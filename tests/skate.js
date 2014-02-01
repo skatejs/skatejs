@@ -30,7 +30,7 @@
       });
     });
 
-    it('Modules should pick up nodes inserted into the DOM after it is defined.', function(done) {
+    it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
       body.appendChild(div);
 
       skate('div', function() {
