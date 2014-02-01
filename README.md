@@ -1,3 +1,5 @@
+[Build Status](https://travis-ci.org/treshugart/skate.png "Build Status")
+
 Skate
 =====
 

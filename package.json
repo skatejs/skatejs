@@ -44,5 +44,8 @@
     "mocha": "~1.17.1",
     "karma-mocha": "~0.1.1",
     "karma-sinon-chai": "~0.1.4"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }
