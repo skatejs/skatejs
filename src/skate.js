@@ -78,8 +78,9 @@
     if (key) {
       ++events[key].count;
     } else {
-      key = selectors[selector] = 'skate-' + new Date().getTime();
-      let node = document.createTextNode('@'
+      key = selectors[selector] = 'skate-' + keyframes.childNodes.length;
+      let node = document.createTextNode(
+        '@'
         + (prefix.keyframes ? prefix.css : '')
         + 'keyframes '
         + key

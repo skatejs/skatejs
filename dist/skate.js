@@ -56,7 +56,7 @@
       try {
         throw undefined;
       } catch (node) {
-        key = selectors[selector] = 'skate-' + new Date().getTime();
+        key = selectors[selector] = 'skate-' + keyframes.childNodes.length;
         node = document.createTextNode('@' + (prefix.keyframes ? prefix.css: '') + 'keyframes ' + key + ' { from { clip: rect(1px, auto, auto, auto); } to { clip: rect(0px, auto, auto, auto); } }');
         keyframes.appendChild(node);
         styles.sheet.insertRule(selector + prefix.properties.replace(/skate/g, key), 0);
