@@ -84,7 +84,7 @@
         + (prefix.keyframes ? prefix.css : '')
         + 'keyframes '
         + key
-        + ' { from { clip: rect(1px, auto, auto, auto); } to { clip: rect(0px, auto, auto, auto); } }'
+        + ' { from { opacity: 0; } to { opacity: 1; } }'
       );
 
       keyframes.appendChild(node);
