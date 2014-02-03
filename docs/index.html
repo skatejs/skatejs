@@ -26,22 +26,18 @@
       <h2>Usage</h2>
       <p>Creating a new component out of existing and new DOM elements is as easy as calling a function and passing a CSS selector.</p>
       <pre code="javascript">
-        skate('p', function(element) {
+        var component = skate('p', function(element) {
           ...
         });
       </pre>
 
       <p>When you bind a component to a subset of elements, a component instance is returned. This allows you to interact with the elements bound to that component.</p>
       <pre code="javascript">
-        var p = skate('p', function() {
-          ...
-        });
-
         // [el1, el2, ...]
-        p.elements();
+        component.elements();
 
         // Stop listening for new elements.
-        p.destroy();
+        component.destroy();
       </pre>
 
       <h2>Compatibility</h2>
