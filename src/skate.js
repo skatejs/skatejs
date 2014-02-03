@@ -124,7 +124,7 @@
   }
 
   // Ensures a component implments a given interface.
-  function makeComponent(component) {
+  function makeComponent(selector, component) {
     // A function passed in becomes the init method.
     if (typeof component === 'function') {
       component = {
@@ -190,7 +190,7 @@
   // Globals FTW!
   // Binds the specified component to the selected elements.
   global.skate = function(selector, component) {
-    var component = makeComponent(component);
+    var component = makeComponent(selector, component);
 
     if (supportsAnimation) {
       useCssKeyframes(selector, component);

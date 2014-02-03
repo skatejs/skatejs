@@ -87,7 +87,7 @@
       component.init(e.target);
     }, false);
   }
-  function makeComponent(component) {
+  function makeComponent(selector, component) {
     if (typeof component === 'function') {
       component = {init: component};
     }
@@ -138,7 +138,7 @@
   }
   ;
   global.skate = function(selector, component) {
-    var component = makeComponent(component);
+    var component = makeComponent(selector, component);
     if (supportsAnimation) {
       useCssKeyframes(selector, component);
     } else {
