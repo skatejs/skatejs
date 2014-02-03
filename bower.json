@@ -4,6 +4,7 @@
   "dependencies": {
     "bootstrap": "~3.1.0",
     "traceur": "https://github.com/google/traceur-compiler/archive/master.zip",
-    "less": "~1.6.2"
+    "less": "~1.6.2",
+    "highlightjs": "~8.0.0"
   }
 }
