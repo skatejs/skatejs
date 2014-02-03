@@ -11,7 +11,6 @@ module.exports = function(grunt) {
       docs: {
         options: {
           keepalive: true,
-          hostname: '172.22.0.253',
           open: 'http://localhost:8000/docs'
         }
       }
