@@ -43,12 +43,12 @@
   }
   function fireInitListeners(event) {
     event.selector = (events[event.animationName] || {}).selector;
-    (listeners[event.animationName] || []).forEach(function(component) {
-      component.init(event.target);
+    (listeners[event.animationName] || []).forEach(function(handler) {
+      handler(event.target);
     });
   }
   ;
-  function useCssKeyframes(selector, component) {
+  function useCssKeyframes(selector, handler) {
     var key = selectors[selector];
     if (key) {
       ++events[key].count;
@@ -76,40 +76,36 @@
         document.addEventListener(name, fireInitListeners, false);
       }, this);
     }
-    (listeners[key] = listeners[key] || []).push(component);
+    (listeners[key] = listeners[key] || []).push(handler);
   }
-  function useDeprecatedMutationEvents(selector, component) {
+  function useDeprecatedMutationEvents(selector, handler) {
     var existing = document.querySelectorAll(selector);
     for (var a = 0; a < existing.length; a++) {
-      component.init(existing[a]);
+      handler(existing[a]);
     }
     document.addEventListener('DOMNodeInserted', function(e) {
-      component.init(e.target);
+      handler(e.target);
     }, false);
   }
-  function makeComponent(selector, component) {
-    if (typeof component === 'function') {
-      component = {init: component};
-    }
+  function makeComponent(selector, handler) {
+    var component = {};
     if (!component.destroy) {
       component.destroy = function() {};
     }
     component.elements = function() {
       return Array.prototype.slice.call(document.querySelectorAll(selector) || []);
     };
-    var oldDestroy = component.destroy;
     component.destroy = function() {
-      oldDestroy();
-      destroyBoundComponent(selector, component);
+      destroyBoundComponent(selector, handler);
       return this;
     };
     return component;
   }
   ;
-  function destroyBoundComponent(selector, component) {
+  function destroyBoundComponent(selector, handler) {
     var key = selectors[selector];
     var listener = listeners[key] || [];
-    var index = listener.indexOf(component);
+    var index = listener.indexOf(handler);
     if (index > - 1) {
       try {
         throw undefined;
@@ -133,12 +129,12 @@
     }
   }
   ;
-  global.skate = function(selector, component) {
-    var component = makeComponent(selector, component);
+  global.skate = function(selector, handler) {
+    var component = makeComponent(selector, handler);
     if (supportsAnimation) {
-      useCssKeyframes(selector, component);
+      useCssKeyframes(selector, handler);
     } else {
-      useDeprecatedMutationEvents(selector, component);
+      useDeprecatedMutationEvents(selector, handler);
     }
     return component;
   };

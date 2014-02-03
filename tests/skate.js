@@ -24,10 +24,10 @@
 
       body.appendChild(div);
 
-      skate('div', function() {
+      var mod = skate('div', function() {
         div.innerText.should.equal('test');
         done();
-        this.destroy();
+        mod.destroy();
       });
     });
 
@@ -36,10 +36,10 @@
 
       body.appendChild(div);
 
-      skate('div', function() {
+      var mod = skate('div', function() {
         div.innerText.should.equal('test');
         done();
-        this.destroy();
+        mod.destroy();
       });
     });
 
@@ -58,10 +58,10 @@
       module.destroy();
       body.appendChild(div);
 
-      skate('div', function() {
+      var mod = skate('div', function() {
         div.innerText.should.equal('');
         done();
-        this.destroy();
+        mod.destroy();
       });
     });
   });

@@ -45,28 +45,6 @@
         p.destroy();
       </pre>
 
-      <h3>Customising a Component</h3>
-      <p>In addition to being able to call methods on a component, you can also define your own methods.</p>
-      <pre code="javascript">
-        var p = skate('p[lang]', {
-          init: function(element) {
-            // The main setup method that gets called for each element.
-          },
-          translate: function(to) {
-            this.each(function(element) {
-              // Some pseudo-code for thought.
-              element.innerHTML = translate(
-                element.innerHTML,
-                element.getAttribute('lang'),
-                to
-              );
-            });
-          }
-        });
-
-        p.translate('en');
-      </pre>
-
       <h3>Compatibility</h3>
       <p>Works in all <em>evergreen browsers</em> that <a class="external" href="http://caniuse.com/#feat=css-animation">support CSS animation</a> and falls back to using <a class="external" href="https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events">deprecated mutation events</a> in <strong>IE9</strong>.</p>
     </div>

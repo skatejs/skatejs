@@ -66,13 +66,13 @@
   function fireInitListeners(event) {
     event.selector = (events[event.animationName] || {}).selector;
 
-    (listeners[event.animationName] || []).forEach(function(component) {
-      component.init(event.target);
+    (listeners[event.animationName] || []).forEach(function(handler) {
+      handler(event.target);
     });
   };
 
   // Listens for new elements using CSS @keyframes.
-  function useCssKeyframes(selector, component) {
+  function useCssKeyframes(selector, handler) {
     var key = selectors[selector];
 
     if (key) {
@@ -108,30 +108,25 @@
       }, this);
     }
 
-    (listeners[key] = listeners[key] || []).push(component);
+    (listeners[key] = listeners[key] || []).push(handler);
   }
 
   // Yep, they're deprecated, but they'll never be removed from IE9 and that's what this targets.
-  function useDeprecatedMutationEvents(selector, component) {
+  function useDeprecatedMutationEvents(selector, handler) {
     var existing = document.querySelectorAll(selector);
 
     for (var a = 0; a < existing.length; a++) {
-      component.init(existing[a]);
+      handler(existing[a]);
     }
 
     document.addEventListener('DOMNodeInserted', function(e) {
-      component.init(e.target);
+      handler(e.target);
     }, false);
   }
 
   // Ensures a component implments a given interface.
-  function makeComponent(selector, component) {
-    // A function passed in becomes the init method.
-    if (typeof component === 'function') {
-      component = {
-        init: component
-      };
-    }
+  function makeComponent(selector, handler) {
+    var component = {};
 
     // All components should have a destroy method.
     if (!component.destroy) {
@@ -143,10 +138,9 @@
       return Array.prototype.slice.call(document.querySelectorAll(selector) || []);
     };
 
-    var oldDestroy = component.destroy;
+    // Destroys the listener.
     component.destroy = function() {
-      oldDestroy();
-      destroyBoundComponent(selector, component);
+      destroyBoundComponent(selector, handler);
       return this;
     };
 
@@ -154,10 +148,10 @@
   };
 
   // Destroys the specified component for the given selector.
-  function destroyBoundComponent(selector, component) {
+  function destroyBoundComponent(selector, handler) {
     var key = selectors[selector];
     var listener = listeners[key] || [];
-    var index = listener.indexOf(component);
+    var index = listener.indexOf(handler);
 
     if (index > -1) {
       let event = events[selectors[selector]];
@@ -184,13 +178,13 @@
 
   // Globals FTW!
   // Binds the specified component to the selected elements.
-  global.skate = function(selector, component) {
-    var component = makeComponent(selector, component);
+  global.skate = function(selector, handler) {
+    var component = makeComponent(selector, handler);
 
     if (supportsAnimation) {
-      useCssKeyframes(selector, component);
+      useCssKeyframes(selector, handler);
     } else {
-      useDeprecatedMutationEvents(selector, component);
+      useDeprecatedMutationEvents(selector, handler);
     }
 
     return component;
