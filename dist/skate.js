@@ -20,7 +20,7 @@
   })();
   var supportsAnimation = (function() {
     var animationstring = 'animation';
-    var domPrefixes = 'Webkit Moz O ms Khtml'.split(' ');
+    var domPrefixes = ['Webkit', 'Moz', 'O', 'ms', 'Khtml'];
     var body = document.documentElement;
     var keyframeprefix = '';
     var prefix = '';
