@@ -2,6 +2,8 @@ module.exports = function(grunt) {
 
   'use strict';
 
+  var host = grunt.option('host') || 'localhost';
+
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-traceur');
@@ -11,7 +13,8 @@ module.exports = function(grunt) {
       docs: {
         options: {
           keepalive: true,
-          open: 'http://localhost:8000/docs'
+          hostname: host,
+          open: 'http://' + host + ':8000/docs'
         }
       }
     },
