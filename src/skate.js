@@ -137,15 +137,9 @@
       component.destroy = function(){};
     }
 
-    // Calls a function for each element the component controls currently in the DOM.
-    component.each = function(fn) {
-      this.elements().forEach(fn);
-      return this;
-    };
-
     // Returns all elements the component affects at the time of the function call.
     component.elements = function() {
-      return document.querySelectorAll(selector);
+      return Array.prototype.slice.call(document.querySelectorAll(selector) || []);
     };
 
     var oldDestroy = component.destroy;

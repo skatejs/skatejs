@@ -94,12 +94,8 @@
     if (!component.destroy) {
       component.destroy = function() {};
     }
-    component.each = function(fn) {
-      this.elements().forEach(fn);
-      return this;
-    };
     component.elements = function() {
-      return document.querySelectorAll(selector);
+      return Array.prototype.slice.call(document.querySelectorAll(selector) || []);
     };
     var oldDestroy = component.destroy;
     component.destroy = function() {
