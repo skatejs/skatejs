@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SkateJS Documentation</title>
+    <link rel="stylesheet/less" href="../bower_components/bootstrap/less/bootstrap.less">
+    <link rel="stylesheet/less" href="less/main.less">
+    <script src="../bower_components/less/dist/less-1.6.2.js"></script>
+    <script src="../bower_components/traceur/bin/traceur.js"></script>
+    <script src="../bower_components/traceur/src/bootstrap.js"></script>
+    <script src="../dist/skate.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>SkateJS</h1>
+      <p>Skate is a component-based micro-framework meant to give you a common interface for interacting with existing and new DOM elements given only a selector.</p>
+
+      <h2>Why?</h2>
+      <p>Skate is heavily inspired by the <a class="external" href="https://github.com/csuwildcat/SelectorListener">SelectorListener</a> technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver">Mutation Observers</a> which are inherently slow and are only available in the <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility">greenest</a> of evergreen browsers. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike and is very performant.</p>
+
+      <h3>Creating a Component</h3>
+      <p>Creating a new component out of existing and new DOM elements is as easy as calling a function and passing a CSS selector.</p>
+      <pre class="code">
+        skate('p', function(element) {
+          ...
+        });
+      </pre>
+
+      <h3>Interacting with a Component</h3>
+      <p>When you bind a component to a subset of elements, a component instance is returned. This allows you to interact with the elements bound to that component.</p>
+      <pre class="code">
+        var p = skate('p', function() {
+          ...
+        });
+
+        // Shorthand for traversing each element the component controls that is
+        // currently in the DOM.
+        this.each(function(el) {
+          ...
+        });
+
+        // [el1, el2, ...]
+        p.elements();
+
+        // Stop listening for new elements.
+        p.destroy();
+      </pre>
+
+      <h3>Customising a Component</h3>
+      <p>In addition to being able to call methods on a component, you can also define your own methods.</p>
+      <pre class="code">
+        var p = skate('p[lang]', {
+          init: function(element) {
+            // The main setup method that gets called for each element.
+          },
+          translate: function(to) {
+            this.each(function(element) {
+              // Some pseudo-code for thought.
+              element.innerHTML = translate(
+                element.innerHTML,
+                element.getAttribute('lang'),
+                to
+              );
+            });
+          }
+        });
+
+        p.translate('en');
+      </pre>
+
+      <h3>Compatibility</h3>
+      <p>Works in all <em>evergreen browsers</em> that support <a class="external" href="http://www.w3schools.com/css/css3_animations.asp">CSS animations</a> and falls back to using <a class="external" href="https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events">deprecated mutation events</a> in <strong>IE9</strong>.</p>
+    </div>
+  </body>
+</html>

@@ -7,6 +7,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-traceur');
 
   grunt.initConfig({
+    connect: {
+      docs: {
+        options: {
+          keepalive: true,
+          hostname: '172.22.0.253',
+          open: 'http://localhost:8000/docs'
+        }
+      }
+    },
     karma: {
       all: {
         options: {
@@ -40,13 +49,14 @@ module.exports = function(grunt) {
     watch: {
       test: {
         files: ['src/*.js'],
-        tasks: ['test']
+        tasks: ['dist']
       }
     }
   });
 
   grunt.registerTask('build', 'Runs the tests and builds the dist.', ['test']);
   grunt.registerTask('dist', 'Builds the dist.', ['traceur', 'uglify']);
+  grunt.registerTask('docs', 'Runs the docs server.', ['connect:docs'])
   grunt.registerTask('test', 'Runs the tests.', ['dist', 'karma']);
 
 };

@@ -1,7 +1,7 @@
 /**
  * Heavily inspired by https://github.com/csuwildcat/SelectorListener.
  */
-(function() {
+(function(global) {
 
   'use strict';
 
@@ -22,7 +22,7 @@
 
   var prefix = (function() {
       var duration = 'animation-duration: 0.01s;';
-      var name = 'animation-name: SelectorListener !important;';
+      var name = 'animation-name: skate !important;';
       var computed = window.getComputedStyle(document.documentElement, '');
       var pre = (Array.prototype.slice.call(computed).join('').match(/moz|webkit|ms/) || (computed.OLink === '' && ['o']))[0];
 
@@ -33,45 +33,52 @@
       };
     })();
 
+  var supportsAnimation = (function() {
+      var animationstring = 'animation';
+      var domPrefixes = 'Webkit Moz O ms Khtml'.split(' ');
+      var body = document.documentElement;
+      var keyframeprefix = '';
+      var prefix = '';
 
-  // Set up listener animations.
-  styles.type = keyframes.type = 'text/css';
-  head.appendChild(styles);
-  head.appendChild(keyframes);
+      if (body.style.animationName !== undefined) {
+        return true;
+      }
+
+      for (var i = 0; i < domPrefixes.length; i++ ) {
+        if (body.style[domPrefixes[i] + 'AnimationName'] !== undefined ) {
+          prefix = domPrefixes[ i ];
+          animationstring = prefix + 'Animation';
+          keyframeprefix = '-' + prefix.toLowerCase() + '-';
+          return true;
+        }
+      }
+    })();
+
+
+  if (supportsAnimation) {
+    styles.type = keyframes.type = 'text/css';
+    head.appendChild(styles);
+    head.appendChild(keyframes);
+  }
 
 
   // Initialises an element from listeners.
   function fireInitListeners(event) {
     event.selector = (events[event.animationName] || {}).selector;
 
-    (listeners[event.animationName] || []).forEach(function(module) {
-      module.init(event.target);
+    (listeners[event.animationName] || []).forEach(function(component) {
+      component.init(event.target);
     });
   };
 
-
-  // Alters the destroy method so that it also destroys the listener.
-  function makeModuleDestroyAndDeafen(selector, module) {
-    var oldDestroy = module.destroy;
-    module.destroy = function() {
-      oldDestroy();
-      return skate.destroy(selector, module);
-    };
-    return module;
-  }
-
-
-  // Binds the specified module to the selected elements.
-  function skate(selector, module) {
+  // Listens for new elements using CSS @keyframes.
+  function useCssKeyframes(selector, component) {
     var key = selectors[selector];
-    var module = skate.module(module);
-
-    makeModuleDestroyAndDeafen(selector, module);
 
     if (key) {
       ++events[key].count;
     } else {
-      key = selectors[selector] = 'SelectorListener-' + new Date().getTime();
+      key = selectors[selector] = 'skate-' + new Date().getTime();
       let node = document.createTextNode('@'
         + (prefix.keyframes ? prefix.css : '')
         + 'keyframes '
@@ -80,7 +87,7 @@
       );
 
       keyframes.appendChild(node);
-      styles.sheet.insertRule(selector + prefix.properties.replace(/SelectorListener/g, key), 0);
+      styles.sheet.insertRule(selector + prefix.properties.replace(/skate/g, key), 0);
 
       events[key] = {
         count: 1,
@@ -100,33 +107,62 @@
       }, this);
     }
 
-    (listeners[key] = listeners[key] || []).push(module);
+    (listeners[key] = listeners[key] || []).push(component);
+  }
 
-    return module;
-  };
+  // Yep, they're deprecated, but they'll never be removed from IE9 and that's what this targets.
+  function useDeprecatedMutationEvents(selector, component) {
+    var existing = document.querySelectorAll(selector);
 
-  // Ensures a module implments a given interface.
-  skate.module = function(module) {
+    for (var a = 0; a < existing.length; a++) {
+      component.init(existing[a]);
+    }
+
+    document.addEventListener('DOMNodeInserted', function(e) {
+      component.init(e.target);
+    }, false);
+  }
+
+  // Ensures a component implments a given interface.
+  function makeComponent(component) {
     // A function passed in becomes the init method.
-    if (typeof module === 'function') {
-      module = {
-        init: module
+    if (typeof component === 'function') {
+      component = {
+        init: component
       };
     }
 
-    // All modules should have a destroy method.
-    if (!module.destroy) {
-      module.destroy = function(){};
+    // All components should have a destroy method.
+    if (!component.destroy) {
+      component.destroy = function(){};
     }
 
-    return module;
+    // Calls a function for each element the component controls currently in the DOM.
+    component.each = function(fn) {
+      this.elements().forEach(fn);
+      return this;
+    };
+
+    // Returns all elements the component affects at the time of the function call.
+    component.elements = function() {
+      return document.querySelectorAll(selector);
+    };
+
+    var oldDestroy = component.destroy;
+    component.destroy = function() {
+      oldDestroy();
+      destroyBoundComponent(selector, component);
+      return this;
+    };
+
+    return component;
   };
 
-  // Destroys the specified module for the given selector.
-  skate.destroy = function(selector, module) {
+  // Destroys the specified component for the given selector.
+  function destroyBoundComponent(selector, component) {
     var key = selectors[selector];
     var listener = listeners[key] || [];
-    var index = listener.indexOf(module);
+    var index = listener.indexOf(component);
 
     if (index > -1) {
       let event = events[selectors[selector]];
@@ -149,12 +185,20 @@
         }, this);
       }
     }
-
-    return skate;
   };
 
-
   // Globals FTW!
-  window.skate = skate;
+  // Binds the specified component to the selected elements.
+  global.skate = function(selector, component) {
+    var component = makeComponent(component);
 
-})();
+    if (supportsAnimation) {
+      useCssKeyframes(selector, component);
+    } else {
+      useDeprecatedMutationEvents(selector, component);
+    }
+
+    return component;
+  };
+
+})(window);
