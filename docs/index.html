@@ -16,7 +16,7 @@
     <header class="main">
       <div class="container">
         <h1>Skate <a href="https://travis-ci.org/treshugart/skate"><img src="https://travis-ci.org/treshugart/skate.png?branch=master"></a></h1>
-        <p>Skate is a component-based micro-framework meant that provides a common interface for interacting with existing and new DOM elements.</p>
+        <p>Skate is a component-based micro-framework that provides a common interface for interacting with existing and new DOM elements.</p>
       </div>
     </header>
     <div class="container">
@@ -24,10 +24,10 @@
       <p>Skate is heavily inspired by the <a class="external" href="https://github.com/csuwildcat/SelectorListener">SelectorListener</a> technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver">Mutation Observers</a> which are inherently slow and are only available in the <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility">greenest</a> of evergreen browsers. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike and is very performant.</p>
 
       <h2>Usage</h2>
-      <p>Creating a new component out of existing and new DOM elements is as easy as calling a function and passing a CSS selector.</p>
+      <p>Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and component handler to a function. A component is simply a function that takes a DOM element as its only argument.</p>
       <pre code="javascript">
-        var component = skate('p', function(element) {
-          ...
+        var component = skate('css[selector]', function(element) {
+          // your component initialisation here
         });
       </pre>
 
@@ -38,6 +38,70 @@
 
         // Stop listening for new elements.
         component.destroy();
+      </pre>
+
+      <h2>Examples</h2>
+
+      <h3>Integrating Frameworks</h3>
+      <p>If you like frameworks like Knockout, you can organise the setup logic into a component.</p>
+      <pre code="javascript">
+        skate('[model]', function(el) {
+          ko.applyBindings(window[el.getAttribute('model')], el);
+        });
+      </pre>
+      <p>Then you can declaratively activate it on the element of your choice.</p>
+      <pre code="html">
+        <script>
+          window.myModel = {
+            hello: ko.observable()
+          };
+        </script>
+
+        <p model="myModel">Hello, <span data-bind="text: hello"></span>!</p>
+      </pre>
+
+      <h3>Templating</h3>
+      <p>You can even create components that will render templates.</p>
+      <pre code="javascript">
+        skate('[template]', function(el) {
+          var temp = Handlebars.compile(document.getElementById(el.getAttribute('template')));
+          var data = window[el.getAttribute('template-data')] || {};
+          el.innerHTML = temp(data);
+        });
+      </pre>
+      <pre code="html">
+        <script type="text/javascript">
+          window.context = {
+            hello: 'World'
+          };
+        </script>
+
+        <script type="text/handlebars" id="hello">
+          Hello, {{hello}}!
+        </script>
+
+        <div template="hello" template-data="context"></div>
+      </pre>
+
+      <h3>Nesting Components</h3>
+      <p>Since components activate once they hit the DOM, this means you can nest components within each other and they just work.</p>
+      <pre code="html">
+        <tabs>
+          <tab pane="tab1">Tab 1</tab>
+          <tab pane="tab2">Tab 2</tab>
+          <pane tab="tab1">Tab 1 content.</pane>
+          <pane tab="tab2">Tab 2 content.</pane>
+        </tabs>
+      </pre>
+      <p>Your selector places restrictions on whether a component is valid within a given hierarchy.</p>
+      <pre code="javascript">
+        skate('tabs > tab', function() {
+          // get tabby with it
+        });
+
+        skate('tabs > pane', function() {
+          // cause some pane
+        });
       </pre>
 
       <h2>Compatibility</h2>

@@ -2,9 +2,9 @@ import trim from 'js/lib/trim';
 
 export default function (el) {
   var baseIndent = getIndentLength(el.textContent.split("\n")[0]);
-  var lines = trim(el.textContent).split("\n");
+  var lines = trim(el.innerHTML).split("\n");
 
-  el.textContent = '';
+  el.innerHTML = '';
 
   lines.forEach(function(line, index) {
     var indent = getIndentLength(line) - baseIndent;
@@ -12,11 +12,15 @@ export default function (el) {
     var code = document.createElement('code');
     var nl = document.createTextNode("\n");
 
+    line = trim(line);
+    line = line.replace('&gt;', '>');
+    line = line.replace('&lt;', '<');
+
     num.className = 'code-line-number';
-    num.textContent = index + 1;
+    num.innerHTML = index + 1;
 
     code.className = 'code-line-content';
-    code.innerHTML = setIndentLength(indent) + hljs.highlight(el.getAttribute('code'), trim(line)).value;
+    code.innerHTML = setIndentLength(indent) + hljs.highlight(el.getAttribute('code'), line).value;
 
     el.appendChild(num);
     el.appendChild(code);
