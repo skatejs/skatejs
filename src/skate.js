@@ -20,6 +20,14 @@
     'webkitAnimationStart'
   ];
 
+  var domPrefixes = [
+    'Webkit',
+    'Moz',
+    'O',
+    'ms',
+    'Khtml'
+  ];
+
   var prefix = (function() {
       var duration = 'animation-duration: 0.01s;';
       var name = 'animation-name: skate !important;';
@@ -35,7 +43,6 @@
 
   var supportsAnimation = (function() {
       var animationstring = 'animation';
-      var domPrefixes = ['Webkit', 'Moz', 'O', 'ms', 'Khtml'];
       var body = document.documentElement;
       var keyframeprefix = '';
       var prefix = '';
@@ -111,16 +118,22 @@
     (listeners[key] = listeners[key] || []).push(handler);
   }
 
-  // Yep, they're deprecated, but they'll never be removed from IE9 and that's what this targets.
+  // Yep, they're deprecated, but they'll never be removed from IE9 and that's
+  // what this targets.
   function useDeprecatedMutationEvents(selector, handler) {
     var existing = document.querySelectorAll(selector);
 
+    // Initialise each element currently in the DOM since DOMNodeInserted
+    // doesn't fire for existing elements.
     for (var a = 0; a < existing.length; a++) {
       handler(existing[a]);
     }
 
     document.addEventListener('DOMNodeInserted', function(e) {
-      handler(e.target);
+      // We're only targeting this at IE anyways.
+      if (e.target.msMatchesSelector(selector)) {
+        handler(e.target);
+      }
     }, false);
   }
 

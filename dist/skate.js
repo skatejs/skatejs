@@ -7,6 +7,7 @@
   var keyframes = document.createElement('style');
   var head = document.getElementsByTagName('head')[0];
   var startNames = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
+  var domPrefixes = ['Webkit', 'Moz', 'O', 'ms', 'Khtml'];
   var prefix = (function() {
     var duration = 'animation-duration: 0.01s;';
     var name = 'animation-name: skate !important;';
@@ -20,7 +21,6 @@
   })();
   var supportsAnimation = (function() {
     var animationstring = 'animation';
-    var domPrefixes = ['Webkit', 'Moz', 'O', 'ms', 'Khtml'];
     var body = document.documentElement;
     var keyframeprefix = '';
     var prefix = '';
@@ -84,7 +84,9 @@
       handler(existing[a]);
     }
     document.addEventListener('DOMNodeInserted', function(e) {
-      handler(e.target);
+      if (e.target.msMatchesSelector(selector)) {
+        handler(e.target);
+      }
     }, false);
   }
   function makeComponent(selector, handler) {
