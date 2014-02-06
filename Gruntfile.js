@@ -6,7 +6,6 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-traceur');
 
   grunt.initConfig({
     concat: {
