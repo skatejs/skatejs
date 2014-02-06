@@ -2,9 +2,11 @@
   "name": "skate",
   "description": "Modules through selector listeners.",
   "dependencies": {
+  },
+  "devDependencies": {
     "bootstrap": "~3.1.0",
-    "traceur": "https://github.com/google/traceur-compiler/archive/master.zip",
+    "highlightjs": "~8.0.0",
     "less": "~1.6.2",
-    "highlightjs": "~8.0.0"
+    "requirejs": "~2.1.10"
   }
 }

@@ -1,3 +1,5 @@
-export default function(el) {
-  el.className = 'glyphicon glyphicon-' + el.getAttribute('icon');
-};
+define(function() {
+  return function(el) {
+    el.className = 'glyphicon glyphicon-' + el.getAttribute('icon');
+  };
+});

@@ -2,13 +2,22 @@ module.exports = function(grunt) {
 
   'use strict';
 
-  var host = grunt.option('host') || 'localhost';
+  var host = grunt.option('host') || require('os').networkInterfaces()['en0'][1].address || 'localhost';
 
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-traceur');
 
   grunt.initConfig({
+    concat: {
+      all: {
+        files: {
+          'dist/skate.js': [
+            'src/skate.js'
+          ]
+        }
+      }
+    },
     connect: {
       docs: {
         options: {
@@ -31,16 +40,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    traceur: {
-      options: {
-        blockBinding: true
-      },
-      all: {
-        files: {
-          'dist/skate.js': 'src/skate.js'
-        }
-      }
-    },
     uglify: {
       all: {
         files: {
@@ -57,7 +56,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('build', 'Runs the tests and builds the dist.', ['test']);
-  grunt.registerTask('dist', 'Builds the dist.', ['traceur', 'uglify']);
+  grunt.registerTask('dist', 'Builds the dist.', ['concat', 'uglify']);
   grunt.registerTask('docs', 'Runs the docs server.', ['connect:docs'])
   grunt.registerTask('test', 'Runs the tests.', ['dist', 'karma']);
 

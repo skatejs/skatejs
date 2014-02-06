@@ -1,7 +1,7 @@
 /**
  * Heavily inspired by https://github.com/csuwildcat/SelectorListener.
  */
-(function(global) {
+(function(factory) {
 
   'use strict';
 
@@ -86,7 +86,7 @@
       ++events[key].count;
     } else {
       key = selectors[selector] = 'skate-' + keyframes.childNodes.length;
-      let node = document.createTextNode(
+      var node = document.createTextNode(
         '@'
         + (prefix.keyframes ? prefix.css : '')
         + 'keyframes '
@@ -167,7 +167,7 @@
     var index = listener.indexOf(handler);
 
     if (index > -1) {
-      let event = events[selectors[selector]];
+      var event = events[selectors[selector]];
       --event.count;
 
       if (!event.count) {
@@ -191,7 +191,7 @@
 
   // Globals FTW!
   // Binds the specified component to the selected elements.
-  global.skate = function(selector, handler) {
+  factory(function(selector, handler) {
     var component = makeComponent(selector, handler);
 
     if (supportsAnimation) {
@@ -201,6 +201,14 @@
     }
 
     return component;
-  };
+  });
 
-})(window);
+})(function(skate) {
+  if (typeof define === 'function' && define.amd) {
+    define('skate', function() {
+      return skate;
+    });
+  } else {
+    window.skate = skate;
+  }
+});
