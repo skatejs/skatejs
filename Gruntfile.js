@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 
   'use strict';
 
-  var host = grunt.option('host') || require('os').networkInterfaces()['en0'][1].address || 'localhost';
+  var host = grunt.option('host') || 'localhost';
 
   grunt.loadNpmTasks('grunt-contrib');
   grunt.loadNpmTasks('grunt-karma');
