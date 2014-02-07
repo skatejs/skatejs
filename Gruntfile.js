@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         options: {
           browsers: ['PhantomJS'],
           files: [
-            'dist/skate.js',
+            'src/skate.js',
             'tests/skate.js'
           ],
           frameworks: ['mocha', 'sinon-chai'],
