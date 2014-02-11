@@ -39,7 +39,7 @@ Examples
 
 ### Integrating Frameworks
 
-If you like frameworks like Knockout, you can organise the setup logic into a component.
+If you like frameworks like [Knockout](http://knockoutjs.com), you can organise the setup logic into a component.
 
     skate('[model]', function(el) {
       ko.applyBindings(window[el.getAttribute('model')], el);
