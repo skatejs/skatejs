@@ -15,7 +15,7 @@ You can install via Bower or use the files located in `dist/`.
 Why?
 ----
 
-Skate is heavily inspired by the [animation keyframe](http://www.backalleycoder.com/2012/04/25/i-want-a-damnodeinserted/) technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) are only available in the [greenest](https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility) of evergreen browsers. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike and is very performant.
+Skate is heavily inspired by the [animation keyframe](http://www.backalleycoder.com/2012/04/25/i-want-a-damnodeinserted/) technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) which are only available in the [greenest](https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility) of evergreen browsers. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike and is very performant.
 
 Usage
 -----
