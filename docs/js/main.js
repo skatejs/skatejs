@@ -1,6 +1,6 @@
 require({
   paths: {
-    highlight: '../../bower_components/highlightjs/highlight.pack',
+    highlight: '../bower_components/highlightjs/highlight.pack',
     skate: '../../src/skate'
   },
   shim: {
