@@ -1,209 +1,232 @@
 /**
  * Heavily inspired by https://github.com/csuwildcat/SelectorListener.
  */
-(function(factory) {
+(function() {
 
   'use strict';
 
-  var events = {};
-  var selectors = {};
-  var listeners = {};
-
-  var styles = document.createElement('style');
-  var keyframes = document.createElement('style');
-  var head = document.getElementsByTagName('head')[0];
-
-  var startNames = [
-    'animationstart',
-    'oAnimationStart',
-    'MSAnimationStart',
-    'webkitAnimationStart'
-  ];
-
   var domPrefixes = [
-    'Webkit',
-    'Moz',
-    'O',
+    'khtml',
+    'moz',
     'ms',
-    'Khtml'
+    'o',
+    'webkit',
   ];
 
-  var prefix = (function() {
-      var duration = 'animation-duration: 0.01s;';
-      var name = 'animation-name: skate !important;';
-      var computed = window.getComputedStyle(document.documentElement, '');
-      var pre = (Array.prototype.slice.call(computed).join('').match(/moz|webkit|ms/) || (computed.OLink === '' && ['o']))[0];
+  function skate(selector) {
+    return new Skate(selector);
+  }
 
-      return {
-        css: '-' + pre + '-',
-        properties: '{' + duration + name + '-' + pre + '-' + duration + '-' + pre + '-' + name + '}',
-        keyframes: !!(window.CSSKeyframesRule || window[('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1] + 'CSSKeyframesRule'])
-      };
-    })();
 
-  var supportsAnimation = (function() {
-      var animationstring = 'animation';
-      var body = document.documentElement;
-      var keyframeprefix = '';
-      var prefix = '';
+  function Skate(selector) {
+    this.selector = selector;
+    this.events = {
+      ready: [],
+      insert: [],
+      remove: []
+    };
 
-      if (body.style.animationName !== undefined) {
+    if (CssKeyframeAdapter.supported) {
+      this.adapter = new CssKeyframeAdapter(this);
+    } else {
+      this.adapter = new MutationEventAdapter(this);
+    }
+
+    this.listen();
+  }
+
+  Skate.prototype = {
+    on: function(evt, fn) {
+      this.events[evt].push(fn);
+      return this;
+    },
+
+    off: function(evt, fn) {
+      if (fn) {
+        this.events[evt].splice(this.events[evt].indexOf(fn), 1);
+      } else {
+        this.events[evt] = [];
+      }
+
+      return this;
+    },
+
+    listen: function() {
+      this.adapter.listen();
+      return this;
+    },
+
+    deafen: function() {
+      this.adapter.deafen();
+      return this;
+    },
+
+    trigger: function(evt, data) {
+      this.events[evt].forEach(function(fn) {
+        fn(data);
+      });
+
+      return this;
+    }
+  };
+
+
+  function CssKeyframeAdapter(component) {
+    ++CssKeyframeAdapter.count;
+    this.events = {};
+    this.listeners = {};
+    this.selectors = {};
+    abstractAdapter(this, component);
+  }
+
+  CssKeyframeAdapter.count = 0;
+  CssKeyframeAdapter.head = document.getElementsByTagName('head')[0];
+  CssKeyframeAdapter.keyframes = document.createElement('style');
+  CssKeyframeAdapter.animations = document.createElement('style');
+  CssKeyframeAdapter.events = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
+
+  CssKeyframeAdapter.prefix = function() {
+    var css = document.documentElement.style;
+    var prefix = false;
+
+    if (typeof css.animation !== 'undefined') {
+      return '';
+    }
+
+    domPrefixes.some(function(domPrefix) {
+      if (typeof css[domPrefix + 'Animation'] !== 'undefined') {
+        prefix = domPrefix;
         return true;
       }
+    });
 
-      for (var i = 0; i < domPrefixes.length; i++ ) {
-        if (body.style[domPrefixes[i] + 'AnimationName'] !== undefined ) {
-          prefix = domPrefixes[ i ];
-          animationstring = prefix + 'Animation';
-          keyframeprefix = '-' + prefix.toLowerCase() + '-';
-          return true;
+    return prefix;
+  };
+
+  CssKeyframeAdapter.cssPrefix = function() {
+    var prefix = CssKeyframeAdapter.prefix();
+    return prefix ? '-' + prefix + '-' : '';
+  };
+
+  CssKeyframeAdapter.supported = function() {
+    return typeof CssKeyframeAdapter.prefix() === 'string';
+  };
+
+  CssKeyframeAdapter.prototype = {
+    constructor: CssKeyframeAdapter,
+
+    listen: function() {
+      var that = this;
+      var ctor = this.constructor;
+      var index = ctor.count - 1;
+      var cssPrefix = ctor.cssPrefix();
+      var animationName = '__skate' + ctor.count;
+      var keyframeRule = '@'
+        + cssPrefix
+        + 'keyframes '
+        + animationName
+        + ' { from { opacity: 0; } to { opacity: 1; } }';
+      var animationRule = this.component.selector
+        + '{'
+        + cssPrefix
+        + 'animation:'
+        + animationName
+        + ' .01s;}';
+
+      ctor.keyframes.sheet.insertRule(keyframeRule, index);
+      ctor.animations.sheet.insertRule(animationRule, index);
+      ctor.events.forEach(function(e) {
+        document.addEventListener(e, that.triggerInsert, false);
+      });
+
+      return this;
+    },
+
+    deafen: function() {
+      var that = this;
+      var key = this.selectors[this.selector];
+      var listener = this.listeners[key] || [];
+      var index = listener.indexOf(handler);
+
+      if (index > -1) {
+        var event = this.events[key];
+        --event.count;
+
+        if (!event.count) {
+          styles.sheet.deleteRule(styles.sheet.cssRules.item(event.rule));
+          keyframes.removeChild(event.keyframe);
+
+          delete this.events[key];
+          delete this.selectors[selector];
+        }
+
+        --this.listeners.count;
+        listener.splice(index, 1);
+
+        if (!this.listeners.count) {
+          this.constructor.events.forEach(function(name) {
+            document.removeEventListener(name, that.triggerInsert, false);
+          });
         }
       }
-    })();
 
-
-  if (supportsAnimation) {
-    styles.type = keyframes.type = 'text/css';
-    head.appendChild(styles);
-    head.appendChild(keyframes);
-  }
-
-
-  // Initialises an element from listeners.
-  function fireInitListeners(event) {
-    event.selector = (events[event.animationName] || {}).selector;
-
-    (listeners[event.animationName] || []).forEach(function(handler) {
-      handler(event.target);
-    });
-  };
-
-  // Listens for new elements using CSS @keyframes.
-  function useCssKeyframes(selector, handler) {
-    var key = selectors[selector];
-
-    if (key) {
-      ++events[key].count;
-    } else {
-      key = selectors[selector] = 'skate-' + keyframes.childNodes.length;
-      var node = document.createTextNode(
-        '@'
-        + (prefix.keyframes ? prefix.css : '')
-        + 'keyframes '
-        + key
-        + ' { from { opacity: 0; } to { opacity: 1; } }'
-      );
-
-      keyframes.appendChild(node);
-      styles.sheet.insertRule(selector + prefix.properties.replace(/skate/g, key), 0);
-
-      events[key] = {
-        count: 1,
-        selector: selector,
-        keyframe: node,
-        rule: styles.sheet.cssRules[0]
-      };
-    }
-
-    if (listeners.count) {
-      ++listeners.count;
-    } else {
-      listeners.count = 1;
-
-      startNames.forEach(function(name) {
-        document.addEventListener(name, fireInitListeners, false);
-      }, this);
-    }
-
-    (listeners[key] = listeners[key] || []).push(handler);
-  }
-
-  // Yep, they're deprecated, but they'll never be removed from IE9 and that's
-  // what this targets.
-  function useDeprecatedMutationEvents(selector, handler) {
-    var existing = document.querySelectorAll(selector);
-
-    // Initialise each element currently in the DOM since DOMNodeInserted
-    // doesn't fire for existing elements.
-    for (var a = 0; a < existing.length; a++) {
-      handler(existing[a]);
-    }
-
-    document.addEventListener('DOMNodeInserted', function(e) {
-      // We're only targeting this at IE anyways.
-      if (e.target.msMatchesSelector(selector)) {
-        handler(e.target);
-      }
-    }, false);
-  }
-
-  // Ensures a component implments a given interface.
-  function makeComponent(selector, handler) {
-    var component = {};
-
-    // All components should have a destroy method.
-    if (!component.destroy) {
-      component.destroy = function(){};
-    }
-
-    // Returns all elements the component affects at the time of the function call.
-    component.elements = function() {
-      return Array.prototype.slice.call(document.querySelectorAll(selector) || []);
-    };
-
-    // Destroys the listener.
-    component.destroy = function() {
-      destroyBoundComponent(selector, handler);
       return this;
+    }
+  }
+
+
+  function MutationEventAdapter(component) {
+    abstractAdapter(this, component);
+  }
+
+  MutationEventAdapter.prototype = {
+    listen: function() {
+      var existing = document.querySelectorAll(this.component.selector);
+
+      // IE doesn't handle existing events correctly.
+      for (var a = 0; a < existing.length; a++) {
+        this.component.trigger('insert', (existing[a]));
+      }
+
+      document.addEventListener('DOMNodeInserted', function(e) {
+        if (e.target.msMatchesSelector(this.component.selector)) {
+          this.component.trigger('insert', e.target);
+        }
+      }, false);
+
+      return this;
+    },
+
+    deafen: function() {
+      return this;
+    }
+  };
+
+
+  function abstractAdapter(adapter, component) {
+    adapter.component = component;
+
+    adapter.triggerReady = function(e) {
+      return component.trigger('ready', e.target);
     };
 
-    return component;
-  };
+    adapter.triggerInsert = function(e) {
+      return component.trigger('insert', e.target);
+    };
 
-  // Destroys the specified component for the given selector.
-  function destroyBoundComponent(selector, handler) {
-    var key = selectors[selector];
-    var listener = listeners[key] || [];
-    var index = listener.indexOf(handler);
+    adapter.triggerRemove = function(e) {
+      return component.trigger('remove', e.target);
+    };
+  }
 
-    if (index > -1) {
-      var event = events[selectors[selector]];
-      --event.count;
 
-      if (!event.count) {
-        styles.sheet.deleteRule(styles.sheet.cssRules.item(event.rule));
-        keyframes.removeChild(event.keyframe);
+  if (CssKeyframeAdapter.supported) {
+    CssKeyframeAdapter.keyframes.type = CssKeyframeAdapter.animations.type = 'text/css';
+    CssKeyframeAdapter.head.appendChild(CssKeyframeAdapter.keyframes);
+    CssKeyframeAdapter.head.appendChild(CssKeyframeAdapter.animations);
+  }
 
-        delete events[key];
-        delete selectors[selector];
-      }
 
-      --listeners.count;
-      listener.splice(index, 1);
-
-      if (!listeners.count) {
-        startNames.forEach(function(name) {
-          document.removeEventListener(name, fireInitListeners, false);
-        }, this);
-      }
-    }
-  };
-
-  // Globals FTW!
-  // Binds the specified component to the selected elements.
-  factory(function(selector, handler) {
-    var component = makeComponent(selector, handler);
-
-    if (supportsAnimation) {
-      useCssKeyframes(selector, handler);
-    } else {
-      useDeprecatedMutationEvents(selector, handler);
-    }
-
-    return component;
-  });
-
-})(function(skate) {
   if (typeof define === 'function' && define.amd) {
     define('skate', function() {
       return skate;
@@ -211,4 +234,5 @@
   } else {
     window.skate = skate;
   }
-});
+
+})();
