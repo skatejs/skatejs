@@ -72,15 +72,14 @@
 
 
   function CssKeyframeAdapter(component) {
-    ++CssKeyframeAdapter.count;
+    this.component = component;
     this.events = {};
     this.listeners = {};
     this.selectors = {};
-    abstractAdapter(this, component);
   }
 
-  CssKeyframeAdapter.count = 0;
-  CssKeyframeAdapter.head = document.getElementsByTagName('head')[0];
+  CssKeyframeAdapter.instances = [];
+  CssKeyframeAdapter.id = '__skate';
   CssKeyframeAdapter.keyframes = document.createElement('style');
   CssKeyframeAdapter.animations = document.createElement('style');
   CssKeyframeAdapter.events = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
@@ -112,63 +111,45 @@
     return typeof CssKeyframeAdapter.prefix() === 'string';
   };
 
+  CssKeyframeAdapter.setup = function() {
+    var head = document.getElementsByTagName('head')[0];
+
+    CssKeyframeAdapter.animations.type = CssKeyframeAdapter.keyframes.type = 'text/css';
+    head.appendChild(CssKeyframeAdapter.keyframes);
+    head.appendChild(CssKeyframeAdapter.animations);
+    CssKeyframeAdapter.events.forEach(function(evt) {
+      document.addEventListener(evt, CssKeyframeAdapter.handler, false);
+    });
+  };
+
+  CssKeyframeAdapter.handler = function(e) {
+    var index = e.animationName.replace(CssKeyframeAdapter.id, '');
+    CssKeyframeAdapter.instances[index].component.trigger('insert', e.target);
+  };
+
   CssKeyframeAdapter.prototype = {
     constructor: CssKeyframeAdapter,
 
     listen: function() {
-      var that = this;
-      var ctor = this.constructor;
-      var index = ctor.count - 1;
-      var cssPrefix = ctor.cssPrefix();
-      var animationName = '__skate' + ctor.count;
-      var keyframeRule = '@'
-        + cssPrefix
-        + 'keyframes '
-        + animationName
-        + ' { from { opacity: 0; } to { opacity: 1; } }';
-      var animationRule = this.component.selector
-        + '{'
-        + cssPrefix
-        + 'animation:'
-        + animationName
-        + ' .01s;}';
+      CssKeyframeAdapter.instances.push(this);
 
-      ctor.keyframes.sheet.insertRule(keyframeRule, index);
-      ctor.animations.sheet.insertRule(animationRule, index);
-      ctor.events.forEach(function(e) {
-        document.addEventListener(e, that.triggerInsert, false);
-      });
+      var index = CssKeyframeAdapter.instances.indexOf(this);
+      var name = this.constructor.id + index;
+      var prefix = this.constructor.cssPrefix();
+
+
+      this.constructor.keyframes.sheet.insertRule('@' + prefix + 'keyframes ' + name + '{from{opacity:0;}to{opacity:1;}}', index);
+      this.constructor.animations.sheet.insertRule(this.component.selector + '{' + prefix + 'animation:' + name + ' .01s;}', index);
 
       return this;
     },
 
     deafen: function() {
-      var that = this;
-      var key = this.selectors[this.selector];
-      var listener = this.listeners[key] || [];
-      var index = listener.indexOf(handler);
+      var index = CssKeyframeAdapter.instances.indexOf(this);
 
-      if (index > -1) {
-        var event = this.events[key];
-        --event.count;
-
-        if (!event.count) {
-          styles.sheet.deleteRule(styles.sheet.cssRules.item(event.rule));
-          keyframes.removeChild(event.keyframe);
-
-          delete this.events[key];
-          delete this.selectors[selector];
-        }
-
-        --this.listeners.count;
-        listener.splice(index, 1);
-
-        if (!this.listeners.count) {
-          this.constructor.events.forEach(function(name) {
-            document.removeEventListener(name, that.triggerInsert, false);
-          });
-        }
-      }
+      CssKeyframeAdapter.splice(index, 1);
+      this.constructor.keyframes.sheet.deleteRule(this.constructor.keyframes.sheet.cssRules.item(index));
+      this.constructor.animations.sheet.deleteRule(this.constructor.animations.sheet.cssRules.item(index));
 
       return this;
     }
@@ -203,27 +184,8 @@
   };
 
 
-  function abstractAdapter(adapter, component) {
-    adapter.component = component;
-
-    adapter.triggerReady = function(e) {
-      return component.trigger('ready', e.target);
-    };
-
-    adapter.triggerInsert = function(e) {
-      return component.trigger('insert', e.target);
-    };
-
-    adapter.triggerRemove = function(e) {
-      return component.trigger('remove', e.target);
-    };
-  }
-
-
-  if (CssKeyframeAdapter.supported) {
-    CssKeyframeAdapter.keyframes.type = CssKeyframeAdapter.animations.type = 'text/css';
-    CssKeyframeAdapter.head.appendChild(CssKeyframeAdapter.keyframes);
-    CssKeyframeAdapter.head.appendChild(CssKeyframeAdapter.animations);
+  if (CssKeyframeAdapter.supported()) {
+    CssKeyframeAdapter.setup();
   }
 
 
