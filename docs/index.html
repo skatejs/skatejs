@@ -49,14 +49,14 @@
       <p>If you like frameworks like Knockout, you can organise the setup logic into a component.</p>
       <pre code="javascript">
         skate('[model]', function(el) {
-          ko.applyBindings(window[el.getAttribute('model')], el);
+          //ko.applyBindings(window[el.getAttribute('model')], el);
         });
       </pre>
       <p>Then you can declaratively activate it on the element of your choice.</p>
       <pre code="html">
         <script>
           window.myModel = {
-            hello: ko.observable()
+            //hello: ko.observable()
           };
         </script>
 
