@@ -5,7 +5,7 @@ define([
   trim,
   hjs
 ) {
-  return function(el, done) {
+  return function(el) {
     var baseIndent = getIndentLength(el.textContent.split("\n")[0]);
     var lines = trim(el.innerHTML).split("\n");
 
@@ -31,8 +31,6 @@ define([
       el.appendChild(code);
       el.appendChild(nl);
     });
-
-    setTimeout(done, 100);
   };
 
   function getIndentLength(str) {

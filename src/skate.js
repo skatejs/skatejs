@@ -12,7 +12,10 @@
   ];
 
 
+  var count = 0;
   var head = document.getElementsByTagName('head')[0];
+  var keyframes = document.createElement('style');
+  var animations = document.createElement('style');
 
 
   function skate(selector, component) {
@@ -21,23 +24,13 @@
 
 
   function Skate(selector, component) {
+    this.adapter = new DetectedAdapter(this);
     this.selector = selector;
     this.events = {
       ready: [],
       insert: [],
       remove: []
     };
-
-    if (CssKeyframeAdapter.supported()) {
-      this.adapter = new CssKeyframeAdapter(this);
-    } else {
-      this.adapter = new MutationEventAdapter(this);
-    }
-
-    if (!isSetup) {
-      isSetup = true;
-      this.adapter.constructor.setup();
-    }
 
     if (component) {
       this.add(component).listen();
@@ -102,9 +95,9 @@
       return this;
     },
 
-    trigger: function(evt, element, done) {
+    trigger: function(evt, element) {
       this.events[evt].forEach(function(fn) {
-        fn(element, done || function(){});
+        fn(element);
       });
 
       return this;
@@ -112,20 +105,10 @@
   };
 
 
-  function CssKeyframeAdapter(skate) {
-    this.skate = skate;
-    this.events = {};
-    this.listeners = {};
-    this.selectors = {};
-  }
-
-  CssKeyframeAdapter.instances = [];
-  CssKeyframeAdapter.id = '__skate';
-  CssKeyframeAdapter.keyframes = document.createElement('style');
-  CssKeyframeAdapter.animations = document.createElement('style');
-  CssKeyframeAdapter.events = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
-
-  CssKeyframeAdapter.prefix = function() {
+  var instances = [];
+  var animationEvents = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
+  var animationNamePrefix = '__skate';
+  var animationBrowserPrefix = (function() {
     var css = document.documentElement.style;
     var prefix = false;
 
@@ -141,71 +124,89 @@
     });
 
     return prefix;
-  };
+  }());
 
-  CssKeyframeAdapter.cssPrefix = function() {
-    var prefix = CssKeyframeAdapter.prefix();
-    return prefix ? '-' + prefix + '-' : '';
-  };
 
-  CssKeyframeAdapter.supported = function() {
-    return typeof CssKeyframeAdapter.prefix() === 'string';
-  };
+  function AnimationAdapter(skate) {
+    this.skate = skate;
+    this.events = {};
+    this.listeners = {};
+    this.selectors = {};
+  }
 
-  CssKeyframeAdapter.setup = function() {
-    CssKeyframeAdapter.animations.type = CssKeyframeAdapter.keyframes.type = 'text/css';
-
-    head.appendChild(CssKeyframeAdapter.keyframes);
-    head.appendChild(CssKeyframeAdapter.animations);
-
-    CssKeyframeAdapter.events.forEach(function(evt) {
-      document.addEventListener(evt, CssKeyframeAdapter.handler, false);
-    });
-  };
-
-  CssKeyframeAdapter.handler = function(e) {
-    triggerReadyAndInsert(
-      CssKeyframeAdapter.instances[e.animationName.replace(CssKeyframeAdapter.id, '')],
-      e.target
-    );
-  };
-
-  CssKeyframeAdapter.prototype = {
-    constructor: CssKeyframeAdapter,
+  AnimationAdapter.prototype = {
+    constructor: AnimationAdapter,
 
     listen: function() {
-      CssKeyframeAdapter.instances.push(this);
+      instances.push(this);
 
-      var index = CssKeyframeAdapter.instances.indexOf(this);
-      var name = this.constructor.id + index;
-      var prefix = this.constructor.cssPrefix();
+      var index = instances.indexOf(this);
+      var name = animationNamePrefix + index;
+      var prefix = '-' + animationBrowserPrefix + '-';
 
-      this.constructor.keyframes.sheet.insertRule('@' + prefix + 'keyframes ' + name + '{from{opacity:1}to{opacity:1}}', index);
-      this.constructor.animations.sheet.insertRule(this.skate.selector + '{' + prefix + 'animation:' + name + ' .01s}', index);
+      // We don't need any animation to happen, we only need the event to fire.
+      keyframes.sheet.insertRule('@' + prefix + 'keyframes ' + name + '{from{opacity:1}to{opacity:1}}', index);
+      animations.sheet.insertRule(this.skate.selector + '{' + prefix + 'animation:' + name + ' .01s}', index);
+
+      // Initially hide all elements.
+      var selectorParts = this.skate.selector.split(',');
+      var ensureHideRules = [
+        'height: 0 !important',
+        'width: 0 !important',
+        'overflow: hidden !important',
+        'margin: 0 !important',
+        'padding: 0 !important'
+      ];
+
+      for (var a in selectorParts) {
+        selectorParts[a] += ':not([data-skate])';
+      }
+
+      animations.sheet.insertRule(
+        selectorParts.join(',')
+          + '{'
+          + ensureHideRules.join(';')
+          + '}',
+        index
+      );
 
       return this;
     },
 
     deafen: function() {
-      var index = CssKeyframeAdapter.instances.indexOf(this);
+      var index = instances.indexOf(this);
 
-      CssKeyframeAdapter.splice(index, 1);
-
-      this.constructor.keyframes.sheet.deleteRule(this.constructor.keyframes.sheet.cssRules.item(index));
-      this.constructor.animations.sheet.deleteRule(this.constructor.animations.sheet.cssRules.item(index));
+      instances.splice(index, 1);
+      keyframes.sheet.deleteRule(keyframes.sheet.cssRules.item(index));
+      animations.sheet.deleteRule(animations.sheet.cssRules.item(index));
 
       return this;
     }
   }
 
 
+  function handleAnimationEvent(e) {
+    triggerReadyAndInsert(
+      instances[e.animationName.replace(animationNamePrefix, '')],
+      e.target
+    );
+  }
+
+  function setUpAnimationAdapter() {
+    animations.type = keyframes.type = 'text/css';
+
+    head.appendChild(keyframes);
+    head.appendChild(animations);
+
+    animationEvents.forEach(function(evt) {
+      document.addEventListener(evt, handleAnimationEvent, false);
+    });
+  }
+
+
   function MutationEventAdapter(skate) {
     this.skate = skate;
   }
-
-  MutationEventAdapter.setup = function() {
-
-  };
 
   MutationEventAdapter.prototype = {
     constructor: MutationEventAdapter,
@@ -239,22 +240,26 @@
   var triggeredNodes = [];
 
   function triggerReadyAndInsert(adapter, target) {
-    var parent = target.parentNode;
-    var placeholder = document.createComment('');
-
     if (triggeredNodes.indexOf(target) !== -1) {
       return;
     }
 
     triggeredNodes.push(target);
-    parent.insertBefore(placeholder, target);
-    parent.removeChild(target);
+    adapter.skate.trigger('ready', target);
+    target.setAttribute('data-skate', count++);
+    adapter.skate.trigger('insert', target);
+  }
 
-    adapter.skate.trigger('ready', target, function(newTarget) {
-      parent.insertBefore(newTarget || target, placeholder);
-      adapter.skate.trigger('insert', target);
-      parent.removeChild(placeholder);
-    });
+
+  var DetectedAdapter = (function() {
+    return animationBrowserPrefix
+      ? AnimationAdapter
+      : MutationEventAdapter;
+  }());
+
+
+  if (DetectedAdapter === AnimationAdapter) {
+    setUpAnimationAdapter();
   }
 
 
