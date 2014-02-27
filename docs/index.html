@@ -34,14 +34,98 @@
         });
       </pre>
 
-      <p>When you bind a component to a subset of elements, a component instance is returned. This allows you to interact with the elements bound to that component.</p>
-      <pre code="javascript">
-        // [el1, el2, ...]
-        component.elements();
 
-        // Stop listening for new elements.
-        component.destroy();
+      <h2 id="components">Components</h2>
+      <p>The simplest way to create a component is by simply passing a selector and a function to the <code>skate()</code> function. However, if you would like to bind to another event besides <code>ready</code> or bind to several events at once, you may also pass an object.</p>
+
+      <p>Binding to <code>insert</code> rather than <code>ready</code>:</p>
+      <pre code="javascript">
+        skate('div', {
+          insert: function(el) {
+
+          }
+        });
       </pre>
+
+      <p>Binding multiple events:</p>
+      <pre code="javascript">
+        skate('div', {
+          ready: function(el) {
+
+          },
+
+          insert: function(el) {
+
+          }
+        });
+      </pre>
+
+      <p>You may also specify these as separate method calls:</p>
+      <pre code="javascript">
+        var component = skate('div');
+
+        component.on('ready', function(el) {
+
+        });
+
+        component.on('insert', function(el) {
+
+        });
+
+        // If you don't pass a component as the second argument
+        // you must explicitly call "listen()".
+        component.listen();
+      </pre>
+
+      <p>Depending on how you write your components, it may be easier for you to bulk add them.</p>
+      <pre code="javascript">
+        var component = skate('div');
+
+        var component1 = function() {
+          this.ready = function(el) {
+
+          };
+        };
+
+        var component2 = {
+          insert: function(el) {
+
+          }
+        };
+
+        var component3 = function(el) {
+
+        };
+
+        // Explicitly bound to the "ready" event.
+        component.add(new component1);
+
+        // Explicitly bound to the "insert" event.
+        component.add(component2);
+
+        // Implicitly bound to the "ready" event.
+        component.add(component3);
+
+        // Start listening for elements.
+        component.listen();
+      </pre>
+
+      <p class="alert alert-info">One thing you may have noticed is that <code>listen()</code> is explicitly called where the second argument to <code>skate()</code> is not defined. This is because, if you pass the second argument, <code>listen()</code> is implicitly called after the listeners are bound. This makes the most common use case simpler and allows you to get around that in an elegant way if necessary.</p>
+
+
+      <h2 id="more">Events</h2>
+      <p>All handlers are bound to events that get triggered on each skate instance.</p>
+
+      <h3><code>ready</code></h3>
+      <p>The <code>ready</code> event is triggered before the element is shown in the DOM. By default, all handlers are bound to this event.</p>
+
+      <h3><code>insert</code></h3>
+      <p>The <code>insert</code> event is triggered after the element is shown in the DOM.</p>
+
+
+      <h2 id="heading-compatibility">Compatibility</h2>
+      <p>Works in all <em>evergreen browsers</em> that <a class="external" href="http://caniuse.com/#feat=css-animation">support CSS animation</a> and falls back to using <a class="external" href="https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events">deprecated mutation events</a> in <strong>IE9</strong>.</p>
+
 
       <h2 id="heading-examples">Examples</h2>
 
@@ -106,9 +190,6 @@
           // cause some pane
         });
       </pre>
-
-      <h2 id="heading-compatibility">Compatibility</h2>
-      <p>Works in all <em>evergreen browsers</em> that <a class="external" href="http://caniuse.com/#feat=css-animation">support CSS animation</a> and falls back to using <a class="external" href="https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events">deprecated mutation events</a> in <strong>IE9</strong>.</p>
     </div>
 
     <footer>
