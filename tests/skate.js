@@ -11,24 +11,23 @@
 
     beforeEach(function() {
       module = skate('div', function(div) {
-        div.innerText = 'test';
+        div.textContent = 'test';
       });
     });
 
     afterEach(function() {
-      module.destroy();
+      module.deafen();
     });
 
     it('Modules should pick up nodes already in the DOM.', function(done) {
       var div = document.createElement('div');
 
-      body.appendChild(div);
-
-      var mod = skate('div', function() {
+      module.on('insert', function() {
         div.innerText.should.equal('test');
         done();
-        mod.destroy();
       });
+
+      body.appendChild(div);
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
@@ -36,32 +35,22 @@
 
       body.appendChild(div);
 
-      var mod = skate('div', function() {
+      module.on('insert', function() {
         div.innerText.should.equal('test');
         done();
-        mod.destroy();
       });
-    });
-
-    it('Should expose the elements that are currently being affected by the component.', function() {
-      module.elements().should.be.an('array');
-      module.elements().length.should.equal(0);
-      body.appendChild(document.createElement('div'));
-      module.elements().length.should.equal(1);
-      body.appendChild(document.createElement('div'));
-      module.elements().length.should.equal(2);
     });
 
     it('When destroyed, that module should no longer affect new nodes.', function(done) {
       var div = document.createElement('div');
 
-      module.destroy();
+      module.deafen();
       body.appendChild(div);
 
-      var mod = skate('div', function() {
+      var newModule = skate('div', function() {
         div.innerText.should.equal('');
+        newModule.deafen();
         done();
-        mod.destroy();
       });
     });
   });

@@ -4,7 +4,6 @@
 
   var isSetup = false;
   var domPrefixes = [
-    'khtml',
     'moz',
     'ms',
     'o',
@@ -176,9 +175,11 @@
     deafen: function() {
       var index = instances.indexOf(this);
 
-      instances.splice(index, 1);
-      keyframes.sheet.deleteRule(keyframes.sheet.cssRules.item(index));
-      animations.sheet.deleteRule(animations.sheet.cssRules.item(index));
+      if (index !== -1) {
+        instances.splice(index, 1);
+        keyframes.sheet.deleteRule(keyframes.sheet.cssRules.item(index));
+        animations.sheet.deleteRule(animations.sheet.cssRules.item(index));
+      }
 
       return this;
     }
