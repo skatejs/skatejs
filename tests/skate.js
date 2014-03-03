@@ -1,57 +1,95 @@
 (function() {
 
-  var body = document.getElementsByTagName('body')[0];
+  function addDivToBody(id) {
+    var div = document.createElement('div');
+    div.id = id || 'test';
+    document.querySelector('body').appendChild(div);
+    return div;
+  }
+
+  function removeDivFromBody(id) {
+    var div = document.querySelector('#' +  (id || 'test'));
+
+    if (div) {
+      document.querySelector('body').removeChild(div);
+    }
+  }
+
 
   afterEach(function() {
-    body.innerHTML = '';
+    document.querySelector('body').innerHTML = '';
   });
 
+
   describe('Defining Modules', function() {
-    var module;
-
-    beforeEach(function() {
-      module = skate('div', function(div) {
-        div.textContent = 'test';
-      });
-    });
-
-    afterEach(function() {
-      module.deafen();
-    });
-
     it('Modules should pick up nodes already in the DOM.', function(done) {
-      var div = document.createElement('div');
+      addDivToBody().textContent = 'test';
 
-      module.on('insert', function() {
-        div.innerText.should.equal('test');
+      var mod = skate('div', function(el) {
+        el.textContent.should.equal('test');
+        mod.deafen();
         done();
       });
-
-      body.appendChild(div);
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
-      var div = document.createElement('div');
-
-      body.appendChild(div);
-
-      module.on('insert', function() {
-        div.innerText.should.equal('test');
+      var mod = skate('div', function(el) {
+        el.textContent.should.equal('test');
+        mod.deafen();
         done();
       });
+
+      addDivToBody().textContent = 'test';
     });
 
     it('When destroyed, that module should no longer affect new nodes.', function(done) {
-      var div = document.createElement('div');
+      var oldModule = skate('div', function() {
+        assert(false);
+        oldModule.deafen();
+        done();
+      }).deafen();
 
-      module.deafen();
-      body.appendChild(div);
+      addDivToBody().textContent = 'test';
 
-      var newModule = skate('div', function() {
-        div.innerText.should.equal('');
+      var newModule = skate('div', function(el) {
+        el.textContent.should.equal('test');
         newModule.deafen();
         done();
       });
+    });
+  });
+
+
+  describe('Events', function() {
+    it('Should trigger ready before the element is shown.', function(done) {
+      var mod = skate('div').on('ready', function(el) {
+        mod.deafen();
+        expect(el.getAttribute('data-skate')).to.equal(null);
+        done();
+      }).listen();
+
+      addDivToBody();
+    });
+
+    it('Should trigger insert after the element is shown.', function(done) {
+      var mod = skate('div').on('insert', function(el) {
+        mod.deafen();
+        expect(el.getAttribute('data-skate')).to.not.equal(null);
+        done();
+      }).listen();
+
+      addDivToBody();
+    });
+
+    it('Should trigger remove when the element is removed.', function(done) {
+      var mod = skate('div').on('remove', function() {
+        mod.deafen();
+        assert(true, 'testing');
+        done();
+      }).listen();
+
+      addDivToBody('remove');
+      removeDivFromBody('remove');
     });
   });
 
