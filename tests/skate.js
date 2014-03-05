@@ -64,7 +64,7 @@
     it('Should trigger ready before the element is shown.', function(done) {
       var mod = skate('div').on('ready', function(el) {
         mod.deafen();
-        expect(el.getAttribute('data-skate')).to.equal(null);
+        el.className.indexOf('__skate').should.equal(-1);
         done();
       }).listen();
 
@@ -74,7 +74,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       var mod = skate('div').on('insert', function(el) {
         mod.deafen();
-        expect(el.getAttribute('data-skate')).to.not.equal(null);
+        el.className.indexOf('__skate').should.be.greaterThan(-1);
         done();
       }).listen();
 

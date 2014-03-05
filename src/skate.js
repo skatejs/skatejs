@@ -18,6 +18,9 @@
   var animationRules = document.createElement('style');
   var hiddenRules = document.createElement('style');
 
+  var cssClassName = '__skate';
+  var skateInstances = [];
+
 
   // Adapted from: http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating.
   //
@@ -76,24 +79,29 @@
 
 
   function skate(selector, component) {
-    return new Skate(selector, component);
+    var instance = new Skate(new DetectedAdapter(selector));
+
+    skateInstances.push(instance);
+
+    if (component) {
+      instance.add(component);
+      instance.listen();
+    }
+
+    return instance;
   }
 
 
-  function Skate(selector, component) {
-    this.adapter = new DetectedAdapter(this);
+  function Skate(adapter) {
+    this.adapter = adapter;
+    this.listening = false;
     this.removeListener = false;
     this.removeRegistry = [];
-    this.selector = selector;
     this.events = {
       ready: [],
       insert: [],
       remove: []
     };
-
-    if (component) {
-      this.add(component).listen();
-    }
   }
 
   Skate.prototype = {
@@ -131,10 +139,12 @@
 
     on: function(evt, fn) {
       var that = this;
+      var shouldAddRemoveListener = evt === 'remove'
+        && !this.removeListener;
 
       this.events[evt].push(fn);
 
-      if (evt === 'remove' && !this.removeListener) {
+      if (shouldAddRemoveListener) {
         this.removeListener = timeout.repeat(function() {
           for (var a = that.removeRegistry.length - 1; a > -1; a--) {
             var el = that.removeRegistry[a];
@@ -151,13 +161,17 @@
     },
 
     off: function(evt, fn) {
+      var shouldEndRemoveListener = evt === 'remove'
+        && this.removeListener
+        && !this.events['remove'].length;
+
       if (fn) {
         this.events[evt].splice(this.events[evt].indexOf(fn), 1);
       } else {
         this.events[evt] = [];
       }
 
-      if (evt === 'remove' && !this.events['remove'].length) {
+      if (shouldEndRemoveListener) {
         timeout.end(this.removeListener);
       }
 
@@ -165,12 +179,27 @@
     },
 
     listen: function() {
-      this.adapter.listen();
+      if (this.listening) {
+        return this;
+      }
+
+      var that = this;
+
+      this.listening = true;
+      this.adapter.listen(function(target) {
+        triggerReadyAndInsert(that, target);
+      });
+
       return this;
     },
 
     deafen: function() {
+      if (!this.listening) {
+        return this;
+      }
+
       this.adapter.deafen();
+      this.listening = false;
 
       if (this.removeListener) {
         timeout.end(this.removeListener);
@@ -193,9 +222,17 @@
   };
 
 
-  var instances = [];
+  function triggerReadyAndInsert(skate, target) {
+    skate.trigger('ready', target);
+    showElement(target);
+    skate.trigger('insert', target);
+  }
+
+
+  var animationCount = 0;
   var animationEvents = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
   var animationNamePrefix = '__skate';
+  var animationTriggers = {};
   var animationBrowserPrefix = (function() {
     var css = document.documentElement.style;
     var prefix = false;
@@ -215,135 +252,142 @@
   }());
 
 
-  function AnimationAdapter(skate) {
-    this.skate = skate;
-    this.events = {};
-    this.listeners = {};
-    this.selectors = {};
+  function AnimationAdapter(selector) {
+    this.index = null;
+    this.name = null;
+    this.selector = selector;
+    hideElements(this.selector);
   }
 
   AnimationAdapter.prototype = {
     constructor: AnimationAdapter,
 
-    listen: function() {
-      instances.push(this);
+    listen: function(trigger) {
+      var cssPrefix = '-' + animationBrowserPrefix + '-';
 
-      var index = keyframeRules.sheet.cssRules.length;
-      var name = animationNamePrefix + index;
-      var prefix = '-' + animationBrowserPrefix + '-';
+      // We have to keep track where this index exists so that it can unbind
+      // itself at a later point if necessary.
+      this.index = animationCount;
 
-      // We don't need any animation to happen, we only need the event to fire.
-      keyframeRules.sheet.insertRule('@' + prefix + 'keyframes ' + name + '{from{opacity:1}to{opacity:1}}', index);
-      animationRules.sheet.insertRule(this.skate.selector + '{' + prefix + 'animation:' + name + ' .01s}', index);
-      hideBySelector(this.skate.selector);
+      // We must keep track of the name so that the trigger can be removed
+      // from its mapping when deafened.
+      this.name = animationNamePrefix + animationCount;
+
+      // We have to keep track of the triggers so the global animation event
+      // trigger knows which one to fire based on the animation name since
+      // we have access to that on the event object.
+      animationTriggers[this.name] = trigger;
+
+      // We don't need any animation to happen, we only need the event to fire
+      // so using opacity 1 for both to and from is ok.
+      keyframeRules.sheet.insertRule('@' + cssPrefix + 'keyframes ' + this.name + '{from{opacity:1}to{opacity:1}}', this.index);
+
+      // We trigger the animation for the shortest amount of time possible
+      // to reduce any possible unwanted animations and to reduce resource
+      // usage.
+      animationRules.sheet.insertRule(this.selector + '{' + cssPrefix + 'animation:' + this.name + ' .01s}', this.index);
+
+      // We must increment in order to
+      ++animationCount;
 
       return this;
     },
 
     deafen: function() {
-      var index = instances.indexOf(this);
+      keyframeRules.sheet.deleteRule(keyframeRules.sheet.cssRules.item(this.index));
+      animationRules.sheet.deleteRule(animationRules.sheet.cssRules.item(this.index));
 
-      if (index !== -1) {
-        instances.splice(index, 1);
-        keyframeRules.sheet.deleteRule(keyframeRules.sheet.cssRules.item(index));
-        animationRules.sheet.deleteRule(animationRules.sheet.cssRules.item(index));
-      }
+      delete animationTriggers[this.name];
+
+      this.index = null;
+      this.name = null;
+
+      --animationCount;
 
       return this;
     }
   }
 
 
-  function handleAnimationEvent(e) {
-    triggerReadyAndInsert(
-      instances[e.animationName.replace(animationNamePrefix, '')],
-      e.target
-    );
-  }
-
-  function setUpAnimationAdapter() {
-    animationRules.type = keyframeRules.type = 'text/css';
-
-    head.appendChild(keyframeRules);
-    head.appendChild(animationRules);
-
-    animationEvents.forEach(function(evt) {
-      document.addEventListener(evt, handleAnimationEvent, false);
-    });
-  }
-
-
-  function MutationEventAdapter(skate) {
-    this.skate = skate;
+  function MutationEventAdapter(selector) {
+    this.listener = null;
+    this.selector = selector;
+    hideElements(selector);
   }
 
   MutationEventAdapter.prototype = {
     constructor: MutationEventAdapter,
 
-    listen: function() {
+    listen: function(trigger) {
       var that = this;
-      var existing = document.querySelectorAll(this.skate.selector);
+      var existing = document.querySelectorAll(this.selector);
+
+      // We must remember the listener in order to unbind it.
+      this.listener = function(e) {
+        if (e.target.msMatchesSelector(that.selector)) {
+          trigger(e.target);
+        }
+      };
 
       // IE doesn't handle the initial load correctly.
       for (var a = 0; a < existing.length; a++) {
-        triggerReadyAndInsert(this, existing[a]);
+        trigger(existing[a]);
       }
 
       // Handle elements added after initial load.
-      document.addEventListener('DOMNodeInserted', function(e) {
-        if (e.target.msMatchesSelector(that.skate.selector)) {
-          triggerReadyAndInsert(that, e.target);
-        }
-      }, false);
+      document.addEventListener('DOMNodeInserted', this.listener, false);
 
       return this;
     },
 
     deafen: function() {
+      document.removeEventListener('DOMNodeInserted', this.listener);
+      this.listener = null;
+
       return this;
     }
   };
 
 
-  var triggeredNodes = [];
+  function hideElements(selector) {
+    var selectorParts = selector.split(',');
+    var ensureHideRules = [
+      'height: 0 !important',
+      'width: 0 !important',
+      'overflow: hidden !important',
+      'margin: 0 !important',
+      'padding: 0 !important'
+    ];
 
-  function triggerReadyAndInsert(adapter, target) {
-    if (triggeredNodes.indexOf(target) !== -1) {
-      return;
+    for (var a in selectorParts) {
+      selectorParts[a] += ':not(.' + cssClassName + ')';
     }
 
-    triggeredNodes.push(target);
-    adapter.skate.trigger('ready', target);
-    target.setAttribute('data-skate', count++);
-    adapter.skate.trigger('insert', target);
+    hiddenRules.sheet.insertRule(
+      selectorParts.join(',')
+        + '{'
+        + ensureHideRules.join(';')
+        + '}',
+      hiddenRules.sheet.cssRules.length
+    );
+  }
+
+  function showElement(element) {
+    element.className += ' ' + cssClassName;
   }
 
 
-  function hideBySelector(selector) {
-    var selectorParts = selector.split(',');
-      var ensureHideRules = [
-        'height: 0 !important',
-        'width: 0 !important',
-        'overflow: hidden !important',
-        'margin: 0 !important',
-        'padding: 0 !important'
-      ];
-
-      for (var a in selectorParts) {
-        selectorParts[a] += ':not([data-skate])';
-      }
-
-      hiddenRules.sheet.insertRule(
-        selectorParts.join(',')
-          + '{'
-          + ensureHideRules.join(';')
-          + '}',
-        hiddenRules.sheet.cssRules.length
-      );
+  function setUpAnimationAdapter() {
+    head.appendChild(keyframeRules);
+    head.appendChild(animationRules);
+    animationEvents.forEach(function(evt) {
+      document.addEventListener(evt, function(e) {
+        animationTriggers[e.animationName](e.target);
+      }, false);
+    });
   }
 
 
-  // Detect which adapter we should use.
   var DetectedAdapter = (function() {
     return animationBrowserPrefix
       ? AnimationAdapter
@@ -351,13 +395,11 @@
   }());
 
 
-  // Only the animation adapter needs setup.
   if (DetectedAdapter === AnimationAdapter) {
     setUpAnimationAdapter();
   }
 
 
-  // All adapters use the hidden rules.
   head.appendChild(hiddenRules);
 
 
