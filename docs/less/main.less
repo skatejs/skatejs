@@ -5,7 +5,7 @@
 @icon-font-path: '@{bootstrap-path}/fonts/';
 
 body {
-  color: #555;
+  color: #333;
   opacity: none;
 }
 
@@ -16,29 +16,9 @@ body.loaded {
 h2, h3, h4, h5, h6 {
   color: #64281d;
 
-  a {
-    border-bottom: 1px dotted #efc8c0;
-
-    &:hover {
-      text-decoration: none;
-    }
-  }
-}
-
-a {
-  color: #993d2c;
-
-  &:hover {
-    color: #c14d37;
-  }
-
-  &.external {
-    border-bottom: 1px dotted #993d2c;
-
-    &:hover {
-      text-decoration: none;
-      border-bottom-color: #c14d37;
-    }
+  a, a:hover {
+    color: #666;
+    text-decoration: none;
   }
 }
 
@@ -58,17 +38,18 @@ header.navbar {
 }
 
 header.main {
-  background-color: #c14d37;
-  box-shadow: inset 0 0 200px rgba(0, 0, 0, .25);
-  color: #eecac3;
+  background-color: #333;
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, .75);
   padding: 75px;
 
   h1 {
+    color: #eee;
     font-size: 6rem;
     margin-top: 0;
   }
 
   p {
+    color: #ddd;
     font-size: 2rem;
     margin-bottom: 0;
   }
