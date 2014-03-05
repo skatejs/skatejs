@@ -19,7 +19,6 @@
   var hiddenRules = document.createElement('style');
 
   var cssClassName = '__skate';
-  var skateInstances = [];
 
 
   // Adapted from: http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating.
@@ -80,8 +79,6 @@
 
   function skate(selector, component) {
     var instance = new Skate(new DetectedAdapter(selector));
-
-    skateInstances.push(instance);
 
     if (component) {
       instance.add(component);
