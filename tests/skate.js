@@ -84,12 +84,19 @@
     it('Should trigger remove when the element is removed.', function(done) {
       var mod = skate('div').on('remove', function() {
         mod.deafen();
-        assert(true, 'testing');
+        assert(true);
         done();
       }).listen();
 
       addDivToBody('remove');
-      removeDivFromBody('remove');
+
+      // TODO: Remove race condition between the time the element is added to
+      // the removeRegistry when the insert event is triggered and when the
+      // element is removed. If the element is removed before it has a chance
+      // to be added to the registry then this will fail.
+      setTimeout(function() {
+        removeDivFromBody('remove');
+      }, 100);
     });
   });
 
