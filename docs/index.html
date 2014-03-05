@@ -30,7 +30,7 @@
     <ul class="toc"></ul>
     <div class="container">
       <h2 id="heading-why">Why?</h2>
-      <p>Skate is heavily inspired by the <a class="external" href="https://github.com/csuwildcat/SelectorListener">SelectorListener</a> technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver">Mutation Observers</a> which are inherently slow and are only available in the <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility">greenest</a> of evergreen browsers. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike and is very performant.</p>
+      <p>Skate is heavily inspired by the <a class="external" href="https://github.com/csuwildcat/SelectorListener">SelectorListener</a> technique by Daniel Buchner. Currently, the only way to accomplish handling elements added to the DOM is by using <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver">Mutation Observers</a> which are are only available in the <a class="external" href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver#Browser_compatibility">greenest</a> of evergreen browsers and they don't work with CSS selectors. Contrary to Mutation Observers, this technique uses CSS animation keyframes to notify handlers about elements that are added to the DOM. This works for both new elements and existing elements alike, is very performant and gives us the added benefit of natively supporting CSS selectors.</p>
 
       <h2 id="heading-usage">Usage</h2>
       <p>Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and component handler to a function. A component is simply a function that takes a DOM element as its only argument.</p>
@@ -66,7 +66,7 @@
         });
       </pre>
 
-      <p>You may also specify these as separate method calls:</p>
+      <p>You may also specify these as separate handlers:</p>
       <pre code="javascript">
         var component = skate('div');
 
