@@ -3,14 +3,7 @@
 Skate
 =====
 
-Skate is a component-based micro-framework that provides a common interface for interacting with existing and new DOM elements.
-
-Installation
-------------
-
-You can install via Bower or use the files located in `dist/`.
-
-    bower install skate
+Skate is a library for building dynamic components from any DOM element using CSS selectors.
 
 Why?
 ----
