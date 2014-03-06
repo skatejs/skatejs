@@ -29,7 +29,7 @@ Creating a new component out of existing and new DOM elements is as easy as pass
 Docs
 ----
 
-The full documentation is available at [http://treshugart.github.io/skate/](http://treshugart.github.io/skate/);
+The full documentation is available at [http://treshugart.github.io/skate/](http://treshugart.github.io/skate/).
 
 Compatibility
 -------------
