@@ -73,103 +73,40 @@
 
 
   function skate(selector, component) {
-    var instance = new Skate(new DetectedAdapter(selector));
-
-    if (component) {
-      instance.add(component);
-      instance.listen();
-    }
-
-    return instance;
+    return new Skate(selector, component);
   }
 
 
-  function Skate(adapter) {
-    this.adapter = adapter;
+  function Skate(selector, component) {
+    this.selector = selector;
+    this.adapter = new DetectedAdapter(selector);
     this.listening = false;
-    this.removeListener = false;
-    this.removeRegistry = [];
+    this.removeListener = null;
+    this.elements = [];
     this.events = {
       ready: [],
       insert: [],
       remove: []
     };
+
+    if (typeof component === 'function') {
+      component = {
+        ready: component
+      };
+    }
+
+    if (component.listen === undefined) {
+      component.listen = true;
+    }
+
+    this.component = component;
+
+    if (component.listen) {
+      this.listen();
+    }
   }
 
   Skate.prototype = {
-    add: function(component) {
-      if (typeof component === 'function') {
-        component = {
-          ready: component
-        }
-      }
-
-      for (var a in this.events) {
-        if (this.events.hasOwnProperty(a) && component[a]) {
-          this.on(a, component[a]);
-        }
-      }
-
-      return this;
-    },
-
-    remove: function(component) {
-      if (typeof component === 'function') {
-        component = {
-          ready: component
-        }
-      }
-
-      for (var a in this.events) {
-        if (this.events.hasOwnProperty(a) && component[a]) {
-          this.off(a, component[a]);
-        }
-      }
-
-      return this;
-    },
-
-    on: function(evt, fn) {
-      var that = this;
-      var shouldAddRemoveListener = evt === 'remove'
-        && !this.removeListener;
-
-      this.events[evt].push(fn);
-
-      if (shouldAddRemoveListener) {
-        this.removeListener = timeout.repeat(function() {
-          for (var a = that.removeRegistry.length - 1; a > -1; a--) {
-            var el = that.removeRegistry[a];
-
-            if (!el.parentNode) {
-              that.removeRegistry.splice(a, 1);
-              that.trigger('remove', el);
-            }
-          }
-        });
-      }
-
-      return this;
-    },
-
-    off: function(evt, fn) {
-      var shouldEndRemoveListener = evt === 'remove'
-        && this.removeListener
-        && !this.events['remove'].length;
-
-      if (fn) {
-        this.events[evt].splice(this.events[evt].indexOf(fn), 1);
-      } else {
-        this.events[evt] = [];
-      }
-
-      if (shouldEndRemoveListener) {
-        timeout.end(this.removeListener);
-      }
-
-      return this;
-    },
-
     listen: function() {
       if (this.listening) {
         return this;
@@ -179,8 +116,21 @@
 
       this.listening = true;
       this.adapter.listen(function(target) {
-        triggerReadyAndInsert(that, target);
+        triggerReady(that, target);
       });
+
+      if (this.component.removed) {
+        this.removeListener = timeout.repeat(function() {
+          for (var a = that.elements.length - 1; a > -1; a--) {
+            var el = that.elements[a];
+
+            if (!el.parentNode) {
+              that.elements.splice(a, 1);
+              that.component.removed(el);
+            }
+          }
+        });
+      }
 
       return this;
     },
@@ -198,26 +148,41 @@
       }
 
       return this;
-    },
-
-    trigger: function(evt, element) {
-      if (evt === 'insert') {
-        this.removeRegistry.push(element);
-      }
-
-      this.events[evt].forEach(function(fn) {
-        fn(element);
-      });
-
-      return this;
     }
   };
 
 
-  function triggerReadyAndInsert(skate, target) {
-    skate.trigger('ready', target);
+  function triggerReady(skate, target) {
+    var ready = skate.component.ready;
+    var definedMultipleArgs = /^[^(]+\([^,]+,/;
+
+    if (ready && definedMultipleArgs.test(ready)) {
+      ready(target, done);
+    } else if (ready) {
+      ready(target);
+      done();
+    } else {
+      done();
+    }
+
+    function done(element) {
+      if (element) {
+        target.parentNode.insertBefore(element, target);
+        target.parentNode.removeChild(target);
+        target = element;
+      }
+
+      triggerInserted(skate, target);
+    }
+  }
+
+  function triggerInserted(skate, target) {
     showElement(target);
-    skate.trigger('insert', target);
+    skate.elements.push(target);
+
+    if (skate.component.inserted) {
+      skate.component.inserted(target);
+    }
   }
 
 
