@@ -328,7 +328,7 @@
 
       // IE doesn't handle the initial load correctly.
       for (var a = 0; a < existing.length; a++) {
-        trigger(existing[a]);
+        this.listener({ target: existing[a] });
       }
 
       // Handle elements added after initial load.
