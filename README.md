@@ -20,7 +20,7 @@ You can install Skate using Bower or by downloading the source from the reposito
 Usage
 -----
 
-Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and a component.
+Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and a component definition.
 
     skate('css[selector]', function(element) {
       // your component initialisation here
