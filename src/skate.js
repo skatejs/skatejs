@@ -83,11 +83,6 @@
     this.listening = false;
     this.removeListener = null;
     this.elements = [];
-    this.events = {
-      ready: [],
-      insert: [],
-      remove: []
-    };
 
     if (typeof component === 'function') {
       component = {
