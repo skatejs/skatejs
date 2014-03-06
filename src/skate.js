@@ -2,23 +2,18 @@
 
   'use strict';
 
-  var isSetup = false;
+
+  var head = document.getElementsByTagName('head')[0];
+  var keyframeRules = document.createElement('style');
+  var animationRules = document.createElement('style');
+  var hiddenRules = document.createElement('style');
+  var cssClassName = '__skate';
   var domPrefixes = [
     'moz',
     'ms',
     'o',
     'webkit',
   ];
-
-
-  var count = 0;
-  var head = document.getElementsByTagName('head')[0];
-
-  var keyframeRules = document.createElement('style');
-  var animationRules = document.createElement('style');
-  var hiddenRules = document.createElement('style');
-
-  var cssClassName = '__skate';
 
 
   // Adapted from: http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating.
