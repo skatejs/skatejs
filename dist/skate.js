@@ -149,7 +149,7 @@
 
   function triggerReady(skate, target) {
     var ready = skate.component.ready;
-    var definedMultipleArgs = /^[^(]+\([^,]+,/;
+    var definedMultipleArgs = /^[^(]+\([^,)]+,/;
 
     if (ready && definedMultipleArgs.test(ready)) {
       ready(target, done);
