@@ -202,6 +202,7 @@
 
     return prefix;
   }());
+  var animationCssPrefix = animationBrowserPrefix ? '-' + animationBrowserPrefix + '-' : '';
 
 
   function AnimationAdapter(selector) {
@@ -215,8 +216,6 @@
     constructor: AnimationAdapter,
 
     listen: function(trigger) {
-      var cssPrefix = '-' + animationBrowserPrefix + '-';
-
       // We have to keep track where this index exists so that it can unbind
       // itself at a later point if necessary.
       this.index = animationCount;
@@ -232,12 +231,12 @@
 
       // We don't need any animation to happen, we only need the event to fire
       // so using opacity 1 for both to and from is ok.
-      keyframeRules.sheet.insertRule('@' + cssPrefix + 'keyframes ' + this.name + '{from{opacity:1}to{opacity:1}}', this.index);
+      keyframeRules.sheet.insertRule('@' + animationCssPrefix + 'keyframes ' + this.name + '{from{opacity:1}to{opacity:1}}', this.index);
 
       // We trigger the animation for the shortest amount of time possible
       // to reduce any possible unwanted animations and to reduce resource
       // usage.
-      animationRules.sheet.insertRule(this.selector + '{' + cssPrefix + 'animation:' + this.name + ' .01s}', this.index);
+      animationRules.sheet.insertRule(this.selector + '{' + animationCssPrefix + 'animation:' + this.name + ' .01s}', this.index);
 
       // We must increment in order to
       ++animationCount;
@@ -341,9 +340,9 @@
 
 
   var DetectedAdapter = (function() {
-    return animationBrowserPrefix
-      ? AnimationAdapter
-      : MutationEventAdapter;
+    return animationBrowserPrefix === false
+      ? MutationEventAdapter
+      : AnimationAdapter;
   }());
 
 
