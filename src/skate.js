@@ -242,7 +242,7 @@
 
   function AnimationAdapter(skate) {
     this.listener = null;
-    this.id = classname + Math.random().toString().replace('0.', '');
+    this.id = classname + '-' + Math.random().toString().replace('0.', '');
     this.skate = skate;
   }
 
