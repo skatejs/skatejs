@@ -26,7 +26,7 @@
       var mod = skate('div', {
         ready: function(el) {
           mod.deafen();
-          el.className.indexOf('__skate').should.equal(-1);
+          el.classList.contains('skate').should.equal(false);
           done();
         }
       });
@@ -38,7 +38,7 @@
       var mod = skate('div', {
         inserted: function(el) {
           mod.deafen();
-          el.className.indexOf('__skate').should.be.greaterThan(-1);
+          el.classList.contains('skate').should.equal(true);
           done();
         }
       });

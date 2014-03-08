@@ -127,13 +127,12 @@
 
     this.component = component;
 
-    if (component.listen) {
-      this.listen();
+    if (component.ready) {
+      hideElementsBySelector(selector);
     }
 
-    if (component.ready) {
-      console.log(selector);
-      hideElementsBySelector(selector);
+    if (component.listen) {
+      this.listen();
     }
   }
 
@@ -288,9 +287,13 @@
     },
 
     deafen: function() {
+      var that = this;
+
       animationEvents.forEach(function(evt) {
-        document.removeEventListener(evt, this.listener, false);
+        document.removeEventListener(evt, that.listener, false);
       });
+
+      this.listener = null;
 
       splitSelector(this.skate.selector).forEach(function(item) {
         var index = animationSelectors.indexOf(item);

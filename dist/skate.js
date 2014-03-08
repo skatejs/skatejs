@@ -3,22 +3,47 @@
   'use strict';
 
 
+  // Global Variables
+  // ----------------
+
   var head = document.getElementsByTagName('head')[0];
   var keyframeRules = document.createElement('style');
   var animationRules = document.createElement('style');
   var hiddenRules = document.createElement('style');
-  var cssClassName = '__skate';
+  var classname = 'skate';
   var domPrefixes = [
-    'moz',
-    'ms',
-    'o',
-    'webkit',
-  ];
+        'moz',
+        'ms',
+        'o',
+        'webkit',
+      ];
+  var matchesSelector = (function() {
+      var matcher = Element.prototype.matches;
+
+      domPrefixes.some(function(prefix) {
+        var method = prefix + 'MatchesSelector';
+
+        if (Element.prototype[method]) {
+          matcher = method;
+        }
+      });
+
+      return function (element, selector) {
+        return element[matcher](selector);
+      };
+    }());
+  var ensureHideRules = [
+      'height: 0 !important',
+      'width: 0 !important',
+      'overflow: hidden !important',
+      'margin: 0 !important',
+      'padding: 0 !important'
+    ];
 
 
-  // Adapted from: http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating.
-  //
-  // Calls the specified function using `RequestAnimationFrame` and falls back to using `setTimeout`.
+  // `requestAnimationFrame` Polyfill
+  // --------------------------------
+
   var timeout = (function() {
     var lastTime = 0;
     var vendors = ['ms', 'moz', 'webkit', 'o'];
@@ -72,21 +97,27 @@
   };
 
 
+  // Factory
+  // -------
+
   function skate(selector, component) {
     return new Skate(selector, component);
   }
 
 
+  // Common Interface
+  // ----------------
+
   function Skate(selector, component) {
-    this.selector = selector;
-    this.adapter = new DetectedAdapter(selector);
+    this.adapter = new DetectedAdapter(this);
+    this.elements = [];
     this.listening = false;
     this.removeListener = null;
-    this.elements = [];
+    this.selector = selector;
 
     if (typeof component === 'function') {
       component = {
-        ready: component
+        inserted: component
       };
     }
 
@@ -95,6 +126,10 @@
     }
 
     this.component = component;
+
+    if (component.ready) {
+      hideElementsBySelector(selector);
+    }
 
     if (component.listen) {
       this.listen();
@@ -146,7 +181,6 @@
     }
   };
 
-
   function triggerReady(skate, target) {
     var ready = skate.component.ready;
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
@@ -172,7 +206,7 @@
   }
 
   function triggerInserted(skate, target) {
-    showElement(target);
+    addClass(target, classname);
     skate.elements.push(target);
 
     if (skate.component.inserted) {
@@ -181,10 +215,11 @@
   }
 
 
-  var animationCount = 0;
+  // Animation Adapter
+  // -----------------
+
   var animationEvents = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
-  var animationNamePrefix = '__skate';
-  var animationTriggers = {};
+  var animationName = '__skate';
   var animationBrowserPrefix = (function() {
     var css = document.documentElement.style;
     var prefix = false;
@@ -203,67 +238,94 @@
     return prefix;
   }());
   var animationCssPrefix = animationBrowserPrefix ? '-' + animationBrowserPrefix + '-' : '';
+  var animationSelectors = [];
 
-
-  function AnimationAdapter(selector) {
-    this.index = null;
-    this.name = null;
-    this.selector = selector;
-    hideElements(this.selector);
+  function AnimationAdapter(skate) {
+    this.listener = null;
+    this.id = classname + Math.random().toString().replace('0.', '');
+    this.skate = skate;
   }
 
   AnimationAdapter.prototype = {
     constructor: AnimationAdapter,
 
     listen: function(trigger) {
-      // We have to keep track where this index exists so that it can unbind
-      // itself at a later point if necessary.
-      this.index = animationCount;
+      var that = this;
+      var existing = document.querySelectorAll(appendSelector(this.skate.selector, '.skate:not(.' + this.id + ')'));
 
-      // We must keep track of the name so that the trigger can be removed
-      // from its mapping when deafened.
-      this.name = animationNamePrefix + animationCount;
+      this.listener = function(e) {
+        if (e.animationName !== animationName) {
+          return;
+        }
 
-      // We have to keep track of the triggers so the global animation event
-      // trigger knows which one to fire based on the animation name since
-      // we have access to that on the event object.
-      animationTriggers[this.name] = trigger;
+        if (matchesSelector(e.target, that.skate.selector)) {
+          addClass(e.target, that.id);
+          trigger(e.target);
+        }
+      };
 
-      // We don't need any animation to happen, we only need the event to fire
-      // so using opacity 1 for both to and from is ok.
-      keyframeRules.sheet.insertRule('@' + animationCssPrefix + 'keyframes ' + this.name + '{from{opacity:1}to{opacity:1}}', this.index);
+      for (var a = 0; a < existing.length; a++) {
+        this.listener({
+          animationName: animationName,
+          target: existing[a]
+        });
+      }
 
-      // We trigger the animation for the shortest amount of time possible
-      // to reduce any possible unwanted animations and to reduce resource
-      // usage.
-      animationRules.sheet.insertRule(this.selector + '{' + animationCssPrefix + 'animation:' + this.name + ' .01s}', this.index);
+      animationEvents.forEach(function(evt) {
+        document.addEventListener(evt, that.listener, false);
+      });
 
-      // We must increment in order to
-      ++animationCount;
+      splitSelector(this.skate.selector).forEach(function(item, index) {
+        if (animationSelectors.indexOf(item) === -1) {
+          animationSelectors.push(item);
+        }
+      });
+
+      animationBuildRules();
 
       return this;
     },
 
     deafen: function() {
-      keyframeRules.sheet.deleteRule(keyframeRules.sheet.cssRules.item(this.index));
-      animationRules.sheet.deleteRule(animationRules.sheet.cssRules.item(this.index));
+      var that = this;
 
-      delete animationTriggers[this.name];
+      animationEvents.forEach(function(evt) {
+        document.removeEventListener(evt, that.listener, false);
+      });
 
-      this.index = null;
-      this.name = null;
+      this.listener = null;
 
-      --animationCount;
+      splitSelector(this.skate.selector).forEach(function(item) {
+        var index = animationSelectors.indexOf(item);
+
+        if (index !== -1) {
+          animationSelectors.splice(index, 1);
+        }
+      });
+
+      animationBuildRules();
 
       return this;
     }
   }
 
+  function animationBuildRules() {
+    animationRules.innerHTML = animationSelectors.join(',') + '{' + animationCssPrefix + 'animation: ' + animationName + ' .01s}';
+  }
 
-  function MutationEventAdapter(selector) {
+  function animationSetup() {
+    head.appendChild(keyframeRules);
+    head.appendChild(animationRules);
+    keyframeRules.innerHTML = '@' + animationCssPrefix + 'keyframes ' + animationName + '{from{opacity:1}to{opacity:1}}';
+  }
+
+
+  // Mutation Events Adapter
+  // -----------------------
+
+  function MutationEventAdapter(skate) {
     this.listener = null;
-    this.selector = selector;
-    hideElements(selector);
+    this.skate = skate;
   }
 
   MutationEventAdapter.prototype = {
@@ -271,11 +333,11 @@
 
     listen: function(trigger) {
       var that = this;
-      var existing = document.querySelectorAll(this.selector);
+      var existing = document.querySelectorAll(this.skate.selector);
 
       // We must remember the listener in order to unbind it.
       this.listener = function(e) {
-        if (e.target.msMatchesSelector(that.selector)) {
+        if (e.target.msMatchesSelector(that.skate.selector)) {
           trigger(e.target);
         }
       };
@@ -300,8 +362,10 @@
   };
 
 
-  function hideElements(selector) {
-    var selectorParts = selector.split(',');
+  // Utilities
+  // ---------
+
+  function hideElementsBySelector(selector) {
     var ensureHideRules = [
       'height: 0 !important',
       'width: 0 !important',
@@ -310,12 +374,8 @@
       'padding: 0 !important'
     ];
 
-    for (var a in selectorParts) {
-      selectorParts[a] += ':not(.' + cssClassName + ')';
-    }
-
     hiddenRules.sheet.insertRule(
-      selectorParts.join(',')
+      appendSelector(selector, ':not(.' + classname + ')')
         + '{'
         + ensureHideRules.join(';')
         + '}',
@@ -323,21 +383,37 @@
     );
   }
 
-  function showElement(element) {
-    element.className += ' ' + cssClassName;
-  }
+  function splitSelector(selector) {
+    var selectors = selector.split(',');
 
-
-  function setUpAnimationAdapter() {
-    head.appendChild(keyframeRules);
-    head.appendChild(animationRules);
-    animationEvents.forEach(function(evt) {
-      document.addEventListener(evt, function(e) {
-        animationTriggers[e.animationName](e.target);
-      }, false);
+    selectors.forEach(function(item, index) {
+      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
     });
+
+    return selectors;
   }
 
+  function addClass(element, classname) {
+    if (element.classList) {
+      element.classList.add(classname);
+    } else {
+      element.className += classname;
+    }
+  }
+
+  function appendSelector(original, addition) {
+    var parts = splitSelector(original);
+
+    parts.forEach(function(part, index) {
+      parts[index] += addition;
+    });
+
+    return parts.join(',');
+  }
+
+
+  // Global Setup
+  // ------------
 
   var DetectedAdapter = (function() {
     return animationBrowserPrefix === false
@@ -345,14 +421,15 @@
       : AnimationAdapter;
   }());
 
-
   if (DetectedAdapter === AnimationAdapter) {
-    setUpAnimationAdapter();
+    animationSetup();
   }
-
 
   head.appendChild(hiddenRules);
 
+
+  // Exporting
+  // ---------
 
   if (typeof define === 'function' && define.amd) {
     define('skate', function() {
