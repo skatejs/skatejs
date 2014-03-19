@@ -12,11 +12,11 @@
   var hiddenRules = document.createElement('style');
   var classname = 'skate';
   var domPrefixes = [
-        'moz',
-        'ms',
-        'o',
-        'webkit',
-      ];
+      'moz',
+      'ms',
+      'o',
+      'webkit',
+    ];
   var matchesSelector = (function() {
       var matcher = Element.prototype.matches;
 
@@ -117,7 +117,7 @@
 
     if (typeof component === 'function') {
       component = {
-        inserted: component
+        insert: component
       };
     }
 
@@ -201,16 +201,16 @@
         target = element;
       }
 
-      triggerInserted(skate, target);
+      triggerInsert(skate, target);
     }
   }
 
-  function triggerInserted(skate, target) {
+  function triggerInsert(skate, target) {
     addClass(target, classname);
     skate.elements.push(target);
 
-    if (skate.component.inserted) {
-      skate.component.inserted(target);
+    if (skate.component.insert) {
+      skate.component.insert(target);
     }
   }
 
@@ -307,7 +307,7 @@
 
       return this;
     }
-  }
+  };
 
   function animationBuildRules() {
     animationRules.innerHTML = animationSelectors.join(',') + '{' + animationCssPrefix + 'animation: ' + animationName + ' .01s}';
@@ -375,10 +375,10 @@
     ];
 
     hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')')
-        + '{'
-        + ensureHideRules.join(';')
-        + '}',
+      appendSelector(selector, ':not(.' + classname + ')') +
+        '{' +
+        ensureHideRules.join(';') +
+        '}',
       hiddenRules.sheet.cssRules.length
     );
   }
@@ -416,9 +416,9 @@
   // ------------
 
   var DetectedAdapter = (function() {
-    return animationBrowserPrefix === false
-      ? MutationEventAdapter
-      : AnimationAdapter;
+    return animationBrowserPrefix === false ?
+      MutationEventAdapter :
+      AnimationAdapter;
   }());
 
   if (DetectedAdapter === AnimationAdapter) {

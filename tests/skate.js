@@ -34,9 +34,9 @@
       addDivToBody();
     });
 
-    it('Should trigger inserted after the element is shown.', function(done) {
+    it('Should trigger insert after the element is shown.', function(done) {
       var mod = skate('div', {
-        inserted: function(el) {
+        insert: function(el) {
           mod.deafen();
           el.classList.contains('skate').should.equal(true);
           done();
@@ -118,7 +118,7 @@
           }, 100);
         },
 
-        inserted: function(el) {
+        insert: function(el) {
           mod.deafen();
           assert(ok);
           done();
@@ -136,7 +136,7 @@
           }, 100);
         },
 
-        inserted: function(el) {
+        insert: function(el) {
           mod.deafen();
           assert(el.nodeName === 'SPAN');
           done();

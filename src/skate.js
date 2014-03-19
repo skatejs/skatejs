@@ -117,7 +117,7 @@
 
     if (typeof component === 'function') {
       component = {
-        inserted: component
+        insert: component
       };
     }
 
@@ -201,16 +201,16 @@
         target = element;
       }
 
-      triggerInserted(skate, target);
+      triggerInsert(skate, target);
     }
   }
 
-  function triggerInserted(skate, target) {
+  function triggerInsert(skate, target) {
     addClass(target, classname);
     skate.elements.push(target);
 
-    if (skate.component.inserted) {
-      skate.component.inserted(target);
+    if (skate.component.insert) {
+      skate.component.insert(target);
     }
   }
 
