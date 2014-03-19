@@ -12,11 +12,11 @@
   var hiddenRules = document.createElement('style');
   var classname = 'skate';
   var domPrefixes = [
-        'moz',
-        'ms',
-        'o',
-        'webkit',
-      ];
+      'moz',
+      'ms',
+      'o',
+      'webkit',
+    ];
   var matchesSelector = (function() {
       var matcher = Element.prototype.matches;
 
@@ -307,7 +307,7 @@
 
       return this;
     }
-  }
+  };
 
   function animationBuildRules() {
     animationRules.innerHTML = animationSelectors.join(',') + '{' + animationCssPrefix + 'animation: ' + animationName + ' .01s}';
@@ -375,10 +375,10 @@
     ];
 
     hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')')
-        + '{'
-        + ensureHideRules.join(';')
-        + '}',
+      appendSelector(selector, ':not(.' + classname + ')') +
+        '{' +
+        ensureHideRules.join(';') +
+        '}',
       hiddenRules.sheet.cssRules.length
     );
   }
@@ -416,9 +416,9 @@
   // ------------
 
   var DetectedAdapter = (function() {
-    return animationBrowserPrefix === false
-      ? MutationEventAdapter
-      : AnimationAdapter;
+    return animationBrowserPrefix === false ?
+      MutationEventAdapter :
+      AnimationAdapter;
   }());
 
   if (DetectedAdapter === AnimationAdapter) {
