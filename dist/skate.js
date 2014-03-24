@@ -100,13 +100,13 @@
   // Factory
   // -------
 
-  var defaultOptions = {
-    listen: true
-  };
-
   function skate(selector, component) {
     return new Skate(selector, component);
   }
+
+  skate.defaults = {
+    listen: true
+  };
 
 
   // Common Interface
@@ -125,7 +125,7 @@
       };
     }
 
-    inherit(this.component = component, defaultOptions);
+    inherit(this.component = component, skate.defaults);
 
     if (component.ready) {
       hideElementsBySelector(selector);
