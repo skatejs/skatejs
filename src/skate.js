@@ -105,6 +105,7 @@
   }
 
   skate.defaults = {
+    extend: true,
     listen: true
   };
 
@@ -146,7 +147,9 @@
 
       this.listening = true;
       this.adapter.listen(function(target) {
-        triggerReady(that, target);
+        timeout(function() {
+          triggerReady(that, target);
+        });
       });
 
       if (this.component.removed) {
@@ -182,13 +185,14 @@
   };
 
   function triggerReady(skate, target) {
-    var ready = skate.component.ready;
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
 
-    if (ready && definedMultipleArgs.test(ready)) {
-      ready(target, done);
-    } else if (ready) {
-      ready(target);
+    inherit(target, skate.component);
+
+    if (target.ready && definedMultipleArgs.test(target.ready)) {
+      target.ready(target, done);
+    } else if (target.ready) {
+      target.ready(target);
       done();
     } else {
       done();
