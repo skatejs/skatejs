@@ -143,14 +143,14 @@
         triggerReady(that, target);
       });
 
-      if (this.component.removed) {
+      if (this.component.remove) {
         this.removeListener = timeout.repeat(function() {
           for (var a = that.elements.length - 1; a > -1; a--) {
             var el = that.elements[a];
 
             if (!el.parentNode) {
               that.elements.splice(a, 1);
-              that.component.removed(el);
+              el.remove();
             }
           }
         });
@@ -176,14 +176,14 @@
   };
 
   function triggerReady(skate, target) {
-    var definedMultipleArgs = /^[^(]+\([^,)]+,/;
+    var hasArgs = /^[^(]+\([^)]+\)/;
 
     inherit(target, skate.component);
 
-    if (target.ready && definedMultipleArgs.test(target.ready)) {
-      target.ready(target, done);
+    if (target.ready && hasArgs.test(target.ready)) {
+      target.ready(done);
     } else if (target.ready) {
-      target.ready(target);
+      target.ready();
       done();
     } else {
       done();
@@ -193,7 +193,7 @@
       if (element) {
         target.parentNode.insertBefore(element, target);
         target.parentNode.removeChild(target);
-        target = element;
+        inherit(target = element, skate.component);
       }
 
       triggerInsert(skate, target);
@@ -204,8 +204,8 @@
     addClass(target, classname);
     skate.elements.push(target);
 
-    if (skate.component.insert) {
-      skate.component.insert(target);
+    if (target.insert) {
+      target.insert();
     }
   }
 

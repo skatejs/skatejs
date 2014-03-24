@@ -24,9 +24,9 @@
   describe('Events', function() {
     it('Should trigger ready before the element is shown.', function(done) {
       var mod = skate('div', {
-        ready: function(el) {
+        ready: function() {
           mod.deafen();
-          el.classList.contains('skate').should.equal(false);
+          this.classList.contains('skate').should.equal(false);
           done();
         }
       });
@@ -36,9 +36,9 @@
 
     it('Should trigger insert after the element is shown.', function(done) {
       var mod = skate('div', {
-        insert: function(el) {
+        insert: function() {
           mod.deafen();
-          el.classList.contains('skate').should.equal(true);
+          this.classList.contains('skate').should.equal(true);
           done();
         }
       });
@@ -48,7 +48,7 @@
 
     it('Should trigger removed when the element is removed.', function(done) {
       var mod = skate('div', {
-        removed: function() {
+        remove: function() {
           mod.deafen();
           assert(true);
           done();
@@ -72,16 +72,16 @@
     it('Modules should pick up nodes already in the DOM.', function(done) {
       addDivToBody().textContent = 'test';
 
-      var mod = skate('div', function(el) {
-        el.textContent.should.equal('test');
+      var mod = skate('div', function() {
+        this.textContent.should.equal('test');
         mod.deafen();
         done();
       });
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
-      var mod = skate('div', function(el) {
-        el.textContent.should.equal('test');
+      var mod = skate('div', function() {
+        this.textContent.should.equal('test');
         mod.deafen();
         done();
       });
@@ -98,8 +98,8 @@
 
       addDivToBody().textContent = 'test';
 
-      var newModule = skate('div', function(el) {
-        el.textContent.should.equal('test');
+      var newModule = skate('div', function() {
+        this.textContent.should.equal('test');
         newModule.deafen();
         done();
       });
@@ -111,14 +111,14 @@
     it('Ready event should be async and provide a done callback.', function(done) {
       var ok = false;
       var mod = skate('div', {
-        ready: function(el, next) {
+        ready: function(next) {
           setTimeout(function() {
             ok = true;
             next();
           }, 100);
         },
 
-        insert: function(el) {
+        insert: function() {
           mod.deafen();
           assert(ok);
           done();
@@ -130,15 +130,15 @@
 
     it('Ready done callback should accept a DOM element which replaces the existing element.', function(done) {
       var mod = skate('div', {
-        ready: function(el, next) {
+        ready: function(next) {
           setTimeout(function() {
             next(document.createElement('span'));
           }, 100);
         },
 
-        insert: function(el) {
+        insert: function() {
           mod.deafen();
-          assert(el.nodeName === 'SPAN');
+          assert(this.nodeName === 'SPAN');
           done();
         }
       });
