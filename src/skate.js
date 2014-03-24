@@ -104,6 +104,10 @@
     return new Skate(selector, component);
   }
 
+  skate.defaults = {
+    listen: true
+  };
+
 
   // Common Interface
   // ----------------
@@ -121,11 +125,7 @@
       };
     }
 
-    if (component.listen === undefined) {
-      component.listen = true;
-    }
-
-    this.component = component;
+    inherit(this.component = component, skate.defaults);
 
     if (component.ready) {
       hideElementsBySelector(selector);
@@ -409,6 +409,14 @@
     });
 
     return parts.join(',');
+  }
+
+  function inherit(base, from) {
+    for (var a in from) {
+      if (typeof base[a] === 'undefined') {
+        base[a] = from[a];
+      }
+    }
   }
 
 

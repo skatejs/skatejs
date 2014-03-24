@@ -100,6 +100,10 @@
   // Factory
   // -------
 
+  var defaultOptions = {
+    listen: true
+  };
+
   function skate(selector, component) {
     return new Skate(selector, component);
   }
@@ -121,11 +125,7 @@
       };
     }
 
-    if (component.listen === undefined) {
-      component.listen = true;
-    }
-
-    this.component = component;
+    inherit(this.component = component, defaultOptions);
 
     if (component.ready) {
       hideElementsBySelector(selector);
@@ -409,6 +409,14 @@
     });
 
     return parts.join(',');
+  }
+
+  function inherit(base, from) {
+    for (var a in from) {
+      if (typeof base[a] === 'undefined') {
+        base[a] = from[a];
+      }
+    }
   }
 
 
