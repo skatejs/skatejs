@@ -32,13 +32,6 @@
         return element[matcher](selector);
       };
     }());
-  var ensureHideRules = [
-      'height: 0 !important',
-      'width: 0 !important',
-      'overflow: hidden !important',
-      'margin: 0 !important',
-      'padding: 0 !important'
-    ];
 
 
   // `requestAnimationFrame` Polyfill
@@ -147,9 +140,7 @@
 
       this.listening = true;
       this.adapter.listen(function(target) {
-        timeout(function() {
-          triggerReady(that, target);
-        });
+        triggerReady(that, target);
       });
 
       if (this.component.removed) {
@@ -398,7 +389,7 @@
     if (element.classList) {
       element.classList.add(classname);
     } else {
-      element.className += classname;
+      element.className +=  ' ' + classname;
     }
   }
 
