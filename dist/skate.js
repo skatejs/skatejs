@@ -25,6 +25,7 @@
 
         if (Element.prototype[method]) {
           matcher = method;
+          return true;
         }
       });
 
@@ -106,6 +107,9 @@
   // Common Interface
   // ----------------
 
+  var blacklist = Object.keys(skate.defaults);
+  blacklist.concat(['ready', 'insert', 'remove']);
+
   function Skate(selector, component) {
     this.adapter = new DetectedAdapter(this);
     this.elements = [];
@@ -150,7 +154,7 @@
 
             if (!el.parentNode) {
               that.elements.splice(a, 1);
-              el.remove();
+              that.component.remove.call(el);
             }
           }
         });
@@ -177,13 +181,14 @@
 
   function triggerReady(skate, target) {
     var hasArgs = /^[^(]+\([^)]+\)/;
+    var readyFn = skate.component.ready;
 
-    inherit(target, skate.component);
+    inherit(target, skate.component, blacklist);
 
-    if (target.ready && hasArgs.test(target.ready)) {
-      target.ready(done);
+    if (readyFn && hasArgs.test(readyFn)) {
+      readyFn.call(target, done);
     } else if (target.ready) {
-      target.ready();
+      readyFn.call(target);
       done();
     } else {
       done();
@@ -201,11 +206,13 @@
   }
 
   function triggerInsert(skate, target) {
+    var insertFn = skate.component.insert;
+
     addClass(target, classname);
     skate.elements.push(target);
 
-    if (target.insert) {
-      target.insert();
+    if (insertFn) {
+      insertFn.call(target);
     }
   }
 
@@ -403,8 +410,12 @@
     return parts.join(',');
   }
 
-  function inherit(base, from) {
+  function inherit(base, from, blacklist) {
     for (var a in from) {
+      if (blacklist && blacklist.indexOf(a) > -1) {
+        continue;
+      }
+
       if (typeof base[a] === 'undefined') {
         base[a] = from[a];
       }
