@@ -53,15 +53,8 @@
         }
       });
 
-      addDivToBody('removed');
-
-      // TODO: Remove race condition between the time the element is added to
-      // the removeRegistry when the insert event is triggered and when the
-      // element is removed. If the element is removed before it has a chance
-      // to be added to the registry then this will fail.
-      setTimeout(function() {
-        removeDivFromBody('removed');
-      }, 100);
+      skate(addDivToBody('removed'));
+      removeDivFromBody('removed');
     });
   });
 
@@ -143,25 +136,7 @@
   });
 
   describe('Display none / block / etc behavior', function() {
-    it('Should not be initialised if initially display none', function() {
-      var initialised = false;
-
-      skate('div', function() {
-        initialised = true;
-      });
-
-      setTimeout(function() {
-        var div = document.createElement('div');
-        div.style.display = 'none';
-        document.body.appendChild(div);
-
-        setTimeout(function() {
-          initialised.should.equal(false);
-        }, 100);
-      }, 100);
-    });
-
-    it('Should not be initialised twice', function(done) {
+    it('Should not be initialised twice', function() {
       var initialised = 0;
 
       skate('div', function() {
@@ -169,13 +144,10 @@
       });
 
       var div = addDivToBody();
+      skate(div);
       div.style.display = 'none';
       div.style.display = 'block';
-
-      setTimeout(function() {
-        initialised.should.equal(1);
-        done();
-      }, 100);
+      initialised.should.equal(1);
     });
   });
 
