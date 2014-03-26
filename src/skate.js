@@ -99,12 +99,12 @@
       return initElement(selector);
     }
 
-    if (typeof selector !== 'string' && selector.length) {
-      return initTraversable(selector);
-    }
-
     if (typeof selector === 'string' && arguments.length === 1) {
       return initSelector(selector);
+    }
+
+    if (typeof selector !== 'string' && typeof selector.length === 'number') {
+      return initTraversable(selector);
     }
 
     return new Skate(selector, component);

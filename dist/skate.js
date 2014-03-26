@@ -95,22 +95,50 @@
   // -------
 
   function skate(selector, component) {
+    if (selector.nodeType) {
+      return initElement(selector);
+    }
+
+    if (typeof selector === 'string' && arguments.length === 1) {
+      return initSelector(selector);
+    }
+
+    if (typeof selector !== 'string' && typeof selector.length === 'number') {
+      return initTraversable(selector);
+    }
+
     return new Skate(selector, component);
   }
 
+  // Default configuration.
   skate.defaults = {
     extend: true,
     listen: true
+  };
+
+  // All active instances.
+  skate.instances = [];
+
+  // Destroys all active instances.
+  skate.destroy = function() {
+    for (var a = skate.instances.length - 1; a >= 0; a--) {
+      skate.instances[a].destroy();
+    }
+
+    return skate;
   };
 
 
   // Common Interface
   // ----------------
 
+  // Methods that should not be added to an element instance if exteding.
   var blacklist = Object.keys(skate.defaults);
   blacklist.concat(['ready', 'insert', 'remove']);
 
   function Skate(selector, component) {
+    skate.instances.push(this);
+
     this.adapter = new DetectedAdapter(this);
     this.elements = [];
     this.listening = false;
@@ -135,6 +163,7 @@
   }
 
   Skate.prototype = {
+    // Starts listening for new elements.
     listen: function() {
       if (this.listening) {
         return this;
@@ -163,6 +192,7 @@
       return this;
     },
 
+    // Stops listening for new elements.
     deafen: function() {
       if (!this.listening) {
         return this;
@@ -176,8 +206,36 @@
       }
 
       return this;
+    },
+
+    // Deafens and destroys the instance.
+    destroy: function() {
+      this.deafen();
+      skate.instances.splice(skate.instances.indexOf(this), 1);
     }
   };
+
+  function initTraversable(els) {
+    return [].slice.call(els).forEach(function(el) {
+      initElement(el);
+    });
+  }
+
+  // Initialises an element directly by searching for any matching components.
+  function initElement(el) {
+    skate.instances.forEach(function(inst) {
+      if (matchesSelector(el, inst.selector)) {
+        triggerReady(inst, el);
+      }
+    });
+
+    return el;
+  }
+
+  // Initialises elements matching the specified selector.
+  function initSelector(sel) {
+    return initTraversable(document.querySelectorAll(sel));
+  }
 
   // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady(skate, target) {
