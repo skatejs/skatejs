@@ -148,6 +148,24 @@
   });
 
   describe('Display none / block / etc behavior', function() {
+    it('Should not be initialised if initially display none', function() {
+      var initialised = false;
+
+      skate('div', function() {
+        initialised = true;
+      });
+
+      setTimeout(function() {
+        var div = document.createElement('div');
+        div.style.display = 'none';
+        document.body.appendChild(div);
+
+        setTimeout(function() {
+          initialised.should.equal(false);
+        }, 100);
+      }, 100);
+    });
+
     it('Should not be initialised twice', function(done) {
       var initialised = 0;
 
