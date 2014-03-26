@@ -17,15 +17,15 @@
 
 
   afterEach(function() {
+    skate.destroy();
     document.querySelector('body').innerHTML = '';
   });
 
 
   describe('Events', function() {
     it('Should trigger ready before the element is shown.', function(done) {
-      var mod = skate('div', {
+      skate('div', {
         ready: function() {
-          mod.deafen();
           this.classList.contains('skate').should.equal(false);
           done();
         }
@@ -35,9 +35,8 @@
     });
 
     it('Should trigger insert after the element is shown.', function(done) {
-      var mod = skate('div', {
+      skate('div', {
         insert: function() {
-          mod.deafen();
           this.classList.contains('skate').should.equal(true);
           done();
         }
@@ -47,9 +46,8 @@
     });
 
     it('Should trigger removed when the element is removed.', function(done) {
-      var mod = skate('div', {
+      skate('div', {
         remove: function() {
-          mod.deafen();
           assert(true);
           done();
         }
@@ -72,17 +70,15 @@
     it('Modules should pick up nodes already in the DOM.', function(done) {
       addDivToBody().textContent = 'test';
 
-      var mod = skate('div', function() {
+      skate('div', function() {
         this.textContent.should.equal('test');
-        mod.deafen();
         done();
       });
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
-      var mod = skate('div', function() {
+      skate('div', function() {
         this.textContent.should.equal('test');
-        mod.deafen();
         done();
       });
 
@@ -110,7 +106,8 @@
   describe('Async ready event.', function() {
     it('Ready event should be async and provide a done callback.', function(done) {
       var ok = false;
-      var mod = skate('div', {
+
+      skate('div', {
         ready: function(next) {
           setTimeout(function() {
             ok = true;
@@ -119,7 +116,6 @@
         },
 
         insert: function() {
-          mod.deafen();
           assert(ok);
           done();
         }
@@ -129,7 +125,7 @@
     });
 
     it('Ready done callback should accept a DOM element which replaces the existing element.', function(done) {
-      var mod = skate('div', {
+      skate('div', {
         ready: function(next) {
           setTimeout(function() {
             next(document.createElement('span'));
@@ -137,7 +133,6 @@
         },
 
         insert: function() {
-          mod.deafen();
           assert(this.nodeName === 'SPAN');
           done();
         }
@@ -181,6 +176,63 @@
         initialised.should.equal(1);
         done();
       }, 100);
+    });
+  });
+
+  describe('Synchronous initialisation', function() {
+    it('Should take traversable items', function() {
+      var initialised = false;
+
+      skate('div', function() {
+        ++initialised;
+      });
+
+      addDivToBody();
+      addDivToBody();
+
+      skate(document.querySelectorAll('div'));
+      initialised.should.equal(2);
+    });
+
+    it('Should take an element', function() {
+      var initialised = 0;
+
+      skate('div', function() {
+        ++initialised;
+      });
+
+      skate(addDivToBody());
+      initialised.should.equal(1);
+    });
+
+    it('Should take a selector', function() {
+      var initialised = 0;
+
+      skate('div', function() {
+        ++initialised;
+      });
+
+      addDivToBody();
+      addDivToBody();
+
+      skate('div');
+      initialised.should.equal(2);
+    });
+  });
+
+  describe('Destroying all instances', function() {
+    it('Should be able to destroy all instances', function() {
+      skate.instances.length.should.equal(0);
+
+      skate('div', function(){});
+      skate.instances.length.should.equal(1);
+
+      skate.destroy();
+      skate.instances.length.should.equal(0);
+
+      var div = addDivToBody();
+      skate(div);
+      div.textContent.should.equal('');
     });
   });
 
