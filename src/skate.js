@@ -183,6 +183,15 @@
   function triggerReady(skate, target) {
     var hasArgs = /^[^(]+\([^)]+\)/;
     var readyFn = skate.component.ready;
+    var elementIndex = skate.elements.length;
+
+    // If it's already been setup, don't do anything.
+    if (skate.elements.indexOf(target) > -1) {
+      return;
+    }
+
+    // Adds to the list of registered elements so the remove check knows which elements to check.
+    skate.elements.push(target);
 
     // Inherit all non-special methods and properties.
     inherit(target, skate.component, blacklist);
@@ -200,8 +209,14 @@
     // Async callback that continues execution.
     function done(element) {
       if (element) {
+        // Replace the existing element in th registry with the new one.
+        skate.elements.splice(elementIndex, 1, target);
+
+        // Replace the existing element in the DOM.
         target.parentNode.insertBefore(element, target);
         target.parentNode.removeChild(target);
+
+        // We must extend the new element.
         inherit(target = element, skate.component, blacklist);
       }
 
@@ -214,9 +229,6 @@
 
     // Ensures that the element is no longer hidden.
     addClass(target, classname);
-
-    // Adds to the list of registered elements so the remove check knows which elements to check.
-    skate.elements.push(target);
 
     if (insertFn) {
       insertFn.call(target);

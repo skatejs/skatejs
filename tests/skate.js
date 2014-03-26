@@ -147,4 +147,23 @@
     });
   });
 
+  describe('Display none / block / etc behavior', function() {
+    it('Should not be initialised twice', function(done) {
+      var initialised = 0;
+
+      skate('div', function() {
+        ++initialised;
+      });
+
+      var div = addDivToBody();
+      div.style.display = 'none';
+      div.style.display = 'block';
+
+      setTimeout(function() {
+        initialised.should.equal(1);
+        done();
+      }, 100);
+    });
+  });
+
 })();
