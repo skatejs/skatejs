@@ -57,6 +57,6 @@ module.exports = function(grunt) {
   grunt.registerTask('build', 'Runs the tests and builds the dist.', ['test']);
   grunt.registerTask('dist', 'Builds the dist.', ['concat', 'uglify']);
   grunt.registerTask('docs', 'Runs the docs server.', ['connect:docs'])
-  grunt.registerTask('test', 'Runs the tests.', ['dist', 'karma']);
+  grunt.registerTask('test', 'Runs the tests.', ['karma']);
 
 };
