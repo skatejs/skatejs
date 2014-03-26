@@ -25,6 +25,7 @@
 
         if (Element.prototype[method]) {
           matcher = method;
+          return true;
         }
       });
 
