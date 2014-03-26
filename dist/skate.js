@@ -179,12 +179,15 @@
     }
   };
 
+  // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady(skate, target) {
     var hasArgs = /^[^(]+\([^)]+\)/;
     var readyFn = skate.component.ready;
 
+    // Inherit all non-special methods and properties.
     inherit(target, skate.component, blacklist);
 
+    // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
     if (readyFn && hasArgs.test(readyFn)) {
       readyFn.call(target, done);
     } else if (target.ready) {
@@ -194,11 +197,12 @@
       done();
     }
 
+    // Async callback that continues execution.
     function done(element) {
       if (element) {
         target.parentNode.insertBefore(element, target);
         target.parentNode.removeChild(target);
-        inherit(target = element, skate.component);
+        inherit(target = element, skate.component, blacklist);
       }
 
       triggerInsert(skate, target);
@@ -208,7 +212,10 @@
   function triggerInsert(skate, target) {
     var insertFn = skate.component.insert;
 
+    // Ensures that the element is no longer hidden.
     addClass(target, classname);
+
+    // Adds to the list of registered elements so the remove check knows which elements to check.
     skate.elements.push(target);
 
     if (insertFn) {
