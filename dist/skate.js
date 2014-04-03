@@ -30,7 +30,7 @@
       });
 
       return function (element, selector) {
-        return element[matcher](selector);
+        return element && element.nodeType && element[matcher](selector);
       };
     }());
 
@@ -413,17 +413,18 @@
     listen: function(trigger) {
       var that = this;
       var existing = document.querySelectorAll(this.skate.selector);
-
-      // We must remember the listener in order to unbind it.
-      this.listener = function(e) {
-        if (e.target.msMatchesSelector(that.skate.selector)) {
+      var listener = function(e) {
+        if (matchesSelector(e.target, that.skate.selector)) {
           trigger(e.target);
         }
       };
 
+      // We must remember the listener in order to unbind it.
+      this.listener = listener;
+
       // IE doesn't handle the initial load correctly.
       for (var a = 0; a < existing.length; a++) {
-        this.listener({ target: existing[a] });
+        listener({ target: existing.item(a) });
       }
 
       // Handle elements added after initial load.
