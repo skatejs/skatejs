@@ -30,7 +30,7 @@
       });
 
       return function (element, selector) {
-        return element && element.nodeType && element[matcher](selector);
+        return element && element.nodeType === 1 && element[matcher](selector);
       };
     }());
 
