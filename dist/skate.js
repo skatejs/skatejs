@@ -151,7 +151,6 @@
 
   function Skate(selector, component) {
     this.elements = [];
-    this.removeListener = null;
     this.selector = selector;
 
     if (typeof component === 'function') {
