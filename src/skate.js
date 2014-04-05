@@ -7,8 +7,6 @@
   // ----------------
 
   var head = document.getElementsByTagName('head')[0];
-  var keyframeRules = document.createElement('style');
-  var animationRules = document.createElement('style');
   var hiddenRules = document.createElement('style');
   var classname = 'skate';
   var domPrefixes = [
@@ -329,6 +327,8 @@
   // Animation Adapter
   // -----------------
 
+  var keyframeRules = document.createElement('style');
+  var animationRules = document.createElement('style');
   var animationEvents = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
   var animationName = '__skate';
   var animationBrowserPrefix = (function() {
