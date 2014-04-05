@@ -480,7 +480,7 @@
     }
 
     return mutationEventAdapter();
-  }());
+  }()) || {};
 
   // Ensure interface is available for skate.
   skateAdapter.listen = skateAdapter.listen || function(){};
