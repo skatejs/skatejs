@@ -486,6 +486,7 @@
   skateAdapter.listen = skateAdapter.listen || function(){};
   skateAdapter.deafen = skateAdapter.deafen || function(){};
 
+  // Rules that hide elements during the lifecycle callbacks.
   head.appendChild(hiddenRules);
 
 
