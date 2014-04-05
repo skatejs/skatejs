@@ -53,8 +53,8 @@
         }
       });
 
-      skate(addDivToBody('removed'));
-      removeDivFromBody('removed');
+      skate(addDivToBody());
+      removeDivFromBody();
     });
   });
 
@@ -75,26 +75,11 @@
         done();
       });
 
-      addDivToBody().textContent = 'test';
-    });
-
-    it('When destroyed, that module should no longer affect new nodes.', function(done) {
-      var oldModule = skate('div', function() {
-        assert(false);
-        oldModule.deafen();
-        done();
-      }).deafen();
-
-      addDivToBody().textContent = 'test';
-
-      var newModule = skate('div', function() {
-        this.textContent.should.equal('test');
-        newModule.deafen();
-        done();
-      });
+      var div = document.createElement('div');
+      div.textContent = 'test';
+      document.body.appendChild(div);
     });
   });
-
 
   describe('Async ready event.', function() {
     it('Ready event should be async and provide a done callback.', function(done) {

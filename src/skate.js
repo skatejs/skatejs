@@ -95,7 +95,11 @@
   // -------
 
   function skate(selector, component) {
-    if (selector.nodeType) {
+    if (!selector) {
+      return;
+    }
+
+    if (selector.nodeType === 1) {
       return initElement(selector);
     }
 
@@ -112,7 +116,7 @@
 
   // Default configuration.
   skate.defaults = {
-    extend: true,
+    extend: {},
     listen: true
   };
 
@@ -122,26 +126,31 @@
   // Destroys all active instances.
   skate.destroy = function() {
     for (var a = skate.instances.length - 1; a >= 0; a--) {
-      skate.instances[a].destroy();
+      skate.instances[a].deafen();
     }
 
     return skate;
+  };
+
+  // Finds instances matching the specified node.
+  skate.find = function(element) {
+    var instances = [];
+
+    skate.instances.forEach(function(instance) {
+      if (instance.matches(element)) {
+        instances.push(instance);
+      }
+    });
+
+    return instances;
   };
 
 
   // Common Interface
   // ----------------
 
-  // Methods that should not be added to an element instance if exteding.
-  var blacklist = Object.keys(skate.defaults);
-  blacklist.concat(['ready', 'insert', 'remove']);
-
   function Skate(selector, component) {
-    skate.instances.push(this);
-
-    this.adapter = new DetectedAdapter(this);
     this.elements = [];
-    this.listening = false;
     this.removeListener = null;
     this.selector = selector;
 
@@ -163,30 +172,17 @@
   }
 
   Skate.prototype = {
+    // Returns whether or not the specified node can be controlled by the instance.
+    matches: function(element) {
+      return matchesSelector(element, this.selector);
+    },
+
     // Starts listening for new elements.
     listen: function() {
-      if (this.listening) {
-        return this;
-      }
-
-      var that = this;
-
-      this.listening = true;
-      this.adapter.listen(function(target) {
-        triggerReady(that, target);
-      });
-
-      if (this.component.remove) {
-        this.removeListener = timeout.repeat(function() {
-          for (var a = that.elements.length - 1; a > -1; a--) {
-            var el = that.elements[a];
-
-            if (!el.parentNode) {
-              that.elements.splice(a, 1);
-              that.component.remove.call(el);
-            }
-          }
-        });
+      if (skate.instances.indexOf(this) === -1) {
+        skate.instances.push(this);
+        skateAdapter.listen(this);
+        skate(this.selector);
       }
 
       return this;
@@ -194,27 +190,16 @@
 
     // Stops listening for new elements.
     deafen: function() {
-      if (!this.listening) {
-        return this;
-      }
-
-      this.adapter.deafen();
-      this.listening = false;
-
-      if (this.removeListener) {
-        timeout.end(this.removeListener);
+      if (skate.instances.indexOf(this) !== -1) {
+        skate.instances.splice(skate.instances.indexOf(this), 1);
+        skateAdapter.deafen(this);
       }
 
       return this;
-    },
-
-    // Deafens and destroys the instance.
-    destroy: function() {
-      this.deafen();
-      skate.instances.splice(skate.instances.indexOf(this), 1);
     }
   };
 
+  // Initialises anything that is enumerable / traversable.
   function initTraversable(els) {
     return [].slice.call(els).forEach(function(el) {
       initElement(el);
@@ -224,7 +209,7 @@
   // Initialises an element directly by searching for any matching components.
   function initElement(el) {
     skate.instances.forEach(function(inst) {
-      if (matchesSelector(el, inst.selector)) {
+      if (inst.matches(el)) {
         triggerReady(inst, el);
       }
     });
@@ -251,13 +236,13 @@
     // Adds to the list of registered elements so the remove check knows which elements to check.
     skate.elements.push(target);
 
-    // Inherit all non-special methods and properties.
-    inherit(target, skate.component, blacklist);
+    // Extend element properties and methods with those provided.
+    inherit(target, skate.component.extend);
 
     // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
     if (readyFn && hasArgs.test(readyFn)) {
       readyFn.call(target, done);
-    } else if (target.ready) {
+    } else if (readyFn) {
       readyFn.call(target);
       done();
     } else {
@@ -275,13 +260,14 @@
         target.parentNode.removeChild(target);
 
         // We must extend the new element.
-        inherit(target = element, skate.component, blacklist);
+        inherit(target = element, skate.component.extend);
       }
 
       triggerInsert(skate, target);
     }
   }
 
+  // Triggers insert on the target.
   function triggerInsert(skate, target) {
     var insertFn = skate.component.insert;
 
@@ -291,6 +277,53 @@
     if (insertFn) {
       insertFn.call(target);
     }
+  }
+
+  // Triggers remove on the target.
+  function triggerRemove(target) {
+    skate.find(target).forEach(function(inst) {
+      if (inst.component.remove) {
+        inst.component.remove.call(target);
+      }
+    });
+  }
+
+
+  // MutationObserver Adapter
+  // ------------------------
+
+  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+  function mutationObserverAdapter() {
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        skate(mutation.addedNodes);
+
+        if (mutation.removedNodes) {
+          [].slice.call(mutation.removedNodes).forEach(function(removedNode) {
+            triggerRemove(removedNode);
+          });
+        }
+      });
+    });
+
+    observer.observe(document, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+
+  // Mutation Events Adapter
+  // -----------------------
+
+  function mutationEventAdapter() {
+    document.addEventListener('DOMNodeInserted', function(e) {
+      skate(e.target);
+    });
+
+    document.addEventListener('DOMNodeRemoved', function(e) {
+      triggerRemove(e.target);
+    });
   }
 
 
@@ -319,127 +352,66 @@
   var animationCssPrefix = animationBrowserPrefix ? '-' + animationBrowserPrefix + '-' : '';
   var animationSelectors = [];
 
-  function AnimationAdapter(skate) {
-    this.listener = null;
-    this.id = classname + '-' + Math.random().toString().replace('0.', '');
-    this.skate = skate;
-  }
-
-  AnimationAdapter.prototype = {
-    constructor: AnimationAdapter,
-
-    listen: function(trigger) {
-      var that = this;
-      var existing = document.querySelectorAll(appendSelector(this.skate.selector, '.skate:not(.' + this.id + ')'));
-
-      this.listener = function(e) {
-        if (e.animationName !== animationName) {
-          return;
-        }
-
-        if (matchesSelector(e.target, that.skate.selector)) {
-          addClass(e.target, that.id);
-          trigger(e.target);
-        }
-      };
-
-      for (var a = 0; a < existing.length; a++) {
-        this.listener({
-          animationName: animationName,
-          target: existing[a]
-        });
-      }
-
-      animationEvents.forEach(function(evt) {
-        document.addEventListener(evt, that.listener, false);
-      });
-
-      splitSelector(this.skate.selector).forEach(function(item, index) {
-        if (animationSelectors.indexOf(item) === -1) {
-          animationSelectors.push(item);
-        }
-      });
-
-      animationBuildRules();
-
-      return this;
-    },
-
-    deafen: function() {
-      var that = this;
-
-      animationEvents.forEach(function(evt) {
-        document.removeEventListener(evt, that.listener, false);
-      });
-
-      this.listener = null;
-
-      splitSelector(this.skate.selector).forEach(function(item) {
-        var index = animationSelectors.indexOf(item);
-
-        if (index !== -1) {
-          animationSelectors.splice(index, 1);
-        }
-      });
-
-      animationBuildRules();
-
-      return this;
-    }
-  };
-
   function animationBuildRules() {
     animationRules.innerHTML = animationSelectors.join(',') + '{' + animationCssPrefix + 'animation: ' + animationName + ' .01s}';
   }
 
-  function animationSetup() {
+  function animationAdapter() {
     head.appendChild(keyframeRules);
     head.appendChild(animationRules);
     keyframeRules.innerHTML = '@' + animationCssPrefix + 'keyframes ' + animationName + '{from{opacity:1}to{opacity:1}}';
-  }
 
-
-  // Mutation Events Adapter
-  // -----------------------
-
-  function MutationEventAdapter(skate) {
-    this.listener = null;
-    this.skate = skate;
-  }
-
-  MutationEventAdapter.prototype = {
-    constructor: MutationEventAdapter,
-
-    listen: function(trigger) {
-      var that = this;
-      var existing = document.querySelectorAll(this.skate.selector);
-      var listener = function(e) {
-        if (matchesSelector(e.target, that.skate.selector)) {
-          trigger(e.target);
+    animationEvents.forEach(function(evt) {
+      document.addEventListener(evt, function(e) {
+        if (e.animationName === animationName) {
+          skate(e.target);
         }
-      };
+      });
+    });
 
-      // We must remember the listener in order to unbind it.
-      this.listener = listener;
+    return {
+      timeout: false,
 
-      // IE doesn't handle the initial load correctly.
-      for (var a = 0; a < existing.length; a++) {
-        listener({ target: existing.item(a) });
+      listen: function(inst) {
+        splitSelector(inst.selector).forEach(function(item, index) {
+          if (animationSelectors.indexOf(item) === -1) {
+            animationSelectors.push(item);
+          }
+        });
+
+        animationBuildRules();
+
+        if (inst.component.remove) {
+          this.timeout = timeout.repeat(function() {
+            for (var a = inst.elements.length - 1; a > -1; a--) {
+              var el = inst.elements[a];
+
+              if (!el.parentNode) {
+                inst.elements.splice(a, 1);
+                inst.component.remove.call(el);
+              }
+            }
+          });
+        }
+      },
+
+      deafen: function(inst) {
+        splitSelector(inst.selector).forEach(function(item) {
+          var index = animationSelectors.indexOf(item);
+
+          if (index !== -1) {
+            animationSelectors.splice(index, 1);
+          }
+        });
+
+        animationBuildRules();
+
+        if (this.timeout) {
+          timeout.end(this.timeout);
+        }
       }
-
-      // Handle elements added after initial load.
-      document.addEventListener('DOMNodeInserted', this.listener, false);
-
-      return this;
-    },
-
-    deafen: function() {
-      document.removeEventListener('DOMNodeInserted', this.listener);
-      this.listener = null;
-
-      return this;
-    }
-  };
+    };
+  }
 
 
   // Utilities
@@ -452,10 +424,7 @@
     ];
 
     hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')') +
-        '{' +
-        ensureHideRules.join(';') +
-        '}',
+      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
       hiddenRules.sheet.cssRules.length
     );
   }
@@ -488,12 +457,8 @@
     return parts.join(',');
   }
 
-  function inherit(base, from, blacklist) {
+  function inherit(base, from) {
     for (var a in from) {
-      if (blacklist && blacklist.indexOf(a) > -1) {
-        continue;
-      }
-
       if (typeof base[a] === 'undefined') {
         base[a] = from[a];
       }
@@ -504,15 +469,22 @@
   // Global Setup
   // ------------
 
-  var DetectedAdapter = (function() {
-    return animationBrowserPrefix === false ?
-      MutationEventAdapter :
-      AnimationAdapter;
+  // Detect the adapter to use.
+  var skateAdapter = (function() {
+    if (MutationObserver) {
+      return mutationObserverAdapter();
+    }
+
+    if (animationBrowserPrefix) {
+      return animationAdapter();
+    }
+
+    return mutationEventAdapter();
   }());
 
-  if (DetectedAdapter === AnimationAdapter) {
-    animationSetup();
-  }
+  // Ensure interface is available for skate.
+  skateAdapter.listen = skateAdapter.listen || function(){};
+  skateAdapter.deafen = skateAdapter.deafen || function(){};
 
   head.appendChild(hiddenRules);
 
