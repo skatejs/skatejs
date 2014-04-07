@@ -10,7 +10,7 @@ Installing
 
 You can install Skate using Bower or by downloading the source from the repository.
 
-    bower install https://github.com/treshugart/skate/archive/lifecycle.zip
+    bower install skate --save
 
 Usage
 -----
