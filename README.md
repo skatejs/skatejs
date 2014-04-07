@@ -3,12 +3,7 @@
 Skate
 =====
 
-Skate is a library for building dynamic components from any DOM element using CSS selectors.
-
-Why?
-----
-
-Skate allows you to build components from any DOM element whether or not they already exist in the DOM, or are dynamically added at a later time.
+Skate is a web component library that allows you to define behaviour for pre-defined and custom HTML elements.
 
 Installing
 ----------
@@ -22,8 +17,9 @@ Usage
 
 Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and a component definition.
 
-    skate('css[selector]', function(element) {
-      // your component initialisation here
+    skate('input[type="date"]', function() {
+      // "date"
+      console.log(this.type);
     });
 
 Docs
@@ -34,7 +30,7 @@ The full documentation is available at [http://treshugart.github.io/skate/](http
 Compatibility
 -------------
 
-Works in all evergreen browsers that support CSS animation and falls back to using deprecated mutation events in IE9.
+IE9+ and all evergreens.
 
 License
 -------
