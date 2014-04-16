@@ -221,7 +221,7 @@
 
   // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady(skate, target) {
-    var hasArgs = /^[^(]+\([^)]+\)/;
+    var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var readyFn = skate.component.ready;
     var elementIndex = skate.elements.length;
 
@@ -237,10 +237,10 @@
     inherit(target, skate.component.extend);
 
     // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
-    if (readyFn && hasArgs.test(readyFn)) {
-      readyFn.call(target, done);
+    if (readyFn && definedMultipleArgs.test(readyFn)) {
+      readyFn(target, done);
     } else if (readyFn) {
-      readyFn.call(target);
+      readyFn(target);
       done();
     } else {
       done();
@@ -272,7 +272,7 @@
     addClass(target, classname);
 
     if (insertFn) {
-      insertFn.call(target);
+      insertFn(target);
     }
   }
 
@@ -280,7 +280,7 @@
   function triggerRemove(target) {
     skate.find(target).forEach(function(inst) {
       if (inst.component.remove) {
-        inst.component.remove.call(target);
+        inst.component.remove(target);
       }
     });
   }
@@ -387,7 +387,7 @@
 
               if (!el.parentNode) {
                 inst.elements.splice(a, 1);
-                inst.component.remove.call(el);
+                inst.component.remove(el);
               }
             }
           });

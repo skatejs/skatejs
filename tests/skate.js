@@ -1,4 +1,5 @@
 (function() {
+  'use strict';
 
   function addDivToBody(id) {
     var div = document.createElement('div');
@@ -25,8 +26,8 @@
   describe('Events', function() {
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
-        ready: function() {
-          this.classList.contains('skate').should.equal(false);
+        ready: function(element) {
+          element.classList.contains('skate').should.equal(false);
           done();
         }
       });
@@ -36,8 +37,8 @@
 
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
-        insert: function() {
-          this.classList.contains('skate').should.equal(true);
+        insert: function(element) {
+          element.classList.contains('skate').should.equal(true);
           done();
         }
       });
@@ -63,16 +64,20 @@
     it('Modules should pick up nodes already in the DOM.', function(done) {
       addDivToBody().textContent = 'test';
 
-      skate('div', function() {
-        this.textContent.should.equal('test');
-        done();
+      skate('div', {
+        insert: function(element) {
+          element.textContent.should.equal('test');
+          done();
+        }
       });
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
-      skate('div', function() {
-        this.textContent.should.equal('test');
-        done();
+      skate('div', {
+        insert: function(element) {
+          element.textContent.should.equal('test');
+          done();
+        }
       });
 
       var div = document.createElement('div');
@@ -81,12 +86,12 @@
     });
   });
 
-  describe('Async ready event.', function() {
+  describe('Async ready callback.', function() {
     it('Ready event should be async and provide a done callback.', function(done) {
       var ok = false;
 
       skate('div', {
-        ready: function(next) {
+        ready: function(element, next) {
           setTimeout(function() {
             ok = true;
             next();
@@ -101,31 +106,16 @@
 
       addDivToBody();
     });
-
-    it('Ready done callback should accept a DOM element which replaces the existing element.', function(done) {
-      skate('div', {
-        ready: function(next) {
-          setTimeout(function() {
-            next(document.createElement('span'));
-          }, 100);
-        },
-
-        insert: function() {
-          assert(this.nodeName === 'SPAN');
-          done();
-        }
-      });
-
-      addDivToBody();
-    });
   });
 
   describe('Display none / block / etc behavior', function() {
     it('Should not be initialised twice', function() {
       var initialised = 0;
 
-      skate('div', function() {
-        ++initialised;
+      skate('div', {
+        insert: function() {
+          ++initialised;
+        }
       });
 
       var div = addDivToBody();
@@ -140,8 +130,10 @@
     it('Should take traversable items', function() {
       var initialised = false;
 
-      skate('div', function() {
-        ++initialised;
+      skate('div', {
+        insert: function() {
+          ++initialised;
+        }
       });
 
       addDivToBody();
@@ -154,8 +146,10 @@
     it('Should take an element', function() {
       var initialised = 0;
 
-      skate('div', function() {
-        ++initialised;
+      skate('div', {
+        insert: function() {
+          ++initialised;
+        }
       });
 
       skate(addDivToBody());
@@ -165,8 +159,10 @@
     it('Should take a selector', function() {
       var initialised = 0;
 
-      skate('div', function() {
-        ++initialised;
+      skate('div', {
+        insert: function() {
+          ++initialised;
+        }
       });
 
       addDivToBody();
@@ -181,9 +177,11 @@
     it('Should be able to destroy all instances', function() {
       skate.instances.length.should.equal(0);
 
-      skate('div', function(){});
-      skate.instances.length.should.equal(1);
+      skate('div', {
+        insert: function(){}
+      });
 
+      skate.instances.length.should.equal(1);
       skate.destroy();
       skate.instances.length.should.equal(0);
 
@@ -192,5 +190,4 @@
       div.textContent.should.equal('');
     });
   });
-
 })();
