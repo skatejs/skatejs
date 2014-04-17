@@ -247,19 +247,7 @@
     }
 
     // Async callback that continues execution.
-    function done(element) {
-      if (element) {
-        // Replace the existing element in th registry with the new one.
-        skate.elements.splice(elementIndex, 1, target);
-
-        // Replace the existing element in the DOM.
-        target.parentNode.insertBefore(element, target);
-        target.parentNode.removeChild(target);
-
-        // We must extend the new element.
-        inherit(target = element, skate.component.extend);
-      }
-
+    function done() {
       triggerInsert(skate, target);
     }
   }
