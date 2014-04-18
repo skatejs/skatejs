@@ -206,46 +206,4 @@
       div.textContent.should.equal('yey');
     });
   });
-
-  describe('Dynamically resoved components', function() {
-    var component = {
-      ready: function(element) {
-        element.setAttribute('data-ready', 'true');
-      },
-      insert: function(element) {
-        element.setAttribute('data-insert', 'true');
-      },
-      extend: {
-        someMethod: function() {
-          return true;
-        }
-      }
-    };
-
-    it ('Should resolve sync', function() {
-      var div = addDivToBody();
-
-      skate('div', function(element) {
-        return component;
-      });
-
-      skate.init(div);
-      div.getAttribute('data-ready').should.equal('true');
-      div.getAttribute('data-insert').should.equal('true');
-      div.someMethod().should.equal(true);
-    });
-
-    it ('Should resolve async', function() {
-      var div = addDivToBody();
-
-      skate('div', function(element, done) {
-        return done(component);
-      });
-
-      skate.init(div);
-      div.getAttribute('data-ready').should.equal('true');
-      div.getAttribute('data-insert').should.equal('true');
-      div.someMethod().should.equal(true);
-    });
-  });
 })();
