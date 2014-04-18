@@ -68,7 +68,11 @@
     return skate;
   };
 
-  // Inserts hide rules for the specified selector.
+  // Inserts hide rules for the specified selector. This is useful if you pass
+  // a matching function isntead of a selector to `skate()`. If you pass a
+  // function and specify a `ready()` callback, your element will not be hidden
+  // because there was no selector that could be used to autohide them. Calling
+  // this manually gets around that problem.
   skate.hide = function(selector) {
     var ensureHideRules = [
       'position: absolute !important',
