@@ -206,4 +206,16 @@
       div.textContent.should.equal('yey');
     });
   });
+
+  describe('Dynamically resoved components', function() {
+    it ('Should resolve sync', function() {
+      skate('div', function(element) {
+
+      });
+    });
+
+    it ('Should resolve async', function() {
+
+    });
+  });
 })();

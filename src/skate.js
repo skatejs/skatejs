@@ -107,14 +107,22 @@
 
     inherit(this.component, skate.defaults);
 
+    // Emulate the web components ready callback.
+    if (this.component.ready && typeof this.matcher === 'string') {
+      skate.hide(this.matcher);
+    }
+
     if (this.component.listen) {
       this.listen();
     }
   }
 
   Skate.prototype = {
-    // Initialises the element.
+    // Initialises an element, or elements.
     init: function(elements, force) {
+      // Defaults to using the current selector, or elements if the selector is
+      // not a string. This is because a matching function can be provided
+      // instead of a selector.
       if (typeof elements === 'undefined') {
         elements = document.querySelectorAll(typeof this.selector === 'string' ? this.selector : '*');
       }
