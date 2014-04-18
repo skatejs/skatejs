@@ -23,11 +23,11 @@
   });
 
 
-  describe('Events', function() {
+  describe('Lifecycle Callbacks', function() {
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
         ready: function(element) {
-          element.classList.contains('skate').should.equal(false);
+          element.classList.contains('_skate').should.equal(false);
           done();
         }
       });
@@ -38,7 +38,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
         insert: function(element) {
-          element.classList.contains('skate').should.equal(true);
+          element.classList.contains('_skate').should.equal(true);
           done();
         }
       });
@@ -208,14 +208,44 @@
   });
 
   describe('Dynamically resoved components', function() {
-    it ('Should resolve sync', function() {
-      skate('div', function(element) {
+    var component = {
+      ready: function(element) {
+        element.setAttribute('data-ready', 'true');
+      },
+      insert: function(element) {
+        element.setAttribute('data-insert', 'true');
+      },
+      extend: {
+        someMethod: function() {
+          return true;
+        }
+      }
+    };
 
+    it ('Should resolve sync', function() {
+      var div = addDivToBody();
+
+      skate('div', function(element) {
+        return component;
       });
+
+      skate.init(div);
+      div.getAttribute('data-ready').should.equal('true');
+      div.getAttribute('data-insert').should.equal('true');
+      div.someMethod().should.equal(true);
     });
 
     it ('Should resolve async', function() {
+      var div = addDivToBody();
 
+      skate('div', function(element, done) {
+        return done(component);
+      });
+
+      skate.init(div);
+      div.getAttribute('data-ready').should.equal('true');
+      div.getAttribute('data-insert').should.equal('true');
+      div.someMethod().should.equal(true);
     });
   });
 })();

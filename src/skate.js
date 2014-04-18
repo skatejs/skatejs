@@ -69,7 +69,7 @@
   };
 
   // Inserts hide rules for the specified selector. This is useful if you pass
-  // a matching function isntead of a selector to `skate()`. If you pass a
+  // a matching function instead of a selector to `skate()`. If you pass a
   // function and specify a `ready()` callback, your element will not be hidden
   // because there was no selector that could be used to autohide them. Calling
   // this manually gets around that problem.
@@ -200,7 +200,6 @@
   function triggerReady(skate, target) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var readyFn = skate.component.ready;
-    var elementIndex = skate.elements.length;
 
     // If it's already been setup, don't do anything.
     if (skate.elements.indexOf(target) > -1) {
