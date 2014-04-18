@@ -54,7 +54,7 @@
         }
       });
 
-      skate(addDivToBody());
+      skate.init(addDivToBody());
       removeDivFromBody();
     });
   });
@@ -119,7 +119,7 @@
       });
 
       var div = addDivToBody();
-      skate(div);
+      skate.init(div);
       div.style.display = 'none';
       div.style.display = 'block';
       initialised.should.equal(1);
@@ -139,7 +139,7 @@
       addDivToBody();
       addDivToBody();
 
-      skate(document.querySelectorAll('div'));
+      skate.init(document.querySelectorAll('div'));
       initialised.should.equal(2);
     });
 
@@ -152,7 +152,7 @@
         }
       });
 
-      skate(addDivToBody());
+      skate.init(addDivToBody());
       initialised.should.equal(1);
     });
 
@@ -168,7 +168,7 @@
       addDivToBody();
       addDivToBody();
 
-      skate('div');
+      skate.init('div');
       initialised.should.equal(2);
     });
   });
@@ -186,12 +186,24 @@
       skate.instances.length.should.equal(0);
 
       var div = addDivToBody();
-      skate(div);
+      skate.init(div);
       div.textContent.should.equal('');
     });
   });
 
   describe('Dynamically resolved elements', function() {
+    it('Should use a function to resolve elements', function() {
+      skate(function(element) {
+        return element.tagName === 'DIV';
+      }, {
+        insert: function(element) {
+          element.textContent = 'yey';
+        }
+      });
 
+      var div = addDivToBody();
+      skate.init(div);
+      div.textContent.should.equal('yey');
+    });
   });
 })();

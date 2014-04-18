@@ -9,6 +9,7 @@
   var head = document.getElementsByTagName('head')[0];
   var hiddenRules = document.createElement('style');
   var classname = 'skate';
+  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
   var domPrefixes = [
       'moz',
       'ms',
@@ -37,22 +38,6 @@
   // -------
 
   function skate(selector, component) {
-    if (!selector) {
-      return;
-    }
-
-    if (selector.nodeType === 1) {
-      return initElement(selector);
-    }
-
-    if (typeof selector === 'string' && arguments.length === 1) {
-      return initSelector(selector);
-    }
-
-    if (typeof selector !== 'string' && typeof selector.length === 'number') {
-      return initTraversable(selector);
-    }
-
     return new Skate(selector, component);
   }
 
@@ -65,11 +50,35 @@
   // All active instances.
   skate.instances = [];
 
+  // Initialises the elements against all skate instances.
+  skate.init = function(elements) {
+    skate.instances.forEach(function(instance) {
+      instance.init(elements);
+    });
+
+    return skate;
+  };
+
   // Destroys all active instances.
   skate.destroy = function() {
     for (var a = skate.instances.length - 1; a >= 0; a--) {
       skate.instances[a].deafen();
     }
+
+    return skate;
+  };
+
+  // Inserts hide rules for the specified selector.
+  skate.hide = function(selector) {
+    var ensureHideRules = [
+      'position: absolute !important',
+      'clip: rect(0, 0, 0, 0)'
+    ];
+
+    hiddenRules.sheet.insertRule(
+      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
+      hiddenRules.sheet.cssRules.length
+    );
 
     return skate;
   };
@@ -98,16 +107,30 @@
 
     inherit(this.component, skate.defaults);
 
-    if (this.component.ready && typeof this.matcher === 'string') {
-      hideElementsBySelector(this.matcher);
-    }
-
     if (this.component.listen) {
       this.listen();
     }
   }
 
   Skate.prototype = {
+    // Initialises the element.
+    init: function(elements, force) {
+      if (typeof elements === 'undefined') {
+        elements = document.querySelectorAll(typeof this.selector === 'string' ? this.selector : '*');
+      }
+
+      if (elements.nodeType === 1) {
+        initElement(this, elements, force);
+      } else if (typeof elements === 'string') {
+        initSelector(this, elements, force);
+      } else if (typeof elements.length === 'number') {
+        initTraversable(this, elements, force);
+      }
+
+      return this;
+    },
+
+    // Returns whether or not the instance can be applied to the element.
     matches: function(element) {
       return typeof this.matcher === 'function' ?
         this.matcher(element) :
@@ -118,7 +141,7 @@
     listen: function() {
       if (skate.instances.indexOf(this) === -1) {
         skate.instances.push(this);
-        initSelectorOrAll(this.matcher);
+        this.init();
       }
 
       return this;
@@ -139,34 +162,21 @@
   // ------------
 
   // Initialises an element directly by searching for any matching components.
-  function initElement(el) {
-    skate.instances.forEach(function(inst) {
-      if (inst.matches(el)) {
-        triggerReady(inst, el);
-      }
-    });
-
-    return el;
+  function initElement(skate, element, force) {
+    if (force || skate.matches(element)) {
+      triggerReady(skate, element);
+    }
   }
 
   // Initialises elements matching the specified selector.
-  function initSelector(sel) {
-    return initTraversable(document.querySelectorAll(sel));
-  }
-
-  // Initialises using the selector if a string otherwise all elements in the DOM.
-  function initSelectorOrAll(selector) {
-    if (typeof selector === 'string') {
-      return initSelector(selector);
-    }
-
-    return initTraversable(document.all);
+  function initSelector(skate, selector, force) {
+    initTraversable(skate, document.querySelectorAll(selector), force);
   }
 
   // Initialises anything that is enumerable / traversable.
-  function initTraversable(els) {
-    return [].slice.call(els).forEach(function(el) {
-      initElement(el);
+  function initTraversable(skate, elements, force) {
+    [].slice.call(elements).forEach(function(element) {
+      initElement(skate, element, force);
     });
   }
 
@@ -241,7 +251,7 @@
 
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        skate(mutation.addedNodes);
+        skate.init(mutation.addedNodes);
 
         if (mutation.removedNodes) {
           [].slice.call(mutation.removedNodes).forEach(function(removedNode) {
@@ -265,7 +275,7 @@
 
   function mutationEventAdapter() {
     document.addEventListener('DOMNodeInserted', function(e) {
-      initElement(e.target);
+      skate.init(e.target);
     });
 
     document.addEventListener('DOMNodeRemoved', function(e) {
@@ -278,28 +288,6 @@
 
   // Utilities
   // ---------
-
-  function hideElementsBySelector(selector) {
-    var ensureHideRules = [
-      'position: absolute !important',
-      'clip: rect(0, 0, 0, 0)'
-    ];
-
-    hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
-      hiddenRules.sheet.cssRules.length
-    );
-  }
-
-  function splitSelector(selector) {
-    var selectors = selector.split(',');
-
-    selectors.forEach(function(item, index) {
-      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
-    });
-
-    return selectors;
-  }
 
   function addClass(element, classname) {
     if (element.classList) {
@@ -327,12 +315,19 @@
     }
   }
 
+  function splitSelector(selector) {
+    var selectors = selector.split(',');
+
+    selectors.forEach(function(item, index) {
+      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
+    });
+
+    return selectors;
+  }
+
 
   // Global Setup
   // ------------
-
-  // Detect the adapter to use.
-  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter()
 
   // Rules that hide elements during the lifecycle callbacks.
   head.appendChild(hiddenRules);
