@@ -8,7 +8,7 @@
 
   var head = document.getElementsByTagName('head')[0];
   var hiddenRules = document.createElement('style');
-  var classname = 'skate';
+  var classname = '_skate';
   var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
   var domPrefixes = [
       'moz',
