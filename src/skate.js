@@ -8,7 +8,8 @@
 
   var head = document.getElementsByTagName('head')[0];
   var hiddenRules = document.createElement('style');
-  var classname = 'skate';
+  var classname = '_skate';
+  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
   var domPrefixes = [
       'moz',
       'ms',
@@ -33,82 +34,10 @@
     }());
 
 
-  // `requestAnimationFrame` Polyfill
-  // --------------------------------
-
-  var timeout = (function() {
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-
-    if (window.requestAnimationFrame) {
-      return window.requestAnimationFrame;
-    }
-
-    for (var x = 0; x < vendors.length; ++x) {
-      var method = vendors[x] + 'RequestAnimationFrame';
-
-      if (typeof window[method] === 'function') {
-        return window[method];
-      }
-    }
-
-    if (!window.requestAnimationFrame) {
-      return function(callback, element) {
-        var currTime = new Date().getTime();
-        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-        var id = window.setTimeout(function() {
-          callback(currTime + timeToCall);
-        },  timeToCall);
-
-        lastTime = currTime + timeToCall;
-
-        return id;
-      };
-    }
-  }());
-
-  // Ends a timeout started with `timeout`.
-  timeout.end = (function() {
-    if (window.cancelAnimationFrame) {
-      return window.cancelAnimationFrame;
-    }
-
-    return function(id) {
-      clearTimeout(id);
-    };
-  })();
-
-  // Repeats the specified `fn` until `timeout` is ended.
-  timeout.repeat = function(fn) {
-    var call = function() {
-      fn();
-      return timeout(call);
-    };
-
-    return call();
-  };
-
-
   // Factory
   // -------
 
   function skate(selector, component) {
-    if (!selector) {
-      return;
-    }
-
-    if (selector.nodeType === 1) {
-      return initElement(selector);
-    }
-
-    if (typeof selector === 'string' && arguments.length === 1) {
-      return initSelector(selector);
-    }
-
-    if (typeof selector !== 'string' && typeof selector.length === 'number') {
-      return initTraversable(selector);
-    }
-
     return new Skate(selector, component);
   }
 
@@ -121,11 +50,39 @@
   // All active instances.
   skate.instances = [];
 
+  // Initialises the elements against all skate instances.
+  skate.init = function(elements) {
+    skate.instances.forEach(function(instance) {
+      instance.init(elements);
+    });
+
+    return skate;
+  };
+
   // Destroys all active instances.
   skate.destroy = function() {
     for (var a = skate.instances.length - 1; a >= 0; a--) {
       skate.instances[a].deafen();
     }
+
+    return skate;
+  };
+
+  // Inserts hide rules for the specified selector. This is useful if you pass
+  // a matching function instead of a selector to `skate()`. If you pass a
+  // function and specify a `ready()` callback, your element will not be hidden
+  // because there was no selector that could be used to autohide them. Calling
+  // this manually gets around that problem.
+  skate.hide = function(selector) {
+    var ensureHideRules = [
+      'position: absolute !important',
+      'clip: rect(0, 0, 0, 0)'
+    ];
+
+    hiddenRules.sheet.insertRule(
+      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
+      hiddenRules.sheet.cssRules.length
+    );
 
     return skate;
   };
@@ -147,39 +104,56 @@
   // Common Interface
   // ----------------
 
-  function Skate(selector, component) {
+  function Skate(matcher, component) {
+    this.component = component
     this.elements = [];
-    this.selector = selector;
+    this.matcher = matcher;
 
-    if (typeof component === 'function') {
-      component = {
-        insert: component
-      };
+    inherit(this.component, skate.defaults);
+
+    // Emulate the web components ready callback.
+    if (this.component.ready && typeof this.matcher === 'string') {
+      skate.hide(this.matcher);
     }
 
-    inherit(this.component = component, skate.defaults);
-
-    if (component.ready) {
-      hideElementsBySelector(selector);
-    }
-
-    if (component.listen) {
+    if (this.component.listen) {
       this.listen();
     }
   }
 
   Skate.prototype = {
-    // Returns whether or not the specified node can be controlled by the instance.
+    // Initialises an element, or elements.
+    init: function(elements, force) {
+      // Defaults to using the current selector, or elements if the selector is
+      // not a string. This is because a matching function can be provided
+      // instead of a selector.
+      if (typeof elements === 'undefined') {
+        elements = document.querySelectorAll(typeof this.selector === 'string' ? this.selector : '*');
+      }
+
+      if (elements.nodeType === 1) {
+        initElement(this, elements, force);
+      } else if (typeof elements === 'string') {
+        initSelector(this, elements, force);
+      } else if (typeof elements.length === 'number') {
+        initTraversable(this, elements, force);
+      }
+
+      return this;
+    },
+
+    // Returns whether or not the instance can be applied to the element.
     matches: function(element) {
-      return matchesSelector(element, this.selector);
+      return typeof this.matcher === 'function' ?
+        this.matcher(element) :
+        matchesSelector(element, this.matcher);
     },
 
     // Starts listening for new elements.
     listen: function() {
       if (skate.instances.indexOf(this) === -1) {
         skate.instances.push(this);
-        skateAdapter.listen(this);
-        skate(this.selector);
+        this.init();
       }
 
       return this;
@@ -189,41 +163,43 @@
     deafen: function() {
       if (skate.instances.indexOf(this) !== -1) {
         skate.instances.splice(skate.instances.indexOf(this), 1);
-        skateAdapter.deafen(this);
       }
 
       return this;
     }
   };
 
-  // Initialises anything that is enumerable / traversable.
-  function initTraversable(els) {
-    return [].slice.call(els).forEach(function(el) {
-      initElement(el);
-    });
-  }
+
+  // Initialisers
+  // ------------
 
   // Initialises an element directly by searching for any matching components.
-  function initElement(el) {
-    skate.instances.forEach(function(inst) {
-      if (inst.matches(el)) {
-        triggerReady(inst, el);
-      }
-    });
-
-    return el;
+  function initElement(skate, element, force) {
+    if (force || skate.matches(element)) {
+      triggerReady(skate, element);
+    }
   }
 
   // Initialises elements matching the specified selector.
-  function initSelector(sel) {
-    return initTraversable(document.querySelectorAll(sel));
+  function initSelector(skate, selector, force) {
+    initTraversable(skate, document.querySelectorAll(selector), force);
   }
+
+  // Initialises anything that is enumerable / traversable.
+  function initTraversable(skate, elements, force) {
+    [].slice.call(elements).forEach(function(element) {
+      initElement(skate, element, force);
+    });
+  }
+
+
+  // Lifecycle Triggers
+  // ------------------
 
   // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady(skate, target) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var readyFn = skate.component.ready;
-    var elementIndex = skate.elements.length;
 
     // If it's already been setup, don't do anything.
     if (skate.elements.indexOf(target) > -1) {
@@ -277,11 +253,16 @@
   // MutationObserver Adapter
   // ------------------------
 
-  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   function mutationObserverAdapter() {
+    var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+
+    if (!MutationObserver) {
+      return;
+    }
+
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        skate(mutation.addedNodes);
+        skate.init(mutation.addedNodes);
 
         if (mutation.removedNodes) {
           [].slice.call(mutation.removedNodes).forEach(function(removedNode) {
@@ -295,6 +276,8 @@
       childList: true,
       subtree: true
     });
+
+    return true;
   }
 
 
@@ -303,129 +286,21 @@
 
   function mutationEventAdapter() {
     document.addEventListener('DOMNodeInserted', function(e) {
-      skate(e.target);
+      skate.init(e.target);
     });
 
     document.addEventListener('DOMNodeRemoved', function(e) {
       triggerRemove(e.target);
     });
-  }
 
-
-  // Animation Adapter
-  // -----------------
-
-  var keyframeRules = document.createElement('style');
-  var animationRules = document.createElement('style');
-  var animationEvents = ['animationstart', 'oAnimationStart', 'MSAnimationStart', 'webkitAnimationStart'];
-  var animationName = '__skate';
-  var animationBrowserPrefix = (function() {
-    var css = document.documentElement.style;
-    var prefix = false;
-
-    if (typeof css.animation !== 'undefined') {
-      return '';
-    }
-
-    domPrefixes.some(function(domPrefix) {
-      if (typeof css[domPrefix + 'Animation'] !== 'undefined') {
-        prefix = domPrefix;
-        return true;
-      }
-    });
-
-    return prefix;
-  }());
-  var animationCssPrefix = animationBrowserPrefix ? '-' + animationBrowserPrefix + '-' : '';
-  var animationSelectors = [];
-
-  function animationBuildRules() {
-    animationRules.innerHTML = animationSelectors.join(',') + '{' + animationCssPrefix + 'animation: ' + animationName + ' .01s}';
-  }
-
-  function animationAdapter() {
-    head.appendChild(keyframeRules);
-    head.appendChild(animationRules);
-    keyframeRules.innerHTML = '@' + animationCssPrefix + 'keyframes ' + animationName + '{from{opacity:1}to{opacity:1}}';
-
-    animationEvents.forEach(function(evt) {
-      document.addEventListener(evt, function(e) {
-        if (e.animationName === animationName) {
-          skate(e.target);
-        }
-      });
-    });
-
-    return {
-      timeout: false,
-
-      listen: function(inst) {
-        splitSelector(inst.selector).forEach(function(item, index) {
-          if (animationSelectors.indexOf(item) === -1) {
-            animationSelectors.push(item);
-          }
-        });
-
-        animationBuildRules();
-
-        if (inst.component.remove) {
-          this.timeout = timeout.repeat(function() {
-            for (var a = inst.elements.length - 1; a > -1; a--) {
-              var el = inst.elements[a];
-
-              if (!el.parentNode) {
-                inst.elements.splice(a, 1);
-                inst.component.remove(el);
-              }
-            }
-          });
-        }
-      },
-
-      deafen: function(inst) {
-        splitSelector(inst.selector).forEach(function(item) {
-          var index = animationSelectors.indexOf(item);
-
-          if (index !== -1) {
-            animationSelectors.splice(index, 1);
-          }
-        });
-
-        animationBuildRules();
-
-        if (this.timeout) {
-          timeout.end(this.timeout);
-        }
-      }
-    };
+    return true;
   }
 
 
   // Utilities
   // ---------
 
-  function hideElementsBySelector(selector) {
-    var ensureHideRules = [
-      'position: absolute !important',
-      'clip: rect(0, 0, 0, 0)'
-    ];
-
-    hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
-      hiddenRules.sheet.cssRules.length
-    );
-  }
-
-  function splitSelector(selector) {
-    var selectors = selector.split(',');
-
-    selectors.forEach(function(item, index) {
-      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
-    });
-
-    return selectors;
-  }
-
+  // Adds the specified class to the element.
   function addClass(element, classname) {
     if (element.classList) {
       element.classList.add(classname);
@@ -434,6 +309,7 @@
     }
   }
 
+  // Appends the selector to the original selector or selectors.
   function appendSelector(original, addition) {
     var parts = splitSelector(original);
 
@@ -444,6 +320,7 @@
     return parts.join(',');
   }
 
+  // Merges the second argument into the first.
   function inherit(base, from) {
     for (var a in from) {
       if (typeof base[a] === 'undefined') {
@@ -452,28 +329,24 @@
     }
   }
 
+  // Splits a selector by commas.
+  function splitSelector(selector) {
+    var selectors = selector.split(',');
+
+    selectors.forEach(function(item, index) {
+      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
+    });
+
+    return selectors;
+  }
+
 
   // Global Setup
   // ------------
 
-  // Detect the adapter to use.
-  var skateAdapter = (function() {
-    if (MutationObserver) {
-      return mutationObserverAdapter();
-    }
-
-    if (animationBrowserPrefix) {
-      return animationAdapter();
-    }
-
-    return mutationEventAdapter();
-  }()) || {};
-
-  // Ensure interface is available for skate.
-  skateAdapter.listen = skateAdapter.listen || function(){};
-  skateAdapter.deafen = skateAdapter.deafen || function(){};
-
-  // Rules that hide elements during the lifecycle callbacks.
+  // Rules that hide elements as they're inserted so that elements are hidden
+  // prior to calling the ready callback to prevent FOUC if the component
+  // modifies the element in which it is bound.
   head.appendChild(hiddenRules);
 
 
