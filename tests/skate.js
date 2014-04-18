@@ -190,4 +190,8 @@
       div.textContent.should.equal('');
     });
   });
+
+  describe('Dynamically resolved elements', function() {
+
+  });
 })();
