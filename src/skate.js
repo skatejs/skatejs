@@ -297,6 +297,7 @@
   // Utilities
   // ---------
 
+  // Adds the specified class to the element.
   function addClass(element, classname) {
     if (element.classList) {
       element.classList.add(classname);
@@ -305,6 +306,7 @@
     }
   }
 
+  // Appends the selector to the original selector or selectors.
   function appendSelector(original, addition) {
     var parts = splitSelector(original);
 
@@ -315,6 +317,7 @@
     return parts.join(',');
   }
 
+  // Merges the second argument into the first.
   function inherit(base, from) {
     for (var a in from) {
       if (typeof base[a] === 'undefined') {
@@ -323,6 +326,7 @@
     }
   }
 
+  // Splits a selector by commas.
   function splitSelector(selector) {
     var selectors = selector.split(',');
 
@@ -337,7 +341,9 @@
   // Global Setup
   // ------------
 
-  // Rules that hide elements during the lifecycle callbacks.
+  // Rules that hide elements as they're inserted so that elements are hidden
+  // prior to calling the ready callback to prevent FOUC if the component
+  // modifies the element in which it is bound.
   head.appendChild(hiddenRules);
 
 
