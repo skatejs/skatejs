@@ -105,6 +105,13 @@
   // ----------------
 
   function Skate(matcher, component) {
+    // Can specify a function that defaults to the insert callback.
+    if (typeof component === 'function') {
+      component = {
+        insert: function(){}
+      };
+    }
+
     this.component = component
     this.elements = [];
     this.matcher = matcher;
