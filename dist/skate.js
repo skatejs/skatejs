@@ -135,7 +135,7 @@
       // not a string. This is because a matching function can be provided
       // instead of a selector.
       if (typeof elements === 'undefined') {
-        elements = document.querySelectorAll(typeof this.selector === 'string' ? this.selector : '*');
+        elements = document.querySelectorAll(typeof this.matcher === 'string' ? this.matcher : '*');
       }
 
       if (elements.nodeType === 1) {
