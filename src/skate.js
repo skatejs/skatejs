@@ -95,7 +95,7 @@
   // -------
 
   function skate(selector, component) {
-    if (selector.nodeType) {
+    if (selector.nodeType === 1) {
       return initElement(selector);
     }
 
