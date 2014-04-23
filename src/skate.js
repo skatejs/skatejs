@@ -416,7 +416,7 @@
 
       // We must remember the listener in order to unbind it.
       this.listener = function(e) {
-        if (e.target.msMatchesSelector(that.skate.selector)) {
+        if (e.target.msMatchesSelector && e.target.msMatchesSelector(that.skate.selector)) {
           trigger(e.target);
         }
       };
