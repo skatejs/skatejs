@@ -131,15 +131,10 @@
   Skate.prototype = {
     // Initialises an element, or elements.
     init: function(elements, force) {
-      // Defaults to using the current selector, or elements if the selector is
-      // not a string. This is because a matching function can be provided
-      // instead of a selector.
-      if (typeof elements === 'undefined') {
-        elements = document.querySelectorAll(typeof this.matcher === 'string' ? this.matcher : '*');
-      }
-
       if (elements.nodeType === 1) {
         initElement(this, elements, force);
+      } else if (typeof elements === 'function') {
+        initFunction(this, elements, force);
       } else if (typeof elements === 'string') {
         initSelector(this, elements, force);
       } else if (typeof elements.length === 'number') {
@@ -160,7 +155,7 @@
     listen: function() {
       if (skate.instances.indexOf(this) === -1) {
         skate.instances.push(this);
-        this.init();
+        this.init(this.matcher, typeof this.matcher === 'string');
       }
 
       return this;
@@ -187,6 +182,11 @@
     }
   }
 
+  // Initialises using a function matcher.
+  function initFunction(skate, element, force) {
+    initTraversable(skate, document.querySelectorAll('*'), force);
+  }
+
   // Initialises elements matching the specified selector.
   function initSelector(skate, selector, force) {
     initTraversable(skate, document.querySelectorAll(selector), force);
@@ -194,9 +194,9 @@
 
   // Initialises anything that is enumerable / traversable.
   function initTraversable(skate, elements, force) {
-    [].slice.call(elements).forEach(function(element) {
-      initElement(skate, element, force);
-    });
+    for (var a = 0; a < elements.length; a++) {
+      initElement(skate, elements[a], force);
+    }
   }
 
 
@@ -272,9 +272,9 @@
         skate.init(mutation.addedNodes);
 
         if (mutation.removedNodes) {
-          [].slice.call(mutation.removedNodes).forEach(function(removedNode) {
-            triggerRemove(removedNode);
-          });
+          for (var a = 0; a < mutation.removedNodes.length; a++) {
+            triggerRemove(mutation.removedNodes[a]);
+          }
         }
       });
     });
