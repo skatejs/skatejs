@@ -108,7 +108,7 @@
     // Can specify a function that defaults to the insert callback.
     if (typeof component === 'function') {
       component = {
-        insert: function(){}
+        insert: component
       };
     }
 
