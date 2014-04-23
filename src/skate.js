@@ -113,7 +113,6 @@
     }
 
     this.component = component
-    this.elements = [];
     this.matcher = matcher;
 
     inherit(this.component, skate.defaults);
@@ -133,11 +132,9 @@
     init: function(elements, force) {
       if (elements.nodeType === 1) {
         initElement(this, elements, force);
-      } else if (typeof elements === 'function') {
-        initFunction(this, elements, force);
       } else if (typeof elements === 'string') {
         initSelector(this, elements, force);
-      } else if (typeof elements.length === 'number') {
+      } else if (!elements.nodeType && typeof elements.length === 'number') {
         initTraversable(this, elements, force);
       }
 
@@ -155,7 +152,12 @@
     listen: function() {
       if (skate.instances.indexOf(this) === -1) {
         skate.instances.push(this);
-        this.init(this.matcher, typeof this.matcher === 'string');
+
+        if (typeof this.matcher === 'string') {
+          initSelector(this, this.matcher, true);
+        } else {
+          initTraversable(this, document.querySelectorAll('*'));
+        }
       }
 
       return this;
@@ -182,11 +184,6 @@
     }
   }
 
-  // Initialises using a function matcher.
-  function initFunction(skate, element, force) {
-    initTraversable(skate, document.querySelectorAll('*'), force);
-  }
-
   // Initialises elements matching the specified selector.
   function initSelector(skate, selector, force) {
     initTraversable(skate, document.querySelectorAll(selector), force);
@@ -208,13 +205,15 @@
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var readyFn = skate.component.ready;
 
-    // If it's already been setup, don't do anything.
-    if (skate.elements.indexOf(target) > -1) {
+    if (target.__skates && target.__skates.indexOf(skate) !== -1) {
       return;
     }
 
-    // Adds to the list of registered elements so the remove check knows which elements to check.
-    skate.elements.push(target);
+    if (!target.__skates) {
+      target.__skates = [];
+    }
+
+    target.__skates.push(skate);
 
     // Extend element properties and methods with those provided.
     inherit(target, skate.component.extend);
