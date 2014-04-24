@@ -406,7 +406,7 @@
       },
 
       removeAttributeListener: function(skate, element) {
-        element.removeEventListener('DOMAttrModified');
+
       }
     };
   }
