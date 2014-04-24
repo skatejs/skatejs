@@ -329,7 +329,7 @@
     if (element.classList) {
       element.classList.add(classname);
     } else {
-      element.className +=  ' ' + classname;
+      element.className += ' ' + classname;
     }
   }
 
