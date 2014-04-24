@@ -143,9 +143,15 @@
 
     // Returns whether or not the instance can be applied to the element.
     matches: function(element) {
-      return typeof this.matcher === 'function' ?
-        this.matcher(element) :
-        matchesSelector(element, this.matcher);
+      if (typeof this.matcher === 'function') {
+        return this.matcher(element);
+      }
+
+      if (typeof this.matcher === 'string') {
+        return matchesSelector(element, this.matcher);
+      }
+
+      return false;
     },
 
     // Starts listening for new elements.
@@ -268,11 +274,19 @@
 
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        skate.init(mutation.addedNodes);
+        if (mutation.addedNodes) {
+          for (var a = 0; a < mutation.addedNodes.length; a++) {
+            if (isValidNode(mutation.addedNodes[a])) {
+              skate.init(mutation.addedNodes[a]);
+            }
+          }
+        }
 
         if (mutation.removedNodes) {
-          for (var a = 0; a < mutation.removedNodes.length; a++) {
-            triggerRemove(mutation.removedNodes[a]);
+          for (var b = 0; b < mutation.removedNodes.length; b++) {
+            if (isValidNode(mutation.removedNodes[b])) {
+              triggerRemove(mutation.removedNodes[b]);
+            }
           }
         }
       });
@@ -292,11 +306,15 @@
 
   function mutationEventAdapter() {
     document.addEventListener('DOMNodeInserted', function(e) {
-      skate.init(e.target);
+      if (isValidNode(e.target)) {
+        skate.init(e.target);
+      }
     });
 
     document.addEventListener('DOMNodeRemoved', function(e) {
-      triggerRemove(e.target);
+      if (isValidNode(e.target)) {
+        triggerRemove(e.target);
+      }
     });
 
     return true;
@@ -344,6 +362,11 @@
     });
 
     return selectors;
+  }
+
+  // Returns whether or not the specified node is valid.
+  function isValidNode(node) {
+    return typeof node.tagName === 'string';
   }
 
 
