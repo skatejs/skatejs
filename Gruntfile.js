@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     },
     karma: {
       options: {
-        browsers: ['PhantomJS'],
+        browsers: [grunt.option('browser') || 'PhantomJS'],
         files: [
           'src/skate.js',
           'tests/skate.js'

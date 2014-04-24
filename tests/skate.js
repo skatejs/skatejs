@@ -260,7 +260,7 @@
   });
 
   describe('Attribute listeners', function() {
-    it('Should listen to changes in specified attributes', function() {
+    it('Should listen to changes in specified attributes', function(done) {
       var init = false;
       var update = false;
       var remove = false;
@@ -269,14 +269,15 @@
         attributes: {
           open: {
             init: function(element, value) {
-              init = value;
+              value.should.equal('init');
             },
             update: function(element, value, oldValue) {
-              init = oldValue;
-              update = value;
+              oldValue.should.equal('init');
+              value.should.equal('update');
             },
             remove: function(element, value) {
-              remove = value;
+              value.should.equal('update');
+              done();
             }
           }
         }
@@ -286,22 +287,17 @@
       skate.init(div);
 
       div.setAttribute('open', 'init');
-      init.should.equal('init');
-      update.should.equal(false);
-      remove.should.equal(false);
 
-      div.setAttribute('open', 'update');
-      init.should.equal('init');
-      update.should.equal('update');
-      remove.should.equal(false);
+      setTimeout(function() {
+        div.setAttribute('open', 'update');
+      }, 100);
 
-      div.removeAttribute('open');
-      init.should.equal('init');
-      update.should.equal('update');
-      remove.should.equal('update');
+      setTimeout(function() {
+        div.removeAttribute('open');
+      }, 200);
     });
 
-    it('Should use the update callback as the init callback if no init callback is specified.', function() {
+    it('Should use the update callback as the init callback if no init callback is specified.', function(done) {
       var init = false;
       var update = false;
 
@@ -309,8 +305,9 @@
         attributes: {
           open: {
             update: function(element, value, oldValue) {
-              init = true;
-              update = true;
+              value.should.equal('true');
+              expect(oldValue).to.be.undefined;
+              done();
             }
           }
         }
@@ -318,10 +315,7 @@
 
       var div = addDivToBody();
       skate.init(div);
-
       div.setAttribute('open', 'true');
-      init.should.equal(true);
-      update.should.equal(true);
     });
   });
 })();

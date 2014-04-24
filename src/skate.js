@@ -276,7 +276,6 @@
 
   function mutationObserverAdapter() {
     var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-    var attributeObservers = [];
 
     if (!MutationObserver) {
       return;
@@ -309,31 +308,48 @@
 
     return {
       addAttributeListener: function(skate, element) {
+        // We've gotta keep track of values because MutationObservers don't
+        // seem to report this correctly.
+        var lastValueCache = {};
         var obs = new MutationObserver(function(mutations) {
-          var attr = element.attributes[mutation.attributeName];
-          var lifecycle = skate.component.attributes[attr];
+          mutations.forEach(function(mutation) {
+            var name = mutation.attributeName;
+            var attr = element.attributes[name];
+            var lifecycle = skate.component.attributes[name];
+            var oldValue;
+            var newValue;
 
-          if (!lifecycle) {
-            return;
-          }
+            if (!lifecycle) {
+              return;
+            }
 
-          if (typeof lifecycle === 'function') {
-            lifecycle = {
-              init: lifecycle,
-              update: lifecycle
-            };
-          }
+            // `mutation.oldValue` doesn't exist sometimes.
+            oldValue = lastValueCache[name];
 
-          if (attr && typeof oldValue === 'undefined' && lifecycle.init) {
-            lifecycle.init(element, attr.nodeValue);
-          } else if (attr && lifecycle.update) {
-            lifecycle.update(element, attr.nodeValue, mutations.oldValue);
-          } else if (lifecycle.remove) {
-            lifecycle.remove(element, mutations.oldValue);
-          }
+            if (attr) {
+              newValue = lastValueCache[name] = attr.nodeValue;
+            }
+
+            if (attr && oldValue === undefined && (lifecycle.init || lifecycle.update)) {
+              (lifecycle.init || lifecycle.update)(element, newValue);
+              return;
+            }
+
+            if (attr && oldValue !== undefined && lifecycle.update) {
+              lifecycle.update(element, newValue, oldValue);
+              return;
+            }
+
+            if (!attr && lifecycle.remove) {
+              lifecycle.remove(element, oldValue);
+              delete lastValueCache[name];
+            }
+          });
         });
 
-        attributeObservers.push(obs);
+        obs.observe(element, {
+          attributes: true
+        });
       },
 
       removeAttributeListener: function(skate, element) {
