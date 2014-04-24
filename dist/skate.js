@@ -43,6 +43,7 @@
 
   // Default configuration.
   skate.defaults = {
+    attributes: false,
     extend: {},
     listen: true
   };
@@ -236,6 +237,10 @@
 
     // Async callback that continues execution.
     function done() {
+      if (skate.component.attributes) {
+        skateAdapter.addAttributeListener(skate, target);
+      }
+
       triggerInsert(skate, target);
     }
   }
@@ -255,6 +260,10 @@
   // Triggers remove on the target.
   function triggerRemove(target) {
     skate.find(target).forEach(function(inst) {
+      if (inst.component.attributes) {
+        skateAdapter.removeAttributeListener(inst, target);
+      }
+
       if (inst.component.remove) {
         inst.component.remove(target);
       }
@@ -267,6 +276,7 @@
 
   function mutationObserverAdapter() {
     var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+    var attributeObservers = [];
 
     if (!MutationObserver) {
       return;
@@ -297,7 +307,39 @@
       subtree: true
     });
 
-    return true;
+    return {
+      addAttributeListener: function(skate, element) {
+        var obs = new MutationObserver(function(mutations) {
+          var attr = element.attributes[mutation.attributeName];
+          var lifecycle = skate.component.attributes[attr];
+
+          if (!lifecycle) {
+            return;
+          }
+
+          if (typeof lifecycle === 'function') {
+            lifecycle = {
+              init: lifecycle,
+              update: lifecycle
+            };
+          }
+
+          if (attr && typeof oldValue === 'undefined' && lifecycle.init) {
+            lifecycle.init(element, attr.nodeValue);
+          } else if (attr && lifecycle.update) {
+            lifecycle.update(element, attr.nodeValue, mutations.oldValue);
+          } else if (lifecycle.remove) {
+            lifecycle.remove(element, mutations.oldValue);
+          }
+        });
+
+        attributeObservers.push(obs);
+      },
+
+      removeAttributeListener: function(skate, element) {
+
+      }
+    };
   }
 
 
@@ -305,6 +347,8 @@
   // -----------------------
 
   function mutationEventAdapter() {
+    var attributeListeners = [];
+
     document.addEventListener('DOMNodeInserted', function(e) {
       if (isValidNode(e.target)) {
         skate.init(e.target);
@@ -317,7 +361,38 @@
       }
     });
 
-    return true;
+    var attrCallbacks = {
+      // modification (update)
+      1: function(lifecycle, element, e) {
+        lifecycle.update(element, e.newValue, e.prevValue);
+      },
+
+      // addition (init / update)
+      2: function(lifecycle, element, e) {
+        (lifecycle.init || lifecycle.update)(element, e.newValue);
+      },
+
+      // removal (remove)
+      3: function(lifecycle, element, e) {
+        lifecycle.remove(element, e.prevValue);
+      }
+    };
+
+    return {
+      addAttributeListener: function(skate, element) {
+        element.addEventListener('DOMAttrModified', function(e) {
+          var lifecycle = skate.component.attributes[e.attrName];
+
+          if (lifecycle) {
+            attrCallbacks[e.attrChange](lifecycle, element, e);
+          }
+        });
+      },
+
+      removeAttributeListener: function(skate, element) {
+        element.removeEventListener('DOMAttrModified');
+      }
+    };
   }
 
 
@@ -329,7 +404,7 @@
     if (element.classList) {
       element.classList.add(classname);
     } else {
-      element.className +=  ' ' + classname;
+      element.className += ' ' + classname;
     }
   }
 

@@ -1,6 +1,56 @@
 (function() {
   'use strict';
 
+
+  // Polyfill DOMAttrModified for PhantomJS
+  // --------------------------------------
+
+  HTMLElement.prototype.__setAttribute = HTMLElement.prototype.setAttribute
+  HTMLElement.prototype.setAttribute = function(attrName, newVal)
+  {
+    var prevVal = this.getAttribute(attrName);
+    this.__setAttribute(attrName, newVal);
+    newVal = this.getAttribute(attrName);
+    if (newVal != prevVal)
+    {
+      var evt = document.createEvent("MutationEvent");
+      evt.initMutationEvent(
+        "DOMAttrModified",
+        true,
+        false,
+        this,
+        prevVal || "",
+        newVal || "",
+        attrName,
+        (prevVal == null) ? evt.ADDITION : evt.MODIFICATION
+      );
+      this.dispatchEvent(evt);
+    }
+  };
+
+  HTMLElement.prototype.__removeAttribute = HTMLElement.prototype.removeAttribute;
+  HTMLElement.prototype.removeAttribute = function(attrName)
+  {
+    var prevVal = this.getAttribute(attrName);
+    this.__removeAttribute(attrName);
+    var evt = document.createEvent("MutationEvent");
+    evt.initMutationEvent(
+      "DOMAttrModified",
+      true,
+      false,
+      this,
+      prevVal,
+      "",
+      attrName,
+      evt.REMOVAL
+    );
+    this.dispatchEvent(evt);
+  };
+
+
+  // Setup
+  // -----
+
   function addDivToBody(id) {
     var div = document.createElement('div');
     div.id = id || 'test';
@@ -16,12 +66,14 @@
     }
   }
 
-
   afterEach(function() {
     skate.destroy();
     document.querySelector('body').innerHTML = '';
   });
 
+
+  // Specs
+  // -----
 
   describe('Lifecycle Callbacks', function() {
     it('Should trigger ready before the element is shown.', function(done) {
@@ -204,6 +256,72 @@
       var div = addDivToBody();
       skate.init(div);
       div.textContent.should.equal('yey');
+    });
+  });
+
+  describe('Attribute listeners', function() {
+    it('Should listen to changes in specified attributes', function() {
+      var init = false;
+      var update = false;
+      var remove = false;
+
+      skate('div', {
+        attributes: {
+          open: {
+            init: function(element, value) {
+              init = value;
+            },
+            update: function(element, value, oldValue) {
+              init = oldValue;
+              update = value;
+            },
+            remove: function(element, value) {
+              remove = value;
+            }
+          }
+        }
+      });
+
+      var div = addDivToBody();
+      skate.init(div);
+
+      div.setAttribute('open', 'init');
+      init.should.equal('init');
+      update.should.equal(false);
+      remove.should.equal(false);
+
+      div.setAttribute('open', 'update');
+      init.should.equal('init');
+      update.should.equal('update');
+      remove.should.equal(false);
+
+      div.removeAttribute('open');
+      init.should.equal('init');
+      update.should.equal('update');
+      remove.should.equal('update');
+    });
+
+    it('Should use the update callback as the init callback if no init callback is specified.', function() {
+      var init = false;
+      var update = false;
+
+      skate('div', {
+        attributes: {
+          open: {
+            update: function(element, value, oldValue) {
+              init = true;
+              update = true;
+            }
+          }
+        }
+      });
+
+      var div = addDivToBody();
+      skate.init(div);
+
+      div.setAttribute('open', 'true');
+      init.should.equal(true);
+      update.should.equal(true);
     });
   });
 })();
