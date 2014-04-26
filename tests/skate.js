@@ -304,15 +304,16 @@
   });
 
   describe('Extending', function() {
-    it('Instead of using a custom tag, an attribute can be used to signify the behaviour.', function() {
+    it('Instead of using a custom tag, an attribute can be used to signify behaviour.', function() {
       var init = false;
 
       skate('datepicker', function() {
         init = true;
       });
 
-      var div = addDivToBody();
+      var div = document.createElement('div');
       div.setAttribute('is', 'datepicker');
+      document.body.appendChild(div);
       skate.init(div);
 
       init.should.equal(true);

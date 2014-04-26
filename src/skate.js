@@ -53,13 +53,12 @@
 
   // Initialises the elements against all skate instances.
   skate.init = function(elements) {
-    eachNode(elements, function(node) {
-      var nodeName = node.nodeName.toLowerCase();
-      var listener = skate.listeners[nodeName];
+    var that = this;
 
-      if (listener) {
-        listener.init(node);
-      }
+    eachElement(elements, function(element) {
+      that.listener(element, function(listener) {
+        listener.init(element);
+      });
     });
 
     return elements;
@@ -95,7 +94,7 @@
 
   // Finds listeners matching the specified node.
   skate.listener = function(element, callback) {
-    var listener = skate.listeners[nodeName(element)];
+    var listener = skate.listeners[componentName(element)];
 
     if (listener) {
       callback(listener);
@@ -136,8 +135,13 @@
     init: function(elements, force) {
       var that = this;
 
-      eachNode(elements, function(element) {
+      eachElement(elements, function(element) {
+        if (element.__skated) {
+          return;
+        }
+
         if (force || that.matches(element)) {
+          element.__skated = true;
           triggerReady(that, element);
         }
       });
@@ -147,7 +151,7 @@
 
     // Returns whether or not the instance can be applied to the element.
     matches: function(element) {
-      return nodeName(element) === this.id;
+      return componentName(element) === this.id;
     },
 
     // Starts listening for new elements.
@@ -204,7 +208,7 @@
     // Async callback that continues execution.
     function done() {
       if (skate.component.attrs) {
-        skateAdapter.addAttributeListener(skate, target);
+        skateAdapter.addAttributeListener(target, skate.component.attrs);
       }
 
       triggerInsert(skate, target);
@@ -265,7 +269,7 @@
     });
 
     return {
-      addAttributeListener: function(skate, element) {
+      addAttributeListener: function(element, attributes) {
         // We've gotta keep track of values because MutationObservers don't
         // seem to report this correctly.
         var lastValueCache = {};
@@ -273,7 +277,7 @@
           mutations.forEach(function(mutation) {
             var name = mutation.attributeName;
             var attr = element.attributes[name];
-            var lifecycle = skate.component.attrs[name];
+            var lifecycle = attributes[name];
             var oldValue;
             var newValue;
 
@@ -284,20 +288,24 @@
             // `mutation.oldValue` doesn't exist sometimes.
             oldValue = lastValueCache[name];
 
+            // Only set a new value if the attribute exists.
             if (attr) {
               newValue = lastValueCache[name] = attr.nodeValue;
             }
 
+            // `init()` or `update()` callback.
             if (attr && oldValue === undefined && (lifecycle.init || lifecycle.update)) {
               (lifecycle.init || lifecycle.update)(element, newValue);
               return;
             }
 
+            // `update()` callback.
             if (attr && oldValue !== undefined && lifecycle.update) {
               lifecycle.update(element, newValue, oldValue);
               return;
             }
 
+            // `remove()` callback.
             if (!attr && lifecycle.remove) {
               lifecycle.remove(element, oldValue);
               delete lastValueCache[name];
@@ -310,7 +318,7 @@
         });
       },
 
-      removeAttributeListener: function(skate, element) {
+      removeAttributeListener: function(element) {
 
       }
     };
@@ -349,9 +357,9 @@
     };
 
     return {
-      addAttributeListener: function(skate, element) {
+      addAttributeListener: function(element, attributes) {
         element.addEventListener('DOMAttrModified', function(e) {
-          var lifecycle = skate.component.attrs[e.attrName];
+          var lifecycle = attributes[e.attrName];
 
           if (lifecycle) {
             attrCallbacks[e.attrChange](lifecycle, element, e);
@@ -359,7 +367,7 @@
         });
       },
 
-      removeAttributeListener: function(skate, element) {
+      removeAttributeListener: function(element) {
 
       }
     };
@@ -409,36 +417,26 @@
     return selectors;
   }
 
-  function isValidNode(node) {
-    return node && node.nodeType && node.nodeType === 1;
-  }
+  // Calls the specified callback for each element.
+  function eachElement(elements, callback) {
+    if (elements.nodeType) {
+      elements = [elements];
+    }
 
-  function eachNode(items, fn) {
-    items = makeEnumerable(items);
-
-    for (var a = 0; a < items.length; a++) {
-      var item = items[a];
-
-      if (isValidNode(item)) {
-        fn(item, a);
+    for (var a = 0; a < elements.length; a++) {
+      if (elements[a].nodeType === 1) {
+        callback(elements[a], a);
       }
     }
   }
 
-  function nodeName(item) {
-    return item.nodeName && item.nodeName.toLowerCase();
-  }
-
-  function makeEnumerable(item) {
-    if (!item) {
-      return [];
+  // Returns the name of the component for the specified element.
+  function componentName(element) {
+    if (!element || element.nodeType !== 1) {
+      return;
     }
 
-    if (typeof item === 'string' || typeof item.length !== 'number') {
-      return [item];
-    }
-
-    return item;
+    return element.getAttribute('is') || element.nodeName.toLowerCase();
   }
 
 
