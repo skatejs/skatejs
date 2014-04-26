@@ -37,8 +37,8 @@
   // Factory
   // -------
 
-  function skate(selector, component) {
-    return new Skate(selector, component);
+  function skate(id, component) {
+    return new Skate(id, component);
   }
 
   // Default configuration.
@@ -49,22 +49,27 @@
   };
 
   // All active instances.
-  skate.instances = [];
+  skate.listeners = [];
 
   // Initialises the elements against all skate instances.
   skate.init = function(elements) {
-    skate.instances.forEach(function(instance) {
-      instance.init(elements);
+    eachNode(elements, function(node) {
+      var nodeName = node.nodeName.toLowerCase();
+      var listener = skate.listeners[nodeName];
+
+      if (listener) {
+        listener.init(node);
+      }
     });
 
-    return skate;
+    return elements;
   };
 
   // Destroys all active instances.
   skate.destroy = function() {
-    for (var a = skate.instances.length - 1; a >= 0; a--) {
-      skate.instances[a].deafen();
-    }
+    Object.keys(skate.listeners).forEach(function(key) {
+      skate.listeners[key].deafen();
+    });
 
     return skate;
   };
@@ -88,24 +93,22 @@
     return skate;
   };
 
-  // Finds instances matching the specified node.
-  skate.find = function(element) {
-    var instances = [];
+  // Finds listeners matching the specified node.
+  skate.listener = function(element, callback) {
+    var listener = skate.listeners[nodeName(element)];
 
-    skate.instances.forEach(function(instance) {
-      if (instance.matches(element)) {
-        instances.push(instance);
-      }
-    });
+    if (listener) {
+      callback(listener);
+    }
 
-    return instances;
+    return skate;
   };
 
 
   // Common Interface
   // ----------------
 
-  function Skate(matcher, component) {
+  function Skate(id, component) {
     // Can specify a function that defaults to the insert callback.
     if (typeof component === 'function') {
       component = {
@@ -114,13 +117,13 @@
     }
 
     this.component = component
-    this.matcher = matcher;
+    this.id = id;
 
     inherit(this.component, skate.defaults);
 
     // Emulate the web components ready callback.
-    if (this.component.ready && typeof this.matcher === 'string') {
-      skate.hide(this.matcher);
+    if (this.component.ready) {
+      skate.hide(this.id);
     }
 
     if (this.component.listen) {
@@ -131,77 +134,40 @@
   Skate.prototype = {
     // Initialises an element, or elements.
     init: function(elements, force) {
-      if (elements.nodeType === 1) {
-        initElement(this, elements, force);
-      } else if (typeof elements === 'string') {
-        initSelector(this, elements, force);
-      } else if (!elements.nodeType && typeof elements.length === 'number') {
-        initTraversable(this, elements, force);
-      }
+      var that = this;
+
+      eachNode(elements, function(element) {
+        if (force || that.matches(element)) {
+          triggerReady(that, element);
+        }
+      });
 
       return this;
     },
 
     // Returns whether or not the instance can be applied to the element.
     matches: function(element) {
-      if (typeof this.matcher === 'function') {
-        return this.matcher(element);
-      }
-
-      if (typeof this.matcher === 'string') {
-        return matchesSelector(element, this.matcher);
-      }
-
-      return false;
+      return nodeName(element) === this.id;
     },
 
     // Starts listening for new elements.
     listen: function() {
-      if (skate.instances.indexOf(this) === -1) {
-        skate.instances.push(this);
-
-        if (typeof this.matcher === 'string') {
-          initSelector(this, this.matcher, true);
-        } else {
-          initTraversable(this, document.querySelectorAll('*'));
-        }
+      if (skate.listeners[this.id]) {
+        throw new Error('Listener for "' + this.id + '" already registered.');
       }
+
+      skate.listeners[this.id] = this;
+      this.init(document.querySelectorAll(this.id), true);
 
       return this;
     },
 
     // Stops listening for new elements.
     deafen: function() {
-      if (skate.instances.indexOf(this) !== -1) {
-        skate.instances.splice(skate.instances.indexOf(this), 1);
-      }
-
+      delete skate.listeners[this.id];
       return this;
     }
   };
-
-
-  // Initialisers
-  // ------------
-
-  // Initialises an element directly by searching for any matching components.
-  function initElement(skate, element, force) {
-    if (force || skate.matches(element)) {
-      triggerReady(skate, element);
-    }
-  }
-
-  // Initialises elements matching the specified selector.
-  function initSelector(skate, selector, force) {
-    initTraversable(skate, document.querySelectorAll(selector), force);
-  }
-
-  // Initialises anything that is enumerable / traversable.
-  function initTraversable(skate, elements, force) {
-    for (var a = 0; a < elements.length; a++) {
-      initElement(skate, elements[a], force);
-    }
-  }
 
 
   // Lifecycle Triggers
@@ -237,7 +203,7 @@
 
     // Async callback that continues execution.
     function done() {
-      if (skate.component.attributes) {
+      if (skate.component.attrs) {
         skateAdapter.addAttributeListener(skate, target);
       }
 
@@ -259,13 +225,13 @@
 
   // Triggers remove on the target.
   function triggerRemove(target) {
-    skate.find(target).forEach(function(inst) {
-      if (inst.component.attributes) {
-        skateAdapter.removeAttributeListener(inst, target);
+    skate.listener(target, function(listener) {
+      if (listener.component.attrs) {
+        skateAdapter.removeAttributeListener(listener, target);
       }
 
-      if (inst.component.remove) {
-        inst.component.remove(target);
+      if (listener.component.remove) {
+        listener.component.remove(target);
       }
     });
   }
@@ -284,19 +250,11 @@
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.addedNodes) {
-          for (var a = 0; a < mutation.addedNodes.length; a++) {
-            if (isValidNode(mutation.addedNodes[a])) {
-              skate.init(mutation.addedNodes[a]);
-            }
-          }
+          skate.init(mutation.addedNodes);
         }
 
         if (mutation.removedNodes) {
-          for (var b = 0; b < mutation.removedNodes.length; b++) {
-            if (isValidNode(mutation.removedNodes[b])) {
-              triggerRemove(mutation.removedNodes[b]);
-            }
-          }
+          triggerRemove(mutation.removedNodes);
         }
       });
     });
@@ -315,7 +273,7 @@
           mutations.forEach(function(mutation) {
             var name = mutation.attributeName;
             var attr = element.attributes[name];
-            var lifecycle = skate.component.attributes[name];
+            var lifecycle = skate.component.attrs[name];
             var oldValue;
             var newValue;
 
@@ -366,15 +324,11 @@
     var attributeListeners = [];
 
     document.addEventListener('DOMNodeInserted', function(e) {
-      if (isValidNode(e.target)) {
-        skate.init(e.target);
-      }
+      skate.init(e.target);
     });
 
     document.addEventListener('DOMNodeRemoved', function(e) {
-      if (isValidNode(e.target)) {
-        triggerRemove(e.target);
-      }
+      triggerRemove(e.target);
     });
 
     var attrCallbacks = {
@@ -397,7 +351,7 @@
     return {
       addAttributeListener: function(skate, element) {
         element.addEventListener('DOMAttrModified', function(e) {
-          var lifecycle = skate.component.attributes[e.attrName];
+          var lifecycle = skate.component.attrs[e.attrName];
 
           if (lifecycle) {
             attrCallbacks[e.attrChange](lifecycle, element, e);
@@ -406,7 +360,7 @@
       },
 
       removeAttributeListener: function(skate, element) {
-        element.removeEventListener('DOMAttrModified');
+
       }
     };
   }
@@ -455,9 +409,36 @@
     return selectors;
   }
 
-  // Returns whether or not the specified node is valid.
   function isValidNode(node) {
-    return typeof node.tagName === 'string';
+    return node && node.nodeType && node.nodeType === 1;
+  }
+
+  function eachNode(items, fn) {
+    items = makeEnumerable(items);
+
+    for (var a = 0; a < items.length; a++) {
+      var item = items[a];
+
+      if (isValidNode(item)) {
+        fn(item, a);
+      }
+    }
+  }
+
+  function nodeName(item) {
+    return item.nodeName && item.nodeName.toLowerCase();
+  }
+
+  function makeEnumerable(item) {
+    if (!item) {
+      return [];
+    }
+
+    if (typeof item === 'string' || typeof item.length !== 'number') {
+      return [item];
+    }
+
+    return item;
   }
 
 

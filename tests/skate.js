@@ -225,37 +225,21 @@
     });
   });
 
-  describe('Destroying all instances', function() {
-    it('Should be able to destroy all instances', function() {
-      skate.instances.length.should.equal(0);
+  describe('Destroying all listeners', function() {
+    it('Should be able to destroy all listeners', function() {
+      skate.listeners.length.should.equal(0);
 
-      skate('div', {
+      var listener = skate('div', {
         insert: function(){}
       });
 
-      skate.instances.length.should.equal(1);
+      expect(skate.listeners[listener.id]).to.equal(listener);
       skate.destroy();
-      skate.instances.length.should.equal(0);
+      expect(skate.listeners[listener.id]).to.be.undefined;
 
       var div = addDivToBody();
       skate.init(div);
       div.textContent.should.equal('');
-    });
-  });
-
-  describe('Dynamically resolved elements', function() {
-    it('Should use a function to resolve elements', function() {
-      skate(function(element) {
-        return element.tagName === 'DIV';
-      }, {
-        insert: function(element) {
-          element.textContent = 'yey';
-        }
-      });
-
-      var div = addDivToBody();
-      skate.init(div);
-      div.textContent.should.equal('yey');
     });
   });
 
@@ -266,7 +250,7 @@
       var remove = false;
 
       skate('div', {
-        attributes: {
+        attrs: {
           open: {
             init: function(element, value) {
               value.should.equal('init');
@@ -302,7 +286,7 @@
       var update = false;
 
       skate('div', {
-        attributes: {
+        attrs: {
           open: {
             update: function(element, value, oldValue) {
               value.should.equal('true');
@@ -316,6 +300,22 @@
       var div = addDivToBody();
       skate.init(div);
       div.setAttribute('open', 'true');
+    });
+  });
+
+  describe('Extending', function() {
+    it('Instead of using a custom tag, an attribute can be used to signify the behaviour.', function() {
+      var init = false;
+
+      skate('datepicker', function() {
+        init = true;
+      });
+
+      var div = addDivToBody();
+      div.setAttribute('is', 'datepicker');
+      skate.init(div);
+
+      init.should.equal(true);
     });
   });
 })();
