@@ -38,8 +38,28 @@
   // -------
 
   function skate(id, component) {
-    return new Skate(id, component);
+    // The listener is what controls the lifecycle of the element.
+    var listener = new Skate(id, component);
+
+    // For easy instantiation.
+    var constructor = function() {
+      var element = document.createElement(id);
+      listener.init(element, true);
+      return element;
+    };
+
+    // If you need access to the listener.
+    constructor.listener = listener;
+
+    // The skate factory returns the element constructor.
+    return constructor;
   }
+
+  // The property to use when checking if the element has already been initialised.
+  skate.initProperty = '__skate';
+
+  // Attribute alternative to custom tag name.
+  skate.componentAttribute = 'is';
 
   // Default configuration.
   skate.defaults = {
@@ -108,6 +128,10 @@
   // ----------------
 
   function Skate(id, component) {
+    if (!component) {
+      component = {};
+    }
+
     // Can specify a function that defaults to the insert callback.
     if (typeof component === 'function') {
       component = {
@@ -136,12 +160,12 @@
       var that = this;
 
       eachElement(elements, function(element) {
-        if (element.__skated) {
+        if (element[skate.initProperty]) {
           return;
         }
 
         if (force || that.matches(element)) {
-          element.__skated = true;
+          element[skate.initProperty] = true;
           triggerReady(that, element);
         }
       });
@@ -436,7 +460,7 @@
       return;
     }
 
-    return element.getAttribute('is') || element.nodeName.toLowerCase();
+    return element.getAttribute(skate.componentAttribute) || element.nodeName.toLowerCase();
   }
 
 

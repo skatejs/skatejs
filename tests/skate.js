@@ -229,15 +229,15 @@
     it('Should be able to destroy all listeners', function() {
       skate.listeners.length.should.equal(0);
 
-      var listener = skate('div', {
+      var Div = skate('div', {
         insert: function(){}
       });
 
-      expect(skate.listeners[listener.id]).to.equal(listener);
+      expect(skate.listeners[Div.listener.id]).to.equal(Div.listener);
       skate.destroy();
-      expect(skate.listeners[listener.id]).to.be.undefined;
+      expect(skate.listeners[Div.listener.id]).to.be.undefined;
 
-      var div = addDivToBody();
+      var div = new Div();
       skate.init(div);
       div.textContent.should.equal('');
     });
@@ -317,6 +317,37 @@
       skate.init(div);
 
       init.should.equal(true);
+    });
+  });
+
+  describe('Instantiation', function() {
+    it('Should return a constructor', function() {
+      skate('div').should.be.a.function;
+    });
+
+    it('Should return a new element when constructed.', function() {
+      var Div = skate('div');
+      var div = new Div();
+      div.nodeName.should.equal('DIV');
+    });
+
+    it('Should return a new element when called without "new".', function() {
+      var div = skate('div');
+      div().nodeName.should.equal('DIV');
+    });
+
+    it('Should synchronously initialise the new element.', function() {
+      var called = false;
+      var div = skate('div', {
+        extend: {
+          someMethod: function() {
+            called = true;
+          }
+        }
+      });
+
+      div().someMethod();
+      called.should.equal(true);
     });
   });
 })();
