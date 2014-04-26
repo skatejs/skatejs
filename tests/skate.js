@@ -378,5 +378,34 @@
       div.parentNode.removeChild(div);
       remove.should.equal(true, 'Should call remove');
     });
+
+    it('Should initialise multiple instances of the same type of element (possible bug).', function() {
+      var numReady = 0;
+      var numInsert = 0;
+      var numRemove = 0;
+      var div = skate('div', {
+        ready: function() {
+          ++numReady;
+        },
+        insert: function() {
+          ++numInsert;
+        },
+        remove: function() {
+          ++numRemove;
+        }
+      });
+
+      var div1 = div();
+      var div2 = div();
+
+      document.body.appendChild(div1);
+      document.body.appendChild(div2);
+      div1.parentNode.removeChild(div1);
+      div2.parentNode.removeChild(div2);
+
+      numReady.should.equal(2);
+      numInsert.should.equal(2);
+      numRemove.should.equal(2);
+    });
   });
 })();
