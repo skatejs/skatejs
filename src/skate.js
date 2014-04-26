@@ -56,7 +56,10 @@
   }
 
   // The property to use when checking if the element has already been initialised.
-  skate.initProperty = '__skate';
+  skate.isReadyTriggeredProperty = '__skate_ready_triggered';
+
+  // The property to use when checking if the element's insert callback has been executed.
+  skate.isInsertTriggeredProperty = '__skate_insert_triggered';
 
   // Attribute alternative to custom tag name.
   skate.componentAttribute = 'is';
@@ -160,13 +163,8 @@
       var that = this;
 
       eachElement(elements, function(element) {
-        if (element[skate.initProperty]) {
-          return;
-        }
-
         if (force || that.matches(element)) {
-          element[skate.initProperty] = true;
-          triggerReady(that, element);
+          triggerLifecycle(that.component, element);
         }
       });
 
@@ -201,23 +199,34 @@
   // Lifecycle Triggers
   // ------------------
 
+  // Triggers the entire lifecycle.
+  function triggerLifecycle(component, target) {
+    triggerReady(component, target, function() {
+      triggerInsert(component, target);
+    });
+  }
+
   // Triggers the ready callback and continues execution to the insert callback.
-  function triggerReady(skate, target) {
+  function triggerReady(component, target, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
-    var readyFn = skate.component.ready;
+    var readyFn = component.ready;
+    done = done || function(){};
 
-    if (target.__skates && target.__skates.indexOf(skate) !== -1) {
-      return;
+    // If it's already been triggered, skip.
+    if (target[skate.isReadyTriggeredProperty]) {
+      return done();
     }
 
-    if (!target.__skates) {
-      target.__skates = [];
-    }
-
-    target.__skates.push(skate);
+    // Set as ready.
+    target[skate.isReadyTriggeredProperty] = true;
 
     // Extend element properties and methods with those provided.
-    inherit(target, skate.component.extend);
+    inherit(target, component.extend);
+
+    // Bind attribute listeners if supplied.
+    if (component.attrs) {
+      skateAdapter.addAttributeListener(target, component.attrs);
+    }
 
     // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
     if (readyFn && definedMultipleArgs.test(readyFn)) {
@@ -228,20 +237,24 @@
     } else {
       done();
     }
-
-    // Async callback that continues execution.
-    function done() {
-      if (skate.component.attrs) {
-        skateAdapter.addAttributeListener(target, skate.component.attrs);
-      }
-
-      triggerInsert(skate, target);
-    }
   }
 
   // Triggers insert on the target.
-  function triggerInsert(skate, target) {
-    var insertFn = skate.component.insert;
+  function triggerInsert(component, target) {
+    var insertFn = component.insert;
+
+    // If it's already been triggered, skip.
+    if (target[skate.isInsertTriggeredProperty]) {
+      return;
+    }
+
+    // If it's not in the document we shouldn't trigger it.
+    if (!document.documentElement.contains(target)) {
+      return;
+    }
+
+    // Set as inserted.
+    target[skate.isInsertTriggeredProperty] = true;
 
     // Ensures that the element is no longer hidden.
     addClass(target, classname);

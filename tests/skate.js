@@ -349,5 +349,34 @@
       div().someMethod();
       called.should.equal(true);
     });
+
+    it('Should call lifecycle callbacks at appropriate times.', function() {
+      var ready = false;
+      var insert = false;
+      var remove = false;
+      var Div = skate('div', {
+        ready: function() {
+          ready = true;
+        },
+        insert: function() {
+          insert = true;
+        },
+        remove: function() {
+          remove = true;
+        }
+      });
+
+      var div = new Div();
+      ready.should.equal(true, 'Should call ready');
+      insert.should.equal(false, 'Should not call insert');
+      remove.should.equal(false, 'Should not call remove');
+
+      document.body.appendChild(div);
+      insert.should.equal(true, 'Should call insert');
+      remove.should.equal(false, 'Should not call remove');
+
+      div.parentNode.removeChild(div);
+      remove.should.equal(true, 'Should call remove');
+    });
   });
 })();
