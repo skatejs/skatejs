@@ -3,23 +3,25 @@
   'use strict';
 
 
-  // Global Variables
-  // ----------------
+  // Scope Variables
+  // ---------------
 
+
+  // Reference to the head of the document where `hiddenRules` are inserted.
   var head = document.getElementsByTagName('head')[0];
+
+  // The rules used to hide elements during the ready lifecycle callback.
   var hiddenRules = document.createElement('style');
+
+  // The classname used to emulate element visibility between ready / insert.
   var classname = '_skate';
-  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
-  var domPrefixes = [
-      'moz',
-      'ms',
-      'o',
-      'webkit',
-    ];
+
+  // Element.prototype.matches polyfill as a function.
+  // Element.prototype.matches polyfill as a function.
   var matchesSelector = (function() {
       var matcher = Element.prototype.matches;
 
-      domPrefixes.some(function(prefix) {
+      ['moz', 'ms', 'o', 'webkit'].some(function(prefix) {
         var method = prefix + 'MatchesSelector';
 
         if (Element.prototype[method]) {
@@ -32,6 +34,12 @@
         return element && element.nodeType === 1 && element[matcher](selector);
       };
     }());
+
+  // All active instances.
+  var skates = [];
+
+  // The adapter we are using according to the capabilities of the environment.
+  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
 
 
   // Factory
@@ -61,25 +69,27 @@
   // The property to use when checking if the element's insert callback has been executed.
   skate.isInsertTriggeredProperty = '__skate_insert_triggered';
 
-  // Attribute alternative to custom tag name.
-  skate.componentAttribute = 'is';
-
   // Default configuration.
   skate.defaults = {
+    // Set to `{...}` of `attrName: `{ init: ..., update: ..., remove: ... }` to listen to specific attributes.
     attributes: false,
-    extend: {},
-    listen: true
-  };
 
-  // All active instances.
-  skate.listeners = [];
+    // Properties and methods to add to each element.
+    extend: {},
+
+    // Whether or not to start listening right away.
+    listen: true,
+
+    // Node.nodeType
+    restrict: function (element) {
+      return true;
+    }
+  };
 
   // Initialises the elements against all skate instances.
   skate.init = function(elements) {
-    var that = this;
-
     eachElement(elements, function(element) {
-      that.listener(element, function(listener) {
+      skate.listeners(element).forEach(function(listener) {
         listener.init(element);
       });
     });
@@ -89,8 +99,8 @@
 
   // Destroys all active instances.
   skate.destroy = function() {
-    Object.keys(skate.listeners).forEach(function(key) {
-      skate.listeners[key].deafen();
+    Object.keys(skates).forEach(function(key) {
+      skates[key].deafen();
     });
 
     return skate;
@@ -116,14 +126,25 @@
   };
 
   // Finds listeners matching the specified node.
-  skate.listener = function(element, callback) {
-    var listener = skate.listeners[componentName(element)];
+  skate.listeners = function(element) {
+    var listeners = [];
+    var tag = elementComponentIdFromTag(element);
+    var attrs = elementComponentIdsFromAttrs(element);
+    var classes = elementComponentIdsFromClasses(element);
 
-    if (listener) {
-      callback(listener);
+    // Tag overrides attributes.
+    if (tag && skates[tag]) {
+      listeners.push(skates[tag]);
     }
 
-    return skate;
+    // Attributes override classes.
+    attrs.concat(classes).forEach(function(attr) {
+      if (skates[attr]) {
+        listeners.push(skates[attr]);
+      }
+    });
+
+    return listeners;
   };
 
 
@@ -139,6 +160,14 @@
     if (typeof component === 'function') {
       component = {
         insert: component
+      };
+    }
+
+    // Ensure that the `restrict` option is always a function.
+    if (typeof component.restrict === 'string') {
+      var restrictSelector = component.restrict;
+      component.restrict = function(element) {
+        return matchesSelector(element, restrictSelector);
       };
     }
 
@@ -158,39 +187,51 @@
   }
 
   Skate.prototype = {
-    // Initialises an element, or elements.
-    init: function(elements, force) {
+    // Initialises one or more elements.
+    init: function(elements) {
       var that = this;
 
       eachElement(elements, function(element) {
-        if (force || that.matches(element)) {
-          triggerLifecycle(that.component, element);
+        if (!that.component.restrict(element)) {
+          throw new Error(
+            'Restrictions don\'t allow "'
+            + that.id
+            + '" to be applied to:"'
+            + "\n"
+            + document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML
+            + '".'
+          );
         }
+
+        triggerLifecycle(that.component, element);
       });
 
       return this;
     },
 
-    // Returns whether or not the instance can be applied to the element.
-    matches: function(element) {
-      return componentName(element) === this.id;
-    },
-
     // Starts listening for new elements.
     listen: function() {
-      if (skate.listeners[this.id]) {
+      if (skates[this.id]) {
         throw new Error('Listener for "' + this.id + '" already registered.');
       }
 
-      skate.listeners[this.id] = this;
-      this.init(document.querySelectorAll(this.id), true);
+      skates[this.id] = this;
+      this.init(
+        document.querySelectorAll(
+          [
+            this.id,
+            '.' + this.id,
+            '[' + this.id + ']'
+          ].join(', ')
+        )
+      );
 
       return this;
     },
 
     // Stops listening for new elements.
     deafen: function() {
-      delete skate.listeners[this.id];
+      delete skates[this.id];
       return this;
     }
   };
@@ -212,13 +253,18 @@
     var readyFn = component.ready;
     done = done || function(){};
 
+    // Make sure the tracker is registered.
+    if (!target[skate.isReadyTriggeredProperty]) {
+      target[skate.isReadyTriggeredProperty] = [];
+    }
+
     // If it's already been triggered, skip.
-    if (target[skate.isReadyTriggeredProperty]) {
+    if (target[skate.isReadyTriggeredProperty].indexOf(component) > -1) {
       return done();
     }
 
     // Set as ready.
-    target[skate.isReadyTriggeredProperty] = true;
+    target[skate.isReadyTriggeredProperty].push(component);
 
     // Extend element properties and methods with those provided.
     inherit(target, component.extend);
@@ -243,8 +289,13 @@
   function triggerInsert(component, target) {
     var insertFn = component.insert;
 
+    // Make sure the tracker is registered.
+    if (!target[skate.isInsertTriggeredProperty]) {
+      target[skate.isInsertTriggeredProperty] = [];
+    }
+
     // If it's already been triggered, skip.
-    if (target[skate.isInsertTriggeredProperty]) {
+    if (target[skate.isInsertTriggeredProperty].indexOf(component) > -1) {
       return;
     }
 
@@ -254,7 +305,7 @@
     }
 
     // Set as inserted.
-    target[skate.isInsertTriggeredProperty] = true;
+    target[skate.isInsertTriggeredProperty].push(component);
 
     // Ensures that the element is no longer hidden.
     addClass(target, classname);
@@ -266,7 +317,7 @@
 
   // Triggers remove on the target.
   function triggerRemove(target) {
-    skate.listener(target, function(listener) {
+    skate.listeners(target).forEach(function(listener) {
       if (listener.component.attrs) {
         skateAdapter.removeAttributeListener(listener, target);
       }
@@ -467,13 +518,21 @@
     }
   }
 
-  // Returns the name of the component for the specified element.
-  function componentName(element) {
-    if (!element || element.nodeType !== 1) {
-      return;
-    }
+  // Returns the component id from the tag name.
+  function elementComponentIdFromTag(element) {
+    return (element.tagName || '').toLowerCase();
+  }
 
-    return element.getAttribute(skate.componentAttribute) || element.nodeName.toLowerCase();
+  // Returns the component ids from the component attribute or class names.
+  function elementComponentIdsFromAttrs(element) {
+    return [].map.call(element.attributes || [], function (attr) {
+      return attr.nodeName;
+    });
+  }
+
+  // Returns the component ids from the component class attribute.
+  function elementComponentIdsFromClasses(element) {
+    return (element.className || '').split(' ');
   }
 
 

@@ -225,24 +225,6 @@
     });
   });
 
-  describe('Destroying all listeners', function() {
-    it('Should be able to destroy all listeners', function() {
-      skate.listeners.length.should.equal(0);
-
-      var Div = skate('div', {
-        insert: function(){}
-      });
-
-      expect(skate.listeners[Div.listener.id]).to.equal(Div.listener);
-      skate.destroy();
-      expect(skate.listeners[Div.listener.id]).to.be.undefined;
-
-      var div = new Div();
-      skate.init(div);
-      div.textContent.should.equal('');
-    });
-  });
-
   describe('Attribute listeners', function() {
     it('Should listen to changes in specified attributes', function(done) {
       var init = false;
@@ -312,7 +294,7 @@
       });
 
       var div = document.createElement('div');
-      div.setAttribute('is', 'datepicker');
+      div.setAttribute('datepicker', 'true');
       document.body.appendChild(div);
       skate.init(div);
 
