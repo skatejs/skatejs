@@ -27,17 +27,23 @@ module.exports = function(grunt) {
       }
     },
     karma: {
+      options: {
+        hostname: grunt.option('host') || 'localhost',
+        port: grunt.option('port') || 9876,
+        browsers: [grunt.option('browser') || 'PhantomJS'],
+        files: [
+          'src/skate.js',
+          'tests/skate.js'
+        ],
+        frameworks: ['mocha', 'sinon-chai'],
+        singleRun: !grunt.option('host')
+      },
       all: {
         options: {
-          browsers: ['PhantomJS'],
-          files: [
-            'src/skate.js',
-            'tests/skate.js'
-          ],
-          frameworks: ['mocha', 'sinon-chai'],
-          singleRun: true
+          browsers: ['Chrome', 'Firefox', 'PhantomJS']
         }
-      }
+      },
+      phantomjs: {}
     },
     uglify: {
       all: {
@@ -57,6 +63,6 @@ module.exports = function(grunt) {
   grunt.registerTask('build', 'Runs the tests and builds the dist.', ['dist', 'test']);
   grunt.registerTask('dist', 'Builds the dist.', ['concat', 'uglify']);
   grunt.registerTask('docs', 'Runs the docs server.', ['connect:docs'])
-  grunt.registerTask('test', 'Runs the tests.', ['karma']);
+  grunt.registerTask('test', 'Runs the tests.', ['karma:phantomjs']);
 
 };

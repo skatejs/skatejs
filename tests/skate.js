@@ -26,7 +26,7 @@
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
         ready: function() {
-          this.classList.contains('skate').should.equal(false);
+          assert(!this.className.match('skate'));
           done();
         }
       });
@@ -37,7 +37,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
         insert: function() {
-          this.classList.contains('skate').should.equal(true);
+          assert(this.className.match('skate'));
           done();
         }
       });
@@ -64,14 +64,14 @@
       addDivToBody().textContent = 'test';
 
       skate('div', function() {
-        this.textContent.should.equal('test');
+        this.textContent.should.equal('test', 'Existing node not initialised');
         done();
       });
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function(done) {
       skate('div', function() {
-        this.textContent.should.equal('test');
+        this.textContent.should.equal('test', 'Future node not initialised');
         done();
       });
 
@@ -89,9 +89,8 @@
 
       var newModule = skate('div', function() {
         this.textContent.should.equal('test');
-        newModule.deafen();
         done();
-      });
+      }).deafen();
     });
   });
 
@@ -147,7 +146,7 @@
       skate(div);
       div.style.display = 'none';
       div.style.display = 'block';
-      initialised.should.equal(1);
+      assert(initialised === 1);
     });
   });
 
@@ -163,7 +162,7 @@
       addDivToBody();
 
       skate(document.querySelectorAll('div'));
-      initialised.should.equal(2);
+      assert(initialised === 2);
     });
 
     it('Should take an element', function() {
@@ -174,7 +173,7 @@
       });
 
       skate(addDivToBody());
-      initialised.should.equal(1);
+      assert(initialised === 1);
     });
 
     it('Should take a selector', function() {
@@ -188,19 +187,19 @@
       addDivToBody();
 
       skate('div');
-      initialised.should.equal(2);
+      assert(initialised === 2);
     });
   });
 
   describe('Destroying all instances', function() {
     it('Should be able to destroy all instances', function() {
-      skate.instances.length.should.equal(0);
+      assert(skate.instances.length === 0);
 
       skate('div', function(){});
-      skate.instances.length.should.equal(1);
+      assert(skate.instances.length === 1);
 
       skate.destroy();
-      skate.instances.length.should.equal(0);
+      assert(skate.instances.length === 0);
 
       var div = addDivToBody();
       skate(div);
