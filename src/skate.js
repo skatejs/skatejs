@@ -188,10 +188,10 @@
 
   Skate.prototype = {
     // Initialises one or more elements.
-    init: function(elements) {
+    init: function(element) {
       var that = this;
 
-      eachElement(elements, function(element) {
+      //eachElement(elements, function(element) {
         if (!that.component.restrict(element)) {
           throw new Error(
             'Restrictions don\'t allow "'
@@ -204,7 +204,7 @@
         }
 
         triggerLifecycle(that, element);
-      });
+      //});
 
       return this;
     },
