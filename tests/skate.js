@@ -264,15 +264,20 @@
     });
 
     it('Should use the update callback as the init callback if no init callback is specified.', function(done) {
+      var init = false;
+
       skate('div', {
         attrs: {
           open: {
             update: function(element, value, oldValue) {
-              if (oldValue) {
-                value.should.equal('update');
+              if (value === 'init') {
+                init = true;
+                element.setAttribute('open', 'update');
+              }
+
+              if (value === 'update') {
+                init.should.equal(true);
                 done();
-              } else {
-                value.should.equal('init');
               }
             }
           }
@@ -280,28 +285,28 @@
       });
 
       document.body.innerHTML = '<div id="attrtest" open="init"></div>';
-      document.getElementById('attrtest').setAttribute('open', 'update');
     });
 
     it('Should accept a function insead of an object for the lifecycle definition which triggers both init and update.', function(done) {
       var init = false;
-      var update = false;
 
       skate('div', {
         attrs: {
           open: function(element, value, oldValue) {
-            if (oldValue) {
-              value.should.equal('update');
+            if (value === 'init') {
+              init = true;
+              element.setAttribute('open', 'update');
+            }
+
+            if (value === 'update') {
+              init.should.equal(true);
               done();
-            } else {
-              value.should.equal('init');
             }
           }
         }
       });
 
       document.body.innerHTML = '<div id="attrtest" open="init"></div>';
-      document.getElementById('attrtest').setAttribute('open', 'update');
     });
   });
 
@@ -374,11 +379,16 @@
       remove.should.equal(false, 'Should not call remove');
 
       document.body.appendChild(div);
+      skate.init(div);
       insert.should.equal(true, 'Should call insert');
       remove.should.equal(false, 'Should not call remove');
 
       div.parentNode.removeChild(div);
-      remove.should.equal(true, 'Should call remove');
+
+      // Mutation Observers are async.
+      setTimeout(function() {
+        remove.should.equal(true, 'Should call remove');
+      });
     });
 
     it('Should initialise multiple instances of the same type of element (possible bug).', function() {
@@ -402,12 +412,19 @@
 
       document.body.appendChild(div1);
       document.body.appendChild(div2);
+
+      skate.init([div1, div2]);
+
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
 
-      numReady.should.equal(2);
-      numInsert.should.equal(2);
-      numRemove.should.equal(2);
+      numReady.should.equal(2, 'Ready not called');
+      numInsert.should.equal(2, 'Insert not called');
+
+      // Mutation Observers are async.
+      setTimeout(function() {
+        numRemove.should.equal(2, 'Remove not called');
+      });
     });
   });
 })();

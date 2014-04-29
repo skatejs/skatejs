@@ -203,7 +203,7 @@
           );
         }
 
-        triggerLifecycle(that.component, element);
+        triggerLifecycle(that, element);
       });
 
       return this;
@@ -216,15 +216,7 @@
       }
 
       skates[this.id] = this;
-      this.init(
-        document.querySelectorAll(
-          [
-            this.id,
-            '.' + this.id,
-            '[' + this.id + ']'
-          ].join(', ')
-        )
-      );
+      this.init(this.id);
 
       return this;
     },
@@ -241,15 +233,16 @@
   // ------------------
 
   // Triggers the entire lifecycle.
-  function triggerLifecycle(component, target) {
-    triggerReady(component, target, function() {
-      triggerInsert(component, target);
+  function triggerLifecycle(instance, target) {
+    triggerReady(instance, target, function() {
+      triggerInsert(instance, target);
     });
   }
 
   // Triggers the ready callback and continues execution to the insert callback.
-  function triggerReady(component, target, done) {
+  function triggerReady(instance, target, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
+    var component = instance.component;
     var readyFn = component.ready;
     done = done || function(){};
 
@@ -259,12 +252,12 @@
     }
 
     // If it's already been triggered, skip.
-    if (target[skate.isReadyTriggeredProperty].indexOf(component) > -1) {
+    if (target[skate.isReadyTriggeredProperty].indexOf(instance.id) > -1) {
       return done();
     }
 
     // Set as ready.
-    target[skate.isReadyTriggeredProperty].push(component);
+    target[skate.isReadyTriggeredProperty].push(instance.id);
 
     // Extend element properties and methods with those provided.
     inherit(target, component.extend);
@@ -286,7 +279,8 @@
   }
 
   // Triggers insert on the target.
-  function triggerInsert(component, target) {
+  function triggerInsert(instance, target) {
+    var component = instance.component;
     var insertFn = component.insert;
 
     // Make sure the tracker is registered.
@@ -295,7 +289,7 @@
     }
 
     // If it's already been triggered, skip.
-    if (target[skate.isInsertTriggeredProperty].indexOf(component) > -1) {
+    if (target[skate.isInsertTriggeredProperty].indexOf(instance.id) > -1) {
       return;
     }
 
@@ -305,7 +299,7 @@
     }
 
     // Set as inserted.
-    target[skate.isInsertTriggeredProperty].push(component);
+    target[skate.isInsertTriggeredProperty].push(instance.id);
 
     // Ensures that the element is no longer hidden.
     addClass(target, classname);
@@ -316,15 +310,17 @@
   }
 
   // Triggers remove on the target.
-  function triggerRemove(target) {
-    skate.listeners(target).forEach(function(listener) {
-      if (listener.component.attrs) {
-        skateAdapter.removeAttributeListener(listener, target);
-      }
+  function triggerRemove(elements) {
+    eachElement(elements, function(element) {
+      skate.listeners(element).forEach(function(listener) {
+        if (listener.component.attrs) {
+          skateAdapter.removeAttributeListener(listener, element);
+        }
 
-      if (listener.component.remove) {
-        listener.component.remove(target);
-      }
+        if (listener.component.remove) {
+          listener.component.remove(element);
+        }
+      });
     });
   }
 
@@ -341,11 +337,11 @@
 
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
-        if (mutation.addedNodes) {
+        if (mutation.addedNodes && mutation.addedNodes.length) {
           skate.init(mutation.addedNodes);
         }
 
-        if (mutation.removedNodes) {
+        if (mutation.removedNodes && mutation.removedNodes.length) {
           triggerRemove(mutation.removedNodes);
         }
       });
@@ -358,6 +354,19 @@
 
     return {
       addAttributeListener: function(element, attributes) {
+        function init (lifecycle, element, newValue) {
+          (lifecycle.init || lifecycle.update || lifecycle)(element, newValue);
+        }
+
+        function update (lifecycle, element, newValue, oldValue) {
+          (lifecycle.update || lifecycle)(element, newValue, oldValue);
+        }
+
+        function remove (lifecycle, element, oldValue) {
+          lifecycle.remove(element, oldValue);
+          delete lastValueCache[name];
+        }
+
         // We've gotta keep track of values because MutationObservers don't
         // seem to report this correctly.
         var lastValueCache = {};
@@ -382,21 +391,18 @@
             }
 
             // `init()` or `update()` callback.
-            if (attr && oldValue === undefined && (lifecycle.init || lifecycle.update)) {
-              (lifecycle.init || lifecycle.update || lifecycle)(element, newValue);
-              return;
+            if (attr && oldValue === undefined && (lifecycle.init || lifecycle.update || lifecycle)) {
+              return init(lifecycle, element, newValue);
             }
 
             // `update()` callback.
-            if (attr && oldValue !== undefined && lifecycle.update) {
-              (lifecycle.update || lifecycle)(element, newValue, oldValue);
-              return;
+            if (attr && oldValue !== undefined && (lifecycle.update || lifecycle)) {
+              return update(lifecycle, element, newValue, oldValue);
             }
 
             // `remove()` callback.
             if (!attr && lifecycle.remove) {
-              lifecycle.remove(element, oldValue);
-              delete lastValueCache[name];
+              return remove(lifecycle, element, oldValue);
             }
           });
         });
@@ -404,6 +410,16 @@
         obs.observe(element, {
           attributes: true
         });
+
+        // Now trigger init on each attribute.
+        for (var a = 0; a < element.attributes.length; a++) {
+          var attribute = element.attributes[a];
+          var lifecycle = attributes[attribute.nodeName];
+
+          if (lifecycle) {
+            init(lifecycle, element, attribute.nodeValue);
+          }
+        }
       },
 
       removeAttributeListener: function(element) {
@@ -455,6 +471,18 @@
             attrCallbacks[e.attrChange](lifecycle, element, e);
           }
         });
+
+        // Now trigger init on each attribute.
+        for (var a = 0; a < element.attributes.length; a++) {
+          var attribute = element.attributes[a];
+          var lifecycle = attributes[attribute.nodeName];
+
+          if (lifecycle) {
+            attrCallbacks[2](lifecycle, element, {
+              newValue: attribute.nodeValue
+            });
+          }
+        }
       },
 
       removeAttributeListener: function(element) {
@@ -511,6 +539,8 @@
   function eachElement(elements, callback) {
     if (elements.nodeType) {
       elements = [elements];
+    } else if (typeof elements === 'string') {
+      elements = document.querySelectorAll([elements, '.' + elements, '[' + elements + ']'].join(', '));
     }
 
     for (var a = 0; a < elements.length; a++) {
