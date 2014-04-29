@@ -439,10 +439,6 @@
       skate.init(e.target);
     });
 
-    document.addEventListener('DOMSubtreeModified', function(e) {
-      skate.init(e.target);
-    });
-
     document.addEventListener('DOMNodeRemoved', function(e) {
       triggerRemove(e.target);
     });
