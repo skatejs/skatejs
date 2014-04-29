@@ -28,13 +28,15 @@ module.exports = function(grunt) {
     },
     karma: {
       options: {
-        browsers: ['PhantomJS'],
+        hostname: grunt.option('host') || 'localhost',
+        port: grunt.option('port') || 9876,
+        browsers: [grunt.option('browser') || 'PhantomJS'],
         files: [
           'src/skate.js',
           'tests/skate.js'
         ],
         frameworks: ['mocha', 'sinon-chai'],
-        singleRun: true
+        singleRun: !grunt.option('host')
       },
       all: {
         options: {
