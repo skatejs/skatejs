@@ -211,18 +211,12 @@
 
     // Starts listening for new elements.
     listen: function() {
-      var that = this;
-
       if (skates[this.id]) {
         throw new Error('Listener for "' + this.id + '" already registered.');
       }
 
       skates[this.id] = this;
-
-      that.init(that.id);
-      document.addEventListener('DOMContentLoaded', function() {
-        that.init(that.id);
-      });
+      this.init(this.id);
 
       return this;
     },
@@ -442,6 +436,10 @@
     var attributeListeners = [];
 
     document.addEventListener('DOMNodeInserted', function(e) {
+      skate.init(e.target);
+    });
+
+    document.addEventListener('DOMSubtreeModified', function(e) {
       skate.init(e.target);
     });
 
