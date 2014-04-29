@@ -79,7 +79,7 @@
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
         ready: function(element) {
-          assert(!element.className.match('_skate'));
+          assert(element.className.split(' ').indexOf('_skate') === -1, 'Class found');
           done();
         }
       });
@@ -90,7 +90,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
         insert: function(element) {
-          assert(element.className.match('_skate'));
+          assert(element.className.split(' ').indexOf('_skate') > -1, 'Class not found');
           done();
         }
       });
