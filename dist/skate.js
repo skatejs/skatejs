@@ -71,12 +71,9 @@
 
   // Ends a timeout started with `timeout`.
   timeout.end = (function() {
-    if (window.cancelAnimationFrame) {
-      return window.cancelAnimationFrame;
-    }
-
+    var cancel = window.cancelAnimationFrame || clearTimeout;
     return function(id) {
-      clearTimeout(id);
+      cancel(id);
     };
   })();
 
