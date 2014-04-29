@@ -257,7 +257,7 @@
     // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
     if (readyFn && hasArgs.test(readyFn)) {
       readyFn.call(target, done);
-    } else if (target.ready) {
+    } else if (readyFn) {
       readyFn.call(target);
       done();
     } else {
@@ -427,13 +427,13 @@
       }
 
       // Handle elements added after initial load.
-      document.addEventListener('DOMNodeInserted', this.listener, false);
+      document.addEventListener('DOMSubtreeModified', this.listener);
 
       return this;
     },
 
     deafen: function() {
-      document.removeEventListener('DOMNodeInserted', this.listener);
+      document.removeEventListener('DOMSubtreeModified', this.listener);
       this.listener = null;
 
       return this;

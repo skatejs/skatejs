@@ -26,7 +26,7 @@
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
         ready: function() {
-          assert(!this.className.match('skate'));
+          assert(this.className.split(' ').indexOf('skate') === -1, 'Class found');
           done();
         }
       });
@@ -37,7 +37,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
         insert: function() {
-          assert(this.className.match('skate'));
+          assert(this.className.split(' ').indexOf('skate') > -1, 'Class not found');
           done();
         }
       });
@@ -90,7 +90,7 @@
       var newModule = skate('div', function() {
         this.textContent.should.equal('test');
         done();
-      }).deafen();
+      });
     });
   });
 
