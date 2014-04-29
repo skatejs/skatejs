@@ -17,7 +17,6 @@
   var classname = '_skate';
 
   // Element.prototype.matches polyfill as a function.
-  // Element.prototype.matches polyfill as a function.
   var matchesSelector = (function() {
       var matcher = Element.prototype.matches;
 
