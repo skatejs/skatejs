@@ -383,13 +383,13 @@
 
             // `init()` or `update()` callback.
             if (attr && oldValue === undefined && (lifecycle.init || lifecycle.update)) {
-              (lifecycle.init || lifecycle.update)(element, newValue);
+              (lifecycle.init || lifecycle.update || lifecycle)(element, newValue);
               return;
             }
 
             // `update()` callback.
             if (attr && oldValue !== undefined && lifecycle.update) {
-              lifecycle.update(element, newValue, oldValue);
+              (lifecycle.update || lifecycle)(element, newValue, oldValue);
               return;
             }
 
@@ -430,17 +430,19 @@
     var attrCallbacks = {
       // modification (update)
       1: function(lifecycle, element, e) {
-        lifecycle.update(element, e.newValue, e.prevValue);
+        (lifecycle.update || lifecycle)(element, e.newValue, e.prevValue);
       },
 
       // addition (init / update)
       2: function(lifecycle, element, e) {
-        (lifecycle.init || lifecycle.update)(element, e.newValue);
+        (lifecycle.init || lifecycle.update || lifecycle)(element, e.newValue);
       },
 
       // removal (remove)
       3: function(lifecycle, element, e) {
-        lifecycle.remove(element, e.prevValue);
+        if (lifecycle.remove) {
+          lifecycle.remove(element, e.prevValue);
+        }
       }
     };
 

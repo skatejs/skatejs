@@ -264,24 +264,44 @@
     });
 
     it('Should use the update callback as the init callback if no init callback is specified.', function(done) {
-      var init = false;
-      var update = false;
-
       skate('div', {
         attrs: {
           open: {
             update: function(element, value, oldValue) {
-              value.should.equal('true');
-              expect(oldValue).to.be.undefined;
-              done();
+              if (oldValue) {
+                value.should.equal('update');
+                done();
+              } else {
+                value.should.equal('init');
+              }
             }
           }
         }
       });
 
-      var div = addDivToBody();
-      skate.init(div);
-      div.setAttribute('open', 'true');
+      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
+      document.getElementById('attrtest').setAttribute('open', 'update');
+    });
+
+    it('Should accept a function insead of an object for the lifecycle definition which triggers both init and update.', function(done) {
+      var init = false;
+      var update = false;
+
+      skate('div', {
+        attrs: {
+          open: function(element, value, oldValue) {
+            if (oldValue) {
+              value.should.equal('update');
+              done();
+            } else {
+              value.should.equal('init');
+            }
+          }
+        }
+      });
+
+      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
+      document.getElementById('attrtest').setAttribute('open', 'update');
     });
   });
 
