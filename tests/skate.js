@@ -79,7 +79,7 @@
     it('Should trigger ready before the element is shown.', function(done) {
       skate('div', {
         ready: function(element) {
-          element.classList.contains('_skate').should.equal(false);
+          assert(!element.className.match('_skate'));
           done();
         }
       });
@@ -90,7 +90,7 @@
     it('Should trigger insert after the element is shown.', function(done) {
       skate('div', {
         insert: function(element) {
-          element.classList.contains('_skate').should.equal(true);
+          assert(element.className.match('_skate'));
           done();
         }
       });
@@ -160,24 +160,6 @@
     });
   });
 
-  describe('Display none / block / etc behavior', function() {
-    it('Should not be initialised twice', function() {
-      var initialised = 0;
-
-      skate('div', {
-        insert: function() {
-          ++initialised;
-        }
-      });
-
-      var div = addDivToBody();
-      skate.init(div);
-      div.style.display = 'none';
-      div.style.display = 'block';
-      initialised.should.equal(1);
-    });
-  });
-
   describe('Synchronous initialisation', function() {
     it('Should take traversable items', function() {
       var initialised = false;
@@ -205,7 +187,7 @@
       });
 
       skate.init(addDivToBody());
-      initialised.should.equal(1);
+      assert(initialised);
     });
 
     it('Should take a selector', function() {
@@ -221,7 +203,7 @@
       addDivToBody();
 
       skate.init('div');
-      initialised.should.equal(2);
+      assert(initialised === 2);
     });
   });
 
@@ -357,7 +339,7 @@
       called.should.equal(true);
     });
 
-    it('Should call lifecycle callbacks at appropriate times.', function() {
+    it('Should call lifecycle callbacks at appropriate times.', function(done) {
       var ready = false;
       var insert = false;
       var remove = false;
@@ -388,10 +370,11 @@
       // Mutation Observers are async.
       setTimeout(function() {
         remove.should.equal(true, 'Should call remove');
+        done();
       });
     });
 
-    it('Should initialise multiple instances of the same type of element (possible bug).', function() {
+    it('Should initialise multiple instances of the same type of element (possible bug).', function(done) {
       var numReady = 0;
       var numInsert = 0;
       var numRemove = 0;
@@ -418,12 +401,13 @@
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
 
-      numReady.should.equal(2, 'Ready not called');
-      numInsert.should.equal(2, 'Insert not called');
+      assert(numReady === 2, 'Ready not called');
+      assert(numInsert === 2, 'Insert not called');
 
       // Mutation Observers are async.
       setTimeout(function() {
-        numRemove.should.equal(2, 'Remove not called');
+        assert(numRemove === 2, 'Remove not called');
+        done();
       });
     });
   });
