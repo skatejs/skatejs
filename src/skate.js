@@ -93,11 +93,15 @@
   };
 
   // Initialises the elements against all skate instances.
-  skate.init = function (elements) {
+  skate.init = function (elements, andChildren) {
     eachElement(elements, function (element) {
       skate.listeners(element).forEach(function (listener) {
         listener.init(element);
       });
+
+      if (andChildren) {
+        skate.init(element.children, true);
+      }
     });
 
     return elements;
@@ -302,11 +306,11 @@
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length) {
-          skate.init(mutation.addedNodes);
+          skate.init(mutation.addedNodes, true);
         }
 
         if (mutation.removedNodes && mutation.removedNodes.length) {
-          triggerRemove(mutation.removedNodes);
+          triggerRemove(mutation.removedNodes, true);
         }
       });
     });
@@ -396,6 +400,10 @@
     var attributeListeners = [];
 
     document.addEventListener('DOMNodeInserted', function (e) {
+      skate.init(e.target);
+    });
+
+    document.addEventListener('DOMSubtreeModified', function (e) {
       skate.init(e.target);
     });
 
@@ -573,7 +581,7 @@
   // ---------
 
   if (typeof define === 'function' && define.amd) {
-    define('skate', function () {
+    define('skate', [],function () {
       return skate;
     });
   } else {
