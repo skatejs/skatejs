@@ -41,10 +41,10 @@
   var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
 
   // The property to use when checking if the element has already been initialised.
-  var isReadyTriggeredProperty = '__skate_ready_triggered';
+  var isReadyTriggeredProperty = '_skate_ready_triggered';
 
   // The property to use when checking if the element's insert callback has been executed.
-  var isInsertTriggeredProperty = '__skate_insert_triggered';
+  var isInsertTriggeredProperty = '_skate_insert_triggered';
 
 
   // Factory
