@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
   'use strict';
 
@@ -17,10 +17,10 @@
   var classname = '_skate';
 
   // Element.prototype.matches polyfill as a function.
-  var matchesSelector = (function() {
+  var matchesSelector = (function () {
       var matcher = Element.prototype.matches;
 
-      ['moz', 'ms', 'o', 'webkit'].some(function(prefix) {
+      ['moz', 'ms', 'o', 'webkit'].some(function (prefix) {
         var method = prefix + 'MatchesSelector';
 
         if (Element.prototype[method]) {
@@ -50,12 +50,12 @@
   // Factory
   // -------
 
-  function skate(id, component) {
+  function skate (id, component) {
     // The listener is what controls the lifecycle of the element.
     var listener = new Skate(id, component);
 
     // For easy instantiation.
-    var constructor = function() {
+    var constructor = function () {
       var element = document.createElement(id);
       listener.init(element, true);
       return element;
@@ -93,9 +93,9 @@
   };
 
   // Initialises the elements against all skate instances.
-  skate.init = function(elements) {
-    eachElement(elements, function(element) {
-      skate.listeners(element).forEach(function(listener) {
+  skate.init = function (elements) {
+    eachElement(elements, function (element) {
+      skate.listeners(element).forEach(function (listener) {
         listener.init(element);
       });
     });
@@ -104,8 +104,8 @@
   };
 
   // Destroys all active instances.
-  skate.destroy = function() {
-    Object.keys(skates).forEach(function(key) {
+  skate.destroy = function () {
+    Object.keys(skates).forEach(function (key) {
       skates[key].deafen();
     });
 
@@ -113,7 +113,7 @@
   };
 
   // Finds listeners matching the specified node.
-  skate.listeners = function(element) {
+  skate.listeners = function (element) {
     var listeners = [];
     var tag = elementComponentIdFromTag(element);
     var attrs = elementComponentIdsFromAttrs(element);
@@ -125,7 +125,7 @@
     }
 
     // Attributes override classes.
-    attrs.concat(classes).forEach(function(id) {
+    attrs.concat(classes).forEach(function (id) {
       if (skates[id]) {
         listeners.push(skates[id]);
       }
@@ -138,7 +138,7 @@
   // Common Interface
   // ----------------
 
-  function Skate(id, component) {
+  function Skate (id, component) {
     if (!component) {
       component = {};
     }
@@ -166,10 +166,10 @@
 
   Skate.prototype = {
     // Initialises one or more elements.
-    init: function(elements) {
+    init: function (elements) {
       var that = this;
 
-      eachElement(elements, function(element) {
+      eachElement(elements, function (element) {
         validateType(that, element);
         triggerLifecycle(that, element);
       });
@@ -178,7 +178,7 @@
     },
 
     // Starts listening for new elements.
-    listen: function() {
+    listen: function () {
       if (skates[this.id]) {
         throw new Error('Listener for "' + this.id + '" already registered.');
       }
@@ -190,7 +190,7 @@
     },
 
     // Stops listening for new elements.
-    deafen: function() {
+    deafen: function () {
       delete skates[this.id];
       return this;
     }
@@ -201,18 +201,18 @@
   // ------------------
 
   // Triggers the entire lifecycle.
-  function triggerLifecycle(instance, target) {
-    triggerReady(instance, target, function() {
+  function triggerLifecycle (instance, target) {
+    triggerReady(instance, target, function () {
       triggerInsert(instance, target);
     });
   }
 
   // Triggers the ready callback and continues execution to the insert callback.
-  function triggerReady(instance, target, done) {
+  function triggerReady (instance, target, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var component = instance.component;
     var readyFn = component.ready;
-    done = done || function(){};
+    done = done || function (){};
 
     // Make sure the tracker is registered.
     if (!target[isReadyTriggeredProperty]) {
@@ -247,7 +247,7 @@
   }
 
   // Triggers insert on the target.
-  function triggerInsert(instance, target) {
+  function triggerInsert (instance, target) {
     var component = instance.component;
     var insertFn = component.insert;
 
@@ -278,13 +278,9 @@
   }
 
   // Triggers remove on the target.
-  function triggerRemove(elements) {
-    eachElement(elements, function(element) {
-      skate.listeners(element).forEach(function(listener) {
-        if (listener.component.attrs) {
-          skateAdapter.removeAttributeListener(listener, element);
-        }
-
+  function triggerRemove (elements) {
+    eachElement(elements, function (element) {
+      skate.listeners(element).forEach(function (listener) {
         if (listener.component.remove) {
           listener.component.remove(element);
         }
@@ -296,15 +292,15 @@
   // MutationObserver Adapter
   // ------------------------
 
-  function mutationObserverAdapter() {
+  function mutationObserverAdapter () {
     var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 
     if (!MutationObserver) {
       return;
     }
 
-    var observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length) {
           skate.init(mutation.addedNodes);
         }
@@ -321,7 +317,7 @@
     });
 
     return {
-      addAttributeListener: function(element, attributes) {
+      addAttributeListener: function (element, attributes) {
         function init (lifecycle, element, newValue) {
           (lifecycle.init || lifecycle.update || lifecycle)(element, newValue);
         }
@@ -338,8 +334,8 @@
         // We've gotta keep track of values because MutationObservers don't
         // seem to report this correctly.
         var lastValueCache = {};
-        var obs = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
+        var obs = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
             var name = mutation.attributeName;
             var attr = element.attributes[name];
             var lifecycle = attributes[name];
@@ -388,10 +384,6 @@
             init(lifecycle, element, attribute.nodeValue);
           }
         }
-      },
-
-      removeAttributeListener: function(element) {
-
       }
     };
   }
@@ -400,30 +392,30 @@
   // Mutation Events Adapter
   // -----------------------
 
-  function mutationEventAdapter() {
+  function mutationEventAdapter () {
     var attributeListeners = [];
 
-    document.addEventListener('DOMNodeInserted', function(e) {
+    document.addEventListener('DOMNodeInserted', function (e) {
       skate.init(e.target);
     });
 
-    document.addEventListener('DOMNodeRemoved', function(e) {
+    document.addEventListener('DOMNodeRemoved', function (e) {
       triggerRemove(e.target);
     });
 
     var attrCallbacks = {
       // modification (update)
-      1: function(lifecycle, element, e) {
+      1: function (lifecycle, element, e) {
         (lifecycle.update || lifecycle)(element, e.newValue, e.prevValue);
       },
 
       // addition (init / update)
-      2: function(lifecycle, element, e) {
+      2: function (lifecycle, element, e) {
         (lifecycle.init || lifecycle.update || lifecycle)(element, e.newValue);
       },
 
       // removal (remove)
-      3: function(lifecycle, element, e) {
+      3: function (lifecycle, element, e) {
         if (lifecycle.remove) {
           lifecycle.remove(element, e.prevValue);
         }
@@ -431,8 +423,8 @@
     };
 
     return {
-      addAttributeListener: function(element, attributes) {
-        element.addEventListener('DOMAttrModified', function(e) {
+      addAttributeListener: function (element, attributes) {
+        element.addEventListener('DOMAttrModified', function (e) {
           var lifecycle = attributes[e.attrName];
 
           if (lifecycle) {
@@ -451,10 +443,6 @@
             });
           }
         }
-      },
-
-      removeAttributeListener: function(element) {
-
       }
     };
   }
@@ -464,7 +452,7 @@
   // ---------
 
   // Adds the specified class to the element.
-  function addClass(element, classname) {
+  function addClass (element, classname) {
     if (element.classList) {
       element.classList.add(classname);
     } else {
@@ -473,7 +461,7 @@
   }
 
   // Calls the specified callback for each element.
-  function eachElement(elements, callback) {
+  function eachElement (elements, callback) {
     if (elements.nodeType) {
       elements = [elements];
     } else if (typeof elements === 'string') {
@@ -488,24 +476,24 @@
   }
 
   // Returns the component id from the tag name.
-  function elementComponentIdFromTag(element) {
+  function elementComponentIdFromTag (element) {
     return (element.tagName || '').toLowerCase();
   }
 
   // Returns the component ids from the component attribute or class names.
-  function elementComponentIdsFromAttrs(element) {
+  function elementComponentIdsFromAttrs (element) {
     return [].map.call(element.attributes || [], function (attr) {
       return attr.nodeName;
     });
   }
 
   // Returns the component ids from the component class attribute.
-  function elementComponentIdsFromClasses(element) {
+  function elementComponentIdsFromClasses (element) {
     return (element.className || '').split(' ');
   }
 
   // Adds a rule to hide the specified component by its id.
-  function hideById(id) {
+  function hideById (id) {
     hiddenRules.sheet.insertRule(
       negateSelector(id) + '{display:none}',
       hiddenRules.sheet.cssRules.length
@@ -513,7 +501,7 @@
   }
 
   // Merges the second argument into the first.
-  function inherit(base, from) {
+  function inherit (base, from) {
     for (var a in from) {
       if (typeof base[a] === 'undefined') {
         base[a] = from[a];
@@ -527,24 +515,24 @@
   }
 
   // Returns a negated selector for the specified component.
-  function negateSelector(id) {
-    return selectors(id).map(function(selector) {
+  function negateSelector (id) {
+    return selectors(id).map(function (selector) {
       return selector + ':not(.' + classname + ')';
     });
   }
 
   // Generates a selector for all possible bindings of a component id.
-  function selector(id) {
+  function selector (id) {
     return selectors(id).join(', ');
   }
 
   // Returns an array of selectors for the specified component.
-  function selectors(id) {
+  function selectors (id) {
     return [id, '[' + id + ']', '.' + id];
   }
 
   // Validates the element against the compoonent type.
-  function validateType(instance, element) {
+  function validateType (instance, element) {
     var type;
     var types = {};
     var restrictions = {};
@@ -585,7 +573,7 @@
   // ---------
 
   if (typeof define === 'function' && define.amd) {
-    define('skate', function() {
+    define('skate', function () {
       return skate;
     });
   } else {
