@@ -155,7 +155,6 @@
 
     inherit(this.component, skate.defaults);
 
-    // Emulate the web components ready callback.
     if (this.component.ready) {
       hideById(this.id);
     }
