@@ -3,24 +3,42 @@
 Skate
 =====
 
-Skate is a web component library that allows you to define behaviour for pre-defined and custom HTML elements.
+Skate is a web component library that allows you to define behaviour for elements without worrying about when that element is inserted into the DOM.
+
+HTML
+
+    <my-component></my-component>
+
+JavaScript
+
+    skate('my-component', function(element) {
+      element.textContent = 'Hello, World!';
+    });
+
+Output
+
+    Hello, World!
 
 Installing
 ----------
 
 You can install Skate using Bower or by downloading the source from the repository.
 
-    bower install skate --save
+    bower install skate
 
-Usage
------
+### AMD
 
-Creating a new component out of existing and new DOM elements is as easy as passing a CSS selector and a component definition.
+Skate supports AMD if detected and is registered as `skate`. You must ensure that when you `require(['skate'])` that you have pointed that module to the correct path. In RequireJS you would use the `paths` configuration option:
 
-    skate('input[type="date"]', function() {
-      // "date"
-      console.log(this.type);
+    require.config({
+      paths: {
+        skate: 'bower_components/skate/dist/skate'
+      }
     });
+
+### Global
+
+If you're still skating old school, we've got you covered. Just make sure skate is included on the page and you can access it via `window.skate`.
 
 Docs
 ----
