@@ -41,6 +41,12 @@
   // The adapter we are using according to the capabilities of the environment.
   var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
 
+  // The property to use when checking if the element has already been initialised.
+  var isReadyTriggeredProperty = '__skate_ready_triggered';
+
+  // The property to use when checking if the element's insert callback has been executed.
+  var isInsertTriggeredProperty = '__skate_insert_triggered';
+
 
   // Factory
   // -------
@@ -63,11 +69,14 @@
     return constructor;
   }
 
-  // The property to use when checking if the element has already been initialised.
-  skate.isReadyTriggeredProperty = '__skate_ready_triggered';
-
-  // The property to use when checking if the element's insert callback has been executed.
-  skate.isInsertTriggeredProperty = '__skate_insert_triggered';
+  // Restriction type constants.
+  skate.types = {
+    ANY: 'act',
+    ATTR: 'a',
+    CLASS: 'c',
+    NOTAG: 'ac',
+    TAG: 't'
+  };
 
   // Default configuration.
   skate.defaults = {
@@ -80,10 +89,8 @@
     // Whether or not to start listening right away.
     listen: true,
 
-    // Node.nodeType
-    restrict: function (element) {
-      return true;
-    }
+    // The type of bindings to allow.
+    type: skate.types.ANY
   };
 
   // Initialises the elements against all skate instances.
@@ -102,25 +109,6 @@
     Object.keys(skates).forEach(function(key) {
       skates[key].deafen();
     });
-
-    return skate;
-  };
-
-  // Inserts hide rules for the specified selector. This is useful if you pass
-  // a matching function instead of a selector to `skate()`. If you pass a
-  // function and specify a `ready()` callback, your element will not be hidden
-  // because there was no selector that could be used to autohide them. Calling
-  // this manually gets around that problem.
-  skate.hide = function(selector) {
-    var ensureHideRules = [
-      'position: absolute !important',
-      'clip: rect(0, 0, 0, 0)'
-    ];
-
-    hiddenRules.sheet.insertRule(
-      appendSelector(selector, ':not(.' + classname + ')') + '{' + ensureHideRules.join(';') + '}',
-      hiddenRules.sheet.cssRules.length
-    );
 
     return skate;
   };
@@ -178,7 +166,7 @@
 
     // Emulate the web components ready callback.
     if (this.component.ready) {
-      skate.hide(this.id);
+      hideById(this.id);
     }
 
     if (this.component.listen) {
@@ -192,17 +180,7 @@
       var that = this;
 
       eachElement(elements, function(element) {
-        if (!that.component.restrict(element)) {
-          throw new Error(
-            'Restrictions don\'t allow "'
-            + that.id
-            + '" to be applied to:"'
-            + "\n"
-            + document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML
-            + '".'
-          );
-        }
-
+        validateType(that, element);
         triggerLifecycle(that, element);
       });
 
@@ -247,17 +225,17 @@
     done = done || function(){};
 
     // Make sure the tracker is registered.
-    if (!target[skate.isReadyTriggeredProperty]) {
-      target[skate.isReadyTriggeredProperty] = [];
+    if (!target[isReadyTriggeredProperty]) {
+      target[isReadyTriggeredProperty] = [];
     }
 
     // If it's already been triggered, skip.
-    if (target[skate.isReadyTriggeredProperty].indexOf(instance.id) > -1) {
+    if (target[isReadyTriggeredProperty].indexOf(instance.id) > -1) {
       return done();
     }
 
     // Set as ready.
-    target[skate.isReadyTriggeredProperty].push(instance.id);
+    target[isReadyTriggeredProperty].push(instance.id);
 
     // Extend element properties and methods with those provided.
     inherit(target, component.extend);
@@ -284,12 +262,12 @@
     var insertFn = component.insert;
 
     // Make sure the tracker is registered.
-    if (!target[skate.isInsertTriggeredProperty]) {
-      target[skate.isInsertTriggeredProperty] = [];
+    if (!target[isInsertTriggeredProperty]) {
+      target[isInsertTriggeredProperty] = [];
     }
 
     // If it's already been triggered, skip.
-    if (target[skate.isInsertTriggeredProperty].indexOf(instance.id) > -1) {
+    if (target[isInsertTriggeredProperty].indexOf(instance.id) > -1) {
       return;
     }
 
@@ -299,7 +277,7 @@
     }
 
     // Set as inserted.
-    target[skate.isInsertTriggeredProperty].push(instance.id);
+    target[isInsertTriggeredProperty].push(instance.id);
 
     // Ensures that the element is no longer hidden.
     addClass(target, classname);
@@ -504,37 +482,6 @@
     }
   }
 
-  // Appends the selector to the original selector or selectors.
-  function appendSelector(original, addition) {
-    var parts = splitSelector(original);
-
-    parts.forEach(function(part, index) {
-      parts[index] += addition;
-    });
-
-    return parts.join(',');
-  }
-
-  // Merges the second argument into the first.
-  function inherit(base, from) {
-    for (var a in from) {
-      if (typeof base[a] === 'undefined') {
-        base[a] = from[a];
-      }
-    }
-  }
-
-  // Splits a selector by commas.
-  function splitSelector(selector) {
-    var selectors = selector.split(',');
-
-    selectors.forEach(function(item, index) {
-      selectors[index] = item.replace(/^\s+/, '').replace(/\s+$/, '');
-    });
-
-    return selectors;
-  }
-
   // Calls the specified callback for each element.
   function eachElement(elements, callback) {
     if (elements.nodeType) {
@@ -565,6 +512,73 @@
   // Returns the component ids from the component class attribute.
   function elementComponentIdsFromClasses(element) {
     return (element.className || '').split(' ');
+  }
+
+  // Adds a rule to hide the specified component by its id.
+  function hideById(id) {
+    hiddenRules.sheet.insertRule(
+      negateSelector(id) + '{display:none}',
+      hiddenRules.sheet.cssRules.length
+    );
+  }
+
+  // Merges the second argument into the first.
+  function inherit(base, from) {
+    for (var a in from) {
+      if (typeof base[a] === 'undefined') {
+        base[a] = from[a];
+      }
+    }
+  }
+
+  // Returns the outer HTML of the specified element.
+  function outerHtml (element) {
+    return document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML;
+  }
+
+  // Returns a negated selector for the specified component.
+  function negateSelector(id) {
+    return selectors(id).map(function(selector) {
+      return selector + ':not(.' + classname + ')';
+    });
+  }
+
+  // Generates a selector for all possible bindings of a component id.
+  function selector(id) {
+    return selectors(id).join(', ');
+  }
+
+  // Returns an array of selectors for the specified component.
+  function selectors(id) {
+    return [id, '[' + id + ']', '.' + id];
+  }
+
+  // Validates the element against the compoonent type.
+  function validateType(instance, element) {
+    var type;
+    var types = {};
+    var restrictions = {};
+
+    types[skate.types.ATTR] = 'an attribute';
+    types[skate.types.CLASS] = 'a class';
+    types[skate.types.TAG] = 'a tag';
+
+    restrictions[skate.types.ATTR] = 'attributes';
+    restrictions[skate.types.CLASS] = 'classes';
+    restrictions[skate.types.NOTAG] = 'attributes or classes';
+    restrictions[skate.types.TAG] = 'tags';
+
+    if (element.tagName.toLowerCase() === instance.id) {
+      type = skate.types.TAG;
+    } else if (element.hasAttribute(instance.id)) {
+      type = skate.types.ATTR;
+    } else if (element.className.split(' ').indexOf(instance.id) > -1) {
+      type = skate.types.CLASS;
+    }
+
+    if (instance.component.type.indexOf(type) === -1) {
+      throw new Error('Component "' + instance.id + '" was bound using ' + types[type] + ' and is restricted to using ' + restrictions[instance.component.type] + '. Element: ' + outerHtml(element));
+    }
   }
 
 
