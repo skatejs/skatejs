@@ -125,9 +125,9 @@
     }
 
     // Attributes override classes.
-    attrs.concat(classes).forEach(function(attr) {
-      if (skates[attr]) {
-        listeners.push(skates[attr]);
+    attrs.concat(classes).forEach(function(id) {
+      if (skates[id]) {
+        listeners.push(skates[id]);
       }
     });
 
