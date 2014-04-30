@@ -150,14 +150,6 @@
       };
     }
 
-    // Ensure that the `restrict` option is always a function.
-    if (typeof component.restrict === 'string') {
-      var restrictSelector = component.restrict;
-      component.restrict = function(element) {
-        return matchesSelector(element, restrictSelector);
-      };
-    }
-
     this.component = component
     this.id = id;
 
