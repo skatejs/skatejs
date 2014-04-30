@@ -487,7 +487,7 @@
     if (elements.nodeType) {
       elements = [elements];
     } else if (typeof elements === 'string') {
-      elements = document.querySelectorAll([elements, '.' + elements, '[' + elements + ']'].join(', '));
+      elements = document.querySelectorAll(selector(elements));
     }
 
     for (var a = 0; a < elements.length; a++) {
