@@ -282,13 +282,17 @@
   }
 
   // Triggers remove on the target.
-  function triggerRemove (elements) {
+  function triggerRemove (elements, andChildren) {
     eachElement(elements, function (element) {
       skate.listeners(element).forEach(function (listener) {
         if (listener.component.remove) {
           listener.component.remove(element);
         }
       });
+
+      if (andChildren) {
+        triggerRemove(element.children, true);
+      }
     });
   }
 
