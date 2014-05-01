@@ -57,7 +57,7 @@
     // For easy instantiation.
     var constructor = function () {
       var element = document.createElement(id);
-      listener.init(element, true);
+      listener.init(element);
       return element;
     };
 
@@ -93,15 +93,11 @@
   };
 
   // Initialises the elements against all skate instances.
-  skate.init = function (elements, andChildren) {
+  skate.init = function (elements) {
     eachElement(elements, function (element) {
       skate.listeners(element).forEach(function (listener) {
         listener.init(element);
       });
-
-      if (andChildren) {
-        skate.init(element.children, true);
-      }
     });
 
     return elements;
@@ -282,17 +278,13 @@
   }
 
   // Triggers remove on the target.
-  function triggerRemove (elements, andChildren) {
+  function triggerRemove (elements) {
     eachElement(elements, function (element) {
       skate.listeners(element).forEach(function (listener) {
         if (listener.component.remove) {
           listener.component.remove(element);
         }
       });
-
-      if (andChildren) {
-        triggerRemove(element.children, true);
-      }
     });
   }
 
@@ -310,11 +302,13 @@
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length) {
-          skate.init(mutation.addedNodes, true);
+          skate.init(mutation.addedNodes);
+          eachDescendant(skate.init);
         }
 
         if (mutation.removedNodes && mutation.removedNodes.length) {
-          triggerRemove(mutation.removedNodes, true);
+          triggerRemove(mutation.removedNodes);
+          eachDescendant(triggerRemove);
         }
       });
     });
@@ -404,15 +398,15 @@
     var attributeListeners = [];
 
     document.addEventListener('DOMNodeInserted', function (e) {
-      skate.init(e.target);
+      skate.init(e.target, false);
     });
 
     document.addEventListener('DOMSubtreeModified', function (e) {
-      skate.init(e.target);
+      skate.init(e.target, false);
     });
 
     document.addEventListener('DOMNodeRemoved', function (e) {
-      triggerRemove(e.target);
+      triggerRemove(e.target, false);
     });
 
     var attrCallbacks = {
@@ -485,6 +479,15 @@
         callback(elements[a], a);
       }
     }
+  }
+
+  // Triggers a callback for all descendants of each passed element.
+  function eachDescendant (elements, callback) {
+    eachElement(elements, function (element) {
+      eachElement(element.getElementsByTagName('*'), function (descendant) {
+        callback(descendant);
+      });
+    });
   }
 
   // Returns the component id from the tag name.
