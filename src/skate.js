@@ -475,7 +475,7 @@
     }
 
     for (var a = 0; a < elements.length; a++) {
-      if (elements[a].nodeType === 1) {
+      if (elements[a] && elements[a].nodeType === 1) {
         callback(elements[a], a);
       }
     }
