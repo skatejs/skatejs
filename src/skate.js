@@ -475,6 +475,54 @@
   // Utilities
   // ---------
 
+  // Returns whether or not the specified listener controls the given type.
+  function listenerControlsType (listener, type) {
+    return listener.component.type.indexOf(type) > -1;
+  }
+
+  // Merges the second argument into the first.
+  function inherit (base, from) {
+    for (var a in from) {
+      if (typeof base[a] === 'undefined') {
+        base[a] = from[a];
+      }
+    }
+  }
+
+
+  // Element Identifier Helpers
+  // --------------------------
+
+  // Returns the component id from the tag name.
+  function elementComponentIdFromTag (element) {
+    return (element.tagName || '').toLowerCase();
+  }
+
+  // Returns the component ids from the component attribute or class names.
+  function elementComponentIdsFromAttrs (element) {
+    return [].map.call(element.attributes || [], function (attr) {
+      return attr.nodeName;
+    });
+  }
+
+  // Returns the component ids from the component class attribute.
+  function elementComponentIdsFromClasses (element) {
+    return (element.className || '').split(' ');
+  }
+
+
+  // Element Manipulation Helpers
+  // ----------------------------
+
+  function elementSelectorFromId (id) {
+    return id + ', [' + id + '], .' + id;
+  }
+
+  // Returns the outer HTML of the specified element.
+  function outerHtml (element) {
+    return document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML;
+  }
+
   // Adds the specified class to the element.
   function addClass (element, classname) {
     if (element.classList) {
@@ -484,10 +532,9 @@
     }
   }
 
-  // Returns whether or not the specified listener controls the given type.
-  function listenerControlsType (listener, type) {
-    return listener.component.type.indexOf(type) > -1;
-  }
+
+  // Element Traversal Helpers
+  // -------------------------
 
   // Calls the specified callback for each element.
   function eachElement (elements, callback) {
@@ -513,48 +560,9 @@
     });
   }
 
-  // Returns the component id from the tag name.
-  function elementComponentIdFromTag (element) {
-    return (element.tagName || '').toLowerCase();
-  }
 
-  // Returns the component ids from the component attribute or class names.
-  function elementComponentIdsFromAttrs (element) {
-    return [].map.call(element.attributes || [], function (attr) {
-      return attr.nodeName;
-    });
-  }
-
-  // Returns the component ids from the component class attribute.
-  function elementComponentIdsFromClasses (element) {
-    return (element.className || '').split(' ');
-  }
-
-  // Merges the second argument into the first.
-  function inherit (base, from) {
-    for (var a in from) {
-      if (typeof base[a] === 'undefined') {
-        base[a] = from[a];
-      }
-    }
-  }
-
-  // Returns the outer HTML of the specified element.
-  function outerHtml (element) {
-    return document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML;
-  }
-
-
-  // Element Helpers
-  // ---------------
-
-  function elementSelectorFromId (id) {
-    return id + ', [' + id + '], .' + id;
-  }
-
-
-  // Ready Callback Emulation Helpers
-  // --------------------------------
+  // Stylistic Helpers
+  // -----------------
 
   // Adds a rule to hide the specified component by its id.
   function hideByListener (listener) {
