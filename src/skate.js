@@ -150,7 +150,7 @@
       };
     }
 
-    this.component = component
+    this.component = component;
     this.id = id;
 
     inherit(this.component, skate.defaults);
@@ -330,7 +330,6 @@
 
         function remove (lifecycle, element, oldValue) {
           lifecycle.remove(element, oldValue);
-          delete lastValueCache[name];
         }
 
         // We've gotta keep track of values because MutationObservers don't
@@ -368,6 +367,7 @@
 
             // `remove()` callback.
             if (!attr && lifecycle.remove) {
+              delete lastValueCache[name];
               return remove(lifecycle, element, oldValue);
             }
           });
@@ -588,7 +588,7 @@
   // ---------
 
   if (typeof define === 'function' && define.amd) {
-    define('skate', [],function () {
+    define('skate', [], function () {
       return skate;
     });
   } else {
