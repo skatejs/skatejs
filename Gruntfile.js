@@ -32,6 +32,7 @@ module.exports = function(grunt) {
         port: grunt.option('port') || 9876,
         browsers: [grunt.option('browser') || 'PhantomJS'],
         files: [
+          'tests/polyfills.js',
           'src/skate.js',
           'tests/skate.js'
         ],

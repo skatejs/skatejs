@@ -119,12 +119,12 @@
     var attrs = elementComponentIdsFromAttrs(element);
     var classes = elementComponentIdsFromClasses(element);
 
-    addToListeners(tag);
-    attrs.forEach(addToListeners);
-    classes.forEach(addToListeners);
+    addToListeners(skate.types.TAG, tag);
+    attrs.forEach(addToListeners.bind(this, skate.types.ATTR));
+    classes.forEach(addToListeners.bind(this, skate.types.CLASS));
 
-    function addToListeners (id) {
-      if (id && skates[id] && listeners.indexOf(skates[id]) === -1) {
+    function addToListeners (type, id) {
+      if (id && skates[id] && listenerControlsType(skates[id], type) && listeners.indexOf(skates[id]) === -1) {
         listeners.push(skates[id]);
       }
     }
@@ -154,7 +154,7 @@
     inherit(this.component, skate.defaults);
 
     if (this.component.ready) {
-      hideById(this.id);
+      hideByListener(this);
     }
 
     if (this.component.listen) {
@@ -168,7 +168,6 @@
       var that = this;
 
       eachElement(elements, function (element) {
-        validateType(that, element);
         triggerLifecycle(that, element);
       });
 
@@ -200,8 +199,30 @@
 
   // Triggers the entire lifecycle.
   function triggerLifecycle (instance, target) {
-    triggerReady(instance, target, function () {
-      triggerInsert(instance, target);
+    triggerReady(instance, target, function (content) {
+      if (content === undefined) {
+        triggerInsert(instance, target);
+      } else {
+        // Create a content placeholder.
+        var comment = document.createComment('placeholder');
+        target.parentNode.insertBefore(comment, target);
+        target.parentNode.removeChild(target);
+
+        // Handle HTML.
+        if (typeof content === 'string') {
+          var div = document.createElement('div');
+          div.innerHTML = content;
+          content = div.childNodes[0];
+        }
+
+        // Place each item before the comment in sequence.
+        eachElement(content, function (element) {
+          comment.parentNode.insertBefore(element, comment);
+        });
+
+        // Cleanup.
+        comment.parentNode.removeChild(comment);
+      }
     });
   }
 
@@ -237,8 +258,7 @@
     if (readyFn && definedMultipleArgs.test(readyFn)) {
       readyFn(target, done);
     } else if (readyFn) {
-      readyFn(target);
-      done();
+      done(readyFn(target));
     } else {
       done();
     }
@@ -464,12 +484,17 @@
     }
   }
 
+  // Returns whether or not the specified listener controls the given type.
+  function listenerControlsType (listener, type) {
+    return listener.component.type.indexOf(type) > -1;
+  }
+
   // Calls the specified callback for each element.
   function eachElement (elements, callback) {
     if (elements.nodeType) {
       elements = [elements];
     } else if (typeof elements === 'string') {
-      elements = document.querySelectorAll(selector(elements));
+      elements = document.querySelectorAll(elementSelectorFromId(elements));
     }
 
     for (var a = 0; a < elements.length; a++) {
@@ -505,14 +530,6 @@
     return (element.className || '').split(' ');
   }
 
-  // Adds a rule to hide the specified component by its id.
-  function hideById (id) {
-    hiddenRules.sheet.insertRule(
-      negateSelector(id) + '{display:none}',
-      hiddenRules.sheet.cssRules.length
-    );
-  }
-
   // Merges the second argument into the first.
   function inherit (base, from) {
     for (var a in from) {
@@ -527,49 +544,55 @@
     return document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML;
   }
 
+
+  // Element Helpers
+  // ---------------
+
+  function elementSelectorFromId (id) {
+    return id + ', [' + id + '], .' + id;
+  }
+
+
+  // Ready Callback Emulation Helpers
+  // --------------------------------
+
+  // Adds a rule to hide the specified component by its id.
+  function hideByListener (listener) {
+    hiddenRules.sheet.insertRule(
+      negateListenerSelector(listener) + '{display:none}',
+      hiddenRules.sheet.cssRules.length
+    );
+  }
+
   // Returns a negated selector for the specified component.
-  function negateSelector (id) {
-    return selectors(id).map(function (selector) {
+  function negateListenerSelector (listener) {
+    return listenerSelectors(listener).map(function (selector) {
       return selector + ':not(.' + classname + ')';
     });
   }
 
   // Generates a selector for all possible bindings of a component id.
-  function selector (id) {
-    return selectors(id).join(', ');
+  function listenerSelector (listener) {
+    return selectors(listener).join(', ');
   }
 
   // Returns an array of selectors for the specified component.
-  function selectors (id) {
-    return [id, '[' + id + ']', '.' + id];
-  }
+  function listenerSelectors (listener) {
+    var parts = [];
 
-  // Validates the element against the compoonent type.
-  function validateType (instance, element) {
-    var type;
-    var types = {};
-    var restrictions = {};
-
-    types[skate.types.ATTR] = 'an attribute';
-    types[skate.types.CLASS] = 'a class';
-    types[skate.types.TAG] = 'a tag';
-
-    restrictions[skate.types.ATTR] = 'attributes';
-    restrictions[skate.types.CLASS] = 'classes';
-    restrictions[skate.types.NOTAG] = 'attributes or classes';
-    restrictions[skate.types.TAG] = 'tags';
-
-    if (element.tagName.toLowerCase() === instance.id) {
-      type = skate.types.TAG;
-    } else if (element.hasAttribute(instance.id)) {
-      type = skate.types.ATTR;
-    } else if (element.className.split(' ').indexOf(instance.id) > -1) {
-      type = skate.types.CLASS;
+    if (listenerControlsType(listener, skate.types.TAG)) {
+      parts.push(listener.id);
     }
 
-    if (instance.component.type.indexOf(type) === -1) {
-      throw new Error('Component "' + instance.id + '" was bound using ' + types[type] + ' and is restricted to using ' + restrictions[instance.component.type] + '. Element: ' + outerHtml(element));
+    if (listenerControlsType(listener, skate.types.ATTR)) {
+      parts.push('[' + listener.id + ']');
     }
+
+    if (listenerControlsType(listener, skate.types.CLASS)) {
+      parts.push('.' + listener.id);
+    }
+
+    return parts;
   }
 
 
