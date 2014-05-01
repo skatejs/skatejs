@@ -415,12 +415,12 @@
   function mutationEventAdapter () {
     var attributeListeners = [];
 
-    document.addEventListener('DOMNodeInserted', function (e) {
-      skate.init(e.target, false);
-    });
-
+    // DOMNodeInserted doesn't behave correctly so we listen to subtree
+    // modifications and init each descendant manually - similar to
+    // mutation observers.
     document.addEventListener('DOMSubtreeModified', function (e) {
-      skate.init(e.target, false);
+      skate.init(e.target);
+      eachDescendant(e.target, skate.init);
     });
 
     document.addEventListener('DOMNodeRemoved', function (e) {
