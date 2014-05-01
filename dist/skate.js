@@ -202,9 +202,11 @@
     triggerReady(instance, target, function (content) {
       if (content === undefined) {
         triggerInsert(instance, target);
-      } else {
-        // Create a content placeholder.
+      } else if (target.parentNode) {
+        // A placeholder for replacing the current element.
         var comment = document.createComment('placeholder');
+
+        // Replace the target with the placeholder.
         target.parentNode.insertBefore(comment, target);
         target.parentNode.removeChild(target);
 
