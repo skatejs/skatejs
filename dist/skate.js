@@ -119,17 +119,15 @@
     var attrs = elementComponentIdsFromAttrs(element);
     var classes = elementComponentIdsFromClasses(element);
 
-    // Tag overrides attributes.
-    if (tag && skates[tag]) {
-      listeners.push(skates[tag]);
-    }
+    addToListeners(tag);
+    attrs.forEach(addToListeners);
+    classes.forEach(addToListeners);
 
-    // Attributes override classes.
-    attrs.concat(classes).forEach(function (id) {
-      if (skates[id]) {
+    function addToListeners (id) {
+      if (id && skates[id] && listeners.indexOf(skates[id]) === -1) {
         listeners.push(skates[id]);
       }
-    });
+    }
 
     return listeners;
   };
