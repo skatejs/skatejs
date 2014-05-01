@@ -303,12 +303,12 @@
       mutations.forEach(function (mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length) {
           skate.init(mutation.addedNodes);
-          eachDescendant(skate.init);
+          eachDescendant(mutation.addedNodes, skate.init);
         }
 
         if (mutation.removedNodes && mutation.removedNodes.length) {
           triggerRemove(mutation.removedNodes);
-          eachDescendant(triggerRemove);
+          eachDescendant(mutation.removedNodes, triggerRemove);
         }
       });
     });
