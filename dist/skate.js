@@ -202,7 +202,7 @@
     triggerReady(instance, target, function (content) {
       if (content === undefined) {
         triggerInsert(instance, target);
-      } else if (target.parentNode) {
+      } else if (content !== target && target.parentNode) {
         // A placeholder for replacing the current element.
         var comment = document.createComment('placeholder');
 
@@ -235,28 +235,17 @@
     var readyFn = component.ready;
     done = done || function (){};
 
-    // Make sure the tracker is registered.
-    if (!target[isReadyTriggeredProperty]) {
-      target[isReadyTriggeredProperty] = [];
-    }
-
-    // If it's already been triggered, skip.
-    if (target[isReadyTriggeredProperty].indexOf(instance.id) > -1) {
+    if (isReadyBlacklisted(target, instance.id)) {
       return done();
     }
 
-    // Set as ready.
-    target[isReadyTriggeredProperty].push(instance.id);
-
-    // Extend element properties and methods with those provided.
+    blacklistReady(target, instance.id);
     inherit(target, component.extend);
 
-    // Bind attribute listeners if supplied.
     if (component.attrs) {
       skateAdapter.addAttributeListener(target, component.attrs);
     }
 
-    // If an async callback is defined make it async, sync or do nothing if no ready method is defined.
     if (readyFn && definedMultipleArgs.test(readyFn)) {
       readyFn(target, done);
     } else if (readyFn) {
@@ -271,25 +260,15 @@
     var component = instance.component;
     var insertFn = component.insert;
 
-    // Make sure the tracker is registered.
-    if (!target[isInsertTriggeredProperty]) {
-      target[isInsertTriggeredProperty] = [];
-    }
-
-    // If it's already been triggered, skip.
-    if (target[isInsertTriggeredProperty].indexOf(instance.id) > -1) {
+    if (isInsertBlacklisted(target, instance.id)) {
       return;
     }
 
-    // If it's not in the document we shouldn't trigger it.
     if (!document.documentElement.contains(target)) {
       return;
     }
 
-    // Set as inserted.
-    target[isInsertTriggeredProperty].push(instance.id);
-
-    // Ensures that the element is no longer hidden.
+    blacklistInsert(target, instance.id);
     addClass(target, classname);
 
     if (insertFn) {
@@ -489,6 +468,34 @@
         base[a] = from[a];
       }
     }
+  }
+
+
+  // Element State Helpers
+  // ---------------------
+
+  function blacklistReady (element, id) {
+    if (!element[isReadyTriggeredProperty]) {
+      element[isReadyTriggeredProperty] = [];
+    }
+
+    element[isReadyTriggeredProperty].push(id);
+  }
+
+  function blacklistInsert (element, id) {
+    if (!element[isInsertTriggeredProperty]) {
+      element[isInsertTriggeredProperty] = [];
+    }
+
+    element[isInsertTriggeredProperty].push(id);
+  }
+
+  function isReadyBlacklisted (element, id) {
+    return element[isReadyTriggeredProperty] && element[isReadyTriggeredProperty].indexOf(id) > -1;
+  }
+
+  function isInsertBlacklisted (element, id) {
+    return element[isInsertTriggeredProperty] && element[isInsertTriggeredProperty].indexOf(id) > -1;
   }
 
 
