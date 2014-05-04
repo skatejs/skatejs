@@ -216,7 +216,7 @@
         if (typeof content === 'string') {
           var div = document.createElement('div');
           div.innerHTML = content;
-          content = div.childNodes[0];
+          content = div.children[0];
         }
 
         // Place each item before the comment in sequence.
@@ -527,11 +527,6 @@
 
   function elementSelectorFromId (id) {
     return id + ', [' + id + '], .' + id;
-  }
-
-  // Returns the outer HTML of the specified element.
-  function outerHtml (element) {
-    return document.createElement('div').appendChild(element.cloneNode(true)).parentNode.innerHTML;
   }
 
   // Adds the specified class to the element.
