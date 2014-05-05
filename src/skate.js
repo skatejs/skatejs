@@ -257,7 +257,7 @@
         if (typeof content === 'string') {
           var div = document.createElement('div');
           div.innerHTML = content;
-          content = div;
+          content = div.childNodes;
         }
 
         // Place each item before the comment in sequence.
