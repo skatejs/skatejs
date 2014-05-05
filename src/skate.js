@@ -40,11 +40,14 @@
   // The adapter we are using according to the capabilities of the environment.
   var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
 
-  // The property to use when checking if the element has already been initialised.
+  // The property to use when checking if the element's ready callback has been executed.
   var isReadyTriggeredProperty = '_skate_ready_triggered';
 
   // The property to use when checking if the element's insert callback has been executed.
   var isInsertTriggeredProperty = '_skate_insert_triggered';
+
+  // The property to use when checking if the element is blacklisted.
+  var isBlacklistedProperty = '_skate_blacklisted';
 
 
   // Factory
@@ -100,6 +103,7 @@
       skate.listeners(element).forEach(function (listener) {
         listener.init(element);
       });
+      skate.init(element.children);
     });
 
     return elements;
@@ -132,6 +136,40 @@
     }
 
     return listeners;
+  };
+
+  // Ensures the passed element or elements aren't initialised.
+  skate.blacklist = function (elements, andDescendants) {
+    if (andDescendants === undefined) {
+      andDescendants = true;
+    }
+
+    eachElement(elements, function (element) {
+      element[isBlacklistedProperty] = true;
+
+      if (andDescendants) {
+        skate.blacklist(element.children, true);
+      }
+    });
+
+    return skate;
+  };
+
+  // Ensures the passed element or elements aren't blacklisted.
+  skate.whitelist = function (elements, andDescendants) {
+    if (andDescendants === undefined) {
+      andDescendants = true;
+    }
+
+    eachElement(elements, function (element) {
+      delete element[isBlacklistedProperty];
+
+      if (andDescendants) {
+        skate.whitelist(element.children, true);
+      }
+    });
+
+    return skate;
   };
 
 
@@ -170,7 +208,10 @@
       var that = this;
 
       eachElement(elements, function (element) {
-        triggerLifecycle(that, element);
+        if (!element[isBlacklistedProperty]) {
+          triggerLifecycle(that, element);
+          skate.init(element.children);
+        }
       });
 
       return this;
@@ -216,7 +257,7 @@
         if (typeof content === 'string') {
           var div = document.createElement('div');
           div.innerHTML = content;
-          content = div.children[0];
+          content = div;
         }
 
         // Place each item before the comment in sequence.
@@ -281,6 +322,7 @@
   // Triggers remove on the target.
   function triggerRemove (elements) {
     eachElement(elements, function (element) {
+      triggerRemove(element.children);
       skate.listeners(element).forEach(function (listener) {
         if (listener.component.remove) {
           listener.component.remove(element);
@@ -304,12 +346,10 @@
       mutations.forEach(function (mutation) {
         if (mutation.addedNodes && mutation.addedNodes.length) {
           skate.init(mutation.addedNodes);
-          eachDescendant(mutation.addedNodes, skate.init);
         }
 
         if (mutation.removedNodes && mutation.removedNodes.length) {
           triggerRemove(mutation.removedNodes);
-          eachDescendant(mutation.removedNodes, triggerRemove);
         }
       });
     });
@@ -403,11 +443,10 @@
     // mutation observers.
     document.addEventListener('DOMSubtreeModified', function (e) {
       skate.init(e.target);
-      eachDescendant(e.target, skate.init);
     });
 
     document.addEventListener('DOMNodeRemoved', function (e) {
-      triggerRemove(e.target, false);
+      triggerRemove(e.target);
     });
 
     var attrCallbacks = {
@@ -555,15 +594,6 @@
         callback(elements[a], a);
       }
     }
-  }
-
-  // Triggers a callback for all descendants of each passed element.
-  function eachDescendant (elements, callback) {
-    eachElement(elements, function (element) {
-      eachElement(element.getElementsByTagName('*'), function (descendant) {
-        callback(descendant);
-      });
-    });
   }
 
 
