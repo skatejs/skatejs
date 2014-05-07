@@ -106,7 +106,6 @@
       skate.listeners(element).forEach(function (listener) {
         listener.init(element);
       });
-      skate.init(element.children);
     });
 
     return elements;
@@ -218,7 +217,6 @@
       eachElement(elements, function (element) {
         if (!element[isBlacklistedProperty]) {
           triggerLifecycle(that, element);
-          skate.init(element.children);
         }
       });
 
@@ -232,7 +230,7 @@
       }
 
       skates[this.id] = this;
-      this.init(this.id);
+      this.init(document.querySelectorAll(elementSelectorFromId(this.id)));
 
       return this;
     },
@@ -269,7 +267,7 @@
         if (typeof replaceWith === 'string') {
           var div = document.createElement('div');
           div.innerHTML = replaceWith;
-          replaceWith = div.childNodes;
+          replaceWith = div.children;
         }
 
         // Place each item before the comment in sequence.
@@ -418,7 +416,9 @@
         var observer = new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
             eachElement(mutation.addedNodes, insertCallback);
+            eachDescendant(mutation.addedNodes, insertCallback);
             eachElement(mutation.removedNodes, removeCallback);
+            eachDescendant(mutation.removedNodes, removeCallback);
           });
         });
 
@@ -527,15 +527,13 @@
 
     return {
       addElementListener: function (element, insertCallback, removeCallback, descendants) {
-        element.addEventListener('DOMNodeInserted', function (e) {
-          insertCallback(e.target);
+        element.addEventListener('DOMSubtreeModified', function (e) {
+          if (descendants) {
+            eachDescendant(e.target, insertCallback);
+          } else {
+            eachElement(e.target.children, insertCallback);
+          }
         });
-
-        if (descendants) {
-          element.addEventListener('DOMSubtreeModified', function (e) {
-            insertCallback(e.target);
-          });
-        }
 
         element.addEventListener('DOMNodeRemoved', function (e) {
           if (descendants || e.target.parentNode === element) {
@@ -657,10 +655,20 @@
 
   // Calls the specified callback for each element.
   function eachElement (elements, callback) {
+    if (!elements) {
+      return;
+    }
+
     if (elements.nodeType) {
-      elements = [elements];
-    } else if (typeof elements === 'string') {
-      elements = document.querySelectorAll(elementSelectorFromId(elements));
+      if (elements.nodeType === 1) {
+        elements = [elements];
+      } else {
+        return;
+      }
+    }
+
+    if (!elements.length) {
+      return;
     }
 
     for (var a = 0; a < elements.length; a++) {
@@ -668,6 +676,16 @@
         callback(elements[a], a);
       }
     }
+  }
+
+  // Executes the callback for each descendant of each element.
+  function eachDescendant (elements, callback) {
+    eachElement(elements, function (element) {
+      eachElement(element.children, function (child) {
+        callback(child);
+        eachDescendant(child, callback);
+      });
+    });
   }
 
 

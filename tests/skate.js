@@ -170,22 +170,6 @@
       skate.init(addDivToBody());
       assert(initialised);
     });
-
-    it('Should take a selector', function () {
-      var initialised = 0;
-
-      skate('div', {
-        insert: function () {
-          ++initialised;
-        }
-      });
-
-      addDivToBody();
-      addDivToBody();
-
-      skate.init('div');
-      assert(initialised === 2);
-    });
   });
 
   describe('Attribute listeners', function () {
