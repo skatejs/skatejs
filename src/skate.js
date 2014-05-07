@@ -416,9 +416,12 @@
         var observer = new MutationObserver(function (mutations) {
           mutations.forEach(function (mutation) {
             eachElement(mutation.addedNodes, insertCallback);
-            eachDescendant(mutation.addedNodes, insertCallback);
             eachElement(mutation.removedNodes, removeCallback);
-            eachDescendant(mutation.removedNodes, removeCallback);
+
+            if (descendants) {
+              eachDescendant(mutation.addedNodes, insertCallback);
+              eachDescendant(mutation.removedNodes, removeCallback);
+            }
           });
         });
 
