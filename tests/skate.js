@@ -123,16 +123,16 @@
       });
 
       skate.init(addDivToBody());
-      document.body.getElementsByTagName('div').length.should.equal(0);
-      document.body.getElementsByTagName('span').length.should.equal(1);
+      assert(document.body.getElementsByTagName('div').length === 0);
+      assert(document.body.getElementsByTagName('span').length === 1);
     });
 
     it ('Should be done asynchronously by passing to the done callback.', function (done) {
       skate('div', {
         ready: function (element, next) {
           next('<span></span>');
-          document.body.getElementsByTagName('div').length.should.equal(0);
-          document.body.getElementsByTagName('span').length.should.equal(1);
+          assert(document.body.getElementsByTagName('div').length === 0);
+          assert(document.body.getElementsByTagName('span').length === 1);
           done();
         }
       });
@@ -390,6 +390,59 @@
         assert(numRemove === 2, 'Remove not called');
         done();
       });
+    });
+  });
+
+  describe('Watching', function () {
+    it('Should watch an element for inserted nodes', function (done) {
+      var div = addDivToBody();
+      var span = document.createElement('span');
+
+      skate.watch(div).insert.bind(function (element) {
+        element.tagName.should.equal('SPAN');
+        done();
+      });
+
+      div.appendChild(span);
+    });
+
+    it('Should watch an element for removed nodes', function (done) {
+      var div = addDivToBody();
+      var span = document.createElement('span');
+
+      skate.watch(div).remove.bind(function (element) {
+        element.tagName.should.equal('SPAN');
+        done();
+      });
+
+      div.appendChild(span);
+      div.removeChild(span);
+    });
+
+    it('Should allow you to specify if you want to watch for descendant insertions.', function (done) {
+      var div = addDivToBody();
+
+      skate.watch(div, true).insert.bind(function (element) {
+        if (element.tagName === 'SPAN') {
+          done();
+        }
+      });
+
+      div.appendChild(document.createElement('div'));
+      div.querySelector('div').appendChild(document.createElement('span'));
+    });
+
+    it('Should allow you to specify if you want to watch for descendant removals.', function (done) {
+      var div = addDivToBody();
+
+      skate.watch(div, true).remove.bind(function (element) {
+        if (element.tagName === 'SPAN') {
+          done();
+        }
+      });
+
+      div.innerHTML = '<div><span></span></div>';
+      div.querySelector('div').removeChild(div.querySelector('span'));
     });
   });
 })();

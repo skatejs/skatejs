@@ -7,6 +7,9 @@
   // ---------------
 
 
+  // Normalise the mutaiton observer constructor.
+  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+
   // Reference to the head of the document where `hiddenRules` are inserted.
   var head = document.getElementsByTagName('head')[0];
 
@@ -38,7 +41,7 @@
   var skates = [];
 
   // The adapter we are using according to the capabilities of the environment.
-  var skateAdapter = mutationObserverAdapter() || mutationEventAdapter();
+  var skateAdapter = MutationObserver ? mutationObserverAdapter() : mutationEventAdapter();
 
   // The property to use when checking if the element's ready callback has been executed.
   var isReadyTriggeredProperty = '_skate_ready_triggered';
@@ -172,6 +175,11 @@
     return skate;
   };
 
+  // Watches the specified element for changes.
+  skate.watch = function (element, descendants) {
+    return new Watcher(element, descendants);
+  };
+
 
   // Common Interface
   // ----------------
@@ -242,10 +250,14 @@
 
   // Triggers the entire lifecycle.
   function triggerLifecycle (instance, target) {
-    triggerReady(instance, target, function (content) {
-      if (content === undefined) {
-        triggerInsert(instance, target);
-      } else if (content !== target && target.parentNode) {
+    triggerReady(instance, target, function (replaceWith) {
+      blacklistReady(target, instance.id);
+
+      if (!replaceWith) {
+        return triggerInsert(instance, target);
+      }
+
+      if (replaceWith !== target && target.parentNode) {
         // A placeholder for replacing the current element.
         var comment = document.createComment('placeholder');
 
@@ -254,14 +266,14 @@
         target.parentNode.removeChild(target);
 
         // Handle HTML.
-        if (typeof content === 'string') {
+        if (typeof replaceWith === 'string') {
           var div = document.createElement('div');
-          div.innerHTML = content;
-          content = div.childNodes;
+          div.innerHTML = replaceWith;
+          replaceWith = div.childNodes;
         }
 
         // Place each item before the comment in sequence.
-        eachElement(content, function (element) {
+        eachElement(replaceWith, function (element) {
           comment.parentNode.insertBefore(element, comment);
         });
 
@@ -282,7 +294,6 @@
       return done();
     }
 
-    blacklistReady(target, instance.id);
     inherit(target, component.extend);
 
     if (component.attrs) {
@@ -332,34 +343,92 @@
   }
 
 
+  // Watcher
+  // -------
+
+  function Watcher (element, descendants) {
+    var that = this;
+
+    this.insert = new WatcherEvent();
+    this.remove = new WatcherEvent();
+
+    skateAdapter.addElementListener(element, triggerInserts, triggerRemoves, descendants);
+
+    function triggerInserts (el) {
+      that.insert.stack.forEach(function (cb) {
+        cb(el);
+      });
+    }
+
+    function triggerRemoves (el) {
+      that.remove.stack.forEach(function (cb) {
+        cb(el);
+      });
+    }
+  }
+
+
+  // Watcher.Event
+
+  function WatcherEvent () {
+    this.stack = [];
+  }
+
+  WatcherEvent.prototype = {
+    bind: function (callback) {
+      this.stack.push(callback);
+      return this;
+    },
+    one: function (callback) {
+      var that = this;
+
+      this.then(callback);
+      this.then(remove);
+
+      return this;
+
+      function remove () {
+        that.stop(callback);
+        that.stop(remove);
+      }
+    },
+    unbind: function (callback) {
+      if (callback) {
+        var index = this.stack.indexOf(callback);
+
+        if (index > -1) {
+          this.stack.splice(index, 1);
+        }
+      } else {
+        this.stack = [];
+      }
+
+      return this;
+    }
+  };
+
+
   // MutationObserver Adapter
   // ------------------------
 
   function mutationObserverAdapter () {
-    var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-
-    if (!MutationObserver) {
-      return;
-    }
-
-    var observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        if (mutation.addedNodes && mutation.addedNodes.length) {
-          skate.init(mutation.addedNodes);
-        }
-
-        if (mutation.removedNodes && mutation.removedNodes.length) {
-          triggerRemove(mutation.removedNodes);
-        }
-      });
-    });
-
-    observer.observe(document, {
-      childList: true,
-      subtree: true
-    });
-
     return {
+      addElementListener: function (element, insertCallback, removeCallback, descendants) {
+        var options = {};
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            eachElement(mutation.addedNodes, insertCallback);
+            eachElement(mutation.removedNodes, removeCallback);
+          });
+        });
+
+        observer.observe(element, {
+          childList: true,
+          subtree: descendants
+        });
+
+        return observer;
+      },
       addAttributeListener: function (element, attributes) {
         function init (lifecycle, element, newValue) {
           (lifecycle.init || lifecycle.update || lifecycle)(element, newValue);
@@ -437,18 +506,6 @@
 
   function mutationEventAdapter () {
     var attributeListeners = [];
-
-    // DOMNodeInserted doesn't behave correctly so we listen to subtree
-    // modifications and init each descendant manually - similar to
-    // mutation observers.
-    document.addEventListener('DOMSubtreeModified', function (e) {
-      skate.init(e.target);
-    });
-
-    document.addEventListener('DOMNodeRemoved', function (e) {
-      triggerRemove(e.target);
-    });
-
     var attrCallbacks = {
       // modification (update)
       1: function (lifecycle, element, e) {
@@ -469,6 +526,23 @@
     };
 
     return {
+      addElementListener: function (element, insertCallback, removeCallback, descendants) {
+        element.addEventListener('DOMNodeInserted', function (e) {
+          insertCallback(e.target);
+        });
+
+        if (descendants) {
+          element.addEventListener('DOMSubtreeModified', function (e) {
+            insertCallback(e.target);
+          });
+        }
+
+        element.addEventListener('DOMNodeRemoved', function (e) {
+          if (descendants || e.target.parentNode === element) {
+            removeCallback(e.target);
+          }
+        });
+      },
       addAttributeListener: function (element, attributes) {
         element.addEventListener('DOMAttrModified', function (e) {
           var lifecycle = attributes[e.attrName];
@@ -647,6 +721,11 @@
   // prior to calling the ready callback to prevent FOUC if the component
   // modifies the element in which it is bound.
   head.appendChild(hiddenRules);
+
+  // Start listening for document updates changes.
+  var watcher = skate.watch(document, true);
+  watcher.insert.bind(skate.init);
+  watcher.remove.bind(triggerRemove);
 
 
   // Exporting
