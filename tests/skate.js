@@ -5,6 +5,15 @@
   // Setup
   // -----
 
+  function add(name) {
+    return document.body.appendChild(document.createElement(name));
+  }
+
+  function remove (element) {
+    element.parentNode.removeChild(element);
+    return element;
+  }
+
   function addDivToBody(id) {
     var div = document.createElement('div');
     div.id = id || 'test';
@@ -31,64 +40,63 @@
 
   describe('Lifecycle Callbacks', function () {
     it('Should trigger ready before the element is shown.', function (done) {
-      skate('div', {
+      skate('ready-callback', {
         ready: function (element) {
           assert(element.className.split(' ').indexOf('_skate') === -1, 'Class found');
           done();
         }
       });
 
-      addDivToBody();
+      add('ready-callback');
     });
 
     it('Should trigger insert after the element is shown.', function (done) {
-      skate('div', {
+      skate('insert-callback', {
         insert: function (element) {
           assert(element.className.split(' ').indexOf('_skate') > -1, 'Class not found');
           done();
         }
       });
 
-      addDivToBody();
+      add('insert-callback');
     });
 
     it('Should trigger removed when the element is removed.', function (done) {
-      skate('div', {
+      skate('remove-callback', {
         remove: function () {
           assert(true);
           done();
         }
       });
 
-      skate.init(addDivToBody());
-      removeDivFromBody();
+      var el = add('remove-callback');
+      skate.init(el);
+      remove(el);
     });
   });
 
 
   describe('DOM node interaction.', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
-      addDivToBody().textContent = 'test';
+      add('existing-element');
 
-      skate('div', {
+      skate('existing-element', {
         insert: function (element) {
-          element.textContent.should.equal('test');
+          assert(true);
           done();
         }
       });
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function (done) {
-      skate('div', {
+      skate('new-element', {
         insert: function (element) {
-          element.textContent.should.equal('test');
+          assert(true);
           done();
         }
       });
 
-      var div = document.createElement('div');
-      div.textContent = 'test';
-      document.body.appendChild(div);
+      add('new-element');
     });
   });
 
@@ -123,8 +131,8 @@
       });
 
       skate.init(addDivToBody());
-      assert(document.body.getElementsByTagName('div').length === 0);
-      assert(document.body.getElementsByTagName('span').length === 1);
+      assert(document.body.getElementsByTagName('div').length === 0, 'Divs were found.');
+      assert(document.body.getElementsByTagName('span').length === 1, 'No spans found.');
     });
 
     it ('Should be done asynchronously by passing to the done callback.', function (done) {
@@ -179,17 +187,17 @@
       var remove = false;
 
       skate('div', {
-        attrs: {
+        attributes: {
           open: {
-            init: function (element, value) {
-              value.should.equal('init');
+            insert: function (data) {
+              data.newValue.should.equal('init');
             },
-            update: function (element, value, oldValue) {
-              oldValue.should.equal('init');
-              value.should.equal('update');
+            update: function (data) {
+              data.oldValue.should.equal('init');
+              data.newValue.should.equal('update');
             },
-            remove: function (element, value) {
-              value.should.equal('update');
+            remove: function (data) {
+              data.oldValue.should.equal('update');
               done();
             }
           }
@@ -214,15 +222,15 @@
       var init = false;
 
       skate('div', {
-        attrs: {
+        attributes: {
           open: {
-            update: function (element, value, oldValue) {
-              if (value === 'init') {
+            update: function (data) {
+              if (data.newValue === 'init') {
                 init = true;
-                element.setAttribute('open', 'update');
+                data.element.setAttribute('open', 'update');
               }
 
-              if (value === 'update') {
+              if (data.newValue === 'update') {
                 init.should.equal(true);
                 done();
               }
@@ -238,14 +246,14 @@
       var init = false;
 
       skate('div', {
-        attrs: {
-          open: function (element, value, oldValue) {
-            if (value === 'init') {
+        attributes: {
+          open: function (data) {
+            if (data.newValue === 'init') {
               init = true;
-              element.setAttribute('open', 'update');
+              data.element.setAttribute('open', 'update');
             }
 
-            if (value === 'update') {
+            if (data.newValue === 'update') {
               init.should.equal(true);
               done();
             }
@@ -382,8 +390,8 @@
       var div = addDivToBody();
       var span = document.createElement('span');
 
-      skate.watch(div).insert.bind(function (element) {
-        element.tagName.should.equal('SPAN');
+      skate.watch(div).on('span.insert', function (element) {
+        assert(true);
         done();
       });
 
@@ -394,8 +402,8 @@
       var div = addDivToBody();
       var span = document.createElement('span');
 
-      skate.watch(div).remove.bind(function (element) {
-        element.tagName.should.equal('SPAN');
+      skate.watch(div).on('span.remove', function (element) {
+        assert(true);
         done();
       });
 
@@ -406,10 +414,11 @@
     it('Should allow you to specify if you want to watch for descendant insertions.', function (done) {
       var div = addDivToBody();
 
-      skate.watch(div, true).insert.bind(function (element) {
-        if (element.tagName === 'SPAN') {
-          done();
-        }
+      skate.watch(div, {
+        descendants: true
+      }).on('span.insert', function (element) {
+        assert(true);
+        done();
       });
 
       div.appendChild(document.createElement('div'));
@@ -419,14 +428,67 @@
     it('Should allow you to specify if you want to watch for descendant removals.', function (done) {
       var div = addDivToBody();
 
-      skate.watch(div, true).remove.bind(function (element) {
-        if (element.tagName === 'SPAN') {
-          done();
-        }
+      skate.watch(div, {
+        descendants: true
+      }).on('span.remove', function (element) {
+        assert(true);
+        done();
       });
 
       div.innerHTML = '<div><span></span></div>';
       div.querySelector('div').removeChild(div.querySelector('span'));
+    });
+
+    it('Should allow you to watch attributes', function (done) {
+      var div = addDivToBody();
+      var added = false;
+      var updated = false;
+      var removed = false;
+
+      skate.watch(div, {
+        attributes: true
+      }).on('name.insert', function (data) {
+        data.element.should.equal(div);
+        data.name.should.equal('name');
+        data.newValue.should.equal('value');
+        added = true;
+      });
+
+      skate.watch(div, {
+        attributes: true
+      }).on('name.update', function (data) {
+        data.element.should.equal(div);
+        data.name.should.equal('name');
+        data.newValue.should.equal('new value');
+        data.oldValue.should.equal('value');
+        updated = true;
+      });
+
+      skate.watch(div, {
+        attributes: true
+      }).on('name.remove', function (data) {
+        data.element.should.equal(div);
+        data.name.should.equal('name');
+        data.oldValue.should.equal('new value');
+        removed = true;
+      });
+
+      div.setAttribute('name', 'value');
+
+      setTimeout(function () {
+        div.setAttribute('name', 'new value');
+      }, 100);
+
+      setTimeout(function () {
+        div.removeAttribute('name');
+      }, 200);
+
+      setTimeout(function () {
+        added.should.equal(true);
+        updated.should.equal(true);
+        removed.should.equal(true);
+        done();
+      }, 300);
     });
   });
 })();

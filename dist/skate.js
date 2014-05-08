@@ -548,7 +548,7 @@
         element.addEventListener('DOMAttrModified', function (e) {
           var lifecycle = attributes[e.attrName];
 
-          if (lifecycle) {
+          if (lifecycle && e.target === element) {
             attrCallbacks[e.attrChange](lifecycle, element, e);
           }
         });
