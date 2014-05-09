@@ -3,47 +3,8 @@
   'use strict';
 
 
-  // Scope Variables
-  // ---------------
-
-  // Reference to the head of the document where `hiddenRules` are inserted.
-  var head = document.getElementsByTagName('head')[0];
-
   // The rules used to hide elements during the ready lifecycle callback.
   var hiddenRules = document.createElement('style');
-
-  // The classname used to emulate element visibility between ready / insert.
-  var classname = '_skate';
-
-  // Element.prototype.matches polyfill as a function.
-  var matchesSelector = (function () {
-      var matcher = Element.prototype.matches;
-
-      ['moz', 'ms', 'o', 'webkit'].some(function (prefix) {
-        var method = prefix + 'MatchesSelector';
-
-        if (Element.prototype[method]) {
-          matcher = method;
-          return true;
-        }
-      });
-
-      return function (element, selector) {
-        return element && element.nodeType === 1 && element[matcher](selector);
-      };
-    }());
-
-  // All active instances.
-  var skates = [];
-
-  // The property to use when checking if the element's ready callback has been executed.
-  var isReadyTriggeredProperty = '_skate_ready_triggered';
-
-  // The property to use when checking if the element's insert callback has been executed.
-  var isInsertTriggeredProperty = '_skate_insert_triggered';
-
-  // The property to use when checking if the element is blacklisted.
-  var isBlacklistedProperty = '_skate_blacklisted';
 
 
   // Observers
@@ -78,36 +39,49 @@
       return observer;
     },
     addAttributeListener: function (element, callback) {
-      if (!element.__skate_attributes) {
-        element.__skate_attributes = {};
+      var callbacks = data(element, 'attribute-callbacks');
+      if (callbacks) {
+        return callbacks.push(callback);
       }
 
-      var obs = new MutationObserver(function (mutations) {
+      callbacks = [callback];
+      data(element, 'attribute-callbacks', callbacks);
+
+      var cache = data(element, 'attribute-cache');
+      if (!cache) {
+        cache = {};
+        data(element, 'attribute-cache', cache);
+      }
+
+      var observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
           var type;
           var newValue;
           var name = mutation.attributeName;
           var attr = element.attributes[name];
-          var oldValue = element.__skate_attributes[name];
+          var oldValue = cache[name];
 
           if (attr) {
-            newValue = element.__skate_attributes[name] = attr.nodeValue;
+            newValue = cache[name] = attr.nodeValue;
+          } else {
+            delete cache[name];
           }
 
-          if (attr && oldValue === undefined) {
+          if (attr && newValue !== undefined && oldValue === undefined) {
             type = 'insert';
-          } else if (attr && oldValue !== undefined) {
+          } else if (attr && newValue !== undefined && oldValue !== undefined) {
             type = 'update';
-          } else if (!attr) {
+          } else if (!attr && newValue === undefined && oldValue !== undefined) {
             type = 'remove';
-            delete element.__skate_attributes[name];
           }
 
-          callback(type, name, newValue, oldValue);
+          callbacks.forEach(function (callback) {
+            callback(type, name, newValue, oldValue);
+          });
         });
       });
 
-      obs.observe(element, {
+      observer.observe(element, {
         attributes: true
       });
     }
@@ -119,10 +93,6 @@
 
   var mutationEventAdapter = {
     addElementListener: function (element, callback) {
-      element.addEventListener('DOMNodeInserted', function (e) {
-        callback('insert', e.target);
-      });
-
       element.addEventListener('DOMSubtreeModified', function (e) {
         callback('insert', e.target);
       });
@@ -158,14 +128,8 @@
 
     if (options.children || options.descendants) {
       skateAdapter.addElementListener(element, function (type, descendant) {
-        if (descendant.nodeType !== 1) {
-          return;
-        }
-
-        for (var a in elementPossibleIds(descendant)) {
-          that.fire(a + '.' + type, {
-            element: descendant
-          });
+        if (descendant.nodeType === 1) {
+          fireElements(type, descendant, options.descendants);
         }
       });
     }
@@ -173,11 +137,25 @@
     if (options.attributes) {
       skateAdapter.addAttributeListener(element, function (type, name, newValue, oldValue) {
         that.fire(name + '.' + type, {
-          element: element,
-          name: name,
+          target: element,
+          attribute: name,
           newValue: newValue,
           oldValue: oldValue
         });
+      });
+    }
+
+    function fireElements(type, elements, recurse) {
+      eachElement(elements, function (element) {
+        for (var a in possibleIds(element)) {
+          that.fire(a + '.' + type, {
+            target: element
+          });
+        }
+
+        if (options.children || options.descendants) {
+          fireElements(type, element.children, recurse);
+        }
       });
     }
   }
@@ -243,6 +221,14 @@
 
   var documentWatcher;
 
+  /**
+   * Creates a listener for the specified component.
+   *
+   * @param {String} id The ID of the component.
+   * @param {Object | Function} component The component definition.
+   *
+   * @return {Function} Function or constructor that creates a custom-element for the component.
+   */
   function skate (id, component) {
     if (!documentWatcher) {
       documentWatcher = new Watcher(document, {
@@ -262,6 +248,8 @@
 
     inherit(component, skate.defaults);
 
+    var Element = makeElementConstructor(id, component);
+
     if (component.ready) {
       hiddenRules.sheet.insertRule(
         id + ':not(.' + component.classname + '),' +
@@ -271,31 +259,23 @@
       );
     }
 
-    var existing = document.querySelectorAll(elementSelectorFromId(id));
+    var existing = Element.existing();
 
     for (var a = 0; a < existing.length; a++) {
-      if (!existing[a][isBlacklistedProperty]) {
-        triggerLifecycle(id, component, existing[a]);
-      }
+      triggerLifecycle(id, component, existing[a]);
     }
 
-    documentWatcher.on(id + '.insert', function (data) {
-      if (!data.element[isBlacklistedProperty]) {
-        triggerLifecycle(id, component, data.element);
-      }
+    documentWatcher.on(id + '.insert', function (e) {
+      triggerLifecycle(id, component, e.target);
     });
 
-    documentWatcher.on(id + '.remove', function (data) {
+    documentWatcher.on(id + '.remove', function (e) {
       if (component.remove) {
-        component.remove(data.element);
+        component.remove(e.target);
       }
     });
 
-    return function () {
-      var element = document.createElement(id);
-      triggerReady(id, component, element);
-      return element;
-    };
+    return Element;
   }
 
   // Restriction type constants.
@@ -314,29 +294,37 @@
     // Set to `{...}` of `attrName: `{ init: ..., update: ..., remove: ... }` to listen to specific attributes.
     attributes: false,
 
-    // Properties and methods to add to each element.
-    extend: {},
+    // The classname to use when showing this component.
+    classname: '__skate',
 
     // Whether or not to start listening right away.
     listen: true,
+
+    // Properties and methods to add to each element.
+    prototype: {},
 
     // The type of bindings to allow.
     type: skate.types.ANY
   };
 
   /**
-   * Synchronously initialises the specified element or elements.
+   * Ensures the passed element or elements aren't initialised.
    *
-   * @param {Element | Traversable} elements The element or elements to init.
+   * @param {Element | Traversable} elements The element or elements to blacklist.
+   * @param {Boolean} andDescendants Whether or not to blacklist element descendants.
    *
    * @return {skate}
    */
-  skate.init = function (elements) {
+  skate.blacklist = function (elements, andDescendants) {
+    if (andDescendants === undefined) {
+      andDescendants = true;
+    }
+
     eachElement(elements, function (element) {
-      for (var a in elementPossibleIds(element)) {
-        documentWatcher.fire(a + '.insert', {
-          element: element
-        });
+      data(element, 'blacklisted', true);
+
+      if (andDescendants) {
+        skate.blacklist(element.children, true);
       }
     });
 
@@ -354,47 +342,18 @@
   };
 
   /**
-   * Ensures the passed element or elements aren't initialised.
+   * Synchronously initialises the specified element or elements.
    *
-   * @param {Element | Traversable} elements The element or elements to blacklist.
-   * @param {Boolean} andDescendants Whether or not to blacklist element descendants.
-   *
-   * @return {skate}
-   */
-  skate.blacklist = function (elements, andDescendants) {
-    if (andDescendants === undefined) {
-      andDescendants = true;
-    }
-
-    eachElement(elements, function (element) {
-      element[isBlacklistedProperty] = true;
-
-      if (andDescendants) {
-        skate.blacklist(element.children, true);
-      }
-    });
-
-    return skate;
-  };
-
-  /**
-   * Ensures the passed element or elements aren't blacklisted.
-   *
-   * @param {Element | Traversable} elements The element or elements to blacklist.
-   * @param {Boolean} andDescendants Whether or not to whitelist element descendants.
+   * @param {Element | Traversable} elements The element or elements to init.
    *
    * @return {skate}
    */
-  skate.whitelist = function (elements, andDescendants) {
-    if (andDescendants === undefined) {
-      andDescendants = true;
-    }
-
+  skate.init = function (elements) {
     eachElement(elements, function (element) {
-      delete element[isBlacklistedProperty];
-
-      if (andDescendants) {
-        skate.whitelist(element.children, true);
+      for (var a in possibleIds(element)) {
+        documentWatcher.fire(a + '.insert', {
+          target: element
+        });
       }
     });
 
@@ -413,12 +372,40 @@
     return new Watcher(element, options);
   };
 
+  /**
+   * Ensures the passed element or elements aren't blacklisted.
+   *
+   * @param {Element | Traversable} elements The element or elements to blacklist.
+   * @param {Boolean} andDescendants Whether or not to whitelist element descendants.
+   *
+   * @return {skate}
+   */
+  skate.whitelist = function (elements, andDescendants) {
+    if (andDescendants === undefined) {
+      andDescendants = true;
+    }
+
+    eachElement(elements, function (element) {
+      data(element, 'blacklisted', undefined);
+
+      if (andDescendants) {
+        skate.whitelist(element.children, true);
+      }
+    });
+
+    return skate;
+  };
+
 
   // Lifecycle Triggers
   // ------------------
 
   // Triggers the entire lifecycle.
   function triggerLifecycle (id, component, target) {
+    if (data(target, 'blacklisted')) {
+      return;
+    }
+
     triggerReady(id, component, target, function (replaceWith) {
       if (!replaceWith) {
         return triggerInsert(id, component, target);
@@ -458,12 +445,12 @@
     var readyFn = component.ready;
     done = done || function (){};
 
-    if (alreadyCalled('ready', id, target)) {
+    if (data(target, id + '.ready-called')) {
       return done();
     }
 
-    flagCalled('ready', id, target);
-    inherit(target, component.extend);
+    data(target, id + '.ready-called', true);
+    inherit(target, component.prototype);
 
     if (readyFn && definedMultipleArgs.test(readyFn)) {
       readyFn(target, done);
@@ -478,17 +465,17 @@
   function triggerInsert (id, component, target) {
     var insertFn = component.insert;
 
-    if (alreadyCalled('insert', id, target)) {
+    if (data(target, id + '.insert-called')) {
       return;
     }
 
-    if (!document.documentElement.contains(target)) {
+    if (!target.parentNode) {
       return;
     }
 
-    flagCalled('insert', id, target);
+    data(target, id + '.insert-called', true);
     triggerAttributes(id, component, target);
-    addClass(target, classname);
+    addClass(target, component.classname);
 
     if (insertFn) {
       insertFn(target);
@@ -501,11 +488,11 @@
       return;
     }
 
-    if (alreadyCalled('attributes', id, target)) {
+    if (data(target, id + '.attributes-called')) {
       return;
     }
 
-    flagCalled('attributes', id, target);
+    data(target, id + '.attributes-called', true);
 
     var watcher = new Watcher(target, {
       attributes: true
@@ -526,8 +513,8 @@
 
       if (attributeDefinition.insert && target.hasAttribute(attributeName)) {
         attributeDefinition.insert({
-          element: target,
-          name: attributeName,
+          target: target,
+          attribute: attributeName,
           newValue: target.getAttribute(attributeName)
         });
       }
@@ -538,89 +525,22 @@
     }
   }
 
-  function alreadyCalled(type, id, target) {
-    return target.__skate_already_called &&
-      target.__skate_already_called[type] &&
-      target.__skate_already_called[type][id];
-  }
-
-  function flagCalled(type, id, target) {
-    if (!target.__skate_already_called) {
-      target.__skate_already_called = {};
-    }
-
-    if (!target.__skate_already_called[type]) {
-      target.__skate_already_called[type] = {};
-    }
-
-    target.__skate_already_called[type][id] = id;
-  }
-
 
   // Utilities
   // ---------
 
-  // Returns whether or not the specified listener controls the given type.
-  function listenerControlsType (listener, type) {
-    return listener.component.type.indexOf(type) > -1;
-  }
-
-  // Merges the second argument into the first.
-  function inherit (base, from) {
-    for (var a in from) {
-      if (typeof base[a] === 'undefined') {
-        base[a] = from[a];
-      }
-    }
-  }
-
-
-  // Element Identifier Helpers
-  // --------------------------
-
-  function elementPossibleIds (element) {
-    var ids = {};
-    var tag = element.tagName.toLowerCase();
-
-    ids[tag] = tag;
-
-    for (var a = 0; a < element.attributes.length; a++) {
-      var name = element.attributes[a].nodeName;
-      ids[name] = name;
+  function data (element, name, value) {
+    if (value === undefined) {
+      return element.__SKATE_DATA && element.__SKATE_DATA[name];
     }
 
-    element.className.split(' ').forEach(function (id) {
-      if (id) {
-        ids[id] = id;
-      }
-    });
+    if (!element.__SKATE_DATA) {
+      element.__SKATE_DATA = {};
+    }
 
-    return ids;
-  }
+    element.__SKATE_DATA[name] = value;
 
-  // Returns the component id from the tag name.
-  function elementComponentIdFromTag (element) {
-    return (element.tagName || '').toLowerCase();
-  }
-
-  // Returns the component ids from the component attribute or class names.
-  function elementComponentIdsFromAttrs (element) {
-    return [].map.call(element.attributes || [], function (attr) {
-      return attr.nodeName;
-    });
-  }
-
-  // Returns the component ids from the component class attribute.
-  function elementComponentIdsFromClasses (element) {
-    return (element.className || '').split(' ');
-  }
-
-
-  // Element Manipulation Helpers
-  // ----------------------------
-
-  function elementSelectorFromId (id) {
-    return id + ', [' + id + '], .' + id;
+    return element;
   }
 
   // Adds the specified class to the element.
@@ -628,13 +548,9 @@
     if (element.classList) {
       element.classList.add(classname);
     } else {
-      element.className += ' ' + classname;
+      element.className += element.className ? ' ' + classname : classname;
     }
   }
-
-
-  // Element Traversal Helpers
-  // -------------------------
 
   // Calls the specified callback for each element.
   function eachElement (elements, callback) {
@@ -661,57 +577,85 @@
     }
   }
 
-  // Executes the callback for each descendant of each element.
-  function eachDescendant (elements, callback) {
-    eachElement(elements, function (element) {
-      eachElement(element.children, function (child) {
-        callback(child);
-        eachDescendant(child, callback);
-      });
+  // Returns the possible ids from an element.
+  function possibleIds (element) {
+    var ids = data(element, 'possible-ids');
+
+    if (ids) {
+      return ids;
+    }
+
+    var tag = element.tagName.toLowerCase();
+
+    ids = {};
+    ids[tag] = tag;
+
+    for (var a = 0; a < element.attributes.length; a++) {
+      var name = element.attributes[a].nodeName;
+      ids[name] = name;
+    }
+
+    element.className.split(' ').forEach(function (id) {
+      if (id) {
+        ids[id] = id;
+      }
     });
+
+    data(element, 'possible-ids', ids);
+
+    return ids;
   }
 
-
-  // Stylistic Helpers
-  // -----------------
-
-  // Adds a rule to hide the specified component by its id.
-  function hideByListener (listener) {
-    hiddenRules.sheet.insertRule(
-      negateListenerSelector(listener) + '{display:none}',
-      hiddenRules.sheet.cssRules.length
-    );
-  }
-
-  // Returns a negated selector for the specified component.
-  function negateListenerSelector (listener) {
-    return listenerSelectors(listener).map(function (selector) {
-      return selector + ':not(.' + classname + ')';
-    });
-  }
-
-  // Generates a selector for all possible bindings of a component id.
-  function listenerSelector (listener) {
-    return selectors(listener).join(', ');
-  }
-
-  // Returns an array of selectors for the specified component.
-  function listenerSelectors (listener) {
-    var parts = [];
-
-    if (listenerControlsType(listener, skate.types.TAG)) {
-      parts.push(listener.id);
+  // Merges the second argument into the first.
+  function inherit (child, parent) {
+    for (var prop in parent) {
+      if (child[prop] === undefined) {
+        child[prop] = parent[prop];
+      }
     }
+  }
 
-    if (listenerControlsType(listener, skate.types.ATTR)) {
-      parts.push('[' + listener.id + ']');
-    }
+  // Creates a constructor for the specified component.
+  function makeElementConstructor (id, component) {
+    var isTag = component.type.indexOf(skate.types.TAG) > -1;
+    var isAttr = component.type.indexOf(skate.types.ATTR) > -1;
+    var isClass = component.type.indexOf(skate.types.CLASS) > -1;
+    var selector = (function () {
+        var selectors = [];
 
-    if (listenerControlsType(listener, skate.types.CLASS)) {
-      parts.push('.' + listener.id);
-    }
+        if (isTag) {
+          selectors.push(id);
+        }
 
-    return parts;
+        if (isAttr) {
+          selectors.push('[' + id + ']');
+        }
+
+        if (isClass) {
+          selectors.push('.' + id);
+        }
+
+        return selectors.join(', ');
+      }());
+    var ctor = function () {
+        if (!isTag) {
+          throw new Error('Cannot construct "' + id + '" as a custom element.');
+        }
+
+        var element = document.createElement(id);
+        triggerReady(id, component, element);
+        return element;
+      };
+
+    ctor.existing = function (within) {
+      return (within || document).querySelectorAll(ctor.selector());
+    };
+
+    ctor.selector = function () {
+      return selector;
+    };
+
+    return ctor;
   }
 
 
@@ -721,7 +665,7 @@
   // Rules that hide elements as they're inserted so that elements are hidden
   // prior to calling the ready callback to prevent FOUC if the component
   // modifies the element in which it is bound.
-  head.appendChild(hiddenRules);
+  document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
 
   // Exporting

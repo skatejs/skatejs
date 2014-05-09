@@ -14,21 +14,6 @@
     return element;
   }
 
-  function addDivToBody(id) {
-    var div = document.createElement('div');
-    div.id = id || 'test';
-    document.querySelector('body').appendChild(div);
-    return div;
-  }
-
-  function removeDivFromBody(id) {
-    var div = document.querySelector('#' +  (id || 'test'));
-
-    if (div) {
-      document.querySelector('body').removeChild(div);
-    }
-  }
-
   afterEach(function () {
     skate.destroy();
     document.querySelector('body').innerHTML = '';
@@ -40,36 +25,36 @@
 
   describe('Lifecycle Callbacks', function () {
     it('Should trigger ready before the element is shown.', function (done) {
-      skate('ready-callback', {
+      skate('div', {
         ready: function (element) {
-          assert(element.className.split(' ').indexOf('_skate') === -1, 'Class found');
+          assert(element.className.split(' ').indexOf('__skate') === -1, 'Class found');
           done();
         }
       });
 
-      add('ready-callback');
+      add('div');
     });
 
     it('Should trigger insert after the element is shown.', function (done) {
-      skate('insert-callback', {
+      skate('div', {
         insert: function (element) {
-          assert(element.className.split(' ').indexOf('_skate') > -1, 'Class not found');
+          assert(element.className.split(' ').indexOf('__skate') > -1, 'Class not found');
           done();
         }
       });
 
-      add('insert-callback');
+      add('div');
     });
 
     it('Should trigger removed when the element is removed.', function (done) {
-      skate('remove-callback', {
+      skate('div', {
         remove: function () {
           assert(true);
           done();
         }
       });
 
-      var el = add('remove-callback');
+      var el = add('div');
       skate.init(el);
       remove(el);
     });
@@ -118,7 +103,7 @@
         }
       });
 
-      addDivToBody();
+      add('div');
     });
   });
 
@@ -130,7 +115,7 @@
         }
       });
 
-      skate.init(addDivToBody());
+      skate.init(add('div'));
       assert(document.body.getElementsByTagName('div').length === 0, 'Divs were found.');
       assert(document.body.getElementsByTagName('span').length === 1, 'No spans found.');
     });
@@ -145,7 +130,7 @@
         }
       });
 
-      skate.init(addDivToBody());
+      skate.init(add('div'));
     });
   });
 
@@ -159,8 +144,8 @@
         }
       });
 
-      addDivToBody();
-      addDivToBody();
+      add('div');
+      add('div');
 
       skate.init(document.querySelectorAll('div'));
       initialised.should.equal(2);
@@ -175,7 +160,7 @@
         }
       });
 
-      skate.init(addDivToBody());
+      skate.init(add('div'));
       assert(initialised);
     });
   });
@@ -204,7 +189,7 @@
         }
       });
 
-      var div = addDivToBody();
+      var div = add('div');
       skate.init(div);
 
       div.setAttribute('open', 'init');
@@ -219,27 +204,25 @@
     });
 
     it('Should use the update callback as the init callback if no init callback is specified.', function (done) {
-      var init = false;
-
       skate('div', {
         attributes: {
           open: {
             update: function (data) {
-              if (data.newValue === 'init') {
-                init = true;
-                data.element.setAttribute('open', 'update');
-              }
-
               if (data.newValue === 'update') {
-                init.should.equal(true);
+                assert(true);
                 done();
               }
+
+              // Mutation events fire synchronously.
+              setTimeout(function () {
+                data.target.setAttribute('open', 'update');
+              });
             }
           }
         }
       });
 
-      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
+      document.body.innerHTML = '<div id="attrtest" open="insert"></div>';
     });
 
     it('Should accept a function insead of an object for the lifecycle definition which triggers both init and update.', function (done) {
@@ -248,15 +231,15 @@
       skate('div', {
         attributes: {
           open: function (data) {
-            if (data.newValue === 'init') {
-              init = true;
-              data.element.setAttribute('open', 'update');
-            }
-
             if (data.newValue === 'update') {
-              init.should.equal(true);
+              assert(true);
               done();
             }
+
+            // Mutation events fire synchronously.
+            setTimeout(function () {
+              data.target.setAttribute('open', 'update');
+            });
           }
         }
       });
@@ -301,7 +284,7 @@
     it('Should synchronously initialise the new element.', function () {
       var called = false;
       var div = skate('div', {
-        extend: {
+        prototype: {
           someMethod: function () {
             called = true;
           }
@@ -387,7 +370,7 @@
 
   describe('Watching', function () {
     it('Should watch an element for inserted nodes', function (done) {
-      var div = addDivToBody();
+      var div = add('div');
       var span = document.createElement('span');
 
       skate.watch(div).on('span.insert', function (element) {
@@ -399,7 +382,7 @@
     });
 
     it('Should watch an element for removed nodes', function (done) {
-      var div = addDivToBody();
+      var div = add('div');
       var span = document.createElement('span');
 
       skate.watch(div).on('span.remove', function (element) {
@@ -412,7 +395,7 @@
     });
 
     it('Should allow you to specify if you want to watch for descendant insertions.', function (done) {
-      var div = addDivToBody();
+      var div = add('div');
 
       skate.watch(div, {
         descendants: true
@@ -426,7 +409,7 @@
     });
 
     it('Should allow you to specify if you want to watch for descendant removals.', function (done) {
-      var div = addDivToBody();
+      var div = add('div');
 
       skate.watch(div, {
         descendants: true
@@ -440,55 +423,61 @@
     });
 
     it('Should allow you to watch attributes', function (done) {
-      var div = addDivToBody();
-      var added = false;
-      var updated = false;
-      var removed = false;
+      var div = add('div');
+      var watcher = skate.watch(div, {
+        attributes: true
+      });
+
+      watcher.on('name.insert', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.newValue.should.equal('value');
+        data.target.setAttribute('name', 'new value');
+      });
+
+      watcher.on('name.update', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.newValue.should.equal('new value');
+        data.oldValue.should.equal('value');
+        data.target.removeAttribute('name');
+      });
+
+      watcher.on('name.remove', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.oldValue.should.equal('new value');
+        done();
+      });
+
+      div.setAttribute('name', 'value');
+    });
+
+    it('Separate attribute watchers should work together.', function (done) {
+      var div = add('div');
 
       skate.watch(div, {
         attributes: true
       }).on('name.insert', function (data) {
-        data.element.should.equal(div);
-        data.name.should.equal('name');
-        data.newValue.should.equal('value');
-        added = true;
+        data.newValue.should.equal('insert');
+        data.target.setAttribute('name', 'update');
       });
 
       skate.watch(div, {
         attributes: true
       }).on('name.update', function (data) {
-        data.element.should.equal(div);
-        data.name.should.equal('name');
-        data.newValue.should.equal('new value');
-        data.oldValue.should.equal('value');
-        updated = true;
+        data.newValue.should.equal('update');
+        data.target.removeAttribute('name');
       });
 
       skate.watch(div, {
         attributes: true
       }).on('name.remove', function (data) {
-        data.element.should.equal(div);
-        data.name.should.equal('name');
-        data.oldValue.should.equal('new value');
-        removed = true;
+        data.oldValue.should.equal('update');
+        done();
       });
 
-      div.setAttribute('name', 'value');
-
-      setTimeout(function () {
-        div.setAttribute('name', 'new value');
-      }, 100);
-
-      setTimeout(function () {
-        div.removeAttribute('name');
-      }, 200);
-
-      setTimeout(function () {
-        added.should.equal(true);
-        updated.should.equal(true);
-        removed.should.equal(true);
-        done();
-      }, 300);
+      div.setAttribute('name', 'insert');
     });
   });
 })();
