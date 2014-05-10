@@ -167,19 +167,17 @@
 
   describe('Attribute listeners', function () {
     it('Should listen to changes in specified attributes', function (done) {
-      var init = false;
-      var update = false;
-      var remove = false;
-
       skate('div', {
         attributes: {
           open: {
             insert: function (data) {
-              data.newValue.should.equal('init');
+              data.newValue.should.equal('insert');
+              data.target.setAttribute('open', 'update');
             },
             update: function (data) {
-              data.oldValue.should.equal('init');
+              data.oldValue.should.equal('insert');
               data.newValue.should.equal('update');
+              data.target.removeAttribute('open');
             },
             remove: function (data) {
               data.oldValue.should.equal('update');
@@ -189,21 +187,10 @@
         }
       });
 
-      var div = add('div');
-      skate.init(div);
-
-      div.setAttribute('open', 'init');
-
-      setTimeout(function () {
-        div.setAttribute('open', 'update');
-      }, 100);
-
-      setTimeout(function () {
-        div.removeAttribute('open');
-      }, 200);
+      add('div').setAttribute('open', 'insert');
     });
 
-    it('Should use the update callback as the init callback if no init callback is specified.', function (done) {
+    it('Should use the update callback as the insert callback if no insert callback is specified.', function (done) {
       skate('div', {
         attributes: {
           open: {
@@ -216,7 +203,7 @@
               // Mutation events fire synchronously.
               setTimeout(function () {
                 data.target.setAttribute('open', 'update');
-              });
+              }, 100);
             }
           }
         }

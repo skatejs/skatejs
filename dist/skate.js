@@ -270,9 +270,7 @@
     });
 
     documentWatcher.on(id + '.remove', function (e) {
-      if (component.remove) {
-        component.remove(e.target);
-      }
+      triggerRemove(id, component, e.target);
     });
 
     return Element;
@@ -482,6 +480,14 @@
     }
   }
 
+  // Triggers remove on the target.
+  function triggerRemove(id, component, target) {
+    if (component.remove && !data(target, 'blacklisted') && !data(target, id + '.remove-called')) {
+      data(target, id + '.remove-called', true);
+      component.remove(target);
+    }
+  }
+
   // Initialises and binds attribute handlers.
   function triggerAttributes(id, component, target) {
     if (!component.attributes) {
@@ -511,17 +517,42 @@
         attributeDefinition.insert = attributeDefinition.update;
       }
 
-      if (attributeDefinition.insert && target.hasAttribute(attributeName)) {
-        attributeDefinition.insert({
-          target: target,
-          attribute: attributeName,
-          newValue: target.getAttribute(attributeName)
-        });
-      }
+      watcher.on(attributeName + '.insert', createAttributeInsertHandler(attributeDefinition));
+      watcher.on(attributeName + '.update', attributeDefinition.update);
+      watcher.on(attributeName + '.remove', createAttributeRemoveHandler(attributeDefinition));
 
-      for (var attributeHandlerName in attributeDefinition) {
-        watcher.on(attributeName + '.' + attributeHandlerName, attributeDefinition[attributeHandlerName]);
+      // Force the insert to trigger.
+      if (attributeDefinition.insert && target.getAttribute(attributeName)) {
+        // Mutation observers don't trigger the insert unless set after adding.
+        if (MutationObserver) {
+          target.setAttribute(attributeName, target.getAttribute(attributeName));
+        // Mutation events do trigger an insert but only if the attribute is different.
+        // We fire this to ensure that the insert is called but must check in the handler
+        // to make sure that it hasn't been triggered.
+        } else {
+          watcher.fire(attributeName + '.insert', {
+            target: target,
+            attribute: attributeName,
+            newValue: target.getAttribute(attributeName)
+          });
+        }
       }
+    }
+  }
+
+  function createAttributeInsertHandler (definition) {
+    return function (e) {
+      if (!data(e.target, 'attribute.insert-called')) {
+        data(e.target, 'attribute.insert-called', true);
+        definition.insert(e);
+      }
+    }
+  }
+
+  function createAttributeRemoveHandler (definition) {
+    return function (e) {
+      data(e.target, 'attribute.insert-called', false);
+      definition.remove(e);
     }
   }
 
