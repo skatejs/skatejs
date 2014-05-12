@@ -17,7 +17,7 @@
   // ------------------------
 
   var mutationObserverAdapter = {
-    addElementListener: function (element, callback) {
+    addElementListener: function (element, callback, descendants) {
       var options = {};
       var observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
@@ -33,15 +33,18 @@
 
       observer.observe(element, {
         childList: true,
-        subtree: true
+        subtree: descendants
       });
 
-      return observer;
+      return function () {
+        observer.disconnect();
+      };
     },
     addAttributeListener: function (element, callback) {
       var callbacks = data(element, 'attribute-callbacks');
       if (callbacks) {
-        return callbacks.push(callback);
+        callbacks.push(callback);
+        return data(element, 'attribute-destroyer');
       }
 
       callbacks = [callback];
@@ -84,6 +87,14 @@
       observer.observe(element, {
         attributes: true
       });
+
+      data(element, 'attribute-destroyer', attributeDestroyer);
+
+      return attributeDestroyer;
+
+      function attributeDestroyer () {
+        observer.disconnect();
+      }
     }
   };
 
@@ -93,13 +104,21 @@
 
   var mutationEventAdapter = {
     addElementListener: function (element, callback) {
-      element.addEventListener('DOMSubtreeModified', function (e) {
-        callback('insert', e.target);
-      });
+      element.addEventListener('DOMSubtreeModified', subtreeHandler);
+      element.addEventListener('DOMNodeRemoved', removeHandler);
 
-      element.addEventListener('DOMNodeRemoved', function (e) {
+      return function () {
+        element.removeEventListener('DOMSubtreeModified', subtreeHandler);
+        element.removeEventListener('DOMNodeRemoved', removeHandler);
+      };
+
+      function subtreeHandler (e) {
+        callback('insert', e.target);
+      }
+
+      function removeHandler (e) {
         callback('remove', e.target);
-      });
+      }
     },
     addAttributeListener: function (element, callback) {
       var map = {
@@ -108,9 +127,15 @@
         3: 'remove'
       };
 
-      element.addEventListener('DOMAttrModified', function (e) {
+      element.addEventListener('DOMAttrModified', handler);
+
+      return function () {
+        element.removeEventListener('DOMAttrModified', handler);
+      };
+
+      function handler (e) {
         callback(map[e.attrChange], e.attrName, e.newValue, e.prevValue);
-      });
+      }
     }
   };
 
@@ -121,97 +146,119 @@
   // Watcher
   // -------
 
-  function Watcher (element, options) {
-    var that = this;
-    options = options || { children: true };
-    this.stack = [];
-
-    if (options.children || options.descendants) {
-      skateAdapter.addElementListener(element, function (type, descendant) {
-        if (descendant.nodeType === 1) {
-          fireElements(type, descendant, options.descendants);
-        }
-      });
-    }
-
-    if (options.attributes) {
-      skateAdapter.addAttributeListener(element, function (type, name, newValue, oldValue) {
-        that.fire(name + '.' + type, {
-          target: element,
-          attribute: name,
-          newValue: newValue,
-          oldValue: oldValue
-        });
-      });
-    }
-
-    function fireElements(type, elements, recurse) {
-      eachElement(elements, function (element) {
-        for (var a in possibleIds(element)) {
-          that.fire(a + '.' + type, {
-            target: element
-          });
-        }
-
-        if (options.children || options.descendants) {
-          fireElements(type, element.children, recurse);
-        }
-      });
-    }
+  function Watcher (element) {
+    this.element = element;
+    this.children = {};
+    this.descendants = {};
+    this.attributes = {};
   }
 
   Watcher.prototype = {
-    on: function (name, callback) {
-      if (!this.stack[name]) {
-        this.stack[name] = [];
-      }
-
-      this.stack[name].push(callback);
-
-      return this;
+    child: function (name) {
+      return this.children[name] || (this.children[name] = new Watcher.Element(this.element, name));
     },
 
-    one: function (name, callback) {
-      var that = this;
-      return this.on(name, function (data) {
-        callback(data);
-        that.off(name);
+    descendant: function (name) {
+      return this.descendants[name] || (this.descendants[name] = new Watcher.Element(this.element, name, true));
+    },
+
+    attribute: function (name) {
+      return this.attributes[name] || (this.attributes[name] = new Watcher.Attribute(this.element, name));
+    },
+
+    destroy: function () {
+      for (var a in this.children) {
+        this.children[a].destroy();
+      }
+
+      for (var b in this.descendants) {
+        this.descendants[b].destroy();
+      }
+
+      for (var c in this.attributes) {
+        this.attributes[c].destroy();
+      }
+
+      this.children = {};
+      this.descendants = {};
+      this.attributes = {};
+
+      return this;
+    }
+  };
+
+  Watcher.Element = function (element, name, descendants) {
+    var that = this;
+
+    this._destroy = skateAdapter.addElementListener(element, function (type, descendant) {
+      if (descendant.nodeType === 1) {
+        fireElements(type, descendant, descendants);
+      }
+    }, descendants);
+
+    function fireElements(type, elements, recurse) {
+      eachElement(elements, function (element) {
+        if (name in possibleIds(element)) {
+          that.fire(type, [element]);
+        }
+
+        fireElements(type, element.children, recurse || descendants);
       });
+    }
+  };
+
+  Watcher.Attribute = function (element, name) {
+    var that = this;
+
+    this._destroy = skateAdapter.addAttributeListener(element, function (type, attr, newValue, oldValue) {
+      if (attr === name) {
+        newValue = type === 'remove' ? oldValue : newValue;
+        that.fire(type, [element, attr, newValue, oldValue]);
+      }
+    });
+  };
+
+  Watcher.Element.prototype = Watcher.Attribute.prototype = {
+    on: function (name, callback) {
+      this.stack(name).push(callback);
+      return this;
     },
 
     off: function (name, callback) {
-      if (!this.stack[name]) {
-        return this;
-      }
+      var stack = this.stack(name);
 
       if (callback) {
-        var index = this.stack[name].indexOf(callback);
-
-        if (index > -1) {
-          this.stack[name].splice(index, 1);
+        for (var a = stack.length - 1; a > -1; a--) {
+          if (stack[a] === callback) {
+            stack.splice(a, 1);
+          }
         }
       } else {
-        this.stack[name] = [];
+        stack.length = 0;
       }
-
-      return this;
-    },
-
-    fire: function (name, data) {
-      if (!this.stack[name]) {
-        return this;
-      }
-
-      this.stack[name].forEach(function (callback) {
-        callback(data);
-      });
 
       return this;
     },
 
     destroy: function () {
-      this.stack = [];
+      this.off();
+      this._destroy();
       return this;
+    },
+
+    fire: function (name, args) {
+      this.stack(name).forEach(function (callback) {
+        callback.apply(callback, args);
+      });
+
+      return this;
+    },
+
+    stack: function (name) {
+      if (!this.events) {
+        this.events = {};
+      }
+      return this.events[name] || (this.events[name] = []);
     }
   };
 
@@ -231,9 +278,7 @@
    */
   function skate (id, component) {
     if (!documentWatcher) {
-      documentWatcher = new Watcher(document, {
-        descendants: true
-      });
+      documentWatcher = skate.watch();
     }
 
     if (!component) {
@@ -265,13 +310,13 @@
       triggerLifecycle(id, component, existing[a]);
     }
 
-    documentWatcher.on(id + '.insert', function (e) {
-      triggerLifecycle(id, component, e.target);
-    });
-
-    documentWatcher.on(id + '.remove', function (e) {
-      triggerRemove(id, component, e.target);
-    });
+    documentWatcher.descendant(id)
+      .on('insert', function (target) {
+        triggerLifecycle(id, component, target);
+      })
+      .on('remove', function (target) {
+        triggerRemove(id, component, target);
+      });
 
     return Element;
   }
@@ -289,7 +334,7 @@
 
   // Default configuration.
   skate.defaults = {
-    // Set to `{...}` of `attrName: `{ init: ..., update: ..., remove: ... }` to listen to specific attributes.
+    // Set to `{...}` of `attrName: `{ insert: ..., update: ..., remove: ... }` to listen to specific attributes.
     attributes: false,
 
     // The classname to use when showing this component.
@@ -302,7 +347,7 @@
     prototype: {},
 
     // The type of bindings to allow.
-    type: skate.types.ANY
+    type: skate.types.TAG
   };
 
   /**
@@ -335,7 +380,10 @@
    * @return {skate}
    */
   skate.destroy = function () {
-    documentWatcher.destroy();
+    if (documentWatcher) {
+      documentWatcher.destroy();
+      documentWatcher = undefined;
+    }
     return skate;
   };
 
@@ -349,9 +397,7 @@
   skate.init = function (elements) {
     eachElement(elements, function (element) {
       for (var a in possibleIds(element)) {
-        documentWatcher.fire(a + '.insert', {
-          target: element
-        });
+        documentWatcher.descendant(a).fire('insert', [element]);
       }
     });
 
@@ -362,12 +408,11 @@
    * Creates a new watcher for the specified element.
    *
    * @param {Element} element The element to watch.
-   * @param {Object} options The options to use for watching.
    *
    * @return {Watcher}
    */
-  skate.watch = function (element, options) {
-    return new Watcher(element, options);
+  skate.watch = function (element) {
+    return new Watcher(element || document);
   };
 
   /**
@@ -500,9 +545,7 @@
 
     data(target, id + '.attributes-called', true);
 
-    var watcher = new Watcher(target, {
-      attributes: true
-    });
+    var watcher = skate.watch(target);
 
     for (var attributeName in component.attributes) {
       var attributeDefinition = component.attributes[attributeName];
@@ -517,9 +560,10 @@
         attributeDefinition.insert = attributeDefinition.update;
       }
 
-      watcher.on(attributeName + '.insert', createAttributeInsertHandler(attributeDefinition));
-      watcher.on(attributeName + '.update', attributeDefinition.update);
-      watcher.on(attributeName + '.remove', createAttributeRemoveHandler(attributeDefinition));
+      var attrWatcher = watcher.attribute(attributeName)
+        .on('insert', createAttributeInsertHandler(attributeDefinition))
+        .on('update', attributeDefinition.update)
+        .on('remove', createAttributeRemoveHandler(attributeDefinition));
 
       // Force the insert to trigger.
       if (attributeDefinition.insert && target.getAttribute(attributeName)) {
@@ -530,30 +574,28 @@
         // We fire this to ensure that the insert is called but must check in the handler
         // to make sure that it hasn't been triggered.
         } else {
-          watcher.fire(attributeName + '.insert', {
-            target: target,
-            attribute: attributeName,
-            newValue: target.getAttribute(attributeName)
-          });
+          attrWatcher.fire('insert', [target, attributeName, target.getAttribute(attributeName)]);
         }
       }
     }
   }
 
   function createAttributeInsertHandler (definition) {
-    return function (e) {
-      if (!data(e.target, 'attribute.insert-called')) {
-        data(e.target, 'attribute.insert-called', true);
-        definition.insert(e);
+    return function (element, attribute, value) {
+      if (!data(element, 'attribute.insert-called')) {
+        data(element, 'attribute.insert-called', true);
+        definition.insert(element, attribute, value);
       }
-    }
+    };
   }
 
   function createAttributeRemoveHandler (definition) {
-    return function (e) {
-      data(e.target, 'attribute.insert-called', false);
-      definition.remove(e);
-    }
+    return function (element, attribute, value) {
+      if (!data(element, 'attribute.remove-called')) {
+        data(element, 'attribute.remove-called', true);
+        definition.remove(element, attribute, value);
+      }
+    };
   }
 
 
