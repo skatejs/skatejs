@@ -43,7 +43,7 @@
         }
       });
 
-      add('div').id = 'gagas';
+      add('div');
     });
 
     it('Should trigger removed when the element is removed.', function (done) {
@@ -170,17 +170,17 @@
       skate('div', {
         attributes: {
           open: {
-            insert: function (element, name, value) {
-              value.should.equal('insert');
-              element.setAttribute('open', 'update');
+            insert: function (data) {
+              data.newValue.should.equal('insert');
+              data.target.setAttribute('open', 'update');
             },
-            update: function (element, name, newValue, oldValue) {
-              oldValue.should.equal('insert');
-              newValue.should.equal('update');
-              element.removeAttribute('open');
+            update: function (data) {
+              data.oldValue.should.equal('insert');
+              data.newValue.should.equal('update');
+              data.target.removeAttribute('open');
             },
-            remove: function (element, name, value) {
-              value.should.equal('update');
+            remove: function (data) {
+              data.oldValue.should.equal('update');
               done();
             }
           }
@@ -194,15 +194,15 @@
       skate('div', {
         attributes: {
           open: {
-            update: function (element, name, newValue) {
-              if (newValue === 'update') {
+            update: function (data) {
+              if (data.newValue === 'update') {
                 assert(true);
                 done();
               }
 
               // Mutation events fire synchronously.
               setTimeout(function () {
-                element.setAttribute('open', 'update');
+                data.target.setAttribute('open', 'update');
               }, 100);
             }
           }
@@ -217,15 +217,15 @@
 
       skate('div', {
         attributes: {
-          open: function (element, name, value) {
-            if (value === 'update') {
+          open: function (data) {
+            if (data.newValue === 'update') {
               assert(true);
               done();
             }
 
             // Mutation events fire synchronously.
             setTimeout(function () {
-              element.setAttribute('open', 'update');
+              data.target.setAttribute('open', 'update');
             });
           }
         }
@@ -360,7 +360,7 @@
       var div = add('div');
       var span = document.createElement('span');
 
-      skate.watch(div).child('span').on('insert', function () {
+      skate.watch(div).on('span.insert', function (element) {
         assert(true);
         done();
       });
@@ -372,7 +372,7 @@
       var div = add('div');
       var span = document.createElement('span');
 
-      skate.watch(div).child('span').on('remove', function () {
+      skate.watch(div).on('span.remove', function (element) {
         assert(true);
         done();
       });
@@ -384,7 +384,9 @@
     it('Should allow you to specify if you want to watch for descendant insertions.', function (done) {
       var div = add('div');
 
-      skate.watch(div).descendant('span').on('insert', function () {
+      skate.watch(div, {
+        descendants: true
+      }).on('span.insert', function (element) {
         assert(true);
         done();
       });
@@ -396,7 +398,9 @@
     it('Should allow you to specify if you want to watch for descendant removals.', function (done) {
       var div = add('div');
 
-      skate.watch(div).descendant('span').on('remove', function () {
+      skate.watch(div, {
+        descendants: true
+      }).on('span.remove', function (element) {
         assert(true);
         done();
       });
@@ -407,27 +411,29 @@
 
     it('Should allow you to watch attributes', function (done) {
       var div = add('div');
-      var watcher = skate.watch(div).attribute('name');
-
-      watcher.on('insert', function (target, attribute, newValue) {
-        target.should.equal(div);
-        attribute.should.equal('name');
-        newValue.should.equal('value');
-        target.setAttribute('name', 'new value');
+      var watcher = skate.watch(div, {
+        attributes: true
       });
 
-      watcher.on('update', function (target, attribute, newValue, oldValue) {
-        target.should.equal(div);
-        attribute.should.equal('name');
-        newValue.should.equal('new value');
-        oldValue.should.equal('value');
-        target.removeAttribute('name');
+      watcher.on('name.insert', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.newValue.should.equal('value');
+        data.target.setAttribute('name', 'new value');
       });
 
-      watcher.on('remove', function (target, attribute, newValue, oldValue) {
-        target.should.equal(div);
-        attribute.should.equal('name');
-        oldValue.should.equal('new value');
+      watcher.on('name.update', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.newValue.should.equal('new value');
+        data.oldValue.should.equal('value');
+        data.target.removeAttribute('name');
+      });
+
+      watcher.on('name.remove', function (data) {
+        data.target.should.equal(div);
+        data.attribute.should.equal('name');
+        data.oldValue.should.equal('new value');
         done();
       });
 
@@ -437,18 +443,24 @@
     it('Separate attribute watchers should work together.', function (done) {
       var div = add('div');
 
-      skate.watch(div).attribute('name').on('insert', function (target, attribute, newValue) {
-        newValue.should.equal('insert');
-        target.setAttribute('name', 'update');
+      skate.watch(div, {
+        attributes: true
+      }).on('name.insert', function (data) {
+        data.newValue.should.equal('insert');
+        data.target.setAttribute('name', 'update');
       });
 
-      skate.watch(div).attribute('name').on('update', function (target, attribute, newValue, oldValue) {
-        newValue.should.equal('update');
-        target.removeAttribute('name');
+      skate.watch(div, {
+        attributes: true
+      }).on('name.update', function (data) {
+        data.newValue.should.equal('update');
+        data.target.removeAttribute('name');
       });
 
-      skate.watch(div).attribute('name').on('remove', function (target, attribute, oldValue) {
-        oldValue.should.equal('update');
+      skate.watch(div, {
+        attributes: true
+      }).on('name.remove', function (data) {
+        data.oldValue.should.equal('update');
         done();
       });
 
