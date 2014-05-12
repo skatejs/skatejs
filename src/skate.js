@@ -136,14 +136,7 @@
       documentObserver = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
           skate.init(mutation.addedNodes);
-
-          eachElement(mutation.removedNodes, function (element) {
-            for (var possibleId in possibleIds(element)) {
-              if (possibleId in skateComponents) {
-                triggerRemove(possibleId, skateComponents[possibleId], element);
-              }
-            }
-          });
+          triggerRemoveAll(mutation.removedNodes);
         });
       });
 
@@ -395,15 +388,27 @@
   }
 
   // Triggers remove on the target.
-  function triggerRemove(id, component, target) {
+  function triggerRemove (id, component, target) {
     if (component.remove && !data(target, 'blacklisted') && !data(target, id + '.remove-called')) {
       data(target, id + '.remove-called', true);
       component.remove(target);
     }
   }
 
+  // Triggers the remove callbacks of the specified elements and their descendants.
+  function triggerRemoveAll (elements) {
+    eachElement(elements, function (element) {
+      triggerRemoveAll(element.children);
+      for (var possibleId in possibleIds(element)) {
+        if (possibleId in skateComponents) {
+          triggerRemove(possibleId, skateComponents[possibleId], element);
+        }
+      }
+    });
+  }
+
   // Initialises and binds attribute handlers.
-  function triggerAttributes(id, component, target) {
+  function triggerAttributes (id, component, target) {
     if (!component.attributes || data(target, id + '.attributes-called')) {
       return;
     }

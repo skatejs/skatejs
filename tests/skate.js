@@ -94,6 +94,19 @@
 
       document.body.innerHTML = '<div><child><sub-element></sub-element></child></div>';
     });
+
+    it('Should pick up descendants that are removed as part of an HTML block.', function (done) {
+      skate('sub-element', {
+        remove: function () {
+          assert(true);
+          done();
+        }
+      });
+
+      document.body.innerHTML = '<div><child><sub-element></sub-element></child></div>';
+      var div = document.querySelector('div');
+      div.parentNode.removeChild(div);
+    });
   });
 
   describe('Async ready callback.', function () {
