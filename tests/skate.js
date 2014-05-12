@@ -89,7 +89,7 @@
     it('Ready event should be async and provide a done callback.', function (done) {
       var ok = false;
 
-      skate('div', {
+      skate('asdf', {
         ready: function (element, next) {
           setTimeout(function () {
             ok = true;
@@ -98,12 +98,12 @@
         },
 
         insert: function () {
-          assert(ok);
+          assert(ok, 'Ready not called before insert.');
           done();
         }
       });
 
-      add('div');
+      add('asdf');
     });
   });
 
@@ -170,17 +170,17 @@
       skate('div', {
         attributes: {
           open: {
-            insert: function (data) {
-              data.newValue.should.equal('insert');
-              data.target.setAttribute('open', 'update');
+            insert: function (element, value) {
+              value.should.equal('insert');
+              element.setAttribute('open', 'update');
             },
-            update: function (data) {
-              data.oldValue.should.equal('insert');
-              data.newValue.should.equal('update');
-              data.target.removeAttribute('open');
+            update: function (element, newValue, oldValue) {
+              oldValue.should.equal('insert');
+              newValue.should.equal('update');
+              element.removeAttribute('open');
             },
-            remove: function (data) {
-              data.oldValue.should.equal('update');
+            remove: function (element, value) {
+              value.should.equal('update');
               done();
             }
           }
@@ -194,15 +194,15 @@
       skate('div', {
         attributes: {
           open: {
-            update: function (data) {
-              if (data.newValue === 'update') {
+            update: function (element, value) {
+              if (value === 'update') {
                 assert(true);
                 done();
               }
 
               // Mutation events fire synchronously.
               setTimeout(function () {
-                data.target.setAttribute('open', 'update');
+                element.setAttribute('open', 'update');
               }, 100);
             }
           }
@@ -217,15 +217,15 @@
 
       skate('div', {
         attributes: {
-          open: function (data) {
-            if (data.newValue === 'update') {
+          open: function (element, value) {
+            if (value === 'update') {
               assert(true);
               done();
             }
 
             // Mutation events fire synchronously.
             setTimeout(function () {
-              data.target.setAttribute('open', 'update');
+              element.setAttribute('open', 'update');
             });
           }
         }
@@ -352,119 +352,6 @@
         assert(numRemove === 2, 'Remove not called');
         done();
       });
-    });
-  });
-
-  describe('Watching', function () {
-    it('Should watch an element for inserted nodes', function (done) {
-      var div = add('div');
-      var span = document.createElement('span');
-
-      skate.watch(div).on('span.insert', function (element) {
-        assert(true);
-        done();
-      });
-
-      div.appendChild(span);
-    });
-
-    it('Should watch an element for removed nodes', function (done) {
-      var div = add('div');
-      var span = document.createElement('span');
-
-      skate.watch(div).on('span.remove', function (element) {
-        assert(true);
-        done();
-      });
-
-      div.appendChild(span);
-      div.removeChild(span);
-    });
-
-    it('Should allow you to specify if you want to watch for descendant insertions.', function (done) {
-      var div = add('div');
-
-      skate.watch(div, {
-        descendants: true
-      }).on('span.insert', function (element) {
-        assert(true);
-        done();
-      });
-
-      div.appendChild(document.createElement('div'));
-      div.querySelector('div').appendChild(document.createElement('span'));
-    });
-
-    it('Should allow you to specify if you want to watch for descendant removals.', function (done) {
-      var div = add('div');
-
-      skate.watch(div, {
-        descendants: true
-      }).on('span.remove', function (element) {
-        assert(true);
-        done();
-      });
-
-      div.innerHTML = '<div><span></span></div>';
-      div.querySelector('div').removeChild(div.querySelector('span'));
-    });
-
-    it('Should allow you to watch attributes', function (done) {
-      var div = add('div');
-      var watcher = skate.watch(div, {
-        attributes: true
-      });
-
-      watcher.on('name.insert', function (data) {
-        data.target.should.equal(div);
-        data.attribute.should.equal('name');
-        data.newValue.should.equal('value');
-        data.target.setAttribute('name', 'new value');
-      });
-
-      watcher.on('name.update', function (data) {
-        data.target.should.equal(div);
-        data.attribute.should.equal('name');
-        data.newValue.should.equal('new value');
-        data.oldValue.should.equal('value');
-        data.target.removeAttribute('name');
-      });
-
-      watcher.on('name.remove', function (data) {
-        data.target.should.equal(div);
-        data.attribute.should.equal('name');
-        data.oldValue.should.equal('new value');
-        done();
-      });
-
-      div.setAttribute('name', 'value');
-    });
-
-    it('Separate attribute watchers should work together.', function (done) {
-      var div = add('div');
-
-      skate.watch(div, {
-        attributes: true
-      }).on('name.insert', function (data) {
-        data.newValue.should.equal('insert');
-        data.target.setAttribute('name', 'update');
-      });
-
-      skate.watch(div, {
-        attributes: true
-      }).on('name.update', function (data) {
-        data.newValue.should.equal('update');
-        data.target.removeAttribute('name');
-      });
-
-      skate.watch(div, {
-        attributes: true
-      }).on('name.remove', function (data) {
-        data.oldValue.should.equal('update');
-        done();
-      });
-
-      div.setAttribute('name', 'insert');
     });
   });
 })();

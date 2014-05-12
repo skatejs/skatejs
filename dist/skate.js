@@ -13,213 +13,115 @@
   // Normalise the mutaiton observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 
-  // MutationObserver Adapter
-  // ------------------------
+  if (!MutationObserver) {
+    MutationObserver = function (callback) {
+      this.callback = callback;
+      this.elements = [];
+    };
 
-  var mutationObserverAdapter = {
-    addElementListener: function (element, callback) {
-      var options = {};
-      var observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-          for (var a = 0; a < mutation.addedNodes.length; a++) {
-            callback('insert', mutation.addedNodes[a]);
+    MutationObserver.prototype = {
+      observe: function (target, options) {
+        var that = this;
+        var attributeOldValueCache = {};
+        var item = {
+          target: target,
+          options: options,
+          insertHandler: function (e) {
+            if (!canTriggerInsertOrRemove(e)) {
+              return;
+            }
+
+            that.callback([
+              mutationRecord(e, {
+                addedNodes: [e.target]
+              })
+            ]);
+          },
+          removeHandler: function (e) {
+            if (!canTriggerInsertOrRemove(e)) {
+              return;
+            }
+
+            that.callback([
+              mutationRecord(e, {
+                removedNodes: [e.target]
+              })
+            ]);
+          },
+          attributeHandler: function (e) {
+            if (!canTriggerAttributeModification(e)) {
+              return;
+            }
+
+            that.callback([
+              mutationRecord(e, {
+                attributeName: e.attrName,
+                oldValue: options.attributeOldValue ? (attributeOldValueCache[e.attrName] || e.prevValue || null) : null,
+                type: 'attributes'
+              })
+            ]);
+
+            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
+            // actually correct.
+            if (options.attributeOldValue) {
+              attributeOldValueCache[e.attrName] = e.newValue;
+            }
           }
+        };
 
-          for (var b = 0; b < mutation.removedNodes.length; b++) {
-            callback('remove', mutation.removedNodes[b]);
-          }
-        });
-      });
+        this.elements.push(item);
 
-      observer.observe(element, {
-        childList: true,
-        subtree: true
-      });
-
-      return observer;
-    },
-    addAttributeListener: function (element, callback) {
-      var callbacks = data(element, 'attribute-callbacks');
-      if (callbacks) {
-        return callbacks.push(callback);
-      }
-
-      callbacks = [callback];
-      data(element, 'attribute-callbacks', callbacks);
-
-      var cache = data(element, 'attribute-cache');
-      if (!cache) {
-        cache = {};
-        data(element, 'attribute-cache', cache);
-      }
-
-      var observer = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-          var type;
-          var newValue;
-          var name = mutation.attributeName;
-          var attr = element.attributes[name];
-          var oldValue = cache[name];
-
-          if (attr) {
-            newValue = cache[name] = attr.nodeValue;
-          } else {
-            delete cache[name];
-          }
-
-          if (attr && newValue !== undefined && oldValue === undefined) {
-            type = 'insert';
-          } else if (attr && newValue !== undefined && oldValue !== undefined) {
-            type = 'update';
-          } else if (!attr && newValue === undefined && oldValue !== undefined) {
-            type = 'remove';
-          }
-
-          callbacks.forEach(function (callback) {
-            callback(type, name, newValue, oldValue);
-          });
-        });
-      });
-
-      observer.observe(element, {
-        attributes: true
-      });
-    }
-  };
-
-
-  // Mutation Events Adapter
-  // -----------------------
-
-  var mutationEventAdapter = {
-    addElementListener: function (element, callback) {
-      element.addEventListener('DOMSubtreeModified', function (e) {
-        callback('insert', e.target);
-      });
-
-      element.addEventListener('DOMNodeRemoved', function (e) {
-        callback('remove', e.target);
-      });
-    },
-    addAttributeListener: function (element, callback) {
-      var map = {
-        1: 'update',
-        2: 'insert',
-        3: 'remove'
-      };
-
-      element.addEventListener('DOMAttrModified', function (e) {
-        callback(map[e.attrChange], e.attrName, e.newValue, e.prevValue);
-      });
-    }
-  };
-
-  // The adapter we are using according to the capabilities of the environment.
-  var skateAdapter = MutationObserver ? mutationObserverAdapter : mutationEventAdapter;
-
-
-  // Watcher
-  // -------
-
-  function Watcher (element, options) {
-    var that = this;
-    options = options || { children: true };
-    this.stack = [];
-
-    if (options.children || options.descendants) {
-      skateAdapter.addElementListener(element, function (type, descendant) {
-        if (descendant.nodeType === 1) {
-          fireElements(type, descendant, options.descendants);
+        if (options.childList) {
+          target.addEventListener('DOMNodeInserted', item.insertHandler);
+          target.addEventListener('DOMNodeRemoved', item.removeHandler);
         }
-      });
-    }
 
-    if (options.attributes) {
-      skateAdapter.addAttributeListener(element, function (type, name, newValue, oldValue) {
-        that.fire(name + '.' + type, {
-          target: element,
-          attribute: name,
-          newValue: newValue,
-          oldValue: oldValue
-        });
-      });
-    }
+        if (options.attributes) {
+          target.addEventListener('DOMAttrModified', item.attributeHandler);
+        }
 
-    function fireElements(type, elements, recurse) {
-      eachElement(elements, function (element) {
-        for (var a in possibleIds(element)) {
-          that.fire(a + '.' + type, {
-            target: element
+        return this;
+
+        function canTriggerInsertOrRemove (e) {
+          return options.childList && (options.subtree || e.target.parentNode === target);
+        }
+
+        function canTriggerAttributeModification (e) {
+          return e.target === target;
+        }
+
+        function mutationRecord (e, merge) {
+          return inherit(merge, {
+            addedNodes: null,
+            attributeName: null,
+            attributeNamespace: null,
+            nextSibling: e.target.nextSibling,
+            oldValue: null,
+            previousSibling: e.target.previousSibling,
+            removedNodes: null,
+            target: e.target,
+            type: 'childList'
           });
         }
+      },
 
-        if (options.children || options.descendants) {
-          fireElements(type, element.children, recurse);
+      disconnect: function () {
+        for (var a in this.elements) {
+          var item = this.elements[a];
+          item.target.removeEventListener('DOMNodeInserted', item.insertHandler);
+          item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
+          item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
         }
-      });
-    }
+      }
+    };
   }
-
-  Watcher.prototype = {
-    on: function (name, callback) {
-      if (!this.stack[name]) {
-        this.stack[name] = [];
-      }
-
-      this.stack[name].push(callback);
-
-      return this;
-    },
-
-    one: function (name, callback) {
-      var that = this;
-      return this.on(name, function (data) {
-        callback(data);
-        that.off(name);
-      });
-    },
-
-    off: function (name, callback) {
-      if (!this.stack[name]) {
-        return this;
-      }
-
-      if (callback) {
-        var index = this.stack[name].indexOf(callback);
-
-        if (index > -1) {
-          this.stack[name].splice(index, 1);
-        }
-      } else {
-        this.stack[name] = [];
-      }
-
-      return this;
-    },
-
-    fire: function (name, data) {
-      if (!this.stack[name]) {
-        return this;
-      }
-
-      this.stack[name].forEach(function (callback) {
-        callback(data);
-      });
-
-      return this;
-    },
-
-    destroy: function () {
-      this.stack = [];
-      return this;
-    }
-  };
 
 
   // Public API
   // ----------
 
-  var documentWatcher;
+  var documentObserver;
+  var skateComponents = {};
 
   /**
    * Creates a listener for the specified component.
@@ -230,9 +132,24 @@
    * @return {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
-    if (!documentWatcher) {
-      documentWatcher = new Watcher(document, {
-        descendants: true
+    if (!documentObserver) {
+      documentObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+          skate.init(mutation.addedNodes);
+
+          eachElement(mutation.removedNodes, function (element) {
+            for (var possibleId in possibleIds(element)) {
+              if (possibleId in skateComponents) {
+                triggerRemove(possibleId, skateComponents[possibleId], element);
+              }
+            }
+          });
+        });
+      });
+
+      documentObserver.observe(document, {
+        childList: true,
+        subtree: true
       });
     }
 
@@ -265,13 +182,7 @@
       triggerLifecycle(id, component, existing[a]);
     }
 
-    documentWatcher.on(id + '.insert', function (e) {
-      triggerLifecycle(id, component, e.target);
-    });
-
-    documentWatcher.on(id + '.remove', function (e) {
-      triggerRemove(id, component, e.target);
-    });
+    skateComponents[id] = component;
 
     return Element;
   }
@@ -335,7 +246,9 @@
    * @return {skate}
    */
   skate.destroy = function () {
-    documentWatcher.destroy();
+    documentObserver.disconnect();
+    documentObserver = undefined;
+    skateComponents = {};
     return skate;
   };
 
@@ -348,10 +261,10 @@
    */
   skate.init = function (elements) {
     eachElement(elements, function (element) {
-      for (var a in possibleIds(element)) {
-        documentWatcher.fire(a + '.insert', {
-          target: element
-        });
+      for (var possibleId in possibleIds(element)) {
+        if (possibleId in skateComponents) {
+          triggerLifecycle(possibleId, skateComponents[possibleId], element);
+        }
       }
     });
 
@@ -359,15 +272,14 @@
   };
 
   /**
-   * Creates a new watcher for the specified element.
+   * Creates a new mutation observer for the specified element.
    *
-   * @param {Element} element The element to watch.
-   * @param {Object} options The options to use for watching.
+   * @param {Function} callback The callback to execute for the observer.
    *
-   * @return {Watcher}
+   * @return {MutationObserver}
    */
-  skate.watch = function (element, options) {
-    return new Watcher(element, options);
+  skate.watch = function (callback) {
+    return new MutationObserver(callback);
   };
 
   /**
@@ -441,7 +353,7 @@
   function triggerReady (id, component, target, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     var readyFn = component.ready;
-    done = done || function (){};
+    done = done || function () {};
 
     if (data(target, id + '.ready-called')) {
       return done();
@@ -490,69 +402,57 @@
 
   // Initialises and binds attribute handlers.
   function triggerAttributes(id, component, target) {
-    if (!component.attributes) {
-      return;
-    }
-
-    if (data(target, id + '.attributes-called')) {
+    if (!component.attributes || data(target, id + '.attributes-called')) {
       return;
     }
 
     data(target, id + '.attributes-called', true);
 
-    var watcher = new Watcher(target, {
-      attributes: true
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        var name = mutation.attributeName;
+        var attr = target.attributes[name];
+        var lifecycle = component.attributes[name];
+
+        if (!lifecycle) {
+          return;
+        }
+
+        if (attr && mutation.oldValue === null && (lifecycle.insert || lifecycle.update || lifecycle)) {
+          insert(lifecycle, target, attr.nodeValue);
+        } else if (attr && mutation.oldValue !== null && (lifecycle.update || lifecycle)) {
+          update(lifecycle, target, attr.nodeValue, mutation.oldValue);
+        } else if (!attr && lifecycle.remove) {
+          remove(lifecycle, target, mutation.oldValue);
+        }
+      });
     });
 
-    for (var attributeName in component.attributes) {
-      var attributeDefinition = component.attributes[attributeName];
+    observer.observe(target, {
+      attributes: true,
+      attributeOldValue: true
+    });
 
-      if (typeof attributeDefinition === 'function') {
-        attributeDefinition = {
-          update: attributeDefinition
-        };
-      }
+    // Now trigger init on each attribute.
+    for (var a = 0; a < target.attributes.length; a++) {
+      var attribute = target.attributes[a];
+      var lifecycle = component.attributes[attribute.nodeName];
 
-      if (!attributeDefinition.insert && attributeDefinition.update) {
-        attributeDefinition.insert = attributeDefinition.update;
-      }
-
-      watcher.on(attributeName + '.insert', createAttributeInsertHandler(attributeDefinition));
-      watcher.on(attributeName + '.update', attributeDefinition.update);
-      watcher.on(attributeName + '.remove', createAttributeRemoveHandler(attributeDefinition));
-
-      // Force the insert to trigger.
-      if (attributeDefinition.insert && target.getAttribute(attributeName)) {
-        // Mutation observers don't trigger the insert unless set after adding.
-        if (MutationObserver) {
-          target.setAttribute(attributeName, target.getAttribute(attributeName));
-        // Mutation events do trigger an insert but only if the attribute is different.
-        // We fire this to ensure that the insert is called but must check in the handler
-        // to make sure that it hasn't been triggered.
-        } else {
-          watcher.fire(attributeName + '.insert', {
-            target: target,
-            attribute: attributeName,
-            newValue: target.getAttribute(attributeName)
-          });
-        }
+      if (lifecycle) {
+        insert(lifecycle, target, attribute.nodeValue);
       }
     }
-  }
 
-  function createAttributeInsertHandler (definition) {
-    return function (e) {
-      if (!data(e.target, 'attribute.insert-called')) {
-        data(e.target, 'attribute.insert-called', true);
-        definition.insert(e);
-      }
+    function insert (lifecycle, element, newValue) {
+      (lifecycle.insert || lifecycle.update || lifecycle)(element, newValue);
     }
-  }
 
-  function createAttributeRemoveHandler (definition) {
-    return function (e) {
-      data(e.target, 'attribute.insert-called', false);
-      definition.remove(e);
+    function update (lifecycle, element, newValue, oldValue) {
+      (lifecycle.update || lifecycle)(element, newValue, oldValue);
+    }
+
+    function remove (lifecycle, element, oldValue) {
+      lifecycle.remove(element, oldValue);
     }
   }
 
@@ -644,6 +544,8 @@
         child[prop] = parent[prop];
       }
     }
+
+    return child;
   }
 
   // Creates a constructor for the specified component.
