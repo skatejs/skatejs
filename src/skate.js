@@ -72,7 +72,7 @@
         this.elements.push(item);
 
         if (options.childList) {
-          target.addEventListener('DOMNodeInserted', item.insertHandler);
+          target.addEventListener('DOMSubtreeModified', item.insertHandler);
           target.addEventListener('DOMNodeRemoved', item.removeHandler);
         }
 
@@ -108,7 +108,7 @@
       disconnect: function () {
         for (var a in this.elements) {
           var item = this.elements[a];
-          item.target.removeEventListener('DOMNodeInserted', item.insertHandler);
+          item.target.removeEventListener('DOMSubtreeModified', item.insertHandler);
           item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
           item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
         }
@@ -266,6 +266,8 @@
           triggerLifecycle(possibleId, skateComponents[possibleId], element);
         }
       }
+
+      skate.init(element.children);
     });
 
     return skate;

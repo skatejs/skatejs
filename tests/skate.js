@@ -83,6 +83,17 @@
 
       add('new-element');
     });
+
+    it('Should pick up descendants that are inserted as part of an HTML block.', function (done) {
+      skate('sub-element', {
+        insert: function () {
+          assert(true);
+          done();
+        }
+      });
+
+      document.body.innerHTML = '<div><child><sub-element></sub-element></child></div>';
+    });
   });
 
   describe('Async ready callback.', function () {
