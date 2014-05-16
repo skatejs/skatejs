@@ -112,6 +112,10 @@
           item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
           item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
         }
+
+        this.elements = [];
+
+        return this;
       }
     };
   }
