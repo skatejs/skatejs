@@ -1,5 +1,6 @@
 {
   "name": "skate",
-  "version": "0.4.0",
+  "description": "Skate is a web component library based loosely on the Custom Element spec that allows you to define behaviour for custom and existing elements using tag names, attribute names and class names.",
+  "version": "0.5.1",
   "main": ["dist/skate.js", "dist/skate.min.js"]
 }

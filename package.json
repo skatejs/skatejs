@@ -1,6 +1,7 @@
 {
   "name": "skate",
-  "description": "Modules through selector listeners.",
+  "description": "Skate is a web component library based loosely on the Custom Element spec that allows you to define behaviour for custom and existing elements using tag names, attribute names and class names.",
+  "private": true,
   "devDependencies": {
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-copy": "~0.4.1",
