@@ -271,6 +271,21 @@
   };
 
   /**
+   * Unregisters a component.
+   *
+   * @param {String} id The ID of the component to unregister.
+   *
+   * @return {skate}
+   */
+  skate.unregister = function (id) {
+    if (skateComponents[id]) {
+      delete skateComponents[id];
+    }
+
+    return skate;
+  };
+
+  /**
    * Creates a new mutation observer for the specified element.
    *
    * @param {Function} callback The callback to execute for the observer.

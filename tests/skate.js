@@ -378,4 +378,15 @@
       });
     });
   });
+
+  describe('Unregistering', function () {
+    it('Should stop a component from initialising an element.', function () {
+      var div = skate('div', function (element) {
+        element.textContent = 'test';
+      });
+
+      div();
+      expect(div.textContent).to.be.undefined;
+    });
+  });
 })();
