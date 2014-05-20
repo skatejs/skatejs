@@ -63,9 +63,9 @@
 
   describe('DOM node interaction.', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
-      add('existing-element');
+      add('div');
 
-      skate('existing-element', {
+      skate('div', {
         insert: function (element) {
           assert(true);
           done();
@@ -74,14 +74,14 @@
     });
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function (done) {
-      skate('new-element', {
+      skate('div', {
         insert: function (element) {
           assert(true);
           done();
         }
       });
 
-      add('new-element');
+      add('div');
     });
 
     it('Should pick up descendants that are inserted as part of an HTML block.', function (done) {
@@ -113,7 +113,7 @@
     it('Ready event should be async and provide a done callback.', function (done) {
       var ok = false;
 
-      skate('asdf', {
+      skate('div', {
         ready: function (element, next) {
           setTimeout(function () {
             ok = true;
@@ -127,7 +127,7 @@
         }
       });
 
-      add('asdf');
+      add('div');
     });
   });
 
