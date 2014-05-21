@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/treshugart/skate.png?branch=master)](https://travis-ci.org/treshugart/skate)
+[![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
 
 Skate
 =====
