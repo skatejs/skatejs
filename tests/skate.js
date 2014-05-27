@@ -406,7 +406,7 @@
   });
 
   describe('Returning a constructor', function () {
-    it('should return a constructor that extends a native element', function () {
+    it('Should return a constructor that extends a native element.', function () {
       var Div = skate('div', {
         prototype: {
           func1: function () {}
@@ -427,7 +427,7 @@
       div.func2.should.equal(Div.prototype.func2);
     });
 
-    it('Should not allow the constructor property to be enumerated', function () {
+    it('Should not allow the constructor property to be enumerated.', function () {
       var Div = skate('div');
 
       for (var prop in Div.prototype) {
@@ -435,6 +435,16 @@
           throw new Error('The constructor property should not be enumerable.');
         }
       }
+    });
+  });
+
+  describe('Doing something when an element is augmented by a particular component.', function () {
+    it('Should execute a callback if an element is already augmented.', function () {
+
+    });
+
+    it('Should execute a callback when an element will be augmented.', function () {
+
     });
   });
 })();
