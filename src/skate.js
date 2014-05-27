@@ -13,6 +13,7 @@
   // Normalise the mutaiton observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 
+  // Polyfill only the parts of Mutation Observer that we need.
   if (!MutationObserver) {
     MutationObserver = function (callback) {
       this.callback = callback;
@@ -218,7 +219,7 @@
   };
 
   /**
-   * Stops listening.
+   * Stops listening for new elements. Generally this will only be used in testing.
    *
    * @returns {skate}
    */
