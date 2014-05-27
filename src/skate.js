@@ -618,8 +618,7 @@
       return selector;
     };
 
-    CustomElement.prototype = component.prototype;
-    CustomElement.prototype = Object.create(CustomElement.prototype, {
+    CustomElement.prototype = Object.create(component.prototype, {
       constructor: {
         enumerable: false,
         value: CustomElement
