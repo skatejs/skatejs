@@ -322,6 +322,19 @@
            * @returns {Object}
            */
           then: function (callback) {
+            if (data(element, id + '.ready-called')) {
+              callback(element);
+            } else {
+              var callbacks = data(element, id + '.when-callbacks');
+
+              if (!callbacks) {
+                callbacks = [];
+              }
+
+              callbacks.push(callback);
+              data(element, id + '.when-callbacks', callbacks);
+            }
+
             return this;
           }
         };
@@ -408,6 +421,7 @@
 
     data(target, id + '.ready-called', true);
     inherit(target, component.prototype);
+    triggerWhenCallbacks(target, id);
 
     if (readyFn && definedMultipleArgs.test(readyFn)) {
       readyFn(target, done);
@@ -513,6 +527,18 @@
     function remove (lifecycle, element, oldValue) {
       lifecycle.remove(element, oldValue);
     }
+  }
+
+  function triggerWhenCallbacks (target, id) {
+    var callbacks = data(target, id + '.when-callbacks');
+
+    if (!callbacks) {
+      return;
+    }
+
+    callbacks.forEach(function (callback) {
+      callback(target);
+    });
   }
 
 
