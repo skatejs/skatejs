@@ -309,6 +309,8 @@
        * Sets the id of the component to listen for on the element.
        *
        * @param {String} id The id of the component to listen for.
+       *
+       * @returns {Object}
        */
       is: function (id) {
         return {
