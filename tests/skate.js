@@ -389,37 +389,6 @@
     });
   });
 
-  describe('Unregistering', function () {
-    it('Should block elements added to the dom from being initialised.', function () {
-      var Div = skate('div', {
-        ready: function (element) {
-          element.textContent = 'test';
-        }
-      });
-
-      skate.unregister('div');
-      var div = add('div');
-      div.textContent.should.equal('');
-    });
-
-    // This behaviour might change in the future.
-    it('Known behaviour: should not block elements created via constructor from being initialised but should not be inserted.', function () {
-      var Div = skate('div', {
-        ready: function (element) {
-          element.readyCalled = true;
-        },
-
-        insert: function (element) {
-          element.insertCalled = true;
-        }
-      });
-
-      var div = new Div();
-      expect(div.readyCalled).to.equal(true);
-      expect(div.insertCalled).to.equal(undefined);
-    });
-  });
-
   describe('Returning a constructor', function () {
     it('Should return a constructor that extends a native element.', function () {
       var Div = skate('div', {

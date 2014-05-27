@@ -218,30 +218,6 @@
   };
 
   /**
-   * Ensures the passed element or elements aren't initialised.
-   *
-   * @param {Element | Traversable} elements The element or elements to blacklist.
-   * @param {Boolean} andDescendants Whether or not to blacklist element descendants.
-   *
-   * @returns {skate}
-   */
-  skate.blacklist = function (elements, andDescendants) {
-    if (andDescendants === undefined) {
-      andDescendants = true;
-    }
-
-    eachElement(elements, function (element) {
-      data(element, 'blacklisted', true);
-
-      if (andDescendants) {
-        skate.blacklist(element.children, true);
-      }
-    });
-
-    return skate;
-  };
-
-  /**
    * Stops listening.
    *
    * @returns {skate}
@@ -270,21 +246,6 @@
 
       skate.init(element.children);
     });
-
-    return skate;
-  };
-
-  /**
-   * Unregisters a component.
-   *
-   * @param {String} id The ID of the component to unregister.
-   *
-   * @returns {skate}
-   */
-  skate.unregister = function (id) {
-    if (skateComponents[id]) {
-      delete skateComponents[id];
-    }
 
     return skate;
   };
@@ -346,40 +307,12 @@
     };
   };
 
-  /**
-   * Ensures the passed element or elements aren't blacklisted.
-   *
-   * @param {Element | Traversable} elements The element or elements to blacklist.
-   * @param {Boolean} andDescendants Whether or not to whitelist element descendants.
-   *
-   * @returns {skate}
-   */
-  skate.whitelist = function (elements, andDescendants) {
-    if (andDescendants === undefined) {
-      andDescendants = true;
-    }
-
-    eachElement(elements, function (element) {
-      data(element, 'blacklisted', undefined);
-
-      if (andDescendants) {
-        skate.whitelist(element.children, true);
-      }
-    });
-
-    return skate;
-  };
-
 
   // Lifecycle Triggers
   // ------------------
 
   // Triggers the entire lifecycle.
   function triggerLifecycle (id, component, target) {
-    if (data(target, 'blacklisted')) {
-      return;
-    }
-
     triggerReady(id, component, target, function (replaceWith) {
       if (!replaceWith) {
         return triggerInsert(id, component, target);
@@ -459,7 +392,7 @@
 
   // Triggers remove on the target.
   function triggerRemove (id, component, target) {
-    if (component.remove && !data(target, 'blacklisted') && !data(target, id + '.remove-called')) {
+    if (component.remove && !data(target, id + '.remove-called')) {
       data(target, id + '.remove-called', true);
       component.remove(target);
     }
