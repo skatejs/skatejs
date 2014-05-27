@@ -487,5 +487,21 @@
 
       document.body.appendChild(div);
     });
+
+    // Safety net to ensure this never happens.
+    it('Should not execute when callbacks that were previously executed.', function () {
+      var Div = skate('div');
+      var div = new Div();
+      var executions = 0;
+      var callbacks = skate.when(div).is('div').then(incrementExecutions);
+
+      document.body.appendChild(div);
+      callbacks.then(incrementExecutions);
+      executions.should.equal(2);
+
+      function incrementExecutions () {
+        ++executions;
+      }
+    });
   });
 })();

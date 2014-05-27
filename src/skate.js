@@ -543,6 +543,10 @@
     callbacks.forEach(function (callback) {
       callback(target);
     });
+
+    // Cleaning up extra callbacks will help
+    // prevent possible memory leaks.
+    removeData(target, id + '.when-callbacks');
   }
 
 
@@ -561,6 +565,12 @@
     element.__SKATE_DATA[name] = value;
 
     return element;
+  }
+
+  function removeData (element, name) {
+    if (element.__SKATE_DATA && element.__SKATE_DATA[name]) {
+      delete element.__SKATE_DATA[name];
+    }
   }
 
   // Adds the specified class to the element.
