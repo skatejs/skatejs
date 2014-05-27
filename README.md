@@ -43,7 +43,7 @@ If you're still skating old school, we've got you covered. Just make sure skate 
 Docs
 ----
 
-The full documentation is available at [http://treshugart.github.io/skate/](http://treshugart.github.io/skate/).
+The full documentation is available at [http://skatejs.github.io/](http://skatejs.github.io/).
 
 Compatibility
 -------------
@@ -76,4 +76,3 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/treshugart/skate/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
