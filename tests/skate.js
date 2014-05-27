@@ -426,5 +426,15 @@
       div.func1.should.equal(Div.prototype.func1);
       div.func2.should.equal(Div.prototype.func2);
     });
+
+    it('Should not allow the constructor property to be enumerated', function () {
+      var Div = skate('div');
+
+      for (var prop in Div.prototype) {
+        if (prop === 'constructor') {
+          throw new Error('The constructor property should not be enumerable.');
+        }
+      }
+    });
   });
 })();

@@ -619,7 +619,12 @@
     };
 
     CustomElement.prototype = component.prototype;
-    CustomElement.prototype.constructor = CustomElement;
+    CustomElement.prototype = Object.create(CustomElement.prototype, {
+      constructor: {
+        enumerable: false,
+        value: CustomElement
+      }
+    });
 
     return CustomElement;
   }
