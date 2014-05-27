@@ -133,7 +133,7 @@
    * @param {String} id The ID of the component.
    * @param {Object | Function} component The component definition.
    *
-   * @return {Function} Function or constructor that creates a custom-element for the component.
+   * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
     if (!documentObserver) {
@@ -219,7 +219,7 @@
    * @param {Element | Traversable} elements The element or elements to blacklist.
    * @param {Boolean} andDescendants Whether or not to blacklist element descendants.
    *
-   * @return {skate}
+   * @returns {skate}
    */
   skate.blacklist = function (elements, andDescendants) {
     if (andDescendants === undefined) {
@@ -240,7 +240,7 @@
   /**
    * Stops listening.
    *
-   * @return {skate}
+   * @returns {skate}
    */
   skate.destroy = function () {
     documentObserver.disconnect();
@@ -254,7 +254,7 @@
    *
    * @param {Element | Traversable} elements The element or elements to init.
    *
-   * @return {skate}
+   * @returns {skate}
    */
   skate.init = function (elements) {
     eachElement(elements, function (element) {
@@ -275,7 +275,7 @@
    *
    * @param {String} id The ID of the component to unregister.
    *
-   * @return {skate}
+   * @returns {skate}
    */
   skate.unregister = function (id) {
     if (skateComponents[id]) {
@@ -290,10 +290,41 @@
    *
    * @param {Function} callback The callback to execute for the observer.
    *
-   * @return {MutationObserver}
+   * @returns {MutationObserver}
    */
   skate.watch = function (callback) {
     return new MutationObserver(callback);
+  };
+
+  /**
+   * Executes a callback when an element is initialised as a particular component.
+   *
+   * @param {HTMLElement} element The element to listen to.
+   *
+   * @returns {Object}
+   */
+  skate.when = function (element) {
+    return {
+      /**
+       * Sets the id of the component to listen for on the element.
+       *
+       * @param {String} id The id of the component to listen for.
+       */
+      is: function (id) {
+        return {
+          /**
+           * Executes the specified callback when an element is initialised with a particular component.
+           *
+           * @param {Function} callback The callback to execute.
+           *
+           * @returns {Object}
+           */
+          then: function (callback) {
+            return this;
+          }
+        };
+      }
+    };
   };
 
   /**
@@ -302,7 +333,7 @@
    * @param {Element | Traversable} elements The element or elements to blacklist.
    * @param {Boolean} andDescendants Whether or not to whitelist element descendants.
    *
-   * @return {skate}
+   * @returns {skate}
    */
   skate.whitelist = function (elements, andDescendants) {
     if (andDescendants === undefined) {
