@@ -596,25 +596,32 @@
 
         return selectors.join(', ');
       }());
-    var ctor = function () {
-        if (!isTag) {
-          throw new Error('Cannot construct "' + id + '" as a custom element.');
-        }
 
-        var element = document.createElement(id);
-        triggerReady(id, component, element);
-        return element;
-      };
+    function CustomElement () {
+      if (!isTag) {
+        throw new Error('Cannot construct "' + id + '" as a custom element.');
+      }
 
-    ctor.existing = function (within) {
-      return (within || document).querySelectorAll(ctor.selector());
+      var element = document.createElement(id);
+
+      component.prototype = this.constructor.prototype;
+      triggerReady(id, component, element);
+
+      return element;
+    }
+
+    CustomElement.existing = function (within) {
+      return (within || document).querySelectorAll(selector);
     };
 
-    ctor.selector = function () {
+    CustomElement.selector = function () {
       return selector;
     };
 
-    return ctor;
+    CustomElement.prototype = component.prototype;
+    CustomElement.prototype.constructor = CustomElement;
+
+    return CustomElement;
   }
 
 

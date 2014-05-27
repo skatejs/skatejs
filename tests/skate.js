@@ -287,14 +287,9 @@
       div.nodeName.should.equal('DIV');
     });
 
-    it('Should return a new element when called without "new".', function () {
-      var div = skate('div');
-      div().nodeName.should.equal('DIV');
-    });
-
     it('Should synchronously initialise the new element.', function () {
       var called = false;
-      var div = skate('div', {
+      var Div = skate('div', {
         prototype: {
           someMethod: function () {
             called = true;
@@ -302,7 +297,7 @@
         }
       });
 
-      div().someMethod();
+      new Div().someMethod();
       called.should.equal(true);
     });
 
@@ -345,7 +340,7 @@
       var numReady = 0;
       var numInsert = 0;
       var numRemove = 0;
-      var div = skate('div', {
+      var Div = skate('div', {
         ready: function () {
           ++numReady;
         },
@@ -357,8 +352,8 @@
         }
       });
 
-      var div1 = div();
-      var div2 = div();
+      var div1 = new Div();
+      var div2 = new Div();
 
       document.body.appendChild(div1);
       document.body.appendChild(div2);
@@ -380,13 +375,56 @@
   });
 
   describe('Unregistering', function () {
-    it('Should stop a component from initialising an element.', function () {
-      var div = skate('div', function (element) {
-        element.textContent = 'test';
+    it('Should block elements added to the dom from being initialised.', function () {
+      var Div = skate('div', {
+        ready: function (element) {
+          element.textContent = 'test';
+        }
       });
 
-      div();
-      expect(div.textContent).to.be.undefined;
+      skate.unregister('div');
+      var div = add('div');
+      div.textContent.should.equal('');
+    });
+
+    // This behaviour might change in the future.
+    it('Known behaviour: should not block elements created via constructor from being initialised but should not be inserted.', function () {
+      var Div = skate('div', {
+        ready: function (element) {
+          element.readyCalled = true;
+        },
+
+        insert: function (element) {
+          element.insertCalled = true;
+        }
+      });
+
+      var div = new Div();
+      expect(div.readyCalled).to.equal(true);
+      expect(div.insertCalled).to.equal(undefined);
+    });
+  });
+
+  describe('Returning a constructor', function () {
+    it('should return a constructor that extends a native element', function () {
+      var Div = skate('div', {
+        prototype: {
+          func1: function () {}
+        }
+      });
+
+      Div.prototype.func2 = function () {};
+
+      expect(Div.prototype.func1).to.be.a('function');
+      expect(Div.prototype.func2).to.be.a('function');
+
+      var div = new Div();
+
+      expect(div.func1).to.be.a('function');
+      expect(div.func2).to.be.a('function');
+
+      div.func1.should.equal(Div.prototype.func1);
+      div.func2.should.equal(Div.prototype.func2);
     });
   });
 })();
