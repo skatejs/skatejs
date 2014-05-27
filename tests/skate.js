@@ -23,6 +23,21 @@
   // Specs
   // -----
 
+  describe('Registration', function () {
+    it('Should not allow you to register the same component more than once.', function () {
+      var multiple = false;
+
+      skate('div');
+
+      try {
+        skate('div');
+        multiple = true;
+      } catch (e) {}
+
+      assert(!multiple, 'Multiple "div" components were registered.');
+    });
+  });
+
   describe('Lifecycle Callbacks', function () {
     it('Should trigger ready before the element is shown.', function (done) {
       skate('div', {

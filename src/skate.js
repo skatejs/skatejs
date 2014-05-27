@@ -136,6 +136,10 @@
    * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
+    if (skateComponents[id]) {
+      throw new Error('A component with the ID of "' + id + '" already exists.');
+    }
+
     if (!documentObserver) {
       documentObserver = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
