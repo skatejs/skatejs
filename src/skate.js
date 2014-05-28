@@ -421,21 +421,19 @@
 
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
+        var type;
         var name = mutation.attributeName;
         var attr = target.attributes[name];
-        var lifecycle = component.attributes[name];
 
-        if (!lifecycle) {
-          return;
+        if (attr && mutation.oldValue === null) {
+          type = 'insert';
+        } else if (attr && mutation.oldValue !== null) {
+          type = 'update';
+        } else if (!attr) {
+          type = 'remove';
         }
 
-        if (attr && mutation.oldValue === null && (lifecycle.insert || lifecycle.update || lifecycle)) {
-          insert(lifecycle, target, attr.nodeValue);
-        } else if (attr && mutation.oldValue !== null && (lifecycle.update || lifecycle)) {
-          update(lifecycle, target, attr.nodeValue, mutation.oldValue);
-        } else if (!attr && lifecycle.remove) {
-          remove(lifecycle, target, mutation.oldValue);
-        }
+        triggerCallback(type, name, attr ? attr.nodeValue : undefined, mutation.oldValue);
       });
     });
 
@@ -444,26 +442,32 @@
       attributeOldValue: true
     });
 
-    // Now trigger init on each attribute.
+    // We must initialise each attribute.
     for (var a = 0; a < target.attributes.length; a++) {
-      var attribute = target.attributes[a];
-      var lifecycle = component.attributes[attribute.nodeName];
+      var attr = target.attributes[a];
+      triggerCallback('insert', attr.nodeName, attr.nodeValue);
+    }
 
-      if (lifecycle) {
-        insert(lifecycle, target, attribute.nodeValue);
+    function triggerCallback (type, name, newValue, oldValue) {
+      var callback;
+
+      if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+        callback = component.attributes[name][type];
+      } else if (component.attributes && typeof component.attributes[name] === 'function') {
+        callback = component.attributes[name];
+      } else if (typeof component.attributes === 'function') {
+        callback = component.attributes;
       }
-    }
 
-    function insert (lifecycle, element, newValue) {
-      (lifecycle.insert || lifecycle.update || lifecycle)(element, newValue);
-    }
-
-    function update (lifecycle, element, newValue, oldValue) {
-      (lifecycle.update || lifecycle)(element, newValue, oldValue);
-    }
-
-    function remove (lifecycle, element, oldValue) {
-      lifecycle.remove(element, oldValue);
+      // There may still not be a callback.
+      if (callback) {
+        callback(target, {
+          type: type,
+          name: name,
+          newValue: newValue,
+          oldValue: oldValue
+        });
+      }
     }
   }
 

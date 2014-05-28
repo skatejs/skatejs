@@ -209,17 +209,17 @@
       skate('div', {
         attributes: {
           open: {
-            insert: function (element, value) {
-              value.should.equal('insert');
+            insert: function (element, data) {
+              data.newValue.should.equal('insert');
               element.setAttribute('open', 'update');
             },
-            update: function (element, newValue, oldValue) {
-              oldValue.should.equal('insert');
-              newValue.should.equal('update');
+            update: function (element, data) {
+              data.oldValue.should.equal('insert');
+              data.newValue.should.equal('update');
               element.removeAttribute('open');
             },
-            remove: function (element, value) {
-              value.should.equal('update');
+            remove: function (element, data) {
+              data.oldValue.should.equal('update');
               done();
             }
           }
@@ -229,43 +229,47 @@
       add('div').setAttribute('open', 'insert');
     });
 
-    it('Should use the update callback as the insert callback if no insert callback is specified.', function (done) {
+    it('Should accept a function insead of an object for a particular attribute definition.', function (done) {
+      var init = false;
+
       skate('div', {
         attributes: {
-          open: {
-            update: function (element, value) {
-              if (value === 'update') {
-                assert(true);
-                done();
-              }
-
-              // Mutation events fire synchronously.
+          open: function (element, data) {
+            if (data.type === 'insert') {
               setTimeout(function () {
                 element.setAttribute('open', 'update');
-              }, 100);
+              });
+            } else if (data.type === 'update') {
+              setTimeout(function () {
+                element.removeAttribute('open');
+              })
+            } else if (data.type === 'remove') {
+              assert(true);
+              done();
             }
           }
         }
       });
 
-      document.body.innerHTML = '<div id="attrtest" open="insert"></div>';
+      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
     });
 
-    it('Should accept a function insead of an object for the lifecycle definition which triggers both init and update.', function (done) {
+    it('Should accept a function insead of an object for the entire attribute definition.', function (done) {
       var init = false;
 
       skate('div', {
-        attributes: {
-          open: function (element, value) {
-            if (value === 'update') {
-              assert(true);
-              done();
-            }
-
-            // Mutation events fire synchronously.
+        attributes: function (element, data) {
+          if (data.type === 'insert') {
             setTimeout(function () {
               element.setAttribute('open', 'update');
             });
+          } else if (data.type === 'update') {
+            setTimeout(function () {
+              element.removeAttribute('open');
+            })
+          } else if (data.type === 'remove') {
+            assert(true);
+            done();
           }
         }
       });
