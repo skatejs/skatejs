@@ -626,13 +626,6 @@
 
     CustomElement.prototype = component.prototype;
 
-    if (!CustomElement.prototype.constructor) {
-      Object.defineProperty(CustomElement.prototype, 'constructor', {
-        enumerable: false,
-        value: CustomElement
-      });
-    }
-
     return CustomElement;
   }
 
