@@ -611,7 +611,6 @@
 
       var element = document.createElement(id);
 
-      component.prototype = this.constructor.prototype;
       triggerReady(id, component, element);
 
       return element;
@@ -625,12 +624,14 @@
       return selector;
     };
 
-    CustomElement.prototype = Object.create(component.prototype, {
-      constructor: {
+    CustomElement.prototype = component.prototype;
+
+    if (!CustomElement.prototype.constructor) {
+      Object.defineProperty(CustomElement.prototype, 'constructor', {
         enumerable: false,
         value: CustomElement
-      }
-    });
+      });
+    }
 
     return CustomElement;
   }

@@ -420,6 +420,21 @@
         }
       }
     });
+
+    it('Should affect the element prototype even if it was not constructed using the constructor.', function () {
+      var Div = skate('div', {
+        prototype: {
+          func1: function () {}
+        }
+      });
+
+      Div.prototype.func2 = function () {};
+
+      var div = add('div');
+
+      div.func1.should.be.a('function');
+      div.func2.should.be.a('function');
+    });
   });
 
   describe('Doing something when an element is augmented by a particular component.', function () {
