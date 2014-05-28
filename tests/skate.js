@@ -242,7 +242,7 @@
             } else if (data.type === 'update') {
               setTimeout(function () {
                 element.removeAttribute('open');
-              })
+              });
             } else if (data.type === 'remove') {
               assert(true);
               done();
@@ -266,7 +266,7 @@
           } else if (data.type === 'update') {
             setTimeout(function () {
               element.removeAttribute('open');
-            })
+            });
           } else if (data.type === 'remove') {
             assert(true);
             done();
@@ -297,7 +297,7 @@
 
   describe('Instantiation', function () {
     it('Should return a constructor', function () {
-      skate('div').should.be.a.function;
+      skate('div').should.be.a('function');
     });
 
     it('Should return a new element when constructed.', function () {
