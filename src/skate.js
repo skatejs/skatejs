@@ -563,7 +563,15 @@
       ids[name] = name;
     }
 
-    element.className.split(' ').forEach(function (id) {
+    var classname = '';
+
+    if (typeof element.className === 'string') {
+      classname = element.className;
+    } else {
+      classname = element.getAttribute('class') || '';
+    }
+
+    classname.split(' ').forEach(function (id) {
       if (id) {
         ids[id] = id;
       }
