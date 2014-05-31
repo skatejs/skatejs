@@ -359,7 +359,7 @@
 
     data(target, id + '.ready-called', true);
     inherit(target, component.prototype);
-    addEventListeners(id, target, component.events);
+    addEventListeners(target, component.events);
     triggerWhenCallbacks(target, id);
 
     if (readyFn && definedMultipleArgs.test(readyFn)) {
@@ -399,7 +399,7 @@
     }
 
     data(target, id + '.remove-called', true);
-    removeEventListeners(id, target, component.events);
+    removeEventListeners(target, component.events);
 
     if (component.remove) {
       component.remove(target);
@@ -478,35 +478,26 @@
     }
   }
 
-  function addEventListeners (id, target, events) {
+  function addEventListeners (target, events) {
     if (typeof events !== 'object') {
       return;
     }
 
-    function makeHandler (handler) {
-      return function (e) {
-        handler(target, e);
-      };
-    }
-
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        var handler = makeHandler(events[a]);
-        data(target, id + '.event.' + a, handler);
-        target.addEventListener(a, handler);
+        target.addEventListener(a, events[a]);
       }
     }
   }
 
-  function removeEventListeners (id, target, events) {
+  function removeEventListeners (target, events) {
     if (typeof events !== 'object') {
       return;
     }
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.removeEventListener(a, data(target, id + '.event.' + a));
-        removeData(target, id + '.event.' + a);
+        target.removeEventListener(a, events[a]);
       }
     }
   }
