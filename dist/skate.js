@@ -483,9 +483,15 @@
       return;
     }
 
+    function makeHandler (handler) {
+      return function (e) {
+        handler(target, e);
+      };
+    }
+
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.addEventListener(a, events[a]);
+        target.addEventListener(a, makeHandler(events[a]));
       }
     }
   }
@@ -497,7 +503,7 @@
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.removeEventListener(a, events[a]);
+        target.removeEventListener(a);
       }
     }
   }

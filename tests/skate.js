@@ -497,8 +497,9 @@
     it('Should bind events', function (done) {
       skate('div', {
         events: {
-          test: function (e) {
-            assert(true);
+          test: function (element, e) {
+            element.should.equal(div);
+            e.should.be.an('object');
             done();
           }
         }
@@ -514,7 +515,7 @@
     it('Should unbind events', function (done) {
       skate('div', {
         events: {
-          test: function (e) {
+          test: function () {
             assert(false);
             done();
           }
