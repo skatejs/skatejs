@@ -492,4 +492,45 @@
       }
     });
   });
+
+  describe('Events', function () {
+    it('Should bind events', function (done) {
+      skate('div', {
+        events: {
+          test: function (e) {
+            assert(true);
+            done();
+          }
+        }
+      });
+
+      var div = add('div');
+      var evt = document.createEvent('CustomEvent');
+
+      evt.initEvent('test');
+      div.dispatchEvent(evt);
+    });
+
+    it('Should unbind events', function (done) {
+      skate('div', {
+        events: {
+          test: function (e) {
+            assert(false);
+            done();
+          }
+        }
+      });
+
+      var div = add('div');
+      remove(div);
+
+      setTimeout(function () {
+        var evt = document.createEvent('CustomEvent');
+        evt.initEvent('test');
+        div.dispatchEvent(evt);
+        assert(true);
+        done();
+      }, 100);
+    });
+  });
 })();

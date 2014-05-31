@@ -359,6 +359,7 @@
 
     data(target, id + '.ready-called', true);
     inherit(target, component.prototype);
+    addEventListeners(target, component.events);
     triggerWhenCallbacks(target, id);
 
     if (readyFn && definedMultipleArgs.test(readyFn)) {
@@ -393,8 +394,14 @@
 
   // Triggers remove on the target.
   function triggerRemove (id, component, target) {
-    if (component.remove && !data(target, id + '.remove-called')) {
-      data(target, id + '.remove-called', true);
+    if (data(target, id + '.remove-called')) {
+      return;
+    }
+
+    data(target, id + '.remove-called', true);
+    removeEventListeners(target, component.events);
+
+    if (component.remove) {
       component.remove(target);
     }
   }
@@ -467,6 +474,30 @@
           newValue: newValue,
           oldValue: oldValue
         });
+      }
+    }
+  }
+
+  function addEventListeners (target, events) {
+    if (typeof events !== 'object') {
+      return;
+    }
+
+    for (var a in events) {
+      if (events.hasOwnProperty(a)) {
+        target.addEventListener(a, events[a]);
+      }
+    }
+  }
+
+  function removeEventListeners (target, events) {
+    if (typeof events !== 'object') {
+      return;
+    }
+
+    for (var a in events) {
+      if (events.hasOwnProperty(a)) {
+        target.removeEventListener(a, events[a]);
       }
     }
   }
