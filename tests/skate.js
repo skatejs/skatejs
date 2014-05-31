@@ -497,8 +497,8 @@
     it('Should bind events', function (done) {
       skate('div', {
         events: {
-          test: function (e) {
-            this.should.equal(div);
+          test: function (element, e) {
+            element.should.equal(div);
             e.should.be.an('object');
             done();
           }
