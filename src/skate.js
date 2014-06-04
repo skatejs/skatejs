@@ -224,9 +224,13 @@
    * @returns {skate}
    */
   skate.destroy = function () {
-    documentObserver.disconnect();
-    documentObserver = undefined;
+    if (documentObserver) {
+      documentObserver.disconnect();
+      documentObserver = undefined;
+    }
+
     skateComponents = {};
+
     return skate;
   };
 

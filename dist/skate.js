@@ -224,9 +224,13 @@
    * @returns {skate}
    */
   skate.destroy = function () {
-    documentObserver.disconnect();
-    documentObserver = undefined;
+    if (documentObserver) {
+      documentObserver.disconnect();
+      documentObserver = undefined;
+    }
+
     skateComponents = {};
+
     return skate;
   };
 
@@ -359,7 +363,7 @@
 
     data(target, id + '.ready-called', true);
     inherit(target, component.prototype);
-    addEventListeners(target, component.events);
+    addEventListeners(id, target, component.events);
     triggerWhenCallbacks(target, id);
 
     if (readyFn && definedMultipleArgs.test(readyFn)) {
@@ -399,7 +403,7 @@
     }
 
     data(target, id + '.remove-called', true);
-    removeEventListeners(target, component.events);
+    removeEventListeners(id, target, component.events);
 
     if (component.remove) {
       component.remove(target);
@@ -478,7 +482,7 @@
     }
   }
 
-  function addEventListeners (target, events) {
+  function addEventListeners (id, target, events) {
     if (typeof events !== 'object') {
       return;
     }
@@ -491,19 +495,22 @@
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.addEventListener(a, makeHandler(events[a]));
+        var handler = makeHandler(events[a]);
+        data(target, id + '.event.' + a, handler);
+        target.addEventListener(a, handler);
       }
     }
   }
 
-  function removeEventListeners (target, events) {
+  function removeEventListeners (id, target, events) {
     if (typeof events !== 'object') {
       return;
     }
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.removeEventListener(a);
+        target.removeEventListener(a, data(target, id + '.event.' + a));
+        removeData(target, id + '.event.' + a);
       }
     }
   }
