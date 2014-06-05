@@ -667,6 +667,10 @@
 
       var element = document.createElement(id);
 
+      // Ensure the component prototype is up to date with the element's prototype. This ensures that overwriting the
+      // element prototype still works.
+      component.prototype = CustomElement.prototype;
+
       triggerReady(id, component, element);
 
       return element;
@@ -680,6 +684,7 @@
       return selector;
     };
 
+    // This allows modifications to the element prototype propagate to the component prototype.
     CustomElement.prototype = component.prototype;
 
     return CustomElement;

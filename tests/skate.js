@@ -439,6 +439,18 @@
       div.func1.should.be.a('function');
       div.func2.should.be.a('function');
     });
+
+    it('should allow the overwriting of the prototype', function () {
+      var Div = skate('div');
+
+      Div.prototype = {
+        func: function () {}
+      };
+
+      var div = new Div();
+
+      div.func.should.be.a('function');
+    });
   });
 
   describe('Doing something when an element is augmented by a particular component.', function () {
