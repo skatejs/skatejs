@@ -202,14 +202,14 @@
 
   // Default configuration.
   skate.defaults = {
-    // Set to `{...}` of `attrName: `{ init: ..., update: ..., remove: ... }` to listen to specific attributes.
+    // Attribute lifecycle callback or callbacks.
     attributes: false,
 
     // The classname to use when showing this component.
     classname: '__skate',
 
-    // Whether or not to start listening right away.
-    listen: true,
+    // The events to manage the binding and unbinding of during the component's lifecycle.
+    events: false,
 
     // Properties and methods to add to each element.
     prototype: {},
@@ -235,7 +235,7 @@
   };
 
   /**
-   * Synchronously initialises the specified element or elements.
+   * Synchronously initialises the specified element or elements and descendants.
    *
    * @param {Element | Traversable} elements The element or elements to init.
    *
@@ -253,6 +253,18 @@
     });
 
     return skate;
+  };
+
+  /**
+   * Unregisters the specified component.
+   *
+   * @param {String} id The ID of the component to unregister.
+   *
+   * @returns {Skate}
+   */
+  skate.unregister = function (id) {
+    delete skateComponents[id];
+    return;
   };
 
   /**

@@ -36,6 +36,24 @@
 
       assert(!multiple, 'Multiple "div" components were registered.');
     });
+
+    it('should destroy all listeners when destroy() called', function () {
+      skate('div', function (element) {
+        element.test = true;
+      });
+
+      skate.destroy();
+      assert(skate.init(add('div')).test === undefined);
+    });
+
+    it('should unregister the specified listener when unregister() called', function () {
+      skate('div', function (element) {
+        element.test = true;
+      });
+
+      skate.unregister('div');
+      assert(skate.init(add('div')).test === undefined);
+    });
   });
 
   describe('Lifecycle Callbacks', function () {
