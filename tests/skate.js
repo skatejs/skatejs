@@ -56,6 +56,69 @@
     });
   });
 
+  describe('Using components', function () {
+    describe('tags', function () {
+      it('should use tag names', function (done) {
+        skate('my-element', {
+          type: skate.types.TAG,
+          insert: function (el) {
+            el.tagName.should.equal('MY-ELEMENT');
+            done();
+          }
+        });
+
+        var element = document.createElement('my-element');
+        document.body.appendChild(element);
+      });
+    });
+
+    describe('attributes', function () {
+      it('should use attribute names', function (done) {
+        skate('my-attribute', {
+          type: skate.types.ATTR,
+          insert: function (el) {
+            el.getAttribute('my-attribute').should.equal('true');
+            done();
+          }
+        });
+
+        var element = document.createElement('my-element');
+        element.setAttribute('my-attribute', 'true');
+        document.body.appendChild(element);
+      });
+    });
+
+    describe('classes', function () {
+      it('should use class names', function (done) {
+        skate('my-class', {
+          type: skate.types.CLASS,
+          insert: function (el) {
+            el.className.match('my-class').length.should.equal(1);
+            done();
+          }
+        });
+
+        var element = document.createElement('my-element');
+        element.className = ' my-class some-other-class ';
+        document.body.appendChild(element);
+      });
+
+      it('should allow newlines in the class attribute', function (done) {
+        skate('my-class', {
+          type: skate.types.CLASS,
+          insert: function (el) {
+            el.className.match('my-class').length.should.equal(1);
+            done();
+          }
+        });
+
+        var element = document.createElement('my-element');
+        element.className = " \n my-class \n some-other-class \n ";
+        document.body.appendChild(element);
+      });
+    });
+  });
+
   describe('Lifecycle Callbacks', function () {
     it('Should trigger ready before the element is shown.', function (done) {
       skate('div', {

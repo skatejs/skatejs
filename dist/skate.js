@@ -619,19 +619,15 @@
       ids[name] = name;
     }
 
-    var classname = '';
+    var classes = element.classList || (element.className && element.className.split(/\s+/)) || [];
 
-    if (typeof element.className === 'string') {
-      classname = element.className;
-    } else {
-      classname = element.getAttribute('class') || '';
-    }
+    for (var b = 0; b < classes.length; b++) {
+      var id = classes[b];
 
-    classname.split(' ').forEach(function (id) {
       if (id) {
         ids[id] = id;
       }
-    });
+    }
 
     data(element, 'possible-ids', ids);
 
