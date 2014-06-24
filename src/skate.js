@@ -304,17 +304,17 @@
            * @returns {Object}
            */
           then: function (callback) {
-            if (data(element, id + '.ready-called')) {
+            if (getData(element, id + '.ready-called')) {
               callback(element);
             } else {
-              var callbacks = data(element, id + '.when-callbacks');
+              var callbacks = getData(element, id + '.when-callbacks');
 
               if (!callbacks) {
                 callbacks = [];
               }
 
               callbacks.push(callback);
-              data(element, id + '.when-callbacks', callbacks);
+              setData(element, id + '.when-callbacks', callbacks);
             }
 
             return this;
@@ -369,11 +369,11 @@
     var readyFn = component.ready;
     done = done || function () {};
 
-    if (data(target, id + '.ready-called')) {
+    if (getData(target, id + '.ready-called')) {
       return done();
     }
 
-    data(target, id + '.ready-called', true);
+    setData(target, id + '.ready-called', true);
     inherit(target, component.prototype);
     addEventListeners(id, target, component.events);
     triggerWhenCallbacks(target, id);
@@ -391,7 +391,7 @@
   function triggerInsert (id, component, target) {
     var insertFn = component.insert;
 
-    if (data(target, id + '.insert-called')) {
+    if (getData(target, id + '.insert-called')) {
       return;
     }
 
@@ -399,7 +399,7 @@
       return;
     }
 
-    data(target, id + '.insert-called', true);
+    setData(target, id + '.insert-called', true);
     triggerAttributes(id, component, target);
     addClass(target, component.classname);
 
@@ -410,12 +410,13 @@
 
   // Triggers remove on the target.
   function triggerRemove (id, component, target) {
-    if (data(target, id + '.remove-called')) {
+    if (getData(target, id + '.remove-called')) {
       return;
     }
 
-    data(target, id + '.remove-called', true);
+    setData(target, id + '.remove-called', true);
     removeEventListeners(id, target, component.events);
+    clearData(target);
 
     if (component.remove) {
       component.remove(target);
@@ -436,11 +437,11 @@
 
   // Initialises and binds attribute handlers.
   function triggerAttributes (id, component, target) {
-    if (!component.attributes || data(target, id + '.attributes-called')) {
+    if (!component.attributes || getData(target, id + '.attributes-called')) {
       return;
     }
 
-    data(target, id + '.attributes-called', true);
+    setData(target, id + '.attributes-called', true);
 
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
@@ -508,7 +509,7 @@
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
         var handler = makeHandler(events[a]);
-        data(target, id + '.event.' + a, handler);
+        setData(target, id + '.event.' + a, handler);
         target.addEventListener(a, handler);
       }
     }
@@ -521,14 +522,14 @@
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        target.removeEventListener(a, data(target, id + '.event.' + a));
+        target.removeEventListener(a, getData(target, id + '.event.' + a));
         removeData(target, id + '.event.' + a);
       }
     }
   }
 
   function triggerWhenCallbacks (target, id) {
-    var callbacks = data(target, id + '.when-callbacks');
+    var callbacks = getData(target, id + '.when-callbacks');
 
     if (!callbacks) {
       return;
@@ -547,24 +548,28 @@
   // Utilities
   // ---------
 
-  function data (element, name, value) {
-    if (value === undefined) {
-      return element.__SKATE_DATA && element.__SKATE_DATA[name];
+  function getData (element, name) {
+    if (element.__SKATE_DATA) {
+      return element.__SKATE_DATA[name];
     }
+  }
 
+  function setData (element, name, value) {
     if (!element.__SKATE_DATA) {
       element.__SKATE_DATA = {};
     }
 
     element.__SKATE_DATA[name] = value;
-
-    return element;
   }
 
   function removeData (element, name) {
     if (element.__SKATE_DATA && element.__SKATE_DATA[name]) {
       delete element.__SKATE_DATA[name];
     }
+  }
+
+  function clearData (element) {
+    delete element.__SKATE_DATA;
   }
 
   // Adds the specified class to the element.
@@ -603,7 +608,7 @@
 
   // Returns the possible ids from an element.
   function possibleIds (element) {
-    var ids = data(element, 'possible-ids');
+    var ids = getData(element, 'possible-ids');
 
     if (ids) {
       return ids;
@@ -629,7 +634,7 @@
       }
     }
 
-    data(element, 'possible-ids', ids);
+    setData(element, 'possible-ids', ids);
 
     return ids;
   }

@@ -587,13 +587,13 @@
   });
 
   describe('Events', function () {
-    it('Should bind events', function (done) {
+    it('Should bind events', function () {
+      var numTriggered = 0;
+
       skate('div', {
         events: {
           test: function (element, e) {
-            element.should.equal(div);
-            e.should.be.an('object');
-            done();
+            ++numTriggered;
           }
         }
       });
@@ -603,6 +603,7 @@
 
       evt.initEvent('test');
       div.dispatchEvent(evt);
+      numTriggered.should.equal(1);
     });
 
     it('Should unbind events', function (done) {
@@ -625,6 +626,29 @@
         assert(true);
         done();
       }, 100);
+    });
+
+    it('Should allow you to re-add the element back into the DOM', function () {
+      var numTriggered = 0;
+
+      skate('div', {
+        events: {
+          test: function (element, e) {
+            ++numTriggered;
+          }
+        }
+      });
+
+      var div = add('div');
+      var par = div.parentNode;
+      var evt = document.createEvent('CustomEvent');
+
+      par.removeChild(div);
+      par.appendChild(div);
+
+      evt.initEvent('test');
+      div.dispatchEvent(evt);
+      numTriggered.should.equal(1);
     });
   });
 })();
