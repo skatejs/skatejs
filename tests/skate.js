@@ -83,16 +83,14 @@
       });
     }
 
-    describe('tags', function () {
-      describe('tags, attributes and classes', function () {
-        assertType(skate.types.ANY, 3);
-        assertType(skate.types.TAG, 1);
-        assertType(skate.types.ATTR, 1);
-        assertType(skate.types.CLASS, 1);
-        assertType(skate.types.NOTAG, 2);
-        assertType(skate.types.NOATTR, 2);
-        assertType(skate.types.NOCLASS, 2);
-      });
+    describe('tags, attributes and classes', function () {
+      assertType(skate.types.ANY, 3);
+      assertType(skate.types.TAG, 1);
+      assertType(skate.types.ATTR, 1);
+      assertType(skate.types.CLASS, 1);
+      assertType(skate.types.NOTAG, 2);
+      assertType(skate.types.NOATTR, 2);
+      assertType(skate.types.NOCLASS, 2);
     });
   });
 
