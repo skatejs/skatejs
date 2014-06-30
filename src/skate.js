@@ -415,8 +415,6 @@
     }
 
     setData(target, id + '.remove-called', true);
-    removeEventListeners(id, target, component.events);
-    clearData(target);
 
     if (component.remove) {
       component.remove(target);
@@ -515,19 +513,6 @@
     }
   }
 
-  function removeEventListeners (id, target, events) {
-    if (typeof events !== 'object') {
-      return;
-    }
-
-    for (var a in events) {
-      if (events.hasOwnProperty(a)) {
-        target.removeEventListener(a, getData(target, id + '.event.' + a));
-        removeData(target, id + '.event.' + a);
-      }
-    }
-  }
-
   function triggerWhenCallbacks (target, id) {
     var callbacks = getData(target, id + '.when-callbacks');
 
@@ -566,10 +551,6 @@
     if (element.__SKATE_DATA && element.__SKATE_DATA[name]) {
       delete element.__SKATE_DATA[name];
     }
-  }
-
-  function clearData (element) {
-    delete element.__SKATE_DATA;
   }
 
   // Adds the specified class to the element.

@@ -606,28 +606,6 @@
       numTriggered.should.equal(1);
     });
 
-    it('Should unbind events', function (done) {
-      skate('div', {
-        events: {
-          test: function () {
-            assert(false);
-            done();
-          }
-        }
-      });
-
-      var div = add('div');
-      remove(div);
-
-      setTimeout(function () {
-        var evt = document.createEvent('CustomEvent');
-        evt.initEvent('test');
-        div.dispatchEvent(evt);
-        assert(true);
-        done();
-      }, 100);
-    });
-
     it('Should allow you to re-add the element back into the DOM', function () {
       var numTriggered = 0;
 
