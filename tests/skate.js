@@ -91,6 +91,23 @@
       assertType(skate.types.NOTAG, 2);
       assertType(skate.types.NOATTR, 2);
       assertType(skate.types.NOCLASS, 2);
+
+      it('should not initialise a single component more than once on a single element', function () {
+        var calls = 0;
+
+        skate('my-element', {
+          ready: function () {
+            ++calls;
+          }
+        });
+
+        var el = document.createElement('my-element');
+        el.setAttribute('my-element', '');
+        el.className = 'my-element';
+        skate.init(el);
+
+        calls.should.equal(1);
+      });
     });
   });
 
