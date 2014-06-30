@@ -244,11 +244,10 @@
   skate.init = function (elements) {
     eachElement(elements, function (element) {
       for (var possibleId in possibleIds(element)) {
-        if (possibleId in skateComponents) {
-          triggerLifecycle(possibleId, skateComponents[possibleId], element);
-        }
+        triggerLifecycle(possibleId, skateComponents[possibleId], element);
       }
 
+      // Should be refactored to run against a flat list of descendants.
       skate.init(element.children);
     });
 
@@ -589,35 +588,33 @@
 
   // Returns the possible ids from an element.
   function possibleIds (element) {
-    var ids = getData(element, 'possible-ids');
-
-    if (ids) {
-      return ids;
-    }
+    var ids = {};
 
     var tag = element.tagName.toLowerCase();
-
-    ids = {};
-    ids[tag] = tag;
-
-    for (var a = 0; a < element.attributes.length; a++) {
-      var name = element.attributes[a].nodeName;
-      ids[name] = name;
+    if (isComponentOfType(tag, skate.types.TAG)) {
+      ids[tag] = tag;
     }
 
-    var classes = element.classList || (element.className && element.className.split(/\s+/)) || [];
-
-    for (var b = 0; b < classes.length; b++) {
-      var id = classes[b];
-
-      if (id) {
-        ids[id] = id;
+    for (var a = 0; a < element.attributes.length; a++) {
+      var attribute = element.attributes[a].nodeName;
+      if (isComponentOfType(attribute, skate.types.ATTR)) {
+        ids[attribute] = attribute;
       }
     }
 
-    setData(element, 'possible-ids', ids);
+    var classes = element.classList || (element.className && element.className.split(/\s+/)) || [];
+    for (var b = 0; b < classes.length; b++) {
+      var classname = classes[b];
+      if (isComponentOfType(classname, skate.types.CLASS)) {
+        ids[classname] = classname;
+      }
+    }
 
     return ids;
+  }
+
+  function isComponentOfType (id, type) {
+    return id in skateComponents && skateComponents[id].type.indexOf(type) > -1;
   }
 
   // Merges the second argument into the first.

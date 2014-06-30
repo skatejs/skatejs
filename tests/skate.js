@@ -57,64 +57,41 @@
   });
 
   describe('Using components', function () {
-    describe('tags', function () {
-      it('should use tag names', function (done) {
+    function assertType (type, shouldEqual) {
+      it('type: ' + type, function () {
+        var calls = 0;
+
         skate('my-element', {
-          type: skate.types.TAG,
-          insert: function (el) {
-            el.tagName.should.equal('MY-ELEMENT');
-            done();
+          type: type,
+          ready: function (el) {
+            ++calls;
           }
         });
 
-        var element = document.createElement('my-element');
-        document.body.appendChild(element);
+        var el1 = document.createElement('my-element');
+        skate.init(el1);
+
+        var el2 = document.createElement('div');
+        el2.setAttribute('my-element', '');
+        skate.init(el2);
+
+        var el3 = document.createElement('div');
+        el3.className = 'my-element';
+        skate.init(el3);
+
+        calls.should.equal(shouldEqual);
       });
-    });
+    }
 
-    describe('attributes', function () {
-      it('should use attribute names', function (done) {
-        skate('my-attribute', {
-          type: skate.types.ATTR,
-          insert: function (el) {
-            el.getAttribute('my-attribute').should.equal('true');
-            done();
-          }
-        });
-
-        var element = document.createElement('my-element');
-        element.setAttribute('my-attribute', 'true');
-        document.body.appendChild(element);
-      });
-    });
-
-    describe('classes', function () {
-      it('should use class names', function (done) {
-        skate('my-class', {
-          type: skate.types.CLASS,
-          insert: function (el) {
-            el.className.match('my-class').length.should.equal(1);
-            done();
-          }
-        });
-
-        var element = document.createElement('my-element');
-        element.className = ' my-class some-other-class ';
-        document.body.appendChild(element);
-      });
-
-      it('should allow newlines in the class attribute', function (done) {
-        skate('my-class', {
-          type: skate.types.CLASS,
-          insert: function (el) {
-            el.className.match('my-class').length.should.equal(1);
-            done();
-          }
-        });
-
-        var element = document.createElement('my-element');
-        element.className = " \n my-class \n some-other-class \n ";
-        document.body.appendChild(element);
+    describe('tags', function () {
+      describe('tags, attributes and classes', function () {
+        assertType(skate.types.ANY, 3);
+        assertType(skate.types.TAG, 1);
+        assertType(skate.types.ATTR, 1);
+        assertType(skate.types.CLASS, 1);
+        assertType(skate.types.NOTAG, 2);
+        assertType(skate.types.NOATTR, 2);
+        assertType(skate.types.NOCLASS, 2);
       });
     });
   });
