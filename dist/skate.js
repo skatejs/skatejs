@@ -561,6 +561,11 @@
     }
   }
 
+  // Returns a class list from the specified element.
+  function getClassList (element) {
+    return element.classList || (element.getAttribute('class') && element.getAttribute('class').split(/\s+/)) || [];
+  }
+
   // Calls the specified callback for each element.
   function eachElement (elements, callback) {
     if (!elements) {
@@ -602,7 +607,7 @@
       }
     }
 
-    var classes = element.classList || (element.getAttribute('class') && element.getAttribute('class').split(/\s+/)) || [];
+    var classes = getClassList(element);
     for (var b = 0; b < classes.length; b++) {
       var classname = classes[b];
       if (isComponentOfType(classname, skate.types.CLASS)) {
