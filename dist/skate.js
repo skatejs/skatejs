@@ -602,7 +602,7 @@
       }
     }
 
-    var classes = element.classList || (element.className && element.className.split(/\s+/)) || [];
+    var classes = element.classList || (element.getAttribute('class') && element.getAttribute('class').split(/\s+/)) || [];
     for (var b = 0; b < classes.length; b++) {
       var classname = classes[b];
       if (isComponentOfType(classname, skate.types.CLASS)) {
