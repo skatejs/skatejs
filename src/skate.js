@@ -713,7 +713,7 @@
   // ---------
 
   if (typeof define === 'function' && define.amd) {
-    define('skate', [], function () {
+    define(function () {
       return skate;
     });
   } else {
