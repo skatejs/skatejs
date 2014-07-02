@@ -14,6 +14,12 @@
     return element;
   }
 
+  function dispatchEvent (name, element) {
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, true, true);
+    element.dispatchEvent(e);
+  }
+
   afterEach(function () {
     skate.destroy();
     document.querySelector('body').innerHTML = '';
@@ -619,6 +625,29 @@
       evt.initEvent('test');
       div.dispatchEvent(evt);
       numTriggered.should.equal(1);
+    });
+
+    it('should support delegate events', function () {
+      var dispatched = 0;
+      var MyComponent = skate('my-component', {
+        ready: function (element) {
+          var a = document.createElement('a');
+          element.appendChild(a);
+        },
+        events: {
+          'click a': function (element, e) {
+            element.tagName.should.equal('MY-COMPONENT');
+            e.target.tagName.should.equal('A');
+            ++dispatched;
+          }
+        }
+      });
+
+      var inst = add('my-component');
+      skate.init(inst);
+      dispatchEvent('click', inst);
+      dispatchEvent('click', inst.querySelector('a'));
+      dispatched.should.equal(1);
     });
   });
 

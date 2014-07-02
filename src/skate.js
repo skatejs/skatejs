@@ -497,19 +497,28 @@
       return;
     }
 
-    function makeHandler (handler) {
+    function makeHandler (handler, delegate) {
       return function (e) {
-        handler(target, e);
+        if (!delegate || matchesSelector(e.target, delegate)) {
+          handler(target, e);
+        }
       };
     }
 
     for (var a in events) {
       if (events.hasOwnProperty(a)) {
-        var handler = makeHandler(events[a]);
-        setData(target, id + '.event.' + a, handler);
-        target.addEventListener(a, handler);
+        var e = parseEvent(a);
+        target.addEventListener(e.name, makeHandler(events[a], e.delegate));
       }
     }
+  }
+
+  function parseEvent (e) {
+    var parts = e.split(' ', 2);
+    return {
+      name: parts[0],
+      delegate: parts[1]
+    };
   }
 
   function triggerWhenCallbacks (target, id) {
@@ -620,6 +629,10 @@
 
   function isComponentOfType (id, type) {
     return id in skateComponents && skateComponents[id].type.indexOf(type) > -1;
+  }
+
+  function matchesSelector (el, selector) {
+    return (el.matches || el.msMatchesSelector || el.webkitMatchesSelector || el.mozMatchesSelector || el.oMatchesSelector).call(el, selector);
   }
 
   // Merges the second argument into the first.
