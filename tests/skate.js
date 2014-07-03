@@ -668,4 +668,44 @@
       skate.init(div);
     });
   });
+
+  describe('Templates', function () {
+    it('should allow a default that is a no-op', function () {
+      var El = skate('my-element');
+      var el = new El();
+      el.innerHTML.should.equal('');
+    });
+
+    it('should allow a string', function () {
+      var El = skate('my-element', {
+        template: 'my template'
+      });
+
+      var el = new El();
+      el.innerHTML.should.equal('my template');
+    });
+
+    it('should allowa function that is assumed that it will do the templating', function () {
+      var El = skate('my-element', {
+        template: function (element) {
+          element.innerHTML = 'my template';
+        }
+      });
+
+      var el = new El();
+      el.innerHTML.should.equal('my template');
+    });
+
+    it('should replace the first matched <content> tag with the content passed to the custom element', function () {
+      var El = skate('my-element', {
+        template: '<span><content></content></span>'
+      });
+
+      document.body.innerHTML = '<my-element>my content</my-element>';
+
+      var el = document.querySelector('my-element');
+      skate.init(el);
+      el.innerHTML.should.equal('<span>my content</span>');
+    });
+  });
 })();

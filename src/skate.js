@@ -214,6 +214,9 @@
     // Properties and methods to add to each element.
     prototype: {},
 
+    // The template to replace the content of the element with.
+    template: '',
+
     // The type of bindings to allow.
     type: skate.types.ANY
   };
@@ -374,6 +377,7 @@
 
     setData(target, id + '.ready-called', true);
     inherit(target, component.prototype);
+    applyTemplate(id, component, target);
     addEventListeners(id, target, component.events);
     triggerWhenCallbacks(target, id);
 
@@ -430,6 +434,32 @@
         }
       }
     });
+  }
+
+  // Sets the content of the element to the template that was specified.
+  function applyTemplate (id, component, target) {
+    var content = target.innerHTML;
+
+    if (typeof component.template === 'function') {
+      component.template(target);
+    } else if (typeof component.template === 'string') {
+      target.innerHTML = component.template;
+    }
+
+    var contentElement = target.querySelector('content');
+
+    if (!contentElement) {
+      return;
+    }
+
+    var contentFragment = document.createElement('div');
+    contentFragment.innerHTML = content;
+
+    for (var a = 0; a < contentFragment.childNodes.length; a++) {
+      contentElement.parentNode.insertBefore(contentFragment.childNodes[a], contentElement);
+    }
+
+    contentElement.parentNode.removeChild(contentElement);
   }
 
   // Initialises and binds attribute handlers.
