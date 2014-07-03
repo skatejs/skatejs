@@ -446,20 +446,31 @@
       target.innerHTML = component.template;
     }
 
-    var contentElement = target.querySelector('content');
+    // Content elements are placeholders for user content.
+    var contentElements = target.querySelectorAll('content');
 
-    if (!contentElement) {
+    // If there aren't any we don't do anything.
+    if (!contentElements || !contentElements.length) {
       return;
     }
 
+    // Create DOM nodes from the user content.
     var contentFragment = document.createElement('div');
     contentFragment.innerHTML = content;
 
-    for (var a = 0; a < contentFragment.childNodes.length; a++) {
-      contentElement.parentNode.insertBefore(contentFragment.childNodes[a], contentElement);
-    }
+    // Replace each content element with elements they select. If they don't specify which elements they want to
+    // represent, then they get everything.
+    for (var a = 0; a < contentElements.length; a++) {
+      var contentElement = contentElements[a];
+      var selectorFilter = contentElement.getAttribute('select');
+      var filteredContent = selectorFilter ? contentFragment.querySelectorAll(selectorFilter) : contentFragment.childNodes;
 
-    contentElement.parentNode.removeChild(contentElement);
+      for (var b = 0; b < filteredContent.length; b++) {
+        contentElement.parentNode.insertBefore(filteredContent[b], contentElement);
+      }
+
+      contentElement.parentNode.removeChild(contentElement);
+    }
   }
 
   // Initialises and binds attribute handlers.
