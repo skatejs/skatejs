@@ -7,6 +7,8 @@
     "bower": "latest",
     "grunt": "latest",
     "grunt-available-tasks": "latest",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-uglify": "~0.5.0",
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
     "karma-chai": "latest",
