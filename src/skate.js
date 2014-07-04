@@ -438,6 +438,11 @@
 
   // Sets the content of the element to the template that was specified.
   function applyTemplate (id, component, target) {
+    // Noop if a falsy value is given.
+    if (!component.template) {
+      return;
+    }
+
     var content = target.innerHTML;
 
     if (typeof component.template === 'function') {

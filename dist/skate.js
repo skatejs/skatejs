@@ -440,6 +440,11 @@
   function applyTemplate (id, component, target) {
     var content = target.innerHTML;
 
+    // Noop if a falsy value is given.
+    if (!component.template) {
+      return;
+    }
+
     if (typeof component.template === 'function') {
       component.template(target);
     } else if (typeof component.template === 'string') {

@@ -670,10 +670,14 @@
   });
 
   describe('Templates', function () {
-    it('should allow a default that is a no-op', function () {
+    it('should not replacing existing content if there is no template', function () {
       var El = skate('my-element');
-      var el = new El();
-      el.innerHTML.should.equal('');
+
+      document.body.innerHTML = '<my-element>my content</my-element>';
+
+      var el = document.querySelector('my-element');
+      skate.init(el);
+      el.innerHTML.should.equal('my content');
     });
 
     it('should allow a string', function () {
