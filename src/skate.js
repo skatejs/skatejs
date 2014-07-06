@@ -468,10 +468,22 @@
     for (var a = 0; a < contentElements.length; a++) {
       var contentElement = contentElements[a];
       var selectorFilter = contentElement.getAttribute('select');
-      var filteredContent = selectorFilter ? contentFragment.querySelectorAll(selectorFilter) : contentFragment.childNodes;
 
-      for (var b = 0; b < filteredContent.length; b++) {
-        contentElement.parentNode.insertBefore(filteredContent[b], contentElement);
+      // If we are filtering based on a selector, only allow first children to be selected. Use `.children` because
+      // we don't care about text nodes when filtering. If we aren't filtering, then we use `.childNodes` so that text
+      // nodes are moved, as well.
+      if (selectorFilter) {
+        for (var b = 0; b < contentFragment.children.length; b++) {
+          var contentFragmentChild = contentFragment.children[b];
+
+          if (matchesSelector(contentFragmentChild, selectorFilter)) {
+            contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
+          }
+        }
+      } else {
+        for (var c = 0; c < contentFragment.childNodes.length; c++) {
+          contentElement.parentNode.insertBefore(contentFragment.childNodes[c], contentElement);
+        }
       }
 
       contentElement.parentNode.removeChild(contentElement);

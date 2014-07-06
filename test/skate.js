@@ -700,9 +700,9 @@
       el.innerHTML.should.equal('my template');
     });
 
-    it('should replace all matched <content> tags with the content passed to the custom element', function () {
+    it('should replace the first matched <content> tag with the content passed to the custom element', function () {
       var El = skate('my-element', {
-        template: '<span><content></content></span>'
+        template: '<span><content></content><content></content></span>'
       });
 
       document.body.innerHTML = '<my-element>my content</my-element>';
@@ -712,16 +712,16 @@
       el.innerHTML.should.equal('<span>my content</span>');
     });
 
-    it('should allow the <content> tag to specify a "select" attribute which selects which nodes to place in the content area', function () {
+    it('should allow first children of the main element to be selected by the <content> tags', function () {
       var El = skate('my-element', {
-        template: '<content select="one:first-of-type"></content><content select="two:first-of-type"></content>'
+        template: '<content select="some descendant"></content>'
       });
 
-      document.body.innerHTML = '<my-element><one></one><one></one><two></two><two></two></my-element>';
+      document.body.innerHTML = '<my-element><some><descendant></descendant></some></my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<one></one><two></two>');
+      el.innerHTML.should.equal('');
     });
   });
 })();
