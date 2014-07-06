@@ -28,13 +28,7 @@ You can install Skate using Bower or by downloading the source from the reposito
 
 ### AMD
 
-Skate supports AMD if detected and is registered as `skate`. You must ensure that when you `require(['skate'])` that you have pointed that module to the correct path. In RequireJS you would use the `paths` configuration option:
-
-    require.config({
-      paths: {
-        skate: 'bower_components/skate/dist/skate'
-      }
-    });
+Skate supports AMD if detected and is registered as an anonymous module.
 
 ### Global
 
