@@ -619,6 +619,7 @@
       var par = div.parentNode;
       var evt = document.createEvent('CustomEvent');
 
+      skate.init(div);
       par.removeChild(div);
       par.appendChild(div);
 
