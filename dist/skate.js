@@ -769,20 +769,17 @@
 
   // Exporting
   // ---------
-  //
-  // If anyone has any reservations about the following, keep in mind that Skate is built for the "real world".
 
   // Always export the global. We don't know how consumers are using it and what their environments are like. Doing
-  // this affords them the flexibility of using it in a non-AMD or partial-AMD environment and shimming is not an
-  // option.
+  // this affords them the flexibility of using it in an environment where module and non-module code may co-exist.
   window.skate = skate;
 
-  // Some libraries incorrectly use AMD which have forced some applications to delete `define.amd` at runtime so that
-  // their world does not break. Only checking if `define` is a function gets around this.
-  if (typeof define === 'function') {
+  if (typeof define === 'function' && define.amd) {
     define(function () {
       return skate;
     });
+  } else if (typeof exports === 'object') {
+    module.exports = skate;
   }
 
 })();
