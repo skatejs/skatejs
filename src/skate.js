@@ -1,4 +1,4 @@
-(function () {
+;(function () {
 
   'use strict';
 
@@ -770,12 +770,12 @@
   // Exporting
   // ---------
 
+  window.skate = skate;
+
   if (typeof define === 'function' && define.amd) {
     define(function () {
       return skate;
     });
-  } else {
-    window.skate = skate;
   }
 
 })();
