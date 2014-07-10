@@ -403,12 +403,13 @@
     }
 
     setData(target, id + '.insert-called', true);
-    triggerAttributes(id, component, target);
     addClass(target, component.classname);
 
     if (insertFn) {
       insertFn(target);
     }
+
+    triggerAttributes(id, component, target);
   }
 
   // Triggers remove on the target.
