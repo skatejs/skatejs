@@ -444,10 +444,26 @@
       });
     });
 
-    it('shouldn allow ids that may have the same names as functions on the object prototype', function () {
+    it('shouldn not allow ids that may have the same names as functions / properties on the object prototype', function () {
+      var idsToSkate = ['hasOwnProperty', 'watch'];
+      var idsToCheck = {};
+
       var div = document.createElement('div');
-      div.className = 'watch';
+      div.className = idsToSkate.join(' ');
+
+      idsToSkate.forEach(function (id) {
+        skate(id, {
+          ready: function () {
+            idsToCheck[id] = true;
+          }
+        });
+      });
+
       skate.init(div);
+
+      idsToSkate.forEach(function (id) {
+        idsToCheck[id].should.equal(true);
+      });
     });
   });
 

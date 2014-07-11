@@ -137,7 +137,7 @@
    * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
-    if (skateComponents[id]) {
+    if (skate.exists(id)) {
       throw new Error('A component with the ID of "' + id + '" already exists.');
     }
 
@@ -256,6 +256,17 @@
 
     return skate;
   };
+
+  /**
+   * Checks whether or not a component with the specified id exists.
+   *
+   * @param {String} id The ID of the component to check for.
+   *
+   * @returns {Boolean}
+   */
+  skate.exists = function (id) {
+    return Object.prototype.hasOwnProperty.call(skateComponents, id);
+  }
 
   /**
    * Unregisters the specified component.
@@ -657,7 +668,7 @@
   }
 
   function isComponentOfType (id, type) {
-    return skateComponents.hasOwnProperty(id) && skateComponents[id].type.indexOf(type) > -1;
+    return skate.exists(id) && skateComponents[id].type.indexOf(type) > -1;
   }
 
   function matchesSelector (el, selector) {
