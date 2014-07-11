@@ -16,7 +16,7 @@
 
   function dispatchEvent (name, element) {
     var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, true, true);
+    e.initCustomEvent(name, true, true, {});
     element.dispatchEvent(e);
   }
 
@@ -486,7 +486,7 @@
 
       Div.prototype.func2 = function () {};
 
-      var div = add('div');
+      var div = new Div();
 
       div.func1.should.be.a('function');
       div.func2.should.be.a('function');
@@ -560,8 +560,7 @@
   describe('Events', function () {
     it('Should bind events', function () {
       var numTriggered = 0;
-
-      skate('div', {
+      var Div = skate('div', {
         events: {
           test: function (element, e) {
             ++numTriggered;
@@ -569,18 +568,15 @@
         }
       });
 
-      var div = add('div');
-      var evt = document.createEvent('CustomEvent');
+      var div = new Div();
 
-      evt.initEvent('test');
-      div.dispatchEvent(evt);
+      dispatchEvent('test', div);
       numTriggered.should.equal(1);
     });
 
     it('Should allow you to re-add the element back into the DOM', function () {
       var numTriggered = 0;
-
-      skate('div', {
+      var Div = skate('div', {
         events: {
           test: function (element, e) {
             ++numTriggered;
@@ -588,16 +584,13 @@
         }
       });
 
-      var div = add('div');
+      var div = new Div();
+      document.body.appendChild(div);
       var par = div.parentNode;
-      var evt = document.createEvent('CustomEvent');
 
-      skate.init(div);
       par.removeChild(div);
       par.appendChild(div);
-
-      evt.initEvent('test');
-      div.dispatchEvent(evt);
+      dispatchEvent('test', div);
       numTriggered.should.equal(1);
     });
 

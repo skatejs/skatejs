@@ -15,6 +15,8 @@
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
     "karma-chai": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-firefox-launcher": "latest",
     "karma-mocha": "latest",
     "karma-phantomjs-launcher": "latest"
   },
