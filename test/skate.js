@@ -225,33 +225,6 @@
     });
   });
 
-  describe('Replacing existing element.', function () {
-    it('Should be done synchronously by returing from the ready callback.', function () {
-      skate('div', {
-        ready: function (element) {
-          return document.createElement('span');
-        }
-      });
-
-      skate.init(add('div'));
-      assert(document.body.getElementsByTagName('div').length === 0, 'Divs were found.');
-      assert(document.body.getElementsByTagName('span').length === 1, 'No spans found.');
-    });
-
-    it ('Should be done asynchronously by passing to the done callback.', function (done) {
-      skate('div', {
-        ready: function (element, next) {
-          next('<span></span>');
-          assert(document.body.getElementsByTagName('div').length === 0);
-          assert(document.body.getElementsByTagName('span').length === 1);
-          done();
-        }
-      });
-
-      skate.init(add('div'));
-    });
-  });
-
   describe('Synchronous initialisation', function () {
     it('Should take traversable items', function () {
       var initialised = false;

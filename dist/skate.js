@@ -332,43 +332,14 @@
 
   // Triggers the entire lifecycle.
   function triggerLifecycle (id, component, target) {
-    triggerReady(id, component, target, function (replaceWith) {
-      if (!replaceWith) {
-        return triggerInsert(id, component, target);
-      }
-
-      if (replaceWith === target || !target.parentNode) {
-        return;
-      }
-
-      // A placeholder for replacing the current element.
-      var comment = document.createComment('placeholder');
-
-      // Replace the target with the placeholder.
-      target.parentNode.insertBefore(comment, target);
-      target.parentNode.removeChild(target);
-
-      // Handle HTML.
-      if (typeof replaceWith === 'string') {
-        var div = document.createElement('div');
-        div.innerHTML = replaceWith;
-        replaceWith = div.children;
-      }
-
-      // Place each item before the comment in sequence.
-      eachElement(replaceWith, function (element) {
-        comment.parentNode.insertBefore(element, comment);
-      });
-
-      // Cleanup.
-      comment.parentNode.removeChild(comment);
+    triggerReady(id, component, target, function () {
+      triggerInsert(id, component, target);
     });
   }
 
   // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady (id, component, target, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
-    var readyFn = component.ready;
     done = done || function () {};
 
     if (getData(target, id + '.ready-called')) {
@@ -381,10 +352,11 @@
     addEventListeners(id, target, component.events);
     triggerWhenCallbacks(target, id);
 
-    if (readyFn && definedMultipleArgs.test(readyFn)) {
-      readyFn(target, done);
-    } else if (readyFn) {
-      done(readyFn(target));
+    if (component.ready && definedMultipleArgs.test(component.ready)) {
+      component.ready(target, done);
+    } else if (component.ready) {
+      component.ready(target);
+      done();
     } else {
       done();
     }
@@ -392,8 +364,6 @@
 
   // Triggers insert on the target.
   function triggerInsert (id, component, target) {
-    var insertFn = component.insert;
-
     if (getData(target, id + '.insert-called')) {
       return;
     }
@@ -405,8 +375,8 @@
     setData(target, id + '.insert-called', true);
     addClass(target, component.classname);
 
-    if (insertFn) {
-      insertFn(target);
+    if (component.insert) {
+      component.insert(target);
     }
 
     triggerAttributes(id, component, target);
