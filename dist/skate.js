@@ -107,12 +107,11 @@
       },
 
       disconnect: function () {
-        for (var a in this.elements) {
-          var item = this.elements[a];
+        objEach(this.elements, function (item) {
           item.target.removeEventListener('DOMSubtreeModified', item.insertHandler);
           item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
           item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
-        }
+        });
 
         this.elements = [];
 
@@ -137,7 +136,7 @@
    * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
-    if (skate.exists(id)) {
+    if (hasOwn(skateComponents, id)) {
       throw new Error('A component with the ID of "' + id + '" already exists.');
     }
 
@@ -246,9 +245,9 @@
    */
   skate.init = function (elements) {
     eachElement(elements, function (element) {
-      for (var possibleId in possibleIds(element)) {
+      objEach(possibleIds(element), function (possibleId) {
         triggerLifecycle(possibleId, skateComponents[possibleId], element);
-      }
+      });
 
       // Should be refactored to run against a flat list of descendants.
       skate.init(element.children);
@@ -256,17 +255,6 @@
 
     return skate;
   };
-
-  /**
-   * Checks whether or not a component with the specified id exists.
-   *
-   * @param {String} id The ID of the component to check for.
-   *
-   * @returns {Boolean}
-   */
-  skate.exists = function (id) {
-    return Object.prototype.hasOwnProperty.call(skateComponents, id);
-  }
 
   /**
    * Unregisters the specified component.
@@ -410,11 +398,12 @@
   function triggerRemoveAll (elements) {
     eachElement(elements, function (element) {
       triggerRemoveAll(element.children);
-      for (var possibleId in possibleIds(element)) {
-        if (possibleId in skateComponents) {
+
+      objEach(possibleIds(element), function (possibleId) {
+        if (hasOwn(skateComponents, possibleId)) {
           triggerRemove(possibleId, skateComponents[possibleId], element);
         }
-      }
+      });
     });
   }
 
@@ -545,12 +534,10 @@
       };
     }
 
-    for (var a in events) {
-      if (events.hasOwnProperty(a)) {
-        var e = parseEvent(a);
-        target.addEventListener(e.name, makeHandler(events[a], e.delegate));
-      }
-    }
+    objEach(events, function (handler, name) {
+      var evt = parseEvent(name);
+      target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
+    });
   }
 
   function parseEvent (e) {
@@ -668,7 +655,7 @@
   }
 
   function isComponentOfType (id, type) {
-    return skate.exists(id) && skateComponents[id].type.indexOf(type) > -1;
+    return hasOwn(skateComponents, id) && skateComponents[id].type.indexOf(type) > -1;
   }
 
   function matchesSelector (el, selector) {
@@ -677,13 +664,27 @@
 
   // Merges the second argument into the first.
   function inherit (child, parent) {
-    for (var prop in parent) {
-      if (child[prop] === undefined) {
-        child[prop] = parent[prop];
+    objEach(parent, function (member, name) {
+      if (child[name] === undefined) {
+        child[name] = member;
       }
-    }
+    });
 
     return child;
+  }
+
+  // Checks {}.hasOwnProperty in a safe way.
+  function hasOwn (obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  // Traverses an object checking hasOwnProperty.
+  function objEach (obj, fn) {
+    for (var a in obj) {
+      if (hasOwn(obj, a)) {
+        fn(obj[a], a);
+      }
+    }
   }
 
   // Creates a constructor for the specified component.
