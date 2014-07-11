@@ -657,7 +657,7 @@
   }
 
   function isComponentOfType (id, type) {
-    return id in skateComponents && skateComponents[id].type.indexOf(type) > -1;
+    return skateComponents.hasOwnProperty(id) && skateComponents[id].type.indexOf(type) > -1;
   }
 
   function matchesSelector (el, selector) {

@@ -443,6 +443,12 @@
         done();
       });
     });
+
+    it('shouldn allow ids that may have the same names as functions on the object prototype', function () {
+      var div = document.createElement('div');
+      div.className = 'watch';
+      skate.init(div);
+    });
   });
 
   describe('Returning a constructor', function () {
