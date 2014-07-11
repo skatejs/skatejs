@@ -444,7 +444,7 @@
       });
     });
 
-    it('shouldn not allow ids that may have the same names as functions / properties on the object prototype', function () {
+    it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {
       var idsToSkate = ['hasOwnProperty', 'watch'];
       var idsToCheck = {};
 
