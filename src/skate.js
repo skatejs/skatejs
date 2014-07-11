@@ -245,7 +245,7 @@
    */
   skate.init = function (elements) {
     eachElement(elements, function (element) {
-      objEach(possibleIds(element), function (possibleId) {
+      possibleIds(element).forEach(function (possibleId) {
         triggerLifecycle(possibleId, skateComponents[possibleId], element);
       });
 
@@ -399,7 +399,7 @@
     eachElement(elements, function (element) {
       triggerRemoveAll(element.children);
 
-      objEach(possibleIds(element), function (possibleId) {
+      possibleIds(element).forEach(function (possibleId) {
         if (hasOwn(skateComponents, possibleId)) {
           triggerRemove(possibleId, skateComponents[possibleId], element);
         }
@@ -651,7 +651,7 @@
       }
     }
 
-    return ids;
+    return Object.keys(ids);
   }
 
   function isComponentOfType (id, type) {
