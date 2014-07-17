@@ -177,11 +177,9 @@
       );
     }
 
-    var existing = Element.existing();
-
-    for (var a = 0; a < existing.length; a++) {
-      triggerLifecycle(id, component, existing[a]);
-    }
+    arrLikeEach(Element.existing(), function (element) {
+      triggerLifecycle(id, component, element);
+    });
 
     skateComponents[id] = component;
 
@@ -439,29 +437,26 @@
 
     // Replace each content element with elements they select. If they don't specify which elements they want to
     // represent, then they get everything.
-    for (var a = 0; a < contentElements.length; a++) {
-      var contentElement = contentElements[a];
+    arrLikeEach(contentElements, function (contentElement) {
       var selectorFilter = contentElement.getAttribute('select');
 
       // If we are filtering based on a selector, only allow first children to be selected. Use `.children` because
       // we don't care about text nodes when filtering. If we aren't filtering, then we use `.childNodes` so that text
       // nodes are moved, as well.
       if (selectorFilter) {
-        for (var b = 0; b < contentFragment.children.length; b++) {
-          var contentFragmentChild = contentFragment.children[b];
-
+        arrLikeEach(contentFragment.children, function (contentFragmentChild) {
           if (matchesSelector(contentFragmentChild, selectorFilter)) {
             contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
           }
-        }
+        });
       } else {
-        for (var c = 0; c < contentFragment.childNodes.length; c++) {
-          contentElement.parentNode.insertBefore(contentFragment.childNodes[c], contentElement);
-        }
+        arrLikeEach(contentFragment.childNodes, function (contentFragmentChild) {
+          contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
+        });
       }
 
       contentElement.parentNode.removeChild(contentElement);
-    }
+    });
   }
 
   // Initialises and binds attribute handlers.
@@ -496,10 +491,9 @@
     });
 
     // We must initialise each attribute.
-    for (var a = 0; a < target.attributes.length; a++) {
-      var attr = target.attributes[a];
+    arrLikeEach(target.attributes, function (attr) {
       triggerCallback('insert', attr.nodeName, attr.nodeValue);
-    }
+    });
 
     function triggerCallback (type, name, newValue, oldValue) {
       var callback;
@@ -623,36 +617,35 @@
       return;
     }
 
-    for (var a = 0; a < elements.length; a++) {
-      if (elements[a] && elements[a].nodeType === 1) {
-        callback(elements[a], a);
+    arrLikeEach(elements, function (node, index) {
+      if (node.nodeType === 1) {
+        callback(node, index);
       }
-    }
+    });
   }
 
   // Returns the possible ids from an element.
   function possibleIds (element) {
     var ids = {};
-
     var tag = element.tagName.toLowerCase();
+
     if (isComponentOfType(tag, skate.types.TAG)) {
       ids[tag] = tag;
     }
 
-    for (var a = 0; a < element.attributes.length; a++) {
-      var attribute = element.attributes[a].nodeName;
-      if (isComponentOfType(attribute, skate.types.ATTR)) {
-        ids[attribute] = attribute;
-      }
-    }
+    arrLikeEach(element.attributes, function (attribute) {
+      var attrName = attribute.nodeName;
 
-    var classes = getClassList(element);
-    for (var b = 0; b < classes.length; b++) {
-      var classname = classes[b];
-      if (isComponentOfType(classname, skate.types.CLASS)) {
-        ids[classname] = classname;
+      if (isComponentOfType(attrName, skate.types.ATTR)) {
+        ids[attrName] = attrName;
       }
-    }
+    });
+
+    arrLikeEach(getClassList(element), function (className) {
+      if (isComponentOfType(className, skate.types.CLASS)) {
+        ids[className] = className;
+      }
+    });
 
     return Object.keys(ids);
   }
@@ -686,6 +679,15 @@
     for (var a in obj) {
       if (hasOwn(obj, a)) {
         fn(obj[a], a);
+      }
+    }
+  }
+
+  // Easy traversal of array like objects.
+  function arrLikeEach (arrLike, fn) {
+    if (arrLike && arrLike.length) {
+      for (var a = 0; a < arrLike.length; a++) {
+        fn(arrLike[a], a);
       }
     }
   }
