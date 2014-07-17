@@ -188,6 +188,9 @@
     return Element;
   }
 
+  // Makes checking the version easy when debugging.
+  skate.version = '0.9.0';
+
   // Restriction type constants.
   skate.types = {
     ANY: 'act',

@@ -713,4 +713,10 @@
       el.innerHTML.should.equal('');
     });
   });
+
+  describe('version', function () {
+    it('should be exposed', function () {
+      skate.version.should.be.a('string');
+    });
+  });
 })();
