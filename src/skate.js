@@ -317,17 +317,6 @@
   };
 
   /**
-   * Creates a new mutation observer for the specified element.
-   *
-   * @param {Function} callback The callback to execute for the observer.
-   *
-   * @returns {MutationObserver}
-   */
-  skate.watch = function (callback) {
-    return new MutationObserver(callback);
-  };
-
-  /**
    * Executes a callback when an element is initialised as a particular component.
    *
    * @param {HTMLElement} element The element to listen to.
