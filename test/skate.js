@@ -719,4 +719,23 @@
       skate.version.should.be.a('string');
     });
   });
+
+  describe('ignoring', function () {
+    it('should ignore a flagged element', function () {
+      var called = 0;
+
+      addIgnoredElement();
+      skate('div', function () {
+        ++called;
+      });
+      addIgnoredElement();
+
+      skate.init(document.body);
+      called.should.equal(0);
+    });
+
+    function addIgnoredElement() {
+      document.body.innerHTML = '<div data-skate-ignore></div>';
+    }
+  });
 })();

@@ -3,6 +3,10 @@
   'use strict';
 
 
+  // Constants
+  var ATTR_IGNORE = 'data-skate-ignore';
+
+
   // The rules used to hide elements during the ready lifecycle callback.
   var hiddenRules = document.createElement('style');
 
@@ -177,9 +181,13 @@
       );
     }
 
-    arrLikeEach(Element.existing(), function (element) {
-      triggerLifecycle(id, component, element);
-    });
+    var existing = Element.existing();
+
+    for (var a = 0; a < existing.length; a++) {
+      if (!getClosestIgnoredElement(existing[a])) {
+        triggerLifecycle(id, component, existing[a]);
+      }
+    }
 
     skateComponents[id] = component;
 
@@ -245,14 +253,44 @@
    * @returns {skate}
    */
   skate.init = function (elements) {
-    eachElement(elements, function (element) {
+    // Ingore falsy values.
+    if (!elements) {
+      return skate;
+    }
+
+    // Handle both single element and an array-like of elements.
+    if (elements.length === undefined) {
+      elements = [elements];
+    }
+
+    // Init each element recursively.
+    for (var a = 0; a < elements.length; a++) {
+      var element = elements[a];
+
+      // Only elements are valid.
+      if (element.nodeType !== 1) {
+        continue;
+      }
+
+      // Check if ignored.
+      var closestIgnored = getClosestIgnoredElement(element);
+
+      // If current element is ignored, then only continue because the next sibling may not be. However, if an
+      // anscestor element was returned, then it means the entire tree at this position must also be ignored.
+      if (closestIgnored === element) {
+        continue;
+      } else if (closestIgnored) {
+        break;
+      }
+
+      // Check ids and trigger lifecycle for those.
       possibleIds(element).forEach(function (possibleId) {
         triggerLifecycle(possibleId, skateComponents[possibleId], element);
       });
 
-      // Should be refactored to run against a flat list of descendants.
+      // Go down the tree.
       skate.init(element.children);
-    });
+    }
 
     return skate;
   };
@@ -397,7 +435,17 @@
 
   // Triggers the remove callbacks of the specified elements and their descendants.
   function triggerRemoveAll (elements) {
-    eachElement(elements, function (element) {
+    if (!elements) {
+      return;
+    }
+
+    for (var a = 0; a < elements.length; a++) {
+      var element = elements[a];
+
+      if (element.nodeType !== 1) {
+        continue;
+      }
+
       triggerRemoveAll(element.children);
 
       possibleIds(element).forEach(function (possibleId) {
@@ -405,7 +453,7 @@
           triggerRemove(possibleId, skateComponents[possibleId], element);
         }
       });
-    });
+    }
   }
 
   // Sets the content of the element to the template that was specified.
@@ -437,26 +485,29 @@
 
     // Replace each content element with elements they select. If they don't specify which elements they want to
     // represent, then they get everything.
-    arrLikeEach(contentElements, function (contentElement) {
+    for (var a = 0; a < contentElements.length; a++) {
+      var contentElement = contentElements[a];
       var selectorFilter = contentElement.getAttribute('select');
 
       // If we are filtering based on a selector, only allow first children to be selected. Use `.children` because
       // we don't care about text nodes when filtering. If we aren't filtering, then we use `.childNodes` so that text
       // nodes are moved, as well.
       if (selectorFilter) {
-        arrLikeEach(contentFragment.children, function (contentFragmentChild) {
+        for (var b = 0; b < contentFragment.children.length; b++) {
+          var contentFragmentChild = contentFragment.children[b];
+
           if (matchesSelector(contentFragmentChild, selectorFilter)) {
             contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
           }
-        });
+        }
       } else {
-        arrLikeEach(contentFragment.childNodes, function (contentFragmentChild) {
-          contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
-        });
+        for (var c = 0; c < contentFragment.childNodes.length; c++) {
+          contentElement.parentNode.insertBefore(contentFragment.childNodes[c], contentElement);
+        }
       }
 
       contentElement.parentNode.removeChild(contentElement);
-    });
+    }
   }
 
   // Initialises and binds attribute handlers.
@@ -491,9 +542,10 @@
     });
 
     // We must initialise each attribute.
-    arrLikeEach(target.attributes, function (attr) {
+    for (var a = 0; a < target.attributes.length; a++) {
+      var attr = target.attributes[a];
       triggerCallback('insert', attr.nodeName, attr.nodeValue);
-    });
+    }
 
     function triggerCallback (type, name, newValue, oldValue) {
       var callback;
@@ -599,53 +651,29 @@
     return element.classList || (element.getAttribute('class') && element.getAttribute('class').split(/\s+/)) || [];
   }
 
-  // Calls the specified callback for each element.
-  function eachElement (elements, callback) {
-    if (!elements) {
-      return;
-    }
-
-    if (elements.nodeType) {
-      if (elements.nodeType === 1) {
-        elements = [elements];
-      } else {
-        return;
-      }
-    }
-
-    if (!elements.length) {
-      return;
-    }
-
-    arrLikeEach(elements, function (node, index) {
-      if (node.nodeType === 1) {
-        callback(node, index);
-      }
-    });
-  }
-
   // Returns the possible ids from an element.
   function possibleIds (element) {
     var ids = {};
-    var tag = element.tagName.toLowerCase();
 
+    var tag = element.tagName.toLowerCase();
     if (isComponentOfType(tag, skate.types.TAG)) {
       ids[tag] = tag;
     }
 
-    arrLikeEach(element.attributes, function (attribute) {
-      var attrName = attribute.nodeName;
-
-      if (isComponentOfType(attrName, skate.types.ATTR)) {
-        ids[attrName] = attrName;
+    for (var a = 0; a < element.attributes.length; a++) {
+      var attribute = element.attributes[a].nodeName;
+      if (isComponentOfType(attribute, skate.types.ATTR)) {
+        ids[attribute] = attribute;
       }
-    });
+    }
 
-    arrLikeEach(getClassList(element), function (className) {
-      if (isComponentOfType(className, skate.types.CLASS)) {
-        ids[className] = className;
+    var classes = getClassList(element);
+    for (var b = 0; b < classes.length; b++) {
+      var classname = classes[b];
+      if (isComponentOfType(classname, skate.types.CLASS)) {
+        ids[classname] = classname;
       }
-    });
+    }
 
     return Object.keys(ids);
   }
@@ -679,15 +707,6 @@
     for (var a in obj) {
       if (hasOwn(obj, a)) {
         fn(obj[a], a);
-      }
-    }
-  }
-
-  // Easy traversal of array like objects.
-  function arrLikeEach (arrLike, fn) {
-    if (arrLike && arrLike.length) {
-      for (var a = 0; a < arrLike.length; a++) {
-        fn(arrLike[a], a);
       }
     }
   }
@@ -743,6 +762,19 @@
     CustomElement.prototype = component.prototype;
 
     return CustomElement;
+  }
+
+  // Returns whether or not the specified element has been selectively ignored.
+  function getClosestIgnoredElement (element) {
+    var parent = element;
+
+    while (parent && parent !== document) {
+      if (parent.hasAttribute(ATTR_IGNORE)) {
+        return parent;
+      }
+
+      parent = parent.parentNode;
+    }
   }
 
 
