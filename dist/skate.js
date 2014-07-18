@@ -140,14 +140,23 @@
    * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
+    // Components must be unique.
     if (hasOwn(skateComponents, id)) {
       throw new Error('A component with the ID of "' + id + '" already exists.');
     }
 
+    // We don't add an observer unless we need one.
     if (!documentObserver) {
       documentObserver = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
-          skate.init(mutation.addedNodes);
+          if (mutation.addedNodes) {
+            for (var a = 0; a < mutation.addedNodes.length; a++) {
+              if (mutation.addedNodes[a].nodeType === 1) {
+                skate.init(mutation.addedNodes[a]);
+              }
+            }
+          }
+
           triggerRemoveAll(mutation.removedNodes);
         });
       });
@@ -158,40 +167,44 @@
       });
     }
 
+    // Safe defaults.
     if (!component) {
       component = {};
     }
 
+    // Allow only a function to be specified.
     if (typeof component === 'function') {
       component = {
         insert: component
       };
     }
 
+    // Set any defaults that weren't passed.
     inherit(component, skate.defaults);
 
-    var Element = makeElementConstructor(id, component);
+    // Register the component.
+    skateComponents[id] = component;
 
+    // If doing something on ready, ensure the element is hidden. If not, we don't need to care.
     if (component.ready) {
       hiddenRules.sheet.insertRule(
-        id + ':not(.' + component.classname + '),' +
-        '[' + id + ']:not(.' + component.classname + '),' +
-        '.' + id + ':not(.' + component.classname + '){display:none}',
+        getSelectorForType(id, component.type, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
       );
     }
 
-    var existing = Element.existing();
-
+    // Initialise existing elements that are supposed to use this component.
+    var existing = document.querySelectorAll(getSelectorForType(id, component.type));
     for (var a = 0; a < existing.length; a++) {
       if (!getClosestIgnoredElement(existing[a])) {
         triggerLifecycle(id, component, existing[a]);
       }
     }
 
-    skateComponents[id] = component;
-
-    return Element;
+    // Only make and return an element constructor if it can be used as a custom element.
+    if (component.type.indexOf(skate.types.TAG)) {
+      return makeElementConstructor(id, component);
+    }
   }
 
   // Makes checking the version easy when debugging.
@@ -248,52 +261,48 @@
   /**
    * Synchronously initialises the specified element or elements and descendants.
    *
-   * @param {Element | Traversable} elements The element or elements to init.
+   * @param {Element} elements The element or elements to init.
    *
    * @returns {skate}
    */
-  skate.init = function (elements) {
-    // Ingore falsy values.
-    if (!elements) {
+  skate.init = function (element) {
+    if (getClosestIgnoredElement(element)) {
       return skate;
     }
 
-    // Handle both single element and an array-like of elements.
-    if (elements.length === undefined) {
-      elements = [elements];
-    }
+    var flattened = flattenDomTree(element);
 
-    // Init each element recursively.
-    for (var a = 0; a < elements.length; a++) {
-      var element = elements[a];
-
-      // Only elements are valid.
-      if (element.nodeType !== 1) {
-        continue;
-      }
-
-      // Check if ignored.
-      var closestIgnored = getClosestIgnoredElement(element);
-
-      // If current element is ignored, then only continue because the next sibling may not be. However, if an
-      // anscestor element was returned, then it means the entire tree at this position must also be ignored.
-      if (closestIgnored === element) {
-        continue;
-      } else if (closestIgnored) {
-        break;
-      }
+    // Initialise each element.
+    for (var a = 0; a < flattened.length; a++) {
+      var current = flattened[a];
 
       // Check ids and trigger lifecycle for those.
-      possibleIds(element).forEach(function (possibleId) {
-        triggerLifecycle(possibleId, skateComponents[possibleId], element);
-      });
-
-      // Go down the tree.
-      skate.init(element.children);
+      var ids = possibleIds(current);
+      for (var b = 0; b < ids.length; b++) {
+        triggerLifecycle(ids[b], skateComponents[ids[b]], current);
+      }
     }
 
     return skate;
   };
+
+  // Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
+  // descending down the DOM tree.
+  function flattenDomTree (parent) {
+    if (parent.hasAttribute(ATTR_IGNORE)) {
+      return [];
+    }
+
+    var elements = [parent];
+
+    if (parent.children) {
+      for (var a = 0; a < parent.children.length; a++) {
+        elements = elements.concat(flattenDomTree(parent.children[a]));
+      }
+    }
+
+    return elements;
+  }
 
   /**
    * Unregisters the specified component.
@@ -713,50 +722,18 @@
 
   // Creates a constructor for the specified component.
   function makeElementConstructor (id, component) {
-    var isTag = component.type.indexOf(skate.types.TAG) > -1;
-    var isAttr = component.type.indexOf(skate.types.ATTR) > -1;
-    var isClass = component.type.indexOf(skate.types.CLASS) > -1;
-    var selector = (function () {
-        var selectors = [];
-
-        if (isTag) {
-          selectors.push(id);
-        }
-
-        if (isAttr) {
-          selectors.push('[' + id + ']');
-        }
-
-        if (isClass) {
-          selectors.push('.' + id);
-        }
-
-        return selectors.join(', ');
-      }());
-
     function CustomElement () {
-      if (!isTag) {
-        throw new Error('Cannot construct "' + id + '" as a custom element.');
-      }
-
       var element = document.createElement(id);
 
       // Ensure the component prototype is up to date with the element's prototype. This ensures that overwriting the
       // element prototype still works.
       component.prototype = CustomElement.prototype;
 
+      // If they use the constructor we don't have to wait until it's inserted.
       triggerReady(id, component, element);
 
       return element;
     }
-
-    CustomElement.existing = function (within) {
-      return (within || document).querySelectorAll(selector);
-    };
-
-    CustomElement.selector = function () {
-      return selector;
-    };
 
     // This allows modifications to the element prototype propagate to the component prototype.
     CustomElement.prototype = component.prototype;
@@ -775,6 +752,30 @@
 
       parent = parent.parentNode;
     }
+  }
+
+  // Returns a selector for the specified component based on the types given.
+  // If a negation selector is passed in then it will append :not(negateWith) to the selector.
+  function getSelectorForType (id, type, negateWith) {
+    var isTag = type.indexOf(skate.types.TAG) > -1;
+    var isAttr = type.indexOf(skate.types.ATTR) > -1;
+    var isClass = type.indexOf(skate.types.CLASS) > -1;
+    var negateWith = negateWith ? ':not(' + negateWith + ')' : '';
+    var selectors = [];
+
+    if (isTag) {
+      selectors.push(id + negateWith);
+    }
+
+    if (isAttr) {
+      selectors.push('[' + id + ']' + negateWith);
+    }
+
+    if (isClass) {
+      selectors.push('.' + id + negateWith);
+    }
+
+    return selectors.join(',');
   }
 
 

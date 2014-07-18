@@ -226,22 +226,6 @@
   });
 
   describe('Synchronous initialisation', function () {
-    it('Should take traversable items', function () {
-      var initialised = false;
-
-      skate('div', {
-        insert: function () {
-          ++initialised;
-        }
-      });
-
-      add('div');
-      add('div');
-
-      skate.init(document.querySelectorAll('div'));
-      initialised.should.equal(2);
-    });
-
     it('Should take an element', function () {
       var initialised = 0;
 
@@ -429,7 +413,8 @@
       document.body.appendChild(div1);
       document.body.appendChild(div2);
 
-      skate.init([div1, div2]);
+      skate.init(div1);
+      skate.init(div2);
 
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
@@ -724,18 +709,21 @@
     it('should ignore a flagged element', function () {
       var called = 0;
 
-      addIgnoredElement();
+      // Test insertion before.
+      document.body.innerHTML = '<div></div><div id="container-1" data-skate-ignore><div><div></div></div></div><div></div>';
+      document.getElementById('container-1').innerHTML = '<div><div></div></div>';
+
+      // Now register.
       skate('div', function () {
         ++called;
       });
-      addIgnoredElement();
 
+      // Test insertion after.
+      document.body.innerHTML = '<div></div><div id="container-2" data-skate-ignore><div><div></div></div></div><div></div>';
+      document.getElementById('container-2').innerHTML = '<div><div></div></div>';
       skate.init(document.body);
-      called.should.equal(0);
-    });
 
-    function addIgnoredElement() {
-      document.body.innerHTML = '<div data-skate-ignore></div>';
-    }
+      called.should.equal(4);
+    });
   });
 })();
