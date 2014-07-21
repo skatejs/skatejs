@@ -288,20 +288,34 @@
 
   // Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
   // descending down the DOM tree.
-  function flattenDomTree (parent) {
-    if (parent.hasAttribute(ATTR_IGNORE)) {
-      return [];
+  function flattenDomTree (parent, using) {
+    var children = parent.childNodes;
+
+    if (using) {
+      using.push(parent);
+    } else {
+      using = [parent];
     }
 
-    var elements = [parent];
+    if (children) {
+      for (var a = 0; a < children.length; a++) {
+        var child = children[a];
 
-    if (parent.children) {
-      for (var a = 0; a < parent.children.length; a++) {
-        elements = elements.concat(flattenDomTree(parent.children[a]));
+        if (child.nodeType !== 1) {
+          continue;
+        }
+
+        var attrs = child.attributes;
+
+        if (attrs && attrs[ATTR_IGNORE]) {
+          continue;
+        }
+
+        flattenDomTree(child, using);
       }
     }
 
-    return elements;
+    return using;
   }
 
   /**
@@ -444,8 +458,7 @@
         continue;
       }
 
-      triggerRemoveAll(element.children);
-
+      triggerRemoveAll(element.childNodes);
       possibleIds(element).forEach(function (possibleId) {
         if (hasOwn(skateComponents, possibleId)) {
           triggerRemove(possibleId, skateComponents[possibleId], element);
@@ -486,21 +499,25 @@
     for (var a = 0; a < contentElements.length; a++) {
       var contentElement = contentElements[a];
       var selectorFilter = contentElement.getAttribute('select');
+      var childNodes = contentFragment.childNodes;
 
-      // If we are filtering based on a selector, only allow first children to be selected. Use `.children` because
-      // we don't care about text nodes when filtering. If we aren't filtering, then we use `.childNodes` so that text
-      // nodes are moved, as well.
+      // If we are filtering based on a selector, only allow first children to be selected. If we aren't filtering,
+      // then we move all children.
       if (selectorFilter) {
-        for (var b = 0; b < contentFragment.children.length; b++) {
-          var contentFragmentChild = contentFragment.children[b];
+        for (var b = 0; b < childNodes.length; b++) {
+          var contentFragmentChild = childNodes[b];
+
+          if (contentFragmentChild.nodeType !== 1) {
+            continue;
+          }
 
           if (matchesSelector(contentFragmentChild, selectorFilter)) {
             contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
           }
         }
       } else {
-        for (var c = 0; c < contentFragment.childNodes.length; c++) {
-          contentElement.parentNode.insertBefore(contentFragment.childNodes[c], contentElement);
+        for (var c = 0; c < childNodes.length; c++) {
+          contentElement.parentNode.insertBefore(childNodes[c], contentElement);
         }
       }
 
@@ -646,20 +663,29 @@
 
   // Returns a class list from the specified element.
   function getClassList (element) {
-    return element.classList || (element.getAttribute('class') && element.getAttribute('class').split(/\s+/)) || [];
+    var classList = element.classList;
+
+    if (classList) {
+      return classList;
+    }
+
+    var attrs = element.attributes;
+
+    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
   }
 
   // Returns the possible ids from an element.
   function possibleIds (element) {
     var ids = {};
+    var attrs = element.attributes;
 
     var tag = element.tagName.toLowerCase();
     if (isComponentOfType(tag, skate.types.TAG)) {
       ids[tag] = tag;
     }
 
-    for (var a = 0; a < element.attributes.length; a++) {
-      var attribute = element.attributes[a].nodeName;
+    for (var a = 0; a < attrs.length; a++) {
+      var attribute = attrs[a].nodeName;
       if (isComponentOfType(attribute, skate.types.ATTR)) {
         ids[attribute] = attribute;
       }
@@ -735,7 +761,9 @@
     var parent = element;
 
     while (parent && parent !== document) {
-      if (parent.hasAttribute(ATTR_IGNORE)) {
+      var attrs = parent.attributes;
+
+      if (attrs && attrs[ATTR_IGNORE]) {
         return parent;
       }
 
