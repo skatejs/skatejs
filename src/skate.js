@@ -252,44 +252,6 @@
   };
 
   /**
-   * Default attribute handlers.
-   *
-   * @var {Object}
-   */
-  skate.attribute = {};
-
-  /**
-   * Bind the lifecycle of an attribute to the attribute of a given element.
-   *
-   * @param {String} selector The selector of the element you wish to set the attribute of.
-   * @param {String} attrName The attribute name you wish to affect.
-   */
-  skate.attribute.attr = function (selector, attrName) {
-    return function (element, change) {
-      var elements = element.querySelectorAll(selector);
-
-      for (var a = 0; a < elements.length; a++) {
-        elements[a].setAttribute(attrName, change.newValue);
-      }
-    };
-  };
-
-  /**
-   * Bind the lifecycle of an attribute to the text content of a given element.
-   *
-   * @param {String} The selector of the element to set the text content of.
-   */
-  skate.attribute.text = function (selector) {
-    return function (element, change) {
-      var elements = element.querySelectorAll(selector);
-
-      for (var a = 0; a < elements.length; a++) {
-        elements[a].textContent = change.newValue;
-      }
-    };
-  };
-
-  /**
    * Default template renderers.
    *
    * @var {Object}
@@ -587,10 +549,10 @@
   }
 
   function parseEvent (e) {
-    var parts = e.split(' ', 2);
+    var parts = e.split(' ');
     return {
-      name: parts[0],
-      delegate: parts[1]
+      name: parts.shift(),
+      delegate: parts.join(' ')
     };
   }
 
