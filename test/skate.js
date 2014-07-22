@@ -512,58 +512,6 @@
     });
   });
 
-  describe('Doing something when an element is augmented by a particular component.', function () {
-    it('Should execute a callback if an element is already augmented.', function (done) {
-      var Div = skate('div', {
-        prototype: {
-          test: function () {}
-        }
-      });
-
-      var div = new Div();
-      document.body.appendChild(div);
-      skate.init(div);
-
-      skate.when(div).is('div').then(function (element) {
-        expect(element.test).to.be.a('function');
-        done();
-      });
-    });
-
-    it('Should execute a callback when an element will be augmented.', function (done) {
-      var Div = skate('div', {
-        prototype: {
-          test: function () {}
-        }
-      });
-
-      var div = new Div();
-
-      skate.when(div).is('div').then(function (element) {
-        expect(element.test).to.be.a('function');
-        done();
-      });
-
-      document.body.appendChild(div);
-    });
-
-    // Safety net to ensure this never happens.
-    it('Should not execute when callbacks that were previously executed.', function () {
-      var Div = skate('div');
-      var div = new Div();
-      var executions = 0;
-      var callbacks = skate.when(div).is('div').then(incrementExecutions);
-
-      document.body.appendChild(div);
-      callbacks.then(incrementExecutions);
-      executions.should.equal(2);
-
-      function incrementExecutions () {
-        ++executions;
-      }
-    });
-  });
-
   describe('Events', function () {
     it('Should bind events', function () {
       var numTriggered = 0;

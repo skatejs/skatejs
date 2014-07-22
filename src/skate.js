@@ -182,6 +182,11 @@
     // Set any defaults that weren't passed.
     inherit(component, skate.defaults);
 
+    // Set default template renderer for template strings.
+    if (component.template && typeof component.template === 'string') {
+      component.template = skate.template.shadowDomStyle(component.template);
+    }
+
     // Register the component.
     skateComponents[id] = component;
 
@@ -221,7 +226,11 @@
     TAG: 't'
   };
 
-  // Default configuration.
+  /**
+   * The default options for a component.
+   *
+   * @var {Object}
+   */
   skate.defaults = {
     // Attribute lifecycle callback or callbacks.
     attributes: false,
@@ -236,10 +245,115 @@
     prototype: {},
 
     // The template to replace the content of the element with.
-    template: '',
+    template: false,
 
     // The type of bindings to allow.
     type: skate.types.ANY
+  };
+
+  /**
+   * Default attribute handlers.
+   *
+   * @var {Object}
+   */
+  skate.attribute = {};
+
+  /**
+   * Bind the lifecycle of an attribute to the attribute of a given element.
+   *
+   * @param {String} selector The selector of the element you wish to set the attribute of.
+   * @param {String} attrName The attribute name you wish to affect.
+   */
+  skate.attribute.attr = function (selector, attrName) {
+    return function (element, change) {
+      var elements = element.querySelectorAll(selector);
+
+      for (var a = 0; a < elements.length; a++) {
+        elements[a].setAttribute(attrName, change.newValue);
+      }
+    };
+  };
+
+  /**
+   * Bind the lifecycle of an attribute to the text content of a given element.
+   *
+   * @param {String} The selector of the element to set the text content of.
+   */
+  skate.attribute.text = function (selector) {
+    return function (element, change) {
+      var elements = element.querySelectorAll(selector);
+
+      for (var a = 0; a < elements.length; a++) {
+        elements[a].textContent = change.newValue;
+      }
+    };
+  };
+
+  /**
+   * Default template renderers.
+   *
+   * @var {Object}
+   */
+  skate.template = {};
+
+  /**
+   * Shadow-DOM "style" renderer.
+   *
+   * @param {String} templateString The template string to use.
+   * @param {Object} options The options to use for customising rendering.
+   */
+  skate.template.shadowDomStyle = function (templateString) {
+    return function (target) {
+      // Noop if a falsy value is given.
+      if (!templateString) {
+        return;
+      }
+
+      var content = target.innerHTML;
+      target.innerHTML = templateString;
+
+      // Content elements are placeholders for user content.
+      var contentElements = target.querySelectorAll('content');
+
+      // If there aren't any we don't do anything.
+      if (!contentElements || !contentElements.length) {
+        return target;
+      }
+
+      // Create DOM nodes from the user content.
+      var contentFragment = document.createElement('div');
+      contentFragment.innerHTML = content;
+
+      // Replace each content element with elements they select. If they don't specify which elements they want to
+      // represent, then they get everything.
+      for (var a = 0; a < contentElements.length; a++) {
+        var contentElement = contentElements[a];
+        var selectorFilter = contentElement.getAttribute('select');
+        var childNodes = contentFragment.childNodes;
+
+        // If we are filtering based on a selector, only allow first children to be selected. If we aren't filtering,
+        // then we move all children.
+        if (selectorFilter) {
+          for (var b = 0; b < childNodes.length; b++) {
+            var contentFragmentChild = childNodes[b];
+
+            if (contentFragmentChild.nodeType !== 1) {
+              continue;
+            }
+
+            if (matchesSelector(contentFragmentChild, selectorFilter)) {
+              contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
+            }
+          }
+        } else {
+          for (var c = 0; c < childNodes.length; c++) {
+            contentElement.parentNode.insertBefore(childNodes[c], contentElement);
+          }
+        }
+
+        contentElement.parentNode.removeChild(contentElement);
+      }
+    };
   };
 
   /**
@@ -286,38 +400,6 @@
     return skate;
   };
 
-  // Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
-  // descending down the DOM tree.
-  function flattenDomTree (parent, using) {
-    var children = parent.childNodes;
-
-    if (using) {
-      using.push(parent);
-    } else {
-      using = [parent];
-    }
-
-    if (children) {
-      for (var a = 0; a < children.length; a++) {
-        var child = children[a];
-
-        if (child.nodeType !== 1) {
-          continue;
-        }
-
-        var attrs = child.attributes;
-
-        if (attrs && attrs[ATTR_IGNORE]) {
-          continue;
-        }
-
-        flattenDomTree(child, using);
-      }
-    }
-
-    return using;
-  }
-
   /**
    * Unregisters the specified component.
    *
@@ -328,52 +410,6 @@
   skate.unregister = function (id) {
     delete skateComponents[id];
     return;
-  };
-
-  /**
-   * Executes a callback when an element is initialised as a particular component.
-   *
-   * @param {HTMLElement} element The element to listen to.
-   *
-   * @returns {Object}
-   */
-  skate.when = function (element) {
-    return {
-      /**
-       * Sets the id of the component to listen for on the element.
-       *
-       * @param {String} id The id of the component to listen for.
-       *
-       * @returns {Object}
-       */
-      is: function (id) {
-        return {
-          /**
-           * Executes the specified callback when an element is initialised with a particular component.
-           *
-           * @param {Function} callback The callback to execute.
-           *
-           * @returns {Object}
-           */
-          then: function (callback) {
-            if (getData(element, id + '.ready-called')) {
-              callback(element);
-            } else {
-              var callbacks = getData(element, id + '.when-callbacks');
-
-              if (!callbacks) {
-                callbacks = [];
-              }
-
-              callbacks.push(callback);
-              setData(element, id + '.when-callbacks', callbacks);
-            }
-
-            return this;
-          }
-        };
-      }
-    };
   };
 
 
@@ -389,6 +425,7 @@
 
   // Triggers the ready callback and continues execution to the insert callback.
   function triggerReady (id, component, target, done) {
+    var newTarget;
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     done = done || function () {};
 
@@ -397,10 +434,13 @@
     }
 
     setData(target, id + '.ready-called', true);
+
+    if (component.template) {
+      component.template(target);
+    }
+
     inherit(target, component.prototype);
-    applyTemplate(id, component, target);
     addEventListeners(id, target, component.events);
-    triggerWhenCallbacks(target, id);
 
     if (component.ready && definedMultipleArgs.test(component.ready)) {
       component.ready(target, done);
@@ -464,64 +504,6 @@
           triggerRemove(possibleId, skateComponents[possibleId], element);
         }
       });
-    }
-  }
-
-  // Sets the content of the element to the template that was specified.
-  function applyTemplate (id, component, target) {
-    // Noop if a falsy value is given.
-    if (!component.template) {
-      return;
-    }
-
-    var content = target.innerHTML;
-
-    if (typeof component.template === 'function') {
-      component.template(target);
-    } else if (typeof component.template === 'string') {
-      target.innerHTML = component.template;
-    }
-
-    // Content elements are placeholders for user content.
-    var contentElements = target.querySelectorAll('content');
-
-    // If there aren't any we don't do anything.
-    if (!contentElements || !contentElements.length) {
-      return;
-    }
-
-    // Create DOM nodes from the user content.
-    var contentFragment = document.createElement('div');
-    contentFragment.innerHTML = content;
-
-    // Replace each content element with elements they select. If they don't specify which elements they want to
-    // represent, then they get everything.
-    for (var a = 0; a < contentElements.length; a++) {
-      var contentElement = contentElements[a];
-      var selectorFilter = contentElement.getAttribute('select');
-      var childNodes = contentFragment.childNodes;
-
-      // If we are filtering based on a selector, only allow first children to be selected. If we aren't filtering,
-      // then we move all children.
-      if (selectorFilter) {
-        for (var b = 0; b < childNodes.length; b++) {
-          var contentFragmentChild = childNodes[b];
-
-          if (contentFragmentChild.nodeType !== 1) {
-            continue;
-          }
-
-          if (matchesSelector(contentFragmentChild, selectorFilter)) {
-            contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
-          }
-        }
-      } else {
-        for (var c = 0; c < childNodes.length; c++) {
-          contentElement.parentNode.insertBefore(childNodes[c], contentElement);
-        }
-      }
-
-      contentElement.parentNode.removeChild(contentElement);
     }
   }
 
@@ -610,22 +592,6 @@
       name: parts[0],
       delegate: parts[1]
     };
-  }
-
-  function triggerWhenCallbacks (target, id) {
-    var callbacks = getData(target, id + '.when-callbacks');
-
-    if (!callbacks) {
-      return;
-    }
-
-    callbacks.forEach(function (callback) {
-      callback(target);
-    });
-
-    // Cleaning up extra callbacks will help
-    // prevent possible memory leaks.
-    removeData(target, id + '.when-callbacks');
   }
 
 
@@ -793,6 +759,38 @@
     }
 
     return selectors.join(',');
+  }
+
+  // Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
+  // descending down the DOM tree.
+  function flattenDomTree (parent, using) {
+    var children = parent.childNodes;
+
+    if (using) {
+      using.push(parent);
+    } else {
+      using = [parent];
+    }
+
+    if (children) {
+      for (var a = 0; a < children.length; a++) {
+        var child = children[a];
+
+        if (child.nodeType !== 1) {
+          continue;
+        }
+
+        var attrs = child.attributes;
+
+        if (attrs && attrs[ATTR_IGNORE]) {
+          continue;
+        }
+
+        flattenDomTree(child, using);
+      }
+    }
+
+    return using;
   }
 
 
