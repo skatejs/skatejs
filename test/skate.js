@@ -645,6 +645,28 @@
       skate.init(el);
       el.innerHTML.should.equal('');
     });
+
+    it('should use the content of the <content> tags as the default content if no content is found to replace it with', function () {
+      var El1 = skate('my-element-1', {
+        template: '<content>default content</content>'
+      });
+
+      var El2 = skate('my-element-2', {
+        template: '<content select=".some-elements">default content</content>'
+      });
+
+      // Not selecting any content.
+      document.body.innerHTML = '<my-element-1></my-element-1>';
+      var el1 = document.querySelector('my-element-1');
+      skate.init(el1);
+      el1.textContent.should.equal('default content');
+
+      // Selecting content.
+      document.body.innerHTML = '<my-element-2><p>some content that will not be selected</p></my-element-2>';
+      var el2 = document.querySelector('my-element-2');
+      skate.init(el2);
+      el2.textContent.should.equal('default content');
+    });
   });
 
   describe('version', function () {

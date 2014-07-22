@@ -296,20 +296,33 @@
         // If we are filtering based on a selector, only allow first children to be selected. If we aren't filtering,
         // then we move all children.
         if (selectorFilter) {
-          for (var b = 0; b < childNodes.length; b++) {
-            var contentFragmentChild = childNodes[b];
+          var hasMatch = false;
 
-            if (contentFragmentChild.nodeType !== 1) {
-              continue;
-            }
+          if (childNodes && childNodes.length) {
+            for (var b = 0; b < childNodes.length; b++) {
+              var contentFragmentChild = childNodes[b];
 
-            if (matchesSelector(contentFragmentChild, selectorFilter)) {
-              contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
+              if (contentFragmentChild.nodeType !== 1) {
+                continue;
+              }
+
+              if (matchesSelector(contentFragmentChild, selectorFilter)) {
+                hasMatch = true;
+                contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
+              }
             }
           }
+
+          if (!hasMatch) {
+            useOriginalTemplateContent(contentElement);
+          }
         } else {
-          for (var c = 0; c < childNodes.length; c++) {
-            contentElement.parentNode.insertBefore(childNodes[c], contentElement);
+          if (childNodes && childNodes.length) {
+            for (var c = 0; c < childNodes.length; c++) {
+              contentElement.parentNode.insertBefore(childNodes[c], contentElement);
+            }
+          } else {
+            useOriginalTemplateContent(contentElement);
           }
         }
 
@@ -317,6 +330,20 @@
       }
     };
   };
+
+  function useOriginalTemplateContent (contentElement) {
+    insertNodesBefore(contentElement.childNodes, contentElement);
+  }
+
+  function insertNodesBefore (nodes, element) {
+    if (nodes && nodes.length) {
+      for (var a = 0; a < nodes.length; a++) {
+        element.parentNode.insertBefore(nodes[a], element);
+      }
+    }
+  }
+
+
 
   /**
    * Stops listening for new elements. Generally this will only be used in testing.
