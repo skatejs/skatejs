@@ -161,29 +161,6 @@
       throw new Error('A component with the ID of "' + id + '" already exists.');
     }
 
-    // We don't add an observer unless we need one. We also only do this after the DOMContentLoaded event has fired
-    // since we init when that is triggered because we don't want to double init.
-    if (!documentObserver && domContentLoaded) {
-      documentObserver = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
-          if (mutation.addedNodes) {
-            for (var a = 0; a < mutation.addedNodes.length; a++) {
-              if (mutation.addedNodes[a].nodeType === 1) {
-                skate.init(mutation.addedNodes[a]);
-              }
-            }
-          }
-
-          triggerRemoveAll(mutation.removedNodes);
-        });
-      });
-
-      documentObserver.observe(document, {
-        childList: true,
-        subtree: true
-      });
-    }
-
     // Safe defaults.
     if (!component) {
       component = {};
@@ -344,13 +321,7 @@
    * @returns {skate}
    */
   skate.destroy = function () {
-    if (documentObserver) {
-      documentObserver.disconnect();
-      documentObserver = undefined;
-    }
-
     skateComponents = {};
-
     return skate;
   };
 
@@ -1009,6 +980,26 @@
   document.addEventListener('DOMContentLoaded', function () {
     skate.init(document.head);
     skate.init(document.body);
+
+    documentObserver = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.addedNodes) {
+          for (var a = 0; a < mutation.addedNodes.length; a++) {
+            if (mutation.addedNodes[a].nodeType === 1) {
+              skate.init(mutation.addedNodes[a]);
+            }
+          }
+        }
+
+        triggerRemoveAll(mutation.removedNodes);
+      });
+    });
+
+    documentObserver.observe(document, {
+      childList: true,
+      subtree: true
+    });
+
     domContentLoaded = true;
   });
 
