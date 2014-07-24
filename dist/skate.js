@@ -333,6 +333,42 @@
    * @returns {skate}
    */
   skate.init = function (element) {
+    if (isElementIgnored(element)) {
+      return skate;
+    }
+
+    var childNodes = element.childNodes;
+
+    // Check ids and trigger lifecycle for those.
+    possibleIds(element).forEach(function (possibleId) {
+      triggerLifecycle(possibleId, skateComponents[possibleId], element);
+    });
+
+    // Go down the tree.
+    for (var a = 0; a < childNodes.length; a++) {
+      var childNode = childNodes[a];
+
+      // Only elements are valid.
+      if (childNode.nodeType !== 1) {
+        continue;
+      }
+
+      var closestIgnored = getClosestIgnoredElement(childNode);
+
+      // If current element is ignored, then only continue because the next sibling may not be. However, if an
+      // anscestor element was returned, then it means the entire tree at this position must also be ignored.
+      if (closestIgnored === childNode) {
+        continue;
+      } else if (closestIgnored) {
+        break;
+      }
+
+      skate.init(childNode);
+    }
+
+    return skate;
+
+
     if (getClosestIgnoredElement(element)) {
       return skate;
     }
