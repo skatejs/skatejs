@@ -10,11 +10,14 @@
   var ATTR_IGNORE = 'data-skate-ignore';
 
 
+
   // Global Variables
   // ----------------
 
   // The observer used to check all elements as they're added to the DOM.
   var documentObserver;
+
+  // True after DOMContentLoaded fires and the first initalisation occurs.
   var domContentLoaded = false;
 
   // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
@@ -24,6 +27,7 @@
 
   // The skate component registry.
   var skateComponents = {};
+
 
 
   // Observers
@@ -1001,7 +1005,7 @@
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // When the content is loaded, then init the body.
+  // When the content is loaded, then init the document.
   document.addEventListener('DOMContentLoaded', function () {
     skate.init(document.head);
     skate.init(document.body);
