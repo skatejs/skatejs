@@ -4,11 +4,25 @@
 
 
   // Constants
+  // ---------
+
+  var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
 
 
-  // The rules used to hide elements during the ready lifecycle callback.
+  // Global Variables
+  // ----------------
+
+  // The observer used to check all elements as they're added to the DOM.
+  var documentObserver;
+
+  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
+  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
+  // prevent any jank if the ready() callback modifies the element.
   var hiddenRules = document.createElement('style');
+
+  // The skate component registry.
+  var skateComponents = {};
 
 
   // Observers
@@ -128,9 +142,6 @@
   // Public API
   // ----------
 
-  var documentObserver;
-  var skateComponents = {};
-
   /**
    * Creates a listener for the specified component.
    *
@@ -184,7 +195,7 @@
 
     // Set default template renderer for template strings.
     if (component.template && typeof component.template === 'string') {
-      component.template = skate.template.shadowDomStyle(component.template);
+      component.template = skate.template[component.renderer](component.template);
     }
 
     // Register the component.
@@ -244,6 +255,9 @@
     // Properties and methods to add to each element.
     prototype: {},
 
+    // The default template renderer.
+    renderer: 'html',
+
     // The template to replace the content of the element with.
     template: false,
 
@@ -259,91 +273,65 @@
   skate.template = {};
 
   /**
-   * Shadow-DOM "style" renderer.
+   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
    *
-   * @param {String} templateString The template string to use.
-   * @param {Object} options The options to use for customising rendering.
+   * Differences:
+   *
+   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
+   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
+   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
+   *
+   * Usage:
+   *
+   *     skate('something', {
+   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
+   *     });
+   *
+   * @param {String} templateString The HTML template string to use.
+   *
+   * @returns {Function} The function for rendering the template.
    */
-  skate.template.shadowDomStyle = function (templateString) {
-    return function (target) {
-      // Noop if a falsy value is given.
-      if (!templateString) {
-        return;
-      }
+  skate.template.html = function (templateString) {
+    var template = createFragmentFromString(templateString);
+    var contentMutationObserver = new MutationObserver(function (mutations) {
+        for (var a = 0; a < mutations.length; a++) {
+          var mutation = mutations[a];
 
-      var content = target.innerHTML;
-      target.innerHTML = templateString;
-
-      // Content elements are placeholders for user content.
-      var contentElements = target.querySelectorAll('content');
-
-      // If there aren't any we don't do anything.
-      if (!contentElements || !contentElements.length) {
-        return target;
-      }
-
-      // Create DOM nodes from the user content.
-      var contentFragment = document.createElement('div');
-      contentFragment.innerHTML = content;
-
-      // Replace each content element with elements they select. If they don't specify which elements they want to
-      // represent, then they get everything.
-      for (var a = 0; a < contentElements.length; a++) {
-        var contentElement = contentElements[a];
-        var selectorFilter = contentElement.getAttribute('select');
-        var childNodes = contentFragment.childNodes;
-
-        // If we are filtering based on a selector, only allow first children to be selected. If we aren't filtering,
-        // then we move all children.
-        if (selectorFilter) {
-          var hasMatch = false;
-
-          if (childNodes && childNodes.length) {
-            for (var b = 0; b < childNodes.length; b++) {
-              var contentFragmentChild = childNodes[b];
-
-              if (contentFragmentChild.nodeType !== 1) {
-                continue;
-              }
-
-              if (matchesSelector(contentFragmentChild, selectorFilter)) {
-                hasMatch = true;
-                contentElement.parentNode.insertBefore(contentFragmentChild, contentElement);
-              }
-            }
-          }
-
-          if (!hasMatch) {
-            useOriginalTemplateContent(contentElement);
-          }
-        } else {
-          if (childNodes && childNodes.length) {
-            for (var c = 0; c < childNodes.length; c++) {
-              contentElement.parentNode.insertBefore(childNodes[c], contentElement);
-            }
-          } else {
-            useOriginalTemplateContent(contentElement);
+          if (!mutation.target.children.length) {
+            mutation.target.innerHTML = getData(mutation.target, 'default-content');
           }
         }
+      });
 
-        contentElement.parentNode.removeChild(contentElement);
+    return function (target) {
+      var targetFragment = createFragmentFromString(target.innerHTML);
+      var targetTemplate = template.cloneNode(true);
+      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
+      var hasContentNodes = contentNodes && contentNodes.length;
+
+      if (hasContentNodes) {
+        for (var a = 0; a < contentNodes.length; a++) {
+          var contentNode = contentNodes[a];
+          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+
+          // Save the default content so we can use it when all nodes are removed from the content.
+          setData(contentNode, 'default-content', contentNode.innerHTML);
+
+          if (foundNodes && foundNodes.length) {
+            contentNode.innerHTML = '';
+            insertNodeList(contentNode, foundNodes);
+          }
+
+          contentMutationObserver.observe(contentNode, {
+            childList: true
+          });
+        }
       }
+
+      target.innerHTML = '';
+      target.appendChild(targetTemplate);
     };
   };
-
-  function useOriginalTemplateContent (contentElement) {
-    insertNodesBefore(contentElement.childNodes, contentElement);
-  }
-
-  function insertNodesBefore (nodes, element) {
-    if (nodes && nodes.length) {
-      for (var a = 0; a < nodes.length; a++) {
-        element.parentNode.insertBefore(nodes[a], element);
-      }
-    }
-  }
-
-
 
   /**
    * Stops listening for new elements. Generally this will only be used in testing.
@@ -405,14 +393,35 @@
   // Lifecycle Triggers
   // ------------------
 
-  // Triggers the entire lifecycle.
+  /**
+   * Triggers the entire element lifecycle if it's not being ignored.
+   *
+   * @param {String} id The component ID.
+   * @param {Object} component The component data.
+   * @param {Element} target The component element.
+   *
+   * @returns {undefined}
+   */
   function triggerLifecycle (id, component, target) {
+    if (isElementIgnored(target)) {
+      return;
+    }
+
     triggerReady(id, component, target, function () {
       triggerInsert(id, component, target);
     });
   }
 
-  // Triggers the ready callback and continues execution to the insert callback.
+  /**
+   * Triggers the ready lifecycle callback.
+   *
+   * @param {String} id The component ID.
+   * @param {Object} component The component data.
+   * @param {Element} target The component element.
+   * @param {Function} done The callback to execute when the lifecycle callback is finished.
+   *
+   * @returns {undefined}
+   */
   function triggerReady (id, component, target, done) {
     var newTarget;
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
@@ -441,7 +450,15 @@
     }
   }
 
-  // Triggers insert on the target.
+  /**
+   * Triggers the insert lifecycle callback.
+   *
+   * @param {String} id The component ID.
+   * @param {Object} component The component data.
+   * @param {Element} target The component element.
+   *
+   * @returns {undefined}
+   */
   function triggerInsert (id, component, target) {
     if (getData(target, id + '.insert-called')) {
       return;
@@ -461,7 +478,15 @@
     triggerAttributes(id, component, target);
   }
 
-  // Triggers remove on the target.
+  /**
+   * Triggers the remove lifecycle callback.
+   *
+   * @param {String} id The component ID.
+   * @param {Object} component The component data.
+   * @param {Element} target The component element.
+   *
+   * @returns {undefined}
+   */
   function triggerRemove (id, component, target) {
     if (getData(target, id + '.remove-called')) {
       return;
@@ -474,7 +499,13 @@
     }
   }
 
-  // Triggers the remove callbacks of the specified elements and their descendants.
+  /**
+   * Triggers the remove lifecycle callback on all of the elements.
+   *
+   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle callback on.
+   *
+   * @returns {undefined}
+   */
   function triggerRemoveAll (elements) {
     if (!elements) {
       return;
@@ -496,7 +527,15 @@
     }
   }
 
-  // Initialises and binds attribute handlers.
+  /**
+   * Binds attribute listeners for the specified attribute handlers.
+   *
+   * @param {String} id The component ID.
+   * @param {Object} component The component data.
+   * @param {Element} target The component element.
+   *
+   * @returns {undefined}
+   */
   function triggerAttributes (id, component, target) {
     if (!component.attributes || getData(target, id + '.attributes-called')) {
       return;
@@ -587,12 +626,29 @@
   // Utilities
   // ---------
 
+  /**
+   * Adds data to the element.
+   *
+   * @param {Element} element The element to get data from.
+   * @param {String} name The name of the data to return.
+   *
+   * @returns {Mixed}
+   */
   function getData (element, name) {
     if (element.__SKATE_DATA) {
       return element.__SKATE_DATA[name];
     }
   }
 
+  /**
+   * Adds data to the element.
+   *
+   * @param {Element} element The element to apply data to.
+   * @param {String} name The name of the data.
+   * @param {Mixed} value The data value.
+   *
+   * @returns {undefined}
+   */
   function setData (element, name, value) {
     if (!element.__SKATE_DATA) {
       element.__SKATE_DATA = {};
@@ -601,13 +657,14 @@
     element.__SKATE_DATA[name] = value;
   }
 
-  function removeData (element, name) {
-    if (element.__SKATE_DATA && element.__SKATE_DATA[name]) {
-      delete element.__SKATE_DATA[name];
-    }
-  }
-
-  // Adds the specified class to the element.
+  /**
+   * Adds a class to the specified element.
+   *
+   * @param {Element} element The element to add the class to.
+   * @param {String} classname The classname to add.
+   *
+   * @returns {undefined}
+   */
   function addClass (element, classname) {
     if (element.classList) {
       element.classList.add(classname);
@@ -616,7 +673,13 @@
     }
   }
 
-  // Returns a class list from the specified element.
+  /**
+   * Returns the class list for the specified element.
+   *
+   * @param {Element} element The element to get the class list for.
+   *
+   * @returns {ClassList | Array}
+   */
   function getClassList (element) {
     var classList = element.classList;
 
@@ -629,12 +692,18 @@
     return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
   }
 
-  // Returns the possible ids from an element.
+  /**
+   * Returns the possible IDs of the components that the element can have applied to them.
+   *
+   * @param {Element} element The element to get the possible IDs of.
+   *
+   * @returns {Array}
+   */
   function possibleIds (element) {
     var ids = {};
     var attrs = element.attributes;
 
-    var tag = element.tagName.toLowerCase();
+    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
     if (isComponentOfType(tag, skate.types.TAG)) {
       ids[tag] = tag;
     }
@@ -657,15 +726,38 @@
     return Object.keys(ids);
   }
 
+  /**
+   * Returns whether or not the specified component supports a particular type of component.
+   *
+   * @param {String} id The component ID.
+   * @param {String} type The type to check.
+   *
+   * @returns {Boolean}
+   */
   function isComponentOfType (id, type) {
     return hasOwn(skateComponents, id) && skateComponents[id].type.indexOf(type) > -1;
   }
 
+  /**
+   * Returns whether or not the element matches the specified selector.
+   *
+   * @param {Element} el The element to check.
+   * @param {String} selector The selector to check the element against.
+   *
+   * @returns {Boolean}
+   */
   function matchesSelector (el, selector) {
     return (el.matches || el.msMatchesSelector || el.webkitMatchesSelector || el.mozMatchesSelector || el.oMatchesSelector).call(el, selector);
   }
 
-  // Merges the second argument into the first.
+  /**
+   * Merges the second argument into the first.
+   *
+   * @param {Object} child The object to merge into.
+   * @param {Object} parent The object to merge from.
+   *
+   * @returns {Object} Returns the child object.
+   */
   function inherit (child, parent) {
     objEach(parent, function (member, name) {
       if (child[name] === undefined) {
@@ -676,12 +768,26 @@
     return child;
   }
 
-  // Checks {}.hasOwnProperty in a safe way.
+  /**
+   * Checks {}.hasOwnProperty in a safe way.
+   *
+   * @param {Object} obj The object the property is on.
+   * @param {String} key The object key to check.
+   *
+   * @returns {Boolean}
+   */
   function hasOwn (obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
 
-  // Traverses an object checking hasOwnProperty.
+  /**
+   * Traverses an object checking hasOwnProperty.
+   *
+   * @param {Object} obj The object to traverse.
+   * @param {Function} fn The function to call for each item in the object.
+   *
+   * @returns {undefined}
+   */
   function objEach (obj, fn) {
     for (var a in obj) {
       if (hasOwn(obj, a)) {
@@ -690,7 +796,14 @@
     }
   }
 
-  // Creates a constructor for the specified component.
+  /**
+   * Creates a constructor for the specified component.
+   *
+   * @param {String} id The ID to make the constructor for.
+   * @param {Object} component The component information to use for generating the constructor.
+   *
+   * @returns {Function} The element constructor.
+   */
   function makeElementConstructor (id, component) {
     function CustomElement () {
       var element = document.createElement(id);
@@ -711,14 +824,18 @@
     return CustomElement;
   }
 
-  // Returns whether or not the specified element has been selectively ignored.
+  /**
+   * Returns whether or not the specified element has been selectively ignored.
+   *
+   * @param {Element} element The element to check and traverse up from.
+   *
+   * @returns {Boolean}
+   */
   function getClosestIgnoredElement (element) {
     var parent = element;
 
     while (parent && parent !== document) {
-      var attrs = parent.attributes;
-
-      if (attrs && attrs[ATTR_IGNORE]) {
+      if (isElementIgnored(parent)) {
         return parent;
       }
 
@@ -726,8 +843,28 @@
     }
   }
 
-  // Returns a selector for the specified component based on the types given.
-  // If a negation selector is passed in then it will append :not(negateWith) to the selector.
+  /**
+   * Returns whether or not the element is ignored.
+   *
+   * @param {Element} element The element to check.
+   *
+   * @returns {Boolean}
+   */
+  function isElementIgnored (element) {
+    var attrs = element.attributes;
+    return attrs && attrs[ATTR_IGNORE];
+  }
+
+  /**
+   * Returns a selector for the specified component based on the types given. If a negation selector is passed in then
+   * it will append :not(negateWith) to the selector.
+   *
+   * @param {String} id The component ID.
+   * @param {String} type The component type.
+   * @param {String} negateWith The negation string, if any.
+   *
+   * @returns {String} The compiled selector.
+   */
   function getSelectorForType (id, type, negateWith) {
     var isTag = type.indexOf(skate.types.TAG) > -1;
     var isAttr = type.indexOf(skate.types.ATTR) > -1;
@@ -737,6 +874,7 @@
 
     if (isTag) {
       selectors.push(id + negateWith);
+      selectors.push('[is=' + id + ']' + negateWith);
     }
 
     if (isAttr) {
@@ -750,8 +888,15 @@
     return selectors.join(',');
   }
 
-  // Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
-  // descending down the DOM tree.
+  /**
+   * Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
+   * descending down the DOM tree.
+   *
+   * @param {Element} parent The element to flatten.
+   * @param {Array} using The array to push the elements onto. If not specified, this is created automatically.
+   *
+   * @returns {Array} The flattened tree.
+   */
   function flattenDomTree (parent, using) {
     var children = parent.childNodes;
 
@@ -769,9 +914,7 @@
           continue;
         }
 
-        var attrs = child.attributes;
-
-        if (attrs && attrs[ATTR_IGNORE]) {
+        if (isElementIgnored(child)) {
           continue;
         }
 
@@ -781,6 +924,72 @@
 
     return using;
   }
+
+  /**
+   * Finds direct children in the `sourceNode` that match the given selector.
+   *
+   * @param {Element} sourceNode The node to find the elements in.
+   * @param {String} selector The selector to use. If not specified, all `childNodes` are returned.
+   *
+   * @returns {NodeList}
+   */
+  function findChildrenMatchingSelector (sourceNode, selector) {
+    var foundNodes = selector ? sourceNode.querySelectorAll(selector) : sourceNode.childNodes;
+
+    return [].filter.call(foundNodes, function (foundNode) {
+      return foundNode.parentNode === sourceNode;
+    });
+  }
+
+  /**
+   * Creates a document fragment from the specified DOM string. It ensures that if special nodes are passed in that
+   * they are added to a valid parent node before importing to the document fragment.
+   *
+   * @param {String} domString The HTMl to create a fragment from.
+   *
+   * @returns {DocumentFragment}
+   */
+  function createFragmentFromString (domString) {
+    var specialMap = {
+        caption: 'table',
+        dd: 'dl',
+        dt: 'dl',
+        li: 'ul',
+        tbody: 'table',
+        td: 'tr',
+        thead: 'table',
+        tr: 'tbody'
+      };
+    var tag = domString.match(/\s*<([^\s>]+)/);
+    var frag = document.createDocumentFragment();
+    var div = document.createElement(tag && specialMap[tag[1]] || 'div');
+
+    div.innerHTML = domString;
+    insertNodeList(frag, div.childNodes);
+
+    return frag;
+  }
+
+  /**
+   * Inserts the specified nodes into the given element.
+   *
+   * @param {Element} element The element to insert the nodes into.
+   * @param {NodeList} nodes The nodes to insert.
+   *
+   * @returns {undefined}
+   */
+  function insertNodeList (element, nodes) {
+    if (nodes && nodes.length) {
+      for (var a = nodes.length - 1; a >= 0; a--) {
+        if (element.childNodes[0]) {
+          element.insertBefore(nodes[a], element.childNodes[0]);
+        } else {
+          element.appendChild(nodes[a]);
+        }
+      }
+    }
+  }
+
 
 
   // Global Setup

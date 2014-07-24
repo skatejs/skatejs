@@ -78,25 +78,29 @@
         skate.init(el1);
 
         var el2 = document.createElement('div');
-        el2.setAttribute('my-element', '');
+        el2.setAttribute('is', 'my-element');
         skate.init(el2);
 
         var el3 = document.createElement('div');
-        el3.className = 'my-element';
+        el3.setAttribute('my-element', '');
         skate.init(el3);
+
+        var el4 = document.createElement('div');
+        el4.className = 'my-element';
+        skate.init(el4);
 
         calls.should.equal(shouldEqual);
       });
     }
 
     describe('tags, attributes and classes', function () {
-      assertType(skate.types.ANY, 3);
-      assertType(skate.types.TAG, 1);
+      assertType(skate.types.ANY, 4);
+      assertType(skate.types.TAG, 2);
       assertType(skate.types.ATTR, 1);
       assertType(skate.types.CLASS, 1);
       assertType(skate.types.NOTAG, 2);
-      assertType(skate.types.NOATTR, 2);
-      assertType(skate.types.NOCLASS, 2);
+      assertType(skate.types.NOATTR, 3);
+      assertType(skate.types.NOCLASS, 3);
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
@@ -611,7 +615,7 @@
       el.innerHTML.should.equal('my template');
     });
 
-    it('should allowa function that is assumed that it will do the templating', function () {
+    it('should allow a function that is assumed that it will do the templating', function () {
       var El = skate('my-element', {
         template: function (element) {
           element.innerHTML = 'my template';
@@ -622,50 +626,50 @@
       el.innerHTML.should.equal('my template');
     });
 
-    it('should replace the first matched <content> tag with the content passed to the custom element', function () {
+    it('should add the content to the first matched content element with the content passed to the main element', function () {
       var El = skate('my-element', {
-        template: '<span><content></content><content></content></span>'
+        template: '<span data-skate-content=""></span>'
       });
 
       document.body.innerHTML = '<my-element>my content</my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<span>my content</span>');
+      el.innerHTML.should.equal('<span data-skate-content="">my content</span>');
     });
 
-    it('should allow first children of the main element to be selected by the <content> tags', function () {
+    it('should allow first children of the main element to be selected by the content element', function () {
       var El = skate('my-element', {
-        template: '<content select="some descendant"></content>'
+        template: '<span data-skate-content="some descendant"></span>'
       });
 
       document.body.innerHTML = '<my-element><some><descendant></descendant></some></my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('');
+      el.innerHTML.should.equal('<span data-skate-content="some descendant"></span>');
     });
 
-    it('should use the content of the <content> tags as the default content if no content is found to replace it with', function () {
+    it('should use the content of the content elements as the default content if no content is found to replace it with', function () {
       var El1 = skate('my-element-1', {
-        template: '<content>default content</content>'
+        template: '<span data-skate-content="">default content</span>'
       });
 
       var El2 = skate('my-element-2', {
-        template: '<content select=".some-elements">default content</content>'
+        template: '<span data-skate-content=".some-elements">default content</span>'
       });
 
       // Not selecting any content.
       document.body.innerHTML = '<my-element-1></my-element-1>';
       var el1 = document.querySelector('my-element-1');
       skate.init(el1);
-      el1.textContent.should.equal('default content');
+      el1.innerHTML.should.equal('<span data-skate-content="">default content</span>');
 
       // Selecting content.
       document.body.innerHTML = '<my-element-2><p>some content that will not be selected</p></my-element-2>';
       var el2 = document.querySelector('my-element-2');
       skate.init(el2);
-      el2.textContent.should.equal('default content');
+      el2.innerHTML.should.equal('<span data-skate-content=".some-elements">default content</span>');
     });
   });
 
