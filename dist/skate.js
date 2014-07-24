@@ -357,21 +357,37 @@
    * @returns {skate}
    */
   skate.init = function (element) {
-    if (getClosestIgnoredElement(element)) {
+    if (isElementIgnored(element)) {
       return skate;
     }
 
-    var flattened = flattenDomTree(element);
+    var childNodes = element.childNodes;
 
-    // Initialise each element.
-    for (var a = 0; a < flattened.length; a++) {
-      var current = flattened[a];
+    // Check ids and trigger lifecycle for those.
+    possibleIds(element).forEach(function (possibleId) {
+      triggerLifecycle(possibleId, skateComponents[possibleId], element);
+    });
 
-      // Check ids and trigger lifecycle for those.
-      var ids = possibleIds(current);
-      for (var b = 0; b < ids.length; b++) {
-        triggerLifecycle(ids[b], skateComponents[ids[b]], current);
+    // Go down the tree.
+    for (var a = 0; a < childNodes.length; a++) {
+      var childNode = childNodes[a];
+
+      // Only elements are valid.
+      if (childNode.nodeType !== 1) {
+        continue;
       }
+
+      var closestIgnored = getClosestIgnoredElement(childNode);
+
+      // If current element is ignored, then only continue because the next sibling may not be. However, if an
+      // anscestor element was returned, then it means the entire tree at this position must also be ignored.
+      if (closestIgnored === childNode) {
+        continue;
+      } else if (closestIgnored) {
+        break;
+      }
+
+      skate.init(childNode);
     }
 
     return skate;
