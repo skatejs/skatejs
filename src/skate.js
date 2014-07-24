@@ -357,9 +357,9 @@
    * @returns {skate}
    */
   skate.init = function (element) {
-    if (isElementIgnored(element)) {
-      return skate;
-    }
+    // if (isElementIgnored(element)) {
+    //   return skate;
+    // }
 
     var childNodes = element.childNodes;
 
@@ -377,7 +377,7 @@
         continue;
       }
 
-      var closestIgnored = getClosestIgnoredElement(childNode);
+      var closestIgnored = false;//getClosestIgnoredElement(childNode);
 
       // If current element is ignored, then only continue because the next sibling may not be. However, if an
       // anscestor element was returned, then it means the entire tree at this position must also be ignored.
