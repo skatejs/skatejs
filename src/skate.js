@@ -15,6 +15,7 @@
 
   // The observer used to check all elements as they're added to the DOM.
   var documentObserver;
+  var domContentLoaded = false;
 
   // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
   // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
@@ -156,8 +157,9 @@
       throw new Error('A component with the ID of "' + id + '" already exists.');
     }
 
-    // We don't add an observer unless we need one.
-    if (!documentObserver) {
+    // We don't add an observer unless we need one. We also only do this after the DOMContentLoaded event has fired
+    // since we init when that is triggered because we don't want to double init.
+    if (!documentObserver && domContentLoaded) {
       documentObserver = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
           if (mutation.addedNodes) {
@@ -209,12 +211,11 @@
       );
     }
 
-    // Initialise existing elements that are supposed to use this component.
-    var existing = document.querySelectorAll(getSelectorForType(id, component.type));
-    for (var a = 0; a < existing.length; a++) {
-      if (!getClosestIgnoredElement(existing[a])) {
-        triggerLifecycle(id, component, existing[a]);
-      }
+    // If we've already initialised on DOMContentLoaded, we must initialise again.
+    // TODO: Optimise this so that if 100's of calls to Skate happen in a large DOM that these get batched.
+    if (domContentLoaded) {
+      skate.init(document.head);
+      skate.init(document.body);
     }
 
     // Only make and return an element constructor if it can be used as a custom element.
@@ -357,37 +358,21 @@
    * @returns {skate}
    */
   skate.init = function (element) {
-    // if (isElementIgnored(element)) {
-    //   return skate;
-    // }
+    if (getClosestIgnoredElement(element)) {
+      return skate;
+    }
 
-    var childNodes = element.childNodes;
+    var flattened = flattenDomTree(element);
 
-    // Check ids and trigger lifecycle for those.
-    possibleIds(element).forEach(function (possibleId) {
-      triggerLifecycle(possibleId, skateComponents[possibleId], element);
-    });
+    // Initialise each element.
+    for (var a = 0; a < flattened.length; a++) {
+      var current = flattened[a];
 
-    // Go down the tree.
-    for (var a = 0; a < childNodes.length; a++) {
-      var childNode = childNodes[a];
-
-      // Only elements are valid.
-      if (childNode.nodeType !== 1) {
-        continue;
+      // Check ids and trigger lifecycle for those.
+      var ids = possibleIds(current);
+      for (var b = 0; b < ids.length; b++) {
+        triggerLifecycle(ids[b], skateComponents[ids[b]], current);
       }
-
-      var closestIgnored = false;//getClosestIgnoredElement(childNode);
-
-      // If current element is ignored, then only continue because the next sibling may not be. However, if an
-      // anscestor element was returned, then it means the entire tree at this position must also be ignored.
-      if (closestIgnored === childNode) {
-        continue;
-      } else if (closestIgnored) {
-        break;
-      }
-
-      skate.init(childNode);
     }
 
     return skate;
@@ -1015,6 +1000,13 @@
   // prior to calling the ready callback to prevent FOUC if the component
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
+
+  // When the content is loaded, then init the body.
+  document.addEventListener('DOMContentLoaded', function () {
+    skate.init(document.head);
+    skate.init(document.body);
+    domContentLoaded = true;
+  });
 
 
   // Exporting
