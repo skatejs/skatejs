@@ -33,10 +33,10 @@
     it('Should not allow you to register the same component more than once.', function () {
       var multiple = false;
 
-      skate('div');
+      skate('div', {});
 
       try {
-        skate('div');
+        skate('div', {});
         multiple = true;
       } catch (e) {}
 
@@ -44,8 +44,10 @@
     });
 
     it('should destroy all listeners when destroy() called', function () {
-      skate('div', function (element) {
-        element.test = true;
+      skate('div', {
+        insert: function (element) {
+          element.test = true;
+        }
       });
 
       skate.destroy();
@@ -53,8 +55,10 @@
     });
 
     it('should unregister the specified listener when unregister() called', function () {
-      skate('div', function (element) {
-        element.test = true;
+      skate('div', {
+        insert: function (element) {
+          element.test = true;
+        }
       });
 
       skate.unregister('div');
@@ -94,13 +98,9 @@
     }
 
     describe('tags, attributes and classes', function () {
-      assertType(skate.types.ANY, 4);
       assertType(skate.types.TAG, 2);
       assertType(skate.types.ATTR, 1);
       assertType(skate.types.CLASS, 1);
-      assertType(skate.types.NOTAG, 2);
-      assertType(skate.types.NOATTR, 3);
-      assertType(skate.types.NOCLASS, 3);
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
@@ -220,7 +220,7 @@
         },
 
         insert: function () {
-          assert(ok, 'Ready not called before insert.');
+          assert(ok, 'Ready not called before insert. See line 408.');
           done();
         }
       });
@@ -318,30 +318,13 @@
     });
   });
 
-  describe('Extending', function () {
-    it('Instead of using a custom tag, an attribute can be used to signify behaviour.', function () {
-      var init = false;
-
-      skate('datepicker', function () {
-        init = true;
-      });
-
-      var div = document.createElement('div');
-      div.setAttribute('datepicker', 'true');
-      document.body.appendChild(div);
-      skate.init(div);
-
-      init.should.equal(true);
-    });
-  });
-
   describe('Instantiation', function () {
     it('Should return a constructor', function () {
-      skate('div').should.be.a('function');
+      skate('div', {}).should.be.a('function');
     });
 
     it('Should return a new element when constructed.', function () {
-      var Div = skate('div');
+      var Div = skate('div', {});
       var div = new Div();
       div.nodeName.should.equal('DIV');
     });
@@ -423,8 +406,8 @@
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
 
-      assert(numReady === 2, 'Ready not called');
-      assert(numInsert === 2, 'Insert not called');
+      numReady.should.equal(2);
+      numInsert.should.equal(2);
 
       // Mutation Observers are async.
       setTimeout(function () {
@@ -442,6 +425,7 @@
 
       idsToSkate.forEach(function (id) {
         skate(id, {
+          type: skate.types.CLASS,
           ready: function () {
             idsToCheck[id] = true;
           }
@@ -479,7 +463,7 @@
     });
 
     it('Should not allow the constructor property to be enumerated.', function () {
-      var Div = skate('div');
+      var Div = skate('div', {});
 
       for (var prop in Div.prototype) {
         if (prop === 'constructor') {
@@ -504,7 +488,7 @@
     });
 
     it('should allow the overwriting of the prototype', function () {
-      var Div = skate('div');
+      var Div = skate('div', {});
 
       Div.prototype = {
         func: function () {}
@@ -597,7 +581,7 @@
 
   describe('Templates', function () {
     it('should not replacing existing content if there is no template', function () {
-      var El = skate('my-element');
+      var El = skate('my-element', {});
 
       document.body.innerHTML = '<my-element>my content</my-element>';
 
@@ -692,9 +676,14 @@
         ++called;
       });
 
+      // Ensure the document is sync'd.
+      skate.init(document.body);
+
       // Test insertion after.
       document.body.innerHTML = '<div></div><div id="container-2" data-skate-ignore><div><div></div></div></div><div></div>';
       document.getElementById('container-2').innerHTML = '<div><div></div></div>';
+
+      // Ensure all new content is sync'd.
       skate.init(document.body);
 
       called.should.equal(4);
