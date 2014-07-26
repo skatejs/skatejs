@@ -5,6 +5,11 @@
   "camelcase": true,
   "curly": true,
   "eqeqeq": true,
+  "globals": {
+      "define": false,
+      "document": false,
+      "window": false
+    },
   "immed": true,
   "indent": 2,
   "latedef": true,
