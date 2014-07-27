@@ -9,9 +9,6 @@
 
   var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
-  var TYPE_ATTR = 'attribute';
-  var TYPE_CLASS = 'class';
-  var TYPE_TAG = 'tag';
 
 
 
@@ -34,25 +31,37 @@
 
   // The skate component registry.
   var registry = {};
-  registry[TYPE_ATTR] = {};
-  registry[TYPE_CLASS] = {};
-  registry[TYPE_TAG] = {};
 
 
 
-  // Observers
-  // ---------
+  // Element Map
+  // -----------
+  //
+  // Kinda like a weak map, but specifically for elements and is more performant that polyfillying ES6 the WeakMap just
+  // for this one purpose.
 
   var ElementMap = function () {
     this.map = [];
   };
 
   ElementMap.prototype = {
+    /**
+     * Clears the element mapping.
+     *
+     * @returns {ElementMap}
+     */
     clear: function () {
       this.map = [];
       return this;
     },
 
+    /**
+     * Returns the value stored against the specified element.
+     *
+     * @param {Element} element The element to get the value for.
+     *
+     * @returns {Mixed}
+     */
     get: function (element) {
       var index = this.index(element);
 
@@ -61,6 +70,13 @@
       }
     },
 
+    /**
+     * Returns the index for the element or -1 if it doesn't exist in the map.
+     *
+     * @param {Element} element The element to get the index for.
+     *
+     * @returns {Integer}
+     */
     index: function (element) {
       var index = getData(element, 'element-map-index');
 
@@ -71,10 +87,23 @@
       return -1;
     },
 
+    /**
+     * Returns the values stored for each element.
+     *
+     * @returns {Array}
+     */
     items: function () {
       return this.map;
     },
 
+    /**
+     * Sets a value for the given element.
+     *
+     * @param {Element} element The element to store the value against.
+     * @Param {Mixed} value The value to store.
+     *
+     * @returns {ElementMap}
+     */
     set: function (element, value) {
       var index = this.index(element);
 
@@ -88,6 +117,22 @@
       return this;
     }
   };
+
+
+
+  // Mutation Observer "Polyfill"
+  // ----------------------------
+  //
+  // TODO: Try using DOMSubtree modified and diffing the children rather than using DOMNodeInserted and eliminating
+  // nodes that aren't first children.
+  //
+  // TODO: Share more code between the insertHandler and the removeHandler.
+  //
+  // TODO: Batch attribute modifications.
+  //
+  // This "polyfill" only polyfills what we need for Skate to function and also batches updates and only does a very
+  // small amount of processing syncronously. The rest is batched on the next tick. Each mutation, like the actual
+  // mutation observer, is divided into siblings.
 
   // Normalise the mutaiton observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
@@ -108,9 +153,9 @@
         var timeout;
         var lastInsertParent;
         var lastRemoveParent;
-        var lastAttributeParent;
+        var attributeMutations = [];
 
-        var item = {
+        var observed = {
           target: target,
           options: options,
           insertHandler: function (e) {
@@ -176,28 +221,29 @@
 
             var record = newMutationRecord();
             record.attributeName = e.attrName,
-            record.oldValue = options.attributeOldValue ? (attributeOldValueCache[e.attrName] || e.prevValue || null) : null,
-            record.type = 'attributes'
-
-            that.callback([record]);
+            record.oldValue = options.attributeOldValue ? attributeOldValueCache[e.attrName] || e.prevValue || null : null;
+            record.type = 'attributes';
+            attributeMutations.push(record);
 
             // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
             // actually correct.
             if (options.attributeOldValue) {
               attributeOldValueCache[e.attrName] = e.newValue;
             }
+
+            batch();
           }
         };
 
-        this.elements.push(item);
+        this.elements.push(observed);
 
         if (options.childList) {
-          target.addEventListener('DOMNodeInserted', item.insertHandler);
-          target.addEventListener('DOMNodeRemoved', item.removeHandler);
+          target.addEventListener('DOMNodeInserted', observed.insertHandler);
+          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
         }
 
         if (options.attributes) {
-          target.addEventListener('DOMAttrModified', item.attributeHandler);
+          target.addEventListener('DOMAttrModified', observed.attributeHandler);
         }
 
         return this;
@@ -206,10 +252,11 @@
           clearTimeout(timeout);
 
           timeout = setTimeout(function () {
-            that.callback(map.items());
+            that.callback(map.items().concat(attributeMutations));
             map.clear();
             lastInsertParent = undefined;
             lastRemoveParent = undefined;
+            attributeMutations = [];
           }, 1);
         }
 
@@ -223,10 +270,10 @@
       },
 
       disconnect: function () {
-        objEach(this.elements, function (item) {
-          item.target.removeEventListener('DOMSubtreeModified', item.insertHandler);
-          item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
-          item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
+        objEach(this.elements, function (observed) {
+          observed.target.removeEventListener('DOMSubtreeModified', observed.insertHandler);
+          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
+          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
         });
 
         this.elements = [];
@@ -273,23 +320,20 @@
    */
   function skate (id, component) {
     // Set any defaults that weren't passed.
-    inherit(component, skate.defaults);
-
-    // Components of a particular type must be unique.
-    if (hasOwn(registry[component.type], id)) {
-      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
-    }
+    component = inherit(component || {}, skate.defaults);
 
     // Set the component ID for reference later.
     component.id = id;
+
+    // Components of a particular type must be unique.
+    if (hasOwn(registry, component.id)) {
+      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
+    }
 
     // Set default template renderer for template strings.
     if (component.template && typeof component.template === 'string') {
       component.template = skate.template[component.renderer](component.template);
     }
-
-    // Register the component.
-    registry[component.type][component.id] = component;
 
     // If doing something on ready, ensure the element is hidden. If not, we don't need to care.
     if (component.ready) {
@@ -299,6 +343,9 @@
       );
     }
 
+    // Register the component.
+    registry[component.id] = component;
+
     // Ensure existing elements are initialised.
     initDocument();
 
@@ -306,7 +353,7 @@
     initDocumentListener();
 
     // Only make and return an element constructor if it can be used as a custom element.
-    if (component.type === skate.types.TAG) {
+    if (component.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(id, component);
     }
   }
@@ -316,9 +363,13 @@
 
   // Restriction type constants.
   skate.types = {
-    ATTR: TYPE_ATTR,
-    CLASS: TYPE_CLASS,
-    TAG: TYPE_TAG
+    ANY: 'act',
+    ATTR: 'a',
+    CLASS: 'c',
+    NOATTR: 'ct',
+    NOCLASS: 'at',
+    NOTAG: 'ac',
+    TAG: 't'
   };
 
   /**
@@ -349,7 +400,7 @@
     template: false,
 
     // The type of bindings to allow.
-    type: skate.types.TAG
+    type: skate.types.ANY
   };
 
   /**
@@ -433,15 +484,15 @@
     var components = [];
     var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
 
-    if (hasOwn(registry[TYPE_TAG], tag)) {
-      return [registry[TYPE_TAG][tag]];
+    if (isComponentOfType(tag, skate.types.TAG)) {
+      return [registry[tag]];
     }
 
     for (var a = 0; a < attrsLength; a++) {
       var attr = attrs[a].nodeValue;
 
-      if (hasOwn(registry[TYPE_ATTR], attr)) {
-        components.push(registry[TYPE_ATTR][attr]);
+      if (isComponentOfType(attr, skate.types.ATTR)) {
+        components.push(registry[attr]);
       }
     }
 
@@ -455,8 +506,8 @@
     for (var b = 0; b < classListLength; b++) {
       var className = classList[b];
 
-      if (hasOwn(registry[TYPE_CLASS], className)) {
-        components.push(registry[TYPE_CLASS][className]);
+      if (isComponentOfType(className, skate.types.CLASS)) {
+        components.push(registry[className]);
       }
     }
 
@@ -470,9 +521,7 @@
    */
   skate.destroy = function () {
     documentListener = undefined;
-    registry[TYPE_ATTR] = {};
-    registry[TYPE_CLASS] = {};
-    registry[TYPE_TAG] = {};
+    registry = {};
     return skate;
   };
 
@@ -888,24 +937,12 @@
     var parent = element;
 
     while (parent && parent !== document) {
-      if (isElementIgnored(parent)) {
+      if (parent.hasAttribute(ATTR_IGNORE)) {
         return parent;
       }
 
       parent = parent.parentNode;
     }
-  }
-
-  /**
-   * Returns whether or not the element is ignored.
-   *
-   * @param {Element} element The element to check.
-   *
-   * @returns {Boolean}
-   */
-  function isElementIgnored (element) {
-    var attrs = element.attributes;
-    return attrs && attrs[ATTR_IGNORE];
   }
 
   /**
@@ -939,6 +976,18 @@
     }
 
     return selectors.join(',');
+  }
+
+  /**
+   * Returns whether or not the specified component can be bound using the specified type.
+   *
+   * @param {String} id The component ID.
+   * @param {String} type The component type.
+   *
+   * @returns {Boolean}
+   */
+  function isComponentOfType (id, type) {
+    return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
   }
 
   /**
@@ -995,12 +1044,17 @@
    * @returns {undefined}
    */
   function insertNodeList (element, nodes) {
-    if (nodes && nodes.length) {
-      for (var a = nodes.length - 1; a >= 0; a--) {
-        if (element.childNodes[0]) {
-          element.insertBefore(nodes[a], element.childNodes[0]);
+    var len = nodes.length;
+
+    if (nodes && len) {
+      for (var a = len - 1; a >= 0; a--) {
+        var newNode = nodes[a];
+        var reference = element.childNodes[0];
+
+        if (reference) {
+          element.insertBefore(newNode, reference);
         } else {
-          element.appendChild(nodes[a]);
+          element.appendChild(newNode);
         }
       }
     }

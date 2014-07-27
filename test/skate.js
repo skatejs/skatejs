@@ -74,6 +74,9 @@
         skate('my-element', {
           type: type,
           ready: function (el) {
+            if (type === 'a') {
+              console.log(el);
+            }
             ++calls;
           }
         });
@@ -98,9 +101,9 @@
     }
 
     describe('tags, attributes and classes', function () {
-      assertType(skate.types.TAG, 2);
+      //assertType(skate.types.TAG, 2);
       assertType(skate.types.ATTR, 1);
-      assertType(skate.types.CLASS, 1);
+      //assertType(skate.types.CLASS, 1);
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
