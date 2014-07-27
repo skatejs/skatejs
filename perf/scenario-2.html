@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib.js"></script>
+    <script src="../src/skate.js"></script>
+    <script src="x-append-button.js"></script>
+  </head>
+  <body>
+    <h1>Scenario 2</h1>
+    <p>Dynamically Skating a container that has serveral items inside it.</p>
+    <x-append-button to="container">Add item to list</x-append-button>
+    <script>
+      addSkateListeners('no-match', 1000);
+
+      var container = document.createElement('div');
+      container.id = 'container';
+      appendTestElements(container, 10000);
+      document.body.appendChild(container);
+    </script>
+  </body>
+</html>

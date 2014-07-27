@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib.js"></script>
+    <script src="../src/skate.js"></script>
+    <script src="x-append-button.js"></script>
+  </head>
+  <body>
+    <h1>Scenario 1</h1>
+    <p>Skating several items already in the DOM.</p>
+    <x-append-button to="container">Add item to list</x-append-button>
+    <div id="container"></div>
+    <script>
+      appendTestElements(document.getElementById('container'), 10000);
+      addSkateListeners('no-match', 1000);
+    </script>
+  </body>
+</html>
