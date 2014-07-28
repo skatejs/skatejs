@@ -367,6 +367,20 @@ It is favourable to use a constructor in your code wherever possible because it 
     // Asynchronously calls the `insert` callback.
     document.body.appendChild(element);
 
+### Performance
+
+Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM, read the next secion on ignoring elements to find out how to speed it up.
+
+### Ignoring Elements
+
+Sometimes you may want to ignore a particular DOM tree. All you need to do is add the `data-skate-ignore` attribute to the container that you want to ignore:
+
+    <div data-skate-ignore>
+      <!-- Everything including the container will be ignored. -->
+    </div>
+
+This will prevent Skate from traversing that particular tree and eliminate any overhead it otherwise would have incurred.
+
 License
 -------
 
