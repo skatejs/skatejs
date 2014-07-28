@@ -1158,6 +1158,7 @@
         }
 
         if (mutation.removedNodes) {
+          // We can't check batched nodes here because they won't have a parent node.
           removeElements(mutation.removedNodes);
         }
       });
