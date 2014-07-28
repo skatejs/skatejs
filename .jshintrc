@@ -6,8 +6,14 @@
   "curly": true,
   "eqeqeq": true,
   "globals": {
+      "afterEach": false,
+      "assert": false,
       "define": false,
+      "describe": false,
       "document": false,
+      "expect": false,
+      "it": false,
+      "skate": false,
       "window": false
     },
   "immed": true,
