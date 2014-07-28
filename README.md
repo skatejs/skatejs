@@ -182,10 +182,10 @@ A notable difference, though, is that this callback gets called for attributes t
 
 This is called for each attribute on an element when:
 
-- An element is inserted with attributes already on it.
-- Attributes are added to an element.
-- Attributes are modified.
-- Attributes are removed.
+- The element is inserted with attributes already on it.
+- Attributes are added to the element.
+- Attributes on the element are updated.
+- Attributes are removed from the element.
 
 The second form of a callback takes an object of attribues and handlers.
 
@@ -199,9 +199,9 @@ The second form of a callback takes an object of attribues and handlers.
 
 This allows you to specify which attributes you want to listen to and will call the specified function when:
 
-- A processed element is inserted with the corresponding attribute already on it.
-- The corresponding attribute is added to the processed element.
-- The corresponding attribute is updated on the processed element.
+- The is inserted with the corresponding attribute already on it.
+- The corresponding attribute is added to the element.
+- The corresponding attribute is updated on the element.
 
 The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
 
@@ -223,16 +223,16 @@ The third form gives you more granularity and flexibility, and is the same form 
 
 The `insert` handler gets called when:
 
-- A processed element is inserted with the corresponding attribute already on it.
-- The corresponding attribute is added to the processed element.
+- The element is inserted with the corresponding attribute already on it.
+- The corresponding attribute is added to the element.
 
 The `update` handler gets called when:
 
-- The corresponding attribute is updated on the processed element.
+- The corresponding attribute is updated on the element.
 
 The `remove` handler gets called when:
 
-- The corresponding attribute is removed from the processed element.
+- The corresponding attribute is removed from the element.
 
 ### Event Binding
 
