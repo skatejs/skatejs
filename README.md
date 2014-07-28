@@ -207,17 +207,19 @@ The third form gives you more granularity and flexibility, and is the same form 
 
     skate('my-component', {
       attributes: {
-      	insert: function (element, change) {
+      	'my-attribute-name': {
+          insert: function (element, change) {
 
-      	},
+          },
 
-      	update: function (element, change) {
+          update: function (element, change) {
 
-      	},
+          },
 
-      	remove: function (element, change) {
+          remove: function (element, change) {
 
-      	}
+          }
+        }
       }
     });
 
