@@ -165,7 +165,7 @@ Without full web-component support, we can only emulate the `ready` callback to 
 
 It is possible to render the entire DOM tree and then define your components, however, this is not recommended for several reasons:
 
-- Skate must scour the entire DOM tree for components to process (this is faster than `querySelectorAll` in large DOMs). It attempts to minmise the impact of subsequent `skate()` by debouncing the initialisation process.
+- Skate must scour the entire DOM tree for components to process (this is faster than `querySelectorAll` in large DOMs). It minimises the impact of subsequent calls to `skate()` by debouncing the initialisation process.
 - If you have any elements in the DOM already and the component adds CSS rules to ensure the component elements are hidden until augmented, these elements may disappear and then reappear after they have been processed.
 
 ### Attribute Lifecycle
