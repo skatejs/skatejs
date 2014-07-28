@@ -679,8 +679,10 @@
       document.getElementById('container-1').innerHTML = '<div><div></div></div>';
 
       // Now register.
-      skate('div', function () {
-        ++called;
+      skate('div', {
+        insert: function () {
+          ++called;
+        }
       });
 
       // Ensure the document is sync'd.
