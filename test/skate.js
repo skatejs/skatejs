@@ -73,7 +73,8 @@
 
         skate('my-element', {
           type: type,
-          insert: function () {
+          ready: function (el) {
+            console.log(el);
             ++calls;
           }
         });
@@ -98,9 +99,9 @@
     }
 
     describe('tags, attributes and classes', function () {
-      //assertType(skate.types.TAG, 2);
+      assertType(skate.types.TAG, 2);
       assertType(skate.types.ATTR, 1);
-      //assertType(skate.types.CLASS, 1);
+      assertType(skate.types.CLASS, 1);
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
@@ -251,17 +252,17 @@
 
       skate('div', {
         attributes: {
-          gaga: {
+          open: {
             insert: function (element, data) {
               inserted = true;
               data.newValue.should.equal('insert');
-              element.setAttribute('gaga', 'update');
+              element.setAttribute('open', 'update');
             },
             update: function (element, data) {
               updated = true;
               data.oldValue.should.equal('insert');
               data.newValue.should.equal('update');
-              element.removeAttribute('gaga');
+              element.removeAttribute('open');
             },
             remove: function (element, data) {
               inserted.should.equal(true);
@@ -273,7 +274,7 @@
         }
       });
 
-      skate.init(add('div')).setAttribute('gaga', 'insert');
+      skate.init(add('div')).setAttribute('open', 'insert');
     });
 
     it('should accept a function insead of an object for a particular attribute definition.', function (done) {
@@ -409,16 +410,14 @@
       numReady.should.equal(2);
       numInsert.should.equal(2);
 
-      window.gagas = true;
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
 
       // Mutation Observers are async.
       setTimeout(function () {
-        window.gagas = false;
         numRemove.should.equal(2);
         done();
-      }, 100);
+      });
     });
 
     it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {

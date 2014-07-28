@@ -3,6 +3,7 @@
   'use strict';
 
 
+
   // Constants
   // ---------
 
@@ -14,24 +15,123 @@
   // Global Variables
   // ----------------
 
-  // The observer used to check all elements as they're added to the DOM.
-  var documentObserver;
-
-  // True after DOMContentLoaded fires and the first initalisation occurs.
-  var domContentLoaded = false;
-
   // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
   // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
   // prevent any jank if the ready() callback modifies the element.
   var hiddenRules = document.createElement('style');
 
+  // The observer listening to document changes.
+  var documentListener;
+
+  // Whether or not the DOM has been updated. Default to `true` so the first call to `initDocument()` works.
+  var domUpdated = true;
+
   // The skate component registry.
-  var skateComponents = {};
+  var registry = {};
 
 
 
-  // Observers
-  // ---------
+  // Element Map
+  // -----------
+
+  /**
+   * Kinda like a weak map, but specifically for elements and is more performant that polyfillying ES6 the WeakMap just
+   * for this one purpose.
+   *
+   * @var {Function}
+   */
+  var ElementMap = function () {
+    this.map = [];
+  };
+
+  ElementMap.prototype = {
+    /**
+     * Clears the element mapping.
+     *
+     * @returns {ElementMap}
+     */
+    clear: function () {
+      this.map = [];
+      return this;
+    },
+
+    /**
+     * Returns the value stored against the specified element.
+     *
+     * @param {Element} element The element to get the value for.
+     *
+     * @returns {Mixed}
+     */
+    get: function (element) {
+      var index = this.index(element);
+
+      if (index > -1) {
+        return this.map[index];
+      }
+    },
+
+    /**
+     * Returns the index for the element or -1 if it doesn't exist in the map.
+     *
+     * @param {Element} element The element to get the index for.
+     *
+     * @returns {Integer}
+     */
+    index: function (element) {
+      var index = getData(element, 'element-map-index');
+
+      if (index > -1) {
+        return index;
+      }
+
+      return -1;
+    },
+
+    /**
+     * Returns the values stored for each element.
+     *
+     * @returns {Array}
+     */
+    items: function () {
+      return this.map;
+    },
+
+    /**
+     * Sets a value for the given element.
+     *
+     * @param {Element} element The element to store the value against.
+     * @Param {Mixed} value The value to store.
+     *
+     * @returns {ElementMap}
+     */
+    set: function (element, value) {
+      var index = this.index(element);
+
+      if (index > -1) {
+        this.map[index] = value;
+      } else {
+        setData(element, 'element-map-index', this.map.length);
+        this.map.push(value);
+      }
+
+      return this;
+    }
+  };
+
+
+
+  // Mutation Observer "Polyfill"
+  // ----------------------------
+  //
+  // TODO: Try using DOMSubtree modified and diffing the children rather than using DOMNodeInserted and eliminating
+  // nodes that aren't first children.
+  //
+  // TODO: Share more code between the insertHandler and the removeHandler.
+  //
+  // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
+  // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
+  // Like mutation observers, each mutation is divided into sibling groups for each parent that had mutations. All
+  // attribute mutations are batched into separate records regardless of the element they occured on.
 
   // Normalise the mutaiton observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
@@ -45,67 +145,6 @@
 
     MutationObserver.prototype = {
       observe: function (target, options) {
-        var that = this;
-        var attributeOldValueCache = {};
-        var item = {
-          target: target,
-          options: options,
-          insertHandler: function (e) {
-            if (!canTriggerInsertOrRemove(e)) {
-              return;
-            }
-
-            that.callback([
-              mutationRecord(e, {
-                addedNodes: [e.target]
-              })
-            ]);
-          },
-          removeHandler: function (e) {
-            if (!canTriggerInsertOrRemove(e)) {
-              return;
-            }
-
-            that.callback([
-              mutationRecord(e, {
-                removedNodes: [e.target]
-              })
-            ]);
-          },
-          attributeHandler: function (e) {
-            if (!canTriggerAttributeModification(e)) {
-              return;
-            }
-
-            that.callback([
-              mutationRecord(e, {
-                attributeName: e.attrName,
-                oldValue: options.attributeOldValue ? (attributeOldValueCache[e.attrName] || e.prevValue || null) : null,
-                type: 'attributes'
-              })
-            ]);
-
-            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
-            // actually correct.
-            if (options.attributeOldValue) {
-              attributeOldValueCache[e.attrName] = e.newValue;
-            }
-          }
-        };
-
-        this.elements.push(item);
-
-        if (options.childList) {
-          target.addEventListener('DOMSubtreeModified', item.insertHandler);
-          target.addEventListener('DOMNodeRemoved', item.removeHandler);
-        }
-
-        if (options.attributes) {
-          target.addEventListener('DOMAttrModified', item.attributeHandler);
-        }
-
-        return this;
-
         function canTriggerInsertOrRemove (e) {
           return options.childList && (options.subtree || e.target.parentNode === target);
         }
@@ -114,26 +153,138 @@
           return e.target === target;
         }
 
-        function mutationRecord (e, merge) {
-          return inherit(merge, {
-            addedNodes: null,
-            attributeName: null,
-            attributeNamespace: null,
-            nextSibling: e.target.nextSibling,
-            oldValue: null,
-            previousSibling: e.target.previousSibling,
-            removedNodes: null,
-            target: e.target,
-            type: 'childList'
-          });
+        var batchInsertRemove = debounce(function () {
+          that.callback(map.items());
+          map.clear();
+          lastInserted = undefined;
+          lastRemoved = undefined;
+        });
+
+        var batchAttributeMods = debounce(function () {
+          // We keep track of the old length just in case attributes are modified within a handler.
+          var len = attributeMutations.length;
+
+          // Call the handler with the current modifications.
+          that.callback(attributeMutations);
+
+          // We remove only up to the current point just in case more modifications were queued.
+          attributeMutations.splice(0, len);
+        });
+
+        var that = this;
+        var attributeOldValueCache = {};
+        var map = new ElementMap();
+
+        var lastInserted;
+        var lastRemoved;
+        var attributeMutations = [];
+
+        var observed = {
+          target: target,
+          options: options,
+          insertHandler: function (e) {
+            if (!canTriggerInsertOrRemove(e)) {
+              return;
+            }
+
+            if (lastInserted && lastInserted.contains(e.target)) {
+              return;
+            }
+
+            var parent = e.target.parentNode;
+            var record = map.get(parent);
+
+            if (record) {
+              if (!record.addedNodes) {
+                record.addedNodes = [];
+              }
+
+              record.addedNodes.push(e.target);
+            } else {
+              record = newMutationRecord(parent);
+              record.addedNodes = [];
+
+              record.addedNodes.push(e.target);
+              map.set(parent, record);
+            }
+
+            lastInserted = parent;
+
+            batchInsertRemove();
+          },
+          removeHandler: function (e) {
+            if (!canTriggerInsertOrRemove(e)) {
+              return;
+            }
+
+            if (lastRemoved && lastRemoved.contains(e.target)) {
+              return;
+            }
+
+            var parent = e.target.parentNode;
+            var record = map.get(parent);
+
+            if (record) {
+              if (!record.removedNodes) {
+                record.removedNodes = [];
+              }
+
+              record.removedNodes.push(e.target);
+            } else {
+              record = newMutationRecord(parent);
+              record.removedNodes = [];
+
+              record.removedNodes.push(e.target);
+              map.set(parent, record);
+            }
+
+            lastRemoved = e.target;
+
+            batchInsertRemove();
+          },
+          attributeHandler: function (e) {
+            if (!canTriggerAttributeModification(e)) {
+              return;
+            }
+
+            var record = newMutationRecord(e.target, 'attributes');
+            record.attributeName = e.attrName;
+
+            if (options.attributeOldValue) {
+              record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
+            }
+
+            attributeMutations.push(record);
+
+            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
+            // actually correct.
+            if (options.attributeOldValue) {
+              attributeOldValueCache[e.attrName] = e.newValue;
+            }
+
+            batchAttributeMods();
+          }
+        };
+
+        this.elements.push(observed);
+
+        if (options.childList) {
+          target.addEventListener('DOMNodeInserted', observed.insertHandler);
+          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
         }
+
+        if (options.attributes) {
+          target.addEventListener('DOMAttrModified', observed.attributeHandler);
+        }
+
+        return this;
       },
 
       disconnect: function () {
-        objEach(this.elements, function (item) {
-          item.target.removeEventListener('DOMSubtreeModified', item.insertHandler);
-          item.target.removeEventListener('DOMNodeRemoved', item.removeHandler);
-          item.target.removeEventListener('DOMAttrModified', item.attributeHandler);
+        objEach(this.elements, function (observed) {
+          observed.target.removeEventListener('DOMSubtreeModified', observed.insertHandler);
+          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
+          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
         });
 
         this.elements = [];
@@ -142,6 +293,29 @@
       }
     };
   }
+
+  /**
+   * Creates a new mutation record with better defaults.
+   *
+   * @param {Element} target The HTML element that was affected.
+   * @param {String} type The type of mutation.
+   *
+   * @returns {Object}
+   */
+  function newMutationRecord (target, type) {
+    return {
+      addedNodes: null,
+      attributeName: null,
+      attributeNamespace: null,
+      nextSibling: null,
+      oldValue: null,
+      previousSibling: null,
+      removedNodes: null,
+      target: target,
+      type: type || 'childList'
+    };
+  }
+
 
 
   // Public API
@@ -156,33 +330,21 @@
    * @returns {Function} Function or constructor that creates a custom-element for the component.
    */
   function skate (id, component) {
-    // Components must be unique.
-    if (hasOwn(skateComponents, id)) {
-      throw new Error('A component with the ID of "' + id + '" already exists.');
-    }
-
-    // Safe defaults.
-    if (!component) {
-      component = {};
-    }
-
-    // Allow only a function to be specified.
-    if (typeof component === 'function') {
-      component = {
-        insert: component
-      };
-    }
-
     // Set any defaults that weren't passed.
-    inherit(component, skate.defaults);
+    component = inherit(component || {}, skate.defaults);
+
+    // Set the component ID for reference later.
+    component.id = id;
+
+    // Components of a particular type must be unique.
+    if (hasOwn(registry, component.id)) {
+      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
+    }
 
     // Set default template renderer for template strings.
     if (component.template && typeof component.template === 'string') {
       component.template = skate.template[component.renderer](component.template);
     }
-
-    // Register the component.
-    skateComponents[id] = component;
 
     // If doing something on ready, ensure the element is hidden. If not, we don't need to care.
     if (component.ready) {
@@ -192,15 +354,17 @@
       );
     }
 
-    // If we've already initialised on DOMContentLoaded, we must initialise again.
-    // TODO: Optimise this so that if 100's of calls to Skate happen in a large DOM that these get batched.
-    if (domContentLoaded) {
-      skate.init(document.head);
-      skate.init(document.body);
-    }
+    // Register the component.
+    registry[component.id] = component;
+
+    // Ensure existing elements are initialised.
+    initDocument();
+
+    // Ensure the document is being listened to.
+    initDocumentListener();
 
     // Only make and return an element constructor if it can be used as a custom element.
-    if (component.type.indexOf(skate.types.TAG)) {
+    if (component.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(id, component);
     }
   }
@@ -233,6 +397,9 @@
 
     // The events to manage the binding and unbinding of during the component's lifecycle.
     events: false,
+
+    // The ID of the component. This is automatically set in the `skate()` function.
+    id: '',
 
     // Properties and methods to add to each element.
     prototype: {},
@@ -316,12 +483,61 @@
   };
 
   /**
+   * Returns the components for the specified element.
+   *
+   * @param {Element} element The element to get the components for.
+   *
+   * @returns {Array}
+   */
+  skate.components = function (element) {
+    var attrs = element.attributes;
+    var attrsLen = attrs.length;
+    var components = [];
+    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
+
+    if (isComponentOfType(tag, skate.types.TAG)) {
+      return [registry[tag]];
+    }
+
+    for (var a = 0; a < attrsLen; a++) {
+      var attr = attrs[a].nodeName;
+
+      if (isComponentOfType(attr, skate.types.ATTR)) {
+        components.push(registry[attr]);
+      }
+    }
+
+    if (components.length) {
+      return components;
+    }
+
+    var classList = getClassList(element);
+    var classListLen = classList.length;
+
+    for (var b = 0; b < classListLen; b++) {
+      var className = classList[b];
+
+      if (isComponentOfType(className, skate.types.CLASS)) {
+        components.push(registry[className]);
+      }
+    }
+
+    return components;
+  };
+
+  /**
    * Stops listening for new elements. Generally this will only be used in testing.
    *
    * @returns {skate}
    */
   skate.destroy = function () {
-    skateComponents = {};
+    if (documentListener) {
+      documentListener.disconnect();
+      documentListener = undefined;
+    }
+
+    registry = {};
+
     return skate;
   };
 
@@ -333,24 +549,24 @@
    * @returns {skate}
    */
   skate.init = function (element) {
-    if (getClosestIgnoredElement(element)) {
-      return skate;
+    if (element.hasAttribute(ATTR_IGNORE)) {
+      return element;
     }
 
-    var flattened = flattenDomTree(element);
+    // We only initialise each element once.
+    if (!getData(element, 'initialised')) {
+      skate.components(element).forEach(function (component) {
+        triggerLifecycle(element, component);
+      });
 
-    // Initialise each element.
-    for (var a = 0; a < flattened.length; a++) {
-      var current = flattened[a];
-
-      // Check ids and trigger lifecycle for those.
-      var ids = possibleIds(current);
-      for (var b = 0; b < ids.length; b++) {
-        triggerLifecycle(ids[b], skateComponents[ids[b]], current);
-      }
+      // Flag as initialised.
+      setData(element, 'initialised', true);
     }
 
-    return skate;
+    // Go down the tree.
+    initElements(element.childNodes);
+
+    return element;
   };
 
   /**
@@ -361,9 +577,10 @@
    * @returns {Skate}
    */
   skate.unregister = function (id) {
-    delete skateComponents[id];
-    return;
+    delete registry[id];
+    return skate;
   };
+
 
 
   // Lifecycle Triggers
@@ -372,49 +589,43 @@
   /**
    * Triggers the entire element lifecycle if it's not being ignored.
    *
-   * @param {String} id The component ID.
-   * @param {Object} component The component data.
    * @param {Element} target The component element.
+   * @param {Object} component The component data.
    *
    * @returns {undefined}
    */
-  function triggerLifecycle (id, component, target) {
-    if (isElementIgnored(target)) {
-      return;
-    }
-
-    triggerReady(id, component, target, function () {
-      triggerInsert(id, component, target);
+  function triggerLifecycle (target, component) {
+    triggerReady(target, component, function () {
+      setData(target, component.id + '.ready-done', true);
+      triggerInsert(target, component);
     });
   }
 
   /**
    * Triggers the ready lifecycle callback.
    *
-   * @param {String} id The component ID.
-   * @param {Object} component The component data.
    * @param {Element} target The component element.
+   * @param {Object} component The component data.
    * @param {Function} done The callback to execute when the lifecycle callback is finished.
    *
    * @returns {undefined}
    */
-  function triggerReady (id, component, target, done) {
-    var newTarget;
+  function triggerReady (target, component, done) {
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     done = done || function () {};
 
-    if (getData(target, id + '.ready-called')) {
+    if (getData(target, component.id + '.ready-started')) {
       return done();
     }
 
-    setData(target, id + '.ready-called', true);
+    setData(target, component.id + '.ready-started', true);
 
     if (component.template) {
       component.template(target);
     }
 
     inherit(target, component.prototype);
-    addEventListeners(id, target, component.events);
+    addEventListeners(target, component);
 
     if (component.ready && definedMultipleArgs.test(component.ready)) {
       component.ready(target, done);
@@ -429,46 +640,48 @@
   /**
    * Triggers the insert lifecycle callback.
    *
-   * @param {String} id The component ID.
-   * @param {Object} component The component data.
    * @param {Element} target The component element.
+   * @param {Object} component The component data.
    *
    * @returns {undefined}
    */
-  function triggerInsert (id, component, target) {
-    if (getData(target, id + '.insert-called')) {
-      return;
-    }
-
+  function triggerInsert (target, component) {
     if (!target.parentNode) {
       return;
     }
 
-    setData(target, id + '.insert-called', true);
+    if (!getData(target, component.id + '.ready-done')) {
+      return;
+    }
+
+    if (getData(target, component.id + '.insert-started')) {
+      return;
+    }
+
+    setData(target, component.id + '.insert-started', true);
     addClass(target, component.classname);
 
     if (component.insert) {
       component.insert(target);
     }
 
-    triggerAttributes(id, component, target);
+    addAttributeListeners(target, component);
   }
 
   /**
    * Triggers the remove lifecycle callback.
    *
-   * @param {String} id The component ID.
-   * @param {Object} component The component data.
    * @param {Element} target The component element.
+   * @param {Object} component The component data.
    *
    * @returns {undefined}
    */
-  function triggerRemove (id, component, target) {
-    if (getData(target, id + '.remove-called')) {
+  function triggerRemove (target, component) {
+    if (getData(target, component.id + '.remove-called')) {
       return;
     }
 
-    setData(target, id + '.remove-called', true);
+    setData(target, component.id + '.remove-called', true);
 
     if (component.remove) {
       component.remove(target);
@@ -476,78 +689,14 @@
   }
 
   /**
-   * Triggers the remove lifecycle callback on all of the elements.
-   *
-   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle callback on.
-   *
-   * @returns {undefined}
-   */
-  function triggerRemoveAll (elements) {
-    if (!elements) {
-      return;
-    }
-
-    for (var a = 0; a < elements.length; a++) {
-      var element = elements[a];
-
-      if (element.nodeType !== 1) {
-        continue;
-      }
-
-      triggerRemoveAll(element.childNodes);
-      possibleIds(element).forEach(function (possibleId) {
-        if (hasOwn(skateComponents, possibleId)) {
-          triggerRemove(possibleId, skateComponents[possibleId], element);
-        }
-      });
-    }
-  }
-
-  /**
    * Binds attribute listeners for the specified attribute handlers.
    *
-   * @param {String} id The component ID.
-   * @param {Object} component The component data.
    * @param {Element} target The component element.
+   * @param {Object} component The component data.
    *
    * @returns {undefined}
    */
-  function triggerAttributes (id, component, target) {
-    if (!component.attributes || getData(target, id + '.attributes-called')) {
-      return;
-    }
-
-    setData(target, id + '.attributes-called', true);
-
-    var observer = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        var type;
-        var name = mutation.attributeName;
-        var attr = target.attributes[name];
-
-        if (attr && mutation.oldValue === null) {
-          type = 'insert';
-        } else if (attr && mutation.oldValue !== null) {
-          type = 'update';
-        } else if (!attr) {
-          type = 'remove';
-        }
-
-        triggerCallback(type, name, attr ? attr.nodeValue : undefined, mutation.oldValue);
-      });
-    });
-
-    observer.observe(target, {
-      attributes: true,
-      attributeOldValue: true
-    });
-
-    // We must initialise each attribute.
-    for (var a = 0; a < target.attributes.length; a++) {
-      var attr = target.attributes[a];
-      triggerCallback('insert', attr.nodeName, attr.nodeValue);
-    }
-
+  function addAttributeListeners (target, component) {
     function triggerCallback (type, name, newValue, oldValue) {
       var callback;
 
@@ -569,10 +718,49 @@
         });
       }
     }
+
+    if (!component.attributes || getData(target, component.id + '.attributes-called')) {
+      return;
+    }
+
+    setData(target, component.id + '.attributes-called', true);
+
+    var attrs = target.attributes;
+    var attrsLen = attrs.length;
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        var type;
+        var name = mutation.attributeName;
+        var attr = attrs[name];
+
+        if (attr && mutation.oldValue === null) {
+          type = 'insert';
+        } else if (attr && mutation.oldValue !== null) {
+          type = 'update';
+        } else if (!attr) {
+          type = 'remove';
+        }
+
+        triggerCallback(type, name, attr ? attr.nodeValue : undefined, mutation.oldValue);
+      });
+    });
+
+    observer.observe(target, {
+      attributes: true,
+      attributeOldValue: true
+    });
+
+    // In default web components, attribute changes aren't triggered for attributes that already exist on an element
+    // when it is bound. This sucks when you want to reuse and separate code for attributes away from your lifecycle
+    // callbacks. Skate will initialise each attribute calling the "insert" callback that already exists on the element.
+    for (var a = 0; a < attrsLen; a++) {
+      var attr = attrs[a];
+      triggerCallback('insert', attr.nodeName, attr.nodeValue);
+    }
   }
 
-  function addEventListeners (id, target, events) {
-    if (typeof events !== 'object') {
+  function addEventListeners (target, component) {
+    if (typeof component.events !== 'object') {
       return;
     }
 
@@ -584,7 +772,7 @@
       };
     }
 
-    objEach(events, function (handler, name) {
+    objEach(component.events, function (handler, name) {
       var evt = parseEvent(name);
       target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
     });
@@ -669,52 +857,6 @@
   }
 
   /**
-   * Returns the possible IDs of the components that the element can have applied to them.
-   *
-   * @param {Element} element The element to get the possible IDs of.
-   *
-   * @returns {Array}
-   */
-  function possibleIds (element) {
-    var ids = {};
-    var attrs = element.attributes;
-
-    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
-    if (isComponentOfType(tag, skate.types.TAG)) {
-      ids[tag] = tag;
-    }
-
-    for (var a = 0; a < attrs.length; a++) {
-      var attribute = attrs[a].nodeName;
-      if (isComponentOfType(attribute, skate.types.ATTR)) {
-        ids[attribute] = attribute;
-      }
-    }
-
-    var classes = getClassList(element);
-    for (var b = 0; b < classes.length; b++) {
-      var classname = classes[b];
-      if (isComponentOfType(classname, skate.types.CLASS)) {
-        ids[classname] = classname;
-      }
-    }
-
-    return Object.keys(ids);
-  }
-
-  /**
-   * Returns whether or not the specified component supports a particular type of component.
-   *
-   * @param {String} id The component ID.
-   * @param {String} type The type to check.
-   *
-   * @returns {Boolean}
-   */
-  function isComponentOfType (id, type) {
-    return hasOwn(skateComponents, id) && skateComponents[id].type.indexOf(type) > -1;
-  }
-
-  /**
    * Returns whether or not the element matches the specified selector.
    *
    * @param {Element} el The element to check.
@@ -789,7 +931,7 @@
       component.prototype = CustomElement.prototype;
 
       // If they use the constructor we don't have to wait until it's inserted.
-      triggerReady(id, component, element);
+      triggerReady(element, component);
 
       return element;
     }
@@ -811,24 +953,12 @@
     var parent = element;
 
     while (parent && parent !== document) {
-      if (isElementIgnored(parent)) {
+      if (parent.hasAttribute(ATTR_IGNORE)) {
         return parent;
       }
 
       parent = parent.parentNode;
     }
-  }
-
-  /**
-   * Returns whether or not the element is ignored.
-   *
-   * @param {Element} element The element to check.
-   *
-   * @returns {Boolean}
-   */
-  function isElementIgnored (element) {
-    var attrs = element.attributes;
-    return attrs && attrs[ATTR_IGNORE];
   }
 
   /**
@@ -845,8 +975,11 @@
     var isTag = type.indexOf(skate.types.TAG) > -1;
     var isAttr = type.indexOf(skate.types.ATTR) > -1;
     var isClass = type.indexOf(skate.types.CLASS) > -1;
-    var negateWith = negateWith ? ':not(' + negateWith + ')' : '';
     var selectors = [];
+
+    if (negateWith) {
+      negateWith = ':not(' + negateWith + ')';
+    }
 
     if (isTag) {
       selectors.push(id + negateWith);
@@ -865,40 +998,15 @@
   }
 
   /**
-   * Flattens the DOM tree into a sequenced array so that you can traverse over each element as if you were recursively
-   * descending down the DOM tree.
+   * Returns whether or not the specified component can be bound using the specified type.
    *
-   * @param {Element} parent The element to flatten.
-   * @param {Array} using The array to push the elements onto. If not specified, this is created automatically.
+   * @param {String} id The component ID.
+   * @param {String} type The component type.
    *
-   * @returns {Array} The flattened tree.
+   * @returns {Boolean}
    */
-  function flattenDomTree (parent, using) {
-    var children = parent.childNodes;
-
-    if (using) {
-      using.push(parent);
-    } else {
-      using = [parent];
-    }
-
-    if (children) {
-      for (var a = 0; a < children.length; a++) {
-        var child = children[a];
-
-        if (child.nodeType !== 1) {
-          continue;
-        }
-
-        if (isElementIgnored(child)) {
-          continue;
-        }
-
-        flattenDomTree(child, using);
-      }
-    }
-
-    return using;
+  function isComponentOfType (id, type) {
+    return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
   }
 
   /**
@@ -955,16 +1063,147 @@
    * @returns {undefined}
    */
   function insertNodeList (element, nodes) {
-    if (nodes && nodes.length) {
-      for (var a = nodes.length - 1; a >= 0; a--) {
-        if (element.childNodes[0]) {
-          element.insertBefore(nodes[a], element.childNodes[0]);
+    var len = nodes.length;
+
+    if (nodes && len) {
+      for (var a = len - 1; a >= 0; a--) {
+        var newNode = nodes[a];
+        var reference = element.childNodes[0];
+
+        if (reference) {
+          element.insertBefore(newNode, reference);
         } else {
-          element.appendChild(nodes[a]);
+          element.appendChild(newNode);
         }
       }
     }
   }
+
+  /**
+   * Initialises a set of elements.
+   *
+   * @param {DOMNodeList | Array} elements A traversable set of elements.
+   *
+   * @returns {undefined}
+   */
+  function initElements (elements) {
+    var len = elements.length;
+
+    for (var a = 0; a < len; a++) {
+      var element = elements[a];
+
+      if (element.nodeType !== 1) {
+        continue;
+      }
+
+      skate.init(element);
+    }
+  }
+
+  /**
+   * Triggers the remove lifecycle callback on all of the elements.
+   *
+   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle callback on.
+   *
+   * @returns {undefined}
+   */
+  function removeElements (elements) {
+    var len = elements.length;
+
+    for (var a = 0; a < len; a++) {
+      var element = elements[a];
+
+      if (element.nodeType !== 1) {
+        continue;
+      }
+
+      var childNodes = element.childNodes;
+
+      removeElements(childNodes);
+      skate.components(element).forEach(removeElemensRemover(element));
+    }
+  }
+
+  /**
+   * Makes a function that calls triggerRemove for the specified element's components.
+   *
+   * @param {Element} element The element to generate the remover for.
+   *
+   * @return {Function}
+   */
+  function removeElemensRemover (element) {
+    return function (component) {
+      triggerRemove(element, component);
+    };
+  }
+
+  /**
+   * Initialises the main listener using mutation obserers.
+   *
+   * @returns {undefined}
+   */
+  function initDocumentListener () {
+    // We only need one document listener.
+    if (documentListener) {
+      return;
+    }
+
+    documentListener = new MutationObserver(function (mutations) {
+      domUpdated = true;
+
+      mutations.forEach(function (mutation) {
+        if (mutation.addedNodes) {
+          // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
+          // is then we don't process any added nodes. This prevents having to check every node.
+          if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
+            initElements(mutation.addedNodes);
+          }
+        }
+
+        if (mutation.removedNodes) {
+          removeElements(mutation.removedNodes);
+        }
+      });
+    });
+
+    documentListener.observe(document, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  /**
+   * Returns a function that will prevent more than one call in a single clock cycle.
+   *
+   * @param {Function} fn The function to call.
+   *
+   * @returns {Function}
+   */
+  function debounce (fn) {
+    var timeout;
+
+    return function () {
+      clearTimeout(timeout);
+      timeout = setTimeout(fn, 1);
+    };
+  }
+
+  /**
+   * Initialises the head and body.
+   *
+   * @returns {undefined}
+   */
+  var initDocument = debounce(function () {
+    if (!domUpdated) {
+      return;
+    }
+
+    var childNodes = document.getElementsByTagName('html')[0].childNodes;
+
+    if (childNodes) {
+      initElements(childNodes);
+    }
+  });
 
 
 
@@ -976,32 +1215,6 @@
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // When the content is loaded, then init the document.
-  document.addEventListener('DOMContentLoaded', function () {
-    skate.init(document.head);
-    skate.init(document.body);
-
-    documentObserver = new MutationObserver(function (mutations) {
-      mutations.forEach(function (mutation) {
-        if (mutation.addedNodes) {
-          for (var a = 0; a < mutation.addedNodes.length; a++) {
-            if (mutation.addedNodes[a].nodeType === 1) {
-              skate.init(mutation.addedNodes[a]);
-            }
-          }
-        }
-
-        triggerRemoveAll(mutation.removedNodes);
-      });
-    });
-
-    documentObserver.observe(document, {
-      childList: true,
-      subtree: true
-    });
-
-    domContentLoaded = true;
-  });
 
 
   // Exporting

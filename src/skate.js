@@ -491,7 +491,7 @@
    */
   skate.components = function (element) {
     var attrs = element.attributes;
-    var attrsLength = attrs.length;
+    var attrsLen = attrs.length;
     var components = [];
     var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
 
@@ -499,8 +499,8 @@
       return [registry[tag]];
     }
 
-    for (var a = 0; a < attrsLength; a++) {
-      var attr = attrs[a].nodeValue;
+    for (var a = 0; a < attrsLen; a++) {
+      var attr = attrs[a].nodeName;
 
       if (isComponentOfType(attr, skate.types.ATTR)) {
         components.push(registry[attr]);
@@ -512,9 +512,9 @@
     }
 
     var classList = getClassList(element);
-    var classListLength = classList.length;
+    var classListLen = classList.length;
 
-    for (var b = 0; b < classListLength; b++) {
+    for (var b = 0; b < classListLen; b++) {
       var className = classList[b];
 
       if (isComponentOfType(className, skate.types.CLASS)) {
