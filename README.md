@@ -125,7 +125,7 @@ The definition is an object of options defining your component.
       // By default, Skate ships with a default templating mechanism that is
       // similar to ShadowDOM templating. This is explained later in the
       // templating section.
-      template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content></section></article>',
+      template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>',
 
       // The binding methods this component supports. For example, if you specify
       // the `type` as `skate.types.TAG`, then the component will only be bound
@@ -142,7 +142,7 @@ The definition is an object of options defining your component.
 
       // This is the class name that is added to the web component in order to
       // display it in the DOM after the `ready` callback is invoked.
-      classname: '__skate',
+      classname: '__skate'
     });
 
 ### Component Lifecycle
