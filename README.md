@@ -308,7 +308,7 @@ And the built-in templating engine would transform this into:
       </article>
     </my-component>
 
-This is very similar to what the Shadow DOM allows you to do with `<content>` tags and its `select` attribute but without the problems that come with attempting to polyfill it.
+This is very similar to what the Shadow DOM allows you to do with the `<content>` tag and its `select` attribute but without the problems that come with attempting to polyfill it.
 
 Additionally, if both paragraphs were removed from the `<section>`, the default content that we specified in the template definition would take their place:
 
