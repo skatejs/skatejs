@@ -44,7 +44,7 @@ If you're still skating old school, we've got you covered. Just make sure it's i
 Docs
 ----
 
-You define a component by calling `skate()` and passing it your component ID and a definition. The ID you speicfy corresponds to one of the following:
+You define a component passing a component ID and definition to the `skate()` function. The ID you specify corresponds to one of the following:
 
 - Tag name
 - Value of the `is` attribute
