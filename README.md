@@ -11,8 +11,10 @@ HTML
 
 JavaScript
 
-    skate('my-component', function(element) {
-      element.textContent = 'Hello, World!';
+    skate('my-component', {
+      ready: function(element) {
+        element.textContent = 'Hello, World!';
+      }
     });
 
 Output
