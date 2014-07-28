@@ -12,7 +12,7 @@ HTML
 JavaScript
 
     skate('my-component', {
-      ready: function(element) {
+      ready: function (element) {
         element.textContent = 'Hello, World!';
       }
     });
