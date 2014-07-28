@@ -170,7 +170,7 @@ It is possible to render the entire DOM tree and then define your components, ho
 
 ### Attribute Lifecycle
 
-An attribute lifecycle definition can take three forms. First, it emulates something similar to what we see in the Web Component spec:
+An attribute lifecycle definition can take three forms. First, it does something similar to what we see in the Web Component spec:
 
     skate('my-component', {
       attributes: function (element, change) {
