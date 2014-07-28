@@ -343,7 +343,7 @@ This is very useful during testing, but can be used for any use case that requir
 
 ### Element Constructors
 
-As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use.
+As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use:
 
     var MyComponent = skate('my-component', {
       ready: function (element) {
