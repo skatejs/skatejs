@@ -346,8 +346,8 @@
       component.template = skate.template.html(component.template);
     }
 
-    // If doing something on ready, ensure the element is hidden. If not, we don't need to care.
-    if (component.ready) {
+    // If doing something that will modify the component's structure, ensure it's not displayed yet.
+    if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
         getSelectorForType(id, component.type, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
