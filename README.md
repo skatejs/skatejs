@@ -21,6 +21,15 @@ Result
 
     <my-component>Hello, World!</my-component>
 
+
+
+Compatibility
+-------------
+
+IE9+ and all evergreens.
+
+
+
 Installing
 ----------
 
@@ -36,15 +45,7 @@ Skate supports AMD if detected and is registered as an anonymous module.
 
 If you're still skating old school, we've got you covered. Just make sure skate is included on the page and you can access it via `window.skate`.
 
-Docs
-----
 
-The full documentation is available at [http://skatejs.github.io/](http://skatejs.github.io/).
-
-Compatibility
--------------
-
-IE9+ and all evergreens.
 
 License
 -------

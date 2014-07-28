@@ -383,7 +383,7 @@
     var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
 
     if (isComponentOfType(tag, skate.types.TAG)) {
-      return [registry[tag]];
+      components.push(registry[tag]);
     }
 
     for (var a = 0; a < attrsLen; a++) {
@@ -392,10 +392,6 @@
       if (isComponentOfType(attr, skate.types.ATTR)) {
         components.push(registry[attr]);
       }
-    }
-
-    if (components.length) {
-      return components;
     }
 
     var classList = getClassList(element);
