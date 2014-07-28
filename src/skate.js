@@ -524,8 +524,13 @@
    * @returns {skate}
    */
   skate.destroy = function () {
-    documentListener = undefined;
+    if (documentListener) {
+      documentListener.disconnect();
+      documentListener = undefined;
+    }
+
     registry = {};
+
     return skate;
   };
 
