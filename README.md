@@ -234,6 +234,8 @@ The `remove` handler gets called when:
 
 - The corresponding attribute is removed from the element.
 
+Callbacks that get fired for attributes that already exist on an element get called after the `insert` callback is triggered.
+
 ### Event Binding
 
 Event binding allows you to declare which events you want to listen for and also offers you the ability to use event delegation, Backbone style.
@@ -338,6 +340,32 @@ This is because the component will not be processed until after the block this c
     element.someCustomMethod();
 
 This is very useful during testing, but can be used for any use case that requires synchronous operation.
+
+### Element Constructors
+
+As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use.
+
+    var MyComponent = skate('my-component', {
+      ready: function (element) {
+        element.textContent = 'something';
+      },
+
+      prototype: function () {
+        logTextContent: function () {
+          console.log(this.textContent);
+        }
+      }
+    });
+
+It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `ready` callback. Only when you insert it into the DOM will the `insert` callback be called:
+
+    var element = new MyComponent();
+
+    // Logs: "something"
+    element.logTextContent();
+
+    // Asynchronously calls the `insert` callback.
+    document.body.appendChild(element);
 
 License
 -------
