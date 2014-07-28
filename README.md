@@ -163,7 +163,7 @@ The `ready` callback can be made asynchronous by specifying a second argument in
 
 Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
 
-It is possible to render the entire DOM tree and then define your components, however, this is not recommended for several reasons:
+It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
 
 - Skate must scour the entire DOM tree for components to process (this is faster than `querySelectorAll` in large DOMs). It minimises the impact of subsequent calls to `skate()` by debouncing the initialisation process.
 - If you have any elements in the DOM already and the component adds CSS rules to ensure the component elements are hidden until augmented, these elements may disappear and then reappear after they have been processed.
