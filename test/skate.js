@@ -73,7 +73,7 @@
 
         skate('my-element', {
           type: type,
-          ready: function () {
+          insert: function () {
             ++calls;
           }
         });
