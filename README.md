@@ -197,7 +197,7 @@ The second form of a callback takes an object of attribues and handlers.
       }
     });
 
-This allows you to specify which attributes you want to listen to and will call the specified function when it when:
+This allows you to specify which attributes you want to listen to and will call the specified function when:
 
 - A processed element is inserted with the corresponding attribute already on it.
 - The corresponding attribute is added to the processed element.
