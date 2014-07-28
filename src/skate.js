@@ -26,9 +26,6 @@
   // Whether or not the DOM has been updated. Default to `true` so the first call to `initDocument()` works.
   var domUpdated = true;
 
-  // The timeout associated with a call to initDocument() to prevent subsequent calls.
-  var initDocumentTimeout;
-
   // The skate component registry.
   var registry = {};
 
@@ -36,10 +33,13 @@
 
   // Element Map
   // -----------
-  //
-  // Kinda like a weak map, but specifically for elements and is more performant that polyfillying ES6 the WeakMap just
-  // for this one purpose.
 
+  /**
+   * Kinda like a weak map, but specifically for elements and is more performant that polyfillying ES6 the WeakMap just
+   * for this one purpose.
+   *
+   * @var {Function}
+   */
   var ElementMap = function () {
     this.map = [];
   };
@@ -128,8 +128,6 @@
   //
   // TODO: Share more code between the insertHandler and the removeHandler.
   //
-  // TODO: Batch attribute modifications.
-  //
   // This "polyfill" only polyfills what we need for Skate to function and also batches updates and only does a very
   // small amount of processing syncronously. The rest is batched on the next tick. Each mutation, like the actual
   // mutation observer, is divided into siblings.
@@ -146,11 +144,29 @@
 
     MutationObserver.prototype = {
       observe: function (target, options) {
+        function canTriggerInsertOrRemove (e) {
+          return options.childList && (options.subtree || e.target.parentNode === target);
+        }
+
+        function canTriggerAttributeModification (e) {
+          return e.target === target;
+        }
+
+        var batchInsertRemove = debounce(function () {
+            that.callback(map.items());
+            map.clear();
+            lastInsertParent = undefined;
+            lastRemoveParent = undefined;
+          });
+        var batchAttributeMods = debounce(function () {
+            that.callback(attributeMutations);
+            attributeMutations = [];
+          });
+
         var that = this;
         var attributeOldValueCache = {};
-
         var map = new ElementMap();
-        var timeout;
+
         var lastInsertParent;
         var lastRemoveParent;
         var attributeMutations = [];
@@ -174,17 +190,19 @@
               if (!record.addedNodes) {
                 record.addedNodes = [];
               }
+
               record.addedNodes.push(e.target);
             } else {
               record = newMutationRecord(parent);
               record.addedNodes = [];
+
               record.addedNodes.push(e.target);
               map.set(parent, record);
             }
 
             lastInsertParent = parent;
 
-            batch();
+            batchInsertRemove();
           },
           removeHandler: function (e) {
             if (!canTriggerInsertOrRemove(e)) {
@@ -202,17 +220,19 @@
               if (!record.removedNodes) {
                 record.removedNodes = [];
               }
+
               record.removedNodes.push(e.target);
             } else {
               record = newMutationRecord(parent);
               record.removedNodes = [];
+
               record.removedNodes.push(e.target);
               map.set(parent, record);
             }
 
             lastRemoveParent = parent;
 
-            batch();
+            batchInsertRemove();
           },
           attributeHandler: function (e) {
             if (!canTriggerAttributeModification(e)) {
@@ -220,9 +240,13 @@
             }
 
             var record = newMutationRecord();
-            record.attributeName = e.attrName,
-            record.oldValue = options.attributeOldValue ? attributeOldValueCache[e.attrName] || e.prevValue || null : null;
+            record.attributeName = e.attrName;
             record.type = 'attributes';
+
+            if (options.attributeOldValue) {
+              record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
+            }
+
             attributeMutations.push(record);
 
             // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
@@ -231,7 +255,7 @@
               attributeOldValueCache[e.attrName] = e.newValue;
             }
 
-            batch();
+            batchAttributeMods();
           }
         };
 
@@ -247,26 +271,6 @@
         }
 
         return this;
-
-        function batch () {
-          clearTimeout(timeout);
-
-          timeout = setTimeout(function () {
-            that.callback(map.items().concat(attributeMutations));
-            map.clear();
-            lastInsertParent = undefined;
-            lastRemoveParent = undefined;
-            attributeMutations = [];
-          }, 1);
-        }
-
-        function canTriggerInsertOrRemove (e) {
-          return options.childList && (options.subtree || e.target.parentNode === target);
-        }
-
-        function canTriggerAttributeModification (e) {
-          return e.target === target;
-        }
       },
 
       disconnect: function () {
@@ -598,7 +602,6 @@
    * @returns {undefined}
    */
   function triggerReady (target, component, done) {
-    var newTarget;
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     done = done || function () {};
 
@@ -685,6 +688,28 @@
    * @returns {undefined}
    */
   function triggerAttributes (target, component) {
+    function triggerCallback (type, name, newValue, oldValue) {
+      var callback;
+
+      if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+        callback = component.attributes[name][type];
+      } else if (component.attributes && typeof component.attributes[name] === 'function') {
+        callback = component.attributes[name];
+      } else if (typeof component.attributes === 'function') {
+        callback = component.attributes;
+      }
+
+      // There may still not be a callback.
+      if (callback) {
+        callback(target, {
+          type: type,
+          name: name,
+          newValue: newValue,
+          oldValue: oldValue
+        });
+      }
+    }
+
     if (!component.attributes || getData(target, component.id + '.attributes-called')) {
       return;
     }
@@ -718,28 +743,6 @@
     for (var a = 0; a < target.attributes.length; a++) {
       var attr = target.attributes[a];
       triggerCallback('insert', attr.nodeName, attr.nodeValue);
-    }
-
-    function triggerCallback (type, name, newValue, oldValue) {
-      var callback;
-
-      if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
-        callback = component.attributes[name][type];
-      } else if (component.attributes && typeof component.attributes[name] === 'function') {
-        callback = component.attributes[name];
-      } else if (typeof component.attributes === 'function') {
-        callback = component.attributes;
-      }
-
-      // There may still not be a callback.
-      if (callback) {
-        callback(target, {
-          type: type,
-          name: name,
-          newValue: newValue,
-          oldValue: oldValue
-        });
-      }
     }
   }
 
@@ -959,8 +962,11 @@
     var isTag = type.indexOf(skate.types.TAG) > -1;
     var isAttr = type.indexOf(skate.types.ATTR) > -1;
     var isClass = type.indexOf(skate.types.CLASS) > -1;
-    var negateWith = negateWith ? ':not(' + negateWith + ')' : '';
     var selectors = [];
+
+    if (negateWith) {
+      negateWith = ':not(' + negateWith + ')';
+    }
 
     if (isTag) {
       selectors.push(id + negateWith);
@@ -1061,31 +1067,6 @@
   }
 
   /**
-   * Initialises the head and body.
-   *
-   * @returns {undefined}
-   */
-  function initDocument () {
-    if (!domUpdated) {
-      return;
-    }
-
-    if (initDocumentTimeout) {
-      clearTimeout(initDocumentTimeout);
-    }
-
-    initDocumentTimeout = setTimeout(function () {
-      domUpdated = false;
-
-      var childNodes = document.getElementsByTagName('html')[0].childNodes;
-
-      if (childNodes) {
-        initElements(childNodes);
-      }
-    }, 1);
-  }
-
-  /**
    * Initialises a set of elements.
    *
    * @param {DOMNodeList | Array} elements A traversable set of elements.
@@ -1126,10 +1107,21 @@
       var childNodes = element.childNodes;
 
       removeElements(childNodes);
-      skate.components(element).forEach(function (component) {
-        triggerRemove(element, component);
-      });
+      skate.components(element).forEach(removeElemensRemover(element));
     }
+  }
+
+  /**
+   * Makes a function that calls triggerRemove for the specified element's components.
+   *
+   * @param {Element} element The element to generate the remover for.
+   *
+   * @return {Function}
+   */
+  function removeElemensRemover (element) {
+    return function (component) {
+      triggerRemove(element, component);
+    };
   }
 
   /**
@@ -1138,6 +1130,7 @@
    * @returns {undefined}
    */
   function initDocumentListener () {
+    // We only need one document listener.
     if (documentListener) {
       return;
     }
@@ -1147,7 +1140,9 @@
 
       mutations.forEach(function (mutation) {
         if (mutation.addedNodes) {
-          if (!getClosestIgnoredElement(mutation.addedNodes[0])) {
+          // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
+          // is then we don't process any added nodes. This prevents having to check every node.
+          if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
             initElements(mutation.addedNodes);
           }
         }
@@ -1163,6 +1158,39 @@
       subtree: true
     });
   }
+
+  /**
+   * Returns a function that will prevent more than one call in a single clock cycle.
+   *
+   * @param {Function} fn The function to call.
+   *
+   * @returns {Function}
+   */
+  function debounce (fn) {
+    var timeout;
+
+    return function () {
+      clearTimeout(timeout);
+      timeout = setTimeout(fn, 1);
+    };
+  }
+
+  /**
+   * Initialises the head and body.
+   *
+   * @returns {undefined}
+   */
+  var initDocument = debounce(function () {
+    if (!domUpdated) {
+      return;
+    }
+
+    var childNodes = document.getElementsByTagName('html')[0].childNodes;
+
+    if (childNodes) {
+      initElements(childNodes);
+    }
+  });
 
 
 
