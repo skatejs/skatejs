@@ -350,7 +350,7 @@ As with the spec, when you define a component that is compatible with tag bindin
         element.textContent = 'something';
       },
 
-      prototype: function () {
+      prototype: {
         logTextContent: function () {
           console.log(this.textContent);
         }
