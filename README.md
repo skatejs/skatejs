@@ -327,7 +327,7 @@ If you decide you want to put some content back in, then it will remove the defa
 
 ### Asynchronous Nature
 
-Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, methods and properties on that element will not be available right away. This will not work:
+Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
     document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
 
