@@ -17,7 +17,7 @@ JavaScript
       }
     });
 
-Output
+Result
 
     <my-component>Hello, World!</my-component>
 
