@@ -39,7 +39,7 @@ Skate supports AMD if detected and is registered as an anonymous module.
 
 ### Global
 
-If you're still skating old school, we've got you covered. Just make sure skate is included on the page and you can access it via `window.skate`.
+If you're still skating old school, we've got you covered. Just make sure it's included on the page and you can access it via `window.skate`.
 
 Docs
 ----
