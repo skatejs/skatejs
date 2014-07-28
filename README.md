@@ -53,27 +53,27 @@ You define a component passing a component ID and definition to the `skate()` fu
 
 The definition is an object of options defining your component.
 
-  	skate('my-component', {
+    skate('my-component', {
       // Called before the element is displayed. This can be made asynchronous
       // by defining a second argument in the method signature. You would then
       // call that argument as a function to tell the component it's ok to
       // proceed with its lifecycle. If the second argument is not provided, it
       // is assumed everything in the callback is synchronous.
-  	  ready: function (element, done) {
+      ready: function (element, done) {
 
-  	  },
+      },
 
       // Called after the element is displayed.
-  	  insert: function (element) {
+      insert: function (element) {
 
-  	  },
+      },
 
       // Called after the element is removed.
-  	  remove: function (element) {
+      remove: function (element) {
 
-  	  },
+      },
 
-  	  // Attribute callbacks that get triggered when attributes on the main web
+      // Attribute callbacks that get triggered when attributes on the main web
       // component are inserted, updated or removed. Each callback gets the
       // element that the change occurred on and the corresponding changes. The
       // change object contains the following information:
@@ -143,7 +143,7 @@ The definition is an object of options defining your component.
       // This is the class name that is added to the web component in order to
       // display it in the DOM after the `ready` callback is invoked.
       classname: '__skate',
-  	});
+    });
 
 ### Component Lifecycle
 
@@ -155,11 +155,11 @@ The component lifecycle consists of three callbacks:
 
 The `ready` callback can be made asynchronous by specifying a second argument in the callback. If this argument is found, it will pass a callback to it which when called will cause the lifecycle to continue by displaying the element and then calling the `insert` callback.
 
-	skate('my-component', {
-	  ready: function (element, done) {
-	  	doSomethingAsync().then(done);
-	  }
-	});
+    skate('my-component', {
+      ready: function (element, done) {
+      	doSomethingAsync().then(done);
+      }
+    });
 
 Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
 
@@ -205,21 +205,21 @@ This allows you to specify which attributes you want to listen to and will call 
 
 The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
 
-	skate('my-component', {
-	  attributes: {
-	  	insert: function (element, change) {
+    skate('my-component', {
+      attributes: {
+      	insert: function (element, change) {
 
-	  	},
+      	},
 
-	  	update: function (element, change) {
+      	update: function (element, change) {
 
-	  	},
+      	},
 
-	  	remove: function (element, change) {
+      	remove: function (element, change) {
 
-	  	}
-	  }
-	});
+      	}
+      }
+    });
 
 The `insert` handler gets called when:
 
@@ -260,17 +260,17 @@ Events listeners are not automatically removed from the element when it is remov
 
 Skate gives you the option to specify custom properties and methods on your component.
 
-	skate('my-component', {
-	  prototype: {
-        callMeLikeAnyNativeMethod: function () {
+    skate('my-component', {
+      prototype: {
+          callMeLikeAnyNativeMethod: function () {
 
+          }
         }
-      }
-	});
+    });
 
 These members are applied directly to the element instance that your component is bound to so you can do stuff like this:
 
-	document.getElementById('my-component-id').callMeLikeanyNativeMethod();
+    document.getElementById('my-component-id').callMeLikeanyNativeMethod();
 
 It's important to understand that the `Element.prototype` is not modified as part of this process.
 
@@ -280,9 +280,9 @@ A simple templating engine is bundled with Skate. It gives you the ability to us
 
 As we saw above:
 
-	skate('my-component', {
-	  template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>'
-	});
+    skate('my-component', {
+      template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>'
+    });
 
 We can now insert our component into the DOM:
 
@@ -294,32 +294,50 @@ We can now insert our component into the DOM:
 
 And the built-in templating engine would transform this into:
 
-	<my-component>
-	  <article>
-	  	<h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
-	  	<section data-skate-content>
-          <p>First paragraph.</p>
-          <p>Second paragraph.</p>
-	  	</section>
-	  </article>
-	</my-component>
+    <my-component>
+      <article>
+      	<h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
+      	<section data-skate-content>
+            <p>First paragraph.</p>
+            <p>Second paragraph.</p>
+      	</section>
+      </article>
+    </my-component>
 
 This is very similar to what the Shadow DOM allows you to do with `<content>` tags and its `select` attribute but without the problems that come with attempting to polyfill it.
 
 Additionally, if both paragraphs were removed from the `<section>`, the default content that we specified in the template definition would take their place:
 
-	<my-component>
-	  <article>
-	  	<h3 data-skate-content=".heading">
-	  		<span class="heading">My Heading</span>
-	  	</h3>
-	  	<section data-skate-content>
-          <p>There is no content to display.</p>
-	  	</section>
-	  </article>
-	</my-component>
+    <my-component>
+      <article>
+      	<h3 data-skate-content=".heading">
+      		<span class="heading">My Heading</span>
+      	</h3>
+      	<section data-skate-content>
+            <p>There is no content to display.</p>
+      	</section>
+      </article>
+    </my-component>
 
 If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
+
+### Asynchronous Nature
+
+Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, methods and properties on that element will not be available right away. This will not work:
+
+    document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
+
+    document.getElementById('my-component-id').someCustomMethod();
+
+This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicity initialise it in a synchronous manner using `skate.init()`:
+
+    var element = document.getElementById('my-component-id');
+
+    skate.init(element);
+
+    element.someCustomMethod();
+
+This is very useful during testing, but can be used for any use case that requires synchronous operation.
 
 License
 -------
