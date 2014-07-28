@@ -73,8 +73,7 @@
 
         skate('my-element', {
           type: type,
-          ready: function (el) {
-            console.log(el);
+          ready: function () {
             ++calls;
           }
         });

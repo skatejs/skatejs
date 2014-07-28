@@ -343,7 +343,7 @@
 
     // Set default template renderer for template strings.
     if (component.template && typeof component.template === 'string') {
-      component.template = skate.template[component.renderer](component.template);
+      component.template = skate.template.html(component.template);
     }
 
     // If doing something on ready, ensure the element is hidden. If not, we don't need to care.
@@ -368,119 +368,6 @@
       return makeElementConstructor(id, component);
     }
   }
-
-  // Makes checking the version easy when debugging.
-  skate.version = '0.9.0';
-
-  // Restriction type constants.
-  skate.types = {
-    ANY: 'act',
-    ATTR: 'a',
-    CLASS: 'c',
-    NOATTR: 'ct',
-    NOCLASS: 'at',
-    NOTAG: 'ac',
-    TAG: 't'
-  };
-
-  /**
-   * The default options for a component.
-   *
-   * @var {Object}
-   */
-  skate.defaults = {
-    // Attribute lifecycle callback or callbacks.
-    attributes: false,
-
-    // The classname to use when showing this component.
-    classname: '__skate',
-
-    // The events to manage the binding and unbinding of during the component's lifecycle.
-    events: false,
-
-    // The ID of the component. This is automatically set in the `skate()` function.
-    id: '',
-
-    // Properties and methods to add to each element.
-    prototype: {},
-
-    // The default template renderer.
-    renderer: 'html',
-
-    // The template to replace the content of the element with.
-    template: false,
-
-    // The type of bindings to allow.
-    type: skate.types.ANY
-  };
-
-  /**
-   * Default template renderers.
-   *
-   * @var {Object}
-   */
-  skate.template = {};
-
-  /**
-   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
-   *
-   * Differences:
-   *
-   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
-   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
-   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
-   *
-   * Usage:
-   *
-   *     skate('something', {
-   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
-   *     });
-   *
-   * @param {String} templateString The HTML template string to use.
-   *
-   * @returns {Function} The function for rendering the template.
-   */
-  skate.template.html = function (templateString) {
-    var template = createFragmentFromString(templateString);
-    var contentMutationObserver = new MutationObserver(function (mutations) {
-        for (var a = 0; a < mutations.length; a++) {
-          var mutation = mutations[a];
-
-          if (!mutation.target.children.length) {
-            mutation.target.innerHTML = getData(mutation.target, 'default-content');
-          }
-        }
-      });
-
-    return function (target) {
-      var targetFragment = createFragmentFromString(target.innerHTML);
-      var targetTemplate = template.cloneNode(true);
-      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
-      var hasContentNodes = contentNodes && contentNodes.length;
-
-      if (hasContentNodes) {
-        for (var a = 0; a < contentNodes.length; a++) {
-          var contentNode = contentNodes[a];
-          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
-
-          // Save the default content so we can use it when all nodes are removed from the content.
-          setData(contentNode, 'default-content', contentNode.innerHTML);
-
-          if (foundNodes && foundNodes.length) {
-            contentNode.innerHTML = '';
-            insertNodeList(contentNode, foundNodes);
-          }
-
-          contentMutationObserver.observe(contentNode, {
-            childList: true
-          });
-        }
-      }
-
-      target.innerHTML = '';
-      target.appendChild(targetTemplate);
-    };
-  };
 
   /**
    * Returns the components for the specified element.
@@ -570,6 +457,85 @@
   };
 
   /**
+   * Default template renderers.
+   *
+   * @var {Object}
+   */
+  skate.template = {};
+
+  /**
+   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
+   *
+   * Differences:
+   *
+   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
+   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
+   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
+   *
+   * Usage:
+   *
+   *     skate('something', {
+   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
+   *     });
+   *
+   * @param {String} templateString The HTML template string to use.
+   *
+   * @returns {Function} The function for rendering the template.
+   */
+  skate.template.html = function (templateString) {
+    var template = createFragmentFromString(templateString);
+    var contentMutationObserver = new MutationObserver(function (mutations) {
+        for (var a = 0; a < mutations.length; a++) {
+          var mutation = mutations[a];
+
+          if (!mutation.target.children.length) {
+            mutation.target.innerHTML = getData(mutation.target, 'default-content');
+          }
+        }
+      });
+
+    return function (target) {
+      var targetFragment = createFragmentFromString(target.innerHTML);
+      var targetTemplate = template.cloneNode(true);
+      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
+      var hasContentNodes = contentNodes && contentNodes.length;
+
+      if (hasContentNodes) {
+        for (var a = 0; a < contentNodes.length; a++) {
+          var contentNode = contentNodes[a];
+          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+
+          // Save the default content so we can use it when all nodes are removed from the content.
+          setData(contentNode, 'default-content', contentNode.innerHTML);
+
+          if (foundNodes && foundNodes.length) {
+            contentNode.innerHTML = '';
+            insertNodeList(contentNode, foundNodes);
+          }
+
+          contentMutationObserver.observe(contentNode, {
+            childList: true
+          });
+        }
+      }
+
+      target.innerHTML = '';
+      target.appendChild(targetTemplate);
+    };
+  };
+
+  // Restriction type constants.
+  skate.types = {
+    ANY: 'act',
+    ATTR: 'a',
+    CLASS: 'c',
+    NOATTR: 'ct',
+    NOCLASS: 'at',
+    NOTAG: 'ac',
+    TAG: 't'
+  };
+
+  /**
    * Unregisters the specified component.
    *
    * @param {String} id The ID of the component to unregister.
@@ -579,6 +545,37 @@
   skate.unregister = function (id) {
     delete registry[id];
     return skate;
+  };
+
+  // Makes checking the version easy when debugging.
+  skate.version = '0.9.0';
+
+  /**
+   * The default options for a component.
+   *
+   * @var {Object}
+   */
+  skate.defaults = {
+    // Attribute lifecycle callback or callbacks.
+    attributes: false,
+
+    // The classname to use when showing this component.
+    classname: '__skate',
+
+    // The events to manage the binding and unbinding of during the component's lifecycle.
+    events: false,
+
+    // The ID of the component. This is automatically set in the `skate()` function.
+    id: '',
+
+    // Properties and methods to add to each element.
+    prototype: {},
+
+    // The template to replace the content of the element with.
+    template: false,
+
+    // The type of bindings to allow.
+    type: skate.types.ANY
   };
 
 
