@@ -191,7 +191,7 @@ The second form of a callback takes an object of attribues and handlers.
 
     skate('my-component', {
       attributes: {
-        'my-attribute-name': function handleInsertAndUpdate (element, change) {
+        'my-attribute': function handleInsertAndUpdate (element, change) {
 
         }
       }
@@ -207,7 +207,7 @@ The third form gives you more granularity and flexibility, and is the same form 
 
     skate('my-component', {
       attributes: {
-      	'my-attribute-name': {
+      	'my-attribute': {
           insert: function (element, change) {
 
           },
