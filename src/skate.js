@@ -128,9 +128,10 @@
   //
   // TODO: Share more code between the insertHandler and the removeHandler.
   //
-  // This "polyfill" only polyfills what we need for Skate to function and also batches updates and only does a very
-  // small amount of processing syncronously. The rest is batched on the next tick. Each mutation, like the actual
-  // mutation observer, is divided into siblings.
+  // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
+  // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
+  // Like mutation observers, each mutation is divided into sibling groups for each parent that had mutations. All
+  // attribute mutations are batched into separate records regardless of the element they occured on.
 
   // Normalise the mutaiton observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
@@ -153,22 +154,29 @@
         }
 
         var batchInsertRemove = debounce(function () {
-            that.callback(map.items());
-            map.clear();
-            lastInsertParent = undefined;
-            lastRemoveParent = undefined;
-          });
+          that.callback(map.items());
+          map.clear();
+          lastInserted = undefined;
+          lastRemoved = undefined;
+        });
+
         var batchAttributeMods = debounce(function () {
-            that.callback(attributeMutations);
-            attributeMutations = [];
-          });
+          // We keep track of the old length just in case attributes are modified within a handler.
+          var len = attributeMutations.length;
+
+          // Call the handler with the current modifications.
+          that.callback(attributeMutations);
+
+          // We remove only up to the current point just in case more modifications were queued.
+          attributeMutations.splice(0, len);
+        });
 
         var that = this;
         var attributeOldValueCache = {};
         var map = new ElementMap();
 
-        var lastInsertParent;
-        var lastRemoveParent;
+        var lastInserted;
+        var lastRemoved;
         var attributeMutations = [];
 
         var observed = {
@@ -179,7 +187,7 @@
               return;
             }
 
-            if (lastInsertParent && lastInsertParent.contains(e.target)) {
+            if (lastInserted && lastInserted.contains(e.target)) {
               return;
             }
 
@@ -200,7 +208,7 @@
               map.set(parent, record);
             }
 
-            lastInsertParent = parent;
+            lastInserted = parent;
 
             batchInsertRemove();
           },
@@ -209,7 +217,7 @@
               return;
             }
 
-            if (lastRemoveParent && lastRemoveParent.contains(e.target)) {
+            if (lastRemoved && lastRemoved.contains(e.target)) {
               return;
             }
 
@@ -230,7 +238,7 @@
               map.set(parent, record);
             }
 
-            lastRemoveParent = parent;
+            lastRemoved = e.target;
 
             batchInsertRemove();
           },
@@ -239,9 +247,8 @@
               return;
             }
 
-            var record = newMutationRecord();
+            var record = newMutationRecord(e.target, 'attributes');
             record.attributeName = e.attrName;
-            record.type = 'attributes';
 
             if (options.attributeOldValue) {
               record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
@@ -543,7 +550,7 @@
    */
   skate.init = function (element) {
     if (element.hasAttribute(ATTR_IGNORE)) {
-      return skate;
+      return element;
     }
 
     // We only initialise each element once.
@@ -559,7 +566,7 @@
     // Go down the tree.
     initElements(element.childNodes);
 
-    return skate;
+    return element;
   };
 
   /**
@@ -570,10 +577,7 @@
    * @returns {Skate}
    */
   skate.unregister = function (id) {
-    objEach(registry, function (type) {
-      delete type[id];
-    });
-
+    delete registry[id];
     return skate;
   };
 
@@ -661,7 +665,7 @@
       component.insert(target);
     }
 
-    triggerAttributes(target, component);
+    addAttributeListeners(target, component);
   }
 
   /**
@@ -692,7 +696,7 @@
    *
    * @returns {undefined}
    */
-  function triggerAttributes (target, component) {
+  function addAttributeListeners (target, component) {
     function triggerCallback (type, name, newValue, oldValue) {
       var callback;
 
@@ -721,11 +725,13 @@
 
     setData(target, component.id + '.attributes-called', true);
 
+    var attrs = target.attributes;
+    var attrsLen = attrs.length;
     var observer = new MutationObserver(function (mutations) {
       mutations.forEach(function (mutation) {
         var type;
         var name = mutation.attributeName;
-        var attr = target.attributes[name];
+        var attr = attrs[name];
 
         if (attr && mutation.oldValue === null) {
           type = 'insert';
@@ -744,9 +750,11 @@
       attributeOldValue: true
     });
 
-    // We must initialise each attribute.
-    for (var a = 0; a < target.attributes.length; a++) {
-      var attr = target.attributes[a];
+    // In default web components, attribute changes aren't triggered for attributes that already exist on an element
+    // when it is bound. This sucks when you want to reuse and separate code for attributes away from your lifecycle
+    // callbacks. Skate will initialise each attribute calling the "insert" callback that already exists on the element.
+    for (var a = 0; a < attrsLen; a++) {
+      var attr = attrs[a];
       triggerCallback('insert', attr.nodeName, attr.nodeValue);
     }
   }

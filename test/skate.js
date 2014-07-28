@@ -30,7 +30,7 @@
   // -----
 
   describe('Registration', function () {
-    it('Should not allow you to register the same component more than once.', function () {
+    it('should not allow you to register the same component more than once.', function () {
       var multiple = false;
 
       skate('div', {});
@@ -51,7 +51,7 @@
       });
 
       skate.destroy();
-      assert(skate.init(add('div')).test === undefined);
+      expect(skate.init(add('div')).test).to.equal(undefined);
     });
 
     it('should unregister the specified listener when unregister() called', function () {
@@ -62,7 +62,7 @@
       });
 
       skate.unregister('div');
-      assert(skate.init(add('div')).test === undefined);
+      expect(skate.init(add('div')).test).to.equal(undefined);
     });
   });
 
@@ -73,10 +73,7 @@
 
         skate('my-element', {
           type: type,
-          ready: function (el) {
-            if (type === 'a') {
-              console.log(el);
-            }
+          ready: function () {
             ++calls;
           }
         });
@@ -125,7 +122,7 @@
   });
 
   describe('Lifecycle Callbacks', function () {
-    it('Should trigger ready before the element is shown.', function (done) {
+    it('should trigger ready before the element is shown.', function (done) {
       skate('div', {
         ready: function (element) {
           assert(element.className.split(' ').indexOf('__skate') === -1, 'Class found');
@@ -136,7 +133,7 @@
       add('div');
     });
 
-    it('Should trigger insert after the element is shown.', function (done) {
+    it('should trigger insert after the element is shown.', function (done) {
       skate('div', {
         insert: function (element) {
           assert(element.className.split(' ').indexOf('__skate') > -1, 'Class not found');
@@ -147,7 +144,7 @@
       add('div');
     });
 
-    it('Should trigger removed when the element is removed.', function (done) {
+    it('should trigger removed when the element is removed.', function (done) {
       skate('div', {
         remove: function () {
           assert(true);
@@ -167,7 +164,7 @@
       add('div');
 
       skate('div', {
-        insert: function (element) {
+        insert: function () {
           assert(true);
           done();
         }
@@ -176,7 +173,7 @@
 
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function (done) {
       skate('div', {
-        insert: function (element) {
+        insert: function () {
           assert(true);
           done();
         }
@@ -185,7 +182,7 @@
       add('div');
     });
 
-    it('Should pick up descendants that are inserted as part of an HTML block.', function (done) {
+    it('should pick up descendants that are inserted as part of an HTML block.', function (done) {
       skate('sub-element', {
         insert: function () {
           assert(true);
@@ -196,7 +193,7 @@
       document.body.innerHTML = '<div><child><sub-element></sub-element></child></div>';
     });
 
-    it('Should pick up descendants that are removed as part of an HTML block.', function (done) {
+    it('should pick up descendants that are removed as part of an HTML block.', function (done) {
       skate('sub-element', {
         remove: function () {
           assert(true);
@@ -233,7 +230,7 @@
   });
 
   describe('Synchronous initialisation', function () {
-    it('Should take an element', function () {
+    it('should take an element', function () {
       var initialised = 0;
 
       skate('div', {
@@ -248,20 +245,27 @@
   });
 
   describe('Attribute listeners', function () {
-    it('Should listen to changes in specified attributes', function (done) {
+    it('should listen to changes in specified attributes', function (done) {
+      var inserted = false;
+      var updated = false;
+
       skate('div', {
         attributes: {
-          open: {
+          gaga: {
             insert: function (element, data) {
+              inserted = true;
               data.newValue.should.equal('insert');
-              element.setAttribute('open', 'update');
+              element.setAttribute('gaga', 'update');
             },
             update: function (element, data) {
+              updated = true;
               data.oldValue.should.equal('insert');
               data.newValue.should.equal('update');
-              element.removeAttribute('open');
+              element.removeAttribute('gaga');
             },
             remove: function (element, data) {
+              inserted.should.equal(true);
+              updated.should.equal(true);
               data.oldValue.should.equal('update');
               done();
             }
@@ -269,12 +273,10 @@
         }
       });
 
-      add('div').setAttribute('open', 'insert');
+      skate.init(add('div')).setAttribute('gaga', 'insert');
     });
 
-    it('Should accept a function insead of an object for a particular attribute definition.', function (done) {
-      var init = false;
-
+    it('should accept a function insead of an object for a particular attribute definition.', function (done) {
       skate('div', {
         attributes: {
           open: function (element, data) {
@@ -294,12 +296,10 @@
         }
       });
 
-      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
+      document.body.innerHTML = '<div id="attrtest" open="insert"></div>';
     });
 
-    it('Should accept a function insead of an object for the entire attribute definition.', function (done) {
-      var init = false;
-
+    it('should accept a function insead of an object for the entire attribute definition.', function (done) {
       skate('div', {
         attributes: function (element, data) {
           if (data.type === 'insert') {
@@ -317,22 +317,22 @@
         }
       });
 
-      document.body.innerHTML = '<div id="attrtest" open="init"></div>';
+      document.body.innerHTML = '<div id="attrtest" open="insert"></div>';
     });
   });
 
   describe('Instantiation', function () {
-    it('Should return a constructor', function () {
+    it('should return a constructor', function () {
       skate('div', {}).should.be.a('function');
     });
 
-    it('Should return a new element when constructed.', function () {
+    it('should return a new element when constructed.', function () {
       var Div = skate('div', {});
       var div = new Div();
       div.nodeName.should.equal('DIV');
     });
 
-    it('Should synchronously initialise the new element.', function () {
+    it('should synchronously initialise the new element.', function () {
       var called = false;
       var Div = skate('div', {
         prototype: {
@@ -346,7 +346,7 @@
       called.should.equal(true);
     });
 
-    it('Should call lifecycle callbacks at appropriate times.', function (done) {
+    it('should call lifecycle callbacks at appropriate times.', function (done) {
       var ready = false;
       var insert = false;
       var remove = false;
@@ -381,7 +381,7 @@
       });
     });
 
-    it('Should initialise multiple instances of the same type of element (possible bug).', function (done) {
+    it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
       var numReady = 0;
       var numInsert = 0;
       var numRemove = 0;
@@ -406,17 +406,19 @@
       skate.init(div1);
       skate.init(div2);
 
-      div1.parentNode.removeChild(div1);
-      div2.parentNode.removeChild(div2);
-
       numReady.should.equal(2);
       numInsert.should.equal(2);
 
+      window.gagas = true;
+      div1.parentNode.removeChild(div1);
+      div2.parentNode.removeChild(div2);
+
       // Mutation Observers are async.
       setTimeout(function () {
-        assert(numRemove === 2, 'Remove not called');
+        window.gagas = false;
+        numRemove.should.equal(2);
         done();
-      });
+      }, 100);
     });
 
     it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {
@@ -444,7 +446,7 @@
   });
 
   describe('Returning a constructor', function () {
-    it('Should return a constructor that extends a native element.', function () {
+    it('should return a constructor that extends a native element.', function () {
       var Div = skate('div', {
         prototype: {
           func1: function () {}
@@ -465,7 +467,7 @@
       div.func2.should.equal(Div.prototype.func2);
     });
 
-    it('Should not allow the constructor property to be enumerated.', function () {
+    it('should not allow the constructor property to be enumerated.', function () {
       var Div = skate('div', {});
 
       for (var prop in Div.prototype) {
@@ -475,7 +477,7 @@
       }
     });
 
-    it('Should affect the element prototype even if it was not constructed using the constructor.', function () {
+    it('should affect the element prototype even if it was not constructed using the constructor.', function () {
       var Div = skate('div', {
         prototype: {
           func1: function () {}
@@ -504,11 +506,11 @@
   });
 
   describe('Events', function () {
-    it('Should bind events', function () {
+    it('should bind events', function () {
       var numTriggered = 0;
       var Div = skate('div', {
         events: {
-          test: function (element, e) {
+          test: function () {
             ++numTriggered;
           }
         }
@@ -520,11 +522,11 @@
       numTriggered.should.equal(1);
     });
 
-    it('Should allow you to re-add the element back into the DOM', function () {
+    it('should allow you to re-add the element back into the DOM', function () {
       var numTriggered = 0;
       var Div = skate('div', {
         events: {
-          test: function (element, e) {
+          test: function () {
             ++numTriggered;
           }
         }
@@ -542,7 +544,8 @@
 
     it('should support delegate events', function () {
       var dispatched = 0;
-      var MyComponent = skate('my-component', {
+
+      skate('my-component', {
         ready: function (element) {
           var a = document.createElement('a');
           element.appendChild(a);
@@ -557,6 +560,7 @@
       });
 
       var inst = add('my-component');
+
       skate.init(inst);
       dispatchEvent('click', inst);
       dispatchEvent('click', inst.querySelector('a'));
@@ -584,7 +588,7 @@
 
   describe('Templates', function () {
     it('should not replacing existing content if there is no template', function () {
-      var El = skate('my-element', {});
+      skate('my-element', {});
 
       document.body.innerHTML = '<my-element>my content</my-element>';
 
@@ -614,7 +618,7 @@
     });
 
     it('should add the content to the first matched content element with the content passed to the main element', function () {
-      var El = skate('my-element', {
+      skate('my-element', {
         template: '<span data-skate-content=""></span>'
       });
 
@@ -626,7 +630,7 @@
     });
 
     it('should allow first children of the main element to be selected by the content element', function () {
-      var El = skate('my-element', {
+      skate('my-element', {
         template: '<span data-skate-content="some descendant"></span>'
       });
 
@@ -638,11 +642,11 @@
     });
 
     it('should use the content of the content elements as the default content if no content is found to replace it with', function () {
-      var El1 = skate('my-element-1', {
+      skate('my-element-1', {
         template: '<span data-skate-content="">default content</span>'
       });
 
-      var El2 = skate('my-element-2', {
+      skate('my-element-2', {
         template: '<span data-skate-content=".some-elements">default content</span>'
       });
 
