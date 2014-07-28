@@ -369,7 +369,7 @@ It is favourable to use a constructor in your code wherever possible because it 
 
 ### Performance
 
-Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM and are worried about performance, read the next secion on ignoring elements to find out how to speed it up.
+Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM and are worried about performance, read the next section on ignoring elements to find out how to speed it up.
 
 ### Ignoring Elements
 
