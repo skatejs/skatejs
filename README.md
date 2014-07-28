@@ -31,7 +31,7 @@ Installing
 
 You can install Skate using Bower or by downloading the source from the repository.
 
-    bower install skate
+    bower install skatejs
 
 ### AMD
 
