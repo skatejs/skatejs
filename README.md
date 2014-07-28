@@ -19,7 +19,7 @@ JavaScript
 
 Output
 
-    Hello, World!
+    <my-component>Hello, World!</my-component>
 
 Installing
 ----------
