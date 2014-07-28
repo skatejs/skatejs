@@ -199,7 +199,7 @@ The second form of a callback takes an object of attribues and handlers.
 
 This allows you to specify which attributes you want to listen to and will call the specified function when:
 
-- The is inserted with the corresponding attribute already on it.
+- The element is inserted with the corresponding attribute already on it.
 - The corresponding attribute is added to the element.
 - The corresponding attribute is updated on the element.
 
