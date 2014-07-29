@@ -83,19 +83,19 @@ The definition is an object of options defining your component.
       // - newValue: The new value. If inserted, this will be undefined.
       // - oldValue: The old value. If removed, this will be undefined.
       attributes: {
-      	'my-attribute': {
-      	  insert: function (element, change) {
-
-      	  },
-
-      	  update: function (element, change) {
+        'my-attribute': {
+          insert: function (element, change) {
 
           },
 
-      	  remove: function (element, change) {
+          update: function (element, change) {
+
+          },
+
+          remove: function (element, change) {
 
           }
-      	}
+        }
       },
 
       // The event handlers to bind to the web component element. If the event
@@ -122,7 +122,7 @@ The definition is an object of options defining your component.
         }
       },
 
-      // By default, Skate ships with a default templating mechanism that is
+      // By default, Skate ships with a simple templating mechanism that is
       // similar to ShadowDOM templating. This is explained later in the
       // templating section.
       template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>',
@@ -157,7 +157,7 @@ The `ready` callback can be made asynchronous by specifying a second argument in
 
     skate('my-component', {
       ready: function (element, done) {
-      	doSomethingAsync().then(done);
+        doSomethingAsync().then(done);
       }
     });
 
@@ -207,7 +207,7 @@ The third form gives you more granularity and flexibility, and is the same form 
 
     skate('my-component', {
       attributes: {
-      	'my-attribute': {
+        'my-attribute': {
           insert: function (element, change) {
 
           },
@@ -300,11 +300,11 @@ And the built-in templating engine would transform this into:
 
     <my-component>
       <article>
-      	<h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
-      	<section data-skate-content>
+        <h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
+        <section data-skate-content>
             <p>First paragraph.</p>
             <p>Second paragraph.</p>
-      	</section>
+        </section>
       </article>
     </my-component>
 
@@ -314,12 +314,12 @@ Additionally, if both paragraphs were removed from the `<section>`, the default 
 
     <my-component>
       <article>
-      	<h3 data-skate-content=".heading">
-      		<span class="heading">My Heading</span>
-      	</h3>
-      	<section data-skate-content>
+        <h3 data-skate-content=".heading">
+          <span class="heading">My Heading</span>
+        </h3>
+        <section data-skate-content>
             <p>There is no content to display.</p>
-      	</section>
+        </section>
       </article>
     </my-component>
 
