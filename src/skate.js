@@ -752,6 +752,14 @@
     }
   }
 
+  /**
+   * Binds event listeners for the specified event handlers.
+   *
+   * @param {Element} target The component element.
+   * @param {Object} component The component data.
+   *
+   * @returns {undefined}
+   */
   function addEventListeners (target, component) {
     if (typeof component.events !== 'object') {
       return;
@@ -771,6 +779,13 @@
     });
   }
 
+  /**
+   * Parses an event definition and returns information about it.
+   *
+   * @param {String} e The event to parse.
+   *
+   * @returns {Object]}
+   */
   function parseEvent (e) {
     var parts = e.split(' ');
     return {
