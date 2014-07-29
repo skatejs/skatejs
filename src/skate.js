@@ -1145,7 +1145,7 @@
       domUpdated = true;
 
       mutations.forEach(function (mutation) {
-        if (mutation.addedNodes) {
+        if (mutation.addedNodes && mutation.addedNodes.length) {
           // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
           // is then we don't process any added nodes. This prevents having to check every node.
           if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
@@ -1153,7 +1153,7 @@
           }
         }
 
-        if (mutation.removedNodes) {
+        if (mutation.removedNodes && mutation.removedNodes.length) {
           // We can't check batched nodes here because they won't have a parent node.
           removeElements(mutation.removedNodes);
         }
