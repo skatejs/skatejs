@@ -365,7 +365,7 @@
 
     // Only make and return an element constructor if it can be used as a custom element.
     if (component.type.indexOf(skate.types.TAG) > -1) {
-      return makeElementConstructor(id, component);
+      return makeElementConstructor(component);
     }
   }
 
@@ -925,14 +925,13 @@
   /**
    * Creates a constructor for the specified component.
    *
-   * @param {String} id The ID to make the constructor for.
    * @param {Object} component The component information to use for generating the constructor.
    *
    * @returns {Function} The element constructor.
    */
-  function makeElementConstructor (id, component) {
+  function makeElementConstructor (component) {
     function CustomElement () {
-      var element = document.createElement(id);
+      var element = document.createElement(component.id);
 
       // Ensure the component prototype is up to date with the element's prototype. This ensures that overwriting the
       // element prototype still works.
