@@ -41,8 +41,8 @@ Skate supports AMD if detected and is registered as an anonymous module.
 
 If you're still skating old school, we've got you covered. Just make sure it's included on the page and you can access it via `window.skate`.
 
-Docs
-----
+Usage
+-----
 
 You define a component by passing a component ID and definition to the `skate()` function. The ID you specify corresponds to one of the following:
 
