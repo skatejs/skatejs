@@ -13,10 +13,19 @@
     ready: function (element) {
       element.setAttribute('size', getInput(element).value);
     },
-    template: '<input type="text" value="10000"><button data-skate-content></button>',
+    template: '<input type="text"><button data-skate-content></button>',
     events: {
       'click button': function (element) {
-        document.getElementById(element.getAttribute('to')).innerHTML = window.getTestElements(element.getAttribute('size'));
+        var create = element.getAttribute('create');
+        var to = element.getAttribute('to');
+
+        if (create && create !== 'false') {
+          var container = document.createElement('div');
+          container.id = to;
+          document.body.appendChild(container);
+        }
+
+        document.getElementById(to).innerHTML = window.getTestElements(element.getAttribute('size'));
       },
 
       'input input': function (element, e) {

@@ -1,7 +1,7 @@
 (function (exports) {
   'use strict';
 
-  function readyHandler (element) {
+  function insertHandler (element) {
     element.textContent += ', done!';
   }
 
@@ -24,7 +24,7 @@
   exports.addSkateListeners = function (amount) {
     for (var a = 0; a < amount; a++) {
       skate('skate-test-' + (a + 1), {
-        ready: readyHandler
+        insert: insertHandler
       });
     }
   };

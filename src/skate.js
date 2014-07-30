@@ -153,13 +153,62 @@
           return e.target === target;
         }
 
-        var batchInsertRemove = debounce(function () {
-          that.callback(map.items());
-          map.clear();
-          lastInserted = undefined;
-          lastRemoved = undefined;
-        });
+        var that = this;
+        var lastBatchedElement;
+        var lastBatchedRecord;
+        var batchedEvents = [];
+        var batchedRecords = [];
 
+        var addEventToBatch = function (e) {
+            batchedEvents.push(e);
+            batchEvents();
+          };
+        var batchEvents = debounce(function () {
+            var temp = batchedEvents;
+            var tempLen = temp.length;
+
+            for (var a = 0; a < tempLen; a++) {
+              batchEvent(temp[a]);
+            }
+
+            that.callback(batchedRecords);
+            batchedEvents = [];
+            batchedRecords = [];
+            lastBatchedElement = undefined;
+            lastBatchedRecord = undefined;
+          });
+        var batchEvent = function (e) {
+            if (!canTriggerInsertOrRemove(e)) {
+              return;
+            }
+
+            if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
+              return;
+            }
+
+            if (!lastBatchedRecord) {
+              batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
+            }
+
+            if (e.target.parentNode) {
+              if (!lastBatchedRecord.addedNodes) {
+                lastBatchedRecord.addedNodes = [];
+              }
+
+              lastBatchedRecord.addedNodes.push(e.target);
+            } else {
+              if (!lastBatchedRecord.removedNodes) {
+                lastBatchedRecord.removedNodes = [];
+              }
+
+              lastBatchedRecord.removedNodes.push(e.target);
+            }
+
+            lastBatchedElement = e.target;
+          };
+
+        var attributeOldValueCache = {};
+        var attributeMutations = [];
         var batchAttributeMods = debounce(function () {
           // We keep track of the old length just in case attributes are modified within a handler.
           var len = attributeMutations.length;
@@ -171,77 +220,11 @@
           attributeMutations.splice(0, len);
         });
 
-        var that = this;
-        var attributeOldValueCache = {};
-        var map = new ElementMap();
-
-        var lastInserted;
-        var lastRemoved;
-        var attributeMutations = [];
-
         var observed = {
           target: target,
           options: options,
-          insertHandler: function (e) {
-            if (!canTriggerInsertOrRemove(e)) {
-              return;
-            }
-
-            if (lastInserted && lastInserted.contains(e.target)) {
-              return;
-            }
-
-            var parent = e.target.parentNode;
-            var record = map.get(parent);
-
-            if (record) {
-              if (!record.addedNodes) {
-                record.addedNodes = [];
-              }
-
-              record.addedNodes.push(e.target);
-            } else {
-              record = newMutationRecord(parent);
-              record.addedNodes = [];
-
-              record.addedNodes.push(e.target);
-              map.set(parent, record);
-            }
-
-            lastInserted = parent;
-
-            batchInsertRemove();
-          },
-          removeHandler: function (e) {
-            if (!canTriggerInsertOrRemove(e)) {
-              return;
-            }
-
-            if (lastRemoved && lastRemoved.contains(e.target)) {
-              return;
-            }
-
-            var parent = e.target.parentNode;
-            var record = map.get(parent);
-
-            if (record) {
-              if (!record.removedNodes) {
-                record.removedNodes = [];
-              }
-
-              record.removedNodes.push(e.target);
-            } else {
-              record = newMutationRecord(parent);
-              record.removedNodes = [];
-
-              record.removedNodes.push(e.target);
-              map.set(parent, record);
-            }
-
-            lastRemoved = e.target;
-
-            batchInsertRemove();
-          },
+          insertHandler: addEventToBatch,
+          removeHandler: addEventToBatch,
           attributeHandler: function (e) {
             if (!canTriggerAttributeModification(e)) {
               return;
@@ -1087,6 +1070,23 @@
   }
 
   /**
+   * Returns whether or not the source element contains the target element. This is for browsers that don't support
+   * Element.prototype.contains on an HTMLUnknownElement.
+   *
+   * @param {HTMLElement} source The source element.
+   * @param {HTMLElement} target The target element.
+   *
+   * @returns {Boolean}
+   */
+  function elementContains (source, target) {
+    if (source.nodeType !== 1) {
+      return false;
+    }
+
+    return source.contains ? source.contains(target) : window.HTMLElement.prototype.contains.call(source, target);
+  }
+
+  /**
    * Initialises a set of elements.
    *
    * @param {DOMNodeList | Array} elements A traversable set of elements.
@@ -1181,7 +1181,7 @@
   }
 
   /**
-   * Returns a function that will prevent more than one call in a single clock cycle.
+   * Returns a function that will prevent more than one call in a single clock tick.
    *
    * @param {Function} fn The function to call.
    *

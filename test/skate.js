@@ -378,7 +378,7 @@
       setTimeout(function () {
         remove.should.equal(true, 'Should call remove');
         done();
-      });
+      }, 100);
     });
 
     it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
@@ -416,7 +416,7 @@
       setTimeout(function () {
         numRemove.should.equal(2);
         done();
-      });
+      }, 100);
     });
 
     it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {
