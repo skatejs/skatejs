@@ -371,7 +371,15 @@ It is favourable to use a constructor in your code wherever possible because it 
 
 ### Performance
 
+There are some things to consider when using Skate, just like any library, in terms of performance. These are recommendations for scenarios which we have come across. If you have any recommendations, please submit a PR adding it to this.
+
+#### Very, Very Large DOMs
+
 Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM and are worried about performance, read the next section on ignoring elements to find out how to speed it up.
+
+#### Ready Callbacks
+
+Another way you can improve performance if you have a very large DOM and / or a very large amount of listeners is to limit the components which you attach a `ready` callback to. Using it implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can have quite an impact on performance. The `ready` callback should really only be used if you require the element to not be visible while you do something.
 
 ### Ignoring Elements
 
