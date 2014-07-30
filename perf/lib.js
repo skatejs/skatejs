@@ -1,20 +1,31 @@
-window.getTestElements = function (size) {
-  var html = '';
-  size = size || 1;
+(function (exports) {
+  'use strict';
 
-  for (var a = 0; a < size; a++) {
-    html += '<div><article><section><div><ul><li><a href="#"><span>test ' + (a + 1) + '</span></a></li></ul></div></section></article></div>';
+  function readyHandler (element) {
+    element.textContent += ', done!';
   }
 
-  return html;
-}
+  exports.getTestElements = function (size) {
+    var html = '';
+    size = size || 1;
 
-window.addTestElements = function (container, amount) {
-  container.innerHTML = getTestElements(amount);
-};
+    for (var a = 0; a < size; a++) {
+      var num = a + 1;
+      html += '<div><div><article><section><div><ul><li><a href="#"><span><skate-test-' + num + '>Test ' + num + '</skate-test-' + num + '></span></a></li></ul></div></section></article></div></div>';
+    }
 
-window.addSkateListeners = function (prefix, amount) {
-  for (var a = 0; a < amount; a++) {
-    skate(prefix + '-' + (a + 1), {});
-  }
-};
+    return html;
+  };
+
+  exports.addTestElements = function (container, amount) {
+    container.innerHTML = exports.getTestElements(amount);
+  };
+
+  exports.addSkateListeners = function (amount) {
+    for (var a = 0; a < amount; a++) {
+      skate('skate-test-' + (a + 1), {
+        ready: readyHandler
+      });
+    }
+  };
+}(window));
