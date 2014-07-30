@@ -1127,7 +1127,7 @@
       var childNodes = element.childNodes;
 
       removeElements(childNodes);
-      skate.components(element).forEach(removeElemensRemover(element));
+      skate.components(element).forEach(removeElementsRemover(element));
     }
   }
 
@@ -1138,7 +1138,7 @@
    *
    * @return {Function}
    */
-  function removeElemensRemover (element) {
+  function removeElementsRemover (element) {
     return function (component) {
       triggerRemove(element, component);
     };

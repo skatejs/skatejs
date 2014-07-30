@@ -4,14 +4,18 @@
     <script src="lib.js"></script>
     <script src="../src/skate.js"></script>
     <script src="x-append-button.js"></script>
+    <script src="x-remove-button.js"></script>
+    <script src="x-ignore-checkbox.js"></script>
   </head>
   <body>
     <h1>Scenario 1</h1>
     <p>Skating several items already in the DOM.</p>
-    <x-append-button to="container">Add item to list</x-append-button>
+    <x-append-button to="container">Add items</x-append-button>
+    <x-remove-button from="container">Remove items</x-remove-button>
+    <x-ignore-checkbox in="container">Ignore items</x-ignore-checkbox>
     <div id="container"></div>
     <script>
-      appendTestElements(document.getElementById('container'), 10000);
+      addTestElements(document.getElementById('container'), 10000);
       addSkateListeners('no-match', 1000);
     </script>
   </body>

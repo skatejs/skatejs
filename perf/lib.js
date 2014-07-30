@@ -1,13 +1,16 @@
-window.newTestElement = function (number) {
-  var div = document.createElement('div');
-  div.innerHTML = '<article><section><div><ul><li><a href="#"><span>test ' + number + '</span></a></li></ul></div></section></article>';
-  return div;
-};
+window.getTestElements = function (size) {
+  var html = '';
+  size = size || 1;
 
-window.appendTestElements = function (container, amount) {
-  for (var a = 0; a < amount; a++) {
-    container.appendChild(newTestElement(a + 1));
+  for (var a = 0; a < size; a++) {
+    html += '<div><article><section><div><ul><li><a href="#"><span>test ' + (a + 1) + '</span></a></li></ul></div></section></article></div>';
   }
+
+  return html;
+}
+
+window.addTestElements = function (container, amount) {
+  container.innerHTML = getTestElements(amount);
 };
 
 window.addSkateListeners = function (prefix, amount) {
