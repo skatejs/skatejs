@@ -1188,11 +1188,16 @@
    * @returns {Function}
    */
   function debounce (fn) {
-    var timeout;
+    var called = false;
 
     return function () {
-      clearTimeout(timeout);
-      timeout = setTimeout(fn, 1);
+      if (!called) {
+        called = true;
+        setTimeout(function () {
+          called = false;
+          fn();
+        }, 1);
+      }
     };
   }
 
