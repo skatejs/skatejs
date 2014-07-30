@@ -145,24 +145,56 @@
 
     MutationObserver.prototype = {
       observe: function (target, options) {
-        function canTriggerInsertOrRemove (e) {
-          return options.childList && (options.subtree || e.target.parentNode === target);
+        function addEventToBatch (e) {
+          batchedEvents.push(e);
+          batchEvents();
+        }
+
+        function batchEvent (e) {
+          if (!canTriggerInsertOrRemove(e)) {
+            return;
+          }
+
+          if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
+            return;
+          }
+
+          if (!lastBatchedRecord) {
+            batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
+          }
+
+          if (e.target.parentNode) {
+            if (!lastBatchedRecord.addedNodes) {
+              lastBatchedRecord.addedNodes = [];
+            }
+
+            lastBatchedRecord.addedNodes.push(e.target);
+          } else {
+            if (!lastBatchedRecord.removedNodes) {
+              lastBatchedRecord.removedNodes = [];
+            }
+
+            lastBatchedRecord.removedNodes.push(e.target);
+          }
+
+          lastBatchedElement = e.target;
         }
 
         function canTriggerAttributeModification (e) {
           return e.target === target;
         }
 
+        function canTriggerInsertOrRemove (e) {
+          return options.childList && (options.subtree || e.target.parentNode === target);
+        }
+
         var that = this;
+
+        // Batching insert and remove.
         var lastBatchedElement;
         var lastBatchedRecord;
         var batchedEvents = [];
         var batchedRecords = [];
-
-        var addEventToBatch = function (e) {
-            batchedEvents.push(e);
-            batchEvents();
-          };
         var batchEvents = debounce(function () {
             var temp = batchedEvents;
             var tempLen = temp.length;
@@ -177,36 +209,8 @@
             lastBatchedElement = undefined;
             lastBatchedRecord = undefined;
           });
-        var batchEvent = function (e) {
-            if (!canTriggerInsertOrRemove(e)) {
-              return;
-            }
 
-            if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
-              return;
-            }
-
-            if (!lastBatchedRecord) {
-              batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
-            }
-
-            if (e.target.parentNode) {
-              if (!lastBatchedRecord.addedNodes) {
-                lastBatchedRecord.addedNodes = [];
-              }
-
-              lastBatchedRecord.addedNodes.push(e.target);
-            } else {
-              if (!lastBatchedRecord.removedNodes) {
-                lastBatchedRecord.removedNodes = [];
-              }
-
-              lastBatchedRecord.removedNodes.push(e.target);
-            }
-
-            lastBatchedElement = e.target;
-          };
-
+        // Batching attributes.
         var attributeOldValueCache = {};
         var attributeMutations = [];
         var batchAttributeMods = debounce(function () {
