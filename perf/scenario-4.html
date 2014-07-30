@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="lib.js"></script>
+    <script src="../src/skate.js"></script>
+    <script src="x-append-button.js"></script>
+    <script src="x-remove-button.js"></script>
+    <script src="x-ignore-checkbox.js"></script>
+  </head>
+  <body>
+    <h1>Scenario 3</h1>
+    <p>Skating several items added after the DOM is loaded.</p>
+    <x-append-button to="container">Add items</x-append-button>
+    <x-remove-button from="container">Remove items</x-remove-button>
+    <x-ignore-checkbox in="container">Ignore items</x-ignore-checkbox>
+    <div id="container"></div>
+    <script>
+      addSkateListeners(1000);
+    </script>
+  </body>
+</html>
