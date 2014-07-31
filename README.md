@@ -57,8 +57,9 @@ The definition is an object of options defining your component.
       // Called before the element is displayed. This can be made asynchronous
       // by defining a second argument in the method signature. You would then
       // call that argument as a function to tell the component it's ok to
-      // proceed with its lifecycle. If the second argument is not provided, it
-      // is assumed everything in the callback is synchronous.
+      // display the element and proceed with its lifecycle. If the second
+      // argument is not provided, it is assumed everything in the callback is
+      // synchronous.
       ready: function (element, done) {
 
       },
@@ -100,8 +101,9 @@ The definition is an object of options defining your component.
 
       // The event handlers to bind to the web component element. If the event
       // name is followed by a space and a CSS selector, the handler is only
-      // triggered if a child matching the selector triggered the event. This is
-      // synonymous with Backbone's style of event binding in its views.
+      // triggered if a descendant matching the selector triggered the event.
+      // This is synonymous with Backbone's style of event binding in its
+      // views.
       events: {
         'click': function (element, eventObject) {
 
