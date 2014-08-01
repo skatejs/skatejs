@@ -8,7 +8,7 @@
     <script src="x-ignore-checkbox.js"></script>
   </head>
   <body>
-    <h1>Scenario 1</h1>
+    <h1>Scenario 2</h1>
     <p>Skating several items already in the DOM that are ignored.</p>
     <x-append-button to="container">Add items</x-append-button>
     <x-remove-button from="container">Remove items</x-remove-button>
@@ -16,7 +16,7 @@
     <div id="container" data-skate-ignore></div>
     <script>
       addTestElements(document.getElementById('container'), 10000);
-      addSkateListeners(1000);
+      addSkateListeners(1000, 'no-match-');
     </script>
   </body>
 </html>

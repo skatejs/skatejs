@@ -21,9 +21,11 @@
     container.innerHTML = exports.getTestElements(amount);
   };
 
-  exports.addSkateListeners = function (amount) {
+  exports.addSkateListeners = function (amount, prefix) {
     for (var a = 0; a < amount; a++) {
-      skate('skate-test-' + (a + 1), {
+      prefix = prefix || 'skate-test-';
+
+      skate(prefix + (a + 1), {
         insert: insertHandler
       });
     }

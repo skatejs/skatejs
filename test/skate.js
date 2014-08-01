@@ -220,7 +220,7 @@
         },
 
         insert: function () {
-          assert(ok, 'Ready not called before insert. See line 408.');
+          assert(ok, 'Ready not called before insert.');
           done();
         }
       });
