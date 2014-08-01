@@ -29,101 +29,14 @@
   // The skate component registry.
   var registry = {};
 
-
-
-  // Element Map
-  // -----------
-
-  /**
-   * Kinda like a weak map, but specifically for elements and is more performant that polyfillying ES6 the WeakMap just
-   * for this one purpose.
-   *
-   * @var {Function}
-   */
-  var ElementMap = function () {
-    this.map = [];
-  };
-
-  ElementMap.prototype = {
-    /**
-     * Clears the element mapping.
-     *
-     * @returns {ElementMap}
-     */
-    clear: function () {
-      this.map = [];
-      return this;
-    },
-
-    /**
-     * Returns the value stored against the specified element.
-     *
-     * @param {Element} element The element to get the value for.
-     *
-     * @returns {Mixed}
-     */
-    get: function (element) {
-      var index = this.index(element);
-
-      if (index > -1) {
-        return this.map[index];
-      }
-    },
-
-    /**
-     * Returns the index for the element or -1 if it doesn't exist in the map.
-     *
-     * @param {Element} element The element to get the index for.
-     *
-     * @returns {Integer}
-     */
-    index: function (element) {
-      var index = getData(element, 'element-map-index');
-
-      if (index > -1) {
-        return index;
-      }
-
-      return -1;
-    },
-
-    /**
-     * Returns the values stored for each element.
-     *
-     * @returns {Array}
-     */
-    items: function () {
-      return this.map;
-    },
-
-    /**
-     * Sets a value for the given element.
-     *
-     * @param {Element} element The element to store the value against.
-     * @Param {Mixed} value The value to store.
-     *
-     * @returns {ElementMap}
-     */
-    set: function (element, value) {
-      var index = this.index(element);
-
-      if (index > -1) {
-        this.map[index] = value;
-      } else {
-        setData(element, 'element-map-index', this.map.length);
-        this.map.push(value);
-      }
-
-      return this;
-    }
-  };
+  var containsElement = window.HTMLElement.prototype.contains;
 
 
 
   // Mutation Observer "Polyfill"
   // ----------------------------
   //
-  // TODO: Try using DOMSubtree modified and diffing the children rather than using DOMNodeInserted and eliminating
+  // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and eliminating
   // nodes that aren't first children.
   //
   // TODO: Share more code between the insertHandler and the removeHandler.
@@ -269,7 +182,7 @@
 
       disconnect: function () {
         objEach(this.elements, function (observed) {
-          observed.target.removeEventListener('DOMSubtreeModified', observed.insertHandler);
+          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
           observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
           observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
         });
@@ -419,22 +332,13 @@
    * @returns {skate}
    */
   skate.init = function (element) {
-    if (element.hasAttribute(ATTR_IGNORE)) {
-      return element;
-    }
+    eachDomElementInTree(element, function (node) {
+      var components = skate.components(node);
 
-    // We only initialise each element once.
-    if (!getData(element, 'initialised')) {
-      skate.components(element).forEach(function (component) {
-        triggerLifecycle(element, component);
-      });
-
-      // Flag as initialised.
-      setData(element, 'initialised', true);
-    }
-
-    // Go down the tree.
-    initElements(element.childNodes);
+      for (var b = 0; b < components.length; b++) {
+        triggerLifecycle(node, components[b]);
+      }
+    });
 
     return element;
   };
@@ -575,8 +479,13 @@
    * @returns {undefined}
    */
   function triggerLifecycle (target, component) {
+    if (getData(target, component.id + '.initialised')) {
+      return;
+    }
+
+    setData(target, component.id + '.initialised', true);
+
     triggerReady(target, component, function () {
-      setData(target, component.id + '.ready-done', true);
       triggerInsert(target, component);
     });
   }
@@ -594,11 +503,11 @@
     var definedMultipleArgs = /^[^(]+\([^,)]+,/;
     done = done || function () {};
 
-    if (getData(target, component.id + '.ready-started')) {
+    if (getData(target, component.id + '.ready-called')) {
       return done();
     }
 
-    setData(target, component.id + '.ready-started', true);
+    setData(target, component.id + '.ready-called', true);
 
     if (component.template) {
       component.template(target);
@@ -630,15 +539,11 @@
       return;
     }
 
-    if (!getData(target, component.id + '.ready-done')) {
+    if (getData(target, component.id + '.insert-called')) {
       return;
     }
 
-    if (getData(target, component.id + '.insert-started')) {
-      return;
-    }
-
-    setData(target, component.id + '.insert-started', true);
+    setData(target, component.id + '.insert-called', true);
     addClass(target, component.classname);
 
     if (component.insert) {
@@ -1087,7 +992,7 @@
       return false;
     }
 
-    return source.contains ? source.contains(target) : window.HTMLElement.prototype.contains.call(source, target);
+    return source.contains ? source.contains(target) : containsElement.call(source, target);
   }
 
   /**
@@ -1133,6 +1038,45 @@
       removeElements(childNodes);
       skate.components(element).forEach(removeElementsRemover(element));
     }
+  }
+
+  /**
+   * Flattens the nodes into an array starting with the specified node.
+   *
+   * @param {HTMLElement} element The element to include and descend from.
+   *
+   * @returns {Array}
+   */
+  function eachDomElementInTree (element, fn) {
+    if (!isValidNode(element)) {
+      return;
+    }
+
+    fn(element);
+
+    var walker = document.createTreeWalker(
+      element,
+      NodeFilter.SHOW_ELEMENT,
+      function (node) {
+        return isValidNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+      true
+    );
+
+    while (walker.nextNode()) {
+      fn(walker.currentNode);
+    }
+  }
+
+  /**
+   * Returns whether or not the specified node is valid.
+   *
+   * @param {DOMNode} node THe node to check.
+   *
+   * @returns {Boolean}
+   */
+  function isValidNode (node) {
+    return node.nodeType === 1 && !node.hasAttribute(ATTR_IGNORE);
   }
 
   /**
