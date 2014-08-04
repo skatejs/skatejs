@@ -1030,6 +1030,19 @@
   }
 
   /**
+   * Makes a function that calls triggerRemove for the specified element's components.
+   *
+   * @param {Element} element The element to generate the remover for.
+   *
+   * @return {Function}
+   */
+  function removeElementsRemover (element) {
+    return function (component) {
+      triggerRemove(element, component);
+    };
+  }
+
+  /**
    * Flattens the nodes into an array starting with the specified node.
    *
    * @param {HTMLElement} element The element to include and descend from.
@@ -1066,19 +1079,6 @@
    */
   function isValidNode (node) {
     return node.nodeType === 1 && !node.hasAttribute(ATTR_IGNORE);
-  }
-
-  /**
-   * Makes a function that calls triggerRemove for the specified element's components.
-   *
-   * @param {Element} element The element to generate the remover for.
-   *
-   * @return {Function}
-   */
-  function removeElementsRemover (element) {
-    return function (component) {
-      triggerRemove(element, component);
-    };
   }
 
   /**
