@@ -256,7 +256,7 @@
     // If doing something that will modify the component's structure, ensure it's not displayed yet.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
-        getSelectorForType(id, component.type, '.' + component.classname) + '{display:none}',
+        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
       );
     }
@@ -264,7 +264,7 @@
     // Register the component.
     registry[component.id] = component;
 
-    // Ensure existing elements are initialised.
+    // Initialise all existing components.
     initDocument();
 
     // Ensure the document is being listened to.
@@ -865,9 +865,7 @@
     var isClass = type.indexOf(skate.types.CLASS) > -1;
     var selectors = [];
 
-    if (negateWith) {
-      negateWith = ':not(' + negateWith + ')';
-    }
+    negateWith = negateWith ? ':not(' + negateWith + ')' : '';
 
     if (isTag) {
       selectors.push(id + negateWith);
