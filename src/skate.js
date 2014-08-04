@@ -602,12 +602,6 @@
       }
     }
 
-    if (!component.attributes || getData(target, component.id + '.attributes-called')) {
-      return;
-    }
-
-    setData(target, component.id + '.attributes-called', true);
-
     var attrs = target.attributes;
     var attrsLen = attrs.length;
     var observer = new MutationObserver(function (mutations) {
