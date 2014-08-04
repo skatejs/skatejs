@@ -15,10 +15,8 @@
   // Global Variables
   // ----------------
 
-  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
-  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
-  // prevent any jank if the ready() callback modifies the element.
-  var hiddenRules = document.createElement('style');
+  // Reference for the contains() method.
+  var containsElement = window.HTMLElement.prototype.contains;
 
   // The observer listening to document changes.
   var documentListener;
@@ -26,20 +24,18 @@
   // Whether or not the DOM has been updated. Default to `true` so the first call to `initDocument()` works.
   var domUpdated = true;
 
+  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
+  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
+  // prevent any jank if the ready() callback modifies the element.
+  var hiddenRules = document.createElement('style');
+
   // The skate component registry.
   var registry = {};
-
-  var containsElement = window.HTMLElement.prototype.contains;
 
 
 
   // Mutation Observer "Polyfill"
   // ----------------------------
-  //
-  // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and eliminating
-  // nodes that aren't first children.
-  //
-  // TODO: Share more code between the insertHandler and the removeHandler.
   //
   // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
   // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
@@ -169,6 +165,8 @@
         this.elements.push(observed);
 
         if (options.childList) {
+          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and eliminating
+          // nodes that aren't first children.
           target.addEventListener('DOMNodeInserted', observed.insertHandler);
           target.addEventListener('DOMNodeRemoved', observed.removeHandler);
         }
