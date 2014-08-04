@@ -15,7 +15,6 @@
   // Global Variables
   // ----------------
 
-  // Reference for the contains() method.
   var containsElement = window.HTMLElement.prototype.contains;
 
   // The observer listening to document changes.
@@ -24,10 +23,20 @@
   // Whether or not the DOM has been updated. Default to `true` so the first call to `initDocument()` works.
   var domUpdated = true;
 
+  var elProto = HTMLElement.prototype;
+
   // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
   // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
   // prevent any jank if the ready() callback modifies the element.
   var hiddenRules = document.createElement('style');
+
+  var matchesSelector = (
+      elProto.matches ||
+      elProto.msMatchesSelector ||
+      elProto.webkitMatchesSelector ||
+      elProto.mozMatchesSelector ||
+      elProto.oMatchesSelector
+    );
 
   // The skate component registry.
   var registry = {};
@@ -651,7 +660,7 @@
 
     function makeHandler (handler, delegate) {
       return function (e) {
-        if (!delegate || matchesSelector(e.target, delegate)) {
+        if (!delegate || matchesSelector.call(e.target, delegate)) {
           handler(target, e);
         }
       };
@@ -746,18 +755,6 @@
     var attrs = element.attributes;
 
     return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-  }
-
-  /**
-   * Returns whether or not the element matches the specified selector.
-   *
-   * @param {Element} el The element to check.
-   * @param {String} selector The selector to check the element against.
-   *
-   * @returns {Boolean}
-   */
-  function matchesSelector (el, selector) {
-    return (el.matches || el.msMatchesSelector || el.webkitMatchesSelector || el.mozMatchesSelector || el.oMatchesSelector).call(el, selector);
   }
 
   /**
