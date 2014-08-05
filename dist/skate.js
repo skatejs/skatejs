@@ -569,34 +569,6 @@
   }
 
   /**
-   * Flattens the nodes into an array starting with the specified node.
-   *
-   * @param {HTMLElement} element The element to include and descend from.
-   *
-   * @returns {Array}
-   */
-  function eachDomElementInTree (element, fn) {
-    if (!isValidNode(element)) {
-      return;
-    }
-
-    fn(element);
-
-    var walker = document.createTreeWalker(
-      element,
-      NodeFilter.SHOW_ELEMENT,
-      function (node) {
-        return isValidNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-      },
-      true
-    );
-
-    while (walker.nextNode()) {
-      fn(walker.currentNode);
-    }
-  }
-
-  /**
    * Returns whether or not the specified node is valid.
    *
    * @param {DOMNode} node THe node to check.
@@ -626,6 +598,17 @@
         }, 1);
       }
     };
+  }
+
+  /**
+   * Filters out invalid nodes for a document tree walker.
+   *
+   * @param {DOMNode} node The node to filter.
+   *
+   * @returns {Integer}
+   */
+  function treeWalkerFilter (node) {
+    return isValidNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
   }
 
   /**
@@ -974,20 +957,34 @@
   /**
    * Synchronously initialises the specified element or elements and descendants.
    *
-   * @param {Element} elements The element or elements to init.
+   * @param {DOMNode} node The node to initialise.
    *
    * @returns {skate}
    */
-  skate.init = function (element) {
-    eachDomElementInTree(element, function (node) {
-      var components = skate.components(node);
+  skate.init = function (node) {
+    if (!isValidNode(node)) {
+      return node;
+    }
 
-      for (var b = 0; b < components.length; b++) {
-        triggerLifecycle(node, components[b]);
+    var walker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT, treeWalkerFilter, true);
+    var currentNodeComponents = skate.components(node);
+    var currentNodeComponentsLength = currentNodeComponents.length;
+
+    for (var a = 0; a < currentNodeComponentsLength; a++) {
+      triggerLifecycle(node, currentNodeComponents[a]);
+    }
+
+    while (walker.nextNode()) {
+      var walkerNode = walker.currentNode;
+      var walkerNodeComponents = skate.components(walkerNode);
+      var walkerNodeComponentsLength = walkerNodeComponents.length;
+
+      for (var b = 0; b < walkerNodeComponentsLength; b++) {
+        triggerLifecycle(walkerNode, walkerNodeComponents[b]);
       }
-    });
+    }
 
-    return element;
+    return node;
   };
 
   /**
