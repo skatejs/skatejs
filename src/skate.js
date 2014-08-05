@@ -665,6 +665,9 @@
   // The observer listening to document changes.
   var documentListener;
 
+  // Whether or not DOMContentLoaded has been triggered.
+  var domContentLoaded = false;
+
   // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
   // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
   // prevent any jank if the ready() callback modifies the element.
@@ -701,41 +704,44 @@
         }
 
         function batchEvent (e) {
-          if (!canTriggerInsertOrRemove(e)) {
+          var eTarget = e.target;
+          var eTargetParent = eTarget.parentNode;
+
+          if (!canTriggerInsertOrRemove(eTargetParent)) {
             return;
           }
 
-          if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
+          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
             return;
           }
 
           if (!lastBatchedRecord) {
-            batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
+            batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
 
-          if (e.target.parentNode) {
+          if (eTargetParent) {
             if (!lastBatchedRecord.addedNodes) {
               lastBatchedRecord.addedNodes = [];
             }
 
-            lastBatchedRecord.addedNodes.push(e.target);
+            lastBatchedRecord.addedNodes.push(eTarget);
           } else {
             if (!lastBatchedRecord.removedNodes) {
               lastBatchedRecord.removedNodes = [];
             }
 
-            lastBatchedRecord.removedNodes.push(e.target);
+            lastBatchedRecord.removedNodes.push(eTarget);
           }
 
-          lastBatchedElement = e.target;
+          lastBatchedElement = eTarget;
         }
 
-        function canTriggerAttributeModification (e) {
-          return e.target === target;
+        function canTriggerAttributeModification (eTarget) {
+          return eTarget === target;
         }
 
-        function canTriggerInsertOrRemove (e) {
-          return options.childList && (options.subtree || e.target.parentNode === target);
+        function canTriggerInsertOrRemove (eTargetParent) {
+          return options.childList && (options.subtree || eTargetParent === target);
         }
 
         var that = this;
@@ -780,15 +786,20 @@
           insertHandler: addEventToBatch,
           removeHandler: addEventToBatch,
           attributeHandler: function (e) {
-            if (!canTriggerAttributeModification(e)) {
+            var eTarget = e.target;
+
+            if (!canTriggerAttributeModification(eTarget)) {
               return;
             }
 
-            var record = newMutationRecord(e.target, 'attributes');
-            record.attributeName = e.attrName;
+            var eAttrName = e.attrName;
+            var ePrevValue = e.prevValue;
+            var eNewValue = e.newValue;
+            var record = newMutationRecord(eTarget, 'attributes');
+            record.attributeName = eAttrName;
 
             if (options.attributeOldValue) {
-              record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
+              record.oldValue = attributeOldValueCache[eAttrName] || ePrevValue || null;
             }
 
             attributeMutations.push(record);
@@ -796,7 +807,7 @@
             // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
             // actually correct.
             if (options.attributeOldValue) {
-              attributeOldValueCache[e.attrName] = e.newValue;
+              attributeOldValueCache[eAttrName] = eNewValue;
             }
 
             batchAttributeMods();
@@ -896,8 +907,14 @@
     // Register the component.
     registry[component.id] = component;
 
-    // Ensure a call is queued for initialising the document.
-    initDocument();
+    // Ensure a call is queued for initialising the document if it's ready. We must initialise the entire document
+    // rather than building a selector and using querySelectorAll() because we have to filter out elements which may
+    // be ignored. On top of that, if calling skate() in sequence several times, querySelectorAll() can become slow
+    // pretty quick. The call to initDocument() is debounced to ensure that it only happens once. In large DOMs this
+    // ends up being faster. In small DOMs, the difference is negligible, but usually faster in most use-cases.
+    if (domContentLoaded) {
+      initDocument();
+    }
 
     // Only make and return an element constructor if it can be used as a custom element.
     if (component.type.indexOf(skate.types.TAG) > -1) {
@@ -1105,27 +1122,43 @@
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // Start listening right away.
-  documentListener = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      if (mutation.addedNodes && mutation.addedNodes.length) {
+  // When the document is ready for manipulation, first initialise the document. This is the first time the document
+  // is initialised. Each call to skate() before this does not trigger a document initialisation. After initialisation
+  // for the first time, we add the document mutation observer to listen for further updates. We flag content as loaded
+  // here because after this, each call to skate() *must* re-initialise the document.
+  document.addEventListener('DOMContentLoaded', function () {
+    // Ensure all elements are initialised before adding the mutation observer.
+    initDocument();
+
+    // Start listening right away.
+    documentListener = new MutationObserver(function (mutations) {
+      var mutationsLength = mutations.length;
+
+      for (var a = 0; a < mutationsLength; a++) {
+        var mutation = mutations[a];
+        var addedNodes = mutation.addedNodes;
+        var removedNodes = mutation.removedNodes;
+
         // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
         // is then we don't process any added nodes. This prevents having to check every node.
-        if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
-          initElements(mutation.addedNodes);
+        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+          initElements(addedNodes);
+        }
+
+        // We can't check batched nodes here because they won't have a parent node.
+        if (removedNodes && removedNodes.length) {
+          removeElements(removedNodes);
         }
       }
-
-      if (mutation.removedNodes && mutation.removedNodes.length) {
-        // We can't check batched nodes here because they won't have a parent node.
-        removeElements(mutation.removedNodes);
-      }
     });
-  });
 
-  documentListener.observe(document, {
-    childList: true,
-    subtree: true
+    documentListener.observe(document, {
+      childList: true,
+      subtree: true
+    });
+
+    // Flag as loaded so subsequent calls to skate() trigger a document initialisation.
+    domContentLoaded = true;
   });
 
 
