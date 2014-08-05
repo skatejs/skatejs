@@ -2,465 +2,6 @@
 
   'use strict';
 
-
-
-  // Constants
-  // ---------
-
-  var ATTR_CONTENT = 'data-skate-content';
-  var ATTR_IGNORE = 'data-skate-ignore';
-
-
-
-  // Global Variables
-  // ----------------
-
-  var elProto = window.HTMLElement.prototype;
-  var containsElement = elProto.contains;
-  var matchesSelector = (
-      elProto.matches ||
-      elProto.msMatchesSelector ||
-      elProto.webkitMatchesSelector ||
-      elProto.mozMatchesSelector ||
-      elProto.oMatchesSelector
-    );
-
-
-  // The observer listening to document changes.
-  var documentListener;
-
-  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
-  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
-  // prevent any jank if the ready() callback modifies the element.
-  var hiddenRules = document.createElement('style');
-
-  // The skate component registry.
-  var registry = {};
-
-
-
-  // Mutation Observer "Polyfill"
-  // ----------------------------
-  //
-  // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
-  // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
-  // Like mutation observers, each mutation is divided into sibling groups for each parent that had mutations. All
-  // attribute mutations are batched into separate records regardless of the element they occured on.
-
-  // Normalise the mutaiton observer constructor.
-  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-
-  // Polyfill only the parts of Mutation Observer that we need.
-  if (!MutationObserver) {
-    MutationObserver = function (callback) {
-      this.callback = callback;
-      this.elements = [];
-    };
-
-    MutationObserver.prototype = {
-      observe: function (target, options) {
-        function addEventToBatch (e) {
-          batchedEvents.push(e);
-          batchEvents();
-        }
-
-        function batchEvent (e) {
-          if (!canTriggerInsertOrRemove(e)) {
-            return;
-          }
-
-          if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
-            return;
-          }
-
-          if (!lastBatchedRecord) {
-            batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
-          }
-
-          if (e.target.parentNode) {
-            if (!lastBatchedRecord.addedNodes) {
-              lastBatchedRecord.addedNodes = [];
-            }
-
-            lastBatchedRecord.addedNodes.push(e.target);
-          } else {
-            if (!lastBatchedRecord.removedNodes) {
-              lastBatchedRecord.removedNodes = [];
-            }
-
-            lastBatchedRecord.removedNodes.push(e.target);
-          }
-
-          lastBatchedElement = e.target;
-        }
-
-        function canTriggerAttributeModification (e) {
-          return e.target === target;
-        }
-
-        function canTriggerInsertOrRemove (e) {
-          return options.childList && (options.subtree || e.target.parentNode === target);
-        }
-
-        var that = this;
-
-        // Batching insert and remove.
-        var lastBatchedElement;
-        var lastBatchedRecord;
-        var batchedEvents = [];
-        var batchedRecords = [];
-        var batchEvents = debounce(function () {
-            var temp = batchedEvents;
-            var tempLen = temp.length;
-
-            for (var a = 0; a < tempLen; a++) {
-              batchEvent(temp[a]);
-            }
-
-            that.callback(batchedRecords);
-            batchedEvents = [];
-            batchedRecords = [];
-            lastBatchedElement = undefined;
-            lastBatchedRecord = undefined;
-          });
-
-        // Batching attributes.
-        var attributeOldValueCache = {};
-        var attributeMutations = [];
-        var batchAttributeMods = debounce(function () {
-          // We keep track of the old length just in case attributes are modified within a handler.
-          var len = attributeMutations.length;
-
-          // Call the handler with the current modifications.
-          that.callback(attributeMutations);
-
-          // We remove only up to the current point just in case more modifications were queued.
-          attributeMutations.splice(0, len);
-        });
-
-        var observed = {
-          target: target,
-          options: options,
-          insertHandler: addEventToBatch,
-          removeHandler: addEventToBatch,
-          attributeHandler: function (e) {
-            if (!canTriggerAttributeModification(e)) {
-              return;
-            }
-
-            var record = newMutationRecord(e.target, 'attributes');
-            record.attributeName = e.attrName;
-
-            if (options.attributeOldValue) {
-              record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
-            }
-
-            attributeMutations.push(record);
-
-            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
-            // actually correct.
-            if (options.attributeOldValue) {
-              attributeOldValueCache[e.attrName] = e.newValue;
-            }
-
-            batchAttributeMods();
-          }
-        };
-
-        this.elements.push(observed);
-
-        if (options.childList) {
-          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and
-          // eliminating nodes that aren't first children.
-          target.addEventListener('DOMNodeInserted', observed.insertHandler);
-          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
-        }
-
-        if (options.attributes) {
-          target.addEventListener('DOMAttrModified', observed.attributeHandler);
-        }
-
-        return this;
-      },
-
-      disconnect: function () {
-        objEach(this.elements, function (observed) {
-          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
-          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
-          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
-        });
-
-        this.elements = [];
-
-        return this;
-      }
-    };
-  }
-
-  /**
-   * Creates a new mutation record with better defaults.
-   *
-   * @param {Element} target The HTML element that was affected.
-   * @param {String} type The type of mutation.
-   *
-   * @returns {Object}
-   */
-  function newMutationRecord (target, type) {
-    return {
-      addedNodes: null,
-      attributeName: null,
-      attributeNamespace: null,
-      nextSibling: null,
-      oldValue: null,
-      previousSibling: null,
-      removedNodes: null,
-      target: target,
-      type: type || 'childList'
-    };
-  }
-
-
-
-  // Public API
-  // ----------
-
-  /**
-   * Creates a listener for the specified component.
-   *
-   * @param {String} id The ID of the component.
-   * @param {Object | Function} component The component definition.
-   *
-   * @returns {Function} Function or constructor that creates a custom-element for the component.
-   */
-  function skate (id, component) {
-    // Set any defaults that weren't passed.
-    component = inherit(component || {}, skate.defaults);
-
-    // Set the component ID for reference later.
-    component.id = id;
-
-    // Components of a particular type must be unique.
-    if (hasOwn(registry, component.id)) {
-      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
-    }
-
-    // Set default template renderer for template strings.
-    if (component.template && typeof component.template === 'string') {
-      component.template = skate.template.html(component.template);
-    }
-
-    // If doing something that will modify the component's structure, ensure it's not displayed yet.
-    if (component.ready || component.template) {
-      hiddenRules.sheet.insertRule(
-        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
-        hiddenRules.sheet.cssRules.length
-      );
-    }
-
-    // Register the component.
-    registry[component.id] = component;
-
-    // Ensure a call is queued for initialising the document.
-    initDocument();
-
-    // Only make and return an element constructor if it can be used as a custom element.
-    if (component.type.indexOf(skate.types.TAG) > -1) {
-      return makeElementConstructor(component);
-    }
-  }
-
-  /**
-   * Returns the components for the specified element.
-   *
-   * @param {Element} element The element to get the components for.
-   *
-   * @returns {Array}
-   */
-  skate.components = function (element) {
-    var attrs = element.attributes;
-    var attrsLen = attrs.length;
-    var components = [];
-    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
-
-    if (isComponentOfType(tag, skate.types.TAG)) {
-      components.push(registry[tag]);
-    }
-
-    for (var a = 0; a < attrsLen; a++) {
-      var attr = attrs[a].nodeName;
-
-      if (isComponentOfType(attr, skate.types.ATTR)) {
-        components.push(registry[attr]);
-      }
-    }
-
-    var classList = getClassList(element);
-    var classListLen = classList.length;
-
-    for (var b = 0; b < classListLen; b++) {
-      var className = classList[b];
-
-      if (isComponentOfType(className, skate.types.CLASS)) {
-        components.push(registry[className]);
-      }
-    }
-
-    return components;
-  };
-
-  /**
-   * Stops listening for new elements. Generally this will only be used in testing.
-   *
-   * @returns {skate}
-   */
-  skate.destroy = function () {
-    registry = {};
-    return skate;
-  };
-
-  /**
-   * Synchronously initialises the specified element or elements and descendants.
-   *
-   * @param {Element} elements The element or elements to init.
-   *
-   * @returns {skate}
-   */
-  skate.init = function (element) {
-    eachDomElementInTree(element, function (node) {
-      var components = skate.components(node);
-
-      for (var b = 0; b < components.length; b++) {
-        triggerLifecycle(node, components[b]);
-      }
-    });
-
-    return element;
-  };
-
-  /**
-   * Default template renderers.
-   *
-   * @var {Object}
-   */
-  skate.template = {};
-
-  /**
-   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
-   *
-   * Differences:
-   *
-   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
-   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
-   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
-   *
-   * Usage:
-   *
-   *     skate('something', {
-   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
-   *     });
-   *
-   * @param {String} templateString The HTML template string to use.
-   *
-   * @returns {Function} The function for rendering the template.
-   */
-  skate.template.html = function (templateString) {
-    var template = createFragmentFromString(templateString);
-    var contentMutationObserver = new MutationObserver(function (mutations) {
-        for (var a = 0; a < mutations.length; a++) {
-          var mutation = mutations[a];
-
-          if (!mutation.target.children.length) {
-            mutation.target.innerHTML = getData(mutation.target, 'default-content');
-          }
-        }
-      });
-
-    return function (target) {
-      var targetFragment = createFragmentFromString(target.innerHTML);
-      var targetTemplate = template.cloneNode(true);
-      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
-      var hasContentNodes = contentNodes && contentNodes.length;
-
-      if (hasContentNodes) {
-        for (var a = 0; a < contentNodes.length; a++) {
-          var contentNode = contentNodes[a];
-          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
-
-          // Save the default content so we can use it when all nodes are removed from the content.
-          setData(contentNode, 'default-content', contentNode.innerHTML);
-
-          if (foundNodes && foundNodes.length) {
-            contentNode.innerHTML = '';
-            insertNodeList(contentNode, foundNodes);
-          }
-
-          contentMutationObserver.observe(contentNode, {
-            childList: true
-          });
-        }
-      }
-
-      target.innerHTML = '';
-      target.appendChild(targetTemplate);
-    };
-  };
-
-  // Restriction type constants.
-  skate.types = {
-    ANY: 'act',
-    ATTR: 'a',
-    CLASS: 'c',
-    NOATTR: 'ct',
-    NOCLASS: 'at',
-    NOTAG: 'ac',
-    TAG: 't'
-  };
-
-  /**
-   * Unregisters the specified component.
-   *
-   * @param {String} id The ID of the component to unregister.
-   *
-   * @returns {Skate}
-   */
-  skate.unregister = function (id) {
-    delete registry[id];
-    return skate;
-  };
-
-  // Makes checking the version easy when debugging.
-  skate.version = '0.9.0';
-
-  /**
-   * The default options for a component.
-   *
-   * @var {Object}
-   */
-  skate.defaults = {
-    // Attribute lifecycle callback or callbacks.
-    attributes: false,
-
-    // The classname to use when showing this component.
-    classname: '__skate',
-
-    // The events to manage the binding and unbinding of during the component's lifecycle.
-    events: false,
-
-    // The ID of the component. This is automatically set in the `skate()` function.
-    id: '',
-
-    // Properties and methods to add to each element.
-    prototype: {},
-
-    // The template to replace the content of the element with.
-    template: false,
-
-    // The type of bindings to allow.
-    type: skate.types.ANY
-  };
-
-
-
   // Lifecycle Triggers
   // ------------------
 
@@ -1096,6 +637,463 @@
   var initDocument = debounce(function () {
     skate.init(document.getElementsByTagName('html')[0]);
   });
+
+
+
+  // Constants
+  // ---------
+
+  var ATTR_CONTENT = 'data-skate-content';
+  var ATTR_IGNORE = 'data-skate-ignore';
+
+
+
+  // Global Variables
+  // ----------------
+
+  var elProto = window.HTMLElement.prototype;
+  var containsElement = elProto.contains;
+  var matchesSelector = (
+      elProto.matches ||
+      elProto.msMatchesSelector ||
+      elProto.webkitMatchesSelector ||
+      elProto.mozMatchesSelector ||
+      elProto.oMatchesSelector
+    );
+
+
+  // The observer listening to document changes.
+  var documentListener;
+
+  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
+  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
+  // prevent any jank if the ready() callback modifies the element.
+  var hiddenRules = document.createElement('style');
+
+  // The skate component registry.
+  var registry = {};
+
+
+
+  // Mutation Observer "Polyfill"
+  // ----------------------------
+  //
+  // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
+  // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
+  // Like mutation observers, each mutation is divided into sibling groups for each parent that had mutations. All
+  // attribute mutations are batched into separate records regardless of the element they occured on.
+
+  // Normalise the mutaiton observer constructor.
+  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+
+  // Polyfill only the parts of Mutation Observer that we need.
+  if (!MutationObserver) {
+    MutationObserver = function (callback) {
+      this.callback = callback;
+      this.elements = [];
+    };
+
+    MutationObserver.prototype = {
+      observe: function (target, options) {
+        function addEventToBatch (e) {
+          batchedEvents.push(e);
+          batchEvents();
+        }
+
+        function batchEvent (e) {
+          if (!canTriggerInsertOrRemove(e)) {
+            return;
+          }
+
+          if (lastBatchedElement && elementContains(lastBatchedElement, e.target)) {
+            return;
+          }
+
+          if (!lastBatchedRecord) {
+            batchedRecords.push(lastBatchedRecord = newMutationRecord(e.target.parentNode));
+          }
+
+          if (e.target.parentNode) {
+            if (!lastBatchedRecord.addedNodes) {
+              lastBatchedRecord.addedNodes = [];
+            }
+
+            lastBatchedRecord.addedNodes.push(e.target);
+          } else {
+            if (!lastBatchedRecord.removedNodes) {
+              lastBatchedRecord.removedNodes = [];
+            }
+
+            lastBatchedRecord.removedNodes.push(e.target);
+          }
+
+          lastBatchedElement = e.target;
+        }
+
+        function canTriggerAttributeModification (e) {
+          return e.target === target;
+        }
+
+        function canTriggerInsertOrRemove (e) {
+          return options.childList && (options.subtree || e.target.parentNode === target);
+        }
+
+        var that = this;
+
+        // Batching insert and remove.
+        var lastBatchedElement;
+        var lastBatchedRecord;
+        var batchedEvents = [];
+        var batchedRecords = [];
+        var batchEvents = debounce(function () {
+            var temp = batchedEvents;
+            var tempLen = temp.length;
+
+            for (var a = 0; a < tempLen; a++) {
+              batchEvent(temp[a]);
+            }
+
+            that.callback(batchedRecords);
+            batchedEvents = [];
+            batchedRecords = [];
+            lastBatchedElement = undefined;
+            lastBatchedRecord = undefined;
+          });
+
+        // Batching attributes.
+        var attributeOldValueCache = {};
+        var attributeMutations = [];
+        var batchAttributeMods = debounce(function () {
+          // We keep track of the old length just in case attributes are modified within a handler.
+          var len = attributeMutations.length;
+
+          // Call the handler with the current modifications.
+          that.callback(attributeMutations);
+
+          // We remove only up to the current point just in case more modifications were queued.
+          attributeMutations.splice(0, len);
+        });
+
+        var observed = {
+          target: target,
+          options: options,
+          insertHandler: addEventToBatch,
+          removeHandler: addEventToBatch,
+          attributeHandler: function (e) {
+            if (!canTriggerAttributeModification(e)) {
+              return;
+            }
+
+            var record = newMutationRecord(e.target, 'attributes');
+            record.attributeName = e.attrName;
+
+            if (options.attributeOldValue) {
+              record.oldValue = attributeOldValueCache[e.attrName] || e.prevValue || null;
+            }
+
+            attributeMutations.push(record);
+
+            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
+            // actually correct.
+            if (options.attributeOldValue) {
+              attributeOldValueCache[e.attrName] = e.newValue;
+            }
+
+            batchAttributeMods();
+          }
+        };
+
+        this.elements.push(observed);
+
+        if (options.childList) {
+          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and
+          // eliminating nodes that aren't first children.
+          target.addEventListener('DOMNodeInserted', observed.insertHandler);
+          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
+        }
+
+        if (options.attributes) {
+          target.addEventListener('DOMAttrModified', observed.attributeHandler);
+        }
+
+        return this;
+      },
+
+      disconnect: function () {
+        objEach(this.elements, function (observed) {
+          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
+          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
+          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
+        });
+
+        this.elements = [];
+
+        return this;
+      }
+    };
+  }
+
+  /**
+   * Creates a new mutation record with better defaults.
+   *
+   * @param {Element} target The HTML element that was affected.
+   * @param {String} type The type of mutation.
+   *
+   * @returns {Object}
+   */
+  function newMutationRecord (target, type) {
+    return {
+      addedNodes: null,
+      attributeName: null,
+      attributeNamespace: null,
+      nextSibling: null,
+      oldValue: null,
+      previousSibling: null,
+      removedNodes: null,
+      target: target,
+      type: type || 'childList'
+    };
+  }
+
+
+
+  // Public API
+  // ----------
+
+  /**
+   * Creates a listener for the specified component.
+   *
+   * @param {String} id The ID of the component.
+   * @param {Object | Function} component The component definition.
+   *
+   * @returns {Function} Function or constructor that creates a custom-element for the component.
+   */
+  function skate (id, component) {
+    // Set any defaults that weren't passed.
+    component = inherit(component || {}, skate.defaults);
+
+    // Set the component ID for reference later.
+    component.id = id;
+
+    // Components of a particular type must be unique.
+    if (hasOwn(registry, component.id)) {
+      throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
+    }
+
+    // Set default template renderer for template strings.
+    if (component.template && typeof component.template === 'string') {
+      component.template = skate.template.html(component.template);
+    }
+
+    // If doing something that will modify the component's structure, ensure it's not displayed yet.
+    if (component.ready || component.template) {
+      hiddenRules.sheet.insertRule(
+        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
+        hiddenRules.sheet.cssRules.length
+      );
+    }
+
+    // Register the component.
+    registry[component.id] = component;
+
+    // Ensure a call is queued for initialising the document.
+    initDocument();
+
+    // Only make and return an element constructor if it can be used as a custom element.
+    if (component.type.indexOf(skate.types.TAG) > -1) {
+      return makeElementConstructor(component);
+    }
+  }
+
+  /**
+   * Returns the components for the specified element.
+   *
+   * @param {Element} element The element to get the components for.
+   *
+   * @returns {Array}
+   */
+  skate.components = function (element) {
+    var attrs = element.attributes;
+    var attrsLen = attrs.length;
+    var components = [];
+    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
+
+    if (isComponentOfType(tag, skate.types.TAG)) {
+      components.push(registry[tag]);
+    }
+
+    for (var a = 0; a < attrsLen; a++) {
+      var attr = attrs[a].nodeName;
+
+      if (isComponentOfType(attr, skate.types.ATTR)) {
+        components.push(registry[attr]);
+      }
+    }
+
+    var classList = getClassList(element);
+    var classListLen = classList.length;
+
+    for (var b = 0; b < classListLen; b++) {
+      var className = classList[b];
+
+      if (isComponentOfType(className, skate.types.CLASS)) {
+        components.push(registry[className]);
+      }
+    }
+
+    return components;
+  };
+
+  /**
+   * Stops listening for new elements. Generally this will only be used in testing.
+   *
+   * @returns {skate}
+   */
+  skate.destroy = function () {
+    registry = {};
+    return skate;
+  };
+
+  /**
+   * Synchronously initialises the specified element or elements and descendants.
+   *
+   * @param {Element} elements The element or elements to init.
+   *
+   * @returns {skate}
+   */
+  skate.init = function (element) {
+    eachDomElementInTree(element, function (node) {
+      var components = skate.components(node);
+
+      for (var b = 0; b < components.length; b++) {
+        triggerLifecycle(node, components[b]);
+      }
+    });
+
+    return element;
+  };
+
+  /**
+   * Default template renderers.
+   *
+   * @var {Object}
+   */
+  skate.template = {};
+
+  /**
+   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
+   *
+   * Differences:
+   *
+   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
+   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
+   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
+   *
+   * Usage:
+   *
+   *     skate('something', {
+   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
+   *     });
+   *
+   * @param {String} templateString The HTML template string to use.
+   *
+   * @returns {Function} The function for rendering the template.
+   */
+  skate.template.html = function (templateString) {
+    var template = createFragmentFromString(templateString);
+    var contentMutationObserver = new MutationObserver(function (mutations) {
+        for (var a = 0; a < mutations.length; a++) {
+          var mutation = mutations[a];
+
+          if (!mutation.target.children.length) {
+            mutation.target.innerHTML = getData(mutation.target, 'default-content');
+          }
+        }
+      });
+
+    return function (target) {
+      var targetFragment = createFragmentFromString(target.innerHTML);
+      var targetTemplate = template.cloneNode(true);
+      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
+      var hasContentNodes = contentNodes && contentNodes.length;
+
+      if (hasContentNodes) {
+        for (var a = 0; a < contentNodes.length; a++) {
+          var contentNode = contentNodes[a];
+          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+
+          // Save the default content so we can use it when all nodes are removed from the content.
+          setData(contentNode, 'default-content', contentNode.innerHTML);
+
+          if (foundNodes && foundNodes.length) {
+            contentNode.innerHTML = '';
+            insertNodeList(contentNode, foundNodes);
+          }
+
+          contentMutationObserver.observe(contentNode, {
+            childList: true
+          });
+        }
+      }
+
+      target.innerHTML = '';
+      target.appendChild(targetTemplate);
+    };
+  };
+
+  // Restriction type constants.
+  skate.types = {
+    ANY: 'act',
+    ATTR: 'a',
+    CLASS: 'c',
+    NOATTR: 'ct',
+    NOCLASS: 'at',
+    NOTAG: 'ac',
+    TAG: 't'
+  };
+
+  /**
+   * Unregisters the specified component.
+   *
+   * @param {String} id The ID of the component to unregister.
+   *
+   * @returns {Skate}
+   */
+  skate.unregister = function (id) {
+    delete registry[id];
+    return skate;
+  };
+
+  // Makes checking the version easy when debugging.
+  skate.version = '0.9.0';
+
+  /**
+   * The default options for a component.
+   *
+   * @var {Object}
+   */
+  skate.defaults = {
+    // Attribute lifecycle callback or callbacks.
+    attributes: false,
+
+    // The classname to use when showing this component.
+    classname: '__skate',
+
+    // The events to manage the binding and unbinding of during the component's lifecycle.
+    events: false,
+
+    // The ID of the component. This is automatically set in the `skate()` function.
+    id: '',
+
+    // Properties and methods to add to each element.
+    prototype: {},
+
+    // The template to replace the content of the element with.
+    template: false,
+
+    // The type of bindings to allow.
+    type: skate.types.ANY
+  };
 
 
 
