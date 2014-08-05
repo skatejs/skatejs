@@ -15,21 +15,8 @@
   // Global Variables
   // ----------------
 
-  var containsElement = window.HTMLElement.prototype.contains;
-
-  // The observer listening to document changes.
-  var documentListener;
-
-  // Whether or not the DOM has been updated. Default to `true` so the first call to `initDocument()` works.
-  var domUpdated = true;
-
-  var elProto = HTMLElement.prototype;
-
-  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
-  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
-  // prevent any jank if the ready() callback modifies the element.
-  var hiddenRules = document.createElement('style');
-
+  var elProto = window.HTMLElement.prototype;
+  var containsElement = elProto.contains;
   var matchesSelector = (
       elProto.matches ||
       elProto.msMatchesSelector ||
@@ -37,6 +24,15 @@
       elProto.mozMatchesSelector ||
       elProto.oMatchesSelector
     );
+
+
+  // The observer listening to document changes.
+  var documentListener;
+
+  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
+  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
+  // prevent any jank if the ready() callback modifies the element.
+  var hiddenRules = document.createElement('style');
 
   // The skate component registry.
   var registry = {};
@@ -174,8 +170,8 @@
         this.elements.push(observed);
 
         if (options.childList) {
-          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and eliminating
-          // nodes that aren't first children.
+          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and
+          // eliminating nodes that aren't first children.
           target.addEventListener('DOMNodeInserted', observed.insertHandler);
           target.addEventListener('DOMNodeRemoved', observed.removeHandler);
         }
@@ -256,7 +252,7 @@
     // If doing something that will modify the component's structure, ensure it's not displayed yet.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
-        getSelectorForType(id, component.type, '.' + component.classname) + '{display:none}',
+        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
       );
     }
@@ -264,11 +260,8 @@
     // Register the component.
     registry[component.id] = component;
 
-    // Ensure existing elements are initialised.
+    // Ensure a call is queued for initialising the document.
     initDocument();
-
-    // Ensure the document is being listened to.
-    initDocumentListener();
 
     // Only make and return an element constructor if it can be used as a custom element.
     if (component.type.indexOf(skate.types.TAG) > -1) {
@@ -321,13 +314,7 @@
    * @returns {skate}
    */
   skate.destroy = function () {
-    if (documentListener) {
-      documentListener.disconnect();
-      documentListener = undefined;
-    }
-
     registry = {};
-
     return skate;
   };
 
@@ -865,9 +852,7 @@
     var isClass = type.indexOf(skate.types.CLASS) > -1;
     var selectors = [];
 
-    if (negateWith) {
-      negateWith = ':not(' + negateWith + ')';
-    }
+    negateWith = negateWith ? ':not(' + negateWith + ')' : '';
 
     if (isTag) {
       selectors.push(id + negateWith);
@@ -1082,42 +1067,6 @@
   }
 
   /**
-   * Initialises the main listener using mutation obserers.
-   *
-   * @returns {undefined}
-   */
-  function initDocumentListener () {
-    // We only need one document listener.
-    if (documentListener) {
-      return;
-    }
-
-    documentListener = new MutationObserver(function (mutations) {
-      domUpdated = true;
-
-      mutations.forEach(function (mutation) {
-        if (mutation.addedNodes && mutation.addedNodes.length) {
-          // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
-          // is then we don't process any added nodes. This prevents having to check every node.
-          if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
-            initElements(mutation.addedNodes);
-          }
-        }
-
-        if (mutation.removedNodes && mutation.removedNodes.length) {
-          // We can't check batched nodes here because they won't have a parent node.
-          removeElements(mutation.removedNodes);
-        }
-      });
-    });
-
-    documentListener.observe(document, {
-      childList: true,
-      subtree: true
-    });
-  }
-
-  /**
    * Returns a function that will prevent more than one call in a single clock tick.
    *
    * @param {Function} fn The function to call.
@@ -1139,20 +1088,13 @@
   }
 
   /**
-   * Initialises the head and body.
+   * Initialises all valid elements in the document. Ensures that it does not happen more than once in the same
+   * execution.
    *
    * @returns {undefined}
    */
   var initDocument = debounce(function () {
-    if (!domUpdated) {
-      return;
-    }
-
-    var childNodes = document.getElementsByTagName('html')[0].childNodes;
-
-    if (childNodes) {
-      initElements(childNodes);
-    }
+    skate.init(document.getElementsByTagName('html')[0]);
   });
 
 
@@ -1164,6 +1106,29 @@
   // prior to calling the ready callback to prevent FOUC if the component
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
+
+  // Start listening right away.
+  documentListener = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      if (mutation.addedNodes && mutation.addedNodes.length) {
+        // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
+        // is then we don't process any added nodes. This prevents having to check every node.
+        if (!getClosestIgnoredElement(mutation.addedNodes[0].parentNode)) {
+          initElements(mutation.addedNodes);
+        }
+      }
+
+      if (mutation.removedNodes && mutation.removedNodes.length) {
+        // We can't check batched nodes here because they won't have a parent node.
+        removeElements(mutation.removedNodes);
+      }
+    });
+  });
+
+  documentListener.observe(document, {
+    childList: true,
+    subtree: true
+  });
 
 
 
