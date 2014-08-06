@@ -672,8 +672,10 @@
     MutationObserver.prototype = {
       observe: function (target, options) {
         function addEventToBatch (e) {
-          batchedEvents.push(e);
-          batchEvents();
+          if (e) {
+            batchedEvents.push(e);
+            batchEvents();
+          }
         }
 
         function batchEvent (e) {
