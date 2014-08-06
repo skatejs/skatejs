@@ -728,7 +728,13 @@
             var batchedEventsLen = batchedEvents.length;
 
             for (var a = 0; a < batchedEventsLen; a++) {
-              batchEvent(batchedEvents[a]);
+              var batchedEvent = batchedEvents[a];
+
+              // We have to check if the event exists because in some environments batches are somehow still being
+              // processed after the document is destoryed, or something. NFI.
+              if (batchedEvent) {
+                batchEvent(batchedEvents[a]);
+              }
             }
 
             that.callback(batchedRecords);
