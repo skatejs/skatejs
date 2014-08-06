@@ -679,6 +679,8 @@
         function batchEvent (e) {
           var eTarget = e.target;
 
+          // In some test environments, e.target has been nulled after the tests are done and a batch is still
+          // processing.
           if (!eTarget) {
             return;
           }
