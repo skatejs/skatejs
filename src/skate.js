@@ -678,6 +678,11 @@
 
         function batchEvent (e) {
           var eTarget = e.target;
+
+          if (!eTarget) {
+            return;
+          }
+
           var eTargetParent = eTarget.parentNode;
 
           if (!canTriggerInsertOrRemove(eTargetParent)) {
@@ -728,13 +733,7 @@
             var batchedEventsLen = batchedEvents.length;
 
             for (var a = 0; a < batchedEventsLen; a++) {
-              var batchedEvent = batchedEvents[a];
-
-              // We have to check if the event exists because in some environments batches are somehow still being
-              // processed after the document is destoryed, or something. NFI.
-              if (batchedEvent) {
-                batchEvent(batchedEvents[a]);
-              }
+              batchEvent(batchedEvents[a]);
             }
 
             that.callback(batchedRecords);
