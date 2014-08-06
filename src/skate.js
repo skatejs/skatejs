@@ -569,17 +569,6 @@
   }
 
   /**
-   * Returns whether or not the specified node is valid.
-   *
-   * @param {DOMNode} node THe node to check.
-   *
-   * @returns {Boolean}
-   */
-  function isValidNode (node) {
-    return node.nodeType === 1 && !node.hasAttribute(ATTR_IGNORE);
-  }
-
-  /**
    * Returns a function that will prevent more than one call in a single clock tick.
    *
    * @param {Function} fn The function to call.
@@ -608,7 +597,8 @@
    * @returns {Integer}
    */
   function treeWalkerFilter (node) {
-    return isValidNode(node) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    var attrs = node.attributes;
+    return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
   }
 
   /**
@@ -962,7 +952,7 @@
    * @returns {skate}
    */
   skate.init = function (node) {
-    if (!isValidNode(node)) {
+    if (node.nodeType !== 1 || node.attributes[ATTR_IGNORE]) {
       return node;
     }
 
