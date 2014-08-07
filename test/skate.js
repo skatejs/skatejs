@@ -22,7 +22,7 @@
 
   afterEach(function () {
     skate.destroy();
-    document.querySelector('body').innerHTML = '';
+    document.body.innerHTML = '';
   });
 
 
@@ -318,6 +318,21 @@
       });
 
       document.body.innerHTML = '<div id="attrtest" open="insert"></div>';
+    });
+
+    it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
+      skate('div', {
+        attributes: function (element, data) {
+          if (data.name === 'first') {
+            element.removeAttribute('second');
+          }
+        }
+      });
+
+      document.body.innerHTML = '<div first="first" second="second"></div>';
+      var div = skate.init(document.body.querySelector('div'));
+      div.hasAttribute('first').should.equal(true);
+      div.hasAttribute('second').should.equal(false);
     });
   });
 
@@ -639,26 +654,24 @@
       el.innerHTML.should.equal('<span data-skate-content="some descendant"></span>');
     });
 
-    it('should use the content of the content elements as the default content if no content is found to replace it with', function () {
-      skate('my-element-1', {
-        template: '<span data-skate-content="">default content</span>'
+    describe('default content', function () {
+      var main;
+      var span;
+
+      beforeEach(function () {
+        skate('my-element', {
+          template: '<span data-skate-content>default content</span>'
+        });
+
+        document.body.innerHTML = '<my-element></my-element>';
+
+        main = skate.init(document.querySelector('my-element'));
+        span = main.querySelector('span');
       });
 
-      skate('my-element-2', {
-        template: '<span data-skate-content=".some-elements">default content</span>'
+      it('should insert the default content if no content is found', function () {
+        span.innerHTML.should.equal('default content');
       });
-
-      // Not selecting any content.
-      document.body.innerHTML = '<my-element-1></my-element-1>';
-      var el1 = document.querySelector('my-element-1');
-      skate.init(el1);
-      el1.innerHTML.should.equal('<span data-skate-content="">default content</span>');
-
-      // Selecting content.
-      document.body.innerHTML = '<my-element-2><p>some content that will not be selected</p></my-element-2>';
-      var el2 = document.querySelector('my-element-2');
-      skate.init(el2);
-      el2.innerHTML.should.equal('<span data-skate-content=".some-elements">default content</span>');
     });
   });
 

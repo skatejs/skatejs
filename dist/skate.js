@@ -169,7 +169,12 @@
     // callbacks. Skate will initialise each attribute calling the "insert" callback that already exists on the element.
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a];
-      triggerCallback('insert', attr.nodeName, attr.nodeValue);
+
+      // If an attribute is removed during the enumeration, then we must ensure that each one still exists when it
+      // comes time to action it.
+      if (attr) {
+        triggerCallback('insert', attr.nodeName, attr.nodeValue);
+      }
     }
   }
 
@@ -679,6 +684,8 @@
         function batchEvent (e) {
           var eTarget = e.target;
 
+          // In some test environments, e.target has been nulled after the tests are done and a batch is still
+          // processing.
           if (!eTarget) {
             return;
           }
