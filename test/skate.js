@@ -672,6 +672,15 @@
       it('should insert the default content if no content is found', function () {
         span.innerHTML.should.equal('default content');
       });
+
+      it('should remove the default content if content is inserted', function (done) {
+        span.appendChild(document.createElement('span'));
+
+        setTimeout(function () {
+          span.innerHTML.should.equal('<span></span>');
+          done();
+        });
+      });
     });
   });
 

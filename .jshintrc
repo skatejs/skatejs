@@ -8,6 +8,7 @@
   "globals": {
       "afterEach": false,
       "assert": false,
+      "beforeEach": false,
       "define": false,
       "describe": false,
       "document": false,

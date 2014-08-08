@@ -437,11 +437,23 @@
    * @returns {NodeList}
    */
   function findChildrenMatchingSelector (sourceNode, selector) {
-    var foundNodes = selector ? sourceNode.querySelectorAll(selector) : sourceNode.childNodes;
+    if (selector) {
+      var found = sourceNode.querySelectorAll(selector);
+      var foundLength = found.length;
+      var filtered = [];
 
-    return [].filter.call(foundNodes, function (foundNode) {
-      return foundNode.parentNode === sourceNode;
-    });
+      for (var a = 0; a < foundLength; a++) {
+        var node = found[a];
+
+        if (node.parentNode === sourceNode) {
+          filtered.push(node);
+        }
+      }
+
+      return filtered;
+    }
+
+    return sourceNode.childNodes || [];
   }
 
   /**
@@ -477,7 +489,7 @@
    * Inserts the specified nodes into the given element.
    *
    * @param {Element} element The element to insert the nodes into.
-   * @param {NodeList} nodes The nodes to insert.
+   * @param {Enumerable} nodes The nodes to insert.
    *
    * @returns {undefined}
    */
@@ -499,6 +511,25 @@
   }
 
   /**
+   * Removes the nodes in the node list from the specified element.
+   *
+   * @param {HTMLElement} element The element to remove the nodes from.
+   * @param {Enumerable} nodes The list of nodes to remove.
+   *
+   * @retruns {undefined}
+   */
+  function removeNodeList (element, nodes) {
+    var len = nodes.length;
+
+    if (nodes && len) {
+      for (var a = 0; a < len; a++) {
+        var node = nodes[a];
+        element.removeChild(node);
+      }
+    }
+  }
+
+  /**
    * Returns whether or not the source element contains the target element. This is for browsers that don't support
    * Element.prototype.contains on an HTMLUnknownElement.
    *
@@ -512,7 +543,7 @@
       return false;
     }
 
-    return source.contains ? source.contains(target) : containsElement.call(source, target);
+    return source.contains ? source.contains(target) : elProtoContains.call(source, target);
   }
 
   /**
@@ -623,6 +654,7 @@
 
   var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
+  var REGEX_WHITESPACE = /^[\s\r\n]*$/;
 
 
 
@@ -630,7 +662,7 @@
   // ----------------
 
   var elProto = window.HTMLElement.prototype;
-  var containsElement = elProto.contains;
+  var elProtoContains = elProto.contains;
   var matchesSelector = (
       elProto.matches ||
       elProto.msMatchesSelector ||
@@ -1016,12 +1048,29 @@
    */
   skate.template.html = function (templateString) {
     var template = createFragmentFromString(templateString);
+    var mutating = false;
     var contentMutationObserver = new MutationObserver(function (mutations) {
+        // If we are mutating, it means that the content mutation observer previously ran and we shouldn't run this
+        // set of mutations. Simply unflag and return.
+        if (mutating) {
+          mutating = false;
+          return;
+        }
+
+        mutating = true;
+
         for (var a = 0; a < mutations.length; a++) {
           var mutation = mutations[a];
+          var mutationTarget = mutation.target;
+          var defaultContent = getData(mutationTarget, 'default-content');
 
-          if (!mutation.target.children.length) {
-            mutation.target.innerHTML = getData(mutation.target, 'default-content');
+          if (mutation.addedNodes) {
+            removeNodeList(mutationTarget, defaultContent);
+          }
+
+          if (mutation.removedNodes && mutationTarget.innerHTML.match(REGEX_WHITESPACE)) {
+            mutationTarget.innerHTML = '';
+            insertNodeList(mutationTarget, defaultContent);
           }
         }
       });
@@ -1030,21 +1079,23 @@
       var targetFragment = createFragmentFromString(target.innerHTML);
       var targetTemplate = template.cloneNode(true);
       var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
-      var hasContentNodes = contentNodes && contentNodes.length;
+      var contentNodesLength = contentNodes.length;
 
-      if (hasContentNodes) {
-        for (var a = 0; a < contentNodes.length; a++) {
+      if (contentNodesLength) {
+        for (var a = 0; a < contentNodesLength; a++) {
           var contentNode = contentNodes[a];
           var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
 
           // Save the default content so we can use it when all nodes are removed from the content.
-          setData(contentNode, 'default-content', contentNode.innerHTML);
+          setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
 
-          if (foundNodes && foundNodes.length) {
+          // If any initial content is found we replace any content with them.
+          if (foundNodes.length) {
             contentNode.innerHTML = '';
             insertNodeList(contentNode, foundNodes);
           }
 
+          // Any further mutations will handle the display of the default content.
           contentMutationObserver.observe(contentNode, {
             childList: true
           });
