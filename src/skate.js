@@ -547,6 +547,37 @@
   }
 
   /**
+   * Initialises a single element and its descendants.
+   *
+   * @param {HTMLElement} element The element tree to initialise.
+   *
+   * @returns {undefined}
+   */
+  function initElement (element) {
+    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+      return;
+    }
+
+    var walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, treeWalkerFilter, true);
+    var currentNodeComponents = skate.components(element);
+    var currentNodeComponentsLength = currentNodeComponents.length;
+
+    for (var a = 0; a < currentNodeComponentsLength; a++) {
+      triggerLifecycle(element, currentNodeComponents[a]);
+    }
+
+    while (walker.nextNode()) {
+      var walkerNode = walker.currentNode;
+      var walkerNodeComponents = skate.components(walkerNode);
+      var walkerNodeComponentsLength = walkerNodeComponents.length;
+
+      for (var b = 0; b < walkerNodeComponentsLength; b++) {
+        triggerLifecycle(walkerNode, walkerNodeComponents[b]);
+      }
+    }
+  }
+
+  /**
    * Initialises a set of elements.
    *
    * @param {DOMNodeList | Array} elements A traversable set of elements.
@@ -557,13 +588,7 @@
     var len = elements.length;
 
     for (var a = 0; a < len; a++) {
-      var element = elements[a];
-
-      if (element.nodeType !== 1) {
-        continue;
-      }
-
-      skate.init(element);
+      initElement(elements[a]);
     }
   }
 
@@ -644,7 +669,7 @@
    * @returns {undefined}
    */
   var initDocument = debounce(function () {
-    skate.init(document.getElementsByTagName('html')[0]);
+    initElement(document.getElementsByTagName('html')[0]);
   });
 
 
@@ -991,34 +1016,18 @@
   /**
    * Synchronously initialises the specified element or elements and descendants.
    *
-   * @param {DOMNode} node The node to initialise.
+   * @param {Mixed} nodes The node, or nodes to initialise. Can be anything: jQuery, DOMNodeList, DOMNode etc.
    *
    * @returns {skate}
    */
-  skate.init = function (node) {
-    if (node.nodeType !== 1 || node.attributes[ATTR_IGNORE]) {
-      return node;
+  skate.init = function (nodes) {
+    if (typeof nodes.length === 'undefined') {
+      nodes = [nodes];
     }
 
-    var walker = document.createTreeWalker(node, NodeFilter.SHOW_ELEMENT, treeWalkerFilter, true);
-    var currentNodeComponents = skate.components(node);
-    var currentNodeComponentsLength = currentNodeComponents.length;
+    initElements(nodes);
 
-    for (var a = 0; a < currentNodeComponentsLength; a++) {
-      triggerLifecycle(node, currentNodeComponents[a]);
-    }
-
-    while (walker.nextNode()) {
-      var walkerNode = walker.currentNode;
-      var walkerNodeComponents = skate.components(walkerNode);
-      var walkerNodeComponentsLength = walkerNodeComponents.length;
-
-      for (var b = 0; b < walkerNodeComponentsLength; b++) {
-        triggerLifecycle(walkerNode, walkerNodeComponents[b]);
-      }
-    }
-
-    return node;
+    return arguments[0];
   };
 
   /**
