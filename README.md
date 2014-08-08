@@ -304,8 +304,8 @@ And the built-in templating engine would transform this into:
       <article>
         <h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
         <section data-skate-content>
-            <p>First paragraph.</p>
-            <p>Second paragraph.</p>
+          <p>First paragraph.</p>
+          <p>Second paragraph.</p>
         </section>
       </article>
     </my-component>
@@ -320,7 +320,7 @@ Additionally, if both paragraphs were removed from the `<section>`, the default 
           <span class="heading">My Heading</span>
         </h3>
         <section data-skate-content>
-            <p>There is no content to display.</p>
+          <p>There is no content to display.</p>
         </section>
       </article>
     </my-component>
@@ -370,6 +370,10 @@ It is favourable to use a constructor in your code wherever possible because it 
 
     // Asynchronously calls the `insert` callback.
     document.body.appendChild(element);
+
+### Unregistering Components
+
+If you need to remove a component definition just call `skate.unregister('your-component-id')`. If you need to reset everything call `skate.destroy()`.
 
 ### Performance
 
