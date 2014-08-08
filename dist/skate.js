@@ -861,7 +861,7 @@
   }
 
   /**
-   * Creates a new mutation record with better defaults.
+   * Creates a new mutation record.
    *
    * @param {Element} target The HTML element that was affected.
    * @param {String} type The type of mutation.
