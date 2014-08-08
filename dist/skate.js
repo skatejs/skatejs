@@ -155,7 +155,7 @@
           type = 'remove';
         }
 
-        triggerCallback(type, name, attr ? attr.nodeValue : undefined, mutation.oldValue);
+        triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
       });
     });
 
@@ -173,7 +173,7 @@
       // If an attribute is removed during the enumeration, then we must ensure that each one still exists when it
       // comes time to action it.
       if (attr) {
-        triggerCallback('insert', attr.nodeName, attr.nodeValue);
+        triggerCallback('insert', attr.nodeName, (attr.value || attr.nodeValue));
       }
     }
   }
@@ -949,7 +949,8 @@
     var attrs = element.attributes;
     var attrsLen = attrs.length;
     var components = [];
-    var tag = attrs.is && attrs.is.nodeValue || element.tagName.toLowerCase();
+    var isAttr = attrs.is;
+    var tag = isAttr && (isAttr.value || isAttr.nodeValue) || element.tagName.toLowerCase();
 
     if (isComponentOfType(tag, skate.types.TAG)) {
       components.push(registry[tag]);
