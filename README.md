@@ -155,15 +155,23 @@ The component lifecycle consists of three callbacks:
 2. `insert` Called after the element is displayed.
 3. `remove` Called after the element is removed.
 
-The `ready` callback can be made asynchronous by specifying a second argument in the callback. If this argument is found, it will pass a callback to it which when called will cause the lifecycle to continue by displaying the element and then calling the `insert` callback.
+The `ready` callback has two forms. The first assumes synchronous operation where once the callback is finished being called, the lifecycle automatically proceeds.
 
     skate('my-component', {
-      ready: function (element, done) {
-        doSomethingAsync().then(done);
+      ready: function (element) {
+        doSomethingSync(element);
       }
     });
 
-Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
+In the second form, the `ready` callback can be made asynchronous by specifying a second argument in the callback. If this argument is found, a callback is passed to it which you must call to continue the lifecycle.
+
+    skate('my-component', {
+      ready: function (element, done) {
+        doSomethingAsync(element).then(done);
+      }
+    });
+
+The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback. Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
 
 It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
 
