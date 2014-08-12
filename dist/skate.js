@@ -2,6 +2,8 @@
 
   'use strict';
 
+
+
   // Lifecycle Triggers
   // ------------------
 
@@ -501,11 +503,7 @@
         var newNode = nodes[a];
         var reference = element.childNodes[0];
 
-        if (reference) {
-          element.insertBefore(newNode, reference);
-        } else {
-          element.appendChild(newNode);
-        }
+        element.appendChild(newNode);
       }
     }
   }
