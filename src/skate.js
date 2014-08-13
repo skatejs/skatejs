@@ -1019,13 +1019,13 @@
    * @returns {skate}
    */
   skate.init = function (nodes) {
-    if (typeof nodes.length === 'undefined') {
-      nodes = [nodes];
+    if (typeof nodes === 'string') {
+      nodes = document.querySelectorAll(nodes);
     }
 
-    initElements(nodes);
+    initElements(typeof nodes.length === 'undefined' ? [nodes] : nodes);
 
-    return arguments[0];
+    return nodes;
   };
 
   /**

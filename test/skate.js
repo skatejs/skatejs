@@ -29,6 +29,36 @@
   // Specs
   // -----
 
+  describe('skate.init', function () {
+    var Div;
+
+    beforeEach(function () {
+      Div = skate('div', {
+        ready: function (element) {
+          element.textContent = 'test';
+        }
+      });
+
+      document.body.appendChild(document.createElement('div'));
+    });
+
+    afterEach(function () {
+      document.body.innerHTML = '';
+    })
+
+    it('should accept a selector', function () {
+      expect(skate.init('div').item(0).textContent).to.equal('test');
+    });
+
+    it('should accept a node', function () {
+      expect(skate.init(document.querySelector('div')).textContent).to.equal('test');
+    });
+
+    it('should accept a node list', function () {
+      expect(skate.init(document.querySelectorAll('div')).item(0).textContent).to.equal('test');
+    })
+  });
+
   describe('Registration', function () {
     it('should not allow you to register the same component more than once.', function () {
       var multiple = false;
