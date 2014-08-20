@@ -649,6 +649,15 @@
       el.innerHTML.should.equal('my template');
     });
 
+    it('should retain template element order', function () {
+      var El = skate('my-element', {
+        template: '<one></one><two></two><three></three>'
+      });
+
+      var el = new El();
+      el.innerHTML.should.equal('<one></one><two></two><three></three>');
+    });
+
     it('should allow a function that is assumed that it will do the templating', function () {
       var El = skate('my-element', {
         template: function (element) {

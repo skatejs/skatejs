@@ -496,15 +496,8 @@
    * @returns {undefined}
    */
   function insertNodeList (element, nodes) {
-    var len = nodes.length;
-
-    if (nodes && len) {
-      for (var a = len - 1; a >= 0; a--) {
-        var newNode = nodes[a];
-        var reference = element.childNodes[0];
-
-        element.appendChild(newNode);
-      }
+    while(nodes.length) {
+      element.appendChild(nodes[0]);
     }
   }
 
