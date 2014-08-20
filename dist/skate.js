@@ -498,13 +498,8 @@
   function insertNodeList (element, nodes) {
     var len = nodes.length;
 
-    if (nodes && len) {
-      for (var a = len - 1; a >= 0; a--) {
-        var newNode = nodes[a];
-        var reference = element.childNodes[0];
-
-        element.appendChild(newNode);
-      }
+    for (var a = len; a > 0; a--) {
+      element.appendChild(nodes[0]);
     }
   }
 
@@ -1019,6 +1014,10 @@
    * @returns {skate}
    */
   skate.init = function (nodes) {
+    if (!nodes) {
+      return;
+    }
+
     if (typeof nodes === 'string') {
       nodes = document.querySelectorAll(nodes);
     }
@@ -1112,6 +1111,76 @@
 
       target.innerHTML = '';
       target.appendChild(targetTemplate);
+    };
+  };
+
+  /**
+   * Wraps the element in an object that has methods which can be used to manipulate the content similar to if it were
+   * delcared as the shadow root.
+   *
+   * @param {HTMLElement} element The element to wrap.
+   *
+   * @returns {Object}
+   */
+  skate.template.html.wrap = function (element) {
+    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
+
+    if (!contentNodes.length) {
+      contentNodes = [element];
+    }
+
+    var contentNodesLength = contentNodes.length;
+
+    return {
+      index: function (node) {
+        return [].indexOf.call(this.nodes(), node);
+      },
+
+      insert: function (node, at) {
+        return this;
+      },
+
+      html: function (html) {
+        if (arguments.length) {
+          var targetFragment = createFragmentFromString(html);
+
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+
+            if (foundNodes.length) {
+              contentNode.innerHTML = '';
+              insertNodeList(contentNode, foundNodes);
+            }
+          }
+
+          return this;
+        }
+
+        var htmlToReturn = '';
+
+        this.nodes().forEach(function (node) {
+          htmlToReturn += node.outerHTML;
+        });
+
+        return htmlToReturn;
+      },
+
+      nodes: function () {
+        var nodesToReturn = [];
+
+        for (var a = 0; a < contentNodesLength; a++) {
+          var contentNode = contentNodes[a];
+          var contentNodeChildNodes = contentNode.childNodes;
+          var contentNodeChildNodesLength = contentNodeChildNodes.length;
+
+          for (var b = 0; b < contentNodeChildNodesLength; b++) {
+            nodesToReturn.push(contentNodeChildNodes[b]);
+          }
+        }
+
+        return nodesToReturn;
+      }
     };
   };
 

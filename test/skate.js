@@ -721,6 +721,41 @@
         });
       });
     });
+
+    describe('wrapper', function () {
+      var elementWithContent;
+      var elementWithoutContent;
+      var wrap = skate.template.html.wrap;
+
+      beforeEach(function () {
+        skate('my-element-with-content', {
+          template: '<span data-skate-content="one"></span><span data-skate-content="two"></span>'
+        });
+
+        skate('my-element-without-content', {
+          template: ''
+        });
+
+        document.body.innerHTML = '' +
+          '<my-element-with-content><one></one><two></two></my-element-with-content>' +
+          '<my-element-without-content><one></one><two></two></my-element-without-content>';
+
+        elementWithContent = skate.init(document.querySelector('my-element-with-content'));
+        elementWithoutContent = skate.init(document.querySelector('my-element-without-content'));
+      });
+
+      it('should allow getting html', function () {
+        expect(wrap(elementWithContent).html()).to.equal('<one></one><two></two>');
+        expect(wrap(elementWithoutContent).html()).to.equal('<one></one><two></two>');
+      });
+
+      it('should allow setting html', function () {
+        wrap(elementWithContent).html('<one></one><two></two>');
+        wrap(elementWithoutContent).html('<one></one><two></two>');
+        expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two"><two></two></span>');
+        expect(elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
+      });
+    });
   });
 
   describe('version', function () {
