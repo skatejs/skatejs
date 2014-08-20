@@ -496,7 +496,9 @@
    * @returns {undefined}
    */
   function insertNodeList (element, nodes) {
-    while(nodes.length) {
+    var len = nodes.length;
+
+    for (var a = len; a > 0; a--) {
       element.appendChild(nodes[0]);
     }
   }
@@ -1132,7 +1134,7 @@
   };
 
   // Makes checking the version easy when debugging.
-  skate.version = '0.9.0';
+  skate.version = '0.9.3';
 
   /**
    * The default options for a component.
