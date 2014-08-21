@@ -671,6 +671,7 @@
   // Constants
   // ---------
 
+  var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
   var REGEX_WHITESPACE = /^[\s\r\n]*$/;
 
@@ -1085,13 +1086,13 @@
     return function (target) {
       var targetFragment = createFragmentFromString(target.innerHTML);
       var targetTemplate = template.cloneNode(true);
-      var contentNodes = targetTemplate.querySelectorAll(skate.template.html.selector);
+      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
       var contentNodesLength = contentNodes.length;
 
       if (contentNodesLength) {
         for (var a = 0; a < contentNodesLength; a++) {
           var contentNode = contentNodes[a];
-          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(skate.template.html.attribute));
+          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
 
           // Save the default content so we can use it when all nodes are removed from the content.
           setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
@@ -1115,12 +1116,6 @@
   };
 
   /**
-   *
-   */
-  skate.template.html.attribute = 'data-skate-content';
-  skate.template.html.selector = '[' + skate.template.html.attribute + ']';
-
-  /**
    * Wraps the element in an object that has methods which can be used to manipulate the content similar to if it were
    * delcared as the shadow root.
    *
@@ -1135,7 +1130,7 @@
       },
 
       content: function () {
-        var contentNodes = element.querySelectorAll(skate.template.html.selector);
+        var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
 
         if (contentNodes.length) {
           return [].slice.call(contentNodes);
@@ -1155,7 +1150,7 @@
           nodes = nodes.slice(at);
         } else {
           var content = nodes[nodes.length - 1].parentNode;
-          var selector = content.getAttribute(skate.template.html.attribute);
+          var selector = content.getAttribute(ATTR_CONTENT);
 
           if (!selector || matchesSelector.call(node, selector)) {
             content.appendChild(node);
@@ -1174,7 +1169,7 @@
           }
 
           lastContent = thisContent;
-          var selector = thisContent.getAttribute(skate.template.html.attribute);
+          var selector = thisContent.getAttribute(ATTR_CONTENT);
 
           if (!selector || matchesSelector.call(node, selector)) {
             thisContent.insertBefore(node, referenceNode);
@@ -1190,7 +1185,7 @@
           var targetFragment = createFragmentFromString(html);
 
           this.content().forEach(function (content) {
-            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(skate.template.html.attribute));
+            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(ATTR_CONTENT));
 
             if (found.length) {
               content.innerHTML = '';
