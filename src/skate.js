@@ -1123,15 +1123,17 @@
    * @returns {Object}
    */
   skate.template.html.wrap = function (element) {
-    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
-
-    if (!contentNodes.length) {
-      contentNodes = [element];
-    }
-
-    var contentNodesLength = contentNodes.length;
-
     return {
+      content: function () {
+        var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
+
+        if (contentNodes.length) {
+          return contentNodes;
+        }
+
+        return [element];
+      },
+
       index: function (node) {
         return [].indexOf.call(this.nodes(), node);
       },
@@ -1142,6 +1144,8 @@
 
       html: function (html) {
         if (arguments.length) {
+          var contentNodes = this.content();
+          var contentNodesLength = contentNodes.length;
           var targetFragment = createFragmentFromString(html);
 
           for (var a = 0; a < contentNodesLength; a++) {
@@ -1167,6 +1171,8 @@
       },
 
       nodes: function () {
+        var contentNodes = this.content();
+        var contentNodesLength = contentNodes.length;
         var nodesToReturn = [];
 
         for (var a = 0; a < contentNodesLength; a++) {
