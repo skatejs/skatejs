@@ -725,6 +725,8 @@
     describe('wrapper', function () {
       var elementWithContent;
       var elementWithoutContent;
+      var $elementWithContent;
+      var $elementWithoutContent;
       var wrap = skate.template.html.wrap;
 
       beforeEach(function () {
@@ -742,16 +744,45 @@
 
         elementWithContent = skate.init(document.querySelector('my-element-with-content'));
         elementWithoutContent = skate.init(document.querySelector('my-element-without-content'));
+        $elementWithContent = wrap(elementWithContent);
+        $elementWithoutContent = wrap(elementWithoutContent);
+      });
+
+      it('should return the nodes as a flat list to represent the light DOM', function () {
+        var withContent = $elementWithContent.nodes();
+        var withoutContent = $elementWithoutContent.nodes();
+
+        expect(withContent.length).to.equal(2);
+        expect(withContent[0].tagName).to.equal('ONE');
+        expect(withContent[1].tagName).to.equal('TWO');
+        expect(withoutContent.length).to.equal(2);
+        expect(withoutContent[0].tagName).to.equal('ONE');
+        expect(withoutContent[1].tagName).to.equal('TWO');
+      });
+
+      it('should return the correct index of the element as represented in the light DOM', function () {
+        expect($elementWithContent.index(elementWithContent.querySelector('one'))).to.equal(0);
+        expect($elementWithContent.index(elementWithContent.querySelector('two'))).to.equal(1);
+        expect($elementWithoutContent.index(elementWithoutContent.querySelector('one'))).to.equal(0);
+        expect($elementWithoutContent.index(elementWithoutContent.querySelector('two'))).to.equal(1);
+      });
+
+      it('should insert the element at the correct index in the light DOM', function () {
+        elementWithContent.querySelector('[data-skate-content="two"]').setAttribute('data-skate-content', 'two, three');
+        $elementWithContent.insert(document.createElement('three'), 1);
+        $elementWithoutContent.insert(document.createElement('three'), 1);
+        expect($elementWithContent.html()).to.equal('<one></one><three></three><two></two>');
+        expect($elementWithoutContent.html()).to.equal('<one></one><three></three><two></two>');
       });
 
       it('should allow getting html', function () {
-        expect(wrap(elementWithContent).html()).to.equal('<one></one><two></two>');
-        expect(wrap(elementWithoutContent).html()).to.equal('<one></one><two></two>');
+        expect($elementWithContent.html()).to.equal('<one></one><two></two>');
+        expect($elementWithoutContent.html()).to.equal('<one></one><two></two>');
       });
 
       it('should allow setting html', function () {
-        wrap(elementWithContent).html('<one></one><two></two>');
-        wrap(elementWithoutContent).html('<one></one><two></two>');
+        $elementWithContent.html('<one></one><two></two>');
+        $elementWithoutContent.html('<one></one><two></two>');
         expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two"><two></two></span>');
         expect(elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
       });

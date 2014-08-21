@@ -477,8 +477,9 @@
         thead: 'table',
         tr: 'tbody'
       };
-    var tag = domString.match(/\s*<([^\s>]+)/);
+
     var frag = document.createDocumentFragment();
+    var tag = domString.match(/\s*<([^\s>]+)/);
     var div = document.createElement(tag && specialMap[tag[1]] || 'div');
 
     div.innerHTML = domString;
@@ -1124,11 +1125,15 @@
    */
   skate.template.html.wrap = function (element) {
     return {
+      append: function (node) {
+        return this.insert(node);
+      },
+
       content: function () {
         var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
 
         if (contentNodes.length) {
-          return contentNodes;
+          return [].slice.call(contentNodes);
         }
 
         return [element];
@@ -1139,24 +1144,43 @@
       },
 
       insert: function (node, at) {
+        var nodes = this.nodes();
+        var parent;
+        var reference;
+        var selector;
+
+        if (at && nodes[at]) {
+          reference = nodes[at];
+          parent = reference.parentNode;
+        } else {
+          parent = nodes[nodes.length - 1].parentNode;
+        }
+
+        selector = parent.getAttribute(ATTR_CONTENT);
+
+        if (!selector || matchesSelector.call(node, selector)) {
+          if (reference) {
+            parent.insertBefore(node, reference);
+          } else {
+            parent.appendChild(node);
+          }
+        }
+
         return this;
       },
 
       html: function (html) {
         if (arguments.length) {
-          var contentNodes = this.content();
-          var contentNodesLength = contentNodes.length;
           var targetFragment = createFragmentFromString(html);
 
-          for (var a = 0; a < contentNodesLength; a++) {
-            var contentNode = contentNodes[a];
-            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+          this.content().forEach(function (content) {
+            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(ATTR_CONTENT));
 
-            if (foundNodes.length) {
-              contentNode.innerHTML = '';
-              insertNodeList(contentNode, foundNodes);
+            if (found.length) {
+              content.innerHTML = '';
+              insertNodeList(content, found);
             }
-          }
+          });
 
           return this;
         }
@@ -1171,21 +1195,25 @@
       },
 
       nodes: function () {
-        var contentNodes = this.content();
-        var contentNodesLength = contentNodes.length;
         var nodesToReturn = [];
 
-        for (var a = 0; a < contentNodesLength; a++) {
-          var contentNode = contentNodes[a];
-          var contentNodeChildNodes = contentNode.childNodes;
-          var contentNodeChildNodesLength = contentNodeChildNodes.length;
-
-          for (var b = 0; b < contentNodeChildNodesLength; b++) {
-            nodesToReturn.push(contentNodeChildNodes[b]);
+        this.content().forEach(function (content) {
+          if (content.childNodes) {
+            for (var a = 0; a < content.childNodes.length; a++) {
+              nodesToReturn.push(content.childNodes[a]);
+            }
           }
-        }
+        });
 
         return nodesToReturn;
+      },
+
+      prepend: function (node) {
+        return this.insert(node, 0);
+      },
+
+      unwrap: function () {
+        return element;
       }
     };
   };
