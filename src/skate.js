@@ -1145,26 +1145,37 @@
 
       insert: function (node, at) {
         var nodes = this.nodes();
-        var parent;
-        var reference;
-        var selector;
 
-        if (at && nodes[at]) {
-          reference = nodes[at];
-          parent = reference.parentNode;
+        if (at < nodes.length) {
+          nodes = nodes.slice(at);
         } else {
-          parent = nodes[nodes.length - 1].parentNode;
-        }
+          var content = nodes[nodes.length - 1].parentNode;
+          var selector = content.getAttribute(ATTR_CONTENT);
 
-        selector = parent.getAttribute(ATTR_CONTENT);
-
-        if (!selector || matchesSelector.call(node, selector)) {
-          if (reference) {
-            parent.insertBefore(node, reference);
-          } else {
-            parent.appendChild(node);
+          if (!selector || matchesSelector.call(node, selector)) {
+            content.appendChild(node);
           }
+
+          return this;
         }
+
+        var lastContent;
+
+        nodes.some(function (referenceNode) {
+          var thisContent = referenceNode.parentNode;
+
+          if (lastContent && lastContent === thisContent) {
+            return;
+          }
+
+          lastContent = thisContent;
+          var selector = thisContent.getAttribute(ATTR_CONTENT);
+
+          if (!selector || matchesSelector.call(node, selector)) {
+            thisContent.insertBefore(node, referenceNode);
+            return true;
+          }
+        });
 
         return this;
       },
