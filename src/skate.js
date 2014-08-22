@@ -1296,6 +1296,23 @@
 
           return html;
         }
+      },
+
+      textContent: {
+        get: function () {
+          var textContent = '';
+          var childNodes = this.childNodes;
+          var childNodesLength = this.childNodes.length;
+
+          for (var a = 0; a < childNodesLength; a++) {
+            textContent += childNodes[a].textContent;
+          }
+
+          return textContent;
+        },
+        set: function (textContent) {
+          element.textContent = textContent;
+        }
       }
     });
 
