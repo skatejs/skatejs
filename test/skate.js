@@ -833,11 +833,6 @@
         expect(elementWithoutContent.innerHTML).to.equal('testing');
       });
 
-      it('should allow non-overridden methods and properties to be accessed', function () {
-        $elementWithContent.setAttribute('testing', 'testing');
-        expect($elementWithContent.attributes.testing.value).to.equal('testing');
-      });
-
       describe('insertAdjacentHTML', function () {
         var container;
 
@@ -850,7 +845,7 @@
 
         it('beforebegin', function () {
           $elementWithContent.insertAdjacentHTML('beforebegin', '<three></three>');
-          expect($elementWithContent.previousSibling.tagName).to.equal('THREE');
+          expect(elementWithContent.previousSibling.tagName).to.equal('THREE');
         });
 
         it('afterbegin', function () {
@@ -865,7 +860,7 @@
 
         it('afterend', function () {
           $elementWithContent.insertAdjacentHTML('afterend', '<three></three>');
-          expect($elementWithContent.nextSibling.tagName).to.equal('THREE');
+          expect(elementWithContent.nextSibling.tagName).to.equal('THREE');
         });
       });
 

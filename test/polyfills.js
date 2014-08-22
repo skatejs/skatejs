@@ -62,7 +62,6 @@
           fToBind = this,
           fNOP = function () {},
           fBound = function () {
-            console.log(this.prototype);
             return fToBind.apply(this instanceof fNOP && oThis
                    ? this
                    : oThis,
