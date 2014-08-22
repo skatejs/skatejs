@@ -748,6 +748,11 @@
         $elementWithoutContent = wrap(elementWithoutContent);
       });
 
+      it('should return the first child', function () {
+        expect($elementWithContent.firstChild.tagName).to.equal('ONE');
+        expect($elementWithoutContent.firstChild.tagName).to.equal('ONE');
+      });
+
       it('should return the nodes as a flat list to represent the light DOM', function () {
         var withContent = $elementWithContent.childNodes;
         var withoutContent = $elementWithoutContent.childNodes;

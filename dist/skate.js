@@ -1124,28 +1124,48 @@
    * @returns {Object}
    */
   skate.template.html.wrap = function (element) {
-    function contentNodes () {
-      var nodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
+    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
 
-      if (nodes.length) {
-        return [].slice.call(nodes);
-      }
-
-      return [element];
+    if (!contentNodes.length) {
+      contentNodes = [element];
     }
+
+    var contentNodesLength = contentNodes.length;
 
     var wrapped = Object.create(element, {
       childNodes: {
         get: function () {
           var nodesToReturn = [];
 
-          contentNodes().forEach(function (content) {
-            if (content.childNodes) {
-              for (var a = 0; a < content.childNodes.length; a++) {
-                nodesToReturn.push(content.childNodes[a]);
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+
+            if (contentNodeChildNodes) {
+              var contentNodeChildNodesLength = contentNodeChildNodes.length;
+
+              for (var b = 0; b < contentNodeChildNodesLength; b++) {
+                nodesToReturn.push(contentNodeChildNodes[b]);
               }
             }
-          });
+          }
+
+          return nodesToReturn;
+        }
+      },
+
+      firstChild: {
+        get: function () {
+          var nodesToReturn = [];
+
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+
+            if (contentNodeChildNodes && contentNodeChildNodes.length) {
+              return contentNodeChildNodes[0];
+            }
+          }
 
           return nodesToReturn;
         }
@@ -1166,14 +1186,15 @@
         set: function (html) {
           var targetFragment = createFragmentFromString(html);
 
-          contentNodes().forEach(function (content) {
-            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(ATTR_CONTENT));
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
 
-            if (found.length) {
-              content.innerHTML = '';
-              insertNodeList(content, found);
+            if (foundNodes.length) {
+              contentNode.innerHTML = '';
+              insertNodeList(contentNode, foundNodes);
             }
-          });
+          }
         }
       },
 
@@ -1203,13 +1224,17 @@
 
     wrapped.appendChild = function (node) {
       var childNodes = this.childNodes;
-      var content = childNodes[childNodes.length - 1].parentNode;
-      var selector = content.getAttribute(ATTR_CONTENT);
+      var contentNode = childNodes[childNodes.length - 1].parentNode;
+      var selector = contentNode.getAttribute(ATTR_CONTENT);
 
       if (!selector || matchesSelector.call(node, selector)) {
-        content.appendChild(node);
+        contentNode.appendChild(node);
       }
 
+      return this;
+    };
+
+    wrapped.insertAdjacentHTML = function (html) {
       return this;
     };
 
