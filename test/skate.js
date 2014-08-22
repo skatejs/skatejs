@@ -749,8 +749,8 @@
       });
 
       it('should return the nodes as a flat list to represent the light DOM', function () {
-        var withContent = $elementWithContent.nodes();
-        var withoutContent = $elementWithoutContent.nodes();
+        var withContent = $elementWithContent.childNodes;
+        var withoutContent = $elementWithoutContent.childNodes;
 
         expect(withContent.length).to.equal(2);
         expect(withContent[0].tagName).to.equal('ONE');
@@ -760,42 +760,35 @@
         expect(withoutContent[1].tagName).to.equal('TWO');
       });
 
-      it('should return the correct index of the element as represented in the light DOM', function () {
-        expect($elementWithContent.index(elementWithContent.querySelector('one'))).to.equal(0);
-        expect($elementWithContent.index(elementWithContent.querySelector('two'))).to.equal(1);
-        expect($elementWithoutContent.index(elementWithoutContent.querySelector('one'))).to.equal(0);
-        expect($elementWithoutContent.index(elementWithoutContent.querySelector('two'))).to.equal(1);
-      });
-
       it('should insert the element at the correct index in the light DOM: 0', function () {
-        $elementWithContent.insert(document.createElement('three'), 0);
-        $elementWithoutContent.insert(document.createElement('three'), 0);
-        expect($elementWithContent.html()).to.equal('<one></one><three></three><two></two>');
-        expect($elementWithoutContent.html()).to.equal('<three></three><one></one><two></two>');
+        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[0]);
+        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[0]);
+        expect($elementWithContent.innerHTML).to.equal('<one></one><three></three><two></two>');
+        expect($elementWithoutContent.innerHTML).to.equal('<three></three><one></one><two></two>');
       });
 
       it('should insert the element at the correct index in the light DOM: 1', function () {
-        $elementWithContent.insert(document.createElement('three'), 1);
-        $elementWithoutContent.insert(document.createElement('three'), 1);
-        expect($elementWithContent.html()).to.equal('<one></one><three></three><two></two>');
-        expect($elementWithoutContent.html()).to.equal('<one></one><three></three><two></two>');
+        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[1]);
+        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[1]);
+        expect($elementWithContent.innerHTML).to.equal('<one></one><three></three><two></two>');
+        expect($elementWithoutContent.innerHTML).to.equal('<one></one><three></three><two></two>');
       });
 
       it('should insert the element at the correct index in the light DOM: 2', function () {
-        $elementWithContent.insert(document.createElement('three'), 2);
-        $elementWithoutContent.insert(document.createElement('three'), 2);
-        expect($elementWithContent.html()).to.equal('<one></one><two></two><three></three>');
-        expect($elementWithoutContent.html()).to.equal('<one></one><two></two><three></three>');
+        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[2]);
+        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[2]);
+        expect($elementWithContent.innerHTML).to.equal('<one></one><two></two><three></three>');
+        expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two><three></three>');
       });
 
       it('should allow getting html', function () {
-        expect($elementWithContent.html()).to.equal('<one></one><two></two>');
-        expect($elementWithoutContent.html()).to.equal('<one></one><two></two>');
+        expect($elementWithContent.innerHTML).to.equal('<one></one><two></two>');
+        expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
       });
 
       it('should allow setting html', function () {
-        $elementWithContent.html('<one></one><two></two>');
-        $elementWithoutContent.html('<one></one><two></two>');
+        $elementWithContent.innerHTML = '<one></one><two></two>';
+        $elementWithoutContent.innerHTML = '<one></one><two></two>';
         expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two, three"><two></two></span>');
         expect(elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
       });

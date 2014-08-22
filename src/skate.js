@@ -1124,45 +1124,119 @@
    * @returns {Object}
    */
   skate.template.html.wrap = function (element) {
-    return {
-      append: function (node) {
-        return this.insert(node);
-      },
+    function contentNodes () {
+      var nodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
 
-      content: function () {
-        var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
+      if (nodes.length) {
+        return [].slice.call(nodes);
+      }
 
-        if (contentNodes.length) {
-          return [].slice.call(contentNodes);
+      return [element];
+    }
+
+    var wrapped = Object.create(element, {
+      childNodes: {
+        get: function () {
+          var nodesToReturn = [];
+
+          contentNodes().forEach(function (content) {
+            if (content.childNodes) {
+              for (var a = 0; a < content.childNodes.length; a++) {
+                nodesToReturn.push(content.childNodes[a]);
+              }
+            }
+          });
+
+          return nodesToReturn;
         }
-
-        return [element];
       },
 
-      index: function (node) {
-        return [].indexOf.call(this.nodes(), node);
-      },
+      innerHTML: {
+        get: function () {
+          var html = '';
+          var childNodes = this.childNodes;
+          var childNodesLength = childNodes.length;
 
-      insert: function (node, at) {
-        var nodes = this.nodes();
-
-        if (at < nodes.length) {
-          nodes = nodes.slice(at);
-        } else {
-          var content = nodes[nodes.length - 1].parentNode;
-          var selector = content.getAttribute(ATTR_CONTENT);
-
-          if (!selector || matchesSelector.call(node, selector)) {
-            content.appendChild(node);
+          for (var a = 0; a < childNodesLength; a++) {
+            html += childNodes[a].outerHTML;
           }
 
-          return this;
-        }
+          return html;
+        },
+        set: function (html) {
+          var targetFragment = createFragmentFromString(html);
 
+          contentNodes().forEach(function (content) {
+            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(ATTR_CONTENT));
+
+            if (found.length) {
+              content.innerHTML = '';
+              insertNodeList(content, found);
+            }
+          });
+        }
+      },
+
+      outerHTML: {
+        get: function () {
+          var name = this.tagName.toLowerCase();
+          var html = '<' + name;
+          var attrs = this.attributes;
+
+          if (attrs) {
+            var attrsLength = attrs.length;
+
+            for (var a = 0; a < attrsLength; a++) {
+              var attr = attrs[a];
+              html += ' ' + attr.nodeName + '="' + attr.nodeValue + '"';
+            }
+          }
+
+          html += '>';
+          html += this.innerHTML;
+          html += '</' + name + '>';
+
+          return html;
+        }
+      }
+    });
+
+    wrapped.appendChild = function (node) {
+      var childNodes = this.childNodes;
+      var content = childNodes[childNodes.length - 1].parentNode;
+      var selector = content.getAttribute(ATTR_CONTENT);
+
+      if (!selector || matchesSelector.call(node, selector)) {
+        content.appendChild(node);
+      }
+
+      return this;
+    };
+
+    wrapped.insertBefore = function (node, referenceNode) {
+      var childNodes = this.childNodes;
+
+      if (!referenceNode) {
+        return this.appendChild(node);
+      }
+
+      if (childNodes) {
+        var childNodesLength = childNodes.length;
+        var hasFoundReferenceNode = false;
         var lastContent;
 
-        nodes.some(function (referenceNode) {
-          var thisContent = referenceNode.parentNode;
+        for (var a = 0; a < childNodesLength; a++) {
+          var currentNode = childNodes[a];
+
+          if (!hasFoundReferenceNode) {
+            if (currentNode === referenceNode) {
+              hasFoundReferenceNode = true;
+            } else {
+              continue;
+            }
+          }
+
+          var thisContent = currentNode.parentNode;
 
           if (lastContent && lastContent === thisContent) {
             return;
@@ -1172,61 +1246,20 @@
           var selector = thisContent.getAttribute(ATTR_CONTENT);
 
           if (!selector || matchesSelector.call(node, selector)) {
-            thisContent.insertBefore(node, referenceNode);
-            return true;
+            thisContent.insertBefore(node, currentNode);
+            break;
           }
-        });
-
-        return this;
-      },
-
-      html: function (html) {
-        if (arguments.length) {
-          var targetFragment = createFragmentFromString(html);
-
-          this.content().forEach(function (content) {
-            var found = findChildrenMatchingSelector(targetFragment, content.getAttribute(ATTR_CONTENT));
-
-            if (found.length) {
-              content.innerHTML = '';
-              insertNodeList(content, found);
-            }
-          });
-
-          return this;
         }
-
-        var htmlToReturn = '';
-
-        this.nodes().forEach(function (node) {
-          htmlToReturn += node.outerHTML;
-        });
-
-        return htmlToReturn;
-      },
-
-      nodes: function () {
-        var nodesToReturn = [];
-
-        this.content().forEach(function (content) {
-          if (content.childNodes) {
-            for (var a = 0; a < content.childNodes.length; a++) {
-              nodesToReturn.push(content.childNodes[a]);
-            }
-          }
-        });
-
-        return nodesToReturn;
-      },
-
-      prepend: function (node) {
-        return this.insert(node, 0);
-      },
-
-      unwrap: function () {
-        return element;
       }
+
+      if (!hasFoundReferenceNode) {
+        throw new NotFoundError ('Failed to execute "insertBefore" on "Node": The node before which the new node is to be inserted is not a child of this node.');
+      }
+
+      return this;
     };
+
+    return wrapped;
   };
 
   // Restriction type constants.
