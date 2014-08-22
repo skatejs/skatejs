@@ -1264,7 +1264,7 @@
           for (var a = contentNodesLength - 1; a > -1; a--) {
             var contentNode = contentNodes[a];
             var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLength = contentNodeChildNodes.length
+            var contentNodeChildNodesLength = contentNodeChildNodes.length;
 
             if (contentNodeChildNodes && contentNodeChildNodesLength) {
               return contentNodeChildNodes[contentNodeChildNodesLength - 1];
@@ -1311,7 +1311,18 @@
           return textContent;
         },
         set: function (textContent) {
-          element.textContent = textContent;
+          // We travers all content nodes, but return on the first one that
+          // gets the text content.
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+
+            // Selectors can't match text nodes, so the content attribute must
+            // be void.
+            if (!contentNode.getAttribute(ATTR_CONTENT)) {
+              contentNode.textContent = textContent;
+              return;
+            }
+          }
         }
       }
     });
@@ -1340,10 +1351,11 @@
         return this.appendChild(node);
       }
 
+      var hasFoundReferenceNode = false;
+
       // Only try and find the child node if there are child nodes.
       if (childNodes) {
         var childNodesLength = childNodes.length;
-        var hasFoundReferenceNode = false;
         var lastContent;
 
         for (var a = 0; a < childNodesLength; a++) {
@@ -1381,6 +1393,18 @@
       }
 
       return this;
+    };
+
+    wrapped.noramlize = function () {
+
+    };
+
+    wrapped.removeChild = function (child) {
+
+    };
+
+    wrapped.replaceChild = function (child) {
+
     };
 
     return wrapped;

@@ -773,7 +773,7 @@
       it('should insert the element at the correct index in the light DOM: 0', function () {
         $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[0]);
         $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[0]);
-        
+
         expect($elementWithContent.innerHTML).to.equal('<one></one><three></three><two></two>');
         expect($elementWithoutContent.innerHTML).to.equal('<three></three><one></one><two></two>');
       });
@@ -821,6 +821,16 @@
 
         expect($elementWithContent.textContent).to.equal('testingtesting');
         expect($elementWithoutContent.textContent).to.equal('testingtesting');
+      });
+
+      it('should allow setting textContent', function () {
+        elementWithContent.childNodes[0].setAttribute('data-skate-content', '');
+
+        $elementWithContent.textContent = 'testing';
+        $elementWithoutContent.textContent = 'testing';
+
+        expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="">testing</span><span data-skate-content="two, three"><two></two></span>');
+        expect(elementWithoutContent.innerHTML).to.equal('testing');
       });
     });
   });
