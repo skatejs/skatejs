@@ -781,6 +781,12 @@
         expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two><three></three>');
       });
 
+      it('should throw an error if inserting before a node that does not exist', function () {
+        expect(function () {
+          $elementWithContent.insertBefore(document.createElement('three'), document.createElement('notindom'))
+        }).to.throw('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
+      });
+
       it('should allow getting html', function () {
         expect($elementWithContent.innerHTML).to.equal('<one></one><two></two>');
         expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');

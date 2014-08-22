@@ -1216,10 +1216,12 @@
     wrapped.insertBefore = function (node, referenceNode) {
       var childNodes = this.childNodes;
 
+      // If no reference node is supplied, we append.
       if (!referenceNode) {
         return this.appendChild(node);
       }
 
+      // Only try and find the child node if there are child nodes.
       if (childNodes) {
         var childNodesLength = childNodes.length;
         var hasFoundReferenceNode = false;
@@ -1252,8 +1254,11 @@
         }
       }
 
+      // If no reference node was found as a child node of the element we must
+      // throw an error. This works for both no child nodes, or if the reference
+      // wasn't found to be a child node.
       if (!hasFoundReferenceNode) {
-        throw new NotFoundError ('Failed to execute "insertBefore" on "Node": The node before which the new node is to be inserted is not a child of this node.');
+        throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
       }
 
       return this;
