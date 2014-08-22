@@ -1028,6 +1028,65 @@
     return nodes;
   };
 
+  // Restriction type constants.
+  skate.types = {
+    ANY: 'act',
+    ATTR: 'a',
+    CLASS: 'c',
+    NOATTR: 'ct',
+    NOCLASS: 'at',
+    NOTAG: 'ac',
+    TAG: 't'
+  };
+
+  /**
+   * Unregisters the specified component.
+   *
+   * @param {String} id The ID of the component to unregister.
+   *
+   * @returns {Skate}
+   */
+  skate.unregister = function (id) {
+    delete registry[id];
+    return skate;
+  };
+
+  // Makes checking the version easy when debugging.
+  skate.version = '0.9.3';
+
+  /**
+   * The default options for a component.
+   *
+   * @var {Object}
+   */
+  skate.defaults = {
+    // Attribute lifecycle callback or callbacks.
+    attributes: false,
+
+    // The classname to use when showing this component.
+    classname: '__skate',
+
+    // The events to manage the binding and unbinding of during the component's lifecycle.
+    events: false,
+
+    // The ID of the component. This is automatically set in the `skate()` function.
+    id: '',
+
+    // Properties and methods to add to each element.
+    prototype: {},
+
+    // The template to replace the content of the element with.
+    template: false,
+
+    // The type of bindings to allow.
+    type: skate.types.ANY
+  };
+
+
+
+  // Templating
+  // ----------
+
   /**
    * Default template renderers.
    *
@@ -1290,60 +1349,6 @@
     };
 
     return wrapped;
-  };
-
-  // Restriction type constants.
-  skate.types = {
-    ANY: 'act',
-    ATTR: 'a',
-    CLASS: 'c',
-    NOATTR: 'ct',
-    NOCLASS: 'at',
-    NOTAG: 'ac',
-    TAG: 't'
-  };
-
-  /**
-   * Unregisters the specified component.
-   *
-   * @param {String} id The ID of the component to unregister.
-   *
-   * @returns {Skate}
-   */
-  skate.unregister = function (id) {
-    delete registry[id];
-    return skate;
-  };
-
-  // Makes checking the version easy when debugging.
-  skate.version = '0.9.3';
-
-  /**
-   * The default options for a component.
-   *
-   * @var {Object}
-   */
-  skate.defaults = {
-    // Attribute lifecycle callback or callbacks.
-    attributes: false,
-
-    // The classname to use when showing this component.
-    classname: '__skate',
-
-    // The events to manage the binding and unbinding of during the component's lifecycle.
-    events: false,
-
-    // The ID of the component. This is automatically set in the `skate()` function.
-    id: '',
-
-    // Properties and methods to add to each element.
-    prototype: {},
-
-    // The template to replace the content of the element with.
-    template: false,
-
-    // The type of bindings to allow.
-    type: skate.types.ANY
   };
 
 
