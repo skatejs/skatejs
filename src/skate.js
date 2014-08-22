@@ -1257,6 +1257,24 @@
         }
       },
 
+      lastChild: {
+        get: function () {
+          var nodesToReturn = [];
+
+          for (var a = contentNodesLength - 1; a > -1; a--) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLength = contentNodeChildNodes.length
+
+            if (contentNodeChildNodes && contentNodeChildNodesLength) {
+              return contentNodeChildNodes[contentNodeChildNodesLength - 1];
+            }
+          }
+
+          return nodesToReturn;
+        }
+      },
+
       outerHTML: {
         get: function () {
           var name = this.tagName.toLowerCase();
