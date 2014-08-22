@@ -833,6 +833,11 @@
         expect(elementWithoutContent.innerHTML).to.equal('testing');
       });
 
+      it('should allow non-overridden methods and properties to be accessed', function () {
+        $elementWithContent.setAttribute('testing', 'testing');
+        expect($elementWithContent.attributes.testing.value).to.equal('testing');
+      });
+
       describe('insertAdjacentHTML', function () {
         var container;
 

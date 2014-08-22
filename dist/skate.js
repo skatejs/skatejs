@@ -1327,6 +1327,16 @@
       }
     });
 
+    for (var a in wrapped) {
+      if (wrapped[a] instanceof Function) {
+        wrapped[a] = (function (a) {
+          return function () {
+            return element[a].apply(element, [].slice.call(arguments));
+          };
+        }(a));
+      }
+    }
+
     wrapped.appendChild = function (node) {
       if (node instanceof DocumentFragment) {
         var fragChildNodes = node.childNodes;
