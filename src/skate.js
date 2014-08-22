@@ -1417,10 +1417,6 @@
       return this;
     };
 
-    wrapped.noramlize = function () {
-
-    };
-
     wrapped.removeChild = function (child) {
 
     };
