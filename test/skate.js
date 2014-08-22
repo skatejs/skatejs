@@ -866,9 +866,23 @@
 
       describe('removeChild', function () {
         it('should remove the specified child', function () {
+          $elementWithContent.removeChild($elementWithContent.firstChild);
           $elementWithContent.removeChild($elementWithContent.lastChild);
-          $elementWithContent.removeChild($elementWithContent.lastChild);
+          $elementWithoutContent.removeChild($elementWithoutContent.firstChild);
+          $elementWithoutContent.removeChild($elementWithoutContent.lastChild);
+
           expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"></span><span data-skate-content="two, three"></span>');
+          expect(elementWithoutContent.innerHTML).to.equal('');
+        });
+      });
+
+      describe('replaceChild', function () {
+        it('should remplace the specified child', function () {
+          $elementWithContent.replaceChild(document.createElement('three'), $elementWithContent.lastChild);
+          $elementWithoutContent.replaceChild(document.createElement('three'), $elementWithoutContent.lastChild);
+
+          expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two, three"><three></three></span>');
+          expect(elementWithoutContent.innerHTML).to.equal('<one></one><three></three>');
         });
       });
     });

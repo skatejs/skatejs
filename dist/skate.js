@@ -1430,8 +1430,17 @@
       return this;
     };
 
-    wrapped.replaceChild = function (child) {
+    wrapped.replaceChild = function (newChild, oldChild) {
+      for (var a = 0; a < contentNodesLength; a++) {
+        var contentNode = contentNodes[a];
 
+        if (contentNode === oldChild.parentNode) {
+          contentNode.replaceChild(newChild, oldChild);
+          break;
+        }
+      }
+
+      return this;
     };
 
     return wrapped;
