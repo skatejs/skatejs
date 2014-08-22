@@ -824,13 +824,44 @@
       });
 
       it('should allow setting textContent', function () {
-        elementWithContent.childNodes[0].setAttribute('data-skate-content', '');
+        elementWithContent.firstChild.setAttribute('data-skate-content', '');
 
         $elementWithContent.textContent = 'testing';
         $elementWithoutContent.textContent = 'testing';
 
         expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="">testing</span><span data-skate-content="two, three"><two></two></span>');
         expect(elementWithoutContent.innerHTML).to.equal('testing');
+      });
+
+      describe('insertAdjacentHTML', function () {
+        var container;
+
+        beforeEach(function () {
+          // An element must have a parent ot use "beforebegin" and "afterend".
+          container = document.createElement('div');
+          container.appendChild(elementWithContent);
+          elementWithContent.firstChild.setAttribute('data-skate-content', '');
+        });
+
+        it('beforebegin', function () {
+          $elementWithContent.insertAdjacentHTML('beforebegin', '<three></three>');
+          expect($elementWithContent.previousSibling.tagName).to.equal('THREE');
+        });
+
+        it('afterbegin', function () {
+          $elementWithContent.insertAdjacentHTML('afterbegin', '<three></three>');
+          expect($elementWithContent.firstChild.tagName).to.equal('THREE');
+        });
+
+        it('beforeend', function () {
+          $elementWithContent.insertAdjacentHTML('beforeend', '<three></three>');
+          expect($elementWithContent.lastChild.tagName).to.equal('THREE');
+        });
+
+        it('afterend', function () {
+          $elementWithContent.insertAdjacentHTML('afterend', '<three></three>');
+          expect($elementWithContent.nextSibling.tagName).to.equal('THREE');
+        });
       });
     });
   });

@@ -1328,6 +1328,20 @@
     });
 
     wrapped.appendChild = function (node) {
+      if (node instanceof DocumentFragment) {
+        var fragChildNodes = node.childNodes;
+
+        if (fragChildNodes) {
+          var fragChildNodesLength = fragChildNodes.length;
+
+          for (var a = 0; a < fragChildNodesLength; a++) {
+            this.appendChild(fragChildNodes[a]);
+          }
+        }
+
+        return this;
+      }
+
       var childNodes = this.childNodes;
       var contentNode = childNodes[childNodes.length - 1].parentNode;
       var selector = contentNode.getAttribute(ATTR_CONTENT);
@@ -1339,7 +1353,15 @@
       return this;
     };
 
-    wrapped.insertAdjacentHTML = function (html) {
+    wrapped.insertAdjacentHTML = function (where, html) {
+      if (where === 'afterbegin') {
+        this.insertBefore(createFragmentFromString(html), this.childNodes[0]);
+      } else if (where === 'beforeend') {
+        this.appendChild(createFragmentFromString(html));
+      } else {
+        element.insertAdjacentHTML(where, html);
+      }
+
       return this;
     };
 
