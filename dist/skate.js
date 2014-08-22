@@ -1320,7 +1320,7 @@
             // be void.
             if (!contentNode.getAttribute(ATTR_CONTENT)) {
               contentNode.textContent = textContent;
-              return;
+              break;
             }
           }
         }
@@ -1394,7 +1394,7 @@
           var thisContent = currentNode.parentNode;
 
           if (lastContent && lastContent === thisContent) {
-            return;
+            continue;
           }
 
           lastContent = thisContent;
@@ -1417,8 +1417,17 @@
       return this;
     };
 
-    wrapped.removeChild = function (child) {
+    wrapped.removeChild = function (childNode) {
+      for (var a = 0; a < contentNodesLength; a++) {
+        var contentNode = contentNodes[a];
 
+        if (contentNode === childNode.parentNode) {
+          contentNode.removeChild(childNode);
+          break;
+        }
+      }
+
+      return this;
     };
 
     wrapped.replaceChild = function (child) {

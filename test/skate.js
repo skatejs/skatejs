@@ -863,6 +863,14 @@
           expect($elementWithContent.nextSibling.tagName).to.equal('THREE');
         });
       });
+
+      describe('removeChild', function () {
+        it('should remove the specified child', function () {
+          $elementWithContent.removeChild($elementWithContent.lastChild);
+          $elementWithContent.removeChild($elementWithContent.lastChild);
+          expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"></span><span data-skate-content="two, three"></span>');
+        });
+      });
     });
   });
 
