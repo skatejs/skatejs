@@ -723,166 +723,131 @@
     });
 
     describe('wrapper', function () {
-      var elementWithContent;
-      var elementWithoutContent;
-      var $elementWithContent;
-      var $elementWithoutContent;
-      var wrap = skate.template.html.wrap;
+      var element;
+      var $element;
+
+      function expectTemplate(one, two, any) {
+        expect(element.innerHTML).to.equal(
+          '<span data-skate-content="one">' + (one || '') + '</span>' +
+          '<span data-skate-content="two, three">' + (two || '') + '</span>' +
+          '<span data-skate-content="">' + (any || '') + '</span>' +
+          '<span>dummy</span>'
+        );
+      }
 
       beforeEach(function () {
-        skate('my-element-with-content', {
-          template: '<span data-skate-content="one"></span><span data-skate-content="two, three"></span>'
+        skate('my-element', {
+          template: '' +
+            '<span data-skate-content="one"></span>' +
+            '<span data-skate-content="two, three"></span>' +
+            '<span data-skate-content=""></span>' +
+            '<span>dummy</span>'
         });
 
-        skate('my-element-without-content', {
-          template: ''
-        });
+        document.body.innerHTML = '<my-element><one></one><two></two></my-element>';
 
-        document.body.innerHTML = '' +
-          '<my-element-with-content><one></one><two></two></my-element-with-content>' +
-          '<my-element-without-content><one></one><two></two></my-element-without-content>';
-
-        elementWithContent = skate.init(document.querySelector('my-element-with-content'));
-        elementWithoutContent = skate.init(document.querySelector('my-element-without-content'));
-        $elementWithContent = wrap(elementWithContent);
-        $elementWithoutContent = wrap(elementWithoutContent);
+        element = skate.init(document.querySelector('my-element'));
+        $element = skate.template.html.wrap(element);
       });
 
       it('should return the first child', function () {
-        expect($elementWithContent.firstChild.tagName).to.equal('ONE');
-        expect($elementWithoutContent.firstChild.tagName).to.equal('ONE');
+        expect($element.firstChild.tagName).to.equal('ONE');
       });
 
       it('should return the last child', function () {
-        expect($elementWithContent.lastChild.tagName).to.equal('TWO');
-        expect($elementWithoutContent.lastChild.tagName).to.equal('TWO');
+        expect($element.lastChild.tagName).to.equal('TWO');
       });
 
       it('should return the nodes as a flat list to represent the light DOM', function () {
-        var withContent = $elementWithContent.childNodes;
-        var withoutContent = $elementWithoutContent.childNodes;
-
-        expect(withContent.length).to.equal(2);
-        expect(withContent[0].tagName).to.equal('ONE');
-        expect(withContent[1].tagName).to.equal('TWO');
-        expect(withoutContent.length).to.equal(2);
-        expect(withoutContent[0].tagName).to.equal('ONE');
-        expect(withoutContent[1].tagName).to.equal('TWO');
+        expect($element.childNodes.length).to.equal(2);
+        expect($element.childNodes[0].tagName).to.equal('ONE');
+        expect($element.childNodes[1].tagName).to.equal('TWO');
       });
 
       it('should insert the element at the correct index in the light DOM: 0', function () {
-        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[0]);
-        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[0]);
-
-        expect($elementWithContent.innerHTML).to.equal('<one></one><three></three><two></two>');
-        expect($elementWithoutContent.innerHTML).to.equal('<three></three><one></one><two></two>');
+        $element.insertBefore(document.createElement('three'), $element.childNodes[0]);
+        expectTemplate('<one></one>', '<three></three><two></two>');
       });
 
       it('should insert the element at the correct index in the light DOM: 1', function () {
-        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[1]);
-        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[1]);
-
-        expect($elementWithContent.innerHTML).to.equal('<one></one><three></three><two></two>');
-        expect($elementWithoutContent.innerHTML).to.equal('<one></one><three></three><two></two>');
+        $element.insertBefore(document.createElement('three'), $element.childNodes[1]);
+        expectTemplate('<one></one>', '<three></three><two></two>');
       });
 
       it('should insert the element at the correct index in the light DOM: 2', function () {
-        $elementWithContent.insertBefore(document.createElement('three'), $elementWithContent.childNodes[2]);
-        $elementWithoutContent.insertBefore(document.createElement('three'), $elementWithoutContent.childNodes[2]);
-
-        expect($elementWithContent.innerHTML).to.equal('<one></one><two></two><three></three>');
-        expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two><three></three>');
+        $element.insertBefore(document.createElement('three'), $element.childNodes[2]);
+        expectTemplate('<one></one>', '<two></two><three></three>');
       });
 
       it('should throw an error if inserting before a node that does not exist', function () {
         expect(function () {
-          $elementWithContent.insertBefore(document.createElement('three'), document.createElement('notindom'))
+          $element.insertBefore(document.createElement('three'), document.createElement('notindom'))
         }).to.throw('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
       });
 
       it('should allow getting html', function () {
-        expect($elementWithContent.innerHTML).to.equal('<one></one><two></two>');
-        expect($elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
+        expect($element.innerHTML).to.equal('<one></one><two></two>');
       });
 
       it('should allow setting html', function () {
-        $elementWithContent.innerHTML = '<one></one><two></two>';
-        $elementWithoutContent.innerHTML = '<one></one><two></two>';
-
-        expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two, three"><two></two></span>');
-        expect(elementWithoutContent.innerHTML).to.equal('<one></one><two></two>');
+        $element.innerHTML = '<one></one><two></two>';
+        expectTemplate('<one></one>', '<two></two>');
       });
 
       it('should allow getting textContent', function () {
-        $elementWithContent.childNodes[0].textContent = 'testing';
-        $elementWithContent.childNodes[1].textContent = 'testing';
-        $elementWithoutContent.childNodes[0].textContent = 'testing';
-        $elementWithoutContent.childNodes[1].textContent = 'testing';
-
-        expect($elementWithContent.textContent).to.equal('testingtesting');
-        expect($elementWithoutContent.textContent).to.equal('testingtesting');
+        $element.childNodes[0].textContent = 'testing';
+        $element.childNodes[1].textContent = 'testing';
+        expectTemplate('<one>testing</one>', '<two>testing</two>');
       });
 
       it('should allow setting textContent', function () {
-        elementWithContent.firstChild.setAttribute('data-skate-content', '');
-
-        $elementWithContent.textContent = 'testing';
-        $elementWithoutContent.textContent = 'testing';
-
-        expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="">testing</span><span data-skate-content="two, three"><two></two></span>');
-        expect(elementWithoutContent.innerHTML).to.equal('testing');
+        $element.textContent = 'testing';
+        expectTemplate('', '', 'testing');
       });
 
       describe('insertAdjacentHTML', function () {
         var container;
 
+        // An element must have a parent ot use "beforebegin" and "afterend".
         beforeEach(function () {
-          // An element must have a parent ot use "beforebegin" and "afterend".
           container = document.createElement('div');
-          container.appendChild(elementWithContent);
-          elementWithContent.firstChild.setAttribute('data-skate-content', '');
+          container.appendChild(element);
+          element.childNodes[0].setAttribute('data-skate-content', '');
         });
 
         it('beforebegin', function () {
-          $elementWithContent.insertAdjacentHTML('beforebegin', '<three></three>');
-          expect(elementWithContent.previousSibling.tagName).to.equal('THREE');
+          $element.insertAdjacentHTML('beforebegin', '<three></three>');
+          expect(element.previousSibling.tagName).to.equal('THREE');
         });
 
         it('afterbegin', function () {
-          $elementWithContent.insertAdjacentHTML('afterbegin', '<three></three>');
-          expect($elementWithContent.firstChild.tagName).to.equal('THREE');
+          $element.insertAdjacentHTML('afterbegin', '<three></three>');
+          expect($element.firstChild.tagName).to.equal('THREE');
         });
 
         it('beforeend', function () {
-          $elementWithContent.insertAdjacentHTML('beforeend', '<three></three>');
-          expect($elementWithContent.lastChild.tagName).to.equal('THREE');
+          $element.insertAdjacentHTML('beforeend', '<three></three>');
+          expect($element.lastChild.tagName).to.equal('THREE');
         });
 
         it('afterend', function () {
-          $elementWithContent.insertAdjacentHTML('afterend', '<three></three>');
-          expect(elementWithContent.nextSibling.tagName).to.equal('THREE');
+          $element.insertAdjacentHTML('afterend', '<three></three>');
+          expect(element.nextSibling.tagName).to.equal('THREE');
         });
       });
 
       describe('removeChild', function () {
         it('should remove the specified child', function () {
-          $elementWithContent.removeChild($elementWithContent.firstChild);
-          $elementWithContent.removeChild($elementWithContent.lastChild);
-          $elementWithoutContent.removeChild($elementWithoutContent.firstChild);
-          $elementWithoutContent.removeChild($elementWithoutContent.lastChild);
-
-          expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"></span><span data-skate-content="two, three"></span>');
-          expect(elementWithoutContent.innerHTML).to.equal('');
+          $element.removeChild($element.firstChild);
+          $element.removeChild($element.lastChild);
+          expectTemplate('', '');
         });
       });
 
       describe('replaceChild', function () {
         it('should remplace the specified child', function () {
-          $elementWithContent.replaceChild(document.createElement('three'), $elementWithContent.lastChild);
-          $elementWithoutContent.replaceChild(document.createElement('three'), $elementWithoutContent.lastChild);
-
-          expect(elementWithContent.innerHTML).to.equal('<span data-skate-content="one"><one></one></span><span data-skate-content="two, three"><three></three></span>');
-          expect(elementWithoutContent.innerHTML).to.equal('<one></one><three></three>');
+          $element.replaceChild(document.createElement('three'), $element.lastChild);
+          expectTemplate('<one></one>', '<three></three>');
         });
       });
     });

@@ -255,6 +255,8 @@
     }
 
     element.__SKATE_DATA[name] = value;
+
+    return element;
   }
 
   /**
@@ -690,7 +692,6 @@
       elProto.oMatchesSelector
     );
 
-
   // The observer listening to document changes.
   var documentListener;
 
@@ -1087,6 +1088,342 @@
   // Templating
   // ----------
 
+  var DocumentFragment = window.DocumentFragment;
+
+  /**
+   * Returns an object with methods and properties that can be used to wrap an
+   * element so that it behaves similar to a shadow root.
+   *
+   * @param {HTMLElement} element The original element to wrap.
+   * @param {DOMNodeList} contentNodes A list of content nodes to use.
+   *
+   * @returns {Object}
+   */
+  function htmlTemplateParentWrapper (element, contentNodes) {
+    var contentNodesLength = contentNodes.length;
+
+    return {
+      childNodes: {
+        get: function () {
+          var nodesToReturn = [];
+
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+
+            if (contentNodeChildNodes) {
+              var contentNodeChildNodesLength = contentNodeChildNodes.length;
+
+              for (var b = 0; b < contentNodeChildNodesLength; b++) {
+                nodesToReturn.push(contentNodeChildNodes[b]);
+              }
+            }
+          }
+
+          return nodesToReturn;
+        }
+      },
+
+      firstChild: {
+        get: function () {
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+
+            if (contentNodeChildNodes && contentNodeChildNodes.length) {
+              return contentNodeChildNodes[0];
+            }
+          }
+
+          return null;
+        }
+      },
+
+      innerHTML: {
+        get: function () {
+          var html = '';
+          var childNodes = this.childNodes;
+          var childNodesLength = childNodes.length;
+
+          for (var a = 0; a < childNodesLength; a++) {
+            html += childNodes[a].outerHTML;
+          }
+
+          return html;
+        },
+        set: function (html) {
+          var targetFragment = createFragmentFromString(html);
+
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+
+            if (foundNodes.length) {
+              contentNode.innerHTML = '';
+              insertNodeList(contentNode, foundNodes);
+            }
+          }
+        }
+      },
+
+      lastChild: {
+        get: function () {
+          var nodesToReturn = [];
+
+          for (var a = contentNodesLength - 1; a > -1; a--) {
+            var contentNode = contentNodes[a];
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLength = contentNodeChildNodes.length;
+
+            if (contentNodeChildNodes && contentNodeChildNodesLength) {
+              return contentNodeChildNodes[contentNodeChildNodesLength - 1];
+            }
+          }
+
+          return nodesToReturn;
+        }
+      },
+
+      outerHTML: {
+        get: function () {
+          var name = this.tagName.toLowerCase();
+          var html = '<' + name;
+          var attrs = this.attributes;
+
+          if (attrs) {
+            var attrsLength = attrs.length;
+
+            for (var a = 0; a < attrsLength; a++) {
+              var attr = attrs[a];
+              html += ' ' + attr.nodeName + '="' + attr.nodeValue + '"';
+            }
+          }
+
+          html += '>';
+          html += this.innerHTML;
+          html += '</' + name + '>';
+
+          return html;
+        }
+      },
+
+      textContent: {
+        get: function () {
+          var textContent = '';
+          var childNodes = this.childNodes;
+          var childNodesLength = this.childNodes.length;
+
+          for (var a = 0; a < childNodesLength; a++) {
+            textContent += childNodes[a].textContent;
+          }
+
+          return textContent;
+        },
+        set: function (textContent) {
+          var acceptsTextContent;
+
+          // Clear all content and find the first one, if any, that accepts
+          // text content.
+          for (var a = 0; a < contentNodesLength; a++) {
+            var contentNode = contentNodes[a];
+
+            contentNode.innerHTML = '';
+
+            if (!acceptsTextContent && !contentNode.getAttribute(ATTR_CONTENT)) {
+              acceptsTextContent = contentNode;
+            }
+          }
+
+          // There may be no content nodes that accept text content.
+          if (acceptsTextContent) {
+            acceptsTextContent.textContent = textContent;
+          }
+        }
+      },
+
+      appendChild: function (node) {
+        if (node instanceof DocumentFragment) {
+          var fragChildNodes = node.childNodes;
+
+          if (fragChildNodes) {
+            var fragChildNodesLength = fragChildNodes.length;
+
+            for (var a = 0; a < fragChildNodesLength; a++) {
+              this.appendChild(fragChildNodes[a]);
+            }
+          }
+
+          return this;
+        }
+
+        var childNodes = this.childNodes;
+        var contentNode = childNodes[childNodes.length - 1].parentNode;
+        var selector = contentNode.getAttribute(ATTR_CONTENT);
+
+        if (!selector || matchesSelector.call(node, selector)) {
+          contentNode.appendChild(node);
+        }
+
+        return this;
+      },
+
+      insertAdjacentHTML: function (where, html) {
+        if (where === 'afterbegin') {
+          this.insertBefore(createFragmentFromString(html), this.childNodes[0]);
+        } else if (where === 'beforeend') {
+          this.appendChild(createFragmentFromString(html));
+        } else {
+          element.insertAdjacentHTML(where, html);
+        }
+
+        return this;
+      },
+
+      insertBefore: function (node, referenceNode) {
+        var childNodes = this.childNodes;
+
+        // If no reference node is supplied, we append.
+        if (!referenceNode) {
+          return this.appendChild(node);
+        }
+
+        // Handle document fragments.
+        if (node instanceof DocumentFragment) {
+          var fragChildNodes = node.childNodes;
+
+          if (fragChildNodes) {
+            var fragChildNodesLength = fragChildNodes.length;
+
+            for (var a = 0; a < fragChildNodesLength; a++) {
+              this.insertBefore(fragChildNodes[a], referenceNode);
+            }
+          }
+
+          return this;
+        }
+
+        var hasFoundReferenceNode = false;
+
+        // Only try and find the child node if there are child nodes.
+        if (childNodes) {
+          var childNodesLength = childNodes.length;
+          var lastContent;
+
+          for (var a = 0; a < childNodesLength; a++) {
+            var currentNode = childNodes[a];
+
+            if (!hasFoundReferenceNode) {
+              if (currentNode === referenceNode) {
+                hasFoundReferenceNode = true;
+              } else {
+                continue;
+              }
+            }
+
+            var thisContent = currentNode.parentNode;
+
+            if (lastContent && lastContent === thisContent) {
+              continue;
+            }
+
+            lastContent = thisContent;
+            var selector = thisContent.getAttribute(ATTR_CONTENT);
+
+            if (!selector || matchesSelector.call(node, selector)) {
+              thisContent.insertBefore(node, currentNode);
+              break;
+            }
+          }
+        }
+
+        // If no reference node was found as a child node of the element we must
+        // throw an error. This works for both no child nodes, or if the reference
+        // wasn't found to be a child node.
+        if (!hasFoundReferenceNode) {
+          throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
+        }
+
+        return this;
+      },
+
+      removeChild: function (childNode) {
+        for (var a = 0; a < contentNodesLength; a++) {
+          var contentNode = contentNodes[a];
+
+          if (contentNode === childNode.parentNode) {
+            contentNode.removeChild(childNode);
+            break;
+          }
+        }
+
+        return this;
+      },
+
+      replaceChild: function (newChild, oldChild) {
+        for (var a = 0; a < contentNodesLength; a++) {
+          var contentNode = contentNodes[a];
+
+          if (contentNode === oldChild.parentNode) {
+            contentNode.replaceChild(newChild, oldChild);
+            break;
+          }
+        }
+
+        return this;
+      }
+    };
+  }
+
+  function makeInstanceOf (element) {
+    var Ctor = function(){};
+    Ctor.prototype = document.createElement(element.tagName);
+    return new Ctor();
+  }
+
+  function createProxyProperty (element, name) {
+    return {
+      get: function () {
+        return element[name];
+      },
+      set: function (value) {
+        element[name] = value;
+      }
+    };
+  }
+
+  /**
+   * Wraps the specified element with the given wrapper. It adds a method called
+   * `unwrap()` to the element which will unwrap it and restore all of the
+   * original methods and properties.
+   *
+   * @param {Object} wrapper The methods and properties to wrap.
+   *
+   * @returns {HTMLElement}
+   */
+  function makeWrapperFrom (element, wrapper) {
+    // Copies all base properties and methods.
+    // Doing this also makes instanceof calls work.
+    var wrapped = makeInstanceOf(element);
+
+    // Copy or proxy all (enumerable and non-enumerable) properties.
+    Object.getOwnPropertyNames(element).forEach(function (name) {
+      Object.defineProperty(
+        wrapped,
+        name,
+        name in wrapper ? wrapper[name] : createProxyProperty(element, name)
+      );
+    });
+
+    // Ensure all wrapper methods are bound.
+    for (var name in wrapper) {
+      if (typeof wrapper[name] === 'function') {
+        wrapped[name] = wrapper[name];
+      }
+    }
+
+    return wrapped;
+  }
+
   /**
    * Default template renderers.
    *
@@ -1186,264 +1523,25 @@
     var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
 
     if (!contentNodes.length) {
-      contentNodes = [element];
+      return element;
     }
 
-    var contentNodesLength = contentNodes.length;
+    var wrapper = htmlTemplateParentWrapper(element, contentNodes);
+    var wrapped = makeWrapperFrom(element, wrapper);
 
-    var wrapped = Object.create(Object.prototype, {
-      childNodes: {
-        get: function () {
-          var nodesToReturn = [];
+    return setData(wrapped, 'element', element);
+  };
 
-          for (var a = 0; a < contentNodesLength; a++) {
-            var contentNode = contentNodes[a];
-            var contentNodeChildNodes = contentNode.childNodes;
-
-            if (contentNodeChildNodes) {
-              var contentNodeChildNodesLength = contentNodeChildNodes.length;
-
-              for (var b = 0; b < contentNodeChildNodesLength; b++) {
-                nodesToReturn.push(contentNodeChildNodes[b]);
-              }
-            }
-          }
-
-          return nodesToReturn;
-        }
-      },
-
-      firstChild: {
-        get: function () {
-          var nodesToReturn = [];
-
-          for (var a = 0; a < contentNodesLength; a++) {
-            var contentNode = contentNodes[a];
-            var contentNodeChildNodes = contentNode.childNodes;
-
-            if (contentNodeChildNodes && contentNodeChildNodes.length) {
-              return contentNodeChildNodes[0];
-            }
-          }
-
-          return nodesToReturn;
-        }
-      },
-
-      innerHTML: {
-        get: function () {
-          var html = '';
-          var childNodes = this.childNodes;
-          var childNodesLength = childNodes.length;
-
-          for (var a = 0; a < childNodesLength; a++) {
-            html += childNodes[a].outerHTML;
-          }
-
-          return html;
-        },
-        set: function (html) {
-          var targetFragment = createFragmentFromString(html);
-
-          for (var a = 0; a < contentNodesLength; a++) {
-            var contentNode = contentNodes[a];
-            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
-
-            if (foundNodes.length) {
-              contentNode.innerHTML = '';
-              insertNodeList(contentNode, foundNodes);
-            }
-          }
-        }
-      },
-
-      lastChild: {
-        get: function () {
-          var nodesToReturn = [];
-
-          for (var a = contentNodesLength - 1; a > -1; a--) {
-            var contentNode = contentNodes[a];
-            var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLength = contentNodeChildNodes.length;
-
-            if (contentNodeChildNodes && contentNodeChildNodesLength) {
-              return contentNodeChildNodes[contentNodeChildNodesLength - 1];
-            }
-          }
-
-          return nodesToReturn;
-        }
-      },
-
-      outerHTML: {
-        get: function () {
-          var name = this.tagName.toLowerCase();
-          var html = '<' + name;
-          var attrs = this.attributes;
-
-          if (attrs) {
-            var attrsLength = attrs.length;
-
-            for (var a = 0; a < attrsLength; a++) {
-              var attr = attrs[a];
-              html += ' ' + attr.nodeName + '="' + attr.nodeValue + '"';
-            }
-          }
-
-          html += '>';
-          html += this.innerHTML;
-          html += '</' + name + '>';
-
-          return html;
-        }
-      },
-
-      textContent: {
-        get: function () {
-          var textContent = '';
-          var childNodes = this.childNodes;
-          var childNodesLength = this.childNodes.length;
-
-          for (var a = 0; a < childNodesLength; a++) {
-            textContent += childNodes[a].textContent;
-          }
-
-          return textContent;
-        },
-        set: function (textContent) {
-          // We travers all content nodes, but return on the first one that
-          // gets the text content.
-          for (var a = 0; a < contentNodesLength; a++) {
-            var contentNode = contentNodes[a];
-
-            // Selectors can't match text nodes, so the content attribute must
-            // be void.
-            if (!contentNode.getAttribute(ATTR_CONTENT)) {
-              contentNode.textContent = textContent;
-              break;
-            }
-          }
-        }
-      }
-    });
-
-    wrapped.appendChild = function (node) {
-      if (node instanceof DocumentFragment) {
-        var fragChildNodes = node.childNodes;
-
-        if (fragChildNodes) {
-          var fragChildNodesLength = fragChildNodes.length;
-
-          for (var a = 0; a < fragChildNodesLength; a++) {
-            this.appendChild(fragChildNodes[a]);
-          }
-        }
-
-        return this;
-      }
-
-      var childNodes = this.childNodes;
-      var contentNode = childNodes[childNodes.length - 1].parentNode;
-      var selector = contentNode.getAttribute(ATTR_CONTENT);
-
-      if (!selector || matchesSelector.call(node, selector)) {
-        contentNode.appendChild(node);
-      }
-
-      return this;
-    };
-
-    wrapped.insertAdjacentHTML = function (where, html) {
-      if (where === 'afterbegin') {
-        this.insertBefore(createFragmentFromString(html), this.childNodes[0]);
-      } else if (where === 'beforeend') {
-        this.appendChild(createFragmentFromString(html));
-      } else {
-        element.insertAdjacentHTML(where, html);
-      }
-
-      return this;
-    };
-
-    wrapped.insertBefore = function (node, referenceNode) {
-      var childNodes = this.childNodes;
-
-      // If no reference node is supplied, we append.
-      if (!referenceNode) {
-        return this.appendChild(node);
-      }
-
-      var hasFoundReferenceNode = false;
-
-      // Only try and find the child node if there are child nodes.
-      if (childNodes) {
-        var childNodesLength = childNodes.length;
-        var lastContent;
-
-        for (var a = 0; a < childNodesLength; a++) {
-          var currentNode = childNodes[a];
-
-          if (!hasFoundReferenceNode) {
-            if (currentNode === referenceNode) {
-              hasFoundReferenceNode = true;
-            } else {
-              continue;
-            }
-          }
-
-          var thisContent = currentNode.parentNode;
-
-          if (lastContent && lastContent === thisContent) {
-            continue;
-          }
-
-          lastContent = thisContent;
-          var selector = thisContent.getAttribute(ATTR_CONTENT);
-
-          if (!selector || matchesSelector.call(node, selector)) {
-            thisContent.insertBefore(node, currentNode);
-            break;
-          }
-        }
-      }
-
-      // If no reference node was found as a child node of the element we must
-      // throw an error. This works for both no child nodes, or if the reference
-      // wasn't found to be a child node.
-      if (!hasFoundReferenceNode) {
-        throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
-      }
-
-      return this;
-    };
-
-    wrapped.removeChild = function (childNode) {
-      for (var a = 0; a < contentNodesLength; a++) {
-        var contentNode = contentNodes[a];
-
-        if (contentNode === childNode.parentNode) {
-          contentNode.removeChild(childNode);
-          break;
-        }
-      }
-
-      return this;
-    };
-
-    wrapped.replaceChild = function (newChild, oldChild) {
-      for (var a = 0; a < contentNodesLength; a++) {
-        var contentNode = contentNodes[a];
-
-        if (contentNode === oldChild.parentNode) {
-          contentNode.replaceChild(newChild, oldChild);
-          break;
-        }
-      }
-
-      return this;
-    };
-
-    return wrapped;
+  /**
+   * Unwraps the element if it was previously wrapped. If it has not been
+   * wrapped then it doesn't do anything.
+   *
+   * @param {HTMLElement} element The element to unwrap.
+   *
+   * @returns {HTMLElement}
+   */
+  skate.template.html.unwrap = function (wrapper) {
+    return getData(wrapper, 'element') || wrapper;
   };
 
 
