@@ -1414,10 +1414,11 @@
       );
     });
 
-    // Ensure all wrapper methods are bound.
-    for (var name in wrapper) {
-      if (typeof wrapper[name] === 'function') {
-        wrapped[name] = wrapper[name];
+    // Ensure all wrapper methods are bound and all inherited methods affect
+    // the main element.
+    for (var name in wrapped) {
+      if (wrapped[name] && wrapped[name].bind) {
+        wrapped[name] = name in wrapper ? wrapper[name] : element[name].bind(element);
       }
     }
 
