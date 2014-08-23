@@ -750,6 +750,11 @@
         $element = skate.template.html.wrap(element);
       });
 
+      it('should allow calling of inherited methods and properties', function () {
+        $element.setAttribute('testing', 'testing');
+        expect($element.attributes.testing.value).to.equal('testing');
+      });
+
       it('should return the first child', function () {
         expect($element.firstChild.tagName).to.equal('ONE');
       });
