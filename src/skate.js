@@ -1313,8 +1313,8 @@
           var childNodesLength = childNodes.length;
           var lastContent;
 
-          for (var a = 0; a < childNodesLength; a++) {
-            var currentNode = childNodes[a];
+          for (var b = 0; b < childNodesLength; b++) {
+            var currentNode = childNodes[b];
 
             if (!hasFoundReferenceNode) {
               if (currentNode === referenceNode) {
@@ -1540,7 +1540,7 @@
    * @returns {Object}
    */
   skate.template.html.wrap = function (element) {
-    var wrapper = htmlTemplateParentWrapper(element)
+    var wrapper = htmlTemplateParentWrapper(element);
 
     if (!wrapper) {
       return element;
