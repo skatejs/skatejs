@@ -695,34 +695,45 @@
 
     describe('default content', function () {
       var main;
-      var span;
+      var $main;
 
       beforeEach(function () {
         skate('my-element', {
           template: '<span data-skate-content>default content</span>'
         });
 
-        document.body.innerHTML = '<my-element></my-element>';
+        document.body.innerHTML = '<my-element>initial content</my-element>';
 
         main = skate.init(document.querySelector('my-element'));
-        span = main.querySelector('span');
+        $main = skate.template.html.wrap(skate.init(main));
+      });
+
+      it('should initialise with custom content', function () {
+        expect($main.innerHTML).to.equal('initial content');
       });
 
       it('should insert the default content if no content is found', function () {
-        span.innerHTML.should.equal('default content');
+        $main.innerHTML = '';
+
+        // Because default content is not exposed.
+        expect($main.innerHTML).to.equal('');
+
+        // However, we must ensure that it does properly restore the default
+        // content.
+        expect(main.childNodes[0].innerHTML).to.equal('default content');
       });
 
-      it('should remove the default content if content is inserted', function (done) {
-        span.appendChild(document.createElement('span'));
+      it('should remove the default content if content is inserted', function () {
+        // Clear to restore the default content.
+        $main.innerHTML = '';
 
-        setTimeout(function () {
-          span.innerHTML.should.equal('<span></span>');
-          done();
-        });
+        // Now when we append a child, it should remove the default content.
+        $main.appendChild(document.createElement('span'));
+        expect($main.innerHTML).to.equal('<span></span>');
       });
     });
 
-    describe('wrapper', function () {
+    describe('wrapper methods', function () {
       var element;
       var $element;
 
@@ -786,7 +797,7 @@
 
       it('should throw an error if inserting before a node that does not exist', function () {
         expect(function () {
-          $element.insertBefore(document.createElement('three'), document.createElement('notindom'))
+          $element.insertBefore(document.createElement('three'), document.createElement('notindom'));
         }).to.throw('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
       });
 
@@ -832,7 +843,7 @@
 
         it('beforeend', function () {
           $element.insertAdjacentHTML('beforeend', '<three></three>');
-          expect($element.lastChild.tagName).to.equal('THREE');
+          expect($element.childNodes.item(1).tagName).to.equal('THREE');
         });
 
         it('afterend', function () {

@@ -507,25 +507,6 @@
   }
 
   /**
-   * Removes the nodes in the node list from the specified element.
-   *
-   * @param {HTMLElement} element The element to remove the nodes from.
-   * @param {Enumerable} nodes The list of nodes to remove.
-   *
-   * @retruns {undefined}
-   */
-  function removeNodeList (element, nodes) {
-    var len = nodes.length;
-
-    if (nodes && len) {
-      for (var a = 0; a < len; a++) {
-        var node = nodes[a];
-        element.removeChild(node);
-      }
-    }
-  }
-
-  /**
    * Returns whether or not the source element contains the target element. This is for browsers that don't support
    * Element.prototype.contains on an HTMLUnknownElement.
    *
@@ -675,7 +656,6 @@
 
   var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
-  var REGEX_WHITESPACE = /^[\s\r\n]*$/;
 
 
 
@@ -1099,42 +1079,48 @@
    * @returns {Object}
    */
   function htmlTemplateParentWrapper (element) {
-    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
-    var contentNodesLength = contentNodes.length;
-
-    if (!contentNodesLength) {
-      return;
-    }
+    var contentNodes = getData(element, 'content');
+    var contentNodesLen = contentNodes.length;
 
     return {
       childNodes: {
         get: function () {
           var nodesToReturn = [];
 
-          for (var a = 0; a < contentNodesLength; a++) {
+          for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
+
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
             var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
 
-            if (contentNodeChildNodes) {
-              var contentNodeChildNodesLength = contentNodeChildNodes.length;
-
-              for (var b = 0; b < contentNodeChildNodesLength; b++) {
+            if (contentNodeChildNodesLen) {
+              for (var b = 0; b < contentNodeChildNodesLen; b++) {
                 nodesToReturn.push(contentNodeChildNodes[b]);
               }
             }
           }
 
-          return nodesToReturn;
+          return makeNodeList(nodesToReturn);
         }
       },
 
       firstChild: {
         get: function () {
-          for (var a = 0; a < contentNodesLength; a++) {
+          for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
-            var contentNodeChildNodes = contentNode.childNodes;
 
-            if (contentNodeChildNodes && contentNodeChildNodes.length) {
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+
+            if (contentNodeChildNodesLen) {
               return contentNodeChildNodes[0];
             }
           }
@@ -1147,10 +1133,13 @@
         get: function () {
           var html = '';
           var childNodes = this.childNodes;
-          var childNodesLength = childNodes.length;
+          var childNodesLen = childNodes && childNodes.length;
 
-          for (var a = 0; a < childNodesLength; a++) {
-            html += childNodes[a].outerHTML;
+          if (childNodesLen) {
+            for (var a = 0; a < childNodesLen; a++) {
+              var childNode = childNodes[a];
+              html += childNode.outerHTML || childNode.textContent;
+            }
           }
 
           return html;
@@ -1158,33 +1147,40 @@
         set: function (html) {
           var targetFragment = createFragmentFromString(html);
 
-          for (var a = 0; a < contentNodesLength; a++) {
+          for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
-            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+            var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentSelector);
+
+            contentNode.innerHTML = '';
 
             if (foundNodes.length) {
-              contentNode.innerHTML = '';
               insertNodeList(contentNode, foundNodes);
             }
+
+            addDefaultContent(contentNode);
           }
         }
       },
 
       lastChild: {
         get: function () {
-          var nodesToReturn = [];
-
-          for (var a = contentNodesLength - 1; a > -1; a--) {
+          for (var a = contentNodesLen - 1; a > -1; a--) {
             var contentNode = contentNodes[a];
-            var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLength = contentNodeChildNodes.length;
 
-            if (contentNodeChildNodes && contentNodeChildNodesLength) {
-              return contentNodeChildNodes[contentNodeChildNodesLength - 1];
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+
+            if (contentNodeChildNodesLen) {
+              return contentNodeChildNodes[contentNodeChildNodesLen - 1];
             }
           }
 
-          return nodesToReturn;
+          return null;
         }
       },
 
@@ -1228,7 +1224,7 @@
 
           // Clear all content and find the first one, if any, that accepts
           // text content.
-          for (var a = 0; a < contentNodesLength; a++) {
+          for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
 
             contentNode.innerHTML = '';
@@ -1240,7 +1236,9 @@
 
           // There may be no content nodes that accept text content.
           if (acceptsTextContent) {
+            removeDefaultContent(acceptsTextContent);
             acceptsTextContent.textContent = textContent;
+            addDefaultContent(acceptsTextContent);
           }
         }
       },
@@ -1260,12 +1258,15 @@
           return this;
         }
 
-        var childNodes = this.childNodes;
-        var contentNode = childNodes[childNodes.length - 1].parentNode;
-        var selector = contentNode.getAttribute(ATTR_CONTENT);
+        for (var a = 0; a < contentNodesLen; a++) {
+          var contentNode = contentNodes[a];
+          var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
 
-        if (!selector || matchesSelector.call(node, selector)) {
-          contentNode.appendChild(node);
+          if (!contentSelector || matchesSelector.call(node, contentSelector)) {
+            removeDefaultContent(contentNode);
+            contentNode.appendChild(node);
+            break;
+          }
         }
 
         return this;
@@ -1284,9 +1285,9 @@
       },
 
       insertBefore: function (node, referenceNode) {
-        var childNodes = this.childNodes;
-
-        // If no reference node is supplied, we append.
+        // If no reference node is supplied, we append. This also means that we
+        // don't need to add / remove any default content because either there
+        // aren't any nodes or appendChild will handle it.
         if (!referenceNode) {
           return this.appendChild(node);
         }
@@ -1306,14 +1307,14 @@
           return this;
         }
 
+        var childNodes = this.childNodes;
+        var childNodesLen = childNodes && childNodes.length;
         var hasFoundReferenceNode = false;
 
-        // Only try and find the child node if there are child nodes.
-        if (childNodes) {
-          var childNodesLength = childNodes.length;
+        if (childNodesLen) {
           var lastContent;
 
-          for (var b = 0; b < childNodesLength; b++) {
+          for (var b = 0; b < childNodesLen; b++) {
             var currentNode = childNodes[b];
 
             if (!hasFoundReferenceNode) {
@@ -1351,20 +1352,22 @@
       },
 
       removeChild: function (childNode) {
-        for (var a = 0; a < contentNodesLength; a++) {
+        for (var a = 0; a < contentNodesLen; a++) {
           var contentNode = contentNodes[a];
 
           if (contentNode === childNode.parentNode) {
             contentNode.removeChild(childNode);
             break;
           }
+
+          addDefaultContent(contentNode);
         }
 
         return this;
       },
 
       replaceChild: function (newChild, oldChild) {
-        for (var a = 0; a < contentNodesLength; a++) {
+        for (var a = 0; a < contentNodesLen; a++) {
           var contentNode = contentNodes[a];
 
           if (contentNode === oldChild.parentNode) {
@@ -1376,6 +1379,72 @@
         return this;
       }
     };
+  }
+
+  /**
+   * Ensures that the array provided implements functions available on a native
+   * NodeList.
+   *
+   * @param {Array} nodes The nodes to add the methods to.
+   *
+   * @return {Array}
+   */
+  function makeNodeList (nodes) {
+    nodes.item = function (index) {
+      return nodes[index];
+    };
+
+    return nodes;
+  }
+
+  /**
+   * Adds the default content if no content exists.
+   *
+   * @param {Node} contentNode The content node to check.
+   *
+   * @returns {undefined}
+   */
+  function addDefaultContent (contentNode) {
+    var childNodes = contentNode.childNodes;
+
+    if (!childNodes || !childNodes.length) {
+      var nodes = getData(contentNode, 'default-content');
+      var nodesLen = nodes && nodes.length;
+
+      if (nodesLen) {
+        contentNode.innerHTML = '';
+
+        for (var a = 0; a < nodesLen; a++) {
+          contentNode.appendChild(nodes[a]);
+        }
+
+        setData(contentNode, 'default-content-state', true);
+      }
+    }
+  }
+
+  /**
+   * Removes the default content if it exists.
+   *
+   * @param {Node} contentNode The content node to check.
+   *
+   * @returns {undefined}
+   */
+  function removeDefaultContent (contentNode) {
+    var nodes = getData(contentNode, 'default-content');
+    var nodesLen = nodes && nodes.length;
+
+    if (nodesLen) {
+      for (var a = 0; a < nodesLen; a++) {
+        var node = nodes[a];
+
+        if (node.parentNode) {
+          contentNode.removeChild(node);
+        }
+      }
+
+      setData(contentNode, 'default-content-state', false);
+    }
   }
 
   /**
@@ -1411,15 +1480,13 @@
   }
 
   /**
-   * Wraps the specified element with the given wrapper. It adds a method
-   * called `unwrap()` to the element which will unwrap it and restore all of
-   * the original methods and properties.
+   * Wraps the specified element with the given wrapper.
    *
    * @param {Object} wrapper The methods and properties to wrap.
    *
    * @returns {Node}
    */
-  function makeWrapperFrom (node, wrapper) {
+  function wrapNodeWith (node, wrapper) {
     // Copies all base properties and methods.
     // Doing this also makes instanceof calls work.
     var wrapped = makeInstanceOf(node);
@@ -1442,6 +1509,27 @@
     }
 
     return wrapped;
+  }
+
+  /**
+   * Caches information about the content nodes.
+   *
+   * @param {Node} node The node to cache content information about.
+   *
+   * @returns {undefined}
+   */
+  function cacheContentData (node) {
+    var contentNodes = node.querySelectorAll('[' + ATTR_CONTENT + ']');
+    var contentNodesLen = contentNodes && contentNodes.length;
+
+    if (contentNodesLen) {
+      setData(node, 'content', contentNodes);
+
+      for (var a = 0; a < contentNodesLen; a++) {
+        var contentNode = contentNodes[a];
+        setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
+      }
+    }
   }
 
   /**
@@ -1471,63 +1559,15 @@
    * @returns {Function} The function for rendering the template.
    */
   skate.template.html = function (templateString) {
-    var template = createFragmentFromString(templateString);
-    var mutating = false;
-    var contentMutationObserver = new MutationObserver(function (mutations) {
-        // If we are mutating, it means that the content mutation observer previously ran and we shouldn't run this
-        // set of mutations. Simply unflag and return.
-        if (mutating) {
-          mutating = false;
-          return;
-        }
-
-        mutating = true;
-
-        for (var a = 0; a < mutations.length; a++) {
-          var mutation = mutations[a];
-          var mutationTarget = mutation.target;
-          var defaultContent = getData(mutationTarget, 'default-content');
-
-          if (mutation.addedNodes) {
-            removeNodeList(mutationTarget, defaultContent);
-          }
-
-          if (mutation.removedNodes && mutationTarget.innerHTML.match(REGEX_WHITESPACE)) {
-            mutationTarget.innerHTML = '';
-            insertNodeList(mutationTarget, defaultContent);
-          }
-        }
-      });
-
     return function (target) {
-      var targetFragment = createFragmentFromString(target.innerHTML);
-      var targetTemplate = template.cloneNode(true);
-      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
-      var contentNodesLength = contentNodes.length;
+      var initialHtml = target.innerHTML;
 
-      if (contentNodesLength) {
-        for (var a = 0; a < contentNodesLength; a++) {
-          var contentNode = contentNodes[a];
-          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
+      target.innerHTML = templateString;
+      cacheContentData(target);
 
-          // Save the default content so we can use it when all nodes are removed from the content.
-          setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
-
-          // If any initial content is found we replace any content with them.
-          if (foundNodes.length) {
-            contentNode.innerHTML = '';
-            insertNodeList(contentNode, foundNodes);
-          }
-
-          // Any further mutations will handle the display of the default content.
-          contentMutationObserver.observe(contentNode, {
-            childList: true
-          });
-        }
+      if (initialHtml) {
+        skate.template.html.wrap(target).innerHTML = initialHtml;
       }
-
-      target.innerHTML = '';
-      target.appendChild(targetTemplate);
     };
   };
 
@@ -1535,32 +1575,14 @@
    * Wraps the element in an object that has methods which can be used to manipulate the content similar to if it were
    * delcared as the shadow root.
    *
-   * @param {HTMLElement} element The element to wrap.
+   * @param {Node} node The node to wrap.
    *
    * @returns {Object}
    */
-  skate.template.html.wrap = function (element) {
-    var wrapper = htmlTemplateParentWrapper(element);
-
-    if (!wrapper) {
-      return element;
-    }
-
-    var wrapped = makeWrapperFrom(element, wrapper);
-
-    return setData(wrapped, 'element', element);
-  };
-
-  /**
-   * Unwraps the element if it was previously wrapped. If it has not been
-   * wrapped then it doesn't do anything.
-   *
-   * @param {HTMLElement} element The element to unwrap.
-   *
-   * @returns {HTMLElement}
-   */
-  skate.template.html.unwrap = function (wrapper) {
-    return getData(wrapper, 'element') || wrapper;
+  skate.template.html.wrap = function (node) {
+    return getData(node, 'content') ?
+      wrapNodeWith(node, htmlTemplateParentWrapper(node)) :
+      node;
   };
 
 
