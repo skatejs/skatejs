@@ -301,11 +301,22 @@
    * @returns {Object} Returns the child object.
    */
   function inherit (child, parent) {
-    objEach(parent, function (member, name) {
+    var names = Object.getOwnPropertyNames(parent);
+    var namesLen = names.length;
+
+    for (var a = 0; a < namesLen; a++) {
+      var name = names[a];
+
       if (child[name] === undefined) {
-        child[name] = member;
+        var desc = Object.getOwnPropertyDescriptor(parent, name);
+
+        if (desc.hasOwnProperty('value')) {
+          child[name] = parent[name];
+        } else {
+          Object.defineProperty(child, name, desc);
+        }
       }
-    });
+    }
 
     return child;
   }
