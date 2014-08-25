@@ -1095,12 +1095,16 @@
    * element so that it behaves similar to a shadow root.
    *
    * @param {HTMLElement} element The original element to wrap.
-   * @param {DOMNodeList} contentNodes A list of content nodes to use.
    *
    * @returns {Object}
    */
-  function htmlTemplateParentWrapper (element, contentNodes) {
+  function htmlTemplateParentWrapper (element) {
+    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
     var contentNodesLength = contentNodes.length;
+
+    if (!contentNodesLength) {
+      return;
+    }
 
     return {
       childNodes: {
@@ -1374,43 +1378,58 @@
     };
   }
 
-  function makeInstanceOf (element) {
+  /**
+   * Makes a constructor for the specified element that passes instanceof
+   * checks which is configurable.
+   *
+   * @param {Node} node The node to create a fake constructor for.
+   *
+   * @return {Object}
+   */
+  function makeInstanceOf (node) {
     var Ctor = function(){};
-    Ctor.prototype = document.createElement(element.tagName);
+    Ctor.prototype = document.createElement(node.tagName);
     return new Ctor();
   }
 
-  function createProxyProperty (element, name) {
+  /**
+   * Returns a property definition that just proxies to the original element
+   * property.
+   *
+   * @param {Node} node The node to proxy to.
+   * @param {String} name The name of the property.
+   */
+  function createProxyProperty (node, name) {
     return {
       get: function () {
-        return element[name];
+        return node[name];
       },
       set: function (value) {
-        element[name] = value;
+        node[name] = value;
       }
     };
   }
 
   /**
-   * Wraps the specified element with the given wrapper. It adds a method called
-   * `unwrap()` to the element which will unwrap it and restore all of the
-   * original methods and properties.
+   * Wraps the specified element with the given wrapper. It adds a method
+   * called `unwrap()` to the element which will unwrap it and restore all of
+   * the original methods and properties.
    *
    * @param {Object} wrapper The methods and properties to wrap.
    *
-   * @returns {HTMLElement}
+   * @returns {Node}
    */
-  function makeWrapperFrom (element, wrapper) {
+  function makeWrapperFrom (node, wrapper) {
     // Copies all base properties and methods.
     // Doing this also makes instanceof calls work.
-    var wrapped = makeInstanceOf(element);
+    var wrapped = makeInstanceOf(node);
 
     // Copy or proxy all (enumerable and non-enumerable) properties.
-    Object.getOwnPropertyNames(element).forEach(function (name) {
+    Object.getOwnPropertyNames(node).forEach(function (name) {
       Object.defineProperty(
         wrapped,
         name,
-        name in wrapper ? wrapper[name] : createProxyProperty(element, name)
+        name in wrapper ? wrapper[name] : createProxyProperty(node, name)
       );
     });
 
@@ -1418,7 +1437,7 @@
     // the main element.
     for (var name in wrapped) {
       if (wrapped[name] && wrapped[name].bind) {
-        wrapped[name] = name in wrapper ? wrapper[name] : element[name].bind(element);
+        wrapped[name] = name in wrapper ? wrapper[name] : node[name].bind(node);
       }
     }
 
@@ -1521,13 +1540,12 @@
    * @returns {Object}
    */
   skate.template.html.wrap = function (element) {
-    var contentNodes = element.querySelectorAll('[' + ATTR_CONTENT + ']');
+    var wrapper = htmlTemplateParentWrapper(element)
 
-    if (!contentNodes.length) {
+    if (!wrapper) {
       return element;
     }
 
-    var wrapper = htmlTemplateParentWrapper(element, contentNodes);
     var wrapped = makeWrapperFrom(element, wrapper);
 
     return setData(wrapped, 'element', element);
