@@ -843,7 +843,7 @@
 
         it('beforeend', function () {
           $element.insertAdjacentHTML('beforeend', '<three></three>');
-          expect($element.childNodes.item(1).tagName).to.equal('THREE');
+          expect($element.childNodes[1].tagName).to.equal('THREE');
         });
 
         it('afterend', function () {

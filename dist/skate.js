@@ -1104,7 +1104,7 @@
             }
           }
 
-          return makeNodeList(nodesToReturn);
+          return nodesToReturn;
         }
       },
 
@@ -1379,22 +1379,6 @@
         return this;
       }
     };
-  }
-
-  /**
-   * Ensures that the array provided implements functions available on a native
-   * NodeList.
-   *
-   * @param {Array} nodes The nodes to add the methods to.
-   *
-   * @return {Array}
-   */
-  function makeNodeList (nodes) {
-    nodes.item = function (index) {
-      return nodes[index];
-    };
-
-    return nodes;
   }
 
   /**
