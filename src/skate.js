@@ -1258,8 +1258,8 @@
           return this;
         }
 
-        for (var a = 0; a < contentNodesLen; a++) {
-          var contentNode = contentNodes[a];
+        for (var b = 0; b < contentNodesLen; b++) {
+          var contentNode = contentNodes[b];
           var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
 
           if (!contentSelector || matchesSelector.call(node, contentSelector)) {
