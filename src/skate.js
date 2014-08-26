@@ -255,6 +255,8 @@
     }
 
     element.__SKATE_DATA[name] = value;
+
+    return element;
   }
 
   /**
@@ -489,8 +491,9 @@
         thead: 'table',
         tr: 'tbody'
       };
-    var tag = domString.match(/\s*<([^\s>]+)/);
+
     var frag = document.createDocumentFragment();
+    var tag = domString.match(/\s*<([^\s>]+)/);
     var div = document.createElement(tag && specialMap[tag[1]] || 'div');
 
     div.innerHTML = domString;
@@ -512,25 +515,6 @@
 
     for (var a = len; a > 0; a--) {
       element.appendChild(nodes[0]);
-    }
-  }
-
-  /**
-   * Removes the nodes in the node list from the specified element.
-   *
-   * @param {HTMLElement} element The element to remove the nodes from.
-   * @param {Enumerable} nodes The list of nodes to remove.
-   *
-   * @retruns {undefined}
-   */
-  function removeNodeList (element, nodes) {
-    var len = nodes.length;
-
-    if (nodes && len) {
-      for (var a = 0; a < len; a++) {
-        var node = nodes[a];
-        element.removeChild(node);
-      }
     }
   }
 
@@ -684,7 +668,6 @@
 
   var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
-  var REGEX_WHITESPACE = /^[\s\r\n]*$/;
 
 
 
@@ -700,7 +683,6 @@
       elProto.mozMatchesSelector ||
       elProto.oMatchesSelector
     );
-
 
   // The observer listening to document changes.
   var documentListener;
@@ -1026,6 +1008,10 @@
    * @returns {skate}
    */
   skate.init = function (nodes) {
+    if (!nodes) {
+      return;
+    }
+
     if (typeof nodes === 'string') {
       nodes = document.querySelectorAll(nodes);
     }
@@ -1033,93 +1019,6 @@
     initElements(typeof nodes.length === 'undefined' ? [nodes] : nodes);
 
     return nodes;
-  };
-
-  /**
-   * Default template renderers.
-   *
-   * @var {Object}
-   */
-  skate.template = {};
-
-  /**
-   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
-   *
-   * Differences:
-   *
-   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
-   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
-   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
-   *
-   * Usage:
-   *
-   *     skate('something', {
-   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
-   *     });
-   *
-   * @param {String} templateString The HTML template string to use.
-   *
-   * @returns {Function} The function for rendering the template.
-   */
-  skate.template.html = function (templateString) {
-    var template = createFragmentFromString(templateString);
-    var mutating = false;
-    var contentMutationObserver = new MutationObserver(function (mutations) {
-        // If we are mutating, it means that the content mutation observer previously ran and we shouldn't run this
-        // set of mutations. Simply unflag and return.
-        if (mutating) {
-          mutating = false;
-          return;
-        }
-
-        mutating = true;
-
-        for (var a = 0; a < mutations.length; a++) {
-          var mutation = mutations[a];
-          var mutationTarget = mutation.target;
-          var defaultContent = getData(mutationTarget, 'default-content');
-
-          if (mutation.addedNodes) {
-            removeNodeList(mutationTarget, defaultContent);
-          }
-
-          if (mutation.removedNodes && mutationTarget.innerHTML.match(REGEX_WHITESPACE)) {
-            mutationTarget.innerHTML = '';
-            insertNodeList(mutationTarget, defaultContent);
-          }
-        }
-      });
-
-    return function (target) {
-      var targetFragment = createFragmentFromString(target.innerHTML);
-      var targetTemplate = template.cloneNode(true);
-      var contentNodes = targetTemplate.querySelectorAll('[' + ATTR_CONTENT + ']');
-      var contentNodesLength = contentNodes.length;
-
-      if (contentNodesLength) {
-        for (var a = 0; a < contentNodesLength; a++) {
-          var contentNode = contentNodes[a];
-          var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.getAttribute(ATTR_CONTENT));
-
-          // Save the default content so we can use it when all nodes are removed from the content.
-          setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
-
-          // If any initial content is found we replace any content with them.
-          if (foundNodes.length) {
-            contentNode.innerHTML = '';
-            insertNodeList(contentNode, foundNodes);
-          }
-
-          // Any further mutations will handle the display of the default content.
-          contentMutationObserver.observe(contentNode, {
-            childList: true
-          });
-        }
-      }
-
-      target.innerHTML = '';
-      target.appendChild(targetTemplate);
-    };
   };
 
   // Restriction type constants.
@@ -1174,6 +1073,512 @@
 
     // The type of bindings to allow.
     type: skate.types.ANY
+  };
+
+
+
+  // Templating
+  // ----------
+
+  var DocumentFragment = window.DocumentFragment;
+
+  /**
+   * Returns an object with methods and properties that can be used to wrap an
+   * element so that it behaves similar to a shadow root.
+   *
+   * @param {HTMLElement} element The original element to wrap.
+   *
+   * @returns {Object}
+   */
+  function htmlTemplateParentWrapper (element) {
+    var contentNodes = getData(element, 'content');
+    var contentNodesLen = contentNodes.length;
+
+    return {
+      childNodes: {
+        get: function () {
+          var nodesToReturn = [];
+
+          for (var a = 0; a < contentNodesLen; a++) {
+            var contentNode = contentNodes[a];
+
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+
+            if (contentNodeChildNodesLen) {
+              for (var b = 0; b < contentNodeChildNodesLen; b++) {
+                nodesToReturn.push(contentNodeChildNodes[b]);
+              }
+            }
+          }
+
+          return nodesToReturn;
+        }
+      },
+
+      firstChild: {
+        get: function () {
+          for (var a = 0; a < contentNodesLen; a++) {
+            var contentNode = contentNodes[a];
+
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+
+            if (contentNodeChildNodesLen) {
+              return contentNodeChildNodes[0];
+            }
+          }
+
+          return null;
+        }
+      },
+
+      innerHTML: {
+        get: function () {
+          var html = '';
+          var childNodes = this.childNodes;
+          var childNodesLen = childNodes && childNodes.length;
+
+          if (childNodesLen) {
+            for (var a = 0; a < childNodesLen; a++) {
+              var childNode = childNodes[a];
+              html += childNode.outerHTML || childNode.textContent;
+            }
+          }
+
+          return html;
+        },
+        set: function (html) {
+          var targetFragment = createFragmentFromString(html);
+
+          for (var a = 0; a < contentNodesLen; a++) {
+            var contentNode = contentNodes[a];
+            var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentSelector);
+
+            contentNode.innerHTML = '';
+
+            if (foundNodes.length) {
+              insertNodeList(contentNode, foundNodes);
+            }
+
+            addDefaultContent(contentNode);
+          }
+        }
+      },
+
+      lastChild: {
+        get: function () {
+          for (var a = contentNodesLen - 1; a > -1; a--) {
+            var contentNode = contentNodes[a];
+
+            if (getData(contentNode, 'default-content-state')) {
+              continue;
+            }
+
+            var contentNodeChildNodes = contentNode.childNodes;
+            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+
+            if (contentNodeChildNodesLen) {
+              return contentNodeChildNodes[contentNodeChildNodesLen - 1];
+            }
+          }
+
+          return null;
+        }
+      },
+
+      outerHTML: {
+        get: function () {
+          var name = this.tagName.toLowerCase();
+          var html = '<' + name;
+          var attrs = this.attributes;
+
+          if (attrs) {
+            var attrsLength = attrs.length;
+
+            for (var a = 0; a < attrsLength; a++) {
+              var attr = attrs[a];
+              html += ' ' + attr.nodeName + '="' + attr.nodeValue + '"';
+            }
+          }
+
+          html += '>';
+          html += this.innerHTML;
+          html += '</' + name + '>';
+
+          return html;
+        }
+      },
+
+      textContent: {
+        get: function () {
+          var textContent = '';
+          var childNodes = this.childNodes;
+          var childNodesLength = this.childNodes.length;
+
+          for (var a = 0; a < childNodesLength; a++) {
+            textContent += childNodes[a].textContent;
+          }
+
+          return textContent;
+        },
+        set: function (textContent) {
+          var acceptsTextContent;
+
+          // Clear all content and find the first one, if any, that accepts
+          // text content.
+          for (var a = 0; a < contentNodesLen; a++) {
+            var contentNode = contentNodes[a];
+
+            contentNode.innerHTML = '';
+
+            if (!acceptsTextContent && !contentNode.getAttribute(ATTR_CONTENT)) {
+              acceptsTextContent = contentNode;
+            }
+          }
+
+          // There may be no content nodes that accept text content.
+          if (acceptsTextContent) {
+            removeDefaultContent(acceptsTextContent);
+            acceptsTextContent.textContent = textContent;
+            addDefaultContent(acceptsTextContent);
+          }
+        }
+      },
+
+      appendChild: function (node) {
+        if (node instanceof DocumentFragment) {
+          var fragChildNodes = node.childNodes;
+
+          if (fragChildNodes) {
+            var fragChildNodesLength = fragChildNodes.length;
+
+            for (var a = 0; a < fragChildNodesLength; a++) {
+              this.appendChild(fragChildNodes[a]);
+            }
+          }
+
+          return this;
+        }
+
+        for (var b = 0; b < contentNodesLen; b++) {
+          var contentNode = contentNodes[b];
+          var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
+
+          if (!contentSelector || matchesSelector.call(node, contentSelector)) {
+            removeDefaultContent(contentNode);
+            contentNode.appendChild(node);
+            break;
+          }
+        }
+
+        return this;
+      },
+
+      insertAdjacentHTML: function (where, html) {
+        if (where === 'afterbegin') {
+          this.insertBefore(createFragmentFromString(html), this.childNodes[0]);
+        } else if (where === 'beforeend') {
+          this.appendChild(createFragmentFromString(html));
+        } else {
+          element.insertAdjacentHTML(where, html);
+        }
+
+        return this;
+      },
+
+      insertBefore: function (node, referenceNode) {
+        // If no reference node is supplied, we append. This also means that we
+        // don't need to add / remove any default content because either there
+        // aren't any nodes or appendChild will handle it.
+        if (!referenceNode) {
+          return this.appendChild(node);
+        }
+
+        // Handle document fragments.
+        if (node instanceof DocumentFragment) {
+          var fragChildNodes = node.childNodes;
+
+          if (fragChildNodes) {
+            var fragChildNodesLength = fragChildNodes.length;
+
+            for (var a = 0; a < fragChildNodesLength; a++) {
+              this.insertBefore(fragChildNodes[a], referenceNode);
+            }
+          }
+
+          return this;
+        }
+
+        var childNodes = this.childNodes;
+        var childNodesLen = childNodes && childNodes.length;
+        var hasFoundReferenceNode = false;
+
+        if (childNodesLen) {
+          var lastContent;
+
+          for (var b = 0; b < childNodesLen; b++) {
+            var currentNode = childNodes[b];
+
+            if (!hasFoundReferenceNode) {
+              if (currentNode === referenceNode) {
+                hasFoundReferenceNode = true;
+              } else {
+                continue;
+              }
+            }
+
+            var thisContent = currentNode.parentNode;
+
+            if (lastContent && lastContent === thisContent) {
+              continue;
+            }
+
+            lastContent = thisContent;
+            var selector = thisContent.getAttribute(ATTR_CONTENT);
+
+            if (!selector || matchesSelector.call(node, selector)) {
+              thisContent.insertBefore(node, currentNode);
+              break;
+            }
+          }
+        }
+
+        // If no reference node was found as a child node of the element we must
+        // throw an error. This works for both no child nodes, or if the reference
+        // wasn't found to be a child node.
+        if (!hasFoundReferenceNode) {
+          throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
+        }
+
+        return this;
+      },
+
+      removeChild: function (childNode) {
+        for (var a = 0; a < contentNodesLen; a++) {
+          var contentNode = contentNodes[a];
+
+          if (contentNode === childNode.parentNode) {
+            contentNode.removeChild(childNode);
+            break;
+          }
+
+          addDefaultContent(contentNode);
+        }
+
+        return this;
+      },
+
+      replaceChild: function (newChild, oldChild) {
+        for (var a = 0; a < contentNodesLen; a++) {
+          var contentNode = contentNodes[a];
+
+          if (contentNode === oldChild.parentNode) {
+            contentNode.replaceChild(newChild, oldChild);
+            break;
+          }
+        }
+
+        return this;
+      }
+    };
+  }
+
+  /**
+   * Adds the default content if no content exists.
+   *
+   * @param {Node} contentNode The content node to check.
+   *
+   * @returns {undefined}
+   */
+  function addDefaultContent (contentNode) {
+    var childNodes = contentNode.childNodes;
+
+    if (!childNodes || !childNodes.length) {
+      var nodes = getData(contentNode, 'default-content');
+      var nodesLen = nodes && nodes.length;
+
+      if (nodesLen) {
+        contentNode.innerHTML = '';
+
+        for (var a = 0; a < nodesLen; a++) {
+          contentNode.appendChild(nodes[a]);
+        }
+
+        setData(contentNode, 'default-content-state', true);
+      }
+    }
+  }
+
+  /**
+   * Removes the default content if it exists.
+   *
+   * @param {Node} contentNode The content node to check.
+   *
+   * @returns {undefined}
+   */
+  function removeDefaultContent (contentNode) {
+    var nodes = getData(contentNode, 'default-content');
+    var nodesLen = nodes && nodes.length;
+
+    if (nodesLen) {
+      for (var a = 0; a < nodesLen; a++) {
+        var node = nodes[a];
+
+        if (node.parentNode) {
+          contentNode.removeChild(node);
+        }
+      }
+
+      setData(contentNode, 'default-content-state', false);
+    }
+  }
+
+  /**
+   * Makes a constructor for the specified element that passes instanceof
+   * checks which is configurable.
+   *
+   * @param {Node} node The node to create a fake constructor for.
+   *
+   * @return {Object}
+   */
+  function makeInstanceOf (node) {
+    var Ctor = function(){};
+    Ctor.prototype = document.createElement(node.tagName);
+    return new Ctor();
+  }
+
+  /**
+   * Returns a property definition that just proxies to the original element
+   * property.
+   *
+   * @param {Node} node The node to proxy to.
+   * @param {String} name The name of the property.
+   */
+  function createProxyProperty (node, name) {
+    return {
+      get: function () {
+        return node[name];
+      },
+      set: function (value) {
+        node[name] = value;
+      }
+    };
+  }
+
+  /**
+   * Wraps the specified element with the given wrapper.
+   *
+   * @param {Object} wrapper The methods and properties to wrap.
+   *
+   * @returns {Node}
+   */
+  function wrapNodeWith (node, wrapper) {
+    // Copies all base properties and methods.
+    // Doing this also makes instanceof calls work.
+    var wrapped = makeInstanceOf(node);
+
+    // Copy or proxy all (enumerable and non-enumerable) properties.
+    Object.getOwnPropertyNames(node).forEach(function (name) {
+      Object.defineProperty(
+        wrapped,
+        name,
+        name in wrapper ? wrapper[name] : createProxyProperty(node, name)
+      );
+    });
+
+    // Ensure all wrapper methods are bound and all inherited methods affect
+    // the main element.
+    for (var name in wrapped) {
+      if (wrapped[name] && wrapped[name].bind) {
+        wrapped[name] = name in wrapper ? wrapper[name] : node[name].bind(node);
+      }
+    }
+
+    return wrapped;
+  }
+
+  /**
+   * Caches information about the content nodes.
+   *
+   * @param {Node} node The node to cache content information about.
+   *
+   * @returns {undefined}
+   */
+  function cacheContentData (node) {
+    var contentNodes = node.querySelectorAll('[' + ATTR_CONTENT + ']');
+    var contentNodesLen = contentNodes && contentNodes.length;
+
+    if (contentNodesLen) {
+      setData(node, 'content', contentNodes);
+
+      for (var a = 0; a < contentNodesLen; a++) {
+        var contentNode = contentNodes[a];
+        setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
+      }
+    }
+  }
+
+  /**
+   * Default template renderers.
+   *
+   * @var {Object}
+   */
+  skate.template = {};
+
+  /**
+   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
+   *
+   * Differences:
+   *
+   * - Uses a `data-skate-content` attribute instead of a `select` attribute.
+   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
+   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
+   *
+   * Usage:
+   *
+   *     skate('something', {
+   *       template: skate.template.html('<my-html-template data-skate-content=".select-some-children"></my-html-template>')
+   *     });
+   *
+   * @param {String} templateString The HTML template string to use.
+   *
+   * @returns {Function} The function for rendering the template.
+   */
+  skate.template.html = function (templateString) {
+    return function (target) {
+      var initialHtml = target.innerHTML;
+
+      target.innerHTML = templateString;
+      cacheContentData(target);
+
+      if (initialHtml) {
+        skate.template.html.wrap(target).innerHTML = initialHtml;
+      }
+    };
+  };
+
+  /**
+   * Wraps the element in an object that has methods which can be used to manipulate the content similar to if it were
+   * delcared as the shadow root.
+   *
+   * @param {Node} node The node to wrap.
+   *
+   * @returns {Object}
+   */
+  skate.template.html.wrap = function (node) {
+    return getData(node, 'content') ?
+      wrapNodeWith(node, htmlTemplateParentWrapper(node)) :
+      node;
   };
 
 
