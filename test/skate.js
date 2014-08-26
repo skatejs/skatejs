@@ -44,7 +44,7 @@
 
     afterEach(function () {
       document.body.innerHTML = '';
-    })
+    });
 
     it('should accept a selector', function () {
       expect(skate.init('div').item(0).textContent).to.equal('test');
@@ -56,7 +56,7 @@
 
     it('should accept a node list', function () {
       expect(skate.init(document.querySelectorAll('div')).item(0).textContent).to.equal('test');
-    })
+    });
   });
 
   describe('Registration', function () {
