@@ -309,11 +309,12 @@
 
       if (child[name] === undefined) {
         var desc = Object.getOwnPropertyDescriptor(parent, name);
+        var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
 
-        if (desc.hasOwnProperty('value')) {
-          child[name] = parent[name];
-        } else {
+        if (shouldDefineProps) {
           Object.defineProperty(child, name, desc);
+        } else {
+          child[name] = parent[name];
         }
       }
     }
