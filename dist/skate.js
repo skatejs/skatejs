@@ -1045,7 +1045,7 @@
   };
 
   // Makes checking the version easy when debugging.
-  skate.version = '0.9.3';
+  skate.version = '0.10.0';
 
   /**
    * The default options for a component.
