@@ -303,11 +303,23 @@
    * @returns {Object} Returns the child object.
    */
   function inherit (child, parent) {
-    objEach(parent, function (member, name) {
+    var names = Object.getOwnPropertyNames(parent);
+    var namesLen = names.length;
+
+    for (var a = 0; a < namesLen; a++) {
+      var name = names[a];
+
       if (child[name] === undefined) {
-        child[name] = member;
+        var desc = Object.getOwnPropertyDescriptor(parent, name);
+        var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
+
+        if (shouldDefineProps) {
+          Object.defineProperty(child, name, desc);
+        } else {
+          child[name] = parent[name];
+        }
       }
-    });
+    }
 
     return child;
   }
@@ -1631,7 +1643,7 @@
     define(function () {
       return skate;
     });
-  } else if (typeof exports === 'object') {
+  } else if (typeof module === 'object') {
     module.exports = skate;
   }
 

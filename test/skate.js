@@ -546,6 +546,22 @@
 
       div.func.should.be.a('function');
     });
+
+    it('should allow getters and setters on the prototype', function () {
+      var Div = skate('div', {
+        prototype: Object.create({}, {
+          test: {
+            get: function () {
+              return true;
+            }
+          }
+        })
+      });
+
+      var div = new Div();
+
+      expect(div.test).to.equal(true);
+    });
   });
 
   describe('Events', function () {
