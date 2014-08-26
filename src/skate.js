@@ -1238,7 +1238,7 @@
     define(function () {
       return skate;
     });
-  } else if (typeof exports === 'object') {
+  } else if (typeof module === 'object') {
     module.exports = skate;
   }
 
