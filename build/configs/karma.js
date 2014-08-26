@@ -14,8 +14,8 @@ module.exports = function (grunt) {
       browsers: browsers,
       files: [
         'src/skate.js',
-        'test/polyfills.js',
-        'test/skate.js'
+        'test/lib/polyfills.js',
+        'test/unit/skate.js'
       ],
       frameworks: [
         'chai',
