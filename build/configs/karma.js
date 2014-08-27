@@ -13,20 +13,23 @@ module.exports = function (grunt) {
       port: grunt.option('port') || '9876',
       browsers: browsers,
       files: [
-        'src/skate.js',
-        'test/lib/polyfills.js',
-        'test/unit/skate.js'
+        { pattern: 'test/lib/polyfills.js', included: true },
+        { pattern: 'test/unit.js', included: true },
+        { pattern: 'src/*.js', included: false },
+        { pattern: 'test/**/*.js', included: false }
       ],
       frameworks: [
-        'chai',
-        'mocha'
+        'requirejs',
+        'mocha',
+        'chai'
       ],
       plugins: [
         'karma-chai',
-        'karma-mocha',
         'karma-chrome-launcher',
         'karma-firefox-launcher',
-        'karma-phantomjs-launcher'
+        'karma-mocha',
+        'karma-phantomjs-launcher',
+        'karma-requirejs'
       ],
       singleRun: !grunt.option('watch')
     },

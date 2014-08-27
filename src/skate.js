@@ -1591,42 +1591,39 @@
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // When the document is ready for manipulation, first initialise the document. This is the first time the document
-  // is initialised. Each call to skate() before this does not trigger a document initialisation. After initialisation
-  // for the first time, we add the document mutation observer to listen for further updates. We flag content as loaded
-  // here because after this, each call to skate() *must* re-initialise the document.
-  document.addEventListener('DOMContentLoaded', function () {
-    // Ensure all elements are initialised before adding the mutation observer.
-    initDocument();
+  // Ensure all elements are initialised before adding the mutation observer.
+  initDocument();
 
-    // Start listening right away.
-    documentListener = new MutationObserver(function (mutations) {
-      var mutationsLength = mutations.length;
+  // Add a mutation observer and start listening right away.
+  documentListener = new MutationObserver(function (mutations) {
+    var mutationsLength = mutations.length;
 
-      for (var a = 0; a < mutationsLength; a++) {
-        var mutation = mutations[a];
-        var addedNodes = mutation.addedNodes;
-        var removedNodes = mutation.removedNodes;
+    for (var a = 0; a < mutationsLength; a++) {
+      var mutation = mutations[a];
+      var addedNodes = mutation.addedNodes;
+      var removedNodes = mutation.removedNodes;
 
-        // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
-        // is then we don't process any added nodes. This prevents having to check every node.
-        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-          initElements(addedNodes);
-        }
-
-        // We can't check batched nodes here because they won't have a parent node.
-        if (removedNodes && removedNodes.length) {
-          removeElements(removedNodes);
-        }
+      // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
+      // is then we don't process any added nodes. This prevents having to check every node.
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+        initElements(addedNodes);
       }
-    });
 
-    documentListener.observe(document, {
-      childList: true,
-      subtree: true
-    });
+      // We can't check batched nodes here because they won't have a parent node.
+      if (removedNodes && removedNodes.length) {
+        removeElements(removedNodes);
+      }
+    }
+  });
 
-    // Flag as loaded so subsequent calls to skate() trigger a document initialisation.
+  documentListener.observe(document, {
+    childList: true,
+    subtree: true
+  });
+
+  // We flag content as loaded here because after this, each call to skate()
+  // *must* re-initialise the document.
+  document.addEventListener('DOMContentLoaded', function () {
     domContentLoaded = true;
   });
 

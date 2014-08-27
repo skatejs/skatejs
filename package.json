@@ -18,7 +18,9 @@
     "karma-chrome-launcher": "latest",
     "karma-firefox-launcher": "latest",
     "karma-mocha": "latest",
-    "karma-phantomjs-launcher": "latest"
+    "karma-phantomjs-launcher": "latest",
+    "karma-requirejs": "~0.2.2",
+    "requirejs": "^2.1.14"
   },
   "scripts": {
     "postinstall": "./build/bin/npm-postinstall.sh",
