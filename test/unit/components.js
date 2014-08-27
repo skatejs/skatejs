@@ -1,4 +1,4 @@
-define(['src/skate'], function (skate) {
+define(['../../src/skate.js'], function (skate) {
   'use strict';
 
   describe('Using components', function () {

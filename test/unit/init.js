@@ -1,4 +1,4 @@
-define(['src/skate', 'test/lib/helpers'], function (skate, helpers) {
+define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
   'use strict';
 
   describe('skate.init', function () {
