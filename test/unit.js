@@ -8,8 +8,7 @@ Object.keys(files).forEach(function (file) {
   }
 });
 
-afterEach(function () {
-  skate.destroy();
+require(['/base/src/skate.js'], function (skate) {
+  afterEach(skate.destroy);
+  require(tests, start);
 });
-
-require(tests, start);
