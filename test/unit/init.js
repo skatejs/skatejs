@@ -127,17 +127,17 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       skate.init(div1);
       skate.init(div2);
 
-      numReady.should.equal(2);
-      numInsert.should.equal(2);
+      expect(numReady).to.equal(2, 'ready');
+      expect(numInsert).to.equal(2, 'insert');
 
       div1.parentNode.removeChild(div1);
       div2.parentNode.removeChild(div2);
 
       // Mutation Observers are async.
-      setTimeout(function () {
-        numRemove.should.equal(2);
+      helpers.afterMutations(function () {
+        expect(numRemove).to.equal(2, 'remove');
         done();
-      }, 100);
+      });
     });
 
     it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {

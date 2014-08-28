@@ -20,11 +20,21 @@ define(function () {
         document.body.appendChild(fixture);
       }
 
+      if (typeof html !== 'undefined') {
+        fixture.innerHTML = '';
+      }
+
       if (typeof html === 'string') {
         fixture.innerHTML = html;
+      } else if (typeof html === 'object') {
+        fixture.appendChild(html);
       }
 
       return fixture;
+    },
+
+    afterMutations: function (callback) {
+      setTimeout(callback, 1);
     },
 
     dispatchEvent: function (name, element) {

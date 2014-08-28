@@ -38,25 +38,75 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
     });
   });
 
-  describe('Async ready callback.', function () {
-    it('Ready event should be async and provide a done callback.', function (done) {
-      var ok = false;
+  describe('Lifecycle scenarios', function () {
+    var ready, insert, remove;
+    var El;
 
-      skate('div', {
-        ready: function (element, next) {
-          setTimeout(function () {
-            ok = true;
-            next();
-          }, 100);
+    beforeEach(function () {
+      ready = insert = remove = 0;
+      El = skate('my-element', {
+        ready: function () {
+          ++ready;
         },
-
         insert: function () {
-          assert(ok, 'Ready not called before insert.');
-          done();
+          ++insert;
+        },
+        remove: function () {
+          ++remove;
         }
       });
+    });
 
-      helpers.add('div');
+    describe('use the constructor then add it to the DOM', function () {
+      beforeEach(function () {
+        helpers.fixture(new El());
+      });
+
+      it('should call ready', function (done) {
+        helpers.afterMutations(function () {
+          expect(ready).to.equal(1);
+          done();
+        });
+      });
+
+      it('should call insert', function (done) {
+        helpers.afterMutations(function () {
+          expect(insert).to.equal(1);
+          done();
+        });
+      });
+    });
+
+    describe('inserted multiple times', function () {
+      beforeEach(function () {
+        var el = new El();
+
+        helpers.fixture(el);
+        helpers.fixture().removeChild(el);
+        helpers.fixture(el);
+        helpers.fixture().removeChild(el);
+      });
+
+      it('should have called ready only once', function (done) {
+        helpers.afterMutations(function () {
+          expect(ready).to.equal(1);
+          done();
+        });
+      });
+
+      it('should have called insert twice', function (done) {
+        helpers.afterMutations(function () {
+          expect(insert).to.equal(2);
+          done();
+        });
+      });
+
+      it('should have called remove twice', function (done) {
+        helpers.afterMutations(function () {
+          expect(remove).to.equal(2);
+          done();
+        });
+      });
     });
   });
 });
