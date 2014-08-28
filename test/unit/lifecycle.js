@@ -82,8 +82,11 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
         var el = new El();
 
         helpers.fixture(el);
+        skate.init(el);
         helpers.fixture().removeChild(el);
+
         helpers.fixture(el);
+        skate.init(el);
         helpers.fixture().removeChild(el);
       });
 
