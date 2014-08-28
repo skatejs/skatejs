@@ -727,6 +727,7 @@
             return;
           }
 
+          var eType = e.type;
           var eTargetParent = eTarget.parentNode;
 
           if (!canTriggerInsertOrRemove(eTargetParent)) {
@@ -741,7 +742,7 @@
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
 
-          if (eTargetParent) {
+          if (eType === 'DOMNodeInserted') {
             if (!lastBatchedRecord.addedNodes) {
               lastBatchedRecord.addedNodes = [];
             }
