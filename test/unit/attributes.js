@@ -92,5 +92,27 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       div.hasAttribute('first').should.equal(true);
       div.hasAttribute('second').should.equal(false);
     });
+
+    it('should be listening to mutations after the ready callback is called and before it is inserted', function (done) {
+      var called = false;
+      var ready = false;
+      var Div = skate('div', {
+        ready: function (element) {
+          ready = true;
+        },
+
+        attributes: function () {
+          called = true;
+        }
+      });
+
+      var div = new Div();
+      expect(ready).to.equal(true);
+      div.setAttribute('what', 'ever');
+      helpers.afterMutations(function () {
+        expect(called).to.equal(true);
+        done();
+      });
+    });
   });
 });

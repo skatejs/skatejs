@@ -59,6 +59,8 @@
     if (component.ready) {
       component.ready(target);
     }
+
+    addAttributeListeners(target, component);
   }
 
   /**
@@ -79,8 +81,6 @@
     if (component.insert) {
       component.insert(target);
     }
-
-    addAttributeListeners(target, component);
   }
 
   /**
