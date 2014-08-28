@@ -7,14 +7,19 @@
   // Lifecycle Triggers
   // ------------------
 
-  function setLifecycleFlag (target, component, flag) {
-    var id = component.id + '.' + flag;
+  function getLifecycleFlag (target, component, name) {
+    return getData(target, component.id + ':lifecycle:' + name);
+  }
 
-    if (getData(target, id)) {
+  function setLifecycleFlag (target, component, name, value) {
+    setData(target, component.id + ':lifecycle:' + name, !!value);
+  }
+
+  function ensureLifecycleFlag (target, component, name) {
+    if (getLifecycleFlag(target, component, name)) {
       return true;
     }
-
-    setData(target, id, true);
+    setLifecycleFlag(target, component, name, true);
     return false;
   }
 
@@ -40,7 +45,7 @@
    * @returns {undefined}
    */
   function triggerReady (target, component) {
-    if (setLifecycleFlag(target, component, 'ready-called')) {
+    if (ensureLifecycleFlag(target, component, 'ready')) {
       return;
     }
 
@@ -65,7 +70,7 @@
    * @returns {undefined}
    */
   function triggerInsert (target, component) {
-    if (setLifecycleFlag(target, component, 'insert-called')) {
+    if (ensureLifecycleFlag(target, component, 'insert')) {
       return;
     }
 
@@ -89,6 +94,7 @@
   function triggerRemove (target, component) {
     if (component.remove) {
       component.remove(target);
+      setLifecycleFlag(target, component, 'insert-called', false);
     }
   }
 
