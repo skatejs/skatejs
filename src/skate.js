@@ -744,7 +744,7 @@
             return;
           }
 
-          if (!lastBatchedRecord) {
+          if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
 
