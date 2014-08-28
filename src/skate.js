@@ -760,7 +760,7 @@
         }
 
         function canTriggerAttributeModification (eTarget) {
-          return eTarget === target;
+          return options.attributes && (options.subtree || eTarget === target);
         }
 
         function canTriggerInsertOrRemove (eTargetParent) {
