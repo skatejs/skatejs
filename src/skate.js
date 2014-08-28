@@ -7,6 +7,17 @@
   // Lifecycle Triggers
   // ------------------
 
+  function setLifecycleFlag (target, component, flag) {
+    var id = component.id + '.' + flag;
+
+    if (getData(target, id)) {
+      return true;
+    }
+
+    setData(target, id, true);
+    return false;
+  }
+
   /**
    * Triggers the entire element lifecycle if it's not being ignored.
    *
@@ -29,13 +40,9 @@
    * @returns {undefined}
    */
   function triggerReady (target, component) {
-    var definedMultipleArgs = /^[^(]+\([^,)]+,/;
-
-    if (getData(target, component.id + '.ready-called')) {
+    if (setLifecycleFlag(target, component, 'ready-called')) {
       return;
     }
-
-    setData(target, component.id + '.ready-called', true);
 
     if (component.template) {
       component.template(target);
@@ -58,11 +65,10 @@
    * @returns {undefined}
    */
   function triggerInsert (target, component) {
-    if (getData(target, component.id + '.insert-called')) {
+    if (setLifecycleFlag(target, component, 'insert-called')) {
       return;
     }
 
-    setData(target, component.id + '.insert-called', true);
     addClass(target, component.classname);
 
     if (component.insert) {
@@ -83,7 +89,6 @@
   function triggerRemove (target, component) {
     if (component.remove) {
       component.remove(target);
-      setData(target, component.id + '.insert-called', false);
     }
   }
 
@@ -586,25 +591,15 @@
         continue;
       }
 
-      var childNodes = element.childNodes;
+      removeElements(element.childNodes);
 
-      removeElements(childNodes);
-      skate.components(element).forEach(removeElementsRemover(element));
+      var components = skate.components(element);
+      var componentsLen = components.length;
+
+      for (var b = 0; b < componentsLen; b++) {
+        triggerRemove(element, components[b]);
+      }
     }
-  }
-
-  /**
-   * Makes a function that calls triggerRemove for the specified element's
-   * components.
-   *
-   * @param {Element} element The element to generate the remover for.
-   *
-   * @return {Function}
-   */
-  function removeElementsRemover (element) {
-    return function (component) {
-      triggerRemove(element, component);
-    };
   }
 
   /**
