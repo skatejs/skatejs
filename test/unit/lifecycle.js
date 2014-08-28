@@ -39,20 +39,25 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
   });
 
   describe('Lifecycle scenarios', function () {
-    var ready, insert, remove;
+    var calls = {};
     var El;
 
     beforeEach(function () {
-      ready = insert = remove = 0;
+      calls = {
+        ready: 0,
+        insert: 0,
+        remove: 0
+      };
+
       El = skate('my-element', {
         ready: function () {
-          ++ready;
+          ++calls.ready;
         },
         insert: function () {
-          ++insert;
+          ++calls.insert;
         },
         remove: function () {
-          ++remove;
+          ++calls.remove;
         }
       });
     });
@@ -64,49 +69,51 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
 
       it('should call ready', function (done) {
         helpers.afterMutations(function () {
-          expect(ready).to.equal(1);
+          expect(calls.ready).to.equal(1);
           done();
         });
       });
 
       it('should call insert', function (done) {
         helpers.afterMutations(function () {
-          expect(insert).to.equal(1);
+          expect(calls.insert).to.equal(1);
           done();
         });
       });
     });
 
     describe('inserted multiple times', function () {
-      beforeEach(function () {
+      function expectNumCalls (num, val, done) {
         var el = new El();
 
-        helpers.fixture(el);
-        helpers.fixture().removeChild(el);
+        el.textContent = 'gagas';
 
         helpers.fixture(el);
-        helpers.fixture().removeChild(el);
-      });
+        helpers.afterMutations(function () {
+          helpers.fixture().removeChild(el);
+          helpers.afterMutations(function () {
+            helpers.fixture(el);
+            helpers.afterMutations(function () {
+              helpers.fixture().removeChild(el);
+              helpers.afterMutations(function () {
+                expect(calls[num]).to.equal(val);
+                done();
+              });
+            });
+          });
+        });
+      }
 
       it('should have called ready only once', function (done) {
-        helpers.afterMutations(function () {
-          expect(ready).to.equal(1);
-          done();
-        });
+        expectNumCalls('ready', 1, done);
       });
 
       it('should have called insert twice', function (done) {
-        helpers.afterMutations(function () {
-          expect(insert).to.equal(2);
-          done();
-        });
+        expectNumCalls('insert', 2, done);
       });
 
       it('should have called remove twice', function (done) {
-        helpers.afterMutations(function () {
-          expect(remove).to.equal(2);
-          done();
-        });
+        expectNumCalls('remove', 2, done);
       });
     });
   });

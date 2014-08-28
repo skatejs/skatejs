@@ -20,14 +20,14 @@ define(function () {
         document.body.appendChild(fixture);
       }
 
-      if (typeof html !== 'undefined') {
+      if (arguments.length) {
         fixture.innerHTML = '';
-      }
 
-      if (typeof html === 'string') {
-        fixture.innerHTML = html;
-      } else if (typeof html === 'object') {
-        fixture.appendChild(html);
+        if (typeof html === 'string') {
+          fixture.innerHTML = html;
+        } else if (typeof html === 'object') {
+          fixture.appendChild(html);
+        }
       }
 
       return fixture;

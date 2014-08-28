@@ -94,7 +94,7 @@
   function triggerRemove (target, component) {
     if (component.remove) {
       component.remove(target);
-      setLifecycleFlag(target, component, 'insert-called', false);
+      setLifecycleFlag(target, component, 'insert', false);
     }
   }
 
