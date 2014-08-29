@@ -7,20 +7,22 @@ Skate is a web component library that allows you to define behaviour for element
 
 HTML
 
-    <my-component></my-component>
-
+```html
+<my-component></my-component>
+```
 JavaScript
-
-    skate('my-component', {
-      ready: function (element) {
-        element.textContent = 'Hello, World!';
-      }
-    });
-
+```js
+skate('my-component', {
+  ready: function (element) {
+    element.textContent = 'Hello, World!';
+  }
+});
+```
 Result
 
-    <my-component>Hello, World!</my-component>
-
+```html
+<my-component>Hello, World!</my-component>
+```
 Compatibility
 -------------
 
