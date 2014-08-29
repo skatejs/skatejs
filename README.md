@@ -5,6 +5,8 @@ Skate
 
 Skate is a web component library that allows you to define behaviour for elements without worrying about when that element is inserted into the DOM.
 
+*I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
+
 HTML
 
 ```html
@@ -57,13 +59,8 @@ The definition is an object of options defining your component.
 
 ```js
 skate('my-component', {
-  // Called before the element is displayed. This can be made asynchronous
-  // by defining a second argument in the method signature. You would then
-  // call that argument as a function to tell the component it's ok to
-  // display the element and proceed with its lifecycle. If the second
-  // argument is not provided, it is assumed everything in the callback is
-  // synchronous.
-  ready: function (element, done) {
+  // Called before the element is displayed.
+  ready: function (element) {
 
   },
 
@@ -159,25 +156,7 @@ The component lifecycle consists of three callbacks:
 2. `insert` Called after the element is displayed.
 3. `remove` Called after the element is removed.
 
-The `ready` callback has two forms. The first assumes synchronous operation where once the callback is finished being called, the lifecycle automatically proceeds.
-
-```js
-skate('my-component', {
-  ready: function (element) {
-    doSomethingSync(element);
-  }
-});
-```
-In the second form, the `ready` callback can be made asynchronous by specifying a second argument in the callback. If this argument is found, a callback is passed to it which you must call to continue the lifecycle.
-```js
-skate('my-component', {
-  ready: function (element, done) {
-    doSomethingAsync(element).then(done);
-  }
-});
-```
-
-The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback. Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
+The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM. The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
 
 It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
 
@@ -358,6 +337,18 @@ Additionally, if both paragraphs were removed from the `<section>`, the default 
 
 If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
 
+### Custom Templating
+
+If you want to do your own templating, all you have to do is specify a function instead of a string as the `template` option.
+
+```js
+skate('my-component', {
+  template: function (element) {
+    renderUsingSomethingElseLikeHandlebarsOrReact(element);
+  }
+});
+```
+
 ### Asynchronous Nature
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
@@ -367,7 +358,7 @@ document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
 document.getElementById('my-component-id').someCustomMethod();
 ```
 
-This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicity initialise it in a synchronous manner using `skate.init()`:
+This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicitly initialise it in a synchronous manner using `skate.init()`:
 
 ```js
 var element = document.getElementById('my-component-id');
@@ -423,7 +414,37 @@ Skate is pretty fast. In any browser other than Internet Explorer, it can proces
 
 #### Ready Callbacks
 
-Another way you can improve performance if you have a very large DOM and / or a very large amount of listeners is to limit the components which you attach a `reaady` callback to. Using it implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can have quite an impact on performance. The `ready` callback should really only be used if you require the element to not be visible while you do something.
+Using the `ready` callback implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can impact performance.
+
+Explicitly defining the type of your component will narrow the selector and will ensure a selector is built specifically for your component's type. For example, if you register a component and do not restrict the type:
+
+```js
+skate('my-unrestricted-component', {
+  type: skate.types.ANY
+});
+```
+
+This will create a CSS rule with a selector of:
+
+```css
+my-unrestricted-component,
+[my-unrestricted-component],
+.my-unrestricted-component { ... }
+```
+
+If you only need it to act as a custom element, then you should restrict it as such:
+
+```js
+skate('my-restricted-component', {
+  type: skate.types.TAG
+});
+```
+
+This is generally good practice anyways, but it will also ensure the selector is built as:
+
+```css
+my-restricted-component { ... }
+```
 
 ### Ignoring Elements
 
