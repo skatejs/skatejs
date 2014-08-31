@@ -33,13 +33,23 @@ IE9+ and all evergreens.
 Installing
 ----------
 
-You can install Skate using Bower or by downloading the source from the repository.
+You can download the source yourself and put it wherever you want. Additionally you can use Bower:
 
     bower install skatejs
+
+Or NPM:
+
+    npm install skatejs
+
+Include either `dist/skate.js` or `dist/skate.min.js`.
 
 ### AMD
 
 Skate supports AMD if detected and is registered as an anonymous module.
+
+### CommonJS
+
+Skate also exports itself as a CommonJS module if detected.
 
 ### Global
 
