@@ -137,7 +137,7 @@ skate('my-component', {
   // By default, Skate ships with a simple templating mechanism that is
   // similar to ShadowDOM templating. This is explained later in the
   // templating section.
-  template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>',
+  template: '<article><h3><content select=".heading"></content></h3><section><content><p>There is no content to display.</p></content></section></article>',
 
   // The binding methods this component supports. For example, if you specify
   // the `type` as `skate.types.TAG`, then the component will only be bound
@@ -297,13 +297,13 @@ It's important to understand that the `Element.prototype` is not modified as par
 
 ### Templating
 
-A simple templating engine is bundled with Skate. It gives you the ability to use templates similar to that of what you can do with Shadow DOM templating. It does not polyfill any sort of Shadow DOM behaviour, however.
+A simple templating engine is bundled with Skate. It gives you the ability to use templates similar to that of what you can do with Shadow DOM templating but it does not polyfill Shadow DOM behaviour.
 
 As we saw above:
 
 ```js
 skate('my-component', {
-  template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>'
+  template: '<article><h3><content select=".heading"></content></h3><section><content><p>There is no content to display.</p></content></section></article>',
 });
 ```
 
@@ -320,25 +320,24 @@ And the built-in templating engine would transform this into:
 ```html
 <my-component>
   <article>
-    <h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
-    <section data-skate-content>
+    <h3><span class="heading">My Heading</span></h3>
+    <section>
       <p>First paragraph.</p>
       <p>Second paragraph.</p>
     </section>
   </article>
 </my-component>
 ```
-This is very similar to what the Shadow DOM allows you to do with the `<content>` tag and its `select` attribute but without the problems that come with attempting to polyfill it.
 
 Additionally, if both paragraphs were removed from the `<section>`, the default content that we specified in the template definition would take their place:
 
 ```html
 <my-component>
   <article>
-    <h3 data-skate-content=".heading">
+    <h3>
       <span class="heading">My Heading</span>
     </h3>
-    <section data-skate-content>
+    <section>
       <p>There is no content to display.</p>
     </section>
   </article>
@@ -358,6 +357,8 @@ skate('my-component', {
   }
 });
 ```
+
+In this function, it's up to you to do whatever is needed in order to template your element; Skate does nothing for you here.
 
 ### Asynchronous Nature
 
