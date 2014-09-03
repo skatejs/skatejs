@@ -372,7 +372,7 @@ You could have achieved the same thing doing:
 myWrappedComponent.innerHTML += '<p>Third paragraph.</p>';
 ```
 
-Additionally, if both paragraphs were removed from the `<section>`:
+Additionally, if all paragraphs were removed from the `<section>`:
 
 ```js
 myWrappedComponent.removeChild(myWrappedComponent.childNodes[0]);
