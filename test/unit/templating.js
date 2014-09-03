@@ -41,7 +41,7 @@ define(['../../src/skate.js'], function (skate) {
       el.innerHTML.should.equal('my template');
     });
 
-    it('should add the content to the first matched content element with the content passed to the main element', function () {
+    it('should select all content from the inital html', function () {
       skate('my-element', {
         template: '<span data-skate-content=""></span>'
       });
@@ -53,7 +53,19 @@ define(['../../src/skate.js'], function (skate) {
       el.innerHTML.should.equal('<span data-skate-content="">my content</span>');
     });
 
-    it('should allow first children of the main element to be selected by the content element', function () {
+    it('should select specific content from the inital html', function () {
+      skate('my-element', {
+        template: '<span data-skate-content="span"></span>'
+      });
+
+      document.body.innerHTML = '<my-element><span>one</span><span>two</span></my-element>';
+
+      var el = document.querySelector('my-element');
+      skate.init(el);
+      el.innerHTML.should.equal('<span data-skate-content="span"><span>one</span><span>two</span></span>');
+    });
+
+    it('should only allow first children of the main element to be selected by the content element', function () {
       skate('my-element', {
         template: '<span data-skate-content="some descendant"></span>'
       });

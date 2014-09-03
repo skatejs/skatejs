@@ -494,25 +494,12 @@
     var div = document.createElement(tag && specialMap[tag[1]] || 'div');
 
     div.innerHTML = domString;
-    insertNodeList(frag, div.childNodes);
+
+    while (div.childNodes.length) {
+      frag.appendChild(div.childNodes[0]);
+    }
 
     return frag;
-  }
-
-  /**
-   * Inserts the specified nodes into the given element.
-   *
-   * @param {Element} element The element to insert the nodes into.
-   * @param {Enumerable} nodes The nodes to insert.
-   *
-   * @returns {undefined}
-   */
-  function insertNodeList (element, nodes) {
-    var len = nodes.length;
-
-    for (var a = len; a > 0; a--) {
-      element.appendChild(nodes[0]);
-    }
   }
 
   /**
@@ -1168,11 +1155,12 @@
             var contentNode = contentNodes[a];
             var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
             var foundNodes = findChildrenMatchingSelector(targetFragment, contentSelector);
+            var foundNodesLen = foundNodes.length;
 
             contentNode.innerHTML = '';
 
-            if (foundNodes.length) {
-              insertNodeList(contentNode, foundNodes);
+            for (var b = 0; b < foundNodesLen; b++) {
+              contentNode.appendChild(foundNodes[b]);
             }
 
             addDefaultContent(contentNode);
