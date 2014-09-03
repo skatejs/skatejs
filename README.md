@@ -568,13 +568,19 @@ This is very useful during testing, but can be used for any use case that requir
 
 If you need to remove a component definition just call `skate.unregister('your-component-id')`. If you need to reset everything call `skate.destroy()`.
 
+
+
 ### Performance
 
 There are some things to consider when using Skate, just like any library, in terms of performance. These are recommendations for scenarios which we have come across. If you have any recommendations, please submit a PR adding it to this.
 
+
+
 #### Very, Very Large DOMs
 
 Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM and are worried about performance, read the section on "Ignoring Elements" to learn how you can mitigate this.
+
+
 
 #### Ready Callbacks
 
@@ -610,6 +616,8 @@ This is generally good practice anyways, but it will also ensure the selector is
 ```css
 my-restricted-component { ... }
 ```
+
+
 
 ### Ignoring Elements
 
