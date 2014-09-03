@@ -644,7 +644,6 @@
   // Constants
   // ---------
 
-  var ATTR_CONTENT = 'data-skate-content';
   var ATTR_IGNORE = 'data-skate-ignore';
 
 
@@ -1074,6 +1073,18 @@
 
   var DocumentFragment = window.DocumentFragment;
 
+  function getNodesBetween (startNode, endNode) {
+    var nodes = [];
+    var nextNode = startNode.nextSibling;
+
+    while (nextNode !== endNode) {
+      nodes.push(nextNode);
+      nextNode = nextNode.nextSibling;
+    }
+
+    return nodes;
+  }
+
   /**
    * Returns an object with methods and properties that can be used to wrap an
    * element so that it behaves similar to a shadow root.
@@ -1089,47 +1100,26 @@
     return {
       childNodes: {
         get: function () {
-          var nodesToReturn = [];
+          var nodes = [];
 
           for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
 
-            if (getData(contentNode, 'default-content-state')) {
+            if (contentNode.isDefault) {
               continue;
             }
 
-            var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
-
-            if (contentNodeChildNodesLen) {
-              for (var b = 0; b < contentNodeChildNodesLen; b++) {
-                nodesToReturn.push(contentNodeChildNodes[b]);
-              }
-            }
+            nodes = nodes.concat(getNodesBetween(contentNode.startNode, contentNode.endNode));
           }
 
-          return nodesToReturn;
+          return nodes;
         }
       },
 
       firstChild: {
         get: function () {
-          for (var a = 0; a < contentNodesLen; a++) {
-            var contentNode = contentNodes[a];
-
-            if (getData(contentNode, 'default-content-state')) {
-              continue;
-            }
-
-            var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
-
-            if (contentNodeChildNodesLen) {
-              return contentNodeChildNodes[0];
-            }
-          }
-
-          return null;
+          var childNodes = this.childNodes;
+          return childNodes.length && childNodes[0] || null;
         }
       },
 
@@ -1137,13 +1127,11 @@
         get: function () {
           var html = '';
           var childNodes = this.childNodes;
-          var childNodesLen = childNodes && childNodes.length;
+          var childNodesLen = childNodes.length;
 
-          if (childNodesLen) {
-            for (var a = 0; a < childNodesLen; a++) {
-              var childNode = childNodes[a];
-              html += childNode.outerHTML || childNode.textContent;
-            }
+          for (var a = 0; a < childNodesLen; a++) {
+            var childNode = childNodes[a];
+            html += childNode.outerHTML || childNode.textContent;
           }
 
           return html;
@@ -1153,17 +1141,27 @@
 
           for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
-            var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
-            var foundNodes = findChildrenMatchingSelector(targetFragment, contentSelector);
-            var foundNodesLen = foundNodes.length;
+            var childNodes = getNodesBetween(contentNode.startNode, contentNode.endNode);
 
-            contentNode.innerHTML = '';
-
-            for (var b = 0; b < foundNodesLen; b++) {
-              contentNode.appendChild(foundNodes[b]);
+            // Remove all nodes (including default content).
+            for (var b = 0; b < childNodes.length; b++) {
+              var childNode = childNodes[b];
+              childNode.parentNode.removeChild(childNode);
             }
 
-            addDefaultContent(contentNode);
+            var foundNodes = findChildrenMatchingSelector(targetFragment, contentNode.selector);
+
+            // Add any matched nodes from the given HTML.
+            for (var c = 0; c < foundNodes.length; c++) {
+              contentNode.container.insertBefore(foundNodes[c], contentNode.endNode);
+            }
+
+            // If no nodes were found, set the default content.
+            if (c) {
+              removeDefaultContent(contentNode);
+            } else {
+              addDefaultContent(contentNode);
+            }
           }
         }
       },
@@ -1173,16 +1171,14 @@
           for (var a = contentNodesLen - 1; a > -1; a--) {
             var contentNode = contentNodes[a];
 
-            if (getData(contentNode, 'default-content-state')) {
+            if (contentNode.isDefault) {
               continue;
             }
 
-            var contentNodeChildNodes = contentNode.childNodes;
-            var contentNodeChildNodesLen = contentNodeChildNodes && contentNodeChildNodes.length;
+            var childNodes = this.childNodes;
+            var childNodesLen = childNodes.length;
 
-            if (contentNodeChildNodesLen) {
-              return contentNodeChildNodes[contentNodeChildNodesLen - 1];
-            }
+            return childNodes[childNodesLen - 1];
           }
 
           return null;
@@ -1227,23 +1223,27 @@
         set: function (textContent) {
           var acceptsTextContent;
 
-          // Clear all content and find the first one, if any, that accepts
-          // text content.
+          // Removes all nodes (including default content).
+          this.innerHTML = '';
+
+          // Find the first content node without a selector.
           for (var a = 0; a < contentNodesLen; a++) {
             var contentNode = contentNodes[a];
 
-            contentNode.innerHTML = '';
-
-            if (!acceptsTextContent && !contentNode.getAttribute(ATTR_CONTENT)) {
+            if (!contentNode.selector) {
               acceptsTextContent = contentNode;
+              break;
             }
           }
 
           // There may be no content nodes that accept text content.
           if (acceptsTextContent) {
-            removeDefaultContent(acceptsTextContent);
-            acceptsTextContent.textContent = textContent;
-            addDefaultContent(acceptsTextContent);
+            if (textContent) {
+              removeDefaultContent(acceptsTextContent);
+              acceptsTextContent.container.insertBefore(document.createTextNode(textContent), acceptsTextContent.endNode);
+            } else {
+              addDefaultContent(acceptsTextContent);
+            }
           }
         }
       },
@@ -1265,11 +1265,11 @@
 
         for (var b = 0; b < contentNodesLen; b++) {
           var contentNode = contentNodes[b];
-          var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
+          var contentSelector = contentNode.selector;
 
           if (!contentSelector || matchesSelector.call(node, contentSelector)) {
             removeDefaultContent(contentNode);
-            contentNode.appendChild(node);
+            contentNode.endNode.parentNode.insertBefore(node, contentNode.endNode);
             break;
           }
         }
@@ -1312,36 +1312,33 @@
           return this;
         }
 
-        var childNodes = this.childNodes;
-        var childNodesLen = childNodes && childNodes.length;
         var hasFoundReferenceNode = false;
 
-        if (childNodesLen) {
-          var lastContent;
+        // There's no reason to handle default content add / remove because:
+        // 1. If no reference node is supplied, appendChild handles it.
+        // 2. If a reference node is supplied, there already is content.
+        // 3. If a reference node is invalid, an exception is thrown, but also
+        //    it's state would not change even if it wasn't.
+        mainLoop:
+        for (var b = 0; b < contentNodesLen; b++) {
+          var contentNode = contentNodes[b];
+          var betweenNodes = getNodesBetween(contentNode.startNode, contentNode.endNode);
+          var betweenNodesLen = betweenNodes.length;
 
-          for (var b = 0; b < childNodesLen; b++) {
-            var currentNode = childNodes[b];
+          for (var c = 0; c < betweenNodesLen; c++) {
+            var betweenNode = betweenNodes[c];
 
-            if (!hasFoundReferenceNode) {
-              if (currentNode === referenceNode) {
-                hasFoundReferenceNode = true;
-              } else {
-                continue;
+            if (betweenNode === referenceNode) {
+              hasFoundReferenceNode = true;
+            }
+
+            if (hasFoundReferenceNode) {
+              var selector = contentNode.selector;
+
+              if (!selector || matchesSelector.call(node, selector)) {
+                betweenNode.parentNode.insertBefore(node, betweenNode);
+                break mainLoop;
               }
-            }
-
-            var thisContent = currentNode.parentNode;
-
-            if (lastContent && lastContent === thisContent) {
-              continue;
-            }
-
-            lastContent = thisContent;
-            var selector = thisContent.getAttribute(ATTR_CONTENT);
-
-            if (!selector || matchesSelector.call(node, selector)) {
-              thisContent.insertBefore(node, currentNode);
-              break;
             }
           }
         }
@@ -1353,30 +1350,39 @@
           throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
         }
 
-        return this;
+        return node;
       },
 
       removeChild: function (childNode) {
+        var removed = false;
+
         for (var a = 0; a < contentNodesLen; a++) {
           var contentNode = contentNodes[a];
 
-          if (contentNode === childNode.parentNode) {
-            contentNode.removeChild(childNode);
+          if (contentNode.container === childNode.parentNode) {
+            contentNode.container.removeChild(childNode);
+            removed = true;
             break;
           }
 
-          addDefaultContent(contentNode);
+          if (contentNode.startNode.nextSibling === contentNode.endNode) {
+            addDefaultContent(contentNode);
+          }
         }
 
-        return this;
+        if (!removed) {
+          throw new Error('DOMException 8: The node in which you are trying to remove is not a child of this node.');
+        }
+
+        return childNode;
       },
 
       replaceChild: function (newChild, oldChild) {
         for (var a = 0; a < contentNodesLen; a++) {
           var contentNode = contentNodes[a];
 
-          if (contentNode === oldChild.parentNode) {
-            contentNode.replaceChild(newChild, oldChild);
+          if (contentNode.container === oldChild.parentNode) {
+            contentNode.container.replaceChild(newChild, oldChild);
             break;
           }
         }
@@ -1389,51 +1395,38 @@
   /**
    * Adds the default content if no content exists.
    *
-   * @param {Node} contentNode The content node to check.
+   * @param {Object} content The content data.
    *
    * @returns {undefined}
    */
-  function addDefaultContent (contentNode) {
-    var childNodes = contentNode.childNodes;
+  function addDefaultContent (content) {
+    var nodes = content.defaultNodes;
+    var nodesLen = nodes.length;
 
-    if (!childNodes || !childNodes.length) {
-      var nodes = getData(contentNode, 'default-content');
-      var nodesLen = nodes && nodes.length;
-
-      if (nodesLen) {
-        contentNode.innerHTML = '';
-
-        for (var a = 0; a < nodesLen; a++) {
-          contentNode.appendChild(nodes[a]);
-        }
-
-        setData(contentNode, 'default-content-state', true);
-      }
+    for (var a = 0; a < nodesLen; a++) {
+      content.container.insertBefore(nodes[a], content.endNode);
     }
+
+    content.isDefault = true;
   }
 
   /**
    * Removes the default content if it exists.
    *
-   * @param {Node} contentNode The content node to check.
+   * @param {Object} content The content data.
    *
    * @returns {undefined}
    */
-  function removeDefaultContent (contentNode) {
-    var nodes = getData(contentNode, 'default-content');
-    var nodesLen = nodes && nodes.length;
+  function removeDefaultContent (content) {
+    var nodes = content.defaultNodes;
+    var nodesLen = nodes.length;
 
-    if (nodesLen) {
-      for (var a = 0; a < nodesLen; a++) {
-        var node = nodes[a];
-
-        if (node.parentNode) {
-          contentNode.removeChild(node);
-        }
-      }
-
-      setData(contentNode, 'default-content-state', false);
+    for (var a = 0; a < nodesLen; a++) {
+      var node = nodes[a];
+      node.parentNode.removeChild(node);
     }
+
+    content.isDefault = false;
   }
 
   /**
@@ -1508,16 +1501,33 @@
    * @returns {undefined}
    */
   function cacheContentData (node) {
-    var contentNodes = node.querySelectorAll('[' + ATTR_CONTENT + ']');
+    var contentNodes = node.getElementsByTagName('content');
     var contentNodesLen = contentNodes && contentNodes.length;
 
     if (contentNodesLen) {
-      setData(node, 'content', contentNodes);
+      var contentData = [];
 
-      for (var a = 0; a < contentNodesLen; a++) {
-        var contentNode = contentNodes[a];
-        setData(contentNode, 'default-content', [].slice.call(contentNode.childNodes));
+      while (contentNodes.length) {
+        var contentNode = contentNodes[0];
+        var parentNode = contentNode.parentNode;
+        var startNode = document.createComment('');
+        var endNode = document.createComment('');
+
+        contentData.push({
+          container: parentNode,
+          contentNode: contentNode,
+          defaultNodes: [].slice.call(contentNode.childNodes),
+          endNode: endNode,
+          isDefault: true,
+          selector: contentNode.getAttribute('select'),
+          startNode: startNode
+        });
+
+        parentNode.replaceChild(endNode, contentNode);
+        parentNode.insertBefore(startNode, endNode);
       }
+
+      setData(node, 'content', contentData);
     }
   }
 
