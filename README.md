@@ -5,22 +5,26 @@ Skate
 
 Skate is a web component library that allows you to define behaviour for elements without worrying about when that element is inserted into the DOM.
 
+*I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
+
 HTML
 
-    <my-component></my-component>
-
+```html
+<my-component></my-component>
+```
 JavaScript
-
-    skate('my-component', {
-      ready: function (element) {
-        element.textContent = 'Hello, World!';
-      }
-    });
-
+```js
+skate('my-component', {
+  ready: function (element) {
+    element.textContent = 'Hello, World!';
+  }
+});
+```
 Result
 
-    <my-component>Hello, World!</my-component>
-
+```html
+<my-component>Hello, World!</my-component>
+```
 Compatibility
 -------------
 
@@ -29,13 +33,23 @@ IE9+ and all evergreens.
 Installing
 ----------
 
-You can install Skate using Bower or by downloading the source from the repository.
+You can download the source yourself and put it wherever you want. Additionally you can use Bower:
 
     bower install skatejs
+
+Or NPM:
+
+    npm install skatejs
+
+Include either `dist/skate.js` or `dist/skate.min.js`.
 
 ### AMD
 
 Skate supports AMD if detected and is registered as an anonymous module.
+
+### CommonJS
+
+Skate also exports itself as a CommonJS module if detected.
 
 ### Global
 
@@ -53,100 +67,97 @@ You define a component by passing a component ID and definition to the `skate()`
 
 The definition is an object of options defining your component.
 
-    skate('my-component', {
-      // Called before the element is displayed. This can be made asynchronous
-      // by defining a second argument in the method signature. You would then
-      // call that argument as a function to tell the component it's ok to
-      // display the element and proceed with its lifecycle. If the second
-      // argument is not provided, it is assumed everything in the callback is
-      // synchronous.
-      ready: function (element, done) {
+```js
+skate('my-component', {
+  // Called before the element is displayed.
+  ready: function (element) {
+
+  },
+
+  // Called after the element is displayed.
+  insert: function (element) {
+
+  },
+
+  // Called after the element is removed.
+  remove: function (element) {
+
+  },
+
+  // Attribute callbacks that get triggered when attributes on the main web
+  // component are inserted, updated or removed. Each callback gets the
+  // element that the change occurred on and the corresponding changes. The
+  // change object contains the following information:
+  //
+  // - type: The type of modification (insert, update or remove).
+  // - name: The attribute name.
+  // - newValue: The new value. If inserted, this will be undefined.
+  // - oldValue: The old value. If removed, this will be undefined.
+  attributes: {
+    'my-attribute': {
+      insert: function (element, change) {
 
       },
 
-      // Called after the element is displayed.
-      insert: function (element) {
+      update: function (element, change) {
 
       },
 
-      // Called after the element is removed.
-      remove: function (element) {
+      remove: function (element, change) {
 
-      },
+      }
+    }
+  },
 
-      // Attribute callbacks that get triggered when attributes on the main web
-      // component are inserted, updated or removed. Each callback gets the
-      // element that the change occurred on and the corresponding changes. The
-      // change object contains the following information:
-      //
-      // - type: The type of modification (insert, update or remove).
-      // - name: The attribute name.
-      // - newValue: The new value. If inserted, this will be undefined.
-      // - oldValue: The old value. If removed, this will be undefined.
-      attributes: {
-        'my-attribute': {
-          insert: function (element, change) {
+  // The event handlers to bind to the web component element. If the event
+  // name is followed by a space and a CSS selector, the handler is only
+  // triggered if a descendant matching the selector triggered the event.
+  // This is synonymous with Backbone's style of event binding in its
+  // views.
+  events: {
+    'click': function (element, eventObject) {
 
-          },
+    },
 
-          update: function (element, change) {
+    'click .some-child-selector': function (element, eventObject) {
 
-          },
+    }
+  },
 
-          remove: function (element, change) {
+  // Properties and methods to add to each element instance. It's notable
+  // that the element's prototype is not modified. These are added after the
+  // element is instantiated. Since the methods and properties are applied to
+  // the element, `this` inside a method will refer to the element.
+  prototype: {
+    callMeLikeAnyNativeMethod: function () {
 
-          }
-        }
-      },
+    }
+  },
 
-      // The event handlers to bind to the web component element. If the event
-      // name is followed by a space and a CSS selector, the handler is only
-      // triggered if a descendant matching the selector triggered the event.
-      // This is synonymous with Backbone's style of event binding in its
-      // views.
-      events: {
-        'click': function (element, eventObject) {
+  // By default, Skate ships with a simple templating mechanism that is
+  // similar to ShadowDOM templating. This is explained later in the
+  // templating section.
+  template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>',
 
-        },
+  // The binding methods this component supports. For example, if you specify
+  // the `type` as `skate.types.TAG`, then the component will only be bound
+  // to an element whos tag name matches the component ID.
+  //
+  // - `ANY` Any type of binding. This is the default.
+  // - `TAG` Tag name only.
+  // - `ATTR` Attribute names.
+  // - `CLASS` Class names.
+  // - `NOTAG` Attribute or class names.
+  // - `NOATTR` Class or tag names.
+  // - `NOCLASS` Attribute or tag names.
+  type: skate.types.ANY,
 
-        'click .some-child-selector': function (element, eventObject) {
+  // This is the class name that is added to the web component in order to
+  // display it in the DOM after the `ready` callback is invoked.
+  classname: '__skate'
+});
 
-        }
-      },
-
-      // Properties and methods to add to each element instance. It's notable
-      // that the element's prototype is not modified. These are added after the
-      // element is instantiated. Since the methods and properties are applied to
-      // the element, `this` inside a method will refer to the element.
-      prototype: {
-        callMeLikeAnyNativeMethod: function () {
-
-        }
-      },
-
-      // By default, Skate ships with a simple templating mechanism that is
-      // similar to ShadowDOM templating. This is explained later in the
-      // templating section.
-      template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>',
-
-      // The binding methods this component supports. For example, if you specify
-      // the `type` as `skate.types.TAG`, then the component will only be bound
-      // to an element whos tag name matches the component ID.
-      //
-      // - `ANY` Any type of binding. This is the default.
-      // - `TAG` Tag name only.
-      // - `ATTR` Attribute names.
-      // - `CLASS` Class names.
-      // - `NOTAG` Attribute or class names.
-      // - `NOATTR` Class or tag names.
-      // - `NOCLASS` Attribute or tag names.
-      type: skate.types.ANY,
-
-      // This is the class name that is added to the web component in order to
-      // display it in the DOM after the `ready` callback is invoked.
-      classname: '__skate'
-    });
-
+```
 ### Component Lifecycle
 
 The component lifecycle consists of three callbacks:
@@ -155,23 +166,7 @@ The component lifecycle consists of three callbacks:
 2. `insert` Called after the element is displayed.
 3. `remove` Called after the element is removed.
 
-The `ready` callback has two forms. The first assumes synchronous operation where once the callback is finished being called, the lifecycle automatically proceeds.
-
-    skate('my-component', {
-      ready: function (element) {
-        doSomethingSync(element);
-      }
-    });
-
-In the second form, the `ready` callback can be made asynchronous by specifying a second argument in the callback. If this argument is found, a callback is passed to it which you must call to continue the lifecycle.
-
-    skate('my-component', {
-      ready: function (element, done) {
-        doSomethingAsync(element).then(done);
-      }
-    });
-
-The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback. Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM.
+The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM. The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
 
 It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
 
@@ -182,11 +177,13 @@ It is possible to render the entire DOM tree and then define your components, ho
 
 An attribute lifecycle definition can take three forms. First, it does something similar to what we see in the Web Component spec:
 
-    skate('my-component', {
-      attributes: function (element, change) {
+```js
+skate('my-component', {
+  attributes: function (element, change) {
 
-      }
-    });
+  }
+});
+```
 
 A notable difference, though, is that this callback gets called for attributes that already exist on the element as this is more predictable. This also allows you to have initialisation code for attributes, rather than forcing the developer to do this in one of the lifecycle callbacks.
 
@@ -199,13 +196,15 @@ This is called for each attribute on an element when:
 
 The second form of a callback takes an object of attribues and handlers.
 
-    skate('my-component', {
-      attributes: {
-        'my-attribute': function handleInsertAndUpdate (element, change) {
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': function handleInsertAndUpdate (element, change) {
 
-        }
-      }
-    });
+    }
+  }
+});
+```
 
 This allows you to specify which attributes you want to listen to and will call the specified function when:
 
@@ -215,23 +214,25 @@ This allows you to specify which attributes you want to listen to and will call 
 
 The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
 
-    skate('my-component', {
-      attributes: {
-        'my-attribute': {
-          insert: function (element, change) {
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': {
+      insert: function (element, change) {
 
-          },
+      },
 
-          update: function (element, change) {
+      update: function (element, change) {
 
-          },
+      },
 
-          remove: function (element, change) {
+      remove: function (element, change) {
 
-          }
-        }
       }
-    });
+    }
+  }
+});
+```
 
 The `insert` handler gets called when:
 
@@ -254,17 +255,19 @@ Event binding allows you to declare which events you want to listen for and also
 
 As we saw above:
 
-    skate('my-component', {
-      events: {
-        'click': function (element, eventObject) {
+```js
+skate('my-component', {
+  events: {
+    'click': function (element, eventObject) {
 
-        },
+    },
 
-        'click .some-child-selector': function (element, eventObject) {
+    'click .some-child-selector': function (element, eventObject) {
 
-        }
-      }
-    });
+    }
+  }
+});
+```
 
 The first `click` handler gets executed whenever the component receives a click event regardless of what triggered it. The second `click .some-child-selector` handler gets executed only when it receives a click event that came from a descendant matching the `.some-child-selector` selector.
 
@@ -274,17 +277,21 @@ Events listeners are not automatically removed from the element when it is remov
 
 Skate gives you the option to specify custom properties and methods on your component.
 
-    skate('my-component', {
-      prototype: {
-          callMeLikeAnyNativeMethod: function () {
+```js
+skate('my-component', {
+  prototype: {
+      callMeLikeAnyNativeMethod: function () {
 
-          }
-        }
-    });
+      }
+    }
+});
+```
 
 These members are applied directly to the element instance that your component is bound to so you can do stuff like this:
 
-    document.getElementById('my-component-id').callMeLikeanyNativeMethod();
+```js
+document.getElementById('my-component-id').callMeLikeanyNativeMethod();
+```
 
 It's important to understand that the `Element.prototype` is not modified as part of this process.
 
@@ -294,62 +301,82 @@ A simple templating engine is bundled with Skate. It gives you the ability to us
 
 As we saw above:
 
-    skate('my-component', {
-      template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>'
-    });
+```js
+skate('my-component', {
+  template: '<article><h3 data-skate-content=".heading"></h3><section data-skate-content><p>There is no content to display.</p></section></article>'
+});
+```
 
 We can now insert our component into the DOM:
-
-    <my-component>
-      <span class="heading">My Heading</span>
-      <p>First paragraph.</p>
-      <p>Second paragraph.</p>
-    </my-component>
-
+```html
+<my-component>
+  <span class="heading">My Heading</span>
+  <p>First paragraph.</p>
+  <p>Second paragraph.</p>
+</my-component>
+```
 And the built-in templating engine would transform this into:
 
-    <my-component>
-      <article>
-        <h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
-        <section data-skate-content>
-          <p>First paragraph.</p>
-          <p>Second paragraph.</p>
-        </section>
-      </article>
-    </my-component>
-
+```html
+<my-component>
+  <article>
+    <h3 data-skate-content=".heading"><span class="heading">My Heading</span></h3>
+    <section data-skate-content>
+      <p>First paragraph.</p>
+      <p>Second paragraph.</p>
+    </section>
+  </article>
+</my-component>
+```
 This is very similar to what the Shadow DOM allows you to do with the `<content>` tag and its `select` attribute but without the problems that come with attempting to polyfill it.
 
 Additionally, if both paragraphs were removed from the `<section>`, the default content that we specified in the template definition would take their place:
 
-    <my-component>
-      <article>
-        <h3 data-skate-content=".heading">
-          <span class="heading">My Heading</span>
-        </h3>
-        <section data-skate-content>
-          <p>There is no content to display.</p>
-        </section>
-      </article>
-    </my-component>
+```html
+<my-component>
+  <article>
+    <h3 data-skate-content=".heading">
+      <span class="heading">My Heading</span>
+    </h3>
+    <section data-skate-content>
+      <p>There is no content to display.</p>
+    </section>
+  </article>
+</my-component>
+```
 
 If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
+
+### Custom Templating
+
+If you want to do your own templating, all you have to do is specify a function instead of a string as the `template` option.
+
+```js
+skate('my-component', {
+  template: function (element) {
+    renderUsingSomethingElseLikeHandlebarsOrReact(element);
+  }
+});
+```
 
 ### Asynchronous Nature
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
+```js
+document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
 
-    document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
+document.getElementById('my-component-id').someCustomMethod();
+```
 
-    document.getElementById('my-component-id').someCustomMethod();
+This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicitly initialise it in a synchronous manner using `skate.init()`:
 
-This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicity initialise it in a synchronous manner using `skate.init()`:
+```js
+var element = document.getElementById('my-component-id');
 
-    var element = document.getElementById('my-component-id');
+skate.init(element);
 
-    skate.init(element);
-
-    element.someCustomMethod();
+element.someCustomMethod();
+```
 
 This is very useful during testing, but can be used for any use case that requires synchronous operation.
 
@@ -357,27 +384,31 @@ This is very useful during testing, but can be used for any use case that requir
 
 As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use:
 
-    var MyComponent = skate('my-component', {
-      ready: function (element) {
-        element.textContent = 'something';
-      },
+```js
+var MyComponent = skate('my-component', {
+  ready: function (element) {
+    element.textContent = 'something';
+  },
 
-      prototype: {
-        logTextContent: function () {
-          console.log(this.textContent);
-        }
-      }
-    });
+  prototype: {
+    logTextContent: function () {
+      console.log(this.textContent);
+    }
+  }
+});
+```
 
 It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `ready` callback. Only when you insert it into the DOM will the `insert` callback be called:
 
-    var element = new MyComponent();
+```js
+var element = new MyComponent();
 
-    // Logs: "something"
-    element.logTextContent();
+// Logs: "something"
+element.logTextContent();
 
-    // Asynchronously calls the `insert` callback.
-    document.body.appendChild(element);
+// Asynchronously calls the `insert` callback.
+document.body.appendChild(element);
+```
 
 ### Unregistering Components
 
@@ -393,15 +424,47 @@ Skate is pretty fast. In any browser other than Internet Explorer, it can proces
 
 #### Ready Callbacks
 
-Another way you can improve performance if you have a very large DOM and / or a very large amount of listeners is to limit the components which you attach a `reaady` callback to. Using it implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can have quite an impact on performance. The `ready` callback should really only be used if you require the element to not be visible while you do something.
+Using the `ready` callback implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can impact performance.
+
+Explicitly defining the type of your component will narrow the selector and will ensure a selector is built specifically for your component's type. For example, if you register a component and do not restrict the type:
+
+```js
+skate('my-unrestricted-component', {
+  type: skate.types.ANY
+});
+```
+
+This will create a CSS rule with a selector of:
+
+```css
+my-unrestricted-component,
+[my-unrestricted-component],
+.my-unrestricted-component { ... }
+```
+
+If you only need it to act as a custom element, then you should restrict it as such:
+
+```js
+skate('my-restricted-component', {
+  type: skate.types.TAG
+});
+```
+
+This is generally good practice anyways, but it will also ensure the selector is built as:
+
+```css
+my-restricted-component { ... }
+```
 
 ### Ignoring Elements
 
 Sometimes you may want to ignore a particular DOM tree. All you need to do is add the `data-skate-ignore` attribute to the container that you want to ignore:
 
-    <div data-skate-ignore>
-      <!-- Everything including the container will be ignored. -->
-    </div>
+```html
+<div data-skate-ignore>
+  <!-- Everything including the container will be ignored. -->
+</div>
+```
 
 This will prevent Skate from traversing that particular tree and eliminate any overhead it otherwise would have incurred.
 
