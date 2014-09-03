@@ -43,38 +43,38 @@ define(['../../src/skate.js'], function (skate) {
 
     it('should select all content from the inital html', function () {
       skate('my-element', {
-        template: '<span data-skate-content=""></span>'
+        template: '<span><content></content></span>'
       });
 
       document.body.innerHTML = '<my-element>my content</my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<span data-skate-content="">my content</span>');
+      el.innerHTML.should.equal('<span><!---->my content<!----></span>');
     });
 
     it('should select specific content from the inital html', function () {
       skate('my-element', {
-        template: '<span data-skate-content="span"></span>'
+        template: '<span><content select="span"></content></span>'
       });
 
       document.body.innerHTML = '<my-element><span>one</span><span>two</span></my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<span data-skate-content="span"><span>one</span><span>two</span></span>');
+      el.innerHTML.should.equal('<span><!----><span>one</span><span>two</span><!----></span>');
     });
 
     it('should only allow first children of the main element to be selected by the content element', function () {
       skate('my-element', {
-        template: '<span data-skate-content="some descendant"></span>'
+        template: '<span><content select="some descendant"></content></span>'
       });
 
       document.body.innerHTML = '<my-element><some><descendant></descendant></some></my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<span data-skate-content="some descendant"></span>');
+      el.innerHTML.should.equal('<span><!----><!----></span>');
     });
 
     describe('default content', function () {
@@ -83,7 +83,7 @@ define(['../../src/skate.js'], function (skate) {
 
       beforeEach(function () {
         skate('my-element', {
-          template: '<span data-skate-content>default content</span>'
+          template: '<span><content>default content</content></span>'
         });
 
         document.body.innerHTML = '<my-element>initial content</my-element>';
@@ -93,7 +93,7 @@ define(['../../src/skate.js'], function (skate) {
       });
 
       it('should initialise with custom content', function () {
-        expect($main.innerHTML).to.equal('initial content');
+        expect(main.textContent).to.equal('initial content');
       });
 
       it('should insert the default content if no content is found', function () {
@@ -104,16 +104,18 @@ define(['../../src/skate.js'], function (skate) {
 
         // However, we must ensure that it does properly restore the default
         // content.
-        expect(main.childNodes[0].innerHTML).to.equal('default content');
+        expect(main.childNodes[0].textContent).to.equal('default content');
       });
 
       it('should remove the default content if content is inserted', function () {
+        var span = document.createElement('span');
+
         // Clear to restore the default content.
         $main.innerHTML = '';
 
         // Now when we append a child, it should remove the default content.
-        $main.appendChild(document.createElement('span'));
-        expect($main.innerHTML).to.equal('<span></span>');
+        $main.appendChild(span);
+        expect($main.childNodes[0]).to.equal(span);
       });
     });
 
@@ -123,9 +125,9 @@ define(['../../src/skate.js'], function (skate) {
 
       function expectTemplate(one, two, any) {
         expect(element.innerHTML).to.equal(
-          '<span data-skate-content="one">' + (one || '') + '</span>' +
-          '<span data-skate-content="two, three">' + (two || '') + '</span>' +
-          '<span data-skate-content="">' + (any || '') + '</span>' +
+          '<span><!---->' + (one || '') + '<!----></span>' +
+          '<span><!---->' + (two || '') + '<!----></span>' +
+          '<span><!---->' + (any || '') + '<!----></span>' +
           '<span>dummy</span>'
         );
       }
@@ -133,9 +135,9 @@ define(['../../src/skate.js'], function (skate) {
       beforeEach(function () {
         skate('my-element', {
           template: '' +
-            '<span data-skate-content="one"></span>' +
-            '<span data-skate-content="two, three"></span>' +
-            '<span data-skate-content=""></span>' +
+            '<span><content select="one"></content></span>' +
+            '<span><content select="two, three"></content></span>' +
+            '<span><content></content></span>' +
             '<span>dummy</span>'
         });
 
@@ -208,11 +210,24 @@ define(['../../src/skate.js'], function (skate) {
       describe('insertAdjacentHTML', function () {
         var container;
 
-        // An element must have a parent ot use "beforebegin" and "afterend".
+        // An element must have a parent to use "beforebegin" and "afterend".
         beforeEach(function () {
+          skate.unregister('my-element');
+          skate('my-element', {
+            template: '' +
+              '<span><content></span>' +
+              '<span><content select="two, three"></span>' +
+              '<span><content select=""></span>' +
+              '<span>dummy</span>'
+          });
+
+          document.body.innerHTML = '<my-element><one></one><two></two></my-element>';
+
+          element = skate.init(document.querySelector('my-element'));
+          $element = skate.template.html.wrap(element);
+
           container = document.createElement('div');
           container.appendChild(element);
-          element.childNodes[0].setAttribute('data-skate-content', '');
         });
 
         it('beforebegin', function () {
