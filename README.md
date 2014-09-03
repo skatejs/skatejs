@@ -523,6 +523,7 @@ This will create a CSS rule with a selector of:
 
 ```css
 my-unrestricted-component,
+[is="my-unrestricted-component"],
 [my-unrestricted-component],
 .my-unrestricted-component { ... }
 ```
