@@ -12,7 +12,9 @@ HTML
 ```html
 <my-component></my-component>
 ```
+
 JavaScript
+
 ```js
 skate('my-component', {
   ready: function (element) {
@@ -20,11 +22,13 @@ skate('my-component', {
   }
 });
 ```
+
 Result
 
 ```html
 <my-component>Hello, World!</my-component>
 ```
+
 Compatibility
 -------------
 
@@ -548,6 +552,16 @@ Sometimes you may want to ignore a particular DOM tree. All you need to do is ad
 ```
 
 This will prevent Skate from traversing that particular tree and eliminate any overhead it otherwise would have incurred.
+
+Who's Using It?
+---------------
+
+<img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200">
+
+Credits
+-------
+
+Trey Shugart (author), Atlassian
 
 License
 -------
