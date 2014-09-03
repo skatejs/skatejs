@@ -308,6 +308,7 @@ skate('my-component', {
 ```
 
 We can now insert our component into the DOM:
+
 ```html
 <my-component>
   <span class="heading">My Heading</span>
@@ -315,6 +316,7 @@ We can now insert our component into the DOM:
   <p>Second paragraph.</p>
 </my-component>
 ```
+
 And the built-in templating engine would transform this into:
 
 ```html
@@ -346,9 +348,57 @@ Additionally, if both paragraphs were removed from the `<section>`, the default 
 
 If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
 
+If you want to work with the element's template dynamically, you must wrap it in a wrapper that overrides native methods to ensure that the modifcations you make only affect the content areas.
+
+```js
+// Assume we're using the example above and have referenced the element as myComponent.
+
+var thirdParagraph = document.createElement('p');
+thirdParagraph.textContent = 'Third paragraph.';
+myComponent.appendChild(thirdParagraph);
+
+```
+
+Would result in:
+
+```html
+<my-component>
+  <article>
+    <h3><span class="heading">My Heading</span></h3>
+    <section>
+      <p>First paragraph.</p>
+      <p>Second paragraph.</p>
+      <p>Third paragraph.</p>
+    </section>
+  </article>
+</my-component>
+```
+
+Notice how the when you appended the content, it didn't actually put it as a first child to the component, it actually moved it into the correct content area in the correct spot.
+
+You could have achieved the same thing doing:
+
+```js
+myComponent.innerHTML += '<p>Third paragraph.</p>';
+```
+
+The properties and methods that are wrapped to give you this behaviour are:
+
+1. childNodes
+2. firstChild
+3. innerHTML
+4. lastChild
+5. outerHTML
+6. textContent
+7. appendChild
+8. insertAdjacentHTML
+9. insertBefore
+10. removeChild
+11. replaceChild
+
 ### Custom Templating
 
-If you want to do your own templating, all you have to do is specify a function instead of a string as the `template` option.
+If you want to do your own templating, all you have to do is specify a function instead of a string as the `template` option. In this function, it's up to you to do whatever is needed in order to template your element; Skate does nothing for you here. This makes it compatible with pretty much anything, it's just up to you to integrate it:
 
 ```js
 skate('my-component', {
@@ -358,11 +408,24 @@ skate('my-component', {
 });
 ```
 
-In this function, it's up to you to do whatever is needed in order to template your element; Skate does nothing for you here.
+You could even use a Shadow DOM polyfill if you wanted to:
+
+```js
+skate('my-component', {
+  template: function (element) {
+  	var initialHtml = element.innerHTML;
+    var shadowRoot = element.createShadowRoot();
+
+    shadowRoot.innerHTML = '<content></content>';
+    element.innerHTML = initialHtml;
+  }
+});
+```
 
 ### Asynchronous Nature
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
+
 ```js
 document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
 
