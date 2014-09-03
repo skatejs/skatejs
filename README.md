@@ -299,11 +299,67 @@ document.getElementById('my-component-id').callMeLikeanyNativeMethod();
 
 It's important to understand that the `Element.prototype` is not modified as part of this process.
 
+
+
 ### Templating
 
-A simple templating engine is bundled with Skate. It gives you the ability to use templates similar to that of what you can do with Shadow DOM templating but it does not polyfill Shadow DOM behaviour.
+To template a component, all you need to do is define a function that takes an element as its first argument. When templating is invoked during an element's lifecycle, this function will be called and the element being Skated will be passed in as the first argument. It's up to you at this point to invoke whatever templating engine you want.
 
-As we saw above:
+For example, Handlebars:
+
+```js
+skate('my-component', {
+  template: function (element) {
+    var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
+    compiled({ name: element.getAttribute('name') });
+  }
+});
+```
+
+A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string. The following example will compile the HTML using Handlebars and when invoked it will take all the attributes on the element and pass them in to the compiled template function as the context. This way, you can use any of the attributes specified on the element.
+
+```js
+function handlebarify (html) {
+  var compiled = Handlebars.compile(html);
+
+  return function (element) {
+    var attrs = {};
+
+    for (var a = 0; a < element.attributes.length; a++) {
+      var attr = element.attributes[a];
+      attrs[attr.name] = attr.value;
+    }
+
+    element.innerHTML = compiled(attrs);
+  };
+}
+
+skate('my-component', {
+  template: handlebarify('<p>Hello, {{ name }}!</p>')
+});
+```
+
+If you wanted to fully embrace Web Components, you could even use Shadow DOM:
+
+```js
+skate('my-component', {
+  template: function (element) {
+    var initialHtml = element.innerHTML;
+    var shadowRoot = element.createShadowRoot();
+
+    shadowRoot.innerHTML = '<content></content>';
+    element.innerHTML = initialHtml;
+  }
+});
+```
+
+
+
+### Default HTML Templates
+
+Skate bundles a simple templating engine based on how the Shadow DOM spec uses the `<content>` element and `select` attribute.
+
+For example, we may have the following definition:
 
 ```js
 skate('my-component', {
@@ -311,7 +367,13 @@ skate('my-component', {
 });
 ```
 
-We can now insert our component into the DOM:
+By default, if a string is passed, Skate will use the default templating engine. It is the same thing as calling:
+
+```js
+skate.template.html(myTemplateString);
+```
+
+Now if we try and insert the following HTML:
 
 ```html
 <my-component>
@@ -321,7 +383,7 @@ We can now insert our component into the DOM:
 </my-component>
 ```
 
-And the built-in templating engine would transform this into:
+The built-in templating engine will transform it into:
 
 ```html
 <my-component>
@@ -335,7 +397,7 @@ And the built-in templating engine would transform this into:
 </my-component>
 ```
 
-If you want to work with the element's template dynamically, you must wrap it in a wrapper that overrides native methods to ensure that the modifcations you make only affect the content areas.
+However, if you want to insert another paragraph dynamically, it will not get projected into the `<section>` by default. If you want to work with the element's template dynamically, you must wrap it in a wrapper that overrides native methods to ensure that the modifcations you make only affect the content areas.
 
 You'd wrap it like so:
 
@@ -344,7 +406,7 @@ You'd wrap it like so:
 var myWrappedComponent = skate.template.html.wrap(myComponent);
 ```
 
-Once wrapped, you can work with it like a normal element. For example, if you wanted to add a third paragraph, all you'd need to do is:
+Once wrapped, you work with the wrapper just like a normal element. For example, if you wanted to add a third paragraph, all you'd need to do is:
 
 ```js
 var thirdParagraph = document.createElement('p');
@@ -353,7 +415,7 @@ myWrappedComponent.appendChild(thirdParagraph);
 
 ```
 
-That would result in:
+Doing that would result in:
 
 ```html
 <my-component>
@@ -415,33 +477,25 @@ The properties and methods that are wrapped to give you this behaviour are:
 10. removeChild()
 11. replaceChild()
 
-The wrapped element may look like an element, but due to browser API limitations, you cannot pass it off to other DOM methods as an element.
+The following properties and methods are not wrapped (but are planned to be):
 
-### Custom Templating
+1. elements
+2. getElementsByClassName()
+3. getElementsByTagName()
+4. getElementsByTagNameNS()
+5. querySelector()
+6. querySelectorAll()
 
-If you want to do your own templating, all you have to do is specify a function instead of a string as the `template` option. In this function, it's up to you to do whatever is needed in order to template your element; Skate does nothing for you here. This makes it compatible with pretty much anything, it's just up to you to integrate it:
+Additionally, descendants are not wrapped (but are planned to be). This means the following members on descendants behave as they normally would:
 
-```js
-skate('my-component', {
-  template: function (element) {
-    renderUsingSomethingElseLikeHandlebarsOrReact(element);
-  }
-});
-```
+1. nextSibling
+2. parentElement
+3. parentNode
+4. previousSibling
 
-You could even use a Shadow DOM polyfill if you wanted to:
+*The wrapped elements may look and act like normal elements (including instanceof checks), but due to browser API limitations, you cannot pass it off to other DOM methods as an element.*
 
-```js
-skate('my-component', {
-  template: function (element) {
-  	var initialHtml = element.innerHTML;
-    var shadowRoot = element.createShadowRoot();
 
-    shadowRoot.innerHTML = '<content></content>';
-    element.innerHTML = initialHtml;
-  }
-});
-```
 
 ### Asynchronous Nature
 
