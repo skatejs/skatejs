@@ -342,14 +342,18 @@ skate('my-component', {
 If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 
 ```js
-skate('my-component', {
-  template: function (element) {
-    var initialHtml = element.innerHTML;
+function shadowDomTemplate (shadowHtml) {
+  return function (element) {
+    var lightHtml = element.innerHTML;
     var shadowRoot = element.createShadowRoot();
 
-    shadowRoot.innerHTML = '<content></content>';
-    element.innerHTML = initialHtml;
-  }
+    shadowRoot.innerHTML = shadowHtml;
+    element.innerHTML = lightHtml;
+  };
+}
+
+skate('my-component', {
+  template: shadowDomTemplate('<h1 class=".heading"></h1><section><content></content></section>');
 });
 ```
 
