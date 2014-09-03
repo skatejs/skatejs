@@ -331,23 +331,6 @@ And the built-in templating engine would transform this into:
 </my-component>
 ```
 
-Additionally, if both paragraphs were removed from the `<section>`, the default content that we specified in the template definition would take their place:
-
-```html
-<my-component>
-  <article>
-    <h3>
-      <span class="heading">My Heading</span>
-    </h3>
-    <section>
-      <p>There is no content to display.</p>
-    </section>
-  </article>
-</my-component>
-```
-
-If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
-
 If you want to work with the element's template dynamically, you must wrap it in a wrapper that overrides native methods to ensure that the modifcations you make only affect the content areas.
 
 You'd wrap it like so:
@@ -357,6 +340,8 @@ You'd wrap it like so:
 var myWrappedComponent = skate.template.html.wrap(myComponent);
 ```
 
+Once wrapped, you can work with it like a normal element. For example, if you wanted to add a third paragraph, all you'd need to do is:
+
 ```js
 var thirdParagraph = document.createElement('p');
 thirdParagraph.textContent = 'Third paragraph.';
@@ -364,7 +349,7 @@ myWrappedComponent.appendChild(thirdParagraph);
 
 ```
 
-Would result in:
+That would result in:
 
 ```html
 <my-component>
@@ -387,6 +372,31 @@ You could have achieved the same thing doing:
 myWrappedComponent.innerHTML += '<p>Third paragraph.</p>';
 ```
 
+Additionally, if both paragraphs were removed from the `<section>`:
+
+```js
+myWrappedComponent.removeChild(myWrappedComponent.childNodes[0]);
+myWrappedComponent.removeChild(myWrappedComponent.childNodes[1]);
+myWrappedComponent.removeChild(myWrappedComponent.childNodes[2]);
+```
+
+Then the default content that we specified in the template definition would take their place:
+
+```html
+<my-component>
+  <article>
+    <h3>
+      <span class="heading">My Heading</span>
+    </h3>
+    <section>
+      <p>There is no content to display.</p>
+    </section>
+  </article>
+</my-component>
+```
+
+If you decide you want to put some content back in, then it will remove the default content in favour of the content you specify.
+
 The properties and methods that are wrapped to give you this behaviour are:
 
 1. childNodes
@@ -400,6 +410,8 @@ The properties and methods that are wrapped to give you this behaviour are:
 9. insertBefore()
 10. removeChild()
 11. replaceChild()
+
+The wrapped element may look like an element, but due to browser API limitations, you cannot pass it off to other DOM methods as an element.
 
 ### Custom Templating
 
