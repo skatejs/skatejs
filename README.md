@@ -350,12 +350,17 @@ If you decide you want to put some content back in, then it will remove the defa
 
 If you want to work with the element's template dynamically, you must wrap it in a wrapper that overrides native methods to ensure that the modifcations you make only affect the content areas.
 
-```js
-// Assume we're using the example above and have referenced the element as myComponent.
+You'd wrap it like so:
 
+```js
+// Assuming myComponent is a reference to the element in the previous examples.
+var myWrappedComponent = skate.template.html.wrap(myComponent);
+```
+
+```js
 var thirdParagraph = document.createElement('p');
 thirdParagraph.textContent = 'Third paragraph.';
-myComponent.appendChild(thirdParagraph);
+myWrappedComponent.appendChild(thirdParagraph);
 
 ```
 
@@ -379,7 +384,7 @@ Notice how the when you appended the content, it didn't actually put it as a fir
 You could have achieved the same thing doing:
 
 ```js
-myComponent.innerHTML += '<p>Third paragraph.</p>';
+myWrappedComponent.innerHTML += '<p>Third paragraph.</p>';
 ```
 
 The properties and methods that are wrapped to give you this behaviour are:
@@ -390,11 +395,11 @@ The properties and methods that are wrapped to give you this behaviour are:
 4. lastChild
 5. outerHTML
 6. textContent
-7. appendChild
-8. insertAdjacentHTML
-9. insertBefore
-10. removeChild
-11. replaceChild
+7. appendChild()
+8. insertAdjacentHTML()
+9. insertBefore()
+10. removeChild()
+11. replaceChild()
 
 ### Custom Templating
 
