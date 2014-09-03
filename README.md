@@ -359,7 +359,7 @@ skate('my-component', {
 
 
 
-### Default HTML Templates
+### Default HTML Templates (experimental)
 
 Skate bundles a simple templating engine based on how the Shadow DOM spec uses the `<content>` element and `select` attribute.
 
