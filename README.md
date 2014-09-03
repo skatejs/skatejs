@@ -508,33 +508,33 @@ If you decide you want to put some content back in, then it will remove the defa
 
 The properties and methods that are wrapped to give you this behaviour are:
 
-1. childNodes
-2. firstChild
-3. innerHTML
-4. lastChild
-5. outerHTML
-6. textContent
-7. appendChild()
-8. insertAdjacentHTML()
-9. insertBefore()
-10. removeChild()
-11. replaceChild()
+1. `childNodes`
+2. `firstChild`
+3. `innerHTML`
+4. `lastChild`
+5. `outerHTML`
+6. `textContent`
+7. `appendChild()`
+8. `insertAdjacentHTML()`
+9. `insertBefore()`
+10. `removeChild()`
+11. `replaceChild()`
 
 The following properties and methods are not wrapped (but are planned to be):
 
-1. elements
-2. getElementsByClassName()
-3. getElementsByTagName()
-4. getElementsByTagNameNS()
-5. querySelector()
-6. querySelectorAll()
+1. `elements`
+2. `getElementsByClassName()`
+3. `getElementsByTagName()`
+4. `getElementsByTagNameNS()`
+5. `querySelector()`
+6. `querySelectorAll()`
 
 Additionally, descendants are not wrapped (but are planned to be). This means the following members on descendants behave as they normally would:
 
-1. nextSibling
-2. parentElement
-3. parentNode
-4. previousSibling
+1. `nextSibling`
+2. `parentElement`
+3. `parentNode`
+4. `previousSibling`
 
 *The wrapped elements may look and act like normal elements (including instanceof checks), but due to browser API limitations, you cannot pass it off to other DOM methods as an element.*
 
