@@ -7,6 +7,22 @@
   // Lifecycle Triggers
   // ------------------
 
+  function getLifecycleFlag (target, component, name) {
+    return getData(target, component.id + ':lifecycle:' + name);
+  }
+
+  function setLifecycleFlag (target, component, name, value) {
+    setData(target, component.id + ':lifecycle:' + name, !!value);
+  }
+
+  function ensureLifecycleFlag (target, component, name) {
+    if (getLifecycleFlag(target, component, name)) {
+      return true;
+    }
+    setLifecycleFlag(target, component, name, true);
+    return false;
+  }
+
   /**
    * Triggers the entire element lifecycle if it's not being ignored.
    *
@@ -16,15 +32,8 @@
    * @returns {undefined}
    */
   function triggerLifecycle (target, component) {
-    if (getData(target, component.id + '.initialised')) {
-      return;
-    }
-
-    setData(target, component.id + '.initialised', true);
-
-    triggerReady(target, component, function () {
-      triggerInsert(target, component);
-    });
+    triggerReady(target, component);
+    triggerInsert(target, component);
   }
 
   /**
@@ -32,19 +41,13 @@
    *
    * @param {Element} target The component element.
    * @param {Object} component The component data.
-   * @param {Function} done The callback to execute when the lifecycle callback is finished.
    *
    * @returns {undefined}
    */
-  function triggerReady (target, component, done) {
-    var definedMultipleArgs = /^[^(]+\([^,)]+,/;
-    done = done || function () {};
-
-    if (getData(target, component.id + '.ready-called')) {
-      return done();
+  function triggerReady (target, component) {
+    if (ensureLifecycleFlag(target, component, 'ready')) {
+      return;
     }
-
-    setData(target, component.id + '.ready-called', true);
 
     if (component.template) {
       component.template(target);
@@ -53,14 +56,11 @@
     inherit(target, component.prototype);
     addEventListeners(target, component);
 
-    if (component.ready && definedMultipleArgs.test(component.ready)) {
-      component.ready(target, done);
-    } else if (component.ready) {
+    if (component.ready) {
       component.ready(target);
-      done();
-    } else {
-      done();
     }
+
+    addAttributeListeners(target, component);
   }
 
   /**
@@ -72,22 +72,15 @@
    * @returns {undefined}
    */
   function triggerInsert (target, component) {
-    if (!target.parentNode) {
+    if (ensureLifecycleFlag(target, component, 'insert')) {
       return;
     }
 
-    if (getData(target, component.id + '.insert-called')) {
-      return;
-    }
-
-    setData(target, component.id + '.insert-called', true);
     addClass(target, component.classname);
 
     if (component.insert) {
       component.insert(target);
     }
-
-    addAttributeListeners(target, component);
   }
 
   /**
@@ -99,14 +92,9 @@
    * @returns {undefined}
    */
   function triggerRemove (target, component) {
-    if (getData(target, component.id + '.remove-called')) {
-      return;
-    }
-
-    setData(target, component.id + '.remove-called', true);
-
     if (component.remove) {
       component.remove(target);
+      setLifecycleFlag(target, component, 'insert', false);
     }
   }
 
@@ -166,14 +154,16 @@
       attributeOldValue: true
     });
 
-    // In default web components, attribute changes aren't triggered for attributes that already exist on an element
-    // when it is bound. This sucks when you want to reuse and separate code for attributes away from your lifecycle
-    // callbacks. Skate will initialise each attribute calling the "insert" callback that already exists on the element.
+    // In default web components, attribute changes aren't triggered for
+    // attributes that already exist on an element when it is bound. This sucks
+    // when you want to reuse and separate code for attributes away from your
+    // lifecycle callbacks. Skate will initialise each attribute calling the
+    // "insert" callback that already exists on the element.
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a];
 
-      // If an attribute is removed during the enumeration, then we must ensure that each one still exists when it
-      // comes time to action it.
+      // If an attribute is removed during the enumeration, then we must ensure
+      // that each one still exists when it comes time to action it.
       if (attr) {
         triggerCallback('insert', attr.nodeName, (attr.value || attr.nodeValue));
       }
@@ -355,7 +345,8 @@
   /**
    * Creates a constructor for the specified component.
    *
-   * @param {Object} component The component information to use for generating the constructor.
+   * @param {Object} component The component information to use for generating
+   *                           the constructor.
    *
    * @returns {Function} The element constructor.
    */
@@ -363,8 +354,9 @@
     function CustomElement () {
       var element = document.createElement(component.id);
 
-      // Ensure the component prototype is up to date with the element's prototype. This ensures that overwriting the
-      // element prototype still works.
+      // Ensure the component prototype is up to date with the element's
+      // prototype. This ensures that overwriting the element prototype still
+      // works.
       component.prototype = CustomElement.prototype;
 
       // If they use the constructor we don't have to wait until it's inserted.
@@ -373,7 +365,8 @@
       return element;
     }
 
-    // This allows modifications to the element prototype propagate to the component prototype.
+    // This allows modifications to the element prototype propagate to the
+    // component prototype.
     CustomElement.prototype = component.prototype;
 
     return CustomElement;
@@ -399,8 +392,9 @@
   }
 
   /**
-   * Returns a selector for the specified component based on the types given. If a negation selector is passed in then
-   * it will append :not(negateWith) to the selector.
+   * Returns a selector for the specified component based on the types given.
+   * If a negation selector is passed in then it will append :not(negateWith) to
+   *  the selector.
    *
    * @param {String} id The component ID.
    * @param {String} type The component type.
@@ -433,7 +427,8 @@
   }
 
   /**
-   * Returns whether or not the specified component can be bound using the specified type.
+   * Returns whether or not the specified component can be bound using the
+   * specified type.
    *
    * @param {String} id The component ID.
    * @param {String} type The component type.
@@ -448,7 +443,8 @@
    * Finds direct children in the `sourceNode` that match the given selector.
    *
    * @param {Element} sourceNode The node to find the elements in.
-   * @param {String} selector The selector to use. If not specified, all `childNodes` are returned.
+   * @param {String} selector The selector to use. If not specified, all
+   *                          `childNodes` are returned.
    *
    * @returns {NodeList}
    */
@@ -473,8 +469,9 @@
   }
 
   /**
-   * Creates a document fragment from the specified DOM string. It ensures that if special nodes are passed in that
-   * they are added to a valid parent node before importing to the document fragment.
+   * Creates a document fragment from the specified DOM string. It ensures that
+   * if special nodes are passed in that they are added to a valid parent node
+   * before importing to the document fragment.
    *
    * @param {String} domString The HTMl to create a fragment from.
    *
@@ -497,30 +494,18 @@
     var div = document.createElement(tag && specialMap[tag[1]] || 'div');
 
     div.innerHTML = domString;
-    insertNodeList(frag, div.childNodes);
+
+    while (div.childNodes.length) {
+      frag.appendChild(div.childNodes[0]);
+    }
 
     return frag;
   }
 
   /**
-   * Inserts the specified nodes into the given element.
-   *
-   * @param {Element} element The element to insert the nodes into.
-   * @param {Enumerable} nodes The nodes to insert.
-   *
-   * @returns {undefined}
-   */
-  function insertNodeList (element, nodes) {
-    var len = nodes.length;
-
-    for (var a = len; a > 0; a--) {
-      element.appendChild(nodes[0]);
-    }
-  }
-
-  /**
-   * Returns whether or not the source element contains the target element. This is for browsers that don't support
-   * Element.prototype.contains on an HTMLUnknownElement.
+   * Returns whether or not the source element contains the target element.
+   * This is for browsers that don't support Element.prototype.contains on an
+   * HTMLUnknownElement.
    *
    * @param {HTMLElement} source The source element.
    * @param {HTMLElement} target The target element.
@@ -584,7 +569,8 @@
   /**
    * Triggers the remove lifecycle callback on all of the elements.
    *
-   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle callback on.
+   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
+   * callback on.
    *
    * @returns {undefined}
    */
@@ -598,28 +584,20 @@
         continue;
       }
 
-      var childNodes = element.childNodes;
+      removeElements(element.childNodes);
 
-      removeElements(childNodes);
-      skate.components(element).forEach(removeElementsRemover(element));
+      var components = skate.components(element);
+      var componentsLen = components.length;
+
+      for (var b = 0; b < componentsLen; b++) {
+        triggerRemove(element, components[b]);
+      }
     }
   }
 
   /**
-   * Makes a function that calls triggerRemove for the specified element's components.
-   *
-   * @param {Element} element The element to generate the remover for.
-   *
-   * @return {Function}
-   */
-  function removeElementsRemover (element) {
-    return function (component) {
-      triggerRemove(element, component);
-    };
-  }
-
-  /**
-   * Returns a function that will prevent more than one call in a single clock tick.
+   * Returns a function that will prevent more than one call in a single clock
+   * tick.
    *
    * @param {Function} fn The function to call.
    *
@@ -652,8 +630,8 @@
   }
 
   /**
-   * Initialises all valid elements in the document. Ensures that it does not happen more than once in the same
-   * execution.
+   * Initialises all valid elements in the document. Ensures that it does not
+   * happen more than once in the same execution.
    *
    * @returns {undefined}
    */
@@ -690,9 +668,10 @@
   // Whether or not DOMContentLoaded has been triggered.
   var domContentLoaded = false;
 
-  // Stylesheet that contains rules for preventing certain components from showing when they're added to the DOM. This
-  // is so that we can simulate calling a lifecycle callback before the element is added to the DOM which helps to
-  // prevent any jank if the ready() callback modifies the element.
+  // Stylesheet that contains rules for preventing certain components from
+  // showing when they're added to the DOM. This is so that we can simulate
+  // calling a lifecycle callback before the element is added to the DOM which
+  // helps to prevent any jank if the ready() callback modifies the element.
   var hiddenRules = document.createElement('style');
 
   // The skate component registry.
@@ -703,10 +682,12 @@
   // Mutation Observer "Polyfill"
   // ----------------------------
   //
-  // This "polyfill" only polyfills what we need for Skate to function. It batches updates and does the bare minimum
-  // during synchronous operation which make mutation event performance bearable. The rest is batched on the next tick.
-  // Like mutation observers, each mutation is divided into sibling groups for each parent that had mutations. All
-  // attribute mutations are batched into separate records regardless of the element they occured on.
+  // This "polyfill" only polyfills what we need for Skate to function. It
+  // batches updates and does the bare minimum during synchronous operation
+  // which make mutation event performance bearable. The rest is batched on the
+  // next tick. Like mutation observers, each mutation is divided into sibling
+  // groups for each parent that had mutations. All attribute mutations are
+  // batched into separate records regardless of the element they occured on.
 
   // Normalise the mutation observer constructor.
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
@@ -728,12 +709,13 @@
         function batchEvent (e) {
           var eTarget = e.target;
 
-          // In some test environments, e.target has been nulled after the tests are done and a batch is still
-          // processing.
+          // In some test environments, e.target has been nulled after the tests
+          // are done and a batch is still processing.
           if (!eTarget) {
             return;
           }
 
+          var eType = e.type;
           var eTargetParent = eTarget.parentNode;
 
           if (!canTriggerInsertOrRemove(eTargetParent)) {
@@ -744,11 +726,11 @@
             return;
           }
 
-          if (!lastBatchedRecord) {
+          if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
 
-          if (eTargetParent) {
+          if (eType === 'DOMNodeInserted') {
             if (!lastBatchedRecord.addedNodes) {
               lastBatchedRecord.addedNodes = [];
             }
@@ -766,7 +748,7 @@
         }
 
         function canTriggerAttributeModification (eTarget) {
-          return eTarget === target;
+          return options.attributes && (options.subtree || eTarget === target);
         }
 
         function canTriggerInsertOrRemove (eTargetParent) {
@@ -798,13 +780,15 @@
         var attributeOldValueCache = {};
         var attributeMutations = [];
         var batchAttributeMods = debounce(function () {
-          // We keep track of the old length just in case attributes are modified within a handler.
+          // We keep track of the old length just in case attributes are
+          // modified within a handler.
           var len = attributeMutations.length;
 
           // Call the handler with the current modifications.
           that.callback(attributeMutations);
 
-          // We remove only up to the current point just in case more modifications were queued.
+          // We remove only up to the current point just in case more
+          // modifications were queued.
           attributeMutations.splice(0, len);
         });
 
@@ -832,8 +816,8 @@
 
             attributeMutations.push(record);
 
-            // We keep track of old values so that when IE incorrectly reports the old value we can ensure it is
-            // actually correct.
+            // We keep track of old values so that when IE incorrectly reports
+            // the old value we can ensure it is actually correct.
             if (options.attributeOldValue) {
               attributeOldValueCache[eAttrName] = eNewValue;
             }
@@ -845,8 +829,6 @@
         this.elements.push(observed);
 
         if (options.childList) {
-          // TODO: Try using DOMSubtreeModified and diffing the children rather than using DOMNodeInserted and
-          // eliminating nodes that aren't first children.
           target.addEventListener('DOMNodeInserted', observed.insertHandler);
           target.addEventListener('DOMNodeRemoved', observed.removeHandler);
         }
@@ -905,7 +887,7 @@
    * @param {String} id The ID of the component.
    * @param {Object | Function} component The component definition.
    *
-   * @returns {Function} Function or constructor that creates a custom-element for the component.
+   * @returns {Function} Constructor that returns a custom element.
    */
   function skate (id, component) {
     // Set any defaults that weren't passed.
@@ -924,7 +906,8 @@
       component.template = skate.template.html(component.template);
     }
 
-    // If doing something that will modify the component's structure, ensure it's not displayed yet.
+    // If doing something that will modify the component's structure, ensure
+    // it's not displayed yet.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
         getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
@@ -935,16 +918,20 @@
     // Register the component.
     registry[component.id] = component;
 
-    // Ensure a call is queued for initialising the document if it's ready. We must initialise the entire document
-    // rather than building a selector and using querySelectorAll() because we have to filter out elements which may
-    // be ignored. On top of that, if calling skate() in sequence several times, querySelectorAll() can become slow
-    // pretty quick. The call to initDocument() is debounced to ensure that it only happens once. In large DOMs this
-    // ends up being faster. In small DOMs, the difference is negligible, but usually faster in most use-cases.
+    // Ensure a call is queued for initialising the document if it's ready. We
+    // must initialise the entire document rather than building a selector and
+    // using querySelectorAll() because we have to filter out elements which may
+    // be ignored. On top of that, if calling skate() in sequence several times,
+    // querySelectorAll() can become slow pretty quick. The call to
+    // initDocument() is debounced to ensure that it only happens once. In large
+    // DOMs this ends up being faster. In small DOMs, the difference is
+    // negligible, but usually faster in most use-cases.
     if (domContentLoaded) {
       initDocument();
     }
 
-    // Only make and return an element constructor if it can be used as a custom element.
+    // Only make and return an element constructor if it can be used as a custom
+    // element.
     if (component.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(component);
     }
@@ -991,7 +978,8 @@
   };
 
   /**
-   * Stops listening for new elements. Generally this will only be used in testing.
+   * Stops listening for new elements. Generally this will only be used in
+   * testing.
    *
    * @returns {skate}
    */
@@ -1001,9 +989,11 @@
   };
 
   /**
-   * Synchronously initialises the specified element or elements and descendants.
+   * Synchronously initialises the specified element or elements and
+   * descendants.
    *
-   * @param {Mixed} nodes The node, or nodes to initialise. Can be anything: jQuery, DOMNodeList, DOMNode etc.
+   * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
+   *                      jQuery, DOMNodeList, DOMNode, selector etc.
    *
    * @returns {skate}
    */
@@ -1059,10 +1049,12 @@
     // The classname to use when showing this component.
     classname: '__skate',
 
-    // The events to manage the binding and unbinding of during the component's lifecycle.
+    // The events to manage the binding and unbinding of during the component's
+    // lifecycle.
     events: false,
 
-    // The ID of the component. This is automatically set in the `skate()` function.
+    // The ID of the component. This is automatically set in the `skate()`
+    // function.
     id: '',
 
     // Properties and methods to add to each element.
@@ -1163,11 +1155,12 @@
             var contentNode = contentNodes[a];
             var contentSelector = contentNode.getAttribute(ATTR_CONTENT);
             var foundNodes = findChildrenMatchingSelector(targetFragment, contentSelector);
+            var foundNodesLen = foundNodes.length;
 
             contentNode.innerHTML = '';
 
-            if (foundNodes.length) {
-              insertNodeList(contentNode, foundNodes);
+            for (var b = 0; b < foundNodesLen; b++) {
+              contentNode.appendChild(foundNodes[b]);
             }
 
             addDefaultContent(contentNode);
@@ -1354,8 +1347,8 @@
         }
 
         // If no reference node was found as a child node of the element we must
-        // throw an error. This works for both no child nodes, or if the reference
-        // wasn't found to be a child node.
+        // throw an error. This works for both no child nodes, or if the
+        // reference wasn't found to be a child node.
         if (!hasFoundReferenceNode) {
           throw new Error('DOMException 8: The node before which the new node is to be inserted is not a child of this node.');
         }
@@ -1536,13 +1529,16 @@
   skate.template = {};
 
   /**
-   * Default template renderer. Similar to ShadowDOM style templating where content is projected from the light DOM.
+   * Default template renderer. Similar to ShadowDOM style templating where
+   * content is projected from the light DOM.
    *
    * Differences:
    *
    * - Uses a `data-skate-content` attribute instead of a `select` attribute.
-   * - Attribute is applied to existing elements rather than the <content> element to prevent styling issues.
-   * - Does not dynamically project modifications to the root custom element. You must affect each projection node.
+   * - Attribute is applied to existing elements rather than the <content>
+   *   element to prevent styling issues.
+   * - Does not dynamically project modifications to the root custom element.
+   *   You must affect each projection node.
    *
    * Usage:
    *
@@ -1568,8 +1564,8 @@
   };
 
   /**
-   * Wraps the element in an object that has methods which can be used to manipulate the content similar to if it were
-   * delcared as the shadow root.
+   * Wraps the element in an object that has methods which can be used to
+   * manipulate the content similar to if it were delcared as the shadow root.
    *
    * @param {Node} node The node to wrap.
    *
@@ -1591,42 +1587,40 @@
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // When the document is ready for manipulation, first initialise the document. This is the first time the document
-  // is initialised. Each call to skate() before this does not trigger a document initialisation. After initialisation
-  // for the first time, we add the document mutation observer to listen for further updates. We flag content as loaded
-  // here because after this, each call to skate() *must* re-initialise the document.
-  document.addEventListener('DOMContentLoaded', function () {
-    // Ensure all elements are initialised before adding the mutation observer.
-    initDocument();
+  // Ensure all elements are initialised before adding the mutation observer.
+  initDocument();
 
-    // Start listening right away.
-    documentListener = new MutationObserver(function (mutations) {
-      var mutationsLength = mutations.length;
+  // Add a mutation observer and start listening right away.
+  documentListener = new MutationObserver(function (mutations) {
+    var mutationsLength = mutations.length;
 
-      for (var a = 0; a < mutationsLength; a++) {
-        var mutation = mutations[a];
-        var addedNodes = mutation.addedNodes;
-        var removedNodes = mutation.removedNodes;
+    for (var a = 0; a < mutationsLength; a++) {
+      var mutation = mutations[a];
+      var addedNodes = mutation.addedNodes;
+      var removedNodes = mutation.removedNodes;
 
-        // Since siblings are batched together, we check the first node's parent node to see if it is ignored. If it
-        // is then we don't process any added nodes. This prevents having to check every node.
-        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-          initElements(addedNodes);
-        }
-
-        // We can't check batched nodes here because they won't have a parent node.
-        if (removedNodes && removedNodes.length) {
-          removeElements(removedNodes);
-        }
+      // Since siblings are batched together, we check the first node's parent
+      // node to see if it is ignored. If it is then we don't process any added
+      // nodes. This prevents having to check every node.
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+        initElements(addedNodes);
       }
-    });
 
-    documentListener.observe(document, {
-      childList: true,
-      subtree: true
-    });
+      // We can't check batched nodes here because they won't have a parent node.
+      if (removedNodes && removedNodes.length) {
+        removeElements(removedNodes);
+      }
+    }
+  });
 
-    // Flag as loaded so subsequent calls to skate() trigger a document initialisation.
+  documentListener.observe(document, {
+    childList: true,
+    subtree: true
+  });
+
+  // We flag content as loaded here because after this, each call to skate()
+  // *must* re-initialise the document.
+  document.addEventListener('DOMContentLoaded', function () {
     domContentLoaded = true;
   });
 
@@ -1635,8 +1629,9 @@
   // Exporting
   // ---------
 
-  // Always export the global. We don't know how consumers are using it and what their environments are like. Doing
-  // this affords them the flexibility of using it in an environment where module and non-module code may co-exist.
+  // Always export the global. We don't know how consumers are using it and what
+  // their environments are like. Doing this affords them the flexibility of
+  // using it in an environment where module and non-module code may co-exist.
   window.skate = skate;
 
   if (typeof define === 'function' && define.amd) {
