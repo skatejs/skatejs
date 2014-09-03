@@ -162,6 +162,9 @@ skate('my-component', {
 });
 
 ```
+
+
+
 ### Component Lifecycle
 
 The component lifecycle consists of three callbacks:
@@ -176,6 +179,40 @@ It is possible to render the entire DOM tree and then define your components, ho
 
 - Skate must scour the entire DOM tree for components to process (this is faster than `querySelectorAll` in large DOMs). It minimises the impact of subsequent calls to `skate()` by debouncing the initialisation process.
 - If you have any elements in the DOM already and the component adds CSS rules to ensure the component elements are hidden until augmented, these elements may disappear and then reappear after they have been processed.
+
+
+
+### Element Constructors
+
+As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use:
+
+```js
+var MyComponent = skate('my-component', {
+  ready: function (element) {
+    element.textContent = 'something';
+  },
+
+  prototype: {
+    logTextContent: function () {
+      console.log(this.textContent);
+    }
+  }
+});
+```
+
+It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `ready` callback. Only when you insert it into the DOM will the `insert` callback be called:
+
+```js
+var element = new MyComponent();
+
+// Logs: "something"
+element.logTextContent();
+
+// Asynchronously calls the `insert` callback.
+document.body.appendChild(element);
+```
+
+
 
 ### Attribute Lifecycle
 
@@ -252,6 +289,8 @@ The `remove` handler gets called when:
 - The corresponding attribute is removed from the element.
 
 Callbacks that get fired for attributes that already exist on an element get called after the `insert` callback is triggered.
+
+
 
 ### Event Binding
 
@@ -523,35 +562,7 @@ element.someCustomMethod();
 
 This is very useful during testing, but can be used for any use case that requires synchronous operation.
 
-### Element Constructors
 
-As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use:
-
-```js
-var MyComponent = skate('my-component', {
-  ready: function (element) {
-    element.textContent = 'something';
-  },
-
-  prototype: {
-    logTextContent: function () {
-      console.log(this.textContent);
-    }
-  }
-});
-```
-
-It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `ready` callback. Only when you insert it into the DOM will the `insert` callback be called:
-
-```js
-var element = new MyComponent();
-
-// Logs: "something"
-element.logTextContent();
-
-// Asynchronously calls the `insert` callback.
-document.body.appendChild(element);
-```
 
 ### Unregistering Components
 
