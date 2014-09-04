@@ -42,25 +42,34 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       var dispatched = 0;
 
       skate('my-component', {
-        ready: function (element) {
-          var a = document.createElement('a');
-          element.appendChild(a);
-        },
         events: {
-          'click a': function (element, e) {
-            element.tagName.should.equal('MY-COMPONENT');
-            e.target.tagName.should.equal('A');
+          'click': function (element, e) {
             ++dispatched;
+            expect(element.tagName).to.equal('MY-COMPONENT');
+            expect(e.target.tagName).to.equal('SPAN');
+          },
+
+          'click a': function (element, e, current) {
+            ++dispatched;
+            expect(element.tagName).to.equal('MY-COMPONENT');
+            expect(current.tagName).to.equal('A');
+            expect(e.target.tagName).to.equal('SPAN');
+          },
+          'click span': function (element, e) {
+            ++dispatched;
+            expect(element.tagName).to.equal('MY-COMPONENT');
+            expect(e.target.tagName).to.equal('SPAN');
           }
-        }
+        },
+
+        template: '<a><span></span></a>'
       });
 
       var inst = helpers.add('my-component');
 
       skate.init(inst);
-      helpers.dispatchEvent('click', inst);
-      helpers.dispatchEvent('click', inst.querySelector('a'));
-      dispatched.should.equal(1);
+      helpers.dispatchEvent('click', inst.querySelector('span'));
+      dispatched.should.equal(3);
     });
   });
 });
