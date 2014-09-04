@@ -123,7 +123,7 @@ skate('my-component', {
 
     },
 
-    'click .some-child-selector': function (element, eventObject) {
+    'click .some-child-selector': function (element, eventObject, currentTarget) {
 
     }
   },
@@ -305,16 +305,18 @@ skate('my-component', {
 
     },
 
-    'click .some-child-selector': function (element, eventObject) {
+    'click .some-child-selector': function (element, eventObject, currentTarget) {
 
     }
   }
 });
 ```
 
-The first `click` handler gets executed whenever the component receives a click event regardless of what triggered it. The second `click .some-child-selector` handler gets executed only when it receives a click event that came from a descendant matching the `.some-child-selector` selector.
+The first `click` handler gets executed whenever the component receives a click event regardless of what triggered it. The second `click .some-child-selector` handler gets executed only when it receives a click event that came from a descendant matching the `.some-child-selector` selector, This will also get fired for any ancestor of the target, up to the component element, that matches the selector. The `currentTarget` parameter is the element which the delegate selector matched.
 
 Events listeners are not automatically removed from the element when it is removed from the DOM. This is because Skate does not know if you intend to re-insert the element back into the DOM. Skate leaves it up to you and the JavaScript engine's garbage collector to manage this.
+
+
 
 ### Prototype Extending
 
