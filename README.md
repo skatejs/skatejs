@@ -486,9 +486,9 @@ myWrappedComponent.innerHTML += '<p>Third paragraph.</p>';
 Additionally, if all paragraphs were removed from the `<section>`:
 
 ```js
-myWrappedComponent.removeChild(myWrappedComponent.childNodes[0]);
-myWrappedComponent.removeChild(myWrappedComponent.childNodes[1]);
 myWrappedComponent.removeChild(myWrappedComponent.childNodes[2]);
+myWrappedComponent.removeChild(myWrappedComponent.childNodes[1]);
+myWrappedComponent.removeChild(myWrappedComponent.childNodes[0]);
 ```
 
 Then the default content that we specified in the template definition would take their place:
