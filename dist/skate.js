@@ -185,8 +185,29 @@
 
     function makeHandler (handler, delegate) {
       return function (e) {
-        if (!delegate || matchesSelector.call(e.target, delegate)) {
-          handler(target, e);
+        // If we're not delegating, trigger directly on the component element.
+        if (!delegate) {
+          return handler(target, e);
+        }
+
+        // If we're delegating and the target metches the selector, trigger
+        // the handler on it.
+        if (matchesSelector.call(e.target, delegate)) {
+          return handler(target, e);
+        }
+
+        // If we're delegating, but the target doesn't match, then we've have
+        // to go up the tree until we find a matching ancestor or stop at the
+        // component element, or document. If a matching ancestor is found, the
+        // handler is triggered on it.
+        var current = e.target.parentNode;
+
+        while (current && current !== document && current !== target) {
+          if (matchesSelector.call(current, delegate)) {
+            return handler(target, e, current);
+          }
+
+          current = current.parentNode;
         }
       };
     }
