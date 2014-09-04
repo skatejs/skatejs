@@ -46,11 +46,11 @@ define(['../../src/skate.js'], function (skate) {
         template: '<span><content></content></span>'
       });
 
-      document.body.innerHTML = '<my-element>my content</my-element>';
+      document.body.innerHTML = '<my-element><span>1</span><span>2</span></my-element>';
 
       var el = document.querySelector('my-element');
       skate.init(el);
-      el.innerHTML.should.equal('<span><!---->my content<!----></span>');
+      el.innerHTML.should.equal('<span><!----><span>1</span><span>2</span><!----></span>');
     });
 
     it('should select specific content from the inital html', function () {
@@ -242,7 +242,7 @@ define(['../../src/skate.js'], function (skate) {
 
         it('beforeend', function () {
           $element.insertAdjacentHTML('beforeend', '<three></three>');
-          expect($element.childNodes[1].tagName).to.equal('THREE');
+          expect($element.childNodes[2].tagName).to.equal('THREE');
         });
 
         it('afterend', function () {
