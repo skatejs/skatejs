@@ -465,7 +465,7 @@
       return filtered;
     }
 
-    return sourceNode.childNodes || [];
+    return [].slice.call(sourceNode.childNodes) || [];
   }
 
   /**
@@ -1157,7 +1157,7 @@
             }
 
             // If no nodes were found, set the default content.
-            if (c) {
+            if (foundNodes.length) {
               removeDefaultContent(contentNode);
             } else {
               addDefaultContent(contentNode);
