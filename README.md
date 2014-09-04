@@ -638,10 +638,10 @@ Who's Using It?
 
 <img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200">
 
-Credits
--------
+Maintainers
+-----------
 
-Trey Shugart (author), Atlassian
+- [Trey Shugart](https://twitter.com/treshugart) (author), Atlassian
 
 License
 -------
