@@ -14,7 +14,7 @@ module.exports = function (grunt) {
       browsers: browsers,
       files: [
         { pattern: 'test/lib/polyfills.js', included: true },
-        { pattern: 'test/unit.js', included: true },
+        { pattern: 'test/*.js', included: true },
         { pattern: 'src/*.js', included: false },
         { pattern: 'test/**/*.js', included: false }
       ],
