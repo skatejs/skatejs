@@ -13,7 +13,7 @@
     ready: function (element) {
       element.setAttribute('size', getInput(element).value);
     },
-    template: '<input type="text"><button data-skate-content></button>',
+    template: '<input type="text"><button><content></content></button>',
     events: {
       'click button': function (element) {
         var create = element.getAttribute('create');

@@ -12,7 +12,7 @@
   }
 
   skate('x-ignore-checkbox', {
-    template: '<label><input type="checkbox"> <span data-skate-content></span></label>',
+    template: '<label><input type="checkbox"> <span><content></content></span></label>',
     ready: function (element) {
       var target = getTarget(element);
 
