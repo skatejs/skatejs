@@ -133,7 +133,7 @@ skate('my-component', {
   // default.
   //
   // Depending on the component type, it behaves like so:
-  // 
+  //
   // - When applied to a custom element, the component ID is used to match the
   //   value of the element's `is` attribute and the element's tag name is
   //   matched against the value specified here. This conforms with the custom
@@ -620,7 +620,6 @@ This will create a CSS rule with a selector of:
 
 ```css
 my-unrestricted-component,
-[is="my-unrestricted-component"],
 [my-unrestricted-component],
 .my-unrestricted-component { ... }
 ```
