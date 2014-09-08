@@ -128,6 +128,12 @@ skate('my-component', {
     }
   },
 
+  // Restricts a particular component to binding explicitly to an element with
+  // a tag name that matches the specified value. This value is empty by default.
+  // The specified tag to extend is matched with the 'is' attribute. Please refer
+  // to the Web Components spec for more information.
+  extends: '',
+
   // Properties and methods to add to each element instance. It's notable
   // that the element's prototype is not modified. These are added after the
   // element is instantiated. Since the methods and properties are applied to
