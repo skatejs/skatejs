@@ -619,9 +619,19 @@ skate('my-unrestricted-component', {
 This will create a CSS rule with a selector of:
 
 ```css
-my-unrestricted-component,
-[my-unrestricted-component],
-.my-unrestricted-component { ... }
+my-unrestricted-component:not(.__skate),
+[my-unrestricted-component]:not(.__skate),
+.my-unrestricted-component:not(.__skate) { ... }
+```
+
+Additionally, if you use the `extends` option, the selectors are altered. Say
+for example, you are extending a `div`. The selectors would then be generated
+as:
+
+```css
+div[is="my-unrestricted-component"]:not(.__skate),
+div[my-unrestricted-component]:not(.__skate),
+div.my-unrestricted-component:not(.__skate) { ... }
 ```
 
 If you only need it to act as a custom element, then you should restrict it as such:
@@ -635,7 +645,13 @@ skate('my-restricted-component', {
 This is generally good practice anyways, but it will also ensure the selector is built as:
 
 ```css
-my-restricted-component { ... }
+my-restricted-component:not(.__skate) { ... }
+```
+
+Or if you use the `extends` option:
+
+```css
+div[is="my-restricted-component"]:not(.__skate) { ... }
 ```
 
 

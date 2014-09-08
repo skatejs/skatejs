@@ -433,23 +433,23 @@
     var isClass = type.indexOf(skate.types.CLASS) > -1;
     var selectors = [];
 
+    tagToExtend = tagToExtend || '';
     negateWith = negateWith ? ':not(' + negateWith + ')' : '';
-
 
     if (isTag) {
       if (tagToExtend) {
-        selectors.push('[is=' + id + ']' + negateWith);
+        selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
       } else {
         selectors.push(id + negateWith);
       }
     }
 
     if (isAttr) {
-      selectors.push('[' + id + ']' + negateWith);
+      selectors.push(tagToExtend + '[' + id + ']' + negateWith);
     }
 
     if (isClass) {
-      selectors.push('.' + id + negateWith);
+      selectors.push(tagToExtend + '.' + id + negateWith);
     }
 
     return selectors.join(',');
