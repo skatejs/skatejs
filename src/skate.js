@@ -422,11 +422,12 @@
    *
    * @param {String} id The component ID.
    * @param {String} type The component type.
+   * @param {String} tagToExtend The tag the component is extending, if any.
    * @param {String} negateWith The negation string, if any.
    *
    * @returns {String} The compiled selector.
    */
-  function getSelectorForType (id, type, negateWith) {
+  function getSelectorForType (id, type, tagToExtend, negateWith) {
     var isTag = type.indexOf(skate.types.TAG) > -1;
     var isAttr = type.indexOf(skate.types.ATTR) > -1;
     var isClass = type.indexOf(skate.types.CLASS) > -1;
@@ -434,9 +435,13 @@
 
     negateWith = negateWith ? ':not(' + negateWith + ')' : '';
 
+
     if (isTag) {
-      selectors.push(id + negateWith);
-      selectors.push('[is=' + id + ']' + negateWith);
+      if (tagToExtend) {
+        selectors.push('[is=' + id + ']' + negateWith);
+      } else {
+        selectors.push(id + negateWith);
+      }
     }
 
     if (isAttr) {
@@ -933,7 +938,7 @@
     // it's not displayed yet.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
-        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
+        getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
       );
     }
