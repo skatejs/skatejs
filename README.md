@@ -129,9 +129,23 @@ skate('my-component', {
   },
 
   // Restricts a particular component to binding explicitly to an element with
-  // a tag name that matches the specified value. This value is empty by default.
-  // The specified tag to extend is matched with the 'is' attribute. Please refer
-  // to the Web Components spec for more information.
+  // a tag name that matches the specified value. This value is empty by
+  // default.
+  //
+  // Depending on the component type, it behaves like so:
+  // 
+  // - When applied to a custom element, the component ID is used to match the
+  //   value of the element's `is` attribute and the element's tag name is
+  //   matched against the value specified here. This conforms with the custom
+  //   element spec.
+  //
+  // - When given to a component that binds to an element using an attribute,
+  //   the value specified here must match the element's tag name.
+  //
+  // - When specified on a component that is bound using a class name, this
+  //   value must match the element's tag name, as with attribute components.
+  //
+  // - If the value is empty, then the component is not restricted at all.
   extends: '',
 
   // Properties and methods to add to each element instance. It's notable
