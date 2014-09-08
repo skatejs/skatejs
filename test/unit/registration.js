@@ -39,7 +39,8 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
 
     describe('should generate a selector for the hidden rules', function () {
       function assertSelectorFor (id, type, tagToExtend) {
-
+        var div;
+        
         skate(id, {
           type: type,
           extends: tagToExtend,
@@ -48,7 +49,6 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
           }
         });
 
-        var div;
         if (tagToExtend) {
           div = document.createElement(tagToExtend);
           div.setAttribute('is', id);
