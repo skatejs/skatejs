@@ -112,5 +112,26 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
 
       expect(div.test).to.equal(true);
     });
+
+    describe('when an extends option is specified', function () {
+      var Div;
+      var div;
+
+      beforeEach(function () {
+        Div = skate('my-element', {
+          extends: 'div'
+        });
+
+        div = new Div();
+      });
+
+      it('should return an element whose tag name matches the extends option', function () {
+        expect(div.tagName).to.equal('DIV');
+      });
+
+      it('should return an element whose is attribute is equal to the component id', function () {
+        expect(div.getAttribute('is')).to.equal('my-element');
+      });
+    });
   });
 });

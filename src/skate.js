@@ -367,7 +367,16 @@
    */
   function makeElementConstructor (component) {
     function CustomElement () {
-      var element = document.createElement(component.id);
+      var element;
+      var tagToExtend = component.extends;
+      var componentId = component.id;
+
+      if (tagToExtend) {
+        element = document.createElement(tagToExtend);
+        element.setAttribute('is', componentId);
+      } else {
+        element = document.createElement(componentId);
+      }
 
       // Ensure the component prototype is up to date with the element's
       // prototype. This ensures that overwriting the element prototype still
