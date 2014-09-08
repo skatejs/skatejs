@@ -680,7 +680,9 @@
   var documentListener;
 
   // Whether or not DOMContentLoaded has been triggered.
-  var domContentLoaded = false;
+  var isDomContentLoaded = document.readyState == 'complete'
+    || document.readyState == 'loaded'
+    || document.readyState == 'interactive';
 
   // Stylesheet that contains rules for preventing certain components from
   // showing when they're added to the DOM. This is so that we can simulate
@@ -940,7 +942,7 @@
     // initDocument() is debounced to ensure that it only happens once. In large
     // DOMs this ends up being faster. In small DOMs, the difference is
     // negligible, but usually faster in most use-cases.
-    if (domContentLoaded) {
+    if (isDomContentLoaded) {
       initDocument();
     }
 
@@ -1607,47 +1609,58 @@
   // Global Setup
   // ------------
 
+  /**
+   * Does all necessary setup after the document has loaded
+   */
+  function onDomContentLoaded () {
+    // Ensure all elements are initialised before adding the mutation observer.
+    initDocument();
+
+    // Observes all descendant mutations to the document.
+    documentListener = new MutationObserver(function (mutations) {
+      var mutationsLength = mutations.length;
+
+      for (var a = 0; a < mutationsLength; a++) {
+        var mutation = mutations[a];
+        var addedNodes = mutation.addedNodes;
+        var removedNodes = mutation.removedNodes;
+
+        // Since siblings are batched together, we check the first node's parent
+        // node to see if it is ignored. If it is then we don't process any added
+        // nodes. This prevents having to check every node.
+        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+          initElements(addedNodes);
+        }
+
+        // We can't check batched nodes here because they won't have a parent node.
+        if (removedNodes && removedNodes.length) {
+          removeElements(removedNodes);
+        }
+      }
+    });
+
+    // Observe after the DOM content has loaded.
+    documentListener.observe(document, {
+      childList: true,
+      subtree: true
+    });
+  }
+
   // Rules that hide elements as they're inserted so that elements are hidden
   // prior to calling the ready callback to prevent FOUC if the component
   // modifies the element in which it is bound.
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
-  // Ensure all elements are initialised before adding the mutation observer.
-  initDocument();
-
-  // Add a mutation observer and start listening right away.
-  documentListener = new MutationObserver(function (mutations) {
-    var mutationsLength = mutations.length;
-
-    for (var a = 0; a < mutationsLength; a++) {
-      var mutation = mutations[a];
-      var addedNodes = mutation.addedNodes;
-      var removedNodes = mutation.removedNodes;
-
-      // Since siblings are batched together, we check the first node's parent
-      // node to see if it is ignored. If it is then we don't process any added
-      // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        initElements(addedNodes);
-      }
-
-      // We can't check batched nodes here because they won't have a parent node.
-      if (removedNodes && removedNodes.length) {
-        removeElements(removedNodes);
-      }
-    }
-  });
-
-  documentListener.observe(document, {
-    childList: true,
-    subtree: true
-  });
-
   // We flag content as loaded here because after this, each call to skate()
   // *must* re-initialise the document.
-  document.addEventListener('DOMContentLoaded', function () {
-    domContentLoaded = true;
-  });
+  if (isDomContentLoaded) {
+    onDomContentLoaded();
+  } else {
+    document.addEventListener('DOMContentLoaded', function () {
+      onDomContentLoaded();
+      isDomContentLoaded = true;
+    });
+  }
 
 
 
