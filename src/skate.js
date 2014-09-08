@@ -963,17 +963,35 @@
     var attrsLen = attrs.length;
     var components = [];
     var isAttr = attrs.is;
-    var tag = isAttr && (isAttr.value || isAttr.nodeValue) || element.tagName.toLowerCase();
+    var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+    var tag = element.tagName.toLowerCase();
+    var isAttrOrTag = isAttrValue || tag;
+    var component;
+    var tagToExtend;
 
-    if (isComponentOfType(tag, skate.types.TAG)) {
-      components.push(registry[tag]);
+    if (isComponentOfType(isAttrOrTag, skate.types.TAG)) {
+      component = registry[isAttrOrTag];
+      tagToExtend = component.extends;
+
+      if (isAttrValue) {
+        if (tag === tagToExtend) {
+          components.push(component);
+        }
+      } else if (!tagToExtend) {
+        components.push(component);
+      }
     }
 
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
       if (isComponentOfType(attr, skate.types.ATTR)) {
-        components.push(registry[attr]);
+        component = registry[attr];
+        tagToExtend = component.extends;
+
+        if (!tagToExtend || tag === tagToExtend) {
+          components.push(component);
+        }
       }
     }
 
@@ -984,7 +1002,12 @@
       var className = classList[b];
 
       if (isComponentOfType(className, skate.types.CLASS)) {
-        components.push(registry[className]);
+        component = registry[className];
+        tagToExtend = component.extends;
+
+        if (!tagToExtend || tag === tagToExtend) {
+          components.push(component);
+        }
       }
     }
 
@@ -1066,6 +1089,10 @@
     // The events to manage the binding and unbinding of during the component's
     // lifecycle.
     events: false,
+
+    // Restricts a particular component to binding explicitly to an element with
+    // a tag name that matches the specified value.
+    extends: '',
 
     // The ID of the component. This is automatically set in the `skate()`
     // function.
