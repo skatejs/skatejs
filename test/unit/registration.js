@@ -36,6 +36,48 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       skate.unregister('div');
       expect(skate.init(helpers.add('div')).test).to.equal(undefined);
     });
+
+    describe('should generate a selector for the hidden rules', function () {
+      function assertSelectorFor (id, type, tagToExtend) {
+        var div;
+        
+        skate(id, {
+          type: type,
+          extends: tagToExtend,
+          ready: function (element) {
+            expect(window.getComputedStyle(element).display).to.equal('none');
+          }
+        });
+
+        if (tagToExtend) {
+          div = document.createElement(tagToExtend);
+          div.setAttribute('is', id);
+        } else {
+          div = document.createElement(id);
+        }
+
+        document.body.appendChild(div);
+        skate.init(div);
+      }
+
+      function describeSelectorTest (id, type, tagToExtend) {
+        describe('for ' + type, function () {
+          it ('extending ' + tagToExtend, function () {
+            assertSelectorFor('my-element', type, 'div');
+          });
+
+          it ('not extending', function () {
+            assertSelectorFor('my-element', type);
+          });
+        });
+      }
+
+      for (var type in skate.types) {
+        if (skate.types.hasOwnProperty(type)) {
+          describeSelectorTest(type);
+        }
+      }
+    });
   });
 
   describe('Returning a constructor', function () {
@@ -111,6 +153,27 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       var div = new Div();
 
       expect(div.test).to.equal(true);
+    });
+
+    describe('when an extends option is specified', function () {
+      var Div;
+      var div;
+
+      beforeEach(function () {
+        Div = skate('my-element', {
+          extends: 'div'
+        });
+
+        div = new Div();
+      });
+
+      it('should return an element whose tag name matches the extends option', function () {
+        expect(div.tagName).to.equal('DIV');
+      });
+
+      it('should return an element whose is attribute is equal to the component id', function () {
+        expect(div.getAttribute('is')).to.equal('my-element');
+      });
     });
   });
 });

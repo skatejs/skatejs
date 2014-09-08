@@ -2,12 +2,13 @@ define(['../../src/skate.js'], function (skate) {
   'use strict';
 
   describe('Using components', function () {
-    function assertType (type, shouldEqual) {
-      it('type: ' + type, function () {
+    function assertType (type, shouldEqual, tagToExtend) {
+      it('type: ' + type + ' extending: ' + tagToExtend, function () {
         var calls = 0;
 
         skate('my-element', {
           type: type,
+          extends: tagToExtend,
           ready: function () {
             ++calls;
           }
@@ -33,9 +34,16 @@ define(['../../src/skate.js'], function (skate) {
     }
 
     describe('tags, attributes and classes', function () {
-      assertType(skate.types.TAG, 2);
+      assertType(skate.types.TAG, 1);
       assertType(skate.types.ATTR, 1);
       assertType(skate.types.CLASS, 1);
+      assertType(skate.types.TAG, 1, 'div');
+      assertType(skate.types.ATTR, 1, 'div');
+      assertType(skate.types.CLASS, 1, 'div');
+      assertType(skate.types.TAG, 0, 'non-existent');
+      assertType(skate.types.ATTR, 0, 'non-existent');
+      assertType(skate.types.CLASS, 0, 'non-existent');
+
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
