@@ -367,7 +367,16 @@
    */
   function makeElementConstructor (component) {
     function CustomElement () {
-      var element = document.createElement(component.id);
+      var element;
+      var tagToExtend = component.extends;
+      var componentId = component.id;
+
+      if (tagToExtend) {
+        element = document.createElement(tagToExtend);
+        element.setAttribute('is', componentId);
+      } else {
+        element = document.createElement(componentId);
+      }
 
       // Ensure the component prototype is up to date with the element's
       // prototype. This ensures that overwriting the element prototype still
@@ -413,11 +422,12 @@
    *
    * @param {String} id The component ID.
    * @param {String} type The component type.
+   * @param {String} tagToExtend The tag the component is extending, if any.
    * @param {String} negateWith The negation string, if any.
    *
    * @returns {String} The compiled selector.
    */
-  function getSelectorForType (id, type, negateWith) {
+  function getSelectorForType (id, type, tagToExtend, negateWith) {
     var isTag = type.indexOf(skate.types.TAG) > -1;
     var isAttr = type.indexOf(skate.types.ATTR) > -1;
     var isClass = type.indexOf(skate.types.CLASS) > -1;
@@ -425,9 +435,13 @@
 
     negateWith = negateWith ? ':not(' + negateWith + ')' : '';
 
+
     if (isTag) {
-      selectors.push(id + negateWith);
-      selectors.push('[is=' + id + ']' + negateWith);
+      if (tagToExtend) {
+        selectors.push('[is=' + id + ']' + negateWith);
+      } else {
+        selectors.push(id + negateWith);
+      }
     }
 
     if (isAttr) {
@@ -926,7 +940,7 @@
     // it's not displayed yet.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
-        getSelectorForType(component.id, component.type, '.' + component.classname) + '{display:none}',
+        getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}',
         hiddenRules.sheet.cssRules.length
       );
     }
@@ -965,17 +979,35 @@
     var attrsLen = attrs.length;
     var components = [];
     var isAttr = attrs.is;
-    var tag = isAttr && (isAttr.value || isAttr.nodeValue) || element.tagName.toLowerCase();
+    var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+    var tag = element.tagName.toLowerCase();
+    var isAttrOrTag = isAttrValue || tag;
+    var component;
+    var tagToExtend;
 
-    if (isComponentOfType(tag, skate.types.TAG)) {
-      components.push(registry[tag]);
+    if (isComponentOfType(isAttrOrTag, skate.types.TAG)) {
+      component = registry[isAttrOrTag];
+      tagToExtend = component.extends;
+
+      if (isAttrValue) {
+        if (tag === tagToExtend) {
+          components.push(component);
+        }
+      } else if (!tagToExtend) {
+        components.push(component);
+      }
     }
 
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
       if (isComponentOfType(attr, skate.types.ATTR)) {
-        components.push(registry[attr]);
+        component = registry[attr];
+        tagToExtend = component.extends;
+
+        if (!tagToExtend || tag === tagToExtend) {
+          components.push(component);
+        }
       }
     }
 
@@ -986,7 +1018,12 @@
       var className = classList[b];
 
       if (isComponentOfType(className, skate.types.CLASS)) {
-        components.push(registry[className]);
+        component = registry[className];
+        tagToExtend = component.extends;
+
+        if (!tagToExtend || tag === tagToExtend) {
+          components.push(component);
+        }
       }
     }
 
@@ -1068,6 +1105,10 @@
     // The events to manage the binding and unbinding of during the component's
     // lifecycle.
     events: false,
+
+    // Restricts a particular component to binding explicitly to an element with
+    // a tag name that matches the specified value.
+    extends: '',
 
     // The ID of the component. This is automatically set in the `skate()`
     // function.
