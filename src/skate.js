@@ -49,7 +49,7 @@
       return;
     }
 
-    if (component.template) {
+    if (typeof component.template === 'function') {
       component.template(target);
     }
 
@@ -868,13 +868,8 @@
       throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
     }
 
-    // Set default template renderer for template strings.
-    if (component.template && typeof component.template === 'string') {
-      component.template = skate.template.html(component.template);
-    }
-
     // If doing something that will modify the component's structure, ensure
-    // it's not displayed yet.
+    // it is hidden.
     if (component.ready || component.template) {
       hiddenRules.sheet.insertRule(
         getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}',
