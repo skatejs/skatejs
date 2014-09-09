@@ -620,7 +620,7 @@ This will create a CSS rule with a selector of:
 
 ```css
 my-unrestricted-component:not(.__skate),
-[my-unrestricted-component]:not(.__skate),
+\[my-unrestricted-component\]:not(.__skate),
 .my-unrestricted-component:not(.__skate) { ... }
 ```
 
