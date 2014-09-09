@@ -15,5 +15,19 @@ define(['../../src/skate.js'], function (skate) {
 
       var myEl = new MyEl();
     });
+
+    it('should have access to the extended prototype in the template function', function () {
+      var MyEl = skate('my-el', {
+        prototype: {
+          myfunc: function () {}
+        },
+
+        template: function (element) {
+          expect(element.myfunc).to.be.a('function');
+        }
+      });
+
+      var myEl = new MyEl();
+    })
   });
 });

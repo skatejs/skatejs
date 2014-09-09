@@ -49,11 +49,12 @@
       return;
     }
 
+    inherit(target, component.prototype);
+
     if (component.template) {
       component.template(target);
     }
 
-    inherit(target, component.prototype);
     addEventListeners(target, component);
     addAttributeListeners(target, component);
 
