@@ -55,12 +55,11 @@
 
     inherit(target, component.prototype);
     addEventListeners(target, component);
+    addAttributeListeners(target, component);
 
     if (component.ready) {
       component.ready(target);
     }
-
-    addAttributeListeners(target, component);
   }
 
   /**

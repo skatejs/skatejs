@@ -93,26 +93,43 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       div.hasAttribute('second').should.equal(false);
     });
 
-    it('should be listening to mutations after the ready callback is called and before it is inserted', function (done) {
+    it('should ensure attributes are initialised', function () {
       var called = false;
-      var ready = false;
-      var Div = skate('div', {
-        ready: function (element) {
-          ready = true;
-        },
-
-        attributes: function () {
+      skate('my-el', {
+        attributes: function (element, data) {
           called = true;
         }
       });
 
-      var div = new Div();
-      expect(ready).to.equal(true);
-      div.setAttribute('what', 'ever');
-      helpers.afterMutations(function () {
-        expect(called).to.equal(true);
-        done();
+      skate.init(helpers.fixture('<my-el some-attr></my-el>'));
+      expect(called).to.equal(true);
+    });
+
+    it('should apply the attribute listeners before the ready callback is called', function (done) {
+      var ready = false;
+      var attributes = false;
+
+      skate('my-el', {
+        ready: function () {
+          ready = true;
+          expect(attributes).to.equal(true);
+          done();
+        },
+
+        attributes: function () {
+          attributes = true;
+          expect(ready).to.equal(false);
+        }
       });
+
+      // We must insert html and init it manually rather than calling a
+      // constructor because the attributes attached to HTML that is inserted
+      // get initialised synchronously since they're not detected using
+      // mutation observers. This is intended behaviour. If we used a
+      // constructor and set an attribute to trigger the change in the ready
+      // callback and then checked to see if it was triggered, it would fail
+      // because that call to set the attribute would happen async.
+      skate.init(helpers.fixture('<my-el some-attr></my-el>'));
     });
   });
 });
