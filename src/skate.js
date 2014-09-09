@@ -49,7 +49,7 @@
       return;
     }
 
-    if (typeof component.template === 'function') {
+    if (component.template) {
       component.template(target);
     }
 

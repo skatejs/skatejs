@@ -12,7 +12,10 @@
   }
 
   skate('x-ignore-checkbox', {
-    template: '<label><input type="checkbox"> <span><content></content></span></label>',
+    template: function (element) {
+      element.innerHTML = '<label><input type="checkbox"> <span><content></content></span></label>';
+    },
+
     ready: function (element) {
       var target = getTarget(element);
 
@@ -20,11 +23,13 @@
         element.setAttribute('checked', target.hasAttribute(ATTR_IGNORE) ? 'true' : 'false');
       }
     },
+
     attributes: {
       checked: function (element, change) {
         getCheckbox(element).checked = change.newValue !== 'false';
       }
     },
+
     events: {
       'change input': function (element, e) {
         var dest = getTarget(element);

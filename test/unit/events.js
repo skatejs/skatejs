@@ -62,7 +62,9 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
           }
         },
 
-        template: '<a><span></span></a>'
+        template: function (element) {
+          element.innerHTML = '<a><span></span></a>';
+        }
       });
 
       var inst = helpers.add('my-component');
