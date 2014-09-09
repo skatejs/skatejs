@@ -39,7 +39,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
   });
 
   describe('Lifecycle scenarios', function () {
-    var calls = {};
+    var calls;
     var El;
 
     beforeEach(function () {
@@ -69,14 +69,14 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
 
       it('should call ready', function (done) {
         helpers.afterMutations(function () {
-          expect(calls.ready).to.equal(1);
+          expect(calls.ready).to.greaterThan(0);
           done();
         });
       });
 
       it('should call insert', function (done) {
         helpers.afterMutations(function () {
-          expect(calls.insert).to.equal(1);
+          expect(calls.insert).to.greaterThan(0);
           done();
         });
       });
