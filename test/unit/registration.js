@@ -60,9 +60,9 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
         skate.init(div);
       }
 
-      function describeSelectorTest (id, type, tagToExtend) {
+      function describeSelectorTest (type) {
         describe('for ' + type, function () {
-          it ('extending ' + tagToExtend, function () {
+          it ('extending div', function () {
             assertSelectorFor('my-element', type, 'div');
           });
 
@@ -74,7 +74,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
 
       for (var type in skate.types) {
         if (skate.types.hasOwnProperty(type)) {
-          describeSelectorTest(type);
+          describeSelectorTest(skate.types[type]);
         }
       }
     });
