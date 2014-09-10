@@ -158,10 +158,11 @@ skate('my-component', {
     }
   },
 
-  // By default, Skate ships with a simple templating mechanism that is
-  // similar to ShadowDOM templating. This is explained later in the
-  // templating section.
-  template: '<article><h3><content select=".heading"></content></h3><section><content><p>There is no content to display.</p></content></section></article>',
+  // A function that renders a template to your element. You can literally use
+  // any templating engine you like here.
+  template: function (element) {
+    bindLatestHipsterTemplateEngineTo(element);
+  },
 
   // The binding methods this component supports. For example, if you specify
   // the `type` as `skate.types.TAG`, then the component will only be bound
