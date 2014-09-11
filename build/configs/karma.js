@@ -9,31 +9,48 @@ module.exports = function (grunt) {
 
   return {
     options: {
-      hostname: grunt.option('host') || 'localhost',
-      port: grunt.option('port') || '9876',
       browsers: browsers,
+
       files: [
         { pattern: 'test/lib/polyfills.js', included: true },
         { pattern: 'test/*.js', included: true },
         { pattern: 'src/*.js', included: false },
         { pattern: 'test/**/*.js', included: false }
       ],
+
       frameworks: [
-        'requirejs',
         'mocha',
         'chai'
       ],
+
+      hostname: grunt.option('host') || 'localhost',
+
       plugins: [
         'karma-chai',
         'karma-chrome-launcher',
         'karma-firefox-launcher',
         'karma-mocha',
         'karma-phantomjs-launcher',
-        'karma-requirejs'
+        'karma-traceur-preprocessor'
       ],
-      singleRun: !grunt.option('watch')
+
+      port: grunt.option('port') || '9876',
+
+      preprocessors: {
+        'src/skate.js': 'traceur'
+      },
+
+      singleRun: !grunt.option('watch'),
+
+      traceurPreprocessor: {
+        options: {
+          modules: 'inline'
+        }
+      }
     },
+
     cli: {},
+
     http: {
       singleRun: false
     }
