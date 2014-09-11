@@ -1,3 +1,5 @@
+import * as data from './data';
+
 (function () {
 
   'use strict';
@@ -8,11 +10,11 @@
   // ------------------
 
   function getLifecycleFlag (target, component, name) {
-    return getData(target, component.id + ':lifecycle:' + name);
+    return data.get(target, component.id + ':lifecycle:' + name);
   }
 
   function setLifecycleFlag (target, component, name, value) {
-    setData(target, component.id + ':lifecycle:' + name, !!value);
+    data.set(target, component.id + ':lifecycle:' + name, !!value);
   }
 
   function ensureLifecycleFlag (target, component, name) {
@@ -230,39 +232,6 @@
 
   // Utilities
   // ---------
-
-  /**
-   * Adds data to the element.
-   *
-   * @param {Element} element The element to get data from.
-   * @param {String} name The name of the data to return.
-   *
-   * @returns {Mixed}
-   */
-  function getData (element, name) {
-    if (element.__SKATE_DATA) {
-      return element.__SKATE_DATA[name];
-    }
-  }
-
-  /**
-   * Adds data to the element.
-   *
-   * @param {Element} element The element to apply data to.
-   * @param {String} name The name of the data.
-   * @param {Mixed} value The data value.
-   *
-   * @returns {undefined}
-   */
-  function setData (element, name, value) {
-    if (!element.__SKATE_DATA) {
-      element.__SKATE_DATA = {};
-    }
-
-    element.__SKATE_DATA[name] = value;
-
-    return element;
-  }
 
   /**
    * Adds a class to the specified element.
