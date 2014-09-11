@@ -23,7 +23,7 @@
     "requirejs": "^2.1.14"
   },
   "scripts": {
-    "postinstall": "./build/bin/npm-postinstall.sh",
+    "postinstall": "sh ./build/bin/npm-postinstall.sh",
     "test": "grunt karma:cli"
   }
 }
