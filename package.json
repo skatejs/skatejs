@@ -21,7 +21,7 @@
     "karma-phantomjs-launcher": "latest"
   },
   "scripts": {
-    "postinstall": "./build/bin/npm-postinstall.sh",
+    "postinstall": "sh ./build/bin/npm-postinstall.sh",
     "test": "grunt karma:cli"
   }
 }
