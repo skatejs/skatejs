@@ -10,15 +10,19 @@
     "bower": "latest",
     "grunt": "latest",
     "grunt-available-tasks": "latest",
-    "grunt-contrib-concat": "~0.4.0",
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
+    "grunt-shell": "^1.1.1",
     "karma-chai": "latest",
     "karma-chrome-launcher": "latest",
     "karma-firefox-launcher": "latest",
     "karma-mocha": "latest",
-    "karma-phantomjs-launcher": "latest"
+    "karma-phantomjs-launcher": "latest",
+    "karma-requirejs": "~0.2.2",
+    "karma-traceur-preprocessor": "~0.3.1",
+    "requirejs": "^2.1.14",
+    "traceur": "latest"
   },
   "scripts": {
     "postinstall": "sh ./build/bin/npm-postinstall.sh",

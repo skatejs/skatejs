@@ -3,7 +3,7 @@ module.exports = function () {
     dist: {
       files: {
         'dist/skate.min.js': [
-          'src/skate.js'
+          'dist/skate.js'
         ]
       }
     }
