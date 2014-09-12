@@ -538,6 +538,10 @@ Contributing
 
 The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, enable these in your editor of choice.
 
+
+
+### Setup
+
 To get a dev environment up and running, all you should need to do is run:
 
     npm install
@@ -545,6 +549,32 @@ To get a dev environment up and running, all you should need to do is run:
 That should install all dependencies (Bower and NPM) and `make` Traceur. To see a list of commands, run:
 
     grunt
+
+
+
+### Testing
+
+To run tests:
+
+    grunt test
+
+Or if you want to keep the Karma server alive to run them in your browser of choice:
+
+    grunt test --keep-alive
+
+To run tests in a specific browser:
+
+    grunt test --browsers Chrome,Firefox
+
+
+
+### Distribution
+
+To build the distribution all you have to do is run:
+
+    grunt dist
+
+This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
 
 
 

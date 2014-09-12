@@ -3,6 +3,6 @@ module.exports = function (grunt) {
 
   grunt.registerTask('test', 'Runs tests.', [
     'shell:test',
-    'karma:cli'
+    'karma:unit'
   ]);
 };

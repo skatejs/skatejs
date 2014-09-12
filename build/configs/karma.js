@@ -32,13 +32,9 @@ module.exports = function (grunt) {
 
       port: grunt.option('port') || '9876',
 
-      singleRun: !grunt.option('watch'),
+      singleRun: !grunt.option('keep-alive'),
     },
 
-    cli: {},
-
-    http: {
-      singleRun: false
-    }
+    unit: {}
   };
 };
