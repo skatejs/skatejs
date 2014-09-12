@@ -26,6 +26,6 @@ describe('ignoring', function () {
     // Ensure all new content is sync'd.
     skate.init(document.body);
 
-    called.should.equal(4);
+    expect(called).to.equal(4);
   });
 });
