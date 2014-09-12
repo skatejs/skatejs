@@ -8,6 +8,16 @@ module.exports = function (grunt) {
         traceurCommand + '--out dist/skate.js --module src/skate.js'
       ].join(' && ')
     },
+    installBower: {
+      command: './node_modules/.bin/bower install'
+    },
+    installTraceur: {
+      command: [
+        'cd ./node_modules/traceur',
+        'make clean',
+        'make'
+      ].join(' && ')
+    },
     test: {
       command: [
         'rm -rf .tmp',

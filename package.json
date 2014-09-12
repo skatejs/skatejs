@@ -22,7 +22,7 @@
     "traceur": "latest"
   },
   "scripts": {
-    "postinstall": "sh ./build/bin/npm-postinstall.sh",
-    "test": "grunt karma:cli"
+    "postinstall": "grunt install",
+    "test": "grunt test"
   }
 }
