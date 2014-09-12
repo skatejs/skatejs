@@ -28,7 +28,7 @@ describe('Using components', function () {
       el4.className = 'my-element';
       skate.init(el4);
 
-      calls.should.equal(shouldEqual);
+      expect(calls).to.equal(shouldEqual);
     });
   }
 
@@ -58,7 +58,7 @@ describe('Using components', function () {
       el.className = 'my-element';
       skate.init(el);
 
-      calls.should.equal(1);
+      expect(calls).to.equal(1);
     });
   });
 });
