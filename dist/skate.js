@@ -19,10 +19,177 @@ var $___46__46__47_src_47_data__ = (function() {
       return $__default;
     }};
 })();
+var $___46__46__47_src_47_utils__ = (function() {
+  "use strict";
+  var __moduleName = "../src/utils";
+  function debounce(fn) {
+    var called = false;
+    return function() {
+      if (!called) {
+        called = true;
+        setTimeout(function() {
+          called = false;
+          fn();
+        }, 1);
+      }
+    };
+  }
+  ;
+  return {get debounce() {
+      return debounce;
+    }};
+})();
+var $___46__46__47_src_47_mutation_45_observer__ = (function() {
+  "use strict";
+  var __moduleName = "../src/mutation-observer";
+  var debounce = ($___46__46__47_src_47_utils__).debounce;
+  function elementContains(source, target) {
+    if (source.nodeType !== 1) {
+      return false;
+    }
+    return source.contains ? source.contains(target) : elProtoContains.call(source, target);
+  }
+  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+  if (!MutationObserver) {
+    MutationObserver = function(callback) {
+      this.callback = callback;
+      this.elements = [];
+    };
+    MutationObserver.prototype = {
+      observe: function(target, options) {
+        function addEventToBatch(e) {
+          batchedEvents.push(e);
+          batchEvents();
+        }
+        function batchEvent(e) {
+          var eTarget = e.target;
+          if (!eTarget) {
+            return;
+          }
+          var eType = e.type;
+          var eTargetParent = eTarget.parentNode;
+          var isDomNodeInserted = eType === 'DOMNodeInserted';
+          if (!canTriggerInsertOrRemove(eTargetParent)) {
+            return;
+          }
+          if (lastBatchedElement && isDomNodeInserted && elementContains(lastBatchedElement, eTarget)) {
+            return;
+          }
+          if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
+            batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
+          }
+          if (isDomNodeInserted) {
+            if (!lastBatchedRecord.addedNodes) {
+              lastBatchedRecord.addedNodes = [];
+            }
+            lastBatchedRecord.addedNodes.push(eTarget);
+          } else {
+            if (!lastBatchedRecord.removedNodes) {
+              lastBatchedRecord.removedNodes = [];
+            }
+            lastBatchedRecord.removedNodes.push(eTarget);
+          }
+          lastBatchedElement = eTarget;
+        }
+        function canTriggerAttributeModification(eTarget) {
+          return options.attributes && (options.subtree || eTarget === target);
+        }
+        function canTriggerInsertOrRemove(eTargetParent) {
+          return options.childList && (options.subtree || eTargetParent === target);
+        }
+        var that = this;
+        var lastBatchedElement;
+        var lastBatchedRecord;
+        var batchedEvents = [];
+        var batchedRecords = [];
+        var batchEvents = debounce(function() {
+          var batchedEventsLen = batchedEvents.length;
+          for (var a = 0; a < batchedEventsLen; a++) {
+            batchEvent(batchedEvents[a]);
+          }
+          that.callback(batchedRecords);
+          batchedEvents = [];
+          batchedRecords = [];
+          lastBatchedElement = undefined;
+          lastBatchedRecord = undefined;
+        });
+        var attributeOldValueCache = {};
+        var attributeMutations = [];
+        var batchAttributeMods = debounce(function() {
+          var len = attributeMutations.length;
+          that.callback(attributeMutations);
+          attributeMutations.splice(0, len);
+        });
+        var observed = {
+          target: target,
+          options: options,
+          insertHandler: addEventToBatch,
+          removeHandler: addEventToBatch,
+          attributeHandler: function(e) {
+            var eTarget = e.target;
+            if (!canTriggerAttributeModification(eTarget)) {
+              return;
+            }
+            var eAttrName = e.attrName;
+            var ePrevValue = e.prevValue;
+            var eNewValue = e.newValue;
+            var record = newMutationRecord(eTarget, 'attributes');
+            record.attributeName = eAttrName;
+            if (options.attributeOldValue) {
+              record.oldValue = attributeOldValueCache[eAttrName] || ePrevValue || null;
+            }
+            attributeMutations.push(record);
+            if (options.attributeOldValue) {
+              attributeOldValueCache[eAttrName] = eNewValue;
+            }
+            batchAttributeMods();
+          }
+        };
+        this.elements.push(observed);
+        if (options.childList) {
+          target.addEventListener('DOMNodeInserted', observed.insertHandler);
+          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
+        }
+        if (options.attributes) {
+          target.addEventListener('DOMAttrModified', observed.attributeHandler);
+        }
+        return this;
+      },
+      disconnect: function() {
+        objEach(this.elements, function(observed) {
+          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
+          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
+          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
+        });
+        this.elements = [];
+        return this;
+      }
+    };
+  }
+  function newMutationRecord(target, type) {
+    return {
+      addedNodes: null,
+      attributeName: null,
+      attributeNamespace: null,
+      nextSibling: null,
+      oldValue: null,
+      previousSibling: null,
+      removedNodes: null,
+      target: target,
+      type: type || 'childList'
+    };
+  }
+  var $__default = MutationObserver;
+  return {get default() {
+      return $__default;
+    }};
+})();
 var $___46__46__47_src_47_skate__ = (function() {
   "use strict";
   var __moduleName = "../src/skate";
   var data = ($___46__46__47_src_47_data__).default;
+  var debounce = ($___46__46__47_src_47_utils__).debounce;
+  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
   function getLifecycleFlag(target, component, name) {
     return data.get(target, component.id + ':lifecycle:' + name);
   }
@@ -240,12 +407,6 @@ var $___46__46__47_src_47_skate__ = (function() {
   function isComponentOfType(id, type) {
     return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
   }
-  function elementContains(source, target) {
-    if (source.nodeType !== 1) {
-      return false;
-    }
-    return source.contains ? source.contains(target) : elProtoContains.call(source, target);
-  }
   function initElement(element) {
     if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
       return;
@@ -286,18 +447,6 @@ var $___46__46__47_src_47_skate__ = (function() {
       }
     }
   }
-  function debounce(fn) {
-    var called = false;
-    return function() {
-      if (!called) {
-        called = true;
-        setTimeout(function() {
-          called = false;
-          fn();
-        }, 1);
-      }
-    };
-  }
   function treeWalkerFilter(node) {
     var attrs = node.attributes;
     return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
@@ -313,135 +462,6 @@ var $___46__46__47_src_47_skate__ = (function() {
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
   var registry = {};
-  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-  if (!MutationObserver) {
-    MutationObserver = function(callback) {
-      this.callback = callback;
-      this.elements = [];
-    };
-    MutationObserver.prototype = {
-      observe: function(target, options) {
-        function addEventToBatch(e) {
-          batchedEvents.push(e);
-          batchEvents();
-        }
-        function batchEvent(e) {
-          var eTarget = e.target;
-          if (!eTarget) {
-            return;
-          }
-          var eType = e.type;
-          var eTargetParent = eTarget.parentNode;
-          if (!canTriggerInsertOrRemove(eTargetParent)) {
-            return;
-          }
-          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
-            return;
-          }
-          if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
-            batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
-          }
-          if (eType === 'DOMNodeInserted') {
-            if (!lastBatchedRecord.addedNodes) {
-              lastBatchedRecord.addedNodes = [];
-            }
-            lastBatchedRecord.addedNodes.push(eTarget);
-          } else {
-            if (!lastBatchedRecord.removedNodes) {
-              lastBatchedRecord.removedNodes = [];
-            }
-            lastBatchedRecord.removedNodes.push(eTarget);
-          }
-          lastBatchedElement = eTarget;
-        }
-        function canTriggerAttributeModification(eTarget) {
-          return options.attributes && (options.subtree || eTarget === target);
-        }
-        function canTriggerInsertOrRemove(eTargetParent) {
-          return options.childList && (options.subtree || eTargetParent === target);
-        }
-        var that = this;
-        var lastBatchedElement;
-        var lastBatchedRecord;
-        var batchedEvents = [];
-        var batchedRecords = [];
-        var batchEvents = debounce(function() {
-          var batchedEventsLen = batchedEvents.length;
-          for (var a = 0; a < batchedEventsLen; a++) {
-            batchEvent(batchedEvents[a]);
-          }
-          that.callback(batchedRecords);
-          batchedEvents = [];
-          batchedRecords = [];
-          lastBatchedElement = undefined;
-          lastBatchedRecord = undefined;
-        });
-        var attributeOldValueCache = {};
-        var attributeMutations = [];
-        var batchAttributeMods = debounce(function() {
-          var len = attributeMutations.length;
-          that.callback(attributeMutations);
-          attributeMutations.splice(0, len);
-        });
-        var observed = {
-          target: target,
-          options: options,
-          insertHandler: addEventToBatch,
-          removeHandler: addEventToBatch,
-          attributeHandler: function(e) {
-            var eTarget = e.target;
-            if (!canTriggerAttributeModification(eTarget)) {
-              return;
-            }
-            var eAttrName = e.attrName;
-            var ePrevValue = e.prevValue;
-            var eNewValue = e.newValue;
-            var record = newMutationRecord(eTarget, 'attributes');
-            record.attributeName = eAttrName;
-            if (options.attributeOldValue) {
-              record.oldValue = attributeOldValueCache[eAttrName] || ePrevValue || null;
-            }
-            attributeMutations.push(record);
-            if (options.attributeOldValue) {
-              attributeOldValueCache[eAttrName] = eNewValue;
-            }
-            batchAttributeMods();
-          }
-        };
-        this.elements.push(observed);
-        if (options.childList) {
-          target.addEventListener('DOMNodeInserted', observed.insertHandler);
-          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
-        }
-        if (options.attributes) {
-          target.addEventListener('DOMAttrModified', observed.attributeHandler);
-        }
-        return this;
-      },
-      disconnect: function() {
-        objEach(this.elements, function(observed) {
-          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
-          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
-          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
-        });
-        this.elements = [];
-        return this;
-      }
-    };
-  }
-  function newMutationRecord(target, type) {
-    return {
-      addedNodes: null,
-      attributeName: null,
-      attributeNamespace: null,
-      nextSibling: null,
-      oldValue: null,
-      previousSibling: null,
-      removedNodes: null,
-      target: target,
-      type: type || 'childList'
-    };
-  }
   function skate(id, component) {
     component = inherit(component || {}, skate.defaults);
     component.id = id;
