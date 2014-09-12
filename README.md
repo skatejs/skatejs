@@ -95,8 +95,8 @@ skate('my-component', {
   //
   // - type: The type of modification (insert, update or remove).
   // - name: The attribute name.
-  // - newValue: The new value. If inserted, this will be undefined.
-  // - oldValue: The old value. If removed, this will be undefined.
+  // - newValue: The new value. If type === 'remove', this will be undefined.
+  // - oldValue: The old value. If type === 'insert', this will be undefined.
   attributes: {
     'my-attribute': {
       insert: function (element, change) {
