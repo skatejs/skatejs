@@ -19,9 +19,25 @@ var $___46__46__47_src_47_data__ = (function() {
       return $__default;
     }};
 })();
+var $___46__46__47_src_47_constants__ = (function() {
+  "use strict";
+  var __moduleName = "../src/constants";
+  var ATTR_IGNORE = 'data-skate-ignore';
+  return {get ATTR_IGNORE() {
+      return ATTR_IGNORE;
+    }};
+})();
 var $___46__46__47_src_47_utils__ = (function() {
   "use strict";
   var __moduleName = "../src/utils";
+  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
+  function addClass(element, classname) {
+    if (element.classList) {
+      element.classList.add(classname);
+    } else {
+      element.className += element.className ? ' ' + classname : classname;
+    }
+  }
   function debounce(fn) {
     var called = false;
     return function() {
@@ -35,14 +51,107 @@ var $___46__46__47_src_47_utils__ = (function() {
     };
   }
   ;
-  return {get debounce() {
+  function getClassList(element) {
+    var classList = element.classList;
+    if (classList) {
+      return classList;
+    }
+    var attrs = element.attributes;
+    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
+  }
+  function getClosestIgnoredElement(element) {
+    var parent = element;
+    while (parent && parent !== document) {
+      if (parent.hasAttribute(ATTR_IGNORE)) {
+        return parent;
+      }
+      parent = parent.parentNode;
+    }
+  }
+  function getSelectorForType(id, type, tagToExtend, negateWith) {
+    var isTag = type.indexOf(skate.types.TAG) > -1;
+    var isAttr = type.indexOf(skate.types.ATTR) > -1;
+    var isClass = type.indexOf(skate.types.CLASS) > -1;
+    var selectors = [];
+    tagToExtend = tagToExtend || '';
+    negateWith = negateWith ? ':not(' + negateWith + ')' : '';
+    if (isTag) {
+      if (tagToExtend) {
+        selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
+      } else {
+        selectors.push(id + negateWith);
+      }
+    }
+    if (isAttr) {
+      selectors.push(tagToExtend + '[' + id + ']' + negateWith);
+    }
+    if (isClass) {
+      selectors.push(tagToExtend + '.' + id + negateWith);
+    }
+    return selectors.join(',');
+  }
+  function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+  function inherit(child, parent) {
+    var names = Object.getOwnPropertyNames(parent);
+    var namesLen = names.length;
+    for (var a = 0; a < namesLen; a++) {
+      var name = names[a];
+      if (child[name] === undefined) {
+        var desc = Object.getOwnPropertyDescriptor(parent, name);
+        var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
+        if (shouldDefineProps) {
+          Object.defineProperty(child, name, desc);
+        } else {
+          child[name] = parent[name];
+        }
+      }
+    }
+    return child;
+  }
+  function objEach(obj, fn) {
+    for (var a in obj) {
+      if (hasOwn(obj, a)) {
+        fn(obj[a], a);
+      }
+    }
+  }
+  return {
+    get addClass() {
+      return addClass;
+    },
+    get debounce() {
       return debounce;
-    }};
+    },
+    get getClassList() {
+      return getClassList;
+    },
+    get getClosestIgnoredElement() {
+      return getClosestIgnoredElement;
+    },
+    get getSelectorForType() {
+      return getSelectorForType;
+    },
+    get hasOwn() {
+      return hasOwn;
+    },
+    get inherit() {
+      return inherit;
+    },
+    get objEach() {
+      return objEach;
+    }
+  };
 })();
 var $___46__46__47_src_47_mutation_45_observer__ = (function() {
   "use strict";
   var __moduleName = "../src/mutation-observer";
-  var debounce = ($___46__46__47_src_47_utils__).debounce;
+  var $__1 = $___46__46__47_src_47_utils__,
+      debounce = $__1.debounce,
+      objEach = $__1.objEach;
+  var elProto = window.HTMLElement.prototype;
+  var elProtoContains = elProto.contains;
   function elementContains(source, target) {
     if (source.nodeType !== 1) {
       return false;
@@ -183,12 +292,15 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       return $__default;
     }};
 })();
-var $___46__46__47_src_47_skate__ = (function() {
+var $___46__46__47_src_47_lifecycle__ = (function() {
   "use strict";
-  var __moduleName = "../src/skate";
+  var __moduleName = "../src/lifecycle";
   var data = ($___46__46__47_src_47_data__).default;
-  var debounce = ($___46__46__47_src_47_utils__).debounce;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
+  var $__4 = $___46__46__47_src_47_utils__,
+      addClass = $__4.addClass,
+      inherit = $__4.inherit,
+      objEach = $__4.objEach;
   function getLifecycleFlag(target, component, name) {
     return data.get(target, component.id + ':lifecycle:' + name);
   }
@@ -201,6 +313,15 @@ var $___46__46__47_src_47_skate__ = (function() {
     }
     setLifecycleFlag(target, component, name, true);
     return false;
+  }
+  var elProto = window.HTMLElement.prototype;
+  var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
+  function parseEvent(e) {
+    var parts = e.split(' ');
+    return {
+      name: parts.shift(),
+      delegate: parts.join(' ')
+    };
   }
   function triggerLifecycle(target, component) {
     triggerReady(target, component);
@@ -305,106 +426,30 @@ var $___46__46__47_src_47_skate__ = (function() {
       target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
     });
   }
-  function parseEvent(e) {
-    var parts = e.split(' ');
-    return {
-      name: parts.shift(),
-      delegate: parts.join(' ')
-    };
-  }
-  function addClass(element, classname) {
-    if (element.classList) {
-      element.classList.add(classname);
-    } else {
-      element.className += element.className ? ' ' + classname : classname;
+  ;
+  return {
+    get triggerLifecycle() {
+      return triggerLifecycle;
+    },
+    get triggerReady() {
+      return triggerReady;
+    },
+    get triggerRemove() {
+      return triggerRemove;
     }
-  }
-  function getClassList(element) {
-    var classList = element.classList;
-    if (classList) {
-      return classList;
-    }
-    var attrs = element.attributes;
-    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-  }
-  function inherit(child, parent) {
-    var names = Object.getOwnPropertyNames(parent);
-    var namesLen = names.length;
-    for (var a = 0; a < namesLen; a++) {
-      var name = names[a];
-      if (child[name] === undefined) {
-        var desc = Object.getOwnPropertyDescriptor(parent, name);
-        var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
-        if (shouldDefineProps) {
-          Object.defineProperty(child, name, desc);
-        } else {
-          child[name] = parent[name];
-        }
-      }
-    }
-    return child;
-  }
-  function hasOwn(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-  }
-  function objEach(obj, fn) {
-    for (var a in obj) {
-      if (hasOwn(obj, a)) {
-        fn(obj[a], a);
-      }
-    }
-  }
-  function makeElementConstructor(component) {
-    function CustomElement() {
-      var element;
-      var tagToExtend = component.extends;
-      var componentId = component.id;
-      if (tagToExtend) {
-        element = document.createElement(tagToExtend);
-        element.setAttribute('is', componentId);
-      } else {
-        element = document.createElement(componentId);
-      }
-      component.prototype = CustomElement.prototype;
-      triggerReady(element, component);
-      return element;
-    }
-    CustomElement.prototype = component.prototype;
-    return CustomElement;
-  }
-  function getClosestIgnoredElement(element) {
-    var parent = element;
-    while (parent && parent !== document) {
-      if (parent.hasAttribute(ATTR_IGNORE)) {
-        return parent;
-      }
-      parent = parent.parentNode;
-    }
-  }
-  function getSelectorForType(id, type, tagToExtend, negateWith) {
-    var isTag = type.indexOf(skate.types.TAG) > -1;
-    var isAttr = type.indexOf(skate.types.ATTR) > -1;
-    var isClass = type.indexOf(skate.types.CLASS) > -1;
-    var selectors = [];
-    tagToExtend = tagToExtend || '';
-    negateWith = negateWith ? ':not(' + negateWith + ')' : '';
-    if (isTag) {
-      if (tagToExtend) {
-        selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
-      } else {
-        selectors.push(id + negateWith);
-      }
-    }
-    if (isAttr) {
-      selectors.push(tagToExtend + '[' + id + ']' + negateWith);
-    }
-    if (isClass) {
-      selectors.push(tagToExtend + '.' + id + negateWith);
-    }
-    return selectors.join(',');
-  }
-  function isComponentOfType(id, type) {
-    return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
+  };
+})();
+var $___46__46__47_src_47_init__ = (function() {
+  "use strict";
+  var __moduleName = "../src/init";
+  var debounce = ($___46__46__47_src_47_utils__).debounce;
+  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
+  var $__7 = $___46__46__47_src_47_lifecycle__,
+      triggerLifecycle = $__7.triggerLifecycle,
+      triggerRemove = $__7.triggerRemove;
+  function treeWalkerFilter(node) {
+    var attrs = node.attributes;
+    return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
   }
   function initElement(element) {
     if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
@@ -446,21 +491,65 @@ var $___46__46__47_src_47_skate__ = (function() {
       }
     }
   }
-  function treeWalkerFilter(node) {
-    var attrs = node.attributes;
-    return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
-  }
   var initDocument = debounce(function() {
     initElement(document.getElementsByTagName('html')[0]);
   });
-  var ATTR_IGNORE = 'data-skate-ignore';
-  var elProto = window.HTMLElement.prototype;
-  var elProtoContains = elProto.contains;
-  var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
+  ;
+  return {
+    get initDocument() {
+      return initDocument;
+    },
+    get initElements() {
+      return initElements;
+    },
+    get removeElements() {
+      return removeElements;
+    }
+  };
+})();
+var $___46__46__47_src_47_skate__ = (function() {
+  "use strict";
+  var __moduleName = "../src/skate";
+  var data = ($___46__46__47_src_47_data__).default;
+  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
+  var triggerReady = ($___46__46__47_src_47_lifecycle__).triggerReady;
+  var $__11 = $___46__46__47_src_47_init__,
+      initDocument = $__11.initDocument,
+      initElements = $__11.initElements,
+      removeElements = $__11.removeElements;
+  var $__12 = $___46__46__47_src_47_utils__,
+      debounce = $__12.debounce,
+      getClassList = $__12.getClassList,
+      getClosestIgnoredElement = $__12.getClosestIgnoredElement,
+      getSelectorForType = $__12.getSelectorForType,
+      hasOwn = $__12.hasOwn,
+      inherit = $__12.inherit,
+      objEach = $__12.objEach;
   var documentListener;
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
   var registry = {};
+  function isComponentOfType(id, type) {
+    return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
+  }
+  function makeElementConstructor(component) {
+    function CustomElement() {
+      var element;
+      var tagToExtend = component.extends;
+      var componentId = component.id;
+      if (tagToExtend) {
+        element = document.createElement(tagToExtend);
+        element.setAttribute('is', componentId);
+      } else {
+        element = document.createElement(componentId);
+      }
+      component.prototype = CustomElement.prototype;
+      triggerReady(element, component);
+      return element;
+    }
+    CustomElement.prototype = component.prototype;
+    return CustomElement;
+  }
   function skate(id, component) {
     component = inherit(component || {}, skate.defaults);
     component.id = id;

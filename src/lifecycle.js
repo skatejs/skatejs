@@ -1,4 +1,5 @@
 import data from './data';
+import MutationObserver from './mutation-observer';
 
 import {
   addClass,
