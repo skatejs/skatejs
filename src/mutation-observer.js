@@ -56,13 +56,12 @@ if (!MutationObserver) {
 
         var eType = e.type;
         var eTargetParent = eTarget.parentNode;
-        var isDomNodeInserted = eType === 'DOMNodeInserted';
 
         if (!canTriggerInsertOrRemove(eTargetParent)) {
           return;
         }
 
-        if (lastBatchedElement && isDomNodeInserted && elementContains(lastBatchedElement, eTarget)) {
+        if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
           return;
         }
 
@@ -70,7 +69,7 @@ if (!MutationObserver) {
           batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
         }
 
-        if (isDomNodeInserted) {
+        if (eType === 'DOMNodeInserted') {
           if (!lastBatchedRecord.addedNodes) {
             lastBatchedRecord.addedNodes = [];
           }

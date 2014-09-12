@@ -10,5 +10,3 @@ import './unit/lifecycle';
 import './unit/registration';
 import './unit/templating';
 import './unit/version';
-
-window.__karma__.start();

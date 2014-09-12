@@ -68,17 +68,16 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
           }
           var eType = e.type;
           var eTargetParent = eTarget.parentNode;
-          var isDomNodeInserted = eType === 'DOMNodeInserted';
           if (!canTriggerInsertOrRemove(eTargetParent)) {
             return;
           }
-          if (lastBatchedElement && isDomNodeInserted && elementContains(lastBatchedElement, eTarget)) {
+          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
             return;
           }
           if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
-          if (isDomNodeInserted) {
+          if (eType === 'DOMNodeInserted') {
             if (!lastBatchedRecord.addedNodes) {
               lastBatchedRecord.addedNodes = [];
             }
