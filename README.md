@@ -47,13 +47,17 @@ Or NPM:
 
 Include either `dist/skate.js` or `dist/skate.min.js`.
 
+### ES6 Modules
+
+Skate is written using ES6. If you're using [Tracuer](https://github.com/google/traceur-compiler) then you don't have to load it from the `dist` directory, you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module.
+
 ### AMD
 
-Skate supports AMD if detected and is registered as an anonymous module.
+An anonymous AMD module is defined, if supported.
 
 ### CommonJS
 
-Skate also exports itself as a CommonJS module if detected.
+A CommonJS module is exported, if supported.
 
 ### Global
 
