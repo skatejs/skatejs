@@ -1,327 +1,58 @@
 import data from './data';
-import { debounce } from './utils';
 import MutationObserver from './mutation-observer';
 
+import {
+  triggerReady
+} from './lifecycle';
+
+import {
+  initDocument,
+  initElements,
+  removeElements
+} from './init';
+
+import {
+  debounce,
+  getClassList,
+  getClosestIgnoredElement,
+  getSelectorForType,
+  hasOwn,
+  inherit,
+  objEach
+} from './utils';
 
 
-// Lifecycle Triggers
-// ------------------
 
-function getLifecycleFlag (target, component, name) {
-  return data.get(target, component.id + ':lifecycle:' + name);
-}
+// The observer listening to document changes.
+var documentListener;
 
-function setLifecycleFlag (target, component, name, value) {
-  data.set(target, component.id + ':lifecycle:' + name, !!value);
-}
+// Whether or not DOMContentLoaded has been triggered.
+var isDomContentLoaded = document.readyState === 'complete' ||
+  document.readyState === 'loaded' ||
+  document.readyState === 'interactive';
 
-function ensureLifecycleFlag (target, component, name) {
-  if (getLifecycleFlag(target, component, name)) {
-    return true;
-  }
-  setLifecycleFlag(target, component, name, true);
-  return false;
-}
+// Stylesheet that contains rules for preventing certain components from
+// showing when they're added to the DOM. This is so that we can simulate
+// calling a lifecycle callback before the element is added to the DOM which
+// helps to prevent any jank if the ready() callback modifies the element.
+var hiddenRules = document.createElement('style');
 
-/**
- * Triggers the entire element lifecycle if it's not being ignored.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerLifecycle (target, component) {
-  triggerReady(target, component);
-  triggerInsert(target, component);
-}
+// Component registry.
+var registry = {};
 
-/**
- * Triggers the ready lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerReady (target, component) {
-  if (ensureLifecycleFlag(target, component, 'ready')) {
-    return;
-  }
 
-  inherit(target, component.prototype);
-
-  if (component.template) {
-    component.template(target);
-  }
-
-  addEventListeners(target, component);
-  addAttributeListeners(target, component);
-
-  if (component.ready) {
-    component.ready(target);
-  }
-}
 
 /**
- * Triggers the insert lifecycle callback.
+ * Returns whether or not the specified component can be bound using the
+ * specified type.
  *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerInsert (target, component) {
-  if (ensureLifecycleFlag(target, component, 'insert')) {
-    return;
-  }
-
-  addClass(target, component.classname);
-
-  if (component.insert) {
-    component.insert(target);
-  }
-}
-
-/**
- * Triggers the remove lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerRemove (target, component) {
-  if (component.remove) {
-    component.remove(target);
-    setLifecycleFlag(target, component, 'insert', false);
-  }
-}
-
-/**
- * Binds attribute listeners for the specified attribute handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function addAttributeListeners (target, component) {
-  function triggerCallback (type, name, newValue, oldValue) {
-    var callback;
-
-    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
-      callback = component.attributes[name][type];
-    } else if (component.attributes && typeof component.attributes[name] === 'function') {
-      callback = component.attributes[name];
-    } else if (typeof component.attributes === 'function') {
-      callback = component.attributes;
-    }
-
-    // There may still not be a callback.
-    if (callback) {
-      callback(target, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
-    }
-  }
-
-  var attrs = target.attributes;
-  var attrsLen = attrs.length;
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      var type;
-      var name = mutation.attributeName;
-      var attr = attrs[name];
-
-      if (attr && mutation.oldValue === null) {
-        type = 'insert';
-      } else if (attr && mutation.oldValue !== null) {
-        type = 'update';
-      } else if (!attr) {
-        type = 'remove';
-      }
-
-      triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
-    });
-  });
-
-  observer.observe(target, {
-    attributes: true,
-    attributeOldValue: true
-  });
-
-  // In default web components, attribute changes aren't triggered for
-  // attributes that already exist on an element when it is bound. This sucks
-  // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute calling the
-  // "insert" callback that already exists on the element.
-  for (var a = 0; a < attrsLen; a++) {
-    var attr = attrs[a];
-
-    // If an attribute is removed during the enumeration, then we must ensure
-    // that each one still exists when it comes time to action it.
-    if (attr) {
-      triggerCallback('insert', attr.nodeName, (attr.value || attr.nodeValue));
-    }
-  }
-}
-
-/**
- * Binds event listeners for the specified event handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function addEventListeners (target, component) {
-  if (typeof component.events !== 'object') {
-    return;
-  }
-
-  function makeHandler (handler, delegate) {
-    return function (e) {
-      // If we're not delegating, trigger directly on the component element.
-      if (!delegate) {
-        return handler(target, e, target);
-      }
-
-      // If we're delegating, but the target doesn't match, then we've have
-      // to go up the tree until we find a matching ancestor or stop at the
-      // component element, or document. If a matching ancestor is found, the
-      // handler is triggered on it.
-      var current = e.target;
-
-      while (current && current !== document && current !== target) {
-        if (matchesSelector.call(current, delegate)) {
-          return handler(target, e, current);
-        }
-
-        current = current.parentNode;
-      }
-    };
-  }
-
-  objEach(component.events, function (handler, name) {
-    var evt = parseEvent(name);
-    target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
-  });
-}
-
-/**
- * Parses an event definition and returns information about it.
- *
- * @param {String} e The event to parse.
- *
- * @returns {Object]}
- */
-function parseEvent (e) {
-  var parts = e.split(' ');
-  return {
-    name: parts.shift(),
-    delegate: parts.join(' ')
-  };
-}
-
-
-// Utilities
-// ---------
-
-/**
- * Adds a class to the specified element.
- *
- * @param {Element} element The element to add the class to.
- * @param {String} classname The classname to add.
- *
- * @returns {undefined}
- */
-function addClass (element, classname) {
-  if (element.classList) {
-    element.classList.add(classname);
-  } else {
-    element.className += element.className ? ' ' + classname : classname;
-  }
-}
-
-/**
- * Returns the class list for the specified element.
- *
- * @param {Element} element The element to get the class list for.
- *
- * @returns {ClassList | Array}
- */
-function getClassList (element) {
-  var classList = element.classList;
-
-  if (classList) {
-    return classList;
-  }
-
-  var attrs = element.attributes;
-
-  return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-}
-
-/**
- * Merges the second argument into the first.
- *
- * @param {Object} child The object to merge into.
- * @param {Object} parent The object to merge from.
- *
- * @returns {Object} Returns the child object.
- */
-function inherit (child, parent) {
-  var names = Object.getOwnPropertyNames(parent);
-  var namesLen = names.length;
-
-  for (var a = 0; a < namesLen; a++) {
-    var name = names[a];
-
-    if (child[name] === undefined) {
-      var desc = Object.getOwnPropertyDescriptor(parent, name);
-      var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
-
-      if (shouldDefineProps) {
-        Object.defineProperty(child, name, desc);
-      } else {
-        child[name] = parent[name];
-      }
-    }
-  }
-
-  return child;
-}
-
-/**
- * Checks {}.hasOwnProperty in a safe way.
- *
- * @param {Object} obj The object the property is on.
- * @param {String} key The object key to check.
+ * @param {String} id The component ID.
+ * @param {String} type The component type.
  *
  * @returns {Boolean}
  */
-function hasOwn (obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-/**
- * Traverses an object checking hasOwnProperty.
- *
- * @param {Object} obj The object to traverse.
- * @param {Function} fn The function to call for each item in the object.
- *
- * @returns {undefined}
- */
-function objEach (obj, fn) {
-  for (var a in obj) {
-    if (hasOwn(obj, a)) {
-      fn(obj[a], a);
-    }
-  }
+function isComponentOfType (id, type) {
+  return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
 }
 
 /**
@@ -362,214 +93,6 @@ function makeElementConstructor (component) {
 
   return CustomElement;
 }
-
-/**
- * Returns whether or not the specified element has been selectively ignored.
- *
- * @param {Element} element The element to check and traverse up from.
- *
- * @returns {Boolean}
- */
-function getClosestIgnoredElement (element) {
-  var parent = element;
-
-  while (parent && parent !== document) {
-    if (parent.hasAttribute(ATTR_IGNORE)) {
-      return parent;
-    }
-
-    parent = parent.parentNode;
-  }
-}
-
-/**
- * Returns a selector for the specified component based on the types given.
- * If a negation selector is passed in then it will append :not(negateWith) to
- *  the selector.
- *
- * @param {String} id The component ID.
- * @param {String} type The component type.
- * @param {String} tagToExtend The tag the component is extending, if any.
- * @param {String} negateWith The negation string, if any.
- *
- * @returns {String} The compiled selector.
- */
-function getSelectorForType (id, type, tagToExtend, negateWith) {
-  var isTag = type.indexOf(skate.types.TAG) > -1;
-  var isAttr = type.indexOf(skate.types.ATTR) > -1;
-  var isClass = type.indexOf(skate.types.CLASS) > -1;
-  var selectors = [];
-
-  tagToExtend = tagToExtend || '';
-  negateWith = negateWith ? ':not(' + negateWith + ')' : '';
-
-  if (isTag) {
-    if (tagToExtend) {
-      selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
-    } else {
-      selectors.push(id + negateWith);
-    }
-  }
-
-  if (isAttr) {
-    selectors.push(tagToExtend + '[' + id + ']' + negateWith);
-  }
-
-  if (isClass) {
-    selectors.push(tagToExtend + '.' + id + negateWith);
-  }
-
-  return selectors.join(',');
-}
-
-/**
- * Returns whether or not the specified component can be bound using the
- * specified type.
- *
- * @param {String} id The component ID.
- * @param {String} type The component type.
- *
- * @returns {Boolean}
- */
-function isComponentOfType (id, type) {
-  return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
-}
-
-/**
- * Initialises a single element and its descendants.
- *
- * @param {HTMLElement} element The element tree to initialise.
- *
- * @returns {undefined}
- */
-function initElement (element) {
-  if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
-    return;
-  }
-
-  var walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, treeWalkerFilter, true);
-  var currentNodeComponents = skate.components(element);
-  var currentNodeComponentsLength = currentNodeComponents.length;
-
-  for (var a = 0; a < currentNodeComponentsLength; a++) {
-    triggerLifecycle(element, currentNodeComponents[a]);
-  }
-
-  while (walker.nextNode()) {
-    var walkerNode = walker.currentNode;
-    var walkerNodeComponents = skate.components(walkerNode);
-    var walkerNodeComponentsLength = walkerNodeComponents.length;
-
-    for (var b = 0; b < walkerNodeComponentsLength; b++) {
-      triggerLifecycle(walkerNode, walkerNodeComponents[b]);
-    }
-  }
-}
-
-/**
- * Initialises a set of elements.
- *
- * @param {DOMNodeList | Array} elements A traversable set of elements.
- *
- * @returns {undefined}
- */
-function initElements (elements) {
-  var len = elements.length;
-
-  for (var a = 0; a < len; a++) {
-    initElement(elements[a]);
-  }
-}
-
-/**
- * Triggers the remove lifecycle callback on all of the elements.
- *
- * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
- * callback on.
- *
- * @returns {undefined}
- */
-function removeElements (elements) {
-  var len = elements.length;
-
-  for (var a = 0; a < len; a++) {
-    var element = elements[a];
-
-    if (element.nodeType !== 1) {
-      continue;
-    }
-
-    removeElements(element.childNodes);
-
-    var components = skate.components(element);
-    var componentsLen = components.length;
-
-    for (var b = 0; b < componentsLen; b++) {
-      triggerRemove(element, components[b]);
-    }
-  }
-}
-
-/**
- * Filters out invalid nodes for a document tree walker.
- *
- * @param {DOMNode} node The node to filter.
- *
- * @returns {Integer}
- */
-function treeWalkerFilter (node) {
-  var attrs = node.attributes;
-  return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
-}
-
-/**
- * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution.
- *
- * @returns {undefined}
- */
-var initDocument = debounce(function () {
-  initElement(document.getElementsByTagName('html')[0]);
-});
-
-
-
-// Constants
-// ---------
-
-var ATTR_IGNORE = 'data-skate-ignore';
-
-
-
-// Global Variables
-// ----------------
-
-var elProto = window.HTMLElement.prototype;
-var elProtoContains = elProto.contains;
-var matchesSelector = (
-    elProto.matches ||
-    elProto.msMatchesSelector ||
-    elProto.webkitMatchesSelector ||
-    elProto.mozMatchesSelector ||
-    elProto.oMatchesSelector
-  );
-
-// The observer listening to document changes.
-var documentListener;
-
-// Whether or not DOMContentLoaded has been triggered.
-var isDomContentLoaded = document.readyState === 'complete' ||
-  document.readyState === 'loaded' ||
-  document.readyState === 'interactive';
-
-// Stylesheet that contains rules for preventing certain components from
-// showing when they're added to the DOM. This is so that we can simulate
-// calling a lifecycle callback before the element is added to the DOM which
-// helps to prevent any jank if the ready() callback modifies the element.
-var hiddenRules = document.createElement('style');
-
-// The skate component registry.
-var registry = {};
 
 
 

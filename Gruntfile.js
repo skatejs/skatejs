@@ -8,6 +8,7 @@ module.exports = function (grunt) {
   grunt.loadTasks('build/tasks');
   grunt.loadNpmTasks('grunt-available-tasks');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-shell');

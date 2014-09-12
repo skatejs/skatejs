@@ -12,6 +12,7 @@
     "grunt-available-tasks": "latest",
     "grunt-cli": "latest",
     "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
     "grunt-shell": "^1.1.1",
