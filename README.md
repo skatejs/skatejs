@@ -558,7 +558,7 @@ To run tests:
 
     grunt test
 
-Or if you want to keep the Karma server alive to run them in your browser of choice:
+If you want to keep the Karma server alive to run them in your browser of choice:
 
     grunt test --keep-alive
 
