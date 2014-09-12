@@ -10,6 +10,7 @@
     "bower": "latest",
     "grunt": "latest",
     "grunt-available-tasks": "latest",
+    "grunt-cli": "latest",
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
@@ -22,7 +23,7 @@
     "traceur": "latest"
   },
   "scripts": {
-    "postinstall": "grunt install",
-    "test": "grunt test"
+    "postinstall": "./node_modules/.bin/grunt install",
+    "test": "./node_modules/.bin/grunt test"
   }
 }
