@@ -15,7 +15,7 @@ describe('Events', function () {
     var div = new Div();
 
     helpers.dispatchEvent('test', div);
-    numTriggered.should.equal(1);
+    expect(numTriggered).to.equal(1);
   });
 
   it('should allow you to re-add the element back into the DOM', function () {
@@ -35,7 +35,7 @@ describe('Events', function () {
     par.removeChild(div);
     par.appendChild(div);
     helpers.dispatchEvent('test', div);
-    numTriggered.should.equal(1);
+    expect(numTriggered).to.equal(1);
   });
 
   it('should support delegate events', function () {
@@ -71,6 +71,6 @@ describe('Events', function () {
 
     skate.init(inst);
     helpers.dispatchEvent('click', inst.querySelector('span'));
-    dispatched.should.equal(3);
+    expect(dispatched).to.equal(3);
   });
 });
