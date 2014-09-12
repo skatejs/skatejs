@@ -1,10 +1,15 @@
-define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
+import { fixture } from '../lib/helpers';
+import skate from '../../src/skate';
+
+export default function () {
   'use strict';
 
   describe('Attribute listeners', function () {
     it('should listen to changes in specified attributes', function (done) {
       var inserted = false;
       var updated = false;
+
+      console.log('first');
 
       skate('div', {
         attributes: {
@@ -35,7 +40,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       // and not others. Calling `skate.init()` on the fixture alleviates this
       // however, FYI to anyone reading this, it might crop up in the future
       // as a bug.
-      skate.init(helpers.fixture('<div open="insert"></div>'));
+      skate.init(fixture('<div open="insert"></div>'));
     });
 
     it('should accept a function insead of an object for a particular attribute definition.', function (done) {
@@ -54,7 +59,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
         }
       });
 
-      helpers.fixture('<div id="attrtest" open="insert"></div>');
+      fixture('<div id="attrtest" open="insert"></div>');
     });
 
     it('should accept a function insead of an object for the entire attribute definition.', function (done) {
@@ -75,7 +80,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
         }
       });
 
-      helpers.fixture('<div id="attrtest" open="insert"></div>');
+      fixture('<div id="attrtest" open="insert"></div>');
     });
 
     it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
@@ -101,7 +106,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
         }
       });
 
-      skate.init(helpers.fixture('<my-el some-attr></my-el>'));
+      skate.init(fixture('<my-el some-attr></my-el>'));
       expect(called).to.equal(true);
     });
 
@@ -129,7 +134,7 @@ define(['../../src/skate.js', '../lib/helpers.js'], function (skate, helpers) {
       // constructor and set an attribute to trigger the change in the ready
       // callback and then checked to see if it was triggered, it would fail
       // because that call to set the attribute would happen async.
-      skate.init(helpers.fixture('<my-el some-attr></my-el>'));
+      skate.init(fixture('<my-el some-attr></my-el>'));
     });
   });
-});
+};

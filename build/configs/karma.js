@@ -12,10 +12,7 @@ module.exports = function (grunt) {
       browsers: browsers,
 
       files: [
-        { pattern: 'test/lib/polyfills.js', included: true },
-        { pattern: 'test/*.js', included: true },
-        { pattern: 'src/*.js', included: false },
-        { pattern: 'test/**/*.js', included: false }
+        { pattern: '.tmp/run-unit-tests.js', included: true }
       ],
 
       frameworks: [
@@ -30,23 +27,12 @@ module.exports = function (grunt) {
         'karma-chrome-launcher',
         'karma-firefox-launcher',
         'karma-mocha',
-        'karma-phantomjs-launcher',
-        'karma-traceur-preprocessor'
+        'karma-phantomjs-launcher'
       ],
 
       port: grunt.option('port') || '9876',
 
-      preprocessors: {
-        'src/skate.js': 'traceur'
-      },
-
       singleRun: !grunt.option('watch'),
-
-      traceurPreprocessor: {
-        options: {
-          modules: 'inline'
-        }
-      }
     },
 
     cli: {},

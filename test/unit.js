@@ -1,28 +1,17 @@
-(function () {
-  'use strict';
+import './lib/polyfills';
+import bootstrap from './unit/bootstrap';
+import attributes from './unit/attributes';
+// import './unit/components';
+// import './unit/dom';
+// import './unit/events';
+// import './unit/ignoring';
+// import './unit/init';
+// import './unit/lifecycle';
+// import './unit/registration';
+// import './unit/templating';
+// import './unit/version';
 
-  var files = window.__karma__.files;
-  var start = window.__karma__.start;
-  var tests = [];
+bootstrap();
+attributes();
 
-  Object.keys(files).forEach(function (file) {
-    if (file.indexOf('/unit/') > -1) {
-      tests.push(file);
-    }
-  });
-
-  require([
-    '/base/src/skate.js',
-    '/base/test/lib/helpers.js'
-  ], function (
-    skate,
-    helpers
-  ) {
-    afterEach(function () {
-      skate.destroy();
-      helpers.fixture('');
-    });
-
-    require(tests, start);
-  });
-}());
+window.__karma__.start();
