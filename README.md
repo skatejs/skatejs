@@ -531,15 +531,36 @@ Sometimes you may want to ignore a particular DOM tree. All you need to do is ad
 
 This will prevent Skate from traversing that particular tree and eliminate any overhead it otherwise would have incurred.
 
+
+
+Contributing
+------------
+
+The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, enable these in your editor of choice.
+
+To get a dev environment up and running, all you should need to do is run:
+
+    npm install
+
+That should install all dependencies (Bower and NPM) and `make` Traceur. To see a list of commands, run:
+
+    grunt
+
+
+
 Who's Using It?
 ---------------
 
 <img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200">
 
+
+
 Maintainers
 -----------
 
 - [Trey Shugart](https://twitter.com/treshugart) (author), Atlassian
+
+
 
 License
 -------
