@@ -14,7 +14,7 @@ module.exports = function (grunt) {
     installTraceur: {
       command: [
         'cd ./node_modules/traceur',
-        'make clean',
+        'npm install',
         'make'
       ].join(' && ')
     },
