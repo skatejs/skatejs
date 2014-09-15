@@ -547,6 +547,13 @@ This will prevent Skate from traversing that particular tree and eliminate any o
 
 
 
+Polyfilled Behaviour
+--------------------
+
+No behaviour is directly polyfilled, that is, everything Skate uses is internally polyfilled and does not modify or set any globals nor is any of the functionality exposed as public API. The most notable of these are MutationObservers. For all polyfilled functionality, Skate only normalises just what it needs and nothing more. This way, no unnecessary bloat or overhead is added and these things can be transparently removed as browser support is updated.
+
+
+
 Contributing
 ------------
 
