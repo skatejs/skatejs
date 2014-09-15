@@ -29,10 +29,14 @@ Result
 <my-component>Hello, World!</my-component>
 ```
 
+
+
 Compatibility
 -------------
 
 IE9+ and all evergreens.
+
+
 
 Installing
 ----------
@@ -47,21 +51,31 @@ Or NPM:
 
 Include either `dist/skate.js` or `dist/skate.min.js`.
 
-### ES6 Modules
 
-Skate is written using ES6. If you're using [Tracuer](https://github.com/google/traceur-compiler) then you don't have to load it from the `dist` directory, you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module.
 
 ### AMD
 
 An anonymous AMD module is defined, if supported.
 
+
+
 ### CommonJS
 
 A CommonJS module is exported, if supported.
 
+
+
 ### Global
 
 If you're still skating old school, we've got you covered. Just make sure it's included on the page and you can access it via `window.skate`.
+
+
+
+### ES6 Modules
+
+The Skate source is written using ES6 modules. If you're using [Tracuer](https://github.com/google/traceur-compiler), or are targeting only browsers that support ES6 (you wish!), then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the compiled ES5 source is compiled in the `dist` directory.
+
+
 
 Usage
 -----
