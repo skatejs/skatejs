@@ -16,6 +16,7 @@
     "grunt-jscs": "latest",
     "grunt-karma": "latest",
     "grunt-shell": "^1.1.1",
+    "grunt-wrap": "^0.3.0",
     "karma-chai": "latest",
     "karma-chrome-launcher": "latest",
     "karma-firefox-launcher": "latest",
