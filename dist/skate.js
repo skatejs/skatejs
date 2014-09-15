@@ -641,7 +641,7 @@ var $___46__46__47_src_47_skate__ = (function() {
     delete registry[id];
     return skate;
   };
-  skate.version = '0.9.3';
+  skate.version = '0.10.0';
   skate.defaults = {
     attributes: undefined,
     classname: '__skate',

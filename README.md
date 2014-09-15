@@ -3,7 +3,7 @@
 Skate
 =====
 
-Skate is a web component library that allows you to define behaviour for elements without worrying about when that element is inserted into the DOM.
+Skate is a web component library that is focused on being a tiny, performant syntactic sugar for custom elements with some added features.
 
 *I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
 
@@ -551,6 +551,13 @@ Polyfilled Behaviour
 --------------------
 
 No behaviour is directly polyfilled, that is, everything Skate uses is internally polyfilled and does not modify or set any globals nor is any of the functionality exposed as public API. The most notable of these are MutationObservers. For all polyfilled functionality, Skate only normalises just what it needs and nothing more. This way, no unnecessary bloat or overhead is added and these things can be transparently removed as browser support is updated.
+
+
+
+Difference to Other Web Component Libraries
+-------------------------------------------
+
+Skate is focused on being a tiny, performant syntactic sugar for custom elements.
 
 
 
