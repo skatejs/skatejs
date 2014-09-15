@@ -73,7 +73,7 @@ If you're still skating old school, we've got you covered. Just make sure it's i
 
 ### ES6 Modules
 
-The Skate source is written using ES6 modules. If you're using [Tracuer](https://github.com/google/traceur-compiler), or are targeting only browsers that support ES6 (you wish!), then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, `dist` directory contains the compiled ES5 source.
+The Skate source is written using ES6 modules. If you're using [Tracuer](https://github.com/google/traceur-compiler), or are targeting only browsers that support ES6 (you wish!), then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
 
 
 
