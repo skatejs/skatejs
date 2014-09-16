@@ -3,7 +3,7 @@
 Skate
 =====
 
-Skate is a web component library that is focused on being a tiny, performant syntactic sugar for custom elements with some added features.
+Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for Custom Elements. It uses the [Custom Element](http://w3c.github.io/webcomponents/spec/custom/) spec as a loose guideline and adds some features on top of it.
 
 *I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
 
@@ -28,6 +28,18 @@ Result
 ```html
 <my-component>Hello, World!</my-component>
 ```
+
+
+
+### Overview
+
+- Custom elements
+- Attribute and class bindings
+- Custom methods and properties
+- Automatic event binding and delegation
+- Fine-grained attribute listeners
+- Templating hook
+- FOUC prevention during the `ready()` callback
 
 
 
@@ -357,17 +369,17 @@ Events listeners are not automatically removed from the element when it is remov
 
 
 
-### Prototype Extending
+### Custom Methods and Properties
 
 Skate gives you the option to specify custom properties and methods on your component.
 
 ```js
 skate('my-component', {
   prototype: {
-      callMeLikeAnyNativeMethod: function () {
+    callMeLikeAnyNativeMethod: function () {
 
-      }
     }
+  }
 });
 ```
 
@@ -547,17 +559,57 @@ This will prevent Skate from traversing that particular tree and eliminate any o
 
 
 
-Polyfilled Behaviour
---------------------
+Web Component Differences
+-------------------------
 
-No behaviour is directly polyfilled, that is, everything Skate uses is internally polyfilled and does not modify or set any globals nor is any of the functionality exposed as public API. The most notable of these are MutationObservers. For all polyfilled functionality, Skate only normalises just what it needs and nothing more. This way, no unnecessary bloat or overhead is added and these things can be transparently removed as browser support is updated.
+Although Skate behaves very similar to [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/) it does not provide any polyfills for the Web Component API exactly as it is defined. For example, instead of calling `document.registerElement()`, you call `skate()`.
+
+You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
+
+`<input placeholder="">`:
+
+    skate('placeholder', {
+      extends: 'input',
+      type: skate.types.ATTR,
+      ready: polyfillInputPlaceholder
+    });
+
+`<input type="date">`:
+
+    skate('type', {
+      extends: 'input',
+      type: skate.types.ATTR,
+      attributes: {
+        type: function (element, change) {
+          if (change.newValue === 'date') {
+            makeIntoDatepicker(element);
+          }
+        }
+      }
+    });
+
+`<link rel="import" href="path/to/import.html">` (HTML Imports):
+
+    skate('rel', {
+      extends: 'link',
+      type: skate.types.ATTR,
+      attributes: {
+        rel: function (element, change) {
+          if (change.newValue === 'import') {
+            makeIntoHtmlImport(element);
+          }
+        }
+      }
+    });
+
+You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-custom-elements) in accordance to the Web Component spec with Skate.
 
 
 
-Difference to Other Web Component Libraries
--------------------------------------------
+Polyfills
+---------
 
-Skate is focused on being a tiny, performant syntactic sugar for custom elements.
+Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
 
 
 
