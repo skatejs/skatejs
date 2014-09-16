@@ -1,5 +1,3 @@
-(function () {
-'use strict';
 var $___46__46__47_src_47_data__ = (function() {
   "use strict";
   var __moduleName = "../src/data";
@@ -695,5 +693,3 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
-
-}());
