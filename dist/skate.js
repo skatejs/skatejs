@@ -1,3 +1,5 @@
+(function () {
+'use strict';
 var $___46__46__47_src_47_data__ = (function() {
   "use strict";
   var __moduleName = "../src/data";
@@ -447,33 +449,26 @@ var $___46__46__47_src_47_init__ = (function() {
   var $__7 = $___46__46__47_src_47_lifecycle__,
       triggerLifecycle = $__7.triggerLifecycle,
       triggerRemove = $__7.triggerRemove;
-  function treeWalkerFilter(node) {
-    var attrs = node.attributes;
-    return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
-  }
-  function initElement(element) {
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
-      return;
-    }
-    var walker = document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, treeWalkerFilter, true);
-    var currentNodeComponents = skate.components(element);
-    var currentNodeComponentsLength = currentNodeComponents.length;
-    for (var a = 0; a < currentNodeComponentsLength; a++) {
-      triggerLifecycle(element, currentNodeComponents[a]);
-    }
-    while (walker.nextNode()) {
-      var walkerNode = walker.currentNode;
-      var walkerNodeComponents = skate.components(walkerNode);
-      var walkerNodeComponentsLength = walkerNodeComponents.length;
-      for (var b = 0; b < walkerNodeComponentsLength; b++) {
-        triggerLifecycle(walkerNode, walkerNodeComponents[b]);
-      }
-    }
-  }
+  var initDocument = debounce(function() {
+    initElements(document.getElementsByTagName('html'));
+  });
   function initElements(elements) {
-    var len = elements.length;
-    for (var a = 0; a < len; a++) {
-      initElement(elements[a]);
+    var elementsLen = elements.length;
+    for (var a = 0; a < elementsLen; a++) {
+      var element = elements[a];
+      if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+        continue;
+      }
+      var currentNodeComponents = skate.components(element);
+      var currentNodeComponentsLength = currentNodeComponents.length;
+      for (var b = 0; b < currentNodeComponentsLength; b++) {
+        triggerLifecycle(element, currentNodeComponents[b]);
+      }
+      var elementChildNodes = element.childNodes;
+      var elementChildNodesLen = elementChildNodes.length;
+      if (elementChildNodesLen) {
+        initElements(elementChildNodes);
+      }
     }
   }
   function removeElements(elements) {
@@ -491,9 +486,6 @@ var $___46__46__47_src_47_init__ = (function() {
       }
     }
   }
-  var initDocument = debounce(function() {
-    initElement(document.getElementsByTagName('html')[0]);
-  });
   ;
   return {
     get initDocument() {
@@ -693,3 +685,5 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
+
+}());
