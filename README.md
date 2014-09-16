@@ -3,7 +3,7 @@
 Skate
 =====
 
-Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for Custom Elements. It uses the [Custom Element](http://w3c.github.io/webcomponents/spec/custom/) spec as a loose guideline and adds some features on top of it.
+Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for binding behaviour to custom and existing elements. It uses the [Custom Element](http://w3c.github.io/webcomponents/spec/custom/) spec as a guideline and adds some features on top of it.
 
 *I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
 
@@ -28,18 +28,6 @@ Result
 ```html
 <my-component>Hello, World!</my-component>
 ```
-
-
-
-### Overview
-
-- Custom elements
-- Attribute and class bindings
-- Custom methods and properties
-- Automatic event binding and delegation
-- Fine-grained attribute listeners
-- Templating hook
-- FOUC prevention during the `ready()` callback
 
 
 
@@ -451,7 +439,7 @@ skate('my-component', {
 
 
 
-### Asynchronous Nature
+### Asynchrony
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
@@ -481,21 +469,64 @@ If you need to remove a component definition just call `skate.unregister('your-c
 
 
 
-### Performance
+Web Component Differences
+-------------------------
 
-There are some things to consider when using Skate, just like any library, in terms of performance. These are recommendations for scenarios which we have come across. If you have any recommendations, please submit a PR adding it to this.
+Skate uses the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) as a guideline but it does not polyfill it, nor does it polyfill the behaviour of [ShadowDOM](http://w3c.github.io/webcomponents/spec/shadow/) or [HTML Imports](http://w3c.github.io/webcomponents/spec/imports/).
+
+You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
+
+`<input placeholder="">`:
+
+    skate('placeholder', {
+      extends: 'input',
+      type: skate.types.ATTR,
+      ready: polyfillInputPlaceholder
+    });
+
+`<input type="date">`:
+
+    skate('type', {
+      extends: 'input',
+      type: skate.types.ATTR,
+      attributes: {
+        type: function (element, change) {
+          if (change.newValue === 'date') {
+            makeIntoDatepicker(element);
+          }
+        }
+      }
+    });
+
+`<link rel="import" href="path/to/import.html">` (HTML Imports):
+
+    skate('rel', {
+      extends: 'link',
+      type: skate.types.ATTR,
+      attributes: {
+        rel: function (element, change) {
+          if (change.newValue === 'import') {
+            makeIntoHtmlImport(element);
+          }
+        }
+      }
+    });
+
+You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-custom-elements) in accordance to the Web Component spec with Skate.
 
 
 
-#### Very, Very Large DOMs
+Polyfills
+---------
 
-Skate is pretty fast. In any browser other than Internet Explorer, it can process in excess of 100k elements in less than half a second. However, IE tends to be fraction of that. If you have a super-massive DOM and are worried about performance, read the section on "Ignoring Elements" to learn how you can mitigate this.
+Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
 
 
 
-#### Ready Callbacks
+Preventing FOUC
+---------------
 
-Using the `ready` callback implies that a CSS rule will be added to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can impact performance.
+If you specify a `ready()` callback, Skate will add a CSS rule to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can impact performance.
 
 Explicitly defining the type of your component will narrow the selector and will ensure a selector is built specifically for your component's type. For example, if you register a component and do not restrict the type:
 
@@ -545,71 +576,16 @@ div[is="my-restricted-component"]:not(.__skate) { ... }
 
 
 
-### Ignoring Elements
+Ignoring Elements
+-----------------
 
-Sometimes you may want to ignore a particular DOM tree. All you need to do is add the `data-skate-ignore` attribute to the container that you want to ignore:
+If you need to ignore an element and its descendants you can add the `data-skate-ignore` attribute to an element.
 
 ```html
 <div data-skate-ignore>
   <!-- Everything including the container will be ignored. -->
 </div>
 ```
-
-This will prevent Skate from traversing that particular tree and eliminate any overhead it otherwise would have incurred.
-
-
-
-Web Component Differences
--------------------------
-
-Although Skate behaves very similar to [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/) it does not provide any polyfills for the Web Component API exactly as it is defined. For example, instead of calling `document.registerElement()`, you call `skate()`.
-
-You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
-
-`<input placeholder="">`:
-
-    skate('placeholder', {
-      extends: 'input',
-      type: skate.types.ATTR,
-      ready: polyfillInputPlaceholder
-    });
-
-`<input type="date">`:
-
-    skate('type', {
-      extends: 'input',
-      type: skate.types.ATTR,
-      attributes: {
-        type: function (element, change) {
-          if (change.newValue === 'date') {
-            makeIntoDatepicker(element);
-          }
-        }
-      }
-    });
-
-`<link rel="import" href="path/to/import.html">` (HTML Imports):
-
-    skate('rel', {
-      extends: 'link',
-      type: skate.types.ATTR,
-      attributes: {
-        rel: function (element, change) {
-          if (change.newValue === 'import') {
-            makeIntoHtmlImport(element);
-          }
-        }
-      }
-    });
-
-You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-custom-elements) in accordance to the Web Component spec with Skate.
-
-
-
-Polyfills
----------
-
-Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
 
 
 
