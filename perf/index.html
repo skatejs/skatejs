@@ -8,15 +8,14 @@
     <script src="x-ignore-checkbox.js"></script>
   </head>
   <body>
-    <h1>Scenario 1</h1>
-    <p>Skating several items already in the DOM that aren't ignored.</p>
-    <x-append-button to="container">Add items</x-append-button>
+    <h1>Skate</h1>
+    <x-append-button to="container" value="10000">Add items</x-append-button>
     <x-remove-button from="container">Remove items</x-remove-button>
     <x-ignore-checkbox in="container">Ignore items</x-ignore-checkbox>
     <div id="container"></div>
     <script>
-      addTestElements(document.getElementById('container'), 10000);
-      addSkateListeners(1000, 'no-match-');
+      perf.addTestElements(document.getElementById('container'), 10000);
+      perf.addSkateListeners(1000, 'no-match-');
     </script>
   </body>
 </html>

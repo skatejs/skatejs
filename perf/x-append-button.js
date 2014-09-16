@@ -10,12 +10,10 @@
   }
 
   skate('x-append-button', {
-    ready: function (element) {
-      element.setAttribute('size', getInput(element).value);
-    },
-
-    template: function (element) {
-      element.innerHTML = '<input type="text"><button><content></content></button>';
+    attributes: {
+      value: function (element, change) {
+        getInput(element).value = change.newValue;
+      }
     },
 
     events: {
@@ -29,12 +27,16 @@
           document.body.appendChild(container);
         }
 
-        document.getElementById(to).innerHTML = window.getTestElements(element.getAttribute('size'));
+        document.getElementById(to).innerHTML = perf.getTestElements(element.getAttribute('size'));
       },
 
       'input input': function (element, e) {
-        element.setAttribute('size', e.target.value);
+        element.setAttribute('value', e.target.value);
       }
+    },
+
+    template: function (element) {
+      element.innerHTML = '<input type="text" size="6"><button>' + element.textContent + '</button>';
     }
   });
 }());

@@ -1,5 +1,7 @@
-(function (exports) {
+(function () {
   'use strict';
+
+  var exports = window.perf = {};
 
   function insertHandler (element) {
     element.textContent += ', done!';
@@ -30,4 +32,4 @@
       });
     }
   };
-}(window));
+}());
