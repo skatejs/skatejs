@@ -27,7 +27,7 @@
           document.body.appendChild(container);
         }
 
-        document.getElementById(to).innerHTML = perf.getTestElements(element.getAttribute('size'));
+        document.getElementById(to).innerHTML = perf.getTestElements(element.getAttribute('value'));
       },
 
       'input input': function (element, e) {

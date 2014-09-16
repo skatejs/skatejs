@@ -12,10 +12,11 @@
     <x-append-button to="container" value="10000">Add items</x-append-button>
     <x-remove-button from="container">Remove items</x-remove-button>
     <x-ignore-checkbox in="container">Ignore items</x-ignore-checkbox>
-    <div id="container"></div>
+    <div id="container">Please add some elements.</div>
     <script>
-      perf.addTestElements(document.getElementById('container'), 10000);
-      perf.addSkateListeners(1000, 'no-match-');
+      setTimeout(function () {
+        perf.addTestElements(document.getElementById('container'), 10000);
+      }, 1000);
     </script>
   </body>
 </html>
