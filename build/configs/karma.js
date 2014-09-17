@@ -4,7 +4,7 @@ module.exports = function (grunt) {
   var customLaunchers = {
       sl_chrome: {
         base: 'SauceLabs',
-        browserName: 'Chrome',
+        browserName: 'chrome',
         platform: 'Windows 8.1',
         version: '37'
       },
@@ -27,7 +27,7 @@ module.exports = function (grunt) {
   } else if (browsers) {
     browsers = browsers.split(',');
   } else {
-    browsers = ['Chrome'];
+    browsers = ['PhantomJS'];
   }
 
   return {
