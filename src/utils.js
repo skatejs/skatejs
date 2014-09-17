@@ -1,8 +1,8 @@
+'use strict';
+
 import {
   ATTR_IGNORE
 } from './constants';
-
-
 
 /**
  * Adds a class to the specified element.
@@ -40,7 +40,7 @@ export function debounce (fn) {
       }, 1);
     }
   };
-};
+}
 
 /**
  * Returns the class list for the specified element.

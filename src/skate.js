@@ -1,27 +1,21 @@
-import data from './data';
-import MutationObserver from './mutation-observer';
+'use strict';
 
+import MutationObserver from './mutation-observer';
 import {
   triggerReady
 } from './lifecycle';
-
 import {
   initDocument,
   initElements,
   removeElements
 } from './init';
-
 import {
-  debounce,
   getClassList,
   getClosestIgnoredElement,
   getSelectorForType,
   hasOwn,
-  inherit,
-  objEach
+  inherit
 } from './utils';
-
-
 
 // The observer listening to document changes.
 var documentListener;
@@ -39,8 +33,6 @@ var hiddenRules = document.createElement('style');
 
 // Component registry.
 var registry = {};
-
-
 
 /**
  * Returns whether or not the specified component can be bound using the
@@ -93,8 +85,6 @@ function makeElementConstructor (component) {
 
   return CustomElement;
 }
-
-
 
 // Public API
 // ----------
@@ -307,8 +297,6 @@ skate.defaults = {
   type: skate.types.ANY
 };
 
-
-
 // Global Setup
 // ------------
 
@@ -364,8 +352,6 @@ if (isDomContentLoaded) {
     isDomContentLoaded = true;
   });
 }
-
-
 
 // Exporting
 // ---------

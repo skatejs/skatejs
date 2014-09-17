@@ -1,27 +1,15 @@
+'use strict';
+
 import {
   debounce
 } from './utils';
-
 import {
   ATTR_IGNORE
 } from './constants';
-
 import {
   triggerLifecycle,
   triggerRemove
 } from './lifecycle';
-
-
-
-/**
- * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution.
- *
- * @returns {undefined}
- */
-var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName('html'));
-});
 
 /**
  * Initialises a set of elements.
@@ -85,7 +73,15 @@ function removeElements (elements) {
   }
 }
 
-
+/**
+ * Initialises all valid elements in the document. Ensures that it does not
+ * happen more than once in the same execution.
+ *
+ * @returns {undefined}
+ */
+var initDocument = debounce(function () {
+  initElements(document.getElementsByTagName('html'));
+});
 
 export {
   initDocument,

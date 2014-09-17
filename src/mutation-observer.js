@@ -1,14 +1,12 @@
+'use strict';
+
 import {
   debounce,
   objEach
 } from './utils';
 
-
-
 var elProto = window.HTMLElement.prototype;
 var elProtoContains = elProto.contains;
-
-
 
 /**
  * Returns whether or not the source element contains the target element.
@@ -224,7 +222,5 @@ function newMutationRecord (target, type) {
     type: type || 'childList'
   };
 }
-
-
 
 export default MutationObserver;

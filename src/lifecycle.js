@@ -1,13 +1,12 @@
+'use strict';
+
 import data from './data';
 import MutationObserver from './mutation-observer';
-
 import {
   addClass,
   inherit,
   objEach
 } from './utils';
-
-
 
 function getLifecycleFlag (target, component, name) {
   return data.get(target, component.id + ':lifecycle:' + name);
@@ -25,8 +24,6 @@ function ensureLifecycleFlag (target, component, name) {
   return false;
 }
 
-
-
 var elProto = window.HTMLElement.prototype;
 var matchesSelector = (
     elProto.matches ||
@@ -35,8 +32,6 @@ var matchesSelector = (
     elProto.mozMatchesSelector ||
     elProto.oMatchesSelector
   );
-
-
 
 /**
  * Parses an event definition and returns information about it.
@@ -241,8 +236,6 @@ function addEventListeners (target, component) {
     target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
   });
 }
-
-
 
 export {
   triggerLifecycle,

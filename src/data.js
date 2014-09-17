@@ -1,3 +1,5 @@
+'use strict';
+
 export default {
   /**
    * Adds data to the element.

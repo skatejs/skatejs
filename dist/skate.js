@@ -1,8 +1,18 @@
 (function () {
 'use strict';
+var $___46__46__47_src_47_constants__ = (function() {
+  "use strict";
+  var __moduleName = "../src/constants";
+  'use strict';
+  var ATTR_IGNORE = 'data-skate-ignore';
+  return {get ATTR_IGNORE() {
+      return ATTR_IGNORE;
+    }};
+})();
 var $___46__46__47_src_47_data__ = (function() {
   "use strict";
   var __moduleName = "../src/data";
+  'use strict';
   var $__default = {
     get: function(element, name) {
       if (element.__SKATE_DATA) {
@@ -21,17 +31,10 @@ var $___46__46__47_src_47_data__ = (function() {
       return $__default;
     }};
 })();
-var $___46__46__47_src_47_constants__ = (function() {
-  "use strict";
-  var __moduleName = "../src/constants";
-  var ATTR_IGNORE = 'data-skate-ignore';
-  return {get ATTR_IGNORE() {
-      return ATTR_IGNORE;
-    }};
-})();
 var $___46__46__47_src_47_utils__ = (function() {
   "use strict";
   var __moduleName = "../src/utils";
+  'use strict';
   var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
   function addClass(element, classname) {
     if (element.classList) {
@@ -52,7 +55,6 @@ var $___46__46__47_src_47_utils__ = (function() {
       }
     };
   }
-  ;
   function getClassList(element) {
     var classList = element.classList;
     if (classList) {
@@ -149,6 +151,7 @@ var $___46__46__47_src_47_utils__ = (function() {
 var $___46__46__47_src_47_mutation_45_observer__ = (function() {
   "use strict";
   var __moduleName = "../src/mutation-observer";
+  'use strict';
   var $__1 = $___46__46__47_src_47_utils__,
       debounce = $__1.debounce,
       objEach = $__1.objEach;
@@ -297,6 +300,7 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
 var $___46__46__47_src_47_lifecycle__ = (function() {
   "use strict";
   var __moduleName = "../src/lifecycle";
+  'use strict';
   var data = ($___46__46__47_src_47_data__).default;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
   var $__4 = $___46__46__47_src_47_utils__,
@@ -444,14 +448,12 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
 var $___46__46__47_src_47_init__ = (function() {
   "use strict";
   var __moduleName = "../src/init";
+  'use strict';
   var debounce = ($___46__46__47_src_47_utils__).debounce;
   var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
   var $__7 = $___46__46__47_src_47_lifecycle__,
       triggerLifecycle = $__7.triggerLifecycle,
       triggerRemove = $__7.triggerRemove;
-  var initDocument = debounce(function() {
-    initElements(document.getElementsByTagName('html'));
-  });
   function initElements(elements) {
     var elementsLen = elements.length;
     for (var a = 0; a < elementsLen; a++) {
@@ -486,6 +488,9 @@ var $___46__46__47_src_47_init__ = (function() {
       }
     }
   }
+  var initDocument = debounce(function() {
+    initElements(document.getElementsByTagName('html'));
+  });
   ;
   return {
     get initDocument() {
@@ -502,21 +507,19 @@ var $___46__46__47_src_47_init__ = (function() {
 var $___46__46__47_src_47_skate__ = (function() {
   "use strict";
   var __moduleName = "../src/skate";
-  var data = ($___46__46__47_src_47_data__).default;
+  'use strict';
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
   var triggerReady = ($___46__46__47_src_47_lifecycle__).triggerReady;
-  var $__11 = $___46__46__47_src_47_init__,
-      initDocument = $__11.initDocument,
-      initElements = $__11.initElements,
-      removeElements = $__11.removeElements;
-  var $__12 = $___46__46__47_src_47_utils__,
-      debounce = $__12.debounce,
-      getClassList = $__12.getClassList,
-      getClosestIgnoredElement = $__12.getClosestIgnoredElement,
-      getSelectorForType = $__12.getSelectorForType,
-      hasOwn = $__12.hasOwn,
-      inherit = $__12.inherit,
-      objEach = $__12.objEach;
+  var $__10 = $___46__46__47_src_47_init__,
+      initDocument = $__10.initDocument,
+      initElements = $__10.initElements,
+      removeElements = $__10.removeElements;
+  var $__11 = $___46__46__47_src_47_utils__,
+      getClassList = $__11.getClassList,
+      getClosestIgnoredElement = $__11.getClosestIgnoredElement,
+      getSelectorForType = $__11.getSelectorForType,
+      hasOwn = $__11.hasOwn,
+      inherit = $__11.inherit;
   var documentListener;
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
