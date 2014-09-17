@@ -26,6 +26,28 @@ function elementContains (source, target) {
   return source.contains ? source.contains(target) : elProtoContains.call(source, target);
 }
 
+/**
+ * Creates a new mutation record.
+ *
+ * @param {Element} target The HTML element that was affected.
+ * @param {String} type The type of mutation.
+ *
+ * @returns {Object}
+ */
+function newMutationRecord (target, type) {
+  return {
+    addedNodes: null,
+    attributeName: null,
+    attributeNamespace: null,
+    nextSibling: null,
+    oldValue: null,
+    previousSibling: null,
+    removedNodes: null,
+    target: target,
+    type: type || 'childList'
+  };
+}
+
 // Mutation Observer "Polyfill"
 // ----------------------------
 //
@@ -198,28 +220,6 @@ if (!MutationObserver) {
 
       return this;
     }
-  };
-}
-
-/**
- * Creates a new mutation record.
- *
- * @param {Element} target The HTML element that was affected.
- * @param {String} type The type of mutation.
- *
- * @returns {Object}
- */
-function newMutationRecord (target, type) {
-  return {
-    addedNodes: null,
-    attributeName: null,
-    attributeNamespace: null,
-    nextSibling: null,
-    oldValue: null,
-    previousSibling: null,
-    removedNodes: null,
-    target: target,
-    type: type || 'childList'
   };
 }
 

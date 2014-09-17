@@ -8,6 +8,15 @@ import {
   objEach
 } from './utils';
 
+var elProto = window.HTMLElement.prototype;
+var matchesSelector = (
+    elProto.matches ||
+    elProto.msMatchesSelector ||
+    elProto.webkitMatchesSelector ||
+    elProto.mozMatchesSelector ||
+    elProto.oMatchesSelector
+  );
+
 function getLifecycleFlag (target, component, name) {
   return data.get(target, component.id + ':lifecycle:' + name);
 }
@@ -24,15 +33,6 @@ function ensureLifecycleFlag (target, component, name) {
   return false;
 }
 
-var elProto = window.HTMLElement.prototype;
-var matchesSelector = (
-    elProto.matches ||
-    elProto.msMatchesSelector ||
-    elProto.webkitMatchesSelector ||
-    elProto.mozMatchesSelector ||
-    elProto.oMatchesSelector
-  );
-
 /**
  * Parses an event definition and returns information about it.
  *
@@ -46,81 +46,6 @@ function parseEvent (e) {
     name: parts.shift(),
     delegate: parts.join(' ')
   };
-}
-
-/**
- * Triggers the entire element lifecycle if it's not being ignored.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerLifecycle (target, component) {
-  triggerReady(target, component);
-  triggerInsert(target, component);
-}
-
-/**
- * Triggers the ready lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerReady (target, component) {
-  if (ensureLifecycleFlag(target, component, 'ready')) {
-    return;
-  }
-
-  inherit(target, component.prototype);
-
-  if (component.template) {
-    component.template(target);
-  }
-
-  addEventListeners(target, component);
-  addAttributeListeners(target, component);
-
-  if (component.ready) {
-    component.ready(target);
-  }
-}
-
-/**
- * Triggers the insert lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerInsert (target, component) {
-  if (ensureLifecycleFlag(target, component, 'insert')) {
-    return;
-  }
-
-  addClass(target, component.classname);
-
-  if (component.insert) {
-    component.insert(target);
-  }
-}
-
-/**
- * Triggers the remove lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function triggerRemove (target, component) {
-  if (component.remove) {
-    component.remove(target);
-    setLifecycleFlag(target, component, 'insert', false);
-  }
 }
 
 /**
@@ -235,6 +160,81 @@ function addEventListeners (target, component) {
     var evt = parseEvent(name);
     target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
   });
+}
+
+/**
+ * Triggers the ready lifecycle callback.
+ *
+ * @param {Element} target The component element.
+ * @param {Object} component The component data.
+ *
+ * @returns {undefined}
+ */
+function triggerReady (target, component) {
+  if (ensureLifecycleFlag(target, component, 'ready')) {
+    return;
+  }
+
+  inherit(target, component.prototype);
+
+  if (component.template) {
+    component.template(target);
+  }
+
+  addEventListeners(target, component);
+  addAttributeListeners(target, component);
+
+  if (component.ready) {
+    component.ready(target);
+  }
+}
+
+/**
+ * Triggers the insert lifecycle callback.
+ *
+ * @param {Element} target The component element.
+ * @param {Object} component The component data.
+ *
+ * @returns {undefined}
+ */
+function triggerInsert (target, component) {
+  if (ensureLifecycleFlag(target, component, 'insert')) {
+    return;
+  }
+
+  addClass(target, component.classname);
+
+  if (component.insert) {
+    component.insert(target);
+  }
+}
+
+/**
+ * Triggers the remove lifecycle callback.
+ *
+ * @param {Element} target The component element.
+ * @param {Object} component The component data.
+ *
+ * @returns {undefined}
+ */
+function triggerRemove (target, component) {
+  if (component.remove) {
+    component.remove(target);
+    setLifecycleFlag(target, component, 'insert', false);
+  }
+}
+
+/**
+ * Triggers the entire element lifecycle if it's not being ignored.
+ *
+ * @param {Element} target The component element.
+ * @param {Object} component The component data.
+ *
+ * @returns {undefined}
+ */
+function triggerLifecycle (target, component) {
+  triggerReady(target, component);
+  triggerInsert(target, component);
 }
 
 export {
