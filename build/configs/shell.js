@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-  var traceurCommand = './node_modules/traceur/traceur-build --modules=inline ';
+  var traceurCommand = './node_modules/traceur/traceur --modules=inline ';
 
   return {
     dist: {
@@ -14,8 +14,7 @@ module.exports = function (grunt) {
     installTraceur: {
       command: [
         'cd ./node_modules/traceur',
-        'npm install',
-        'make'
+        'npm install'
       ].join(' && ')
     },
     test: {
