@@ -519,7 +519,7 @@ You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-cust
 Polymer / X-Tags Differences
 ----------------------------
 
-Polymer and X-Tags are Custom Element polyfills. Although they have differences amongst themselves, there's a few thins that set Skate apart:
+Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags uses Polymer's Custom Element and Mutation Observer polyfills to add a layer of sugar on top of Custom Elements. Although they have differences amongst themselves, they provide the same functionality in terms of just Custom Elements. Skate provides that as well, and much more.
 
 
 
@@ -542,11 +542,11 @@ This will only get executed on DOM Ready. If you ever insert some tabs dynamical
 
 You're definition is now in one place. If you dynamically insert some tabs into the document, they'll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you've used the `ready()` callback.
 
-Furthermore, this is especially good when you don't have the time to refactor a legacy legacy component into web components. You get many of the benefits of a web component without having to change any markup.
+Furthermore, this is especially good when you don't have the time to refactor a legacy component into web components. You get many of the benefits of a web component without having to change any markup.
 
 
 
-### Size
+### Size (min + gz)
 
 Size does matter.
 
@@ -559,7 +559,7 @@ Size does matter.
 
 ### Performance
 
-In terms of performance, Skate comes close to Polymer and X-Tags in modern browsers but isn't quite as fast for a couple reasons:
+Skate comes close to Polymer and X-Tags in modern browsers but isn't quite as fast in this area for a couple reasons:
 
 1. Skate doesn't use `document.registerElement()` if supported. There are [plans](https://github.com/skatejs/skatejs/issues/46) to do this.
 2. Skate supports more than just Custom Elements. The added overhead is because it also supports attribute and class bindings and has to check these on top of just checking the tag name / `is` attribute value.
@@ -570,7 +570,7 @@ In terms of performance, Skate comes close to Polymer and X-Tags in modern brows
 
 Skate takes about 350ms to go through 100k elements. With Polymer and X-Tags, in browsers that natively support Custom Elements, there's almost zero overhead because they don't need to use Mutation Observers. With no native support, they take around 200ms.
 
-The real difference comes in when you have to polyfill Mutation Observers. In IE9, Skate goes through 100k elements in a mere ~2s. The mutation observer polyfill used by Polymer and X-Tags (and probably some others) takes ~25s.
+The real difference comes in when you [have to polyfill Mutation Observers](http://caniuse.com/#feat=mutationobserver). In IE9, Skate goes through 100k elements in a mere ~2s. Polymer and X-Tags take around 25s (that's not a typo). Even if you bring this down to a reasonable 5k elements, it'll still take them over a second to process the elements.
 
 
 
