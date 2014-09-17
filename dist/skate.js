@@ -163,6 +163,19 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
     }
     return source.contains ? source.contains(target) : elProtoContains.call(source, target);
   }
+  function newMutationRecord(target, type) {
+    return {
+      addedNodes: null,
+      attributeName: null,
+      attributeNamespace: null,
+      nextSibling: null,
+      oldValue: null,
+      previousSibling: null,
+      removedNodes: null,
+      target: target,
+      type: type || 'childList'
+    };
+  }
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   if (!MutationObserver) {
     MutationObserver = function(callback) {
@@ -279,19 +292,6 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       }
     };
   }
-  function newMutationRecord(target, type) {
-    return {
-      addedNodes: null,
-      attributeName: null,
-      attributeNamespace: null,
-      nextSibling: null,
-      oldValue: null,
-      previousSibling: null,
-      removedNodes: null,
-      target: target,
-      type: type || 'childList'
-    };
-  }
   var $__default = MutationObserver;
   return {get default() {
       return $__default;
@@ -307,6 +307,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       addClass = $__4.addClass,
       inherit = $__4.inherit,
       objEach = $__4.objEach;
+  var elProto = window.HTMLElement.prototype;
+  var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
   function getLifecycleFlag(target, component, name) {
     return data.get(target, component.id + ':lifecycle:' + name);
   }
@@ -320,47 +322,12 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     setLifecycleFlag(target, component, name, true);
     return false;
   }
-  var elProto = window.HTMLElement.prototype;
-  var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
   function parseEvent(e) {
     var parts = e.split(' ');
     return {
       name: parts.shift(),
       delegate: parts.join(' ')
     };
-  }
-  function triggerLifecycle(target, component) {
-    triggerReady(target, component);
-    triggerInsert(target, component);
-  }
-  function triggerReady(target, component) {
-    if (ensureLifecycleFlag(target, component, 'ready')) {
-      return;
-    }
-    inherit(target, component.prototype);
-    if (component.template) {
-      component.template(target);
-    }
-    addEventListeners(target, component);
-    addAttributeListeners(target, component);
-    if (component.ready) {
-      component.ready(target);
-    }
-  }
-  function triggerInsert(target, component) {
-    if (ensureLifecycleFlag(target, component, 'insert')) {
-      return;
-    }
-    addClass(target, component.classname);
-    if (component.insert) {
-      component.insert(target);
-    }
-  }
-  function triggerRemove(target, component) {
-    if (component.remove) {
-      component.remove(target);
-      setLifecycleFlag(target, component, 'insert', false);
-    }
   }
   function addAttributeListeners(target, component) {
     function triggerCallback(type, name, newValue, oldValue) {
@@ -431,6 +398,39 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       var evt = parseEvent(name);
       target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
     });
+  }
+  function triggerReady(target, component) {
+    if (ensureLifecycleFlag(target, component, 'ready')) {
+      return;
+    }
+    inherit(target, component.prototype);
+    if (component.template) {
+      component.template(target);
+    }
+    addEventListeners(target, component);
+    addAttributeListeners(target, component);
+    if (component.ready) {
+      component.ready(target);
+    }
+  }
+  function triggerInsert(target, component) {
+    if (ensureLifecycleFlag(target, component, 'insert')) {
+      return;
+    }
+    addClass(target, component.classname);
+    if (component.insert) {
+      component.insert(target);
+    }
+  }
+  function triggerRemove(target, component) {
+    if (component.remove) {
+      component.remove(target);
+      setLifecycleFlag(target, component, 'insert', false);
+    }
+  }
+  function triggerLifecycle(target, component) {
+    triggerReady(target, component);
+    triggerInsert(target, component);
   }
   ;
   return {
