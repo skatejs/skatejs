@@ -519,7 +519,7 @@ You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-cust
 Polymer / X-Tags Differences
 ----------------------------
 
-Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags uses Polymer's Custom Element and Mutation Observer polyfills to add a layer of sugar on top of Custom Elements. Although they have differences amongst themselves, they provide the same functionality in terms of just Custom Elements. Skate provides that as well, and much more.
+Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags uses Polymer's Custom Element and Mutation Observer polyfills to add a layer of sugar on top of Custom Elements. Although they have differences amongst themselves, they share functionality in terms of Custom Elements. Skate shares this functionality and provides some things that they don't.
 
 
 
