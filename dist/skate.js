@@ -155,6 +155,8 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       objEach = $__1.objEach;
   var elProto = window.HTMLElement.prototype;
   var elProtoContains = elProto.contains;
+  var isIe = window.navigator.userAgent.indexOf('MSIE') > -1;
+  var isRestoring = false;
   function elementContains(source, target) {
     if (source.nodeType !== 1) {
       return false;
@@ -174,6 +176,37 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       type: type || 'childList'
     };
   }
+  function saveDescendants(node) {
+    var childNodes = node.childNodes;
+    if (!childNodes) {
+      return;
+    }
+    var childNodesLen = childNodes.length;
+    var savedDescendants = node.__savedDescendants = [];
+    for (var a = 0; a < childNodesLen; a++) {
+      var childNode = childNodes[a];
+      savedDescendants.push(childNode);
+      saveDescendants(childNode);
+    }
+  }
+  function restoreDescendants(node) {
+    var saved = node.__savedDescendants;
+    if (!saved) {
+      return;
+    }
+    isRestoring = true;
+    var savedLen = saved.length;
+    for (var a = 0; a < savedLen; a++) {
+      var desc = saved[a];
+      if (desc.nodeType === 3) {
+        desc = document.createTextNode(desc);
+      }
+      restoreDescendants(desc);
+      node.appendChild(desc);
+    }
+    node.__savedDescendants = undefined;
+    isRestoring = false;
+  }
   var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   if (!MutationObserver) {
     MutationObserver = function(callback) {
@@ -185,8 +218,14 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
         function addEventToBatch(e) {
           batchedEvents.push(e);
           batchEvents();
+          if (isIe && e.type === 'DOMNodeRemoved') {
+            saveDescendants(e.target);
+          }
         }
         function batchEvent(e) {
+          if (isRestoring) {
+            return;
+          }
           var eTarget = e.target;
           if (!eTarget) {
             return;
@@ -208,6 +247,9 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
             }
             lastBatchedRecord.addedNodes.push(eTarget);
           } else {
+            if (isIe) {
+              restoreDescendants(eTarget);
+            }
             if (!lastBatchedRecord.removedNodes) {
               lastBatchedRecord.removedNodes = [];
             }
