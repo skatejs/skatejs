@@ -62,7 +62,6 @@ describe('DOM', function () {
 
       skate('my-element-4', {
         remove: function () {
-          done();
           ++calls;
         }
       });
@@ -71,8 +70,8 @@ describe('DOM', function () {
       skate.init(helpers.fixture());
       helpers.fixture('');
       helpers.afterMutations(function () {
-        //expect(calls).to.equal(1);
-        //done();
+        expect(calls).to.equal(1);
+        done();
       });
     });
 
@@ -82,7 +81,6 @@ describe('DOM', function () {
 
       skate('my-element-5', {
         remove: function () {
-          done();
           ++calls;
         }
       });
@@ -91,8 +89,8 @@ describe('DOM', function () {
       skate.init(helpers.fixture());
       helpers.fixture().removeChild(document.getElementById('removing'));
       helpers.afterMutations(function () {
-        //expect(calls).to.equal(1);
-        //done();
+        expect(calls).to.equal(1);
+        done();
       });
     });
   });
