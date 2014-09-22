@@ -26,10 +26,15 @@ describe('DOM', function () {
       assertComponent('sub-element', 'insert', '<div><child><sub-element></sub-element></child></div>', done);
     });
 
-    it('should pick up descendants that are removed as part of an HTML block.', function (done) {
-      assertComponent('sub-element', 'remove', '<div><child><sub-element></sub-element></child></div>', done);
-      skate.init(helpers.fixture());
+    it('should pick up descendants that are removed if an ancestor\'s innerHTML is set.', function (done) {
+      assertComponent('sub-element', 'remove', '<div id="removing"><child><sub-element></sub-element></child></div>', done);
       helpers.fixture('');
+    });
+
+    it('should pick up descendants that are removed if an ancestor is removed.', function (done) {
+      assertComponent('sub-element', 'remove', '<div id="removing"><child><sub-element></sub-element></child></div>', done);
+      var div = helpers.fixture().querySelector('div');
+      div.parentNode.removeChild(div);
     });
   });
 
