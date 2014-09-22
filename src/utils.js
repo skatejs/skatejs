@@ -5,18 +5,36 @@ import {
 } from './constants';
 
 /**
+ * Checks {}.hasOwnProperty in a safe way.
+ *
+ * @param {Object} obj The object the property is on.
+ * @param {String} key The object key to check.
+ *
+ * @returns {Boolean}
+ */
+export function hasOwn (obj, key) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+/**
  * Adds a class to the specified element.
  *
  * @param {Element} element The element to add the class to.
- * @param {String} classname The classname to add.
+ * @param {String} newClass The classname to add.
  *
  * @returns {undefined}
  */
-export function addClass (element, classname) {
+export function addClass (element, newClass) {
+  // Modern JS engines.
   if (element.classList) {
-    element.classList.add(classname);
+    element.classList.add(newClass);
+  // Legacy JS engines.
+  } else if (hasOwn(element, 'className')) {
+    element.className += element.className ? ' ' + newClass : newClass;
+  // SVG elements.
   } else {
-    element.className += element.className ? ' ' + classname : classname;
+    var oldClass = element.getAttribute('class');
+    element.setAttribute('class', oldClass ? oldClass + ' ' + newClass : newClass);
   }
 }
 
@@ -118,18 +136,6 @@ export function getSelectorForType (id, type, tagToExtend, negateWith) {
   }
 
   return selectors.join(',');
-}
-
-/**
- * Checks {}.hasOwnProperty in a safe way.
- *
- * @param {Object} obj The object the property is on.
- * @param {String} key The object key to check.
- *
- * @returns {Boolean}
- */
-export function hasOwn (obj, key) {
-  return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 /**

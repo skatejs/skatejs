@@ -1,5 +1,3 @@
-(function () {
-'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -36,11 +34,17 @@ var $___46__46__47_src_47_utils__ = (function() {
   var __moduleName = "../src/utils";
   'use strict';
   var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
-  function addClass(element, classname) {
+  function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+  function addClass(element, newClass) {
     if (element.classList) {
-      element.classList.add(classname);
+      element.classList.add(newClass);
+    } else if (hasOwn(element, 'className')) {
+      element.className += element.className ? ' ' + newClass : newClass;
     } else {
-      element.className += element.className ? ' ' + classname : classname;
+      var oldClass = element.getAttribute('class');
+      element.setAttribute('class', oldClass ? oldClass + ' ' + newClass : newClass);
     }
   }
   function debounce(fn) {
@@ -94,9 +98,6 @@ var $___46__46__47_src_47_utils__ = (function() {
     }
     return selectors.join(',');
   }
-  function hasOwn(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-  }
   function inherit(child, parent) {
     var names = Object.getOwnPropertyNames(parent);
     var namesLen = names.length;
@@ -122,6 +123,9 @@ var $___46__46__47_src_47_utils__ = (function() {
     }
   }
   return {
+    get hasOwn() {
+      return hasOwn;
+    },
     get addClass() {
       return addClass;
     },
@@ -136,9 +140,6 @@ var $___46__46__47_src_47_utils__ = (function() {
     },
     get getSelectorForType() {
       return getSelectorForType;
-    },
-    get hasOwn() {
-      return hasOwn;
     },
     get inherit() {
       return inherit;
@@ -715,5 +716,3 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
-
-}());
