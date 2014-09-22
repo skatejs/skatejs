@@ -1,6 +1,5 @@
 'use strict';
 
-import data from './data';
 import {
   debounce,
   objEach
@@ -10,7 +9,6 @@ var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
 var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
-var supportsNative = !!MutationObserver;
 
 /**
  * Returns whether or not the source element contains the target element.
