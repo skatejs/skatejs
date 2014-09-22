@@ -1,3 +1,5 @@
+(function () {
+'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -228,7 +230,9 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
           if (!canTriggerInsertOrRemove(eTargetParent)) {
             return;
           }
-          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {}
+          if (!isIe && lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
+            return;
+          }
           if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
@@ -716,3 +720,5 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
+
+}());

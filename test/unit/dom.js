@@ -53,38 +53,26 @@ describe('DOM', function () {
 
     // IE 11 has a bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml.
     it('should pick up descendants that are removed if an ancestor\'s innerHTML is set.', function (done) {
-      var calls = 0;
-
       skate('my-element', {
         remove: function () {
-          ++calls;
+          done()
         }
       });
 
-      skate.init(helpers.fixture('<div id="removing"><child><my-element</my-element></child></div>'));
+      skate.init(helpers.fixture('<div id="removing"><child><my-element></my-element></child></div>'));
       helpers.fixture('');
-      helpers.afterMutations(function () {
-        expect(calls).to.equal(1);
-        done();
-      });
     });
 
     // IE 9 / 10 have the same bug with removeChild() as IE 11 does with innerHTML.
     it('should pick up descendants that are removed if an ancestor is removed.', function (done) {
-      var calls = 0;
-
       skate('my-element', {
         remove: function () {
-          ++calls;
+          done();
         }
       });
 
       skate.init(helpers.fixture('<div id="removing"><child><my-element></my-element></child></div>'));
       helpers.fixture().removeChild(document.getElementById('removing'));
-      helpers.afterMutations(function () {
-        expect(calls).to.equal(1);
-        done();
-      });
     });
   });
 

@@ -133,8 +133,8 @@ if (!MutationObserver) {
           return;
         }
 
-        if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
-          //return;
+        if (!isIe && lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
+          return;
         }
 
         if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
