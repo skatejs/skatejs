@@ -1,3 +1,5 @@
+(function () {
+'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -150,13 +152,15 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
   "use strict";
   var __moduleName = "../src/mutation-observer";
   'use strict';
-  var $__1 = $___46__46__47_src_47_utils__,
-      debounce = $__1.debounce,
-      objEach = $__1.objEach;
+  var data = ($___46__46__47_src_47_data__).default;
+  var $__2 = $___46__46__47_src_47_utils__,
+      debounce = $__2.debounce,
+      objEach = $__2.objEach;
   var elProto = window.HTMLElement.prototype;
-  var elProtoContains = elProto.contains;
-  var isIe = window.navigator.userAgent.indexOf('MSIE') > -1;
-  var isRestoring = false;
+  var elProtoContains = window.HTMLElement.prototype.contains;
+  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+  var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
+  var supportsNative = !!MutationObserver;
   function elementContains(source, target) {
     if (source.nodeType !== 1) {
       return false;
@@ -176,39 +180,35 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       type: type || 'childList'
     };
   }
-  function saveDescendants(node) {
+  function walkTree(node, cb) {
     var childNodes = node.childNodes;
     if (!childNodes) {
       return;
     }
     var childNodesLen = childNodes.length;
-    var savedDescendants = node.__savedDescendants = [];
     for (var a = 0; a < childNodesLen; a++) {
       var childNode = childNodes[a];
-      savedDescendants.push(childNode);
-      saveDescendants(childNode);
+      cb(childNode);
+      walkTree(childNode, cb);
     }
   }
-  function restoreDescendants(node) {
-    var saved = node.__savedDescendants;
-    if (!saved) {
-      return;
-    }
-    isRestoring = true;
-    var savedLen = saved.length;
-    for (var a = 0; a < savedLen; a++) {
-      var desc = saved[a];
-      if (desc.nodeType === 3) {
-        desc = document.createTextNode(desc);
-      }
-      restoreDescendants(desc);
-      node.appendChild(desc);
-    }
-    node.__savedDescendants = undefined;
-    isRestoring = false;
-  }
-  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   if (!MutationObserver) {
+    if (isIe) {
+      var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+      Object.defineProperty(elProto, 'innerHTML', {
+        get: function() {
+          return oldInnerHtml.get.call(this);
+        },
+        set: function(html) {
+          walkTree(this, function(node) {
+            var mutationEvent = document.createEvent('MutationEvent');
+            mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+            node.dispatchEvent(mutationEvent);
+          });
+          oldInnerHtml.set.call(this, html);
+        }
+      });
+    }
     MutationObserver = function(callback) {
       this.callback = callback;
       this.elements = [];
@@ -216,16 +216,10 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
     MutationObserver.prototype = {
       observe: function(target, options) {
         function addEventToBatch(e) {
-          if (isIe && e.type === 'DOMNodeRemoved') {
-            saveDescendants(e.target);
-          }
           batchedEvents.push(e);
           batchEvents();
         }
         function batchEvent(e) {
-          if (isRestoring) {
-            return;
-          }
           var eTarget = e.target;
           if (!eTarget) {
             return;
@@ -235,9 +229,7 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
           if (!canTriggerInsertOrRemove(eTargetParent)) {
             return;
           }
-          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
-            return;
-          }
+          if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {}
           if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
             batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
           }
@@ -247,9 +239,6 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
             }
             lastBatchedRecord.addedNodes.push(eTarget);
           } else {
-            if (isIe) {
-              restoreDescendants(eTarget);
-            }
             if (!lastBatchedRecord.removedNodes) {
               lastBatchedRecord.removedNodes = [];
             }
@@ -343,10 +332,10 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
   'use strict';
   var data = ($___46__46__47_src_47_data__).default;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var $__4 = $___46__46__47_src_47_utils__,
-      addClass = $__4.addClass,
-      inherit = $__4.inherit,
-      objEach = $__4.objEach;
+  var $__5 = $___46__46__47_src_47_utils__,
+      addClass = $__5.addClass,
+      inherit = $__5.inherit,
+      objEach = $__5.objEach;
   var elProto = window.HTMLElement.prototype;
   var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
   function getLifecycleFlag(target, component, name) {
@@ -491,9 +480,9 @@ var $___46__46__47_src_47_init__ = (function() {
   'use strict';
   var debounce = ($___46__46__47_src_47_utils__).debounce;
   var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
-  var $__7 = $___46__46__47_src_47_lifecycle__,
-      triggerLifecycle = $__7.triggerLifecycle,
-      triggerRemove = $__7.triggerRemove;
+  var $__8 = $___46__46__47_src_47_lifecycle__,
+      triggerLifecycle = $__8.triggerLifecycle,
+      triggerRemove = $__8.triggerRemove;
   function initElements(elements) {
     var elementsLen = elements.length;
     for (var a = 0; a < elementsLen; a++) {
@@ -550,16 +539,16 @@ var $___46__46__47_src_47_skate__ = (function() {
   'use strict';
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
   var triggerReady = ($___46__46__47_src_47_lifecycle__).triggerReady;
-  var $__10 = $___46__46__47_src_47_init__,
-      initDocument = $__10.initDocument,
-      initElements = $__10.initElements,
-      removeElements = $__10.removeElements;
-  var $__11 = $___46__46__47_src_47_utils__,
-      getClassList = $__11.getClassList,
-      getClosestIgnoredElement = $__11.getClosestIgnoredElement,
-      getSelectorForType = $__11.getSelectorForType,
-      hasOwn = $__11.hasOwn,
-      inherit = $__11.inherit;
+  var $__11 = $___46__46__47_src_47_init__,
+      initDocument = $__11.initDocument,
+      initElements = $__11.initElements,
+      removeElements = $__11.removeElements;
+  var $__12 = $___46__46__47_src_47_utils__,
+      getClassList = $__12.getClassList,
+      getClosestIgnoredElement = $__12.getClosestIgnoredElement,
+      getSelectorForType = $__12.getSelectorForType,
+      hasOwn = $__12.hasOwn,
+      inherit = $__12.inherit;
   var documentListener;
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
@@ -728,3 +717,5 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
+
+}());

@@ -1,14 +1,16 @@
 'use strict';
 
+import data from './data';
 import {
   debounce,
   objEach
 } from './utils';
 
 var elProto = window.HTMLElement.prototype;
-var elProtoContains = elProto.contains;
-var isIe = window.navigator.userAgent.indexOf('MSIE') > -1;
-var isRestoring = false;
+var elProtoContains = window.HTMLElement.prototype.contains;
+var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
+var supportsNative = !!MutationObserver;
 
 /**
  * Returns whether or not the source element contains the target element.
@@ -58,7 +60,7 @@ function newMutationRecord (target, type) {
  *
  * @returns {undefined}
  */
-function saveDescendants (node) {
+function walkTree (node, cb) {
   var childNodes = node.childNodes;
 
   if (!childNodes) {
@@ -66,50 +68,12 @@ function saveDescendants (node) {
   }
 
   var childNodesLen = childNodes.length;
-  var savedDescendants = node.__savedDescendants = [];
 
   for (var a = 0; a < childNodesLen; a++) {
     var childNode = childNodes[a];
-    savedDescendants.push(childNode);
-    saveDescendants(childNode);
+    cb(childNode);
+    walkTree(childNode, cb);
   }
-}
-
-/**
- * Restores the descendant tree for the specified element with the nodes that
- * were saved in a prior call to `saveDescendants()`.
- *
- * @param {Node} node The node to restore the tree for.
- *
- * @returns {undefined}
- */
-function restoreDescendants (node) {
-  var saved = node.__savedDescendants;
-
-  if (!saved) {
-    return;
-  }
-
-  isRestoring = true;
-  var savedLen = saved.length;
-
-  for (var a = 0; a < savedLen; a++) {
-    var desc = saved[a];
-
-    // IE for some reason doesn't keep text nodes in their original form
-    // (re-appending them fails) so we have to recreate them. It's important to
-    // note at this point that we can't just restore only element nodes because
-    // we can't make assumptions about which nodes the callback cares about.
-    if (desc.nodeType === 3) {
-      desc = document.createTextNode(desc);
-    }
-
-    restoreDescendants(desc);
-    node.appendChild(desc);
-  }
-
-  node.__savedDescendants = undefined;
-  isRestoring = false;
 }
 
 // Mutation Observer "Polyfill"
@@ -122,11 +86,27 @@ function restoreDescendants (node) {
 // groups for each parent that had mutations. All attribute mutations are
 // batched into separate records regardless of the element they occured on.
 
-// Normalise the mutation observer constructor.
-var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-
 // Polyfill only the parts of Mutation Observer that we need.
 if (!MutationObserver) {
+  if (isIe) {
+    var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+
+    Object.defineProperty(elProto, 'innerHTML', {
+      get: function () {
+        return oldInnerHtml.get.call(this);
+      },
+      set: function (html) {
+        walkTree(this, function (node) {
+          var mutationEvent = document.createEvent('MutationEvent');
+          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+          node.dispatchEvent(mutationEvent);
+        });
+
+        oldInnerHtml.set.call(this, html);
+      }
+    });
+  }
+
   MutationObserver = function (callback) {
     this.callback = callback;
     this.elements = [];
@@ -135,29 +115,11 @@ if (!MutationObserver) {
   MutationObserver.prototype = {
     observe: function (target, options) {
       function addEventToBatch (e) {
-        // We save the current tree state so that we can restore it after IE
-        // mistakenly removes the nodes before the callback is fired. This is
-        // currently a bug in IE 11 Mutation Observers and is also a bug in
-        // IE 9/10 MutationEvents only if delaying the execution of the callback
-        // using setTimeout(fn, 1) as we do to polyfill Mutation Observers and
-        // keep the event execution from blocking.
-        if (isIe && e.type === 'DOMNodeRemoved') {
-          saveDescendants(e.target);
-        }
-
         batchedEvents.push(e);
         batchEvents();
       }
 
       function batchEvent (e) {
-        // Don't execute any events if we are restoring nodes. We only have to
-        // check a flag because events are synchronous and will only be true
-        // while we are restoring. Any other nodes that trigger an event will
-        // be queued either before or after.
-        if (isRestoring) {
-          return;
-        }
-
         var eTarget = e.target;
 
         // In some test environments, e.target has been nulled after the tests
@@ -174,7 +136,7 @@ if (!MutationObserver) {
         }
 
         if (lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
-          return;
+          //return;
         }
 
         if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
@@ -188,12 +150,6 @@ if (!MutationObserver) {
 
           lastBatchedRecord.addedNodes.push(eTarget);
         } else {
-          // IE may have screwed up the descendants. At this point we must
-          // ensure the node tree is restored.
-          if (isIe) {
-            restoreDescendants(eTarget);
-          }
-
           if (!lastBatchedRecord.removedNodes) {
             lastBatchedRecord.removedNodes = [];
           }
