@@ -98,8 +98,8 @@ function restoreDescendants (node) {
 
     // IE for some reason doesn't keep text nodes in their original form
     // (re-appending them fails) so we have to recreate them. It's important to
-    // note at this point that we can't just restore element nodes because we
-    // can't make assumptions about which nodes the callback cares about.
+    // note at this point that we can't just restore only element nodes because
+    // we can't make assumptions about which nodes the callback cares about.
     if (desc.nodeType === 3) {
       desc = document.createTextNode(desc);
     }
