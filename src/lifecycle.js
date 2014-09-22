@@ -220,8 +220,9 @@ function triggerInsert (target, component) {
 function triggerRemove (target, component) {
   if (component.remove) {
     component.remove(target);
-    setLifecycleFlag(target, component, 'insert', false);
   }
+
+  setLifecycleFlag(target, component, 'insert', false);
 }
 
 /**
