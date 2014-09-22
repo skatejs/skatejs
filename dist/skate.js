@@ -216,11 +216,11 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
     MutationObserver.prototype = {
       observe: function(target, options) {
         function addEventToBatch(e) {
-          batchedEvents.push(e);
-          batchEvents();
           if (isIe && e.type === 'DOMNodeRemoved') {
             saveDescendants(e.target);
           }
+          batchedEvents.push(e);
+          batchEvents();
         }
         function batchEvent(e) {
           if (isRestoring) {

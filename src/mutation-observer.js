@@ -135,9 +135,6 @@ if (!MutationObserver) {
   MutationObserver.prototype = {
     observe: function (target, options) {
       function addEventToBatch (e) {
-        batchedEvents.push(e);
-        batchEvents();
-
         // We save the current tree state so that we can restore it after IE
         // mistakenly removes the nodes before the callback is fired. This is
         // currently a bug in IE 11 Mutation Observers and is also a bug in
@@ -147,6 +144,9 @@ if (!MutationObserver) {
         if (isIe && e.type === 'DOMNodeRemoved') {
           saveDescendants(e.target);
         }
+
+        batchedEvents.push(e);
+        batchEvents();
       }
 
       function batchEvent (e) {
