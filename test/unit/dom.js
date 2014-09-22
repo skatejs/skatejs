@@ -6,8 +6,8 @@ describe('DOM', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
       var calls = 0;
 
-      skate.init(helpers.fixture('<div><my-element-1></my-element-1></div>'));
-      skate('my-element-1', {
+      skate.init(helpers.fixture('<div><my-element></my-element></div>'));
+      skate('my-element', {
         insert: function () {
           ++calls;
         }
@@ -22,13 +22,13 @@ describe('DOM', function () {
     it('Modules should pick up nodes inserted into the DOM after they are defined.', function (done) {
       var calls = 0;
 
-      skate('my-element-2', {
+      skate('my-element', {
         insert: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div><my-element-2></my-element-2></div>'));
+      skate.init(helpers.fixture('<div><my-element></my-element></div>'));
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
         done();
@@ -38,13 +38,13 @@ describe('DOM', function () {
     it('should pick up descendants that are inserted as part of an HTML block.', function (done) {
       var calls = 0;
 
-      skate('my-element-3', {
+      skate('my-element', {
         insert: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div><my-element-3></my-element-3></div>'));
+      skate.init(helpers.fixture('<div><my-element></my-element></div>'));
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
         done();
@@ -55,13 +55,13 @@ describe('DOM', function () {
     it('should pick up descendants that are removed if an ancestor\'s innerHTML is set.', function (done) {
       var calls = 0;
 
-      skate('my-element-4', {
+      skate('my-element', {
         remove: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div id="removing"><child><my-element-4</my-element-4></child></div>'));
+      skate.init(helpers.fixture('<div id="removing"><child><my-element</my-element></child></div>'));
       helpers.fixture('');
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
@@ -73,13 +73,13 @@ describe('DOM', function () {
     it('should pick up descendants that are removed if an ancestor is removed.', function (done) {
       var calls = 0;
 
-      skate('my-element-5', {
+      skate('my-element', {
         remove: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div id="removing"><child><my-element-5></my-element-5></child></div>'));
+      skate.init(helpers.fixture('<div id="removing"><child><my-element></my-element></child></div>'));
       helpers.fixture().removeChild(document.getElementById('removing'));
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
