@@ -1,5 +1,3 @@
-(function () {
-'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -425,8 +423,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
   function triggerRemove(target, component) {
     if (component.remove) {
       component.remove(target);
-      setLifecycleFlag(target, component, 'insert', false);
     }
+    setLifecycleFlag(target, component, 'insert', false);
   }
   function triggerLifecycle(target, component) {
     triggerReady(target, component);
@@ -688,5 +686,3 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
-
-}());
