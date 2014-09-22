@@ -5,7 +5,7 @@ module.exports = function (grunt) {
   return {
     dist: {
       files: [src],
-      tasks: ['less:dist', 'shell:dist', 'uglify:dist']
+      tasks: ['shell:dist', 'uglify:dist']
     },
     test: {
       files: [src, test],
