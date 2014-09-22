@@ -133,6 +133,11 @@ if (!MutationObserver) {
           return;
         }
 
+        // This checks to see if the element is contained in the last batched
+        // element. If it is, then we don't batch it because elements are
+        // batched into first-children of a given parent. However, IE is (of
+        // course) an exception to this and destroys the DOM tree heirarchy
+        // before the callback gets fired so we must include all elements.
         if (!isIe && lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
           return;
         }
