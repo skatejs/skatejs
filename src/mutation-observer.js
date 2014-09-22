@@ -74,6 +74,33 @@ function walkTree (node, cb) {
   }
 }
 
+// IE 11 has a bug that prevents descendant nodes from being reported as removed
+// to a mutation observer in IE 11 if an ancestor node's innerHTML is reset.
+// This same bug also happens when using Mutation Events in IE 9 / 10. Because of
+// this, we must ensure that observers and events get triggered properly on
+// those descendant nodes. In order to do this we have to override `innerHTML`
+// and then manually trigger an event.
+//
+// See: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
+if (isIe) {
+  var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+
+  Object.defineProperty(elProto, 'innerHTML', {
+    get: function () {
+      return oldInnerHtml.get.call(this);
+    },
+    set: function (html) {
+      walkTree(this, function (node) {
+        var mutationEvent = document.createEvent('MutationEvent');
+        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+        node.dispatchEvent(mutationEvent);
+      });
+
+      oldInnerHtml.set.call(this, html);
+    }
+  });
+}
+
 // Mutation Observer "Polyfill"
 // ----------------------------
 //
@@ -84,27 +111,9 @@ function walkTree (node, cb) {
 // groups for each parent that had mutations. All attribute mutations are
 // batched into separate records regardless of the element they occured on.
 
-// Polyfill only the parts of Mutation Observer that we need.
-if (!MutationObserver) {
-  if (isIe) {
-    var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
-
-    Object.defineProperty(elProto, 'innerHTML', {
-      get: function () {
-        return oldInnerHtml.get.call(this);
-      },
-      set: function (html) {
-        walkTree(this, function (node) {
-          var mutationEvent = document.createEvent('MutationEvent');
-          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
-          node.dispatchEvent(mutationEvent);
-        });
-
-        oldInnerHtml.set.call(this, html);
-      }
-    });
-  }
-
+// Polyfill only the parts of Mutation Observer that we need. If it's IE, we
+// force mutation events due to buggy behaviour with removedNodes.
+if (isIe || !MutationObserver) {
   MutationObserver = function (callback) {
     this.callback = callback;
     this.elements = [];

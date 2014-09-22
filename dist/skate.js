@@ -1,3 +1,5 @@
+(function () {
+'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -191,23 +193,23 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       walkTree(childNode, cb);
     }
   }
-  if (!MutationObserver) {
-    if (isIe) {
-      var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
-      Object.defineProperty(elProto, 'innerHTML', {
-        get: function() {
-          return oldInnerHtml.get.call(this);
-        },
-        set: function(html) {
-          walkTree(this, function(node) {
-            var mutationEvent = document.createEvent('MutationEvent');
-            mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
-            node.dispatchEvent(mutationEvent);
-          });
-          oldInnerHtml.set.call(this, html);
-        }
-      });
-    }
+  if (isIe) {
+    var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+    Object.defineProperty(elProto, 'innerHTML', {
+      get: function() {
+        return oldInnerHtml.get.call(this);
+      },
+      set: function(html) {
+        walkTree(this, function(node) {
+          var mutationEvent = document.createEvent('MutationEvent');
+          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+          node.dispatchEvent(mutationEvent);
+        });
+        oldInnerHtml.set.call(this, html);
+      }
+    });
+  }
+  if (isIe || !MutationObserver) {
     MutationObserver = function(callback) {
       this.callback = callback;
       this.elements = [];
@@ -718,3 +720,5 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
+
+}());
