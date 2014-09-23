@@ -556,6 +556,30 @@ var $___46__46__47_src_47_skate__ = (function() {
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
   var registry = {};
+  function createDocumentObserver() {
+    return createMutationObserver(document);
+  }
+  function createMutationObserver(root) {
+    var observer = new MutationObserver(function(mutations) {
+      var mutationsLength = mutations.length;
+      for (var a = 0; a < mutationsLength; a++) {
+        var mutation = mutations[a];
+        var addedNodes = mutation.addedNodes;
+        var removedNodes = mutation.removedNodes;
+        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+          initElements(addedNodes);
+        }
+        if (removedNodes && removedNodes.length) {
+          removeElements(removedNodes);
+        }
+      }
+    });
+    observer.observe(root, {
+      childList: true,
+      subtree: true
+    });
+    return observer;
+  }
   function isComponentOfType(id, type) {
     return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
   }
@@ -589,6 +613,9 @@ var $___46__46__47_src_47_skate__ = (function() {
     registry[component.id] = component;
     if (isDomContentLoaded) {
       initDocument();
+    }
+    if (!documentListener) {
+      documentListener = createDocumentObserver();
     }
     if (component.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(component);
@@ -640,6 +667,10 @@ var $___46__46__47_src_47_skate__ = (function() {
     return components;
   };
   skate.destroy = function() {
+    if (documentListener) {
+      documentListener.disconnect();
+      documentListener = undefined;
+    }
     registry = {};
     return skate;
   };
@@ -677,33 +708,12 @@ var $___46__46__47_src_47_skate__ = (function() {
     template: undefined,
     type: skate.types.ANY
   };
-  function onDomContentLoaded() {
-    initDocument();
-    documentListener = new MutationObserver(function(mutations) {
-      var mutationsLength = mutations.length;
-      for (var a = 0; a < mutationsLength; a++) {
-        var mutation = mutations[a];
-        var addedNodes = mutation.addedNodes;
-        var removedNodes = mutation.removedNodes;
-        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-          initElements(addedNodes);
-        }
-        if (removedNodes && removedNodes.length) {
-          removeElements(removedNodes);
-        }
-      }
-    });
-    documentListener.observe(document, {
-      childList: true,
-      subtree: true
-    });
-  }
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
   if (isDomContentLoaded) {
-    onDomContentLoaded();
+    initDocument();
   } else {
     document.addEventListener('DOMContentLoaded', function() {
-      onDomContentLoaded();
+      initDocument();
       isDomContentLoaded = true;
     });
   }

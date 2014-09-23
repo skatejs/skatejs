@@ -34,6 +34,42 @@ var hiddenRules = document.createElement('style');
 // Component registry.
 var registry = {};
 
+function createDocumentObserver () {
+  return createMutationObserver(document);
+}
+
+function createMutationObserver (root) {
+  var observer = new MutationObserver(function (mutations) {
+    var mutationsLength = mutations.length;
+
+    for (var a = 0; a < mutationsLength; a++) {
+      var mutation = mutations[a];
+      var addedNodes = mutation.addedNodes;
+      var removedNodes = mutation.removedNodes;
+
+      // Since siblings are batched together, we check the first node's parent
+      // node to see if it is ignored. If it is then we don't process any added
+      // nodes. This prevents having to check every node.
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+        initElements(addedNodes);
+      }
+
+      // We can't check batched nodes here because they won't have a parent node.
+      if (removedNodes && removedNodes.length) {
+        removeElements(removedNodes);
+      }
+    }
+  });
+
+  // Observe after the DOM content has loaded.
+  observer.observe(root, {
+    childList: true,
+    subtree: true
+  });
+
+  return observer;
+}
+
 /**
  * Returns whether or not the specified component can be bound using the
  * specified type.
@@ -133,6 +169,12 @@ function skate (id, component) {
     initDocument();
   }
 
+  // Lazily initialise the document observer so we don't incur any overhead if
+  // there's no component listeners.
+  if (!documentListener) {
+    documentListener = createDocumentObserver();
+  }
+
   // Only make and return an element constructor if it can be used as a custom
   // element.
   if (component.type.indexOf(skate.types.TAG) > -1) {
@@ -210,7 +252,13 @@ skate.components = function (element) {
  * @returns {skate}
  */
 skate.destroy = function () {
+  if (documentListener) {
+    documentListener.disconnect();
+    documentListener = undefined;
+  }
+
   registry = {};
+
   return skate;
 };
 
@@ -300,43 +348,6 @@ skate.defaults = {
 // Global Setup
 // ------------
 
-/**
- * Does all necessary setup after the document has loaded
- */
-function onDomContentLoaded () {
-  // Ensure all elements are initialised before adding the mutation observer.
-  initDocument();
-
-  // Observes all descendant mutations to the document.
-  documentListener = new MutationObserver(function (mutations) {
-    var mutationsLength = mutations.length;
-
-    for (var a = 0; a < mutationsLength; a++) {
-      var mutation = mutations[a];
-      var addedNodes = mutation.addedNodes;
-      var removedNodes = mutation.removedNodes;
-
-      // Since siblings are batched together, we check the first node's parent
-      // node to see if it is ignored. If it is then we don't process any added
-      // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        initElements(addedNodes);
-      }
-
-      // We can't check batched nodes here because they won't have a parent node.
-      if (removedNodes && removedNodes.length) {
-        removeElements(removedNodes);
-      }
-    }
-  });
-
-  // Observe after the DOM content has loaded.
-  documentListener.observe(document, {
-    childList: true,
-    subtree: true
-  });
-}
-
 // Rules that hide elements as they're inserted so that elements are hidden
 // prior to calling the ready callback to prevent FOUC if the component
 // modifies the element in which it is bound.
@@ -345,10 +356,10 @@ document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 // We flag content as loaded here because after this, each call to skate()
 // *must* re-initialise the document.
 if (isDomContentLoaded) {
-  onDomContentLoaded();
+  initDocument();
 } else {
   document.addEventListener('DOMContentLoaded', function () {
-    onDomContentLoaded();
+    initDocument();
     isDomContentLoaded = true;
   });
 }
