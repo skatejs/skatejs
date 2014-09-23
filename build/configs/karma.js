@@ -31,8 +31,7 @@ module.exports = function (grunt) {
         'karma-chai',
         'karma-chrome-launcher',
         'karma-firefox-launcher',
-        'karma-mocha',
-        'karma-slimerjs-launcher'
+        'karma-mocha'
       ],
 
       port: grunt.option('port') || '9876',
