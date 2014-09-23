@@ -23,23 +23,23 @@ module.exports = function (grunt) {
   var browsers = grunt.option('browsers');
   var sauce = grunt.option('sauce');
   var customLaunchers = {
-      chrome_37: launcher('Windows 8.1', 'chrome', 37),
-      chrome_36: launcher('Windows 8.1', 'chrome', 36),
+      'Chrome 37': launcher('Windows 8.1', 'chrome', 37),
+      'Chrome 36': launcher('Windows 8.1', 'chrome', 36),
 
-      firefox_32: launcher('Windows 8.1', 'firefox', 32),
-      firefox_31: launcher('Windows 8.1', 'firefox', 31),
+      'Firefox 32': launcher('Windows 8.1', 'firefox', 32),
+      'Firefox 31': launcher('Windows 8.1', 'firefox', 31),
 
-      safari_7: launcher('OS X 10.9', 'safari', 7),
-      safari_6: launcher('OS X 10.8', 'safari', 6),
+      'Safari 7': launcher('OS X 10.9', 'safari', 7),
+      'Safari 6': launcher('OS X 10.8', 'safari', 6),
 
-      ios_safari_7_1: launcher('OS X 10.9', 'iphone', 7.1),
-      ios_safari_7: launcher('OS X 10.9', 'iphone', 7),
-      ios_safari_6_1: launcher('OS X 10.8', 'iphone', 6.1),
-      ios_safari_6: launcher('OS X 10.8', 'iphone', 6),
+      'iOS Safari 7.1': launcher('OS X 10.9', 'iphone', 7.1),
+      'iOS Safari 7': launcher('OS X 10.9', 'iphone', 7),
+      'iOS Safari 6.1': launcher('OS X 10.8', 'iphone', 6.1),
+      'iOS Safari 6': launcher('OS X 10.8', 'iphone', 6),
 
-      ie_11: launcher('Windows 8.1', 'internet explorer', 11),
-      ie_10: launcher('Windows 8', 'internet explorer', 10),
-      ie_9: launcher('Windows 7', 'internet explorer', 9)
+      'IE 11': launcher('Windows 8.1', 'internet explorer', 11),
+      'IE 10': launcher('Windows 8', 'internet explorer', 10),
+      'IE 9': launcher('Windows 7', 'internet explorer', 9)
     };
 
   if (sauce) {
