@@ -230,7 +230,9 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
           if (!canTriggerInsertOrRemove(eTargetParent)) {
             return;
           }
-          if (!isIe && lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
+          var shouldWorkAroundIeRemoveBug = isIe && eType === 'DOMNodeRemoved';
+          var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
+          if (!shouldWorkAroundIeRemoveBug && isDescendant) {
             return;
           }
           if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {

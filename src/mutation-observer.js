@@ -142,12 +142,19 @@ if (isIe || !MutationObserver) {
           return;
         }
 
+        // The same bug that affects IE 11 also affects IE 9 / 10 with Mutation
+        // Events.
+        //
+        // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
+        var shouldWorkAroundIeRemoveBug = isIe && eType === 'DOMNodeRemoved';
+        var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
+
         // This checks to see if the element is contained in the last batched
         // element. If it is, then we don't batch it because elements are
         // batched into first-children of a given parent. However, IE is (of
         // course) an exception to this and destroys the DOM tree heirarchy
-        // before the callback gets fired so we must include all elements.
-        if (!isIe && lastBatchedElement && elementContains(lastBatchedElement, eTarget)) {
+        // before the callback gets fired if the element was removed.
+        if (!shouldWorkAroundIeRemoveBug && isDescendant) {
           return;
         }
 
