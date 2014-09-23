@@ -1,6 +1,8 @@
 language: node_js
 node_js: "0.10"
 before_script:
+  - npm install -g slimerjs
+  - export SLIMERJS_BIN=slimerjs
   - npm install -g bower grunt-cli
   - npm install
   - bower install
