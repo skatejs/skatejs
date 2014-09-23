@@ -29,7 +29,7 @@ module.exports = function (grunt) {
       chrome_36: launcher('Windows 8.1', 'chrome', 36),
 
       firefox_32: launcher('Windows 8.1', 'firefox', 32),
-      firefox_31: {launcher('Windows 8.1', 'firefox', 31),
+      firefox_31: launcher('Windows 8.1', 'firefox', 31),
 
       safari_7: launcher('OS X 10.9', 'safari', 7),
       safari_6: launcher('OS X 10.8', 'safari', 6),
