@@ -18,7 +18,7 @@ import {
 } from './utils';
 
 // The observer listening to document changes.
-var documentListener;
+var documentObserver;
 
 // Whether or not DOMContentLoaded has been triggered.
 var isDomContentLoaded = document.readyState === 'complete' ||
@@ -34,10 +34,14 @@ var hiddenRules = document.createElement('style');
 // Component registry.
 var registry = {};
 
-function createDocumentObserver () {
-  return createMutationObserver(document);
-}
-
+/**
+ * Creates a new mutation observer for listening to Skate components for the
+ * specified root element.
+ *
+ * @param {Element} root The element to observe.
+ *
+ * @returns {MutationObserver}
+ */
 function createMutationObserver (root) {
   var observer = new MutationObserver(function (mutations) {
     var mutationsLength = mutations.length;
@@ -171,8 +175,8 @@ function skate (id, component) {
 
   // Lazily initialise the document observer so we don't incur any overhead if
   // there's no component listeners.
-  if (!documentListener) {
-    documentListener = createDocumentObserver();
+  if (!documentObserver) {
+    documentObserver = createMutationObserver(document);
   }
 
   // Only make and return an element constructor if it can be used as a custom
@@ -252,9 +256,9 @@ skate.components = function (element) {
  * @returns {skate}
  */
 skate.destroy = function () {
-  if (documentListener) {
-    documentListener.disconnect();
-    documentListener = undefined;
+  if (documentObserver) {
+    documentObserver.disconnect();
+    documentObserver = undefined;
   }
 
   registry = {};

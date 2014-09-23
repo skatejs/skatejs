@@ -552,13 +552,10 @@ var $___46__46__47_src_47_skate__ = (function() {
       getSelectorForType = $__11.getSelectorForType,
       hasOwn = $__11.hasOwn,
       inherit = $__11.inherit;
-  var documentListener;
+  var documentObserver;
   var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
   var registry = {};
-  function createDocumentObserver() {
-    return createMutationObserver(document);
-  }
   function createMutationObserver(root) {
     var observer = new MutationObserver(function(mutations) {
       var mutationsLength = mutations.length;
@@ -614,8 +611,8 @@ var $___46__46__47_src_47_skate__ = (function() {
     if (isDomContentLoaded) {
       initDocument();
     }
-    if (!documentListener) {
-      documentListener = createDocumentObserver();
+    if (!documentObserver) {
+      documentObserver = createMutationObserver(document);
     }
     if (component.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(component);
@@ -667,9 +664,9 @@ var $___46__46__47_src_47_skate__ = (function() {
     return components;
   };
   skate.destroy = function() {
-    if (documentListener) {
-      documentListener.disconnect();
-      documentListener = undefined;
+    if (documentObserver) {
+      documentObserver.disconnect();
+      documentObserver = undefined;
     }
     registry = {};
     return skate;
