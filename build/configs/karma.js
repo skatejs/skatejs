@@ -8,7 +8,7 @@ module.exports = function (grunt) {
     if (browsers) {
       browsers = browsers.split(',');
     } else {
-      browsers = ['SlimerJS'];
+      browsers = ['Firefox'];
     }
   }
 
