@@ -8,7 +8,7 @@ module.exports = function (grunt) {
     if (browsers) {
       browsers = browsers.split(',');
     } else {
-      browsers = ['Firefox'];
+      browsers = ['SlimerJS'];
     }
   }
 
@@ -31,7 +31,8 @@ module.exports = function (grunt) {
         'karma-chai',
         'karma-chrome-launcher',
         'karma-firefox-launcher',
-        'karma-mocha'
+        'karma-mocha',
+        'karma-slimerjs-launcher'
       ],
 
       port: grunt.option('port') || '9876',
