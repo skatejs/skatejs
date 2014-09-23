@@ -579,6 +579,8 @@ Polyfills
 
 Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
 
+As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback. What Skate does to mitigate this overhead is to queue up each event to be processed on the next tick. Once queued, it then batches them up like Mutation Observers do, and then calls the callback only once.
+
 
 
 Preventing FOUC
