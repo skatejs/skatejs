@@ -16,9 +16,7 @@ module.exports = function (grunt) {
       base: 'SauceLabs',
       platform: platform,
       browserName: browser,
-      version: version && version.toString() || '',
-      //deviceName: device,
-      'device-orientation': device ? 'portrait' : ''
+      version: version && version.toString() || ''
     };
   }
 
