@@ -17,7 +17,7 @@ module.exports = function (grunt) {
       platform: platform,
       browserName: browser,
       version: version && version.toString() || '',
-      deviceName: device,
+      //deviceName: device,
       'device-orientation': device ? 'portrait' : ''
     };
   }
