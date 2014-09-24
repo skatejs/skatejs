@@ -9,6 +9,7 @@ var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
+var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
 
 /**
  * Returns whether or not the source element contains the target element.
@@ -111,8 +112,8 @@ function MutationObserver (callback) {
  * @returns {undefined}
  */
 MutationObserver.fixIe = function () {
-  // Only fix once.
-  if (isFixingIe) {
+  // Fix once only if we need to.
+  if (!isIe || isFixingIe) {
     return;
   }
 
@@ -139,6 +140,12 @@ MutationObserver.fixIe = function () {
   // Flag so the polyfill is used for all subsequent Mutation Observer objects.
   isFixingIe = true;
 };
+
+Object.defineProperty(MutationObserver, 'isFixingIe', {
+  get: function () {
+    return isFixingIe;
+  }
+});
 
 MutationObserver.prototype = {
   observe: function (target, options) {

@@ -1,3 +1,5 @@
+(function () {
+'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -160,6 +162,7 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
   var elProtoContains = window.HTMLElement.prototype.contains;
   var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   var isFixingIe = false;
+  var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
   function elementContains(source, target) {
     if (source.nodeType !== 1) {
       return false;
@@ -199,7 +202,7 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
     this.elements = [];
   }
   MutationObserver.fixIe = function() {
-    if (isFixingIe) {
+    if (!isIe || isFixingIe) {
       return;
     }
     var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
@@ -218,6 +221,9 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
     });
     isFixingIe = true;
   };
+  Object.defineProperty(MutationObserver, 'isFixingIe', {get: function() {
+      return isFixingIe;
+    }});
   MutationObserver.prototype = {
     observe: function(target, options) {
       function addEventToBatch(e) {
@@ -581,6 +587,12 @@ var $___46__46__47_src_47_skate__ = (function() {
     });
     return observer;
   }
+  function destroyDocumentObserver() {
+    if (documentObserver) {
+      documentObserver.disconnect();
+      documentObserver = undefined;
+    }
+  }
   function isComponentOfType(id, type) {
     return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
   }
@@ -612,8 +624,9 @@ var $___46__46__47_src_47_skate__ = (function() {
       hiddenRules.sheet.insertRule(getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}', hiddenRules.sheet.cssRules.length);
     }
     registry[component.id] = component;
-    if (component.remove) {
+    if (component.remove && !MutationObserver.isFixingIe) {
       MutationObserver.fixIe();
+      destroyDocumentObserver();
     }
     initDocument();
     if (!documentObserver) {
@@ -669,10 +682,7 @@ var $___46__46__47_src_47_skate__ = (function() {
     return components;
   };
   skate.destroy = function() {
-    if (documentObserver) {
-      documentObserver.disconnect();
-      documentObserver = undefined;
-    }
+    destroyDocumentObserver();
     registry = {};
     return skate;
   };
@@ -724,3 +734,5 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
+
+}());

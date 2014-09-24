@@ -70,6 +70,18 @@ function createMutationObserver (root) {
 }
 
 /**
+ * Disconnects the document observer and undefine it.
+ *
+ * @returns {undefined}
+ */
+function destroyDocumentObserver () {
+  if (documentObserver) {
+    documentObserver.disconnect();
+    documentObserver = undefined;
+  }
+}
+
+/**
  * Returns whether or not the specified component can be bound using the
  * specified type.
  *
@@ -157,9 +169,10 @@ function skate (id, component) {
   registry[component.id] = component;
 
   // IE has issues with reporting removedNodes correctly. See the polyfill for
-  // details.
-  if (component.remove) {
+  // details. If we fix IE, we must also re-define the documentObserver.
+  if (component.remove && !MutationObserver.isFixingIe) {
     MutationObserver.fixIe();
+    destroyDocumentObserver();
   }
 
   // Initialise existing elements.
@@ -248,13 +261,8 @@ skate.components = function (element) {
  * @returns {skate}
  */
 skate.destroy = function () {
-  if (documentObserver) {
-    documentObserver.disconnect();
-    documentObserver = undefined;
-  }
-
+  destroyDocumentObserver();
   registry = {};
-
   return skate;
 };
 
