@@ -20,11 +20,6 @@ import {
 // The observer listening to document changes.
 var documentObserver;
 
-// Whether or not DOMContentLoaded has been triggered.
-var isDomContentLoaded = document.readyState === 'complete' ||
-  document.readyState === 'loaded' ||
-  document.readyState === 'interactive';
-
 // Stylesheet that contains rules for preventing certain components from
 // showing when they're added to the DOM. This is so that we can simulate
 // calling a lifecycle callback before the element is added to the DOM which
@@ -161,17 +156,8 @@ function skate (id, component) {
   // Register the component.
   registry[component.id] = component;
 
-  // Ensure a call is queued for initialising the document if it's ready. We
-  // must initialise the entire document rather than building a selector and
-  // using querySelectorAll() because we have to filter out elements which may
-  // be ignored. On top of that, if calling skate() in sequence several times,
-  // querySelectorAll() can become slow pretty quick. The call to
-  // initDocument() is debounced to ensure that it only happens once. In large
-  // DOMs this ends up being faster. In small DOMs, the difference is
-  // negligible, but usually faster in most use-cases.
-  if (isDomContentLoaded) {
-    initDocument();
-  }
+  // Initialise existing elements.
+  initDocument();
 
   // Lazily initialise the document observer so we don't incur any overhead if
   // there's no component listeners.
@@ -356,17 +342,6 @@ skate.defaults = {
 // prior to calling the ready callback to prevent FOUC if the component
 // modifies the element in which it is bound.
 document.getElementsByTagName('head')[0].appendChild(hiddenRules);
-
-// We flag content as loaded here because after this, each call to skate()
-// *must* re-initialise the document.
-if (isDomContentLoaded) {
-  initDocument();
-} else {
-  document.addEventListener('DOMContentLoaded', function () {
-    initDocument();
-    isDomContentLoaded = true;
-  });
-}
 
 // Exporting
 // ---------

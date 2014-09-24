@@ -555,7 +555,6 @@ var $___46__46__47_src_47_skate__ = (function() {
       hasOwn = $__11.hasOwn,
       inherit = $__11.inherit;
   var documentObserver;
-  var isDomContentLoaded = document.readyState === 'complete' || document.readyState === 'loaded' || document.readyState === 'interactive';
   var hiddenRules = document.createElement('style');
   var registry = {};
   function createMutationObserver(root) {
@@ -610,9 +609,7 @@ var $___46__46__47_src_47_skate__ = (function() {
       hiddenRules.sheet.insertRule(getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}', hiddenRules.sheet.cssRules.length);
     }
     registry[component.id] = component;
-    if (isDomContentLoaded) {
-      initDocument();
-    }
+    initDocument();
     if (!documentObserver) {
       documentObserver = createMutationObserver(document);
     }
@@ -708,14 +705,6 @@ var $___46__46__47_src_47_skate__ = (function() {
     type: skate.types.ANY
   };
   document.getElementsByTagName('head')[0].appendChild(hiddenRules);
-  if (isDomContentLoaded) {
-    initDocument();
-  } else {
-    document.addEventListener('DOMContentLoaded', function() {
-      initDocument();
-      isDomContentLoaded = true;
-    });
-  }
   window.skate = skate;
   if (typeof define === 'function' && define.amd) {
     define(function() {
