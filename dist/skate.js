@@ -1,5 +1,3 @@
-(function () {
-'use strict';
 var $___46__46__47_src_47_constants__ = (function() {
   "use strict";
   var __moduleName = "../src/constants";
@@ -160,8 +158,8 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       objEach = $__1.objEach;
   var elProto = window.HTMLElement.prototype;
   var elProtoContains = window.HTMLElement.prototype.contains;
-  var MutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
-  var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
+  var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
+  var isFixingIe = false;
   function elementContains(source, target) {
     if (source.nodeType !== 1) {
       return false;
@@ -193,7 +191,17 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       walkTree(childNode, cb);
     }
   }
-  if (isIe) {
+  function MutationObserver(callback) {
+    if (NativeMutationObserver && !isFixingIe) {
+      return new NativeMutationObserver(callback);
+    }
+    this.callback = callback;
+    this.elements = [];
+  }
+  MutationObserver.fixIe = function() {
+    if (isFixingIe) {
+      return;
+    }
     var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
     Object.defineProperty(elProto, 'innerHTML', {
       get: function() {
@@ -208,124 +216,119 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
         oldInnerHtml.set.call(this, html);
       }
     });
-  }
-  if (isIe || !MutationObserver) {
-    MutationObserver = function(callback) {
-      this.callback = callback;
-      this.elements = [];
-    };
-    MutationObserver.prototype = {
-      observe: function(target, options) {
-        function addEventToBatch(e) {
-          batchedEvents.push(e);
-          batchEvents();
-        }
-        function batchEvent(e) {
-          var eTarget = e.target;
-          if (!eTarget) {
-            return;
-          }
-          var eType = e.type;
-          var eTargetParent = eTarget.parentNode;
-          if (!canTriggerInsertOrRemove(eTargetParent)) {
-            return;
-          }
-          var shouldWorkAroundIeRemoveBug = isIe && eType === 'DOMNodeRemoved';
-          var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
-          if (!shouldWorkAroundIeRemoveBug && isDescendant) {
-            return;
-          }
-          if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
-            batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
-          }
-          if (eType === 'DOMNodeInserted') {
-            if (!lastBatchedRecord.addedNodes) {
-              lastBatchedRecord.addedNodes = [];
-            }
-            lastBatchedRecord.addedNodes.push(eTarget);
-          } else {
-            if (!lastBatchedRecord.removedNodes) {
-              lastBatchedRecord.removedNodes = [];
-            }
-            lastBatchedRecord.removedNodes.push(eTarget);
-          }
-          lastBatchedElement = eTarget;
-        }
-        function canTriggerAttributeModification(eTarget) {
-          return options.attributes && (options.subtree || eTarget === target);
-        }
-        function canTriggerInsertOrRemove(eTargetParent) {
-          return options.childList && (options.subtree || eTargetParent === target);
-        }
-        var that = this;
-        var lastBatchedElement;
-        var lastBatchedRecord;
-        var batchedEvents = [];
-        var batchedRecords = [];
-        var batchEvents = debounce(function() {
-          var batchedEventsLen = batchedEvents.length;
-          for (var a = 0; a < batchedEventsLen; a++) {
-            batchEvent(batchedEvents[a]);
-          }
-          that.callback(batchedRecords);
-          batchedEvents = [];
-          batchedRecords = [];
-          lastBatchedElement = undefined;
-          lastBatchedRecord = undefined;
-        });
-        var attributeOldValueCache = {};
-        var attributeMutations = [];
-        var batchAttributeMods = debounce(function() {
-          var len = attributeMutations.length;
-          that.callback(attributeMutations);
-          attributeMutations.splice(0, len);
-        });
-        var observed = {
-          target: target,
-          options: options,
-          insertHandler: addEventToBatch,
-          removeHandler: addEventToBatch,
-          attributeHandler: function(e) {
-            var eTarget = e.target;
-            if (!canTriggerAttributeModification(eTarget)) {
-              return;
-            }
-            var eAttrName = e.attrName;
-            var ePrevValue = e.prevValue;
-            var eNewValue = e.newValue;
-            var record = newMutationRecord(eTarget, 'attributes');
-            record.attributeName = eAttrName;
-            if (options.attributeOldValue) {
-              record.oldValue = attributeOldValueCache[eAttrName] || ePrevValue || null;
-            }
-            attributeMutations.push(record);
-            if (options.attributeOldValue) {
-              attributeOldValueCache[eAttrName] = eNewValue;
-            }
-            batchAttributeMods();
-          }
-        };
-        this.elements.push(observed);
-        if (options.childList) {
-          target.addEventListener('DOMNodeInserted', observed.insertHandler);
-          target.addEventListener('DOMNodeRemoved', observed.removeHandler);
-        }
-        if (options.attributes) {
-          target.addEventListener('DOMAttrModified', observed.attributeHandler);
-        }
-        return this;
-      },
-      disconnect: function() {
-        objEach(this.elements, function(observed) {
-          observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
-          observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
-          observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
-        });
-        this.elements = [];
-        return this;
+    isFixingIe = true;
+  };
+  MutationObserver.prototype = {
+    observe: function(target, options) {
+      function addEventToBatch(e) {
+        batchedEvents.push(e);
+        batchEvents();
       }
-    };
-  }
+      function batchEvent(e) {
+        var eTarget = e.target;
+        if (!eTarget) {
+          return;
+        }
+        var eType = e.type;
+        var eTargetParent = eTarget.parentNode;
+        if (!canTriggerInsertOrRemove(eTargetParent)) {
+          return;
+        }
+        var shouldWorkAroundIeRemoveBug = isFixingIe && eType === 'DOMNodeRemoved';
+        var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
+        if (!shouldWorkAroundIeRemoveBug && isDescendant) {
+          return;
+        }
+        if (!lastBatchedRecord || lastBatchedRecord.target !== eTargetParent) {
+          batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
+        }
+        if (eType === 'DOMNodeInserted') {
+          if (!lastBatchedRecord.addedNodes) {
+            lastBatchedRecord.addedNodes = [];
+          }
+          lastBatchedRecord.addedNodes.push(eTarget);
+        } else {
+          if (!lastBatchedRecord.removedNodes) {
+            lastBatchedRecord.removedNodes = [];
+          }
+          lastBatchedRecord.removedNodes.push(eTarget);
+        }
+        lastBatchedElement = eTarget;
+      }
+      function canTriggerAttributeModification(eTarget) {
+        return options.attributes && (options.subtree || eTarget === target);
+      }
+      function canTriggerInsertOrRemove(eTargetParent) {
+        return options.childList && (options.subtree || eTargetParent === target);
+      }
+      var that = this;
+      var lastBatchedElement;
+      var lastBatchedRecord;
+      var batchedEvents = [];
+      var batchedRecords = [];
+      var batchEvents = debounce(function() {
+        var batchedEventsLen = batchedEvents.length;
+        for (var a = 0; a < batchedEventsLen; a++) {
+          batchEvent(batchedEvents[a]);
+        }
+        that.callback(batchedRecords);
+        batchedEvents = [];
+        batchedRecords = [];
+        lastBatchedElement = undefined;
+        lastBatchedRecord = undefined;
+      });
+      var attributeOldValueCache = {};
+      var attributeMutations = [];
+      var batchAttributeMods = debounce(function() {
+        var len = attributeMutations.length;
+        that.callback(attributeMutations);
+        attributeMutations.splice(0, len);
+      });
+      var observed = {
+        target: target,
+        options: options,
+        insertHandler: addEventToBatch,
+        removeHandler: addEventToBatch,
+        attributeHandler: function(e) {
+          var eTarget = e.target;
+          if (!canTriggerAttributeModification(eTarget)) {
+            return;
+          }
+          var eAttrName = e.attrName;
+          var ePrevValue = e.prevValue;
+          var eNewValue = e.newValue;
+          var record = newMutationRecord(eTarget, 'attributes');
+          record.attributeName = eAttrName;
+          if (options.attributeOldValue) {
+            record.oldValue = attributeOldValueCache[eAttrName] || ePrevValue || null;
+          }
+          attributeMutations.push(record);
+          if (options.attributeOldValue) {
+            attributeOldValueCache[eAttrName] = eNewValue;
+          }
+          batchAttributeMods();
+        }
+      };
+      this.elements.push(observed);
+      if (options.childList) {
+        target.addEventListener('DOMNodeInserted', observed.insertHandler);
+        target.addEventListener('DOMNodeRemoved', observed.removeHandler);
+      }
+      if (options.attributes) {
+        target.addEventListener('DOMAttrModified', observed.attributeHandler);
+      }
+      return this;
+    },
+    disconnect: function() {
+      objEach(this.elements, function(observed) {
+        observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
+        observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
+        observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
+      });
+      this.elements = [];
+      return this;
+    }
+  };
   var $__default = MutationObserver;
   return {get default() {
       return $__default;
@@ -609,6 +612,9 @@ var $___46__46__47_src_47_skate__ = (function() {
       hiddenRules.sheet.insertRule(getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}', hiddenRules.sheet.cssRules.length);
     }
     registry[component.id] = component;
+    if (component.remove) {
+      MutationObserver.fixIe();
+    }
     initDocument();
     if (!documentObserver) {
       documentObserver = createMutationObserver(document);
@@ -718,5 +724,3 @@ var $___46__46__47_src_47_skate__ = (function() {
       return $__default;
     }};
 })();
-
-}());

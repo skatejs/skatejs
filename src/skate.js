@@ -156,6 +156,12 @@ function skate (id, component) {
   // Register the component.
   registry[component.id] = component;
 
+  // IE has issues with reporting removedNodes correctly. See the polyfill for
+  // details.
+  if (component.remove) {
+    MutationObserver.fixIe();
+  }
+
   // Initialise existing elements.
   initDocument();
 
