@@ -12,19 +12,12 @@ import {
 import {
   getClassList,
   getClosestIgnoredElement,
-  getSelectorForType,
   hasOwn,
   inherit
 } from './utils';
 
 // The observer listening to document changes.
 var documentObserver;
-
-// Stylesheet that contains rules for preventing certain components from
-// showing when they're added to the DOM. This is so that we can simulate
-// calling a lifecycle callback before the element is added to the DOM which
-// helps to prevent any jank if the ready() callback modifies the element.
-var hiddenRules = document.createElement('style');
 
 // Component registry.
 var registry = {};
@@ -154,15 +147,6 @@ function skate (id, component) {
   // Components of a particular type must be unique.
   if (hasOwn(registry, component.id)) {
     throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
-  }
-
-  // If doing something that will modify the component's structure, ensure
-  // it is hidden.
-  if (component.ready || component.template) {
-    hiddenRules.sheet.insertRule(
-      getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}',
-      hiddenRules.sheet.cssRules.length
-    );
   }
 
   // Register the component.
@@ -324,9 +308,6 @@ skate.defaults = {
   // Attribute lifecycle callback or callbacks.
   attributes: undefined,
 
-  // The classname to use when showing this component.
-  classname: '__skate',
-
   // The events to manage the binding and unbinding of during the component's
   // lifecycle.
   events: undefined,
@@ -346,16 +327,12 @@ skate.defaults = {
   template: undefined,
 
   // The type of bindings to allow.
-  type: skate.types.ANY
+  type: skate.types.ANY,
+
+  // The unresolved attribute name to remove after calling the ready() callback
+  // and before calling the insert() callback.
+  unresolved: 'unresolved'
 };
-
-// Global Setup
-// ------------
-
-// Rules that hide elements as they're inserted so that elements are hidden
-// prior to calling the ready callback to prevent FOUC if the component
-// modifies the element in which it is bound.
-document.getElementsByTagName('head')[0].appendChild(hiddenRules);
 
 // Exporting
 // ---------

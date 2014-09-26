@@ -3,7 +3,6 @@
 import data from './data';
 import MutationObserver from './mutation-observer';
 import {
-  addClass,
   inherit,
   objEach
 } from './utils';
@@ -202,7 +201,7 @@ function triggerInsert (target, component) {
     return;
   }
 
-  addClass(target, component.classname);
+  target.removeAttribute(component.unresolved);
 
   if (component.insert) {
     component.insert(target);

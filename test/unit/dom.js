@@ -77,20 +77,20 @@ describe('DOM', function () {
   });
 
   describe('SVG', function () {
-    it('should work for any SVG element', function (done) {
+    it('should work for any SVG element', function () {
       var html = '<svg width="100" height="100">' +
-          '<circle my-circle="true" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
-          '<circle my-circle="true" class="my-circle" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
+          '<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
+          '<circle class="my-circle" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
         '</svg>';
 
       skate('my-circle', {
-        insert: function (element) {
-          expect(element.getAttribute('class')).to.contain('__skate');
-          done();
+        prototype: {
+          skated: true
         }
       });
 
       skate.init(helpers.fixture(html));
+      expect(helpers.fixture().querySelector('.my-circle').skated).to.equal(true);
     });
   });
 });
