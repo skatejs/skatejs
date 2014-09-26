@@ -2,7 +2,7 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
-  it('should remove the "unresolved" attribute after the ready callback is called', function (done) {
+  it('should call the ready() callback when the element is inserted', function (done) {
     skate('my-element', {
       ready: function (element) {
         done();
@@ -12,7 +12,7 @@ describe('Lifecycle Callbacks', function () {
     helpers.fixture('<my-element></my-element>');
   });
 
-  it('should remove the "unresolved" attribute before the insert callback is called', function (done) {
+  it('should call the insert() callback when the element is attached', function (done) {
     skate('my-element', {
       insert: function (element) {
         done();
@@ -22,7 +22,7 @@ describe('Lifecycle Callbacks', function () {
     helpers.fixture('<my-element></my-element>');
   });
 
-  it('should trigger removed when the element is removed.', function (done) {
+  it('should call the remove() callback when the element is detached', function (done) {
     skate('my-element', {
       remove: function () {
         done();
