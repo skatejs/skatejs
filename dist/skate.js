@@ -421,7 +421,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     if (ensureLifecycleFlag(target, component, 'insert')) {
       return;
     }
-    target.removeAttribute(component.unresolved);
+    target.removeAttribute(component.unresolvedAttribute);
+    target.setAttribute(component.resolvedAttribute, '');
     if (component.insert) {
       component.insert(target);
     }
@@ -672,9 +673,10 @@ var $___46__46__47_src_47_skate__ = (function() {
     extends: '',
     id: '',
     prototype: {},
+    resolvedAttribute: 'resolved',
     template: undefined,
     type: skate.types.ANY,
-    unresolved: 'unresolved'
+    unresolvedAttribute: 'unresolved'
   };
   window.skate = skate;
   if (typeof define === 'function' && define.amd) {

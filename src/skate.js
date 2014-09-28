@@ -323,15 +323,17 @@ skate.defaults = {
   // Properties and methods to add to each element.
   prototype: {},
 
+  // The attribute name to add after calling the ready() callback.
+  resolvedAttribute: 'resolved',
+
   // The template to replace the content of the element with.
   template: undefined,
 
   // The type of bindings to allow.
   type: skate.types.ANY,
 
-  // The unresolved attribute name to remove after calling the ready() callback
-  // and before calling the insert() callback.
-  unresolved: 'unresolved'
+  // The attribute name to remove after calling the ready() callback.
+  unresolvedAttribute: 'unresolved'
 };
 
 // Exporting

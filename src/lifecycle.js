@@ -201,7 +201,8 @@ function triggerInsert (target, component) {
     return;
   }
 
-  target.removeAttribute(component.unresolved);
+  target.removeAttribute(component.unresolvedAttribute);
+  target.setAttribute(component.resolvedAttribute, '');
 
   if (component.insert) {
     component.insert(target);

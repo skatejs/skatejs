@@ -39,6 +39,7 @@ describe('Unresolved attribute', function () {
     skate('my-element', {
       ready: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(true);
+        expect(element.hasAttribute('resolved')).to.equal(false);
       }
     });
 
@@ -49,6 +50,7 @@ describe('Unresolved attribute', function () {
     skate('my-element', {
       insert: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(false);
+        expect(element.hasAttribute('resolved')).to.equal(true);
       }
     });
 
