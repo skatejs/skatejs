@@ -17,28 +17,6 @@ export function hasOwn (obj, key) {
 }
 
 /**
- * Adds a class to the specified element.
- *
- * @param {Element} element The element to add the class to.
- * @param {String} newClass The classname to add.
- *
- * @returns {undefined}
- */
-export function addClass (element, newClass) {
-  // Modern JS engines.
-  if (element.classList) {
-    element.classList.add(newClass);
-  // Legacy JS engines.
-  } else if (hasOwn(element, 'className')) {
-    element.className += element.className ? ' ' + newClass : newClass;
-  // SVG elements.
-  } else {
-    var oldClass = element.getAttribute('class');
-    element.setAttribute('class', oldClass ? oldClass + ' ' + newClass : newClass);
-  }
-}
-
-/**
  * Returns a function that will prevent more than one call in a single clock
  * tick.
  *
@@ -96,46 +74,6 @@ export function getClosestIgnoredElement (element) {
 
     parent = parent.parentNode;
   }
-}
-
-/**
- * Returns a selector for the specified component based on the types given.
- * If a negation selector is passed in then it will append :not(negateWith) to
- *  the selector.
- *
- * @param {String} id The component ID.
- * @param {String} type The component type.
- * @param {String} tagToExtend The tag the component is extending, if any.
- * @param {String} negateWith The negation string, if any.
- *
- * @returns {String} The compiled selector.
- */
-export function getSelectorForType (id, type, tagToExtend, negateWith) {
-  var isTag = type.indexOf(skate.types.TAG) > -1;
-  var isAttr = type.indexOf(skate.types.ATTR) > -1;
-  var isClass = type.indexOf(skate.types.CLASS) > -1;
-  var selectors = [];
-
-  tagToExtend = tagToExtend || '';
-  negateWith = negateWith ? ':not(' + negateWith + ')' : '';
-
-  if (isTag) {
-    if (tagToExtend) {
-      selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
-    } else {
-      selectors.push(id + negateWith);
-    }
-  }
-
-  if (isAttr) {
-    selectors.push(tagToExtend + '[' + id + ']' + negateWith);
-  }
-
-  if (isClass) {
-    selectors.push(tagToExtend + '.' + id + negateWith);
-  }
-
-  return selectors.join(',');
 }
 
 /**

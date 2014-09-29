@@ -174,7 +174,7 @@ skate('my-component', {
     callMeLikeAnyNativeMethod: function () {
 
     }
-  },
+  },  
 
   // A function that renders a template to your element. You can literally use
   // any templating engine you like here.
@@ -195,9 +195,11 @@ skate('my-component', {
   // - `NOCLASS` Attribute or tag names.
   type: skate.types.ANY,
 
-  // This is the class name that is added to the web component in order to
-  // display it in the DOM after the `ready` callback is invoked.
-  classname: '__skate'
+  // The attribute name to add after calling the ready() callback.
+  resolvedAttribute: 'resolved',
+
+  // The attribute name to remove after calling the ready() callback.
+  unresolvedAttribute: 'unresolved'
 });
 
 ```
@@ -586,53 +588,23 @@ As you may know, the only way to polyfill Mutation Observers is to use the depre
 Preventing FOUC
 ---------------
 
-If you specify a `ready()` callback, Skate will add a CSS rule to the page that ensures any matching element is hidden until a class is added to it. The selector varies depending on the type of component you've registered and depending on the DOM size, it can impact performance.
+An element may not be initialised right away. To prevent FOUC, you can add the `unresolved` attribute to any web component element and then use that attribute to hide the element in your stylesheets.
 
-Explicitly defining the type of your component will narrow the selector and will ensure a selector is built specifically for your component's type. For example, if you register a component and do not restrict the type:
+    <style>
+      [unresolved] {
+        opacity: 0;
+      }
+    </style>
+    <my-element unresolved></my-element>
 
-```js
-skate('my-unrestricted-component', {
-  type: skate.types.ANY
-});
-```
+The `unresolved` attribute will be removed after the `ready()` callback is called and before the `insert()` callback is called.
 
-This will create a CSS rule with a selector of:
+Additionally, after removing the `unresolved` attribute, Skate will add the `resolved` attribute. This allows you to transition your styles:
 
-```css
-my-unrestricted-component:not(.__skate),
-\[my-unrestricted-component\]:not(.__skate),
-.my-unrestricted-component:not(.__skate) { ... }
-```
-
-Additionally, if you use the `extends` option, the selectors are altered. Say
-for example, you are extending a `div`. The selectors would then be generated
-as:
-
-```css
-div[is="my-unrestricted-component"]:not(.__skate),
-div[my-unrestricted-component]:not(.__skate),
-div.my-unrestricted-component:not(.__skate) { ... }
-```
-
-If you only need it to act as a custom element, then you should restrict it as such:
-
-```js
-skate('my-restricted-component', {
-  type: skate.types.TAG
-});
-```
-
-This is generally good practice anyways, but it will also ensure the selector is built as:
-
-```css
-my-restricted-component:not(.__skate) { ... }
-```
-
-Or if you use the `extends` option:
-
-```css
-div[is="my-restricted-component"]:not(.__skate) { ... }
-```
+    [resolved] {
+      opacity: 1;
+      transition: opacity .3s ease;
+    }
 
 
 

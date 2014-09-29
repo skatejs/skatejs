@@ -2,39 +2,59 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
-  it('should trigger ready before the element is shown.', function (done) {
-    skate('div', {
+  it('should call the ready() callback when the element is inserted', function (done) {
+    skate('my-element', {
       ready: function (element) {
-        assert(element.className.split(' ').indexOf('__skate') === -1, 'Class found');
         done();
       }
     });
 
-    helpers.add('div');
+    helpers.fixture('<my-element></my-element>');
   });
 
-  it('should trigger insert after the element is shown.', function (done) {
-    skate('div', {
+  it('should call the insert() callback when the element is attached', function (done) {
+    skate('my-element', {
       insert: function (element) {
-        assert(element.className.split(' ').indexOf('__skate') > -1, 'Class not found');
         done();
       }
     });
 
-    helpers.add('div');
+    helpers.fixture('<my-element></my-element>');
   });
 
-  it('should trigger removed when the element is removed.', function (done) {
-    skate('div', {
+  it('should call the remove() callback when the element is detached', function (done) {
+    skate('my-element', {
       remove: function () {
-        assert(true);
         done();
       }
     });
 
-    var el = helpers.add('div');
-    skate.init(el);
-    helpers.remove(el);
+    helpers.fixture('<my-element></my-element>');
+    helpers.fixture('');
+  });
+});
+
+describe('Unresolved attribute', function () {
+  it('should remove the "unresolved" attribute after the ready callback is called', function () {
+    skate('my-element', {
+      ready: function (element) {
+        expect(element.hasAttribute('unresolved')).to.equal(true);
+        expect(element.hasAttribute('resolved')).to.equal(false);
+      }
+    });
+
+    skate.init(helpers.fixture('<my-element unresolved></my-element>'));
+  });
+
+  it('should remove the "unresolved" attribute before the insert callback is called', function () {
+    skate('my-element', {
+      insert: function (element) {
+        expect(element.hasAttribute('unresolved')).to.equal(false);
+        expect(element.hasAttribute('resolved')).to.equal(true);
+      }
+    });
+
+    skate.init(helpers.fixture('<my-element unresolved></my-element>'));
   });
 });
 

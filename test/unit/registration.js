@@ -36,48 +36,6 @@ describe('Registration', function () {
     skate.unregister('div');
     expect(skate.init(helpers.add('div')).test).to.equal(undefined);
   });
-
-  describe('should generate a selector for the hidden rules', function () {
-    function assertSelectorFor (id, type, tagToExtend) {
-      var div;
-
-      skate(id, {
-        type: type,
-        extends: tagToExtend,
-        ready: function (element) {
-          expect(window.getComputedStyle(element).display).to.equal('none');
-        }
-      });
-
-      if (tagToExtend) {
-        div = document.createElement(tagToExtend);
-        div.setAttribute('is', id);
-      } else {
-        div = document.createElement(id);
-      }
-
-      document.body.appendChild(div);
-      skate.init(div);
-    }
-
-    function describeSelectorTest (type) {
-      describe('for ' + type, function () {
-        it ('extending div', function () {
-          assertSelectorFor('my-element', type, 'div');
-        });
-
-        it ('not extending', function () {
-          assertSelectorFor('my-element', type);
-        });
-      });
-    }
-
-    for (var type in skate.types) {
-      if (skate.types.hasOwnProperty(type)) {
-        describeSelectorTest(skate.types[type]);
-      }
-    }
-  });
 });
 
 describe('Returning a constructor', function () {

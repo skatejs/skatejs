@@ -39,16 +39,6 @@ var $___46__46__47_src_47_utils__ = (function() {
   function hasOwn(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
-  function addClass(element, newClass) {
-    if (element.classList) {
-      element.classList.add(newClass);
-    } else if (hasOwn(element, 'className')) {
-      element.className += element.className ? ' ' + newClass : newClass;
-    } else {
-      var oldClass = element.getAttribute('class');
-      element.setAttribute('class', oldClass ? oldClass + ' ' + newClass : newClass);
-    }
-  }
   function debounce(fn) {
     var called = false;
     return function() {
@@ -78,28 +68,6 @@ var $___46__46__47_src_47_utils__ = (function() {
       parent = parent.parentNode;
     }
   }
-  function getSelectorForType(id, type, tagToExtend, negateWith) {
-    var isTag = type.indexOf(skate.types.TAG) > -1;
-    var isAttr = type.indexOf(skate.types.ATTR) > -1;
-    var isClass = type.indexOf(skate.types.CLASS) > -1;
-    var selectors = [];
-    tagToExtend = tagToExtend || '';
-    negateWith = negateWith ? ':not(' + negateWith + ')' : '';
-    if (isTag) {
-      if (tagToExtend) {
-        selectors.push(tagToExtend + '[is=' + id + ']' + negateWith);
-      } else {
-        selectors.push(id + negateWith);
-      }
-    }
-    if (isAttr) {
-      selectors.push(tagToExtend + '[' + id + ']' + negateWith);
-    }
-    if (isClass) {
-      selectors.push(tagToExtend + '.' + id + negateWith);
-    }
-    return selectors.join(',');
-  }
   function inherit(child, parent) {
     var names = Object.getOwnPropertyNames(parent);
     var namesLen = names.length;
@@ -128,9 +96,6 @@ var $___46__46__47_src_47_utils__ = (function() {
     get hasOwn() {
       return hasOwn;
     },
-    get addClass() {
-      return addClass;
-    },
     get debounce() {
       return debounce;
     },
@@ -139,9 +104,6 @@ var $___46__46__47_src_47_utils__ = (function() {
     },
     get getClosestIgnoredElement() {
       return getClosestIgnoredElement;
-    },
-    get getSelectorForType() {
-      return getSelectorForType;
     },
     get inherit() {
       return inherit;
@@ -347,7 +309,6 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
   var data = ($___46__46__47_src_47_data__).default;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
   var $__4 = $___46__46__47_src_47_utils__,
-      addClass = $__4.addClass,
       inherit = $__4.inherit,
       objEach = $__4.objEach;
   var elProto = window.HTMLElement.prototype;
@@ -460,7 +421,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     if (ensureLifecycleFlag(target, component, 'insert')) {
       return;
     }
-    addClass(target, component.classname);
+    target.removeAttribute(component.unresolvedAttribute);
+    target.setAttribute(component.resolvedAttribute, '');
     if (component.insert) {
       component.insert(target);
     }
@@ -560,11 +522,9 @@ var $___46__46__47_src_47_skate__ = (function() {
   var $__11 = $___46__46__47_src_47_utils__,
       getClassList = $__11.getClassList,
       getClosestIgnoredElement = $__11.getClosestIgnoredElement,
-      getSelectorForType = $__11.getSelectorForType,
       hasOwn = $__11.hasOwn,
       inherit = $__11.inherit;
   var documentObserver;
-  var hiddenRules = document.createElement('style');
   var registry = {};
   function createMutationObserver(root) {
     var observer = new MutationObserver(function(mutations) {
@@ -619,9 +579,6 @@ var $___46__46__47_src_47_skate__ = (function() {
     component.id = id;
     if (hasOwn(registry, component.id)) {
       throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
-    }
-    if (component.ready || component.template) {
-      hiddenRules.sheet.insertRule(getSelectorForType(component.id, component.type, component.extends, '.' + component.classname) + '{display:none}', hiddenRules.sheet.cssRules.length);
     }
     registry[component.id] = component;
     if (component.remove && !MutationObserver.isFixingIe) {
@@ -712,15 +669,15 @@ var $___46__46__47_src_47_skate__ = (function() {
   skate.version = '0.10.0';
   skate.defaults = {
     attributes: undefined,
-    classname: '__skate',
     events: undefined,
     extends: '',
     id: '',
     prototype: {},
+    resolvedAttribute: 'resolved',
     template: undefined,
-    type: skate.types.ANY
+    type: skate.types.ANY,
+    unresolvedAttribute: 'unresolved'
   };
-  document.getElementsByTagName('head')[0].appendChild(hiddenRules);
   window.skate = skate;
   if (typeof define === 'function' && define.amd) {
     define(function() {
