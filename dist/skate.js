@@ -509,6 +509,14 @@ var $___46__46__47_src_47_init__ = (function() {
     }
   };
 })();
+var $___46__46__47_src_47_version__ = (function() {
+  "use strict";
+  var __moduleName = "../src/version";
+  var $__default = '0.10.0';
+  return {get default() {
+      return $__default;
+    }};
+})();
 var $___46__46__47_src_47_skate__ = (function() {
   "use strict";
   var __moduleName = "../src/skate";
@@ -524,6 +532,7 @@ var $___46__46__47_src_47_skate__ = (function() {
       getClosestIgnoredElement = $__11.getClosestIgnoredElement,
       hasOwn = $__11.hasOwn,
       inherit = $__11.inherit;
+  var version = ($___46__46__47_src_47_version__).default;
   var documentObserver;
   var registry = {};
   function createMutationObserver(root) {
@@ -666,7 +675,7 @@ var $___46__46__47_src_47_skate__ = (function() {
     delete registry[id];
     return skate;
   };
-  skate.version = '0.10.0';
+  skate.version = version;
   skate.defaults = {
     attributes: undefined,
     events: undefined,

@@ -15,6 +15,7 @@ import {
   hasOwn,
   inherit
 } from './utils';
+import version from './version';
 
 // The observer listening to document changes.
 var documentObserver;
@@ -297,7 +298,7 @@ skate.unregister = function (id) {
 };
 
 // Makes checking the version easy when debugging.
-skate.version = '0.10.0';
+skate.version = version;
 
 /**
  * The default options for a component.
