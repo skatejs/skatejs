@@ -595,7 +595,14 @@ An element may not be initialised right away. To prevent FOUC, you can add the `
     </style>
     <my-element unresolved></my-element>
 
-The attribute will be removed after the `ready()` callback is called and before the `insert()` callback is called.
+The `unresolved` attribute will be removed after the `ready()` callback is called and before the `insert()` callback is called.
+
+Additionally, after removing the `unresolved` attribute, Skate will add the `resolved` attribute. This allows you to transition your styles:
+
+    [resolved] {
+      opacity: 1;
+      transition: opacity .3s ease;
+    }
 
 
 
