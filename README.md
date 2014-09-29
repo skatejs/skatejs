@@ -174,7 +174,7 @@ skate('my-component', {
     callMeLikeAnyNativeMethod: function () {
 
     }
-  },
+  },  
 
   // A function that renders a template to your element. You can literally use
   // any templating engine you like here.
@@ -195,9 +195,11 @@ skate('my-component', {
   // - `NOCLASS` Attribute or tag names.
   type: skate.types.ANY,
 
-  // The unresolved attribute name to remove after calling the ready() callback
-  // and before calling the insert() callback.
-  unresolved: 'unresolved'
+  // The attribute name to add after calling the ready() callback.
+  resolvedAttribute: 'resolved',
+
+  // The attribute name to remove after calling the ready() callback.
+  unresolvedAttribute: 'unresolved'
 });
 
 ```
