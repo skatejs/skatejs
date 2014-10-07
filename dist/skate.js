@@ -453,7 +453,7 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
 var $___46__46__47_src_47_version__ = (function() {
   "use strict";
   var __moduleName = "../src/version";
-  var $__default = '0.10.0';
+  var $__default = '0.10.1';
   return {get default() {
       return $__default;
     }};
