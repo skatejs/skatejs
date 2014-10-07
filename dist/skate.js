@@ -450,15 +450,33 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     }
   };
 })();
-var $___46__46__47_src_47_init__ = (function() {
+var $___46__46__47_src_47_version__ = (function() {
   "use strict";
-  var __moduleName = "../src/init";
+  var __moduleName = "../src/version";
+  var $__default = '0.10.0';
+  return {get default() {
+      return $__default;
+    }};
+})();
+var $___46__46__47_src_47_skate__ = (function() {
+  "use strict";
+  var __moduleName = "../src/skate";
   'use strict';
-  var debounce = ($___46__46__47_src_47_utils__).debounce;
   var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
-  var $__7 = $___46__46__47_src_47_lifecycle__,
-      triggerLifecycle = $__7.triggerLifecycle,
-      triggerRemove = $__7.triggerRemove;
+  var $__6 = $___46__46__47_src_47_lifecycle__,
+      triggerLifecycle = $__6.triggerLifecycle,
+      triggerReady = $__6.triggerReady,
+      triggerRemove = $__6.triggerRemove;
+  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
+  var $__8 = $___46__46__47_src_47_utils__,
+      debounce = $__8.debounce,
+      getClassList = $__8.getClassList,
+      getClosestIgnoredElement = $__8.getClosestIgnoredElement,
+      hasOwn = $__8.hasOwn,
+      inherit = $__8.inherit;
+  var version = ($___46__46__47_src_47_version__).default;
+  var documentObserver;
+  var registry = {};
   function initElements(elements) {
     var elementsLen = elements.length;
     for (var a = 0; a < elementsLen; a++) {
@@ -496,45 +514,6 @@ var $___46__46__47_src_47_init__ = (function() {
   var initDocument = debounce(function() {
     initElements(document.getElementsByTagName('html'));
   });
-  ;
-  return {
-    get initDocument() {
-      return initDocument;
-    },
-    get initElements() {
-      return initElements;
-    },
-    get removeElements() {
-      return removeElements;
-    }
-  };
-})();
-var $___46__46__47_src_47_version__ = (function() {
-  "use strict";
-  var __moduleName = "../src/version";
-  var $__default = '0.10.0';
-  return {get default() {
-      return $__default;
-    }};
-})();
-var $___46__46__47_src_47_skate__ = (function() {
-  "use strict";
-  var __moduleName = "../src/skate";
-  'use strict';
-  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var triggerReady = ($___46__46__47_src_47_lifecycle__).triggerReady;
-  var $__10 = $___46__46__47_src_47_init__,
-      initDocument = $__10.initDocument,
-      initElements = $__10.initElements,
-      removeElements = $__10.removeElements;
-  var $__11 = $___46__46__47_src_47_utils__,
-      getClassList = $__11.getClassList,
-      getClosestIgnoredElement = $__11.getClosestIgnoredElement,
-      hasOwn = $__11.hasOwn,
-      inherit = $__11.inherit;
-  var version = ($___46__46__47_src_47_version__).default;
-  var documentObserver;
-  var registry = {};
   function createMutationObserver(root) {
     var observer = new MutationObserver(function(mutations) {
       var mutationsLength = mutations.length;
