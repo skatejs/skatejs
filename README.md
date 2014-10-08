@@ -388,7 +388,7 @@ For example, Handlebars:
 skate('my-component', {
   template: function (element) {
     var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
-    compiled({ name: element.getAttribute('name') });
+    element.innerHTML = compiled({ name: element.getAttribute('name') });
   }
 });
 ```
