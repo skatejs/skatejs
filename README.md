@@ -214,7 +214,7 @@ The component lifecycle consists of three callbacks:
 2. `insert` Called after the element is displayed.
 3. `remove` Called after the element is removed.
 
-The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
+The `ready` callback gets triggered before the element is shown and is only ever fired once.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The `insert` and `remove` callbacks are fired each time the element is attached and detached from the DOM, which can happen multiple times.
 
 
 
