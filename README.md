@@ -216,11 +216,6 @@ The component lifecycle consists of three callbacks:
 
 The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
 
-It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
-
-- Skate must scour the entire DOM tree for components to process (this is faster than `querySelectorAll` in large DOMs). It minimises the impact of subsequent calls to `skate()` by debouncing the initialisation process.
-- If you have any elements in the DOM already and the component adds CSS rules to ensure the component elements are hidden until augmented, these elements may disappear and then reappear after they have been processed.
-
 
 
 ### Element Constructors
