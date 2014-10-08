@@ -643,7 +643,7 @@ To run tests:
 
 If you want to keep the Karma server alive to run them in your browser of choice:
 
-    grunt test --keep-alive
+    grunt test --keepalive
 
 To run tests in a specific browser:
 
