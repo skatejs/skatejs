@@ -214,7 +214,7 @@ The component lifecycle consists of three callbacks:
 2. `insert` Called after the element is displayed.
 3. `remove` Called after the element is removed.
 
-The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden by inserting a CSS rule that matches the element based on its component type. That being the case, it is best to define your components as early as possible so that Skate can make sure there is a CSS rule to hide it before it ever exists in the DOM. The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
+The `ready` callback gets triggered before the element is shown.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The lifecycle continues from the `ready` callback by showing the element and then calling the `insert` callback.
 
 It is possible to render the entire DOM tree and then define your components, however, this is not recommended for a couple reasons:
 
