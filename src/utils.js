@@ -39,25 +39,6 @@ export function debounce (fn) {
 }
 
 /**
- * Returns the class list for the specified element.
- *
- * @param {Element} element The element to get the class list for.
- *
- * @returns {ClassList | Array}
- */
-export function getClassList (element) {
-  var classList = element.classList;
-
-  if (classList) {
-    return classList;
-  }
-
-  var attrs = element.attributes;
-
-  return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-}
-
-/**
  * Returns whether or not the specified element has been selectively ignored.
  *
  * @param {Element} element The element to check and traverse up from.

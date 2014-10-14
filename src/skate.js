@@ -1,28 +1,26 @@
 'use strict';
 
-import {
-  ATTR_IGNORE
-} from './constants';
-import {
-  triggerLifecycle,
-  triggerReady,
-  triggerRemove
-} from './lifecycle';
 import MutationObserver from './mutation-observer';
-import {
-  debounce,
-  getClassList,
-  getClosestIgnoredElement,
-  hasOwn,
-  inherit
-} from './utils';
+import registry from './registry';
 import version from './version';
+
+import {
+    ATTR_IGNORE
+  } from './constants';
+import {
+    triggerLifecycle,
+    triggerReady,
+    triggerRemove
+  } from './lifecycle';
+import {
+    debounce,
+    getClosestIgnoredElement,
+    hasOwn,
+    inherit
+  } from './utils';
 
 // The observer listening to document changes.
 var documentObserver;
-
-// Component registry.
-var registry = {};
 
 /**
  * Initialises a set of elements.
@@ -41,11 +39,11 @@ function initElements (elements) {
       continue;
     }
 
-    var currentNodeComponents = skate.components(element);
-    var currentNodeComponentsLength = currentNodeComponents.length;
+    var currentNodeDefinitions = registry.getForElement(element);
+    var currentNodeDefinitionsLength = currentNodeDefinitions.length;
 
-    for (var b = 0; b < currentNodeComponentsLength; b++) {
-      triggerLifecycle(element, currentNodeComponents[b]);
+    for (var b = 0; b < currentNodeDefinitionsLength; b++) {
+      triggerLifecycle(element, currentNodeDefinitions[b]);
     }
 
     var elementChildNodes = element.childNodes;
@@ -77,11 +75,11 @@ function removeElements (elements) {
 
     removeElements(element.childNodes);
 
-    var components = skate.components(element);
-    var componentsLen = components.length;
+    var definitions = registry.getForElement(element);
+    var definitionsLen = definitions.length;
 
-    for (var b = 0; b < componentsLen; b++) {
-      triggerRemove(element, components[b]);
+    for (var b = 0; b < definitionsLen; b++) {
+      triggerRemove(element, definitions[b]);
     }
   }
 }
@@ -126,7 +124,7 @@ function mutationObserverHandler (mutations) {
 }
 
 /**
- * Creates a new mutation observer for listening to Skate components for the
+ * Creates a new mutation observer for listening to Skate definitions for the
  * specified root element.
  *
  * @param {Element} root The element to observe.
@@ -158,53 +156,39 @@ function destroyDocumentObserver () {
 }
 
 /**
- * Returns whether or not the specified component can be bound using the
- * specified type.
+ * Creates a constructor for the specified definition.
  *
- * @param {String} id The component ID.
- * @param {String} type The component type.
- *
- * @returns {Boolean}
- */
-function isComponentOfType (id, type) {
-  return hasOwn(registry, id) && registry[id].type.indexOf(type) > -1;
-}
-
-/**
- * Creates a constructor for the specified component.
- *
- * @param {Object} component The component information to use for generating
- *                           the constructor.
+ * @param {Object} definition The definition information to use for generating the constructor.
  *
  * @returns {Function} The element constructor.
  */
-function makeElementConstructor (component) {
+function makeElementConstructor (definition) {
   function CustomElement () {
     var element;
-    var tagToExtend = component.extends;
-    var componentId = component.id;
+    var tagToExtend = definition.extends;
+    var definitionId = definition.id;
 
     if (tagToExtend) {
       element = document.createElement(tagToExtend);
-      element.setAttribute('is', componentId);
+      element.setAttribute('is', definitionId);
     } else {
-      element = document.createElement(componentId);
+      element = document.createElement(definitionId);
     }
 
-    // Ensure the component prototype is up to date with the element's
+    // Ensure the definition prototype is up to date with the element's
     // prototype. This ensures that overwriting the element prototype still
     // works.
-    component.prototype = CustomElement.prototype;
+    definition.prototype = CustomElement.prototype;
 
     // If they use the constructor we don't have to wait until it's inserted.
-    triggerReady(element, component);
+    triggerReady(element, definition);
 
     return element;
   }
 
   // This allows modifications to the element prototype propagate to the
-  // component prototype.
-  CustomElement.prototype = component.prototype;
+  // definition prototype.
+  CustomElement.prototype = definition.prototype;
 
   return CustomElement;
 }
@@ -213,31 +197,31 @@ function makeElementConstructor (component) {
 // ----------
 
 /**
- * Creates a listener for the specified component.
+ * Creates a listener for the specified definition.
  *
- * @param {String} id The ID of the component.
- * @param {Object | Function} component The component definition.
+ * @param {String} id The ID of the definition.
+ * @param {Object | Function} definition The definition definition.
  *
  * @returns {Function} Constructor that returns a custom element.
  */
-function skate (id, component) {
+function skate (id, definition) {
   // Set any defaults that weren't passed.
-  component = inherit(component || {}, skate.defaults);
+  definition = inherit(definition || {}, skate.defaults);
 
-  // Set the component ID for reference later.
-  component.id = id;
+  // Set the definition ID for reference later.
+  definition.id = id;
 
-  // Components of a particular type must be unique.
-  if (hasOwn(registry, component.id)) {
-    throw new Error('A component of type "' + component.type + '" with the ID of "' + id + '" already exists.');
+  // Definitions of a particular type must be unique.
+  if (registry.has(definition.id)) {
+    throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
   }
 
-  // Register the component.
-  registry[component.id] = component;
+  // Register the definition.
+  registry.set(definition.id, definition);
 
   // IE has issues with reporting removedNodes correctly. See the polyfill for
   // details. If we fix IE, we must also re-define the documentObserver.
-  if (component.remove && !MutationObserver.isFixingIe) {
+  if (definition.remove && !MutationObserver.isFixingIe) {
     MutationObserver.fixIe();
     destroyDocumentObserver();
   }
@@ -246,80 +230,17 @@ function skate (id, component) {
   initDocument();
 
   // Lazily initialise the document observer so we don't incur any overhead if
-  // there's no component listeners.
+  // there's no definition listeners.
   if (!documentObserver) {
     documentObserver = createMutationObserver(document);
   }
 
   // Only make and return an element constructor if it can be used as a custom
   // element.
-  if (component.type.indexOf(skate.types.TAG) > -1) {
-    return makeElementConstructor(component);
+  if (definition.type.indexOf(skate.types.TAG) > -1) {
+    return makeElementConstructor(definition);
   }
 }
-
-/**
- * Returns the components for the specified element.
- *
- * @param {Element} element The element to get the components for.
- *
- * @returns {Array}
- */
-skate.components = function (element) {
-  var attrs = element.attributes;
-  var attrsLen = attrs.length;
-  var components = [];
-  var isAttr = attrs.is;
-  var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-  var tag = element.tagName.toLowerCase();
-  var isAttrOrTag = isAttrValue || tag;
-  var component;
-  var tagToExtend;
-
-  if (isComponentOfType(isAttrOrTag, skate.types.TAG)) {
-    component = registry[isAttrOrTag];
-    tagToExtend = component.extends;
-
-    if (isAttrValue) {
-      if (tag === tagToExtend) {
-        components.push(component);
-      }
-    } else if (!tagToExtend) {
-      components.push(component);
-    }
-  }
-
-  for (var a = 0; a < attrsLen; a++) {
-    var attr = attrs[a].nodeName;
-
-    if (isComponentOfType(attr, skate.types.ATTR)) {
-      component = registry[attr];
-      tagToExtend = component.extends;
-
-      if (!tagToExtend || tag === tagToExtend) {
-        components.push(component);
-      }
-    }
-  }
-
-  var classList = getClassList(element);
-  var classListLen = classList.length;
-
-  for (var b = 0; b < classListLen; b++) {
-    var className = classList[b];
-
-    if (isComponentOfType(className, skate.types.CLASS)) {
-      component = registry[className];
-      tagToExtend = component.extends;
-
-      if (!tagToExtend || tag === tagToExtend) {
-        components.push(component);
-      }
-    }
-  }
-
-  return components;
-};
 
 /**
  * Stops listening for new elements. Generally this will only be used in
@@ -329,7 +250,7 @@ skate.components = function (element) {
  */
 skate.destroy = function () {
   destroyDocumentObserver();
-  registry = {};
+  registry.clear();
   return skate;
 };
 
@@ -368,14 +289,14 @@ skate.types = {
 };
 
 /**
- * Unregisters the specified component.
+ * Unregisters the specified definition.
  *
- * @param {String} id The ID of the component to unregister.
+ * @param {String} id The ID of the definition to unregister.
  *
  * @returns {Skate}
  */
 skate.unregister = function (id) {
-  delete registry[id];
+  delete registry.remove(id);
   return skate;
 };
 
@@ -383,7 +304,7 @@ skate.unregister = function (id) {
 skate.version = version;
 
 /**
- * The default options for a component.
+ * The default options for a definition.
  *
  * @var {Object}
  */
@@ -391,15 +312,15 @@ skate.defaults = {
   // Attribute lifecycle callback or callbacks.
   attributes: undefined,
 
-  // The events to manage the binding and unbinding of during the component's
+  // The events to manage the binding and unbinding of during the definition's
   // lifecycle.
   events: undefined,
 
-  // Restricts a particular component to binding explicitly to an element with
+  // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
   extends: '',
 
-  // The ID of the component. This is automatically set in the `skate()`
+  // The ID of the definition. This is automatically set in the `skate()`
   // function.
   id: '',
 
