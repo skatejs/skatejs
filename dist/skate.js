@@ -667,11 +667,12 @@ var $___46__46__47_src_47_skate__ = (function() {
     unresolvedAttribute: 'unresolved'
   };
   window.skate = skate;
-  if (typeof define === 'function' && define.amd) {
+  if (typeof define === 'function') {
     define(function() {
       return skate;
     });
-  } else if (typeof module === 'object') {
+  }
+  if (typeof module === 'object') {
     module.exports = skate;
   }
   var $__default = skate;

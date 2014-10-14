@@ -418,12 +418,15 @@ skate.defaults = {
 // using it in an environment where module and non-module code may co-exist.
 window.skate = skate;
 
-// AMD or CommonJS
-if (typeof define === 'function' && define.amd) {
+// AMD
+if (typeof define === 'function') {
   define(function () {
     return skate;
   });
-} else if (typeof module === 'object') {
+}
+
+// CommonJS
+if (typeof module === 'object') {
   module.exports = skate;
 }
 
