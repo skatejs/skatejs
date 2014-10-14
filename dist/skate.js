@@ -514,21 +514,22 @@ var $___46__46__47_src_47_skate__ = (function() {
   var initDocument = debounce(function() {
     initElements(document.getElementsByTagName('html'));
   });
-  function createMutationObserver(root) {
-    var observer = new MutationObserver(function(mutations) {
-      var mutationsLength = mutations.length;
-      for (var a = 0; a < mutationsLength; a++) {
-        var mutation = mutations[a];
-        var addedNodes = mutation.addedNodes;
-        var removedNodes = mutation.removedNodes;
-        if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-          initElements(addedNodes);
-        }
-        if (removedNodes && removedNodes.length) {
-          removeElements(removedNodes);
-        }
+  function mutationObserverHandler(mutations) {
+    var mutationsLength = mutations.length;
+    for (var a = 0; a < mutationsLength; a++) {
+      var mutation = mutations[a];
+      var addedNodes = mutation.addedNodes;
+      var removedNodes = mutation.removedNodes;
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+        initElements(addedNodes);
       }
-    });
+      if (removedNodes && removedNodes.length) {
+        removeElements(removedNodes);
+      }
+    }
+  }
+  function createMutationObserver(root) {
+    var observer = new MutationObserver(mutationObserverHandler);
     observer.observe(root, {
       childList: true,
       subtree: true

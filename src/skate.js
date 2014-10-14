@@ -97,6 +97,35 @@ var initDocument = debounce(function () {
 });
 
 /**
+ * The mutation observer handler.
+ *
+ * @param {Array} mutations The mutations to handle.
+ *
+ * @returns {undefined}
+ */
+function mutationObserverHandler (mutations) {
+  var mutationsLength = mutations.length;
+
+  for (var a = 0; a < mutationsLength; a++) {
+    var mutation = mutations[a];
+    var addedNodes = mutation.addedNodes;
+    var removedNodes = mutation.removedNodes;
+
+    // Since siblings are batched together, we check the first node's parent
+    // node to see if it is ignored. If it is then we don't process any added
+    // nodes. This prevents having to check every node.
+    if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+      initElements(addedNodes);
+    }
+
+    // We can't check batched nodes here because they won't have a parent node.
+    if (removedNodes && removedNodes.length) {
+      removeElements(removedNodes);
+    }
+  }
+}
+
+/**
  * Creates a new mutation observer for listening to Skate components for the
  * specified root element.
  *
@@ -105,27 +134,7 @@ var initDocument = debounce(function () {
  * @returns {MutationObserver}
  */
 function createMutationObserver (root) {
-  var observer = new MutationObserver(function (mutations) {
-    var mutationsLength = mutations.length;
-
-    for (var a = 0; a < mutationsLength; a++) {
-      var mutation = mutations[a];
-      var addedNodes = mutation.addedNodes;
-      var removedNodes = mutation.removedNodes;
-
-      // Since siblings are batched together, we check the first node's parent
-      // node to see if it is ignored. If it is then we don't process any added
-      // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        initElements(addedNodes);
-      }
-
-      // We can't check batched nodes here because they won't have a parent node.
-      if (removedNodes && removedNodes.length) {
-        removeElements(removedNodes);
-      }
-    }
-  });
+  var observer = new MutationObserver(mutationObserverHandler);
 
   // Observe after the DOM content has loaded.
   observer.observe(root, {
