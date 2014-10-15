@@ -1,8 +1,8 @@
 'use strict';
 
 import {
-    hasOwn
-  } from './utils';
+  hasOwn
+} from './utils';
 
 if (!window.__skateDefinitions) {
   window.__skateDefinitions = {};

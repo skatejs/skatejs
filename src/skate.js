@@ -5,18 +5,18 @@ import registry from './registry';
 import version from './version';
 
 import {
-    ATTR_IGNORE
-  } from './constants';
+  ATTR_IGNORE
+} from './constants';
 import {
-    triggerLifecycle,
-    triggerReady,
-    triggerRemove
-  } from './lifecycle';
+  triggerLifecycle,
+  triggerReady,
+  triggerRemove
+} from './lifecycle';
 import {
-    debounce,
-    getClosestIgnoredElement,
-    inherit
-  } from './utils';
+  debounce,
+  getClosestIgnoredElement,
+  inherit
+} from './utils';
 
 // The observer listening to document changes.
 var documentObserver;
