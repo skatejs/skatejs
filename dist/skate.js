@@ -552,7 +552,6 @@ var $___46__46__47_src_47_skate__ = (function() {
   var $__11 = $___46__46__47_src_47_utils__,
       debounce = $__11.debounce,
       getClosestIgnoredElement = $__11.getClosestIgnoredElement,
-      hasOwn = $__11.hasOwn,
       inherit = $__11.inherit;
   var documentObserver;
   function initElements(elements) {

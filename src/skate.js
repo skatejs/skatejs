@@ -15,7 +15,6 @@ import {
 import {
     debounce,
     getClosestIgnoredElement,
-    hasOwn,
     inherit
   } from './utils';
 
