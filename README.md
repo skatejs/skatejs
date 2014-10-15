@@ -266,7 +266,7 @@ A notable difference, though, is that this callback gets called for attributes t
 
 This is called for each attribute on an element when:
 
-- The element is inserted with attributes already on it.
+- The element is created with attributes already on it.
 - Attributes are added to the element.
 - Attributes on the element are updated.
 - Attributes are removed from the element.
@@ -285,7 +285,7 @@ skate('my-component', {
 
 This allows you to specify which attributes you want to listen to and will call the specified function when:
 
-- The element is inserted with the corresponding attribute already on it.
+- The element is created with the corresponding attribute already on it.
 - The corresponding attribute is added to the element.
 - The corresponding attribute is updated on the element.
 
@@ -313,7 +313,7 @@ skate('my-component', {
 
 The `insert` handler gets called when:
 
-- The element is inserted with the corresponding attribute already on it.
+- The element is created with the corresponding attribute already on it.
 - The corresponding attribute is added to the element.
 
 The `update` handler gets called when:
