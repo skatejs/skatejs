@@ -291,107 +291,15 @@ var $___46__46__47_src_47_mutation_45_observer__ = (function() {
       return $__default;
     }};
 })();
-var $___46__46__47_src_47_registry__ = (function() {
-  "use strict";
-  var __moduleName = "../src/registry";
-  'use strict';
-  var hasOwn = ($___46__46__47_src_47_utils__).hasOwn;
-  if (!window.__skateDefinitions) {
-    window.__skateDefinitions = {};
-  }
-  function getClassList(element) {
-    var classList = element.classList;
-    if (classList) {
-      return classList;
-    }
-    var attrs = element.attributes;
-    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
-  }
-  function isDefinitionOfType(id, type) {
-    return hasOwn(window.__skateDefinitions, id) && window.__skateDefinitions[id].type.indexOf(type) > -1;
-  }
-  var $__default = {
-    clear: function() {
-      window.__skateDefinitions = {};
-      return this;
-    },
-    getForElement: function(element) {
-      var attrs = element.attributes;
-      var attrsLen = attrs.length;
-      var definitions = [];
-      var isAttr = attrs.is;
-      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-      var tag = element.tagName.toLowerCase();
-      var isAttrOrTag = isAttrValue || tag;
-      var definition;
-      var tagToExtend;
-      if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
-        definition = window.__skateDefinitions[isAttrOrTag];
-        tagToExtend = definition.extends;
-        if (isAttrValue) {
-          if (tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        } else if (!tagToExtend) {
-          definitions.push(definition);
-        }
-      }
-      for (var a = 0; a < attrsLen; a++) {
-        var attr = attrs[a].nodeName;
-        if (isDefinitionOfType(attr, skate.types.ATTR)) {
-          definition = window.__skateDefinitions[attr];
-          tagToExtend = definition.extends;
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-      var classList = getClassList(element);
-      var classListLen = classList.length;
-      for (var b = 0; b < classListLen; b++) {
-        var className = classList[b];
-        if (isDefinitionOfType(className, skate.types.CLASS)) {
-          definition = window.__skateDefinitions[className];
-          tagToExtend = definition.extends;
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-      return definitions;
-    },
-    has: function(id) {
-      return hasOwn(window.__skateDefinitions, id);
-    },
-    set: function(id, definition) {
-      if (this.has(id)) {
-        throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
-      }
-      window.__skateDefinitions[id] = definition;
-      return this;
-    },
-    remove: function(id) {
-      if (this.has(id)) {
-        delete window.__skateDefinitions[id];
-      }
-      return this;
-    }
-  };
-  return {get default() {
-      return $__default;
-    }};
-})();
 var $___46__46__47_src_47_lifecycle__ = (function() {
   "use strict";
   var __moduleName = "../src/lifecycle";
   'use strict';
-  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
   var data = ($___46__46__47_src_47_data__).default;
   var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var registry = ($___46__46__47_src_47_registry__).default;
-  var $__7 = $___46__46__47_src_47_utils__,
-      inherit = $__7.inherit,
-      objEach = $__7.objEach;
+  var $__4 = $___46__46__47_src_47_utils__,
+      inherit = $__4.inherit,
+      objEach = $__4.objEach;
   var elProto = window.HTMLElement.prototype;
   var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
   function getLifecycleFlag(target, component, name) {
@@ -518,6 +426,134 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
     triggerReady(target, component);
     triggerInsert(target, component);
   }
+  ;
+  return {
+    get triggerLifecycle() {
+      return triggerLifecycle;
+    },
+    get triggerReady() {
+      return triggerReady;
+    },
+    get triggerRemove() {
+      return triggerRemove;
+    }
+  };
+})();
+var $___46__46__47_src_47_registry__ = (function() {
+  "use strict";
+  var __moduleName = "../src/registry";
+  'use strict';
+  var hasOwn = ($___46__46__47_src_47_utils__).hasOwn;
+  if (!window.__skateDefinitions) {
+    window.__skateDefinitions = {};
+  }
+  function getClassList(element) {
+    var classList = element.classList;
+    if (classList) {
+      return classList;
+    }
+    var attrs = element.attributes;
+    return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
+  }
+  function isDefinitionOfType(id, type) {
+    return hasOwn(window.__skateDefinitions, id) && window.__skateDefinitions[id].type.indexOf(type) > -1;
+  }
+  var $__default = {
+    clear: function() {
+      window.__skateDefinitions = {};
+      return this;
+    },
+    getForElement: function(element) {
+      var attrs = element.attributes;
+      var attrsLen = attrs.length;
+      var definitions = [];
+      var isAttr = attrs.is;
+      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+      var tag = element.tagName.toLowerCase();
+      var isAttrOrTag = isAttrValue || tag;
+      var definition;
+      var tagToExtend;
+      if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+        definition = window.__skateDefinitions[isAttrOrTag];
+        tagToExtend = definition.extends;
+        if (isAttrValue) {
+          if (tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        } else if (!tagToExtend) {
+          definitions.push(definition);
+        }
+      }
+      for (var a = 0; a < attrsLen; a++) {
+        var attr = attrs[a].nodeName;
+        if (isDefinitionOfType(attr, skate.types.ATTR)) {
+          definition = window.__skateDefinitions[attr];
+          tagToExtend = definition.extends;
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+      var classList = getClassList(element);
+      var classListLen = classList.length;
+      for (var b = 0; b < classListLen; b++) {
+        var className = classList[b];
+        if (isDefinitionOfType(className, skate.types.CLASS)) {
+          definition = window.__skateDefinitions[className];
+          tagToExtend = definition.extends;
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+      return definitions;
+    },
+    has: function(id) {
+      return hasOwn(window.__skateDefinitions, id);
+    },
+    set: function(id, definition) {
+      if (this.has(id)) {
+        throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+      }
+      window.__skateDefinitions[id] = definition;
+      return this;
+    },
+    remove: function(id) {
+      if (this.has(id)) {
+        delete window.__skateDefinitions[id];
+      }
+      return this;
+    }
+  };
+  return {get default() {
+      return $__default;
+    }};
+})();
+var $___46__46__47_src_47_version__ = (function() {
+  "use strict";
+  var __moduleName = "../src/version";
+  var $__default = '0.10.2';
+  return {get default() {
+      return $__default;
+    }};
+})();
+var $___46__46__47_src_47_skate__ = (function() {
+  "use strict";
+  var __moduleName = "../src/skate";
+  'use strict';
+  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
+  var registry = ($___46__46__47_src_47_registry__).default;
+  var version = ($___46__46__47_src_47_version__).default;
+  var ATTR_IGNORE = ($___46__46__47_src_47_constants__).ATTR_IGNORE;
+  var $__10 = $___46__46__47_src_47_lifecycle__,
+      triggerLifecycle = $__10.triggerLifecycle,
+      triggerReady = $__10.triggerReady,
+      triggerRemove = $__10.triggerRemove;
+  var $__11 = $___46__46__47_src_47_utils__,
+      debounce = $__11.debounce,
+      getClosestIgnoredElement = $__11.getClosestIgnoredElement,
+      inherit = $__11.inherit;
+  var documentObserver;
   function initElements(elements) {
     var elementsLen = elements.length;
     for (var a = 0; a < elementsLen; a++) {
@@ -552,37 +588,15 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       }
     }
   }
-  ;
-  return {
-    get triggerReady() {
-      return triggerReady;
-    },
-    get initElements() {
-      return initElements;
-    },
-    get removeElements() {
-      return removeElements;
-    }
-  };
-})();
-var $___46__46__47_src_47_document_45_observer__ = (function() {
-  "use strict";
-  var __moduleName = "../src/document-observer";
-  'use strict';
-  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var $__9 = $___46__46__47_src_47_lifecycle__,
-      initElements = $__9.initElements,
-      removeElements = $__9.removeElements;
-  var getClosestIgnoredElement = ($___46__46__47_src_47_utils__).getClosestIgnoredElement;
-  var handlers = [];
-  function documentObserverHandler(mutations) {
-    var mutationsLen = mutations.length;
-    for (var a = 0; a < mutationsLen; a++) {
+  var initDocument = debounce(function() {
+    initElements(document.getElementsByTagName('html'));
+  });
+  function mutationObserverHandler(mutations) {
+    var mutationsLength = mutations.length;
+    for (var a = 0; a < mutationsLength; a++) {
       var mutation = mutations[a];
       var addedNodes = mutation.addedNodes;
-      var addedNodesLen = addedNodes && addedNodes.length;
       var removedNodes = mutation.removedNodes;
-      var removedNodesLen = removedNodes && removedNodes.length;
       if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
         initElements(addedNodes);
       }
@@ -591,62 +605,20 @@ var $___46__46__47_src_47_document_45_observer__ = (function() {
       }
     }
   }
-  function createDocumentObserver() {
-    var observer = new MutationObserver(documentObserverHandler);
-    observer.observe(document, {
+  function createMutationObserver(root) {
+    var observer = new MutationObserver(mutationObserverHandler);
+    observer.observe(root, {
       childList: true,
       subtree: true
     });
     return observer;
   }
-  var $__default = {
-    register: function(fixIe) {
-      if (fixIe) {
-        MutationObserver.fixIe();
-        this.unregister();
-      }
-      if (!window.__skateDocumentObserver) {
-        window.__skateDocumentObserver = createDocumentObserver();
-      }
-      return this;
-    },
-    unregister: function() {
-      if (window.__skateDocumentObserver) {
-        window.__skateDocumentObserver.disconnect();
-        window.__skateDocumentObserver = undefined;
-      }
-      return this;
+  function destroyDocumentObserver() {
+    if (documentObserver) {
+      documentObserver.disconnect();
+      documentObserver = undefined;
     }
-  };
-  return {get default() {
-      return $__default;
-    }};
-})();
-var $___46__46__47_src_47_version__ = (function() {
-  "use strict";
-  var __moduleName = "../src/version";
-  var $__default = '0.10.2';
-  return {get default() {
-      return $__default;
-    }};
-})();
-var $___46__46__47_src_47_skate__ = (function() {
-  "use strict";
-  var __moduleName = "../src/skate";
-  'use strict';
-  var documentObserver = ($___46__46__47_src_47_document_45_observer__).default;
-  var $__12 = $___46__46__47_src_47_lifecycle__,
-      triggerReady = $__12.triggerReady,
-      initElements = $__12.initElements;
-  var MutationObserver = ($___46__46__47_src_47_mutation_45_observer__).default;
-  var registry = ($___46__46__47_src_47_registry__).default;
-  var $__15 = $___46__46__47_src_47_utils__,
-      debounce = $__15.debounce,
-      inherit = $__15.inherit;
-  var version = ($___46__46__47_src_47_version__).default;
-  var initDocument = debounce(function() {
-    initElements(document.getElementsByTagName('html'));
-  });
+  }
   function makeElementConstructor(definition) {
     function CustomElement() {
       var element;
@@ -672,14 +644,20 @@ var $___46__46__47_src_47_skate__ = (function() {
       throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
     registry.set(definition.id, definition);
+    if (definition.remove && !MutationObserver.isFixingIe) {
+      MutationObserver.fixIe();
+      destroyDocumentObserver();
+    }
     initDocument();
-    documentObserver.register(definition.remove);
+    if (!documentObserver) {
+      documentObserver = createMutationObserver(document);
+    }
     if (definition.type.indexOf(skate.types.TAG) > -1) {
       return makeElementConstructor(definition);
     }
   }
   skate.destroy = function() {
-    documentObserver.unregister();
+    destroyDocumentObserver();
     registry.clear();
     return skate;
   };
@@ -703,7 +681,7 @@ var $___46__46__47_src_47_skate__ = (function() {
     TAG: 't'
   };
   skate.unregister = function(id) {
-    registry.remove(id);
+    delete registry.remove(id);
     return skate;
   };
   skate.version = version;
