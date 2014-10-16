@@ -8,5 +8,6 @@ import './unit/ignoring';
 import './unit/init';
 import './unit/lifecycle';
 import './unit/registration';
+import './unit/registry';
 import './unit/templating';
 import './unit/version';
