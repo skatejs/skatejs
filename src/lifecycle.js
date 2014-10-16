@@ -1,7 +1,11 @@
 'use strict';
 
+import {
+  ATTR_IGNORE
+} from './constants';
 import data from './data';
 import MutationObserver from './mutation-observer';
+import registry from './registry';
 import {
   inherit,
   objEach
@@ -238,8 +242,70 @@ function triggerLifecycle (target, component) {
   triggerInsert(target, component);
 }
 
+/**
+ * Initialises a set of elements.
+ *
+ * @param {DOMNodeList | Array} elements A traversable set of elements.
+ *
+ * @returns {undefined}
+ */
+function initElements (elements) {
+  var elementsLen = elements.length;
+
+  for (var a = 0; a < elementsLen; a++) {
+    var element = elements[a];
+
+    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+      continue;
+    }
+
+    var currentNodeDefinitions = registry.getForElement(element);
+    var currentNodeDefinitionsLength = currentNodeDefinitions.length;
+
+    for (var b = 0; b < currentNodeDefinitionsLength; b++) {
+      triggerLifecycle(element, currentNodeDefinitions[b]);
+    }
+
+    var elementChildNodes = element.childNodes;
+    var elementChildNodesLen = elementChildNodes.length;
+
+    if (elementChildNodesLen) {
+      initElements(elementChildNodes);
+    }
+  }
+}
+
+/**
+ * Triggers the remove lifecycle callback on all of the elements.
+ *
+ * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
+ * callback on.
+ *
+ * @returns {undefined}
+ */
+function removeElements (elements) {
+  var len = elements.length;
+
+  for (var a = 0; a < len; a++) {
+    var element = elements[a];
+
+    if (element.nodeType !== 1) {
+      continue;
+    }
+
+    removeElements(element.childNodes);
+
+    var definitions = registry.getForElement(element);
+    var definitionsLen = definitions.length;
+
+    for (var b = 0; b < definitionsLen; b++) {
+      triggerRemove(element, definitions[b]);
+    }
+  }
+}
+
 export {
-  triggerLifecycle,
   triggerReady,
-  triggerRemove
+  initElements,
+  removeElements
 };

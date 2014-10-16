@@ -1,87 +1,17 @@
 'use strict';
 
+import documentObserver from './document-observer';
+import {
+  triggerReady,
+  initElements
+} from './lifecycle';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
-import version from './version';
-
-import {
-  ATTR_IGNORE
-} from './constants';
-import {
-  triggerLifecycle,
-  triggerReady,
-  triggerRemove
-} from './lifecycle';
 import {
   debounce,
-  getClosestIgnoredElement,
   inherit
 } from './utils';
-
-// The observer listening to document changes.
-var documentObserver;
-
-/**
- * Initialises a set of elements.
- *
- * @param {DOMNodeList | Array} elements A traversable set of elements.
- *
- * @returns {undefined}
- */
-function initElements (elements) {
-  var elementsLen = elements.length;
-
-  for (var a = 0; a < elementsLen; a++) {
-    var element = elements[a];
-
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
-      continue;
-    }
-
-    var currentNodeDefinitions = registry.getForElement(element);
-    var currentNodeDefinitionsLength = currentNodeDefinitions.length;
-
-    for (var b = 0; b < currentNodeDefinitionsLength; b++) {
-      triggerLifecycle(element, currentNodeDefinitions[b]);
-    }
-
-    var elementChildNodes = element.childNodes;
-    var elementChildNodesLen = elementChildNodes.length;
-
-    if (elementChildNodesLen) {
-      initElements(elementChildNodes);
-    }
-  }
-}
-
-/**
- * Triggers the remove lifecycle callback on all of the elements.
- *
- * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
- * callback on.
- *
- * @returns {undefined}
- */
-function removeElements (elements) {
-  var len = elements.length;
-
-  for (var a = 0; a < len; a++) {
-    var element = elements[a];
-
-    if (element.nodeType !== 1) {
-      continue;
-    }
-
-    removeElements(element.childNodes);
-
-    var definitions = registry.getForElement(element);
-    var definitionsLen = definitions.length;
-
-    for (var b = 0; b < definitionsLen; b++) {
-      triggerRemove(element, definitions[b]);
-    }
-  }
-}
+import version from './version';
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -92,67 +22,6 @@ function removeElements (elements) {
 var initDocument = debounce(function () {
   initElements(document.getElementsByTagName('html'));
 });
-
-/**
- * The mutation observer handler.
- *
- * @param {Array} mutations The mutations to handle.
- *
- * @returns {undefined}
- */
-function mutationObserverHandler (mutations) {
-  var mutationsLength = mutations.length;
-
-  for (var a = 0; a < mutationsLength; a++) {
-    var mutation = mutations[a];
-    var addedNodes = mutation.addedNodes;
-    var removedNodes = mutation.removedNodes;
-
-    // Since siblings are batched together, we check the first node's parent
-    // node to see if it is ignored. If it is then we don't process any added
-    // nodes. This prevents having to check every node.
-    if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-      initElements(addedNodes);
-    }
-
-    // We can't check batched nodes here because they won't have a parent node.
-    if (removedNodes && removedNodes.length) {
-      removeElements(removedNodes);
-    }
-  }
-}
-
-/**
- * Creates a new mutation observer for listening to Skate definitions for the
- * specified root element.
- *
- * @param {Element} root The element to observe.
- *
- * @returns {MutationObserver}
- */
-function createMutationObserver (root) {
-  var observer = new MutationObserver(mutationObserverHandler);
-
-  // Observe after the DOM content has loaded.
-  observer.observe(root, {
-    childList: true,
-    subtree: true
-  });
-
-  return observer;
-}
-
-/**
- * Disconnects the document observer and undefine it.
- *
- * @returns {undefined}
- */
-function destroyDocumentObserver () {
-  if (documentObserver) {
-    documentObserver.disconnect();
-    documentObserver = undefined;
-  }
-}
 
 /**
  * Creates a constructor for the specified definition.
@@ -218,21 +87,12 @@ function skate (id, definition) {
   // Register the definition.
   registry.set(definition.id, definition);
 
-  // IE has issues with reporting removedNodes correctly. See the polyfill for
-  // details. If we fix IE, we must also re-define the documentObserver.
-  if (definition.remove && !MutationObserver.isFixingIe) {
-    MutationObserver.fixIe();
-    destroyDocumentObserver();
-  }
-
   // Initialise existing elements.
   initDocument();
 
   // Lazily initialise the document observer so we don't incur any overhead if
   // there's no definition listeners.
-  if (!documentObserver) {
-    documentObserver = createMutationObserver(document);
-  }
+  documentObserver.register(definition.remove);
 
   // Only make and return an element constructor if it can be used as a custom
   // element.
@@ -248,7 +108,7 @@ function skate (id, definition) {
  * @returns {skate}
  */
 skate.destroy = function () {
-  destroyDocumentObserver();
+  documentObserver.unregister();
   registry.clear();
   return skate;
 };
@@ -295,7 +155,7 @@ skate.types = {
  * @returns {Skate}
  */
 skate.unregister = function (id) {
-  delete registry.remove(id);
+  registry.remove(id);
   return skate;
 };
 
