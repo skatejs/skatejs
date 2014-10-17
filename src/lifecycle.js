@@ -145,7 +145,7 @@ function addEventListeners (target, component) {
       // handler is triggered on it.
       var current = e.target;
 
-      while (current && current !== document && current !== target) {
+      while (current && current !== document && current !== target.parentNode) {
         if (matchesSelector.call(current, delegate)) {
           return handler(target, e, current);
         }
