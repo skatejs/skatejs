@@ -8,7 +8,7 @@ describe('Using components', function () {
       skate('my-element', {
         type: type,
         extends: tagToExtend,
-        ready: function () {
+        created: function () {
           ++calls;
         }
       });
@@ -48,7 +48,7 @@ describe('Using components', function () {
       var calls = 0;
 
       skate('my-element', {
-        ready: function () {
+        created: function () {
           ++calls;
         }
       });

@@ -2,9 +2,9 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Templates', function () {
-  it('should execute the template function before ready is called', function () {
+  it('should execute the template function before created is called', function () {
     var MyEl = skate('my-el', {
-      ready: function (element) {
+      created: function (element) {
         expect(element.textContent).to.equal('test');
       },
 

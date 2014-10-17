@@ -9,8 +9,8 @@ import {
 } from './constants';
 import {
   triggerLifecycle,
-  triggerReady,
-  triggerRemove
+  triggerCreated,
+  triggerDetached
 } from './lifecycle';
 import {
   debounce,
@@ -55,7 +55,7 @@ function initElements (elements) {
 }
 
 /**
- * Triggers the remove lifecycle callback on all of the elements.
+ * Triggers the detached lifecycle callback on all of the elements.
  *
  * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
  * callback on.
@@ -78,7 +78,7 @@ function removeElements (elements) {
     var definitionsLen = definitions.length;
 
     for (var b = 0; b < definitionsLen; b++) {
-      triggerRemove(element, definitions[b]);
+      triggerDetached(element, definitions[b]);
     }
   }
 }
@@ -179,8 +179,8 @@ function makeElementConstructor (definition) {
     // works.
     definition.prototype = CustomElement.prototype;
 
-    // If they use the constructor we don't have to wait until it's inserted.
-    triggerReady(element, definition);
+    // If they use the constructor we don't have to wait until it's attached.
+    triggerCreated(element, definition);
 
     return element;
   }
@@ -220,7 +220,7 @@ function skate (id, definition) {
 
   // IE has issues with reporting removedNodes correctly. See the polyfill for
   // details. If we fix IE, we must also re-define the documentObserver.
-  if (definition.remove && !MutationObserver.isFixingIe) {
+  if (definition.detached && !MutationObserver.isFixingIe) {
     MutationObserver.fixIe();
     destroyDocumentObserver();
   }
@@ -326,7 +326,7 @@ skate.defaults = {
   // Properties and methods to add to each element.
   prototype: {},
 
-  // The attribute name to add after calling the ready() callback.
+  // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
 
   // The template to replace the content of the element with.
@@ -335,7 +335,7 @@ skate.defaults = {
   // The type of bindings to allow.
   type: skate.types.ANY,
 
-  // The attribute name to remove after calling the ready() callback.
+  // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
 };
 
