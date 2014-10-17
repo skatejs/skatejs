@@ -2,7 +2,7 @@
 
 import documentObserver from './document-observer';
 import {
-  triggerReady,
+  triggerCreated,
   initElements
 } from './lifecycle';
 import MutationObserver from './mutation-observer';
@@ -48,8 +48,8 @@ function makeElementConstructor (definition) {
     // works.
     definition.prototype = CustomElement.prototype;
 
-    // If they use the constructor we don't have to wait until it's inserted.
-    triggerReady(element, definition);
+    // If they use the constructor we don't have to wait until it's attached.
+    triggerCreated(element, definition);
 
     return element;
   }
@@ -186,7 +186,7 @@ skate.defaults = {
   // Properties and methods to add to each element.
   prototype: {},
 
-  // The attribute name to add after calling the ready() callback.
+  // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
 
   // The template to replace the content of the element with.
@@ -195,7 +195,7 @@ skate.defaults = {
   // The type of bindings to allow.
   type: skate.types.ANY,
 
-  // The attribute name to remove after calling the ready() callback.
+  // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
 };
 

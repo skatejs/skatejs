@@ -2,9 +2,9 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
-  it('should call the ready() callback when the element is inserted', function (done) {
+  it('should call the created() callback when the element is attached', function (done) {
     skate('my-element', {
-      ready: function (element) {
+      created: function (element) {
         done();
       }
     });
@@ -12,9 +12,9 @@ describe('Lifecycle Callbacks', function () {
     helpers.fixture('<my-element></my-element>');
   });
 
-  it('should call the insert() callback when the element is attached', function (done) {
+  it('should call the attached() callback when the element is attached', function (done) {
     skate('my-element', {
-      insert: function (element) {
+      attached: function (element) {
         done();
       }
     });
@@ -22,9 +22,9 @@ describe('Lifecycle Callbacks', function () {
     helpers.fixture('<my-element></my-element>');
   });
 
-  it('should call the remove() callback when the element is detached', function (done) {
+  it('should call the detached() callback when the element is detached', function (done) {
     skate('my-element', {
-      remove: function () {
+      detached: function () {
         done();
       }
     });
@@ -35,9 +35,9 @@ describe('Lifecycle Callbacks', function () {
 });
 
 describe('Unresolved attribute', function () {
-  it('should remove the "unresolved" attribute after the ready callback is called', function () {
+  it('should remove the "unresolved" attribute after the created callback is called', function () {
     skate('my-element', {
-      ready: function (element) {
+      created: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(true);
         expect(element.hasAttribute('resolved')).to.equal(false);
       }
@@ -46,9 +46,9 @@ describe('Unresolved attribute', function () {
     skate.init(helpers.fixture('<my-element unresolved></my-element>'));
   });
 
-  it('should remove the "unresolved" attribute before the insert callback is called', function () {
+  it('should remove the "unresolved" attribute before the attached callback is called', function () {
     skate('my-element', {
-      insert: function (element) {
+      attached: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(false);
         expect(element.hasAttribute('resolved')).to.equal(true);
       }
@@ -64,20 +64,20 @@ describe('Lifecycle scenarios', function () {
 
   beforeEach(function () {
     calls = {
-      ready: 0,
-      insert: 0,
-      remove: 0
+      created: 0,
+      attached: 0,
+      detached: 0
     };
 
     El = skate('my-element', {
-      ready: function () {
-        ++calls.ready;
+      created: function () {
+        ++calls.created;
       },
-      insert: function () {
-        ++calls.insert;
+      attached: function () {
+        ++calls.attached;
       },
-      remove: function () {
-        ++calls.remove;
+      detached: function () {
+        ++calls.detached;
       }
     });
   });
@@ -87,22 +87,22 @@ describe('Lifecycle scenarios', function () {
       helpers.fixture(new El());
     });
 
-    it('should call ready', function (done) {
+    it('should call created', function (done) {
       helpers.afterMutations(function () {
-        expect(calls.ready).to.greaterThan(0);
+        expect(calls.created).to.greaterThan(0);
         done();
       });
     });
 
-    it('should call insert', function (done) {
+    it('should call attached', function (done) {
       helpers.afterMutations(function () {
-        expect(calls.insert).to.greaterThan(0);
+        expect(calls.attached).to.greaterThan(0);
         done();
       });
     });
   });
 
-  describe('inserted multiple times', function () {
+  describe('attached multiple times', function () {
     function expectNumCalls (num, val, done) {
       var el = new El();
 
@@ -124,16 +124,16 @@ describe('Lifecycle scenarios', function () {
       });
     }
 
-    it('should have called ready only once', function (done) {
-      expectNumCalls('ready', 1, done);
+    it('should have called created only once', function (done) {
+      expectNumCalls('created', 1, done);
     });
 
-    it('should have called insert twice', function (done) {
-      expectNumCalls('insert', 2, done);
+    it('should have called attached twice', function (done) {
+      expectNumCalls('attached', 2, done);
     });
 
-    it('should have called remove twice', function (done) {
-      expectNumCalls('remove', 2, done);
+    it('should have called detached twice', function (done) {
+      expectNumCalls('detached', 2, done);
     });
   });
 });

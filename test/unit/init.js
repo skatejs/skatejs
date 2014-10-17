@@ -6,7 +6,7 @@ describe('skate.init', function () {
 
   beforeEach(function () {
     Div = skate('div', {
-      ready: function (element) {
+      created: function (element) {
         element.textContent = 'test';
       }
     });
@@ -32,7 +32,7 @@ describe('Synchronous initialisation', function () {
     var initialised = 0;
 
     skate('div', {
-      insert: function () {
+      attached: function () {
         ++initialised;
       }
     });
@@ -68,53 +68,53 @@ describe('Instantiation', function () {
   });
 
   it('should call lifecycle callbacks at appropriate times.', function (done) {
-    var ready = false;
-    var insert = false;
-    var remove = false;
+    var created = false;
+    var attached = false;
+    var detached = false;
     var Div = skate('div', {
-      ready: function () {
-        ready = true;
+      created: function () {
+        created = true;
       },
-      insert: function () {
-        insert = true;
+      attached: function () {
+        attached = true;
       },
-      remove: function () {
-        remove = true;
+      detached: function () {
+        detached = true;
       }
     });
 
     var div = new Div();
-    ready.should.equal(true, 'Should call ready');
-    insert.should.equal(false, 'Should not call insert');
-    remove.should.equal(false, 'Should not call remove');
+    created.should.equal(true, 'Should call created');
+    attached.should.equal(false, 'Should not call attached');
+    detached.should.equal(false, 'Should not call detached');
 
     document.body.appendChild(div);
     skate.init(div);
-    insert.should.equal(true, 'Should call insert');
-    remove.should.equal(false, 'Should not call remove');
+    attached.should.equal(true, 'Should call attached');
+    detached.should.equal(false, 'Should not call remove');
 
     div.parentNode.removeChild(div);
 
     // Mutation Observers are async.
     setTimeout(function () {
-      remove.should.equal(true, 'Should call remove');
+      detached.should.equal(true, 'Should call detached');
       done();
     }, 1);
   });
 
   it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
-    var numReady = 0;
-    var numInsert = 0;
-    var numRemove = 0;
+    var numCreated = 0;
+    var numAttached = 0;
+    var numDetached = 0;
     var Div = skate('div', {
-      ready: function () {
-        ++numReady;
+      created: function () {
+        ++numCreated;
       },
-      insert: function () {
-        ++numInsert;
+      attached: function () {
+        ++numAttached;
       },
-      remove: function () {
-        ++numRemove;
+      detached: function () {
+        ++numDetached;
       }
     });
 
@@ -127,15 +127,15 @@ describe('Instantiation', function () {
     skate.init(div1);
     skate.init(div2);
 
-    expect(numReady).to.equal(2, 'ready');
-    expect(numInsert).to.equal(2, 'insert');
+    expect(numCreated).to.equal(2, 'created');
+    expect(numAttached).to.equal(2, 'attached');
 
     div1.parentNode.removeChild(div1);
     div2.parentNode.removeChild(div2);
 
     // Mutation Observers are async.
     helpers.afterMutations(function () {
-      expect(numRemove).to.equal(2, 'remove');
+      expect(numDetached).to.equal(2, 'detached');
       done();
     });
   });
@@ -150,7 +150,7 @@ describe('Instantiation', function () {
     idsToSkate.forEach(function (id) {
       skate(id, {
         type: skate.types.CLASS,
-        ready: function () {
+        created: function () {
           idsToCheck[id] = true;
         }
       });

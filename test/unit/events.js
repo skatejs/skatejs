@@ -18,6 +18,22 @@ describe('Events', function () {
     expect(numTriggered).to.equal(1);
   });
 
+  it('should bind to the component element', function () {
+    var numTriggered = 0;
+    var Div = skate('div', {
+      events: {
+        'test div' : function () {
+          ++numTriggered;
+        }
+      }
+    });
+
+    var div = new Div();
+
+    helpers.dispatchEvent('test', div);
+    expect(numTriggered).to.equal(1);
+  });
+
   it('should allow you to re-add the element back into the DOM', function () {
     var numTriggered = 0;
     var Div = skate('div', {
