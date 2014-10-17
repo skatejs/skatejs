@@ -24,9 +24,7 @@ function documentObserverHandler (mutations) {
   for (var a = 0; a < mutationsLen; a++) {
     var mutation = mutations[a];
     var addedNodes = mutation.addedNodes;
-    var addedNodesLen = addedNodes && addedNodes.length;
     var removedNodes = mutation.removedNodes;
-    var removedNodesLen = removedNodes && removedNodes.length;
 
     // Since siblings are batched together, we check the first node's parent
     // node to see if it is ignored. If it is then we don't process any added
