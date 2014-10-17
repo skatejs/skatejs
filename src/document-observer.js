@@ -9,8 +9,6 @@ import {
   getClosestIgnoredElement
 } from './utils';
 
-var handlers = [];
-
 /**
  * The document observer handler.
  *
