@@ -17,7 +17,7 @@ describe('Registration', function () {
 
   it('should destroy all listeners when destroy() called', function () {
     skate('div', {
-      insert: function (element) {
+      attached: function (element) {
         element.test = true;
       }
     });
@@ -28,7 +28,7 @@ describe('Registration', function () {
 
   it('should unregister the specified listener when unregister() called', function () {
     skate('div', {
-      insert: function (element) {
+      attached: function (element) {
         element.test = true;
       }
     });

@@ -87,11 +87,11 @@ function addAttributeListeners (target, component) {
       var attr = attrs[name];
 
       if (attr && mutation.oldValue === null) {
-        type = 'insert';
+        type = 'created';
       } else if (attr && mutation.oldValue !== null) {
-        type = 'update';
+        type = 'updated';
       } else if (!attr) {
-        type = 'remove';
+        type = 'removed';
       }
 
       triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
@@ -106,15 +106,15 @@ function addAttributeListeners (target, component) {
   // In default web components, attribute changes aren't triggered for
   // attributes that already exist on an element when it is bound. This sucks
   // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute calling the
-  // "insert" callback that already exists on the element.
+  // lifecycle callbacks. Skate will initialise each attribute by calling the
+  // created callback for the attributes that already exist on the element.
   for (var a = 0; a < attrsLen; a++) {
     var attr = attrs[a];
 
     // If an attribute is removed during the enumeration, then we must ensure
     // that each one still exists when it comes time to action it.
     if (attr) {
-      triggerCallback('insert', attr.nodeName, (attr.value || attr.nodeValue));
+      triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
     }
   }
 }
@@ -162,15 +162,15 @@ function addEventListeners (target, component) {
 }
 
 /**
- * Triggers the ready lifecycle callback.
+ * Triggers the created lifecycle callback.
  *
  * @param {Element} target The component element.
  * @param {Object} component The component data.
  *
  * @returns {undefined}
  */
-function triggerReady (target, component) {
-  if (ensureLifecycleFlag(target, component, 'ready')) {
+function triggerCreated (target, component) {
+  if (ensureLifecycleFlag(target, component, 'created')) {
     return;
   }
 
@@ -183,46 +183,46 @@ function triggerReady (target, component) {
   addEventListeners(target, component);
   addAttributeListeners(target, component);
 
-  if (component.ready) {
-    component.ready(target);
+  if (component.created) {
+    component.created(target);
   }
 }
 
 /**
- * Triggers the insert lifecycle callback.
+ * Triggers the attached lifecycle callback.
  *
  * @param {Element} target The component element.
  * @param {Object} component The component data.
  *
  * @returns {undefined}
  */
-function triggerInsert (target, component) {
-  if (ensureLifecycleFlag(target, component, 'insert')) {
+function triggerAttached (target, component) {
+  if (ensureLifecycleFlag(target, component, 'attached')) {
     return;
   }
 
   target.removeAttribute(component.unresolvedAttribute);
   target.setAttribute(component.resolvedAttribute, '');
 
-  if (component.insert) {
-    component.insert(target);
+  if (component.attached) {
+    component.attached(target);
   }
 }
 
 /**
- * Triggers the remove lifecycle callback.
+ * Triggers the detached lifecycle callback.
  *
  * @param {Element} target The component element.
  * @param {Object} component The component data.
  *
  * @returns {undefined}
  */
-function triggerRemove (target, component) {
-  if (component.remove) {
-    component.remove(target);
+function triggerDetached (target, component) {
+  if (component.detached) {
+    component.detached(target);
   }
 
-  setLifecycleFlag(target, component, 'insert', false);
+  setLifecycleFlag(target, component, 'attached', false);
 }
 
 /**
@@ -234,12 +234,12 @@ function triggerRemove (target, component) {
  * @returns {undefined}
  */
 function triggerLifecycle (target, component) {
-  triggerReady(target, component);
-  triggerInsert(target, component);
+  triggerCreated(target, component);
+  triggerAttached(target, component);
 }
 
 export {
   triggerLifecycle,
-  triggerReady,
-  triggerRemove
+  triggerCreated,
+  triggerDetached
 };

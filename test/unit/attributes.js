@@ -3,45 +3,45 @@ import skate from '../../src/skate';
 
 describe('Attribute listeners', function () {
   it('should listen to changes in specified attributes', function (done) {
-    var inserted = false;
+    var created = false;
     var updated = false;
 
     skate('div', {
       attributes: {
         open: {
-          insert: function (element, data) {
-            inserted = true;
-            data.newValue.should.equal('insert');
-            element.setAttribute('open', 'update');
+          created: function (element, data) {
+            created = true;
+            data.newValue.should.equal('created');
+            element.setAttribute('open', 'updated');
           },
-          update: function (element, data) {
+          updated: function (element, data) {
             updated = true;
-            data.oldValue.should.equal('insert');
-            data.newValue.should.equal('update');
+            data.oldValue.should.equal('created');
+            data.newValue.should.equal('updated');
             element.removeAttribute('open');
           },
-          remove: function (element, data) {
-            inserted.should.equal(true);
+          removed: function (element, data) {
+            created.should.equal(true);
             updated.should.equal(true);
-            data.oldValue.should.equal('update');
+            data.oldValue.should.equal('updated');
             done();
           }
         }
       }
     });
 
-    helpers.fixture('<div open="insert"></div>');
+    helpers.fixture('<div open="created"></div>');
   });
 
   it('should accept a function insead of an object for a particular attribute definition.', function (done) {
     skate('div', {
       attributes: {
         open: function (element, data) {
-          if (data.type === 'insert') {
-            element.setAttribute('open', 'update');
-          } else if (data.type === 'update') {
+          if (data.type === 'created') {
+            element.setAttribute('open', 'updated');
+          } else if (data.type === 'updated') {
             element.removeAttribute('open');
-          } else if (data.type === 'remove') {
+          } else if (data.type === 'removed') {
             assert(true);
             done();
           }
@@ -49,28 +49,28 @@ describe('Attribute listeners', function () {
       }
     });
 
-    helpers.fixture('<div id="attrtest" open="insert"></div>');
+    helpers.fixture('<div id="attrtest" open="created"></div>');
   });
 
   it('should accept a function insead of an object for the entire attribute definition.', function (done) {
     skate('div', {
       attributes: function (element, data) {
-        if (data.type === 'insert') {
+        if (data.type === 'created') {
           setTimeout(function () {
-            element.setAttribute('open', 'update');
+            element.setAttribute('open', 'updated');
           });
-        } else if (data.type === 'update') {
+        } else if (data.type === 'updated') {
           setTimeout(function () {
             element.removeAttribute('open');
           });
-        } else if (data.type === 'remove') {
+        } else if (data.type === 'removed') {
           assert(true);
           done();
         }
       }
     });
 
-    helpers.fixture('<div id="attrtest" open="insert"></div>');
+    helpers.fixture('<div id="attrtest" open="created"></div>');
   });
 
   it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
