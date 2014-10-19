@@ -1,27 +1,33 @@
 module.exports = function (grunt) {
-  var traceurCommand = './node_modules/traceur/traceur --modules=inline ';
+  var cmd = require('../lib/cmd');
+  var traceur = require('../lib/traceur');
 
   return {
     dist: {
-      command: [
+      command: cmd(
         'rm -rf dist',
-        traceurCommand + '--out dist/skate.js --module src/skate.js'
-      ].join(' && ')
+        traceur('src/skate.js', 'dist/skate.js')
+      )
+    },
+    docs: {
+      command: cmd(
+        traceur('docs/src/scripts/index.js', 'docs/build/scripts/index.js')
+      )
     },
     installBower: {
       command: './node_modules/.bin/bower install'
     },
     installTraceur: {
-      command: [
+      command: cmd(
         'cd ./node_modules/traceur',
         'npm install'
-      ].join(' && ')
+      )
     },
     test: {
-      command: [
+      command: cmd(
         'rm -rf .tmp',
-        traceurCommand + '--out .tmp/run-unit-tests.js --module test/unit.js'
-      ].join(' && ')
+        traceur('test/unit.js', '.tmp/run-unit-tests.js')
+      )
     }
   };
 };

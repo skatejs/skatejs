@@ -1,0 +1,484 @@
+<!doctype html>
+<html>
+<head>
+  <title>SkateJS</title>
+  <link rel="stylesheet" href="styles/index.css">
+  <script src="scripts/index.js"></script>
+</head>
+<body class="container">
+  <skate>skate</skate>
+  <p><a href="https://travis-ci.org/skatejs/skatejs"><img src="https://travis-ci.org/skatejs/skatejs.png?branch=master" alt="Build Status"></a></p>
+<p>Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for binding behaviour to custom and existing elements without ever having to worry about when your element is inserted into the DOM. It uses the <a href="http://w3c.github.io/webcomponents/spec/custom/">Custom Element</a> spec as a guideline and adds some features on top of it.</p>
+<p><em>I recently <a href="http://slides.com/treshugart/skating-with-web-components">spoke about Skate</a> at <a href="http://www.sydjs.com/">SydJS</a>.</em></p>
+<p>HTML</p>
+<pre><code class="lang-html">&lt;my-component&gt;&lt;/my-component&gt;
+</code></pre>
+<p>JavaScript</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  ready: function (element) {
+    element.textContent = &#39;Hello, World!&#39;;
+  }
+});
+</code></pre>
+<p>Result</p>
+<pre><code class="lang-html">&lt;my-component&gt;Hello, World!&lt;/my-component&gt;
+</code></pre>
+<h2 id="compatibility">Compatibility</h2>
+<p>IE9+ and all evergreens.</p>
+<h2 id="installing">Installing</h2>
+<p>You can download the source yourself and put it wherever you want. Additionally you can use Bower:</p>
+<pre><code>bower install skatejs
+</code></pre><p>Or NPM:</p>
+<pre><code>npm install skatejs
+</code></pre><p>Include either <code>dist/skate.js</code> or <code>dist/skate.min.js</code>.</p>
+<h3 id="amd">AMD</h3>
+<p>An anonymous AMD module is defined, if supported.</p>
+<h3 id="commonjs">CommonJS</h3>
+<p>A CommonJS module is exported, if supported.</p>
+<h3 id="global">Global</h3>
+<p>If you&#39;re still skating old school, we&#39;ve got you covered. Just make sure it&#39;s included on the page and you can access it via <code>window.skate</code>.</p>
+<h3 id="es6-modules">ES6 Modules</h3>
+<p>The Skate source is written using <a href="http://www.2ality.com/2014/09/es6-modules-final.html">ES6 modules</a>. If you&#39;re using <a href="https://github.com/google/traceur-compiler">Tracuer</a>, or are targeting only <a href="http://kangax.github.io/compat-table/es6">browsers that support ES6</a> (none yet), then you can <code>import skate from &#39;src/skate&#39;;</code> and use it in your projects as you would any ES6 module. Otherwise, the <code>dist</code> directory contains the compiled ES5 source.</p>
+<h2 id="usage">Usage</h2>
+<p>You define a component by passing a component ID and definition to the <code>skate()</code> function. The ID you specify corresponds to one of the following:</p>
+<ul>
+<li>Tag name</li>
+<li>Value of the <code>is</code> attribute</li>
+<li>Attribute name</li>
+<li>Class name</li>
+</ul>
+<p>The definition is an object of options defining your component.</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  // Called before the element is displayed.
+  ready: function (element) {
+
+  },
+
+  // Called after the element is displayed.
+  insert: function (element) {
+
+  },
+
+  // Called after the element is removed.
+  remove: function (element) {
+
+  },
+
+  // Attribute callbacks that get triggered when attributes on the main web
+  // component are inserted, updated or removed. Each callback gets the
+  // element that the change occurred on and the corresponding changes. The
+  // change object contains the following information:
+  //
+  // - type: The type of modification (insert, update or remove).
+  // - name: The attribute name.
+  // - newValue: The new value. If type === &#39;remove&#39;, this will be undefined.
+  // - oldValue: The old value. If type === &#39;insert&#39;, this will be undefined.
+  attributes: {
+    &#39;my-attribute&#39;: {
+      insert: function (element, change) {
+
+      },
+
+      update: function (element, change) {
+
+      },
+
+      remove: function (element, change) {
+
+      }
+    }
+  },
+
+  // The event handlers to bind to the web component element. If the event
+  // name is followed by a space and a CSS selector, the handler is only
+  // triggered if a descendant matching the selector triggered the event.
+  // This is synonymous with Backbone&#39;s style of event binding in its
+  // views.
+  events: {
+    &#39;click&#39;: function (element, eventObject) {
+
+    },
+
+    &#39;click .some-child-selector&#39;: function (element, eventObject, currentTarget) {
+
+    }
+  },
+
+  // Restricts a particular component to binding explicitly to an element with
+  // a tag name that matches the specified value. This value is empty by
+  // default.
+  //
+  // Depending on the component type, it behaves like so:
+  //
+  // - When applied to a custom element, the component ID is used to match the
+  //   value of the element&#39;s `is` attribute and the element&#39;s tag name is
+  //   matched against the value specified here. This conforms with the custom
+  //   element spec.
+  //
+  // - When given to a component that binds to an element using an attribute,
+  //   the value specified here must match the element&#39;s tag name.
+  //
+  // - When specified on a component that is bound using a class name, this
+  //   value must match the element&#39;s tag name, as with attribute components.
+  //
+  // - If the value is empty, then the component is not restricted at all.
+  extends: &#39;&#39;,
+
+  // Properties and methods to add to each element instance. It&#39;s notable
+  // that the element&#39;s prototype is not modified. These are added after the
+  // element is instantiated. Since the methods and properties are applied to
+  // the element, `this` inside a method will refer to the element.
+  prototype: {
+    callMeLikeAnyNativeMethod: function () {
+
+    }
+  },  
+
+  // A function that renders a template to your element. You can literally use
+  // any templating engine you like here.
+  template: function (element) {
+    bindLatestHipsterTemplateEngineTo(element);
+  },
+
+  // The binding methods this component supports. For example, if you specify
+  // the `type` as `skate.types.TAG`, then the component will only be bound
+  // to an element whos tag name matches the component ID.
+  //
+  // - `ANY` Any type of binding. This is the default.
+  // - `TAG` Tag name only.
+  // - `ATTR` Attribute names.
+  // - `CLASS` Class names.
+  // - `NOTAG` Attribute or class names.
+  // - `NOATTR` Class or tag names.
+  // - `NOCLASS` Attribute or tag names.
+  type: skate.types.ANY,
+
+  // The attribute name to add after calling the ready() callback.
+  resolvedAttribute: &#39;resolved&#39;,
+
+  // The attribute name to remove after calling the ready() callback.
+  unresolvedAttribute: &#39;unresolved&#39;
+});
+</code></pre>
+<h3 id="component-lifecycle">Component Lifecycle</h3>
+<p>The component lifecycle consists of three callbacks:</p>
+<ol>
+<li><code>ready</code> Called before the element is displayed.</li>
+<li><code>insert</code> Called after the element is displayed.</li>
+<li><code>remove</code> Called after the element is removed.</li>
+</ol>
+<p>The <code>ready</code> callback gets triggered before the element is shown and is only ever fired once.  Without full web-component support, we can only emulate the <code>ready</code> callback to ensure the element is hidden. For more information see <a href="#preventing-fouc">Preventing FOUC</a>. The <code>insert</code> and <code>remove</code> callbacks are fired each time the element is attached and detached from the DOM, which can happen multiple times.</p>
+<h3 id="element-constructors">Element Constructors</h3>
+<p>As with the spec, when you define a component that is compatible with tag bindings, your call to <code>skate()</code> will return an element constructor for you to use:</p>
+<pre><code class="lang-js">var MyComponent = skate(&#39;my-component&#39;, {
+  ready: function (element) {
+    element.textContent = &#39;something&#39;;
+  },
+
+  prototype: {
+    logTextContent: function () {
+      console.log(this.textContent);
+    }
+  }
+});
+</code></pre>
+<p>It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the <code>ready</code> callback. Only when you insert it into the DOM will the <code>insert</code> callback be called:</p>
+<pre><code class="lang-js">var element = new MyComponent();
+
+// Logs: &quot;something&quot;
+element.logTextContent();
+
+// Asynchronously calls the `insert` callback.
+document.body.appendChild(element);
+</code></pre>
+<h3 id="attribute-lifecycle">Attribute Lifecycle</h3>
+<p>An attribute lifecycle definition can take three forms. First, it does something similar to what we see in the Web Component spec:</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  attributes: function (element, change) {
+
+  }
+});
+</code></pre>
+<p>A notable difference, though, is that this callback gets called for attributes that already exist on the element as this is more predictable. This also allows you to have initialisation code for attributes, rather than forcing the developer to do this in one of the lifecycle callbacks.</p>
+<p>This is called for each attribute on an element when:</p>
+<ul>
+<li>The element is created with attributes already on it.</li>
+<li>Attributes are added to the element.</li>
+<li>Attributes on the element are updated.</li>
+<li>Attributes are removed from the element.</li>
+</ul>
+<p>The second form of a callback takes an object of attribues and handlers.</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  attributes: {
+    &#39;my-attribute&#39;: function handleInsertAndUpdate (element, change) {
+
+    }
+  }
+});
+</code></pre>
+<p>This allows you to specify which attributes you want to listen to and will call the specified function when:</p>
+<ul>
+<li>The element is created with the corresponding attribute already on it.</li>
+<li>The corresponding attribute is added to the element.</li>
+<li>The corresponding attribute is updated on the element.</li>
+</ul>
+<p>The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  attributes: {
+    &#39;my-attribute&#39;: {
+      insert: function (element, change) {
+
+      },
+
+      update: function (element, change) {
+
+      },
+
+      remove: function (element, change) {
+
+      }
+    }
+  }
+});
+</code></pre>
+<p>The <code>insert</code> handler gets called when:</p>
+<ul>
+<li>The element is created with the corresponding attribute already on it.</li>
+<li>The corresponding attribute is added to the element.</li>
+</ul>
+<p>The <code>update</code> handler gets called when:</p>
+<ul>
+<li>The corresponding attribute is updated on the element.</li>
+</ul>
+<p>The <code>remove</code> handler gets called when:</p>
+<ul>
+<li>The corresponding attribute is removed from the element.</li>
+</ul>
+<p>Callbacks that get fired for attributes that already exist on an element get called after the <code>insert</code> callback is triggered.</p>
+<h3 id="event-binding">Event Binding</h3>
+<p>Event binding allows you to declare which events you want to listen for and also offers you the ability to use event delegation, Backbone style.</p>
+<p>As we saw above:</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  events: {
+    &#39;click&#39;: function (element, eventObject) {
+
+    },
+
+    &#39;click .some-child-selector&#39;: function (element, eventObject, currentTarget) {
+
+    }
+  }
+});
+</code></pre>
+<p>The first <code>click</code> handler gets executed whenever the component receives a click event regardless of what triggered it. The second <code>click .some-child-selector</code> handler gets executed only when it receives a click event that came from a descendant matching the <code>.some-child-selector</code> selector, This will also get fired for any ancestor of the target, up to the component element, that matches the selector. The <code>currentTarget</code> parameter is the element which the delegate selector matched.</p>
+<p>Events listeners are not automatically removed from the element when it is removed from the DOM. This is because Skate does not know if you intend to re-insert the element back into the DOM. Skate leaves it up to you and the JavaScript engine&#39;s garbage collector to manage this.</p>
+<h3 id="custom-methods-and-properties">Custom Methods and Properties</h3>
+<p>Skate gives you the option to specify custom properties and methods on your component.</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  prototype: {
+    callMeLikeAnyNativeMethod: function () {
+
+    }
+  }
+});
+</code></pre>
+<p>These members are applied directly to the element instance that your component is bound to so you can do stuff like this:</p>
+<pre><code class="lang-js">document.getElementById(&#39;my-component-id&#39;).callMeLikeanyNativeMethod();
+</code></pre>
+<p>It&#39;s important to understand that the <code>Element.prototype</code> is not modified as part of this process.</p>
+<h3 id="templating">Templating</h3>
+<p>To template a component, all you need to do is define a function that takes an element as its first argument. When templating is invoked during an element&#39;s lifecycle, this function will be called and the element being Skated will be passed in as the first argument. It&#39;s up to you at this point to invoke whatever templating engine you want.</p>
+<p>For example, Handlebars:</p>
+<pre><code class="lang-js">skate(&#39;my-component&#39;, {
+  template: function (element) {
+    var compiled = Handlebars.compile(&#39;&lt;p&gt;Hello, {{ name }}!&lt;/p&gt;&#39;);
+    element.innerHTML = compiled({ name: element.getAttribute(&#39;name&#39;) });
+  }
+});
+</code></pre>
+<p>A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string. The following example will compile the HTML using Handlebars and when invoked it will take all the attributes on the element and pass them in to the compiled template function as the context. This way, you can use any of the attributes specified on the element.</p>
+<pre><code class="lang-js">function handlebarify (html) {
+  var compiled = Handlebars.compile(html);
+
+  return function (element) {
+    var attrs = {};
+
+    for (var a = 0; a &lt; element.attributes.length; a++) {
+      var attr = element.attributes[a];
+      attrs[attr.name] = attr.value;
+    }
+
+    element.innerHTML = compiled(attrs);
+  };
+}
+
+skate(&#39;my-component&#39;, {
+  template: handlebarify(&#39;&lt;p&gt;Hello, {{ name }}!&lt;/p&gt;&#39;)
+});
+</code></pre>
+<p>If you wanted to fully embrace Web Components, you could even use Shadow DOM:</p>
+<pre><code class="lang-js">function shadowDomTemplate (shadowHtml) {
+  return function (element) {
+    var lightHtml = element.innerHTML;
+    var shadowRoot = element.createShadowRoot();
+
+    shadowRoot.innerHTML = shadowHtml;
+    element.innerHTML = lightHtml;
+  };
+}
+
+skate(&#39;my-component&#39;, {
+  template: shadowDomTemplate(&#39;&lt;h1 class=&quot;.heading&quot;&gt;&lt;/h1&gt;&lt;section&gt;&lt;content&gt;&lt;/content&gt;&lt;/section&gt;&#39;);
+});
+</code></pre>
+<h3 id="asynchrony">Asynchrony</h3>
+<p>Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:</p>
+<pre><code class="lang-js">document.body.innerHTML = &#39;&lt;my-component id=&quot;my-component-id&quot;&gt;&lt;/my-component&gt;&#39;;
+
+document.getElementById(&#39;my-component-id&#39;).someCustomMethod();
+</code></pre>
+<p>This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicitly initialise it in a synchronous manner using <code>skate.init()</code>:</p>
+<pre><code class="lang-js">var element = document.getElementById(&#39;my-component-id&#39;);
+
+skate.init(element);
+
+element.someCustomMethod();
+</code></pre>
+<p>This is very useful during testing, but can be used for any use case that requires synchronous operation.</p>
+<h3 id="unregistering-components">Unregistering Components</h3>
+<p>If you need to remove a component definition just call <code>skate.unregister(&#39;your-component-id&#39;)</code>. If you need to reset everything call <code>skate.destroy()</code>.</p>
+<h2 id="web-component-differences">Web Component Differences</h2>
+<p>Skate uses the <a href="http://w3c.github.io/webcomponents/spec/custom/">Custom Element spec</a> as a guideline but it does not polyfill it, nor does it polyfill the behaviour of <a href="http://w3c.github.io/webcomponents/spec/shadow/">ShadowDOM</a> or <a href="http://w3c.github.io/webcomponents/spec/imports/">HTML Imports</a>.</p>
+<p>You can do some pretty cool things with Skate that you can&#39;t do with Web Components. For example, you can write polyfills for existing elements:</p>
+<p><code>&lt;input placeholder=&quot;&quot;&gt;</code>:</p>
+<pre><code>skate(&#39;placeholder&#39;, {
+  extends: &#39;input&#39;,
+  type: skate.types.ATTR,
+  ready: polyfillInputPlaceholder
+});
+</code></pre><p><code>&lt;input type=&quot;date&quot;&gt;</code>:</p>
+<pre><code>skate(&#39;type&#39;, {
+  extends: &#39;input&#39;,
+  type: skate.types.ATTR,
+  attributes: {
+    type: function (element, change) {
+      if (change.newValue === &#39;date&#39;) {
+        makeIntoDatepicker(element);
+      }
+    }
+  }
+});
+</code></pre><p><code>&lt;link rel=&quot;import&quot; href=&quot;path/to/import.html&quot;&gt;</code> (HTML Imports):</p>
+<pre><code>skate(&#39;rel&#39;, {
+  extends: &#39;link&#39;,
+  type: skate.types.ATTR,
+  attributes: {
+    rel: function (element, change) {
+      if (change.newValue === &#39;import&#39;) {
+        makeIntoHtmlImport(element);
+      }
+    }
+  }
+});
+</code></pre><p>You can even <a href="https://github.com/skatejs/polyfill-custom-elements">polyfill Custom Elements</a> in accordance to the Web Component spec with Skate.</p>
+<h2 id="polymer-x-tags-differences">Polymer / X-Tags Differences</h2>
+<p>Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags uses Polymer&#39;s Custom Element and Mutation Observer polyfills to add a layer of sugar on top of Custom Elements. Although they have differences amongst themselves, they share functionality in terms of Custom Elements. Skate shares this functionality and provides some things that they don&#39;t.</p>
+<h3 id="attribute-class-bindings">Attribute / Class Bindings</h3>
+<p>Polymer and X-Tags do not offer a way to bind behaviour to elements with a particular attribute or class. Skate allows this because classes can be a good transitional period away from legacy components. For example:</p>
+<pre><code>jQuery(function ($) {
+  $(&#39;.tabs&#39;).tabs();
+});
+</code></pre><p>This will only get executed on DOM Ready. If you ever insert some tabs dynamically, you&#39;d have to call that again. Skate makes it possible to only define this once:</p>
+<pre><code>skate(&#39;tabs&#39;, {
+  type: skate.types.CLASS
+  ready: function (element) {
+    jQuery(element).tabs();
+  }
+});
+</code></pre><p>You&#39;re definition is now in one place. If you dynamically insert some tabs into the document, they&#39;ll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you&#39;ve used the <code>ready()</code> callback.</p>
+<p>Furthermore, this is especially good when you don&#39;t have the time to refactor a legacy component into web components. You get many of the benefits of a web component without having to change any markup.</p>
+<h3 id="size-min-gz-">Size (min + gz)</h3>
+<p>Size does matter.</p>
+<ol>
+<li>Skate: 3.2k</li>
+<li>X-Tags: 10.8k</li>
+<li>Polymer without polyfills): 33.7k</li>
+<li>Polymer with polyfills: 70.2k</li>
+</ol>
+<h3 id="performance">Performance</h3>
+<p>Skate comes close to Polymer and X-Tags in modern browsers but isn&#39;t quite as fast in this area for a couple reasons:</p>
+<ol>
+<li>Skate doesn&#39;t use <code>document.registerElement()</code> if supported. There are <a href="https://github.com/skatejs/skatejs/issues/46">plans</a> to do this.</li>
+<li>Skate supports more than just Custom Elements. The added overhead is because it also supports attribute and class bindings and has to check these on top of just checking the tag name / <code>is</code> attribute value.</li>
+</ol>
+<h4 id="how-bad-is-it-">How bad is it?</h4>
+<p>Skate takes about 350ms to go through 100k elements. With Polymer and X-Tags, in browsers that natively support Custom Elements, there&#39;s almost zero overhead because they don&#39;t need to use Mutation Observers. With no native support, they take around 200ms.</p>
+<p>The real difference comes in when you <a href="http://caniuse.com/#feat=mutationobserver">have to polyfill Mutation Observers</a>. In IE9, Skate goes through 100k elements in a mere ~2s. Polymer and X-Tags take around 25s (that&#39;s not a typo). Even if you bring this down to a reasonable 5k elements, it&#39;ll still take them over a second to process the elements.</p>
+<h2 id="polyfills">Polyfills</h2>
+<p>Skate mostly polyfills <a href="https://developer.mozilla.org/en/docs/Web/API/MutationObserver">Mutation Observers</a>, but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.</p>
+<p>As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback. What Skate does to mitigate this overhead is to queue up each event to be processed on the next tick. Once queued, it then batches them up like Mutation Observers do, and then calls the callback only once.</p>
+<h2 id="preventing-fouc">Preventing FOUC</h2>
+<p>An element may not be initialised right away. To prevent FOUC, you can add the <code>unresolved</code> attribute to any web component element and then use that attribute to hide the element in your stylesheets.</p>
+<pre><code>&lt;style&gt;
+  [unresolved] {
+    opacity: 0;
+  }
+&lt;/style&gt;
+&lt;my-element unresolved&gt;&lt;/my-element&gt;
+</code></pre><p>The <code>unresolved</code> attribute will be removed after the <code>ready()</code> callback is called and before the <code>insert()</code> callback is called.</p>
+<p>Additionally, after removing the <code>unresolved</code> attribute, Skate will add the <code>resolved</code> attribute. This allows you to transition your styles:</p>
+<pre><code>[resolved] {
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+</code></pre><h2 id="ignoring-elements">Ignoring Elements</h2>
+<p>If you need to ignore an element and its descendants you can add the <code>data-skate-ignore</code> attribute to an element.</p>
+<pre><code class="lang-html">&lt;div data-skate-ignore&gt;
+  &lt;!-- Everything including the container will be ignored. --&gt;
+&lt;/div&gt;
+</code></pre>
+<h2 id="contributing">Contributing</h2>
+<p>The <code>.editorconfig</code>, <code>.jscs</code> and <code>.jshint</code> configs are all set up. If you can, enable these in your editor of choice.</p>
+<h3 id="setup">Setup</h3>
+<p>To get a dev environment up and running, all you should need to do is run:</p>
+<pre><code>npm install
+</code></pre><p>That should install all dependencies (Bower and NPM) and <code>make</code> Traceur. To see a list of commands, run:</p>
+<pre><code>grunt
+</code></pre><h3 id="testing">Testing</h3>
+<p>To run tests:</p>
+<pre><code>grunt test
+</code></pre><p>If you want to keep the Karma server alive to run them in your browser of choice:</p>
+<pre><code>grunt test --keepalive
+</code></pre><p>To run tests in a specific browser:</p>
+<pre><code>grunt test --browsers Chrome,Firefox
+</code></pre><h3 id="distribution">Distribution</h3>
+<p>To build the distribution all you have to do is run:</p>
+<pre><code>grunt dist
+</code></pre><p>This will build <code>dist/skate.js</code> and <code>dist/skate.min.js</code>. Don&#39;t worry about doing this in a PR; it&#39;ll avoid conflicts.</p>
+<h2 id="who-s-using-it-">Who&#39;s Using It?</h2>
+<p><img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200"></p>
+<h2 id="maintainers">Maintainers</h2>
+<ul>
+<li><a href="https://twitter.com/treshugart">Trey Shugart</a> (author), Atlassian</li>
+</ul>
+<h2 id="license">License</h2>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2014 Trey Shugart</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the &quot;Software&quot;), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<p><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/treshugart/skate/trend.png" alt="Bitdeli Badge"></a></p>
+
+</body>
+</html>
