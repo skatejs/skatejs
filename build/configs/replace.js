@@ -1,6 +1,4 @@
 module.exports = function (grunt) {
-  var curver = require('../../package.json').version;
-  var semver = require('semver');
   var version = require('../lib/version')(grunt);
 
   function file (path) {
@@ -11,7 +9,7 @@ module.exports = function (grunt) {
   }
 
   return {
-    release: {
+    version: {
       options: {
         patterns: [
           {
