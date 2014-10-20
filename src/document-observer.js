@@ -1,10 +1,11 @@
 'use strict';
 
-import MutationObserver from './mutation-observer';
+import globals from './globals';
 import {
   initElements,
   removeElements
 } from './lifecycle';
+import MutationObserver from './mutation-observer';
 import {
   getClosestIgnoredElement
 } from './utils';
@@ -67,17 +68,17 @@ export default {
       this.unregister();
     }
 
-    if (!window.__skateDocumentObserver) {
-      window.__skateDocumentObserver = createDocumentObserver();
+    if (!globals.observer) {
+      globals.observer = createDocumentObserver();
     }
 
     return this;
   },
 
   unregister: function () {
-    if (window.__skateDocumentObserver) {
-      window.__skateDocumentObserver.disconnect();
-      window.__skateDocumentObserver = undefined;
+    if (globals.observer) {
+      globals.observer.disconnect();
+      globals.observer = undefined;
     }
 
     return this;
