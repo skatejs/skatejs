@@ -1,8 +1,7 @@
 module.exports = function (grunt) {
   var curver = require('../../package.json').version;
   var semver = require('semver');
-  var type = grunt.option('type') || 'patch';
-  var version = grunt.option('version') || semver.inc(curver, type);
+  var version = require('../lib/version')(grunt);
 
   function file (path) {
     return {
