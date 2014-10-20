@@ -1,7 +1,17 @@
 module.exports = function (grunt) {
-  return grunt.option('version') ||
-    semver.inc(
-      curver,
-      grunt.option('type') || 'patch'
-    );
+  var semver = require('semver');
+
+  function version () {
+    return require('../../package.json').version;
+  }
+
+  version.next = function (type) {
+    return grunt.option('version') ||
+      semver.inc(
+        version.current(),
+        grunt.option('type') || 'patch'
+      );
+  };
+
+  return version;
 };

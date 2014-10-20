@@ -15,8 +15,8 @@ module.exports = function (grunt) {
       options: {
         patterns: [
           {
-            match: new RegExp(curver),
-            replacement: version
+            match: new RegExp(version()),
+            replacement: version.next()
           }
         ]
       },
