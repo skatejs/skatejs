@@ -28,6 +28,7 @@ module.exports = function (grunt) {
       command: cmd(
         task('replace:version'),
         task('test'),
+        task('dist'),
         git('commit -am "' + version() + ' -> ' + version.next() + '"'),
         git('tag -a ' + version.next() + ' -m ' + version.next()),
         git('push --tags')
