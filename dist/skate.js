@@ -636,7 +636,7 @@ var $___46__46__47_src_47_document_45_observer__ = (function() {
 var $___46__46__47_src_47_version__ = (function() {
   "use strict";
   var __moduleName = "../src/version";
-  var $__default = '0.10.5';
+  var $__default = '0.11.0';
   return {get default() {
       return $__default;
     }};
