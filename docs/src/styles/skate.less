@@ -2,7 +2,7 @@
  * SkateJS Logo
  *
  * Design: @msharp
- * CSS: @seancurtis
+ * CSS: @cyberdash, @seancurtis, @treshugart
  */
 
 @line-colour: white;
@@ -13,23 +13,24 @@ skate {
   background: @circle-colour;
 
   // uncomment below bg to see absolute middle keyline
-  // background: linear-gradient(to bottom, #000 49.95%, #fff 50.5%, #000 50.5%);
+  background: linear-gradient(to bottom, #000 49.95%, #fff 50.5%, #000 50.5%);
 
   box-sizing: border-box;
   border-radius: 100%;
   color: transparent;
-  font-family: sans-serif;
+  cursor: pointer;
   display: block;
+  font-family: sans-serif;
   font-size: 4rem;
   height: 5em;
   line-height: 1;
-  text-shadow: 0 0.3em rgba(255,255,255,0);
   padding: 2em 0;
   position: relative;
   text-align: center;
+  text-shadow: 0 0.3em rgba(255,255,255,0);
+  transition: text-shadow 0.2s;
   vertical-align: middle;
   width: 5em;
-  transition: text-shadow 0.2s;
 
   &:before,
   &:after {
@@ -41,7 +42,6 @@ skate {
     transition: all 0.3s ease-in-out;
     width: 3em;
   }
-
 
   &:before {
     box-shadow: 0 3em 0 0 @line-colour;
@@ -59,17 +59,16 @@ skate {
 
     &:before {
       box-shadow: 2.3em 2.25em 0 0 @line-colour;
-      transform: translate(-0.6em, 1.38em) rotate(-35deg);
-
       height: 0.1em;
-      width: 1em;
+      transform: translate(-0.45em, 1.45em) rotate(-36deg);
+      width: .85em;
     }
 
     &:after {
-      box-shadow: 2.31em -2.244em 0 0 @line-colour;
-      transform: translate(-3.3em, 0.7em) rotate(35deg);
-      height: 0.1em;
-      width: 1em;
+      box-shadow: 2.3em -2.15em 0 0 @line-colour;
+      height: 0.12em;
+      transform: translate(-3.12em, 0.7em) rotate(35deg);
+      width: .84em;
     }
   }
 }
