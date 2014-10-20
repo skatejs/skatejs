@@ -19,6 +19,7 @@
     ],
     "disallowMixedSpacesAndTabs": true,
     "disallowMultipleLineStrings": true,
+    "disallowMultipleVarDecl": true,
     "disallowQuotedKeysInObjects": true,
     "disallowRightStickedOperators": [
         "?",
@@ -89,7 +90,6 @@
         ","
     ],
     "requireLineFeedAtFileEnd": true,
-    "requireMultipleVarDecl": true,
     "requireOperatorBeforeLineBreak": [
         "?",
         "+",
