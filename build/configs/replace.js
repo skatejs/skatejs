@@ -1,9 +1,10 @@
 module.exports = function (grunt) {
+  var curver = require('../../package.json').version;
   var semver = require('semver');
   var version = grunt.option('version');
 
   function bump () {
-    //console.log(arguments[0][0]);
+    return version ? version : semver.inc(curver);
   }
 
   function file (path) {
@@ -13,19 +14,14 @@ module.exports = function (grunt) {
     };
   }
 
-  function pattern (find) {
-    return {
-      match: find,
-      replacement: bump
-    };
-  }
-
   return {
     release: {
       options: {
         patterns: [
-          pattern(/version: '([^\']+)';/),
-          pattern(/"version": "([^\']+)"/)
+          {
+            match: new RegExp(curver),
+            replacement: bump
+          }
         ]
       },
       files: [
