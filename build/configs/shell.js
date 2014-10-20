@@ -26,7 +26,7 @@ module.exports = function (grunt) {
     release: {
       command: cmd(
         grunt('replace:version'),
-        grunt('test'),
+        grunt('test')
         //'git tag -a ' + version.next() + ' -m ' + version.next(),
         //'git push --tags'
       )
