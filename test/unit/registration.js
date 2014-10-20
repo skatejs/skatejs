@@ -14,28 +14,6 @@ describe('Registration', function () {
 
     assert(!multiple, 'Multiple "div" components were registered.');
   });
-
-  it('should destroy all listeners when destroy() called', function () {
-    skate('div', {
-      attached: function (element) {
-        element.test = true;
-      }
-    });
-
-    skate.destroy();
-    expect(skate.init(helpers.add('div')).test).to.equal(undefined);
-  });
-
-  it('should unregister the specified listener when unregister() called', function () {
-    skate('div', {
-      attached: function (element) {
-        element.test = true;
-      }
-    });
-
-    skate.unregister('div');
-    expect(skate.init(helpers.add('div')).test).to.equal(undefined);
-  });
 });
 
 describe('Returning a constructor', function () {

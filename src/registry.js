@@ -1,12 +1,9 @@
 'use strict';
 
+import globals from './globals';
 import {
   hasOwn
 } from './utils';
-
-if (!window.__skateDefinitions) {
-  window.__skateDefinitions = {};
-}
 
 /**
  * Returns the class list for the specified element.
@@ -37,12 +34,12 @@ function getClassList (element) {
  * @returns {Boolean}
  */
 function isDefinitionOfType (id, type) {
-  return hasOwn(window.__skateDefinitions, id) && window.__skateDefinitions[id].type.indexOf(type) > -1;
+  return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
 }
 
 export default {
   clear: function () {
-    window.__skateDefinitions = {};
+    globals.registry = {};
     return this;
   },
 
@@ -58,7 +55,7 @@ export default {
     var tagToExtend;
 
     if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
-      definition = window.__skateDefinitions[isAttrOrTag];
+      definition = globals.registry[isAttrOrTag];
       tagToExtend = definition.extends;
 
       if (isAttrValue) {
@@ -74,7 +71,7 @@ export default {
       var attr = attrs[a].nodeName;
 
       if (isDefinitionOfType(attr, skate.types.ATTR)) {
-        definition = window.__skateDefinitions[attr];
+        definition = globals.registry[attr];
         tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
@@ -90,7 +87,7 @@ export default {
       var className = classList[b];
 
       if (isDefinitionOfType(className, skate.types.CLASS)) {
-        definition = window.__skateDefinitions[className];
+        definition = globals.registry[className];
         tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
@@ -103,7 +100,7 @@ export default {
   },
 
   has: function (id) {
-    return hasOwn(window.__skateDefinitions, id);
+    return hasOwn(globals.registry, id);
   },
 
   set: function (id, definition) {
@@ -111,14 +108,14 @@ export default {
       throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
 
-    window.__skateDefinitions[id] = definition;
+    globals.registry[id] = definition;
 
     return this;
   },
 
   remove: function (id) {
     if (this.has(id)) {
-      delete window.__skateDefinitions[id];
+      delete globals.registry[id];
     }
 
     return this;
