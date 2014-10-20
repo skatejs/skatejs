@@ -102,18 +102,6 @@ function skate (id, definition) {
 }
 
 /**
- * Stops listening for new elements. Generally this will only be used in
- * testing.
- *
- * @returns {skate}
- */
-skate.destroy = function () {
-  documentObserver.unregister();
-  registry.clear();
-  return skate;
-};
-
-/**
  * Synchronously initialises the specified element or elements and
  * descendants.
  *
@@ -145,18 +133,6 @@ skate.types = {
   NOCLASS: 'at',
   NOTAG: 'ac',
   TAG: 't'
-};
-
-/**
- * Unregisters the specified definition.
- *
- * @param {String} id The ID of the definition to unregister.
- *
- * @returns {Skate}
- */
-skate.unregister = function (id) {
-  registry.remove(id);
-  return skate;
 };
 
 // Makes checking the version easy when debugging.
