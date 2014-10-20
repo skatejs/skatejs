@@ -1,7 +1,9 @@
 import helpers from '../lib/helpers';
-import skate from '../../src/skate';
+import observer from '../../src/document-observer';
+import registry from '../../src/registry';
 
 afterEach(function () {
-  skate.destroy();
+  observer.unregister();
+  registry.clear();
   helpers.fixture('');
 });

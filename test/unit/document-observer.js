@@ -1,8 +1,9 @@
+import globals from '../../src/globals';
 import observer from '../../src/document-observer';
 
 describe('Document Observer', function () {
   function getObserver () {
-    return window.__skateDocumentObserver;
+    return globals.observer;
   }
 
   function hasObserver () {
@@ -10,7 +11,7 @@ describe('Document Observer', function () {
   }
 
   function mockObserver () {
-    window.__skateDocumentObserver = {
+    globals.observer = {
       observe: function () {},
       disconnect: function () {},
       takeRecords: function () {}

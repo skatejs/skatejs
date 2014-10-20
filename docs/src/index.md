@@ -461,12 +461,6 @@ This is very useful during testing, but can be used for any use case that requir
 
 
 
-### Unregistering Components
-
-If you need to remove a component definition just call `skate.unregister('your-component-id')`. If you need to reset everything call `skate.destroy()`.
-
-
-
 Web Component Differences
 -------------------------
 

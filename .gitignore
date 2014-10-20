@@ -1,5 +1,6 @@
 .DS_Store
 .tmp
 bower_components
+docs/build
 node_modules
 npm-debug.log
