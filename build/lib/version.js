@@ -6,7 +6,7 @@ module.exports = function (grunt) {
   }
 
   version.next = function (type) {
-    return grunt.option('version') ||
+    return grunt.option('tag') ||
       semver.inc(
         version(),
         grunt.option('type') || 'patch'
