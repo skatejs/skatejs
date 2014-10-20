@@ -1,7 +1,7 @@
 module.exports = function (grunt) {
   var cmd = require('../lib/cmd');
   var git = require('../lib/git');
-  var grunt = require('../lib/grunt');
+  var task = require('../lib/grunt');
   var traceur = require('../lib/traceur');
   var version = require('../lib/version')(grunt);
 
@@ -26,8 +26,8 @@ module.exports = function (grunt) {
     },
     release: {
       command: cmd(
-        grunt('replace:version'),
-        grunt('test'),
+        task('replace:version'),
+        task('test'),
         git('commit -am "' + version() + ' -> ' + version.next() + '"'),
         git('tag -a ' + version.next() + ' -m ' + version.next()),
         git('push --tags')
