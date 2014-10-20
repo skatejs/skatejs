@@ -3,7 +3,7 @@ module.exports = function (grunt) {
   var version = grunt.option('version');
 
   function bump () {
-    console.log(arguments);
+    //console.log(arguments[0][0]);
   }
 
   function file (path) {
@@ -24,8 +24,8 @@ module.exports = function (grunt) {
     release: {
       options: {
         patterns: [
-          pattern('version: \'([^\']+)\';'),
-          pattern('"version": "([^\']+)"')
+          pattern(/version: '([^\']+)';/),
+          pattern(/"version": "([^\']+)"/)
         ]
       },
       files: [
