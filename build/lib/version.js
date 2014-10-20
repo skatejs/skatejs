@@ -8,7 +8,7 @@ module.exports = function (grunt) {
   version.next = function (type) {
     return grunt.option('version') ||
       semver.inc(
-        version.current(),
+        version(),
         grunt.option('type') || 'patch'
       );
   };
