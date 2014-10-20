@@ -6,6 +6,13 @@ module.exports = function (grunt) {
     console.log(arguments);
   }
 
+  function file (path) {
+    return {
+      dest: path,
+      src: path
+    };
+  }
+
   function pattern (find) {
     return {
       match: find,
@@ -22,9 +29,9 @@ module.exports = function (grunt) {
         ]
       },
       files: [
-        'src/version.js',
-        'bower.json',
-        'package.json'
+        file('src/version.js'),
+        file('bower.json'),
+        file('package.json')
       ]
     }
   };
