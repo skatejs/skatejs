@@ -6,6 +6,22 @@ module.exports = function (grunt) {
   var version = require('../lib/version')(grunt);
 
   return {
+    deploy: {
+      command: cmd(
+        'rm -rf .tmp',
+        'mkdir -p .tmp',
+        'cd .tmp',
+        'git clone git@github.com:skatejs/skatejs',
+        'git checkout gh-pages',
+        'find . -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null',
+        'cp -rf ../docs/build/* ./',
+        'git add .',
+        'git commit -am "Update documentation."',
+        'git push',
+        'cd ..',
+        'rm -rf .tmp'
+      )
+    },
     dist: {
       command: cmd(
         'rm -rf dist',
