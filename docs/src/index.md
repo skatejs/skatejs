@@ -18,7 +18,7 @@ JavaScript
 
 ```js
 skate('my-component', {
-  ready: function (element) {
+  created: function (element) {
     element.textContent = 'Hello, World!';
   }
 });
@@ -93,17 +93,17 @@ The definition is an object of options defining your component.
 ```js
 skate('my-component', {
   // Called before the element is displayed.
-  ready: function (element) {
+  created: function (element) {
 
   },
 
   // Called after the element is displayed.
-  insert: function (element) {
+  attached: function (element) {
 
   },
 
   // Called after the element is removed.
-  remove: function (element) {
+  detached: function (element) {
 
   },
 
@@ -118,15 +118,15 @@ skate('my-component', {
   // - oldValue: The old value. If type === 'insert', this will be undefined.
   attributes: {
     'my-attribute': {
-      insert: function (element, change) {
+      created: function (element, change) {
 
       },
 
-      update: function (element, change) {
+      updated: function (element, change) {
 
       },
 
-      remove: function (element, change) {
+      removed: function (element, change) {
 
       }
     }
@@ -225,7 +225,7 @@ As with the spec, when you define a component that is compatible with tag bindin
 
 ```js
 var MyComponent = skate('my-component', {
-  ready: function (element) {
+  created: function (element) {
     element.textContent = 'something';
   },
 
@@ -296,15 +296,15 @@ The third form gives you more granularity and flexibility, and is the same form 
 skate('my-component', {
   attributes: {
     'my-attribute': {
-      insert: function (element, change) {
+      created: function (element, change) {
 
       },
 
-      update: function (element, change) {
+      updated: function (element, change) {
 
       },
 
-      remove: function (element, change) {
+      removed: function (element, change) {
 
       }
     }
@@ -473,7 +473,7 @@ You can do some pretty cool things with Skate that you can't do with Web Compone
     skate('placeholder', {
       extends: 'input',
       type: skate.types.ATTR,
-      ready: polyfillInputPlaceholder
+      created: polyfillInputPlaceholder
     });
 
 `<input type="date">`:
@@ -527,7 +527,7 @@ This will only get executed on DOM Ready. If you ever insert some tabs dynamical
 
     skate('tabs', {
       type: skate.types.CLASS
-      ready: function (element) {
+      created: function (element) {
         jQuery(element).tabs();
       }
     });
@@ -653,6 +653,16 @@ To build the distribution all you have to do is run:
     grunt dist
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
+
+### Releasing
+
+To release all you've got to do is run `grunt release`. You can either specify the release `type`, or `tag`.
+
+    grunt release --tag x.x.x
+
+Or:
+
+    grunt release --type minor
 
 
 
