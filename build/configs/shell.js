@@ -11,7 +11,7 @@ module.exports = function (grunt) {
         'rm -rf .tmp',
         'mkdir -p .tmp',
         'cd .tmp',
-        'git clone git@github.com:skatejs/skatejs',
+        'git clone git@github.com:skatejs/skatejs .',
         'git checkout gh-pages',
         'find . -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null',
         'cp -rf ../docs/build/* ./',
