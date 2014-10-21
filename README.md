@@ -653,6 +653,8 @@ To build the distribution all you have to do is run:
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
 
+
+
 ### Releasing
 
 To release all you've got to do is run `grunt release`. You can either specify the release `type`, or `tag`.
@@ -662,6 +664,14 @@ To release all you've got to do is run `grunt release`. You can either specify t
 Or:
 
     grunt release --type minor
+
+
+
+### Deploying
+
+To deploy the documentation, run the following command from the branch or tag which you want to deploy:
+
+    grunt deploy
 
 
 
