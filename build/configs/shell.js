@@ -13,7 +13,7 @@ module.exports = function (grunt) {
         'cd .tmp',
         'git clone git@github.com:skatejs/skatejs .',
         'git checkout gh-pages',
-        'find . -path ./.git -prune -o -exec rm -rf {} \; 2> /dev/null',
+        'ls -a1 | grep -v "^\.git$" | grep -v "^\.$" | grep -v "^\.\.$" | xargs rm -rf',
         'cp -rf ../docs/build/* ./',
         'git add .',
         'git commit -am "Update documentation."',
