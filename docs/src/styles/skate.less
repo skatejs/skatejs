@@ -7,13 +7,13 @@
 
 @line-colour: white;
 @text-colour: white;
-@circle-colour: #59AFE1;
+@circle-colour: #59afe1;
 
 skate {
   background: @circle-colour;
 
   // uncomment below bg to see absolute middle keyline
-  background: linear-gradient(to bottom, #000 49.95%, #fff 50.5%, #000 50.5%);
+  // background: linear-gradient(to bottom, #000 49.95%, #fff 50.5%, #000 50.5%);
 
   box-sizing: border-box;
   border-radius: 100%;
@@ -39,7 +39,7 @@ skate {
     content: '';
     height: 0.4em;
     position: absolute;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
     width: 3em;
   }
 
@@ -54,21 +54,21 @@ skate {
     transform: translate(-3.34em, -0.075em) rotate(60deg);
   }
 
-  //&:hover {
+  &:hover {
     text-shadow: 0 0 0 @text-colour;
 
     &:before {
-      box-shadow: 2.3em 2.15em 0 0 @line-colour;
+      box-shadow: 2.3em 2em 0 0 @line-colour;
       height: 0.1em;
-      transform: translate(-0.45em, 1.45em) rotate(-36deg);
-      width: .6em;
+      transform: translate(-0.3em, 1.55em) rotate(-36deg);
+      width: .5em;
     }
 
     &:after {
-      box-shadow: 2.3em -2.15em 0 0 @line-colour;
+      box-shadow: 2.3em -2em 0 0 @line-colour;
       height: 0.12em;
-      transform: translate(-3.18em, 0.7em) rotate(35deg);
-      width: .84em;
+      transform: translate(-3em, 0.6em) rotate(36.5deg);
+      width: .5em;
     }
-  //}
+  }
 }
