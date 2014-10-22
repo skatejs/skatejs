@@ -446,7 +446,9 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
         });
       }
     }
+    var a;
     var attrs = target.attributes;
+    var attrsCopy = [];
     var attrsLen = attrs.length;
     var observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
@@ -467,11 +469,12 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       attributes: true,
       attributeOldValue: true
     });
-    for (var a = 0; a < attrsLen; a++) {
-      var attr = attrs[a];
-      if (attr) {
-        triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
-      }
+    for (a = 0; a < attrsLen; a++) {
+      attrsCopy.push(attrs[a]);
+    }
+    for (a = 0; a < attrsLen; a++) {
+      var attr = attrsCopy[a];
+      triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
     }
   }
   function addEventListeners(target, component) {
@@ -636,7 +639,7 @@ var $___46__46__47_src_47_document_45_observer__ = (function() {
 var $___46__46__47_src_47_version__ = (function() {
   "use strict";
   var __moduleName = "../src/version";
-  var $__default = '0.11.0';
+  var $__default = '0.11.1';
   return {get default() {
       return $__default;
     }};
