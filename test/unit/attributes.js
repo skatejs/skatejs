@@ -2,6 +2,8 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Attribute listeners', function () {
+  'use strict';
+
   it('should listen to changes in specified attributes', function (done) {
     var created = false;
     var updated = false;
@@ -91,7 +93,7 @@ describe('Attribute listeners', function () {
   it('should ensure attributes are initialised', function () {
     var called = false;
     skate('my-el', {
-      attributes: function (element, data) {
+      attributes: function () {
         called = true;
       }
     });
