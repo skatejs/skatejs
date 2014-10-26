@@ -101,12 +101,32 @@ describe('Attribute listeners', function () {
   });
 
   describe('should define properties for all watched attributes', function () {
-    it('should set the attribute when the property is set', function () {
+    var MyEl;
+    var myEl;
 
+    beforeEach(function () {
+      MyEl = skate('my-el', {
+        attributes: {
+          'aria-hidden': {
+            init: 'true'
+          }
+        }
+      });
+      myEl = new MyEl();
+    });
+
+    it('should set a default value using the "init" option', function () {
+      myEl.getAttribute('aria-hidden').should.equal('true');
+    });
+
+    it('should set the attribute when the property is set', function () {
+      myEl.setAttribute('aria-hidden', 'false');
+      myEl.ariaHidden.should.equal('false');
     });
 
     it('should set the property when the attribute is set', function () {
-
+      myEl.ariaHidden = 'true';
+      myEl.getAttribute('aria-hidden').should.equal('true');
     });
   });
 });

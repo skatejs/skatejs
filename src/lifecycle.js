@@ -7,6 +7,7 @@ import data from './data';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
+  hasOwn,
   inherit,
   objEach
 } from './utils';
@@ -51,6 +52,51 @@ function parseEvent (e) {
   };
 }
 
+function camelCase (str) {
+  return str.split(/-/g).map(function (str, index) {
+    return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
+  }).join('');
+}
+
+function defineAttributeProperty (target, attribute) {
+  Object.defineProperty(target, camelCase(attribute), {
+    get: function () {
+      return this.getAttribute(attribute);
+    },
+    set: function (value) {
+      this.setAttribute(attribute, value);
+    }
+  });
+}
+
+function initAttributes (target, component) {
+  var componentAttributes = component.attributes;
+
+  if (typeof componentAttributes !== 'object') {
+    return;
+  }
+
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'init')) {
+      target.setAttribute(attribute, componentAttributes[attribute].init);
+    }
+  }
+}
+
+function addAttributeToPropertyLinks (target, component) {
+  var componentAttributes = component.attributes;
+
+  if (typeof componentAttributes !== 'object') {
+    return;
+  }
+
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
+      defineAttributeProperty(target, attribute);
+    }
+  }
+}
+
 /**
  * Binds attribute listeners for the specified attribute handlers.
  *
@@ -62,8 +108,6 @@ function parseEvent (e) {
 function addAttributeListeners (target, component) {
   function triggerCallback (type, name, newValue, oldValue) {
     var callback;
-
-    addAttributeToPropertyLinks(target, component);
 
     if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
       callback = component.attributes[name][type];
@@ -109,6 +153,9 @@ function addAttributeListeners (target, component) {
     attributeOldValue: true
   });
 
+  initAttributes(target, component);
+  addAttributeToPropertyLinks(target, component);
+
   // In default web components, attribute changes aren't triggered for
   // attributes that already exist on an element when it is bound. This sucks
   // when you want to reuse and separate code for attributes away from your
@@ -123,31 +170,6 @@ function addAttributeListeners (target, component) {
       triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
     }
   }
-}
-
-function addAttributeToPropertyLinks (target, component) {
-  var componentAttributes = component.attributes;
-
-  if (typeof componentAttributes !== 'object') {
-    return;
-  }
-
-  for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
-      defineAttributeProperty(target, attribute);
-    }
-  }
-}
-
-function defineAttributeProperty (target, attribute) {
-  Object.defineProperty(target, attribute, {
-    get: function () {
-      return this.getAttribute(attribute);
-    },
-    set: function (value) {
-      this.setAttribute(attribute, value);
-    }
-  });
 }
 
 /**
