@@ -99,4 +99,14 @@ describe('Attribute listeners', function () {
     skate.init(helpers.fixture('<my-el some-attr></my-el>'));
     expect(called).to.equal(true);
   });
+
+  describe('should define properties for all watched attributes', function () {
+    it('should set the attribute when the property is set', function () {
+
+    });
+
+    it('should set the property when the attribute is set', function () {
+
+    });
+  });
 });
