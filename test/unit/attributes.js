@@ -32,7 +32,7 @@ describe('Attribute listeners', function () {
     });
   });
 
-  describe('should define properties for all watched attributes', function () {
+  describe('should define properties for all watched attributes', function (done) {
     var myEl;
     var created = false;
     var updated = false;
@@ -197,24 +197,27 @@ describe('Attribute listeners', function () {
       helpers.fixture('<div id="attrtest" open="created"></div>');
     });
 
-    it('should allow a catchall callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
-      var created = false;
-      var updated = false;
-      var removed = false;
+    it('should allow a catchall callback to be specified that catches all changes (same as passing a function instead of an object)', function (done) {
+      var called = 0;
       var MyEl = skate('my-el', {
         attributes: {
           test: {
-            catchall: function (element, data) {
-
+            catchall: function () {
+              ++called;
             }
           }
         }
       });
 
       var myEl = new MyEl();
-      myEl.test = true;
       myEl.test = false;
+      myEl.test = true;
       myEl.test = undefined;
+
+      helpers.afterMutations(function () {
+        called.should.equal(3);
+        done();
+      });
     });
   });
 

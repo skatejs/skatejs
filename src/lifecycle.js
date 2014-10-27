@@ -114,17 +114,20 @@ function addAttributeToPropertyLinks (target, component) {
 function addAttributeListeners (target, component) {
   function triggerCallback (type, name, newValue, oldValue) {
     var callback;
+    var isSpecific = component.attributes && component.attributes[name];
 
-    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+    if (isSpecific && component.attributes[name][type]) {
       callback = component.attributes[name][type];
-    } else if (component.attributes && typeof component.attributes[name] === 'function') {
+    } else if (isSpecific && component.attributes[name]['catchall']) {
+      callback = component.attributes[name]['catchall'];
+    } else if (isSpecific) {
       callback = component.attributes[name];
-    } else if (typeof component.attributes === 'function') {
+    } else {
       callback = component.attributes;
     }
 
     // There may still not be a callback.
-    if (callback) {
+    if (typeof callback === 'function') {
       callback(target, {
         type: type,
         name: name,
