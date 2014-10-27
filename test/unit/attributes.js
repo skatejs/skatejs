@@ -125,23 +125,47 @@ describe('Attribute listeners', function () {
     expect(attributesCalled).to.equal(2);
   });
 
-  describe('should define properties for all watched attributes', function () {
-    var MyEl;
-    var myEl;
-
-    beforeEach(function () {
-      MyEl = skate('my-el', {
+  describe('should initialise default attribute values', function () {
+    it('should set a default value using the "default" option', function () {
+      var MyEl = skate('my-el', {
         attributes: {
           'aria-hidden': {
-            init: 'true'
+            default: 'true'
           }
         }
       });
-      myEl = new MyEl();
+
+      new MyEl().getAttribute('aria-hidden').should.equal('true');
     });
 
-    it('should set a default value using the "init" option', function () {
-      myEl.getAttribute('aria-hidden').should.equal('true');
+    it('should allow a callback to return a default value', function () {
+      var MyEl = skate('my-el', {
+        attributes: {
+          'aria-hidden': {
+            default: function (element) {
+              return 'true';
+            }
+          }
+        }
+      });
+
+      new MyEl().getAttribute('aria-hidden').should.equal('true');
+    });
+  });
+
+  describe('should define properties for all watched attributes', function () {
+    var myEl;
+
+    beforeEach(function () {
+      var MyEl = skate('my-el', {
+        attributes: {
+          'aria-hidden': {
+            default: 'true'
+          }
+        }
+      });
+
+      myEl = new MyEl();
     });
 
     it('should set the attribute when the property is set', function () {

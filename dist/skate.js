@@ -449,8 +449,10 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       return;
     }
     for (var attribute in componentAttributes) {
-      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'init')) {
-        target.setAttribute(attribute, componentAttributes[attribute].init);
+      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default')) {
+        var value = componentAttributes[attribute].default;
+        value = typeof value === 'function' ? value(target) : value;
+        target.setAttribute(attribute, value);
       }
     }
   }
