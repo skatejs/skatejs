@@ -6,7 +6,7 @@ describe('Attribute listeners', function () {
     var created = false;
     var updated = false;
 
-    skate('div', {
+    skate('my-el', {
       attributes: {
         open: {
           created: function (element, data) {
@@ -30,7 +30,7 @@ describe('Attribute listeners', function () {
       }
     });
 
-    helpers.fixture('<div open="created"></div>');
+    helpers.fixture('<my-el open="created"></my-el>');
   });
 
   it('should accept a function insead of an object for a particular attribute definition.', function (done) {
@@ -98,5 +98,28 @@ describe('Attribute listeners', function () {
 
     skate.init(helpers.fixture('<my-el some-attr></my-el>'));
     expect(called).to.equal(true);
+  });
+
+  it('should iterate over every attribute even if one removed while it is still being processed', function () {
+    var attributesCalled = 0;
+    skate('my-el', {
+      attributes: {
+        id: {
+          created: function (element) {
+            element.removeAttribute('id');
+            attributesCalled++;
+          }
+        },
+        name: {
+          created: function (element) {
+            element.removeAttribute('name');
+            attributesCalled++;
+          }
+        }
+      }
+    });
+
+    skate.init(helpers.fixture('<my-el id="test" name="name"></my-el>'));
+    expect(attributesCalled).to.equal(2);
   });
 });
