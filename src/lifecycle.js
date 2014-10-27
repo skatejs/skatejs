@@ -58,17 +58,6 @@ function camelCase (str) {
   }).join('');
 }
 
-function defineAttributeProperty (target, attribute) {
-  Object.defineProperty(target, camelCase(attribute), {
-    get: function () {
-      return this.getAttribute(attribute);
-    },
-    set: function (value) {
-      this.setAttribute(attribute, value);
-    }
-  });
-}
-
 function initAttributes (target, component) {
   var componentAttributes = component.attributes;
 
@@ -83,6 +72,21 @@ function initAttributes (target, component) {
       target.setAttribute(attribute, value);
     }
   }
+}
+
+function defineAttributeProperty (target, attribute) {
+  Object.defineProperty(target, camelCase(attribute), {
+    get: function () {
+      return this.getAttribute(attribute);
+    },
+    set: function (value) {
+      if (value === undefined) {
+        this.removeAttribute(attribute);
+      } else {
+        this.setAttribute(attribute, value);
+      }
+    }
+  });
 }
 
 function addAttributeToPropertyLinks (target, component) {
@@ -157,8 +161,8 @@ function addAttributeListeners (target, component) {
     attributeOldValue: true
   });
 
-  initAttributes(target, component);
   addAttributeToPropertyLinks(target, component);
+  initAttributes(target, component);
 
   // This is actually faster than [].slice.call(attrs).
   for (a = 0; a < attrsLen; a++) {
