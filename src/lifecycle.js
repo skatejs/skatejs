@@ -128,7 +128,9 @@ function addAttributeListeners (target, component) {
     }
   }
 
+  var a;
   var attrs = target.attributes;
+  var attrsCopy = [];
   var attrsLen = attrs.length;
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
@@ -156,19 +158,19 @@ function addAttributeListeners (target, component) {
   initAttributes(target, component);
   addAttributeToPropertyLinks(target, component);
 
+  // This is actually faster than [].slice.call(attrs).
+  for (a = 0; a < attrsLen; a++) {
+    attrsCopy.push(attrs[a]);
+  }
+
   // In default web components, attribute changes aren't triggered for
   // attributes that already exist on an element when it is bound. This sucks
   // when you want to reuse and separate code for attributes away from your
   // lifecycle callbacks. Skate will initialise each attribute by calling the
   // created callback for the attributes that already exist on the element.
-  for (var a = 0; a < attrsLen; a++) {
-    var attr = attrs[a];
-
-    // If an attribute is removed during the enumeration, then we must ensure
-    // that each one still exists when it comes time to action it.
-    if (attr) {
-      triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
-    }
+  for (a = 0; a < attrsLen; a++) {
+    var attr = attrsCopy[a];
+    triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
   }
 }
 
