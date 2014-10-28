@@ -433,28 +433,32 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
     }).join('');
   }
-  function defineAttributeProperty(target, attribute) {
-    Object.defineProperty(target, camelCase(attribute), {
-      get: function() {
-        return this.getAttribute(attribute);
-      },
-      set: function(value) {
-        this.setAttribute(attribute, value);
-      }
-    });
-  }
   function initAttributes(target, component) {
     var componentAttributes = component.attributes;
     if (typeof componentAttributes !== 'object') {
       return;
     }
     for (var attribute in componentAttributes) {
-      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default')) {
+      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default') && !target.hasAttribute(attribute)) {
         var value = componentAttributes[attribute].default;
         value = typeof value === 'function' ? value(target) : value;
         target.setAttribute(attribute, value);
       }
     }
+  }
+  function defineAttributeProperty(target, attribute) {
+    Object.defineProperty(target, camelCase(attribute), {
+      get: function() {
+        return this.getAttribute(attribute);
+      },
+      set: function(value) {
+        if (value === undefined) {
+          this.removeAttribute(attribute);
+        } else {
+          this.setAttribute(attribute, value);
+        }
+      }
+    });
   }
   function addAttributeToPropertyLinks(target, component) {
     var componentAttributes = component.attributes;
@@ -470,14 +474,17 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
   function addAttributeListeners(target, component) {
     function triggerCallback(type, name, newValue, oldValue) {
       var callback;
-      if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+      var isSpecific = component.attributes && component.attributes[name];
+      if (isSpecific && component.attributes[name][type]) {
         callback = component.attributes[name][type];
-      } else if (component.attributes && typeof component.attributes[name] === 'function') {
+      } else if (isSpecific && component.attributes[name].catchall) {
+        callback = component.attributes[name].catchall;
+      } else if (isSpecific) {
         callback = component.attributes[name];
-      } else if (typeof component.attributes === 'function') {
+      } else {
         callback = component.attributes;
       }
-      if (callback) {
+      if (typeof callback === 'function') {
         callback(target, {
           type: type,
           name: name,
@@ -509,8 +516,8 @@ var $___46__46__47_src_47_lifecycle__ = (function() {
       attributes: true,
       attributeOldValue: true
     });
-    initAttributes(target, component);
     addAttributeToPropertyLinks(target, component);
+    initAttributes(target, component);
     for (a = 0; a < attrsLen; a++) {
       attrsCopy.push(attrs[a]);
     }
