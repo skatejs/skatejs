@@ -8,19 +8,19 @@ describe('Attribute listeners', function () {
     it('should set a default value using the "default" option', function () {
       var MyEl = skate('my-el', {
         attributes: {
-          'aria-hidden': {
+          test: {
             default: 'true'
           }
         }
       });
 
-      new MyEl().getAttribute('aria-hidden').should.equal('true');
+      new MyEl().getAttribute('test').should.equal('true');
     });
 
     it('should allow a callback to return a default value', function () {
       var MyEl = skate('my-el', {
         attributes: {
-          'aria-hidden': {
+          test: {
             default: function () {
               return 'true';
             }
@@ -28,7 +28,23 @@ describe('Attribute listeners', function () {
         }
       });
 
-      new MyEl().getAttribute('aria-hidden').should.equal('true');
+      new MyEl().getAttribute('test').should.equal('true');
+    });
+
+    it('should not override if already specified', function () {
+      var MyEl = skate('my-el', {
+        attributes: {
+          test: {
+            default: 'true'
+          }
+        }
+      });
+
+      skate.init(helpers.fixture('<my-el test="false"></my-el>'))
+        .firstChild
+        .test
+        .should
+        .equal('false');
     });
   });
 

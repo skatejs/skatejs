@@ -52,12 +52,27 @@ function parseEvent (e) {
   };
 }
 
+/**
+ * Camel-cases the specified string.
+ *
+ * @param {String} str The string to camel-case.
+ *
+ * @returns {String}
+ */
 function camelCase (str) {
   return str.split(/-/g).map(function (str, index) {
     return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
   }).join('');
 }
 
+/**
+ * Sets the defined attributes to their default values, if specified.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
 function initAttributes (target, component) {
   var componentAttributes = component.attributes;
 
@@ -66,7 +81,7 @@ function initAttributes (target, component) {
   }
 
   for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default')) {
+    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default') && !target.hasAttribute(attribute)) {
       var value = componentAttributes[attribute].default;
       value = typeof value === 'function' ? value(target) : value;
       target.setAttribute(attribute, value);
@@ -74,6 +89,14 @@ function initAttributes (target, component) {
   }
 }
 
+/**
+ * Defines a property that proxies the specified attribute.
+ *
+ * @param {Element} target The web component element.
+ * @param {String} attribute The attribute name to proxy.
+ *
+ * @returns {undefined}
+ */
 function defineAttributeProperty (target, attribute) {
   Object.defineProperty(target, camelCase(attribute), {
     get: function () {
@@ -89,6 +112,14 @@ function defineAttributeProperty (target, attribute) {
   });
 }
 
+/**
+ * Adds links from attributes to properties.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
 function addAttributeToPropertyLinks (target, component) {
   var componentAttributes = component.attributes;
 
