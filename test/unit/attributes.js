@@ -80,7 +80,13 @@ describe('Attribute listeners', function () {
             removed: function () {
               removed = true;
             }
+          },
+          'override': {
+            default: 'false'
           }
+        },
+        prototype: {
+          override: 'true'
         }
       });
 
@@ -136,6 +142,14 @@ describe('Attribute listeners', function () {
       myEl.testLifecycle = undefined;
       helpers.afterMutations(function () {
         removed.should.equal(true);
+        done();
+      });
+    });
+
+    it('should not override an existing property', function (done) {
+      myEl.setAttribute('override', 'false');
+      helpers.afterMutations(function () {
+        myEl.override.should.equal('true');
         done();
       });
     });
