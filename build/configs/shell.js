@@ -1,4 +1,6 @@
 module.exports = function (grunt) {
+  'use strict';
+
   var cmd = require('../lib/cmd');
   var git = require('../lib/git');
   var task = require('../lib/grunt');
@@ -48,6 +50,7 @@ module.exports = function (grunt) {
         git('tag -a ' + version.next() + ' -m ' + version.next()),
         git('push'),
         git('push --tags')
+        'npm publish'
       )
     },
     test: {
