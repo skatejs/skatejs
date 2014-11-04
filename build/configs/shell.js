@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         git('commit -am "' + version() + ' -> ' + version.next() + '"'),
         git('tag -a ' + version.next() + ' -m ' + version.next()),
         git('push'),
-        git('push --tags')
+        git('push --tags'),
         'npm publish'
       )
     },
