@@ -73,7 +73,7 @@ If you're still skating old school, we've got you covered. Just make sure it's i
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using [Tracuer](https://github.com/google/traceur-compiler), or are targeting only [browsers that support ES6](http://kangax.github.io/compat-table/es6) (none yet), then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
+The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
 
 
 
@@ -541,7 +541,7 @@ Furthermore, this is especially good when you don't have the time to refactor a 
 
 Size does matter.
 
-1. Skate: 3.2k
+1. Skate: 3.4k
 2. X-Tags: 10.8k
 3. Polymer without polyfills): 33.7k
 4. Polymer with polyfills: 70.2k
@@ -623,7 +623,7 @@ To get a dev environment up and running, all you should need to do is run:
 
     npm install
 
-That should install all dependencies (Bower and NPM) and `make` Traceur. To see a list of commands, run:
+To see a list of commands, run:
 
     grunt
 
@@ -712,6 +712,3 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/treshugart/skate/trend.png)](https://bitdeli.com/free "Bitdeli Badge")

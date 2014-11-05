@@ -4,6 +4,9 @@ template: layout.html
 
 [![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
 
+Skate
+=====
+
 Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for binding behaviour to custom and existing elements without ever having to worry about when your element is inserted into the DOM. It uses the [Custom Element](http://w3c.github.io/webcomponents/spec/custom/) spec as a guideline and adds some features on top of it.
 
 *I recently [spoke about Skate](http://slides.com/treshugart/skating-with-web-components) at [SydJS](http://www.sydjs.com/).*
@@ -74,7 +77,7 @@ If you're still skating old school, we've got you covered. Just make sure it's i
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using [Tracuer](https://github.com/google/traceur-compiler), or are targeting only [browsers that support ES6](http://kangax.github.io/compat-table/es6) (none yet), then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
+The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
 
 
 
@@ -112,10 +115,10 @@ skate('my-component', {
   // element that the change occurred on and the corresponding changes. The
   // change object contains the following information:
   //
-  // - type: The type of modification (insert, update or remove).
+  // - type: The type of modification (created, updated or removed).
   // - name: The attribute name.
-  // - newValue: The new value. If type === 'remove', this will be undefined.
-  // - oldValue: The old value. If type === 'insert', this will be undefined.
+  // - newValue: The new value. If type === 'removed', this will be undefined.
+  // - oldValue: The old value. If type === 'created', this will be undefined.
   attributes: {
     'my-attribute': {
       created: function (element, change) {
@@ -196,10 +199,10 @@ skate('my-component', {
   // - `NOCLASS` Attribute or tag names.
   type: skate.types.ANY,
 
-  // The attribute name to add after calling the ready() callback.
+  // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
 
-  // The attribute name to remove after calling the ready() callback.
+  // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
 });
 
@@ -211,11 +214,11 @@ skate('my-component', {
 
 The component lifecycle consists of three callbacks:
 
-1. `ready` Called before the element is displayed.
-2. `insert` Called after the element is displayed.
-3. `remove` Called after the element is removed.
+1. `created` Called before the element is displayed.
+2. `attached` Called after the element is displayed.
+3. `detached` Called after the element is removed.
 
-The `ready` callback gets triggered before the element is shown and is only ever fired once.  Without full web-component support, we can only emulate the `ready` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The `insert` and `remove` callbacks are fired each time the element is attached and detached from the DOM, which can happen multiple times.
+The `created` callback gets triggered before the element is shown and is only ever fired once.  Without full web-component support, we can only emulate the `created` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The `attached` and `detached` callbacks are fired each time the element is attached and detached from the DOM, which can happen multiple times.
 
 
 
@@ -237,7 +240,7 @@ var MyComponent = skate('my-component', {
 });
 ```
 
-It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `ready` callback. Only when you insert it into the DOM will the `insert` callback be called:
+It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `created` callback. Only when you insert it into the DOM will the `attached` callback be called:
 
 ```js
 var element = new MyComponent();
@@ -245,7 +248,7 @@ var element = new MyComponent();
 // Logs: "something"
 element.logTextContent();
 
-// Asynchronously calls the `insert` callback.
+// Asynchronously calls the `attached` callback.
 document.body.appendChild(element);
 ```
 
@@ -312,20 +315,20 @@ skate('my-component', {
 });
 ```
 
-The `insert` handler gets called when:
+The `created` handler gets called when:
 
 - The element is created with the corresponding attribute already on it.
 - The corresponding attribute is added to the element.
 
-The `update` handler gets called when:
+The `updated` handler gets called when:
 
 - The corresponding attribute is updated on the element.
 
-The `remove` handler gets called when:
+The `removed` handler gets called when:
 
 - The corresponding attribute is removed from the element.
 
-Callbacks that get fired for attributes that already exist on an element get called after the `insert` callback is triggered.
+Callbacks that get fired for attributes that already exist on an element get called after the `attached` callback is triggered.
 
 
 
@@ -532,7 +535,7 @@ This will only get executed on DOM Ready. If you ever insert some tabs dynamical
       }
     });
 
-You're definition is now in one place. If you dynamically insert some tabs into the document, they'll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you've used the `ready()` callback.
+You're definition is now in one place. If you dynamically insert some tabs into the document, they'll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you've used the `created()` callback.
 
 Furthermore, this is especially good when you don't have the time to refactor a legacy component into web components. You get many of the benefits of a web component without having to change any markup.
 
@@ -542,7 +545,7 @@ Furthermore, this is especially good when you don't have the time to refactor a 
 
 Size does matter.
 
-1. Skate: 3.2k
+1. Skate: 3.4k
 2. X-Tags: 10.8k
 3. Polymer without polyfills): 33.7k
 4. Polymer with polyfills: 70.2k
@@ -587,7 +590,7 @@ An element may not be initialised right away. To prevent FOUC, you can add the `
     </style>
     <my-element unresolved></my-element>
 
-The `unresolved` attribute will be removed after the `ready()` callback is called and before the `insert()` callback is called.
+The `unresolved` attribute will be removed after the `created()` callback is called and before the `attached()` callback is called.
 
 Additionally, after removing the `unresolved` attribute, Skate will add the `resolved` attribute. This allows you to transition your styles:
 
@@ -624,7 +627,7 @@ To get a dev environment up and running, all you should need to do is run:
 
     npm install
 
-That should install all dependencies (Bower and NPM) and `make` Traceur. To see a list of commands, run:
+To see a list of commands, run:
 
     grunt
 
@@ -713,6 +716,3 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/treshugart/skate/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
