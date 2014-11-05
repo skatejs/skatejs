@@ -1077,8 +1077,8 @@ if (typeof define === 'function') {
 }
 
 // CommonJS
-if (typeof module === 'object') {
-  module.exports = skate;
+if (typeof exports === 'object') {
+  exports.default = skate;
 }
 
 exports.default = skate;
