@@ -20,7 +20,6 @@
     "grunt-karma": "~0.9.0",
     "grunt-replace": "^0.8.0",
     "grunt-shell": "^1.1.1",
-    "grunt-wrap": "~0.3.0",
     "handlebars": "^2.0.0",
     "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~0.1.4",

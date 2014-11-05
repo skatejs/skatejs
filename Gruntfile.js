@@ -15,5 +15,4 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-shell');
-  grunt.loadNpmTasks('grunt-wrap');
 };
