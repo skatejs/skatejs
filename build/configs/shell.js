@@ -26,11 +26,11 @@ module.exports = function (grunt) {
     dist: {
       command: cmd(
         'rm -rf dist',
-        compile('src', 'skate.js', 'dist/skate.js')
+        compile('src/skate.js', 'dist/skate.js')
       )
     },
     docs: {
-      command: compile('docs/src/scripts', 'index.js', 'docs/build/scripts/index.js')
+      command: compile('docs/src/scripts/index.js', 'docs/build/scripts/index.js')
     },
     installBower: {
       command: './node_modules/.bin/bower install'
@@ -50,7 +50,7 @@ module.exports = function (grunt) {
     test: {
       command: cmd(
         'rm -rf .tmp',
-        compile('test', 'unit.js', '.tmp/run-unit-tests.js')
+        compile('docs/src/scripts/unit.js', '.tmp/run-unit-tests.js')
       )
     }
   };
