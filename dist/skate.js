@@ -894,7 +894,6 @@ exports.default = {
 var documentObserver = require('./document-observer').default;
 var triggerCreated = require('./lifecycle').triggerCreated;
 var initElements = require('./lifecycle').initElements;
-var MutationObserver = require('./mutation-observer').default;
 var registry = require('./registry').default;
 var debounce = require('./utils').debounce;
 var inherit = require('./utils').inherit;
@@ -1084,7 +1083,7 @@ if (typeof module === 'object') {
 
 exports.default = skate;
 
-},{"./document-observer":3,"./lifecycle":5,"./mutation-observer":6,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
+},{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
 exports.hasOwn = hasOwn;
 exports.debounce = debounce;
