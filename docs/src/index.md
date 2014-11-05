@@ -473,39 +473,45 @@ You can do some pretty cool things with Skate that you can't do with Web Compone
 
 `<input placeholder="">`:
 
-    skate('placeholder', {
-      extends: 'input',
-      type: skate.types.ATTR,
-      created: polyfillInputPlaceholder
-    });
+```js
+skate('placeholder', {
+  extends: 'input',
+  type: skate.types.ATTR,
+  created: polyfillInputPlaceholder
+});
+```
 
 `<input type="date">`:
 
-    skate('type', {
-      extends: 'input',
-      type: skate.types.ATTR,
-      attributes: {
-        type: function (element, change) {
-          if (change.newValue === 'date') {
-            makeIntoDatepicker(element);
-          }
-        }
+```js
+skate('type', {
+  extends: 'input',
+  type: skate.types.ATTR,
+  attributes: {
+    type: function (element, change) {
+      if (change.newValue === 'date') {
+        makeIntoDatepicker(element);
       }
-    });
+    }
+  }
+});
+```
 
 `<link rel="import" href="path/to/import.html">` (HTML Imports):
 
-    skate('rel', {
-      extends: 'link',
-      type: skate.types.ATTR,
-      attributes: {
-        rel: function (element, change) {
-          if (change.newValue === 'import') {
-            makeIntoHtmlImport(element);
-          }
-        }
+```js
+skate('rel', {
+  extends: 'link',
+  type: skate.types.ATTR,
+  attributes: {
+    rel: function (element, change) {
+      if (change.newValue === 'import') {
+        makeIntoHtmlImport(element);
       }
-    });
+    }
+  }
+});
+```
 
 You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-custom-elements) in accordance to the Web Component spec with Skate.
 
@@ -522,18 +528,22 @@ Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags 
 
 Polymer and X-Tags do not offer a way to bind behaviour to elements with a particular attribute or class. Skate allows this because classes can be a good transitional period away from legacy components. For example:
 
-    jQuery(function ($) {
-      $('.tabs').tabs();
-    });
+```js
+jQuery(function ($) {
+  $('.tabs').tabs();
+});
+```
 
 This will only get executed on DOM Ready. If you ever insert some tabs dynamically, you'd have to call that again. Skate makes it possible to only define this once:
 
-    skate('tabs', {
-      type: skate.types.CLASS
-      created: function (element) {
-        jQuery(element).tabs();
-      }
-    });
+```js
+skate('tabs', {
+  type: skate.types.CLASS
+  created: function (element) {
+    jQuery(element).tabs();
+  }
+});
+```
 
 You're definition is now in one place. If you dynamically insert some tabs into the document, they'll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you've used the `created()` callback.
 
@@ -547,7 +557,7 @@ Size does matter.
 
 1. Skate: 3.4k
 2. X-Tags: 10.8k
-3. Polymer without polyfills): 33.7k
+3. Polymer without polyfills: 33.7k
 4. Polymer with polyfills: 70.2k
 
 
@@ -583,12 +593,14 @@ Preventing FOUC
 
 An element may not be initialised right away. To prevent FOUC, you can add the `unresolved` attribute to any web component element and then use that attribute to hide the element in your stylesheets.
 
-    <style>
-      [unresolved] {
-        opacity: 0;
-      }
-    </style>
-    <my-element unresolved></my-element>
+```html
+<style>
+  [unresolved] {
+    opacity: 0;
+  }
+</style>
+<my-element unresolved></my-element>
+```
 
 The `unresolved` attribute will be removed after the `created()` callback is called and before the `attached()` callback is called.
 
@@ -625,27 +637,36 @@ The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, e
 
 To get a dev environment up and running, all you should need to do is run:
 
-    npm install
+```bash
+npm install
+```
 
 To see a list of commands, run:
 
-    grunt
-
+```bash
+grunt
+```
 
 
 ### Testing
 
 To run tests:
 
-    grunt test
+```bash
+grunt test
+```
 
 If you want to keep the Karma server alive to run them in your browser of choice:
 
-    grunt test --keepalive
+```bash
+grunt test --keepalive
+```
 
 To run tests in a specific browser:
 
-    grunt test --browsers Chrome,Firefox
+```bash
+grunt test --browsers Chrome,Firefox
+```
 
 
 
@@ -653,7 +674,9 @@ To run tests in a specific browser:
 
 To build the distribution all you have to do is run:
 
-    grunt dist
+```bash
+grunt dist
+```
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
 
@@ -663,11 +686,15 @@ This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing
 
 To release all you've got to do is run `grunt release`. You can either specify the release `type`, or `tag`.
 
-    grunt release --tag x.x.x
+```bash
+grunt release --tag x.x.x
+```
 
 Or:
 
-    grunt release --type minor
+```bash
+grunt release --type minor
+```
 
 
 
@@ -675,7 +702,9 @@ Or:
 
 To deploy the documentation, run the following command from the branch or tag which you want to deploy:
 
-    grunt deploy
+```bash
+grunt deploy
+```
 
 
 
