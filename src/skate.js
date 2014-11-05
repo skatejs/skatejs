@@ -5,7 +5,6 @@ import {
   triggerCreated,
   initElements
 } from './lifecycle';
-import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
   debounce,
