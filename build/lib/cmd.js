@@ -1,3 +1,3 @@
 module.exports = function () {
-  return [].slice.call(arguments).join(' && ');
+  return [].slice.call(arguments).filter(Boolean).join(' && ');
 };

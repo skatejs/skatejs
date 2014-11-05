@@ -50,7 +50,8 @@ module.exports = function (grunt) {
     test: {
       command: cmd(
         'rm -rf .tmp',
-        compile('docs/src/scripts/unit.js', '.tmp/run-unit-tests.js')
+        compile('src/skate.js'),
+        compile('test/unit.js', '.tmp/run-unit-tests.js')
       )
     }
   };
