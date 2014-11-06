@@ -1,3 +1,5 @@
+'use strict';
+
 import './lib/polyfills';
 import './unit/bootstrap';
 import './unit/attributes';

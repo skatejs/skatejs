@@ -1,3 +1,5 @@
+'use strict';
+
 import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 

@@ -1,3 +1,5 @@
+'use strict';
+
 import helpers from '../lib/helpers';
 import observer from '../../src/document-observer';
 import registry from '../../src/registry';

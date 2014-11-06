@@ -1,10 +1,12 @@
+'use strict';
+
 import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
   it('should call the created() callback when the element is attached', function (done) {
     skate('my-element', {
-      created: function (element) {
+      created: function () {
         done();
       }
     });
@@ -14,7 +16,7 @@ describe('Lifecycle Callbacks', function () {
 
   it('should call the attached() callback when the element is attached', function (done) {
     skate('my-element', {
-      attached: function (element) {
+      attached: function () {
         done();
       }
     });
