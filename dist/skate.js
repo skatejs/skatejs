@@ -1,11 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var ATTR_IGNORE = 'data-skate-ignore';
-exports.ATTR_IGNORE = ATTR_IGNORE;
-
+var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 },{}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 exports.default = {
   /**
@@ -41,9 +39,8 @@ exports.default = {
     return element;
   }
 };
-
 },{}],3:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var globals = require('./globals').default;
 var initElements = require('./lifecycle').initElements;
@@ -58,7 +55,7 @@ var getClosestIgnoredElement = require('./utils').getClosestIgnoredElement;
  *
  * @returns {undefined}
  */
-function documentObserverHandler (mutations) {
+function documentObserverHandler(mutations) {
   var mutationsLen = mutations.length;
 
   for (var a = 0; a < mutationsLen; a++) {
@@ -88,7 +85,7 @@ function documentObserverHandler (mutations) {
  *
  * @returns {MutationObserver}
  */
-function createDocumentObserver () {
+function createDocumentObserver() {
   var observer = new MutationObserver(documentObserverHandler);
 
   // Observe after the DOM content has loaded.
@@ -125,9 +122,8 @@ exports.default = {
     return this;
   }
 };
-
 },{"./globals":4,"./lifecycle":5,"./mutation-observer":6,"./utils":9}],4:[function(require,module,exports){
-'use strict';
+"use strict";
 
 if (!window.__skate) {
   window.__skate = {
@@ -137,9 +133,8 @@ if (!window.__skate) {
 }
 
 exports.default = window.__skate;
-
 },{}],5:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
 var data = require('./data').default;
@@ -149,23 +144,17 @@ var inherit = require('./utils').inherit;
 var objEach = require('./utils').objEach;
 
 var elProto = window.HTMLElement.prototype;
-var matchesSelector = (
-    elProto.matches ||
-    elProto.msMatchesSelector ||
-    elProto.webkitMatchesSelector ||
-    elProto.mozMatchesSelector ||
-    elProto.oMatchesSelector
-  );
+var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
 
-function getLifecycleFlag (target, component, name) {
-  return data.get(target, component.id + ':lifecycle:' + name);
+function getLifecycleFlag(target, component, name) {
+  return data.get(target, component.id + ":lifecycle:" + name);
 }
 
-function setLifecycleFlag (target, component, name, value) {
-  data.set(target, component.id + ':lifecycle:' + name, !!value);
+function setLifecycleFlag(target, component, name, value) {
+  data.set(target, component.id + ":lifecycle:" + name, !!value);
 }
 
-function ensureLifecycleFlag (target, component, name) {
+function ensureLifecycleFlag(target, component, name) {
   if (getLifecycleFlag(target, component, name)) {
     return true;
   }
@@ -180,11 +169,11 @@ function ensureLifecycleFlag (target, component, name) {
  *
  * @returns {Object]}
  */
-function parseEvent (e) {
-  var parts = e.split(' ');
+function parseEvent(e) {
+  var parts = e.split(" ");
   return {
     name: parts.shift(),
-    delegate: parts.join(' ')
+    delegate: parts.join(" ")
   };
 }
 
@@ -196,15 +185,15 @@ function parseEvent (e) {
  *
  * @returns {undefined}
  */
-function addAttributeListeners (target, component) {
-  function triggerCallback (type, name, newValue, oldValue) {
+function addAttributeListeners(target, component) {
+  function triggerCallback(type, name, newValue, oldValue) {
     var callback;
 
-    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === "function") {
       callback = component.attributes[name][type];
-    } else if (component.attributes && typeof component.attributes[name] === 'function') {
+    } else if (component.attributes && typeof component.attributes[name] === "function") {
       callback = component.attributes[name];
-    } else if (typeof component.attributes === 'function') {
+    } else if (typeof component.attributes === "function") {
       callback = component.attributes;
     }
 
@@ -230,11 +219,11 @@ function addAttributeListeners (target, component) {
       var attr = attrs[name];
 
       if (attr && mutation.oldValue === null) {
-        type = 'created';
+        type = "created";
       } else if (attr && mutation.oldValue !== null) {
-        type = 'updated';
+        type = "updated";
       } else if (!attr) {
-        type = 'removed';
+        type = "removed";
       }
 
       triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
@@ -258,7 +247,7 @@ function addAttributeListeners (target, component) {
   // created callback for the attributes that already exist on the element.
   for (a = 0; a < attrsLen; a++) {
     var attr = attrsCopy[a];
-    triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
+    triggerCallback("created", attr.nodeName, (attr.value || attr.nodeValue));
   }
 }
 
@@ -270,12 +259,12 @@ function addAttributeListeners (target, component) {
  *
  * @returns {undefined}
  */
-function addEventListeners (target, component) {
-  if (typeof component.events !== 'object') {
+function addEventListeners(target, component) {
+  if (typeof component.events !== "object") {
     return;
   }
 
-  function makeHandler (handler, delegate) {
+  function makeHandler(handler, delegate) {
     return function (e) {
       // If we're not delegating, trigger directly on the component element.
       if (!delegate) {
@@ -312,8 +301,8 @@ function addEventListeners (target, component) {
  *
  * @returns {undefined}
  */
-function triggerCreated (target, component) {
-  if (ensureLifecycleFlag(target, component, 'created')) {
+function triggerCreated(target, component) {
+  if (ensureLifecycleFlag(target, component, "created")) {
     return;
   }
 
@@ -339,13 +328,13 @@ function triggerCreated (target, component) {
  *
  * @returns {undefined}
  */
-function triggerAttached (target, component) {
-  if (ensureLifecycleFlag(target, component, 'attached')) {
+function triggerAttached(target, component) {
+  if (ensureLifecycleFlag(target, component, "attached")) {
     return;
   }
 
   target.removeAttribute(component.unresolvedAttribute);
-  target.setAttribute(component.resolvedAttribute, '');
+  target.setAttribute(component.resolvedAttribute, "");
 
   if (component.attached) {
     component.attached(target);
@@ -360,12 +349,12 @@ function triggerAttached (target, component) {
  *
  * @returns {undefined}
  */
-function triggerDetached (target, component) {
+function triggerDetached(target, component) {
   if (component.detached) {
     component.detached(target);
   }
 
-  setLifecycleFlag(target, component, 'attached', false);
+  setLifecycleFlag(target, component, "attached", false);
 }
 
 /**
@@ -376,7 +365,7 @@ function triggerDetached (target, component) {
  *
  * @returns {undefined}
  */
-function triggerLifecycle (target, component) {
+function triggerLifecycle(target, component) {
   triggerCreated(target, component);
   triggerAttached(target, component);
 }
@@ -388,7 +377,7 @@ function triggerLifecycle (target, component) {
  *
  * @returns {undefined}
  */
-function initElements (elements) {
+function initElements(elements) {
   var elementsLen = elements.length;
 
   for (var a = 0; a < elementsLen; a++) {
@@ -422,7 +411,7 @@ function initElements (elements) {
  *
  * @returns {undefined}
  */
-function removeElements (elements) {
+function removeElements(elements) {
   var len = elements.length;
 
   for (var a = 0; a < len; a++) {
@@ -446,9 +435,8 @@ function removeElements (elements) {
 exports.triggerCreated = triggerCreated;
 exports.initElements = initElements;
 exports.removeElements = removeElements;
-
 },{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var debounce = require('./utils').debounce;
 var objEach = require('./utils').objEach;
@@ -457,7 +445,7 @@ var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
-var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
+var isIe = window.navigator.userAgent.indexOf("Trident") > -1;
 
 /**
  * Returns whether or not the source element contains the target element.
@@ -469,7 +457,7 @@ var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
  *
  * @returns {Boolean}
  */
-function elementContains (source, target) {
+function elementContains(source, target) {
   if (source.nodeType !== 1) {
     return false;
   }
@@ -485,7 +473,7 @@ function elementContains (source, target) {
  *
  * @returns {Object}
  */
-function newMutationRecord (target, type) {
+function newMutationRecord(target, type) {
   return {
     addedNodes: null,
     attributeName: null,
@@ -495,7 +483,7 @@ function newMutationRecord (target, type) {
     previousSibling: null,
     removedNodes: null,
     target: target,
-    type: type || 'childList'
+    type: type || "childList"
   };
 }
 
@@ -507,7 +495,7 @@ function newMutationRecord (target, type) {
  *
  * @returns {undefined}
  */
-function walkTree (node, cb) {
+function walkTree(node, cb) {
   var childNodes = node.childNodes;
 
   if (!childNodes) {
@@ -538,7 +526,7 @@ function walkTree (node, cb) {
  *
  * @returns {undefined}
  */
-function MutationObserver (callback) {
+function MutationObserver(callback) {
   if (NativeMutationObserver && !isFixingIe) {
     return new NativeMutationObserver(callback);
   }
@@ -566,18 +554,18 @@ MutationObserver.fixIe = function () {
   }
 
   // We have to call the old innerHTML getter and setter.
-  var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+  var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, "innerHTML");
 
   // This redefines the innerHTML property so that we can ensure that events
   // are properly triggered.
-  Object.defineProperty(elProto, 'innerHTML', {
+  Object.defineProperty(elProto, "innerHTML", {
     get: function () {
       return oldInnerHtml.get.call(this);
     },
     set: function (html) {
       walkTree(this, function (node) {
-        var mutationEvent = document.createEvent('MutationEvent');
-        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+        var mutationEvent = document.createEvent("MutationEvent");
+        mutationEvent.initMutationEvent("DOMNodeRemoved", true, false, null, null, null, null, null);
         node.dispatchEvent(mutationEvent);
       });
 
@@ -589,7 +577,7 @@ MutationObserver.fixIe = function () {
   isFixingIe = true;
 };
 
-Object.defineProperty(MutationObserver, 'isFixingIe', {
+Object.defineProperty(MutationObserver, "isFixingIe", {
   get: function () {
     return isFixingIe;
   }
@@ -597,12 +585,12 @@ Object.defineProperty(MutationObserver, 'isFixingIe', {
 
 MutationObserver.prototype = {
   observe: function (target, options) {
-    function addEventToBatch (e) {
+    function addEventToBatch(e) {
       batchedEvents.push(e);
       batchEvents();
     }
 
-    function batchEvent (e) {
+    function batchEvent(e) {
       var eTarget = e.target;
 
       // In some test environments, e.target has been nulled after the tests
@@ -622,7 +610,7 @@ MutationObserver.prototype = {
       // Events.
       //
       // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
-      var shouldWorkAroundIeRemoveBug = isFixingIe && eType === 'DOMNodeRemoved';
+      var shouldWorkAroundIeRemoveBug = isFixingIe && eType === "DOMNodeRemoved";
       var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
 
       // This checks to see if the element is contained in the last batched
@@ -640,7 +628,7 @@ MutationObserver.prototype = {
         batchedRecords.push(lastBatchedRecord = newMutationRecord(eTargetParent));
       }
 
-      if (eType === 'DOMNodeInserted') {
+      if (eType === "DOMNodeInserted") {
         if (!lastBatchedRecord.addedNodes) {
           lastBatchedRecord.addedNodes = [];
         }
@@ -657,11 +645,11 @@ MutationObserver.prototype = {
       lastBatchedElement = eTarget;
     }
 
-    function canTriggerAttributeModification (eTarget) {
+    function canTriggerAttributeModification(eTarget) {
       return options.attributes && (options.subtree || eTarget === target);
     }
 
-    function canTriggerInsertOrRemove (eTargetParent) {
+    function canTriggerInsertOrRemove(eTargetParent) {
       return options.childList && (options.subtree || eTargetParent === target);
     }
 
@@ -673,18 +661,18 @@ MutationObserver.prototype = {
     var batchedEvents = [];
     var batchedRecords = [];
     var batchEvents = debounce(function () {
-        var batchedEventsLen = batchedEvents.length;
+      var batchedEventsLen = batchedEvents.length;
 
-        for (var a = 0; a < batchedEventsLen; a++) {
-          batchEvent(batchedEvents[a]);
-        }
+      for (var a = 0; a < batchedEventsLen; a++) {
+        batchEvent(batchedEvents[a]);
+      }
 
-        that.callback(batchedRecords);
-        batchedEvents = [];
-        batchedRecords = [];
-        lastBatchedElement = undefined;
-        lastBatchedRecord = undefined;
-      });
+      that.callback(batchedRecords);
+      batchedEvents = [];
+      batchedRecords = [];
+      lastBatchedElement = undefined;
+      lastBatchedRecord = undefined;
+    });
 
     // Batching attributes.
     var attributeOldValueCache = {};
@@ -717,7 +705,7 @@ MutationObserver.prototype = {
         var eAttrName = e.attrName;
         var ePrevValue = e.prevValue;
         var eNewValue = e.newValue;
-        var record = newMutationRecord(eTarget, 'attributes');
+        var record = newMutationRecord(eTarget, "attributes");
         record.attributeName = eAttrName;
 
         if (options.attributeOldValue) {
@@ -739,12 +727,12 @@ MutationObserver.prototype = {
     this.elements.push(observed);
 
     if (options.childList) {
-      target.addEventListener('DOMNodeInserted', observed.insertHandler);
-      target.addEventListener('DOMNodeRemoved', observed.removeHandler);
+      target.addEventListener("DOMNodeInserted", observed.insertHandler);
+      target.addEventListener("DOMNodeRemoved", observed.removeHandler);
     }
 
     if (options.attributes) {
-      target.addEventListener('DOMAttrModified', observed.attributeHandler);
+      target.addEventListener("DOMAttrModified", observed.attributeHandler);
     }
 
     return this;
@@ -752,9 +740,9 @@ MutationObserver.prototype = {
 
   disconnect: function () {
     objEach(this.elements, function (observed) {
-      observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
-      observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
-      observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
+      observed.target.removeEventListener("DOMNodeInserted", observed.insertHandler);
+      observed.target.removeEventListener("DOMNodeRemoved", observed.removeHandler);
+      observed.target.removeEventListener("DOMAttrModified", observed.attributeHandler);
     });
 
     this.elements = [];
@@ -764,9 +752,8 @@ MutationObserver.prototype = {
 };
 
 exports.default = MutationObserver;
-
 },{"./utils":9}],7:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var globals = require('./globals').default;
 var hasOwn = require('./utils').hasOwn;
@@ -778,7 +765,7 @@ var hasOwn = require('./utils').hasOwn;
  *
  * @returns {ClassList | Array}
  */
-function getClassList (element) {
+function getClassList(element) {
   var classList = element.classList;
 
   if (classList) {
@@ -787,7 +774,7 @@ function getClassList (element) {
 
   var attrs = element.attributes;
 
-  return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
+  return (attrs["class"] && attrs["class"].nodeValue.split(/\s+/)) || [];
 }
 
 /**
@@ -799,7 +786,7 @@ function getClassList (element) {
  *
  * @returns {Boolean}
  */
-function isDefinitionOfType (id, type) {
+function isDefinitionOfType(id, type) {
   return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
 }
 
@@ -871,7 +858,7 @@ exports.default = {
 
   set: function (id, definition) {
     if (this.has(id)) {
-      throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+      throw new Error("A definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
     }
 
     globals.registry[id] = definition;
@@ -887,9 +874,8 @@ exports.default = {
     return this;
   }
 };
-
 },{"./globals":4,"./utils":9}],8:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var documentObserver = require('./document-observer').default;
 var triggerCreated = require('./lifecycle').triggerCreated;
@@ -906,7 +892,7 @@ var version = require('./version').default;
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName('html'));
+  initElements(document.getElementsByTagName("html"));
 });
 
 /**
@@ -916,15 +902,15 @@ var initDocument = debounce(function () {
  *
  * @returns {Function} The element constructor.
  */
-function makeElementConstructor (definition) {
-  function CustomElement () {
+function makeElementConstructor(definition) {
+  function CustomElement() {
     var element;
     var tagToExtend = definition.extends;
     var definitionId = definition.id;
 
     if (tagToExtend) {
       element = document.createElement(tagToExtend);
-      element.setAttribute('is', definitionId);
+      element.setAttribute("is", definitionId);
     } else {
       element = document.createElement(definitionId);
     }
@@ -958,7 +944,7 @@ function makeElementConstructor (definition) {
  *
  * @returns {Function} Constructor that returns a custom element.
  */
-function skate (id, definition) {
+function skate(id, definition) {
   // Set any defaults that weren't passed.
   definition = inherit(definition || {}, skate.defaults);
 
@@ -967,7 +953,7 @@ function skate (id, definition) {
 
   // Definitions of a particular type must be unique.
   if (registry.has(definition.id)) {
-    throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+    throw new Error("A definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
   }
 
   // Register the definition.
@@ -1001,24 +987,24 @@ skate.init = function (nodes) {
     return;
   }
 
-  if (typeof nodes === 'string') {
+  if (typeof nodes === "string") {
     nodes = document.querySelectorAll(nodes);
   }
 
-  initElements(typeof nodes.length === 'undefined' ? [nodes] : nodes);
+  initElements(typeof nodes.length === "undefined" ? [nodes] : nodes);
 
   return nodes;
 };
 
 // Restriction type constants.
 skate.types = {
-  ANY: 'act',
-  ATTR: 'a',
-  CLASS: 'c',
-  NOATTR: 'ct',
-  NOCLASS: 'at',
-  NOTAG: 'ac',
-  TAG: 't'
+  ANY: "act",
+  ATTR: "a",
+  CLASS: "c",
+  NOATTR: "ct",
+  NOCLASS: "at",
+  NOTAG: "ac",
+  TAG: "t"
 };
 
 // Makes checking the version easy when debugging.
@@ -1039,17 +1025,17 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: '',
+  extends: "",
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
-  id: '',
+  id: "",
 
   // Properties and methods to add to each element.
   prototype: {},
 
   // The attribute name to add after calling the created() callback.
-  resolvedAttribute: 'resolved',
+  resolvedAttribute: "resolved",
 
   // The template to replace the content of the element with.
   template: undefined,
@@ -1058,7 +1044,7 @@ skate.defaults = {
   type: skate.types.ANY,
 
   // The attribute name to remove after calling the created() callback.
-  unresolvedAttribute: 'unresolved'
+  unresolvedAttribute: "unresolved"
 };
 
 // Exporting
@@ -1070,34 +1056,34 @@ skate.defaults = {
 window.skate = skate;
 
 // AMD
-if (typeof define === 'function') {
+if (typeof define === "function") {
   define(function () {
     return skate;
   });
 }
 
 // CommonJS
-if (typeof exports === 'object') {
+if (typeof exports === "object") {
   exports.default = skate;
 }
 
 exports.default = skate;
-
 },{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
+
 exports.hasOwn = hasOwn;
 exports.debounce = debounce;
 exports.getClosestIgnoredElement = getClosestIgnoredElement;
 exports.inherit = inherit;
 exports.objEach = objEach;
-'use strict';
+"use strict";
 
 var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
-function hasOwn (obj, key) {
+function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-function debounce (fn) {
+function debounce(fn) {
   var called = false;
 
   return function () {
@@ -1111,7 +1097,7 @@ function debounce (fn) {
   };
 }
 
-function getClosestIgnoredElement (element) {
+function getClosestIgnoredElement(element) {
   var parent = element;
 
   while (parent && parent !== document) {
@@ -1123,7 +1109,7 @@ function getClosestIgnoredElement (element) {
   }
 }
 
-function inherit (child, parent) {
+function inherit(child, parent) {
   var names = Object.getOwnPropertyNames(parent);
   var namesLen = names.length;
 
@@ -1145,16 +1131,15 @@ function inherit (child, parent) {
   return child;
 }
 
-function objEach (obj, fn) {
+function objEach(obj, fn) {
   for (var a in obj) {
     if (hasOwn(obj, a)) {
       fn(obj[a], a);
     }
   }
 }
-
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
-exports.default = '0.11.1';
 
+exports.default = "0.11.1";
 },{}]},{},[8]);
