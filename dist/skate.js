@@ -306,7 +306,7 @@ function triggerCreated(target, component) {
     return;
   }
 
-  inherit(target, component.prototype);
+  inherit(target, component.prototype, true);
 
   if (component.template) {
     component.template(target);
@@ -1109,14 +1109,14 @@ function getClosestIgnoredElement(element) {
   }
 }
 
-function inherit(child, parent) {
+function inherit(child, parent, overwrite) {
   var names = Object.getOwnPropertyNames(parent);
   var namesLen = names.length;
 
   for (var a = 0; a < namesLen; a++) {
     var name = names[a];
 
-    if (child[name] === undefined) {
+    if (overwrite || child[name] === undefined) {
       var desc = Object.getOwnPropertyDescriptor(parent, name);
       var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
 

@@ -92,6 +92,23 @@ describe('Returning a constructor', function () {
     expect(div.test).to.equal(true);
   });
 
+  it('should overwrite prototype members', function () {
+    var called = false;
+    var Input = skate('super-input', {
+      extends: 'input',
+      type: skate.types.TAG,
+      prototype: {
+        focus: function () {
+          called = true;
+        }
+      }
+    });
+
+    var input = new Input();
+    input.focus();
+    expect(called).to.equal(true);
+  });
+
   describe('when an extends option is specified', function () {
     var Div;
     var div;

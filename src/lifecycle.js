@@ -180,7 +180,7 @@ function triggerCreated (target, component) {
     return;
   }
 
-  inherit(target, component.prototype);
+  inherit(target, component.prototype, true);
 
   if (component.template) {
     component.template(target);
