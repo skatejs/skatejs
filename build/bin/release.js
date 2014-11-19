@@ -17,11 +17,11 @@ var nextVersion = semver.inc(
   cmd.type || 'patch'
 );
 
+sh.exec('npm run test');
+sh.exec('npm run dist');
 replace('src/version.js', currentVersion, nextVersion);
 replace('bower.json', currentVersion, nextVersion);
 replace('package.json', currentVersion, nextVersion);
-sh.exec('npm test');
-sh.exec('npm dist');
 sh.exec('git commit -am "' + currentVersion + ' -> ' + nextVersion + '"');
 sh.exec('git tag -a ' + nextVersion + ' -m ' + nextVersion);
 sh.exec('git push');

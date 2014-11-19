@@ -28,7 +28,6 @@
     "shelljs": "~0.3.0"
   },
   "scripts": {
-    "postinstall": "node build/bin/install.js",
     "deploy": "node build/bin/deploy.js",
     "dist": "node build/bin/dist.js",
     "docs": "node build/bin/docs.js",
