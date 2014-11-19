@@ -91,4 +91,43 @@ describe('Events', function () {
     helpers.dispatchEvent('click', inst.querySelector('span'));
     expect(dispatched).to.equal(3);
   });
+
+  it('should support delegate blur and focus events', function () {
+    var blur = false;
+    var focus = false;
+
+    skate('my-component', {
+      events: {
+        'blur input': function () {
+          blur = true;
+        },
+
+        'focus input': function () {
+          focus = true;
+        }
+      },
+
+      prototype: {
+        blur: function () {
+          helpers.dispatchEvent('blur', this.querySelector('input'));
+        },
+
+        focus: function () {
+          helpers.dispatchEvent('focus', this.querySelector('input'));
+        }
+      },
+
+      template: function (element) {
+        element.innerHTML = '<input>';
+      }
+    });
+
+    var inst = skate.init(helpers.add('my-component'));
+
+    inst.blur();
+    expect(blur).to.equal(true);
+
+    inst.focus();
+    expect(focus).to.equal(true);
+  });
 });

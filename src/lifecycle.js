@@ -163,7 +163,8 @@ function addEventListeners (target, component) {
 
   objEach(component.events, function (handler, name) {
     var evt = parseEvent(name);
-    target.addEventListener(evt.name, makeHandler(handler, evt.delegate));
+    var useCapture = !!evt.delegate && (evt.name === 'blur' || evt.name === 'focus');
+    target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
   });
 }
 
