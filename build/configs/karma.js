@@ -1,48 +1,48 @@
-module.exports = function (grunt) {
-  'use strict';
+'use strict';
 
-  var browsers = grunt.option('browsers');
-  var keepalive = grunt.option('keepalive');
+var cmd = require('commander')
+  .option('-b', '--browsers [browsers]', 'Comma separated list of browsers to test with.')
+  .option('-h', '--host [host]', 'The host to listen on.')
+  .option('-k', '--keepalive', 'Whether or not to keep the server alive.')
+  .option('-p', '--port [port]', 'The port to listen on.')
+  .parse(process.argv);
 
-  if (!keepalive) {
-    if (browsers) {
-      browsers = browsers.split(',');
-    } else {
-      browsers = ['Firefox'];
-    }
-  }
+var browsers = 'Firefox';
 
-  return {
-    options: {
-      browsers: browsers,
+if (!cmd.keepalive && cmd.browsers) {
+  browsers = cmd.browsers;
+}
 
-      files: [
-        { pattern: '.tmp/run-unit-tests.js', included: true }
-      ],
+module.exports = function (config) {
+  config.set({
+    basePath: '../..',
 
-      frameworks: [
-        'mocha',
-        'chai'
-      ],
+    browsers: browsers.split(','),
 
-      hostname: grunt.option('host') || 'localhost',
+    files: [
+      { pattern: '.tmp/run-unit-tests.js', included: true }
+    ],
 
-      plugins: [
-        'karma-chai',
-        'karma-chrome-launcher',
-        'karma-firefox-launcher',
-        'karma-mocha'
-      ],
+    frameworks: [
+      'mocha',
+      'chai'
+    ],
 
-      port: grunt.option('port') || '9876',
+    hostname: cmd.host || 'localhost',
 
-      reporters: [
-        'progress'
-      ],
+    plugins: [
+      'karma-chai',
+      'karma-chrome-launcher',
+      'karma-firefox-launcher',
+      'karma-mocha'
+    ],
 
-      singleRun: !keepalive
-    },
+    port: cmd.port || '9876',
 
-    unit: {}
-  };
+    reporters: [
+      'progress'
+    ],
+
+    singleRun: !cmd.keepalive
+  });
 };

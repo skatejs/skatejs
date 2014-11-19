@@ -1,15 +1,22 @@
-module.exports = function (grunt) {
-  var semver = require('semver');
+'use strict';
 
-  function version () {
-    return require('../../package.json').version;
-  }
+var semver = require('semver');
 
-  version.next = function (type) {
-    return grunt.option('tag') ||
+function version () {
+  return require('../../package.json').version;
+}
+
+module.exports = function () {
+  var cmd = require('commander')
+    .option('-v', '--version [version]', 'The version to release in lieu of --type.')
+    .option('-t', '--type [major, minor or patch]', 'The type of release being performed.')
+    .parse(process.argv);
+
+  version.next = function () {
+    return cmd.version ||
       semver.inc(
         version(),
-        grunt.option('type') || 'patch'
+        cmd.type || 'patch'
       );
   };
 

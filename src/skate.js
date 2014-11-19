@@ -5,7 +5,6 @@ import {
   triggerCreated,
   initElements
 } from './lifecycle';
-import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
   debounce,
@@ -191,8 +190,8 @@ if (typeof define === 'function') {
 }
 
 // CommonJS
-if (typeof module === 'object') {
-  module.exports = skate;
+if (typeof exports === 'object') {
+  exports.default = skate;
 }
 
 // ES6

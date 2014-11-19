@@ -1,3 +1,5 @@
+'use strict';
+
 import globals from '../../src/globals';
 import observer from '../../src/document-observer';
 
@@ -25,14 +27,14 @@ describe('Document Observer', function () {
   });
 
   it('should register an observer', function () {
-    expect(hasObserver()).to.be.false;
+    expect(hasObserver()).to.equal(false);
     observer.register();
-    expect(hasObserver()).to.be.true;
+    expect(hasObserver()).to.equal(true);
   });
 
   it('should unregister an observer', function () {
     observer.register().unregister();
-    expect(hasObserver()).to.be.false;
+    expect(hasObserver()).to.equal(false);
   });
 
   it('should not overwrite an existing observer', function () {

@@ -1,4 +1,5 @@
-import helpers from '../lib/helpers';
+'use strict';
+
 import skate from '../../src/skate';
 
 describe('Registration', function () {
@@ -89,6 +90,23 @@ describe('Returning a constructor', function () {
     var div = new Div();
 
     expect(div.test).to.equal(true);
+  });
+
+  it('should overwrite prototype members', function () {
+    var called = false;
+    var Input = skate('super-input', {
+      extends: 'input',
+      type: skate.types.TAG,
+      prototype: {
+        focus: function () {
+          called = true;
+        }
+      }
+    });
+
+    var input = new Input();
+    input.focus();
+    expect(called).to.equal(true);
   });
 
   describe('when an extends option is specified', function () {

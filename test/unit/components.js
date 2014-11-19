@@ -1,3 +1,5 @@
+'use strict';
+
 import skate from '../../src/skate';
 
 describe('Using components', function () {

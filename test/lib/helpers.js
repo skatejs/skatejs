@@ -1,3 +1,5 @@
+'use strict';
+
 export default {
   add: function (name) {
     return this.fixture('<' + name + '></' + name + '>').querySelector(name);

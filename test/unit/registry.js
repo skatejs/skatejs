@@ -1,3 +1,5 @@
+'use strict';
+
 import registry from '../../src/registry';
 import skate from '../../src/skate';
 
@@ -11,21 +13,21 @@ describe('Registry', function () {
   });
 
   it('should check if definitions exist', function () {
-    expect(registry.has('test')).to.be.false;
+    expect(registry.has('test')).to.equal(false);
     registry.set('test', {});
-    expect(registry.has('test')).to.be.true;
+    expect(registry.has('test')).to.equal(true);
   });
 
   it('should remove definitions', function () {
     registry.set('test', {});
     registry.remove('test', {});
-    expect(registry.has('test')).to.be.false;
+    expect(registry.has('test')).to.equal(false);
   });
 
   it('should clear definitions', function () {
     registry.set('test', {});
     registry.clear();
-    expect(registry.has('test')).to.be.false;
+    expect(registry.has('test')).to.equal(false);
   });
 
   it('should return definitions for a given element', function () {

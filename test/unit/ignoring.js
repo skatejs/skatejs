@@ -1,4 +1,5 @@
-import helpers from '../lib/helpers';
+'use strict';
+
 import skate from '../../src/skate';
 
 describe('ignoring', function () {
