@@ -13,7 +13,7 @@ cmd
 
 var currentVersion = pkg.version;
 var nextVersion = semver.inc(
-  version(),
+  currentVersion,
   cmd.type || 'patch'
 );
 
