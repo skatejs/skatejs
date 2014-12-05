@@ -51,6 +51,58 @@ function parseEvent (e) {
   };
 }
 
+function triggerAttributeListener (target, component, data) {
+  var callback;
+  var type = data.type;
+  var name = data.name;
+  var newValue = data.newValue;
+  var oldValue = data.oldValue;
+
+  if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
+    callback = component.attributes[name][type];
+  } else if (component.attributes && typeof component.attributes[name] === 'function') {
+    callback = component.attributes[name];
+  } else if (typeof component.attributes === 'function') {
+    callback = component.attributes;
+  }
+
+  // There may still not be a callback.
+  if (callback) {
+    callback(target, {
+      type: type,
+      name: name,
+      newValue: newValue,
+      oldValue: oldValue
+    });
+  }
+}
+
+function triggerAttributesCreated (target, component) {
+  var a;
+  var attrs = target.attributes;
+  var attrsCopy = [];
+  var attrsLen = attrs.length;
+
+  // This is actually faster than [].slice.call(attrs).
+  for (a = 0; a < attrsLen; a++) {
+    attrsCopy.push(attrs[a]);
+  }
+
+  // In default web components, attribute changes aren't triggered for
+  // attributes that already exist on an element when it is bound. This sucks
+  // when you want to reuse and separate code for attributes away from your
+  // lifecycle callbacks. Skate will initialise each attribute by calling the
+  // created callback for the attributes that already exist on the element.
+  for (a = 0; a < attrsLen; a++) {
+    var attr = attrsCopy[a];
+    triggerAttributeListener(target, component, {
+      type: 'created',
+      name: attr.nodeName,
+      newValue: attr.value || attr.nodeValue
+    });
+  }
+}
+
 /**
  * Binds attribute listeners for the specified attribute handlers.
  *
@@ -60,32 +112,11 @@ function parseEvent (e) {
  * @returns {undefined}
  */
 function addAttributeListeners (target, component) {
-  function triggerCallback (type, name, newValue, oldValue) {
-    var callback;
-
-    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
-      callback = component.attributes[name][type];
-    } else if (component.attributes && typeof component.attributes[name] === 'function') {
-      callback = component.attributes[name];
-    } else if (typeof component.attributes === 'function') {
-      callback = component.attributes;
-    }
-
-    // There may still not be a callback.
-    if (callback) {
-      callback(target, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
-    }
+  if (!component.attributes) {
+    return;
   }
 
-  var a;
   var attrs = target.attributes;
-  var attrsCopy = [];
-  var attrsLen = attrs.length;
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       var type;
@@ -100,7 +131,12 @@ function addAttributeListeners (target, component) {
         type = 'removed';
       }
 
-      triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
+      triggerAttributeListener(target, component, {
+        type: type,
+        name: name,
+        newValue: attr ? (attr.value || attr.nodeValue) : undefined,
+        oldValue: mutation.oldValue
+      });
     });
   });
 
@@ -108,21 +144,6 @@ function addAttributeListeners (target, component) {
     attributes: true,
     attributeOldValue: true
   });
-
-  // This is actually faster than [].slice.call(attrs).
-  for (a = 0; a < attrsLen; a++) {
-    attrsCopy.push(attrs[a]);
-  }
-
-  // In default web components, attribute changes aren't triggered for
-  // attributes that already exist on an element when it is bound. This sucks
-  // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute by calling the
-  // created callback for the attributes that already exist on the element.
-  for (a = 0; a < attrsLen; a++) {
-    var attr = attrsCopy[a];
-    triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
-  }
 }
 
 /**
@@ -134,7 +155,7 @@ function addAttributeListeners (target, component) {
  * @returns {undefined}
  */
 function addEventListeners (target, component) {
-  if (typeof component.events !== 'object') {
+  if (!component.events) {
     return;
   }
 
@@ -189,6 +210,7 @@ function triggerCreated (target, component) {
 
   addEventListeners(target, component);
   addAttributeListeners(target, component);
+  triggerAttributesCreated(target, component);
 
   if (component.created) {
     component.created(target);
