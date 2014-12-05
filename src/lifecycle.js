@@ -51,12 +51,22 @@ function parseEvent (e) {
   };
 }
 
-function triggerAttributeListener (target, component, data) {
+function triggerAttributeChanged (target, component, data) {
   var callback;
-  var type = data.type;
+  var type;
   var name = data.name;
   var newValue = data.newValue;
   var oldValue = data.oldValue;
+  var newValueIsString = typeof newValue === 'string';
+  var oldValueIsString = typeof oldValue === 'string';
+
+  if (!oldValueIsString && newValueIsString) {
+    type = 'created';
+  } else if (oldValueIsString && newValueIsString) {
+    type = 'updated';
+  } else if (oldValueIsString && !newValueIsString) {
+    type = 'removed';
+  }
 
   if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
     callback = component.attributes[name][type];
@@ -83,7 +93,6 @@ function triggerAttributesCreated (target, component) {
   var attrsCopy = [];
   var attrsLen = attrs.length;
 
-  // This is actually faster than [].slice.call(attrs).
   for (a = 0; a < attrsLen; a++) {
     attrsCopy.push(attrs[a]);
   }
@@ -95,8 +104,7 @@ function triggerAttributesCreated (target, component) {
   // created callback for the attributes that already exist on the element.
   for (a = 0; a < attrsLen; a++) {
     var attr = attrsCopy[a];
-    triggerAttributeListener(target, component, {
-      type: 'created',
+    triggerAttributeChanged(target, component, {
       name: attr.nodeName,
       newValue: attr.value || attr.nodeValue
     });
@@ -119,22 +127,12 @@ function addAttributeListeners (target, component) {
   var attrs = target.attributes;
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
-      var type;
       var name = mutation.attributeName;
       var attr = attrs[name];
 
-      if (attr && mutation.oldValue === null) {
-        type = 'created';
-      } else if (attr && mutation.oldValue !== null) {
-        type = 'updated';
-      } else if (!attr) {
-        type = 'removed';
-      }
-
-      triggerAttributeListener(target, component, {
-        type: type,
+      triggerAttributeChanged(target, component, {
         name: name,
-        newValue: attr ? (attr.value || attr.nodeValue) : undefined,
+        newValue: attr && (attr.value || attr.nodeValue),
         oldValue: mutation.oldValue
       });
     });
@@ -331,6 +329,9 @@ function removeElements (elements) {
 
 export {
   triggerCreated,
+  triggerAttached,
+  triggerDetached,
+  triggerAttributeChanged,
   initElements,
   removeElements
 };

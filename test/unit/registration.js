@@ -130,3 +130,56 @@ describe('Returning a constructor', function () {
     });
   });
 });
+
+describe('Native document.registerElement', function () {
+  var definitions;
+  var oldRegisterElement;
+
+  beforeEach(function () {
+    definitions = {};
+    oldRegisterElement = document.registerElement;
+    document.registerElement = function (name, definition) {
+      definitions[name] = definition;
+    };
+  });
+
+  afterEach(function () {
+    document.registerElement = oldRegisterElement;
+  });
+
+  it('should be called if it is compatible with anything', function () {
+    skate('my-div', {
+      type: skate.types.ANY
+    });
+    expect('my-div' in definitions).to.equal(true);
+  });
+
+  it('should be called if it is compatible with tags', function () {
+    skate('my-div', {
+      type: skate.types.TAG
+    });
+    expect('my-div' in definitions).to.equal(true);
+  });
+
+  it('should be called if it is not compatible with tags', function () {
+    skate('my-div-1', {
+      type: skate.types.ATTR
+    });
+    skate('my-div-2', {
+      type: skate.types.CLASS
+    });
+    skate('my-div-3', {
+      type: skate.types.NOTAG
+    });
+    expect('my-div-1' in definitions).to.equal(false);
+    expect('my-div-2' in definitions).to.equal(false);
+    expect('my-div-3' in definitions).to.equal(false);
+  });
+
+  it('should not be called if the id is invalid', function () {
+    skate('div', {
+      type: skate.types.TAG
+    });
+    expect('div' in definitions).to.equal(false);
+  });
+});

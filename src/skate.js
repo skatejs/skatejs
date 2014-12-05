@@ -3,6 +3,9 @@
 import documentObserver from './document-observer';
 import {
   triggerCreated,
+  triggerAttached,
+  triggerDetached,
+  triggerAttributeChanged,
   initElements
 } from './lifecycle';
 import registry from './registry';
@@ -72,37 +75,60 @@ function makeElementConstructor (definition) {
  * @returns {Function} Constructor that returns a custom element.
  */
 function skate (id, definition) {
-  // Set any defaults that weren't passed.
   definition = inherit(definition || {}, skate.defaults);
-
-  // Set the definition ID for reference later.
   definition.id = id;
 
-  // Definitions of a particular type must be unique.
-  if (registry.has(definition.id)) {
+  var customElementConstructor;
+  var isCustomElementExclusive = definition.type === skate.types.TAG;
+  var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
+  var isValidNativeCustomElementId = id.indexOf('-') > 0;
+  var supportsNativeCustomElements = typeof document.registerElement === 'function';
+
+  if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+    customElementConstructor = document.registerElement(id, {
+      extends: definition.extends,
+      prototype: inherit(definition.prototype, {
+        createdCallback: function () {
+          triggerCreated(this, definition);
+        },
+        attachedCallback: function () {
+          triggerAttached(this, definition);
+        },
+        detachedCallback: function () {
+          triggerDetached(this, definition);
+        },
+        attributeChangedCallback: function (name, oldValue, newValue) {
+          triggerAttributeChanged(target, definition, {
+            name: name,
+            oldValue: oldValue,
+            newValue: newValue
+          });
+        }
+      })
+    });
+
+    if (isCustomElementExclusive) {
+      return customElementConstructor;
+    }
+  }
+
+  if (registry.has(id)) {
     throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
   }
 
-  // Register the definition.
-  registry.set(definition.id, definition);
-
-  // Initialise existing elements.
+  registry.set(id, definition);
   initDocument();
-
-  // Lazily initialise the document observer so we don't incur any overhead if
-  // there's no definition listeners.
   documentObserver.register(definition.remove);
 
-  // Only make and return an element constructor if it can be used as a custom
-  // element.
-  if (definition.type.indexOf(skate.types.TAG) > -1) {
-    return makeElementConstructor(definition);
+  if (!customElementConstructor && isCustomElementInclusive) {
+    customElementConstructor = makeElementConstructor(definition);
   }
+
+  return customElementConstructor;
 }
 
 /**
- * Synchronously initialises the specified element or elements and
- * descendants.
+ * Synchronously initialises the specified element or elements and descendants.
  *
  * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
  *                      jQuery, DOMNodeList, DOMNode, selector etc.
