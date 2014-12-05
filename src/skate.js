@@ -112,10 +112,6 @@ function skate (id, definition) {
     }
   }
 
-  if (registry.has(id)) {
-    throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
-  }
-
   registry.set(id, definition);
   initDocument();
   documentObserver.register(definition.remove);

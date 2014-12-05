@@ -10,24 +10,16 @@ describe('Registry', function () {
 
   it('should set definitions', function () {
     registry.set('test', {});
-  });
-
-  it('should check if definitions exist', function () {
-    expect(registry.has('test')).to.equal(false);
-    registry.set('test', {});
-    expect(registry.has('test')).to.equal(true);
-  });
-
-  it('should remove definitions', function () {
-    registry.set('test', {});
-    registry.remove('test', {});
-    expect(registry.has('test')).to.equal(false);
+    try {
+      registry.set('test', {});
+      assert(false);
+    } catch (e) {}
   });
 
   it('should clear definitions', function () {
     registry.set('test', {});
     registry.clear();
-    expect(registry.has('test')).to.equal(false);
+    registry.set('test', {});
   });
 
   it('should return definitions for a given element', function () {
