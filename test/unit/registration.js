@@ -155,10 +155,18 @@ describe('Native document.registerElement', function () {
   });
 
   it('should be called if it is compatible with tags', function () {
-    skate('my-div', {
+    skate('my-div-1', {
       type: skate.types.TAG
     });
-    expect('my-div' in definitions).to.equal(true);
+    skate('my-div-2', {
+      type: skate.types.NOATTR
+    });
+    skate('my-div-3', {
+      type: skate.types.NOCLASS
+    });
+    expect('my-div-1' in definitions).to.equal(true);
+    expect('my-div-2' in definitions).to.equal(true);
+    expect('my-div-3' in definitions).to.equal(true);
   });
 
   it('should be called if it is not compatible with tags', function () {
