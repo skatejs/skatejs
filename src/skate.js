@@ -110,15 +110,19 @@ function skate (id, definition) {
  * @returns {skate}
  */
 skate.init = function (nodes) {
+  var nodesToUse = nodes;
+
   if (!nodes) {
-    return;
+    return nodes;
   }
 
   if (typeof nodes === 'string') {
-    nodes = document.querySelectorAll(nodes);
+    nodesToUse = nodes = document.querySelectorAll(nodes);
+  } else if (nodes instanceof window.HTMLElement) {
+    nodesToUse = [nodes];
   }
 
-  initElements(typeof nodes.length === 'undefined' ? [nodes] : nodes);
+  initElements(nodesToUse);
 
   return nodes;
 };
