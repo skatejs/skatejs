@@ -2,7 +2,7 @@
 
 var sh = require('shelljs');
 
-sh.exec('npm docs');
+sh.exec('npm run docs');
 sh.rm('-rf', '.tmp');
 sh.mkdir('-p', '.tmp');
 sh.cd('.tmp');
