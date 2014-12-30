@@ -19,7 +19,9 @@ import version from './version';
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName('html'));
+  document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
+    initElements(document.getElementsByTagName('html'));
+  });
 });
 
 /**
