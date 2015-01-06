@@ -535,6 +535,7 @@ skate('tabs', {
     jQuery(element).tabs();
   }
 });
+```
 
 Possibly the best part about this is that you don't need to touch any markup and only a minimal amount of JavaScript.
 
