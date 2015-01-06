@@ -423,14 +423,12 @@ function shadowDomTemplate (shadowHtml) {
   return function (element) {
     var lightHtml = element.innerHTML;
     var shadowRoot = element.createShadowRoot();
-
     shadowRoot.innerHTML = shadowHtml;
-    element.innerHTML = lightHtml;
   };
 }
 
 skate('my-component', {
-  template: shadowDomTemplate('<h1 class=".heading"></h1><section><content></content></section>');
+  template: shadowDomTemplate('<h1 class=".heading"></h1><section><content></content></section>')
 });
 ```
 
