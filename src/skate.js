@@ -19,9 +19,19 @@ import version from './version';
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
+  if (hasDomContentLoadedFired) {
     initElements(document.getElementsByTagName('html'));
-  });
+  } else {
+    document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
+      initElements(document.getElementsByTagName('html'));
+    });
+  }
+});
+
+var hasDomContentLoadedFired = false;
+
+document.addEventListener('DOMContentLoaded', function () {
+  hasDomContentLoadedFired = true;
 });
 
 /**
