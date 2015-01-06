@@ -426,7 +426,7 @@ function shadowDomTemplate (shadowHtml) {
 }
 
 skate('my-component', {
-  template: shadowDomTemplate('<h1 class=".heading"></h1><section><content></content></section>')
+  template: shadowDomTemplate('<header><content select="h2"></content></header><section><content></content></section>')
 });
 ```
 
