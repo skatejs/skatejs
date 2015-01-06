@@ -421,9 +421,7 @@ If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 ```js
 function shadowDomTemplate (shadowHtml) {
   return function (element) {
-    var lightHtml = element.innerHTML;
-    var shadowRoot = element.createShadowRoot();
-    shadowRoot.innerHTML = shadowHtml;
+    element.createShadowRoot().innerHTML = shadowHtml;
   };
 }
 
