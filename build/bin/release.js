@@ -22,10 +22,10 @@ if (!cmd.skipTests) {
   sh.exec('npm run test');
 }
 
-sh.exec('npm run dist');
 replace('src/version.js', currentVersion, nextVersion);
 replace('bower.json', currentVersion, nextVersion);
 replace('package.json', currentVersion, nextVersion);
+sh.exec('npm run dist');
 sh.exec('git commit -am "' + currentVersion + ' -> ' + nextVersion + '"');
 sh.exec('git tag -a ' + nextVersion + ' -m ' + nextVersion);
 sh.exec('git push');
