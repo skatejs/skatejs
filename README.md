@@ -612,19 +612,19 @@ npm install
 To run tests:
 
 ```bash
-npm test
+npm run test
 ```
 
 If you want to keep the Karma server alive to run them in your browser of choice:
 
 ```bash
-npm test --keepalive
+npm run test --keepalive
 ```
 
 To run tests in a specific browser:
 
 ```bash
-npm test --browsers Chrome,Firefox
+npm run test --browsers Chrome,Firefox
 ```
 
 
@@ -634,7 +634,7 @@ npm test --browsers Chrome,Firefox
 To build the distribution all you have to do is run:
 
 ```bash
-npm dist
+npm run dist
 ```
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
@@ -643,16 +643,16 @@ This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing
 
 ### Releasing
 
-To release all you've got to do is run `npm release`. You can either specify the release `type`, or `tag`.
+To release all you've got to do is run `npm run release`. You can either specify the release `type`, or `tag`.
 
 ```bash
-npm release --tag x.x.x
+npm run release --tag x.x.x
 ```
 
 Or:
 
 ```bash
-npm release --type minor
+npm run release --type minor
 ```
 
 
@@ -662,7 +662,7 @@ npm release --type minor
 To deploy the documentation, run the following command from the branch or tag which you want to deploy:
 
 ```bash
-npm deploy
+npm run deploy
 ```
 
 
