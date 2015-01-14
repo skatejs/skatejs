@@ -177,65 +177,48 @@ function parseEvent(e) {
   };
 }
 
-/**
- * Binds attribute listeners for the specified attribute handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function addAttributeListeners(target, component) {
-  function triggerCallback(type, name, newValue, oldValue) {
-    var callback;
+function triggerAttributeChanged(target, component, data) {
+  var callback;
+  var type;
+  var name = data.name;
+  var newValue = data.newValue;
+  var oldValue = data.oldValue;
+  var newValueIsString = typeof newValue === "string";
+  var oldValueIsString = typeof oldValue === "string";
 
-    if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === "function") {
-      callback = component.attributes[name][type];
-    } else if (component.attributes && typeof component.attributes[name] === "function") {
-      callback = component.attributes[name];
-    } else if (typeof component.attributes === "function") {
-      callback = component.attributes;
-    }
-
-    // There may still not be a callback.
-    if (callback) {
-      callback(target, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
-    }
+  if (!oldValueIsString && newValueIsString) {
+    type = "created";
+  } else if (oldValueIsString && newValueIsString) {
+    type = "updated";
+  } else if (oldValueIsString && !newValueIsString) {
+    type = "removed";
   }
 
+  if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === "function") {
+    callback = component.attributes[name][type];
+  } else if (component.attributes && typeof component.attributes[name] === "function") {
+    callback = component.attributes[name];
+  } else if (typeof component.attributes === "function") {
+    callback = component.attributes;
+  }
+
+  // There may still not be a callback.
+  if (callback) {
+    callback(target, {
+      type: type,
+      name: name,
+      newValue: newValue,
+      oldValue: oldValue
+    });
+  }
+}
+
+function triggerAttributesCreated(target, component) {
   var a;
   var attrs = target.attributes;
   var attrsCopy = [];
   var attrsLen = attrs.length;
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      var type;
-      var name = mutation.attributeName;
-      var attr = attrs[name];
 
-      if (attr && mutation.oldValue === null) {
-        type = "created";
-      } else if (attr && mutation.oldValue !== null) {
-        type = "updated";
-      } else if (!attr) {
-        type = "removed";
-      }
-
-      triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
-    });
-  });
-
-  observer.observe(target, {
-    attributes: true,
-    attributeOldValue: true
-  });
-
-  // This is actually faster than [].slice.call(attrs).
   for (a = 0; a < attrsLen; a++) {
     attrsCopy.push(attrs[a]);
   }
@@ -247,8 +230,44 @@ function addAttributeListeners(target, component) {
   // created callback for the attributes that already exist on the element.
   for (a = 0; a < attrsLen; a++) {
     var attr = attrsCopy[a];
-    triggerCallback("created", attr.nodeName, (attr.value || attr.nodeValue));
+    triggerAttributeChanged(target, component, {
+      name: attr.nodeName,
+      newValue: attr.value || attr.nodeValue
+    });
   }
+}
+
+/**
+ * Binds attribute listeners for the specified attribute handlers.
+ *
+ * @param {Element} target The component element.
+ * @param {Object} component The component data.
+ *
+ * @returns {undefined}
+ */
+function addAttributeListeners(target, component) {
+  if (!component.attributes) {
+    return;
+  }
+
+  var attrs = target.attributes;
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      var name = mutation.attributeName;
+      var attr = attrs[name];
+
+      triggerAttributeChanged(target, component, {
+        name: name,
+        newValue: attr && (attr.value || attr.nodeValue),
+        oldValue: mutation.oldValue
+      });
+    });
+  });
+
+  observer.observe(target, {
+    attributes: true,
+    attributeOldValue: true
+  });
 }
 
 /**
@@ -260,7 +279,7 @@ function addAttributeListeners(target, component) {
  * @returns {undefined}
  */
 function addEventListeners(target, component) {
-  if (typeof component.events !== "object") {
+  if (!component.events) {
     return;
   }
 
@@ -315,6 +334,7 @@ function triggerCreated(target, component) {
 
   addEventListeners(target, component);
   addAttributeListeners(target, component);
+  triggerAttributesCreated(target, component);
 
   if (component.created) {
     component.created(target);
@@ -434,6 +454,9 @@ function removeElements(elements) {
 }
 
 exports.triggerCreated = triggerCreated;
+exports.triggerAttached = triggerAttached;
+exports.triggerDetached = triggerDetached;
+exports.triggerAttributeChanged = triggerAttributeChanged;
 exports.initElements = initElements;
 exports.removeElements = removeElements;
 },{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(require,module,exports){
@@ -853,24 +876,12 @@ exports.default = {
     return definitions;
   },
 
-  has: function (id) {
-    return hasOwn(globals.registry, id);
-  },
-
   set: function (id, definition) {
-    if (this.has(id)) {
+    if (hasOwn(globals.registry, id)) {
       throw new Error("A definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
     }
 
     globals.registry[id] = definition;
-
-    return this;
-  },
-
-  remove: function (id) {
-    if (this.has(id)) {
-      delete globals.registry[id];
-    }
 
     return this;
   }
@@ -880,6 +891,9 @@ exports.default = {
 
 var documentObserver = require('./document-observer').default;
 var triggerCreated = require('./lifecycle').triggerCreated;
+var triggerAttached = require('./lifecycle').triggerAttached;
+var triggerDetached = require('./lifecycle').triggerDetached;
+var triggerAttributeChanged = require('./lifecycle').triggerAttributeChanged;
 var initElements = require('./lifecycle').initElements;
 var registry = require('./registry').default;
 var debounce = require('./utils').debounce;
@@ -946,37 +960,56 @@ function makeElementConstructor(definition) {
  * @returns {Function} Constructor that returns a custom element.
  */
 function skate(id, definition) {
-  // Set any defaults that weren't passed.
   definition = inherit(definition || {}, skate.defaults);
-
-  // Set the definition ID for reference later.
   definition.id = id;
 
-  // Definitions of a particular type must be unique.
-  if (registry.has(definition.id)) {
-    throw new Error("A definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
+  var customElementConstructor;
+  var isCustomElementExclusive = definition.type === skate.types.TAG;
+  var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
+  var isValidNativeCustomElementId = id.indexOf("-") > 0;
+  var supportsNativeCustomElements = typeof document.registerElement === "function";
+
+  if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+    customElementConstructor = document.registerElement(id, {
+      extends: definition.extends,
+      prototype: inherit(definition.prototype, {
+        createdCallback: function () {
+          triggerCreated(this, definition);
+        },
+        attachedCallback: function () {
+          triggerAttached(this, definition);
+        },
+        detachedCallback: function () {
+          triggerDetached(this, definition);
+        },
+        attributeChangedCallback: function (name, oldValue, newValue) {
+          triggerAttributeChanged(target, definition, {
+            name: name,
+            oldValue: oldValue,
+            newValue: newValue
+          });
+        }
+      })
+    });
+
+    if (isCustomElementExclusive) {
+      return customElementConstructor;
+    }
   }
 
-  // Register the definition.
-  registry.set(definition.id, definition);
-
-  // Initialise existing elements.
+  registry.set(id, definition);
   initDocument();
-
-  // Lazily initialise the document observer so we don't incur any overhead if
-  // there's no definition listeners.
   documentObserver.register(definition.remove);
 
-  // Only make and return an element constructor if it can be used as a custom
-  // element.
-  if (definition.type.indexOf(skate.types.TAG) > -1) {
-    return makeElementConstructor(definition);
+  if (!customElementConstructor && isCustomElementInclusive) {
+    customElementConstructor = makeElementConstructor(definition);
   }
+
+  return customElementConstructor;
 }
 
 /**
- * Synchronously initialises the specified element or elements and
- * descendants.
+ * Synchronously initialises the specified element or elements and descendants.
  *
  * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
  *                      jQuery, DOMNodeList, DOMNode, selector etc.
@@ -984,15 +1017,19 @@ function skate(id, definition) {
  * @returns {skate}
  */
 skate.init = function (nodes) {
+  var nodesToUse = nodes;
+
   if (!nodes) {
-    return;
+    return nodes;
   }
 
   if (typeof nodes === "string") {
-    nodes = document.querySelectorAll(nodes);
+    nodesToUse = nodes = document.querySelectorAll(nodes);
+  } else if (nodes instanceof window.HTMLElement) {
+    nodesToUse = [nodes];
   }
 
-  initElements(typeof nodes.length === "undefined" ? [nodes] : nodes);
+  initElements(nodesToUse);
 
   return nodes;
 };
@@ -1142,5 +1179,5 @@ function objEach(obj, fn) {
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-exports.default = "0.11.1";
+exports.default = "0.12.0";
 },{}]},{},[8]);
