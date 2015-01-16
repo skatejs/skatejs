@@ -83,6 +83,9 @@ function makeElementConstructor (definition) {
 function skate (id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
+  if (definition.prototype === skate.defaults.prototype) {
+    definition.prototype = {};
+  }
 
   var customElementConstructor;
   var isCustomElementExclusive = definition.type === skate.types.TAG;
