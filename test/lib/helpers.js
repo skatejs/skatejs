@@ -32,16 +32,6 @@ export default {
   },
 
   fixture: function (html, tagName) {
-    if (typeof html === 'string' && typeof tagName !== 'undefined') {
-      var unsafeTagName = tagName.id;
-      var openTagRegex = new RegExp('<' + unsafeTagName + '\\b', 'g');
-      var closeTagRegex = new RegExp('</' + unsafeTagName + '>', 'g');
-
-      html = html
-        .replace(openTagRegex, '<' + tagName[unsafeTagName])
-        .replace(closeTagRegex, '</' + tagName[unsafeTagName] + '>');
-    }
-
     var fixture = document.getElementById('fixture');
     if (!fixture) {
       fixture = document.createElement('div');
@@ -53,6 +43,16 @@ export default {
       fixture.innerHTML = '';
 
       if (typeof html === 'string') {
+        if (typeof tagName !== 'undefined') {
+          var unsafeTagName = tagName.id;
+          var openTagRegex = new RegExp('<' + unsafeTagName + '\\b', 'g');
+          var closeTagRegex = new RegExp('</' + unsafeTagName + '>', 'g');
+
+          html = html
+            .replace(openTagRegex, '<' + tagName[unsafeTagName])
+            .replace(closeTagRegex, '</' + tagName[unsafeTagName] + '>');
+        }
+
         fixture.innerHTML = html;
       } else if (typeof html === 'object') {
         fixture.appendChild(html);
