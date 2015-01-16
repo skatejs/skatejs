@@ -1,4 +1,5 @@
 .DS_Store
+.idea
 .tmp
 bower_components
 docs/build
