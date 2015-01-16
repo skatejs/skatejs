@@ -59,23 +59,24 @@ describe('Events', function () {
   it('should support delegate events', function () {
     var dispatched = 0;
 
-    skate('my-component', {
+    var {'my-component': tagName} = helpers.uniqueTagName('my-component');
+    skate(tagName, {
       events: {
         'click': function (element, e) {
           ++dispatched;
-          expect(element.tagName).to.equal('MY-COMPONENT');
+          expect(element.tagName).to.equal(tagName.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
         },
 
         'click a': function (element, e, current) {
           ++dispatched;
-          expect(element.tagName).to.equal('MY-COMPONENT');
+          expect(element.tagName).to.equal(tagName.toUpperCase());
           expect(current.tagName).to.equal('A');
           expect(e.target.tagName).to.equal('SPAN');
         },
         'click span': function (element, e) {
           ++dispatched;
-          expect(element.tagName).to.equal('MY-COMPONENT');
+          expect(element.tagName).to.equal(tagName.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
         }
       },
@@ -85,7 +86,7 @@ describe('Events', function () {
       }
     });
 
-    var inst = helpers.add('my-component');
+    var inst = helpers.add(tagName);
 
     skate.init(inst);
     helpers.dispatchEvent('click', inst.querySelector('span'));
@@ -96,7 +97,8 @@ describe('Events', function () {
     var blur = false;
     var focus = false;
 
-    skate('my-component', {
+    var {'my-component': tagName} = helpers.uniqueTagName('my-component');
+    skate(tagName, {
       events: {
         'blur input': function () {
           blur = true;
@@ -122,7 +124,7 @@ describe('Events', function () {
       }
     });
 
-    var inst = skate.init(helpers.add('my-component'));
+    var inst = skate.init(helpers.add(tagName));
 
     inst.blur();
     expect(blur).to.equal(true);

@@ -1,5 +1,6 @@
 'use strict';
 
+import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Using components', function () {
@@ -7,7 +8,8 @@ describe('Using components', function () {
     it('type: ' + type + ' extending: ' + tagToExtend, function () {
       var calls = 0;
 
-      skate('my-element', {
+      var {'my-element': tagName} = helpers.uniqueTagName('my-element');
+      skate(tagName, {
         type: type,
         extends: tagToExtend,
         created: function () {
@@ -15,19 +17,19 @@ describe('Using components', function () {
         }
       });
 
-      var el1 = document.createElement('my-element');
+      var el1 = document.createElement(tagName);
       skate.init(el1);
 
       var el2 = document.createElement('div');
-      el2.setAttribute('is', 'my-element');
+      el2.setAttribute('is', tagName);
       skate.init(el2);
 
       var el3 = document.createElement('div');
-      el3.setAttribute('my-element', '');
+      el3.setAttribute(tagName, '');
       skate.init(el3);
 
       var el4 = document.createElement('div');
-      el4.className = 'my-element';
+      el4.className = tagName;
       skate.init(el4);
 
       expect(calls).to.equal(shouldEqual);
@@ -49,15 +51,16 @@ describe('Using components', function () {
     it('should not initialise a single component more than once on a single element', function () {
       var calls = 0;
 
-      skate('my-element', {
+      var {'my-element': tagName} = helpers.uniqueTagName('my-element');
+      skate(tagName, {
         created: function () {
           ++calls;
         }
       });
 
-      var el = document.createElement('my-element');
-      el.setAttribute('my-element', '');
-      el.className = 'my-element';
+      var el = document.createElement(tagName);
+      el.setAttribute(tagName, '');
+      el.className = tagName;
       skate.init(el);
 
       expect(calls).to.equal(1);
