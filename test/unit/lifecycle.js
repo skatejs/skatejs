@@ -5,8 +5,8 @@ import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
   it('should call the created() callback when the element is attached', function (done) {
-    var tagName = helpers.uniqueTagName('my-element');
-    skate(tagName['my-element'], {
+    var tagName = helpers.safeTagName('my-element');
+    skate(tagName.safe, {
       created: function () {
         done();
       }
@@ -16,8 +16,8 @@ describe('Lifecycle Callbacks', function () {
   });
 
   it('should call the attached() callback when the element is attached', function (done) {
-    var tagName = helpers.uniqueTagName('my-element');
-    skate(tagName['my-element'], {
+    var tagName = helpers.safeTagName('my-element');
+    skate(tagName.safe, {
       attached: function () {
         done();
       }
@@ -27,8 +27,8 @@ describe('Lifecycle Callbacks', function () {
   });
 
   it('should call the detached() callback when the element is detached', function (done) {
-    var tagName = helpers.uniqueTagName('my-element');
-    skate(tagName['my-element'], {
+    var tagName = helpers.safeTagName('my-element');
+    skate(tagName.safe, {
       detached: function () {
         done();
       }
@@ -41,8 +41,8 @@ describe('Lifecycle Callbacks', function () {
 
 describe('Unresolved attribute', function () {
   it('should remove the "unresolved" attribute after the created callback is called', function () {
-    var tagName = helpers.uniqueTagName('my-element');
-    skate(tagName['my-element'], {
+    var tagName = helpers.safeTagName('my-element');
+    skate(tagName.safe, {
       created: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(true);
         expect(element.hasAttribute('resolved')).to.equal(false);
@@ -53,8 +53,8 @@ describe('Unresolved attribute', function () {
   });
 
   it('should remove the "unresolved" attribute before the attached callback is called', function () {
-    var tagName = helpers.uniqueTagName('my-element');
-    skate(tagName['my-element'], {
+    var tagName = helpers.safeTagName('my-element');
+    skate(tagName.safe, {
       attached: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(false);
         expect(element.hasAttribute('resolved')).to.equal(true);
@@ -76,7 +76,7 @@ describe('Lifecycle scenarios', function () {
       detached: 0
     };
 
-    var {'my-element': tagName} = helpers.uniqueTagName('my-element');
+    var {safe: tagName} = helpers.safeTagName('my-element');
     El = skate(tagName, {
       created: function () {
         ++calls.created;

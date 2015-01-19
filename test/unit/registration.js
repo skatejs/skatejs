@@ -95,7 +95,7 @@ describe('Returning a constructor', function () {
 
   it('should overwrite prototype members', function () {
     var called = false;
-    var {'super-input': tagName} = helpers.uniqueTagName('super-input');
+    var {safe: tagName} = helpers.safeTagName('super-input');
     var Input = skate(tagName, {
       extends: 'input',
       type: skate.types.TAG,
@@ -117,8 +117,8 @@ describe('Returning a constructor', function () {
     var tagName;
 
     beforeEach(function () {
-      tagName = helpers.uniqueTagName('my-element');
-      Div = skate(tagName['my-element'], {
+      tagName = helpers.safeTagName('my-element');
+      Div = skate(tagName.safe, {
         extends: 'div'
       });
 
@@ -130,7 +130,7 @@ describe('Returning a constructor', function () {
     });
 
     it('should return an element whose is attribute is equal to the component id', function () {
-      expect(div.getAttribute('is')).to.equal(tagName['my-element']);
+      expect(div.getAttribute('is')).to.equal(tagName.safe);
     });
   });
 });
@@ -152,7 +152,7 @@ describe('Native document.registerElement', function () {
   });
 
   it('should be called if it is compatible with anything', function () {
-    var {'my-div': tagName} = helpers.uniqueTagName('my-div');
+    var {safe: tagName} = helpers.safeTagName('my-div');
     skate(tagName, {
       type: skate.types.ANY
     });
@@ -160,9 +160,9 @@ describe('Native document.registerElement', function () {
   });
 
   it('should be called if it is compatible with tags', function () {
-    var {'my-div-1': tagName1} = helpers.uniqueTagName('my-div-1');
-    var {'my-div-2': tagName2} = helpers.uniqueTagName('my-div-2');
-    var {'my-div-3': tagName3} = helpers.uniqueTagName('my-div-3');
+    var {safe: tagName1} = helpers.safeTagName('my-div-1');
+    var {safe: tagName2} = helpers.safeTagName('my-div-2');
+    var {safe: tagName3} = helpers.safeTagName('my-div-3');
     skate(tagName1, {
       type: skate.types.TAG
     });
@@ -178,9 +178,9 @@ describe('Native document.registerElement', function () {
   });
 
   it('should be called if it is not compatible with tags', function () {
-    var {'my-div-1': tagName1} = helpers.uniqueTagName('my-div-1');
-    var {'my-div-2': tagName2} = helpers.uniqueTagName('my-div-2');
-    var {'my-div-3': tagName3} = helpers.uniqueTagName('my-div-3');
+    var {safe: tagName1} = helpers.safeTagName('my-div-1');
+    var {safe: tagName2} = helpers.safeTagName('my-div-2');
+    var {safe: tagName3} = helpers.safeTagName('my-div-3');
     skate(tagName1, {
       type: skate.types.ATTR
     });

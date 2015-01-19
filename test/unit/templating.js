@@ -5,7 +5,7 @@ import skate from '../../src/skate';
 
 describe('Templates', function () {
   it('should execute the template function before created is called', function () {
-    var {'my-el': tagName} = helpers.uniqueTagName('my-el');
+    var {safe: tagName} = helpers.safeTagName('my-el');
     var MyEl = skate(tagName, {
       created: function (element) {
         expect(element.textContent).to.equal('test');
@@ -20,7 +20,7 @@ describe('Templates', function () {
   });
 
   it('should have access to the extended prototype in the template function', function () {
-    var {'my-el': tagName} = helpers.uniqueTagName('my-el');
+    var {safe: tagName} = helpers.safeTagName('my-el');
     var MyEl = skate(tagName, {
       prototype: {
         myfunc: function () {}

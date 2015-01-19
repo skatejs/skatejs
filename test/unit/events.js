@@ -59,7 +59,7 @@ describe('Events', function () {
   it('should support delegate events', function () {
     var dispatched = 0;
 
-    var {'my-component': tagName} = helpers.uniqueTagName('my-component');
+    var {safe: tagName} = helpers.safeTagName('my-component');
     skate(tagName, {
       events: {
         'click': function (element, e) {
@@ -97,7 +97,7 @@ describe('Events', function () {
     var blur = false;
     var focus = false;
 
-    var {'my-component': tagName} = helpers.uniqueTagName('my-component');
+    var {safe: tagName} = helpers.safeTagName('my-component');
     skate(tagName, {
       events: {
         'blur input': function () {

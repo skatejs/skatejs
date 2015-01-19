@@ -8,7 +8,7 @@ describe('Using components', function () {
     it('type: ' + type + ' extending: ' + tagToExtend, function () {
       var calls = 0;
 
-      var {'my-element': tagName} = helpers.uniqueTagName('my-element');
+      var {safe: tagName} = helpers.safeTagName('my-element');
       skate(tagName, {
         type: type,
         extends: tagToExtend,
@@ -51,7 +51,7 @@ describe('Using components', function () {
     it('should not initialise a single component more than once on a single element', function () {
       var calls = 0;
 
-      var {'my-element': tagName} = helpers.uniqueTagName('my-element');
+      var {safe: tagName} = helpers.safeTagName('my-element');
       skate(tagName, {
         created: function () {
           ++calls;

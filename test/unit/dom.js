@@ -8,9 +8,9 @@ describe('DOM', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
       var calls = 0;
 
-      var tagName = helpers.uniqueTagName('my-element');
+      var tagName = helpers.safeTagName('my-element');
       skate.init(helpers.fixture('<div><my-element></my-element></div>', tagName));
-      skate(tagName['my-element'], {
+      skate(tagName.safe, {
         attached: function () {
           ++calls;
         }
@@ -25,8 +25,8 @@ describe('DOM', function () {
     it('Modules should pick up nodes attached to the DOM after they are defined.', function (done) {
       var calls = 0;
 
-      var tagName = helpers.uniqueTagName('my-element');
-      skate(tagName['my-element'], {
+      var tagName = helpers.safeTagName('my-element');
+      skate(tagName.safe, {
         attached: function () {
           ++calls;
         }
@@ -42,8 +42,8 @@ describe('DOM', function () {
     it('should pick up descendants that are attached as part of an HTML block.', function (done) {
       var calls = 0;
 
-      var tagName = helpers.uniqueTagName('my-element');
-      skate(tagName['my-element'], {
+      var tagName = helpers.safeTagName('my-element');
+      skate(tagName.safe, {
         attached: function () {
           ++calls;
         }
@@ -58,8 +58,8 @@ describe('DOM', function () {
 
     // IE 11 has a bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml.
     it('should pick up descendants that are detached if an ancestor\'s innerHTML is set.', function (done) {
-      var tagName = helpers.uniqueTagName('my-element');
-      skate(tagName['my-element'], {
+      var tagName = helpers.safeTagName('my-element');
+      skate(tagName.safe, {
         detached: function () {
           done();
         }
@@ -71,8 +71,8 @@ describe('DOM', function () {
 
     // IE 9 / 10 have the same bug with removeChild() as IE 11 does with innerHTML.
     it('should pick up descendants that are detached if an ancestor is detached.', function (done) {
-      var tagName = helpers.uniqueTagName('my-element');
-      skate(tagName['my-element'], {
+      var tagName = helpers.safeTagName('my-element');
+      skate(tagName.safe, {
         detached: function () {
           done();
         }

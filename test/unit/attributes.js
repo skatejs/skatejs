@@ -8,8 +8,8 @@ describe('Attribute listeners', function () {
     var created = false;
     var updated = false;
 
-    var tagName = helpers.uniqueTagName('my-el');
-    skate(tagName['my-el'], {
+    var tagName = helpers.safeTagName('my-el');
+    skate(tagName.safe, {
       attributes: {
         open: {
           created: function (element, data) {
@@ -93,8 +93,8 @@ describe('Attribute listeners', function () {
 
   it('should ensure attributes are initialised', function () {
     var called = false;
-    var tagName = helpers.uniqueTagName('my-el');
-    skate(tagName['my-el'], {
+    var tagName = helpers.safeTagName('my-el');
+    skate(tagName.safe, {
       attributes: function () {
         called = true;
       }
@@ -106,8 +106,8 @@ describe('Attribute listeners', function () {
 
   it('should iterate over every attribute even if one removed while it is still being processed', function () {
     var attributesCalled = 0;
-    var tagName = helpers.uniqueTagName('my-el');
-    skate(tagName['my-el'], {
+    var tagName = helpers.safeTagName('my-el');
+    skate(tagName.safe, {
       attributes: {
         id: {
           created: function (element) {

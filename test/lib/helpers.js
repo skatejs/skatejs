@@ -4,25 +4,20 @@ var tagNameCounter = 1;
 
 export default {
   /**
-   * Generate a unique tag name to avoid errors due to re-registering a tag
-   * name.
-   *
-   * Returns an object that can be looked up using the provided id to obtain
-   * a unique tag name to use with skate() and fixture().
+   * Generate a tag name that is safe to register (e.g., won't cause a
+   * duplicate tag name registration).
    *
    * @param id the identifier for the tag
-   * @returns {Object.<string, string>} an object with the key 'id' mapped to
-   *   the value of the id and the value of the id mapped to a unique tag name
+   * @returns {safe: string, unsafe: string} an object the unsafe tag name
+   *   (value of id) and safe tag name.
    */
-  uniqueTagName: function (id) {
+  safeTagName: function (id) {
     var safeId = id + '-' + (tagNameCounter++).toString();
-    var tagName = {id: id};
-    tagName[id] = safeId;
-    return tagName;
+    return {unsafe: id, safe: safeId};
   },
 
   add: function (name, tagName) {
-    var safeTagName = typeof tagName === 'undefined' ? name : tagName[name];
+    var safeTagName = typeof tagName === 'undefined' ? name : tagName.safe;
     return this.fixture('<' + safeTagName + '></' + safeTagName + '>').querySelector(safeTagName);
   },
 
@@ -44,13 +39,12 @@ export default {
 
       if (typeof html === 'string') {
         if (typeof tagName !== 'undefined') {
-          var unsafeTagName = tagName.id;
-          var openTagRegex = new RegExp('<' + unsafeTagName + '\\b', 'g');
-          var closeTagRegex = new RegExp('</' + unsafeTagName + '>', 'g');
+          var openTagRegex = new RegExp('<' + tagName.unsafe + '\\b', 'g');
+          var closeTagRegex = new RegExp('</' + tagName.unsafe + '>', 'g');
 
           html = html
-            .replace(openTagRegex, '<' + tagName[unsafeTagName])
-            .replace(closeTagRegex, '</' + tagName[unsafeTagName] + '>');
+            .replace(openTagRegex, '<' + tagName.safe)
+            .replace(closeTagRegex, '</' + tagName.safe + '>');
         }
 
         fixture.innerHTML = html;
