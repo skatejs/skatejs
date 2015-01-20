@@ -83,8 +83,8 @@ function makeElementConstructor (definition) {
 function skate (id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
-  if (definition.prototype === skate.defaults.prototype) {
-    definition.prototype = Object.create(HTMLElement.prototype);
+  if (!HTMLElement.prototype.isPrototypeOf(definition.prototype)) {
+    definition.prototype = inherit(Object.create(HTMLElement.prototype), definition.prototype, true);
   }
 
   registry.set(id, definition);
