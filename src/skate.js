@@ -84,6 +84,8 @@ function skate (id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
 
+  registry.set(id, definition);
+
   var customElementConstructor;
   var isCustomElementExclusive = definition.type === skate.types.TAG;
   var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
@@ -118,7 +120,6 @@ function skate (id, definition) {
     }
   }
 
-  registry.set(id, definition);
   initDocument();
   documentObserver.register(definition.remove);
 
