@@ -81,8 +81,8 @@ function initAttributes (target, component) {
   }
 
   for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'default') && !target.hasAttribute(attribute)) {
-      var value = componentAttributes[attribute].default;
+    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'value') && !target.hasAttribute(attribute)) {
+      var value = componentAttributes[attribute].value;
       value = typeof value === 'function' ? value(target) : value;
       target.setAttribute(attribute, value);
     }

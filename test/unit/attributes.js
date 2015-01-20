@@ -5,12 +5,12 @@ import skate from '../../src/skate';
 
 describe('Attribute listeners', function () {
   describe('default values', function () {
-    it('should set a default value using the "default" option', function () {
+    it('should set a default value using the "value" option', function () {
       var tagName = helpers.safeTagName('my-el');
       var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
-            default: 'true'
+            value: 'true'
           }
         }
       });
@@ -23,7 +23,7 @@ describe('Attribute listeners', function () {
       var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
-            default: function () {
+            value: function () {
               return 'true';
             }
           }
@@ -39,7 +39,7 @@ describe('Attribute listeners', function () {
       skate(tagName.safe, {
         attributes: {
           test: {
-            default: 'true'
+            value: 'true'
           }
         }
       });
@@ -63,14 +63,14 @@ describe('Attribute listeners', function () {
       var MyEl = skate(tagName.safe, {
         attributes: {
           camelCased: {
-            default: 'true'
+            value: 'true'
           },
           'not-camel-cased': {
-            default: 'true'
+            value: 'true'
           },
           'test-proxy': {},
           'test-created': {
-            default: 'true',
+            value: 'true',
             created: function () {
               created = true;
             }
@@ -87,7 +87,7 @@ describe('Attribute listeners', function () {
             }
           },
           'override': {
-            default: 'false'
+            value: 'false'
           }
         },
         prototype: {
