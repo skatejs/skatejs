@@ -188,7 +188,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: '',
+  extends: undefined,
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
