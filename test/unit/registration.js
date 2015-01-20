@@ -1,5 +1,6 @@
 'use strict';
 
+import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Registration', function () {
@@ -94,7 +95,8 @@ describe('Returning a constructor', function () {
 
   it('should overwrite prototype members', function () {
     var called = false;
-    var Input = skate('super-input', {
+    var {safe: tagName} = helpers.safeTagName('super-input');
+    var Input = skate(tagName, {
       extends: 'input',
       type: skate.types.TAG,
       prototype: {
@@ -112,9 +114,11 @@ describe('Returning a constructor', function () {
   describe('when an extends option is specified', function () {
     var Div;
     var div;
+    var tagName;
 
     beforeEach(function () {
-      Div = skate('my-element', {
+      tagName = helpers.safeTagName('my-element');
+      Div = skate(tagName.safe, {
         extends: 'div'
       });
 
@@ -126,7 +130,75 @@ describe('Returning a constructor', function () {
     });
 
     it('should return an element whose is attribute is equal to the component id', function () {
-      expect(div.getAttribute('is')).to.equal('my-element');
+      expect(div.getAttribute('is')).to.equal(tagName.safe);
     });
+  });
+});
+
+describe('Native document.registerElement', function () {
+  var definitions;
+  var oldRegisterElement;
+
+  beforeEach(function () {
+    definitions = {};
+    oldRegisterElement = document.registerElement;
+    document.registerElement = function (name, definition) {
+      definitions[name] = definition;
+    };
+  });
+
+  afterEach(function () {
+    document.registerElement = oldRegisterElement;
+  });
+
+  it('should be called if it is compatible with anything', function () {
+    var {safe: tagName} = helpers.safeTagName('my-div');
+    skate(tagName, {
+      type: skate.types.ANY
+    });
+    expect(tagName in definitions).to.equal(true);
+  });
+
+  it('should be called if it is compatible with tags', function () {
+    var {safe: tagName1} = helpers.safeTagName('my-div-1');
+    var {safe: tagName2} = helpers.safeTagName('my-div-2');
+    var {safe: tagName3} = helpers.safeTagName('my-div-3');
+    skate(tagName1, {
+      type: skate.types.TAG
+    });
+    skate(tagName2, {
+      type: skate.types.NOATTR
+    });
+    skate(tagName3, {
+      type: skate.types.NOCLASS
+    });
+    expect(tagName1 in definitions).to.equal(true);
+    expect(tagName2 in definitions).to.equal(true);
+    expect(tagName3 in definitions).to.equal(true);
+  });
+
+  it('should be called if it is not compatible with tags', function () {
+    var {safe: tagName1} = helpers.safeTagName('my-div-1');
+    var {safe: tagName2} = helpers.safeTagName('my-div-2');
+    var {safe: tagName3} = helpers.safeTagName('my-div-3');
+    skate(tagName1, {
+      type: skate.types.ATTR
+    });
+    skate(tagName2, {
+      type: skate.types.CLASS
+    });
+    skate(tagName3, {
+      type: skate.types.NOTAG
+    });
+    expect(tagName1 in definitions).to.equal(false);
+    expect(tagName2 in definitions).to.equal(false);
+    expect(tagName3 in definitions).to.equal(false);
+  });
+
+  it('should not be called if the id is invalid', function () {
+    skate('div', {
+      type: skate.types.TAG
+    });
+    expect('div' in definitions).to.equal(false);
   });
 });

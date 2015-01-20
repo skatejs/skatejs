@@ -14,12 +14,12 @@ import {
 
 var elProto = window.HTMLElement.prototype;
 var matchesSelector = (
-    elProto.matches ||
-    elProto.msMatchesSelector ||
-    elProto.webkitMatchesSelector ||
-    elProto.mozMatchesSelector ||
-    elProto.oMatchesSelector
-  );
+  elProto.matches ||
+  elProto.msMatchesSelector ||
+  elProto.webkitMatchesSelector ||
+  elProto.mozMatchesSelector ||
+  elProto.oMatchesSelector
+);
 
 function getLifecycleFlag (target, component, name) {
   return data.get(target, component.id + ':lifecycle:' + name);
@@ -38,12 +38,12 @@ function ensureLifecycleFlag (target, component, name) {
 }
 
 /**
- * Parses an event definition and returns information about it.
- *
- * @param {String} e The event to parse.
- *
- * @returns {Object]}
- */
+* Parses an event definition and returns information about it.
+*
+* @param {String} e The event to parse.
+*
+* @returns {Object]}
+*/
 function parseEvent (e) {
   var parts = e.split(' ');
   return {
@@ -53,12 +53,12 @@ function parseEvent (e) {
 }
 
 /**
- * Camel-cases the specified string.
- *
- * @param {String} str The string to camel-case.
- *
- * @returns {String}
- */
+* Camel-cases the specified string.
+*
+* @param {String} str The string to camel-case.
+*
+* @returns {String}
+*/
 function camelCase (str) {
   return str.split(/-/g).map(function (str, index) {
     return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
@@ -66,13 +66,13 @@ function camelCase (str) {
 }
 
 /**
- * Sets the defined attributes to their default values, if specified.
- *
- * @param {Element} target The web component element.
- * @param {Object} component The web component definition.
- *
- * @returns {undefined}
- */
+* Sets the defined attributes to their default values, if specified.
+*
+* @param {Element} target The web component element.
+* @param {Object} component The web component definition.
+*
+* @returns {undefined}
+*/
 function initAttributes (target, component) {
   var componentAttributes = component.attributes;
 
@@ -90,13 +90,13 @@ function initAttributes (target, component) {
 }
 
 /**
- * Defines a property that proxies the specified attribute.
- *
- * @param {Element} target The web component element.
- * @param {String} attribute The attribute name to proxy.
- *
- * @returns {undefined}
- */
+* Defines a property that proxies the specified attribute.
+*
+* @param {Element} target The web component element.
+* @param {String} attribute The attribute name to proxy.
+*
+* @returns {undefined}
+*/
 function defineAttributeProperty (target, attribute) {
   Object.defineProperty(target, camelCase(attribute), {
     get: function () {
@@ -113,13 +113,13 @@ function defineAttributeProperty (target, attribute) {
 }
 
 /**
- * Adds links from attributes to properties.
- *
- * @param {Element} target The web component element.
- * @param {Object} component The web component definition.
- *
- * @returns {undefined}
- */
+* Adds links from attributes to properties.
+*
+* @param {Element} target The web component element.
+* @param {Object} component The web component definition.
+*
+* @returns {undefined}
+*/
 function addAttributeToPropertyLinks (target, component) {
   var componentAttributes = component.attributes;
 
@@ -135,13 +135,13 @@ function addAttributeToPropertyLinks (target, component) {
 }
 
 /**
- * Binds attribute listeners for the specified attribute handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Binds attribute listeners for the specified attribute handlers.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function addAttributeListeners (target, component) {
   function triggerCallback (type, name, newValue, oldValue) {
     var callback;
@@ -215,13 +215,13 @@ function addAttributeListeners (target, component) {
 }
 
 /**
- * Binds event listeners for the specified event handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Binds event listeners for the specified event handlers.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function addEventListeners (target, component) {
   if (typeof component.events !== 'object') {
     return;
@@ -258,13 +258,13 @@ function addEventListeners (target, component) {
 }
 
 /**
- * Triggers the created lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Triggers the created lifecycle callback.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function triggerCreated (target, component) {
   if (ensureLifecycleFlag(target, component, 'created')) {
     return;
@@ -285,13 +285,13 @@ function triggerCreated (target, component) {
 }
 
 /**
- * Triggers the attached lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Triggers the attached lifecycle callback.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function triggerAttached (target, component) {
   if (ensureLifecycleFlag(target, component, 'attached')) {
     return;
@@ -306,13 +306,13 @@ function triggerAttached (target, component) {
 }
 
 /**
- * Triggers the detached lifecycle callback.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Triggers the detached lifecycle callback.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function triggerDetached (target, component) {
   if (component.detached) {
     component.detached(target);
@@ -322,25 +322,25 @@ function triggerDetached (target, component) {
 }
 
 /**
- * Triggers the entire element lifecycle if it's not being ignored.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
+* Triggers the entire element lifecycle if it's not being ignored.
+*
+* @param {Element} target The component element.
+* @param {Object} component The component data.
+*
+* @returns {undefined}
+*/
 function triggerLifecycle (target, component) {
   triggerCreated(target, component);
   triggerAttached(target, component);
 }
 
 /**
- * Initialises a set of elements.
- *
- * @param {DOMNodeList | Array} elements A traversable set of elements.
- *
- * @returns {undefined}
- */
+* Initialises a set of elements.
+*
+* @param {DOMNodeList | Array} elements A traversable set of elements.
+*
+* @returns {undefined}
+*/
 function initElements (elements) {
   var elementsLen = elements.length;
 
@@ -368,13 +368,13 @@ function initElements (elements) {
 }
 
 /**
- * Triggers the remove lifecycle callback on all of the elements.
- *
- * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
- * callback on.
- *
- * @returns {undefined}
- */
+* Triggers the remove lifecycle callback on all of the elements.
+*
+* @param {DOMNodeList} elements The elements to trigger the remove lifecycle
+* callback on.
+*
+* @returns {undefined}
+*/
 function removeElements (elements) {
   var len = elements.length;
 

@@ -99,24 +99,12 @@ export default {
     return definitions;
   },
 
-  has: function (id) {
-    return hasOwn(globals.registry, id);
-  },
-
   set: function (id, definition) {
-    if (this.has(id)) {
+    if (hasOwn(globals.registry, id)) {
       throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
 
     globals.registry[id] = definition;
-
-    return this;
-  },
-
-  remove: function (id) {
-    if (this.has(id)) {
-      delete globals.registry[id];
-    }
 
     return this;
   }

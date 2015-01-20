@@ -165,3 +165,17 @@ describe('Instantiation', function () {
     });
   });
 });
+
+describe('Forms', function () {
+  it('#110 - should initialise forms properly', function () {
+    var form = document.createElement('form');
+    skate('form', {
+      created: function (el) {
+        el.initialised = true;
+      }
+    });
+
+    skate.init(form);
+    expect(form.initialised).to.equal(true);
+  });
+});

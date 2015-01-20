@@ -43,10 +43,10 @@ describe('Attribute listeners', function () {
       });
 
       skate.init(helpers.fixture('<my-el test="false"></my-el>'))
-        .firstChild
-        .test
-        .should
-        .equal('false');
+      .firstChild
+      .test
+      .should
+      .equal('false');
     });
   });
 

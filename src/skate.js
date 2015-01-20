@@ -3,6 +3,9 @@
 import documentObserver from './document-observer';
 import {
   triggerCreated,
+  triggerAttached,
+  triggerDetached,
+  triggerAttributeChanged,
   initElements
 } from './lifecycle';
 import registry from './registry';
@@ -14,12 +17,18 @@ import version from './version';
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution.
+ * happen more than once in the same execution, and that it happens after the DOM is ready.
  *
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName('html'));
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initElements(document.documentElement.childNodes);
+  } else {
+    document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
+      initElements(document.documentElement.childNodes);
+    });
+  }
 });
 
 /**
@@ -72,37 +81,60 @@ function makeElementConstructor (definition) {
  * @returns {Function} Constructor that returns a custom element.
  */
 function skate (id, definition) {
-  // Set any defaults that weren't passed.
   definition = inherit(definition || {}, skate.defaults);
-
-  // Set the definition ID for reference later.
   definition.id = id;
-
-  // Definitions of a particular type must be unique.
-  if (registry.has(definition.id)) {
-    throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+  if (definition.prototype === skate.defaults.prototype) {
+    definition.prototype = {};
   }
 
-  // Register the definition.
-  registry.set(definition.id, definition);
+  registry.set(id, definition);
 
-  // Initialise existing elements.
+  var customElementConstructor;
+  var isCustomElementExclusive = definition.type === skate.types.TAG;
+  var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
+  var isValidNativeCustomElementId = id.indexOf('-') > 0;
+  var supportsNativeCustomElements = typeof document.registerElement === 'function';
+
+  if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+    customElementConstructor = document.registerElement(id, {
+      extends: definition.extends,
+      prototype: inherit(definition.prototype, {
+        createdCallback: function () {
+          triggerCreated(this, definition);
+        },
+        attachedCallback: function () {
+          triggerAttached(this, definition);
+        },
+        detachedCallback: function () {
+          triggerDetached(this, definition);
+        },
+        attributeChangedCallback: function (name, oldValue, newValue) {
+          triggerAttributeChanged(target, definition, {
+            name: name,
+            oldValue: oldValue,
+            newValue: newValue
+          });
+        }
+      })
+    });
+
+    if (isCustomElementExclusive) {
+      return customElementConstructor;
+    }
+  }
+
   initDocument();
-
-  // Lazily initialise the document observer so we don't incur any overhead if
-  // there's no definition listeners.
   documentObserver.register(definition.remove);
 
-  // Only make and return an element constructor if it can be used as a custom
-  // element.
-  if (definition.type.indexOf(skate.types.TAG) > -1) {
-    return makeElementConstructor(definition);
+  if (!customElementConstructor && isCustomElementInclusive) {
+    customElementConstructor = makeElementConstructor(definition);
   }
+
+  return customElementConstructor;
 }
 
 /**
- * Synchronously initialises the specified element or elements and
- * descendants.
+ * Synchronously initialises the specified element or elements and descendants.
  *
  * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
  *                      jQuery, DOMNodeList, DOMNode, selector etc.
@@ -110,15 +142,19 @@ function skate (id, definition) {
  * @returns {skate}
  */
 skate.init = function (nodes) {
+  var nodesToUse = nodes;
+
   if (!nodes) {
-    return;
+    return nodes;
   }
 
   if (typeof nodes === 'string') {
-    nodes = document.querySelectorAll(nodes);
+    nodesToUse = nodes = document.querySelectorAll(nodes);
+  } else if (nodes instanceof window.HTMLElement) {
+    nodesToUse = [nodes];
   }
 
-  initElements(typeof nodes.length === 'undefined' ? [nodes] : nodes);
+  initElements(nodesToUse);
 
   return nodes;
 };
@@ -152,7 +188,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: '',
+  extends: undefined,
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
