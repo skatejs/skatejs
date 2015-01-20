@@ -109,7 +109,7 @@ function skate (id, definition) {
           triggerDetached(this, definition);
         },
         attributeChangedCallback: function (name, oldValue, newValue) {
-          triggerAttributeChanged(target, definition, {
+          triggerAttributeChanged(this, definition, {
             name: name,
             oldValue: oldValue,
             newValue: newValue
