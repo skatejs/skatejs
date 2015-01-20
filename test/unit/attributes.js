@@ -4,11 +4,10 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Attribute listeners', function () {
-  'use strict';
-
   describe('default values', function () {
     it('should set a default value using the "default" option', function () {
-      var MyEl = skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
             default: 'true'
@@ -20,7 +19,8 @@ describe('Attribute listeners', function () {
     });
 
     it('should allow a callback to return a default value', function () {
-      var MyEl = skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
             default: function () {
@@ -34,7 +34,9 @@ describe('Attribute listeners', function () {
     });
 
     it('should not override if already specified', function () {
-      var MyEl = skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: {
           test: {
             default: 'true'
@@ -42,22 +44,23 @@ describe('Attribute listeners', function () {
         }
       });
 
-      skate.init(helpers.fixture('<my-el test="false"></my-el>'))
-      .firstChild
-      .test
-      .should
-      .equal('false');
+      skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
+        .firstChild
+        .test
+        .should
+        .equal('false');
     });
   });
 
-  describe('should define properties for all watched attributes', function (done) {
+  describe('should define properties for all watched attributes', function () {
     var myEl;
     var created = false;
     var updated = false;
     var removed = false;
 
     beforeEach(function () {
-      var MyEl = skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
         attributes: {
           camelCased: {
             default: 'true'
@@ -161,8 +164,9 @@ describe('Attribute listeners', function () {
     it('should listen to changes in specified attributes', function (done) {
       var created = false;
       var updated = false;
+      var tagName = helpers.safeTagName('my-el');
 
-      skate('my-el', {
+      skate(tagName.safe, {
         attributes: {
           open: {
             created: function (element, data) {
@@ -186,11 +190,13 @@ describe('Attribute listeners', function () {
         }
       });
 
-      helpers.fixture('<my-el open="created"></my-el>');
+      helpers.fixture('<my-el open="created"></my-el>', tagName);
     });
 
     it('should accept a function insead of an object for a particular attribute definition.', function (done) {
-      skate('div', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: {
           open: function (element, data) {
             if (data.type === 'created') {
@@ -205,11 +211,13 @@ describe('Attribute listeners', function () {
         }
       });
 
-      helpers.fixture('<div id="attrtest" open="created"></div>');
+      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
     });
 
     it('should accept a function insead of an object for the entire attribute definition.', function (done) {
-      skate('div', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: function (element, data) {
           if (data.type === 'created') {
             setTimeout(function () {
@@ -226,12 +234,13 @@ describe('Attribute listeners', function () {
         }
       });
 
-      helpers.fixture('<div id="attrtest" open="created"></div>');
+      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
     });
 
     it('should allow a catchall callback to be specified that catches all changes (same as passing a function instead of an object)', function (done) {
       var called = 0;
-      var MyEl = skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
             catchall: function () {
@@ -256,20 +265,24 @@ describe('Attribute listeners', function () {
   describe('Attributes added via HTML', function () {
     it('should ensure attributes are initialised', function () {
       var called = false;
-      skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: function () {
           called = true;
         }
       });
 
-      skate.init(helpers.fixture('<my-el some-attr></my-el>'));
+      skate.init(helpers.fixture('<my-el some-attr></my-el>', tagName));
       expect(called).to.equal(true);
     });
   });
 
   describe('side effects', function () {
     it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
-      skate('div', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: function (element, data) {
           if (data.name === 'first') {
             element.removeAttribute('second');
@@ -277,15 +290,16 @@ describe('Attribute listeners', function () {
         }
       });
 
-      document.body.innerHTML = '<div first="first" second="second"></div>';
-      var div = skate.init(document.body.querySelector('div'));
-      div.hasAttribute('first').should.equal(true);
-      div.hasAttribute('second').should.equal(false);
+      skate.init(helpers.fixture('<my-el first></my-el>', tagName));
+      document.querySelector(tagName.safe).hasAttribute('first').should.equal(true);
+      document.querySelector(tagName.safe).hasAttribute('second').should.equal(false);
     });
 
     it('should iterate over every attribute even if one removed while it is still being processed', function () {
       var attributesCalled = 0;
-      skate('my-el', {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
         attributes: {
           id: {
             created: function (element) {
@@ -302,7 +316,7 @@ describe('Attribute listeners', function () {
         }
       });
 
-      skate.init(helpers.fixture('<my-el id="test" name="name"></my-el>'));
+      skate.init(helpers.fixture('<my-el id="test" name="name"></my-el>', tagName));
       expect(attributesCalled).to.equal(2);
     });
   });
