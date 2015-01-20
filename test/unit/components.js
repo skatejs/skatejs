@@ -41,9 +41,9 @@ describe('Using components', function () {
     assertType(skate.types.TAG, 1, 'div');
     assertType(skate.types.ATTR, 1, 'div');
     assertType(skate.types.CLASS, 1, 'div');
-    assertType(skate.types.TAG, 0, 'non-existent');
-    assertType(skate.types.ATTR, 0, 'non-existent');
-    assertType(skate.types.CLASS, 0, 'non-existent');
+    assertType(skate.types.TAG, 0, 'span');
+    assertType(skate.types.ATTR, 0, 'span');
+    assertType(skate.types.CLASS, 0, 'span');
 
 
     it('should not initialise a single component more than once on a single element', function () {
