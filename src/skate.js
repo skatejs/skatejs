@@ -84,7 +84,7 @@ function skate (id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
   if (definition.prototype === skate.defaults.prototype) {
-    definition.prototype = {};
+    definition.prototype = Object.create(HTMLElement.prototype);
   }
 
   registry.set(id, definition);
