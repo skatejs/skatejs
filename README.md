@@ -120,7 +120,7 @@ skate('my-component', {
       // The element's default value if not already specified on the element.
       // Can also be a function that returns a value. The function gets passed
       // The element as its only argument.
-      default: 'default value',
+      value: 'default value',
 
       // Called when the attribute is set for the first time.
       created: function (element, change) {
@@ -400,7 +400,7 @@ If you want to specify a default value for your component you may do so by setti
 skate('my-component', {
   attributes: {
     'my-attribute': {
-      default: 'default value'
+      value: 'default value'
     }
   }
 }
