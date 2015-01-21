@@ -83,9 +83,6 @@ function makeElementConstructor (definition) {
 function skate (id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
-  if (!HTMLElement.prototype.isPrototypeOf(definition.prototype)) {
-    definition.prototype = inherit(Object.create(HTMLElement.prototype), definition.prototype, true);
-  }
 
   registry.set(id, definition);
 
@@ -96,6 +93,10 @@ function skate (id, definition) {
   var supportsNativeCustomElements = typeof document.registerElement === 'function';
 
   if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+    var elementPrototype = document.createElement(id).constructor.prototype;
+    if (!elementPrototype.isPrototypeOf(definition.prototype)) {
+      definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
+    }
     customElementConstructor = document.registerElement(id, {
       extends: definition.extends,
       prototype: inherit(definition.prototype, {
