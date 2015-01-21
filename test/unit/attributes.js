@@ -237,27 +237,50 @@ describe('Attribute listeners', function () {
       helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
     });
 
-    it('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function (done) {
-      var called = 0;
-      var tagName = helpers.safeTagName('my-el');
-      var MyEl = skate(tagName.safe, {
-        attributes: {
-          test: {
-            fallback: function () {
-              ++called;
-            }
+    describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
+      function assertAttributeLifeycleCalls(expectedNumCalls, nonFallbackHandlers, done) {
+        var called = 0;
+        var tagName = helpers.safeTagName('my-el');
+        var testHandlers = {
+          fallback: function () {
+            ++called;
           }
-        }
+        };
+        var MyEl = skate(tagName.safe, {
+          attributes: {
+            test: testHandlers
+          }
+        });
+
+        nonFallbackHandlers.forEach(function (item) {
+          testHandlers[item] = function () {};
+        });
+
+        var myEl = new MyEl();
+        myEl.test = false;
+        myEl.test = true;
+        myEl.test = undefined;
+
+        helpers.afterMutations(function () {
+          called.should.equal(expectedNumCalls);
+          done();
+        });
+      }
+
+      it('fallback only', function (done) {
+        assertAttributeLifeycleCalls(3, [], done);
       });
 
-      var myEl = new MyEl();
-      myEl.test = false;
-      myEl.test = true;
-      myEl.test = undefined;
+      it('created + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['created'], done);
+      });
 
-      helpers.afterMutations(function () {
-        called.should.equal(3);
-        done();
+      it('updated + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['updated'], done);
+      });
+
+      it('removed + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['removed'], done);
       });
     });
   });
