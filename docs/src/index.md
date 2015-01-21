@@ -122,7 +122,8 @@ skate('my-component', {
   attributes: {
     'my-attribute': {
       // The element's default value if not already specified on the element.
-      // Can also be a function that returns a value.
+      // Can also be a function that returns a value. The function gets passed
+      // The element as its only argument.
       default: 'default value',
 
       // Called when the attribute is set for the first time.
@@ -347,8 +348,6 @@ Callbacks that get fired for attributes that already exist on an element get cal
 
 
 #### Catching Unspecified Modifications
-
-
 
 You may also specify a `catchall` callback that will get called if a specific callback for the type of modification isn't found. For example, if you wanted to do the same thing on `created` and `updated` but something different on `removed`, then you'd do something like:
 
