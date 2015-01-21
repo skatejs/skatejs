@@ -237,13 +237,13 @@ describe('Attribute listeners', function () {
       helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
     });
 
-    it('should allow a catchall callback to be specified that catches all changes (same as passing a function instead of an object)', function (done) {
+    it('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function (done) {
       var called = 0;
       var tagName = helpers.safeTagName('my-el');
       var MyEl = skate(tagName.safe, {
         attributes: {
           test: {
-            catchall: function () {
+            fallback: function () {
               ++called;
             }
           }
