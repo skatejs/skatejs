@@ -7,6 +7,7 @@ import data from './data';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
+  camelCase,
   hasOwn,
   inherit,
   objEach
@@ -50,19 +51,6 @@ function parseEvent (e) {
     name: parts.shift(),
     delegate: parts.join(' ')
   };
-}
-
-/**
-* Camel-cases the specified string.
-*
-* @param {String} str The string to camel-case.
-*
-* @returns {String}
-*/
-function camelCase (str) {
-  return str.split(/-/g).map(function (str, index) {
-    return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
-  }).join('');
 }
 
 /**
