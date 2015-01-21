@@ -144,7 +144,7 @@ skate('my-component', {
       // Called when created, updated or remove is not specified. This is the
       // same as specifying a function instead of an options object for a
       // given attribute.
-      catchall: function (element, change) {
+      fallback: function (element, change) {
 
       }
     }
@@ -349,13 +349,13 @@ Callbacks that get fired for attributes that already exist on an element get cal
 
 #### Catching Unspecified Modifications
 
-You may also specify a `catchall` callback that will get called if a specific callback for the type of modification isn't found. For example, if you wanted to do the same thing on `created` and `updated` but something different on `removed`, then you'd do something like:
+You may also specify a `fallback` callback that will get called if a specific callback for the type of modification isn't found. For example, if you wanted to do the same thing on `created` and `updated` but something different on `removed`, then you'd do something like:
 
 ```js
 skate('my-component', {
   attributes: {
     'my-attribute': {
-      catchall: function (element, change) {
+      fallback: function (element, change) {
 
       },
 
@@ -373,7 +373,7 @@ Note that doing:
 skate('my-component', {
   attributes: {
     'my-attribute': {
-      catchall: function (element, change) {
+      fallback: function (element, change) {
 
       }
     }

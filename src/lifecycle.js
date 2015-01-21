@@ -149,8 +149,8 @@ function addAttributeListeners (target, component) {
 
     if (isSpecific && component.attributes[name][type]) {
       callback = component.attributes[name][type];
-    } else if (isSpecific && component.attributes[name].catchall) {
-      callback = component.attributes[name].catchall;
+    } else if (isSpecific && component.attributes[name].fallback) {
+      callback = component.attributes[name].fallback;
     } else if (isSpecific) {
       callback = component.attributes[name];
     } else {
