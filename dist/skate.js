@@ -5,7 +5,7 @@ var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 },{}],2:[function(require,module,exports){
 "use strict";
 
-module.exports = {
+exports.default = {
   /**
    * Adds data to the element.
    *
@@ -42,18 +42,11 @@ module.exports = {
 },{}],3:[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
-
-var globals = _interopRequire(require("./globals"));
-
-var initElements = require("./lifecycle").initElements;
-var removeElements = require("./lifecycle").removeElements;
-var MutationObserver = _interopRequire(require("./mutation-observer"));
-
-var getClosestIgnoredElement = require("./utils").getClosestIgnoredElement;
-
+var globals = require('./globals').default;
+var initElements = require('./lifecycle').initElements;
+var removeElements = require('./lifecycle').removeElements;
+var MutationObserver = require('./mutation-observer').default;
+var getClosestIgnoredElement = require('./utils').getClosestIgnoredElement;
 
 /**
  * The document observer handler.
@@ -104,7 +97,7 @@ function createDocumentObserver() {
   return observer;
 }
 
-module.exports = {
+exports.default = {
   register: function (fixIe) {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
@@ -139,27 +132,22 @@ if (!window.__skate) {
   };
 }
 
-module.exports = window.__skate;
+exports.default = window.__skate;
 },{}],5:[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
-
-var ATTR_IGNORE = require("./constants").ATTR_IGNORE;
-var data = _interopRequire(require("./data"));
-
-var MutationObserver = _interopRequire(require("./mutation-observer"));
-
-var registry = _interopRequire(require("./registry"));
-
-var inherit = require("./utils").inherit;
-var objEach = require("./utils").objEach;
-
+var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
+var data = require('./data').default;
+var MutationObserver = require('./mutation-observer').default;
+var registry = require('./registry').default;
+var camelCase = require('./utils').camelCase;
+var hasOwn = require('./utils').hasOwn;
+var inherit = require('./utils').inherit;
+var objEach = require('./utils').objEach;
+var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
 
 var elProto = window.HTMLElement.prototype;
-var matchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
+var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
 
 function getLifecycleFlag(target, component, name) {
   return data.get(target, component.id + ":lifecycle:" + name);
@@ -192,6 +180,75 @@ function parseEvent(e) {
   };
 }
 
+/**
+ * Sets the defined attributes to their default values, if specified.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
+function initAttributes(target, component) {
+  var componentAttributes = component.attributes;
+
+  if (typeof componentAttributes !== "object") {
+    return;
+  }
+
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], "value") && !target.hasAttribute(attribute)) {
+      var value = componentAttributes[attribute].value;
+      value = typeof value === "function" ? value(target) : value;
+      target.setAttribute(attribute, value);
+    }
+  }
+}
+
+/**
+ * Defines a property that proxies the specified attribute.
+ *
+ * @param {Element} target The web component element.
+ * @param {String} attribute The attribute name to proxy.
+ *
+ * @returns {undefined}
+ */
+function defineAttributeProperty(target, attribute) {
+  Object.defineProperty(target, camelCase(attribute), {
+    get: function () {
+      return this.getAttribute(attribute);
+    },
+    set: function (value) {
+      if (value === undefined) {
+        this.removeAttribute(attribute);
+      } else {
+        this.setAttribute(attribute, value);
+      }
+    }
+  });
+}
+
+/**
+ * Adds links from attributes to properties.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
+function addAttributeToPropertyLinks(target, component) {
+  var componentAttributes = component.attributes;
+
+  if (typeof componentAttributes !== "object") {
+    return;
+  }
+
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
+      defineAttributeProperty(target, attribute);
+    }
+  }
+}
+
 function triggerAttributeChanged(target, component, data) {
   var callback;
   var type;
@@ -200,6 +257,8 @@ function triggerAttributeChanged(target, component, data) {
   var oldValue = data.oldValue;
   var newValueIsString = typeof newValue === "string";
   var oldValueIsString = typeof oldValue === "string";
+  var attrs = component.attributes;
+  var specific = attrs && attrs[name];
 
   if (!oldValueIsString && newValueIsString) {
     type = "created";
@@ -209,13 +268,19 @@ function triggerAttributeChanged(target, component, data) {
     type = "removed";
   }
 
-  if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === "function") {
-    callback = component.attributes[name][type];
-  } else if (component.attributes && typeof component.attributes[name] === "function") {
-    callback = component.attributes[name];
-  } else if (typeof component.attributes === "function") {
-    callback = component.attributes;
+  if (specific && typeof specific[type] === "function") {
+    callback = specific[type];
+  } else if (specific && typeof specific.fallback === "function") {
+    callback = specific.fallback;
+  } else if (typeof specific === "function") {
+    callback = specific;
+  } else if (typeof attrs === "function") {
+    callback = attrs;
   }
+
+  // Ensure values are null if undefined.
+  newValue = newValue === undefined ? null : newValue;
+  oldValue = oldValue === undefined ? null : oldValue;
 
   // There may still not be a callback.
   if (callback) {
@@ -252,20 +317,13 @@ function triggerAttributesCreated(target, component) {
   }
 }
 
-/**
- * Binds attribute listeners for the specified attribute handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
 function addAttributeListeners(target, component) {
-  if (!component.attributes) {
+  var attrs = target.attributes;
+
+  if (!component.attributes || supportsNativeCustomElements()) {
     return;
   }
 
-  var attrs = target.attributes;
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       var name = mutation.attributeName;
@@ -294,7 +352,7 @@ function addAttributeListeners(target, component) {
  * @returns {undefined}
  */
 function addEventListeners(target, component) {
-  if (!component.events) {
+  if (typeof component.events !== "object") {
     return;
   }
 
@@ -349,6 +407,8 @@ function triggerCreated(target, component) {
 
   addEventListeners(target, component);
   addAttributeListeners(target, component);
+  addAttributeToPropertyLinks(target, component);
+  initAttributes(target, component);
   triggerAttributesCreated(target, component);
 
   if (component.created) {
@@ -375,6 +435,8 @@ function triggerAttached(target, component) {
   if (component.attached) {
     component.attached(target);
   }
+
+  setLifecycleFlag(target, component, "detached", false);
 }
 
 /**
@@ -386,6 +448,10 @@ function triggerAttached(target, component) {
  * @returns {undefined}
  */
 function triggerDetached(target, component) {
+  if (ensureLifecycleFlag(target, component, "detached")) {
+    return;
+  }
+
   if (component.detached) {
     component.detached(target);
   }
@@ -468,18 +534,17 @@ function removeElements(elements) {
   }
 }
 
-exports.triggerCreated = triggerCreated;
-exports.triggerAttached = triggerAttached;
-exports.triggerDetached = triggerDetached;
-exports.triggerAttributeChanged = triggerAttributeChanged;
 exports.initElements = initElements;
 exports.removeElements = removeElements;
+exports.triggerAttached = triggerAttached;
+exports.triggerAttributeChanged = triggerAttributeChanged;
+exports.triggerCreated = triggerCreated;
+exports.triggerDetached = triggerDetached;
 },{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(require,module,exports){
 "use strict";
 
-var debounce = require("./utils").debounce;
-var objEach = require("./utils").objEach;
-
+var debounce = require('./utils').debounce;
+var objEach = require('./utils').objEach;
 
 var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
@@ -791,18 +856,12 @@ MutationObserver.prototype = {
   }
 };
 
-module.exports = MutationObserver;
+exports.default = MutationObserver;
 },{"./utils":9}],7:[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
-
-var globals = _interopRequire(require("./globals"));
-
-var hasOwn = require("./utils").hasOwn;
-
+var globals = require('./globals').default;
+var hasOwn = require('./utils').hasOwn;
 
 /**
  * Returns the class list for the specified element.
@@ -820,7 +879,7 @@ function getClassList(element) {
 
   var attrs = element.attributes;
 
-  return attrs["class"] && attrs["class"].nodeValue.split(/\s+/) || [];
+  return (attrs["class"] && attrs["class"].nodeValue.split(/\s+/)) || [];
 }
 
 /**
@@ -836,7 +895,7 @@ function isDefinitionOfType(id, type) {
   return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
 }
 
-module.exports = {
+exports.default = {
   clear: function () {
     globals.registry = {};
     return this;
@@ -855,7 +914,7 @@ module.exports = {
 
     if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
       definition = globals.registry[isAttrOrTag];
-      tagToExtend = definition["extends"];
+      tagToExtend = definition.extends;
 
       if (isAttrValue) {
         if (tag === tagToExtend) {
@@ -871,7 +930,7 @@ module.exports = {
 
       if (isDefinitionOfType(attr, skate.types.ATTR)) {
         definition = globals.registry[attr];
-        tagToExtend = definition["extends"];
+        tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -887,7 +946,7 @@ module.exports = {
 
       if (isDefinitionOfType(className, skate.types.CLASS)) {
         definition = globals.registry[className];
-        tagToExtend = definition["extends"];
+        tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -911,22 +970,17 @@ module.exports = {
 },{"./globals":4,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
-var _interopRequire = function (obj) {
-  return obj && (obj["default"] || obj);
-};
-
-var documentObserver = _interopRequire(require("./document-observer"));
-
-var triggerCreated = require("./lifecycle").triggerCreated;
-var triggerAttached = require("./lifecycle").triggerAttached;
-var triggerDetached = require("./lifecycle").triggerDetached;
-var triggerAttributeChanged = require("./lifecycle").triggerAttributeChanged;
-var initElements = require("./lifecycle").initElements;
-var registry = _interopRequire(require("./registry"));
-
-var debounce = require("./utils").debounce;
-var inherit = require("./utils").inherit;
-var version = _interopRequire(require("./version"));
+var documentObserver = require('./document-observer').default;
+var triggerCreated = require('./lifecycle').triggerCreated;
+var triggerAttached = require('./lifecycle').triggerAttached;
+var triggerDetached = require('./lifecycle').triggerDetached;
+var triggerAttributeChanged = require('./lifecycle').triggerAttributeChanged;
+var initElements = require('./lifecycle').initElements;
+var registry = require('./registry').default;
+var debounce = require('./utils').debounce;
+var inherit = require('./utils').inherit;
+var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
+var version = require('./version').default;
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -954,7 +1008,7 @@ var initDocument = debounce(function () {
 function makeElementConstructor(definition) {
   function CustomElement() {
     var element;
-    var tagToExtend = definition["extends"];
+    var tagToExtend = definition.extends;
     var definitionId = definition.id;
 
     if (tagToExtend) {
@@ -1003,15 +1057,13 @@ function skate(id, definition) {
   var isCustomElementExclusive = definition.type === skate.types.TAG;
   var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
   var isValidNativeCustomElementId = id.indexOf("-") > 0;
-  var supportsNativeCustomElements = typeof document.registerElement === "function";
 
-  if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
-    var elementPrototype = document.createElement(id).constructor.prototype;
+  if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
+    var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
     }
-    customElementConstructor = document.registerElement(id, {
-      "extends": definition["extends"],
+    var options = {
       prototype: inherit(definition.prototype, {
         createdCallback: function () {
           triggerCreated(this, definition);
@@ -1030,7 +1082,11 @@ function skate(id, definition) {
           });
         }
       })
-    });
+    };
+    if (definition.extends) {
+      options.extends = definition.extends;
+    }
+    customElementConstructor = document.registerElement(id, options);
 
     if (isCustomElementExclusive) {
       return customElementConstructor;
@@ -1102,7 +1158,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  "extends": undefined,
+  extends: undefined,
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
@@ -1141,42 +1197,33 @@ if (typeof define === "function") {
 
 // CommonJS
 if (typeof exports === "object") {
-  exports["default"] = skate;
+  exports.default = skate;
 }
 
-// ES6
-module.exports = skate;
+exports.default = skate;
 },{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
 
 exports.hasOwn = hasOwn;
+exports.camelCase = camelCase;
 exports.debounce = debounce;
 exports.getClosestIgnoredElement = getClosestIgnoredElement;
 exports.inherit = inherit;
 exports.objEach = objEach;
-var ATTR_IGNORE = require("./constants").ATTR_IGNORE;
+exports.supportsNativeCustomElements = supportsNativeCustomElements;
+"use strict";
 
-
-/**
- * Checks {}.hasOwnProperty in a safe way.
- *
- * @param {Object} obj The object the property is on.
- * @param {String} key The object key to check.
- *
- * @returns {Boolean}
- */
+var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
 function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-/**
- * Returns a function that will prevent more than one call in a single clock
- * tick.
- *
- * @param {Function} fn The function to call.
- *
- * @returns {Function}
- */
+function camelCase(str) {
+  return str.split(/-/g).map(function (str, index) {
+    return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
+  }).join("");
+}
+
 function debounce(fn) {
   var called = false;
 
@@ -1191,13 +1238,6 @@ function debounce(fn) {
   };
 }
 
-/**
- * Returns whether or not the specified element has been selectively ignored.
- *
- * @param {Element} element The element to check and traverse up from.
- *
- * @returns {Boolean}
- */
 function getClosestIgnoredElement(element) {
   var parent = element;
 
@@ -1210,15 +1250,6 @@ function getClosestIgnoredElement(element) {
   }
 }
 
-/**
- * Merges the second argument into the first.
- *
- * @param {Object} child The object to merge into.
- * @param {Object} parent The object to merge from.
- * @param {Boolean} overwrite Whether or not to overwrite properties on the child.
- *
- * @returns {Object} Returns the child object.
- */
 function inherit(child, parent, overwrite) {
   var names = Object.getOwnPropertyNames(parent);
   var namesLen = names.length;
@@ -1241,14 +1272,6 @@ function inherit(child, parent, overwrite) {
   return child;
 }
 
-/**
- * Traverses an object checking hasOwnProperty.
- *
- * @param {Object} obj The object to traverse.
- * @param {Function} fn The function to call for each item in the object.
- *
- * @returns {undefined}
- */
 function objEach(obj, fn) {
   for (var a in obj) {
     if (hasOwn(obj, a)) {
@@ -1256,8 +1279,12 @@ function objEach(obj, fn) {
     }
   }
 }
+
+function supportsNativeCustomElements() {
+  return typeof document.registerElement === "function";
+}
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-module.exports = "0.13.0";
+exports.default = "0.13.0";
 },{}]},{},[8]);
