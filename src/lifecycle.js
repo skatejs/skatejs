@@ -309,6 +309,8 @@ function triggerAttached (target, component) {
   if (component.attached) {
     component.attached(target);
   }
+
+  setLifecycleFlag(target, component, 'detached', false);
 }
 
 /**
@@ -320,6 +322,10 @@ function triggerAttached (target, component) {
  * @returns {undefined}
  */
 function triggerDetached (target, component) {
+  if (ensureLifecycleFlag(target, component, 'detached')) {
+    return;
+  }
+
   if (component.detached) {
     component.detached(target);
   }
