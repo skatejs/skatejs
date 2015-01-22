@@ -242,7 +242,7 @@ describe('Attribute listeners', function () {
         var called = 0;
         var tagName = helpers.safeTagName('my-el');
         var testHandlers = {
-          fallback: function () {
+          fallback: function (element, data) {
             ++called;
           }
         };
@@ -258,12 +258,15 @@ describe('Attribute listeners', function () {
 
         var myEl = new MyEl();
         myEl.test = false;
-        myEl.test = true;
-        myEl.test = undefined;
-
         helpers.afterMutations(function () {
-          called.should.equal(expectedNumCalls);
-          done();
+          myEl.test = true;
+          helpers.afterMutations(function () {
+            myEl.test = undefined;
+            helpers.afterMutations(function () {
+              called.should.equal(expectedNumCalls);
+              done();
+            });
+          });
         });
       }
 
