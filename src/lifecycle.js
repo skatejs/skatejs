@@ -10,7 +10,8 @@ import {
   camelCase,
   hasOwn,
   inherit,
-  objEach
+  objEach,
+  supportsNativeCustomElements
 } from './utils';
 
 var elProto = window.HTMLElement.prototype;
@@ -122,71 +123,56 @@ function addAttributeToPropertyLinks (target, component) {
   }
 }
 
-/**
- * Binds attribute listeners for the specified attribute handlers.
- *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
- *
- * @returns {undefined}
- */
-function addAttributeListeners (target, component) {
-  function triggerCallback (type, name, newValue, oldValue) {
-    var callback;
-    var isSpecific = component.attributes && component.attributes[name];
+function triggerAttributeChanged(target, component, data) {
+  var callback;
+  var type;
+  var name = data.name;
+  var newValue = data.newValue;
+  var oldValue = data.oldValue;
+  var newValueIsString = typeof newValue === 'string';
+  var oldValueIsString = typeof oldValue === 'string';
+  var attrs = component.attributes;
+  var specific = attrs && attrs[name];
 
-    if (isSpecific && component.attributes[name][type]) {
-      callback = component.attributes[name][type];
-    } else if (isSpecific && component.attributes[name].fallback) {
-      callback = component.attributes[name].fallback;
-    } else if (isSpecific) {
-      callback = component.attributes[name];
-    } else {
-      callback = component.attributes;
-    }
-
-    // There may still not be a callback.
-    if (typeof callback === 'function') {
-      callback(target, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
-    }
+  if (!oldValueIsString && newValueIsString) {
+    type = 'created';
+  } else if (oldValueIsString && newValueIsString) {
+    type = 'updated';
+  } else if (oldValueIsString && !newValueIsString) {
+    type = 'removed';
   }
 
+  if (specific && typeof specific[type] === 'function') {
+    callback = specific[type];
+  } else if (specific && typeof specific.fallback === 'function') {
+    callback = specific.fallback;
+  } else if (typeof specific === 'function') {
+    callback = specific;
+  } else if (typeof attrs === 'function') {
+    callback = attrs;
+  }
+
+  // Ensure values are null if undefined.
+  newValue = newValue === undefined ? null : newValue;
+  oldValue = oldValue === undefined ? null : oldValue;
+
+  // There may still not be a callback.
+  if (callback) {
+    callback(target, {
+      type: type,
+      name: name,
+      newValue: newValue,
+      oldValue: oldValue
+    });
+  }
+}
+
+function triggerAttributesCreated (target, component) {
   var a;
   var attrs = target.attributes;
   var attrsCopy = [];
   var attrsLen = attrs.length;
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      var type;
-      var name = mutation.attributeName;
-      var attr = attrs[name];
 
-      if (attr && mutation.oldValue === null) {
-        type = 'created';
-      } else if (attr && mutation.oldValue !== null) {
-        type = 'updated';
-      } else if (!attr) {
-        type = 'removed';
-      }
-
-      triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
-    });
-  });
-
-  observer.observe(target, {
-    attributes: true,
-    attributeOldValue: true
-  });
-
-  addAttributeToPropertyLinks(target, component);
-  initAttributes(target, component);
-
-  // This is actually faster than [].slice.call(attrs).
   for (a = 0; a < attrsLen; a++) {
     attrsCopy.push(attrs[a]);
   }
@@ -198,8 +184,37 @@ function addAttributeListeners (target, component) {
   // created callback for the attributes that already exist on the element.
   for (a = 0; a < attrsLen; a++) {
     var attr = attrsCopy[a];
-    triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
+    triggerAttributeChanged(target, component, {
+      name: attr.nodeName,
+      newValue: attr.value || attr.nodeValue
+    });
   }
+}
+
+function addAttributeListeners (target, component) {
+  var attrs = target.attributes;
+
+  if (!component.attributes || supportsNativeCustomElements) {
+    return;
+  }
+
+  var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+      var name = mutation.attributeName;
+      var attr = attrs[name];
+
+      triggerAttributeChanged(target, component, {
+        name: name,
+        newValue: attr && (attr.value || attr.nodeValue),
+        oldValue: mutation.oldValue
+      });
+    });
+  });
+
+  observer.observe(target, {
+    attributes: true,
+    attributeOldValue: true
+  });
 }
 
 /**
@@ -266,6 +281,9 @@ function triggerCreated (target, component) {
 
   addEventListeners(target, component);
   addAttributeListeners(target, component);
+  addAttributeToPropertyLinks(target, component);
+  initAttributes(target, component);
+  triggerAttributesCreated(target, component);
 
   if (component.created) {
     component.created(target);
@@ -385,7 +403,10 @@ function removeElements (elements) {
 }
 
 export {
-  triggerCreated,
   initElements,
-  removeElements
+  removeElements,
+  triggerAttached,
+  triggerAttributeChanged,
+  triggerCreated,
+  triggerDetached
 };

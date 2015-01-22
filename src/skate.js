@@ -11,7 +11,8 @@ import {
 import registry from './registry';
 import {
   debounce,
-  inherit
+  inherit,
+  supportsNativeCustomElements
 } from './utils';
 import version from './version';
 
@@ -90,7 +91,6 @@ function skate (id, definition) {
   var isCustomElementExclusive = definition.type === skate.types.TAG;
   var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
   var isValidNativeCustomElementId = id.indexOf('-') > 0;
-  var supportsNativeCustomElements = typeof document.registerElement === 'function';
 
   if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
     var elementPrototype = document.createElement(id).constructor.prototype;

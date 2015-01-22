@@ -116,3 +116,5 @@ export function objEach (obj, fn) {
     }
   }
 }
+
+export var supportsNativeCustomElements = 'registerElement' in document;
