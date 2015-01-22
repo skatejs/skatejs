@@ -13,7 +13,7 @@ cmd
   .parse(process.argv);
 
 var currentVersion = pkg.version;
-var nextVersion = semver.inc(
+var nextVersion = cmd.version || semver.inc(
   currentVersion,
   cmd.type || 'patch'
 );

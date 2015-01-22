@@ -5,7 +5,7 @@ var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 },{}],2:[function(require,module,exports){
 "use strict";
 
-exports.default = {
+module.exports = {
   /**
    * Adds data to the element.
    *
@@ -42,11 +42,18 @@ exports.default = {
 },{}],3:[function(require,module,exports){
 "use strict";
 
-var globals = require('./globals').default;
-var initElements = require('./lifecycle').initElements;
-var removeElements = require('./lifecycle').removeElements;
-var MutationObserver = require('./mutation-observer').default;
-var getClosestIgnoredElement = require('./utils').getClosestIgnoredElement;
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
+
+var globals = _interopRequire(require("./globals"));
+
+var initElements = require("./lifecycle").initElements;
+var removeElements = require("./lifecycle").removeElements;
+var MutationObserver = _interopRequire(require("./mutation-observer"));
+
+var getClosestIgnoredElement = require("./utils").getClosestIgnoredElement;
+
 
 /**
  * The document observer handler.
@@ -97,7 +104,7 @@ function createDocumentObserver() {
   return observer;
 }
 
-exports.default = {
+module.exports = {
   register: function (fixIe) {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
@@ -132,19 +139,27 @@ if (!window.__skate) {
   };
 }
 
-exports.default = window.__skate;
+module.exports = window.__skate;
 },{}],5:[function(require,module,exports){
 "use strict";
 
-var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
-var data = require('./data').default;
-var MutationObserver = require('./mutation-observer').default;
-var registry = require('./registry').default;
-var inherit = require('./utils').inherit;
-var objEach = require('./utils').objEach;
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
+
+var ATTR_IGNORE = require("./constants").ATTR_IGNORE;
+var data = _interopRequire(require("./data"));
+
+var MutationObserver = _interopRequire(require("./mutation-observer"));
+
+var registry = _interopRequire(require("./registry"));
+
+var inherit = require("./utils").inherit;
+var objEach = require("./utils").objEach;
+
 
 var elProto = window.HTMLElement.prototype;
-var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
+var matchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
 
 function getLifecycleFlag(target, component, name) {
   return data.get(target, component.id + ":lifecycle:" + name);
@@ -462,8 +477,9 @@ exports.removeElements = removeElements;
 },{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(require,module,exports){
 "use strict";
 
-var debounce = require('./utils').debounce;
-var objEach = require('./utils').objEach;
+var debounce = require("./utils").debounce;
+var objEach = require("./utils").objEach;
+
 
 var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
@@ -775,12 +791,18 @@ MutationObserver.prototype = {
   }
 };
 
-exports.default = MutationObserver;
+module.exports = MutationObserver;
 },{"./utils":9}],7:[function(require,module,exports){
 "use strict";
 
-var globals = require('./globals').default;
-var hasOwn = require('./utils').hasOwn;
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
+
+var globals = _interopRequire(require("./globals"));
+
+var hasOwn = require("./utils").hasOwn;
+
 
 /**
  * Returns the class list for the specified element.
@@ -798,7 +820,7 @@ function getClassList(element) {
 
   var attrs = element.attributes;
 
-  return (attrs["class"] && attrs["class"].nodeValue.split(/\s+/)) || [];
+  return attrs["class"] && attrs["class"].nodeValue.split(/\s+/) || [];
 }
 
 /**
@@ -814,7 +836,7 @@ function isDefinitionOfType(id, type) {
   return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
 }
 
-exports.default = {
+module.exports = {
   clear: function () {
     globals.registry = {};
     return this;
@@ -833,7 +855,7 @@ exports.default = {
 
     if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
       definition = globals.registry[isAttrOrTag];
-      tagToExtend = definition.extends;
+      tagToExtend = definition["extends"];
 
       if (isAttrValue) {
         if (tag === tagToExtend) {
@@ -849,7 +871,7 @@ exports.default = {
 
       if (isDefinitionOfType(attr, skate.types.ATTR)) {
         definition = globals.registry[attr];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -865,7 +887,7 @@ exports.default = {
 
       if (isDefinitionOfType(className, skate.types.CLASS)) {
         definition = globals.registry[className];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -889,16 +911,22 @@ exports.default = {
 },{"./globals":4,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
-var documentObserver = require('./document-observer').default;
-var triggerCreated = require('./lifecycle').triggerCreated;
-var triggerAttached = require('./lifecycle').triggerAttached;
-var triggerDetached = require('./lifecycle').triggerDetached;
-var triggerAttributeChanged = require('./lifecycle').triggerAttributeChanged;
-var initElements = require('./lifecycle').initElements;
-var registry = require('./registry').default;
-var debounce = require('./utils').debounce;
-var inherit = require('./utils').inherit;
-var version = require('./version').default;
+var _interopRequire = function (obj) {
+  return obj && (obj["default"] || obj);
+};
+
+var documentObserver = _interopRequire(require("./document-observer"));
+
+var triggerCreated = require("./lifecycle").triggerCreated;
+var triggerAttached = require("./lifecycle").triggerAttached;
+var triggerDetached = require("./lifecycle").triggerDetached;
+var triggerAttributeChanged = require("./lifecycle").triggerAttributeChanged;
+var initElements = require("./lifecycle").initElements;
+var registry = _interopRequire(require("./registry"));
+
+var debounce = require("./utils").debounce;
+var inherit = require("./utils").inherit;
+var version = _interopRequire(require("./version"));
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -926,7 +954,7 @@ var initDocument = debounce(function () {
 function makeElementConstructor(definition) {
   function CustomElement() {
     var element;
-    var tagToExtend = definition.extends;
+    var tagToExtend = definition["extends"];
     var definitionId = definition.id;
 
     if (tagToExtend) {
@@ -969,6 +997,8 @@ function skate(id, definition) {
   definition = inherit(definition || {}, skate.defaults);
   definition.id = id;
 
+  registry.set(id, definition);
+
   var customElementConstructor;
   var isCustomElementExclusive = definition.type === skate.types.TAG;
   var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
@@ -976,8 +1006,12 @@ function skate(id, definition) {
   var supportsNativeCustomElements = typeof document.registerElement === "function";
 
   if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+    var elementPrototype = document.createElement(id).constructor.prototype;
+    if (!elementPrototype.isPrototypeOf(definition.prototype)) {
+      definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
+    }
     customElementConstructor = document.registerElement(id, {
-      extends: definition.extends,
+      "extends": definition["extends"],
       prototype: inherit(definition.prototype, {
         createdCallback: function () {
           triggerCreated(this, definition);
@@ -989,7 +1023,7 @@ function skate(id, definition) {
           triggerDetached(this, definition);
         },
         attributeChangedCallback: function (name, oldValue, newValue) {
-          triggerAttributeChanged(target, definition, {
+          triggerAttributeChanged(this, definition, {
             name: name,
             oldValue: oldValue,
             newValue: newValue
@@ -1003,7 +1037,6 @@ function skate(id, definition) {
     }
   }
 
-  registry.set(id, definition);
   initDocument();
   documentObserver.register(definition.remove);
 
@@ -1069,7 +1102,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: "",
+  "extends": undefined,
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
@@ -1108,10 +1141,11 @@ if (typeof define === "function") {
 
 // CommonJS
 if (typeof exports === "object") {
-  exports.default = skate;
+  exports["default"] = skate;
 }
 
-exports.default = skate;
+// ES6
+module.exports = skate;
 },{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
 
@@ -1120,13 +1154,29 @@ exports.debounce = debounce;
 exports.getClosestIgnoredElement = getClosestIgnoredElement;
 exports.inherit = inherit;
 exports.objEach = objEach;
-"use strict";
+var ATTR_IGNORE = require("./constants").ATTR_IGNORE;
 
-var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
+
+/**
+ * Checks {}.hasOwnProperty in a safe way.
+ *
+ * @param {Object} obj The object the property is on.
+ * @param {String} key The object key to check.
+ *
+ * @returns {Boolean}
+ */
 function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
+/**
+ * Returns a function that will prevent more than one call in a single clock
+ * tick.
+ *
+ * @param {Function} fn The function to call.
+ *
+ * @returns {Function}
+ */
 function debounce(fn) {
   var called = false;
 
@@ -1141,6 +1191,13 @@ function debounce(fn) {
   };
 }
 
+/**
+ * Returns whether or not the specified element has been selectively ignored.
+ *
+ * @param {Element} element The element to check and traverse up from.
+ *
+ * @returns {Boolean}
+ */
 function getClosestIgnoredElement(element) {
   var parent = element;
 
@@ -1153,6 +1210,15 @@ function getClosestIgnoredElement(element) {
   }
 }
 
+/**
+ * Merges the second argument into the first.
+ *
+ * @param {Object} child The object to merge into.
+ * @param {Object} parent The object to merge from.
+ * @param {Boolean} overwrite Whether or not to overwrite properties on the child.
+ *
+ * @returns {Object} Returns the child object.
+ */
 function inherit(child, parent, overwrite) {
   var names = Object.getOwnPropertyNames(parent);
   var namesLen = names.length;
@@ -1175,6 +1241,14 @@ function inherit(child, parent, overwrite) {
   return child;
 }
 
+/**
+ * Traverses an object checking hasOwnProperty.
+ *
+ * @param {Object} obj The object to traverse.
+ * @param {Function} fn The function to call for each item in the object.
+ *
+ * @returns {undefined}
+ */
 function objEach(obj, fn) {
   for (var a in obj) {
     if (hasOwn(obj, a)) {
@@ -1185,5 +1259,5 @@ function objEach(obj, fn) {
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-exports.default = "0.13.1";
+module.exports = "0.13.0";
 },{}]},{},[8]);
