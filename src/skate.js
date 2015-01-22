@@ -92,7 +92,7 @@ function skate (id, definition) {
   var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
   var isValidNativeCustomElementId = id.indexOf('-') > 0;
 
-  if (supportsNativeCustomElements && isCustomElementInclusive && isValidNativeCustomElementId) {
+  if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
     var elementPrototype = document.createElement(id).constructor.prototype;
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);

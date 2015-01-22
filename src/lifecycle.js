@@ -194,7 +194,7 @@ function triggerAttributesCreated (target, component) {
 function addAttributeListeners (target, component) {
   var attrs = target.attributes;
 
-  if (!component.attributes || supportsNativeCustomElements) {
+  if (!component.attributes || supportsNativeCustomElements()) {
     return;
   }
 

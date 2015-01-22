@@ -117,4 +117,6 @@ export function objEach (obj, fn) {
   }
 }
 
-export var supportsNativeCustomElements = 'registerElement' in document;
+export function supportsNativeCustomElements () {
+  return typeof document.registerElement === 'function';
+}
