@@ -164,6 +164,21 @@ describe('Instantiation', function () {
       idsToCheck[id].should.equal(true);
     });
   });
+
+  it('should use a tag name equal to the provided one', function () {
+    var {safe: tagName} = helpers.safeTagName('my-element');
+    var MyElement = skate(tagName, {
+      type: skate.types.TAG,
+      prototype: {
+        returnSelf: function () {
+          return this;
+        }
+      }
+    });
+
+    var el = new MyElement();
+    expect(el.tagName).to.equal(tagName.toUpperCase());
+  })
 });
 
 describe('Forms', function () {

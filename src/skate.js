@@ -93,12 +93,11 @@ function skate (id, definition) {
   var isValidNativeCustomElementId = id.indexOf('-') > 0;
 
   if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
-    var elementPrototype = document.createElement(id).constructor.prototype;
+    var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
     }
-    customElementConstructor = document.registerElement(id, {
-      extends: definition.extends,
+    var options = {
       prototype: inherit(definition.prototype, {
         createdCallback: function () {
           triggerCreated(this, definition);
@@ -117,7 +116,11 @@ function skate (id, definition) {
           });
         }
       })
-    });
+    };
+    if (definition.extends) {
+      options.extends = definition.extends;
+    }
+    customElementConstructor = document.registerElement(id, options);
 
     if (isCustomElementExclusive) {
       return customElementConstructor;
