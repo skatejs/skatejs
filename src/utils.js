@@ -17,6 +17,19 @@ export function hasOwn (obj, key) {
 }
 
 /**
+ * Camel-cases the specified string.
+ *
+ * @param {String} str The string to camel-case.
+ *
+ * @returns {String}
+ */
+export function camelCase (str) {
+  return str.split(/-/g).map(function (str, index) {
+    return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
+  }).join('');
+}
+
+/**
  * Returns a function that will prevent more than one call in a single clock
  * tick.
  *

@@ -4,127 +4,346 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Attribute listeners', function () {
-  it('should listen to changes in specified attributes', function (done) {
-    var created = false;
-    var updated = false;
-
-    var tagName = helpers.safeTagName('my-el');
-    skate(tagName.safe, {
-      attributes: {
-        open: {
-          created: function (element, data) {
-            created = true;
-            data.newValue.should.equal('created');
-            element.setAttribute('open', 'updated');
-          },
-          updated: function (element, data) {
-            updated = true;
-            data.oldValue.should.equal('created');
-            data.newValue.should.equal('updated');
-            element.removeAttribute('open');
-          },
-          removed: function (element, data) {
-            created.should.equal(true);
-            updated.should.equal(true);
-            data.oldValue.should.equal('updated');
-            done();
+  describe('default values', function () {
+    it('should set a default value using the "value" option', function () {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: 'true'
           }
         }
-      }
+      });
+
+      new MyEl().getAttribute('test').should.equal('true');
     });
 
-    helpers.fixture('<my-el open="created"></my-el>', tagName);
+    it('should allow a callback to return a default value', function () {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: function () {
+              return 'true';
+            }
+          }
+        }
+      });
+
+      new MyEl().getAttribute('test').should.equal('true');
+    });
+
+    it('should not override if already specified', function () {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: 'true'
+          }
+        }
+      });
+
+      skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
+        .firstChild
+        .test
+        .should
+        .equal('false');
+    });
   });
 
-  it('should accept a function insead of an object for a particular attribute definition.', function (done) {
-    skate('div', {
-      attributes: {
-        open: function (element, data) {
+  describe('should define properties for all watched attributes', function () {
+    var myEl;
+    var created = false;
+    var updated = false;
+    var removed = false;
+
+    beforeEach(function () {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
+        attributes: {
+          camelCased: {
+            value: 'true'
+          },
+          'not-camel-cased': {
+            value: 'true'
+          },
+          'test-proxy': {},
+          'test-created': {
+            value: 'true',
+            created: function () {
+              created = true;
+            }
+          },
+          'test-lifecycle': {
+            created: function () {
+              created = true;
+            },
+            updated: function () {
+              updated = true;
+            },
+            removed: function () {
+              removed = true;
+            }
+          },
+          'override': {
+            value: 'false'
+          }
+        },
+        prototype: {
+          override: 'true'
+        }
+      });
+
+      myEl = new MyEl();
+    });
+
+    it('should respect attributes that are already camel-cased', function () {
+      myEl.camelCased.should.equal('true');
+    });
+
+    it('should camel-case the property name and leave the attribute name as is', function () {
+      myEl.notCamelCased.should.equal('true');
+    });
+
+    it('should set the attribute when the property is set', function () {
+      myEl.setAttribute('test-proxy', false);
+      myEl.testProxy.should.equal('false');
+    });
+
+    it('should set the property when the attribute is set', function () {
+      myEl.testProxy = true;
+      myEl.getAttribute('test-proxy').should.equal('true');
+    });
+
+    it('should call created after setting the default value', function (done) {
+      helpers.afterMutations(function () {
+        myEl.testCreated.should.equal('true');
+        created.should.equal(true);
+        done();
+      });
+    });
+
+    it('should call created when the attribute is set for the first time', function (done) {
+      myEl.testLifecycle = true;
+      helpers.afterMutations(function () {
+        myEl.testLifecycle.should.equal('true');
+        created.should.equal(true);
+        done();
+      });
+    });
+
+    it('should call updated when the attribute is subsequently set', function (done) {
+      myEl.testLifecycle = true;
+      myEl.testLifecycle = false;
+      helpers.afterMutations(function () {
+        updated.should.equal(true);
+        done();
+      });
+    });
+
+    it('should call removed when the attribute is set to "undefined".', function (done) {
+      myEl.testLifecycle = true;
+      myEl.testLifecycle = undefined;
+      helpers.afterMutations(function () {
+        removed.should.equal(true);
+        done();
+      });
+    });
+
+    it('should not override an existing property', function (done) {
+      myEl.setAttribute('override', 'false');
+      helpers.afterMutations(function () {
+        myEl.override.should.equal('true');
+        done();
+      });
+    });
+  });
+
+  describe('callbacks', function () {
+    it('should listen to changes in specified attributes', function (done) {
+      var created = false;
+      var updated = false;
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: {
+          open: {
+            created: function (element, data) {
+              created = true;
+              data.newValue.should.equal('created');
+              element.setAttribute('open', 'updated');
+            },
+            updated: function (element, data) {
+              updated = true;
+              data.oldValue.should.equal('created');
+              data.newValue.should.equal('updated');
+              element.removeAttribute('open');
+            },
+            removed: function (element, data) {
+              created.should.equal(true);
+              updated.should.equal(true);
+              data.oldValue.should.equal('updated');
+              done();
+            }
+          }
+        }
+      });
+
+      helpers.fixture('<my-el open="created"></my-el>', tagName);
+    });
+
+    it('should accept a function insead of an object for a particular attribute definition.', function (done) {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: {
+          open: function (element, data) {
+            if (data.type === 'created') {
+              element.setAttribute('open', 'updated');
+            } else if (data.type === 'updated') {
+              element.removeAttribute('open');
+            } else if (data.type === 'removed') {
+              assert(true);
+              done();
+            }
+          }
+        }
+      });
+
+      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
+    });
+
+    it('should accept a function insead of an object for the entire attribute definition.', function (done) {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: function (element, data) {
           if (data.type === 'created') {
-            element.setAttribute('open', 'updated');
+            setTimeout(function () {
+              element.setAttribute('open', 'updated');
+            });
           } else if (data.type === 'updated') {
-            element.removeAttribute('open');
+            setTimeout(function () {
+              element.removeAttribute('open');
+            });
           } else if (data.type === 'removed') {
             assert(true);
             done();
           }
         }
-      }
+      });
+
+      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
     });
 
-    helpers.fixture('<div id="attrtest" open="created"></div>');
-  });
-
-  it('should accept a function insead of an object for the entire attribute definition.', function (done) {
-    skate('div', {
-      attributes: function (element, data) {
-        if (data.type === 'created') {
-          setTimeout(function () {
-            element.setAttribute('open', 'updated');
-          });
-        } else if (data.type === 'updated') {
-          setTimeout(function () {
-            element.removeAttribute('open');
-          });
-        } else if (data.type === 'removed') {
-          assert(true);
-          done();
-        }
-      }
-    });
-
-    helpers.fixture('<div id="attrtest" open="created"></div>');
-  });
-
-  it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
-    skate('div', {
-      attributes: function (element, data) {
-        if (data.name === 'first') {
-          element.removeAttribute('second');
-        }
-      }
-    });
-
-    document.body.innerHTML = '<div first="first" second="second"></div>';
-    var div = skate.init(document.body.querySelector('div'));
-    div.hasAttribute('first').should.equal(true);
-    div.hasAttribute('second').should.equal(false);
-  });
-
-  it('should ensure attributes are initialised', function () {
-    var called = false;
-    var tagName = helpers.safeTagName('my-el');
-    skate(tagName.safe, {
-      attributes: function () {
-        called = true;
-      }
-    });
-
-    skate.init(helpers.fixture('<my-el some-attr></my-el>', tagName));
-    expect(called).to.equal(true);
-  });
-
-  it('should iterate over every attribute even if one removed while it is still being processed', function () {
-    var attributesCalled = 0;
-    var tagName = helpers.safeTagName('my-el');
-    skate(tagName.safe, {
-      attributes: {
-        id: {
-          created: function (element) {
-            element.removeAttribute('id');
-            attributesCalled++;
+    describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
+      function assertAttributeLifeycleCalls(expectedNumCalls, nonFallbackHandlers, done) {
+        var called = 0;
+        var tagName = helpers.safeTagName('my-el');
+        var testHandlers = {
+          fallback: function (element, data) {
+            ++called;
           }
-        },
-        name: {
-          created: function (element) {
-            element.removeAttribute('name');
-            attributesCalled++;
+        };
+        var MyEl = skate(tagName.safe, {
+          attributes: {
+            test: testHandlers
+          }
+        });
+
+        nonFallbackHandlers.forEach(function (item) {
+          testHandlers[item] = function () {};
+        });
+
+        var myEl = new MyEl();
+        myEl.test = false;
+        helpers.afterMutations(function () {
+          myEl.test = true;
+          helpers.afterMutations(function () {
+            myEl.test = undefined;
+            helpers.afterMutations(function () {
+              called.should.equal(expectedNumCalls);
+              done();
+            });
+          });
+        });
+      }
+
+      it('fallback only', function (done) {
+        assertAttributeLifeycleCalls(3, [], done);
+      });
+
+      it('created + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['created'], done);
+      });
+
+      it('updated + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['updated'], done);
+      });
+
+      it('removed + fallback', function (done) {
+        assertAttributeLifeycleCalls(2, ['removed'], done);
+      });
+    });
+  });
+
+  describe('Attributes added via HTML', function () {
+    it('should ensure attributes are initialised', function () {
+      var called = false;
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: function () {
+          called = true;
+        }
+      });
+
+      skate.init(helpers.fixture('<my-el some-attr></my-el>', tagName));
+      expect(called).to.equal(true);
+    });
+  });
+
+  describe('side effects', function () {
+    it('should ensure an attribute exists before trying to action it just in case another attribute handler removes it', function () {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: function (element, data) {
+          if (data.name === 'first') {
+            element.removeAttribute('second');
           }
         }
-      }
+      });
+
+      skate.init(helpers.fixture('<my-el first></my-el>', tagName));
+      document.querySelector(tagName.safe).hasAttribute('first').should.equal(true);
+      document.querySelector(tagName.safe).hasAttribute('second').should.equal(false);
     });
 
-    skate.init(helpers.fixture('<my-el id="test" name="name"></my-el>', tagName));
-    expect(attributesCalled).to.equal(2);
+    it('should iterate over every attribute even if one removed while it is still being processed', function () {
+      var attributesCalled = 0;
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: {
+          id: {
+            created: function (element) {
+              element.removeAttribute('id');
+              attributesCalled++;
+            }
+          },
+          name: {
+            created: function (element) {
+              element.removeAttribute('name');
+              attributesCalled++;
+            }
+          }
+        }
+      });
+
+      skate.init(helpers.fixture('<my-el id="test" name="name"></my-el>', tagName));
+      expect(attributesCalled).to.equal(2);
+    });
   });
 });

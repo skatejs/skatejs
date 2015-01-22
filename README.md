@@ -117,15 +117,30 @@ skate('my-component', {
   // - oldValue: The old value. If type === 'created', this will be undefined.
   attributes: {
     'my-attribute': {
+      // The element's default value if not already specified on the element.
+      // Can also be a function that returns a value. The function gets passed
+      // The element as its only argument.
+      value: 'default value',
+
+      // Called when the attribute is set for the first time.
       created: function (element, change) {
 
       },
 
+      // Called on all attribute modifications except for the intial creation.
       updated: function (element, change) {
 
       },
 
+      // Called when the attribute is removed.
       removed: function (element, change) {
+
+      },
+
+      // Called when created, updated or remove is not specified. This is the
+      // same as specifying a function instead of an options object for a
+      // given attribute.
+      fallback: function (element, change) {
 
       }
     }
@@ -325,6 +340,73 @@ The `removed` handler gets called when:
 - The corresponding attribute is removed from the element.
 
 Callbacks that get fired for attributes that already exist on an element get called after the `attached` callback is triggered.
+
+
+
+#### Catching Unspecified Modifications
+
+You may also specify a `fallback` callback that will get called if a specific callback for the type of modification isn't found. For example, if you wanted to do the same thing on `created` and `updated` but something different on `removed`, then you'd do something like:
+
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': {
+      fallback: function (element, change) {
+
+      },
+
+      removed: function (element, change) {
+
+      }
+    }
+  }
+}
+```
+
+Note that doing:
+
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': {
+      fallback: function (element, change) {
+
+      }
+    }
+  }
+}
+```
+
+Is the same thing as:
+
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': function (element, change) {
+
+    }
+  }
+}
+```
+
+The only difference is that the former allows you to specify other options for that specific attribute.
+
+
+#### Default Values
+
+If you want to specify a default value for your component you may do so by setting the `default` option for an attribute.
+
+```js
+skate('my-component', {
+  attributes: {
+    'my-attribute': {
+      value: 'default value'
+    }
+  }
+}
+```
+
+That would ensure that the attribute `my-attribute` is set to `default value` but only if that attribute doesn't already exist.
 
 
 

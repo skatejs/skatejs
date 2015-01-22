@@ -7,18 +7,20 @@ import data from './data';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
+  camelCase,
+  hasOwn,
   inherit,
   objEach
 } from './utils';
 
 var elProto = window.HTMLElement.prototype;
 var matchesSelector = (
-    elProto.matches ||
-    elProto.msMatchesSelector ||
-    elProto.webkitMatchesSelector ||
-    elProto.mozMatchesSelector ||
-    elProto.oMatchesSelector
-  );
+  elProto.matches ||
+  elProto.msMatchesSelector ||
+  elProto.webkitMatchesSelector ||
+  elProto.mozMatchesSelector ||
+  elProto.oMatchesSelector
+);
 
 function getLifecycleFlag (target, component, name) {
   return data.get(target, component.id + ':lifecycle:' + name);
@@ -51,63 +53,72 @@ function parseEvent (e) {
   };
 }
 
-function triggerAttributeChanged (target, component, data) {
-  var callback;
-  var type;
-  var name = data.name;
-  var newValue = data.newValue;
-  var oldValue = data.oldValue;
-  var newValueIsString = typeof newValue === 'string';
-  var oldValueIsString = typeof oldValue === 'string';
+/**
+ * Sets the defined attributes to their default values, if specified.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
+function initAttributes (target, component) {
+  var componentAttributes = component.attributes;
 
-  if (!oldValueIsString && newValueIsString) {
-    type = 'created';
-  } else if (oldValueIsString && newValueIsString) {
-    type = 'updated';
-  } else if (oldValueIsString && !newValueIsString) {
-    type = 'removed';
+  if (typeof componentAttributes !== 'object') {
+    return;
   }
 
-  if (component.attributes && component.attributes[name] && typeof component.attributes[name][type] === 'function') {
-    callback = component.attributes[name][type];
-  } else if (component.attributes && typeof component.attributes[name] === 'function') {
-    callback = component.attributes[name];
-  } else if (typeof component.attributes === 'function') {
-    callback = component.attributes;
-  }
-
-  // There may still not be a callback.
-  if (callback) {
-    callback(target, {
-      type: type,
-      name: name,
-      newValue: newValue,
-      oldValue: oldValue
-    });
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'value') && !target.hasAttribute(attribute)) {
+      var value = componentAttributes[attribute].value;
+      value = typeof value === 'function' ? value(target) : value;
+      target.setAttribute(attribute, value);
+    }
   }
 }
 
-function triggerAttributesCreated (target, component) {
-  var a;
-  var attrs = target.attributes;
-  var attrsCopy = [];
-  var attrsLen = attrs.length;
+/**
+ * Defines a property that proxies the specified attribute.
+ *
+ * @param {Element} target The web component element.
+ * @param {String} attribute The attribute name to proxy.
+ *
+ * @returns {undefined}
+ */
+function defineAttributeProperty (target, attribute) {
+  Object.defineProperty(target, camelCase(attribute), {
+    get: function () {
+      return this.getAttribute(attribute);
+    },
+    set: function (value) {
+      if (value === undefined) {
+        this.removeAttribute(attribute);
+      } else {
+        this.setAttribute(attribute, value);
+      }
+    }
+  });
+}
 
-  for (a = 0; a < attrsLen; a++) {
-    attrsCopy.push(attrs[a]);
+/**
+ * Adds links from attributes to properties.
+ *
+ * @param {Element} target The web component element.
+ * @param {Object} component The web component definition.
+ *
+ * @returns {undefined}
+ */
+function addAttributeToPropertyLinks (target, component) {
+  var componentAttributes = component.attributes;
+
+  if (typeof componentAttributes !== 'object') {
+    return;
   }
 
-  // In default web components, attribute changes aren't triggered for
-  // attributes that already exist on an element when it is bound. This sucks
-  // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute by calling the
-  // created callback for the attributes that already exist on the element.
-  for (a = 0; a < attrsLen; a++) {
-    var attr = attrsCopy[a];
-    triggerAttributeChanged(target, component, {
-      name: attr.nodeName,
-      newValue: attr.value || attr.nodeValue
-    });
+  for (var attribute in componentAttributes) {
+    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
+      defineAttributeProperty(target, attribute);
+    }
   }
 }
 
@@ -120,21 +131,50 @@ function triggerAttributesCreated (target, component) {
  * @returns {undefined}
  */
 function addAttributeListeners (target, component) {
-  if (!component.attributes) {
-    return;
+  function triggerCallback (type, name, newValue, oldValue) {
+    var callback;
+    var isSpecific = component.attributes && component.attributes[name];
+
+    if (isSpecific && component.attributes[name][type]) {
+      callback = component.attributes[name][type];
+    } else if (isSpecific && component.attributes[name].fallback) {
+      callback = component.attributes[name].fallback;
+    } else if (isSpecific) {
+      callback = component.attributes[name];
+    } else {
+      callback = component.attributes;
+    }
+
+    // There may still not be a callback.
+    if (typeof callback === 'function') {
+      callback(target, {
+        type: type,
+        name: name,
+        newValue: newValue,
+        oldValue: oldValue
+      });
+    }
   }
 
+  var a;
   var attrs = target.attributes;
+  var attrsCopy = [];
+  var attrsLen = attrs.length;
   var observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
+      var type;
       var name = mutation.attributeName;
       var attr = attrs[name];
 
-      triggerAttributeChanged(target, component, {
-        name: name,
-        newValue: attr && (attr.value || attr.nodeValue),
-        oldValue: mutation.oldValue
-      });
+      if (attr && mutation.oldValue === null) {
+        type = 'created';
+      } else if (attr && mutation.oldValue !== null) {
+        type = 'updated';
+      } else if (!attr) {
+        type = 'removed';
+      }
+
+      triggerCallback(type, name, attr ? (attr.value || attr.nodeValue) : undefined, mutation.oldValue);
     });
   });
 
@@ -142,6 +182,24 @@ function addAttributeListeners (target, component) {
     attributes: true,
     attributeOldValue: true
   });
+
+  addAttributeToPropertyLinks(target, component);
+  initAttributes(target, component);
+
+  // This is actually faster than [].slice.call(attrs).
+  for (a = 0; a < attrsLen; a++) {
+    attrsCopy.push(attrs[a]);
+  }
+
+  // In default web components, attribute changes aren't triggered for
+  // attributes that already exist on an element when it is bound. This sucks
+  // when you want to reuse and separate code for attributes away from your
+  // lifecycle callbacks. Skate will initialise each attribute by calling the
+  // created callback for the attributes that already exist on the element.
+  for (a = 0; a < attrsLen; a++) {
+    var attr = attrsCopy[a];
+    triggerCallback('created', attr.nodeName, (attr.value || attr.nodeValue));
+  }
 }
 
 /**
@@ -153,7 +211,7 @@ function addAttributeListeners (target, component) {
  * @returns {undefined}
  */
 function addEventListeners (target, component) {
-  if (!component.events) {
+  if (typeof component.events !== 'object') {
     return;
   }
 
@@ -208,7 +266,6 @@ function triggerCreated (target, component) {
 
   addEventListeners(target, component);
   addAttributeListeners(target, component);
-  triggerAttributesCreated(target, component);
 
   if (component.created) {
     component.created(target);
@@ -329,9 +386,6 @@ function removeElements (elements) {
 
 export {
   triggerCreated,
-  triggerAttached,
-  triggerDetached,
-  triggerAttributeChanged,
   initElements,
   removeElements
 };
