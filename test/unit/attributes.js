@@ -162,79 +162,93 @@ describe('Attribute listeners', function () {
 
   describe('callbacks', function () {
     it('should listen to changes in specified attributes', function (done) {
-      var created = false;
-      var updated = false;
       var tagName = helpers.safeTagName('my-el');
-
-      skate(tagName.safe, {
+      var MyEl = skate(tagName.safe, {
         attributes: {
-          open: {
+          test: {
             created: function (element, data) {
-              created = true;
+              expect(data.oldValue).to.equal(null);
               data.newValue.should.equal('created');
-              element.setAttribute('open', 'updated');
             },
             updated: function (element, data) {
-              updated = true;
               data.oldValue.should.equal('created');
               data.newValue.should.equal('updated');
-              element.removeAttribute('open');
             },
             removed: function (element, data) {
-              created.should.equal(true);
-              updated.should.equal(true);
               data.oldValue.should.equal('updated');
+              expect(data.newValue).to.equal(null);
               done();
             }
           }
         }
       });
 
-      helpers.fixture('<my-el open="created"></my-el>', tagName);
+      var myEl = new MyEl();
+      myEl.setAttribute('test', 'created');
+      helpers.afterMutations(function () {
+        myEl.setAttribute('test', 'updated');
+        helpers.afterMutations(function () {
+          myEl.removeAttribute('test');
+        });
+      });
     });
 
     it('should accept a function insead of an object for a particular attribute definition.', function (done) {
       var tagName = helpers.safeTagName('my-el');
-
-      skate(tagName.safe, {
+      var MyEl = skate(tagName.safe, {
         attributes: {
-          open: function (element, data) {
+          test: function (element, data) {
             if (data.type === 'created') {
-              element.setAttribute('open', 'updated');
+              expect(data.oldValue).to.equal(null);
+              data.newValue.should.equal('created');
             } else if (data.type === 'updated') {
-              element.removeAttribute('open');
+              data.oldValue.should.equal('created');
+              data.newValue.should.equal('updated');
             } else if (data.type === 'removed') {
-              assert(true);
+              data.oldValue.should.equal('updated');
+              expect(data.newValue).to.equal(null);
               done();
             }
           }
         }
       });
 
-      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
+      var myEl = new MyEl();
+      myEl.setAttribute('test', 'created');
+      helpers.afterMutations(function () {
+        myEl.setAttribute('test', 'updated');
+        helpers.afterMutations(function () {
+          myEl.removeAttribute('test');
+        });
+      });
     });
 
     it('should accept a function insead of an object for the entire attribute definition.', function (done) {
       var tagName = helpers.safeTagName('my-el');
-
-      skate(tagName.safe, {
+      var MyEl = skate(tagName.safe, {
         attributes: function (element, data) {
           if (data.type === 'created') {
-            setTimeout(function () {
-              element.setAttribute('open', 'updated');
-            });
+            expect(data.oldValue).to.equal(null);
+            data.newValue.should.equal('created');
           } else if (data.type === 'updated') {
-            setTimeout(function () {
-              element.removeAttribute('open');
-            });
+            data.oldValue.should.equal('created');
+            data.newValue.should.equal('updated');
           } else if (data.type === 'removed') {
-            assert(true);
+            data.oldValue.should.equal('updated');
+            expect(data.newValue).to.equal(null);
             done();
           }
         }
       });
 
-      helpers.fixture('<my-el id="attrtest" open="created"></my-el>', tagName);
+      var myEl = new MyEl();
+      myEl.setAttribute('test', 'created');
+      helpers.afterMutations(function () {
+        myEl.setAttribute('test', 'updated');
+        helpers.afterMutations(function () {
+          myEl.removeAttribute('test');
+        });
+      });
     });
 
     describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
