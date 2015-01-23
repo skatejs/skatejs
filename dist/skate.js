@@ -399,10 +399,17 @@ function triggerCreated(target, component) {
     return;
   }
 
+  // TODO: This doesn't need to happen if using native.
   inherit(target, component.prototype, true);
 
-  if (component.template) {
+  // We use the unresolved / resolved attributes to flag whether or not the
+  // element has been templated or not. The resolved attribute is also how
+  // you can ensure there isn't a FOUC. If no templating is happening, then
+  // there is no reason to add / remove these attributes.
+  if (component.template && !target.hasAttribute(component.resolvedAttribute)) {
     component.template(target);
+    target.removeAttribute(component.unresolvedAttribute);
+    target.setAttribute(component.resolvedAttribute, "");
   }
 
   addEventListeners(target, component);
