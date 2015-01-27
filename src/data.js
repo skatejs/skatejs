@@ -1,7 +1,5 @@
 'use strict';
 
-import '../node_modules/weakmap/weakmap';
-
 export default function (element) {
   var data = element.__SKATE_DATA;
 
