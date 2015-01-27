@@ -142,9 +142,9 @@ describe('Instantiation', function () {
     });
   });
 
-  it('should not allow ids that may have the same names as functions / properties on the object prototype', function () {
+  it('should not throw an error if using an id with the same name as a method / property on the Object prototype', function () {
     var idsToSkate = ['hasOwnProperty', 'watch'];
-    var idsToCheck = {};
+    var idsToCheck = [];
 
     var div = document.createElement('div');
     div.className = idsToSkate.join(' ');
@@ -153,16 +153,12 @@ describe('Instantiation', function () {
       skate(id, {
         type: skate.types.CLASS,
         created: function () {
-          idsToCheck[id] = true;
+          idsToCheck.push(id);
         }
       });
     });
 
     skate.init(div);
-
-    idsToSkate.forEach(function (id) {
-      idsToCheck[id].should.equal(true);
-    });
   });
 
   it('should use a tag name equal to the provided one', function () {

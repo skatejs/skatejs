@@ -13,6 +13,7 @@
     "browserify": "^6.2.0",
     "closure-compiler": "~0.2.6",
     "commander": "^2.5.0",
+    "fs-extra": "^0.15.0",
     "handlebars": "^2.0.0",
     "jscs": "^1.7.3",
     "jshint": "^2.5.8",
@@ -25,7 +26,8 @@
     "metalsmith-markdown": "^0.2.1",
     "metalsmith-templates": "^0.6.0",
     "semver": "^4.1.0",
-    "shelljs": "~0.3.0"
+    "shelljs": "~0.3.0",
+    "weakmap": "0.0.6"
   },
   "scripts": {
     "deploy": "node build/bin/deploy.js",

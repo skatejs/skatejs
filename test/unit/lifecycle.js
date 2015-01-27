@@ -4,38 +4,66 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('Lifecycle Callbacks', function () {
-  it('should call the created() callback when the element is attached', function (done) {
-    var tagName = helpers.safeTagName('my-element');
-    skate(tagName.safe, {
+  var MyEl;
+  var myEl;
+  var tagName;
+  var created = false;
+  var attached = false;
+  var detached = false;
+
+  beforeEach(function () {
+    tagName = helpers.safeTagName('my-el');
+    created = false;
+    attached = false;
+    detached = false;
+    MyEl = skate(tagName.safe, {
       created: function () {
-        done();
+        created = true;
+      },
+      attached: function () {
+        attached = true;
+      },
+      detached: function () {
+        detached = true;
       }
     });
+    myEl = new MyEl();
+  });
 
-    helpers.fixture('<my-element></my-element>', tagName);
+  it('should call the created() callback when the element is created', function () {
+    expect(created).to.equal(true);
+    expect(attached).to.equal(false);
+    expect(detached).to.equal(false);
   });
 
   it('should call the attached() callback when the element is attached', function (done) {
-    var tagName = helpers.safeTagName('my-element');
-    skate(tagName.safe, {
-      attached: function () {
-        done();
-      }
+    helpers.fixture().appendChild(myEl);
+    helpers.afterMutations(function () {
+      expect(created).to.equal(true);
+      expect(attached).to.equal(true);
+      expect(detached).to.equal(false);
+      done();
     });
-
-    helpers.fixture('<my-element></my-element>', tagName);
   });
 
   it('should call the detached() callback when the element is detached', function (done) {
-    var tagName = helpers.safeTagName('my-element');
-    skate(tagName.safe, {
-      detached: function () {
+    helpers.fixture().appendChild(myEl);
+    helpers.afterMutations(function () {
+      helpers.fixture().removeChild(myEl);
+      helpers.afterMutations(function () {
+        expect(created).to.equal(true);
+        expect(attached).to.equal(true);
+        expect(detached).to.equal(true);
         done();
-      }
+      });
     });
+  });
 
-    helpers.fixture('<my-element></my-element>', tagName);
-    helpers.fixture('');
+  it('should not call the attached() callback when the element is initialised', function () {
+    skate.init(myEl);
+    expect(created).to.equal(true);
+    expect(attached).to.equal(false);
+    expect(detached).to.equal(false);
   });
 });
 
