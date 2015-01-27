@@ -23,22 +23,6 @@ var matchesSelector = (
   elProto.oMatchesSelector
 );
 
-function getLifecycleFlag (target, component, name) {
-  return data.get(target, component.id + ':lifecycle:' + name);
-}
-
-function setLifecycleFlag (target, component, name, value) {
-  data.set(target, component.id + ':lifecycle:' + name, !!value);
-}
-
-function ensureLifecycleFlag (target, component, name) {
-  if (getLifecycleFlag(target, component, name)) {
-    return true;
-  }
-  setLifecycleFlag(target, component, name, true);
-  return false;
-}
-
 /**
  * Parses an event definition and returns information about it.
  *
@@ -269,21 +253,22 @@ function addEventListeners (target, component) {
  * @returns {undefined}
  */
 function triggerCreated (target, component) {
-  if (ensureLifecycleFlag(target, component, 'created')) {
+  var targetData = data(target);
+
+  if (targetData.get('created')) {
     return;
   }
+
+  targetData.set('created', true);
 
   // TODO: This doesn't need to happen if using native.
   inherit(target, component.prototype, true);
 
   // We use the unresolved / resolved attributes to flag whether or not the
-  // element has been templated or not. The resolved attribute is also how
-  // you can ensure there isn't a FOUC. If no templating is happening, then
-  // there is no reason to add / remove these attributes.
-  if (component.template && !target.hasAttribute(component.resolvedAttribute)) {
+  // element has been templated or not.
+  if (component.template && !targetData.get('templated')) {
     component.template(target);
-    target.removeAttribute(component.unresolvedAttribute);
-    target.setAttribute(component.resolvedAttribute, '');
+    targetData.set('templated', true);
   }
 
   addEventListeners(target, component);
@@ -306,10 +291,17 @@ function triggerCreated (target, component) {
  * @returns {undefined}
  */
 function triggerAttached (target, component) {
-  if (ensureLifecycleFlag(target, component, 'attached')) {
+  var targetData = data(target);
+
+  if (targetData.get('attached')) {
     return;
   }
 
+  if (!document.contains(target)) {
+    return;
+  }
+
+  targetData.set('attached', true);
   target.removeAttribute(component.unresolvedAttribute);
   target.setAttribute(component.resolvedAttribute, '');
 
@@ -317,7 +309,7 @@ function triggerAttached (target, component) {
     component.attached(target);
   }
 
-  setLifecycleFlag(target, component, 'detached', false);
+  targetData.set('detached', false);
 }
 
 /**
@@ -329,15 +321,19 @@ function triggerAttached (target, component) {
  * @returns {undefined}
  */
 function triggerDetached (target, component) {
-  if (ensureLifecycleFlag(target, component, 'detached')) {
+  var targetData = data(target);
+
+  if (targetData.get('detached')) {
     return;
   }
+
+  targetData.set('detached', true);
 
   if (component.detached) {
     component.detached(target);
   }
 
-  setLifecycleFlag(target, component, 'attached', false);
+  targetData.set('attached', false);
 }
 
 /**
