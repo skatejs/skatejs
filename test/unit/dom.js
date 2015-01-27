@@ -95,4 +95,46 @@ describe('DOM', function () {
       expect(helpers.fixture().querySelector('.my-circle').skated).to.equal(true);
     });
   });
+
+  describe('Document Fragments', function () {
+    var frag;
+    var created;
+    var attached;
+    var MyEl;
+
+    beforeEach(function () {
+      created = false;
+      attached = false;
+      MyEl = skate('my-element', {
+        created: function () {
+          created = true;
+        },
+
+        attached: function () {
+          attached = true;
+        }
+      });
+      frag = document.createDocumentFragment();
+    });
+
+    it('should not call attached when initialised inside a document fragment', function () {
+      var myEl = new MyEl();
+
+      frag.appendChild(myEl);
+      skate.init(frag);
+      expect(created).to.equal(true);
+      expect(attached).to.equal(false);
+    });
+
+    it('GH-118 - should not trigger the element is inserted, removed and then put into a fragment', function (done) {
+      var div = document.createElement('div');
+
+      document.body.appendChild(div);
+      frag.appendChild(div);
+
+      helpers.afterMutations(function () {
+        done();
+      });
+    });
+  });
 });
