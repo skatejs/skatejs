@@ -227,6 +227,10 @@ describe('Attribute listeners', function () {
       var tagName = helpers.safeTagName('my-el');
       var MyEl = skate(tagName.safe, {
         attributes: function (element, data) {
+          if (data.name !== 'test') {
+            return;
+          }
+
           if (data.type === 'created') {
             expect(data.oldValue).to.equal(null);
             data.newValue.should.equal('created');
