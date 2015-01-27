@@ -68,10 +68,10 @@ describe('Lifecycle Callbacks', function () {
 });
 
 describe('Unresolved attribute', function () {
-  it('should remove the "unresolved" attribute after the created callback is called', function () {
+  it('should not be considred "resolved" until after template() is called', function () {
     var tagName = helpers.safeTagName('my-element');
     skate(tagName.safe, {
-      created: function (element) {
+      template: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(true);
         expect(element.hasAttribute('resolved')).to.equal(false);
       }
@@ -80,10 +80,10 @@ describe('Unresolved attribute', function () {
     skate.init(helpers.fixture('<my-element unresolved></my-element>', tagName));
   });
 
-  it('should remove the "unresolved" attribute before the attached callback is called', function () {
+  it('should be considred "resolved" by the time created() is called', function () {
     var tagName = helpers.safeTagName('my-element');
     skate(tagName.safe, {
-      attached: function (element) {
+      created: function (element) {
         expect(element.hasAttribute('unresolved')).to.equal(false);
         expect(element.hasAttribute('resolved')).to.equal(true);
       }

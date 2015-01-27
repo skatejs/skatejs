@@ -266,11 +266,12 @@ function triggerCreated (target, component) {
 
   // We use the unresolved / resolved attributes to flag whether or not the
   // element has been templated or not.
-  if (component.template && !targetData.get('templated')) {
+  if (component.template && !target.hasAttribute(component.resolvedAttribute)) {
     component.template(target);
-    targetData.set('templated', true);
   }
 
+  target.removeAttribute(component.unresolvedAttribute);
+  target.setAttribute(component.resolvedAttribute, '');
   addEventListeners(target, component);
   addAttributeListeners(target, component);
   addAttributeToPropertyLinks(target, component);
@@ -302,8 +303,6 @@ function triggerAttached (target, component) {
   }
 
   targetData.set('attached', true);
-  target.removeAttribute(component.unresolvedAttribute);
-  target.setAttribute(component.resolvedAttribute, '');
 
   if (component.attached) {
     component.attached(target);
