@@ -2,14 +2,11 @@
 
 import '../node_modules/weakmap/weakmap';
 
-var map = new WeakMap();
-
 export default function (element) {
-  var data = map.get(element);
+  var data = element.__SKATE_DATA;
 
   if (!data) {
-    data = {};
-    map.set(element, data);
+    element.__SKATE_DATA = data = {};
   }
 
   return {
