@@ -82,7 +82,10 @@ function makeElementConstructor (definition) {
  * @returns {Function} Constructor that returns a custom element.
  */
 function skate (id, definition) {
-  definition = inherit(definition || {}, skate.defaults);
+  // Just in case the definition is shared, we duplicate it so that internal
+  // modifications to the original aren't shared.
+  definition = inherit({}, definition);
+  definition = inherit(definition, skate.defaults);
   definition.id = id;
 
   registry.set(id, definition);
@@ -94,9 +97,11 @@ function skate (id, definition) {
 
   if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
     var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
+
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
     }
+
     var options = {
       prototype: inherit(definition.prototype, {
         createdCallback: function () {
@@ -117,9 +122,11 @@ function skate (id, definition) {
         }
       })
     };
+
     if (definition.extends) {
       options.extends = definition.extends;
     }
+
     customElementConstructor = document.registerElement(id, options);
 
     if (isCustomElementExclusive) {
@@ -222,6 +229,9 @@ skate.defaults = {
 // using it in an environment where module and non-module code may co-exist.
 window.skate = skate;
 
+// This ensures that if Skate is transpiled to AMD / CJS from ES6 that it works.
+skate.default = skate;
+
 // AMD
 if (typeof define === 'function') {
   define(function () {
@@ -231,7 +241,7 @@ if (typeof define === 'function') {
 
 // CommonJS
 if (typeof exports === 'object') {
-  exports.default = skate;
+  module.exports = skate;
 }
 
 // ES6

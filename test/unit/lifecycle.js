@@ -172,4 +172,48 @@ describe('Lifecycle scenarios', function () {
       expectNumCalls('detached', 2, done);
     });
   });
+
+  describe('multiple bindings', function () {
+    it('should initialise all bindings', function () {
+      var id1 = helpers.safeTagName('my-el');
+      var id2 = helpers.safeTagName('my-el');
+      var created = 0;
+      var attached = 0;
+      var detached = 0;
+      var element;
+      var def = {
+        created: function () { ++created; },
+        attached: function () { ++attached; }
+      };
+
+      skate(id1.safe, def);
+      skate(id2.safe, def);
+
+      skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
+      expect(created).to.equal(2, 'created');
+      expect(attached).to.equal(2, 'attached');
+    });
+  });
+
+  describe('shared definitions', function () {
+    it('should copy the definition so that the shared definition is not modified', function () {
+      var id1 = helpers.safeTagName('my-el');
+      var id2 = helpers.safeTagName('my-el');
+      var created = 0;
+      var attached = 0;
+      var detached = 0;
+      var element;
+      var def = {
+        created: function () { ++created; },
+        attached: function () { ++attached; }
+      };
+
+      skate(id1.safe, def);
+      skate(id2.safe, def);
+
+      skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
+      expect(created).to.equal(2, 'created');
+      expect(attached).to.equal(2, 'attached');
+    })
+  })
 });

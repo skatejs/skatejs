@@ -253,13 +253,13 @@ function addEventListeners (target, component) {
  * @returns {undefined}
  */
 function triggerCreated (target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get('created')) {
+  if (targetData.created) {
     return;
   }
 
-  targetData.set('created', true);
+  targetData.created = true;
 
   // TODO: This doesn't need to happen if using native.
   inherit(target, component.prototype, true);
@@ -292,9 +292,9 @@ function triggerCreated (target, component) {
  * @returns {undefined}
  */
 function triggerAttached (target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get('attached')) {
+  if (targetData.attached) {
     return;
   }
 
@@ -302,13 +302,13 @@ function triggerAttached (target, component) {
     return;
   }
 
-  targetData.set('attached', true);
+  targetData.attached = true;
 
   if (component.attached) {
     component.attached(target);
   }
 
-  targetData.set('detached', false);
+  targetData.detached = false;
 }
 
 /**
@@ -320,19 +320,19 @@ function triggerAttached (target, component) {
  * @returns {undefined}
  */
 function triggerDetached (target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get('detached')) {
+  if (targetData.detached) {
     return;
   }
 
-  targetData.set('detached', true);
+  targetData.detached = true;
 
   if (component.detached) {
     component.detached(target);
   }
 
-  targetData.set('attached', false);
+  targetData.attached = false;
 }
 
 /**

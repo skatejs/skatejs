@@ -1,20 +1,6 @@
 'use strict';
 
-export default function (element) {
-  var data = element.__SKATE_DATA;
-
-  if (!data) {
-    element.__SKATE_DATA = data = {};
-  }
-
-  return {
-    get: function (name) {
-      return data[name];
-    },
-
-    set: function (name, value) {
-      data[name] = value;
-      return this;
-    }
-  };
+export default function (element, namespace = '') {
+  var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+  return namespace && (data[namespace] || (data[namespace] = {})) || data;
 }
