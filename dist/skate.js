@@ -5,23 +5,11 @@ var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 },{}],2:[function(require,module,exports){
 "use strict";
 
-exports.default = function (element) {
-  var data = element.__SKATE_DATA;
+exports.default = function (element, namespace) {
+  if (namespace === undefined) namespace = "";
 
-  if (!data) {
-    element.__SKATE_DATA = data = {};
-  }
-
-  return {
-    get: function (name) {
-      return data[name];
-    },
-
-    set: function (name, value) {
-      data[name] = value;
-      return this;
-    }
-  };
+  var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+  return namespace && (data[namespace] || (data[namespace] = {})) || data;
 };
 },{}],3:[function(require,module,exports){
 "use strict";
@@ -363,13 +351,13 @@ function addEventListeners(target, component) {
  * @returns {undefined}
  */
 function triggerCreated(target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get("created")) {
+  if (targetData.created) {
     return;
   }
 
-  targetData.set("created", true);
+  targetData.created = true;
 
   // TODO: This doesn't need to happen if using native.
   inherit(target, component.prototype, true);
@@ -402,9 +390,9 @@ function triggerCreated(target, component) {
  * @returns {undefined}
  */
 function triggerAttached(target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get("attached")) {
+  if (targetData.attached) {
     return;
   }
 
@@ -412,13 +400,13 @@ function triggerAttached(target, component) {
     return;
   }
 
-  targetData.set("attached", true);
+  targetData.attached = true;
 
   if (component.attached) {
     component.attached(target);
   }
 
-  targetData.set("detached", false);
+  targetData.detached = false;
 }
 
 /**
@@ -430,19 +418,19 @@ function triggerAttached(target, component) {
  * @returns {undefined}
  */
 function triggerDetached(target, component) {
-  var targetData = data(target);
+  var targetData = data(target, component.id);
 
-  if (targetData.get("detached")) {
+  if (targetData.detached) {
     return;
   }
 
-  targetData.set("detached", true);
+  targetData.detached = true;
 
   if (component.detached) {
     component.detached(target);
   }
 
-  targetData.set("attached", false);
+  targetData.attached = false;
 }
 
 /**
@@ -1034,7 +1022,10 @@ function makeElementConstructor(definition) {
  * @returns {Function} Constructor that returns a custom element.
  */
 function skate(id, definition) {
-  definition = inherit(definition || {}, skate.defaults);
+  // Just in case the definition is shared, we duplicate it so that internal
+  // modifications to the original aren't shared.
+  definition = inherit({}, definition);
+  definition = inherit(definition, skate.defaults);
   definition.id = id;
 
   registry.set(id, definition);
@@ -1046,9 +1037,11 @@ function skate(id, definition) {
 
   if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
     var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
+
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
     }
+
     var options = {
       prototype: inherit(definition.prototype, {
         createdCallback: function () {
@@ -1069,9 +1062,11 @@ function skate(id, definition) {
         }
       })
     };
+
     if (definition.extends) {
       options.extends = definition.extends;
     }
+
     customElementConstructor = document.registerElement(id, options);
 
     if (isCustomElementExclusive) {
@@ -1174,6 +1169,9 @@ skate.defaults = {
 // using it in an environment where module and non-module code may co-exist.
 window.skate = skate;
 
+// This ensures that if Skate is transpiled to AMD / CJS from ES6 that it works.
+skate.default = skate;
+
 // AMD
 if (typeof define === "function") {
   define(function () {
@@ -1183,7 +1181,7 @@ if (typeof define === "function") {
 
 // CommonJS
 if (typeof exports === "object") {
-  exports.default = skate;
+  module.exports = skate;
 }
 
 exports.default = skate;
