@@ -182,6 +182,7 @@ describe('Lifecycle scenarios', function () {
       var detached = 0;
       var element;
       var def = {
+        type: skate.type.ATTRIBUTE,
         created: function () { ++created; },
         attached: function () { ++attached; }
       };
@@ -204,6 +205,7 @@ describe('Lifecycle scenarios', function () {
       var detached = 0;
       var element;
       var def = {
+        type: skate.type.ATTRIBUTE,
         created: function () { ++created; },
         attached: function () { ++attached; }
       };

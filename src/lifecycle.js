@@ -10,8 +10,7 @@ import {
   camelCase,
   hasOwn,
   inherit,
-  objEach,
-  supportsNativeCustomElements
+  objEach
 } from './utils';
 
 var elProto = window.HTMLElement.prototype;
@@ -178,7 +177,7 @@ function triggerAttributesCreated (target, component) {
 function addAttributeListeners (target, component) {
   var attrs = target.attributes;
 
-  if (!component.attributes || supportsNativeCustomElements()) {
+  if (!component.attributes || registry.isNativeCustomElement(component.id)) {
     return;
   }
 

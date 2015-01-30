@@ -1,8 +1,15 @@
 'use strict';
 
+import {
+  TYPE_ATTRIBUTE,
+  TYPE_CLASSNAME,
+  TYPE_ELEMENT
+} from './constants';
 import globals from './globals';
 import {
-  hasOwn
+  hasOwn,
+  isValidNativeCustomElementName,
+  supportsNativeCustomElements
 } from './utils';
 
 /**
@@ -24,23 +31,14 @@ function getClassList (element) {
   return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
 }
 
-/**
- * Returns whether or not the specified definition can be bound using the
- * specified type.
- *
- * @param {String} id The definition ID.
- * @param {String} type The definition type.
- *
- * @returns {Boolean}
- */
-function isDefinitionOfType (id, type) {
-  return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
-}
-
 export default {
   clear: function () {
     globals.registry = {};
     return this;
+  },
+
+  get: function (id) {
+    return hasOwn(globals.registry, id) && globals.registry[id];
   },
 
   getForElement: function (element) {
@@ -54,7 +52,7 @@ export default {
     var definition;
     var tagToExtend;
 
-    if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+    if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
       definition = globals.registry[isAttrOrTag];
       tagToExtend = definition.extends;
 
@@ -70,7 +68,7 @@ export default {
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
-      if (isDefinitionOfType(attr, skate.types.ATTR)) {
+      if (this.isType(attr, TYPE_ATTRIBUTE)) {
         definition = globals.registry[attr];
         tagToExtend = definition.extends;
 
@@ -86,7 +84,7 @@ export default {
     for (var b = 0; b < classListLen; b++) {
       var className = classList[b];
 
-      if (isDefinitionOfType(className, skate.types.CLASS)) {
+      if (this.isType(className, TYPE_CLASSNAME)) {
         definition = globals.registry[className];
         tagToExtend = definition.extends;
 
@@ -99,9 +97,18 @@ export default {
     return definitions;
   },
 
+  isType: function (id, type) {
+    var def = this.get(id);
+    return def && def.type === type;
+  },
+
+  isNativeCustomElement: function (id) {
+    return supportsNativeCustomElements() && this.isType(id, TYPE_ELEMENT) && isValidNativeCustomElementName(id);
+  },
+
   set: function (id, definition) {
     if (hasOwn(globals.registry, id)) {
-      throw new Error('A definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+      throw new Error('A component definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
 
     globals.registry[id] = definition;

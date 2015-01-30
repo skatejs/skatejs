@@ -37,15 +37,15 @@ describe('Using components', function () {
   }
 
   describe('tags, attributes and classes', function () {
-    assertType(skate.types.TAG, 1);
-    assertType(skate.types.ATTR, 1);
-    assertType(skate.types.CLASS, 1);
-    assertType(skate.types.TAG, 1, 'div');
-    assertType(skate.types.ATTR, 1, 'div');
-    assertType(skate.types.CLASS, 1, 'div');
-    assertType(skate.types.TAG, 0, 'span');
-    assertType(skate.types.ATTR, 0, 'span');
-    assertType(skate.types.CLASS, 0, 'span');
+    assertType(skate.type.ELEMENT, 1);
+    assertType(skate.type.ATTRIBUTE, 1);
+    assertType(skate.type.CLASSNAME, 1);
+    assertType(skate.type.ELEMENT, 1, 'div');
+    assertType(skate.type.ATTRIBUTE, 1, 'div');
+    assertType(skate.type.CLASSNAME, 1, 'div');
+    assertType(skate.type.ELEMENT, 0, 'span');
+    assertType(skate.type.ATTRIBUTE, 0, 'span');
+    assertType(skate.type.CLASSNAME, 0, 'span');
 
 
     it('should not initialise a single component more than once on a single element', function () {

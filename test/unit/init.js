@@ -31,16 +31,17 @@ describe('skate.init', function () {
 
 describe('Synchronous initialisation', function () {
   it('should take an element', function () {
-    var initialised = 0;
+    var initialised = false;
+    var { safe: tagName } = helpers.safeTagName('div');
 
-    skate('div', {
+    skate(tagName, {
       attached: function () {
-        ++initialised;
+        initialised = true;
       }
     });
 
-    skate.init(helpers.add('div'));
-    assert(initialised);
+    skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+    expect(initialised).to.equal(true);
   });
 });
 
@@ -151,7 +152,7 @@ describe('Instantiation', function () {
 
     idsToSkate.forEach(function (id) {
       skate(id, {
-        type: skate.types.CLASS,
+        type: skate.type.CLASSNAME,
         created: function () {
           idsToCheck.push(id);
         }
@@ -164,7 +165,7 @@ describe('Instantiation', function () {
   it('should use a tag name equal to the provided one', function () {
     var {safe: tagName} = helpers.safeTagName('my-element');
     var MyElement = skate(tagName, {
-      type: skate.types.TAG,
+      type: skate.type.ELEMENT,
       prototype: {
         returnSelf: function () {
           return this;

@@ -91,6 +91,7 @@ describe('DOM', function () {
         '</svg>';
 
       skate('my-circle', {
+        type: skate.type.CLASSNAME,
         prototype: {
           skated: true
         }

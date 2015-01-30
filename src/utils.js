@@ -120,3 +120,7 @@ export function objEach (obj, fn) {
 export function supportsNativeCustomElements () {
   return typeof document.registerElement === 'function';
 }
+
+export function isValidNativeCustomElementName (name) {
+  return name.indexOf('-') > 0;
+}

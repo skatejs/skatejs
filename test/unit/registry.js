@@ -23,9 +23,9 @@ describe('Registry', function () {
   });
 
   it('should return definitions for a given element', function () {
-    var definition1 = { type: skate.types.TAG };
-    var definition2 = { type: skate.types.ATTR };
-    var definition3 = { type: skate.types.CLASS };
+    var definition1 = { type: skate.type.ELEMENT };
+    var definition2 = { type: skate.type.ATTRIBUTE };
+    var definition3 = { type: skate.type.CLASSNAME };
     var definitions;
     var element = document.createElement('test1');
 

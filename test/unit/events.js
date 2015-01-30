@@ -58,8 +58,8 @@ describe('Events', function () {
 
   it('should support delegate events', function () {
     var dispatched = 0;
+    var { safe: tagName } = helpers.safeTagName('my-component');
 
-    var {safe: tagName} = helpers.safeTagName('my-component');
     skate(tagName, {
       events: {
         'click': function (element, e) {
@@ -86,7 +86,7 @@ describe('Events', function () {
       }
     });
 
-    var inst = helpers.add(tagName);
+    var inst = helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName);
 
     skate.init(inst);
     helpers.dispatchEvent('click', inst.querySelector('span'));
@@ -96,8 +96,8 @@ describe('Events', function () {
   it('should support delegate blur and focus events', function () {
     var blur = false;
     var focus = false;
+    var { safe: tagName } = helpers.safeTagName('my-component');
 
-    var {safe: tagName} = helpers.safeTagName('my-component');
     skate(tagName, {
       events: {
         'blur input': function () {
@@ -124,7 +124,7 @@ describe('Events', function () {
       }
     });
 
-    var inst = skate.init(helpers.add(tagName));
+    var inst = skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
 
     inst.blur();
     expect(blur).to.equal(true);

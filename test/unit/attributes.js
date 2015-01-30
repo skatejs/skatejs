@@ -161,10 +161,9 @@ describe('Attribute listeners', function () {
   });
 
   describe('callbacks', function () {
-    it('should listen to changes in specified attributes', function (done) {
-      var tagName = helpers.safeTagName('my-el');
-      var MyEl = skate(tagName.safe, {
-        attributes: {
+    describe('should listen to changes in specified attributes', function () {
+      function createAttributeDefinition (done) {
+        return {
           test: {
             created: function (element, data) {
               expect(data.oldValue).to.equal(null);
@@ -180,16 +179,59 @@ describe('Attribute listeners', function () {
               done();
             }
           }
-        }
+        };
+      }
+
+      function assertAttributeChanges (element) {
+        helpers.afterMutations(function () {
+          element.setAttribute('test', 'created');
+          helpers.afterMutations(function () {
+            element.setAttribute('test', 'updated');
+            helpers.afterMutations(function () {
+              element.removeAttribute('test');
+            });
+          });
+        });
+      }
+
+      it('for native custom elements', function (done) {
+        var Element = skate(helpers.safeTagName('my-el').safe, {
+          attributes: createAttributeDefinition(done)
+        });
+
+        assertAttributeChanges(new Element());
       });
 
-      var myEl = new MyEl();
-      myEl.setAttribute('test', 'created');
-      helpers.afterMutations(function () {
-        myEl.setAttribute('test', 'updated');
-        helpers.afterMutations(function () {
-          myEl.removeAttribute('test');
+      it('for existing elements (via mutation observer)', function (done) {
+        var { safe: id } = helpers.safeTagName('element');
+
+        skate(id, {
+          attributes: createAttributeDefinition(done)
         });
+
+        assertAttributeChanges(helpers.fixture(`<${id}></${id}>`).querySelector(id));
+      });
+
+      it('for attributes (via mutation observer)', function (done) {
+        var { safe: id } = helpers.safeTagName('attribute');
+
+        skate(id, {
+          type: skate.type.ATTRIBUTE,
+          attributes: createAttributeDefinition(done)
+        });
+
+        assertAttributeChanges(helpers.fixture(`<div ${id}></div>`).querySelector('div'));
+      });
+
+      it('for classnames (via mutation observer)', function (done) {
+        var { safe: id } = helpers.safeTagName('classname');
+
+        skate(id, {
+          type: skate.type.CLASSNAME,
+          attributes: createAttributeDefinition(done)
+        });
+
+        assertAttributeChanges(helpers.fixture(`<div class="${id}"></div>`).querySelector('div'));
       });
     });
 
@@ -260,7 +302,7 @@ describe('Attribute listeners', function () {
         var called = 0;
         var tagName = helpers.safeTagName('my-el');
         var testHandlers = {
-          fallback: function (element, data) {
+          fallback: function () {
             ++called;
           }
         };

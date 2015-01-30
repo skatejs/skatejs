@@ -1,5 +1,10 @@
 'use strict';
 
+import {
+  TYPE_ATTRIBUTE,
+  TYPE_CLASSNAME,
+  TYPE_ELEMENT
+} from './constants';
 import documentObserver from './document-observer';
 import {
   triggerCreated,
@@ -15,6 +20,8 @@ import {
   supportsNativeCustomElements
 } from './utils';
 import version from './version';
+
+var HTMLElement = window.HTMLElement;
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -90,13 +97,10 @@ function skate (id, definition) {
 
   registry.set(id, definition);
 
-  var customElementConstructor;
-  var isCustomElementExclusive = definition.type === skate.types.TAG;
-  var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
-  var isValidNativeCustomElementId = id.indexOf('-') > 0;
-
-  if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
-    var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
+  if (registry.isNativeCustomElement(id)) {
+    var elementPrototype = definition.extends ?
+      document.createElement(definition.extends).constructor.prototype :
+      HTMLElement.prototype;
 
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
@@ -127,21 +131,15 @@ function skate (id, definition) {
       options.extends = definition.extends;
     }
 
-    customElementConstructor = document.registerElement(id, options);
-
-    if (isCustomElementExclusive) {
-      return customElementConstructor;
-    }
+    return document.registerElement(id, options);
   }
 
   initDocument();
   documentObserver.register(definition.remove);
 
-  if (!customElementConstructor && isCustomElementInclusive) {
-    customElementConstructor = makeElementConstructor(definition);
+  if (registry.isType(id, TYPE_ELEMENT)) {
+    return makeElementConstructor(definition);
   }
-
-  return customElementConstructor;
 }
 
 /**
@@ -161,7 +159,7 @@ skate.init = function (nodes) {
 
   if (typeof nodes === 'string') {
     nodesToUse = nodes = document.querySelectorAll(nodes);
-  } else if (nodes instanceof window.HTMLElement) {
+  } else if (nodes instanceof HTMLElement) {
     nodesToUse = [nodes];
   }
 
@@ -171,14 +169,10 @@ skate.init = function (nodes) {
 };
 
 // Restriction type constants.
-skate.types = {
-  ANY: 'act',
-  ATTR: 'a',
-  CLASS: 'c',
-  NOATTR: 'ct',
-  NOCLASS: 'at',
-  NOTAG: 'ac',
-  TAG: 't'
+skate.type = {
+  ATTRIBUTE: TYPE_ATTRIBUTE,
+  CLASSNAME: TYPE_CLASSNAME,
+  ELEMENT: TYPE_ELEMENT
 };
 
 // Makes checking the version easy when debugging.
@@ -215,7 +209,7 @@ skate.defaults = {
   template: undefined,
 
   // The type of bindings to allow.
-  type: skate.types.ANY,
+  type: TYPE_ELEMENT,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
