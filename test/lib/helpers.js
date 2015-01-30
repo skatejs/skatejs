@@ -12,22 +12,15 @@ export default {
    *   (value of id) and safe tag name.
    */
   safeTagName: function (id) {
-    var safeId = id + '-' + (tagNameCounter++).toString();
-    return {unsafe: id, safe: safeId};
-  },
-
-  add: function (name, tagName) {
-    var safeTagName = typeof tagName === 'undefined' ? name : tagName.safe;
-    return this.fixture('<' + safeTagName + '></' + safeTagName + '>').querySelector(safeTagName);
-  },
-
-  remove: function (element) {
-    element.parentNode.removeChild(element);
-    return element;
+    return {
+      unsafe: id,
+      safe: id + (tagNameCounter++).toString()
+    };
   },
 
   fixture: function (html, tagName) {
     var fixture = document.getElementById('fixture');
+
     if (!fixture) {
       fixture = document.createElement('div');
       fixture.id = 'fixture';
