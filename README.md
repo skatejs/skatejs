@@ -198,17 +198,13 @@ skate('my-component', {
   },
 
   // The binding methods this component supports. For example, if you specify
-  // the `type` as `skate.types.TAG`, then the component will only be bound
+  // the `type` as `skate.type.ELEMENT`, then the component will only be bound
   // to an element whos tag name matches the component ID.
   //
-  // - `ANY` Any type of binding. This is the default.
-  // - `TAG` Tag name only.
-  // - `ATTR` Attribute names.
-  // - `CLASS` Class names.
-  // - `NOTAG` Attribute or class names.
-  // - `NOATTR` Class or tag names.
-  // - `NOCLASS` Attribute or tag names.
-  type: skate.types.ANY,
+  // - `ELEMENT` Tag name only.
+  // - `ATTRIBUTE` Attribute names.
+  // - `CLASSNAME` Class names.
+  type: skate.type.ELEMENT,
 
   // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
@@ -550,7 +546,7 @@ You can do some pretty cool things with Skate that you can't do with Web Compone
 ```js
 skate('placeholder', {
   extends: 'input',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   created: polyfillInputPlaceholder
 });
 ```
@@ -560,7 +556,7 @@ skate('placeholder', {
 ```js
 skate('type', {
   extends: 'input',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   attributes: {
     type: function (element, change) {
       if (change.newValue === 'date') {
@@ -576,7 +572,7 @@ skate('type', {
 ```js
 skate('rel', {
   extends: 'link',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   attributes: {
     rel: function (element, change) {
       if (change.newValue === 'import') {
@@ -608,7 +604,7 @@ To refactor that into a Skate component, all you need to do is:
 
 ```js
 skate('tabs', {
-  type: skate.types.CLASS
+  type: skate.type.CLASSNAME
   created: function (element) {
     jQuery(element).tabs();
   }

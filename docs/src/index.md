@@ -202,17 +202,13 @@ skate('my-component', {
   },
 
   // The binding methods this component supports. For example, if you specify
-  // the `type` as `skate.types.TAG`, then the component will only be bound
+  // the `type` as `skate.type.ELEMENT`, then the component will only be bound
   // to an element whos tag name matches the component ID.
   //
-  // - `ANY` Any type of binding. This is the default.
-  // - `TAG` Tag name only.
-  // - `ATTR` Attribute names.
-  // - `CLASS` Class names.
-  // - `NOTAG` Attribute or class names.
-  // - `NOATTR` Class or tag names.
-  // - `NOCLASS` Attribute or tag names.
-  type: skate.types.ANY,
+  // - `ELEMENT` Tag name only.
+  // - `ATTRIBUTE` Attribute names.
+  // - `CLASSNAME` Class names.
+  type: skate.type.ELEMENT,
 
   // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
@@ -308,7 +304,7 @@ This allows you to specify which attributes you want to listen to and will call 
 - The corresponding attribute is added to the element.
 - The corresponding attribute is updated on the element.
 
-The third form gives you more granularity and flexibility:
+The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
 
 ```js
 skate('my-component', {
@@ -507,16 +503,12 @@ If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 ```js
 function shadowDomTemplate (shadowHtml) {
   return function (element) {
-    var lightHtml = element.innerHTML;
-    var shadowRoot = element.createShadowRoot();
-
-    shadowRoot.innerHTML = shadowHtml;
-    element.innerHTML = lightHtml;
+    element.createShadowRoot().innerHTML = shadowHtml;
   };
 }
 
 skate('my-component', {
-  template: shadowDomTemplate('<h1 class=".heading"></h1><section><content></content></section>');
+  template: shadowDomTemplate('<header><content select="h2"></content></header><section><content></content></section>')
 });
 ```
 
@@ -558,7 +550,7 @@ You can do some pretty cool things with Skate that you can't do with Web Compone
 ```js
 skate('placeholder', {
   extends: 'input',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   created: polyfillInputPlaceholder
 });
 ```
@@ -568,7 +560,7 @@ skate('placeholder', {
 ```js
 skate('type', {
   extends: 'input',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   attributes: {
     type: function (element, change) {
       if (change.newValue === 'date') {
@@ -584,7 +576,7 @@ skate('type', {
 ```js
 skate('rel', {
   extends: 'link',
-  type: skate.types.ATTR,
+  type: skate.type.ATTRIBUTE,
   attributes: {
     rel: function (element, change) {
       if (change.newValue === 'import') {
@@ -595,20 +587,12 @@ skate('rel', {
 });
 ```
 
-You can even [polyfill Custom Elements](https://github.com/skatejs/polyfill-custom-elements) in accordance to the Web Component spec with Skate.
 
 
+Transitioning Away from jQuery-style Plugins
+--------------------------------------------
 
-Polymer / X-Tags Differences
-----------------------------
-
-Polymer polyfills the web component spec (mostly) and adds data binding. X-Tags uses Polymer's Custom Element and Mutation Observer polyfills to add a layer of sugar on top of Custom Elements. Although they have differences amongst themselves, they share functionality in terms of Custom Elements. Skate shares this functionality and provides some things that they don't.
-
-
-
-### Attribute / Class Bindings
-
-Polymer and X-Tags do not offer a way to bind behaviour to elements with a particular attribute or class. Skate allows this because classes can be a good transitional period away from legacy components. For example:
+Because Skate can also bind to attributes and classes, it offers a way to transition away from jQuery-style plugins to web components.
 
 ```js
 jQuery(function ($) {
@@ -616,48 +600,29 @@ jQuery(function ($) {
 });
 ```
 
-This will only get executed on DOM Ready. If you ever insert some tabs dynamically, you'd have to call that again. Skate makes it possible to only define this once:
+There's several problems with this approach. First, you're running a selector against the document. This is unnecessary and can get slow in large DOMs even in the latest browsers. Second, it only gets executed on DOMReady. If you want to dynamically add some tabs to your document, then you've got to manually call that again once they've been added to the DOM.
+
+With Skate, those problems vanish. No selectors are run and your tabs will automatically be initialised regardless of when they are put into the document.
+
+To refactor that into a Skate component, all you need to do is:
 
 ```js
 skate('tabs', {
-  type: skate.types.CLASS
+  type: skate.type.CLASSNAME
   created: function (element) {
     jQuery(element).tabs();
   }
 });
 ```
 
-You're definition is now in one place. If you dynamically insert some tabs into the document, they'll be upgraded automatically without you having to do anything. You also have the added benefit of ensuring that the element is not visible when it is upgraded to tabs because you've used the `created()` callback.
-
-Furthermore, this is especially good when you don't have the time to refactor a legacy component into web components. You get many of the benefits of a web component without having to change any markup.
+Possibly the best part about this is that you don't need to touch any markup and only a minimal amount of JavaScript.
 
 
 
-### Size (min + gz)
+Native Support
+--------------
 
-Size does matter.
-
-1. Skate: 3.4k
-2. X-Tags: 10.8k
-3. Polymer without polyfills: 33.7k
-4. Polymer with polyfills: 70.2k
-
-
-
-### Performance
-
-Skate comes close to Polymer and X-Tags in modern browsers but isn't quite as fast in this area for a couple reasons:
-
-1. Skate doesn't use `document.registerElement()` if supported. There are [plans](https://github.com/skatejs/skatejs/issues/46) to do this.
-2. Skate supports more than just Custom Elements. The added overhead is because it also supports attribute and class bindings and has to check these on top of just checking the tag name / `is` attribute value.
-
-
-
-#### How bad is it?
-
-Skate takes about 350ms to go through 100k elements. With Polymer and X-Tags, in browsers that natively support Custom Elements, there's almost zero overhead because they don't need to use Mutation Observers. With no native support, they take around 200ms.
-
-The real difference comes in when you [have to polyfill Mutation Observers](http://caniuse.com/#feat=mutationobserver). In IE9, Skate goes through 100k elements in a mere ~2s. Polymer and X-Tags take around 25s (that's not a typo). Even if you bring this down to a reasonable 5k elements, it'll still take them over a second to process the elements.
+If your component is bound via custom tags and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 
 
@@ -723,31 +688,25 @@ To get a dev environment up and running, all you should need to do is run:
 npm install
 ```
 
-To see a list of commands, run:
-
-```bash
-grunt
-```
-
 
 ### Testing
 
 To run tests:
 
 ```bash
-grunt test
+node build/bin/test
 ```
 
 If you want to keep the Karma server alive to run them in your browser of choice:
 
 ```bash
-grunt test --keepalive
+node build/bin/test --keepalive
 ```
 
 To run tests in a specific browser:
 
 ```bash
-grunt test --browsers Chrome,Firefox
+node build/bin/test --browsers Chrome,Firefox
 ```
 
 
@@ -757,7 +716,7 @@ grunt test --browsers Chrome,Firefox
 To build the distribution all you have to do is run:
 
 ```bash
-grunt dist
+node build/bin/dist
 ```
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
@@ -766,16 +725,16 @@ This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing
 
 ### Releasing
 
-To release all you've got to do is run `grunt release`. You can either specify the release `type`, or `tag`.
+To release all you've got to do is run `node build/bin/release`. You can either specify the release `type`, or `tag`.
 
 ```bash
-grunt release --tag x.x.x
+node build/bin/release --tag x.x.x
 ```
 
 Or:
 
 ```bash
-grunt release --type minor
+node build/bin/release --type minor
 ```
 
 
@@ -785,7 +744,7 @@ grunt release --type minor
 To deploy the documentation, run the following command from the branch or tag which you want to deploy:
 
 ```bash
-grunt deploy
+node build/bin/deploy
 ```
 
 
