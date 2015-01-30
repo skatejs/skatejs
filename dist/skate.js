@@ -2,6 +2,9 @@
 "use strict";
 
 var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
+var TYPE_ATTRIBUTE = exports.TYPE_ATTRIBUTE = "a";
+var TYPE_CLASSNAME = exports.TYPE_CLASSNAME = "c";
+var TYPE_ELEMENT = exports.TYPE_ELEMENT = "t";
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -116,7 +119,6 @@ var camelCase = require('./utils').camelCase;
 var hasOwn = require('./utils').hasOwn;
 var inherit = require('./utils').inherit;
 var objEach = require('./utils').objEach;
-var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
 
 var elProto = window.HTMLElement.prototype;
 var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
@@ -276,7 +278,7 @@ function triggerAttributesCreated(target, component) {
 function addAttributeListeners(target, component) {
   var attrs = target.attributes;
 
-  if (!component.attributes || supportsNativeCustomElements()) {
+  if (!component.attributes || registry.isNativeCustomElement(component.id)) {
     return;
   }
 
@@ -834,8 +836,13 @@ exports.default = MutationObserver;
 },{"./utils":9}],7:[function(require,module,exports){
 "use strict";
 
+var TYPE_ATTRIBUTE = require('./constants').TYPE_ATTRIBUTE;
+var TYPE_CLASSNAME = require('./constants').TYPE_CLASSNAME;
+var TYPE_ELEMENT = require('./constants').TYPE_ELEMENT;
 var globals = require('./globals').default;
 var hasOwn = require('./utils').hasOwn;
+var isValidNativeCustomElementName = require('./utils').isValidNativeCustomElementName;
+var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
 
 /**
  * Returns the class list for the specified element.
@@ -856,23 +863,14 @@ function getClassList(element) {
   return (attrs["class"] && attrs["class"].nodeValue.split(/\s+/)) || [];
 }
 
-/**
- * Returns whether or not the specified definition can be bound using the
- * specified type.
- *
- * @param {String} id The definition ID.
- * @param {String} type The definition type.
- *
- * @returns {Boolean}
- */
-function isDefinitionOfType(id, type) {
-  return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
-}
-
 exports.default = {
   clear: function () {
     globals.registry = {};
     return this;
+  },
+
+  get: function (id) {
+    return hasOwn(globals.registry, id) && globals.registry[id];
   },
 
   getForElement: function (element) {
@@ -886,7 +884,7 @@ exports.default = {
     var definition;
     var tagToExtend;
 
-    if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+    if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
       definition = globals.registry[isAttrOrTag];
       tagToExtend = definition.extends;
 
@@ -902,7 +900,7 @@ exports.default = {
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
-      if (isDefinitionOfType(attr, skate.types.ATTR)) {
+      if (this.isType(attr, TYPE_ATTRIBUTE)) {
         definition = globals.registry[attr];
         tagToExtend = definition.extends;
 
@@ -918,7 +916,7 @@ exports.default = {
     for (var b = 0; b < classListLen; b++) {
       var className = classList[b];
 
-      if (isDefinitionOfType(className, skate.types.CLASS)) {
+      if (this.isType(className, TYPE_CLASSNAME)) {
         definition = globals.registry[className];
         tagToExtend = definition.extends;
 
@@ -931,9 +929,18 @@ exports.default = {
     return definitions;
   },
 
+  isType: function (id, type) {
+    var def = this.get(id);
+    return def && def.type === type;
+  },
+
+  isNativeCustomElement: function (id) {
+    return supportsNativeCustomElements() && this.isType(id, TYPE_ELEMENT) && isValidNativeCustomElementName(id);
+  },
+
   set: function (id, definition) {
     if (hasOwn(globals.registry, id)) {
-      throw new Error("A definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
+      throw new Error("A component definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
     }
 
     globals.registry[id] = definition;
@@ -941,9 +948,12 @@ exports.default = {
     return this;
   }
 };
-},{"./globals":4,"./utils":9}],8:[function(require,module,exports){
+},{"./constants":1,"./globals":4,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
+var TYPE_ATTRIBUTE = require('./constants').TYPE_ATTRIBUTE;
+var TYPE_CLASSNAME = require('./constants').TYPE_CLASSNAME;
+var TYPE_ELEMENT = require('./constants').TYPE_ELEMENT;
 var documentObserver = require('./document-observer').default;
 var triggerCreated = require('./lifecycle').triggerCreated;
 var triggerAttached = require('./lifecycle').triggerAttached;
@@ -955,6 +965,8 @@ var debounce = require('./utils').debounce;
 var inherit = require('./utils').inherit;
 var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
 var version = require('./version').default;
+
+var HTMLElement = window.HTMLElement;
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -1030,12 +1042,7 @@ function skate(id, definition) {
 
   registry.set(id, definition);
 
-  var customElementConstructor;
-  var isCustomElementExclusive = definition.type === skate.types.TAG;
-  var isCustomElementInclusive = isCustomElementExclusive || definition.type.indexOf(skate.types.TAG) > -1;
-  var isValidNativeCustomElementId = id.indexOf("-") > 0;
-
-  if (supportsNativeCustomElements() && isCustomElementInclusive && isValidNativeCustomElementId) {
+  if (registry.isNativeCustomElement(id)) {
     var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
 
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
@@ -1067,21 +1074,15 @@ function skate(id, definition) {
       options.extends = definition.extends;
     }
 
-    customElementConstructor = document.registerElement(id, options);
-
-    if (isCustomElementExclusive) {
-      return customElementConstructor;
-    }
+    return document.registerElement(id, options);
   }
 
   initDocument();
   documentObserver.register(definition.remove);
 
-  if (!customElementConstructor && isCustomElementInclusive) {
-    customElementConstructor = makeElementConstructor(definition);
+  if (registry.isType(id, TYPE_ELEMENT)) {
+    return makeElementConstructor(definition);
   }
-
-  return customElementConstructor;
 }
 
 /**
@@ -1101,7 +1102,7 @@ skate.init = function (nodes) {
 
   if (typeof nodes === "string") {
     nodesToUse = nodes = document.querySelectorAll(nodes);
-  } else if (nodes instanceof window.HTMLElement) {
+  } else if (nodes instanceof HTMLElement) {
     nodesToUse = [nodes];
   }
 
@@ -1111,14 +1112,10 @@ skate.init = function (nodes) {
 };
 
 // Restriction type constants.
-skate.types = {
-  ANY: "act",
-  ATTR: "a",
-  CLASS: "c",
-  NOATTR: "ct",
-  NOCLASS: "at",
-  NOTAG: "ac",
-  TAG: "t"
+skate.type = {
+  ATTRIBUTE: TYPE_ATTRIBUTE,
+  CLASSNAME: TYPE_CLASSNAME,
+  ELEMENT: TYPE_ELEMENT
 };
 
 // Makes checking the version easy when debugging.
@@ -1155,7 +1152,7 @@ skate.defaults = {
   template: undefined,
 
   // The type of bindings to allow.
-  type: skate.types.ANY,
+  type: TYPE_ELEMENT,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: "unresolved"
@@ -1185,7 +1182,7 @@ if (typeof exports === "object") {
 }
 
 exports.default = skate;
-},{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
+},{"./constants":1,"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
 
 exports.hasOwn = hasOwn;
@@ -1195,6 +1192,7 @@ exports.getClosestIgnoredElement = getClosestIgnoredElement;
 exports.inherit = inherit;
 exports.objEach = objEach;
 exports.supportsNativeCustomElements = supportsNativeCustomElements;
+exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
 "use strict";
 
 var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
@@ -1266,6 +1264,10 @@ function objEach(obj, fn) {
 
 function supportsNativeCustomElements() {
   return typeof document.registerElement === "function";
+}
+
+function isValidNativeCustomElementName(name) {
+  return name.indexOf("-") > 0;
 }
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
