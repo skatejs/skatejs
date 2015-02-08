@@ -14,6 +14,6 @@ var browsers = '--browsers ' + (cmd.browsers || 'Firefox');
 var keepAlive = '-' + (cmd.keepAlive && '-no-' || '-') + 'single-run';
 
 fs.removeSync('.tmp');
-compile('src/skate.js');
+compile('src/skate.js', 'dist/skate.js');
 compile('test/unit.js', '.tmp/run-unit-tests.js');
 sh.exec('./node_modules/karma/bin/karma start build/configs/karma.js ' + browsers + ' ' + keepAlive);
