@@ -1,27 +1,36 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 "use strict";
 
 var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 var TYPE_ATTRIBUTE = exports.TYPE_ATTRIBUTE = "a";
 var TYPE_CLASSNAME = exports.TYPE_CLASSNAME = "c";
 var TYPE_ELEMENT = exports.TYPE_ELEMENT = "t";
-},{}],2:[function(require,module,exports){
+exports.__esModule = true;
+
+},{}],2:[function(_dereq_,module,exports){
 "use strict";
 
-exports.default = function (element, namespace) {
-  if (namespace === undefined) namespace = "";
-
+module.exports = function (element) {
+  var namespace = arguments[1] === undefined ? "" : arguments[1];
   var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
   return namespace && (data[namespace] || (data[namespace] = {})) || data;
 };
-},{}],3:[function(require,module,exports){
+
+},{}],3:[function(_dereq_,module,exports){
 "use strict";
 
-var globals = require('./globals').default;
-var initElements = require('./lifecycle').initElements;
-var removeElements = require('./lifecycle').removeElements;
-var MutationObserver = require('./mutation-observer').default;
-var getClosestIgnoredElement = require('./utils').getClosestIgnoredElement;
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var globals = _interopRequire(_dereq_("./globals"));
+
+var _lifecycle = _dereq_("./lifecycle");
+
+var initElements = _lifecycle.initElements;
+var removeElements = _lifecycle.removeElements;
+var MutationObserver = _interopRequire(_dereq_("./mutation-observer"));
+
+var getClosestIgnoredElement = _dereq_("./utils").getClosestIgnoredElement;
+
 
 /**
  * The document observer handler.
@@ -72,7 +81,7 @@ function createDocumentObserver() {
   return observer;
 }
 
-exports.default = {
+module.exports = {
   register: function (fixIe) {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
@@ -97,7 +106,8 @@ exports.default = {
     return this;
   }
 };
-},{"./globals":4,"./lifecycle":5,"./mutation-observer":6,"./utils":9}],4:[function(require,module,exports){
+
+},{"./globals":4,"./lifecycle":5,"./mutation-observer":6,"./utils":9}],4:[function(_dereq_,module,exports){
 "use strict";
 
 if (!window.__skate) {
@@ -107,21 +117,30 @@ if (!window.__skate) {
   };
 }
 
-exports.default = window.__skate;
-},{}],5:[function(require,module,exports){
+module.exports = window.__skate;
+
+},{}],5:[function(_dereq_,module,exports){
 "use strict";
 
-var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
-var data = require('./data').default;
-var MutationObserver = require('./mutation-observer').default;
-var registry = require('./registry').default;
-var camelCase = require('./utils').camelCase;
-var hasOwn = require('./utils').hasOwn;
-var inherit = require('./utils').inherit;
-var objEach = require('./utils').objEach;
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var ATTR_IGNORE = _dereq_("./constants").ATTR_IGNORE;
+var data = _interopRequire(_dereq_("./data"));
+
+var MutationObserver = _interopRequire(_dereq_("./mutation-observer"));
+
+var registry = _interopRequire(_dereq_("./registry"));
+
+var _utils = _dereq_("./utils");
+
+var camelCase = _utils.camelCase;
+var hasOwn = _utils.hasOwn;
+var inherit = _utils.inherit;
+var objEach = _utils.objEach;
+
 
 var elProto = window.HTMLElement.prototype;
-var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
+var matchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
 
 /**
  * Parses an event definition and returns information about it.
@@ -516,11 +535,16 @@ exports.triggerAttached = triggerAttached;
 exports.triggerAttributeChanged = triggerAttributeChanged;
 exports.triggerCreated = triggerCreated;
 exports.triggerDetached = triggerDetached;
-},{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(require,module,exports){
+exports.__esModule = true;
+
+},{"./constants":1,"./data":2,"./mutation-observer":6,"./registry":7,"./utils":9}],6:[function(_dereq_,module,exports){
 "use strict";
 
-var debounce = require('./utils').debounce;
-var objEach = require('./utils').objEach;
+var _utils = _dereq_("./utils");
+
+var debounce = _utils.debounce;
+var objEach = _utils.objEach;
+
 
 var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
@@ -832,17 +856,26 @@ MutationObserver.prototype = {
   }
 };
 
-exports.default = MutationObserver;
-},{"./utils":9}],7:[function(require,module,exports){
+module.exports = MutationObserver;
+
+},{"./utils":9}],7:[function(_dereq_,module,exports){
 "use strict";
 
-var TYPE_ATTRIBUTE = require('./constants').TYPE_ATTRIBUTE;
-var TYPE_CLASSNAME = require('./constants').TYPE_CLASSNAME;
-var TYPE_ELEMENT = require('./constants').TYPE_ELEMENT;
-var globals = require('./globals').default;
-var hasOwn = require('./utils').hasOwn;
-var isValidNativeCustomElementName = require('./utils').isValidNativeCustomElementName;
-var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var _constants = _dereq_("./constants");
+
+var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
+var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
+var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
+var globals = _interopRequire(_dereq_("./globals"));
+
+var _utils = _dereq_("./utils");
+
+var hasOwn = _utils.hasOwn;
+var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
+var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
+
 
 /**
  * Returns the class list for the specified element.
@@ -860,10 +893,10 @@ function getClassList(element) {
 
   var attrs = element.attributes;
 
-  return (attrs["class"] && attrs["class"].nodeValue.split(/\s+/)) || [];
+  return attrs["class"] && attrs["class"].nodeValue.split(/\s+/) || [];
 }
 
-exports.default = {
+module.exports = {
   clear: function () {
     globals.registry = {};
     return this;
@@ -886,7 +919,7 @@ exports.default = {
 
     if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
       definition = globals.registry[isAttrOrTag];
-      tagToExtend = definition.extends;
+      tagToExtend = definition["extends"];
 
       if (isAttrValue) {
         if (tag === tagToExtend) {
@@ -902,7 +935,7 @@ exports.default = {
 
       if (this.isType(attr, TYPE_ATTRIBUTE)) {
         definition = globals.registry[attr];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -918,7 +951,7 @@ exports.default = {
 
       if (this.isType(className, TYPE_CLASSNAME)) {
         definition = globals.registry[className];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -948,23 +981,34 @@ exports.default = {
     return this;
   }
 };
-},{"./constants":1,"./globals":4,"./utils":9}],8:[function(require,module,exports){
+
+},{"./constants":1,"./globals":4,"./utils":9}],8:[function(_dereq_,module,exports){
 "use strict";
 
-var TYPE_ATTRIBUTE = require('./constants').TYPE_ATTRIBUTE;
-var TYPE_CLASSNAME = require('./constants').TYPE_CLASSNAME;
-var TYPE_ELEMENT = require('./constants').TYPE_ELEMENT;
-var documentObserver = require('./document-observer').default;
-var triggerCreated = require('./lifecycle').triggerCreated;
-var triggerAttached = require('./lifecycle').triggerAttached;
-var triggerDetached = require('./lifecycle').triggerDetached;
-var triggerAttributeChanged = require('./lifecycle').triggerAttributeChanged;
-var initElements = require('./lifecycle').initElements;
-var registry = require('./registry').default;
-var debounce = require('./utils').debounce;
-var inherit = require('./utils').inherit;
-var supportsNativeCustomElements = require('./utils').supportsNativeCustomElements;
-var version = require('./version').default;
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var _constants = _dereq_("./constants");
+
+var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
+var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
+var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
+var documentObserver = _interopRequire(_dereq_("./document-observer"));
+
+var _lifecycle = _dereq_("./lifecycle");
+
+var triggerCreated = _lifecycle.triggerCreated;
+var triggerAttached = _lifecycle.triggerAttached;
+var triggerDetached = _lifecycle.triggerDetached;
+var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
+var initElements = _lifecycle.initElements;
+var registry = _interopRequire(_dereq_("./registry"));
+
+var _utils = _dereq_("./utils");
+
+var debounce = _utils.debounce;
+var inherit = _utils.inherit;
+var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
+var version = _interopRequire(_dereq_("./version"));
 
 var HTMLElement = window.HTMLElement;
 
@@ -994,7 +1038,7 @@ var initDocument = debounce(function () {
 function makeElementConstructor(definition) {
   function CustomElement() {
     var element;
-    var tagToExtend = definition.extends;
+    var tagToExtend = definition["extends"];
     var definitionId = definition.id;
 
     if (tagToExtend) {
@@ -1043,7 +1087,7 @@ function skate(id, definition) {
   registry.set(id, definition);
 
   if (registry.isNativeCustomElement(id)) {
-    var elementPrototype = definition.extends ? document.createElement(definition.extends).constructor.prototype : HTMLElement.prototype;
+    var elementPrototype = definition["extends"] ? document.createElement(definition["extends"]).constructor.prototype : HTMLElement.prototype;
 
     if (!elementPrototype.isPrototypeOf(definition.prototype)) {
       definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
@@ -1070,8 +1114,8 @@ function skate(id, definition) {
       })
     };
 
-    if (definition.extends) {
-      options.extends = definition.extends;
+    if (definition["extends"]) {
+      options["extends"] = definition["extends"];
     }
 
     return document.registerElement(id, options);
@@ -1136,7 +1180,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: undefined,
+  "extends": undefined,
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
@@ -1167,7 +1211,7 @@ skate.defaults = {
 window.skate = skate;
 
 // This ensures that if Skate is transpiled to AMD / CJS from ES6 that it works.
-skate.default = skate;
+skate["default"] = skate;
 
 // AMD
 if (typeof define === "function") {
@@ -1181,32 +1225,85 @@ if (typeof exports === "object") {
   module.exports = skate;
 }
 
-exports.default = skate;
-},{"./constants":1,"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
+// ES6
+module.exports = skate;
+
+},{"./constants":1,"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(_dereq_,module,exports){
 "use strict";
 
+/**
+ * Checks {}.hasOwnProperty in a safe way.
+ *
+ * @param {Object} obj The object the property is on.
+ * @param {String} key The object key to check.
+ *
+ * @returns {Boolean}
+ */
 exports.hasOwn = hasOwn;
+
+
+/**
+ * Camel-cases the specified string.
+ *
+ * @param {String} str The string to camel-case.
+ *
+ * @returns {String}
+ */
 exports.camelCase = camelCase;
+
+
+/**
+ * Returns a function that will prevent more than one call in a single clock
+ * tick.
+ *
+ * @param {Function} fn The function to call.
+ *
+ * @returns {Function}
+ */
 exports.debounce = debounce;
+
+
+/**
+ * Returns whether or not the specified element has been selectively ignored.
+ *
+ * @param {Element} element The element to check and traverse up from.
+ *
+ * @returns {Boolean}
+ */
 exports.getClosestIgnoredElement = getClosestIgnoredElement;
+
+
+/**
+ * Merges the second argument into the first.
+ *
+ * @param {Object} child The object to merge into.
+ * @param {Object} parent The object to merge from.
+ * @param {Boolean} overwrite Whether or not to overwrite properties on the child.
+ *
+ * @returns {Object} Returns the child object.
+ */
 exports.inherit = inherit;
+
+
+/**
+ * Traverses an object checking hasOwnProperty.
+ *
+ * @param {Object} obj The object to traverse.
+ * @param {Function} fn The function to call for each item in the object.
+ *
+ * @returns {undefined}
+ */
 exports.objEach = objEach;
 exports.supportsNativeCustomElements = supportsNativeCustomElements;
 exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
-"use strict";
-
-var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
+var ATTR_IGNORE = _dereq_("./constants").ATTR_IGNORE;
 function hasOwn(obj, key) {
   return Object.prototype.hasOwnProperty.call(obj, key);
-}
-
-function camelCase(str) {
+}function camelCase(str) {
   return str.split(/-/g).map(function (str, index) {
     return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
   }).join("");
-}
-
-function debounce(fn) {
+}function debounce(fn) {
   var called = false;
 
   return function () {
@@ -1218,9 +1315,7 @@ function debounce(fn) {
       }, 1);
     }
   };
-}
-
-function getClosestIgnoredElement(element) {
+}function getClosestIgnoredElement(element) {
   var parent = element;
 
   while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
@@ -1230,9 +1325,7 @@ function getClosestIgnoredElement(element) {
 
     parent = parent.parentNode;
   }
-}
-
-function inherit(child, parent, overwrite) {
+}function inherit(child, parent, overwrite) {
   var names = Object.getOwnPropertyNames(parent);
   var namesLen = names.length;
 
@@ -1252,9 +1345,7 @@ function inherit(child, parent, overwrite) {
   }
 
   return child;
-}
-
-function objEach(obj, fn) {
+}function objEach(obj, fn) {
   for (var a in obj) {
     if (hasOwn(obj, a)) {
       fn(obj[a], a);
@@ -1269,8 +1360,11 @@ function supportsNativeCustomElements() {
 function isValidNativeCustomElementName(name) {
   return name.indexOf("-") > 0;
 }
-},{"./constants":1}],10:[function(require,module,exports){
+exports.__esModule = true;
+
+},{"./constants":1}],10:[function(_dereq_,module,exports){
 "use strict";
 
-exports.default = "0.13.0";
+module.exports = "0.13.0";
+
 },{}]},{},[8]);
