@@ -1,17 +1,15 @@
 'use strict';
 
-var path = require('path');
+var fs = require('fs');
 var sh = require('shelljs');
+var path = require('path');
 
-module.exports = function (src, dest) {
-  var base = '.tmp/6to5/' + path.dirname(src);
+var browserify = require('browserify');
+var to5ify = require('6to5ify');
 
-  sh.rm('-rf', base);
-  sh.mkdir('-p', base);
-  sh.exec('./node_modules/.bin/6to5 ' + path.dirname(src) + ' --out-dir ' + base);
+module.exports = function (src, dest, name) {
+  sh.mkdir('-p', path.dirname(dest));
 
-  if (dest) {
-    sh.mkdir('-p', path.dirname(dest));
-    sh.exec('./node_modules/.bin/browserify .tmp/6to5/' + src + ' -o ' + dest);
-  }
+  var opts = './' + src + ' -t 6to5ify -p browserify-derequire -o ' + dest;
+  sh.exec('./node_modules/.bin/browserify ' + opts);
 };
