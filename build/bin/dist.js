@@ -6,11 +6,12 @@ var fs = require('fs');
 var sh = require('shelljs');
 
 sh.rm('-rf', 'dist');
-compile('src/skate.js', 'dist/skate.js');
-cc.compile(fs.readFileSync('dist/skate.js'), {}, function aftercompile (err, stdout, stderr) {
-  if (err) {
-    throw err;
-  }
+compile('./src/skate.js', 'dist/skate.js', 'skate', function () {
+  cc.compile(fs.readFileSync('dist/skate.js'), {}, function aftercompile (err, stdout, stderr) {
+    if (err) {
+      throw err;
+    }
 
-  fs.writeFileSync('dist/skate.min.js', stdout);
+    fs.writeFileSync('dist/skate.min.js', stdout);
+  });
 });

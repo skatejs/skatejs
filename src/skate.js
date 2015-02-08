@@ -223,20 +223,5 @@ skate.defaults = {
 // using it in an environment where module and non-module code may co-exist.
 window.skate = skate;
 
-// This ensures that if Skate is transpiled to AMD / CJS from ES6 that it works.
-skate.default = skate;
-
-// AMD
-if (typeof define === 'function') {
-  define(function () {
-    return skate;
-  });
-}
-
-// CommonJS
-if (typeof exports === 'object') {
-  module.exports = skate;
-}
-
 // ES6
 export default skate;
