@@ -29,7 +29,6 @@ module.exports = function (src, dest, name, cb) {
   bundle
     .pipe(mold.transformSourcesRelativeTo(path.join(__dirname, '..', '..')))
     .pipe(exorcist(dest + '.map'))
-    .pipe(out);
-
-  bundle.on('end', cb);
+    .pipe(out)
+    .on('finish', cb);
 };
