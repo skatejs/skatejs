@@ -541,6 +541,14 @@ Skate uses the [Custom Element spec](http://w3c.github.io/webcomponents/spec/cus
 
 You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
 
+`<datalist>...</datalist>`:
+
+```js
+skate('datalist', {
+  created: polyfillDatalistElement
+});
+```
+
 `<input placeholder="">`:
 
 ```js
