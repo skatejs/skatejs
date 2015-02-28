@@ -4,6 +4,11 @@ import {
   ATTR_IGNORE
 } from './constants';
 
+var elementPrototype = window.HTMLElement.prototype;
+var elementPrototypeContains = window.HTMLElement.prototype.contains;
+
+export var elementPrototype;
+
 /**
  * Checks {}.hasOwnProperty in a safe way.
  *
@@ -27,6 +32,25 @@ export function camelCase (str) {
   return str.split(/-/g).map(function (str, index) {
     return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
   }).join('');
+}
+
+/**
+ * Returns whether or not the source element contains the target element.
+ * This is for browsers that don't support Element.prototype.contains on an
+ * HTMLUnknownElement.
+ *
+ * @param {HTMLElement} source The source element.
+ * @param {HTMLElement} target The target element.
+ *
+ * @returns {Boolean}
+ */
+export function elementContains (source, target) {
+  // The document element does not have the contains method in IE.
+  if (source === document && !source.contains) {
+    return document.head.contains(target) || document.body.contains(target);
+  }
+
+  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
 }
 
 /**

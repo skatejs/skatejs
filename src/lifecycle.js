@@ -8,6 +8,7 @@ import MutationObserver from './mutation-observer';
 import registry from './registry';
 import {
   camelCase,
+  elementContains,
   hasOwn,
   inherit,
   objEach
@@ -297,7 +298,7 @@ function triggerAttached (target, component) {
     return;
   }
 
-  if (!document.contains(target)) {
+  if (!elementContains(document, target)) {
     return;
   }
 

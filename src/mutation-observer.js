@@ -2,32 +2,14 @@
 
 import {
   debounce,
+  elementContains,
+  elementPrototype,
   objEach
 } from './utils';
 
-var elProto = window.HTMLElement.prototype;
-var elProtoContains = window.HTMLElement.prototype.contains;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
-
-/**
- * Returns whether or not the source element contains the target element.
- * This is for browsers that don't support Element.prototype.contains on an
- * HTMLUnknownElement.
- *
- * @param {HTMLElement} source The source element.
- * @param {HTMLElement} target The target element.
- *
- * @returns {Boolean}
- */
-function elementContains (source, target) {
-  if (source.nodeType !== 1) {
-    return false;
-  }
-
-  return source.contains ? source.contains(target) : elProtoContains.call(source, target);
-}
 
 /**
  * Creates a new mutation record.
@@ -118,11 +100,11 @@ MutationObserver.fixIe = function () {
   }
 
   // We have to call the old innerHTML getter and setter.
-  var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, 'innerHTML');
+  var oldInnerHtml = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
 
   // This redefines the innerHTML property so that we can ensure that events
   // are properly triggered.
-  Object.defineProperty(elProto, 'innerHTML', {
+  Object.defineProperty(elementPrototype, 'innerHTML', {
     get: function () {
       return oldInnerHtml.get.call(this);
     },
