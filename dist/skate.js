@@ -75,6 +75,18 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   exports.camelCase = camelCase;
   
   /**
+   * Returns whether or not the source element contains the target element.
+   * This is for browsers that don't support Element.prototype.contains on an
+   * HTMLUnknownElement.
+   *
+   * @param {HTMLElement} source The source element.
+   * @param {HTMLElement} target The target element.
+   *
+   * @returns {Boolean}
+   */
+  exports.elementContains = elementContains;
+  
+  /**
    * Returns a function that will prevent more than one call in a single clock
    * tick.
    *
@@ -119,6 +131,10 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   
   var ATTR_IGNORE = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = window.HTMLElement.prototype.contains;
+  
+  var elementPrototype = exports.elementPrototype = undefined;
   function hasOwn(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -127,6 +143,15 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
     return str.split(/-/g).map(function (str, index) {
       return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
     }).join("");
+  }
+  
+  function elementContains(source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
   }
   
   function debounce(fn) {
@@ -209,31 +234,13 @@ window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
   var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
+  var elementContains = _utils.elementContains;
+  var elementPrototype = _utils.elementPrototype;
   var objEach = _utils.objEach;
   
-  var elProto = window.HTMLElement.prototype;
-  var elProtoContains = window.HTMLElement.prototype.contains;
   var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   var isFixingIe = false;
   var isIe = window.navigator.userAgent.indexOf("Trident") > -1;
-  
-  /**
-   * Returns whether or not the source element contains the target element.
-   * This is for browsers that don't support Element.prototype.contains on an
-   * HTMLUnknownElement.
-   *
-   * @param {HTMLElement} source The source element.
-   * @param {HTMLElement} target The target element.
-   *
-   * @returns {Boolean}
-   */
-  function elementContains(source, target) {
-    if (source.nodeType !== 1) {
-      return false;
-    }
-  
-    return source.contains ? source.contains(target) : elProtoContains.call(source, target);
-  }
   
   /**
    * Creates a new mutation record.
@@ -324,11 +331,11 @@ window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
     }
   
     // We have to call the old innerHTML getter and setter.
-    var oldInnerHtml = Object.getOwnPropertyDescriptor(elProto, "innerHTML");
+    var oldInnerHtml = Object.getOwnPropertyDescriptor(elementPrototype, "innerHTML");
   
     // This redefines the innerHTML property so that we can ensure that events
     // are properly triggered.
-    Object.defineProperty(elProto, "innerHTML", {
+    Object.defineProperty(elementPrototype, "innerHTML", {
       get: function get() {
         return oldInnerHtml.get.call(this);
       },
@@ -675,6 +682,7 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var camelCase = _utils.camelCase;
+  var elementContains = _utils.elementContains;
   var hasOwn = _utils.hasOwn;
   var inherit = _utils.inherit;
   var objEach = _utils.objEach;
@@ -957,7 +965,7 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
       return;
     }
   
-    if (!document.contains(target)) {
+    if (!elementContains(document, target)) {
       return;
     }
   
