@@ -1,14 +1,10 @@
 'use strict';
 
-var galvatron = require('galvatron');
+var galvatron = require('../lib/galvatron');
 var gulp = require('gulp');
 var gulpRename = require('gulp-rename');
 var gulpUglify = require('gulp-uglify');
 var mac = require('mac');
-
-galvatron
-  .pre('babel')
-  .post('globalize');
 
 module.exports = function () {
   return gulp
