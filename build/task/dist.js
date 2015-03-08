@@ -1,5 +1,6 @@
 'use strict';
 
+var commander = require('../lib/commander');
 var galvatron = require('../lib/galvatron');
 var gulp = require('gulp');
 var gulpRename = require('gulp-rename');
@@ -7,9 +8,11 @@ var gulpUglify = require('gulp-uglify');
 var mac = require('mac');
 
 module.exports = function () {
+  var bundle = galvatron.bundle('src/skate.js');
   return gulp
-    .src('src/skate.js')
-    .pipe(galvatron.stream())
+    .src(bundle.files)
+    .pipe(bundle.watchIf(commander.watch))
+    .pipe(bundle.stream())
     .pipe(gulp.dest('dist'))
     .pipe(gulpUglify())
     .pipe(gulpRename( { basename: 'skate.min' }))

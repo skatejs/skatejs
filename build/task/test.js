@@ -15,30 +15,37 @@ commander
 var clientArgs = [];
 
 if (commander.grep) {
-    clientArgs.push('--grep');
-    clientArgs.push(commander.grep);
+  clientArgs.push('--grep');
+  clientArgs.push(commander.grep);
 }
 
 function run () {
-    karma.start({
-        autoWatch: !!commander.watch,
-        singleRun: !commander.watch,
-        hostname: commander.host || 'localhost',
-        port: commander.port || 9876,
-        frameworks: ['mocha', 'sinon-chai'],
-        browsers: (commander.browsers || 'Chrome').split(','),
-        client: {
-            args: clientArgs
-        },
-        files: [
-            '.tmp/unit.js'
-        ]
-    });
+  karma.start({
+    autoWatch: !!commander.watch,
+    singleRun: !commander.watch,
+    hostname: commander.host || 'localhost',
+    port: commander.port || 9876,
+    frameworks: ['mocha', 'sinon-chai'],
+    browsers: (commander.browsers || 'Chrome').split(','),
+    client: {
+      args: clientArgs
+    },
+    files: [
+      '.tmp/unit.js'
+    ]
+  });
 }
 
 module.exports = function () {
-    gulp.src('test/unit.js')
-        .pipe(galvatron.stream())
-        .pipe(gulp.dest('.tmp'))
-        .on('finish', run);
+  var bundle = galvatron.bundle('test/unit.js');
+
+  if (commander.watch) {
+    run();
+  }
+
+  gulp.src(bundle.files)
+    .pipe(bundle.watchIf(commander.watch))
+    .pipe(bundle.stream())
+    .pipe(gulp.dest('.tmp'))
+    .on('finish', run);
 };
