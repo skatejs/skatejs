@@ -4,5 +4,5 @@
   "version": "0.13.0",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
-  "main": "src/skate.js"
+  "main": "dist/skate.js"
 }
