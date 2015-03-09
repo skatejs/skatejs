@@ -4,10 +4,14 @@ window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   
   "use strict";
   
-  var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
-  var TYPE_ATTRIBUTE = exports.TYPE_ATTRIBUTE = "a";
-  var TYPE_CLASSNAME = exports.TYPE_CLASSNAME = "c";
-  var TYPE_ELEMENT = exports.TYPE_ELEMENT = "t";
+  var ATTR_IGNORE = "data-skate-ignore";
+  exports.ATTR_IGNORE = ATTR_IGNORE;
+  var TYPE_ATTRIBUTE = "a";
+  exports.TYPE_ATTRIBUTE = TYPE_ATTRIBUTE;
+  var TYPE_CLASSNAME = "c";
+  exports.TYPE_CLASSNAME = TYPE_CLASSNAME;
+  var TYPE_ELEMENT = "t";
+  exports.TYPE_ELEMENT = TYPE_ELEMENT;
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -134,20 +138,28 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   var elementPrototype = window.HTMLElement.prototype;
   var elementPrototypeContains = window.HTMLElement.prototype.contains;
   
-  var elementPrototype = exports.elementPrototype = undefined;function hasOwn(obj, key) {
+  var elementPrototype;exports.elementPrototype = elementPrototype;
+  
+  function hasOwn(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
-  }function camelCase(str) {
+  }
+  
+  function camelCase(str) {
     return str.split(/-/g).map(function (str, index) {
       return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
     }).join("");
-  }function elementContains(source, target) {
+  }
+  
+  function elementContains(source, target) {
     // The document element does not have the contains method in IE.
     if (source === document && !source.contains) {
       return document.head.contains(target) || document.body.contains(target);
     }
   
     return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  }function debounce(fn) {
+  }
+  
+  function debounce(fn) {
     var called = false;
   
     return function () {
@@ -159,7 +171,9 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
         }, 1);
       }
     };
-  }function getClosestIgnoredElement(element) {
+  }
+  
+  function getClosestIgnoredElement(element) {
     var parent = element;
   
     while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
@@ -169,7 +183,9 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   
       parent = parent.parentNode;
     }
-  }function inherit(child, parent, overwrite) {
+  }
+  
+  function inherit(child, parent, overwrite) {
     var names = Object.getOwnPropertyNames(parent);
     var namesLen = names.length;
   
@@ -189,7 +205,9 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
     }
   
     return child;
-  }function objEach(obj, fn) {
+  }
+  
+  function objEach(obj, fn) {
     for (var a in obj) {
       if (hasOwn(obj, a)) {
         fn(obj[a], a);
@@ -204,6 +222,7 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   function isValidNativeCustomElementName(name) {
     return name.indexOf("-") > 0;
   }
+  
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
