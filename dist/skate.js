@@ -1435,6 +1435,14 @@ window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
   // using it in an environment where module and non-module code may co-exist.
   window.skate = skate;
   
+  if (typeof define === "function") {
+    define(skate);
+  }
+  
+  if (typeof module === "object") {
+    module.exports = skate;
+  }
+  
   // ES6
   module.exports = skate;
   
