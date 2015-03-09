@@ -43,6 +43,6 @@
     "shelljs": "~0.3.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp test --browsers Firefox"
+    "test": "./node_modules/.bin/gulp test"
   }
 }

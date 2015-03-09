@@ -26,7 +26,7 @@ function run () {
     hostname: commander.host || 'localhost',
     port: commander.port || 9876,
     frameworks: ['mocha', 'sinon-chai'],
-    browsers: (commander.browsers || 'Chrome').split(','),
+    browsers: (commander.browsers || 'Firefox').split(','),
     client: {
       args: clientArgs
     },
