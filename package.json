@@ -18,7 +18,7 @@
     "commander": "^2.5.0",
     "exorcist": "^0.1.6",
     "fs-extra": "^0.15.0",
-    "galvatron": "^0.3.0",
+    "galvatron": "^0.3.1",
     "gulp": "^3.8.11",
     "gulp-auto-task": "0.0.1",
     "gulp-rename": "^1.2.0",

@@ -1,17 +1,14 @@
-window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
+// src/constants.js
+window.__module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   "use strict";
   
-  var ATTR_IGNORE = "data-skate-ignore";
-  exports.ATTR_IGNORE = ATTR_IGNORE;
-  var TYPE_ATTRIBUTE = "a";
-  exports.TYPE_ATTRIBUTE = TYPE_ATTRIBUTE;
-  var TYPE_CLASSNAME = "c";
-  exports.TYPE_CLASSNAME = TYPE_CLASSNAME;
-  var TYPE_ELEMENT = "t";
-  exports.TYPE_ELEMENT = TYPE_ELEMENT;
+  var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
+  var TYPE_ATTRIBUTE = exports.TYPE_ATTRIBUTE = "a";
+  var TYPE_CLASSNAME = exports.TYPE_CLASSNAME = "c";
+  var TYPE_ELEMENT = exports.TYPE_ELEMENT = "t";
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -19,7 +16,8 @@ window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
+// src/globals.js
+window.__module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -37,7 +35,8 @@ window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
+// src/data.js
+window.__module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -53,7 +52,8 @@ window.aui_module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
+// src/utils.js
+window.__module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -133,33 +133,25 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
   "use strict";
   
-  var ATTR_IGNORE = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  var ATTR_IGNORE = window.__module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
   var elementPrototype = window.HTMLElement.prototype;
   var elementPrototypeContains = window.HTMLElement.prototype.contains;
   
-  var elementPrototype;exports.elementPrototype = elementPrototype;
-  
-  function hasOwn(obj, key) {
+  var elementPrototype = exports.elementPrototype = undefined;function hasOwn(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
-  }
-  
-  function camelCase(str) {
+  }function camelCase(str) {
     return str.split(/-/g).map(function (str, index) {
       return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
     }).join("");
-  }
-  
-  function elementContains(source, target) {
+  }function elementContains(source, target) {
     // The document element does not have the contains method in IE.
     if (source === document && !source.contains) {
       return document.head.contains(target) || document.body.contains(target);
     }
   
     return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  }
-  
-  function debounce(fn) {
+  }function debounce(fn) {
     var called = false;
   
     return function () {
@@ -171,9 +163,7 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
         }, 1);
       }
     };
-  }
-  
-  function getClosestIgnoredElement(element) {
+  }function getClosestIgnoredElement(element) {
     var parent = element;
   
     while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
@@ -183,9 +173,7 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   
       parent = parent.parentNode;
     }
-  }
-  
-  function inherit(child, parent, overwrite) {
+  }function inherit(child, parent, overwrite) {
     var names = Object.getOwnPropertyNames(parent);
     var namesLen = names.length;
   
@@ -205,9 +193,7 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
     }
   
     return child;
-  }
-  
-  function objEach(obj, fn) {
+  }function objEach(obj, fn) {
     for (var a in obj) {
       if (hasOwn(obj, a)) {
         fn(obj[a], a);
@@ -222,7 +208,6 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   function isValidNativeCustomElementName(name) {
     return name.indexOf("-") > 0;
   }
-  
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -230,13 +215,14 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
+// src/mutation-observer.js
+window.__module_ff611d2c455b299b951f7e794d2d3337 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   "use strict";
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var elementContains = _utils.elementContains;
@@ -538,7 +524,8 @@ window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
+// src/registry.js
+window.__module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -546,15 +533,15 @@ window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = window.__module_22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(window.__module_906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -668,7 +655,8 @@ window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
+// src/lifecycle.js
+window.__module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -676,15 +664,15 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var ATTR_IGNORE = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  var ATTR_IGNORE = window.__module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
-  var data = _interopRequire(window.aui_module_1d31a3a5e497c74976d725fe4ea5e938);
+  var data = _interopRequire(window.__module_1d31a3a5e497c74976d725fe4ea5e938);
   
-  var MutationObserver = _interopRequire(window.aui_module_ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(window.__module_ff611d2c455b299b951f7e794d2d3337);
   
-  var registry = _interopRequire(window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(window.__module_69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -1095,7 +1083,8 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
+// src/document-observer.js
+window.__module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1103,16 +1092,16 @@ window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(window.__module_906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _lifecycle = window.aui_module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = window.__module_3afb33416adfdec2a05e8e91247972a7;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  var MutationObserver = _interopRequire(window.aui_module_ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(window.__module_ff611d2c455b299b951f7e794d2d3337);
   
-  var getClosestIgnoredElement = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
+  var getClosestIgnoredElement = window.__module_99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1192,7 +1181,8 @@ window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
+// src/version.js
+window.__module_6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1201,7 +1191,8 @@ window.aui_module_6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   return module.exports
 }.call(this));
 
-window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
+// src/skate.js
+window.__module_880d751441dbbd15758abf63053bf506 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1209,15 +1200,15 @@ window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = window.__module_22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827);
+  var documentObserver = _interopRequire(window.__module_6d7033c1bbef2b64e54f3f58cc6d2827);
   
-  var _lifecycle = window.aui_module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = window.__module_3afb33416adfdec2a05e8e91247972a7;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1225,15 +1216,15 @@ window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(window.__module_69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
   var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
   
-  var version = _interopRequire(window.aui_module_6c7bfcbc0c7a1db6e242c7f7a90b3330);
+  var version = _interopRequire(window.__module_6c7bfcbc0c7a1db6e242c7f7a90b3330);
   
   var HTMLElement = window.HTMLElement;
   
