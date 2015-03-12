@@ -1,7 +1,7 @@
 'use strict';
 
 var commander = require('../lib/commander');
-var galvatron = require('../lib/galvatron');
+var galvatron = require('galvatron');
 var gulp = require('gulp');
 var karma = require('karma').server;
 
@@ -11,6 +11,10 @@ commander
   .option('-h, --host [localhost]', 'The host to listen on.')
   .option('-p, --port [9876]', 'The port to listen on.')
   .parse(process.argv);
+
+galvatron.transformer
+  .post('babel')
+  .post('globalize');
 
 var clientArgs = [];
 

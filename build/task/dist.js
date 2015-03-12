@@ -1,10 +1,14 @@
 'use strict';
 
 var commander = require('../lib/commander');
-var galvatron = require('../lib/galvatron');
+var galvatron = require('galvatron')();
 var gulp = require('gulp');
 var gulpRename = require('gulp-rename');
 var gulpUglify = require('gulp-uglify');
+
+galvatron.transformer
+  .post('babel')
+  .post('globalize');
 
 module.exports = function () {
   var bundle = galvatron.bundle('src/skate.js');
