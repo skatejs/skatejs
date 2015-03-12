@@ -1,9 +1,7 @@
 // src/constants.js
-window.__module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
+__109f1183510e67c7b8f39bf6c993fe2c = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
   var TYPE_ATTRIBUTE = exports.TYPE_ATTRIBUTE = "a";
@@ -14,14 +12,12 @@ window.__module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   });
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/globals.js
-window.__module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
+__17c84629abc5a2ac40e2f9b7ada70756 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   if (!window.__skate) {
     window.__skate = {
@@ -33,14 +29,12 @@ window.__module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   module.exports = window.__skate;
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/data.js
-window.__module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
+__8633db7ab67ace1ccaa2ce6f34fb629b = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   module.exports = function (element) {
     var namespace = arguments[1] === undefined ? "" : arguments[1];
@@ -50,14 +44,12 @@ window.__module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/utils.js
-window.__module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
+__4e6ce3decb3b691e20396770a364a0bf = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  
   
   /**
    * Checks {}.hasOwnProperty in a safe way.
@@ -131,9 +123,8 @@ window.__module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   exports.objEach = objEach;
   exports.supportsNativeCustomElements = supportsNativeCustomElements;
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
-  "use strict";
   
-  var ATTR_IGNORE = window.__module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  var ATTR_IGNORE = __109f1183510e67c7b8f39bf6c993fe2c.ATTR_IGNORE;
   
   var elementPrototype = window.HTMLElement.prototype;
   var elementPrototypeContains = window.HTMLElement.prototype.contains;
@@ -213,16 +204,14 @@ window.__module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   });
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/mutation-observer.js
-window.__module_ff611d2c455b299b951f7e794d2d3337 = (function () {
+__dac4546fc6d837333039d9b056012093 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
-  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __4e6ce3decb3b691e20396770a364a0bf;
   
   var debounce = _utils.debounce;
   var elementContains = _utils.elementContains;
@@ -522,26 +511,24 @@ window.__module_ff611d2c455b299b951f7e794d2d3337 = (function () {
   module.exports = MutationObserver;
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/registry.js
-window.__module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
+__a79aa1df0beaa23f450ab9ced8ff3f10 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.__module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __109f1183510e67c7b8f39bf6c993fe2c;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(window.__module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__17c84629abc5a2ac40e2f9b7ada70756);
   
-  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __4e6ce3decb3b691e20396770a364a0bf;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -653,26 +640,24 @@ window.__module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/lifecycle.js
-window.__module_3afb33416adfdec2a05e8e91247972a7 = (function () {
+__05282bc8635c400519fbb7de60cc598d = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var ATTR_IGNORE = window.__module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  var ATTR_IGNORE = __109f1183510e67c7b8f39bf6c993fe2c.ATTR_IGNORE;
   
-  var data = _interopRequire(window.__module_1d31a3a5e497c74976d725fe4ea5e938);
+  var data = _interopRequire(__8633db7ab67ace1ccaa2ce6f34fb629b);
   
-  var MutationObserver = _interopRequire(window.__module_ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(__dac4546fc6d837333039d9b056012093);
   
-  var registry = _interopRequire(window.__module_69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(__a79aa1df0beaa23f450ab9ced8ff3f10);
   
-  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __4e6ce3decb3b691e20396770a364a0bf;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -1081,27 +1066,25 @@ window.__module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   });
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/document-observer.js
-window.__module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
+__b934b20ba26c535cba4ce77e0ac981c4 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(window.__module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__17c84629abc5a2ac40e2f9b7ada70756);
   
-  var _lifecycle = window.__module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __05282bc8635c400519fbb7de60cc598d;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  var MutationObserver = _interopRequire(window.__module_ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(__dac4546fc6d837333039d9b056012093);
   
-  var getClosestIgnoredElement = window.__module_99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
+  var getClosestIgnoredElement = __4e6ce3decb3b691e20396770a364a0bf.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1179,36 +1162,34 @@ window.__module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/version.js
-window.__module_6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
+__ac41d6d33a79cedf3f34d6f18c7817d8 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   module.exports = "0.13.0";
   
   return module.exports
-}.call(this));
+}).call(this);
 
 // src/skate.js
-window.__module_880d751441dbbd15758abf63053bf506 = (function () {
+__2c1f97c27bb16fe071d2d57a158d7691 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.__module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __109f1183510e67c7b8f39bf6c993fe2c;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(window.__module_6d7033c1bbef2b64e54f3f58cc6d2827);
+  var documentObserver = _interopRequire(__b934b20ba26c535cba4ce77e0ac981c4);
   
-  var _lifecycle = window.__module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __05282bc8635c400519fbb7de60cc598d;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1216,15 +1197,15 @@ window.__module_880d751441dbbd15758abf63053bf506 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(window.__module_69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(__a79aa1df0beaa23f450ab9ced8ff3f10);
   
-  var _utils = window.__module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __4e6ce3decb3b691e20396770a364a0bf;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
   var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
   
-  var version = _interopRequire(window.__module_6c7bfcbc0c7a1db6e242c7f7a90b3330);
+  var version = _interopRequire(__ac41d6d33a79cedf3f34d6f18c7817d8);
   
   var HTMLElement = window.HTMLElement;
   
@@ -1425,17 +1406,7 @@ window.__module_880d751441dbbd15758abf63053bf506 = (function () {
   // their environments are like. Doing this affords them the flexibility of
   // using it in an environment where module and non-module code may co-exist.
   window.skate = skate;
-  
-  if (typeof define === "function") {
-    define(skate);
-  }
-  
-  if (typeof module === "object") {
-    module.exports = skate;
-  }
-  
-  // ES6
   module.exports = skate;
   
   return module.exports
-}.call(this));
+}).call(this);
