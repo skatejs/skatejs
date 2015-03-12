@@ -1175,7 +1175,7 @@ __ac41d6d33a79cedf3f34d6f18c7817d8 = (function () {
 }).call(this);
 
 // src/skate.js
-__a37e01d9167043e4d251a1a95c2a4b12 = (function () {
+__ca408130a26f25e08316367570591bf4 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1402,14 +1402,14 @@ __a37e01d9167043e4d251a1a95c2a4b12 = (function () {
   // Exporting
   // ---------
   
-  // Only overwrite the global if it exists.
-  if (!window.skate) {
-    window.skate = skate;
-  }
+  var previousSkate = window.skate;
+  skate.noConflict = function () {
+    window.skate = previousSkate;
+    return skate;
+  };
   
-  // Allow multiple versions of Skate on the page by using its version number to
-  // access it on the main skate global.
-  window.skate[skate.version] = skate;
+  // Global
+  window.skate = skate;
   
   // ES6
   module.exports = skate;
