@@ -222,14 +222,4 @@ skate.defaults = {
 // their environments are like. Doing this affords them the flexibility of
 // using it in an environment where module and non-module code may co-exist.
 window.skate = skate;
-
-if (typeof define === 'function') {
-  define(skate);
-}
-
-if (typeof module === 'object') {
-  module.exports = skate;
-}
-
-// ES6
 export default skate;
