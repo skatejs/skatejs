@@ -218,14 +218,14 @@ skate.defaults = {
 // Exporting
 // ---------
 
-// Only overwrite the global if it exists.
-if (!window.skate) {
-  window.skate = skate;
+var previousSkate = window.skate;
+skate.noConflict = function () {
+  window.skate = previousSkate;
+  return skate;
 }
 
-// Allow multiple versions of Skate on the page by using its version number to
-// access it on the main skate global.
-window.skate[skate.version] = skate;
+// Global
+window.skate = skate;
 
 // ES6
 export default skate;

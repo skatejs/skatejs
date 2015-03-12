@@ -673,23 +673,10 @@ If you need to ignore an element and its descendants you can add the `data-skate
 No Conflict
 -----------
 
-Skate does not have a `noConflict()` function. It exports itself as a property on the main `skate` global using its version number. For example, if you include Skate 0.12.1 first and then include Skate 0.13.0 you can access them like so:
+Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring `skate` to the previous value.
 
 ```js
-// 0.12.1
-skate;
-
-// 0.12.1
-skate['0.12.1'];
-
-// 0.13.0
-skate['0.13.0'];
-```
-
-It's recommended that you alias this so that you aren't hardcoding the version number everywhere:
-
-```js
-var mySkate = skate['0.13.0'];
+var mySkate = skate.noConflict();
 ```
 
 
