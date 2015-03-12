@@ -1175,7 +1175,7 @@ __ac41d6d33a79cedf3f34d6f18c7817d8 = (function () {
 }).call(this);
 
 // src/skate.js
-__2c1f97c27bb16fe071d2d57a158d7691 = (function () {
+__a37e01d9167043e4d251a1a95c2a4b12 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1402,10 +1402,16 @@ __2c1f97c27bb16fe071d2d57a158d7691 = (function () {
   // Exporting
   // ---------
   
-  // Always export the global. We don't know how consumers are using it and what
-  // their environments are like. Doing this affords them the flexibility of
-  // using it in an environment where module and non-module code may co-exist.
-  window.skate = skate;
+  // Only overwrite the global if it exists.
+  if (!window.skate) {
+    window.skate = skate;
+  }
+  
+  // Allow multiple versions of Skate on the page by using its version number to
+  // access it on the main skate global.
+  window.skate[skate.version] = skate;
+  
+  // ES6
   module.exports = skate;
   
   return module.exports
