@@ -53,27 +53,21 @@ Include either `dist/skate.js` or `dist/skate.min.js`.
 
 
 
-### AMD
+### UMD (AMD / CommonJS)
 
-An anonymous AMD module is defined, if supported.
-
-
-
-### CommonJS
-
-A CommonJS module is exported, if supported.
-
-
-
-### Global
-
-If you're still skating old school, we've got you covered. Just make sure it's included on the page and you can access it via `window.skate`.
+UMD files are located in `lib/`. Simply import `lib/skate.js` and use it as normal.
 
 
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
+The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module.
+
+
+
+### Global
+
+If you're still skating old school the `dist` directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with `skate`.
 
 
 
@@ -674,6 +668,36 @@ If you need to ignore an element and its descendants you can add the `data-skate
   <!-- Everything including the container will be ignored. -->
 </div>
 ```
+
+
+No Conflict
+-----------
+
+Skate does not have a `noConflict()` function. It exports itself as a property on the main `skate` global using its version number. For example, if you include Skate 0.12.1 first and then include Skate 0.13.0 you can access them like so:
+
+```js
+// 0.12.1
+skate;
+
+// 0.12.1
+skate['0.12.1'];
+
+// 0.13.0
+skate['0.13.0'];
+```
+
+It's recommended that you alias this so that you aren't hardcoding the version number everywhere:
+
+```js
+var mySkate = skate['0.13.0'];
+```
+
+
+
+Multiple Version Support
+------------------------
+
+On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
 
 
 
