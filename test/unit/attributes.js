@@ -306,14 +306,14 @@ describe('Attribute listeners', function () {
             ++called;
           }
         };
+        nonFallbackHandlers.forEach(function (item) {
+          testHandlers[item] = function () {};
+        });
+
         var MyEl = skate(tagName.safe, {
           attributes: {
             test: testHandlers
           }
-        });
-
-        nonFallbackHandlers.forEach(function (item) {
-          testHandlers[item] = function () {};
         });
 
         var myEl = new MyEl();
