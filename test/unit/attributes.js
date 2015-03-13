@@ -15,7 +15,7 @@ describe('Attribute listeners', function () {
         }
       });
 
-      new MyEl().getAttribute('test').should.equal('true');
+      expect(new MyEl().getAttribute('test')).to.equal('true');
     });
 
     it('should allow a callback to return a default value', function () {
@@ -30,7 +30,7 @@ describe('Attribute listeners', function () {
         }
       });
 
-      new MyEl().getAttribute('test').should.equal('true');
+      expect(new MyEl().getAttribute('test')).equal('true');
     });
 
     it('should not override if already specified', function () {
@@ -44,11 +44,11 @@ describe('Attribute listeners', function () {
         }
       });
 
-      skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
-        .firstChild
-        .test
-        .should
-        .equal('false');
+      expect(
+        skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
+          .firstChild
+          .test
+      ).to.equal('false');
     });
   });
 
@@ -99,27 +99,27 @@ describe('Attribute listeners', function () {
     });
 
     it('should respect attributes that are already camel-cased', function () {
-      myEl.camelCased.should.equal('true');
+      expect(myEl.camelCased).to.equal('true');
     });
 
     it('should camel-case the property name and leave the attribute name as is', function () {
-      myEl.notCamelCased.should.equal('true');
+      expect(myEl.notCamelCased).to.equal('true');
     });
 
     it('should set the attribute when the property is set', function () {
       myEl.setAttribute('test-proxy', false);
-      myEl.testProxy.should.equal('false');
+      expect(myEl.testProxy).to.equal('false');
     });
 
     it('should set the property when the attribute is set', function () {
       myEl.testProxy = true;
-      myEl.getAttribute('test-proxy').should.equal('true');
+      expect(myEl.getAttribute('test-proxy')).to.equal('true');
     });
 
     it('should call created after setting the default value', function (done) {
       helpers.afterMutations(function () {
-        myEl.testCreated.should.equal('true');
-        created.should.equal(true);
+        expect(myEl.testCreated).to.equal('true');
+        expect(created).to.equal(true);
         done();
       });
     });
@@ -127,8 +127,8 @@ describe('Attribute listeners', function () {
     it('should call created when the attribute is set for the first time', function (done) {
       myEl.testLifecycle = true;
       helpers.afterMutations(function () {
-        myEl.testLifecycle.should.equal('true');
-        created.should.equal(true);
+        expect(myEl.testLifecycle).to.equal('true');
+        expect(created).to.equal(true);
         done();
       });
     });
@@ -137,7 +137,7 @@ describe('Attribute listeners', function () {
       myEl.testLifecycle = true;
       myEl.testLifecycle = false;
       helpers.afterMutations(function () {
-        updated.should.equal(true);
+        expect(updated).to.equal(true);
         done();
       });
     });
@@ -146,7 +146,7 @@ describe('Attribute listeners', function () {
       myEl.testLifecycle = true;
       myEl.testLifecycle = undefined;
       helpers.afterMutations(function () {
-        removed.should.equal(true);
+        expect(removed).to.equal(true);
         done();
       });
     });
@@ -154,7 +154,7 @@ describe('Attribute listeners', function () {
     it('should not override an existing property', function (done) {
       myEl.setAttribute('override', 'false');
       helpers.afterMutations(function () {
-        myEl.override.should.equal('true');
+        expect(myEl.override).to.equal('true');
         done();
       });
     });
@@ -167,14 +167,14 @@ describe('Attribute listeners', function () {
           test: {
             created: function (element, data) {
               expect(data.oldValue).to.equal(null);
-              data.newValue.should.equal('created');
+              expect(data.newValue).to.equal('created');
             },
             updated: function (element, data) {
-              data.oldValue.should.equal('created');
-              data.newValue.should.equal('updated');
+              expect(data.oldValue).to.equal('created');
+              expect(data.newValue).to.equal('updated');
             },
             removed: function (element, data) {
-              data.oldValue.should.equal('updated');
+              expect(data.oldValue).to.equal('updated');
               expect(data.newValue).to.equal(null);
               done();
             }
@@ -242,12 +242,12 @@ describe('Attribute listeners', function () {
           test: function (element, data) {
             if (data.type === 'created') {
               expect(data.oldValue).to.equal(null);
-              data.newValue.should.equal('created');
+              expect(data.newValue).to.equal('created');
             } else if (data.type === 'updated') {
-              data.oldValue.should.equal('created');
-              data.newValue.should.equal('updated');
+              expect(data.oldValue).to.equal('created');
+              expect(data.newValue).to.equal('updated');
             } else if (data.type === 'removed') {
-              data.oldValue.should.equal('updated');
+              expect(data.oldValue).to.equal('updated');
               expect(data.newValue).to.equal(null);
               done();
             }
@@ -275,12 +275,12 @@ describe('Attribute listeners', function () {
 
           if (data.type === 'created') {
             expect(data.oldValue).to.equal(null);
-            data.newValue.should.equal('created');
+            expect(data.newValue).to.equal('created');
           } else if (data.type === 'updated') {
-            data.oldValue.should.equal('created');
-            data.newValue.should.equal('updated');
+            expect(data.oldValue).to.equal('created');
+            expect(data.newValue).to.equal('updated');
           } else if (data.type === 'removed') {
-            data.oldValue.should.equal('updated');
+            expect(data.oldValue).to.equal('updated');
             expect(data.newValue).to.equal(null);
             done();
           }
@@ -300,20 +300,20 @@ describe('Attribute listeners', function () {
     describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
       function assertAttributeLifeycleCalls(expectedNumCalls, nonFallbackHandlers, done) {
         var called = 0;
-        var tagName = helpers.safeTagName('my-el');
+        var {safe: tagName} = helpers.safeTagName('my-el');
         var testHandlers = {
           fallback: function () {
             ++called;
           }
         };
-        var MyEl = skate(tagName.safe, {
+        nonFallbackHandlers.forEach(function (item) {
+          testHandlers[item] = function () {};
+        });
+
+        var MyEl = skate(tagName, {
           attributes: {
             test: testHandlers
           }
-        });
-
-        nonFallbackHandlers.forEach(function (item) {
-          testHandlers[item] = function () {};
         });
 
         var myEl = new MyEl();
@@ -323,7 +323,7 @@ describe('Attribute listeners', function () {
           helpers.afterMutations(function () {
             myEl.test = undefined;
             helpers.afterMutations(function () {
-              called.should.equal(expectedNumCalls);
+              expect(called).to.equal(expectedNumCalls);
               done();
             });
           });
@@ -377,8 +377,8 @@ describe('Attribute listeners', function () {
       });
 
       skate.init(helpers.fixture('<my-el first></my-el>', tagName));
-      document.querySelector(tagName.safe).hasAttribute('first').should.equal(true);
-      document.querySelector(tagName.safe).hasAttribute('second').should.equal(false);
+      expect(document.querySelector(tagName.safe).hasAttribute('first')).to.equal(true);
+      expect(document.querySelector(tagName.safe).hasAttribute('second')).to.equal(false);
     });
 
     it('should iterate over every attribute even if one removed while it is still being processed', function () {

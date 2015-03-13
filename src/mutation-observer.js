@@ -244,6 +244,18 @@ MutationObserver.prototype = {
       attributeHandler: function (e) {
         var eTarget = e.target;
 
+        if (!(e.relatedNode instanceof Attr)) {
+          // IE10 fires two mutation events for attributes, one with the
+          // target as the relatedNode, and one where it's the attribute.
+          //
+          // Re: relatedNode, "In the case of the DOMAttrModified event
+          // it indicates the Attr node which was modified, added, or
+          // removed." [1]
+          //
+          // [1]: https://msdn.microsoft.com/en-us/library/ff943606%28v=vs.85%29.aspx
+          return;
+        }
+
         if (!canTriggerAttributeModification(eTarget)) {
           return;
         }

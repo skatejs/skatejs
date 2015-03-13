@@ -36,8 +36,8 @@ describe('Returning a constructor', function () {
     expect(div.func1).to.be.a('function');
     expect(div.func2).to.be.a('function');
 
-    div.func1.should.equal(Div.prototype.func1);
-    div.func2.should.equal(Div.prototype.func2);
+    expect(div.func1).to.equal(Div.prototype.func1);
+    expect(div.func2).to.equal(Div.prototype.func2);
   });
 
   it('should not allow the constructor property to be enumerated.', function () {
@@ -61,8 +61,8 @@ describe('Returning a constructor', function () {
 
     var div = new Div();
 
-    div.func1.should.be.a('function');
-    div.func2.should.be.a('function');
+    expect(div.func1).to.be.a('function');
+    expect(div.func2).to.be.a('function');
   });
 
   it('should allow the overwriting of the prototype', function () {
@@ -74,7 +74,7 @@ describe('Returning a constructor', function () {
 
     var div = new Div();
 
-    div.func.should.be.a('function');
+    expect(div.func).to.be.a('function');
   });
 
   it('should allow getters and setters on the prototype', function () {

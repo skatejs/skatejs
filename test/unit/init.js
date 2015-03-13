@@ -47,13 +47,13 @@ describe('Synchronous initialisation', function () {
 
 describe('Instantiation', function () {
   it('should return a constructor', function () {
-    skate('div', {}).should.be.a('function');
+    expect(skate('div', {})).to.be.a('function');
   });
 
   it('should return a new element when constructed.', function () {
     var Div = skate('div', {});
     var div = new Div();
-    div.nodeName.should.equal('DIV');
+    expect(div.nodeName).to.equal('DIV');
   });
 
   it('should synchronously initialise the new element.', function () {
@@ -67,7 +67,7 @@ describe('Instantiation', function () {
     });
 
     new Div().someMethod();
-    called.should.equal(true);
+    expect(called).to.equal(true);
   });
 
   it('should call lifecycle callbacks at appropriate times.', function (done) {
@@ -87,20 +87,20 @@ describe('Instantiation', function () {
     });
 
     var div = new Div();
-    created.should.equal(true, 'Should call created');
-    attached.should.equal(false, 'Should not call attached');
-    detached.should.equal(false, 'Should not call detached');
+    expect(created).to.equal(true, 'Should call created');
+    expect(attached).to.equal(false, 'Should not call attached');
+    expect(detached).to.equal(false, 'Should not call detached');
 
     document.body.appendChild(div);
     skate.init(div);
-    attached.should.equal(true, 'Should call attached');
-    detached.should.equal(false, 'Should not call remove');
+    expect(attached).to.equal(true, 'Should call attached');
+    expect(detached).to.equal(false, 'Should not call remove');
 
     div.parentNode.removeChild(div);
 
     // Mutation Observers are async.
     setTimeout(function () {
-      detached.should.equal(true, 'Should call detached');
+      expect(detached).to.equal(true, 'Should call detached');
       done();
     }, 1);
   });

@@ -15,13 +15,23 @@ import {
 } from './utils';
 
 var elProto = window.HTMLElement.prototype;
-var matchesSelector = (
+var nativeMatchesSelector = (
   elProto.matches ||
   elProto.msMatchesSelector ||
   elProto.webkitMatchesSelector ||
   elProto.mozMatchesSelector ||
   elProto.oMatchesSelector
 );
+// Only IE9 has this msMatchesSelector bug, but best to detect it.
+var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
+var matchesSelector = function (element, selector) {
+  if (hasNativeMatchesSelectorDetattachedBug) {
+    var clone = element.cloneNode();
+    document.createElement('div').appendChild(clone);
+    return nativeMatchesSelector.call(clone, selector);
+  }
+  return nativeMatchesSelector.call(element, selector);
+};
 
 /**
  * Parses an event definition and returns information about it.
@@ -228,7 +238,7 @@ function addEventListeners (target, component) {
       var current = e.target;
 
       while (current && current !== document && current !== target.parentNode) {
-        if (matchesSelector.call(current, delegate)) {
+        if (matchesSelector(current, delegate)) {
           return handler(target, e, current);
         }
 

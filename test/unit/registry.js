@@ -30,7 +30,7 @@ describe('Registry', function () {
     var element = document.createElement('test1');
 
     element.setAttribute('test2', '');
-    element.classList.add('test3');
+    element.className += ' test3';
 
     registry.set('test1', definition1);
     registry.set('test2', definition2);
