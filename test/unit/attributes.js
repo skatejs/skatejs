@@ -300,7 +300,7 @@ describe('Attribute listeners', function () {
     describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
       function assertAttributeLifeycleCalls(expectedNumCalls, nonFallbackHandlers, done) {
         var called = 0;
-        var tagName = helpers.safeTagName('my-el');
+        var {safe: tagName} = helpers.safeTagName('my-el');
         var testHandlers = {
           fallback: function () {
             ++called;
@@ -310,7 +310,7 @@ describe('Attribute listeners', function () {
           testHandlers[item] = function () {};
         });
 
-        var MyEl = skate(tagName.safe, {
+        var MyEl = skate(tagName, {
           attributes: {
             test: testHandlers
           }
