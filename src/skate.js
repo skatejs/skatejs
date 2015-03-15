@@ -135,7 +135,7 @@ function skate (id, definition) {
   }
 
   initDocument();
-  documentObserver.register(definition.remove);
+  documentObserver.register(!!definition.detached);
 
   if (registry.isType(id, TYPE_ELEMENT)) {
     return makeElementConstructor(definition);

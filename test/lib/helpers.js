@@ -28,8 +28,6 @@ export default {
     }
 
     if (arguments.length) {
-      fixture.innerHTML = '';
-
       if (typeof html === 'string') {
         if (typeof tagName !== 'undefined') {
           var openTagRegex = new RegExp('<' + tagName.unsafe + '\\b', 'g');
@@ -42,6 +40,7 @@ export default {
 
         fixture.innerHTML = html;
       } else if (typeof html === 'object') {
+        fixture.innerHTML = '';
         fixture.appendChild(html);
       }
     }
