@@ -100,13 +100,13 @@ MutationObserver.fixIe = function () {
   }
 
   // We have to call the old innerHTML getter and setter.
-  var oldInnerHtml = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+  var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
 
   // This redefines the innerHTML property so that we can ensure that events
   // are properly triggered.
   Object.defineProperty(elementPrototype, 'innerHTML', {
     get: function () {
-      return oldInnerHtml.get.call(this);
+      return oldInnerHTML.get.call(this);
     },
     set: function (html) {
       walkTree(this, function (node) {
@@ -115,7 +115,7 @@ MutationObserver.fixIe = function () {
         node.dispatchEvent(mutationEvent);
       });
 
-      oldInnerHtml.set.call(this, html);
+      oldInnerHTML.set.call(this, html);
     }
   });
 
