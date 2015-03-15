@@ -58,14 +58,14 @@ describe('DOM', function () {
 
     // IE 11 has a bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml.
     it('should pick up descendants that are detached if an ancestor\'s innerHTML is set.', function (done) {
-      var tagName = helpers.safeTagName('my-element');
-      skate(tagName.safe, {
+      var {safe: tagName} = helpers.safeTagName('my-element');
+      skate(tagName, {
         detached: function () {
           done();
         }
       });
 
-      skate.init(helpers.fixture('<div id="removing"><child><my-element></my-element></child></div>', tagName));
+      skate.init(helpers.fixture(`<div id="removing"><child><${tagName}></${tagName}></child></div>`));
       helpers.fixture('');
     });
 
