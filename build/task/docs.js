@@ -1,7 +1,7 @@
 'use strict';
 
 var del = require('del');
-var galv = require('gavlatron');
+var galv = require('galvatron');
 var gulp = require('gulp');
 var gulpLess = require('gulp-less');
 var mac = require('mac');
