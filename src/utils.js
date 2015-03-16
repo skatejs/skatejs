@@ -4,10 +4,8 @@ import {
   ATTR_IGNORE
 } from './constants';
 
-var elementPrototype = window.HTMLElement.prototype;
-var elementPrototypeContains = window.HTMLElement.prototype.contains;
-
-export var elementPrototype;
+export var elementPrototype = window.HTMLElement.prototype;
+var elementPrototypeContains = elementPrototype.contains;
 
 /**
  * Checks {}.hasOwnProperty in a safe way.
