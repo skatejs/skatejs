@@ -27,16 +27,12 @@ function run () {
   karma.start({
     autoWatch: !!commander.watch,
     singleRun: !commander.watch,
-    hostname: commander.host || 'localhost',
+    hostname: commander.host || '0.0.0.0',
     port: commander.port || 9876,
     frameworks: ['mocha', 'sinon-chai'],
     browsers: (commander.browsers || 'Firefox').split(','),
-    client: {
-      args: clientArgs
-    },
-    files: [
-      '.tmp/unit.js'
-    ]
+    client: { args: clientArgs },
+    files: [ '.tmp/unit.js' ]
   });
 }
 
