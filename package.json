@@ -44,6 +44,7 @@
     "deploy": "./node_modules/.bin/gulp deploy",
     "dist": "./node_modules/.bin/gulp dist",
     "docs": "./node_modules/.bin/gulp docs",
+    "lib": "./node_modules/.bin/gulp lib",
     "lint": "./node_modules/.bin/gulp lint",
     "release": "./node_modules/.bin/gulp release",
     "test": "./node_modules/.bin/gulp test"
