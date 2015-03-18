@@ -18,6 +18,7 @@ module.exports = function () {
     cmd.type || 'patch'
   );
 
+  sh.exec('npm run lint');
   sh.exec('npm run test');
   replace('src/version.js', currentVersion, nextVersion);
   replace('bower.json', currentVersion, nextVersion);
