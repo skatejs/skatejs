@@ -175,7 +175,7 @@ describe('Instantiation', function () {
 
     var el = new MyElement();
     expect(el.tagName).to.equal(tagName.toUpperCase());
-  })
+  });
 });
 
 describe('Forms', function () {

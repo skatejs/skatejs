@@ -7,6 +7,7 @@ import {
   objEach
 } from './utils';
 
+var Attr = window.Attr;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;

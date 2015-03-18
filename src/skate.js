@@ -16,8 +16,7 @@ import {
 import registry from './registry';
 import {
   debounce,
-  inherit,
-  supportsNativeCustomElements
+  inherit
 } from './utils';
 import version from './version';
 
@@ -222,7 +221,7 @@ var previousSkate = window.skate;
 skate.noConflict = function () {
   window.skate = previousSkate;
   return skate;
-}
+};
 
 // Global
 window.skate = skate;

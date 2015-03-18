@@ -179,8 +179,6 @@ describe('Lifecycle scenarios', function () {
       var id2 = helpers.safeTagName('my-el');
       var created = 0;
       var attached = 0;
-      var detached = 0;
-      var element;
       var def = {
         type: skate.type.ATTRIBUTE,
         created: function () { ++created; },
@@ -202,8 +200,6 @@ describe('Lifecycle scenarios', function () {
       var id2 = helpers.safeTagName('my-el');
       var created = 0;
       var attached = 0;
-      var detached = 0;
-      var element;
       var def = {
         type: skate.type.ATTRIBUTE,
         created: function () { ++created; },
@@ -216,6 +212,6 @@ describe('Lifecycle scenarios', function () {
       skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
       expect(created).to.equal(2, 'created');
       expect(attached).to.equal(2, 'attached');
-    })
-  })
+    });
+  });
 });

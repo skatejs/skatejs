@@ -16,7 +16,7 @@ describe('Templates', function () {
       }
     });
 
-    var myEl = new MyEl();
+    new MyEl();
   });
 
   it('should have access to the extended prototype in the template function', function () {
@@ -31,6 +31,6 @@ describe('Templates', function () {
       }
     });
 
-    var myEl = new MyEl();
-  })
+    new MyEl();
+  });
 });

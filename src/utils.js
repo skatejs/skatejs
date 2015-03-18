@@ -4,6 +4,7 @@ import {
   ATTR_IGNORE
 } from './constants';
 
+var DocumentFragment = window.DocumentFragment;
 export var elementPrototype = window.HTMLElement.prototype;
 var elementPrototypeContains = elementPrototype.contains;
 
