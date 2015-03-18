@@ -6,44 +6,46 @@ import skate from '../../src/skate';
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
     var multiple = false;
-
-    skate('div', {});
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {});
 
     try {
-      skate('div', {});
+      skate(tag.safe, {});
       multiple = true;
     } catch (e) {}
 
-    assert(!multiple, 'Multiple "div" components were registered.');
+    assert(!multiple);
   });
 });
 
 describe('Returning a constructor', function () {
   it('should return a constructor that extends a native element.', function () {
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       prototype: {
         func1: function () {}
       }
     });
 
-    Div.prototype.func2 = function () {};
+    Element.prototype.func2 = function () {};
 
-    expect(Div.prototype.func1).to.be.a('function');
-    expect(Div.prototype.func2).to.be.a('function');
+    expect(Element.prototype.func1).to.be.a('function');
+    expect(Element.prototype.func2).to.be.a('function');
 
-    var div = new Div();
+    var element = new Element();
 
-    expect(div.func1).to.be.a('function');
-    expect(div.func2).to.be.a('function');
+    expect(element.func1).to.be.a('function');
+    expect(element.func2).to.be.a('function');
 
-    expect(div.func1).to.equal(Div.prototype.func1);
-    expect(div.func2).to.equal(Div.prototype.func2);
+    expect(element.func1).to.equal(Element.prototype.func1);
+    expect(element.func2).to.equal(Element.prototype.func2);
   });
 
   it('should not allow the constructor property to be enumerated.', function () {
-    var Div = skate('div', {});
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {});
 
-    for (var prop in Div.prototype) {
+    for (var prop in Element.prototype) {
       if (prop === 'constructor') {
         throw new Error('The constructor property should not be enumerable.');
       }
@@ -51,34 +53,24 @@ describe('Returning a constructor', function () {
   });
 
   it('should affect the element prototype even if it was not constructed using the constructor.', function () {
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       prototype: {
         func1: function () {}
       }
     });
 
-    Div.prototype.func2 = function () {};
+    Element.prototype.func2 = function () {};
 
-    var div = new Div();
+    var element = new Element();
 
-    expect(div.func1).to.be.a('function');
-    expect(div.func2).to.be.a('function');
-  });
-
-  it('should allow the overwriting of the prototype', function () {
-    var Div = skate('div', {});
-
-    Div.prototype = {
-      func: function () {}
-    };
-
-    var div = new Div();
-
-    expect(div.func).to.be.a('function');
+    expect(element.func1).to.be.a('function');
+    expect(element.func2).to.be.a('function');
   });
 
   it('should allow getters and setters on the prototype', function () {
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       prototype: Object.create({}, {
         test: {
           get: function () {
@@ -88,14 +80,13 @@ describe('Returning a constructor', function () {
       })
     });
 
-    var div = new Div();
-
-    expect(div.test).to.equal(true);
+    var element = new Element();
+    expect(element.test).to.equal(true);
   });
 
   it('should overwrite prototype members', function () {
     var called = false;
-    var {safe: tagName} = helpers.safeTagName('super-input');
+    var { safe: tagName } = helpers.safeTagName('super-input');
     var Input = skate(tagName, {
       extends: 'input',
       type: skate.type.ELEMENT,

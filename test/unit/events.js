@@ -6,7 +6,8 @@ import skate from '../../src/skate';
 describe('Events', function () {
   it('should bind events', function () {
     var numTriggered = 0;
-    var Div = skate('div', {
+    var tagName = helpers.safeTagName('my-el');
+    var MyEl = skate(tagName.safe, {
       events: {
         test: function () {
           ++numTriggered;
@@ -14,31 +15,35 @@ describe('Events', function () {
       }
     });
 
-    var div = new Div();
+    var myEl = new MyEl();
 
-    helpers.dispatchEvent('test', div);
+    helpers.dispatchEvent('test', myEl);
     expect(numTriggered).to.equal(1);
   });
 
   it('should bind to the component element', function () {
     var numTriggered = 0;
-    var Div = skate('div', {
-      events: {
-        'test div' : function () {
-          ++numTriggered;
-        }
-      }
+    var tagName = helpers.safeTagName('my-el');
+    var events = {};
+    var MyEl;
+
+    events[`test ${tagName.safe}`] = function () {
+      ++numTriggered;
+    };
+
+    MyEl = skate(tagName.safe, {
+      events: events
     });
 
-    var div = new Div();
-
-    helpers.dispatchEvent('test', div);
+    var myEl = new MyEl();
+    helpers.dispatchEvent('test', myEl);
     expect(numTriggered).to.equal(1);
   });
 
   it('should allow you to re-add the element back into the DOM', function () {
     var numTriggered = 0;
-    var Div = skate('div', {
+    var tagName = helpers.safeTagName('my-el');
+    var MyEl = skate(tagName.safe, {
       events: {
         test: function () {
           ++numTriggered;
@@ -46,13 +51,13 @@ describe('Events', function () {
       }
     });
 
-    var div = new Div();
-    document.body.appendChild(div);
-    var par = div.parentNode;
+    var myEl = new MyEl();
+    document.body.appendChild(myEl);
+    var par = myEl.parentNode;
 
-    par.removeChild(div);
-    par.appendChild(div);
-    helpers.dispatchEvent('test', div);
+    par.removeChild(myEl);
+    par.appendChild(myEl);
+    helpers.dispatchEvent('test', myEl);
     expect(numTriggered).to.equal(1);
   });
 

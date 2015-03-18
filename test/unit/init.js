@@ -4,28 +4,30 @@ import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('skate.init', function () {
-  var Div;
+  var MyEl;
+  var tagName;
 
   beforeEach(function () {
-    Div = skate('div', {
+    tagName = helpers.safeTagName('my-el');
+    MyEl = skate(tagName.safe, {
       created: function (element) {
         element.textContent = 'test';
       }
     });
 
-    helpers.fixture('<div></div>');
+    helpers.fixture(`<${tagName.safe}></${tagName.safe}>`);
   });
 
   it('should accept a selector', function () {
-    expect(skate.init('#' + helpers.fixture().id + ' div').item(0).textContent).to.equal('test');
+    expect(skate.init(`#${helpers.fixture().id} ${tagName.safe}`).item(0).textContent).to.equal('test');
   });
 
   it('should accept a node', function () {
-    expect(skate.init(helpers.fixture().querySelector('div')).textContent).to.equal('test');
+    expect(skate.init(helpers.fixture().querySelector(tagName.safe)).textContent).to.equal('test');
   });
 
   it('should accept a node list', function () {
-    expect(skate.init(helpers.fixture().querySelectorAll('div')).item(0).textContent).to.equal('test');
+    expect(skate.init(helpers.fixture().querySelectorAll(tagName.safe)).item(0).textContent).to.equal('test');
   });
 });
 
@@ -47,18 +49,20 @@ describe('Synchronous initialisation', function () {
 
 describe('Instantiation', function () {
   it('should return a constructor', function () {
-    expect(skate('div', {})).to.be.a('function');
+    expect(skate(helpers.safeTagName('my-el').safe, {})).to.be.a('function');
   });
 
   it('should return a new element when constructed.', function () {
-    var Div = skate('div', {});
-    var div = new Div();
-    expect(div.nodeName).to.equal('DIV');
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {});
+    var element = new Element();
+    expect(element.nodeName).to.equal(tag.safe.toUpperCase());
   });
 
   it('should synchronously initialise the new element.', function () {
     var called = false;
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       prototype: {
         someMethod: function () {
           called = true;
@@ -66,7 +70,7 @@ describe('Instantiation', function () {
       }
     });
 
-    new Div().someMethod();
+    new Element().someMethod();
     expect(called).to.equal(true);
   });
 
@@ -74,7 +78,8 @@ describe('Instantiation', function () {
     var created = false;
     var attached = false;
     var detached = false;
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       created: function () {
         created = true;
       },
@@ -86,17 +91,17 @@ describe('Instantiation', function () {
       }
     });
 
-    var div = new Div();
+    var element = new Element();
     expect(created).to.equal(true, 'Should call created');
     expect(attached).to.equal(false, 'Should not call attached');
     expect(detached).to.equal(false, 'Should not call detached');
 
-    document.body.appendChild(div);
-    skate.init(div);
+    document.body.appendChild(element);
+    skate.init(element);
     expect(attached).to.equal(true, 'Should call attached');
     expect(detached).to.equal(false, 'Should not call remove');
 
-    div.parentNode.removeChild(div);
+    element.parentNode.removeChild(element);
 
     // Mutation Observers are async.
     setTimeout(function () {
@@ -109,7 +114,8 @@ describe('Instantiation', function () {
     var numCreated = 0;
     var numAttached = 0;
     var numDetached = 0;
-    var Div = skate('div', {
+    var tag = helpers.safeTagName('my-el');
+    var Element = skate(tag.safe, {
       created: function () {
         ++numCreated;
       },
@@ -121,20 +127,20 @@ describe('Instantiation', function () {
       }
     });
 
-    var div1 = new Div();
-    var div2 = new Div();
+    var element1 = new Element();
+    var element2 = new Element();
 
-    document.body.appendChild(div1);
-    document.body.appendChild(div2);
+    document.body.appendChild(element1);
+    document.body.appendChild(element2);
 
-    skate.init(div1);
-    skate.init(div2);
+    skate.init(element1);
+    skate.init(element2);
 
     expect(numCreated).to.equal(2, 'created');
     expect(numAttached).to.equal(2, 'attached');
 
-    div1.parentNode.removeChild(div1);
-    div2.parentNode.removeChild(div2);
+    element1.parentNode.removeChild(element1);
+    element2.parentNode.removeChild(element2);
 
     // Mutation Observers are async.
     helpers.afterMutations(function () {
@@ -151,7 +157,8 @@ describe('Instantiation', function () {
     div.className = idsToSkate.join(' ');
 
     idsToSkate.forEach(function (id) {
-      skate(id, {
+      var tag = helpers.safeTagName('my-el');
+      skate(tag.safe, {
         type: skate.type.CLASSNAME,
         created: function () {
           idsToCheck.push(id);

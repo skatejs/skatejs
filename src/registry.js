@@ -32,11 +32,6 @@ function getClassList (element) {
 }
 
 export default {
-  clear: function () {
-    globals.registry = {};
-    return this;
-  },
-
   get: function (id) {
     return hasOwn(globals.registry, id) && globals.registry[id];
   },
