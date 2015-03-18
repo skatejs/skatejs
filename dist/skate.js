@@ -1,13 +1,11 @@
-window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
+// src/constants.js
+__22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });
-  "use strict";
-  
-  var ATTR_IGNORE = "data-skate-ignore";
+  });var ATTR_IGNORE = "data-skate-ignore";
   exports.ATTR_IGNORE = ATTR_IGNORE;
   var TYPE_ATTRIBUTE = "a";
   exports.TYPE_ATTRIBUTE = TYPE_ATTRIBUTE;
@@ -17,13 +15,12 @@ window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   exports.TYPE_ELEMENT = TYPE_ELEMENT;
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
+// src/globals.js
+__906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   if (!window.__skate) {
     window.__skate = {
@@ -35,13 +32,12 @@ window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   module.exports = window.__skate;
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
+// src/data.js
+__1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   module.exports = function (element) {
     var namespace = arguments[1] === undefined ? "" : arguments[1];
@@ -51,13 +47,12 @@ window.aui_module_1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
+// src/utils.js
+__99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  
   
   /**
    * Checks {}.hasOwnProperty in a safe way.
@@ -133,11 +128,9 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });
-  "use strict";
+  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
-  var ATTR_IGNORE = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
-  
+  var DocumentFragment = window.DocumentFragment;
   var elementPrototype = window.HTMLElement.prototype;
   exports.elementPrototype = elementPrototype;
   var elementPrototypeContains = elementPrototype.contains;
@@ -225,21 +218,21 @@ window.aui_module_99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   }
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
+// src/mutation-observer.js
+__ff611d2c455b299b951f7e794d2d3337 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var elementContains = _utils.elementContains;
   var elementPrototype = _utils.elementPrototype;
   var objEach = _utils.objEach;
   
+  var Attr = window.Attr;
   var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   var isFixingIe = false;
   var isIe = window.navigator.userAgent.indexOf("Trident") > -1;
@@ -545,25 +538,24 @@ window.aui_module_ff611d2c455b299b951f7e794d2d3337 = (function () {
   module.exports = MutationObserver;
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
+// src/registry.js
+__69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -675,9 +667,10 @@ window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
+// src/lifecycle.js
+__3afb33416adfdec2a05e8e91247972a7 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -685,18 +678,15 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });
-  "use strict";
+  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
-  var ATTR_IGNORE = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  var data = _interopRequire(__1d31a3a5e497c74976d725fe4ea5e938);
   
-  var data = _interopRequire(window.aui_module_1d31a3a5e497c74976d725fe4ea5e938);
+  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
   
-  var MutationObserver = _interopRequire(window.aui_module_ff611d2c455b299b951f7e794d2d3337);
+  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var registry = _interopRequire(window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb);
-  
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -1112,26 +1102,25 @@ window.aui_module_3afb33416adfdec2a05e8e91247972a7 = (function () {
   exports.triggerDetached = triggerDetached;
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
+// src/document-observer.js
+__6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  "use strict";
-  
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(window.aui_module_906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _lifecycle = window.aui_module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  var MutationObserver = _interopRequire(window.aui_module_ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
   
-  var getClosestIgnoredElement = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
+  var getClosestIgnoredElement = __99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1209,34 +1198,34 @@ window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   };
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
+// src/version.js
+__6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.0";
+  module.exports = "1.0.0";
   
   return module.exports
-}.call(this));
+}).call(this);
 
-window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
+// src/skate.js
+__880d751441dbbd15758abf63053bf506 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
-  
-  "use strict";
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = window.aui_module_22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(window.aui_module_6d7033c1bbef2b64e54f3f58cc6d2827);
+  var documentObserver = _interopRequire(__6d7033c1bbef2b64e54f3f58cc6d2827);
   
-  var _lifecycle = window.aui_module_3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1244,15 +1233,14 @@ window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(window.aui_module_69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var _utils = window.aui_module_99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
-  var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
   
-  var version = _interopRequire(window.aui_module_6c7bfcbc0c7a1db6e242c7f7a90b3330);
+  var version = _interopRequire(__6c7bfcbc0c7a1db6e242c7f7a90b3330);
   
   var HTMLElement = window.HTMLElement;
   
@@ -1462,4 +1450,4 @@ window.aui_module_880d751441dbbd15758abf63053bf506 = (function () {
   module.exports = skate;
   
   return module.exports
-}.call(this));
+}).call(this);
