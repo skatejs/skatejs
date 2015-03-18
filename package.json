@@ -20,7 +20,7 @@
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^1.1.0",
     "handlebars": "^2.0.0",
-    "jscs": "^1.7.3",
+    "jscs": "^1.11.3",
     "jshint": "^2.5.8",
     "karma": "^0.12.31",
     "karma-chrome-launcher": "~0.1.4",
