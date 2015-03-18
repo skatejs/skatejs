@@ -4,8 +4,7 @@ template: layout.html
 
 [![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
 
-Skate
-=====
+# Skate
 
 Skate is a web component library that is focused on being a tiny, performant, syntactic-sugar for binding behaviour to custom and existing elements without ever having to worry about when your element is inserted into the DOM. It uses the [Custom Element](http://w3c.github.io/webcomponents/spec/custom/) spec as a guideline and adds some features on top of it.
 
@@ -35,15 +34,13 @@ Result
 
 
 
-Compatibility
--------------
+## Compatibility
 
 IE9+ and all evergreens.
 
 
 
-Installing
-----------
+## Installing
 
 You can download the source yourself and put it wherever you want. Additionally you can use Bower:
 
@@ -57,32 +54,25 @@ Include either `dist/skate.js` or `dist/skate.min.js`.
 
 
 
-### AMD
+### UMD (AMD / CommonJS)
 
-An anonymous AMD module is defined, if supported.
-
-
-
-### CommonJS
-
-A CommonJS module is exported, if supported.
-
-
-
-### Global
-
-If you're still skating old school, we've got you covered. Just make sure it's included on the page and you can access it via `window.skate`.
+UMD files are located in `lib/`. Simply import `lib/skate.js` and use it as normal.
 
 
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module. Otherwise, the `dist` directory contains the compiled ES5 source.
+The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module.
 
 
 
-Usage
------
+### Global
+
+If you're still skating old school the `dist` directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with `skate`.
+
+
+
+## Usage
 
 You define a component by passing a component ID and definition to the `skate()` function. The ID you specify corresponds to one of the following:
 
@@ -538,12 +528,19 @@ This is very useful during testing, but can be used for any use case that requir
 
 
 
-Web Component Differences
--------------------------
+## Web Component Differences
 
 Skate uses the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) as a guideline but it does not polyfill it, nor does it polyfill the behaviour of [ShadowDOM](http://w3c.github.io/webcomponents/spec/shadow/) or [HTML Imports](http://w3c.github.io/webcomponents/spec/imports/).
 
 You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
+
+`<datalist>...</datalist>`:
+
+```js
+skate('datalist', {
+  created: polyfillDatalistElement
+});
+```
 
 `<input placeholder="">`:
 
@@ -589,8 +586,7 @@ skate('rel', {
 
 
 
-Transitioning Away from jQuery-style Plugins
---------------------------------------------
+## Transitioning Away from jQuery-style Plugins
 
 Because Skate can also bind to attributes and classes, it offers a way to transition away from jQuery-style plugins to web components.
 
@@ -619,15 +615,13 @@ Possibly the best part about this is that you don't need to touch any markup and
 
 
 
-Native Support
---------------
+## Native Support
 
 If your component is bound via custom tags and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 
 
-Polyfills
----------
+## Polyfills
 
 Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
 
@@ -635,8 +629,7 @@ As you may know, the only way to polyfill Mutation Observers is to use the depre
 
 
 
-Preventing FOUC
----------------
+## Preventing FOUC
 
 An element may not be initialised right away. To prevent FOUC, you can add the `unresolved` attribute to any web component element and then use that attribute to hide the element in your stylesheets.
 
@@ -660,8 +653,7 @@ Additionally, after removing the `unresolved` attribute, Skate will add the `res
 
 
 
-Ignoring Elements
------------------
+## Ignoring Elements
 
 If you need to ignore an element and its descendants you can add the `data-skate-ignore` attribute to an element.
 
@@ -672,9 +664,23 @@ If you need to ignore an element and its descendants you can add the `data-skate
 ```
 
 
+## No Conflict
 
-Contributing
-------------
+Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring `skate` to the previous value.
+
+```js
+var mySkate = skate.noConflict();
+```
+
+
+
+## Multiple Version Support
+
+On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
+
+
+
+## Contributing
 
 The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, enable these in your editor of choice.
 
@@ -694,19 +700,29 @@ npm install
 To run tests:
 
 ```bash
-node build/bin/test
+npm test
 ```
 
 If you want to keep the Karma server alive to run them in your browser of choice:
 
 ```bash
-node build/bin/test --keepalive
+npm test -- --keepalive
 ```
 
 To run tests in a specific browser:
 
 ```bash
-node build/bin/test --browsers Chrome,Firefox
+npm test -- --browsers Chrome,Firefox
+```
+
+
+
+### Linting
+
+To lint your files with `jscs` and `jshint`:
+
+```bash
+npm run lint
 ```
 
 
@@ -716,25 +732,31 @@ node build/bin/test --browsers Chrome,Firefox
 To build the distribution all you have to do is run:
 
 ```bash
-node build/bin/dist
+npm run dist
 ```
 
 This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
+
+To build the `lib` (ES5 + UMD) files:
+
+```bash
+npm run lib
+```
 
 
 
 ### Releasing
 
-To release all you've got to do is run `node build/bin/release`. You can either specify the release `type`, or `tag`.
+To release all you've got to do is run `npm release`. You can either specify the release `type`, or `tag`.
 
 ```bash
-node build/bin/release --tag x.x.x
+npm run release -- --tag x.x.x
 ```
 
 Or:
 
 ```bash
-node build/bin/release --type minor
+npm run release -- --type minor
 ```
 
 
@@ -744,27 +766,24 @@ node build/bin/release --type minor
 To deploy the documentation, run the following command from the branch or tag which you want to deploy:
 
 ```bash
-node build/bin/deploy
+npm run deploy
 ```
 
 
 
-Who's Using It?
----------------
+## Who's Using It?
 
 <img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200">
 
 
 
-Maintainers
------------
+## Maintainers
 
 - [Trey Shugart](https://twitter.com/treshugart) (author), Atlassian
 
 
 
-License
--------
+## License
 
 The MIT License (MIT)
 
