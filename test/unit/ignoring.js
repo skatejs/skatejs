@@ -1,32 +1,90 @@
 'use strict';
 
+import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
 describe('ignoring', function () {
-  it('should ignore a flagged element', function () {
+  it('should ignore a flagged element if defined after it is inserted', function () {
     var called = 0;
+    var tag = helpers.safeTagName();
 
-    // Test attaching before.
-    document.body.innerHTML = '<div></div><div id="container-1" data-skate-ignore><div><div></div></div></div><div></div>';
-    document.getElementById('container-1').innerHTML = '<div><div></div></div>';
-
-    // Now register.
-    skate('div', {
-      attached: function () {
+    helpers.fixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
+    skate(tag.safe, {
+      created: function () {
         ++called;
       }
     });
+    skate.init(document.getElementsByTagName(tag.safe));
+    expect(called).to.equal(0);
+  });
 
-    // Ensure the document is sync'd.
-    skate.init(document.body);
+  it('should ignore a flagged element if defined before it is inserted', function () {
+    var called = 0;
+    var tag = helpers.safeTagName();
 
-    // Test attaching after.
-    document.body.innerHTML = '<div></div><div id="container-2" data-skate-ignore><div><div></div></div></div><div></div>';
-    document.getElementById('container-2').innerHTML = '<div><div></div></div>';
+    skate(tag.safe, {
+      created: function () {
+        ++called;
+      }
+    });
+    helpers.fixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
+    skate.init(document.getElementsByTagName(tag.safe));
+    expect(called).to.equal(0);
+  })
 
-    // Ensure all new content is sync'd.
-    skate.init(document.body);
+  it('should ignore children of a flagged element if defined after it is inserted', function () {
+    var called = 0;
+    var tag = helpers.safeTagName();
 
-    expect(called).to.equal(4);
+    helpers.fixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
+    skate(tag.safe, {
+      created: function () {
+        ++called;
+      }
+    });
+    skate.init(helpers.fixture());
+    expect(called).to.equal(0);
+  });
+
+  it('should ignore children of a flagged element if defined before it is inserted', function () {
+    var called = 0;
+    var tag = helpers.safeTagName();
+
+    skate(tag.safe, {
+      created: function () {
+        ++called;
+      }
+    });
+    helpers.fixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
+    skate.init(helpers.fixture());
+    expect(called).to.equal(0);
+  });
+
+  it('should ignore descendants of a flagged element if defined after it is inserted', function () {
+    var called = 0;
+    var tag = helpers.safeTagName();
+
+    helpers.fixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
+    skate(tag.safe, {
+      created: function () {
+        ++called;
+      }
+    });
+    skate.init(helpers.fixture());
+    expect(called).to.equal(0);
+  });
+
+  it('should ignore descendants of a flagged element if defined before it is inserted', function () {
+    var called = 0;
+    var tag = helpers.safeTagName();
+
+    skate(tag.safe, {
+      created: function () {
+        ++called;
+      }
+    });
+    helpers.fixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
+    skate.init(helpers.fixture());
+    expect(called).to.equal(0);
   });
 });

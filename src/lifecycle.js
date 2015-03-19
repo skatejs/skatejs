@@ -22,6 +22,7 @@ var nativeMatchesSelector = (
   elProto.mozMatchesSelector ||
   elProto.oMatchesSelector
 );
+
 // Only IE9 has this msMatchesSelector bug, but best to detect it.
 var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
 var matchesSelector = function (element, selector) {
@@ -308,10 +309,6 @@ function triggerAttached (target, component) {
     return;
   }
 
-  if (!elementContains(document, target)) {
-    return;
-  }
-
   targetData.attached = true;
 
   if (component.attached) {
@@ -346,16 +343,33 @@ function triggerDetached (target, component) {
 }
 
 /**
- * Triggers the entire element lifecycle if it's not being ignored.
+ * Creates a tree-walker pre-configured for walking a tree for only nodes that
+ * Skate cares about.
  *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
+ * @param {DOMElement} element The element to walk.
  *
- * @returns {undefined}
+ * @returns {TreeWalker}
  */
-function triggerLifecycle (target, component) {
-  triggerCreated(target, component);
-  triggerAttached(target, component);
+function createTreeWalker (element) {
+  return document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, {
+    acceptNode: function (node) {
+      // If ignoring this node we must ensure that it's we flag it so that as
+      // the tree walker goes down the tree it only needs to check if its parent
+      // is ignored.
+      if (node.attributes && node.attributes[ATTR_IGNORE]) {
+        data(node).ignored = true;
+        return false;
+      }
+
+      // If the parent is ignored, then this node is ignored, too.
+      if (data(node.parentNode).ignored) {
+        data(node).ignored = true;
+        return false;
+      }
+
+      return true;
+    }
+  });
 }
 
 /**
@@ -366,27 +380,67 @@ function triggerLifecycle (target, component) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  var elementsLen = elements.length;
+  var a, b, c, d, e;
+  var definitions;
+  var definitionsLength;
+  var element;
+  var elementsLength;
+  var elementsList;
+  var elementsListLength;
+  var elementsListDefinitions;
+  var elementWalker;
+  var elementWalkerCurrentNode;
 
-  for (var a = 0; a < elementsLen; a++) {
-    var element = elements[a];
+  elementsList = [];
+  elementsListDefinitions = [];
+  elementsLength = elements.length;
 
+  // Build a list of nodes that we will initialise.
+  for (a = 0; a < elementsLength; a++) {
+    element = elements[a];
+
+    // We screen the root node only. The rest of the nodes are screened in the
+    // tree walker.
     if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
       continue;
     }
 
-    var currentNodeDefinitions = registry.getForElement(element);
-    var currentNodeDefinitionsLength = currentNodeDefinitions.length;
+    elementWalker = createTreeWalker(element);
+    elementsList.push(element);
+    elementsListDefinitions.push(registry.getForElement(element));
 
-    for (var b = 0; b < currentNodeDefinitionsLength; b++) {
-      triggerLifecycle(element, currentNodeDefinitions[b]);
+    while (elementWalker.nextNode()) {
+      elementWalkerCurrentNode = elementWalker.currentNode;
+      elementsList.push(elementWalkerCurrentNode);
+      elementsListDefinitions.push(registry.getForElement(elementWalkerCurrentNode));
     }
+  }
 
-    var elementChildNodes = element.childNodes;
-    var elementChildNodesLen = elementChildNodes.length;
+  // Triggering all created before all attached mimics the behaviour of native
+  // custom elements.
+  elementsListLength = elementsList.length;
 
-    if (elementChildNodesLen) {
-      initElements(elementChildNodes);
+  // Trigger all created callbacks first.
+  for (b = 0; b < elementsListLength; b++) {
+    definitions = elementsListDefinitions[b];
+    definitionsLength = definitions.length;
+    element = elementsList[b];
+
+    for (c = 0; c < definitionsLength; c++) {
+      triggerCreated(element, definitions[c]);
+    }
+  }
+
+  // Then trigger the attached callbacks.
+  for (d = 0; d < elementsListLength; d++) {
+    definitions = elementsListDefinitions[d];
+    definitionsLength = definitions.length;
+    element = elementsList[d];
+
+    for (e = 0; e < definitionsLength; e++) {
+      if (elementContains(document, element)) {
+        triggerAttached(element, definitions[e]);
+      }
     }
   }
 }
