@@ -369,7 +369,7 @@ function createTreeWalker (element) {
 
       return true;
     }
-  });
+  }, true);
 }
 
 /**
