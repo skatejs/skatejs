@@ -351,8 +351,10 @@ function triggerDetached (target, component) {
  * @returns {TreeWalker}
  */
 function createTreeWalker (element) {
-  return document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, {
-    acceptNode: function (node) {
+  return document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_ELEMENT,
+    function (node) {
       // If ignoring this node we must ensure that it's we flag it so that as
       // the tree walker goes down the tree it only needs to check if its parent
       // is ignored.
@@ -368,8 +370,9 @@ function createTreeWalker (element) {
       }
 
       return true;
-    }
-  }, true);
+    },
+    true
+  );
 }
 
 /**
