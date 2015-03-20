@@ -375,6 +375,7 @@ function initElements (elements) {
   var definitions;
   var definitionsLength;
   var element;
+  var elementAttrs;
   var elementsLength;
   var elementsList;
   var elementsListLength;
@@ -389,10 +390,11 @@ function initElements (elements) {
   // Build a list of nodes that we will initialise.
   for (var a = 0; a < elementsLength; a++) {
     element = elements[a];
+    elementAttrs = element.attributes;
 
     // We screen the root node only. The rest of the nodes are screened in the
     // tree walker.
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+    if (element.nodeType !== 1 || (elementAttrs && elementAttrs[ATTR_IGNORE])) {
       continue;
     }
 
