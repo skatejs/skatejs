@@ -387,6 +387,7 @@ function flattenElements (elements) {
       continue;
     }
 
+    // The tree walker doesn't include the current element.
     flattened.push({
       element: element,
       definitions: registry.getForElement(element)
