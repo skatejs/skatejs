@@ -372,7 +372,6 @@ function createElementTreeWalker (element) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  var a, b, c, d, e;
   var definitions;
   var definitionsLength;
   var element;
@@ -388,7 +387,7 @@ function initElements (elements) {
   elementsLength = elements.length;
 
   // Build a list of nodes that we will initialise.
-  for (a = 0; a < elementsLength; a++) {
+  for (var a = 0; a < elementsLength; a++) {
     element = elements[a];
 
     // We screen the root node only. The rest of the nodes are screened in the
@@ -413,23 +412,23 @@ function initElements (elements) {
   elementsListLength = elementsList.length;
 
   // Trigger all created callbacks first.
-  for (b = 0; b < elementsListLength; b++) {
+  for (var b = 0; b < elementsListLength; b++) {
     definitions = elementsListDefinitions[b];
     definitionsLength = definitions.length;
     element = elementsList[b];
 
-    for (c = 0; c < definitionsLength; c++) {
+    for (var c = 0; c < definitionsLength; c++) {
       triggerCreated(element, definitions[c]);
     }
   }
 
   // Then trigger the attached callbacks.
-  for (d = 0; d < elementsListLength; d++) {
+  for (var d = 0; d < elementsListLength; d++) {
     definitions = elementsListDefinitions[d];
     definitionsLength = definitions.length;
     element = elementsList[d];
 
-    for (e = 0; e < definitionsLength; e++) {
+    for (var e = 0; e < definitionsLength; e++) {
       if (elementContains(document, element)) {
         triggerAttached(element, definitions[e]);
       }
