@@ -448,7 +448,7 @@ function initElements (elements) {
 }
 
 /**
- * Triggers the remove lifecycle callback on all of the elements.
+ * Triggers the detached lifecycle callback on all of the elements.
  *
  * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
  * callback on.
