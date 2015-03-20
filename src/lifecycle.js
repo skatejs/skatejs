@@ -350,7 +350,7 @@ function triggerDetached (target, component) {
  *
  * @returns {TreeWalker}
  */
-function createTreeWalker (element) {
+function createElementTreeWalker (element) {
   return document.createTreeWalker(
     element,
     NodeFilter.SHOW_ELEMENT,
@@ -397,7 +397,7 @@ function initElements (elements) {
       continue;
     }
 
-    elementWalker = createTreeWalker(element);
+    elementWalker = createElementTreeWalker(element);
     elementsList.push(element);
     elementsListDefinitions.push(registry.getForElement(element));
 
