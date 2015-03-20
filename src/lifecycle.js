@@ -355,21 +355,10 @@ function createTreeWalker (element) {
     element,
     NodeFilter.SHOW_ELEMENT,
     function (node) {
-      // If ignoring this node we must ensure that it's we flag it so that as
-      // the tree walker goes down the tree it only needs to check if its parent
-      // is ignored.
-      if (node.attributes && node.attributes[ATTR_IGNORE]) {
-        data(node).ignored = true;
-        return false;
-      }
-
-      // If the parent is ignored, then this node is ignored, too.
-      if (data(node.parentNode).ignored) {
-        data(node).ignored = true;
-        return false;
-      }
-
-      return true;
+      var attrs = node.attributes;
+      return attrs && attrs[ATTR_IGNORE] ?
+        NodeFilter.FILTER_REJECT :
+        NodeFilter.FILTER_ACCEPT;
     },
     true
   );
