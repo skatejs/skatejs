@@ -59,8 +59,7 @@ function makeElementConstructor (definition) {
     }
 
     // Ensure the definition prototype is up to date with the element's
-    // prototype. This ensures that overwriting the element prototype still
-    // works.
+    // prototype. This ensures that modifying the element prototype still works.
     definition.prototype = CustomElement.prototype;
 
     // If they use the constructor we don't have to wait until it's attached.

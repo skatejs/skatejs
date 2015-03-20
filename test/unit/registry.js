@@ -4,22 +4,12 @@ import registry from '../../src/registry';
 import skate from '../../src/skate';
 
 describe('Registry', function () {
-  afterEach(function () {
-    registry.clear();
-  });
-
   it('should set definitions', function () {
     registry.set('test', {});
     try {
       registry.set('test', {});
       assert(false);
     } catch (e) {}
-  });
-
-  it('should clear definitions', function () {
-    registry.set('test', {});
-    registry.clear();
-    registry.set('test', {});
   });
 
   it('should return definitions for a given element', function () {

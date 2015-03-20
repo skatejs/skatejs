@@ -6,6 +6,5 @@ import registry from '../../src/registry';
 
 afterEach(function () {
   observer.unregister();
-  registry.clear();
   helpers.fixture('');
 });
