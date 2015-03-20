@@ -22,6 +22,7 @@ var nativeMatchesSelector = (
   elProto.mozMatchesSelector ||
   elProto.oMatchesSelector
 );
+
 // Only IE9 has this msMatchesSelector bug, but best to detect it.
 var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
 var matchesSelector = function (element, selector) {
@@ -308,10 +309,6 @@ function triggerAttached (target, component) {
     return;
   }
 
-  if (!elementContains(document, target)) {
-    return;
-  }
-
   targetData.attached = true;
 
   if (component.attached) {
@@ -346,16 +343,91 @@ function triggerDetached (target, component) {
 }
 
 /**
- * Triggers the entire element lifecycle if it's not being ignored.
+ * Creates a tree-walker pre-configured for walking a tree for only nodes that
+ * Skate cares about.
  *
- * @param {Element} target The component element.
- * @param {Object} component The component data.
+ * @param {DOMElement} element The element to walk.
+ *
+ * @returns {TreeWalker}
+ */
+function createElementTreeWalker (element) {
+  return document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_ELEMENT,
+    function (node) {
+      var attrs = node.attributes;
+      return attrs && attrs[ATTR_IGNORE] ?
+        NodeFilter.FILTER_REJECT :
+        NodeFilter.FILTER_ACCEPT;
+    },
+    true
+  );
+}
+
+/**
+ * Returns a flattened array of elements and their component definitions from
+ * the passed array of elements.
+ *
+ * @param {Array} elements The array of elements to flatten.
+ *
+ * @returns {Array}
+ */
+function flattenElements (elements) {
+  var flattened = [];
+  var elementsLength = elements.length;
+
+  // Build a list of nodes that we will initialise.
+  for (var a = 0; a < elementsLength; a++) {
+    var element = elements[a];
+    var elementAttrs = element.attributes;
+
+    // We screen the root node only. The rest of the nodes are screened in the
+    // tree walker.
+    if (element.nodeType !== 1 || (elementAttrs && elementAttrs[ATTR_IGNORE])) {
+      continue;
+    }
+
+    // The tree walker doesn't include the current element.
+    flattened.push({
+      element: element,
+      definitions: registry.getForElement(element)
+    });
+
+    var elementWalker = createElementTreeWalker(element);
+    while (elementWalker.nextNode()) {
+      var elementWalkerCurrentNode = elementWalker.currentNode;
+      flattened.push({
+        element: elementWalkerCurrentNode,
+        definitions: registry.getForElement(elementWalkerCurrentNode)
+      });
+    }
+  }
+
+  return flattened;
+}
+
+/**
+ * Initialises a set of elements with the specified callback.
+ *
+ * @param {Array} elements The elements to initialise.
+ * @param {Funciton} callback The callback to init the elements with.
  *
  * @returns {undefined}
  */
-function triggerLifecycle (target, component) {
-  triggerCreated(target, component);
-  triggerAttached(target, component);
+function initElementsWith (elements, callback) {
+  var elementsLength = elements.length;
+
+  // Trigger all created callbacks first.
+  for (var a = 0; a < elementsLength; a++) {
+    var elementItem = elements[a];
+    var element = elementItem.element;
+    var definitions = elementItem.definitions;
+    var definitionsLength = definitions.length;
+
+    for (var b = 0; b < definitionsLength; b++) {
+      callback(element, definitions[b]);
+    }
+  }
 }
 
 /**
@@ -366,33 +438,17 @@ function triggerLifecycle (target, component) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  var elementsLen = elements.length;
-
-  for (var a = 0; a < elementsLen; a++) {
-    var element = elements[a];
-
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
-      continue;
+  elements = flattenElements(elements);
+  initElementsWith(elements, triggerCreated);
+  initElementsWith(elements, function (element, definition) {
+    if (elementContains(document, element)) {
+      triggerAttached(element, definition);
     }
-
-    var currentNodeDefinitions = registry.getForElement(element);
-    var currentNodeDefinitionsLength = currentNodeDefinitions.length;
-
-    for (var b = 0; b < currentNodeDefinitionsLength; b++) {
-      triggerLifecycle(element, currentNodeDefinitions[b]);
-    }
-
-    var elementChildNodes = element.childNodes;
-    var elementChildNodesLen = elementChildNodes.length;
-
-    if (elementChildNodesLen) {
-      initElements(elementChildNodes);
-    }
-  }
+  });
 }
 
 /**
- * Triggers the remove lifecycle callback on all of the elements.
+ * Triggers the detached lifecycle callback on all of the elements.
  *
  * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
  * callback on.

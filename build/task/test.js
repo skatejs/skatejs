@@ -16,7 +16,12 @@ galvatron.transformer
   .post('babel')
   .post('globalize');
 
+var browsers = commander.browsers || 'Firefox';
 var clientArgs = [];
+
+if (browsers === 'all') {
+  browsers = 'Chrome,Firefox,Opera,Safari';
+}
 
 if (commander.grep) {
   clientArgs.push('--grep');
@@ -30,7 +35,7 @@ function run () {
     hostname: commander.host || '0.0.0.0',
     port: commander.port || 9876,
     frameworks: ['mocha', 'sinon-chai'],
-    browsers: (commander.browsers || 'Firefox').split(','),
+    browsers: browsers.split(','),
     client: { args: clientArgs },
     files: [ '.tmp/unit.js' ]
   });
