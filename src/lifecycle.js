@@ -365,32 +365,21 @@ function createElementTreeWalker (element) {
 }
 
 /**
- * Initialises a set of elements.
+ * Returns a flattened array of elements and their component definitions from
+ * the passed array of elements.
  *
- * @param {DOMNodeList | Array} elements A traversable set of elements.
+ * @param {Array} elements The array of elements to flatten.
  *
- * @returns {undefined}
+ * @returns {Array}
  */
-function initElements (elements) {
-  var definitions;
-  var definitionsLength;
-  var element;
-  var elementAttrs;
-  var elementsLength;
-  var elementsList;
-  var elementsListLength;
-  var elementsListDefinitions;
-  var elementWalker;
-  var elementWalkerCurrentNode;
-
-  elementsList = [];
-  elementsListDefinitions = [];
-  elementsLength = elements.length;
+function flattenElements (elements) {
+  var flattened = [];
+  var elementsLength = elements.length;
 
   // Build a list of nodes that we will initialise.
   for (var a = 0; a < elementsLength; a++) {
-    element = elements[a];
-    elementAttrs = element.attributes;
+    var element = elements[a];
+    var elementAttrs = element.attributes;
 
     // We screen the root node only. The rest of the nodes are screened in the
     // tree walker.
@@ -398,44 +387,63 @@ function initElements (elements) {
       continue;
     }
 
-    elementWalker = createElementTreeWalker(element);
-    elementsList.push(element);
-    elementsListDefinitions.push(registry.getForElement(element));
+    flattened.push({
+      element: element,
+      definitions: registry.getForElement(element)
+    });
 
+    var elementWalker = createElementTreeWalker(element);
     while (elementWalker.nextNode()) {
-      elementWalkerCurrentNode = elementWalker.currentNode;
-      elementsList.push(elementWalkerCurrentNode);
-      elementsListDefinitions.push(registry.getForElement(elementWalkerCurrentNode));
+      var elementWalkerCurrentNode = elementWalker.currentNode;
+      flattened.push({
+        element: elementWalkerCurrentNode,
+        definitions: registry.getForElement(elementWalkerCurrentNode)
+      });
     }
   }
 
-  // Triggering all created before all attached mimics the behaviour of native
-  // custom elements.
-  elementsListLength = elementsList.length;
+  return flattened;
+}
+
+/**
+ * Initialises a set of elements with the specified callback.
+ *
+ * @param {Array} elements The elements to initialise.
+ * @param {Funciton} callback The callback to init the elements with.
+ *
+ * @returns {undefined}
+ */
+function initElementsWith (elements, callback) {
+  var elementsLength = elements.length;
 
   // Trigger all created callbacks first.
-  for (var b = 0; b < elementsListLength; b++) {
-    definitions = elementsListDefinitions[b];
-    definitionsLength = definitions.length;
-    element = elementsList[b];
+  for (var a = 0; a < elementsLength; a++) {
+    var elementItem = elements[a];
+    var element = elementItem.element;
+    var definitions = elementItem.definitions;
+    var definitionsLength = definitions.length;
 
-    for (var c = 0; c < definitionsLength; c++) {
-      triggerCreated(element, definitions[c]);
+    for (var b = 0; b < definitionsLength; b++) {
+      callback(element, definitions[b]);
     }
   }
+}
 
-  // Then trigger the attached callbacks.
-  for (var d = 0; d < elementsListLength; d++) {
-    definitions = elementsListDefinitions[d];
-    definitionsLength = definitions.length;
-    element = elementsList[d];
-
-    for (var e = 0; e < definitionsLength; e++) {
-      if (elementContains(document, element)) {
-        triggerAttached(element, definitions[e]);
-      }
+/**
+ * Initialises a set of elements.
+ *
+ * @param {DOMNodeList | Array} elements A traversable set of elements.
+ *
+ * @returns {undefined}
+ */
+function initElements (elements) {
+  elements = flattenElements(elements);
+  initElementsWith(elements, triggerCreated);
+  initElementsWith(elements, function (element, definition) {
+    if (elementContains(document, element)) {
+      triggerAttached(element, definition);
     }
-  }
+  });
 }
 
 /**
