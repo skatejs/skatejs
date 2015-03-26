@@ -14,10 +14,9 @@ export default forEachComponent(function (element, options) {
   }
 
   targetData.attached = true;
+  targetData.detached = false;
 
   if (options.attached) {
     options.attached(element);
   }
-
-  targetData.detached = false;
 });

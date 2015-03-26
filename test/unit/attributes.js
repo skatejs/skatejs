@@ -151,7 +151,7 @@ describe('Attribute listeners', function () {
       });
     });
 
-    it.only('should not override an existing property', function (done) {
+    it('should not override an existing property', function (done) {
       myEl.setAttribute('override', 'false');
       helpers.afterMutations(function () {
         expect(myEl.override).to.equal('true');
