@@ -1,5 +1,3 @@
-'use strict';
-
 if (!window.__skate) {
   window.__skate = {
     observer: undefined,

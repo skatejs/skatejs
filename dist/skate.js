@@ -17,6 +17,41 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   return module.exports
 }).call(this);
 
+// src/utils/data.js
+__bbde635d6f239d7b17f5bee9a64f03e8 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = function (element) {
+    var namespace = arguments[1] === undefined ? "" : arguments[1];
+  
+    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+    return namespace && (data[namespace] || (data[namespace] = {})) || data;
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/element-contains.js
+__a3535eb1111d11f1a455783a62f000d8 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = elementPrototype.contains;
+  
+  module.exports = function (source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
+  };
+  
+  return module.exports
+}).call(this);
+
 // src/globals.js
 __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = { exports: {} };
@@ -34,152 +69,292 @@ __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   return module.exports
 }).call(this);
 
-// src/data.js
-__1d31a3a5e497c74976d725fe4ea5e938 = (function () {
+// src/utils/has-own.js
+__0a2c5941f61640fa05d4ec2723b939c4 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = function (element) {
-    var namespace = arguments[1] === undefined ? "" : arguments[1];
-  
-    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
-    return namespace && (data[namespace] || (data[namespace] = {})) || data;
+  module.exports = function (obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
   };
   
   return module.exports
 }).call(this);
 
-// src/utils.js
-__99aa25dcdde6f58792ecf7632c64ef45 = (function () {
+// src/utils/is-valid-native-custom-element-name.js
+__83aa9f829a30cb0a4faf42736893afbd = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  /**
-   * Checks {}.hasOwnProperty in a safe way.
-   *
-   * @param {Object} obj The object the property is on.
-   * @param {String} key The object key to check.
-   *
-   * @returns {Boolean}
-   */
-  exports.hasOwn = hasOwn;
+  module.exports = function (name) {
+    return name.indexOf("-") > 0;
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/supports-native-custom-elements.js
+__90ba2f630e2b7b1ca84240073f6ea852 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = function () {
+    return typeof document.registerElement === "function";
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/polyfill/registry.js
+__270cb854b3681e4b614f772d24705d53 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  
+  var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
+  var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
+  var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
+  
+  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
+  
+  var hasOwn = _interopRequire(__0a2c5941f61640fa05d4ec2723b939c4);
+  
+  var isValidNativeCustomElementName = _interopRequire(__83aa9f829a30cb0a4faf42736893afbd);
+  
+  var supportsNativeCustomElements = _interopRequire(__90ba2f630e2b7b1ca84240073f6ea852);
   
   /**
-   * Camel-cases the specified string.
+   * Returns the class list for the specified element.
    *
-   * @param {String} str The string to camel-case.
+   * @param {Element} element The element to get the class list for.
    *
-   * @returns {String}
+   * @returns {ClassList | Array}
    */
-  exports.camelCase = camelCase;
+  function getClassList(element) {
+    var classList = element.classList;
   
-  /**
-   * Returns whether or not the source element contains the target element.
-   * This is for browsers that don't support Element.prototype.contains on an
-   * HTMLUnknownElement.
-   *
-   * @param {HTMLElement} source The source element.
-   * @param {HTMLElement} target The target element.
-   *
-   * @returns {Boolean}
-   */
-  exports.elementContains = elementContains;
+    if (classList) {
+      return classList;
+    }
   
-  /**
-   * Returns a function that will prevent more than one call in a single clock
-   * tick.
-   *
-   * @param {Function} fn The function to call.
-   *
-   * @returns {Function}
-   */
-  exports.debounce = debounce;
+    var attrs = element.attributes;
   
-  /**
-   * Returns whether or not the specified element has been selectively ignored.
-   *
-   * @param {Element} element The element to check and traverse up from.
-   *
-   * @returns {Boolean}
-   */
-  exports.getClosestIgnoredElement = getClosestIgnoredElement;
-  
-  /**
-   * Merges the second argument into the first.
-   *
-   * @param {Object} child The object to merge into.
-   * @param {Object} parent The object to merge from.
-   * @param {Boolean} overwrite Whether or not to overwrite properties on the child.
-   *
-   * @returns {Object} Returns the child object.
-   */
-  exports.inherit = inherit;
-  
-  /**
-   * Traverses an object checking hasOwnProperty.
-   *
-   * @param {Object} obj The object to traverse.
-   * @param {Function} fn The function to call for each item in the object.
-   *
-   * @returns {undefined}
-   */
-  exports.objEach = objEach;
-  exports.supportsNativeCustomElements = supportsNativeCustomElements;
-  exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
-  
-  var DocumentFragment = window.DocumentFragment;
-  var elementPrototype = window.HTMLElement.prototype;
-  exports.elementPrototype = elementPrototype;
-  var elementPrototypeContains = elementPrototype.contains;
-  function hasOwn(obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
+    return attrs["class"] && attrs["class"].nodeValue.split(/\s+/) || [];
   }
   
-  function camelCase(str) {
+  module.exports = {
+    get: function get(id) {
+      return hasOwn(globals.registry, id) && globals.registry[id];
+    },
+  
+    getForElement: function getForElement(element) {
+      var attrs = element.attributes;
+      var attrsLen = attrs.length;
+      var definitions = [];
+      var isAttr = attrs.is;
+      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+      var tag = element.tagName.toLowerCase();
+      var isAttrOrTag = isAttrValue || tag;
+      var definition;
+      var tagToExtend;
+  
+      if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
+        definition = globals.registry[isAttrOrTag];
+        tagToExtend = definition["extends"];
+  
+        if (isAttrValue) {
+          if (tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        } else if (!tagToExtend) {
+          definitions.push(definition);
+        }
+      }
+  
+      for (var a = 0; a < attrsLen; a++) {
+        var attr = attrs[a].nodeName;
+  
+        if (this.isType(attr, TYPE_ATTRIBUTE)) {
+          definition = globals.registry[attr];
+          tagToExtend = definition["extends"];
+  
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+  
+      var classList = getClassList(element);
+      var classListLen = classList.length;
+  
+      for (var b = 0; b < classListLen; b++) {
+        var className = classList[b];
+  
+        if (this.isType(className, TYPE_CLASSNAME)) {
+          definition = globals.registry[className];
+          tagToExtend = definition["extends"];
+  
+          if (!tagToExtend || tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        }
+      }
+  
+      return definitions;
+    },
+  
+    isType: function isType(id, type) {
+      var def = this.get(id);
+      return def && def.type === type;
+    },
+  
+    isNativeCustomElement: function isNativeCustomElement(id) {
+      return supportsNativeCustomElements() && this.isType(id, TYPE_ELEMENT) && isValidNativeCustomElementName(id);
+    },
+  
+    set: function set(id, definition) {
+      if (hasOwn(globals.registry, id)) {
+        throw new Error("A component definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
+      }
+  
+      globals.registry[id] = definition;
+  
+      return this;
+    }
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/lifecycle/for-each-component.js
+__b5370a9e5a5555b0d7d0d7c1a5880abf = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
+  
+  module.exports = function (callback) {
+    return function (element) {
+      element = element || this;
+      registry.getForElement(element).forEach(callback.bind(null, element));
+    };
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/lifecycle/attached.js
+__2b55a083f45c9ef157662a1dc1674218 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var data = _interopRequire(__bbde635d6f239d7b17f5bee9a64f03e8);
+  
+  var elementContains = _interopRequire(__a3535eb1111d11f1a455783a62f000d8);
+  
+  var forEachComponent = _interopRequire(__b5370a9e5a5555b0d7d0d7c1a5880abf);
+  
+  module.exports = forEachComponent(function (element, options) {
+    var targetData = data(element, options.id);
+  
+    if (targetData.attached) {
+      return;
+    }
+  
+    if (!elementContains(document, element)) {
+      return;
+    }
+  
+    targetData.attached = true;
+  
+    if (options.attached) {
+      options.attached(element);
+    }
+  
+    targetData.detached = false;
+  });
+  
+  return module.exports
+}).call(this);
+
+// src/lifecycle/attribute.js
+__9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = function (options) {
+    return function (name, oldValue, newValue) {
+      var callback;
+      var type;
+      var newValueIsString = typeof newValue === "string";
+      var oldValueIsString = typeof oldValue === "string";
+      var attrs = options.attributes;
+      var specific = attrs && attrs[name];
+  
+      if (!oldValueIsString && newValueIsString) {
+        type = "created";
+      } else if (oldValueIsString && newValueIsString) {
+        type = "updated";
+      } else if (oldValueIsString && !newValueIsString) {
+        type = "removed";
+      }
+  
+      if (specific && typeof specific[type] === "function") {
+        callback = specific[type];
+      } else if (specific && typeof specific.fallback === "function") {
+        callback = specific.fallback;
+      } else if (typeof specific === "function") {
+        callback = specific;
+      } else if (typeof attrs === "function") {
+        callback = attrs;
+      }
+  
+      // Ensure values are null if undefined.
+      newValue = newValue === undefined ? null : newValue;
+      oldValue = oldValue === undefined ? null : oldValue;
+  
+      // There may still not be a callback.
+      if (callback) {
+        callback(this, {
+          type: type,
+          name: name,
+          newValue: newValue,
+          oldValue: oldValue
+        });
+      }
+    };
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/camel-case.js
+__779e1c84796f4ab22197cd554c25dd35 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = function (str) {
     return str.split(/-/g).map(function (str, index) {
       return index === 0 ? str : str[0].toUpperCase() + str.substring(1);
     }).join("");
-  }
+  };
   
-  function elementContains(source, target) {
-    // The document element does not have the contains method in IE.
-    if (source === document && !source.contains) {
-      return document.head.contains(target) || document.body.contains(target);
-    }
+  return module.exports
+}).call(this);
+
+// src/utils/inherit.js
+__1549ba2e7c62853a39e94336669d2f79 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
   
-    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  }
-  
-  function debounce(fn) {
-    var called = false;
-  
-    return function () {
-      if (!called) {
-        called = true;
-        setTimeout(function () {
-          called = false;
-          fn();
-        }, 1);
-      }
-    };
-  }
-  
-  function getClosestIgnoredElement(element) {
-    var parent = element;
-  
-    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
-      if (parent.hasAttribute(ATTR_IGNORE)) {
-        return parent;
-      }
-  
-      parent = parent.parentNode;
-    }
-  }
-  
-  function inherit(child, parent, overwrite) {
+  module.exports = function (child, parent, overwrite) {
     var names = Object.getOwnPropertyNames(parent);
     var namesLen = names.length;
   
@@ -199,40 +374,91 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
     }
   
     return child;
-  }
+  };
   
-  function objEach(obj, fn) {
+  return module.exports
+}).call(this);
+
+// src/utils/matches-selector.js
+__0964927725a619be8ccd39e7e56cf3ad = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var elProto = window.HTMLElement.prototype;
+  var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
+  
+  // Only IE9 has this msMatchesSelector bug, but best to detect it.
+  var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement("div"), "div");
+  
+  module.exports = function (element, selector) {
+    if (hasNativeMatchesSelectorDetattachedBug) {
+      var clone = element.cloneNode();
+      document.createElement("div").appendChild(clone);
+      return nativeMatchesSelector.call(clone, selector);
+    }
+    return nativeMatchesSelector.call(element, selector);
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/debounce.js
+__bf50fdd75f99f2b27325dc6d6f1dcb64 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = function (fn) {
+    var called = false;
+  
+    return function () {
+      if (!called) {
+        called = true;
+        setTimeout(function () {
+          called = false;
+          fn();
+        }, 1);
+      }
+    };
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/obj-each.js
+__f6279d384ed58022eb040533c80b6909 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var hasOwn = _interopRequire(__0a2c5941f61640fa05d4ec2723b939c4);
+  
+  module.exports = function (obj, fn) {
     for (var a in obj) {
       if (hasOwn(obj, a)) {
         fn(obj[a], a);
       }
     }
-  }
-  
-  function supportsNativeCustomElements() {
-    return typeof document.registerElement === "function";
-  }
-  
-  function isValidNativeCustomElementName(name) {
-    return name.indexOf("-") > 0;
-  }
+  };
   
   return module.exports
 }).call(this);
 
-// src/mutation-observer.js
-__ff611d2c455b299b951f7e794d2d3337 = (function () {
+// src/polyfill/mutation-observer.js
+__fcd21ac78247116a0bdde5374b0c4641 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var debounce = _utils.debounce;
-  var elementContains = _utils.elementContains;
-  var elementPrototype = _utils.elementPrototype;
-  var objEach = _utils.objEach;
+  var debounce = _interopRequire(__bf50fdd75f99f2b27325dc6d6f1dcb64);
+  
+  var elementContains = _interopRequire(__a3535eb1111d11f1a455783a62f000d8);
+  
+  var objEach = _interopRequire(__f6279d384ed58022eb040533c80b6909);
   
   var Attr = window.Attr;
+  var elementPrototype = window.HTMLElement.prototype;
   var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   var isFixingIe = false;
   var isIe = window.navigator.userAgent.indexOf("Trident") > -1;
@@ -540,324 +766,30 @@ __ff611d2c455b299b951f7e794d2d3337 = (function () {
   return module.exports
 }).call(this);
 
-// src/registry.js
-__69e9c62cf40fb0891a2dd34186d09cdb = (function () {
+// src/lifecycle/created.js
+__fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  var camelCase = _interopRequire(__779e1c84796f4ab22197cd554c25dd35);
   
-  var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
-  var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
-  var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
+  var data = _interopRequire(__bbde635d6f239d7b17f5bee9a64f03e8);
   
-  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
+  var forEachComponent = _interopRequire(__b5370a9e5a5555b0d7d0d7c1a5880abf);
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var hasOwn = _interopRequire(__0a2c5941f61640fa05d4ec2723b939c4);
   
-  var hasOwn = _utils.hasOwn;
-  var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
-  var supportsNativeCustomElements = _utils.supportsNativeCustomElements;
+  var inherit = _interopRequire(__1549ba2e7c62853a39e94336669d2f79);
   
-  /**
-   * Returns the class list for the specified element.
-   *
-   * @param {Element} element The element to get the class list for.
-   *
-   * @returns {ClassList | Array}
-   */
-  function getClassList(element) {
-    var classList = element.classList;
+  var matchesSelector = _interopRequire(__0964927725a619be8ccd39e7e56cf3ad);
   
-    if (classList) {
-      return classList;
-    }
+  var MutationObserver = _interopRequire(__fcd21ac78247116a0bdde5374b0c4641);
   
-    var attrs = element.attributes;
+  var objEach = _interopRequire(__f6279d384ed58022eb040533c80b6909);
   
-    return attrs["class"] && attrs["class"].nodeValue.split(/\s+/) || [];
-  }
-  
-  module.exports = {
-    clear: function clear() {
-      globals.registry = {};
-      return this;
-    },
-  
-    get: function get(id) {
-      return hasOwn(globals.registry, id) && globals.registry[id];
-    },
-  
-    getForElement: function getForElement(element) {
-      var attrs = element.attributes;
-      var attrsLen = attrs.length;
-      var definitions = [];
-      var isAttr = attrs.is;
-      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-      var tag = element.tagName.toLowerCase();
-      var isAttrOrTag = isAttrValue || tag;
-      var definition;
-      var tagToExtend;
-  
-      if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
-        definition = globals.registry[isAttrOrTag];
-        tagToExtend = definition["extends"];
-  
-        if (isAttrValue) {
-          if (tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        } else if (!tagToExtend) {
-          definitions.push(definition);
-        }
-      }
-  
-      for (var a = 0; a < attrsLen; a++) {
-        var attr = attrs[a].nodeName;
-  
-        if (this.isType(attr, TYPE_ATTRIBUTE)) {
-          definition = globals.registry[attr];
-          tagToExtend = definition["extends"];
-  
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-  
-      var classList = getClassList(element);
-      var classListLen = classList.length;
-  
-      for (var b = 0; b < classListLen; b++) {
-        var className = classList[b];
-  
-        if (this.isType(className, TYPE_CLASSNAME)) {
-          definition = globals.registry[className];
-          tagToExtend = definition["extends"];
-  
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-  
-      return definitions;
-    },
-  
-    isType: function isType(id, type) {
-      var def = this.get(id);
-      return def && def.type === type;
-    },
-  
-    isNativeCustomElement: function isNativeCustomElement(id) {
-      return supportsNativeCustomElements() && this.isType(id, TYPE_ELEMENT) && isValidNativeCustomElementName(id);
-    },
-  
-    set: function set(id, definition) {
-      if (hasOwn(globals.registry, id)) {
-        throw new Error("A component definition of type \"" + definition.type + "\" with the ID of \"" + id + "\" already exists.");
-      }
-  
-      globals.registry[id] = definition;
-  
-      return this;
-    }
-  };
-  
-  return module.exports
-}).call(this);
-
-// src/lifecycle.js
-__3afb33416adfdec2a05e8e91247972a7 = (function () {
-  var module = { exports: {} };
-  var exports = module.exports;
-  
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
-  
-  var data = _interopRequire(__1d31a3a5e497c74976d725fe4ea5e938);
-  
-  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
-  
-  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
-  
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
-  
-  var camelCase = _utils.camelCase;
-  var elementContains = _utils.elementContains;
-  var hasOwn = _utils.hasOwn;
-  var inherit = _utils.inherit;
-  var objEach = _utils.objEach;
-  
-  var elProto = window.HTMLElement.prototype;
-  var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
-  // Only IE9 has this msMatchesSelector bug, but best to detect it.
-  var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement("div"), "div");
-  var matchesSelector = function matchesSelector(element, selector) {
-    if (hasNativeMatchesSelectorDetattachedBug) {
-      var clone = element.cloneNode();
-      document.createElement("div").appendChild(clone);
-      return nativeMatchesSelector.call(clone, selector);
-    }
-    return nativeMatchesSelector.call(element, selector);
-  };
-  
-  /**
-   * Parses an event definition and returns information about it.
-   *
-   * @param {String} e The event to parse.
-   *
-   * @returns {Object]}
-   */
-  function parseEvent(e) {
-    var parts = e.split(" ");
-    return {
-      name: parts.shift(),
-      delegate: parts.join(" ")
-    };
-  }
-  
-  /**
-   * Sets the defined attributes to their default values, if specified.
-   *
-   * @param {Element} target The web component element.
-   * @param {Object} component The web component definition.
-   *
-   * @returns {undefined}
-   */
-  function initAttributes(target, component) {
-    var componentAttributes = component.attributes;
-  
-    if (typeof componentAttributes !== "object") {
-      return;
-    }
-  
-    for (var attribute in componentAttributes) {
-      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], "value") && !target.hasAttribute(attribute)) {
-        var value = componentAttributes[attribute].value;
-        value = typeof value === "function" ? value(target) : value;
-        target.setAttribute(attribute, value);
-      }
-    }
-  }
-  
-  /**
-   * Defines a property that proxies the specified attribute.
-   *
-   * @param {Element} target The web component element.
-   * @param {String} attribute The attribute name to proxy.
-   *
-   * @returns {undefined}
-   */
-  function defineAttributeProperty(target, attribute) {
-    Object.defineProperty(target, camelCase(attribute), {
-      get: function get() {
-        return this.getAttribute(attribute);
-      },
-      set: function set(value) {
-        if (value === undefined) {
-          this.removeAttribute(attribute);
-        } else {
-          this.setAttribute(attribute, value);
-        }
-      }
-    });
-  }
-  
-  /**
-   * Adds links from attributes to properties.
-   *
-   * @param {Element} target The web component element.
-   * @param {Object} component The web component definition.
-   *
-   * @returns {undefined}
-   */
-  function addAttributeToPropertyLinks(target, component) {
-    var componentAttributes = component.attributes;
-  
-    if (typeof componentAttributes !== "object") {
-      return;
-    }
-  
-    for (var attribute in componentAttributes) {
-      if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
-        defineAttributeProperty(target, attribute);
-      }
-    }
-  }
-  
-  function triggerAttributeChanged(target, component, data) {
-    var callback;
-    var type;
-    var name = data.name;
-    var newValue = data.newValue;
-    var oldValue = data.oldValue;
-    var newValueIsString = typeof newValue === "string";
-    var oldValueIsString = typeof oldValue === "string";
-    var attrs = component.attributes;
-    var specific = attrs && attrs[name];
-  
-    if (!oldValueIsString && newValueIsString) {
-      type = "created";
-    } else if (oldValueIsString && newValueIsString) {
-      type = "updated";
-    } else if (oldValueIsString && !newValueIsString) {
-      type = "removed";
-    }
-  
-    if (specific && typeof specific[type] === "function") {
-      callback = specific[type];
-    } else if (specific && typeof specific.fallback === "function") {
-      callback = specific.fallback;
-    } else if (typeof specific === "function") {
-      callback = specific;
-    } else if (typeof attrs === "function") {
-      callback = attrs;
-    }
-  
-    // Ensure values are null if undefined.
-    newValue = newValue === undefined ? null : newValue;
-    oldValue = oldValue === undefined ? null : oldValue;
-  
-    // There may still not be a callback.
-    if (callback) {
-      callback(target, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
-    }
-  }
-  
-  function triggerAttributesCreated(target, component) {
-    var a;
-    var attrs = target.attributes;
-    var attrsCopy = [];
-    var attrsLen = attrs.length;
-  
-    for (a = 0; a < attrsLen; a++) {
-      attrsCopy.push(attrs[a]);
-    }
-  
-    // In default web components, attribute changes aren't triggered for
-    // attributes that already exist on an element when it is bound. This sucks
-    // when you want to reuse and separate code for attributes away from your
-    // lifecycle callbacks. Skate will initialise each attribute by calling the
-    // created callback for the attributes that already exist on the element.
-    for (a = 0; a < attrsLen; a++) {
-      var attr = attrsCopy[a];
-      triggerAttributeChanged(target, component, {
-        name: attr.nodeName,
-        newValue: attr.value || attr.nodeValue
-      });
-    }
-  }
+  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
   
   function addAttributeListeners(target, component) {
     var attrs = target.attributes;
@@ -870,12 +802,7 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
       mutations.forEach(function (mutation) {
         var name = mutation.attributeName;
         var attr = attrs[name];
-  
-        triggerAttributeChanged(target, component, {
-          name: name,
-          newValue: attr && (attr.value || attr.nodeValue),
-          oldValue: mutation.oldValue
-        });
+        target.attributeChangedCallback(name, mutation.oldValue, attr && (attr.value || attr.nodeValue));
       });
     });
   
@@ -885,14 +812,14 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
     });
   }
   
-  /**
-   * Binds event listeners for the specified event handlers.
-   *
-   * @param {Element} target The component element.
-   * @param {Object} component The component data.
-   *
-   * @returns {undefined}
-   */
+  function parseEvent(e) {
+    var parts = e.split(" ");
+    return {
+      name: parts.shift(),
+      delegate: parts.join(" ")
+    };
+  }
+  
   function addEventListeners(target, component) {
     if (typeof component.events !== "object") {
       return;
@@ -928,16 +855,74 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
     });
   }
   
-  /**
-   * Triggers the created lifecycle callback.
-   *
-   * @param {Element} target The component element.
-   * @param {Object} component The component data.
-   *
-   * @returns {undefined}
-   */
-  function triggerCreated(target, component) {
-    var targetData = data(target, component.id);
+  function defineAttributeProperty(target, attribute) {
+    Object.defineProperty(target, camelCase(attribute), {
+      get: function get() {
+        return this.getAttribute(attribute);
+      },
+      set: function set(value) {
+        if (value === undefined) {
+          this.removeAttribute(attribute);
+        } else {
+          this.setAttribute(attribute, value);
+        }
+      }
+    });
+  }
+  
+  function addAttributeToPropertyLinks(target, component) {
+    var componentAttributes = component.attributes;
+  
+    if (typeof componentAttributes !== "object") {
+      return;
+    }
+  
+    for (var attribute in componentAttributes) {
+      if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
+        defineAttributeProperty(target, attribute);
+      }
+    }
+  }
+  
+  function initAttributes(target, component) {
+    var componentAttributes = component.attributes;
+  
+    if (typeof componentAttributes !== "object") {
+      return;
+    }
+  
+    for (var attribute in componentAttributes) {
+      if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], "value") && !target.hasAttribute(attribute)) {
+        var value = componentAttributes[attribute].value;
+        value = typeof value === "function" ? value(target) : value;
+        target.setAttribute(attribute, value);
+      }
+    }
+  }
+  
+  function triggerAttributesCreated(target) {
+    var a;
+    var attrs = target.attributes;
+    var attrsCopy = [];
+    var attrsLen = attrs.length;
+  
+    for (a = 0; a < attrsLen; a++) {
+      attrsCopy.push(attrs[a]);
+    }
+  
+    // In default web components, attribute changes aren't triggered for
+    // attributes that already exist on an element when it is bound. This sucks
+    // when you want to reuse and separate code for attributes away from your
+    // lifecycle callbacks. Skate will initialise each attribute by calling the
+    // created callback for the attributes that already exist on the element.
+    for (a = 0; a < attrsLen; a++) {
+      var attr = attrsCopy[a];
+      target.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
+    }
+  }
+  
+  module.exports = forEachComponent(function (element, options) {
+    var targetData = data(element, options.id);
   
     if (targetData.created) {
       return;
@@ -945,190 +930,170 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
   
     targetData.created = true;
   
-    // TODO: This doesn't need to happen if using native.
-    inherit(target, component.prototype, true);
+    // Native custom elements automatically inherit the prototype.
+    if (!registry.isNativeCustomElement(options.id)) {
+      inherit(element, options.prototype, true);
+    }
   
     // We use the unresolved / resolved attributes to flag whether or not the
     // element has been templated or not.
-    if (component.template && !target.hasAttribute(component.resolvedAttribute)) {
-      component.template(target);
+    if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
+      options.template(element);
     }
   
-    target.removeAttribute(component.unresolvedAttribute);
-    target.setAttribute(component.resolvedAttribute, "");
-    addEventListeners(target, component);
-    addAttributeListeners(target, component);
-    addAttributeToPropertyLinks(target, component);
-    initAttributes(target, component);
-    triggerAttributesCreated(target, component);
+    element.removeAttribute(options.unresolvedAttribute);
+    element.setAttribute(options.resolvedAttribute, "");
+    addEventListeners(element, options);
+    addAttributeListeners(element, options);
+    addAttributeToPropertyLinks(element, options);
+    initAttributes(element, options);
+    triggerAttributesCreated(element, options);
   
-    if (component.created) {
-      component.created(target);
+    if (options.created) {
+      options.created(element);
     }
-  }
-  
-  /**
-   * Triggers the attached lifecycle callback.
-   *
-   * @param {Element} target The component element.
-   * @param {Object} component The component data.
-   *
-   * @returns {undefined}
-   */
-  function triggerAttached(target, component) {
-    var targetData = data(target, component.id);
-  
-    if (targetData.attached) {
-      return;
-    }
-  
-    if (!elementContains(document, target)) {
-      return;
-    }
-  
-    targetData.attached = true;
-  
-    if (component.attached) {
-      component.attached(target);
-    }
-  
-    targetData.detached = false;
-  }
-  
-  /**
-   * Triggers the detached lifecycle callback.
-   *
-   * @param {Element} target The component element.
-   * @param {Object} component The component data.
-   *
-   * @returns {undefined}
-   */
-  function triggerDetached(target, component) {
-    var targetData = data(target, component.id);
-  
-    if (targetData.detached) {
-      return;
-    }
-  
-    targetData.detached = true;
-  
-    if (component.detached) {
-      component.detached(target);
-    }
-  
-    targetData.attached = false;
-  }
-  
-  /**
-   * Triggers the entire element lifecycle if it's not being ignored.
-   *
-   * @param {Element} target The component element.
-   * @param {Object} component The component data.
-   *
-   * @returns {undefined}
-   */
-  function triggerLifecycle(target, component) {
-    triggerCreated(target, component);
-    triggerAttached(target, component);
-  }
-  
-  /**
-   * Initialises a set of elements.
-   *
-   * @param {DOMNodeList | Array} elements A traversable set of elements.
-   *
-   * @returns {undefined}
-   */
-  function initElements(elements) {
-    var elementsLen = elements.length;
-  
-    for (var a = 0; a < elementsLen; a++) {
-      var element = elements[a];
-  
-      if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
-        continue;
-      }
-  
-      var currentNodeDefinitions = registry.getForElement(element);
-      var currentNodeDefinitionsLength = currentNodeDefinitions.length;
-  
-      for (var b = 0; b < currentNodeDefinitionsLength; b++) {
-        triggerLifecycle(element, currentNodeDefinitions[b]);
-      }
-  
-      var elementChildNodes = element.childNodes;
-      var elementChildNodesLen = elementChildNodes.length;
-  
-      if (elementChildNodesLen) {
-        initElements(elementChildNodes);
-      }
-    }
-  }
-  
-  /**
-   * Triggers the remove lifecycle callback on all of the elements.
-   *
-   * @param {DOMNodeList} elements The elements to trigger the remove lifecycle
-   * callback on.
-   *
-   * @returns {undefined}
-   */
-  function removeElements(elements) {
-    var len = elements.length;
-  
-    for (var a = 0; a < len; a++) {
-      var element = elements[a];
-  
-      if (element.nodeType !== 1) {
-        continue;
-      }
-  
-      removeElements(element.childNodes);
-  
-      var definitions = registry.getForElement(element);
-      var definitionsLen = definitions.length;
-  
-      for (var b = 0; b < definitionsLen; b++) {
-        triggerDetached(element, definitions[b]);
-      }
-    }
-  }
-  
-  exports.initElements = initElements;
-  exports.removeElements = removeElements;
-  exports.triggerAttached = triggerAttached;
-  exports.triggerAttributeChanged = triggerAttributeChanged;
-  exports.triggerCreated = triggerCreated;
-  exports.triggerDetached = triggerDetached;
+  });
   
   return module.exports
 }).call(this);
 
-// src/document-observer.js
-__6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
+// src/lifecycle/detached.js
+__8e93439e8a566d1586c9903a75a6a785 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
+  var data = _interopRequire(__bbde635d6f239d7b17f5bee9a64f03e8);
+  
+  var elementContains = _interopRequire(__a3535eb1111d11f1a455783a62f000d8);
+  
+  var forEachComponent = _interopRequire(__b5370a9e5a5555b0d7d0d7c1a5880abf);
+  
+  module.exports = forEachComponent(function (element, options) {
+    var targetData = data(element, options.id);
+  
+    if (targetData.detached) {
+      return;
+    }
+  
+    if (elementContains(document, element)) {
+      return;
+    }
+  
+    targetData.detached = true;
+  
+    if (options.detached) {
+      options.detached(element);
+    }
+  
+    targetData.attached = false;
+  });
+  
+  return module.exports
+}).call(this);
+
+// src/utils/get-closest-ignored-element.js
+__494582998af37ebc214b42da609592d4 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  
+  var DocumentFragment = window.DocumentFragment;
+  
+  module.exports = function (element) {
+    var parent = element;
+  
+    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
+      if (parent.hasAttribute(ATTR_IGNORE)) {
+        return parent;
+      }
+  
+      parent = parent.parentNode;
+    }
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/lifecycle/init.js
+__1f473b05c77b72c96ed0e55c584eebc4 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
+  
+  var attached = _interopRequire(__2b55a083f45c9ef157662a1dc1674218);
+  
+  module.exports = function (element) {
+    created(element);
+    attached(element);
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/walk-tree.js
+__a0585d1fdcadd9bac377cefca6e07069 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  
+  function createElementTreeWalker(element) {
+    return document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, function (node) {
+      var attrs = node.attributes;
+      return attrs && attrs[ATTR_IGNORE] ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+    }, true);
+  }
+  
+  module.exports = function (elements, callback) {
+    var elementsLength = elements.length;
+    for (var a = 0; a < elementsLength; a++) {
+      var element = elements[a];
+      var elementAttrs = element.attributes;
+  
+      // We screen the root node only. The rest of the nodes are screened in the
+      // tree walker.
+      if (element.nodeType !== 1 || elementAttrs && elementAttrs[ATTR_IGNORE]) {
+        continue;
+      }
+  
+      // The tree walker doesn't include the current element.
+      callback(element);
+  
+      var elementWalker = createElementTreeWalker(element);
+      while (elementWalker.nextNode()) {
+        callback(elementWalker.currentNode);
+      }
+    }
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/polyfill/document-observer.js
+__53affcee25439c12726058fee7f75787 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var detached = _interopRequire(__8e93439e8a566d1586c9903a75a6a785);
+  
+  var getClosestIgnoredElement = _interopRequire(__494582998af37ebc214b42da609592d4);
+  
   var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
+  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
   
-  var initElements = _lifecycle.initElements;
-  var removeElements = _lifecycle.removeElements;
+  var MutationObserver = _interopRequire(__fcd21ac78247116a0bdde5374b0c4641);
   
-  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
+  var walkTree = _interopRequire(__a0585d1fdcadd9bac377cefca6e07069);
   
-  var getClosestIgnoredElement = __99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
-  
-  /**
-   * The document observer handler.
-   *
-   * @param {Array} mutations The mutations to handle.
-   *
-   * @returns {undefined}
-   */
   function documentObserverHandler(mutations) {
     var mutationsLen = mutations.length;
   
@@ -1141,24 +1106,16 @@ __6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
       // node to see if it is ignored. If it is then we don't process any added
       // nodes. This prevents having to check every node.
       if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        initElements(addedNodes);
+        walkTree(addedNodes, init);
       }
   
       // We can't check batched nodes here because they won't have a parent node.
       if (removedNodes && removedNodes.length) {
-        removeElements(removedNodes);
+        walkTree(removedNodes, detached);
       }
     }
   }
   
-  /**
-   * Creates a new mutation observer for listening to Skate definitions for the
-   * document.
-   *
-   * @param {Element} root The element to observe.
-   *
-   * @returns {MutationObserver}
-   */
   function createDocumentObserver() {
     var observer = new MutationObserver(documentObserverHandler);
   
@@ -1200,209 +1157,52 @@ __6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   return module.exports
 }).call(this);
 
-// src/version.js
-__6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
+// src/polyfill/element-constructor.js
+__2a9c84628af99934db58f308e303b691 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.2";
-  
-  return module.exports
-}).call(this);
-
-// src/skate.js
-__880d751441dbbd15758abf63053bf506 = (function () {
-  var module = { exports: {} };
-  var exports = module.exports;
-  
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-  
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
-  var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
-  var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
-  
-  var documentObserver = _interopRequire(__6d7033c1bbef2b64e54f3f58cc6d2827);
-  
-  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
-  
-  var triggerCreated = _lifecycle.triggerCreated;
-  var triggerAttached = _lifecycle.triggerAttached;
-  var triggerDetached = _lifecycle.triggerDetached;
-  var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
-  var initElements = _lifecycle.initElements;
-  
-  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
-  
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
-  
-  var debounce = _utils.debounce;
-  var inherit = _utils.inherit;
-  
-  var version = _interopRequire(__6c7bfcbc0c7a1db6e242c7f7a90b3330);
-  
-  var HTMLElement = window.HTMLElement;
-  
-  /**
-   * Initialises all valid elements in the document. Ensures that it does not
-   * happen more than once in the same execution, and that it happens after the DOM is ready.
-   *
-   * @returns {undefined}
-   */
-  var initDocument = debounce(function () {
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-      initElements(document.documentElement.childNodes);
-    } else {
-      document.addEventListener("DOMContentLoaded", function initialiseSkateElementsOnDomLoad() {
-        initElements(document.documentElement.childNodes);
-      });
-    }
-  });
-  
-  /**
-   * Creates a constructor for the specified definition.
-   *
-   * @param {Object} definition The definition information to use for generating the constructor.
-   *
-   * @returns {Function} The element constructor.
-   */
-  function makeElementConstructor(definition) {
+  module.exports = function (id, options) {
     function CustomElement() {
       var element;
-      var tagToExtend = definition["extends"];
-      var definitionId = definition.id;
+      var tagToExtend = options["extends"];
   
       if (tagToExtend) {
         element = document.createElement(tagToExtend);
-        element.setAttribute("is", definitionId);
+        element.setAttribute("is", id);
       } else {
-        element = document.createElement(definitionId);
+        element = document.createElement(id);
       }
   
       // Ensure the definition prototype is up to date with the element's
       // prototype. This ensures that overwriting the element prototype still
       // works.
-      definition.prototype = CustomElement.prototype;
+      options.prototype = CustomElement.prototype;
   
       // If they use the constructor we don't have to wait until it's attached.
-      triggerCreated(element, definition);
+      options.prototype.createdCallback.call(element);
   
       return element;
     }
   
     // This allows modifications to the element prototype propagate to the
     // definition prototype.
-    CustomElement.prototype = definition.prototype;
+    CustomElement.prototype = options.prototype;
   
     return CustomElement;
-  }
-  
-  // Public API
-  // ----------
-  
-  /**
-   * Creates a listener for the specified definition.
-   *
-   * @param {String} id The ID of the definition.
-   * @param {Object | Function} definition The definition definition.
-   *
-   * @returns {Function} Constructor that returns a custom element.
-   */
-  function skate(id, definition) {
-    // Just in case the definition is shared, we duplicate it so that internal
-    // modifications to the original aren't shared.
-    definition = inherit({}, definition);
-    definition = inherit(definition, skate.defaults);
-    definition.id = id;
-  
-    registry.set(id, definition);
-  
-    if (registry.isNativeCustomElement(id)) {
-      var elementPrototype = definition["extends"] ? document.createElement(definition["extends"]).constructor.prototype : HTMLElement.prototype;
-  
-      if (!elementPrototype.isPrototypeOf(definition.prototype)) {
-        definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
-      }
-  
-      var options = {
-        prototype: inherit(definition.prototype, {
-          createdCallback: function createdCallback() {
-            triggerCreated(this, definition);
-          },
-          attachedCallback: function attachedCallback() {
-            triggerAttached(this, definition);
-          },
-          detachedCallback: function detachedCallback() {
-            triggerDetached(this, definition);
-          },
-          attributeChangedCallback: function attributeChangedCallback(name, oldValue, newValue) {
-            triggerAttributeChanged(this, definition, {
-              name: name,
-              oldValue: oldValue,
-              newValue: newValue
-            });
-          }
-        })
-      };
-  
-      if (definition["extends"]) {
-        options["extends"] = definition["extends"];
-      }
-  
-      return document.registerElement(id, options);
-    }
-  
-    initDocument();
-    documentObserver.register(!!definition.detached);
-  
-    if (registry.isType(id, TYPE_ELEMENT)) {
-      return makeElementConstructor(definition);
-    }
-  }
-  
-  /**
-   * Synchronously initialises the specified element or elements and descendants.
-   *
-   * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
-   *                      jQuery, DOMNodeList, DOMNode, selector etc.
-   *
-   * @returns {skate}
-   */
-  skate.init = function (nodes) {
-    var nodesToUse = nodes;
-  
-    if (!nodes) {
-      return nodes;
-    }
-  
-    if (typeof nodes === "string") {
-      nodesToUse = nodes = document.querySelectorAll(nodes);
-    } else if (nodes instanceof HTMLElement) {
-      nodesToUse = [nodes];
-    }
-  
-    initElements(nodesToUse);
-  
-    return nodes;
   };
   
-  // Restriction type constants.
-  skate.type = {
-    ATTRIBUTE: TYPE_ATTRIBUTE,
-    CLASSNAME: TYPE_CLASSNAME,
-    ELEMENT: TYPE_ELEMENT
-  };
+  return module.exports
+}).call(this);
+
+// src/skate/defaults.js
+__33161e60567f66738c91b496cf4db43e = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
   
-  // Makes checking the version easy when debugging.
-  skate.version = version;
+  var TYPE_ELEMENT = __22848e6eb5ddd68722bf2a03dc73e10d.TYPE_ELEMENT;
   
-  /**
-   * The default options for a definition.
-   *
-   * @var {Object}
-   */
-  skate.defaults = {
+  module.exports = {
     // Attribute lifecycle callback or callbacks.
     attributes: undefined,
   
@@ -1434,14 +1234,185 @@ __880d751441dbbd15758abf63053bf506 = (function () {
     unresolvedAttribute: "unresolved"
   };
   
-  // Exporting
-  // ---------
+  return module.exports
+}).call(this);
+
+// src/skate/init.js
+__99576e5bc788ab5981d3c4c6fbd25110 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
+  
+  var walkTree = _interopRequire(__a0585d1fdcadd9bac377cefca6e07069);
+  
+  var HTMLElement = window.HTMLElement;
+  
+  module.exports = function (nodes) {
+    var nodesToUse = nodes;
+  
+    if (!nodes) {
+      return nodes;
+    }
+  
+    if (typeof nodes === "string") {
+      nodesToUse = nodes = document.querySelectorAll(nodes);
+    } else if (nodes instanceof HTMLElement) {
+      nodesToUse = [nodes];
+    }
+  
+    walkTree(nodesToUse, init);
+  
+    return nodes;
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/skate/no-conflict.js
+__0a94d5d6526738702ffe048568b330dd = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
   
   var previousSkate = window.skate;
-  skate.noConflict = function () {
+  
+  module.exports = function () {
     window.skate = previousSkate;
-    return skate;
+    return this;
   };
+  
+  return module.exports
+}).call(this);
+
+// src/skate/type.js
+__752afec9756903eb48fe9be5709f7c66 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  
+  var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
+  var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
+  var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
+  module.exports = {
+    ATTRIBUTE: TYPE_ATTRIBUTE,
+    CLASSNAME: TYPE_CLASSNAME,
+    ELEMENT: TYPE_ELEMENT
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/skate/version.js
+__95a3d6d4d0b7a435b0ca2614ed3c49dd = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = "0.13.2";
+  
+  return module.exports
+}).call(this);
+
+// src/skate.js
+__880d751441dbbd15758abf63053bf506 = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var TYPE_ELEMENT = __22848e6eb5ddd68722bf2a03dc73e10d.TYPE_ELEMENT;
+  
+  var attached = _interopRequire(__2b55a083f45c9ef157662a1dc1674218);
+  
+  var attribute = _interopRequire(__9f17962f9aa326a94ed3e5d6f6b172e6);
+  
+  var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
+  
+  var debounce = _interopRequire(__bf50fdd75f99f2b27325dc6d6f1dcb64);
+  
+  var detached = _interopRequire(__8e93439e8a566d1586c9903a75a6a785);
+  
+  var documentObserver = _interopRequire(__53affcee25439c12726058fee7f75787);
+  
+  var elementConstructor = _interopRequire(__2a9c84628af99934db58f308e303b691);
+  
+  var inherit = _interopRequire(__1549ba2e7c62853a39e94336669d2f79);
+  
+  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
+  
+  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
+  
+  var skateDefaults = _interopRequire(__33161e60567f66738c91b496cf4db43e);
+  
+  var skateInit = _interopRequire(__99576e5bc788ab5981d3c4c6fbd25110);
+  
+  var skateNoConflict = _interopRequire(__0a94d5d6526738702ffe048568b330dd);
+  
+  var skateType = _interopRequire(__752afec9756903eb48fe9be5709f7c66);
+  
+  var skateVersion = _interopRequire(__95a3d6d4d0b7a435b0ca2614ed3c49dd);
+  
+  var walkTree = _interopRequire(__a0585d1fdcadd9bac377cefca6e07069);
+  
+  function initDocument() {
+    walkTree(document.documentElement.childNodes, init);
+  }
+  
+  function initDocumentWhenReady() {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      initDocument();
+    } else {
+      document.addEventListener("DOMContentLoaded", initDocument);
+    }
+  }
+  
+  var HTMLElement = window.HTMLElement;
+  var HTMLElementPrototype = HTMLElement.prototype;
+  var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
+  
+  function skate(id, options) {
+    // Copy options and set defaults.
+    options = inherit(inherit({ id: id }, options), skate.defaults);
+  
+    var parent = options["extends"] ? document.createElement(options["extends"]).constructor.prototype : HTMLElementPrototype;
+    var shouldFixIe = !!options.prototype.detachedCallback;
+  
+    // Extend behaviour of existing callbacks.
+    options.prototype.createdCallback = created;
+    options.prototype.attachedCallback = attached;
+    options.prototype.detachedCallback = detached;
+    options.prototype.attributeChangedCallback = attribute(options);
+  
+    // By always setting in the registry we ensure that behaviour between
+    // polyfilled and native registries are handled consistently.
+    registry.set(id, options);
+  
+    if (!parent.isPrototypeOf(options.prototype)) {
+      options.prototype = inherit(Object.create(parent), options.prototype, true);
+    }
+  
+    // Don't need to do anything else if we're running native.
+    if (registry.isNativeCustomElement(id)) {
+      return document.registerElement(id, options);
+    }
+  
+    // Polyfill / attributes and classes.
+    debouncedInitDocumentWhenReady();
+    documentObserver.register(shouldFixIe);
+  
+    // Only polyfill the constructor if it's a custom element.
+    if (registry.isType(id, TYPE_ELEMENT)) {
+      return elementConstructor(id, options);
+    }
+  }
+  
+  skate.defaults = skateDefaults;
+  skate.init = skateInit;
+  skate.noConflict = skateNoConflict;
+  skate.type = skateType;
+  skate.version = skateVersion;
   
   // Global
   window.skate = skate;

@@ -1,0 +1,11 @@
+import {
+  TYPE_ATTRIBUTE,
+  TYPE_CLASSNAME,
+  TYPE_ELEMENT
+} from '../constants';
+
+export default {
+  ATTRIBUTE: TYPE_ATTRIBUTE,
+  CLASSNAME: TYPE_CLASSNAME,
+  ELEMENT: TYPE_ELEMENT
+};

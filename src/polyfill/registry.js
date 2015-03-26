@@ -1,24 +1,12 @@
-'use strict';
-
 import {
   TYPE_ATTRIBUTE,
   TYPE_CLASSNAME,
   TYPE_ELEMENT
-} from './constants';
-import globals from './globals';
-import {
-  hasOwn,
-  isValidNativeCustomElementName,
-  supportsNativeCustomElements
-} from './utils';
+} from '../constants';
 
-/**
- * Returns the class list for the specified element.
- *
- * @param {Element} element The element to get the class list for.
- *
- * @returns {ClassList | Array}
- */
+import globals from '../globals';
+import hasOwn from '../utils/has-own';
+
 function getClassList (element) {
   var classList = element.classList;
 
@@ -34,6 +22,19 @@ function getClassList (element) {
 export default {
   get: function (id) {
     return hasOwn(globals.registry, id) && globals.registry[id];
+  },
+
+  set: function (id, definition) {
+    if (hasOwn(globals.registry, id)) {
+      throw new Error('A component definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+    }
+    globals.registry[id] = definition;
+    return this;
+  },
+
+  isType: function (id, type) {
+    var def = this.get(id);
+    return def && def.type === type;
   },
 
   getForElement: function (element) {
@@ -90,24 +91,5 @@ export default {
     }
 
     return definitions;
-  },
-
-  isType: function (id, type) {
-    var def = this.get(id);
-    return def && def.type === type;
-  },
-
-  isNativeCustomElement: function (id) {
-    return supportsNativeCustomElements() && this.isType(id, TYPE_ELEMENT) && isValidNativeCustomElementName(id);
-  },
-
-  set: function (id, definition) {
-    if (hasOwn(globals.registry, id)) {
-      throw new Error('A component definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
-    }
-
-    globals.registry[id] = definition;
-
-    return this;
   }
 };

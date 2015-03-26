@@ -20,8 +20,7 @@ describe('Using components', function () {
       var el1 = document.createElement(tagName);
       skate.init(el1);
 
-      var el2 = document.createElement('div');
-      el2.setAttribute('is', tagName);
+      var el2 = document.createElement('div', tagName);
       skate.init(el2);
 
       var el3 = document.createElement('div');
