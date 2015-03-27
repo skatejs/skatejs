@@ -15,7 +15,9 @@ var metalsmithWatch = require('metalsmith-watch');
 module.exports = mac.series(
   function (done) {
     var ms = metalsmith('docs')
-      .use(metalsmithMarkdown())
+      .use(metalsmithMarkdown({
+        sanitize: false
+      }))
       .use(metalsmithTemplates('handlebars'))
 
     if (cmd.watch) {
