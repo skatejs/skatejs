@@ -48,7 +48,7 @@ skate('my-component', {
 
 *BEWARE that when using native custom elements and polyfilled custom elements that the `created` callback behaves differently. In native, your element will not have a parent or any children even if the HTML you've written begs to differ. This is because the element is created the instant the HTML parser encounters it. In polyfill land, we can't only detect changes to the DOM once it's already added, so it would already be in the DOM along with its children by the time you get into this callback.*
 
-*Because of this, it is __never__ recommended to assume structure in your `created` callback. Use the `attached` callback instead.*
+*Because of this, __never__ ever assume structure in your `created` callback. Use the `attached` callback instead.*
 
 If you need to do something when the element is inserted into the DOM, then use the `attached` callback.
 
@@ -83,7 +83,7 @@ Parents should control and know about their children and the children should not
 If a parent needs to respond to a change within a child, respond to an event.
 
 ```js
-skate('my-parent', {
+var MyParent = skate('my-parent', {
   events: {
     'update my-child': function (element, e, target) {
       console.log('my-child got updated');
@@ -91,11 +91,19 @@ skate('my-parent', {
   }
 });
 
-skate('my-child', {
+var MyChild = skate('my-child', {
   prototype: {
     update: function () {
       this.dispatchEvent(new CustomEvent('updated', { bubbles: true }));
     }
   }
 });
+
+var myParent = new MyParent();
+var myChild = new MyChild();
+
+myParent.appendChild(myChild);
+
+// Logs: "my-child got updated".
+myChild.update();
 ```
