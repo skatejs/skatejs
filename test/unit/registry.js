@@ -1,6 +1,6 @@
 'use strict';
 
-import registry from '../../src/registry';
+import registry from '../../src/polyfill/registry';
 import skate from '../../src/skate';
 
 describe('Registry', function () {

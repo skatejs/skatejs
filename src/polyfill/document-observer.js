@@ -1,22 +1,10 @@
-'use strict';
+import detached from '../lifecycle/detached';
+import getClosestIgnoredElement from '../utils/get-closest-ignored-element';
+import globals from '../globals';
+import init from '../lifecycle/init';
+import MutationObserver from '../polyfill/mutation-observer';
+import walkTree from '../utils/walk-tree';
 
-import globals from './globals';
-import {
-  initElements,
-  removeElements
-} from './lifecycle';
-import MutationObserver from './mutation-observer';
-import {
-  getClosestIgnoredElement
-} from './utils';
-
-/**
- * The document observer handler.
- *
- * @param {Array} mutations The mutations to handle.
- *
- * @returns {undefined}
- */
 function documentObserverHandler (mutations) {
   var mutationsLen = mutations.length;
 
@@ -29,24 +17,16 @@ function documentObserverHandler (mutations) {
     // node to see if it is ignored. If it is then we don't process any added
     // nodes. This prevents having to check every node.
     if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-      initElements(addedNodes);
+      walkTree(addedNodes, init);
     }
 
     // We can't check batched nodes here because they won't have a parent node.
     if (removedNodes && removedNodes.length) {
-      removeElements(removedNodes);
+      walkTree(removedNodes, detached);
     }
   }
 }
 
-/**
- * Creates a new mutation observer for listening to Skate definitions for the
- * document.
- *
- * @param {Element} root The element to observe.
- *
- * @returns {MutationObserver}
- */
 function createDocumentObserver () {
   var observer = new MutationObserver(documentObserverHandler);
 
@@ -60,10 +40,10 @@ function createDocumentObserver () {
 }
 
 export default {
-  register: function (fixIe) {
+  register: function (options = {}) {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
-    if (fixIe) {
+    if (options.fixIe) {
       MutationObserver.fixIe();
       this.unregister();
     }

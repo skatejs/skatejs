@@ -1,226 +1,80 @@
-'use strict';
+import { TYPE_ELEMENT } from './constants';
+import attached from './lifecycle/attached';
+import attribute from './lifecycle/attribute';
+import created from './lifecycle/created';
+import debounce from './utils/debounce';
+import detached from './lifecycle/detached';
+import documentObserver from './polyfill/document-observer';
+import elementConstructor from './polyfill/element-constructor';
+import inherit from './utils/inherit';
+import init from './lifecycle/init';
+import registry from './polyfill/registry';
+import skateDefaults from './skate/defaults';
+import skateInit from './skate/init';
+import skateNoConflict from './skate/no-conflict';
+import skateType from './skate/type';
+import skateVersion from './skate/version';
+import supportsCustomElements from './support/custom-elements';
+import walkTree from './utils/walk-tree';
+import validCustomElement from './support/valid-custom-element';
 
-import {
-  TYPE_ATTRIBUTE,
-  TYPE_CLASSNAME,
-  TYPE_ELEMENT
-} from './constants';
-import documentObserver from './document-observer';
-import {
-  triggerCreated,
-  triggerAttached,
-  triggerDetached,
-  triggerAttributeChanged,
-  initElements
-} from './lifecycle';
-import registry from './registry';
-import {
-  debounce,
-  inherit
-} from './utils';
-import version from './version';
-
-var HTMLElement = window.HTMLElement;
-
-/**
- * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution, and that it happens after the DOM is ready.
- *
- * @returns {undefined}
- */
-var initDocument = debounce(function () {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initElements(document.documentElement.childNodes);
-  } else {
-    document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
-      initElements(document.documentElement.childNodes);
-    });
-  }
-});
-
-/**
- * Creates a constructor for the specified definition.
- *
- * @param {Object} definition The definition information to use for generating the constructor.
- *
- * @returns {Function} The element constructor.
- */
-function makeElementConstructor (definition) {
-  function CustomElement () {
-    var element;
-    var tagToExtend = definition.extends;
-    var definitionId = definition.id;
-
-    if (tagToExtend) {
-      element = document.createElement(tagToExtend);
-      element.setAttribute('is', definitionId);
-    } else {
-      element = document.createElement(definitionId);
-    }
-
-    // Ensure the definition prototype is up to date with the element's
-    // prototype. This ensures that modifying the element prototype still works.
-    definition.prototype = CustomElement.prototype;
-
-    // If they use the constructor we don't have to wait until it's attached.
-    triggerCreated(element, definition);
-
-    return element;
-  }
-
-  // This allows modifications to the element prototype propagate to the
-  // definition prototype.
-  CustomElement.prototype = definition.prototype;
-
-  return CustomElement;
+function initDocument () {
+  walkTree(document.documentElement.childNodes, init);
 }
 
-// Public API
-// ----------
+function initDocumentWhenReady () {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initDocument();
+  } else {
+    document.addEventListener('DOMContentLoaded', initDocument);
+  }
+}
 
-/**
- * Creates a listener for the specified definition.
- *
- * @param {String} id The ID of the definition.
- * @param {Object | Function} definition The definition definition.
- *
- * @returns {Function} Constructor that returns a custom element.
- */
-function skate (id, definition) {
-  // Just in case the definition is shared, we duplicate it so that internal
-  // modifications to the original aren't shared.
-  definition = inherit({}, definition);
-  definition = inherit(definition, skate.defaults);
-  definition.id = id;
+var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
+var HTMLElement = window.HTMLElement;
+var HTMLElementPrototype = HTMLElement.prototype;
 
-  registry.set(id, definition);
+function skate (id, options) {
+  // Copy options and set defaults.
+  options = inherit(inherit({ id: id }, options), skateDefaults);
 
-  if (registry.isNativeCustomElement(id)) {
-    var elementPrototype = definition.extends ?
-      document.createElement(definition.extends).constructor.prototype :
-      HTMLElement.prototype;
+  var parent = options.extends ? document.createElement(options.extends).constructor.prototype : HTMLElementPrototype;
 
-    if (!elementPrototype.isPrototypeOf(definition.prototype)) {
-      definition.prototype = inherit(Object.create(elementPrototype), definition.prototype, true);
-    }
+  // Extend behaviour of existing callbacks.
+  options.prototype.createdCallback = created;
+  options.prototype.attachedCallback = attached;
+  options.prototype.detachedCallback = detached;
+  options.prototype.attributeChangedCallback = attribute(options);
+  options.isElement = options.type === TYPE_ELEMENT;
+  options.isNative = supportsCustomElements() && validCustomElement(id) && options.isElement;
 
-    var options = {
-      prototype: inherit(definition.prototype, {
-        createdCallback: function () {
-          triggerCreated(this, definition);
-        },
-        attachedCallback: function () {
-          triggerAttached(this, definition);
-        },
-        detachedCallback: function () {
-          triggerDetached(this, definition);
-        },
-        attributeChangedCallback: function (name, oldValue, newValue) {
-          triggerAttributeChanged(this, definition, {
-            name: name,
-            oldValue: oldValue,
-            newValue: newValue
-          });
-        }
-      })
-    };
+  // By always setting in the registry we ensure that behaviour between
+  // polyfilled and native registries are handled consistently.
+  registry.set(id, options);
 
-    if (definition.extends) {
-      options.extends = definition.extends;
-    }
+  if (!parent.isPrototypeOf(options.prototype)) {
+    options.prototype = inherit(Object.create(parent), options.prototype, true);
+  }
 
+  if (options.isNative) {
     return document.registerElement(id, options);
   }
 
-  initDocument();
-  documentObserver.register(!!definition.detached);
+  debouncedInitDocumentWhenReady();
+  documentObserver.register({
+    fixIe: !!options.prototype.detachedCallback
+  });
 
-  if (registry.isType(id, TYPE_ELEMENT)) {
-    return makeElementConstructor(definition);
+  if (options.isElement) {
+    return elementConstructor(id, options);
   }
 }
 
-/**
- * Synchronously initialises the specified element or elements and descendants.
- *
- * @param {Mixed} nodes The node, or nodes to initialise. Can be anything:
- *                      jQuery, DOMNodeList, DOMNode, selector etc.
- *
- * @returns {skate}
- */
-skate.init = function (nodes) {
-  var nodesToUse = nodes;
-
-  if (!nodes) {
-    return nodes;
-  }
-
-  if (typeof nodes === 'string') {
-    nodesToUse = nodes = document.querySelectorAll(nodes);
-  } else if (nodes instanceof HTMLElement) {
-    nodesToUse = [nodes];
-  }
-
-  initElements(nodesToUse);
-
-  return nodes;
-};
-
-// Restriction type constants.
-skate.type = {
-  ATTRIBUTE: TYPE_ATTRIBUTE,
-  CLASSNAME: TYPE_CLASSNAME,
-  ELEMENT: TYPE_ELEMENT
-};
-
-// Makes checking the version easy when debugging.
-skate.version = version;
-
-/**
- * The default options for a definition.
- *
- * @var {Object}
- */
-skate.defaults = {
-  // Attribute lifecycle callback or callbacks.
-  attributes: undefined,
-
-  // The events to manage the binding and unbinding of during the definition's
-  // lifecycle.
-  events: undefined,
-
-  // Restricts a particular definition to binding explicitly to an element with
-  // a tag name that matches the specified value.
-  extends: undefined,
-
-  // The ID of the definition. This is automatically set in the `skate()`
-  // function.
-  id: '',
-
-  // Properties and methods to add to each element.
-  prototype: {},
-
-  // The attribute name to add after calling the created() callback.
-  resolvedAttribute: 'resolved',
-
-  // The template to replace the content of the element with.
-  template: undefined,
-
-  // The type of bindings to allow.
-  type: TYPE_ELEMENT,
-
-  // The attribute name to remove after calling the created() callback.
-  unresolvedAttribute: 'unresolved'
-};
-
-// Exporting
-// ---------
-
-var previousSkate = window.skate;
-skate.noConflict = function () {
-  window.skate = previousSkate;
-  return skate;
-};
+skate.defaults = skateDefaults;
+skate.init = skateInit;
+skate.noConflict = skateNoConflict;
+skate.type = skateType;
+skate.version = skateVersion;
 
 // Global
 window.skate = skate;

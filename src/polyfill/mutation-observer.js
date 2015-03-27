@@ -1,13 +1,9 @@
-'use strict';
-
-import {
-  debounce,
-  elementContains,
-  elementPrototype,
-  objEach
-} from './utils';
+import debounce from '../utils/debounce';
+import elementContains from '../utils/element-contains';
+import objEach from '../utils/obj-each';
 
 var Attr = window.Attr;
+var elementPrototype = window.HTMLElement.prototype;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;

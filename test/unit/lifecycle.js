@@ -104,7 +104,7 @@ describe('Lifecycle scenarios', function () {
       detached: 0
     };
 
-    var {safe: tagName} = helpers.safeTagName('my-element');
+    var { safe: tagName } = helpers.safeTagName('my-element');
     El = skate(tagName, {
       created: function () {
         ++calls.created;
@@ -125,14 +125,14 @@ describe('Lifecycle scenarios', function () {
 
     it('should call created', function (done) {
       helpers.afterMutations(function () {
-        expect(calls.created).to.greaterThan(0);
+        expect(calls.created).to.be.greaterThan(0);
         done();
       });
     });
 
     it('should call attached', function (done) {
       helpers.afterMutations(function () {
-        expect(calls.attached).to.greaterThan(0);
+        expect(calls.attached).to.be.greaterThan(0);
         done();
       });
     });
@@ -152,7 +152,7 @@ describe('Lifecycle scenarios', function () {
           helpers.afterMutations(function () {
             helpers.fixture().removeChild(el);
             helpers.afterMutations(function () {
-              expect(calls[num]).to.equal(val);
+              expect(calls[num]).to.equal(val, num);
               done();
             });
           });
@@ -175,27 +175,6 @@ describe('Lifecycle scenarios', function () {
 
   describe('multiple bindings', function () {
     it('should initialise all bindings', function () {
-      var id1 = helpers.safeTagName('my-el');
-      var id2 = helpers.safeTagName('my-el');
-      var created = 0;
-      var attached = 0;
-      var def = {
-        type: skate.type.ATTRIBUTE,
-        created: function () { ++created; },
-        attached: function () { ++attached; }
-      };
-
-      skate(id1.safe, def);
-      skate(id2.safe, def);
-
-      skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
-      expect(created).to.equal(2, 'created');
-      expect(attached).to.equal(2, 'attached');
-    });
-  });
-
-  describe('shared definitions', function () {
-    it('should copy the definition so that the shared definition is not modified', function () {
       var id1 = helpers.safeTagName('my-el');
       var id2 = helpers.safeTagName('my-el');
       var created = 0;
