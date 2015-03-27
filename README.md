@@ -617,9 +617,9 @@ If your component is bound via custom tags and your browser supports custom elem
 
 ## Polyfills
 
-Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate at the moment since it only polyfills what Skate needs to function.
+As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback.
 
-As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback. What Skate does to mitigate this overhead is to queue up each event to be processed on the next tick. Once queued, it then batches them up like Mutation Observers do, and then calls the callback only once.
+Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate since it only polyfills what Skate needs to function. Its code is written to withstand an extreme number of incoming DOM elements. It's fast in Internet Explorer, not just modern browsers, and this is what sets it apart from other polyfills. It also ensures that mutation events are queued, rather than executed as they come in. Once queued, they are batched into a single callback.
 
 
 
@@ -656,6 +656,7 @@ If you need to ignore an element and its descendants you can add the `data-skate
   <!-- Everything including the container will be ignored. -->
 </div>
 ```
+
 
 
 ## No Conflict
