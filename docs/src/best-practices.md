@@ -107,3 +107,80 @@ myParent.appendChild(myChild);
 // Logs: "my-child got updated".
 myChild.update();
 ```
+
+## Keep things concise
+
+When you define attributes on your component:
+
+```js
+var MyComponent = skate('my-component', {
+  attributes: {
+    'my-attribute-1': ...,
+    'my-attribute-2': ...
+  }
+});
+```
+
+Skate will create property links for those attributes:
+
+```js
+var myComponent = new MyComponent();
+myComponent.myAttribute1 = 'testing';
+
+// "testing"
+myComponent.myAttribute1;
+myComponent.getAttribute('my-attribute-1');
+```
+
+This makes the behaviour consistent with properties / attributes like `id` and `name` that are linked by default.
+
+## Data-binding. Sort of.
+
+Being able to use attribute listeners is kinda like having an abstract way to use data-binding. As seen above we can use property links to manipulate attributes which, visually, looks more like a view model - and for all intents and purposes, it *is* a view model. This means you can do some really cool stuff with a very small amount of code.
+
+For example, you can write a helper to take an attiribute change and apply it to an element.
+
+```js
+// File: helper/text.js
+
+export default function text (selector) {
+  return function (element, data) {
+    [].slice.call(element.querySelectorAll(selector)).forEach(function (descendant) {
+      descendant.textContent = data.newValue;
+    });
+  };
+}
+```
+
+And then use it in your component:
+
+```js
+// File: my-component.js
+import text from './helper/text';
+
+export default skate('my-component', {
+  attributes: {
+    name: text('.name')
+  },
+
+  template: function (element) {
+    element.innerHTML = '<div class="name"></div>';
+  }
+});
+```
+
+When you set the `name` attribute of the element, it will update the descendants:
+
+```js
+// File main.js
+import MyComponent from 'my-component';
+
+var myComponent = new MyComponent();
+
+myComponent.name = 'Trey';
+
+// Logs: <my-component name="Trey"><div class="name">Trey</div></my-component>
+console.log(myComponent);
+```
+
+You're not limited to text either. You can use that functional pattern to set attributes, form field values and manipulate structure.
