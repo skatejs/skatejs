@@ -2,6 +2,8 @@
 template: layout.html
 ---
 
+## Best Practices
+
 There are some things to consider when building a web component that aren't quite obvious at first. Things like having compound components; ones that have parents and children that are all components and are supposed to interact with each other. There's also some gotcha's when working with polyfilled components vs native web componennts.
 
 ## Setup
