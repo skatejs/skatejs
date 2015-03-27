@@ -50,6 +50,10 @@ module.exports = mac.series(
   },
 
   function () {
+    if (!cmd.watch) {
+      return;
+    }
+
     return gulp.src('docs/build')
         .pipe(gulpWebserver({
             host: cmd.host || '0.0.0.0',
