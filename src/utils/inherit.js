@@ -7,13 +7,15 @@ export default function (child, parent, overwrite) {
 
     if (overwrite || child[name] === undefined) {
       var desc = Object.getOwnPropertyDescriptor(parent, name);
-      var shouldDefineProps = desc.get || desc.set || !desc.writable || !desc.enumerable || !desc.configurable;
 
-      if (shouldDefineProps) {
+      // Attempting to check the "configurable" property as to whether or not
+      // the property can be redefined doesn't work because sometimes it is
+      // true for properties that cannot be defined. This seems to be the case
+      // with internal properties that may not be defined as properties using
+      // this method.
+      try {
         Object.defineProperty(child, name, desc);
-      } else {
-        child[name] = parent[name];
-      }
+      } catch (e) {}
     }
   }
 

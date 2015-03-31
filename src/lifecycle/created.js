@@ -1,6 +1,5 @@
 import camelCase from '../utils/camel-case';
 import data from '../utils/data';
-import forEachComponent from './for-each-component';
 import hasOwn from '../utils/has-own';
 import inherit from '../utils/inherit';
 import matchesSelector from '../utils/matches-selector';
@@ -137,35 +136,38 @@ function triggerAttributesCreated (target) {
   }
 }
 
-export default forEachComponent(function (element, options) {
-  var targetData = data(element, options.id);
+export default function (options) {
+  return function () {
+    var element = this;
+    var targetData = data(element, options.id);
 
-  if (targetData.created) {
-    return;
-  }
+    if (targetData.created) {
+      return;
+    }
 
-  targetData.created = true;
+    targetData.created = true;
 
-  // Native custom elements automatically inherit the prototype.
-  if (!options.isNative) {
-    inherit(element, options.prototype, true);
-  }
+    // Native custom elements automatically inherit the prototype.
+    if (!options.isNative) {
+      inherit(element, options.prototype, true);
+    }
 
-  // We use the unresolved / resolved attributes to flag whether or not the
-  // element has been templated or not.
-  if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
-    options.template(element);
-  }
+    // We use the unresolved / resolved attributes to flag whether or not the
+    // element has been templated or not.
+    if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
+      options.template(element);
+    }
 
-  element.removeAttribute(options.unresolvedAttribute);
-  element.setAttribute(options.resolvedAttribute, '');
-  addEventListeners(element, options);
-  addAttributeListeners(element, options);
-  addAttributeToPropertyLinks(element, options);
-  initAttributes(element, options);
-  triggerAttributesCreated(element, options);
+    element.removeAttribute(options.unresolvedAttribute);
+    element.setAttribute(options.resolvedAttribute, '');
+    addEventListeners(element, options);
+    addAttributeListeners(element, options);
+    addAttributeToPropertyLinks(element, options);
+    initAttributes(element, options);
+    triggerAttributesCreated(element, options);
 
-  if (options.created) {
-    options.created(element);
-  }
-});
+    if (options.created) {
+      options.created(element);
+    }
+  };
+}

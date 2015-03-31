@@ -36,18 +36,33 @@ var HTMLElementPrototype = HTMLElement.prototype;
 
 function skate (id, options) {
   // Copy options and set defaults.
-  options = inherit(inherit({ id: id }, options), skateDefaults);
+  options = inherit(inherit({}, options), skateDefaults);
 
   var Ctor;
   var parent = options.extends ? document.createElement(options.extends).constructor.prototype : HTMLElementPrototype;
+  var isElement = options.type === TYPE_ELEMENT;
 
   // Extend behaviour of existing callbacks.
-  options.prototype.createdCallback = created;
-  options.prototype.attachedCallback = attached;
-  options.prototype.detachedCallback = detached;
+  options.prototype.createdCallback = created(options);
+  options.prototype.attachedCallback = attached(options);
+  options.prototype.detachedCallback = detached(options);
   options.prototype.attributeChangedCallback = attribute(options);
-  options.isElement = options.type === TYPE_ELEMENT;
-  options.isNative = supportsCustomElements() && validCustomElement(id) && options.isElement;
+  Object.defineProperties(options, {
+    id: {
+      value: id,
+      writable: false
+    },
+
+    isElement: {
+      value: isElement,
+      writable: false
+    },
+
+    isNative: {
+      value: isElement && supportsCustomElements() && validCustomElement(id),
+      writable: false
+    }
+  });
 
   // By always setting in the registry we ensure that behaviour between
   // polyfilled and native registries are handled consistently.
@@ -71,10 +86,8 @@ function skate (id, options) {
   }
 
   if (Ctor) {
-    inherit(Ctor, options);
+    return inherit(Ctor, options, true);
   }
-
-  return Ctor;
 }
 
 skate.defaults = skateDefaults;

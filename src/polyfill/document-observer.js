@@ -3,6 +3,7 @@ import getClosestIgnoredElement from '../utils/get-closest-ignored-element';
 import globals from '../globals';
 import init from '../lifecycle/init';
 import MutationObserver from '../polyfill/mutation-observer';
+import uninit from '../lifecycle/uninit';
 import walkTree from '../utils/walk-tree';
 
 function documentObserverHandler (mutations) {
@@ -22,7 +23,7 @@ function documentObserverHandler (mutations) {
 
     // We can't check batched nodes here because they won't have a parent node.
     if (removedNodes && removedNodes.length) {
-      walkTree(removedNodes, detached);
+      walkTree(removedNodes, uninit);
     }
   }
 }

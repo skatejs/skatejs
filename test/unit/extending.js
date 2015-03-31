@@ -6,19 +6,18 @@ describe('extending', function () {
 
   beforeEach(function () {
     tag = helpers.safeTagName().safe;
-    Ctor = skate(tag, {
+    Ctor = skate(helpers.safeTagName().safe, {
       extends: 'div',
       someNonStandardProperty: true,
+      created: function (element) {
+        element.textContent = 'test';
+      },
       attributes: {
-        myAttribute: function () {
-
-        }
+        myAttribute: function () {}
       },
       prototype: {
         test: true,
-        someFunction: function () {
-
-        }
+        someFunction: function () {}
       }
     });
   });
@@ -26,6 +25,7 @@ describe('extending', function () {
   it('should copy all configuration options to the constructor', function () {
     expect(Ctor.extends).to.equal('div');
     expect(Ctor.someNonStandardProperty).to.equal(true);
+    expect(Ctor.created).to.be.a('function');
     expect(Ctor.attributes.myAttribute).to.be.a('function');
     expect(Ctor.prototype.test).to.equal(true);
     expect(Ctor.prototype.someFunction).to.be.a('function');
@@ -35,8 +35,24 @@ describe('extending', function () {
     class ExtendedCtor extends Ctor {}
     expect(ExtendedCtor.extends).to.equal('div');
     expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
+    expect(ExtendedCtor.created).to.be.a('function');
     expect(ExtendedCtor.attributes.myAttribute).to.be.a('function');
     expect(ExtendedCtor.prototype.test).to.equal(true);
     expect(ExtendedCtor.prototype.someFunction).to.be.a('function');
+  });
+
+  it('should not mess with callbacks', function () {
+    var ExtendedCtor = skate(tag, class extends Ctor {});
+    expect(new ExtendedCtor().textContent).to.equal('test');
+  });
+
+  it('should allow overriding of callbacks', function () {
+    var ExtendedCtor = skate(tag, class extends Ctor {
+      static created (element) {
+        super.created(element);
+        element.textContent += 'ing';
+      }
+    });
+    expect(new ExtendedCtor().textContent).to.equal('testing');
   });
 });
