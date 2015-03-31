@@ -7,6 +7,7 @@ import './unit/components';
 import './unit/document-observer';
 import './unit/dom';
 import './unit/events';
+import './unit/extending';
 import './unit/ignoring';
 import './unit/init';
 import './unit/lifecycle';

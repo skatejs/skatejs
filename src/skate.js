@@ -38,6 +38,7 @@ function skate (id, options) {
   // Copy options and set defaults.
   options = inherit(inherit({ id: id }, options), skateDefaults);
 
+  var Ctor;
   var parent = options.extends ? document.createElement(options.extends).constructor.prototype : HTMLElementPrototype;
 
   // Extend behaviour of existing callbacks.
@@ -57,17 +58,23 @@ function skate (id, options) {
   }
 
   if (options.isNative) {
-    return document.registerElement(id, options);
+    Ctor = document.registerElement(id, options);
+  } else {
+    debouncedInitDocumentWhenReady();
+    documentObserver.register({
+      fixIe: !!options.prototype.detachedCallback
+    });
+
+    if (options.isElement) {
+      Ctor = elementConstructor(id, options);
+    }
   }
 
-  debouncedInitDocumentWhenReady();
-  documentObserver.register({
-    fixIe: !!options.prototype.detachedCallback
-  });
-
-  if (options.isElement) {
-    return elementConstructor(id, options);
+  if (Ctor) {
+    inherit(Ctor, options);
   }
+
+  return Ctor;
 }
 
 skate.defaults = skateDefaults;
