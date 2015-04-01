@@ -76,11 +76,9 @@ function skate (id, options) {
     Ctor = document.registerElement(id, options);
   } else {
     debouncedInitDocumentWhenReady();
-    documentObserver.register({
-      fixIe: !!options.prototype.detachedCallback
-    });
+    documentObserver.register();
 
-    if (options.isElement) {
+    if (isElement) {
       Ctor = elementConstructor(id, options);
     }
   }

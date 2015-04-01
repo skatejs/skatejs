@@ -41,15 +41,9 @@ function createDocumentObserver () {
 }
 
 export default {
-  register: function (options = {}) {
-    // IE has issues with reporting removedNodes correctly. See the polyfill for
-    // details. If we fix IE, we must also re-define the document observer.
-    if (options.fixIe) {
-      MutationObserver.fixIe();
-      this.unregister();
-    }
-
+  register: function () {
     if (!globals.observer) {
+      MutationObserver.fixIe();
       globals.observer = createDocumentObserver();
     }
 
