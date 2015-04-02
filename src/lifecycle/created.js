@@ -146,9 +146,12 @@ export default function (options) {
 
     targetData.created = true;
 
-    // Native custom elements automatically inherit the prototype.
+    // Native custom elements automatically inherit the prototype. We apply
+    // the user defined prototype directly to the element instance if not.
     if (!options.isNative) {
-      Object.assign(element, options.prototype);
+      objEach(options.prototype, function (value, name) {
+        Object.defineProperty(element, name, Object.getOwnPropertyDescriptor(options.prototype, name));
+      });
     }
 
     // We use the unresolved / resolved attributes to flag whether or not the
