@@ -5,7 +5,6 @@ describe('extending', function () {
   var Ctor, tag;
 
   beforeEach(function () {
-    tag = helpers.safeTagName().safe;
     Ctor = skate(helpers.safeTagName().safe, {
       extends: 'div',
       someNonStandardProperty: true,
@@ -20,6 +19,7 @@ describe('extending', function () {
         someFunction: function () {}
       }
     });
+    tag = helpers.safeTagName().safe;
   });
 
   it('should copy all configuration options to the constructor', function () {

@@ -1,7 +1,6 @@
 import camelCase from '../utils/camel-case';
 import data from '../utils/data';
 import hasOwn from '../utils/has-own';
-import inherit from '../utils/inherit';
 import matchesSelector from '../utils/matches-selector';
 import MutationObserver from '../polyfill/mutation-observer';
 import objEach from '../utils/obj-each';
@@ -149,7 +148,7 @@ export default function (options) {
 
     // Native custom elements automatically inherit the prototype.
     if (!options.isNative) {
-      inherit(element, options.prototype, true);
+      Object.assign(element, options.prototype);
     }
 
     // We use the unresolved / resolved attributes to flag whether or not the

@@ -6,7 +6,6 @@ import debounce from './utils/debounce';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
-import inherit from './utils/inherit';
 import init from './lifecycle/init';
 import registry from './polyfill/registry';
 import skateDefaults from './skate/defaults';
@@ -32,15 +31,23 @@ function initDocumentWhenReady () {
 
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
-var HTMLElementPrototype = HTMLElement.prototype;
 
-function skate (id, options) {
-  // Copy options and set defaults.
-  options = inherit(inherit({}, options), skateDefaults);
+function skate (id, userOptions) {
+  var Ctor, CtorParent, isElement;
+  var options = Object.assign({}, skateDefaults);
 
-  var Ctor;
-  var parent = options.extends ? document.createElement(options.extends).constructor.prototype : HTMLElementPrototype;
-  var isElement = options.type === TYPE_ELEMENT;
+  // Object.assign() only copies own properties. If a constructor is extended
+  // and passed as the userOptions then properties that aren't on a Function
+  // instance by default won't get copied. This ensures that all available
+  // options are passed along if they were passed as part of the userOptions.
+  Object.keys(skateDefaults).forEach(function (name) {
+    if (userOptions[name] !== undefined) {
+      options[name] = userOptions[name];
+    }
+  });
+
+  CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
+  isElement = options.type === TYPE_ELEMENT;
 
   // Extend behaviour of existing callbacks.
   options.prototype.createdCallback = created(options);
@@ -68,8 +75,8 @@ function skate (id, options) {
   // polyfilled and native registries are handled consistently.
   registry.set(id, options);
 
-  if (!parent.isPrototypeOf(options.prototype)) {
-    options.prototype = inherit(Object.create(parent), options.prototype, true);
+  if (!CtorParent.isPrototypeOf(options.prototype)) {
+    options.prototype = Object.assign(class extends CtorParent {}, options.prototype);
   }
 
   if (options.isNative) {
@@ -84,7 +91,7 @@ function skate (id, options) {
   }
 
   if (Ctor) {
-    return inherit(Ctor, options, true);
+    return Object.assign(Ctor, options);
   }
 }
 
