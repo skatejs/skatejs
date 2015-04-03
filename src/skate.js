@@ -29,11 +29,19 @@ function initDocumentWhenReady () {
   }
 }
 
+function readonly (value) {
+  return {
+    configurable: false,
+    value: value,
+    writable: false
+  };
+}
+
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent, isElement;
+  var Ctor, CtorParent, isElement, isNative;
   var options = Object.assign({}, skateDefaults);
 
   // Object.assign() only copies own properties. If a constructor is extended
@@ -48,6 +56,7 @@ function skate (id, userOptions) {
 
   CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
+  isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
   // Extend behaviour of existing callbacks.
   options.prototype.createdCallback = created(options);
@@ -55,20 +64,9 @@ function skate (id, userOptions) {
   options.prototype.detachedCallback = detached(options);
   options.prototype.attributeChangedCallback = attribute(options);
   Object.defineProperties(options, {
-    id: {
-      value: id,
-      writable: false
-    },
-
-    isElement: {
-      value: isElement,
-      writable: false
-    },
-
-    isNative: {
-      value: isElement && supportsCustomElements() && validCustomElement(id),
-      writable: false
-    }
+    id: readonly(id),
+    isElement: readonly(isElement),
+    isNative: readonly(isNative)
   });
 
   // By always setting in the registry we ensure that behaviour between
@@ -79,7 +77,7 @@ function skate (id, userOptions) {
     options.prototype = Object.assign(class extends CtorParent {}, options.prototype);
   }
 
-  if (options.isNative) {
+  if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
     debouncedInitDocumentWhenReady();
