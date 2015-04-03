@@ -1,4 +1,5 @@
 import { TYPE_ELEMENT } from './constants';
+import assign from './utils/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
@@ -42,9 +43,9 @@ var HTMLElement = window.HTMLElement;
 
 function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
-  var options = Object.assign({}, skateDefaults);
+  var options = assign({}, skateDefaults);
 
-  // Object.assign() only copies own properties. If a constructor is extended
+  // The assign() func only copies own properties. If a constructor is extended
   // and passed as the userOptions then properties that aren't on a Function
   // instance by default won't get copied. This ensures that all available
   // options are passed along if they were passed as part of the userOptions.
@@ -74,7 +75,7 @@ function skate (id, userOptions) {
   registry.set(id, options);
 
   if (!CtorParent.isPrototypeOf(options.prototype)) {
-    options.prototype = Object.assign(class extends CtorParent {}, options.prototype);
+    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
   }
 
   if (isNative) {
@@ -89,7 +90,7 @@ function skate (id, userOptions) {
   }
 
   if (Ctor) {
-    return Object.assign(Ctor, options);
+    return assign(Ctor, options);
   }
 }
 
