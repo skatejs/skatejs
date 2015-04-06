@@ -649,7 +649,7 @@ Additionally, after removing the `unresolved` attribute, Skate will add the `res
 
 ## Ignoring Elements
 
-If you need to ignore an element and its descendants you can add the `data-skate-ignore` attribute to an element.
+If you have a DOM tree that you don't want Skate to polyfill then you can add the `data-skate-ignore` attribute. This is ideal for mitigating performance issues associated with older browsers and inspecting each element that is added to the document. Generally this is only an issue in Internet Explorer and dealing with hundreds of thousands of elements. If your browser natively supports Custom Elements then this attribute is ignored.
 
 ```html
 <div data-skate-ignore>
@@ -661,7 +661,7 @@ If you need to ignore an element and its descendants you can add the `data-skate
 
 ## No Conflict
 
-Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring `skate` to the previous value.
+Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring the global `skate` to the previous value.
 
 ```js
 var mySkate = skate.noConflict();

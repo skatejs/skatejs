@@ -2,7 +2,6 @@ import assign from '../utils/assign';
 import camelCase from '../utils/camel-case';
 import data from '../utils/data';
 import hasOwn from '../utils/has-own';
-import ignored from '../utils/ignored';
 import matchesSelector from '../utils/matches-selector';
 import MutationObserver from '../polyfill/mutation-observer';
 import objEach from '../utils/obj-each';
@@ -140,10 +139,9 @@ function triggerAttributesCreated (target) {
 export default function (options) {
   return function () {
     var element = this;
-    var targetAttr;
     var targetData = data(element, options.id);
 
-    if (targetData.created || ignored(element)) {
+    if (targetData.created) {
       return;
     }
 

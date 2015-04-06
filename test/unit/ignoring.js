@@ -2,6 +2,7 @@
 
 import helpers from '../lib/helpers';
 import skate from '../../src/skate';
+import supportsCustomElements from '../../src/support/custom-elements';
 
 describe('ignoring', function () {
   var created;
@@ -18,8 +19,9 @@ describe('ignoring', function () {
 
   function assertCalls (done) {
     helpers.afterMutations(function () {
-      expect(created).to.equal(0, 'created');
-      expect(attached).to.equal(0, 'attached');
+      var expected = supportsCustomElements() ? 1 : 0;
+      expect(created).to.equal(expected, 'created');
+      expect(attached).to.equal(expected, 'attached');
       done();
     });
   }
