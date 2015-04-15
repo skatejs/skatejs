@@ -3,6 +3,7 @@ import getClosestIgnoredElement from '../utils/get-closest-ignored-element';
 import globals from '../globals';
 import init from '../lifecycle/init';
 import MutationObserver from '../polyfill/mutation-observer';
+import uninit from '../lifecycle/uninit';
 import walkTree from '../utils/walk-tree';
 
 function documentObserverHandler (mutations) {
@@ -22,7 +23,7 @@ function documentObserverHandler (mutations) {
 
     // We can't check batched nodes here because they won't have a parent node.
     if (removedNodes && removedNodes.length) {
-      walkTree(removedNodes, detached);
+      walkTree(removedNodes, uninit);
     }
   }
 }
@@ -40,15 +41,9 @@ function createDocumentObserver () {
 }
 
 export default {
-  register: function (options = {}) {
-    // IE has issues with reporting removedNodes correctly. See the polyfill for
-    // details. If we fix IE, we must also re-define the document observer.
-    if (options.fixIe) {
-      MutationObserver.fixIe();
-      this.unregister();
-    }
-
+  register: function () {
     if (!globals.observer) {
+      MutationObserver.fixIe();
       globals.observer = createDocumentObserver();
     }
 

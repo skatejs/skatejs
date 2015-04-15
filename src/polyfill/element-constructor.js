@@ -16,7 +16,9 @@ export default function (id, options) {
     options.prototype = CustomElement.prototype;
 
     // If they use the constructor we don't have to wait until it's attached.
-    options.prototype.createdCallback.call(element);
+    if (options.prototype.createdCallback) {
+      options.prototype.createdCallback.call(element);
+    }
 
     return element;
   }

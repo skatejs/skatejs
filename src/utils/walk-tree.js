@@ -1,12 +1,11 @@
-import { ATTR_IGNORE } from '../constants';
+import ignored from './ignored';
 
 function createElementTreeWalker (element) {
   return document.createTreeWalker(
     element,
     NodeFilter.SHOW_ELEMENT,
     function (node) {
-      var attrs = node.attributes;
-      return attrs && attrs[ATTR_IGNORE] ?
+      return ignored(node) ?
         NodeFilter.FILTER_REJECT :
         NodeFilter.FILTER_ACCEPT;
     },
@@ -18,11 +17,10 @@ export default function (elements, callback) {
   var elementsLength = elements.length;
   for (var a = 0; a < elementsLength; a++) {
     var element = elements[a];
-    var elementAttrs = element.attributes;
 
     // We screen the root node only. The rest of the nodes are screened in the
     // tree walker.
-    if (element.nodeType !== 1 || (elementAttrs && elementAttrs[ATTR_IGNORE])) {
+    if (element.nodeType !== 1 || ignored(element)) {
       continue;
     }
 

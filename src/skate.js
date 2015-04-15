@@ -1,4 +1,5 @@
 import { TYPE_ELEMENT } from './constants';
+import assign from './utils/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
@@ -6,7 +7,6 @@ import debounce from './utils/debounce';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
-import inherit from './utils/inherit';
 import init from './lifecycle/init';
 import registry from './polyfill/registry';
 import skateDefaults from './skate/defaults';
@@ -30,51 +30,68 @@ function initDocumentWhenReady () {
   }
 }
 
+function readonly (value) {
+  return {
+    configurable: false,
+    value: value,
+    writable: false
+  };
+}
+
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
-var HTMLElementPrototype = HTMLElement.prototype;
 
-function skate (id, options) {
-  // Copy options and set defaults.
-  options = inherit(inherit({ id: id }, options), skateDefaults);
+function skate (id, userOptions) {
+  var Ctor, CtorParent, isElement, isNative;
+  var options = assign({}, skateDefaults);
 
-  var Ctor;
-  var parent = options.extends ? document.createElement(options.extends).constructor.prototype : HTMLElementPrototype;
+  // The assign() func only copies own properties. If a constructor is extended
+  // and passed as the userOptions then properties that aren't on a Function
+  // instance by default won't get copied. This ensures that all available
+  // options are passed along if they were passed as part of the userOptions.
+  Object.keys(skateDefaults).forEach(function (name) {
+    if (userOptions[name] !== undefined) {
+      options[name] = userOptions[name];
+    }
+  });
+
+  CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
+  isElement = options.type === TYPE_ELEMENT;
+  isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
   // Extend behaviour of existing callbacks.
-  options.prototype.createdCallback = created;
-  options.prototype.attachedCallback = attached;
-  options.prototype.detachedCallback = detached;
+  options.prototype.createdCallback = created(options);
+  options.prototype.attachedCallback = attached(options);
+  options.prototype.detachedCallback = detached(options);
   options.prototype.attributeChangedCallback = attribute(options);
-  options.isElement = options.type === TYPE_ELEMENT;
-  options.isNative = supportsCustomElements() && validCustomElement(id) && options.isElement;
+  Object.defineProperties(options, {
+    id: readonly(id),
+    isElement: readonly(isElement),
+    isNative: readonly(isNative)
+  });
 
   // By always setting in the registry we ensure that behaviour between
   // polyfilled and native registries are handled consistently.
   registry.set(id, options);
 
-  if (!parent.isPrototypeOf(options.prototype)) {
-    options.prototype = inherit(Object.create(parent), options.prototype, true);
+  if (!CtorParent.isPrototypeOf(options.prototype)) {
+    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
   }
 
-  if (options.isNative) {
+  if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
     debouncedInitDocumentWhenReady();
-    documentObserver.register({
-      fixIe: !!options.prototype.detachedCallback
-    });
+    documentObserver.register();
 
-    if (options.isElement) {
+    if (isElement) {
       Ctor = elementConstructor(id, options);
     }
   }
 
   if (Ctor) {
-    inherit(Ctor, options);
+    return assign(Ctor, options);
   }
-
-  return Ctor;
 }
 
 skate.defaults = skateDefaults;

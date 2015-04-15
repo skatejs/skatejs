@@ -1,4 +1,4 @@
-import { ATTR_IGNORE } from '../constants';
+import ignored from './ignored';
 
 var DocumentFragment = window.DocumentFragment;
 
@@ -6,7 +6,7 @@ export default function (element) {
   var parent = element;
 
   while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
-    if (parent.hasAttribute(ATTR_IGNORE)) {
+    if (ignored(parent)) {
       return parent;
     }
 

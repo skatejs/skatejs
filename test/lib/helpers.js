@@ -12,6 +12,7 @@ export default {
    *   (value of id) and safe tag name.
    */
   safeTagName: function (id) {
+    id = id || 'my-element';
     return {
       unsafe: id,
       safe: id + (tagNameCounter++).toString()
