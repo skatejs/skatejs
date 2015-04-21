@@ -41,6 +41,12 @@ describe('extending', function () {
     expect(ExtendedCtor.prototype.someFunction).to.be.a('function');
   });
 
+  it('prototype members should be available', function () {
+    var ExtendedCtor = skate(tag, class extends Ctor {});
+    expect(new ExtendedCtor().test).to.equal(true);
+    expect(new ExtendedCtor().someFunction).to.be.a('function');
+  });
+
   it('should not mess with callbacks', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {});
     expect(new ExtendedCtor().textContent).to.equal('test');
