@@ -32,7 +32,7 @@ describe('extending', function () {
   });
 
   it('should copy all configuration options to the extended object', function () {
-    class ExtendedCtor extends Ctor {}
+    var ExtendedCtor = skate(tag, class extends Ctor {});
     expect(ExtendedCtor.extends).to.equal('div');
     expect(ExtendedCtor.someNonStandardProperty).to.equal(undefined);
     expect(ExtendedCtor.created).to.be.a('function');

@@ -74,7 +74,7 @@ function skate (id, userOptions) {
   // polyfilled and native registries are handled consistently.
   registry.set(id, options);
 
-  if (!CtorParent.isPrototypeOf(options.prototype)) {
+  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
     options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
   }
 
