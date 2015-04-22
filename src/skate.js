@@ -181,7 +181,7 @@ skate.defaults = {
 // their environments are like. Doing this affords them the flexibility of
 // using it in an environment where module and non-module code may co-exist.
 var previousSkate = window.skate;
-export default function () {
+skate.noConflict = function () {
   window.skate = previousSkate;
   return this;
 }
