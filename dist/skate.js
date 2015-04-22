@@ -5,7 +5,7 @@ var ATTR_IGNORE = exports.ATTR_IGNORE = "data-skate-ignore";
 },{}],2:[function(require,module,exports){
 "use strict";
 
-exports.default = {
+exports["default"] = {
   /**
    * Adds data to the element.
    *
@@ -42,11 +42,12 @@ exports.default = {
 },{}],3:[function(require,module,exports){
 "use strict";
 
-var globals = require('./globals').default;
+var globals = require('./globals')["default"];
 var initElements = require('./lifecycle').initElements;
 var removeElements = require('./lifecycle').removeElements;
-var MutationObserver = require('./mutation-observer').default;
+var MutationObserver = require('./mutation-observer')["default"];
 var getClosestIgnoredElement = require('./utils').getClosestIgnoredElement;
+
 
 /**
  * The document observer handler.
@@ -97,7 +98,7 @@ function createDocumentObserver() {
   return observer;
 }
 
-exports.default = {
+exports["default"] = {
   register: function (fixIe) {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
@@ -132,16 +133,17 @@ if (!window.__skate) {
   };
 }
 
-exports.default = window.__skate;
+exports["default"] = window.__skate;
 },{}],5:[function(require,module,exports){
 "use strict";
 
 var ATTR_IGNORE = require('./constants').ATTR_IGNORE;
-var data = require('./data').default;
-var MutationObserver = require('./mutation-observer').default;
-var registry = require('./registry').default;
+var data = require('./data')["default"];
+var MutationObserver = require('./mutation-observer')["default"];
+var registry = require('./registry')["default"];
 var inherit = require('./utils').inherit;
 var objEach = require('./utils').objEach;
+
 
 var elProto = window.HTMLElement.prototype;
 var matchesSelector = (elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector);
@@ -441,6 +443,7 @@ exports.removeElements = removeElements;
 
 var debounce = require('./utils').debounce;
 var objEach = require('./utils').objEach;
+
 
 var elProto = window.HTMLElement.prototype;
 var elProtoContains = window.HTMLElement.prototype.contains;
@@ -752,12 +755,13 @@ MutationObserver.prototype = {
   }
 };
 
-exports.default = MutationObserver;
+exports["default"] = MutationObserver;
 },{"./utils":9}],7:[function(require,module,exports){
 "use strict";
 
-var globals = require('./globals').default;
+var globals = require('./globals')["default"];
 var hasOwn = require('./utils').hasOwn;
+
 
 /**
  * Returns the class list for the specified element.
@@ -791,7 +795,7 @@ function isDefinitionOfType(id, type) {
   return hasOwn(globals.registry, id) && globals.registry[id].type.indexOf(type) > -1;
 }
 
-exports.default = {
+exports["default"] = {
   clear: function () {
     globals.registry = {};
     return this;
@@ -810,7 +814,7 @@ exports.default = {
 
     if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
       definition = globals.registry[isAttrOrTag];
-      tagToExtend = definition.extends;
+      tagToExtend = definition["extends"];
 
       if (isAttrValue) {
         if (tag === tagToExtend) {
@@ -826,7 +830,7 @@ exports.default = {
 
       if (isDefinitionOfType(attr, skate.types.ATTR)) {
         definition = globals.registry[attr];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -842,7 +846,7 @@ exports.default = {
 
       if (isDefinitionOfType(className, skate.types.CLASS)) {
         definition = globals.registry[className];
-        tagToExtend = definition.extends;
+        tagToExtend = definition["extends"];
 
         if (!tagToExtend || tag === tagToExtend) {
           definitions.push(definition);
@@ -878,13 +882,14 @@ exports.default = {
 },{"./globals":4,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
-var documentObserver = require('./document-observer').default;
+var documentObserver = require('./document-observer')["default"];
 var triggerCreated = require('./lifecycle').triggerCreated;
 var initElements = require('./lifecycle').initElements;
-var registry = require('./registry').default;
+var registry = require('./registry')["default"];
 var debounce = require('./utils').debounce;
 var inherit = require('./utils').inherit;
-var version = require('./version').default;
+var version = require('./version')["default"];
+
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
@@ -906,7 +911,7 @@ var initDocument = debounce(function () {
 function makeElementConstructor(definition) {
   function CustomElement() {
     var element;
-    var tagToExtend = definition.extends;
+    var tagToExtend = definition["extends"];
     var definitionId = definition.id;
 
     if (tagToExtend) {
@@ -1026,7 +1031,7 @@ skate.defaults = {
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: "",
+  "extends": "",
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
@@ -1051,6 +1056,13 @@ skate.defaults = {
 // Exporting
 // ---------
 
+var previousSkate = window.skate;
+
+skate.noConflict = function () {
+  window.skate = previousSkate;
+  return this;
+};
+
 // Always export the global. We don't know how consumers are using it and what
 // their environments are like. Doing this affords them the flexibility of
 // using it in an environment where module and non-module code may co-exist.
@@ -1065,10 +1077,10 @@ if (typeof define === "function") {
 
 // CommonJS
 if (typeof exports === "object") {
-  exports.default = skate;
+  exports["default"] = skate;
 }
 
-exports.default = skate;
+exports["default"] = skate;
 },{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 "use strict";
 
@@ -1142,5 +1154,5 @@ function objEach(obj, fn) {
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-exports.default = "0.11.1";
+exports["default"] = "0.12.0";
 },{}]},{},[8]);
