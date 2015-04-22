@@ -177,14 +177,17 @@ skate.defaults = {
 // Exporting
 // ---------
 
-// Always export the global. We don't know how consumers are using it and what
-// their environments are like. Doing this affords them the flexibility of
-// using it in an environment where module and non-module code may co-exist.
 var previousSkate = window.skate;
+
 skate.noConflict = function () {
   window.skate = previousSkate;
   return this;
 }
+
+// Always export the global. We don't know how consumers are using it and what
+// their environments are like. Doing this affords them the flexibility of
+// using it in an environment where module and non-module code may co-exist.
+window.skate = skate;
 
 // AMD
 if (typeof define === 'function') {
