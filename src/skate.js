@@ -180,7 +180,11 @@ skate.defaults = {
 // Always export the global. We don't know how consumers are using it and what
 // their environments are like. Doing this affords them the flexibility of
 // using it in an environment where module and non-module code may co-exist.
-window.skate = skate;
+var previousSkate = window.skate;
+export default function () {
+  window.skate = previousSkate;
+  return this;
+}
 
 // AMD
 if (typeof define === 'function') {
