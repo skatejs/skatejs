@@ -42,11 +42,21 @@ function readonly (value) {
 function dashCaseAttributeNames (options) {
   for (let name in options.attributes) {
     var dashCasedName = dashCase(name);
+
+    // We only need to define a new attribute if the name is actually different.
     if (name !== dashCasedName) {
       options.attributes[dashCasedName] = options.attributes[name];
+
+      // We define a non-enumerable property that links the camelCased version
+      // to the dash-cased version just in case it's referred to in either form.
+      // It is non-enumerable so that there are no duplicate names attributes
+      // during enumeration and that the ones that are enumerable are the
+      // dash-cased versions.
       Object.defineProperty(options.attributes, name, {
         enumerable: false,
-        value: options.attributes[name]
+        get: function () {
+          return options.attributes[dashCasedName];
+        }
       });
     }
   }
