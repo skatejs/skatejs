@@ -422,10 +422,13 @@ describe('attributes:', function () {
       triggered = false;
     });
 
-    it('attribute name in the attribute definition should convert camelCased attribute names to dash-case', function () {
+    it('attribute name in the attribute definition should convert camelCased attribute names to dash-case', function (done) {
       var el = new Ctor();
       el.setAttribute('my-attribute', '');
-      expect(triggered).to.equal(true);
+      helpers.afterMutations(function () {
+        expect(triggered).to.equal(true);
+        done();
+      });
     });
   });
 });
