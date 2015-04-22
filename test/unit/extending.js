@@ -24,7 +24,7 @@ describe('extending', function () {
 
   it('should copy all configuration options to the constructor', function () {
     expect(Ctor.extends).to.equal('div');
-    expect(Ctor.someNonStandardProperty).to.equal(undefined);
+    expect(Ctor.someNonStandardProperty).to.equal(true);
     expect(Ctor.created).to.be.a('function');
     expect(Ctor.attributes.myAttribute).to.be.a('function');
     expect(Ctor.prototype.test).to.equal(true);
@@ -34,7 +34,7 @@ describe('extending', function () {
   it('should copy all configuration options to the extended object', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {});
     expect(ExtendedCtor.extends).to.equal('div');
-    expect(ExtendedCtor.someNonStandardProperty).to.equal(undefined);
+    expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
     expect(ExtendedCtor.created).to.be.a('function');
     expect(ExtendedCtor.attributes.myAttribute).to.be.a('function');
     expect(ExtendedCtor.prototype.test).to.equal(true);

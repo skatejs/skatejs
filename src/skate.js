@@ -41,6 +41,15 @@ function readonly (value) {
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
+function getPrototypes (proto) {
+  var chains = [proto];
+  while (proto = Object.getPrototypeOf(proto)) {
+    chains.push(proto);
+  }
+  chains.reverse();
+  return chains;
+}
+
 function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
   var options = assign({}, skateDefaults);
@@ -49,6 +58,11 @@ function skate (id, userOptions) {
   // and passed as the userOptions then properties that aren't on a Function
   // instance by default won't get copied. This ensures that all available
   // options are passed along if they were passed as part of the userOptions.
+  for (var name in userOptions) {
+    if (userOptions[name] !== undefined) {
+      options[name] = userOptions[name];
+    }
+  }
   Object.keys(skateDefaults).forEach(function (name) {
     if (userOptions[name] !== undefined) {
       options[name] = userOptions[name];
