@@ -406,4 +406,26 @@ describe('Attribute listeners', function () {
       expect(attributesCalled).to.equal(2);
     });
   });
+
+  describe('camelCasing', function () {
+    var Ctor;
+    var triggered;
+
+    beforeEach(function () {
+      Ctor = skate(helpers.safeTagName().safe, {
+        attributes: {
+          myAttribute: function () {
+            triggered = true;
+          }
+        }
+      });
+      triggered = false;
+    });
+
+    it('attribute name in the attribute definition should convert camelCased attribute names to dash-case', function () {
+      var el = new Ctor();
+      el.setAttribute('my-attribute', '');
+      expect(triggered).to.equal(true);
+    });
+  });
 });
