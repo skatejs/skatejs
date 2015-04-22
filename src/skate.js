@@ -39,36 +39,45 @@ function readonly (value) {
   };
 }
 
+function dashCaseAttributeNames (options) {
+  for (let name in options.attributes) {
+    var dashCasedName = dashCase(name);
+    if (name !== dashCasedName) {
+      options.attributes[dashCasedName] = options.attributes[name];
+      Object.defineProperty(options.attributes, name, {
+        enumerable: false,
+        value: options.attributes[name]
+      });
+    }
+  }
+}
+
+function makeOptions (userOptions) {
+  var options = assign({}, skateDefaults);
+
+  // Copy over all standard options if the user has defined them.
+  for (let name in skateDefaults) {
+    if (userOptions[name] !== undefined) {
+      options[name] = userOptions[name];
+    }
+  }
+
+  // Copy over non-standard options.
+  for (let name in userOptions) {
+    options[name] = userOptions[name];
+  }
+
+  dashCaseAttributeNames(options);
+
+  return options;
+}
+
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
 function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
-  var options = assign({}, skateDefaults);
-
-  // The assign() func only copies own properties. If a constructor is extended
-  // and passed as the userOptions then properties that aren't on a Function
-  // instance by default won't get copied. This ensures that all available
-  // options are passed along if they were passed as part of the userOptions.
-  for (var name in userOptions) {
-    if (userOptions[name] !== undefined) {
-      options[name] = userOptions[name];
-    }
-  }
-  Object.keys(skateDefaults).forEach(function (name) {
-    if (userOptions[name] !== undefined) {
-      options[name] = userOptions[name];
-    }
-  });
-
-  // Ensure attribute names are dash-cased.
-  for (let name in options.attributes) {
-    var dashCasedName = dashCase(name);
-    if (name !== dashCasedName) {
-      options.attributes[dashCasedName] = options.attributes[name];
-      delete options.attributes[name];
-    }
-  }
+  var options = makeOptions(userOptions);
 
   CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
