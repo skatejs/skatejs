@@ -3,6 +3,7 @@ import assign from './utils/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
+import dashCase from './utils/dash-case';
 import debounce from './utils/debounce';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
@@ -59,6 +60,15 @@ function skate (id, userOptions) {
       options[name] = userOptions[name];
     }
   });
+
+  // Ensure attribute names are dash-cased.
+  for (let name in options.attributes) {
+    var dashCasedName = dashCase(name);
+    if (name !== dashCasedName) {
+      options.attributes[dashCasedName] = options.attributes[name];
+      delete options.attributes[name];
+    }
+  }
 
   CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
