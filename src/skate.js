@@ -41,15 +41,6 @@ function readonly (value) {
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
-function getPrototypes (proto) {
-  var chains = [proto];
-  while (proto = Object.getPrototypeOf(proto)) {
-    chains.push(proto);
-  }
-  chains.reverse();
-  return chains;
-}
-
 function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
   var options = assign({}, skateDefaults);
