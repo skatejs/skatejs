@@ -3,7 +3,7 @@
 import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
-describe('Attribute listeners', function () {
+describe('attributes:', function () {
   describe('default values', function () {
     it('should set a default value using the "value" option', function () {
       var tagName = helpers.safeTagName('my-el');
