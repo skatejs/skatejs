@@ -186,3 +186,30 @@ console.log(myComponent);
 ```
 
 You're not limited to text either. You can use that functional pattern to set attributes, form field values and manipulate structure.
+
+## Re-rendering a Component
+
+There is no built-in way to re-render a component. This is left up to the developer to implement if they need it. One way you could do this is to make your template callback able to be called multiple times. How the re-rendering is done within that callback is up to the developer and templating engine.
+
+All you need to do for this is just to call the template callback from anywhere in your code. For example, if you wanted to call the template callback when any attribute changes:
+
+```js
+skate('my-element', {
+  attributes: function (element) {
+    element.constructor.template(element);
+  }
+});
+```
+
+If you want to make this easier to call, you can create a prototype method for it:
+
+```js
+skate('my-element', {
+  prototype: {
+    render: function () {
+      this.constructor.template(this);
+      return this;
+    }
+  }
+});
+```
