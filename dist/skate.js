@@ -620,6 +620,15 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   var objEach = _interopRequire(__f6279d384ed58022eb040533c80b6909);
   
+  function getPrototypes(proto) {
+    var chains = [proto];
+    while (proto = Object.getPrototypeOf(proto)) {
+      chains.push(proto);
+    }
+    chains.reverse();
+    return chains;
+  }
+  
   function addAttributeListeners(target, component) {
     var attrs = target.attributes;
   
@@ -763,8 +772,15 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
       // Native custom elements automatically inherit the prototype. We apply
       // the user defined prototype directly to the element instance if not.
+      // Note that in order to catch modified prototype chains - such as when
+      // setPrototypeOf() or ES6 classes are used - we must walk each prototype
+      // and apply each member directly.
       if (!options.isNative) {
-        assign(element, options.prototype);
+        getPrototypes(options.prototype).forEach(function (proto) {
+          if (!proto.isPrototypeOf(element)) {
+            assign(element, proto);
+          }
+        });
       }
   
       // We use the unresolved / resolved attributes to flag whether or not the
@@ -785,6 +801,23 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
         options.created(element);
       }
     };
+  };
+  
+  return module.exports
+}).call(this);
+
+// src/utils/dash-case.js
+__d13e9a9bb254af255c785b353cd82e95 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  module.exports = function (str) {
+    return str.split(/([A-Z])/).reduce(function (one, two, idx) {
+      var dash = !one || idx % 2 === 0 ? "" : "-";
+      return "" + one + "" + dash + "" + two.toLowerCase();
+    });
   };
   
   return module.exports
@@ -1399,6 +1432,8 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   
   var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
   
+  var dashCase = _interopRequire(__d13e9a9bb254af255c785b353cd82e95);
+  
   var debounce = _interopRequire(__bf50fdd75f99f2b27325dc6d6f1dcb64);
   
   var detached = _interopRequire(__8e93439e8a566d1586c9903a75a6a785);
@@ -1447,22 +1482,55 @@ __880d751441dbbd15758abf63053bf506 = (function () {
     };
   }
   
+  function dashCaseAttributeNames(options) {
+    for (var _name in options.attributes) {
+      var dashCasedName = dashCase(_name);
+  
+      // We only need to define a new attribute if the name is actually different.
+      if (_name !== dashCasedName) {
+        options.attributes[dashCasedName] = options.attributes[_name];
+  
+        // We define a non-enumerable property that links the camelCased version
+        // to the dash-cased version just in case it's referred to in either form.
+        // It is non-enumerable so that there are no duplicate names attributes
+        // during enumeration and that the ones that are enumerable are the
+        // dash-cased versions.
+        Object.defineProperty(options.attributes, _name, {
+          enumerable: false,
+          get: function get() {
+            return options.attributes[dashCasedName];
+          }
+        });
+      }
+    }
+  }
+  
+  function makeOptions(userOptions) {
+    var options = assign({}, skateDefaults);
+  
+    // Copy over all standard options if the user has defined them.
+    for (var _name in skateDefaults) {
+      if (userOptions[_name] !== undefined) {
+        options[_name] = userOptions[_name];
+      }
+    }
+  
+    // Copy over non-standard options.
+    for (var _name2 in userOptions) {
+      options[_name2] = userOptions[_name2];
+    }
+  
+    dashCaseAttributeNames(options);
+  
+    return options;
+  }
+  
   var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
   var HTMLElement = window.HTMLElement;
   
   function skate(id, userOptions) {
     var Ctor, CtorParent, isElement, isNative;
-    var options = assign({}, skateDefaults);
-  
-    // The assign() func only copies own properties. If a constructor is extended
-    // and passed as the userOptions then properties that aren't on a Function
-    // instance by default won't get copied. This ensures that all available
-    // options are passed along if they were passed as part of the userOptions.
-    Object.keys(skateDefaults).forEach(function (name) {
-      if (userOptions[name] !== undefined) {
-        options[name] = userOptions[name];
-      }
-    });
+    var options = makeOptions(userOptions);
   
     CtorParent = options["extends"] ? document.createElement(options["extends"]).constructor : HTMLElement;
     isElement = options.type === TYPE_ELEMENT;
