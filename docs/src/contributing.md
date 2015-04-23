@@ -28,7 +28,7 @@ npm test
 If you want to keep the Karma server alive to run them in your browser of choice:
 
 ```bash
-npm test -- --keepalive
+npm test -- --watch
 ```
 
 To run tests in a specific browser:
