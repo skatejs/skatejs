@@ -3,7 +3,7 @@
 import helpers from '../lib/helpers';
 import skate from '../../src/skate';
 
-describe('Lifecycle Callbacks', function () {
+describe('lifecycle', function () {
   var MyEl;
   var myEl;
   var tagName;
