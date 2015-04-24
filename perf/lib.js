@@ -2,9 +2,14 @@
   'use strict';
 
   var exports = window.perf = {};
+  var prefix = 'skate-test-';
 
   function attachedHandler (element) {
     element.textContent += ', done!';
+  }
+
+  for (var a = 0; a < 10000; a++) {
+    skate(prefix + (a + 1), {});
   }
 
   exports.getTestElements = function (size) {
@@ -21,15 +26,5 @@
 
   exports.addTestElements = function (container, amount) {
     container.innerHTML = exports.getTestElements(amount);
-  };
-
-  exports.addSkateListeners = function (amount, prefix) {
-    for (var a = 0; a < amount; a++) {
-      prefix = prefix || 'skate-test-';
-
-      skate(prefix + (a + 1), {
-        attached: attachedHandler
-      });
-    }
   };
 }());

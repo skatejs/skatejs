@@ -18,6 +18,14 @@
       }
     },
 
+    created: function (element) {
+      var target = getTarget(element);
+
+      if (target) {
+        element.setAttribute('checked', target.hasAttribute(ATTR_IGNORE) ? 'true' : 'false');
+      }
+    },
+
     events: {
       'change input': function (element, e) {
         var dest = getTarget(element);
@@ -31,14 +39,6 @@
         } else {
           dest.removeAttribute(ATTR_IGNORE);
         }
-      }
-    },
-
-    ready: function (element) {
-      var target = getTarget(element);
-
-      if (target) {
-        element.setAttribute('checked', target.hasAttribute(ATTR_IGNORE) ? 'true' : 'false');
       }
     },
 

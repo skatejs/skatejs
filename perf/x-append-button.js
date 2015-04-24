@@ -1,10 +1,6 @@
 (function () {
   'use strict';
 
-  function getButton (element) {
-    return element.querySelector('button');
-  }
-
   function getInput (element) {
     return element.querySelector('input');
   }
