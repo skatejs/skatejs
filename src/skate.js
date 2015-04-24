@@ -8,7 +8,6 @@ import debounce from './utils/debounce';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
-import init from './lifecycle/init';
 import registry from './polyfill/registry';
 import skateDefaults from './skate/defaults';
 import skateInit from './skate/init';
@@ -20,7 +19,18 @@ import walkTree from './utils/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function initDocument () {
-  walkTree(document.documentElement.childNodes, init);
+  walkTree(document.documentElement.childNodes, function (element) {
+    var components = registry.getForElement(element);
+    var componentsLength = components.length;
+
+    for (let a = 0; a < componentsLength; a++) {
+      created(components[a]).call(element);
+    }
+
+    for (let a = 0; a < componentsLength; a++) {
+      attached(components[a]).call(element);
+    }
+  });
 }
 
 function initDocumentWhenReady () {

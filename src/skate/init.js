@@ -1,4 +1,7 @@
-import init from '../lifecycle/init';
+import attached from '../lifecycle/attached';
+import created from '../lifecycle/created';
+import elementContains from '../utils/element-contains';
+import registry from '../polyfill/registry';
 import walkTree from '../utils/walk-tree';
 
 var HTMLElement = window.HTMLElement;
@@ -16,7 +19,20 @@ export default function (nodes) {
     nodesToUse = [nodes];
   }
 
-  walkTree(nodesToUse, init);
+  walkTree(nodesToUse, function (element) {
+    var components = registry.getForElement(element);
+    var componentsLength = components.length;
+
+    for (let a = 0; a < componentsLength; a++) {
+      created(components[a]).call(element);
+    }
+
+    for (let a = 0; a < componentsLength; a++) {
+      if (elementContains(document, element)) {
+        attached(components[a]).call(element);
+      }
+    }
+  });
 
   return nodes;
 }

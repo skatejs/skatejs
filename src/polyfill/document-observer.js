@@ -1,9 +1,10 @@
+import attached from '../lifecycle/attached';
+import created from '../lifecycle/created';
 import detached from '../lifecycle/detached';
 import getClosestIgnoredElement from '../utils/get-closest-ignored-element';
 import globals from '../globals';
-import init from '../lifecycle/init';
-import MutationObserver from '../polyfill/mutation-observer';
-import uninit from '../lifecycle/uninit';
+import MutationObserver from './mutation-observer';
+import registry from './registry';
 import walkTree from '../utils/walk-tree';
 
 function documentObserverHandler (mutations) {
@@ -18,12 +19,30 @@ function documentObserverHandler (mutations) {
     // node to see if it is ignored. If it is then we don't process any added
     // nodes. This prevents having to check every node.
     if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-      walkTree(addedNodes, init);
+      walkTree(addedNodes, function (element) {
+        var components = registry.getForElement(element);
+        var componentsLength = components.length;
+
+        for (let a = 0; a < componentsLength; a++) {
+          created(components[a]).call(element);
+        }
+
+        for (let a = 0; a < componentsLength; a++) {
+          attached(components[a]).call(element);
+        }
+      });
     }
 
     // We can't check batched nodes here because they won't have a parent node.
     if (removedNodes && removedNodes.length) {
-      walkTree(removedNodes, uninit);
+      walkTree(removedNodes, function (element) {
+        var components = registry.getForElement(element);
+        var componentsLength = components.length;
+
+        for (let a = 0; a < componentsLength; a++) {
+          detached(components[a]).call(element);
+        }
+      });
     }
   }
 }

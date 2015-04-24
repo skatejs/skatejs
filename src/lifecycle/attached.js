@@ -6,7 +6,7 @@ export default function (options) {
     var element = this;
     var targetData = data(element, options.id);
 
-    if (targetData.attached || !elementContains(document, element)) {
+    if (targetData.attached) {
       return;
     }
 
