@@ -3,7 +3,7 @@
 
   var exports = window.perf = {};
 
-  function insertHandler (element) {
+  function attachedHandler (element) {
     element.textContent += ', done!';
   }
 
@@ -28,7 +28,7 @@
       prefix = prefix || 'skate-test-';
 
       skate(prefix + (a + 1), {
-        insert: insertHandler
+        attached: attachedHandler
       });
     }
   };
