@@ -103,7 +103,7 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
       var element = this;
       var targetData = data(element, options.id);
   
-      if (targetData.attached || !elementContains(document, element)) {
+      if (targetData.attached) {
         return;
       }
   
@@ -440,7 +440,7 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
         //
         // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
         var shouldWorkAroundIeRemoveBug = isFixingIe && eType === "DOMNodeRemoved";
-        var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
+        var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === 1 && elementContains(lastBatchedElement, eTarget);
   
         // This checks to see if the element is contained in the last batched
         // element. If it is, then we don't batch it because elements are
@@ -841,7 +841,7 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
       var element = this;
       var targetData = data(element, options.id);
   
-      if (targetData.detached || elementContains(document, element)) {
+      if (targetData.detached) {
         return;
       }
   
@@ -1031,58 +1031,6 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
   return module.exports
 }).call(this);
 
-// src/lifecycle/init.js
-__1f473b05c77b72c96ed0e55c584eebc4 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-  
-  var attached = _interopRequire(__2b55a083f45c9ef157662a1dc1674218);
-  
-  var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
-  
-  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
-  
-  function callCallback(element, callback) {
-    return function (options) {
-      callback(options).call(element);
-    };
-  }
-  
-  module.exports = function (element) {
-    var components = registry.getForElement(element);
-    components.forEach(callCallback(element, created));
-    components.forEach(callCallback(element, attached));
-  };
-  
-  return module.exports
-}).call(this);
-
-// src/lifecycle/uninit.js
-__34b002db7f00b8d120dca26ca31ccd0e = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
-  
-  var detached = _interopRequire(__8e93439e8a566d1586c9903a75a6a785);
-  
-  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
-  
-  module.exports = function (element) {
-    registry.getForElement(element).forEach(function (options) {
-      detached(options).call(element);
-    });
-  };
-  
-  return module.exports
-}).call(this);
-
 // src/utils/walk-tree.js
 __a0585d1fdcadd9bac377cefca6e07069 = (function () {
   var module = {
@@ -1133,17 +1081,19 @@ __53affcee25439c12726058fee7f75787 = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
+  var attached = _interopRequire(__2b55a083f45c9ef157662a1dc1674218);
+  
+  var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
+  
   var detached = _interopRequire(__8e93439e8a566d1586c9903a75a6a785);
   
   var getClosestIgnoredElement = _interopRequire(__494582998af37ebc214b42da609592d4);
   
   var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
-  
   var MutationObserver = _interopRequire(__fcd21ac78247116a0bdde5374b0c4641);
   
-  var uninit = _interopRequire(__34b002db7f00b8d120dca26ca31ccd0e);
+  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
   
   var walkTree = _interopRequire(__a0585d1fdcadd9bac377cefca6e07069);
   
@@ -1159,12 +1109,30 @@ __53affcee25439c12726058fee7f75787 = (function () {
       // node to see if it is ignored. If it is then we don't process any added
       // nodes. This prevents having to check every node.
       if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        walkTree(addedNodes, init);
+        walkTree(addedNodes, function (element) {
+          var components = registry.getForElement(element);
+          var componentsLength = components.length;
+  
+          for (var _a = 0; _a < componentsLength; _a++) {
+            created(components[_a]).call(element);
+          }
+  
+          for (var _a2 = 0; _a2 < componentsLength; _a2++) {
+            attached(components[_a2]).call(element);
+          }
+        });
       }
   
       // We can't check batched nodes here because they won't have a parent node.
       if (removedNodes && removedNodes.length) {
-        walkTree(removedNodes, uninit);
+        walkTree(removedNodes, function (element) {
+          var components = registry.getForElement(element);
+          var componentsLength = components.length;
+  
+          for (var _a = 0; _a < componentsLength; _a++) {
+            detached(components[_a]).call(element);
+          }
+        });
       }
     }
   }
@@ -1308,7 +1276,13 @@ __99576e5bc788ab5981d3c4c6fbd25110 = (function () {
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
+  var attached = _interopRequire(__2b55a083f45c9ef157662a1dc1674218);
+  
+  var created = _interopRequire(__fe1aef0db5b664068b470b21f7c754a5);
+  
+  var elementContains = _interopRequire(__a3535eb1111d11f1a455783a62f000d8);
+  
+  var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
   
   var walkTree = _interopRequire(__a0585d1fdcadd9bac377cefca6e07069);
   
@@ -1327,7 +1301,20 @@ __99576e5bc788ab5981d3c4c6fbd25110 = (function () {
       nodesToUse = [nodes];
     }
   
-    walkTree(nodesToUse, init);
+    walkTree(nodesToUse, function (element) {
+      var components = registry.getForElement(element);
+      var componentsLength = components.length;
+  
+      for (var a = 0; a < componentsLength; a++) {
+        created(components[a]).call(element);
+      }
+  
+      for (var a = 0; a < componentsLength; a++) {
+        if (elementContains(document, element)) {
+          attached(components[a]).call(element);
+        }
+      }
+    });
   
     return nodes;
   };
@@ -1442,8 +1429,6 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   
   var elementConstructor = _interopRequire(__2a9c84628af99934db58f308e303b691);
   
-  var init = _interopRequire(__1f473b05c77b72c96ed0e55c584eebc4);
-  
   var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
   
   var skateDefaults = _interopRequire(__33161e60567f66738c91b496cf4db43e);
@@ -1463,7 +1448,18 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   var validCustomElement = _interopRequire(__6e1dfed2b03894ef63a4b65d5038d223);
   
   function initDocument() {
-    walkTree(document.documentElement.childNodes, init);
+    walkTree(document.documentElement.childNodes, function (element) {
+      var components = registry.getForElement(element);
+      var componentsLength = components.length;
+  
+      for (var a = 0; a < componentsLength; a++) {
+        created(components[a]).call(element);
+      }
+  
+      for (var a = 0; a < componentsLength; a++) {
+        attached(components[a]).call(element);
+      }
+    });
   }
   
   function initDocumentWhenReady() {
