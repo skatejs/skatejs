@@ -10,6 +10,10 @@ galvatron.transformer
   .post('babel')
   .post('globalize');
 
+galvatron.events.on('update', function (file) {
+  console.log('Updated:', file);
+});
+
 module.exports = function () {
   var bundle = galvatron.bundle('src/skate.js');
   return gulp
