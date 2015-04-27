@@ -1,7 +1,7 @@
 {
   "name": "skatejs",
   "description": "Skate is a web component library based loosely on the Custom Element spec that allows you to define behaviour for custom and existing elements using tag names, attribute names and class names.",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "dist/skate.js"
