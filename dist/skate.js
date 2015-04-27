@@ -54,6 +54,8 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
+  
+  
   /**
    * Checks {}.hasOwnProperty in a safe way.
    *
@@ -61,8 +63,7 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
    * @param {String} key The object key to check.
    *
    * @returns {Boolean}
-   */
-  exports.hasOwn = hasOwn;
+   */exports.hasOwn = hasOwn;
   
   /**
    * Camel-cases the specified string.
@@ -1205,7 +1206,7 @@ __6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.2";
+  module.exports = "0.13.3";
   
   return module.exports
 }).call(this);
