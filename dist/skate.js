@@ -384,7 +384,7 @@ __ff611d2c455b299b951f7e794d2d3337 = (function () {
         //
         // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
         var shouldWorkAroundIeRemoveBug = isFixingIe && eType === "DOMNodeRemoved";
-        var isDescendant = lastBatchedElement && elementContains(lastBatchedElement, eTarget);
+        var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === 1 && elementContains(lastBatchedElement, eTarget);
   
         // This checks to see if the element is contained in the last batched
         // element. If it is, then we don't batch it because elements are
