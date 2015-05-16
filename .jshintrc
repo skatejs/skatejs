@@ -6,10 +6,17 @@
   "curly": true,
   "eqeqeq": true,
   "globals": {
-    "document": false,
-    "process": false,
-    "window": false
-  },
+      "afterEach": false,
+      "assert": false,
+      "beforeEach": false,
+      "define": false,
+      "describe": false,
+      "document": false,
+      "expect": false,
+      "it": false,
+      "process": false,
+      "window": false
+    },
   "immed": true,
   "indent": 2,
   "latedef": true,
