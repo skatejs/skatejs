@@ -4,6 +4,7 @@ import './lib/polyfills';
 import './unit/bootstrap';
 import './unit/attributes';
 import './unit/components';
+import './unit/create-element';
 import './unit/document-observer';
 import './unit/dom';
 import './unit/events';
