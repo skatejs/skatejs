@@ -213,11 +213,42 @@ The component lifecycle consists of three callbacks:
 2. `attached`
 3. `detached`
 
+These callbacks try and mimic the spec as closely as possible when native support is unavailable.
+
 #### `created`
 
-The `created` callback gets triggered before the element is shown and is only ever fired once. Without full web-component support, we can only emulate the `created` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). If native custom element support is available, this will be called as normal.
+The `created` callback gets triggered when the element is created. There are some differences when using native vs polyfilled support.
 
-** Keep in mind that if using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists here unless you've used the `template` callback. **
+```js
+// native: called immediately (synchronous)
+// polyfill: called immediately (synchronous)
+new MyEl();
+
+// native: called immediately (synchronous)
+// polyfill: called when inserted to the DOM (asynchronous)
+document.createElement('my-el');
+
+// native: called immediately (synchronous)
+// polyfill: called when the mutation observer fires (asynchronous)
+document.body.innerHTML = '<my-el></my-el>';
+
+// native: called immediately (synchronous)
+// polyfill: called when <div> is inserted into the DOM (asynchronous)
+document.createElement('div').innerHTML = '<my-el></my-el>';
+```
+
+In instances where an element is initialised asynchronously, there may be a flash of unstyled content or jank. For more information see [Preventing FOUC](#preventing-fouc).
+
+If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists here unless you've used the `template` callback.
+
+```js
+// Will not have children.
+document.createElement('my-el');
+
+// Will have children.
+document.body.innerHTML = '<my-el>child</my-el>';
+document.createElement('div').innerHTML = '<my-el>child</my-el>';
+```
 
 #### `attached`
 
