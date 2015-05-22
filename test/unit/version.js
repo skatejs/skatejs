@@ -1,6 +1,6 @@
 'use strict';
 
-import skate from '../../src/skate';
+import skate from '../../src/index';
 
 describe('version', function () {
   it('should be exposed', function () {

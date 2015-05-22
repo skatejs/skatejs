@@ -1,7 +1,7 @@
 'use strict';
 
 import helpers from '../lib/helpers';
-import skate from '../../src/skate';
+import skate from '../../src/index';
 
 describe('Templates', function () {
   it('should execute the template function before created is called', function () {

@@ -1,5 +1,5 @@
 import helpers from '../lib/helpers';
-import skate from '../../src/skate';
+import skate from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;

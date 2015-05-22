@@ -1,7 +1,7 @@
 'use strict';
 
 import helpers from '../lib/helpers';
-import skate from '../../src/skate';
+import skate from '../../src/index';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {

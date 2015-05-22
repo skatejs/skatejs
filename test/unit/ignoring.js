@@ -1,7 +1,7 @@
 'use strict';
 
 import helpers from '../lib/helpers';
-import skate from '../../src/skate';
+import skate from '../../src/index';
 import supportsCustomElements from '../../src/support/custom-elements';
 
 describe('ignoring', function () {

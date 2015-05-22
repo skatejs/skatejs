@@ -1,7 +1,7 @@
 'use strict';
 
 import registry from '../../src/polyfill/registry';
-import skate from '../../src/skate';
+import skate from '../../src/index';
 
 describe('Registry', function () {
   it('should set definitions', function () {
