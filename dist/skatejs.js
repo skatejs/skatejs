@@ -17,7 +17,7 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   var TYPE_ELEMENT = "t";
   exports.TYPE_ELEMENT = TYPE_ELEMENT;
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/assign.js
@@ -43,7 +43,7 @@ __73ed121703c12e45c92e178e4c3d0f43 = (function () {
     return child;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/data.js
@@ -60,7 +60,7 @@ __bbde635d6f239d7b17f5bee9a64f03e8 = (function () {
     return namespace && (data[namespace] || (data[namespace] = {})) || data;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/element-contains.js
@@ -82,7 +82,7 @@ __a3535eb1111d11f1a455783a62f000d8 = (function () {
     return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/lifecycle/attached.js
@@ -116,7 +116,7 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
     };
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/lifecycle/attribute.js
@@ -169,7 +169,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
     };
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/camel-case.js
@@ -185,7 +185,7 @@ __779e1c84796f4ab22197cd554c25dd35 = (function () {
     }).join("");
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/has-own.js
@@ -199,7 +199,7 @@ __0a2c5941f61640fa05d4ec2723b939c4 = (function () {
     return Object.prototype.hasOwnProperty.call(obj, key);
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/matches-selector.js
@@ -224,7 +224,7 @@ __0964927725a619be8ccd39e7e56cf3ad = (function () {
     return nativeMatchesSelector.call(element, selector);
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/debounce.js
@@ -248,7 +248,7 @@ __bf50fdd75f99f2b27325dc6d6f1dcb64 = (function () {
     };
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/obj-each.js
@@ -270,7 +270,7 @@ __f6279d384ed58022eb040533c80b6909 = (function () {
     }
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/polyfill/mutation-observer.js
@@ -594,7 +594,7 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
   
   module.exports = MutationObserver;
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/lifecycle/created.js
@@ -803,7 +803,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     };
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/dash-case.js
@@ -820,7 +820,7 @@ __d13e9a9bb254af255c785b353cd82e95 = (function () {
     });
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/lifecycle/detached.js
@@ -855,7 +855,7 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
     };
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/ignored.js
@@ -872,7 +872,7 @@ __8bb6310a50f06194e5854a88451830c9 = (function () {
     return attrs && !!attrs[ATTR_IGNORE];
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/get-closest-ignored-element.js
@@ -900,7 +900,7 @@ __494582998af37ebc214b42da609592d4 = (function () {
     }
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/globals.js
@@ -919,7 +919,7 @@ __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   
   module.exports = window.__skate;
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/polyfill/registry.js
@@ -1028,7 +1028,7 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
     }
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/utils/walk-tree.js
@@ -1069,7 +1069,7 @@ __a0585d1fdcadd9bac377cefca6e07069 = (function () {
     }
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/polyfill/document-observer.js
@@ -1169,7 +1169,7 @@ __53affcee25439c12726058fee7f75787 = (function () {
     }
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/polyfill/element-constructor.js
@@ -1211,11 +1211,11 @@ __2a9c84628af99934db58f308e303b691 = (function () {
     return CustomElement;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate/defaults.js
-__33161e60567f66738c91b496cf4db43e = (function () {
+// src/api/defaults.js
+__7fef35d5c839ac176880394d7552cca3 = (function () {
   var module = {
     exports: {}
   };
@@ -1264,11 +1264,11 @@ __33161e60567f66738c91b496cf4db43e = (function () {
     unresolvedAttribute: "unresolved"
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate/init.js
-__99576e5bc788ab5981d3c4c6fbd25110 = (function () {
+// src/api/init.js
+__3add36046399fead5a83243849207ed7 = (function () {
   var module = {
     exports: {}
   };
@@ -1319,11 +1319,11 @@ __99576e5bc788ab5981d3c4c6fbd25110 = (function () {
     return nodes;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate/no-conflict.js
-__0a94d5d6526738702ffe048568b330dd = (function () {
+// src/api/no-conflict.js
+__82110da8eb4359fb9724f67f4a12febe = (function () {
   var module = {
     exports: {}
   };
@@ -1336,11 +1336,11 @@ __0a94d5d6526738702ffe048568b330dd = (function () {
     return this;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate/type.js
-__752afec9756903eb48fe9be5709f7c66 = (function () {
+// src/api/type.js
+__df5112248641660374a4ff3deedcb65e = (function () {
   var module = {
     exports: {}
   };
@@ -1357,11 +1357,11 @@ __752afec9756903eb48fe9be5709f7c66 = (function () {
     ELEMENT: TYPE_ELEMENT
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate/version.js
-__95a3d6d4d0b7a435b0ca2614ed3c49dd = (function () {
+// src/api/version.js
+__662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
     exports: {}
   };
@@ -1369,7 +1369,7 @@ __95a3d6d4d0b7a435b0ca2614ed3c49dd = (function () {
   
   module.exports = "0.13.2";
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/support/custom-elements.js
@@ -1383,7 +1383,7 @@ __c6f5e18624750ce93a74df6369c85ef0 = (function () {
     return typeof document.registerElement === "function";
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
 // src/support/valid-custom-element.js
@@ -1397,11 +1397,11 @@ __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
     return name.indexOf("-") > 0;
   };
   
-  return module.exports
+  return module.exports;
 }).call(this);
 
-// src/skate.js
-__880d751441dbbd15758abf63053bf506 = (function () {
+// src/index.js
+__abb93179bdc0236a6e77d3eae07c991c = (function () {
   var module = {
     exports: {}
   };
@@ -1431,15 +1431,15 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   
   var registry = _interopRequire(__270cb854b3681e4b614f772d24705d53);
   
-  var skateDefaults = _interopRequire(__33161e60567f66738c91b496cf4db43e);
+  var skateDefaults = _interopRequire(__7fef35d5c839ac176880394d7552cca3);
   
-  var skateInit = _interopRequire(__99576e5bc788ab5981d3c4c6fbd25110);
+  var skateInit = _interopRequire(__3add36046399fead5a83243849207ed7);
   
-  var skateNoConflict = _interopRequire(__0a94d5d6526738702ffe048568b330dd);
+  var skateNoConflict = _interopRequire(__82110da8eb4359fb9724f67f4a12febe);
   
-  var skateType = _interopRequire(__752afec9756903eb48fe9be5709f7c66);
+  var skateType = _interopRequire(__df5112248641660374a4ff3deedcb65e);
   
-  var skateVersion = _interopRequire(__95a3d6d4d0b7a435b0ca2614ed3c49dd);
+  var skateVersion = _interopRequire(__662bde51c096e9d79bf327311ea178e0);
   
   var supportsCustomElements = _interopRequire(__c6f5e18624750ce93a74df6369c85ef0);
   
@@ -1579,5 +1579,5 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   // ES6
   module.exports = skate;
   
-  return module.exports
+  return module.exports;
 }).call(this);
