@@ -217,7 +217,7 @@ The component lifecycle consists of three callbacks:
 
 The `created` callback gets triggered before the element is shown and is only ever fired once. Without full web-component support, we can only emulate the `created` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). If native custom element support is available, this will be called as normal.
 
-** Keep in mind that if using native custom elements, the element will not have any children when the `created` callback is invoked. This is called immediately when the element is constructed and before any elements are attached to it. **
+** Keep in mind that if using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists here unless you've used the `template` callback. **
 
 #### `attached`
 
