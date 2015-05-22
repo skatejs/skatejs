@@ -3,6 +3,7 @@ import assign from './utils/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
+import createElement from './polyfill/create-element';
 import dashCase from './utils/dash-case';
 import debounce from './utils/debounce';
 import detached from './lifecycle/detached';
@@ -99,7 +100,7 @@ function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
   var options = makeOptions(userOptions);
 
-  CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
+  CtorParent = options.extends ? createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
   isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
@@ -114,10 +115,6 @@ function skate (id, userOptions) {
     isNative: readonly(isNative)
   });
 
-  // By always setting in the registry we ensure that behaviour between
-  // polyfilled and native registries are handled consistently.
-  registry.set(id, options);
-
   if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
     options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
   }
@@ -125,17 +122,13 @@ function skate (id, userOptions) {
   if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
+    Ctor = elementConstructor(id, options);
     debouncedInitDocumentWhenReady();
     documentObserver.register();
-
-    if (isElement) {
-      Ctor = elementConstructor(id, options);
-    }
   }
 
-  if (Ctor) {
-    return assign(Ctor, options);
-  }
+  registry.set(id, Ctor);
+  return assign(Ctor, options);
 }
 
 skate.defaults = skateDefaults;

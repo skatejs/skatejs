@@ -1,13 +1,15 @@
+import createElement from './create-element';
+
 export default function (id, options) {
   function CustomElement () {
     var element;
     var tagToExtend = options.extends;
 
     if (tagToExtend) {
-      element = document.createElement(tagToExtend);
+      element = createElement(tagToExtend);
       element.setAttribute('is', id);
     } else {
-      element = document.createElement(id);
+      element = createElement(id);
     }
 
     // Ensure the definition prototype is up to date with the element's
