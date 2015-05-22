@@ -209,11 +209,23 @@ skate('my-component', {
 
 The component lifecycle consists of three callbacks:
 
-1. `created` Called before the element is displayed.
-2. `attached` Called after the element is displayed.
-3. `detached` Called after the element is removed.
+1. `created`
+2. `attached`
+3. `detached`
 
-The `created` callback gets triggered before the element is shown and is only ever fired once.  Without full web-component support, we can only emulate the `created` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). The `attached` and `detached` callbacks are fired each time the element is attached and detached from the DOM, which can happen multiple times.
+#### `created`
+
+The `created` callback gets triggered before the element is shown and is only ever fired once. Without full web-component support, we can only emulate the `created` callback to ensure the element is hidden. For more information see [Preventing FOUC](#preventing-fouc). If native custom element support is available, this will be called as normal.
+
+** Keep in mind that if using native custom elements, the element will not have any children when the `created` callback is invoked. This is called immediately when the element is constructed and before any elements are attached to it. **
+
+#### `attached`
+
+The `attached` callback is fired when the element is attached to the `document`. It must actually be in the document to be triggered. This means if you attach your custom element to an element that is detached from the `document`, it will not be called until the element in which you've attached it to is inserted into the `document`.
+
+#### `detached`
+
+The `detached` callback is fired when the element is detached from the `document`. Like the `attached` callback, this only gets fired when the element gets removed from the `document`.
 
 
 
