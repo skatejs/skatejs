@@ -137,4 +137,22 @@ describe('Events', function () {
     inst.focus();
     expect(focus).to.equal(true);
   });
+
+  it('should support an array of event handlers for a given key', function () {
+    var called = function () { ++calledNum; };
+    var calledNum = 0;
+    var { safe: tagName } = helpers.safeTagName('my-component');
+    var MyComponent = skate(tagName, {
+      events: {
+        click: [
+          called,
+          called
+        ]
+      }
+    });
+
+    var myComponent = new MyComponent();
+    helpers.dispatchEvent('click', myComponent);
+    expect(calledNum).to.equal(2);
+  });
 });

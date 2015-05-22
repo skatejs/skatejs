@@ -72,10 +72,14 @@ function addEventListeners (target, component) {
     };
   }
 
-  objEach(component.events, function (handler, name) {
+  objEach(component.events, function (handlers, name) {
+    handlers = typeof handlers === 'function' ? [handlers] : handlers;
     var evt = parseEvent(name);
     var useCapture = !!evt.delegate && (evt.name === 'blur' || evt.name === 'focus');
-    target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
+
+    handlers.forEach(function (handler) {
+      target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
+    });
   });
 }
 
