@@ -249,6 +249,17 @@ document.body.appendChild(element);
 
 
 
+### Extending Components
+
+Once you have an element constructor, you can extend the component that constructor represents. For example, in ES6 you might do this:
+
+```js
+var MyEl = skate('my-el', {});
+var MySuperEl = skate('my-super-el', class extends MyEl);
+```
+
+
+
 ### Attribute Lifecycle
 
 An attribute lifecycle definition can take three forms. First, it does something similar to what we see in the Web Component spec:
