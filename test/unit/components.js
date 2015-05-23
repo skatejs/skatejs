@@ -7,7 +7,7 @@ describe('Using components', function () {
   function assertType (type, shouldEqual, tagToExtend) {
     it('type: ' + type + ' extending: ' + tagToExtend, function () {
       var calls = 0;
-
+      var callsPerCreationType = {};
       var {safe: tagName} = helpers.safeTagName('my-element');
       skate(tagName, {
         type: type,
@@ -19,19 +19,25 @@ describe('Using components', function () {
 
       var el1 = document.createElement(tagName);
       skate.init(el1);
+      callsPerCreationType[`<${tagName}>`] = calls;
 
       var el2 = document.createElement('div', tagName);
       skate.init(el2);
+      callsPerCreationType[`<div is="${tagName}">`] = calls;
 
       var el3 = document.createElement('div');
       el3.setAttribute(tagName, '');
       skate.init(el3);
+      callsPerCreationType[`<div ${tagName}>`] = calls;
 
       var el4 = document.createElement('div');
       el4.className = tagName;
       skate.init(el4);
+      callsPerCreationType[`<div class="${tagName}">`] = calls;
 
-      expect(calls).to.equal(shouldEqual);
+      expect(calls).to.equal(shouldEqual, Object.keys(callsPerCreationType).map(function (item) {
+        return `${item}: ${callsPerCreationType[item]}`;
+      }).join('\n') + '\nOutcome');
     });
   }
 

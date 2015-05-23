@@ -1,15 +1,16 @@
 import createElement from './create-element';
 
-export default function (id, options) {
+export default function (options) {
   function CustomElement () {
     var element;
-    var tagToExtend = options.extends;
+    var elementName = options.id;
+    var parentElementName = options.extends;
 
-    if (tagToExtend) {
-      element = createElement(tagToExtend);
-      element.setAttribute('is', id);
+    if (parentElementName) {
+      element = createElement(parentElementName);
+      element.setAttribute('is', elementName);
     } else {
-      element = createElement(id);
+      element = createElement(elementName);
     }
 
     // Ensure the definition prototype is up to date with the element's

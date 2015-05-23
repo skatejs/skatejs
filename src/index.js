@@ -100,7 +100,7 @@ function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
   var options = makeOptions(userOptions);
 
-  CtorParent = options.extends ? createElement(options.extends).constructor : HTMLElement;
+  CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
   isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
@@ -122,7 +122,7 @@ function skate (id, userOptions) {
   if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
-    Ctor = elementConstructor(id, options);
+    Ctor = elementConstructor(options);
     debouncedInitDocumentWhenReady();
     documentObserver.register();
   }

@@ -1,4 +1,4 @@
 export const ATTR_IGNORE = 'data-skate-ignore';
-export const TYPE_ATTRIBUTE = 'a';
-export const TYPE_CLASSNAME = 'c';
-export const TYPE_ELEMENT = 't';
+export const TYPE_ATTRIBUTE = 'attribute';
+export const TYPE_CLASSNAME = 'classname';
+export const TYPE_ELEMENT = 'element';
