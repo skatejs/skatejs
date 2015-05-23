@@ -104,6 +104,11 @@ function skate (id, userOptions) {
   isElement = options.type === TYPE_ELEMENT;
   isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
+  // Inherit from parent prototype.
+  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
+    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
+  }
+
   // Extend behaviour of existing callbacks.
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
@@ -115,10 +120,7 @@ function skate (id, userOptions) {
     isNative: readonly(isNative)
   });
 
-  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
-  }
-
+  // Make a constructor for the definition.
   if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
@@ -127,8 +129,14 @@ function skate (id, userOptions) {
     documentObserver.register();
   }
 
+  assign(Ctor, options);
   registry.set(id, Ctor);
-  return assign(Ctor, options);
+  Object.defineProperty(Ctor.prototype, 'constructor', {
+    enumerable: false,
+    value: Ctor
+  });
+
+  return Ctor;
 }
 
 skate.defaults = skateDefaults;
