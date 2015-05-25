@@ -12,5 +12,5 @@ import './unit/lifecycle';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
-import './unit/utils/dash-case';
+import './unit/util/dash-case';
 import './unit/version';

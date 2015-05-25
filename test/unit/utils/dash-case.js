@@ -1,4 +1,4 @@
-import dashCase from '../../../src/utils/dash-case';
+import dashCase from '../../../src/util/dash-case';
 
 describe('utils/dash-case:', function () {
   it('should dash-case a camelCased attribute', function () {
