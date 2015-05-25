@@ -1,11 +1,11 @@
 import attached from '../lifecycle/attached';
 import created from '../lifecycle/created';
 import detached from '../lifecycle/detached';
-import getClosestIgnoredElement from '../utils/get-closest-ignored-element';
+import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import globals from '../globals';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
-import walkTree from '../utils/walk-tree';
+import walkTree from '../util/walk-tree';
 
 function documentObserverHandler (mutations) {
   var mutationsLen = mutations.length;
@@ -50,7 +50,6 @@ function documentObserverHandler (mutations) {
 function createDocumentObserver () {
   var observer = new MutationObserver(documentObserverHandler);
 
-  // Observe after the DOM content has loaded.
   observer.observe(document, {
     childList: true,
     subtree: true

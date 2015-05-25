@@ -5,7 +5,7 @@ import {
 } from '../constants';
 
 import globals from '../globals';
-import hasOwn from '../utils/has-own';
+import hasOwn from '../util/has-own';
 
 function getClassList (element) {
   var classList = element.classList;

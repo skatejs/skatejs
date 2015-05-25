@@ -1,22 +1,22 @@
 import { TYPE_ELEMENT } from './constants';
-import assign from './utils/assign';
+import apiCreate from './api/create';
+import apiDefaults from './api/defaults';
+import apiInit from './api/init';
+import apiNoConflict from './api/no-conflict';
+import apiType from './api/type';
+import apiVersion from './api/version';
+import assign from './util/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import createElement from './polyfill/create-element';
-import dashCase from './utils/dash-case';
-import debounce from './utils/debounce';
+import dashCase from './util/dash-case';
+import debounce from './util/debounce';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
 import registry from './polyfill/registry';
-import skateDefaults from './api/defaults';
-import skateInit from './api/init';
-import skateNoConflict from './api/no-conflict';
-import skateType from './api/type';
-import skateVersion from './api/version';
 import supportsCustomElements from './support/custom-elements';
-import walkTree from './utils/walk-tree';
+import walkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function initDocument () {
@@ -74,10 +74,10 @@ function dashCaseAttributeNames (options) {
 }
 
 function makeOptions (userOptions) {
-  var options = assign({}, skateDefaults);
+  var options = assign({}, apiDefaults);
 
   // Copy over all standard options if the user has defined them.
-  for (let name in skateDefaults) {
+  for (let name in apiDefaults) {
     if (userOptions[name] !== undefined) {
       options[name] = userOptions[name];
     }
@@ -139,11 +139,12 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.defaults = skateDefaults;
-skate.init = skateInit;
-skate.noConflict = skateNoConflict;
-skate.type = skateType;
-skate.version = skateVersion;
+skate.create = apiCreate;
+skate.defaults = apiDefaults;
+skate.init = apiInit;
+skate.noConflict = apiNoConflict;
+skate.type = apiType;
+skate.version = apiVersion;
 
 // Global
 window.skate = skate;

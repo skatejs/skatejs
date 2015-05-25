@@ -1,10 +1,10 @@
-import assign from '../utils/assign';
-import camelCase from '../utils/camel-case';
-import data from '../utils/data';
-import hasOwn from '../utils/has-own';
-import matchesSelector from '../utils/matches-selector';
+import assign from '../util/assign';
+import camelCase from '../util/camel-case';
+import data from '../util/data';
+import hasOwn from '../util/has-own';
+import matchesSelector from '../util/matches-selector';
 import MutationObserver from '../polyfill/mutation-observer';
-import objEach from '../utils/obj-each';
+import objEach from '../util/obj-each';
 
 function getPrototypes (proto) {
   var chains = [proto];
