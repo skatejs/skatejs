@@ -1,6 +1,5 @@
 import { TYPE_ELEMENT } from './constants';
 import apiCreate from './api/create';
-import apiDefaults from './api/defaults';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
 import apiType from './api/type';
@@ -11,6 +10,7 @@ import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
 import dashCase from './util/dash-case';
 import debounce from './util/debounce';
+import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
@@ -74,10 +74,10 @@ function dashCaseAttributeNames (options) {
 }
 
 function makeOptions (userOptions) {
-  var options = assign({}, apiDefaults);
+  var options = assign({}, defaults);
 
   // Copy over all standard options if the user has defined them.
-  for (let name in apiDefaults) {
+  for (let name in defaults) {
     if (userOptions[name] !== undefined) {
       options[name] = userOptions[name];
     }
@@ -140,7 +140,6 @@ function skate (id, userOptions) {
 }
 
 skate.create = apiCreate;
-skate.defaults = apiDefaults;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
 skate.type = apiType;
