@@ -1,33 +1,44 @@
+function resolveType (oldValue, newValue) {
+  var type;
+  var newValueIsString = typeof newValue === 'string';
+  var oldValueIsString = typeof oldValue === 'string';
+
+  if (!oldValueIsString && newValueIsString) {
+    type = 'created';
+  } else if (oldValueIsString && newValueIsString) {
+    type = 'updated';
+  } else if (oldValueIsString && !newValueIsString) {
+    type = 'removed';
+  }
+
+  return type;
+}
+
+function resolveCallback (name, type, attrs) {
+  var callback;
+  var specific = attrs && attrs[name];
+
+  if (specific && typeof specific[type] === 'function') {
+    callback = specific[type];
+  } else if (specific && typeof specific.fallback === 'function') {
+    callback = specific.fallback;
+  } else if (typeof specific === 'function') {
+    callback = specific;
+  } else if (typeof attrs === 'function') {
+    callback = attrs;
+  }
+
+  return callback;
+}
+
 export default function (options) {
   return function (name, oldValue, newValue) {
     if (oldValue === newValue) {
       return;
     }
 
-    var callback;
-    var type;
-    var newValueIsString = typeof newValue === 'string';
-    var oldValueIsString = typeof oldValue === 'string';
-    var attrs = options.attributes;
-    var specific = attrs && attrs[name];
-
-    if (!oldValueIsString && newValueIsString) {
-      type = 'created';
-    } else if (oldValueIsString && newValueIsString) {
-      type = 'updated';
-    } else if (oldValueIsString && !newValueIsString) {
-      type = 'removed';
-    }
-
-    if (specific && typeof specific[type] === 'function') {
-      callback = specific[type];
-    } else if (specific && typeof specific.fallback === 'function') {
-      callback = specific.fallback;
-    } else if (typeof specific === 'function') {
-      callback = specific;
-    } else if (typeof attrs === 'function') {
-      callback = attrs;
-    }
+    var type = resolveType(oldValue, newValue);
+    var callback = resolveCallback(name, type, options.attributes);
 
     // Ensure values are null if undefined.
     newValue = newValue === undefined ? null : newValue;
