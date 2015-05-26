@@ -62,7 +62,7 @@ function addEventListeners (target, component) {
   });
 }
 
-function patchSetAttribute (element, options) {
+function patchAttributeMethods (element, options) {
   if (options.isNative) {
     return;
   }
@@ -184,7 +184,7 @@ export default function (options) {
     element.removeAttribute(options.unresolvedAttribute);
     element.setAttribute(options.resolvedAttribute, '');
     addEventListeners(element, options);
-    patchSetAttribute(element, options);
+    patchAttributeMethods(element, options);
     addAttributeToPropertyLinks(element, options);
     initAttributes(element, options);
     triggerAttributesCreated(element, options);
