@@ -1,5 +1,6 @@
 import './boot';
 import './unit/attributes';
+import './unit/constructor';
 import './unit/create';
 import './unit/document-observer';
 import './unit/dom';

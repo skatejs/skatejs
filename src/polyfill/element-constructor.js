@@ -1,6 +1,6 @@
 import {
   TYPE_ATTRIBUTE,
-  TYPE_CLASS,
+  TYPE_CLASSNAME,
   TYPE_ELEMENT
 } from '../constants';
 
@@ -24,7 +24,7 @@ function createElement (options) {
 
     if (type === TYPE_ATTRIBUTE) {
       element.setAttribute(id, '');
-    } else if (type === TYPE_CLASS) {
+    } else if (type === TYPE_CLASSNAME) {
       element.className = id;
     }
   }

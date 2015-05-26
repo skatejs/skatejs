@@ -1,10 +1,20 @@
-'use strict';
-
 import helpers from '../lib/helpers';
-import apiCreate from '../../src/api/create';
+import resolved from '../lib/resolved';
+import skate from '../../src/index';
 
 describe('skate.create()', function () {
-  function resolved (element) {
-    return element.hasAttribute('resolved');
-  }
+  var tagName;
+
+  beforeEach(function () {
+    tagName = helpers.safeTagName().safe;
+  })
+
+  it('should init a component', function () {
+    skate(tagName, {});
+    expect(resolved(skate.create(tagName))).to.equal(true);
+  });
+
+  it('should create an element if no component is found', function () {
+    expect(resolved(skate.create(tagName))).to.equal(false);
+  });
 });
