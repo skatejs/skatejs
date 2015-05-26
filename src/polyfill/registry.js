@@ -19,16 +19,18 @@ function getClassList (element) {
   return (attrs['class'] && attrs['class'].nodeValue.split(/\s+/)) || [];
 }
 
-export default {
+export default globals.registerIfNotExists('registry', {
+  definitions: {},
+
   get: function (id) {
-    return hasOwn(globals.registry, id) && globals.registry[id];
+    return hasOwn(this.definitions, id) && this.definitions[id];
   },
 
   set: function (id, definition) {
-    if (hasOwn(globals.registry, id)) {
+    if (hasOwn(this.definitions, id)) {
       throw new Error('A component definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
     }
-    globals.registry[id] = definition;
+    this.definitions[id] = definition;
     return this;
   },
 
@@ -49,7 +51,7 @@ export default {
     var tagToExtend;
 
     if (this.isType(isAttrOrTag, TYPE_ELEMENT)) {
-      definition = globals.registry[isAttrOrTag];
+      definition = this.definitions[isAttrOrTag];
       tagToExtend = definition.extends;
 
       if (isAttrValue) {
@@ -65,7 +67,7 @@ export default {
       var attr = attrs[a].nodeName;
 
       if (this.isType(attr, TYPE_ATTRIBUTE)) {
-        definition = globals.registry[attr];
+        definition = this.definitions[attr];
         tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
@@ -81,7 +83,7 @@ export default {
       var className = classList[b];
 
       if (this.isType(className, TYPE_CLASSNAME)) {
-        definition = globals.registry[className];
+        definition = this.definitions[className];
         tagToExtend = definition.extends;
 
         if (!tagToExtend || tag === tagToExtend) {
@@ -92,4 +94,4 @@ export default {
 
     return definitions;
   }
-};
+});

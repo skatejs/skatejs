@@ -58,22 +58,22 @@ function createDocumentObserver () {
   return observer;
 }
 
-export default {
+export default globals.registerIfNotExists('observer', {
+  observer: undefined,
   register: function () {
-    if (!globals.observer) {
+    if (!this.observer) {
       MutationObserver.fixIe();
-      globals.observer = createDocumentObserver();
+      this.observer = createDocumentObserver();
     }
 
     return this;
   },
-
   unregister: function () {
-    if (globals.observer) {
-      globals.observer.disconnect();
-      globals.observer = undefined;
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = undefined;
     }
 
     return this;
   }
-};
+});
