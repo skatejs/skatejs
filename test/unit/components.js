@@ -17,10 +17,10 @@ describe('components', function () {
         }
       });
 
-      var el1 = skate.create(tagName);
+      skate.create(tagName);
       callsPerCreationType[`<${tagName}>`] = calls;
 
-      var el2 = skate.create('div', tagName);
+      skate.create('div', tagName);
       callsPerCreationType[`<div is="${tagName}">`] = calls;
 
       var el3 = skate.create('div');
