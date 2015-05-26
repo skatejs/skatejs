@@ -1,4 +1,4 @@
-import { TYPE_ELEMENT } from '../constants';
+import { TYPE_ELEMENT } from './constants';
 
 export default {
   // Called when the element is attached to the document.
