@@ -138,7 +138,6 @@ function skate (id, userOptions) {
   }
 }
 
-skate.defaults = defaults;
 skate.init = skateInit;
 skate.noConflict = skateNoConflict;
 skate.type = skateType;
