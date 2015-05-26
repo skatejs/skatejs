@@ -185,10 +185,11 @@ export default function (options) {
     patchAttributeMethods(element, options);
     addAttributeToPropertyLinks(element, options);
     initAttributes(element, options);
-    triggerAttributesCreated(element, options);
 
     if (options.created) {
       options.created(element);
     }
+
+    triggerAttributesCreated(element, options);
   };
 }
