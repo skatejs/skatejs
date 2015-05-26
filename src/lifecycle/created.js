@@ -79,9 +79,7 @@ function patchAttributeMethods (element, options) {
   element.removeAttribute = function (name) {
     var oldValue = this.getAttribute(name);
     oldRemoveAttribute(name);
-    if (!this.hasAttribute(name)) {
-      element.attributeChangedCallback(name, oldValue, null);
-    }
+    element.attributeChangedCallback(name, oldValue, null);
   };
 }
 
