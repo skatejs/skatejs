@@ -116,53 +116,40 @@ describe('attributes:', function () {
       expect(myEl.getAttribute('test-proxy')).to.equal('true');
     });
 
-    it('should call created after setting the default value', function (done) {
-      helpers.afterMutations(function () {
-        expect(myEl.testCreated).to.equal('true');
-        expect(created).to.equal(true);
-        done();
-      });
+    it('should call created after setting the default value', function () {
+      expect(myEl.testCreated).to.equal('true');
+      expect(created).to.equal(true);
     });
 
-    it('should call created when the attribute is set for the first time', function (done) {
+    it('should call created when the attribute is set for the first time', function () {
       myEl.testLifecycle = true;
-      helpers.afterMutations(function () {
-        expect(myEl.testLifecycle).to.equal('true');
-        expect(created).to.equal(true);
-        done();
-      });
+      expect(myEl.testLifecycle).to.equal('true');
+      expect(created).to.equal(true);
     });
 
-    it('should call updated when the attribute is subsequently set', function (done) {
+    it('should call updated when the attribute is subsequently set', function () {
+      window.doit = true;
       myEl.testLifecycle = true;
       myEl.testLifecycle = false;
-      helpers.afterMutations(function () {
-        expect(updated).to.equal(true);
-        done();
-      });
+      window.doit = false;
+      expect(updated).to.equal(true);
     });
 
-    it('should call removed when the attribute is set to "undefined".', function (done) {
+    it('should call removed when the attribute is set to "undefined".', function () {
       myEl.testLifecycle = true;
       myEl.testLifecycle = undefined;
-      helpers.afterMutations(function () {
-        expect(removed).to.equal(true);
-        done();
-      });
+      expect(removed).to.equal(true);
     });
 
-    it('should not override an existing property', function (done) {
+    it('should not override an existing property', function () {
       myEl.setAttribute('override', 'false');
-      helpers.afterMutations(function () {
-        expect(myEl.override).to.equal('true');
-        done();
-      });
+      expect(myEl.override).to.equal('true');
     });
   });
 
   describe('callbacks', function () {
     describe('should listen to changes in specified attributes', function () {
-      function createAttributeDefinition (done) {
+      function createAttributeDefinition () {
         return {
           test: {
             created: function (element, data) {
@@ -176,66 +163,59 @@ describe('attributes:', function () {
             removed: function (element, data) {
               expect(data.oldValue).to.equal('updated');
               expect(data.newValue).to.equal(null);
-              done();
             }
           }
         };
       }
 
       function assertAttributeChanges (element) {
-        helpers.afterMutations(function () {
-          element.setAttribute('test', 'created');
-          helpers.afterMutations(function () {
-            element.setAttribute('test', 'updated');
-            helpers.afterMutations(function () {
-              element.removeAttribute('test');
-            });
-          });
-        });
+        element.setAttribute('test', 'created');
+        element.setAttribute('test', 'updated');
+        element.removeAttribute('test');
       }
 
-      it('for native custom elements', function (done) {
+      it('for native custom elements', function () {
         var Element = skate(helpers.safeTagName('my-el').safe, {
-          attributes: createAttributeDefinition(done)
+          attributes: createAttributeDefinition()
         });
 
         assertAttributeChanges(new Element());
       });
 
-      it('for existing elements (via mutation observer)', function (done) {
+      it('for existing elements (via mutation observer)', function () {
         var { safe: id } = helpers.safeTagName('element');
 
         skate(id, {
-          attributes: createAttributeDefinition(done)
+          attributes: createAttributeDefinition()
         });
 
         assertAttributeChanges(helpers.fixture(`<${id}></${id}>`).querySelector(id));
       });
 
-      it('for attributes (via mutation observer)', function (done) {
+      it('for attributes (via mutation observer)', function () {
         var { safe: id } = helpers.safeTagName('attribute');
 
         skate(id, {
           type: skate.type.ATTRIBUTE,
-          attributes: createAttributeDefinition(done)
+          attributes: createAttributeDefinition()
         });
 
         assertAttributeChanges(helpers.fixture(`<div ${id}></div>`).querySelector('div'));
       });
 
-      it('for classnames (via mutation observer)', function (done) {
+      it('for classnames (via mutation observer)', function () {
         var { safe: id } = helpers.safeTagName('classname');
 
         skate(id, {
           type: skate.type.CLASSNAME,
-          attributes: createAttributeDefinition(done)
+          attributes: createAttributeDefinition()
         });
 
         assertAttributeChanges(helpers.fixture(`<div class="${id}"></div>`).querySelector('div'));
       });
     });
 
-    it('should accept a function insead of an object for a particular attribute definition.', function (done) {
+    it('should accept a function insead of an object for a particular attribute definition.', function () {
       var tagName = helpers.safeTagName('my-el');
       var MyEl = skate(tagName.safe, {
         attributes: {
@@ -249,7 +229,6 @@ describe('attributes:', function () {
             } else if (data.type === 'removed') {
               expect(data.oldValue).to.equal('updated');
               expect(data.newValue).to.equal(null);
-              done();
             }
           }
         }
@@ -257,15 +236,11 @@ describe('attributes:', function () {
 
       var myEl = new MyEl();
       myEl.setAttribute('test', 'created');
-      helpers.afterMutations(function () {
-        myEl.setAttribute('test', 'updated');
-        helpers.afterMutations(function () {
-          myEl.removeAttribute('test');
-        });
-      });
+      myEl.setAttribute('test', 'updated');
+      myEl.removeAttribute('test');
     });
 
-    it('should accept a function insead of an object for the entire attribute definition.', function (done) {
+    it('should accept a function insead of an object for the entire attribute definition.', function () {
       var tagName = helpers.safeTagName('my-el');
       var MyEl = skate(tagName.safe, {
         attributes: function (element, data) {
@@ -282,32 +257,29 @@ describe('attributes:', function () {
           } else if (data.type === 'removed') {
             expect(data.oldValue).to.equal('updated');
             expect(data.newValue).to.equal(null);
-            done();
           }
         }
       });
 
       var myEl = new MyEl();
       myEl.setAttribute('test', 'created');
-      helpers.afterMutations(function () {
-        myEl.setAttribute('test', 'updated');
-        helpers.afterMutations(function () {
-          myEl.removeAttribute('test');
-        });
-      });
+      myEl.setAttribute('test', 'updated');
+      myEl.removeAttribute('test');
     });
 
     describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
-      function assertAttributeLifeycleCalls(expectedNumCalls, nonFallbackHandlers, done) {
-        var called = 0;
+      function assertAttributeLifeycleCalls(nonFallbackHandlers = []) {
+        var called = [];
         var {safe: tagName} = helpers.safeTagName('my-el');
         var testHandlers = {
           fallback: function () {
-            ++called;
+            called.push('fallback');
           }
         };
         nonFallbackHandlers.forEach(function (item) {
-          testHandlers[item] = function () {};
+          testHandlers[item] = function () {
+            called.push(item);
+          };
         });
 
         var MyEl = skate(tagName, {
@@ -318,32 +290,26 @@ describe('attributes:', function () {
 
         var myEl = new MyEl();
         myEl.test = false;
-        helpers.afterMutations(function () {
-          myEl.test = true;
-          helpers.afterMutations(function () {
-            myEl.test = undefined;
-            helpers.afterMutations(function () {
-              expect(called).to.equal(expectedNumCalls);
-              done();
-            });
-          });
-        });
+        myEl.test = true;
+        myEl.test = undefined;
+
+        return expect(called);
       }
 
-      it('fallback only', function (done) {
-        assertAttributeLifeycleCalls(3, [], done);
+      it('fallback only', function () {
+        assertAttributeLifeycleCalls().to.include.members(['fallback', 'fallback', 'fallback']);
       });
 
-      it('created + fallback', function (done) {
-        assertAttributeLifeycleCalls(2, ['created'], done);
+      it('created + fallback', function () {
+        assertAttributeLifeycleCalls(['created']).to.include.members(['created', 'fallback', 'fallback']);
       });
 
-      it('updated + fallback', function (done) {
-        assertAttributeLifeycleCalls(2, ['updated'], done);
+      it('updated + fallback', function () {
+        assertAttributeLifeycleCalls(['updated']).to.include.members(['fallback', 'updated', 'fallback']);
       });
 
-      it('removed + fallback', function (done) {
-        assertAttributeLifeycleCalls(2, ['removed'], done);
+      it('removed + fallback', function () {
+        assertAttributeLifeycleCalls(['removed']).to.include.members(['fallback', 'fallback', 'removed']);
       });
     });
   });
@@ -422,13 +388,10 @@ describe('attributes:', function () {
       triggered = false;
     });
 
-    it('attribute name in the attribute definition should convert camelCased attribute names to dash-case', function (done) {
+    it('attribute name in the attribute definition should convert camelCased attribute names to dash-case', function () {
       var el = new Ctor();
       el.setAttribute('my-attribute', '');
-      helpers.afterMutations(function () {
-        expect(triggered).to.equal(true);
-        done();
-      });
+      expect(triggered).to.equal(true);
     });
   });
 });

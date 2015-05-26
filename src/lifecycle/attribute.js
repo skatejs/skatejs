@@ -1,5 +1,9 @@
 export default function (options) {
   return function (name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return;
+    }
+
     var callback;
     var type;
     var newValueIsString = typeof newValue === 'string';
