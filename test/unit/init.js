@@ -202,16 +202,17 @@ describe('skate.init()', function () {
         skate.init(el1);
         callsPerCreationType[`<${tagName}>`] = calls;
 
-        var el2 = document.createElement('div', tagName);
+        var el2 = document.createElement('div');
+        el2.setAttribute('is', tagName);
         skate.init(el2);
         callsPerCreationType[`<div is="${tagName}">`] = calls;
 
-        var el3 = skate.create('div');
+        var el3 = document.createElement('div');
         el3.setAttribute(tagName, '');
         skate.init(el3);
         callsPerCreationType[`<div ${tagName}>`] = calls;
 
-        var el4 = skate.create('div');
+        var el4 = document.createElement('div');
         el4.className = tagName;
         skate.init(el4);
         callsPerCreationType[`<div class="${tagName}">`] = calls;
