@@ -1,5 +1,3 @@
-import createElement from '../polyfill/create-element';
-
 var elProto = window.HTMLElement.prototype;
 var nativeMatchesSelector = (
   elProto.matches ||
@@ -10,12 +8,12 @@ var nativeMatchesSelector = (
 );
 
 // Only IE9 has this msMatchesSelector bug, but best to detect it.
-var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(createElement('div'), 'div');
+var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
 
 export default function (element, selector) {
   if (hasNativeMatchesSelectorDetattachedBug) {
     var clone = element.cloneNode();
-    createElement('div').appendChild(clone);
+    document.createElement('div').appendChild(clone);
     return nativeMatchesSelector.call(clone, selector);
   }
   return nativeMatchesSelector.call(element, selector);
