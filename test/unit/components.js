@@ -3,7 +3,7 @@
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
 
-describe('Using components', function () {
+describe('components', function () {
   function assertType (type, shouldEqual, tagToExtend) {
     it(`type "${type}", extending "${tagToExtend}"`, function () {
       var calls = 0;
