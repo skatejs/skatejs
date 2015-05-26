@@ -5,7 +5,7 @@ import skate from '../../src/index';
 
 describe('Using components', function () {
   function assertType (type, shouldEqual, tagToExtend) {
-    it('type: ' + type + ' extending: ' + tagToExtend, function () {
+    it(`type "${type}", extending "${tagToExtend}"`, function () {
       var calls = 0;
       var callsPerCreationType = {};
       var {safe: tagName} = helpers.safeTagName('my-element');
@@ -17,20 +17,18 @@ describe('Using components', function () {
         }
       });
 
-      var el1 = document.createElement(tagName);
-      skate.init(el1);
+      var el1 = skate.create(tagName);
       callsPerCreationType[`<${tagName}>`] = calls;
 
-      var el2 = document.createElement('div', tagName);
-      skate.init(el2);
+      var el2 = skate.create('div', tagName);
       callsPerCreationType[`<div is="${tagName}">`] = calls;
 
-      var el3 = document.createElement('div');
+      var el3 = skate.create('div');
       el3.setAttribute(tagName, '');
       skate.init(el3);
       callsPerCreationType[`<div ${tagName}>`] = calls;
 
-      var el4 = document.createElement('div');
+      var el4 = skate.create('div');
       el4.className = tagName;
       skate.init(el4);
       callsPerCreationType[`<div class="${tagName}">`] = calls;
@@ -52,22 +50,19 @@ describe('Using components', function () {
     assertType(skate.type.ATTRIBUTE, 0, 'span');
     assertType(skate.type.CLASSNAME, 0, 'span');
 
-
     it('should not initialise a single component more than once on a single element', function () {
       var calls = 0;
-
       var {safe: tagName} = helpers.safeTagName('my-element');
+
       skate(tagName, {
         created: function () {
           ++calls;
         }
       });
 
-      var el = document.createElement(tagName);
+      var el = skate.create(tagName);
       el.setAttribute(tagName, '');
       el.className = tagName;
-      skate.init(el);
-
       expect(calls).to.equal(1);
     });
   });
