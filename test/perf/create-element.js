@@ -1,17 +1,16 @@
 import bench from '../lib/bench';
-import nativeCreateElement from '../../src/util/native-create-element';
-import polyfillCreateElement from '../../src/polyfill/create-element';
+import apiCreate from '../../src/api/create';
 
-describe('skate.create()', function () {
-  bench('native', {
+describe('creating elements', function () {
+  bench('document.createElement()', {
     fn: function () {
-      nativeCreateElement('div');
+      document.createElement('div');
     }
   });
 
-  bench('polyfill', {
+  bench('skate.create()', {
     fn: function () {
-      polyfillCreateElement('div');
+      apiCreate('div');
     }
   });
 });
