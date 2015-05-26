@@ -196,8 +196,7 @@ describe('skate.init()', function () {
           extends: tagToExtend,
           created: function () {
             ++calls;
-          },
-          gagas: true
+          }
         });
 
         var el1 = document.createElement(tagName);
