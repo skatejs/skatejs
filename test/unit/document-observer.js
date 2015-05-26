@@ -5,7 +5,7 @@ import observer from '../../src/polyfill/document-observer';
 
 describe('Document Observer', function () {
   function getObserver () {
-    return globals.observer;
+    return globals.observer.observer;
   }
 
   function hasObserver () {

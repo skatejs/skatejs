@@ -1,21 +1,22 @@
 import { TYPE_ELEMENT } from './constants';
-import assign from './utils/assign';
+import apiCreate from './api/create';
+import apiInit from './api/init';
+import apiNoConflict from './api/no-conflict';
+import apiType from './api/type';
+import apiVersion from './api/version';
+import assign from './util/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import dashCase from './utils/dash-case';
-import debounce from './utils/debounce';
+import dashCase from './util/dash-case';
+import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
 import registry from './polyfill/registry';
-import skateInit from './api/init';
-import skateNoConflict from './api/no-conflict';
-import skateType from './api/type';
-import skateVersion from './api/version';
 import supportsCustomElements from './support/custom-elements';
-import walkTree from './utils/walk-tree';
+import walkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function initDocument () {
@@ -103,6 +104,11 @@ function skate (id, userOptions) {
   isElement = options.type === TYPE_ELEMENT;
   isNative = isElement && supportsCustomElements() && validCustomElement(id);
 
+  // Inherit from parent prototype.
+  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
+    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
+  }
+
   // Extend behaviour of existing callbacks.
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
@@ -114,34 +120,30 @@ function skate (id, userOptions) {
     isNative: readonly(isNative)
   });
 
-  // By always setting in the registry we ensure that behaviour between
-  // polyfilled and native registries are handled consistently.
-  registry.set(id, options);
-
-  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
-  }
-
+  // Make a constructor for the definition.
   if (isNative) {
     Ctor = document.registerElement(id, options);
   } else {
+    Ctor = elementConstructor(options);
     debouncedInitDocumentWhenReady();
     documentObserver.register();
-
-    if (isElement) {
-      Ctor = elementConstructor(id, options);
-    }
   }
 
-  if (Ctor) {
-    return assign(Ctor, options);
-  }
+  assign(Ctor, options);
+  registry.set(id, Ctor);
+  Object.defineProperty(Ctor.prototype, 'constructor', {
+    enumerable: false,
+    value: Ctor
+  });
+
+  return Ctor;
 }
 
-skate.init = skateInit;
-skate.noConflict = skateNoConflict;
-skate.type = skateType;
-skate.version = skateVersion;
+skate.create = apiCreate;
+skate.init = apiInit;
+skate.noConflict = apiNoConflict;
+skate.type = apiType;
+skate.version = apiVersion;
 
 // Global
 window.skate = skate;

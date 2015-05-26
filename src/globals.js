@@ -1,8 +1,13 @@
-if (!window.__skate) {
-  window.__skate = {
-    observer: undefined,
-    registry: {}
+if (!window.__skate0) {
+  window.__skate0 = {
+    registerIfNotExists (name, value) {
+      if (!this[name]) {
+        this[name] = value;
+      }
+
+      return this[name];
+    }
   };
 }
 
-export default window.__skate;
+export default window.__skate0;

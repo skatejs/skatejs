@@ -1,9 +1,7 @@
-'use strict';
-
-import './lib/polyfills';
-import './unit/bootstrap';
+import './boot';
 import './unit/attributes';
-import './unit/components';
+import './unit/constructor';
+import './unit/create';
 import './unit/document-observer';
 import './unit/dom';
 import './unit/events';
@@ -14,5 +12,5 @@ import './unit/lifecycle';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
-import './unit/utils/dash-case';
+import './unit/util/dash-case';
 import './unit/version';

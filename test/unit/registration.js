@@ -135,6 +135,7 @@ describe('Native document.registerElement', function () {
     oldRegisterElement = document.registerElement;
     document.registerElement = function (name, definition) {
       definitions[name] = definition;
+      return function () {};
     };
   });
 

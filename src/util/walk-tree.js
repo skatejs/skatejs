@@ -1,5 +1,7 @@
 import ignored from './ignored';
 
+var NodeFilter = window.NodeFilter;
+
 function createElementTreeWalker (element) {
   return document.createTreeWalker(
     element,

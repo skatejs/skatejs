@@ -1,14 +1,40 @@
-export default function (id, options) {
-  function CustomElement () {
-    var element;
-    var tagToExtend = options.extends;
+import {
+  TYPE_ATTRIBUTE,
+  TYPE_CLASSNAME,
+  TYPE_ELEMENT
+} from '../constants';
 
-    if (tagToExtend) {
-      element = document.createElement(tagToExtend);
+const DEFAULT_ELEMENT = 'div';
+
+function createElement (options) {
+  var element;
+  var id = options.id;
+  var parent = options.extends;
+  var type = options.type;
+
+  // Allow all types of components to be constructed.
+  if (type === TYPE_ELEMENT) {
+    element = document.createElement(parent || id);
+
+    if (parent) {
       element.setAttribute('is', id);
-    } else {
-      element = document.createElement(id);
     }
+  } else {
+    element = document.createElement(parent || DEFAULT_ELEMENT);
+
+    if (type === TYPE_ATTRIBUTE) {
+      element.setAttribute(id, '');
+    } else if (type === TYPE_CLASSNAME) {
+      element.className = id;
+    }
+  }
+
+  return element;
+}
+
+export default function (options) {
+  function CustomElement () {
+    var element = createElement(options);
 
     // Ensure the definition prototype is up to date with the element's
     // prototype. This ensures that overwriting the element prototype still

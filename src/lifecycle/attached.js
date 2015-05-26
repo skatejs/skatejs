@@ -1,5 +1,5 @@
-import data from '../utils/data';
-import elementContains from '../utils/element-contains';
+import data from '../util/data';
+import elementContains from '../util/element-contains';
 
 export default function (options) {
   return function () {
