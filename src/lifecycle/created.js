@@ -3,37 +3,16 @@ import camelCase from '../util/camel-case';
 import data from '../util/data';
 import hasOwn from '../util/has-own';
 import matchesSelector from '../util/matches-selector';
-import MutationObserver from '../polyfill/mutation-observer';
 import objEach from '../util/obj-each';
 
 function getPrototypes (proto) {
   var chains = [proto];
+  /* jshint boss: true */
   while (proto = Object.getPrototypeOf(proto)) {
     chains.push(proto);
   }
   chains.reverse();
   return chains;
-}
-
-function addAttributeListeners (target, component) {
-  var attrs = target.attributes;
-
-  if (!component.attributes || component.isNative) {
-    return;
-  }
-
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      var name = mutation.attributeName;
-      var attr = attrs[name];
-      target.attributeChangedCallback(name, mutation.oldValue, attr && (attr.value || attr.nodeValue));
-    });
-  });
-
-  observer.observe(target, {
-    attributes: true,
-    attributeOldValue: true
-  });
 }
 
 function parseEvent (e) {
@@ -81,6 +60,29 @@ function addEventListeners (target, component) {
       target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
     });
   });
+}
+
+function patchSetAttribute (element, options) {
+  if (options.isNative) {
+    return;
+  }
+
+  var oldSetAttribute = element.setAttribute.bind(element);
+  var oldRemoveAttribute = element.removeAttribute.bind(element);
+
+  element.setAttribute = function (name, newValue) {
+    var oldValue = this.getAttribute(name);
+    oldSetAttribute(name, newValue);
+    element.attributeChangedCallback(name, oldValue, String(newValue));
+  };
+
+  element.removeAttribute = function (name) {
+    var oldValue = this.getAttribute(name);
+    oldRemoveAttribute(name);
+    if (!this.hasAttribute(name)) {
+      element.attributeChangedCallback(name, oldValue, null);
+    }
+  };
 }
 
 function defineAttributeProperty (target, attribute) {
@@ -182,7 +184,7 @@ export default function (options) {
     element.removeAttribute(options.unresolvedAttribute);
     element.setAttribute(options.resolvedAttribute, '');
     addEventListeners(element, options);
-    addAttributeListeners(element, options);
+    patchSetAttribute(element, options);
     addAttributeToPropertyLinks(element, options);
     initAttributes(element, options);
     triggerAttributesCreated(element, options);
