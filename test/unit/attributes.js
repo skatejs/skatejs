@@ -394,4 +394,45 @@ describe('attributes:', function () {
       expect(triggered).to.equal(true);
     });
   });
+
+  describe('compound keys ("created updated removed")', function () {
+    var calls, tag;
+
+    beforeEach(() => {
+      calls = 0;
+      tag = helpers.safeTagName().safe;
+    });
+
+    it('should allow multiple keys for all attributes', () => {
+      var El = skate(tag, {
+        attributes: {
+          'created updated removed': function () {
+            ++calls;
+          }
+        }
+      });
+      var el = new El();
+      el.attr = true;
+      el.attr = false;
+      el.attr = undefined;
+      expect(calls).to.equal(3);
+    });
+
+    it('should allow multiple keys for specific attributes', () => {
+      var El = skate(tag, {
+        attributes: {
+          attr: {
+            'created updated removed': function () {
+              ++calls;
+            }
+          }
+        }
+      });
+      var el = new El();
+      el.attr = true;
+      el.attr = false;
+      el.attr = undefined;
+      expect(calls).to.equal(3);
+    });
+  });
 });
