@@ -33,12 +33,14 @@ function resolveCallback (name, type, attrs) {
 
 export default function (options) {
   return function (name, oldValue, newValue) {
+    var callback, type;
+
     if (oldValue === newValue) {
       return;
     }
 
-    var type = resolveType(oldValue, newValue);
-    var callback = resolveCallback(name, type, options.attributes);
+    type = resolveType(oldValue, newValue);
+    callback = resolveCallback(name, type, options.attributes);
 
     // Ensure values are null if undefined.
     newValue = newValue === undefined ? null : newValue;
