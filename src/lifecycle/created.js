@@ -162,10 +162,10 @@ export default function (options) {
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.
-    // Note that in order to catch modified prototype chains - such as when
-    // setPrototypeOf() or ES6 classes are used - we must walk each prototype
-    // and apply each member directly.
-    if (!options.isNative) {
+    // Skate will always add lifecycle callbacks to the definition. If native
+    // custom elements are being used, one of these will already be on the
+    // element. If not, then we are initialising via non-native means.
+    if (!element.attributeChangedCallback) {
       getPrototypes(options.prototype).forEach(function (proto) {
         if (!proto.isPrototypeOf(element)) {
           assign(element, proto);
@@ -185,10 +185,11 @@ export default function (options) {
     patchAttributeMethods(element, options);
     addAttributeToPropertyLinks(element, options);
     initAttributes(element, options);
-    triggerAttributesCreated(element, options);
 
     if (options.created) {
       options.created(element);
     }
+
+    triggerAttributesCreated(element, options);
   };
 }
