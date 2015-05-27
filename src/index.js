@@ -1,4 +1,6 @@
 import { TYPE_ELEMENT } from './constants';
+import apiAttr from './api/attr';
+import apiChain from './api/chain';
 import apiCreate from './api/create';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
@@ -139,6 +141,8 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
+skate.attr = apiAttr;
+skate.chain = apiChain;
 skate.create = apiCreate;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;

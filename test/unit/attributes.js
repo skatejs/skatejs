@@ -266,52 +266,6 @@ describe('attributes:', function () {
       myEl.setAttribute('test', 'updated');
       myEl.removeAttribute('test');
     });
-
-    describe('should allow a fallback callback to be specified that catches all changes (same as passing a function instead of an object)', function () {
-      function assertAttributeLifeycleCalls(nonFallbackHandlers = []) {
-        var called = [];
-        var {safe: tagName} = helpers.safeTagName('my-el');
-        var testHandlers = {
-          fallback: function () {
-            called.push('fallback');
-          }
-        };
-        nonFallbackHandlers.forEach(function (item) {
-          testHandlers[item] = function () {
-            called.push(item);
-          };
-        });
-
-        var MyEl = skate(tagName, {
-          attributes: {
-            test: testHandlers
-          }
-        });
-
-        var myEl = new MyEl();
-        myEl.test = false;
-        myEl.test = true;
-        myEl.test = undefined;
-
-        return expect(called);
-      }
-
-      it('fallback only', function () {
-        assertAttributeLifeycleCalls().to.include.members(['fallback', 'fallback', 'fallback']);
-      });
-
-      it('created + fallback', function () {
-        assertAttributeLifeycleCalls(['created']).to.include.members(['created', 'fallback', 'fallback']);
-      });
-
-      it('updated + fallback', function () {
-        assertAttributeLifeycleCalls(['updated']).to.include.members(['fallback', 'updated', 'fallback']);
-      });
-
-      it('removed + fallback', function () {
-        assertAttributeLifeycleCalls(['removed']).to.include.members(['fallback', 'fallback', 'removed']);
-      });
-    });
   });
 
   describe('Attributes added via HTML', function () {
@@ -396,43 +350,33 @@ describe('attributes:', function () {
   });
 
   describe('compound keys ("created updated removed")', function () {
-    var calls, tag;
+    var calls, inc, tag;
 
     beforeEach(() => {
       calls = 0;
+      inc = () => ++calls;
       tag = helpers.safeTagName().safe;
-    });
-
-    it('should allow multiple keys for all attributes', () => {
-      var El = skate(tag, {
-        attributes: {
-          'created updated removed': function () {
-            ++calls;
-          }
-        }
-      });
-      var el = new El();
-      el.attr = true;
-      el.attr = false;
-      el.attr = undefined;
-      expect(calls).to.equal(3);
     });
 
     it('should allow multiple keys for specific attributes', () => {
       var El = skate(tag, {
         attributes: {
-          attr: {
-            'created updated removed': function () {
-              ++calls;
-            }
-          }
+          attr: skate.attr()
+            .on('created', inc)
+            .on('updated', inc)
+            .on('removed', inc)
+            .on('created updated', inc)
+            .on('updated removed', inc)
+            .on('created removed', inc)
+            .on('created updated removed', inc)
+            .compile()
         }
       });
       var el = new El();
       el.attr = true;
       el.attr = false;
       el.attr = undefined;
-      expect(calls).to.equal(3);
+      expect(calls).to.equal(12);
     });
   });
 });

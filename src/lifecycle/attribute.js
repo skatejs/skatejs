@@ -14,46 +14,55 @@ function resolveType (oldValue, newValue) {
   return type;
 }
 
-function resolveCallback (name, type, attrs) {
-  var callback;
+function resolveCallbacks (name, type, attrs) {
+  var callbacks;
   var specific = attrs && attrs[name];
 
+  // { attributes: { name: { created: function () {} } } }
   if (specific && typeof specific[type] === 'function') {
-    callback = specific[type];
-  } else if (specific && typeof specific.fallback === 'function') {
-    callback = specific.fallback;
+    callbacks = specific[type];
+  // { attributes: { name: function () {} } }
   } else if (typeof specific === 'function') {
-    callback = specific;
+    callbacks = specific;
+  // { attributes: function () {} }
   } else if (typeof attrs === 'function') {
-    callback = attrs;
+    callbacks = attrs;
   }
 
-  return callback;
+  if (!callbacks) {
+    callbacks = [];
+  }
+
+  if (!Array.isArray(callbacks)) {
+    callbacks = [callbacks];
+  }
+
+  return callbacks;
 }
 
 export default function (options) {
   return function (name, oldValue, newValue) {
-    var callback, type;
+    var callbacks, type;
 
     if (oldValue === newValue) {
       return;
     }
 
     type = resolveType(oldValue, newValue);
-    callback = resolveCallback(name, type, options.attributes);
+    callbacks = resolveCallbacks(name, type, options.attributes);
 
     // Ensure values are null if undefined.
     newValue = newValue === undefined ? null : newValue;
     oldValue = oldValue === undefined ? null : oldValue;
 
-    // There may still not be a callback.
-    if (callback) {
+    // Callbacks should be normalised to an array.
+    callbacks.forEach((callback) => {
       callback(this, {
         type: type,
         name: name,
         newValue: newValue,
         oldValue: oldValue
       });
-    }
+    });
   };
 }
