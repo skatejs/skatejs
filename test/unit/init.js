@@ -189,7 +189,8 @@ describe('skate.init()', function () {
       it(`type "${type}", extending "${tagToExtend}"`, function () {
         var calls = 0;
         var callsPerCreationType = {};
-        var {safe: tagName} = helpers.safeTagName('my-element');
+        var { safe: tagName } = helpers.safeTagName();
+
         skate(tagName, {
           type: type,
           extends: tagToExtend,
