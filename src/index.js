@@ -1,5 +1,4 @@
 import { TYPE_ELEMENT } from './constants';
-import apiChain from './util/chain';
 import apiCreate from './api/create';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
@@ -41,14 +40,6 @@ function initDocumentWhenReady () {
   } else {
     document.addEventListener('DOMContentLoaded', initDocument);
   }
-}
-
-function readonly (value) {
-  return {
-    configurable: false,
-    value: value,
-    writable: false
-  };
 }
 
 function dashCaseAttributeNames (options) {
@@ -115,8 +106,10 @@ function skate (id, userOptions) {
   options.prototype.attachedCallback = attached(options);
   options.prototype.detachedCallback = detached(options);
   options.prototype.attributeChangedCallback = attribute(options.attributes);
-  Object.defineProperties(options, {
-    id: readonly(id)
+  Object.defineProperty(options, 'id', {
+    configurable: false,
+    value: id,
+    writable: false
   });
 
   // Make a constructor for the definition.
@@ -138,7 +131,6 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.chain = apiChain;
 skate.create = apiCreate;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
