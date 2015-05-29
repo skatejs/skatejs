@@ -5,6 +5,10 @@ import hasOwn from '../util/has-own';
 import matchesSelector from '../util/matches-selector';
 import objEach from '../util/obj-each';
 
+var elProto = window.Element.prototype;
+var oldSetAttribute = elProto.setAttribute;
+var oldRemoveAttribute = elProto.removeAttribute;
+
 function getPrototypes (proto) {
   var chains = [proto];
   /* jshint boss: true */
@@ -62,20 +66,17 @@ function addEventListeners (target, component) {
   });
 }
 
-function patchAttributeMethods (element) {
-  var oldSetAttribute = element.setAttribute.bind(element);
-  var oldRemoveAttribute = element.removeAttribute.bind(element);
-
-  element.setAttribute = function (name, newValue) {
+function patchAttributeMethods (elem) {
+  elem.setAttribute = function (name, newValue) {
     var oldValue = this.getAttribute(name);
-    oldSetAttribute(name, newValue);
-    element.attributeChangedCallback(name, String(newValue), oldValue);
+    oldSetAttribute.call(elem, name, newValue);
+    elem.attributeChangedCallback(name, String(newValue), oldValue);
   };
 
-  element.removeAttribute = function (name) {
+  elem.removeAttribute = function (name) {
     var oldValue = this.getAttribute(name);
-    oldRemoveAttribute(name);
-    element.attributeChangedCallback(name, null, oldValue);
+    oldRemoveAttribute.call(elem, name);
+    elem.attributeChangedCallback(name, null, oldValue);
   };
 }
 
@@ -85,16 +86,14 @@ function defineAttributeProperty (elem, attr) {
       return this.getAttribute(attr);
     },
     set: function (value) {
-      if (value === undefined) {
-        this.removeAttribute(attr);
-      } else {
+      return value === undefined ?
+        this.removeAttribute(attr) :
         this.setAttribute(attr, value);
-      }
     }
   });
 }
 
-function addAttributeToPropertyLinks (elem, attrs = {}) {
+function linkProperties (elem, attrs = {}) {
   for (var attr in attrs) {
     if (hasOwn(attrs, attr) && elem[attr] === undefined) {
       defineAttributeProperty(elem, attr);
@@ -102,31 +101,26 @@ function addAttributeToPropertyLinks (elem, attrs = {}) {
   }
 }
 
-function triggerAttributesCreated (target) {
-  var a;
-  var attrs = target.attributes;
-  var attrsCopy = [];
-  var attrsLen = attrs.length;
-
-  for (a = 0; a < attrsLen; a++) {
-    attrsCopy.push(attrs[a]);
-  }
-
-  // In default web components, attribute changes aren't triggered for
-  // attributes that already exist on an element when it is bound. This sucks
-  // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute by calling the
-  // created callback for the attributes that already exist on the element.
-  for (a = 0; a < attrsLen; a++) {
-
-    var attr = attrsCopy[a];
-    target.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
+function triggerAttributesCreated (elem) {
+  for (var attr of elem.attributes) {
+    elem.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
   }
 }
 
 function markAsResolved (elem, opts) {
   elem.removeAttribute(opts.unresolvedAttribute);
   elem.setAttribute(opts.resolvedAttribute, '');
+}
+
+function initAttributes (elem, attrs = {}) {
+  Object.keys(attrs).forEach(function (name) {
+    var attr = attrs[name];
+    if (attr && attr.value && !elem.hasAttribute(name)) {
+      var value = attr.value;
+      value = typeof value === 'function' ? value(elem) : value;
+      elem.setAttribute(name, value);
+    }
+  });
 }
 
 export default function (options) {
@@ -168,7 +162,8 @@ export default function (options) {
       patchAttributeMethods(element);
     }
 
-    addAttributeToPropertyLinks(element, options.attributes);
+    linkProperties(element, options.attributes);
+    initAttributes(element, options.attributes);
 
     if (options.created) {
       options.created(element);

@@ -4,6 +4,54 @@ import helpers from '../lib/helpers';
 import skate from '../../src/index';
 
 describe('attributes:', function () {
+  describe('default values', function () {
+    it('should set a default value using the "value" option', function () {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: 'true'
+          }
+        }
+      });
+
+      expect(new MyEl().getAttribute('test')).to.equal('true');
+    });
+
+    it('should allow a callback to return a default value', function () {
+      var tagName = helpers.safeTagName('my-el');
+      var MyEl = skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: function () {
+              return 'true';
+            }
+          }
+        }
+      });
+
+      expect(new MyEl().getAttribute('test')).equal('true');
+    });
+
+    it('should not override if already specified', function () {
+      var tagName = helpers.safeTagName('my-el');
+
+      skate(tagName.safe, {
+        attributes: {
+          test: {
+            value: 'true'
+          }
+        }
+      });
+
+      expect(
+        skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
+          .firstChild
+          .test
+      ).to.equal('false');
+    });
+  });
+
   describe('should define properties for all watched attributes', function () {
     var myEl;
     var created = false;
