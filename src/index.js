@@ -1,5 +1,4 @@
 import { TYPE_ELEMENT } from './constants';
-import apiAttr from './api/attr';
 import apiChain from './api/chain';
 import apiCreate from './api/create';
 import apiInit from './api/init';
@@ -115,11 +114,10 @@ function skate (id, userOptions) {
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
   options.prototype.detachedCallback = detached(options);
-  options.prototype.attributeChangedCallback = attribute(options);
+  options.prototype.attributeChangedCallback = attribute(options.attributes);
   Object.defineProperties(options, {
     id: readonly(id),
-    isElement: readonly(isElement),
-    isNative: readonly(isNative)
+    isElement: readonly(isElement)
   });
 
   // Make a constructor for the definition.
@@ -141,7 +139,6 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.attr = apiAttr;
 skate.chain = apiChain;
 skate.create = apiCreate;
 skate.init = apiInit;

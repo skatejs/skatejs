@@ -62,68 +62,42 @@ function addEventListeners (target, component) {
   });
 }
 
-function patchAttributeMethods (element, options) {
-  if (options.isNative) {
-    return;
-  }
-
+function patchAttributeMethods (element) {
   var oldSetAttribute = element.setAttribute.bind(element);
   var oldRemoveAttribute = element.removeAttribute.bind(element);
 
   element.setAttribute = function (name, newValue) {
     var oldValue = this.getAttribute(name);
     oldSetAttribute(name, newValue);
-    element.attributeChangedCallback(name, oldValue, String(newValue));
+    element.attributeChangedCallback(name, String(newValue), oldValue);
   };
 
   element.removeAttribute = function (name) {
     var oldValue = this.getAttribute(name);
     oldRemoveAttribute(name);
-    element.attributeChangedCallback(name, oldValue, null);
+    element.attributeChangedCallback(name, null, oldValue);
   };
 }
 
-function defineAttributeProperty (target, attribute) {
-  Object.defineProperty(target, camelCase(attribute), {
+function defineAttributeProperty (elem, attr) {
+  Object.defineProperty(elem, camelCase(attr), {
     get: function () {
-      return this.getAttribute(attribute);
+      return this.getAttribute(attr);
     },
     set: function (value) {
       if (value === undefined) {
-        this.removeAttribute(attribute);
+        this.removeAttribute(attr);
       } else {
-        this.setAttribute(attribute, value);
+        this.setAttribute(attr, value);
       }
     }
   });
 }
 
-function addAttributeToPropertyLinks (target, component) {
-  var componentAttributes = component.attributes;
-
-  if (typeof componentAttributes !== 'object') {
-    return;
-  }
-
-  for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && target[attribute] === undefined) {
-      defineAttributeProperty(target, attribute);
-    }
-  }
-}
-
-function initAttributes (target, component) {
-  var componentAttributes = component.attributes;
-
-  if (typeof componentAttributes !== 'object') {
-    return;
-  }
-
-  for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'value') && !target.hasAttribute(attribute)) {
-      var value = componentAttributes[attribute].value;
-      value = typeof value === 'function' ? value(target) : value;
-      target.setAttribute(attribute, value);
+function addAttributeToPropertyLinks (elem, attrs = {}) {
+  for (var attr in attrs) {
+    if (hasOwn(attrs, attr) && elem[attr] === undefined) {
+      defineAttributeProperty(elem, attr);
     }
   }
 }
@@ -144,13 +118,20 @@ function triggerAttributesCreated (target) {
   // lifecycle callbacks. Skate will initialise each attribute by calling the
   // created callback for the attributes that already exist on the element.
   for (a = 0; a < attrsLen; a++) {
+
     var attr = attrsCopy[a];
-    target.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
+    target.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
   }
+}
+
+function markAsResolved (elem, opts) {
+  elem.removeAttribute(opts.unresolvedAttribute);
+  elem.setAttribute(opts.resolvedAttribute, '');
 }
 
 export default function (options) {
   return function () {
+    var native;
     var element = this;
     var targetData = data(element, options.id);
 
@@ -159,13 +140,14 @@ export default function (options) {
     }
 
     targetData.created = true;
+    native = !!element.createCallback;
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.
     // Skate will always add lifecycle callbacks to the definition. If native
     // custom elements are being used, one of these will already be on the
     // element. If not, then we are initialising via non-native means.
-    if (!element.attributeChangedCallback) {
+    if (!native) {
       getPrototypes(options.prototype).forEach(function (proto) {
         if (!proto.isPrototypeOf(element)) {
           assign(element, proto);
@@ -179,17 +161,19 @@ export default function (options) {
       options.template(element);
     }
 
-    element.removeAttribute(options.unresolvedAttribute);
-    element.setAttribute(options.resolvedAttribute, '');
+    markAsResolved(element, options);
     addEventListeners(element, options);
-    patchAttributeMethods(element, options);
-    addAttributeToPropertyLinks(element, options);
-    initAttributes(element, options);
+
+    if (!native) {
+      patchAttributeMethods(element);
+    }
+
+    addAttributeToPropertyLinks(element, options.attributes);
 
     if (options.created) {
       options.created(element);
     }
 
-    triggerAttributesCreated(element, options);
+    triggerAttributesCreated(element);
   };
 }

@@ -1,68 +1,60 @@
+import chain from '../api/chain';
+
 function resolveType (oldValue, newValue) {
-  var type;
   var newValueIsString = typeof newValue === 'string';
   var oldValueIsString = typeof oldValue === 'string';
 
   if (!oldValueIsString && newValueIsString) {
-    type = 'created';
+    return 'created';
   } else if (oldValueIsString && newValueIsString) {
-    type = 'updated';
+    return 'updated';
   } else if (oldValueIsString && !newValueIsString) {
-    type = 'removed';
+    return 'removed';
   }
-
-  return type;
 }
 
-function resolveCallbacks (name, type, attrs) {
-  var callbacks;
-  var specific = attrs && attrs[name];
+function makeSpecificCallback (types) {
+  var fns = {};
 
-  // { attributes: { name: { created: function () {} } } }
-  if (specific && typeof specific[type] === 'function') {
-    callbacks = specific[type];
-  // { attributes: { name: function () {} } }
-  } else if (typeof specific === 'function') {
-    callbacks = specific;
-  // { attributes: function () {} }
-  } else if (typeof attrs === 'function') {
-    callbacks = attrs;
+  if (typeof types === 'function') {
+    return types;
   }
 
-  if (!callbacks) {
-    callbacks = [];
-  }
+  Object.keys(types).forEach(function (type) {
+    type.split(' ').forEach(function (part) {
+      fns[part] = chain(fns[part], types[type]);
+    });
+  });
 
-  if (!Array.isArray(callbacks)) {
-    callbacks = [callbacks];
-  }
-
-  return callbacks;
+  return function (elem, diff) {
+    chain(fns[diff.type])(elem, diff);
+  };
 }
 
-export default function (options) {
-  return function (name, oldValue, newValue) {
-    var callbacks, type;
+function makeGlobalCallback (attrs) {
+  var fns = {};
 
-    if (oldValue === newValue) {
-      return;
-    }
+  if (typeof attrs === 'function') {
+    return attrs;
+  }
 
-    type = resolveType(oldValue, newValue);
-    callbacks = resolveCallbacks(name, type, options.attributes);
+  Object.keys(attrs).forEach(function (name) {
+    fns[name] = makeSpecificCallback(attrs[name] || {});
+  });
 
-    // Ensure values are null if undefined.
-    newValue = newValue === undefined ? null : newValue;
-    oldValue = oldValue === undefined ? null : oldValue;
+  return function (elem, diff) {
+    chain(fns[diff.name])(elem, diff);
+  };
+}
 
-    // Callbacks should be normalised to an array.
-    callbacks.forEach((callback) => {
-      callback(this, {
-        type: type,
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      });
+export default function (attributes = {}) {
+  var callback = makeGlobalCallback(attributes);
+  return function (name, newValue, oldValue) {
+    callback(this, {
+      name: name,
+      newValue: newValue === undefined ? null : newValue,
+      oldValue: oldValue === undefined ? null : oldValue,
+      type: resolveType(oldValue, newValue)
     });
   };
 }
