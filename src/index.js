@@ -116,8 +116,7 @@ function skate (id, userOptions) {
   options.prototype.detachedCallback = detached(options);
   options.prototype.attributeChangedCallback = attribute(options.attributes);
   Object.defineProperties(options, {
-    id: readonly(id),
-    isElement: readonly(isElement)
+    id: readonly(id)
   });
 
   // Make a constructor for the definition.

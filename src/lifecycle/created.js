@@ -79,7 +79,7 @@ function initAttributes (elem, attrs = {}) {
 
 export default function (options) {
   return function () {
-    var native;
+    var isNative;
     var element = this;
     var targetData = data(element, options.id);
 
@@ -88,14 +88,14 @@ export default function (options) {
     }
 
     targetData.created = true;
-    native = !!element.createdCallback;
+    isNative = !!element.createdCallback;
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.
     // Skate will always add lifecycle callbacks to the definition. If native
     // custom elements are being used, one of these will already be on the
     // element. If not, then we are initialising via non-native means.
-    if (!native) {
+    if (!isNative) {
       getPrototypes(options.prototype).forEach(function (proto) {
         if (!proto.isPrototypeOf(element)) {
           assign(element, proto);
@@ -112,7 +112,7 @@ export default function (options) {
     markAsResolved(element, options);
     events(element, options.events);
 
-    if (!native) {
+    if (!isNative) {
       patchAttributeMethods(element);
     }
 
