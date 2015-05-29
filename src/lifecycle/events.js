@@ -27,22 +27,15 @@ function makeNormalHandler (elem, handler) {
   };
 }
 
-function makeHandler (elem, handler, delegate) {
-  return delegate ?
-    makeDelegateHandler(elem, handler, delegate) :
-    makeNormalHandler(elem, handler);
-}
-
 export default function (elem, evts) {
   Object.keys(evts || {}).forEach(function (evt) {
     var handler = chain(evts[evt]);
-    var parsed = parseEvent(evt);
-    var useCapture = !!parsed.delegate && (parsed.name === 'blur' || parsed.name === 'focus');
+    var { name, delegate } = parseEvent(evt);
 
     elem.addEventListener(
-      parsed.name,
-      makeHandler(elem, handler, parsed.delegate),
-      useCapture
+      name,
+      delegate ? makeDelegateHandler(elem, handler, delegate) : makeNormalHandler(elem, handler),
+      delegate && (name === 'blur' || name === 'focus')
     );
   });
 }
