@@ -14,17 +14,16 @@ function resolveType (oldValue, newValue) {
 }
 
 function makeSpecificCallback (types) {
-  var fns = {};
-
   if (typeof types === 'function') {
     return types;
   }
 
-  Object.keys(types).forEach(function (type) {
-    type.split(' ').forEach(function (part) {
-      fns[part] = chain(fns[part], types[type]);
-    });
-  });
+  var fns = Object.keys(types || {}).reduce(function (prev, curr) {
+    return curr.split(' ').reduce(function (prev, curr) {
+      prev[curr] = chain(prev[curr], types[curr]);
+      return prev;
+    }, prev);
+  }, {});
 
   return function (elem, diff) {
     chain(fns[diff.type])(elem, diff);
@@ -32,22 +31,21 @@ function makeSpecificCallback (types) {
 }
 
 function makeGlobalCallback (attrs) {
-  var fns = {};
-
   if (typeof attrs === 'function') {
     return attrs;
   }
 
-  Object.keys(attrs).forEach(function (name) {
-    fns[name] = makeSpecificCallback(attrs[name] || {});
-  });
+  var fns = Object.keys(attrs || {}).reduce(function (prev, curr) {
+    prev[curr] = makeSpecificCallback(attrs[curr]);
+    return prev;
+  }, {});
 
   return function (elem, diff) {
     chain(fns[diff.name])(elem, diff);
   };
 }
 
-export default function (attributes = {}) {
+export default function (attributes) {
   var callback = makeGlobalCallback(attributes);
   return function (name, newValue, oldValue) {
     callback(this, {
