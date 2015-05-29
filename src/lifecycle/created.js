@@ -3,8 +3,6 @@ import camelCase from '../util/camel-case';
 import data from '../util/data';
 import events from './events';
 import hasOwn from '../util/has-own';
-import matchesSelector from '../util/matches-selector';
-import objEach from '../util/obj-each';
 
 var elProto = window.Element.prototype;
 var oldSetAttribute = elProto.setAttribute;
@@ -24,13 +22,13 @@ function patchAttributeMethods (elem) {
   elem.setAttribute = function (name, newValue) {
     var oldValue = this.getAttribute(name);
     oldSetAttribute.call(elem, name, newValue);
-    elem.attributeChangedCallback(name, String(newValue), oldValue);
+    elem.attributeChangedCallback(name, oldValue, String(newValue));
   };
 
   elem.removeAttribute = function (name) {
     var oldValue = this.getAttribute(name);
     oldRemoveAttribute.call(elem, name);
-    elem.attributeChangedCallback(name, null, oldValue);
+    elem.attributeChangedCallback(name, oldValue, null);
   };
 }
 
@@ -59,7 +57,7 @@ function triggerAttributesCreated (elem) {
   var attrs = elem.attributes;
   for (let attr in attrs) {
     attr = attrs[attr];
-    elem.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
+    elem.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
   }
 }
 
@@ -90,7 +88,7 @@ export default function (options) {
     }
 
     targetData.created = true;
-    native = !!element.createCallback;
+    native = !!element.createdCallback;
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.

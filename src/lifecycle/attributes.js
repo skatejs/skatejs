@@ -47,7 +47,7 @@ function makeGlobalCallback (attrs) {
 
 export default function (attributes) {
   var callback = makeGlobalCallback(attributes);
-  return function (name, newValue, oldValue) {
+  return function (name, oldValue, newValue) {
     callback(this, {
       name: name,
       newValue: newValue === undefined ? null : newValue,

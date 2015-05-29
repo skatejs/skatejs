@@ -1,13 +1,8 @@
-export default function chain (...callbacks) {
-  callbacks = callbacks.filter(Boolean).map(function (callback) {
-    return typeof callback === 'object' ?
-      chain.apply(null, callback) :
-      callback;
-  });
+export default function chain (...cbs) {
+  cbs = cbs.filter(Boolean).map(cb =>
+    typeof cb === 'object' ? chain.apply(null, cb) : cb);
 
   return function (...args) {
-    callbacks.forEach((callback) => {
-      callback.apply(this, args);
-    });
+    cbs.forEach(cb => cb.apply(this, args));
   };
 }
