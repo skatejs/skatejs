@@ -33,43 +33,24 @@ __233ca7c3eccc5d0b7863e069d525eab7 = (function () {
   exports['default'] = chain;
   
   function chain() {
-    for (var _len = arguments.length, callbacks = Array(_len), _key = 0; _key < _len; _key++) {
-      callbacks[_key] = arguments[_key];
+    for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
+      cbs[_key] = arguments[_key];
     }
   
-    callbacks = callbacks.filter(Boolean).map(function (callback) {
-      return typeof callback === 'object' ? chain.apply(null, callback) : callback;
+    cbs = cbs.filter(Boolean).map(function (cb) {
+      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
     });
   
     return function () {
+      var _this = this;
+  
       for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         args[_key2] = arguments[_key2];
       }
   
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-  
-      try {
-        for (var _iterator = callbacks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var callback = _step.value;
-  
-          callback.apply(null, args);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator['return']) {
-            _iterator['return']();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
+      cbs.forEach(function (cb) {
+        return cb.apply(_this, args);
+      });
     };
   }
   
@@ -481,36 +462,6 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/obj-each.js
-__aa16eea962f403b3d0a38c93350a466d = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _hasOwn = __6d7878404f872c72787f01cd3e06dd21;
-  
-  var _hasOwn2 = _interopRequireDefault(_hasOwn);
-  
-  exports['default'] = function (obj, fn) {
-    for (var a in obj) {
-      if ((0, _hasOwn2['default'])(obj, a)) {
-        fn(obj[a], a);
-      }
-    }
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/lifecycle/created.js
 __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var module = {
@@ -544,14 +495,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   var _utilHasOwn2 = _interopRequireDefault(_utilHasOwn);
   
-  var _utilMatchesSelector = __365bd8b7bbfb2b50d6dbfd830f0aa927;
-  
-  var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
-  
-  var _utilObjEach = __aa16eea962f403b3d0a38c93350a466d;
-  
-  var _utilObjEach2 = _interopRequireDefault(_utilObjEach);
-  
   var elProto = window.Element.prototype;
   var oldSetAttribute = elProto.setAttribute;
   var oldRemoveAttribute = elProto.removeAttribute;
@@ -570,13 +513,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     elem.setAttribute = function (name, newValue) {
       var oldValue = this.getAttribute(name);
       oldSetAttribute.call(elem, name, newValue);
-      elem.attributeChangedCallback(name, String(newValue), oldValue);
+      elem.attributeChangedCallback(name, oldValue, String(newValue));
     };
   
     elem.removeAttribute = function (name) {
       var oldValue = this.getAttribute(name);
       oldRemoveAttribute.call(elem, name);
-      elem.attributeChangedCallback(name, null, oldValue);
+      elem.attributeChangedCallback(name, oldValue, null);
     };
   }
   
@@ -602,29 +545,10 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   }
   
   function triggerAttributesCreated(elem) {
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
-  
-    try {
-      for (var _iterator = elem.attributes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var attr = _step.value;
-  
-        elem.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
-      }
-    } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
-    } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator['return']) {
-          _iterator['return']();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+    var attrs = elem.attributes;
+    for (var attr in attrs) {
+      attr = attrs[attr];
+      elem.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
     }
   }
   
@@ -648,7 +572,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   exports['default'] = function (options) {
     return function () {
-      var native;
+      var isNative;
       var element = this;
       var targetData = (0, _utilData2['default'])(element, options.id);
   
@@ -657,14 +581,14 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       }
   
       targetData.created = true;
-      native = !!element.createCallback;
+      isNative = !!element.createdCallback;
   
       // Native custom elements automatically inherit the prototype. We apply
       // the user defined prototype directly to the element instance if not.
       // Skate will always add lifecycle callbacks to the definition. If native
       // custom elements are being used, one of these will already be on the
       // element. If not, then we are initialising via non-native means.
-      if (!native) {
+      if (!isNative) {
         getPrototypes(options.prototype).forEach(function (proto) {
           if (!proto.isPrototypeOf(element)) {
             (0, _utilAssign2['default'])(element, proto);
@@ -681,7 +605,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       markAsResolved(element, options);
       (0, _events2['default'])(element, options.events);
   
-      if (!native) {
+      if (!isNative) {
         patchAttributeMethods(element);
       }
   
@@ -998,7 +922,7 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   
   exports['default'] = function (attributes) {
     var callback = makeGlobalCallback(attributes);
-    return function (name, newValue, oldValue) {
+    return function (name, oldValue, newValue) {
       callback(this, {
         name: name,
         newValue: newValue === undefined ? null : newValue,
@@ -1193,6 +1117,36 @@ __a56dab24700df352eb84caec3fe615e5 = (function () {
       }
   
       parent = parent.parentNode;
+    }
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/obj-each.js
+__aa16eea962f403b3d0a38c93350a466d = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _hasOwn = __6d7878404f872c72787f01cd3e06dd21;
+  
+  var _hasOwn2 = _interopRequireDefault(_hasOwn);
+  
+  exports['default'] = function (obj, fn) {
+    for (var a in obj) {
+      if ((0, _hasOwn2['default'])(obj, a)) {
+        fn(obj[a], a);
+      }
     }
   };
   
@@ -1957,8 +1911,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     options.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(options);
     options.prototype.attributeChangedCallback = (0, _lifecycleAttributes2['default'])(options.attributes);
     Object.defineProperties(options, {
-      id: readonly(id),
-      isElement: readonly(isElement)
+      id: readonly(id)
     });
   
     // Make a constructor for the definition.
