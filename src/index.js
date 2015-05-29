@@ -1,4 +1,5 @@
 import { TYPE_ELEMENT } from './constants';
+import apiChain from './util/chain';
 import apiCreate from './api/create';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
@@ -6,7 +7,7 @@ import apiType from './api/type';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import attached from './lifecycle/attached';
-import attribute from './lifecycle/attribute';
+import attribute from './lifecycle/attributes';
 import created from './lifecycle/created';
 import dashCase from './util/dash-case';
 import debounce from './util/debounce';
@@ -113,11 +114,10 @@ function skate (id, userOptions) {
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
   options.prototype.detachedCallback = detached(options);
-  options.prototype.attributeChangedCallback = attribute(options);
+  options.prototype.attributeChangedCallback = attribute(options.attributes);
   Object.defineProperties(options, {
     id: readonly(id),
-    isElement: readonly(isElement),
-    isNative: readonly(isNative)
+    isElement: readonly(isElement)
   });
 
   // Make a constructor for the definition.
@@ -139,6 +139,7 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
+skate.chain = apiChain;
 skate.create = apiCreate;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;

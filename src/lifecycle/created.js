@@ -1,9 +1,12 @@
 import assign from '../util/assign';
 import camelCase from '../util/camel-case';
 import data from '../util/data';
+import events from './events';
 import hasOwn from '../util/has-own';
-import matchesSelector from '../util/matches-selector';
-import objEach from '../util/obj-each';
+
+var elProto = window.Element.prototype;
+var oldSetAttribute = elProto.setAttribute;
+var oldRemoveAttribute = elProto.removeAttribute;
 
 function getPrototypes (proto) {
   var chains = [proto];
@@ -15,142 +18,68 @@ function getPrototypes (proto) {
   return chains;
 }
 
-function parseEvent (e) {
-  var parts = e.split(' ');
-  return {
-    name: parts.shift(),
-    delegate: parts.join(' ')
-  };
-}
-
-function addEventListeners (target, component) {
-  if (typeof component.events !== 'object') {
-    return;
-  }
-
-  function makeHandler (handler, delegate) {
-    return function (e) {
-      // If we're not delegating, trigger directly on the component element.
-      if (!delegate) {
-        return handler(target, e, target);
-      }
-
-      // If we're delegating, but the target doesn't match, then we've have
-      // to go up the tree until we find a matching ancestor or stop at the
-      // component element, or document. If a matching ancestor is found, the
-      // handler is triggered on it.
-      var current = e.target;
-
-      while (current && current !== document && current !== target.parentNode) {
-        if (matchesSelector(current, delegate)) {
-          return handler(target, e, current);
-        }
-
-        current = current.parentNode;
-      }
-    };
-  }
-
-  objEach(component.events, function (handlers, name) {
-    handlers = typeof handlers === 'function' ? [handlers] : handlers;
-    var evt = parseEvent(name);
-    var useCapture = !!evt.delegate && (evt.name === 'blur' || evt.name === 'focus');
-
-    handlers.forEach(function (handler) {
-      target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
-    });
-  });
-}
-
-function patchAttributeMethods (element, options) {
-  if (options.isNative) {
-    return;
-  }
-
-  var oldSetAttribute = element.setAttribute.bind(element);
-  var oldRemoveAttribute = element.removeAttribute.bind(element);
-
-  element.setAttribute = function (name, newValue) {
+function patchAttributeMethods (elem) {
+  elem.setAttribute = function (name, newValue) {
     var oldValue = this.getAttribute(name);
-    oldSetAttribute(name, newValue);
-    element.attributeChangedCallback(name, oldValue, String(newValue));
+    oldSetAttribute.call(elem, name, newValue);
+    elem.attributeChangedCallback(name, oldValue, String(newValue));
   };
 
-  element.removeAttribute = function (name) {
+  elem.removeAttribute = function (name) {
     var oldValue = this.getAttribute(name);
-    oldRemoveAttribute(name);
-    element.attributeChangedCallback(name, oldValue, null);
+    oldRemoveAttribute.call(elem, name);
+    elem.attributeChangedCallback(name, oldValue, null);
   };
 }
 
-function defineAttributeProperty (target, attribute) {
-  Object.defineProperty(target, camelCase(attribute), {
+function defineAttributeProperty (elem, attr) {
+  Object.defineProperty(elem, camelCase(attr), {
     get: function () {
-      return this.getAttribute(attribute);
+      return this.getAttribute(attr);
     },
     set: function (value) {
-      if (value === undefined) {
-        this.removeAttribute(attribute);
-      } else {
-        this.setAttribute(attribute, value);
-      }
+      return value === undefined ?
+        this.removeAttribute(attr) :
+        this.setAttribute(attr, value);
     }
   });
 }
 
-function addAttributeToPropertyLinks (target, component) {
-  var componentAttributes = component.attributes;
-
-  if (typeof componentAttributes !== 'object') {
-    return;
-  }
-
-  for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && target[attribute] === undefined) {
-      defineAttributeProperty(target, attribute);
+function linkProperties (elem, attrs = {}) {
+  for (var attr in attrs) {
+    if (hasOwn(attrs, attr) && elem[attr] === undefined) {
+      defineAttributeProperty(elem, attr);
     }
   }
 }
 
-function initAttributes (target, component) {
-  var componentAttributes = component.attributes;
-
-  if (typeof componentAttributes !== 'object') {
-    return;
-  }
-
-  for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && hasOwn(componentAttributes[attribute], 'value') && !target.hasAttribute(attribute)) {
-      var value = componentAttributes[attribute].value;
-      value = typeof value === 'function' ? value(target) : value;
-      target.setAttribute(attribute, value);
-    }
+function triggerAttributesCreated (elem) {
+  var attrs = elem.attributes;
+  for (let attr in attrs) {
+    attr = attrs[attr];
+    elem.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
   }
 }
 
-function triggerAttributesCreated (target) {
-  var a;
-  var attrs = target.attributes;
-  var attrsCopy = [];
-  var attrsLen = attrs.length;
+function markAsResolved (elem, opts) {
+  elem.removeAttribute(opts.unresolvedAttribute);
+  elem.setAttribute(opts.resolvedAttribute, '');
+}
 
-  for (a = 0; a < attrsLen; a++) {
-    attrsCopy.push(attrs[a]);
-  }
-
-  // In default web components, attribute changes aren't triggered for
-  // attributes that already exist on an element when it is bound. This sucks
-  // when you want to reuse and separate code for attributes away from your
-  // lifecycle callbacks. Skate will initialise each attribute by calling the
-  // created callback for the attributes that already exist on the element.
-  for (a = 0; a < attrsLen; a++) {
-    var attr = attrsCopy[a];
-    target.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
-  }
+function initAttributes (elem, attrs = {}) {
+  Object.keys(attrs).forEach(function (name) {
+    var attr = attrs[name];
+    if (attr && attr.value && !elem.hasAttribute(name)) {
+      var value = attr.value;
+      value = typeof value === 'function' ? value(elem) : value;
+      elem.setAttribute(name, value);
+    }
+  });
 }
 
 export default function (options) {
   return function () {
+    var native;
     var element = this;
     var targetData = data(element, options.id);
 
@@ -159,13 +88,14 @@ export default function (options) {
     }
 
     targetData.created = true;
+    native = !!element.createdCallback;
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.
     // Skate will always add lifecycle callbacks to the definition. If native
     // custom elements are being used, one of these will already be on the
     // element. If not, then we are initialising via non-native means.
-    if (!element.attributeChangedCallback) {
+    if (!native) {
       getPrototypes(options.prototype).forEach(function (proto) {
         if (!proto.isPrototypeOf(element)) {
           assign(element, proto);
@@ -179,17 +109,20 @@ export default function (options) {
       options.template(element);
     }
 
-    element.removeAttribute(options.unresolvedAttribute);
-    element.setAttribute(options.resolvedAttribute, '');
-    addEventListeners(element, options);
-    patchAttributeMethods(element, options);
-    addAttributeToPropertyLinks(element, options);
-    initAttributes(element, options);
+    markAsResolved(element, options);
+    events(element, options.events);
+
+    if (!native) {
+      patchAttributeMethods(element);
+    }
+
+    linkProperties(element, options.attributes);
+    initAttributes(element, options.attributes);
 
     if (options.created) {
       options.created(element);
     }
 
-    triggerAttributesCreated(element, options);
+    triggerAttributesCreated(element);
   };
 }
