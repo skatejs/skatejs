@@ -1,8 +1,13 @@
-export default function (...callbacks) {
-  callbacks = callbacks.filter(Boolean);
-  return function (...callbackArgs) {
-    callbacks.forEach((callback) => {
-      callback.apply(null, callbackArgs);
-    });
+export default function chain (...callbacks) {
+  callbacks = callbacks.filter(Boolean).map(function (callback) {
+    return typeof callback === 'object' ?
+      chain.apply(null, callback) :
+      callback;
+  });
+
+  return (...args) => {
+    for (let callback of callbacks) {
+      callback.apply(null, args);
+    }
   };
 }
