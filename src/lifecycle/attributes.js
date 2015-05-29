@@ -1,4 +1,4 @@
-import chain from '../api/chain';
+import chain from '../util/chain';
 
 function resolveType (oldValue, newValue) {
   var newValueIsString = typeof newValue === 'string';

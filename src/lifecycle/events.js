@@ -1,4 +1,4 @@
-import chain from '../api/chain';
+import chain from '../util/chain';
 import matchesSelector from '../util/matches-selector';
 
 function parseEvent (e) {

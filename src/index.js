@@ -1,5 +1,5 @@
 import { TYPE_ELEMENT } from './constants';
-import apiChain from './api/chain';
+import apiChain from './util/chain';
 import apiCreate from './api/create';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
