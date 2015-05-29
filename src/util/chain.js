@@ -5,9 +5,9 @@ export default function chain (...callbacks) {
       callback;
   });
 
-  return (...args) => {
-    for (let callback of callbacks) {
-      callback.apply(null, args);
-    }
+  return function (...args) {
+    callbacks.forEach((callback) => {
+      callback.apply(this, args);
+    });
   };
 }

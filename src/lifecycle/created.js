@@ -56,7 +56,9 @@ function linkProperties (elem, attrs = {}) {
 }
 
 function triggerAttributesCreated (elem) {
-  for (var attr of elem.attributes) {
+  var attrs = elem.attributes;
+  for (let attr in attrs) {
+    attr = attrs[attr];
     elem.attributeChangedCallback(attr.nodeName, attr.value || attr.nodeValue, null);
   }
 }
