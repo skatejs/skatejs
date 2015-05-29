@@ -7,7 +7,7 @@ import apiType from './api/type';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import attached from './lifecycle/attached';
-import attribute from './lifecycle/attribute';
+import attribute from './lifecycle/attributes';
 import created from './lifecycle/created';
 import dashCase from './util/dash-case';
 import debounce from './util/debounce';

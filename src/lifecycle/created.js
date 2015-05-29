@@ -1,6 +1,7 @@
 import assign from '../util/assign';
 import camelCase from '../util/camel-case';
 import data from '../util/data';
+import events from './events';
 import hasOwn from '../util/has-own';
 import matchesSelector from '../util/matches-selector';
 import objEach from '../util/obj-each';
@@ -17,53 +18,6 @@ function getPrototypes (proto) {
   }
   chains.reverse();
   return chains;
-}
-
-function parseEvent (e) {
-  var parts = e.split(' ');
-  return {
-    name: parts.shift(),
-    delegate: parts.join(' ')
-  };
-}
-
-function addEventListeners (target, component) {
-  if (typeof component.events !== 'object') {
-    return;
-  }
-
-  function makeHandler (handler, delegate) {
-    return function (e) {
-      // If we're not delegating, trigger directly on the component element.
-      if (!delegate) {
-        return handler(target, e, target);
-      }
-
-      // If we're delegating, but the target doesn't match, then we've have
-      // to go up the tree until we find a matching ancestor or stop at the
-      // component element, or document. If a matching ancestor is found, the
-      // handler is triggered on it.
-      var current = e.target;
-
-      while (current && current !== document && current !== target.parentNode) {
-        if (matchesSelector(current, delegate)) {
-          return handler(target, e, current);
-        }
-
-        current = current.parentNode;
-      }
-    };
-  }
-
-  objEach(component.events, function (handlers, name) {
-    handlers = typeof handlers === 'function' ? [handlers] : handlers;
-    var evt = parseEvent(name);
-    var useCapture = !!evt.delegate && (evt.name === 'blur' || evt.name === 'focus');
-
-    handlers.forEach(function (handler) {
-      target.addEventListener(evt.name, makeHandler(handler, evt.delegate), useCapture);
-    });
-  });
 }
 
 function patchAttributeMethods (elem) {
@@ -156,7 +110,7 @@ export default function (options) {
     }
 
     markAsResolved(element, options);
-    addEventListeners(element, options);
+    events(element, options.events);
 
     if (!native) {
       patchAttributeMethods(element);
