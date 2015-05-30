@@ -3,20 +3,11 @@ import camelCase from '../util/camel-case';
 import data from '../util/data';
 import events from './events';
 import hasOwn from '../util/has-own';
+import protos from '../util/protos';
 
 var elProto = window.Element.prototype;
 var oldSetAttribute = elProto.setAttribute;
 var oldRemoveAttribute = elProto.removeAttribute;
-
-function getPrototypes (proto) {
-  var chains = [proto];
-  /* jshint boss: true */
-  while (proto = Object.getPrototypeOf(proto)) {
-    chains.push(proto);
-  }
-  chains.reverse();
-  return chains;
-}
 
 function patchAttributeMethods (elem) {
   elem.setAttribute = function (name, newValue) {
@@ -96,7 +87,7 @@ export default function (options) {
     // custom elements are being used, one of these will already be on the
     // element. If not, then we are initialising via non-native means.
     if (!isNative) {
-      getPrototypes(options.prototype).forEach(function (proto) {
+      protos(options.prototype).forEach(function (proto) {
         if (!proto.isPrototypeOf(element)) {
           assign(element, proto);
         }

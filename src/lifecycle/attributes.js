@@ -1,4 +1,27 @@
 import chain from '../util/chain';
+import protos from '../util/protos';
+
+var lifecycleNames = ['created', 'updated', 'removed'];
+
+function unique (arr) {
+  return arr.filter(function (key, idx, arr) {
+    return arr.lastIndexOf(key) === idx;
+  });
+}
+
+function keys (obj = {}) {
+  return unique(protos(obj).reduce(function (prev, curr) {
+    return prev.concat(Object.getOwnPropertyNames(curr));
+  }, []));
+}
+
+function valid (obj) {
+  return keys(obj).filter(function (key) {
+    return lifecycleNames.some(function (val) {
+      return key.indexOf(val) !== -1;
+    });
+  });
+}
 
 function resolveType (oldValue, newValue) {
   var newValueIsString = typeof newValue === 'string';
@@ -18,15 +41,17 @@ function makeSpecificCallback (types) {
     return types;
   }
 
-  var fns = Object.keys(types || {}).reduce(function (prev, curr) {
-    return curr.split(' ').reduce(function (prev, curr) {
-      prev[curr] = chain(prev[curr], types[curr]);
-      return prev;
-    }, prev);
+  var map = valid(types).reduce(function (obj, unsplit) {
+    return unsplit.split(' ').reduce(function (obj, split) {
+      (obj[split] = obj[split] || []).push(unsplit);
+      return obj;
+    }, obj);
   }, {});
 
   return function (elem, diff) {
-    chain(fns[diff.type])(elem, diff);
+    map[diff.type].forEach(function (cb) {
+      types[cb](elem, diff);
+    });
   };
 }
 
@@ -41,7 +66,7 @@ function makeGlobalCallback (attrs) {
   }, {});
 
   return function (elem, diff) {
-    chain(fns[diff.name])(elem, diff);
+    chain(fns[diff.name]).call(this, elem, diff);
   };
 }
 
