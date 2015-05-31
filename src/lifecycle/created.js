@@ -100,13 +100,11 @@ export default function (options) {
       options.template(element);
     }
 
-    markAsResolved(element, options);
-    events(element, options.events);
-
     if (!isNative) {
       patchAttributeMethods(element);
     }
 
+    events(element, options.events);
     linkProperties(element, options.attributes);
     initAttributes(element, options.attributes);
 
@@ -115,5 +113,6 @@ export default function (options) {
     }
 
     triggerAttributesCreated(element);
+    markAsResolved(element, options);
   };
 }
