@@ -329,7 +329,7 @@ The second form of a callback takes an object of attribues and handlers.
 ```js
 skate('my-component', {
   attributes: {
-    'my-attribute': function handleInsertAndUpdate (element, change) {
+    'my-attribute': function handleAnyChange (element, change) {
 
     }
   }
@@ -341,6 +341,7 @@ This allows you to specify which attributes you want to listen to and will call 
 - The element is created with the corresponding attribute already on it.
 - The corresponding attribute is added to the element.
 - The corresponding attribute is updated on the element.
+- The corresponding attribute is removed from the element.
 
 The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
 
