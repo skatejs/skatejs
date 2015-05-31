@@ -5,6 +5,8 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -20,51 +22,14 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/chain.js
-__233ca7c3eccc5d0b7863e069d525eab7 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  exports['default'] = chain;
-  
-  function chain() {
-    for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
-      cbs[_key] = arguments[_key];
-    }
-  
-    cbs = cbs.filter(Boolean).map(function (cb) {
-      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
-    });
-  
-    return function () {
-      var _this = this;
-  
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-  
-      cbs.forEach(function (cb) {
-        return cb.apply(_this, args);
-      });
-    };
-  }
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/globals.js
 __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
+  
+  "use strict";
   
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -94,6 +59,8 @@ __6d7878404f872c72787f01cd3e06dd21 = (function () {
   };
   var exports = module.exports;
   
+  "use strict";
+  
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -113,6 +80,8 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -230,6 +199,8 @@ __1675a7174b713323cc232370699a2714 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -257,6 +228,8 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -273,12 +246,85 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/ignored.js
+__092f8936e5006bddcb3baf24320a5a06 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  
+  exports['default'] = function (element) {
+    var attrs = element.attributes;
+    return attrs && !!attrs[_constants.ATTR_IGNORE];
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/walk-tree.js
+__164e5750c20526cb74a9e443b730eeff = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
+  
+  var _ignored2 = _interopRequireDefault(_ignored);
+  
+  function walk(elem, fn, filter) {
+    if (elem.nodeType !== 1 || (0, _ignored2['default'])(elem) || filter && filter(elem) === false) {
+      return;
+    }
+  
+    var chren = elem.childNodes;
+    var child = chren && chren[0];
+  
+    while (child) {
+      walk(child, fn, filter);
+      child = child.nextSibling;
+    }
+  
+    fn(elem);
+  }
+  
+  exports['default'] = function (elems, fn, filter) {
+    for (var a = 0; a < elems.length; a++) {
+      walk(elems[a], fn, filter);
+    }
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/lifecycle/attached.js
 __2b55a083f45c9ef157662a1dc1674218 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -290,21 +336,38 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  exports['default'] = function (options) {
-    return function () {
-      var element = this;
-      var targetData = (0, _utilData2['default'])(element, options.id);
+  var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
   
-      if (targetData.attached) {
+  var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  exports['default'] = function (opts) {
+    return function () {
+      var elem = this;
+      var info = (0, _utilData2['default'])(elem, opts.id);
+  
+      if (info.attached) {
         return;
       }
   
-      targetData.attached = true;
-      targetData.detached = false;
-  
-      if (options.attached) {
-        options.attached(element);
+      if (!elem.attachedCallback) {
+        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+            return Ctor.prototype.createdCallback.call(elem);
+          });
+        }, function (elem) {
+          return !(0, _utilData2['default'])(elem, opts.id).attached;
+        });
       }
+  
+      info.attached = true;
+      if (opts.attached) {
+        opts.attached(elem);
+      }
+      info.detached = false;
     };
   };
   
@@ -319,6 +382,8 @@ __d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  "use strict";
   
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -352,6 +417,8 @@ __b31bb5afb2380ff92522588ee6157548 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -367,12 +434,55 @@ __b31bb5afb2380ff92522588ee6157548 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/chain.js
+__233ca7c3eccc5d0b7863e069d525eab7 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = chain;
+  
+  function chain() {
+    for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
+      cbs[_key] = arguments[_key];
+    }
+  
+    cbs = cbs.filter(Boolean).map(function (cb) {
+      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
+    });
+  
+    return function () {
+      var _this = this;
+  
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+  
+      cbs.forEach(function (cb) {
+        return cb.apply(_this, args);
+      });
+    };
+  }
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/util/matches-selector.js
 __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -403,6 +513,8 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -462,12 +574,42 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/protos.js
+__1d11a28624d684874cb270f137cc0122 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (proto) {
+    var chains = [proto];
+    /* jshint boss: true */
+    while (proto = Object.getPrototypeOf(proto)) {
+      chains.push(proto);
+    }
+    chains.reverse();
+    return chains;
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
 // src/lifecycle/created.js
 __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -495,19 +637,21 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   var _utilHasOwn2 = _interopRequireDefault(_utilHasOwn);
   
+  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
+  
+  var _utilProtos2 = _interopRequireDefault(_utilProtos);
+  
+  var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
+  
+  var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
   var elProto = window.Element.prototype;
   var oldSetAttribute = elProto.setAttribute;
   var oldRemoveAttribute = elProto.removeAttribute;
-  
-  function getPrototypes(proto) {
-    var chains = [proto];
-    /* jshint boss: true */
-    while (proto = Object.getPrototypeOf(proto)) {
-      chains.push(proto);
-    }
-    chains.reverse();
-    return chains;
-  }
   
   function patchAttributeMethods(elem) {
     elem.setAttribute = function (name, newValue) {
@@ -570,18 +714,18 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     });
   }
   
-  exports['default'] = function (options) {
+  exports['default'] = function (opts) {
     return function () {
       var isNative;
-      var element = this;
-      var targetData = (0, _utilData2['default'])(element, options.id);
+      var elem = this;
+      var info = (0, _utilData2['default'])(elem, opts.id);
   
-      if (targetData.created) {
+      if (info.created) {
         return;
       }
   
-      targetData.created = true;
-      isNative = !!element.createdCallback;
+      info.created = true;
+      isNative = !!elem.createdCallback;
   
       // Native custom elements automatically inherit the prototype. We apply
       // the user defined prototype directly to the element instance if not.
@@ -589,34 +733,44 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       // custom elements are being used, one of these will already be on the
       // element. If not, then we are initialising via non-native means.
       if (!isNative) {
-        getPrototypes(options.prototype).forEach(function (proto) {
-          if (!proto.isPrototypeOf(element)) {
-            (0, _utilAssign2['default'])(element, proto);
+        (0, _utilProtos2['default'])(opts.prototype).forEach(function (proto) {
+          if (!proto.isPrototypeOf(elem)) {
+            (0, _utilAssign2['default'])(elem, proto);
           }
         });
       }
   
       // We use the unresolved / resolved attributes to flag whether or not the
       // element has been templated or not.
-      if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
-        options.template(element);
+      if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
+        opts.template(elem);
       }
   
-      markAsResolved(element, options);
-      (0, _events2['default'])(element, options.events);
+      // Native custom elements initialise descendants before the current node.
+      if (!isNative) {
+        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+            return Ctor.prototype.createdCallback.call(elem);
+          });
+        }, function (elem) {
+          return !(0, _utilData2['default'])(elem, opts.id).created;
+        });
+      }
   
       if (!isNative) {
-        patchAttributeMethods(element);
+        patchAttributeMethods(elem);
       }
   
-      linkProperties(element, options.attributes);
-      initAttributes(element, options.attributes);
+      (0, _events2['default'])(elem, opts.events);
+      linkProperties(elem, opts.attributes);
+      initAttributes(elem, opts.attributes);
   
-      if (options.created) {
-        options.created(element);
+      if (opts.created) {
+        opts.created(elem);
       }
   
-      triggerAttributesCreated(element);
+      triggerAttributesCreated(elem);
+      markAsResolved(elem, opts);
     };
   };
   
@@ -631,6 +785,8 @@ __6f793202bae98770dbb2b598df7929ad = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  "use strict";
   
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -652,86 +808,14 @@ __6f793202bae98770dbb2b598df7929ad = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/ignored.js
-__092f8936e5006bddcb3baf24320a5a06 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  exports['default'] = function (element) {
-    var attrs = element.attributes;
-    return attrs && !!attrs[_constants.ATTR_IGNORE];
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/walk-tree.js
-__164e5750c20526cb74a9e443b730eeff = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
-  
-  var _ignored2 = _interopRequireDefault(_ignored);
-  
-  var NodeFilter = window.NodeFilter;
-  
-  function createElementTreeWalker(element) {
-    return document.createTreeWalker(element, NodeFilter.SHOW_ELEMENT, function (node) {
-      return (0, _ignored2['default'])(node) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
-    }, true);
-  }
-  
-  exports['default'] = function (elements, callback) {
-    var elementsLength = elements.length;
-    for (var a = 0; a < elementsLength; a++) {
-      var element = elements[a];
-  
-      // We screen the root node only. The rest of the nodes are screened in the
-      // tree walker.
-      if (element.nodeType !== 1 || (0, _ignored2['default'])(element)) {
-        continue;
-      }
-  
-      // The tree walker doesn't include the current element.
-      callback(element);
-  
-      var elementWalker = createElementTreeWalker(element);
-      while (elementWalker.nextNode()) {
-        callback(elementWalker.currentNode);
-      }
-    }
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/api/init.js
 __3add36046399fead5a83243849207ed7 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -804,6 +888,8 @@ __82110da8eb4359fb9724f67f4a12febe = (function () {
   };
   var exports = module.exports;
   
+  "use strict";
+  
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
@@ -825,6 +911,8 @@ __df5112248641660374a4ff3deedcb65e = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -849,6 +937,8 @@ __662bde51c096e9d79bf327311ea178e0 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -865,6 +955,8 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -874,6 +966,24 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
   
   var _utilChain2 = _interopRequireDefault(_utilChain);
+  
+  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
+  
+  var _utilProtos2 = _interopRequireDefault(_utilProtos);
+  
+  var lifecycleNames = ['created', 'updated', 'removed'];
+  
+  function validLifecycles(obj) {
+    return (0, _utilProtos2['default'])(obj || {}).reduce(function (prev, curr) {
+      return prev.concat(Object.getOwnPropertyNames(curr));
+    }, []).filter(function (key, idx, arr) {
+      return arr.lastIndexOf(key) === idx;
+    }).filter(function (key) {
+      return lifecycleNames.some(function (val) {
+        return key.indexOf(val) !== -1;
+      });
+    });
+  }
   
   function resolveType(oldValue, newValue) {
     var newValueIsString = typeof newValue === 'string';
@@ -893,15 +1003,17 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
       return types;
     }
   
-    var fns = Object.keys(types || {}).reduce(function (prev, curr) {
-      return curr.split(' ').reduce(function (prev, curr) {
-        prev[curr] = (0, _utilChain2['default'])(prev[curr], types[curr]);
-        return prev;
-      }, prev);
+    var map = validLifecycles(types).reduce(function (obj, unsplit) {
+      return unsplit.split(' ').reduce(function (obj, split) {
+        (obj[split] = obj[split] || []).push(unsplit);
+        return obj;
+      }, obj);
     }, {});
   
     return function (elem, diff) {
-      (0, _utilChain2['default'])(fns[diff.type])(elem, diff);
+      (map[diff.type] || []).forEach(function (cb) {
+        types[cb](elem, diff);
+      });
     };
   }
   
@@ -916,7 +1028,7 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
     }, {});
   
     return function (elem, diff) {
-      (0, _utilChain2['default'])(fns[diff.name])(elem, diff);
+      (0, _utilChain2['default'])(fns[diff.name]).call(this, elem, diff);
     };
   }
   
@@ -944,6 +1056,8 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -966,6 +1080,8 @@ __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  "use strict";
   
   Object.defineProperty(exports, "__esModule", {
     value: true
@@ -996,6 +1112,8 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -1055,6 +1173,8 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -1065,59 +1185,39 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  exports['default'] = function (options) {
-    return function () {
-      var element = this;
-      var targetData = (0, _utilData2['default'])(element, options.id);
+  var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
   
-      if (targetData.detached) {
+  var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  exports['default'] = function (opts) {
+    return function () {
+      var elem = this;
+      var info = (0, _utilData2['default'])(elem, opts.id);
+  
+      if (info.detached) {
         return;
       }
   
-      targetData.detached = true;
-  
-      if (options.detached) {
-        options.detached(element);
+      if (!elem.attachedCallback) {
+        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+            return Ctor.prototype.createdCallback.call(elem);
+          });
+        }, function (elem) {
+          return !(0, _utilData2['default'])(elem, opts.id).attached;
+        });
       }
   
-      targetData.attached = false;
+      info.detached = true;
+      if (opts.detached) {
+        opts.detached(elem);
+      }
+      info.attached = false;
     };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/get-closest-ignored-element.js
-__a56dab24700df352eb84caec3fe615e5 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
-  
-  var _ignored2 = _interopRequireDefault(_ignored);
-  
-  var DocumentFragment = window.DocumentFragment;
-  
-  exports['default'] = function (element) {
-    var parent = element;
-  
-    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
-      if ((0, _ignored2['default'])(parent)) {
-        return parent;
-      }
-  
-      parent = parent.parentNode;
-    }
   };
   
   module.exports = exports['default'];
@@ -1131,6 +1231,8 @@ __aa16eea962f403b3d0a38c93350a466d = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -1161,6 +1263,8 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -1497,6 +1601,8 @@ __53affcee25439c12726058fee7f75787 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -1515,13 +1621,13 @@ __53affcee25439c12726058fee7f75787 = (function () {
   
   var _lifecycleDetached2 = _interopRequireDefault(_lifecycleDetached);
   
-  var _utilGetClosestIgnoredElement = __a56dab24700df352eb84caec3fe615e5;
-  
-  var _utilGetClosestIgnoredElement2 = _interopRequireDefault(_utilGetClosestIgnoredElement);
-  
   var _globals = __906dce814f2e16e7f80d2aa958aa9ac6;
   
   var _globals2 = _interopRequireDefault(_globals);
+  
+  var _utilIgnored = __092f8936e5006bddcb3baf24320a5a06;
+  
+  var _utilIgnored2 = _interopRequireDefault(_utilIgnored);
   
   var _mutationObserver = __fcd21ac78247116a0bdde5374b0c4641;
   
@@ -1535,6 +1641,20 @@ __53affcee25439c12726058fee7f75787 = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
+  var DocumentFragment = window.DocumentFragment;
+  
+  function getClosestIgnoredElement(element) {
+    var parent = element;
+  
+    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
+      if ((0, _utilIgnored2['default'])(parent)) {
+        return parent;
+      }
+  
+      parent = parent.parentNode;
+    }
+  }
+  
   function documentObserverHandler(mutations) {
     var mutationsLen = mutations.length;
   
@@ -1546,7 +1666,7 @@ __53affcee25439c12726058fee7f75787 = (function () {
       // Since siblings are batched together, we check the first node's parent
       // node to see if it is ignored. If it is then we don't process any added
       // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !(0, _utilGetClosestIgnoredElement2['default'])(addedNodes[0].parentNode)) {
+      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
         (0, _utilWalkTree2['default'])(addedNodes, function (element) {
           var components = _registry2['default'].getForElement(element);
           var componentsLength = components.length;
@@ -1617,6 +1737,8 @@ __2a9c84628af99934db58f308e303b691 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -1634,7 +1756,6 @@ __2a9c84628af99934db58f308e303b691 = (function () {
     // Allow all types of components to be constructed.
     if (type === _constants.TYPE_ELEMENT) {
       element = document.createElement(parent || id);
-  
       if (parent) {
         element.setAttribute('is', id);
       }
@@ -1660,10 +1781,8 @@ __2a9c84628af99934db58f308e303b691 = (function () {
       // works.
       options.prototype = CustomElement.prototype;
   
-      // If they use the constructor we don't have to wait until it's attached.
-      if (options.prototype.createdCallback) {
-        options.prototype.createdCallback.call(element);
-      }
+      // Initialises. This will always exist.
+      options.prototype.createdCallback.call(element);
   
       return element;
     }
@@ -1687,6 +1806,8 @@ __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -1706,6 +1827,8 @@ __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
     exports: {}
   };
   var exports = module.exports;
+  
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
@@ -1727,6 +1850,8 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   };
   var exports = module.exports;
   
+  'use strict';
+  
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
@@ -1734,10 +1859,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
   var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
-  
-  var _utilChain2 = _interopRequireDefault(_utilChain);
   
   var _apiCreate = __1675a7174b713323cc232370699a2714;
   
@@ -1838,14 +1959,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     }
   }
   
-  function readonly(value) {
-    return {
-      configurable: false,
-      value: value,
-      writable: false
-    };
-  }
-  
   function dashCaseAttributeNames(options) {
     for (var _name in options.attributes) {
       var dashCasedName = (0, _utilDashCase2['default'])(_name);
@@ -1910,8 +2023,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     options.prototype.attachedCallback = (0, _lifecycleAttached2['default'])(options);
     options.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(options);
     options.prototype.attributeChangedCallback = (0, _lifecycleAttributes2['default'])(options.attributes);
-    Object.defineProperties(options, {
-      id: readonly(id)
+    Object.defineProperty(options, 'id', {
+      configurable: false,
+      value: id,
+      writable: false
     });
   
     // Make a constructor for the definition.
@@ -1933,7 +2048,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     return Ctor;
   }
   
-  skate.chain = _utilChain2['default'];
   skate.create = _apiCreate2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
