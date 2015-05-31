@@ -5,18 +5,19 @@ function walk (elem, fn, filter) {
     return;
   }
 
-  var child = elem.children[0];
+  var chren = elem.childNodes;
+  var child = chren && chren[0];
+
   while (child) {
     walk(child, fn, filter);
-    child = child.nextElementSibling;
+    child = child.nextSibling;
   }
 
   fn(elem);
 }
 
 export default function (elems, fn, filter) {
-  var len = elems.length;
-  for (let a = 0; a < len; a++) {
+  for (let a = 0; a < elems.length; a++) {
     walk(elems[a], fn, filter);
   }
 }
