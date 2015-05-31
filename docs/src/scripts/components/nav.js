@@ -1,10 +1,12 @@
-import skate from '../../../../src/skate';
-import template from 'skatejs-template-html';
+import shade from '../../../../node_modules/shadejs/src/index';
+import skate from '../../../../src/index';
 
 export default skate('skate-nav', {
-  template: template(`
+  template: shade(`
     <nav>
-      <content select="skate-item"></content>
+      <ul class="nav">
+        <content name="items" wrap="li" multiple></content>
+      </ul>
     </nav>
   `)
 });

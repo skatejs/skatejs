@@ -1,8 +1,8 @@
-import skate from '../../../../src/skate';
-import template from 'skatejs-template-html';
+import shade from '../../../../node_modules/shadejs/src/index';
+import skate from '../../../../src/index';
 
 export default skate('skate-item', {
-  template: template(`
+  template: shade(`
     <content></content>
   `)
 });

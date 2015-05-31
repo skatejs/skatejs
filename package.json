@@ -8,9 +8,10 @@
   "dependencies": {},
   "devDependencies": {
     "bootstrap": "^3.3.0",
-    "chippy": "treshugart/chippy#27799f274acd5f2f18902adb94ca8095ece1a1a5",
+    "chippy": "treshugart/chippy#dfc4c5022a103e81eeb0404c8026ddb1ca5fd6da",
     "gulp": "^3.8.11",
-    "gulp-auto-task": "0.0.1"
+    "gulp-auto-task": "0.0.1",
+    "shadejs": "../shade"
   },
   "scripts": {
     "deploy": "gulp deploy",
