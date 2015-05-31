@@ -80,16 +80,17 @@ describe('Unresolved attribute', function () {
     skate.init(helpers.fixture('<my-element unresolved></my-element>', tagName));
   });
 
-  it('should be considred "resolved" by the time created() is called', function () {
-    var tagName = helpers.safeTagName('my-element');
-    skate(tagName.safe, {
+  it('should be considred "resolved" after the created lifecycle finishes', function () {
+    var tag = helpers.safeTagName('my-element').safe;
+    skate(tag, {
       created: function (element) {
-        expect(element.hasAttribute('unresolved')).to.equal(false);
-        expect(element.hasAttribute('resolved')).to.equal(true);
+        expect(element.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
+        expect(element.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
       }
     });
 
-    skate.init(helpers.fixture('<my-element unresolved></my-element>', tagName));
+    var element = skate.init(helpers.fixture(`<${tag} unresolved></${tag}>`).children[0]);
+    expect(element.hasAttribute('resolved')).to.equal(true, 'should have resolved');
   });
 });
 
