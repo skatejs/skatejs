@@ -4,6 +4,8 @@ import data from '../util/data';
 import events from './events';
 import hasOwn from '../util/has-own';
 import protos from '../util/protos';
+import registry from '../polyfill/registry';
+import walkTree from '../util/walk-tree';
 
 var elProto = window.Element.prototype;
 var oldSetAttribute = elProto.setAttribute;
@@ -69,10 +71,11 @@ function initAttributes (elem, attrs = {}) {
 }
 
 export default function (options) {
+  var id = options.id;
   return function () {
     var isNative;
     var element = this;
-    var targetData = data(element, options.id);
+    var targetData = data(element, id);
 
     if (targetData.created) {
       return;
@@ -98,6 +101,15 @@ export default function (options) {
     // element has been templated or not.
     if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
       options.template(element);
+    }
+
+    // Native custom elements initialise descendants before the current node.
+    if (!isNative) {
+      walkTree(element.childNodes, function (elem) {
+        registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
+      }, function (elem) {
+        return !data(elem, id).created;
+      });
     }
 
     if (!isNative) {
