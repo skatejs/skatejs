@@ -11,7 +11,7 @@
     "chippy": "treshugart/chippy#dfc4c5022a103e81eeb0404c8026ddb1ca5fd6da",
     "gulp": "^3.8.11",
     "gulp-auto-task": "0.0.1",
-    "shadejs": "../shade"
+    "shadejs": "skatejs/shade#8b903d0a7c6ad884353b277b5f19e3e72e118d82"
   },
   "scripts": {
     "deploy": "gulp deploy",
