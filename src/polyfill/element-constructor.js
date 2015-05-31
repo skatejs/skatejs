@@ -15,7 +15,6 @@ function createElement (options) {
   // Allow all types of components to be constructed.
   if (type === TYPE_ELEMENT) {
     element = document.createElement(parent || id);
-
     if (parent) {
       element.setAttribute('is', id);
     }
@@ -41,10 +40,8 @@ export default function (options) {
     // works.
     options.prototype = CustomElement.prototype;
 
-    // If they use the constructor we don't have to wait until it's attached.
-    if (options.prototype.createdCallback) {
-      options.prototype.createdCallback.call(element);
-    }
+    // Initialises. This will always exist.
+    options.prototype.createdCallback.call(element);
 
     return element;
   }
