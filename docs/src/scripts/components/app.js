@@ -3,6 +3,6 @@ import skate from '../../../../src/index';
 
 export default skate('skate-app', {
   template: shade(`
-    <content name="innerHTML" multiple></content>
+    <content name="innerHTML"></content>
   `)
 });
