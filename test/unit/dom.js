@@ -7,10 +7,10 @@ describe('DOM', function () {
   describe('General DOM node interaction.', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
       var calls = 0;
+      var tag = helpers.safeTagName().safe;
 
-      var tagName = helpers.safeTagName('my-element');
-      skate.init(helpers.fixture('<div><my-element></my-element></div>', tagName));
-      skate(tagName.safe, {
+      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
+      skate(tag, {
         attached: function () {
           ++calls;
         }
@@ -24,15 +24,15 @@ describe('DOM', function () {
 
     it('Modules should pick up nodes attached to the DOM after they are defined.', function (done) {
       var calls = 0;
+      var tag = helpers.safeTagName().safe;
 
-      var tagName = helpers.safeTagName('my-element');
-      skate(tagName.safe, {
+      skate(tag, {
         attached: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div><my-element></my-element></div>', tagName));
+      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
         done();
@@ -41,15 +41,15 @@ describe('DOM', function () {
 
     it('should pick up descendants that are attached as part of an HTML block.', function (done) {
       var calls = 0;
+      var tag = helpers.safeTagName().safe;
 
-      var tagName = helpers.safeTagName('my-element');
-      skate(tagName.safe, {
+      skate(tag, {
         attached: function () {
           ++calls;
         }
       });
 
-      skate.init(helpers.fixture('<div><my-element></my-element></div>', tagName));
+      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
       helpers.afterMutations(function () {
         expect(calls).to.equal(1);
         done();
@@ -71,26 +71,29 @@ describe('DOM', function () {
 
     // IE 9 / 10 have the same bug with removeChild() as IE 11 does with innerHTML.
     it('should pick up descendants that are detached if an ancestor is detached.', function (done) {
-      var tagName = helpers.safeTagName('my-element');
-      skate(tagName.safe, {
+      var tag = helpers.safeTagName().safe;
+      skate(tag, {
         detached: function () {
           done();
         }
       });
 
-      skate.init(helpers.fixture('<div id="removing"><child><my-element></my-element></child></div>', tagName));
+      skate.init(helpers.fixture(`<div id="removing"><child><${tag}></${tag}></child></div>`));
       helpers.fixture().removeChild(document.getElementById('removing'));
     });
   });
 
   describe('SVG', function () {
     it('should work for any SVG element', function () {
-      var html = '<svg width="100" height="100">' +
-          '<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
-          '<circle class="my-circle" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />' +
-        '</svg>';
+      var tag = helpers.safeTagName().safe;
+      var html = `
+        <svg width="100" height="100">
+          <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+          <circle class="${tag}" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+        </svg>
+      `;
 
-      skate('my-circle', {
+      skate(tag, {
         type: skate.type.CLASSNAME,
         prototype: {
           skated: true
@@ -98,7 +101,7 @@ describe('DOM', function () {
       });
 
       skate.init(helpers.fixture(html));
-      expect(helpers.fixture().querySelector('.my-circle').skated).to.equal(true);
+      expect(helpers.fixture().querySelector(`.${tag}`).skated).to.equal(true);
     });
   });
 
@@ -106,14 +109,12 @@ describe('DOM', function () {
     var frag;
     var created;
     var attached;
-    var tagName;
     var MyEl;
 
     beforeEach(function () {
       created = false;
       attached = false;
-      tagName = helpers.safeTagName('my-element');
-      MyEl = skate(tagName.safe, {
+      MyEl = skate(helpers.safeTagName('my-element').safe, {
         created: function () {
           created = true;
         },

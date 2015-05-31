@@ -1,16 +1,30 @@
 import attached from '../lifecycle/attached';
 import created from '../lifecycle/created';
 import detached from '../lifecycle/detached';
-import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import globals from '../globals';
+import ignored from '../util/ignored';
 import MutationObserver from './mutation-observer';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
 
+var DocumentFragment = window.DocumentFragment;
+
+function getClosestIgnoredElement (element) {
+  var parent = element;
+
+  while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
+    if (ignored(parent)) {
+      return parent;
+    }
+
+    parent = parent.parentNode;
+  }
+}
+
 function documentObserverHandler (mutations) {
   var mutationsLen = mutations.length;
 
-  for (var a = 0; a < mutationsLen; a++) {
+  for (let a = 0; a < mutationsLen; a++) {
     var mutation = mutations[a];
     var addedNodes = mutation.addedNodes;
     var removedNodes = mutation.removedNodes;

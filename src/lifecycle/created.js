@@ -4,6 +4,8 @@ import data from '../util/data';
 import events from './events';
 import hasOwn from '../util/has-own';
 import protos from '../util/protos';
+import registry from '../polyfill/registry';
+import walkTree from '../util/walk-tree';
 
 var elProto = window.Element.prototype;
 var oldSetAttribute = elProto.setAttribute;
@@ -68,18 +70,18 @@ function initAttributes (elem, attrs = {}) {
   });
 }
 
-export default function (options) {
+export default function (opts) {
   return function () {
     var isNative;
-    var element = this;
-    var targetData = data(element, options.id);
+    var elem = this;
+    var info = data(elem, opts.id);
 
-    if (targetData.created) {
+    if (info.created) {
       return;
     }
 
-    targetData.created = true;
-    isNative = !!element.createdCallback;
+    info.created = true;
+    isNative = !!elem.createdCallback;
 
     // Native custom elements automatically inherit the prototype. We apply
     // the user defined prototype directly to the element instance if not.
@@ -87,32 +89,41 @@ export default function (options) {
     // custom elements are being used, one of these will already be on the
     // element. If not, then we are initialising via non-native means.
     if (!isNative) {
-      protos(options.prototype).forEach(function (proto) {
-        if (!proto.isPrototypeOf(element)) {
-          assign(element, proto);
+      protos(opts.prototype).forEach(function (proto) {
+        if (!proto.isPrototypeOf(elem)) {
+          assign(elem, proto);
         }
       });
     }
 
     // We use the unresolved / resolved attributes to flag whether or not the
     // element has been templated or not.
-    if (options.template && !element.hasAttribute(options.resolvedAttribute)) {
-      options.template(element);
+    if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
+      opts.template(elem);
+    }
+
+    // Native custom elements initialise descendants before the current node.
+    if (!isNative) {
+      walkTree(elem.childNodes, function (elem) {
+        registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
+      }, function (elem) {
+        return !data(elem, opts.id).created;
+      });
     }
 
     if (!isNative) {
-      patchAttributeMethods(element);
+      patchAttributeMethods(elem);
     }
 
-    events(element, options.events);
-    linkProperties(element, options.attributes);
-    initAttributes(element, options.attributes);
+    events(elem, opts.events);
+    linkProperties(elem, opts.attributes);
+    initAttributes(elem, opts.attributes);
 
-    if (options.created) {
-      options.created(element);
+    if (opts.created) {
+      opts.created(elem);
     }
 
-    triggerAttributesCreated(element);
-    markAsResolved(element, options);
+    triggerAttributesCreated(elem);
+    markAsResolved(elem, opts);
   };
 }
