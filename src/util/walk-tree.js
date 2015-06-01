@@ -16,6 +16,10 @@ function walk (elem, fn, filter) {
 }
 
 export default function (elems, fn, filter) {
+  if (elems.length === undefined) {
+    elems = [elems];
+  }
+
   for (let a = 0; a < elems.length; a++) {
     walk(elems[a], fn, filter);
   }
