@@ -8,12 +8,11 @@ function walk (elem, fn, filter) {
   var chren = elem.childNodes;
   var child = chren && chren[0];
 
+  fn(elem);
   while (child) {
     walk(child, fn, filter);
     child = child.nextSibling;
   }
-
-  fn(elem);
 }
 
 export default function (elems, fn, filter) {
