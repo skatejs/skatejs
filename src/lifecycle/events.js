@@ -5,7 +5,7 @@ var isShadowSelectorRegex = /(:host|::content|::shadow|\/deep\/)/;
 var ShadowRoot = window.ShadowRoot;
 
 function parseEvent (e) {
-  var parts = e.split(/\s+/);
+  var parts = e.split(' ');
   return {
     name: parts.shift(),
     delegate: parts.join(' ')
