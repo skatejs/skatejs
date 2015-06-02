@@ -22,11 +22,11 @@ describe('lifecycle/events', function () {
       btn.dispatchEvent(new CustomEvent('click', { bubbles: true }));
     }
 
-    function assertDispatchClick (delegateSelector, btnId) {
+    function assertDispatchClick (delegateSelector, btnId, assertionValue) {
       var btn = div.querySelector('* /deep/ #' + btnId);
       events(div, { ['click ' + delegateSelector + ' button']: assertDelegation(btn) });
       dispatchClick(btn);
-      expect(triggered).to.equal(true);
+      expect(triggered).to.equal(assertionValue);
     }
 
     beforeEach(function () {
@@ -58,36 +58,47 @@ describe('lifecycle/events', function () {
     });
 
 
+    // Light DOM
+
+    it('light dom', function () {
+      assertDispatchClick('', 'in-light-content', true);
+    });
+
+    it('light dom (nested)', function () {
+      assertDispatchClick('', 'in-deep-light-content', false);
+    });
+
+
     // ::content
 
     it('::shadow ::content', function () {
-      assertDispatchClick('::shadow ::content', 'in-light-content');
+      assertDispatchClick('::shadow ::content', 'in-light-content', true);
     });
 
     it('::shadow ::content (nested)', function () {
-      assertDispatchClick('::shadow ::content', 'in-deep-light-content');
+      assertDispatchClick('::shadow ::content', 'in-deep-light-content', true);
     });
 
 
     // ::shadow
 
     it(':host::shadow', function () {
-      assertDispatchClick(':host::shadow', 'in-shadow-root');
+      assertDispatchClick(':host::shadow', 'in-shadow-root', true);
     });
 
     it(':host::shadow (nested)', function () {
-      assertDispatchClick(':host::shadow', 'in-deep-shadow-root');
+      assertDispatchClick(':host::shadow', 'in-deep-shadow-root', true);
     });
 
 
     // /deep/
 
     it(':host /deep/', function () {
-      assertDispatchClick(':host /deep/', 'in-shadow-root');
+      assertDispatchClick(':host /deep/', 'in-shadow-root', true);
     });
 
     it(':host /deep/ (nested)', function () {
-      assertDispatchClick(':host /deep/', 'in-deep-shadow-root');
+      assertDispatchClick(':host /deep/', 'in-deep-shadow-root', true);
     });
   });
 });
