@@ -1,6 +1,9 @@
 import chain from '../util/chain';
 import matchesSelector from '../util/matches-selector';
 
+var isShadowSelectorRegex = /(::content|::shadow|\/deep\/)/;
+var ShadowRoot = window.ShadowRoot;
+
 function parseEvent (e) {
   var parts = e.split(' ');
   return {
@@ -10,13 +13,21 @@ function parseEvent (e) {
 }
 
 function makeDelegateHandler (elem, handler, delegate) {
+  var isShadowSelector = isShadowSelectorRegex.test(delegate);
   return function (e) {
-    var current = e.target;
+    var current = isShadowSelector ? e.path[0] : e.target;
     while (current && current !== document && current !== elem.parentNode) {
       if (matchesSelector(current, delegate)) {
         return handler(elem, e, current);
       }
+
       current = current.parentNode;
+
+      // This ensures that we pass by any ShadowRoots as calling matches() on
+      // them doesn't work.
+      if (isShadowSelector && current instanceof ShadowRoot) {
+        current = current.host;
+      }
     }
   };
 }

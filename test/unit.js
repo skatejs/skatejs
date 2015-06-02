@@ -9,6 +9,7 @@ import './unit/extending';
 import './unit/ignoring';
 import './unit/init';
 import './unit/lifecycle';
+import './unit/lifecycle/events';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
