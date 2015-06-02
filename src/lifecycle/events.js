@@ -23,9 +23,7 @@ function makeDelegateHandler (elem, handler, delegate) {
 
       current = current.parentNode;
 
-      // This ensures that we pass by any ShadowRoots as calling matches() on
-      // them doesn't work.
-      if (isShadowSelector && current instanceof ShadowRoot) {
+      if (current && ShadowRoot && current instanceof ShadowRoot) {
         current = current.host;
       }
     }
