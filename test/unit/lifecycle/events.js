@@ -15,7 +15,7 @@ describe('lifecycle/events', function () {
         triggered = true;
         expect(elem).to.equal(div);
         expect(curr).to.equal(btn);
-      }
+      };
     }
 
     function dispatchClick (btn) {
