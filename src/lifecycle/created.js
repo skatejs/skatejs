@@ -1,8 +1,6 @@
 import assign from '../util/assign';
-import camelCase from '../util/camel-case';
 import data from '../util/data';
 import events from './events';
-import hasOwn from '../util/has-own';
 import protos from '../util/protos';
 import registry from '../polyfill/registry';
 import walkTree from '../util/walk-tree';
@@ -23,27 +21,6 @@ function patchAttributeMethods (elem) {
     oldRemoveAttribute.call(elem, name);
     elem.attributeChangedCallback(name, oldValue, null);
   };
-}
-
-function defineAttributeProperty (elem, attr) {
-  Object.defineProperty(elem, camelCase(attr), {
-    get: function () {
-      return this.getAttribute(attr);
-    },
-    set: function (value) {
-      return value === undefined ?
-        this.removeAttribute(attr) :
-        this.setAttribute(attr, value);
-    }
-  });
-}
-
-function linkProperties (elem, attrs = {}) {
-  for (var attr in attrs) {
-    if (hasOwn(attrs, attr) && elem[attr] === undefined) {
-      defineAttributeProperty(elem, attr);
-    }
-  }
 }
 
 function triggerAttributesCreated (elem) {
@@ -116,7 +93,6 @@ export default function (opts) {
     }
 
     events(elem, opts.events);
-    linkProperties(elem, opts.attributes);
     initAttributes(elem, opts.attributes);
 
     if (opts.created) {

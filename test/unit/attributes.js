@@ -32,109 +32,6 @@ describe('attributes:', function () {
 
       expect(new MyEl().getAttribute('test')).equal('true');
     });
-
-    it('should not override if already specified', function () {
-      var tagName = helpers.safeTagName('my-el');
-
-      skate(tagName.safe, {
-        attributes: {
-          test: {
-            value: 'true'
-          }
-        }
-      });
-
-      expect(
-        skate.init(helpers.fixture('<my-el test="false"></my-el>', tagName))
-          .firstChild
-          .test
-      ).to.equal('false');
-    });
-  });
-
-  describe('should define properties for all watched attributes', function () {
-    var myEl;
-    var created = false;
-    var updated = false;
-    var removed = false;
-
-    beforeEach(function () {
-      var tagName = helpers.safeTagName('my-el');
-      var MyEl = skate(tagName.safe, {
-        attributes: {
-          camelCased: null,
-          'not-camel-cased': null,
-          'test-proxy': null,
-          'test-created': {
-            created: () => created = true
-          },
-          'test-lifecycle': {
-            created: () => created = true,
-            updated: () => updated = true,
-            removed: () => removed = true
-          },
-          'override': null
-        },
-        prototype: {
-          override: true
-        },
-        created: function (element) {
-          element.camelCased = true;
-          element.notCamelCased = true;
-          element.testCreated = true;
-        }
-      });
-
-      myEl = new MyEl();
-    });
-
-    it('should respect attributes that are already camel-cased', function () {
-      expect(myEl.camelCased).to.equal('true');
-    });
-
-    it('should camel-case the property name and leave the attribute name as is', function () {
-      expect(myEl.notCamelCased).to.equal('true');
-    });
-
-    it('should set the attribute when the property is set', function () {
-      myEl.setAttribute('test-proxy', false);
-      expect(myEl.testProxy).to.equal('false');
-    });
-
-    it('should set the property when the attribute is set', function () {
-      myEl.testProxy = true;
-      expect(myEl.getAttribute('test-proxy')).to.equal('true');
-    });
-
-    it('should call created after setting the default value', function () {
-      expect(myEl.testCreated).to.equal('true');
-      expect(created).to.equal(true);
-    });
-
-    it('should call created when the attribute is set for the first time', function () {
-      myEl.testLifecycle = true;
-      expect(myEl.testLifecycle).to.equal('true');
-      expect(created).to.equal(true);
-    });
-
-    it('should call updated when the attribute is subsequently set', function () {
-      window.doit = true;
-      myEl.testLifecycle = true;
-      myEl.testLifecycle = false;
-      window.doit = false;
-      expect(updated).to.equal(true);
-    });
-
-    it('should call removed when the attribute is set to "undefined".', function () {
-      myEl.testLifecycle = true;
-      myEl.testLifecycle = undefined;
-      expect(removed).to.equal(true);
-    });
-
-    it('should not override an existing property', function () {
-      myEl.setAttribute('override', 'false');
-      expect(myEl.override).to.equal(true);
-    });
   });
 
   describe('callbacks', function () {
@@ -344,9 +241,9 @@ describe('attributes:', function () {
         }
       });
       var el = new El();
-      el.attr = true;
-      el.attr = false;
-      el.attr = undefined;
+      el.setAttribute('attr', true);
+      el.setAttribute('attr', false);
+      el.removeAttribute('attr');
       expect(calls).to.equal(12);
     });
   });
