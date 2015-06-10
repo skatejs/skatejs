@@ -1,6 +1,7 @@
 import assign from '../util/assign';
 import data from '../util/data';
 import events from './events';
+import properties from './properties';
 import protos from '../util/protos';
 import registry from '../polyfill/registry';
 import walkTree from '../util/walk-tree';
@@ -47,59 +48,54 @@ function initAttributes (elem, attrs = {}) {
   });
 }
 
+function applyPrototype (elem, opts) {
+  protos(opts.prototype).forEach(function (proto) {
+    if (!proto.isPrototypeOf(elem)) {
+      assign(elem, proto);
+    }
+  });
+}
+
+function template (elem, opts) {
+  if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
+    opts.template(elem);
+  }
+}
+
+function callCreatedOnDescendants (elem, opts) {
+  walkTree(elem.childNodes, function (elem) {
+    registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
+  }, function (elem) {
+    return !data(elem, opts.id).created;
+  });
+}
+
+function callCreated (elem, opts) {
+  if (opts.created) {
+    opts.created(elem);
+  }
+}
+
 export default function (opts) {
+  /* jshint expr: true */
   return function () {
-    var isNative;
-    var elem = this;
-    var info = data(elem, opts.id);
+    var info = data(this, opts.id);
+    var isNative = this.createdCallback;
 
     if (info.created) {
       return;
     }
 
     info.created = true;
-    isNative = !!elem.createdCallback;
-
-    // Native custom elements automatically inherit the prototype. We apply
-    // the user defined prototype directly to the element instance if not.
-    // Skate will always add lifecycle callbacks to the definition. If native
-    // custom elements are being used, one of these will already be on the
-    // element. If not, then we are initialising via non-native means.
-    if (!isNative) {
-      protos(opts.prototype).forEach(function (proto) {
-        if (!proto.isPrototypeOf(elem)) {
-          assign(elem, proto);
-        }
-      });
-    }
-
-    // We use the unresolved / resolved attributes to flag whether or not the
-    // element has been templated or not.
-    if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
-      opts.template(elem);
-    }
-
-    // Native custom elements initialise descendants before the current node.
-    if (!isNative) {
-      walkTree(elem.childNodes, function (elem) {
-        registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
-      }, function (elem) {
-        return !data(elem, opts.id).created;
-      });
-    }
-
-    if (!isNative) {
-      patchAttributeMethods(elem);
-    }
-
-    events(elem, opts.events);
-    initAttributes(elem, opts.attributes);
-
-    if (opts.created) {
-      opts.created(elem);
-    }
-
-    triggerAttributesCreated(elem);
-    markAsResolved(elem, opts);
+    isNative || applyPrototype(this, opts);
+    properties(this, opts.properties);
+    template(this, opts);
+    isNative || callCreatedOnDescendants(this, opts);
+    isNative || patchAttributeMethods(this);
+    events(this, opts.events);
+    initAttributes(this, opts.attributes);
+    callCreated(this, opts);
+    triggerAttributesCreated(this);
+    markAsResolved(this, opts);
   };
 }
