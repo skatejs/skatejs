@@ -105,7 +105,7 @@ function skate (id, userOptions) {
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
   options.prototype.detachedCallback = detached(options);
-  options.prototype.attributeChangedCallback = attribute(options.attributes);
+  options.prototype.attributeChangedCallback = attribute(options);
   Object.defineProperty(options, 'id', {
     configurable: false,
     value: id,
