@@ -20,6 +20,12 @@ export default function (elem, props = {}) {
       attributeToPropertyMap[dashCase(name)] = name;
     }
 
+    if (typeof prop.value === 'function') {
+      elem[name] = prop.value();
+    } else if (typeof prop.value !== 'undefined') {
+      elem[name] = prop.value;
+    }
+
     (prop.deps || []).forEach(
       dependency => elem.addEventListener(
         `${EVENT_PREFIX}${dependency}`,

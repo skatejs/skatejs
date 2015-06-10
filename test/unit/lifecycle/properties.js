@@ -133,4 +133,32 @@ describe('lifecycle/properties', function () {
     el.setAttribute('prop-name1', 'some value');
     expect(triggered).to.equal(true);
   });
+
+  it('default value (scalar)', function () {
+    skate(elem.safe, {
+      properties: {
+        propName1: {
+          value: 'test'
+        }
+      }
+    });
+
+    var el = elem.create();
+    expect(el.propName1).to.equal('test');
+  });
+
+  it('default value (function)', function () {
+    skate(elem.safe, {
+      properties: {
+        propName1: {
+          value: function () {
+            return 'test';
+          }
+        }
+      }
+    });
+
+    var el = elem.create();
+    expect(el.propName1).to.equal('test');
+  });
 });
