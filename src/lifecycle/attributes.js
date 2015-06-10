@@ -1,4 +1,6 @@
 import chain from '../util/chain';
+import data from '../util/data';
+import notify from './notify';
 import protos from '../util/protos';
 
 var lifecycleNames = ['created', 'updated', 'removed'];
@@ -60,11 +62,18 @@ function makeGlobalCallback (attrs) {
 export default function (opts) {
   var callback = makeGlobalCallback(opts.attributes);
   return function (name, oldValue, newValue) {
+    var attributeToPropertyMap = data(this).attributeToPropertyMap;
+
     callback(this, {
       name: name,
       newValue: newValue === undefined ? null : newValue,
       oldValue: oldValue === undefined ? null : oldValue,
       type: resolveType(oldValue, newValue)
     });
+
+    // Ensure properties are notified of this change.
+    if (attributeToPropertyMap[name]) {
+      notify(this, attributeToPropertyMap[name]);
+    }
   };
 }

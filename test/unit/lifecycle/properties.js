@@ -131,6 +131,6 @@ describe('lifecycle/properties', function () {
     var el = elem.create();
     el.addEventListener('skate-property-propName1', () => triggered = true);
     el.setAttribute('prop-name1', 'some value');
-    expect(triggered.to.equal(true));
+    expect(triggered).to.equal(true);
   });
 });
