@@ -58,8 +58,7 @@ function makeGlobalCallback (attrs) {
 }
 
 export default function (opts) {
-  var attributes = opts.attributes;
-  var callback = makeGlobalCallback(attributes);
+  var callback = makeGlobalCallback(opts.attributes);
   return function (name, oldValue, newValue) {
     callback(this, {
       name: name,
