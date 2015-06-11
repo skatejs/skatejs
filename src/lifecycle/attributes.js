@@ -1,6 +1,5 @@
 import chain from '../util/chain';
 import data from '../util/data';
-import notify from './notify';
 import protos from '../util/protos';
 
 var lifecycleNames = ['created', 'updated', 'removed'];
@@ -62,7 +61,8 @@ function makeGlobalCallback (attrs) {
 export default function (opts) {
   var callback = makeGlobalCallback(opts.attributes);
   return function (name, oldValue, newValue) {
-    var attributeToPropertyMap = data(this).attributeToPropertyMap;
+    var info = data(this);
+    var attributeToPropertyMap = info.attributeToPropertyMap;
 
     callback(this, {
       name: name,
@@ -71,9 +71,13 @@ export default function (opts) {
       type: resolveType(oldValue, newValue)
     });
 
-    // Ensure properties are notified of this change.
-    if (attributeToPropertyMap[name]) {
-      notify(this, attributeToPropertyMap[name]);
+    // Ensure properties are notified of this change. We only do this if we're
+    // not already updating the attribute from the property. This is so that
+    // we don't invoke an infinite loop.
+    if (attributeToPropertyMap[name] && !info.updatingAttribute) {
+      info.updatingProperty = true;
+      this[attributeToPropertyMap[name]] = newValue;
+      info.updatingProperty = false;
     }
   };
 }

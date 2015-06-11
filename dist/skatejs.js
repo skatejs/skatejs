@@ -589,121 +589,6 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
-// src/lifecycle/notify.js
-__0f623056f5caba5978dc609003737a10 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  exports['default'] = function (elem, name) {
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent('' + _constants.EVENT_PREFIX + '' + name, false, false, undefined);
-    elem.dispatchEvent(e);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/lifecycle/property.js
-__5fe98810c40e8fe796b072491d45fcc6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
-  
-  var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
-  
-  var _notify2 = __0f623056f5caba5978dc609003737a10;
-  
-  var _notify3 = _interopRequireDefault(_notify2);
-  
-  exports['default'] = function (name, prop) {
-    if (typeof prop !== 'object') {
-      prop = { type: prop };
-    }
-  
-    var _attribute = prop.attr;
-    var _coerce = prop.type || function (val) {
-      return val;
-    };
-    var _dependencies = prop.deps || [];
-    var _getter = prop.get;
-    var _isBoolean = prop.type && prop.type === Boolean;
-    var _notify = prop.notify;
-    var _setter = prop.set;
-    var _value;
-  
-    if (_attribute === true) {
-      _attribute = (0, _utilDashCase2['default'])(name);
-    }
-  
-    return {
-      get: function get() {
-        var _this = this;
-  
-        if (_getter) {
-          return _getter.apply(this, _dependencies.map(function (dep) {
-            return _this[dep];
-          }));
-        }
-  
-        if (_attribute) {
-          return _isBoolean ? this.hasAttribute(_attribute) : _coerce(this.getAttribute(_attribute));
-        }
-  
-        return _value;
-      },
-  
-      set: function set(value) {
-        _value = _coerce(value);
-  
-        if (_attribute) {
-          if (_isBoolean && _value) {
-            this.setAttribute(_attribute, '');
-          } else if (_isBoolean && !_value) {
-            this.removeAttribute(_attribute, '');
-          } else {
-            this.setAttribute(_attribute, _value);
-          }
-        }
-  
-        if (_setter) {
-          _setter.call(this, _value);
-        }
-  
-        if (_notify) {
-          (0, _notify3['default'])(this, name);
-        }
-      }
-    };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/lifecycle/properties.js
 __dc805244a3f10da2e05ae57781968d52 = (function () {
   var module = {
@@ -729,13 +614,93 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _notify = __0f623056f5caba5978dc609003737a10;
+  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
   
-  var _notify2 = _interopRequireDefault(_notify);
+  var _events2 = _interopRequireDefault(_events);
   
-  var _property = __5fe98810c40e8fe796b072491d45fcc6;
+  function returnSingle(elem, name) {
+    return function () {
+      return elem[name];
+    };
+  }
   
-  var _property2 = _interopRequireDefault(_property);
+  function returnMultiple(elem, name, selector) {
+    return function () {
+      return [].slice.call(elem.querySelectorAll(selector)).map(function (desc) {
+        return desc[name];
+      });
+    };
+  }
+  
+  function resolveReturnFunction(elem) {
+    return function (name) {
+      var parts = name.split(' ');
+      return parts[1] ? returnMultiple(elem, parts[0], parts[1]) : returnSingle(elem, name);
+    };
+  }
+  
+  function notify(elem, name) {
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent('' + _constants.EVENT_PREFIX + '' + name, true, false, undefined);
+    elem.dispatchEvent(e);
+  }
+  
+  function property(name, prop) {
+    if (typeof prop !== 'object') {
+      prop = { type: prop };
+    }
+  
+    var _attribute = prop.attr;
+    var _coerce = prop.type || function (val) {
+      return val;
+    };
+    var _dependencies = prop.deps || [];
+    var _getter = prop.get;
+    var _isBoolean = prop.type && prop.type === Boolean;
+    var _notify = prop.notify;
+    var _setter = prop.set;
+    var _value;
+  
+    if (_attribute === true) {
+      _attribute = (0, _utilDashCase2['default'])(name);
+    }
+  
+    return {
+      get: function get() {
+        return _getter ? _getter.apply(this, _dependencies.map(resolveReturnFunction(this))) : _value;
+      },
+  
+      set: function set(value) {
+        var info = (0, _utilData2['default'])(this);
+        _value = _coerce(value);
+  
+        // We check first to see if we're already updating the property from
+        // the attribute. If we are, then there's no need to update the attribute
+        // especially because it would invoke an infinite loop.
+        if (_attribute && !info.updatingProperty) {
+          info.updatingAttribute = true;
+  
+          if (_isBoolean && _value) {
+            this.setAttribute(_attribute, '');
+          } else if (_isBoolean && !_value) {
+            this.removeAttribute(_attribute, '');
+          } else {
+            this.setAttribute(_attribute, _value);
+          }
+  
+          info.updatingAttribute = false;
+        }
+  
+        if (_setter) {
+          _setter.call(this, _value);
+        }
+  
+        if (_notify) {
+          notify(this, name);
+        }
+      }
+    };
+  }
   
   exports['default'] = function (elem) {
     var props = arguments[1] === undefined ? {} : arguments[1];
@@ -749,7 +714,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
         return;
       }
   
-      Object.defineProperty(elem, name, (0, _property2['default'])(name, prop));
+      Object.defineProperty(elem, name, property(name, prop));
   
       if (prop.attr) {
         attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
@@ -761,9 +726,10 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
         elem[name] = prop.value;
       }
   
-      (prop.deps || []).forEach(function (dependency) {
-        return elem.addEventListener('' + _constants.EVENT_PREFIX + '' + dependency, _notify2['default'].bind(null, elem, name));
-      });
+      (0, _events2['default'])(elem, (prop.deps || []).reduce(function (prev, curr) {
+        prev[_constants.EVENT_PREFIX + curr] = notify.bind(null, elem, name);
+        return prev;
+      }, {}));
     });
   };
   
@@ -1138,10 +1104,6 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _notify = __0f623056f5caba5978dc609003737a10;
-  
-  var _notify2 = _interopRequireDefault(_notify);
-  
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
   var _utilProtos2 = _interopRequireDefault(_utilProtos);
@@ -1210,7 +1172,8 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   exports['default'] = function (opts) {
     var callback = makeGlobalCallback(opts.attributes);
     return function (name, oldValue, newValue) {
-      var attributeToPropertyMap = (0, _utilData2['default'])(this).attributeToPropertyMap;
+      var info = (0, _utilData2['default'])(this);
+      var attributeToPropertyMap = info.attributeToPropertyMap;
   
       callback(this, {
         name: name,
@@ -1219,9 +1182,13 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
         type: resolveType(oldValue, newValue)
       });
   
-      // Ensure properties are notified of this change.
-      if (attributeToPropertyMap[name]) {
-        (0, _notify2['default'])(this, attributeToPropertyMap[name]);
+      // Ensure properties are notified of this change. We only do this if we're
+      // not already updating the attribute from the property. This is so that
+      // we don't invoke an infinite loop.
+      if (attributeToPropertyMap[name] && !info.updatingAttribute) {
+        info.updatingProperty = true;
+        this[attributeToPropertyMap[name]] = newValue;
+        info.updatingProperty = false;
       }
     };
   };
