@@ -589,6 +589,32 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
+// src/api/notify.js
+__9c53d0b55c601bcd876ca0d265bb297a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  
+  exports['default'] = function (elem, name) {
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent('' + _constants.EVENT_PREFIX + '' + name, true, false, undefined);
+    elem.dispatchEvent(e);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/lifecycle/properties.js
 __dc805244a3f10da2e05ae57781968d52 = (function () {
   var module = {
@@ -618,6 +644,10 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   var _events2 = _interopRequireDefault(_events);
   
+  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
+  
+  var _apiNotify2 = _interopRequireDefault(_apiNotify);
+  
   function returnSingle(elem, name) {
     return function () {
       return elem[name];
@@ -637,12 +667,6 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       var parts = name.split(' ');
       return parts[1] ? returnMultiple(elem, parts[0], parts[1]) : returnSingle(elem, name);
     };
-  }
-  
-  function notify(elem, name) {
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent('' + _constants.EVENT_PREFIX + '' + name, true, false, undefined);
-    elem.dispatchEvent(e);
   }
   
   function property(name, prop) {
@@ -696,7 +720,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
         }
   
         if (_notify) {
-          notify(this, name);
+          (0, _apiNotify2['default'])(this, name);
         }
       }
     };
@@ -727,7 +751,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       }
   
       (0, _events2['default'])(elem, (prop.deps || []).reduce(function (prev, curr) {
-        prev[_constants.EVENT_PREFIX + curr] = notify.bind(null, elem, name);
+        prev[_constants.EVENT_PREFIX + curr] = _apiNotify2['default'].bind(null, elem, name);
         return prev;
       }, {}));
     });
@@ -1038,6 +1062,32 @@ __82110da8eb4359fb9724f67f4a12febe = (function () {
   return module.exports;
 }).call(this);
 
+// src/api/ready.js
+__83ca289f5309abef55c338a9f7a22385 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (callback) {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      callback();
+    } else {
+      document.addEventListener('DOMContentLoaded', callback);
+    }
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/api/type.js
 __df5112248641660374a4ff3deedcb65e = (function () {
   var module = {
@@ -1081,123 +1131,6 @@ __662bde51c096e9d79bf327311ea178e0 = (function () {
   return module.exports;
 }).call(this);
 
-// src/lifecycle/attributes.js
-__3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
-  
-  var _utilChain2 = _interopRequireDefault(_utilChain);
-  
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
-  
-  var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
-  
-  var _utilProtos2 = _interopRequireDefault(_utilProtos);
-  
-  var lifecycleNames = ['created', 'updated', 'removed'];
-  
-  function validLifecycles(obj) {
-    return (0, _utilProtos2['default'])(obj || {}).reduce(function (prev, curr) {
-      return prev.concat(Object.getOwnPropertyNames(curr));
-    }, []).filter(function (key, idx, arr) {
-      return arr.lastIndexOf(key) === idx;
-    }).filter(function (key) {
-      return lifecycleNames.some(function (val) {
-        return key.indexOf(val) !== -1;
-      });
-    });
-  }
-  
-  function resolveType(oldValue, newValue) {
-    var newValueIsString = typeof newValue === 'string';
-    var oldValueIsString = typeof oldValue === 'string';
-  
-    if (!oldValueIsString && newValueIsString) {
-      return 'created';
-    } else if (oldValueIsString && newValueIsString) {
-      return 'updated';
-    } else if (oldValueIsString && !newValueIsString) {
-      return 'removed';
-    }
-  }
-  
-  function makeSpecificCallback(types) {
-    if (typeof types === 'function') {
-      return types;
-    }
-  
-    var map = validLifecycles(types).reduce(function (obj, unsplit) {
-      return unsplit.split(' ').reduce(function (obj, split) {
-        (obj[split] = obj[split] || []).push(unsplit);
-        return obj;
-      }, obj);
-    }, {});
-  
-    return function (elem, diff) {
-      (map[diff.type] || []).forEach(function (cb) {
-        types[cb](elem, diff);
-      });
-    };
-  }
-  
-  function makeGlobalCallback(attrs) {
-    if (typeof attrs === 'function') {
-      return attrs;
-    }
-  
-    var fns = Object.keys(attrs || {}).reduce(function (prev, curr) {
-      prev[curr] = makeSpecificCallback(attrs[curr]);
-      return prev;
-    }, {});
-  
-    return function (elem, diff) {
-      (0, _utilChain2['default'])(fns[diff.name]).call(this, elem, diff);
-    };
-  }
-  
-  exports['default'] = function (opts) {
-    var callback = makeGlobalCallback(opts.attributes);
-    return function (name, oldValue, newValue) {
-      var info = (0, _utilData2['default'])(this);
-      var attributeToPropertyMap = info.attributeToPropertyMap;
-  
-      callback(this, {
-        name: name,
-        newValue: newValue === undefined ? null : newValue,
-        oldValue: oldValue === undefined ? null : oldValue,
-        type: resolveType(oldValue, newValue)
-      });
-  
-      // Ensure properties are notified of this change. We only do this if we're
-      // not already updating the attribute from the property. This is so that
-      // we don't invoke an infinite loop.
-      if (attributeToPropertyMap[name] && !info.updatingAttribute) {
-        info.updatingProperty = true;
-        this[attributeToPropertyMap[name]] = newValue;
-        info.updatingProperty = false;
-      }
-    };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/util/debounce.js
 __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   var module = {
@@ -1226,125 +1159,6 @@ __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   };
   
   module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
-// src/defaults.js
-__46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  exports['default'] = {
-    // Called when the element is attached to the document.
-    attached: function attached() {},
-  
-    // Attribute lifecycle callback or callbacks.
-    attributes: undefined,
-  
-    // Called when the element is created.
-    created: function created() {},
-  
-    // Called when the element is detached from the document.
-    detached: function detached() {},
-  
-    // The events to manage the binding and unbinding of during the definition's
-    // lifecycle.
-    events: undefined,
-  
-    // Restricts a particular definition to binding explicitly to an element with
-    // a tag name that matches the specified value.
-    'extends': undefined,
-  
-    // The ID of the definition. This is automatically set in the `skate()`
-    // function.
-    id: '',
-  
-    // Properties and methods to add to each element.
-    prototype: {},
-  
-    // The attribute name to add after calling the created() callback.
-    resolvedAttribute: 'resolved',
-  
-    // The template to replace the content of the element with.
-    template: undefined,
-  
-    // The type of bindings to allow.
-    type: _constants.TYPE_ELEMENT,
-  
-    // The attribute name to remove after calling the created() callback.
-    unresolvedAttribute: 'unresolved'
-  };
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/lifecycle/detached.js
-__8e93439e8a566d1586c9903a75a6a785 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
-  
-  var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
-  
-  var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
-  
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
-  
-  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
-  
-  exports['default'] = function (opts) {
-    return function () {
-      var elem = this;
-      var info = (0, _utilData2['default'])(elem, opts.id);
-  
-      if (info.detached) {
-        return;
-      }
-  
-      if (!elem.attachedCallback) {
-        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
-          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
-            return Ctor.prototype.createdCallback.call(elem);
-          });
-        }, function (elem) {
-          return !(0, _utilData2['default'])(elem, opts.id).attached;
-        });
-      }
-  
-      info.detached = true;
-      if (opts.detached) {
-        opts.detached(elem);
-      }
-      info.attached = false;
-    };
-  };
-  
-  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -1718,6 +1532,280 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
   return module.exports;
 }).call(this);
 
+// src/api/watch.js
+__4390c5a519e11ff146587075b0e7abac = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _polyfillMutationObserver = __fcd21ac78247116a0bdde5374b0c4641;
+  
+  var _polyfillMutationObserver2 = _interopRequireDefault(_polyfillMutationObserver);
+  
+  exports['default'] = function (elem, callback) {
+    var observer = new _polyfillMutationObserver2['default'](function (mutations) {
+      mutations.forEach(function (mutation) {
+        callback(mutation.addedNodes || [], mutation.removedNodes || []);
+      });
+    });
+  
+    observer.observe(elem, {
+      childList: true
+    });
+  
+    return observer;
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/lifecycle/attributes.js
+__3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
+  
+  var _utilChain2 = _interopRequireDefault(_utilChain);
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
+  
+  var _utilProtos2 = _interopRequireDefault(_utilProtos);
+  
+  var lifecycleNames = ['created', 'updated', 'removed'];
+  
+  function validLifecycles(obj) {
+    return (0, _utilProtos2['default'])(obj || {}).reduce(function (prev, curr) {
+      return prev.concat(Object.getOwnPropertyNames(curr));
+    }, []).filter(function (key, idx, arr) {
+      return arr.lastIndexOf(key) === idx;
+    }).filter(function (key) {
+      return lifecycleNames.some(function (val) {
+        return key.indexOf(val) !== -1;
+      });
+    });
+  }
+  
+  function resolveType(oldValue, newValue) {
+    var newValueIsString = typeof newValue === 'string';
+    var oldValueIsString = typeof oldValue === 'string';
+  
+    if (!oldValueIsString && newValueIsString) {
+      return 'created';
+    } else if (oldValueIsString && newValueIsString) {
+      return 'updated';
+    } else if (oldValueIsString && !newValueIsString) {
+      return 'removed';
+    }
+  }
+  
+  function makeSpecificCallback(types) {
+    if (typeof types === 'function') {
+      return types;
+    }
+  
+    var map = validLifecycles(types).reduce(function (obj, unsplit) {
+      return unsplit.split(' ').reduce(function (obj, split) {
+        (obj[split] = obj[split] || []).push(unsplit);
+        return obj;
+      }, obj);
+    }, {});
+  
+    return function (elem, diff) {
+      (map[diff.type] || []).forEach(function (cb) {
+        types[cb](elem, diff);
+      });
+    };
+  }
+  
+  function makeGlobalCallback(attrs) {
+    if (typeof attrs === 'function') {
+      return attrs;
+    }
+  
+    var fns = Object.keys(attrs || {}).reduce(function (prev, curr) {
+      prev[curr] = makeSpecificCallback(attrs[curr]);
+      return prev;
+    }, {});
+  
+    return function (elem, diff) {
+      (0, _utilChain2['default'])(fns[diff.name]).call(this, elem, diff);
+    };
+  }
+  
+  exports['default'] = function (opts) {
+    var callback = makeGlobalCallback(opts.attributes);
+    return function (name, oldValue, newValue) {
+      var info = (0, _utilData2['default'])(this);
+      var attributeToPropertyMap = info.attributeToPropertyMap;
+  
+      callback(this, {
+        name: name,
+        newValue: newValue === undefined ? null : newValue,
+        oldValue: oldValue === undefined ? null : oldValue,
+        type: resolveType(oldValue, newValue)
+      });
+  
+      // Ensure properties are notified of this change. We only do this if we're
+      // not already updating the attribute from the property. This is so that
+      // we don't invoke an infinite loop.
+      if (attributeToPropertyMap[name] && !info.updatingAttribute) {
+        info.updatingProperty = true;
+        this[attributeToPropertyMap[name]] = newValue;
+        info.updatingProperty = false;
+      }
+    };
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/defaults.js
+__46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  
+  exports['default'] = {
+    // Called when the element is attached to the document.
+    attached: function attached() {},
+  
+    // Attribute lifecycle callback or callbacks.
+    attributes: undefined,
+  
+    // Called when the element is created.
+    created: function created() {},
+  
+    // Called when the element is detached from the document.
+    detached: function detached() {},
+  
+    // The events to manage the binding and unbinding of during the definition's
+    // lifecycle.
+    events: undefined,
+  
+    // Restricts a particular definition to binding explicitly to an element with
+    // a tag name that matches the specified value.
+    'extends': undefined,
+  
+    // The ID of the definition. This is automatically set in the `skate()`
+    // function.
+    id: '',
+  
+    // Properties and methods to add to each element.
+    prototype: {},
+  
+    // The attribute name to add after calling the created() callback.
+    resolvedAttribute: 'resolved',
+  
+    // The template to replace the content of the element with.
+    template: undefined,
+  
+    // The type of bindings to allow.
+    type: _constants.TYPE_ELEMENT,
+  
+    // The attribute name to remove after calling the created() callback.
+    unresolvedAttribute: 'unresolved'
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/lifecycle/detached.js
+__8e93439e8a566d1586c9903a75a6a785 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
+  
+  var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  exports['default'] = function (opts) {
+    return function () {
+      var elem = this;
+      var info = (0, _utilData2['default'])(elem, opts.id);
+  
+      if (info.detached) {
+        return;
+      }
+  
+      if (!elem.attachedCallback) {
+        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+            return Ctor.prototype.createdCallback.call(elem);
+          });
+        }, function (elem) {
+          return !(0, _utilData2['default'])(elem, opts.id).attached;
+        });
+      }
+  
+      info.detached = true;
+      if (opts.detached) {
+        opts.detached(elem);
+      }
+      info.attached = false;
+    };
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/polyfill/document-observer.js
 __53affcee25439c12726058fee7f75787 = (function () {
   var module = {
@@ -1996,6 +2084,14 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiNoConflict2 = _interopRequireDefault(_apiNoConflict);
   
+  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
+  
+  var _apiNotify2 = _interopRequireDefault(_apiNotify);
+  
+  var _apiReady = __83ca289f5309abef55c338a9f7a22385;
+  
+  var _apiReady2 = _interopRequireDefault(_apiReady);
+  
   var _apiType = __df5112248641660374a4ff3deedcb65e;
   
   var _apiType2 = _interopRequireDefault(_apiType);
@@ -2003,6 +2099,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
+  
+  var _apiWatch = __4390c5a519e11ff146587075b0e7abac;
+  
+  var _apiWatch2 = _interopRequireDefault(_apiWatch);
   
   var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
   
@@ -2076,11 +2176,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   }
   
   function initDocumentWhenReady() {
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      initDocument();
-    } else {
-      document.addEventListener('DOMContentLoaded', initDocument);
-    }
+    (0, _apiReady2['default'])(initDocument);
   }
   
   function dashCaseAttributeNames(options) {
@@ -2175,8 +2271,11 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.create = _apiCreate2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
+  skate.notify = _apiNotify2['default'];
+  skate.ready = _apiReady2['default'];
   skate.type = _apiType2['default'];
   skate.version = _apiVersion2['default'];
+  skate.watch = _apiWatch2['default'];
   
   // Global
   window.skate = skate;
