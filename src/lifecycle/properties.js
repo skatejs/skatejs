@@ -2,6 +2,7 @@ import { EVENT_PREFIX } from '../constants';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 import events from './events';
+import notify from '../api/notify';
 
 function returnSingle (elem, name) {
   return function () {
@@ -20,12 +21,6 @@ function resolveReturnFunction (elem) {
     var parts = name.split(' ');
     return parts[1] ? returnMultiple(elem, parts[0], parts[1]) : returnSingle(elem, name);
   };
-}
-
-function notify (elem, name) {
-  var e = document.createEvent('CustomEvent');
-  e.initCustomEvent(`${EVENT_PREFIX}${name}`, true, false, undefined);
-  elem.dispatchEvent(e);
 }
 
 function property (name, prop) {
