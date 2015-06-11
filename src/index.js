@@ -2,8 +2,11 @@ import { TYPE_ELEMENT } from './constants';
 import apiCreate from './api/create';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
+import apiNotify from './api/notify';
+import apiReady from './api/ready';
 import apiType from './api/type';
 import apiVersion from './api/version';
+import apiWatch from './api/watch';
 import assign from './util/assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attributes';
@@ -35,11 +38,7 @@ function initDocument () {
 }
 
 function initDocumentWhenReady () {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initDocument();
-  } else {
-    document.addEventListener('DOMContentLoaded', initDocument);
-  }
+  apiReady(initDocument);
 }
 
 function dashCaseAttributeNames (options) {
@@ -134,8 +133,11 @@ function skate (id, userOptions) {
 skate.create = apiCreate;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
+skate.notify = apiNotify;
+skate.ready = apiReady;
 skate.type = apiType;
 skate.version = apiVersion;
+skate.watch = apiWatch;
 
 // Global
 window.skate = skate;
