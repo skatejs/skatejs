@@ -12,7 +12,7 @@ function returnSingle (elem, name) {
 function returnMultiple (elem, name, selector) {
   return function () {
     return [].slice.call(elem.querySelectorAll(selector)).map(desc => desc[name]);
-  }
+  };
 }
 
 function resolveReturnFunction (elem) {
