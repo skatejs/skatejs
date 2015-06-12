@@ -62,7 +62,7 @@ export default function (opts) {
   var callback = makeGlobalCallback(opts.attributes);
   return function (name, oldValue, newValue) {
     var info = data(this);
-    var attributeToPropertyMap = info.attributeToPropertyMap;
+    var attributeToPropertyMap = info.attributeToPropertyMap || {};
 
     callback(this, {
       name: name,
