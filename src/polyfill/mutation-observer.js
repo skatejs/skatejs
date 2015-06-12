@@ -8,6 +8,35 @@ var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObs
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
 
+() => {
+  if (!isIe) {
+    return;
+  }
+
+  // We have to call the old innerHTML getter and setter.
+  var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+
+  // This redefines the innerHTML property so that we can ensure that events
+  // are properly triggered.
+  Object.defineProperty(elementPrototype, 'innerHTML', {
+    get: function () {
+      return oldInnerHTML.get.call(this);
+    },
+    set: function (html) {
+      walkTree(this, function (node) {
+        var mutationEvent = document.createEvent('MutationEvent');
+        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+        node.dispatchEvent(mutationEvent);
+      });
+
+      oldInnerHTML.set.call(this, html);
+    }
+  });
+
+  // Flag so the polyfill is used for all subsequent Mutation Observer objects.
+  isFixingIe = true;
+}();
+
 /**
  * Creates a new mutation record.
  *
@@ -77,54 +106,6 @@ function MutationObserver (callback) {
   this.callback = callback;
   this.elements = [];
 }
-
-/**
- * IE 11 has a bug that prevents descendant nodes from being reported as removed
- * to a mutation observer in IE 11 if an ancestor node's innerHTML is reset.
- * This same bug also happens when using Mutation Events in IE 9 / 10. Because of
- * this, we must ensure that observers and events get triggered properly on
- * those descendant nodes. In order to do this we have to override `innerHTML`
- * and then manually trigger an event.
- *
- * See: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
- *
- * @returns {undefined}
- */
-MutationObserver.fixIe = function () {
-  // Fix once only if we need to.
-  if (!isIe || isFixingIe) {
-    return;
-  }
-
-  // We have to call the old innerHTML getter and setter.
-  var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
-
-  // This redefines the innerHTML property so that we can ensure that events
-  // are properly triggered.
-  Object.defineProperty(elementPrototype, 'innerHTML', {
-    get: function () {
-      return oldInnerHTML.get.call(this);
-    },
-    set: function (html) {
-      walkTree(this, function (node) {
-        var mutationEvent = document.createEvent('MutationEvent');
-        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
-        node.dispatchEvent(mutationEvent);
-      });
-
-      oldInnerHTML.set.call(this, html);
-    }
-  });
-
-  // Flag so the polyfill is used for all subsequent Mutation Observer objects.
-  isFixingIe = true;
-};
-
-Object.defineProperty(MutationObserver, 'isFixingIe', {
-  get: function () {
-    return isFixingIe;
-  }
-});
 
 MutationObserver.prototype = {
   observe: function (target, options) {
