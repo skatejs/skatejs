@@ -1,4 +1,5 @@
 import './boot';
+import './unit/api/event';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/create';
@@ -9,7 +10,6 @@ import './unit/extending';
 import './unit/ignoring';
 import './unit/init';
 import './unit/lifecycle';
-import './unit/lifecycle/events';
 import './unit/lifecycle/properties';
 import './unit/registration';
 import './unit/registry';

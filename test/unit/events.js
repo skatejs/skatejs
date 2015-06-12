@@ -17,7 +17,7 @@ describe('Events', function () {
 
     var myEl = new MyEl();
 
-    helpers.dispatchEvent('test', myEl);
+    skate.emit(myEl, 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -67,22 +67,26 @@ describe('Events', function () {
 
     skate(tagName, {
       events: {
-        'click': function (element, e) {
+        'click': function (e) {
           ++dispatched;
-          expect(element.tagName).to.equal(tagName.toUpperCase());
+          expect(this.tagName).to.equal(tagName.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal(tagName.toUpperCase());
         },
-
-        'click a': function (element, e, current) {
+        'click a': function (e) {
           ++dispatched;
-          expect(element.tagName).to.equal(tagName.toUpperCase());
-          expect(current.tagName).to.equal('A');
+          expect(this.tagName).to.equal(tagName.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal('A');
         },
-        'click span': function (element, e) {
+        'click span': function (e) {
           ++dispatched;
-          expect(element.tagName).to.equal(tagName.toUpperCase());
+          expect(this.tagName).to.equal(tagName.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal('SPAN');
         }
       },
 

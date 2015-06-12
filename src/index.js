@@ -1,8 +1,11 @@
 import { TYPE_ELEMENT } from './constants';
+import apiChain from './api/chain';
 import apiCreate from './api/create';
+import apiEmit from './api/emit';
+import apiEvent from './api/event';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
-import apiNotify from './api/notify';
+import apiProperty from './api/property';
 import apiReady from './api/ready';
 import apiType from './api/type';
 import apiVersion from './api/version';
@@ -130,10 +133,13 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
+skate.chain = apiChain;
 skate.create = apiCreate;
+skate.emit = apiEmit;
+skate.event = apiEvent;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
-skate.notify = apiNotify;
+skate.property = apiProperty;
 skate.ready = apiReady;
 skate.type = apiType;
 skate.version = apiVersion;

@@ -1,4 +1,4 @@
-import chain from '../util/chain';
+import apiChain from '../api/chain';
 import data from '../util/data';
 import protos from '../util/protos';
 
@@ -54,7 +54,7 @@ function makeGlobalCallback (attrs) {
   }, {});
 
   return function (elem, diff) {
-    chain(fns[diff.name]).call(this, elem, diff);
+    apiChain(fns[diff.name]).call(this, elem, diff);
   };
 }
 

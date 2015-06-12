@@ -1,4 +1,5 @@
 import helperElement from '../../lib/element';
+import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
 
 describe('lifecycle/properties', function () {
@@ -131,7 +132,6 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          notify: true,
           deps: [`propName1 ${elem2.safe}`],
           get: function (propName1) {
             return (
@@ -147,9 +147,7 @@ describe('lifecycle/properties', function () {
 
     skate(elem2.safe, {
       properties: {
-        propName1: {
-          notify: true
-        }
+        propName1: {}
       }
     });
 
@@ -157,6 +155,7 @@ describe('lifecycle/properties', function () {
     var el2 = elem2.create();
 
     el1.appendChild(el2);
+    helpers.fixture().appendChild(el1);
     el1.addEventListener('skate-property-propName1', () => triggered = true);
     el2.propName1 = 'testing';
     expect(triggered).to.equal(true);

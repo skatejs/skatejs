@@ -1,7 +1,7 @@
+import apiEvent from '../api/event';
+import apiProperty from '../api/property';
 import assign from '../util/assign';
 import data from '../util/data';
-import events from './events';
-import properties from './properties';
 import protos from '../util/protos';
 import registry from '../polyfill/registry';
 import walkTree from '../util/walk-tree';
@@ -88,11 +88,11 @@ export default function (opts) {
 
     info.created = true;
     isNative || applyPrototype(this, opts);
-    properties(this, opts.properties);
+    apiProperty(this, opts.properties);
     template(this, opts);
     isNative || callCreatedOnDescendants(this, opts);
     isNative || patchAttributeMethods(this);
-    events(this, opts.events);
+    apiEvent(this, opts.events);
     initAttributes(this, opts.attributes);
     callCreated(this, opts);
     triggerAttributesCreated(this);
