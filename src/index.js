@@ -87,6 +87,16 @@ function makeOptions (userOptions) {
   return options;
 }
 
+function makeNonNewableWrapper (Ctor) {
+  var CtorWrapper = function (opts = {}) {
+    var elem = new Ctor();
+    Object.keys(opts).forEach(name => elem[name] = opts[name]);
+    return elem;
+  };
+  CtorWrapper.prototype = Ctor.prototype;
+  return CtorWrapper;
+}
+
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
@@ -123,6 +133,7 @@ function skate (id, userOptions) {
     documentObserver.register();
   }
 
+  Ctor = makeNonNewableWrapper(Ctor);
   assign(Ctor, options);
   registry.set(id, Ctor);
   Object.defineProperty(Ctor.prototype, 'constructor', {
