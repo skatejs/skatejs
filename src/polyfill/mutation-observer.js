@@ -8,35 +8,6 @@ var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObs
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
 
-() => {
-  if (!isIe) {
-    return;
-  }
-
-  // We have to call the old innerHTML getter and setter.
-  var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
-
-  // This redefines the innerHTML property so that we can ensure that events
-  // are properly triggered.
-  Object.defineProperty(elementPrototype, 'innerHTML', {
-    get: function () {
-      return oldInnerHTML.get.call(this);
-    },
-    set: function (html) {
-      walkTree(this, function (node) {
-        var mutationEvent = document.createEvent('MutationEvent');
-        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
-        node.dispatchEvent(mutationEvent);
-      });
-
-      oldInnerHTML.set.call(this, html);
-    }
-  });
-
-  // Flag so the polyfill is used for all subsequent Mutation Observer objects.
-  isFixingIe = true;
-}();
-
 /**
  * Creates a new mutation record.
  *
@@ -286,5 +257,35 @@ MutationObserver.prototype = {
     return this;
   }
 };
+
+// Fix IE because IE.
+() => {
+  if (!isIe) {
+    return;
+  }
+
+  // We have to call the old innerHTML getter and setter.
+  var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+
+  // This redefines the innerHTML property so that we can ensure that events
+  // are properly triggered.
+  Object.defineProperty(elementPrototype, 'innerHTML', {
+    get: function () {
+      return oldInnerHTML.get.call(this);
+    },
+    set: function (html) {
+      walkTree(this, function (node) {
+        var mutationEvent = document.createEvent('MutationEvent');
+        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+        node.dispatchEvent(mutationEvent);
+      });
+
+      oldInnerHTML.set.call(this, html);
+    }
+  });
+
+  // Flag so the polyfill is used for all subsequent Mutation Observer objects.
+  isFixingIe = true;
+}();
 
 export default MutationObserver;
