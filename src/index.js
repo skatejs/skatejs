@@ -11,6 +11,7 @@ import apiType from './api/type';
 import apiVersion from './api/version';
 import apiWatch from './api/watch';
 import assign from './util/assign';
+import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attributes';
 import created from './lifecycle/created';
@@ -68,7 +69,7 @@ function dashCaseAttributeNames (options) {
 }
 
 function makeOptions (userOptions) {
-  var options = assign({}, defaults);
+  var options = assignSafe({}, defaults);
 
   // Copy over all standard options if the user has defined them.
   for (let name in defaults) {
@@ -88,10 +89,8 @@ function makeOptions (userOptions) {
 }
 
 function makeNonNewableWrapper (Ctor) {
-  var CtorWrapper = function (opts = {}) {
-    var elem = new Ctor();
-    Object.keys(opts).forEach(name => elem[name] = opts[name]);
-    return elem;
+  var CtorWrapper = function (props = {}) {
+    return assign(new Ctor(), props);
   };
   CtorWrapper.prototype = Ctor.prototype;
   return CtorWrapper;
@@ -110,7 +109,7 @@ function skate (id, userOptions) {
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
+    options.prototype = assignSafe(Object.create(CtorParent.prototype), options.prototype);
   }
 
   // Extend behaviour of existing callbacks.
@@ -134,7 +133,7 @@ function skate (id, userOptions) {
   }
 
   Ctor = makeNonNewableWrapper(Ctor);
-  assign(Ctor, options);
+  assignSafe(Ctor, options);
   registry.set(id, Ctor);
   Object.defineProperty(Ctor.prototype, 'constructor', {
     enumerable: false,

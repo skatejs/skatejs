@@ -1,6 +1,6 @@
 import apiEvent from '../api/event';
 import apiProperty from '../api/property';
-import assign from '../util/assign';
+import assignSafe from '../util/assign-safe';
 import data from '../util/data';
 import protos from '../util/protos';
 import registry from '../polyfill/registry';
@@ -51,7 +51,7 @@ function initAttributes (elem, attrs = {}) {
 function applyPrototype (elem, opts) {
   protos(opts.prototype).forEach(function (proto) {
     if (!proto.isPrototypeOf(elem)) {
-      assign(elem, proto);
+      assignSafe(elem, proto);
     }
   });
 }
