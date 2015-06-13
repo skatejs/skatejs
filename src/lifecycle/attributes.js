@@ -53,8 +53,8 @@ function makeGlobalCallback (attrs) {
     return prev;
   }, {});
 
-  return function (elem, diff) {
-    apiChain(fns[diff.name]).call(this, elem, diff);
+  return function (diff) {
+    apiChain(fns[diff.name]).call(this, diff);
   };
 }
 
@@ -64,7 +64,7 @@ export default function (opts) {
     var info = data(this);
     var attributeToPropertyMap = info.attributeToPropertyMap || {};
 
-    callback(this, {
+    callback.call(this, {
       name: name,
       newValue: newValue === undefined ? null : newValue,
       oldValue: oldValue === undefined ? null : oldValue,

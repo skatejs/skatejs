@@ -72,7 +72,7 @@ function callCreatedOnDescendants (elem, opts) {
 
 function callCreated (elem, opts) {
   if (opts.created) {
-    opts.created(elem);
+    opts.created.call(elem);
   }
 }
 
