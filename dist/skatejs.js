@@ -24,6 +24,78 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   return module.exports;
 }).call(this);
 
+// src/api/chain.js
+__4f25f0faaaf0c53e145c08c5d91c9c2b = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = chain;
+  
+  function chain() {
+    for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
+      cbs[_key] = arguments[_key];
+    }
+  
+    cbs = cbs.filter(Boolean).map(function (cb) {
+      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
+    });
+  
+    return function () {
+      var _this = this;
+  
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+  
+      cbs.forEach(function (cb) {
+        return cb.apply(_this, args);
+      });
+    };
+  }
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/assign.js
+__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (child) {
+    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      parents[_key - 1] = arguments[_key];
+    }
+  
+    parents.forEach(function (parent) {
+      return Object.keys(parent || {}).forEach(function (name) {
+        return child[name] = parent[name];
+      });
+    });
+    return child;
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
 // src/globals.js
 __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = {
@@ -209,13 +281,168 @@ __1675a7174b713323cc232370699a2714 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  
+  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  
   var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
   
   var _polyfillRegistry2 = _interopRequireDefault(_polyfillRegistry);
   
-  exports['default'] = function (name) {
-    var Ctor = _polyfillRegistry2['default'].get(name);
-    return Ctor && new Ctor() || document.createElement(name);
+  exports['default'] = function (name, props) {
+    var ctor = _polyfillRegistry2['default'].get(name);
+    return ctor && ctor(props) || (0, _utilAssign2['default'])(document.createElement(name), props);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/emit.js
+__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  /* jshint expr: true */
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments[2] === undefined ? {} : arguments[2];
+  
+    var e = document.createEvent('CustomEvent');
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return elem.dispatchEvent(e);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/matches-selector.js
+__365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  var elProto = window.HTMLElement.prototype;
+  var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
+  
+  // Only IE9 has this msMatchesSelector bug, but best to detect it.
+  var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
+  
+  exports['default'] = function (element, selector) {
+    if (hasNativeMatchesSelectorDetattachedBug) {
+      var clone = element.cloneNode();
+      document.createElement('div').appendChild(clone);
+      return nativeMatchesSelector.call(clone, selector);
+    }
+    return nativeMatchesSelector.call(element, selector);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/event.js
+__6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _chain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
+  
+  var _chain2 = _interopRequireDefault(_chain);
+  
+  var _utilMatchesSelector = __365bd8b7bbfb2b50d6dbfd830f0aa927;
+  
+  var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
+  
+  var isShadowSelectorRegex = /(::shadow|\/deep\/)/;
+  var ShadowRoot = window.ShadowRoot;
+  
+  function parseEvent(e) {
+    var parts = e.split(' ');
+    return {
+      name: parts.shift(),
+      delegate: parts.join(' ')
+    };
+  }
+  
+  function makeDelegateHandler(elem, handler, delegate) {
+    var isShadowSelector = isShadowSelectorRegex.test(delegate);
+    return function (e) {
+      var current = isShadowSelector ? e.path[0] : e.target;
+      while (current && current !== elem.parentNode) {
+        if ((0, _utilMatchesSelector2['default'])(current, delegate)) {
+          e.delegateTarget = current;
+          return handler(e);
+        }
+  
+        current = current.parentNode;
+  
+        if (current && ShadowRoot && current instanceof ShadowRoot) {
+          current = current.host;
+        }
+      }
+    };
+  }
+  
+  function makeNormalHandler(elem, handler) {
+    return function (e) {
+      e.delegateTarget = e.currentTarget;
+      handler(e);
+    };
+  }
+  
+  function bindEvent(elem, event, handler) {
+    var _parseEvent = parseEvent(event);
+  
+    var name = _parseEvent.name;
+    var delegate = _parseEvent.delegate;
+  
+    var capture = delegate && (name === 'blur' || name === 'focus');
+    handler = (0, _chain2['default'])(handler).bind(elem);
+    handler = delegate ? makeDelegateHandler(elem, handler, delegate) : makeNormalHandler(elem, handler);
+    elem.addEventListener(name, handler, capture);
+  }
+  
+  function bindEvents(elem, events) {
+    Object.keys(events).forEach(function (name) {
+      bindEvent(elem, name, events[name]);
+    });
+  }
+  
+  exports['default'] = function (elem, events, handler) {
+    if (typeof events === 'string') {
+      bindEvent(elem, events, handler);
+    } else {
+      bindEvents(elem, events || {});
+    }
   };
   
   module.exports = exports['default'];
@@ -349,214 +576,37 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
+  function callAttachedOnDescendants(elem, opts) {
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+      _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+        return Ctor.prototype.createdCallback.call(elem);
+      });
+    }, function (elem) {
+      return !(0, _utilData2['default'])(elem, opts.id).attached;
+    });
+  }
+  
+  function callAttached(elem, opts) {
+    if (opts.attached) {
+      opts.attached.call(elem);
+    }
+  }
+  
   exports['default'] = function (opts) {
+    /* jshint expr: true */
     return function () {
-      var elem = this;
-      var info = (0, _utilData2['default'])(elem, opts.id);
+      var info = (0, _utilData2['default'])(this, opts.id);
+      var isNative = this.attachedCallback;
   
       if (info.attached) {
         return;
       }
   
-      if (!elem.attachedCallback) {
-        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
-          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
-            return Ctor.prototype.createdCallback.call(elem);
-          });
-        }, function (elem) {
-          return !(0, _utilData2['default'])(elem, opts.id).attached;
-        });
-      }
-  
+      isNative || callAttachedOnDescendants(this, opts);
       info.attached = true;
-      if (opts.attached) {
-        opts.attached(elem);
-      }
+      callAttached(this, opts);
       info.detached = false;
     };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/assign.js
-__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
-  
-    parents.forEach(function (parent) {
-      Object.getOwnPropertyNames(parent).forEach(function (name) {
-        var childDesc = Object.getOwnPropertyDescriptor(child, name);
-        if (!childDesc || childDesc.configurable) {
-          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-        }
-      });
-    });
-    return child;
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/chain.js
-__233ca7c3eccc5d0b7863e069d525eab7 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  exports['default'] = chain;
-  
-  function chain() {
-    for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
-      cbs[_key] = arguments[_key];
-    }
-  
-    cbs = cbs.filter(Boolean).map(function (cb) {
-      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
-    });
-  
-    return function () {
-      var _this = this;
-  
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-  
-      cbs.forEach(function (cb) {
-        return cb.apply(_this, args);
-      });
-    };
-  }
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/matches-selector.js
-__365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  var elProto = window.HTMLElement.prototype;
-  var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
-  
-  // Only IE9 has this msMatchesSelector bug, but best to detect it.
-  var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
-  
-  exports['default'] = function (element, selector) {
-    if (hasNativeMatchesSelectorDetattachedBug) {
-      var clone = element.cloneNode();
-      document.createElement('div').appendChild(clone);
-      return nativeMatchesSelector.call(clone, selector);
-    }
-    return nativeMatchesSelector.call(element, selector);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/lifecycle/events.js
-__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
-  
-  var _utilChain2 = _interopRequireDefault(_utilChain);
-  
-  var _utilMatchesSelector = __365bd8b7bbfb2b50d6dbfd830f0aa927;
-  
-  var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
-  
-  var isShadowSelectorRegex = /(::shadow|\/deep\/)/;
-  var ShadowRoot = window.ShadowRoot;
-  
-  function parseEvent(e) {
-    var parts = e.split(' ');
-    return {
-      name: parts.shift(),
-      delegate: parts.join(' ')
-    };
-  }
-  
-  function makeDelegateHandler(elem, handler, delegate) {
-    var isShadowSelector = isShadowSelectorRegex.test(delegate);
-    return function (e) {
-      var current = isShadowSelector ? e.path[0] : e.target;
-      while (current && current !== document && current !== elem.parentNode) {
-        if ((0, _utilMatchesSelector2['default'])(current, delegate)) {
-          return handler(elem, e, current);
-        }
-  
-        current = current.parentNode;
-  
-        if (current && ShadowRoot && current instanceof ShadowRoot) {
-          current = current.host;
-        }
-      }
-    };
-  }
-  
-  function makeNormalHandler(elem, handler) {
-    return function (e) {
-      handler(elem, e, elem);
-    };
-  }
-  
-  exports['default'] = function (elem, evts) {
-    Object.keys(evts || {}).forEach(function (evt) {
-      var handler = (0, _utilChain2['default'])(evts[evt]);
-  
-      var _parseEvent = parseEvent(evt);
-  
-      var name = _parseEvent.name;
-      var delegate = _parseEvent.delegate;
-  
-      elem.addEventListener(name, delegate ? makeDelegateHandler(elem, handler, delegate) : makeNormalHandler(elem, handler), delegate && (name === 'blur' || name === 'focus'));
-    });
   };
   
   module.exports = exports['default'];
@@ -589,34 +639,8 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/notify.js
-__9c53d0b55c601bcd876ca0d265bb297a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
-  exports['default'] = function (elem, name) {
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent('' + _constants.EVENT_PREFIX + '' + name, true, false, undefined);
-    elem.dispatchEvent(e);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/lifecycle/properties.js
-__dc805244a3f10da2e05ae57781968d52 = (function () {
+// src/api/property.js
+__f57aa4e0179bb8c6b45d999112238add = (function () {
   var module = {
     exports: {}
   };
@@ -632,6 +656,14 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
+  
+  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
+  
+  var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
   var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
@@ -639,14 +671,6 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
-  
-  var _events2 = _interopRequireDefault(_events);
-  
-  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
-  
-  var _apiNotify2 = _interopRequireDefault(_apiNotify);
   
   function returnSingle(elem, name) {
     return function () {
@@ -681,7 +705,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
     var _dependencies = prop.deps || [];
     var _getter = prop.get;
     var _isBoolean = prop.type && prop.type === Boolean;
-    var _notify = prop.notify;
+    var _notify = prop.notify === undefined ? true : prop.notify;
     var _setter = prop.set;
     var _value;
   
@@ -693,10 +717,18 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       get: function get() {
         return _getter ? _getter.apply(this, _dependencies.map(resolveReturnFunction(this))) : _value;
       },
-  
       set: function set(value) {
         var info = (0, _utilData2['default'])(this);
-        _value = _coerce(value);
+        var oldValue = _value;
+        var newValue = _coerce(value);
+  
+        // We do nothing if the value hasn't changed.
+        if (oldValue === newValue) {
+          return;
+        }
+  
+        // Regardless of any options, we store the value internally.
+        _value = newValue;
   
         // We check first to see if we're already updating the property from
         // the attribute. If we are, then there's no need to update the attribute
@@ -715,49 +747,96 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
           info.updatingAttribute = false;
         }
   
+        // A setter is responsible for setting its own value.
         if (_setter) {
-          _setter.call(this, _value);
+          _setter.call(this, newValue, oldValue);
         }
   
+        // Only notify if the value has changed.
         if (_notify) {
-          (0, _apiNotify2['default'])(this, name);
+          (0, _apiEmit2['default'])(this, 'skate-property-' + name);
         }
       }
     };
   }
   
-  exports['default'] = function (elem) {
-    var props = arguments[1] === undefined ? {} : arguments[1];
-  
+  function defineProperty(elem, name, prop) {
     var attributeToPropertyMap = (0, _utilData2['default'])(elem).attributeToPropertyMap = {};
   
-    Object.keys(props).forEach(function (name) {
-      var prop = props[name];
+    if (!prop) {
+      return;
+    }
   
-      if (!prop) {
-        return;
-      }
+    Object.defineProperty(elem, name, property(name, prop));
   
-      Object.defineProperty(elem, name, property(name, prop));
+    if (prop.attr) {
+      attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
+    }
   
-      if (prop.attr) {
-        attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
-      }
+    if (typeof prop.value === 'function') {
+      elem[name] = prop.value();
+    } else if (typeof prop.value !== 'undefined') {
+      elem[name] = prop.value;
+    }
   
-      if (typeof prop.value === 'function') {
-        elem[name] = prop.value();
-      } else if (typeof prop.value !== 'undefined') {
-        elem[name] = prop.value;
-      }
-  
-      (0, _events2['default'])(elem, (prop.deps || []).reduce(function (prev, curr) {
-        prev[_constants.EVENT_PREFIX + curr] = _apiNotify2['default'].bind(null, elem, name);
-        return prev;
-      }, {}));
+    (prop.deps || []).forEach(function (dep) {
+      (0, _apiEvent2['default'])(elem, _constants.EVENT_PREFIX + dep, function (e) {
+        if (e.target === e.delegateTarget || this === e.delegateTarget) {
+          (0, _apiEmit2['default'])(elem, 'skate-property-' + name);
+        }
+      });
     });
+  }
+  
+  function defineProperties(elem, props) {
+    Object.keys(props).forEach(function (name) {
+      defineProperty(elem, name, props[name]);
+    });
+  }
+  
+  exports['default'] = function (elem, props, prop) {
+    if (typeof props === 'string') {
+      defineProperty(elem, props, prop);
+    } else {
+      defineProperties(elem, props || {});
+    }
   };
   
   module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/assign-safe.js
+__d9d26492984e649e5130081ad32bafd6 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (child) {
+    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      parents[_key - 1] = arguments[_key];
+    }
+  
+    parents.forEach(function (parent) {
+      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
+        var childDesc = Object.getOwnPropertyDescriptor(child, name);
+        if (!childDesc || childDesc.configurable) {
+          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
+        }
+      });
+    });
+    return child;
+  };
+  
+  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -805,21 +884,21 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
   
-  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  
+  var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
+  
+  var _apiProperty2 = _interopRequireDefault(_apiProperty);
+  
+  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
+  
+  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
   
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
-  
-  var _events2 = _interopRequireDefault(_events);
-  
-  var _properties = __dc805244a3f10da2e05ae57781968d52;
-  
-  var _properties2 = _interopRequireDefault(_properties);
   
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
@@ -880,14 +959,14 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   function applyPrototype(elem, opts) {
     (0, _utilProtos2['default'])(opts.prototype).forEach(function (proto) {
       if (!proto.isPrototypeOf(elem)) {
-        (0, _utilAssign2['default'])(elem, proto);
+        (0, _utilAssignSafe2['default'])(elem, proto);
       }
     });
   }
   
   function template(elem, opts) {
     if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
-      opts.template(elem);
+      opts.template.call(elem);
     }
   }
   
@@ -903,7 +982,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function callCreated(elem, opts) {
     if (opts.created) {
-      opts.created(elem);
+      opts.created.call(elem);
     }
   }
   
@@ -919,11 +998,11 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
       info.created = true;
       isNative || applyPrototype(this, opts);
-      (0, _properties2['default'])(this, opts.properties);
+      (0, _apiProperty2['default'])(this, opts.properties);
       template(this, opts);
       isNative || callCreatedOnDescendants(this, opts);
       isNative || patchAttributeMethods(this);
-      (0, _events2['default'])(this, opts.events);
+      (0, _apiEvent2['default'])(this, opts.events);
       initAttributes(this, opts.attributes);
       callCreated(this, opts);
       triggerAttributesCreated(this);
@@ -1298,54 +1377,6 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
     this.elements = [];
   }
   
-  /**
-   * IE 11 has a bug that prevents descendant nodes from being reported as removed
-   * to a mutation observer in IE 11 if an ancestor node's innerHTML is reset.
-   * This same bug also happens when using Mutation Events in IE 9 / 10. Because of
-   * this, we must ensure that observers and events get triggered properly on
-   * those descendant nodes. In order to do this we have to override `innerHTML`
-   * and then manually trigger an event.
-   *
-   * See: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
-   *
-   * @returns {undefined}
-   */
-  MutationObserver.fixIe = function () {
-    // Fix once only if we need to.
-    if (!isIe || isFixingIe) {
-      return;
-    }
-  
-    // We have to call the old innerHTML getter and setter.
-    var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
-  
-    // This redefines the innerHTML property so that we can ensure that events
-    // are properly triggered.
-    Object.defineProperty(elementPrototype, 'innerHTML', {
-      get: function get() {
-        return oldInnerHTML.get.call(this);
-      },
-      set: function set(html) {
-        walkTree(this, function (node) {
-          var mutationEvent = document.createEvent('MutationEvent');
-          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
-          node.dispatchEvent(mutationEvent);
-        });
-  
-        oldInnerHTML.set.call(this, html);
-      }
-    });
-  
-    // Flag so the polyfill is used for all subsequent Mutation Observer objects.
-    isFixingIe = true;
-  };
-  
-  Object.defineProperty(MutationObserver, 'isFixingIe', {
-    get: function get() {
-      return isFixingIe;
-    }
-  });
-  
   MutationObserver.prototype = {
     observe: function observe(target, options) {
       function addEventToBatch(e) {
@@ -1526,6 +1557,36 @@ __fcd21ac78247116a0bdde5374b0c4641 = (function () {
     }
   };
   
+  // Fix IE because IE.
+  (function () {
+    if (!isIe) {
+      return;
+    }
+  
+    // We have to call the old innerHTML getter and setter.
+    var oldInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+  
+    // This redefines the innerHTML property so that we can ensure that events
+    // are properly triggered.
+    Object.defineProperty(elementPrototype, 'innerHTML', {
+      get: function get() {
+        return oldInnerHTML.get.call(this);
+      },
+      set: function set(html) {
+        walkTree(this, function (node) {
+          var mutationEvent = document.createEvent('MutationEvent');
+          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, null, null, null, null, null);
+          node.dispatchEvent(mutationEvent);
+        });
+  
+        oldInnerHTML.set.call(this, html);
+      }
+    });
+  
+    // Flag so the polyfill is used for all subsequent Mutation Observer objects.
+    isFixingIe = true;
+  })();
+  
   exports['default'] = MutationObserver;
   module.exports = exports['default'];
   
@@ -1551,17 +1612,19 @@ __4390c5a519e11ff146587075b0e7abac = (function () {
   
   var _polyfillMutationObserver2 = _interopRequireDefault(_polyfillMutationObserver);
   
-  exports['default'] = function (elem, callback) {
+  exports['default'] = function (elem, callback, opts) {
+    var opts = opts || {};
     var observer = new _polyfillMutationObserver2['default'](function (mutations) {
       mutations.forEach(function (mutation) {
         callback(mutation.addedNodes || [], mutation.removedNodes || []);
       });
     });
   
-    observer.observe(elem, {
-      childList: true
-    });
+    if (opts.childList === undefined) {
+      opts.childList = true;
+    }
   
+    observer.observe(elem, opts);
     return observer;
   };
   
@@ -1585,9 +1648,9 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilChain = __233ca7c3eccc5d0b7863e069d525eab7;
+  var _apiChain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
   
-  var _utilChain2 = _interopRequireDefault(_utilChain);
+  var _apiChain2 = _interopRequireDefault(_apiChain);
   
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
@@ -1636,9 +1699,11 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
       }, obj);
     }, {});
   
-    return function (elem, diff) {
+    return function (diff) {
+      var _this = this;
+  
       (map[diff.type] || []).forEach(function (cb) {
-        types[cb](elem, diff);
+        return types[cb].call(_this, diff);
       });
     };
   }
@@ -1653,8 +1718,8 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
       return prev;
     }, {});
   
-    return function (elem, diff) {
-      (0, _utilChain2['default'])(fns[diff.name]).call(this, elem, diff);
+    return function (diff) {
+      (0, _apiChain2['default'])(fns[diff.name]).call(this, diff);
     };
   }
   
@@ -1662,9 +1727,9 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
     var callback = makeGlobalCallback(opts.attributes);
     return function (name, oldValue, newValue) {
       var info = (0, _utilData2['default'])(this);
-      var attributeToPropertyMap = info.attributeToPropertyMap;
+      var attributeToPropertyMap = info.attributeToPropertyMap || {};
   
-      callback(this, {
+      callback.call(this, {
         name: name,
         newValue: newValue === undefined ? null : newValue,
         oldValue: oldValue === undefined ? null : oldValue,
@@ -1774,29 +1839,35 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
+  function callDetachedOnDescendants(elem, opts) {
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
+      _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
+        return Ctor.prototype.createdCallback.call(elem);
+      });
+    }, function (elem) {
+      return !(0, _utilData2['default'])(elem, opts.id).attached;
+    });
+  }
+  
+  function callDetached(elem, opts) {
+    if (opts.detached) {
+      opts.detached.call(elem);
+    }
+  }
+  
   exports['default'] = function (opts) {
+    /* jshint expr: true */
     return function () {
-      var elem = this;
-      var info = (0, _utilData2['default'])(elem, opts.id);
+      var info = (0, _utilData2['default'])(this, opts.id);
+      var isNative = this.detachedCallback;
   
       if (info.detached) {
         return;
       }
   
-      if (!elem.attachedCallback) {
-        (0, _utilWalkTree2['default'])(elem.childNodes, function (elem) {
-          _polyfillRegistry2['default'].getForElement(elem).forEach(function (Ctor) {
-            return Ctor.prototype.createdCallback.call(elem);
-          });
-        }, function (elem) {
-          return !(0, _utilData2['default'])(elem, opts.id).attached;
-        });
-      }
-  
+      isNative || callDetachedOnDescendants(this, opts);
       info.detached = true;
-      if (opts.detached) {
-        opts.detached(elem);
-      }
+      callDetached(this, opts);
       info.attached = false;
     };
   };
@@ -1821,6 +1892,10 @@ __53affcee25439c12726058fee7f75787 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _apiWatch = __4390c5a519e11ff146587075b0e7abac;
+  
+  var _apiWatch2 = _interopRequireDefault(_apiWatch);
+  
   var _lifecycleAttached = __2b55a083f45c9ef157662a1dc1674218;
   
   var _lifecycleAttached2 = _interopRequireDefault(_lifecycleAttached);
@@ -1840,10 +1915,6 @@ __53affcee25439c12726058fee7f75787 = (function () {
   var _utilIgnored = __092f8936e5006bddcb3baf24320a5a06;
   
   var _utilIgnored2 = _interopRequireDefault(_utilIgnored);
-  
-  var _mutationObserver = __fcd21ac78247116a0bdde5374b0c4641;
-  
-  var _mutationObserver2 = _interopRequireDefault(_mutationObserver);
   
   var _registry = __270cb854b3681e4b614f772d24705d53;
   
@@ -1867,63 +1938,43 @@ __53affcee25439c12726058fee7f75787 = (function () {
     }
   }
   
-  function documentObserverHandler(mutations) {
-    var mutationsLen = mutations.length;
+  function documentObserverHandler(addedNodes, removedNodes) {
+    // Since siblings are batched together, we check the first node's parent
+    // node to see if it is ignored. If it is then we don't process any added
+    // nodes. This prevents having to check every node.
+    if (addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+      (0, _utilWalkTree2['default'])(addedNodes, function (element) {
+        var components = _registry2['default'].getForElement(element);
+        var componentsLength = components.length;
   
-    for (var a = 0; a < mutationsLen; a++) {
-      var mutation = mutations[a];
-      var addedNodes = mutation.addedNodes;
-      var removedNodes = mutation.removedNodes;
+        for (var a = 0; a < componentsLength; a++) {
+          (0, _lifecycleCreated2['default'])(components[a]).call(element);
+        }
   
-      // Since siblings are batched together, we check the first node's parent
-      // node to see if it is ignored. If it is then we don't process any added
-      // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-        (0, _utilWalkTree2['default'])(addedNodes, function (element) {
-          var components = _registry2['default'].getForElement(element);
-          var componentsLength = components.length;
-  
-          for (var _a = 0; _a < componentsLength; _a++) {
-            (0, _lifecycleCreated2['default'])(components[_a]).call(element);
-          }
-  
-          for (var _a2 = 0; _a2 < componentsLength; _a2++) {
-            (0, _lifecycleAttached2['default'])(components[_a2]).call(element);
-          }
-        });
-      }
-  
-      // We can't check batched nodes here because they won't have a parent node.
-      if (removedNodes && removedNodes.length) {
-        (0, _utilWalkTree2['default'])(removedNodes, function (element) {
-          var components = _registry2['default'].getForElement(element);
-          var componentsLength = components.length;
-  
-          for (var _a3 = 0; _a3 < componentsLength; _a3++) {
-            (0, _lifecycleDetached2['default'])(components[_a3]).call(element);
-          }
-        });
-      }
+        for (var a = 0; a < componentsLength; a++) {
+          (0, _lifecycleAttached2['default'])(components[a]).call(element);
+        }
+      });
     }
-  }
   
-  function createDocumentObserver() {
-    var observer = new _mutationObserver2['default'](documentObserverHandler);
+    // We can't check batched nodes here because they won't have a parent node.
+    if (removedNodes.length) {
+      (0, _utilWalkTree2['default'])(removedNodes, function (element) {
+        var components = _registry2['default'].getForElement(element);
+        var componentsLength = components.length;
   
-    observer.observe(document, {
-      childList: true,
-      subtree: true
-    });
-  
-    return observer;
+        for (var a = 0; a < componentsLength; a++) {
+          (0, _lifecycleDetached2['default'])(components[a]).call(element);
+        }
+      });
+    }
   }
   
   exports['default'] = _globals2['default'].registerIfNotExists('observer', {
     observer: undefined,
     register: function register() {
       if (!this.observer) {
-        _mutationObserver2['default'].fixIe();
-        this.observer = createDocumentObserver();
+        this.observer = (0, _apiWatch2['default'])(document, documentObserverHandler, { subtree: true });
       }
   
       return this;
@@ -2072,9 +2123,21 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
+  var _apiChain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
+  
+  var _apiChain2 = _interopRequireDefault(_apiChain);
+  
   var _apiCreate = __1675a7174b713323cc232370699a2714;
   
   var _apiCreate2 = _interopRequireDefault(_apiCreate);
+  
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
+  
+  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
+  
+  var _apiEvent2 = _interopRequireDefault(_apiEvent);
   
   var _apiInit = __3add36046399fead5a83243849207ed7;
   
@@ -2084,9 +2147,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiNoConflict2 = _interopRequireDefault(_apiNoConflict);
   
-  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
+  var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
   
-  var _apiNotify2 = _interopRequireDefault(_apiNotify);
+  var _apiProperty2 = _interopRequireDefault(_apiProperty);
   
   var _apiReady = __83ca289f5309abef55c338a9f7a22385;
   
@@ -2107,6 +2170,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
   
   var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  
+  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
+  
+  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
   
   var _lifecycleAttached = __2b55a083f45c9ef157662a1dc1674218;
   
@@ -2203,7 +2270,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   }
   
   function makeOptions(userOptions) {
-    var options = (0, _utilAssign2['default'])({}, _defaults2['default']);
+    var options = (0, _utilAssignSafe2['default'])({}, _defaults2['default']);
   
     // Copy over all standard options if the user has defined them.
     for (var _name2 in _defaults2['default']) {
@@ -2222,6 +2289,16 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     return options;
   }
   
+  function makeNonNewableWrapper(Ctor) {
+    var CtorWrapper = function CtorWrapper() {
+      var props = arguments[0] === undefined ? {} : arguments[0];
+  
+      return (0, _utilAssign2['default'])(new Ctor(), props);
+    };
+    CtorWrapper.prototype = Ctor.prototype;
+    return CtorWrapper;
+  }
+  
   var debouncedInitDocumentWhenReady = (0, _utilDebounce2['default'])(initDocumentWhenReady);
   var HTMLElement = window.HTMLElement;
   
@@ -2235,7 +2312,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
     // Inherit from parent prototype.
     if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-      options.prototype = (0, _utilAssign2['default'])(Object.create(CtorParent.prototype), options.prototype);
+      options.prototype = (0, _utilAssignSafe2['default'])(Object.create(CtorParent.prototype), options.prototype);
     }
   
     // Extend behaviour of existing callbacks.
@@ -2258,7 +2335,8 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
       _polyfillDocumentObserver2['default'].register();
     }
   
-    (0, _utilAssign2['default'])(Ctor, options);
+    Ctor = makeNonNewableWrapper(Ctor);
+    (0, _utilAssignSafe2['default'])(Ctor, options);
     _polyfillRegistry2['default'].set(id, Ctor);
     Object.defineProperty(Ctor.prototype, 'constructor', {
       enumerable: false,
@@ -2268,10 +2346,13 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     return Ctor;
   }
   
+  skate.chain = _apiChain2['default'];
   skate.create = _apiCreate2['default'];
+  skate.emit = _apiEmit2['default'];
+  skate.event = _apiEvent2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
-  skate.notify = _apiNotify2['default'];
+  skate.property = _apiProperty2['default'];
   skate.ready = _apiReady2['default'];
   skate.type = _apiType2['default'];
   skate.version = _apiVersion2['default'];
