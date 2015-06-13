@@ -10,8 +10,8 @@ describe('skate.init()', function () {
   beforeEach(function () {
     tagName = helpers.safeTagName('my-el');
     MyEl = skate(tagName.safe, {
-      created: function (element) {
-        element.textContent = 'test';
+      created: function () {
+        this.textContent = 'test';
       }
     });
 
@@ -257,8 +257,8 @@ describe('skate.init()', function () {
     it('#110 - should initialise forms properly', function () {
       var form = document.createElement('form');
       skate('form', {
-        created: function (el) {
-          el.initialised = true;
+        created: function () {
+          this.initialised = true;
         }
       });
 

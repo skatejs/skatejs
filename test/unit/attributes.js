@@ -149,14 +149,14 @@ describe('attributes:', function () {
 
       describe('for the entire attribute definition.', function () {
         assertCalls(new (skate(helpers.safeTagName().safe, {
-          attributes: (elem, diff) => calls[diff.type] = true
+          attributes: (diff) => calls[diff.type] = true
         }))());
       });
 
       describe('for a particular attribute definition', function () {
         assertCalls(new (skate(helpers.safeTagName().safe, {
           attributes: {
-            test: (elem, diff) => calls[diff.type] = true
+            test: (diff) => calls[diff.type] = true
           }
         }))());
       });
@@ -182,9 +182,9 @@ describe('attributes:', function () {
       var tagName = helpers.safeTagName('my-el');
 
       skate(tagName.safe, {
-        attributes: function (element, data) {
-          if (data.name === 'first') {
-            element.removeAttribute('second');
+        attributes: function (diff) {
+          if (diff.name === 'first') {
+            this.removeAttribute('second');
           }
         }
       });

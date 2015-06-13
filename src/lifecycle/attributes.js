@@ -36,10 +36,8 @@ function makeSpecificCallback (types) {
     }, obj);
   }, {});
 
-  return function (elem, diff) {
-    (map[diff.type] || []).forEach(function (cb) {
-      types[cb](elem, diff);
-    });
+  return function (diff) {
+    (map[diff.type] || []).forEach(cb => types[cb].call(this, diff));
   };
 }
 

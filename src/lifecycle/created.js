@@ -58,7 +58,7 @@ function applyPrototype (elem, opts) {
 
 function template (elem, opts) {
   if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
-    opts.template(elem);
+    opts.template.call(elem);
   }
 }
 

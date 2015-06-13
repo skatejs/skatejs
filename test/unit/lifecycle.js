@@ -71,9 +71,9 @@ describe('Unresolved attribute', function () {
   it('should not be considred "resolved" until after template() is called', function () {
     var tagName = helpers.safeTagName('my-element');
     skate(tagName.safe, {
-      template: function (element) {
-        expect(element.hasAttribute('unresolved')).to.equal(true);
-        expect(element.hasAttribute('resolved')).to.equal(false);
+      template: function () {
+        expect(this.hasAttribute('unresolved')).to.equal(true);
+        expect(this.hasAttribute('resolved')).to.equal(false);
       }
     });
 
@@ -83,9 +83,9 @@ describe('Unresolved attribute', function () {
   it('should be considred "resolved" after the created lifecycle finishes', function () {
     var tag = helpers.safeTagName('my-element').safe;
     skate(tag, {
-      created: function (element) {
-        expect(element.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
-        expect(element.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
+      created: function () {
+        expect(this.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
+        expect(this.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
       }
     });
 

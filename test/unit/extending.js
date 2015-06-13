@@ -8,8 +8,8 @@ describe('extending', function () {
     Ctor = skate(helpers.safeTagName().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created: function (element) {
-        element.textContent = 'test';
+      created: function () {
+        this.textContent = 'test';
       },
       attributes: {
         myAttribute: function () {}
@@ -54,9 +54,9 @@ describe('extending', function () {
 
   it('should allow overriding of callbacks', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {
-      static created (element) {
-        super.created(element);
-        element.textContent += 'ing';
+      static created () {
+        super.created();
+        this.textContent += 'ing';
       }
     });
     expect(new ExtendedCtor().textContent).to.equal('testing');

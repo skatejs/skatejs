@@ -90,8 +90,8 @@ describe('Events', function () {
         }
       },
 
-      template: function (element) {
-        element.innerHTML = '<a><span></span></a>';
+      template: function () {
+        this.innerHTML = '<a><span></span></a>';
       }
     });
 
@@ -128,8 +128,8 @@ describe('Events', function () {
         }
       },
 
-      template: function (element) {
-        element.innerHTML = '<input>';
+      template: function () {
+        this.innerHTML = '<input>';
       }
     });
 
