@@ -1,4 +1,3 @@
-import apiEvent from '../api/event';
 import apiNotify from '../api/notify';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
