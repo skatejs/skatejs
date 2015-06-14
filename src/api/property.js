@@ -1,12 +1,12 @@
-import apiEmit from '../api/emit';
 import apiEvent from '../api/event';
+import apiNotify from '../api/notify';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 
 function property (name, prop) {
   var internalGetter, internalSetter, internalValue, isBoolean;
 
-  if (typeof prop !== 'object') {
+  if (!prop || typeof prop !== 'object') {
     prop = { type: prop };
   }
 
@@ -20,6 +20,10 @@ function property (name, prop) {
 
   if (!Array.isArray(prop.deps)) {
     prop.deps = [];
+  }
+
+  if (prop.notify === undefined) {
+    prop.notify = true;
   }
 
   if (typeof prop.type !== 'function') {
@@ -83,12 +87,9 @@ function property (name, prop) {
     }
 
     if (prop.notify) {
-      apiEmit(this, prop.notify, {
-        detail: {
-          name: name,
-          newValue: newValue,
-          oldValue: oldValue
-        }
+      apiNotify(this, name, {
+        newValue: newValue,
+        oldValue: oldValue
       });
     }
   };
@@ -115,7 +116,24 @@ function defineProperty (elem, name, prop) {
   // listened to.
   if (prop.notify) {
     prop.deps.forEach(function (dep) {
-      apiEvent(elem, dep, apiEmit.bind(null, elem, prop.notify));
+      var depPath = dep.split('.');
+      var depName = depPath.pop();
+
+      elem.addEventListener(`skate.property.${depName}`, function (e) {
+        var target = elem;
+
+        depPath.forEach(function (part) {
+          target = elem && elem[part];
+        });
+
+        if (elem !== e.target) {
+          e.stopImmediatePropagation();
+        }
+
+        if (target === e.target) {
+          apiNotify(elem, name);
+        }
+      });
     });
   }
 }
@@ -132,6 +150,4 @@ export default function (elem, props = {}, prop = {}) {
   } else {
     defineProperties(elem, props);
   }
-
-  return this;
 }

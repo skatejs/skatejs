@@ -80,62 +80,73 @@ describe('lifecycle/properties', function () {
   });
 
   it('events', function () {
-    var triggered;
+    var triggered = 0;
 
     skate(elem.safe, {
       properties: {
-        propName1: {
-          notify: 'propName1-changed'
-        }
+        propName1: null
       }
     });
 
     var el = elem.create();
-    el.addEventListener('propName1-changed', e => triggered = e.detail.newValue);
+    el.addEventListener('skate.property', () => ++triggered);
+    el.addEventListener('skate.property.propName1', () => ++triggered);
     el.propName1 = true;
-    expect(triggered).to.equal(true);
+    expect(triggered).to.equal(2);
   });
 
   it('dependencies', function () {
-    var triggered;
+    var triggered = 0;
 
     skate(elem.safe, {
       properties: {
-        propName1: {
-          notify: 'propName1-changed'
-        },
+        propName1: null,
         propName2: {
-          deps: 'propName1-changed',
-          notify: 'propName2-changed'
+          deps: 'propName1'
         }
       }
     });
 
     var el = elem.create();
 
-    el.addEventListener('propName2-changed', e => triggered = e.detail.newValue);
+    // Triggered twice. Once for propName1 and once for propName2.
+    el.addEventListener('skate.property', () => ++triggered);
+
+    // Triggered once for propName2.
+    el.addEventListener('skate.property.propName2', () => ++triggered);
+
+    // Will trigger: propName1 -> propName2.
     el.propName1 = true;
-    expect(triggered).to.equal(true);
+
+    // Chains:
+    // - skate.property
+    // - skate.property.propName1
+    // - skate.property
+    // - skate.property.propName2
+    expect(triggered).to.equal(3);
   });
 
-  it('dependencies (deep)', function () {
-    var triggered;
+  it('dependencies (deep; elements must be in DOM)', function () {
+    var triggeredNumber = 0;
+    var triggeredTarget;
     var elem2 = helperElement();
 
     skate(elem.safe, {
       properties: {
+        child: {
+          get: function () {
+            return this.childNodes[0];
+          }
+        },
         propName1: {
-          deps: 'el.deep',
-          notify: 'el'
+          deps: 'child.propName1'
         }
       }
     });
 
     skate(elem2.safe, {
       properties: {
-        propName1: {
-          notify: 'el.deep'
-        }
+        propName1: null
       }
     });
 
@@ -144,9 +155,20 @@ describe('lifecycle/properties', function () {
 
     el1.appendChild(el2);
     helpers.fixture().appendChild(el1);
-    el1.addEventListener('el', e => triggered = e.detail.newValue);
+
+    // We need to check the number of calls as well which element triggered the
+    // property event.
+    el1.addEventListener('skate.property.propName1', () => ++triggeredNumber);
+    el1.addEventListener('skate.property.propName1', e => triggeredTarget = e.target);
+
+    // Will notify el1.propName1.
     el2.propName1 = true;
-    expect(triggered).to.equal(true);
+
+    // Deep property events should not call handlers of the same name on the
+    // dependant element. The dependant element dependant property should
+    // trigger the change.
+    expect(triggeredNumber).to.equal(1);
+    expect(triggeredTarget).to.equal(el1);
   });
 
   it('attribute triggers property change', function () {
@@ -156,14 +178,13 @@ describe('lifecycle/properties', function () {
       properties: {
         propName1: {
           attr: true,
-          notify: 'skate-property',
           type: Boolean
         }
       }
     });
 
     var el = elem.create();
-    el.addEventListener('skate-property', e => triggered = e.detail.newValue);
+    el.addEventListener('skate.property', e => triggered = e.detail.newValue);
     el.setAttribute('prop-name1', '');
     expect(triggered).to.equal(true);
   });
