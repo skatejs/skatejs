@@ -158,6 +158,7 @@ describe('lifecycle/properties', function () {
 
     // We need to check the number of calls as well which element triggered the
     // property event.
+    el1.addEventListener('skate.property', () => ++triggeredNumber);
     el1.addEventListener('skate.property.propName1', () => ++triggeredNumber);
     el1.addEventListener('skate.property.propName1', e => triggeredTarget = e.target);
 
@@ -167,7 +168,7 @@ describe('lifecycle/properties', function () {
     // Deep property events should not call handlers of the same name on the
     // dependant element. The dependant element dependant property should
     // trigger the change.
-    expect(triggeredNumber).to.equal(1);
+    expect(triggeredNumber).to.equal(2);
     expect(triggeredTarget).to.equal(el1);
   });
 
