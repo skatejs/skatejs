@@ -12,8 +12,6 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   });
   var ATTR_IGNORE = 'data-skate-ignore';
   exports.ATTR_IGNORE = ATTR_IGNORE;
-  var EVENT_PREFIX = 'skate-property-';
-  exports.EVENT_PREFIX = EVENT_PREFIX;
   var TYPE_ATTRIBUTE = 'attribute';
   exports.TYPE_ATTRIBUTE = TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = 'classname';
@@ -311,15 +309,19 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  
-  exports['default'] = function (elem, name) {
-    var opts = arguments[2] === undefined ? {} : arguments[2];
-  
+  function emit(name, opts) {
     var e = document.createEvent('CustomEvent');
     opts.bubbles === undefined && (opts.bubbles = true);
     opts.cancelable === undefined && (opts.cancelable = true);
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return elem.dispatchEvent(e);
+    return this.dispatchEvent(e);
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments[2] === undefined ? {} : arguments[2];
+  
+    (name.split && name.split(' ') || []).forEach(emit.bind(elem, name, opts));
+    return this;
   };
   
   module.exports = exports['default'];
@@ -654,8 +656,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
   var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
@@ -672,102 +672,105 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  function returnSingle(elem, name) {
-    return function () {
-      return elem[name];
-    };
-  }
-  
-  function returnMultiple(elem, name, selector) {
-    return function () {
-      return [].slice.call(elem.querySelectorAll(selector)).map(function (desc) {
-        return desc[name];
-      });
-    };
-  }
-  
-  function resolveReturnFunction(elem) {
-    return function (name) {
-      var parts = name.split(' ');
-      return parts[1] ? returnMultiple(elem, parts[0], parts[1]) : returnSingle(elem, name);
-    };
-  }
-  
   function property(name, prop) {
+    var internalGetter, internalSetter, internalValue, isBoolean;
+  
     if (typeof prop !== 'object') {
       prop = { type: prop };
     }
   
-    var _attribute = prop.attr;
-    var _coerce = prop.type || function (val) {
-      return val;
-    };
-    var _dependencies = prop.deps || [];
-    var _getter = prop.get;
-    var _isBoolean = prop.type && prop.type === Boolean;
-    var _notify = prop.notify === undefined ? true : prop.notify;
-    var _setter = prop.set;
-    var _value;
-  
-    if (_attribute === true) {
-      _attribute = (0, _utilDashCase2['default'])(name);
+    if (prop.attr === true) {
+      prop.attr = (0, _utilDashCase2['default'])(name);
     }
   
-    return {
-      get: function get() {
-        return _getter ? _getter.apply(this, _dependencies.map(resolveReturnFunction(this))) : _value;
-      },
-      set: function set(value) {
-        var info = (0, _utilData2['default'])(this);
-        var oldValue = _value;
-        var newValue = _coerce(value);
+    if (typeof prop.deps === 'string') {
+      prop.deps = prop.deps.split(' ');
+    }
   
-        // We do nothing if the value hasn't changed.
-        if (oldValue === newValue) {
-          return;
+    if (!Array.isArray(prop.deps)) {
+      prop.deps = [];
+    }
+  
+    if (typeof prop.type !== 'function') {
+      prop.type = function (val) {
+        return val;
+      };
+    }
+  
+    internalGetter = prop.get;
+    internalSetter = prop.set;
+    internalValue = typeof prop.value === 'function' ? prop.value.call(this) : prop.value;
+    isBoolean = prop.type && prop.type === Boolean;
+    delete prop.value;
+  
+    prop.get = function () {
+      return internalGetter ? internalGetter.apply(this) : internalValue;
+    };
+  
+    prop.set = function (value) {
+      var info = (0, _utilData2['default'])(this);
+  
+      // If the property is being updated and it is a boolean we must just check
+      // if the attribute exists because "" is true for a boolean attribute.
+      if (info.updatingProperty && isBoolean) {
+        value = this.hasAttribute(prop.attr);
+      }
+  
+      // We report both new and old values;
+      var newValue = prop.type(value);
+      var oldValue = internalValue;
+  
+      // We do nothing if the value hasn't changed.
+      if (oldValue === newValue) {
+        return;
+      }
+  
+      // Regardless of any options, we store the value internally.
+      internalValue = newValue;
+  
+      // We check first to see if we're already updating the property from
+      // the attribute. If we are, then there's no need to update the attribute
+      // especially because it would invoke an infinite loop.
+      if (prop.attr && !info.updatingProperty) {
+        info.updatingAttribute = true;
+  
+        if (isBoolean && internalValue) {
+          this.setAttribute(prop.attr, '');
+        } else if (isBoolean && !internalValue) {
+          this.removeAttribute(prop.attr, '');
+        } else {
+          this.setAttribute(prop.attr, internalValue);
         }
   
-        // Regardless of any options, we store the value internally.
-        _value = newValue;
+        info.updatingAttribute = false;
+      }
   
-        // We check first to see if we're already updating the property from
-        // the attribute. If we are, then there's no need to update the attribute
-        // especially because it would invoke an infinite loop.
-        if (_attribute && !info.updatingProperty) {
-          info.updatingAttribute = true;
+      // A setter is responsible for setting its own value. We still store the
+      // value internally because the default getter may still be used to return
+      // that value. Even if it's not, we use it to reference the old value which
+      // is useful information for the setter.
+      if (internalSetter) {
+        internalSetter.call(this, newValue, oldValue);
+      }
   
-          if (_isBoolean && _value) {
-            this.setAttribute(_attribute, '');
-          } else if (_isBoolean && !_value) {
-            this.removeAttribute(_attribute, '');
-          } else {
-            this.setAttribute(_attribute, _value);
+      if (prop.notify) {
+        (0, _apiEmit2['default'])(this, prop.notify, {
+          detail: {
+            name: name,
+            newValue: newValue,
+            oldValue: oldValue
           }
-  
-          info.updatingAttribute = false;
-        }
-  
-        // A setter is responsible for setting its own value.
-        if (_setter) {
-          _setter.call(this, newValue, oldValue);
-        }
-  
-        // Only notify if the value has changed.
-        if (_notify) {
-          (0, _apiEmit2['default'])(this, 'skate-property-' + name);
-        }
+        });
       }
     };
+  
+    return prop;
   }
   
   function defineProperty(elem, name, prop) {
     var attributeToPropertyMap = (0, _utilData2['default'])(elem).attributeToPropertyMap = {};
-  
-    if (!prop) {
-      return;
-    }
-  
-    Object.defineProperty(elem, name, property(name, prop));
+    prop = property(name, prop);
+    Object.defineProperty(elem, name, prop);
   
     if (prop.attr) {
       attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
@@ -779,13 +782,13 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       elem[name] = prop.value;
     }
   
-    (prop.deps || []).forEach(function (dep) {
-      (0, _apiEvent2['default'])(elem, _constants.EVENT_PREFIX + dep, function (e) {
-        if (e.target === e.delegateTarget || this === e.delegateTarget) {
-          (0, _apiEmit2['default'])(elem, 'skate-property-' + name);
-        }
+    // If you aren't notifying of property changes, then dependencies aren't
+    // listened to.
+    if (prop.notify) {
+      prop.deps.forEach(function (dep) {
+        (0, _apiEvent2['default'])(elem, dep, _apiEmit2['default'].bind(null, elem, prop.notify));
       });
-    });
+    }
   }
   
   function defineProperties(elem, props) {
@@ -794,12 +797,17 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     });
   }
   
-  exports['default'] = function (elem, props, prop) {
+  exports['default'] = function (elem) {
+    var props = arguments[1] === undefined ? {} : arguments[1];
+    var prop = arguments[2] === undefined ? {} : arguments[2];
+  
     if (typeof props === 'string') {
       defineProperty(elem, props, prop);
     } else {
-      defineProperties(elem, props || {});
+      defineProperties(elem, props);
     }
+  
+    return this;
   };
   
   module.exports = exports['default'];
