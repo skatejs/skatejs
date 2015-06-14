@@ -85,14 +85,14 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          notify: true
+          notify: 'propName1-changed'
         }
       }
     });
 
     var el = elem.create();
-    el.addEventListener('skate-property-propName1', () => triggered = true);
-    el.propName1 = 'testing';
+    el.addEventListener('propName1-changed', e => triggered = e.detail.newValue);
+    el.propName1 = true;
     expect(triggered).to.equal(true);
   });
 
@@ -102,27 +102,20 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          notify: true
+          notify: 'propName1-changed'
         },
         propName2: {
-          deps: ['propName1'],
-          get: function (propName1) {
-            return (
-              typeof propName1 === 'function' &&
-              propName1() === 'testing'
-            );
-          }
+          deps: 'propName1-changed',
+          notify: 'propName2-changed'
         }
       }
     });
 
     var el = elem.create();
 
-    el.addEventListener('skate-property-propName2', () => triggered = true);
-    el.propName1 = 'testing';
+    el.addEventListener('propName2-changed', e => triggered = e.detail.newValue);
+    el.propName1 = true;
     expect(triggered).to.equal(true);
-    expect(el.propName1).to.equal('testing');
-    expect(el.propName2).to.equal(true);
   });
 
   it('dependencies (deep)', function () {
@@ -132,22 +125,17 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          deps: [`propName1 ${elem2.safe}`],
-          get: function (propName1) {
-            return (
-              typeof propName1 === 'function' &&
-              Array.isArray(propName1()) &&
-              propName1().length === 1 &&
-              propName1()[0] === 'testing'
-            );
-          }
+          deps: 'el.deep',
+          notify: 'el'
         }
       }
     });
 
     skate(elem2.safe, {
       properties: {
-        propName1: {}
+        propName1: {
+          notify: 'el.deep'
+        }
       }
     });
 
@@ -156,10 +144,9 @@ describe('lifecycle/properties', function () {
 
     el1.appendChild(el2);
     helpers.fixture().appendChild(el1);
-    el1.addEventListener('skate-property-propName1', () => triggered = true);
-    el2.propName1 = 'testing';
+    el1.addEventListener('el', e => triggered = e.detail.newValue);
+    el2.propName1 = true;
     expect(triggered).to.equal(true);
-    expect(el1.propName1).to.equal(true);
   });
 
   it('attribute triggers property change', function () {
@@ -169,14 +156,15 @@ describe('lifecycle/properties', function () {
       properties: {
         propName1: {
           attr: true,
-          notify: true
+          notify: 'skate-property',
+          type: Boolean
         }
       }
     });
 
     var el = elem.create();
-    el.addEventListener('skate-property-propName1', () => triggered = true);
-    el.setAttribute('prop-name1', 'some value');
+    el.addEventListener('skate-property', e => triggered = e.detail.newValue);
+    el.setAttribute('prop-name1', '');
     expect(triggered).to.equal(true);
   });
 
