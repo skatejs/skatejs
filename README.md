@@ -294,14 +294,38 @@ document.body.appendChild(element);
 
 ### Extending Components
 
-Once you have an element constructor, you can extend the component that constructor represents. For example, in ES6 you might do this:
+You may extend components using ES6 classes or your favorite ES5 library.
 
 ```js
-var MyEl = skate('my-el', {});
-var MySuperEl = skate('my-super-el', class extends MyEl);
+var XParent = skate('x-parent', {
+  static created () {
+
+  }
+  static get events {
+    return {
+      event1 () {}
+    }
+  }
+});
+
+var XChild = skate('x-child', class extends XParent {
+  static created () {
+    super.created();
+  }
+  static get events {
+    return class extends super.events {
+      event1 (e) {
+        super.event1(e);
+      }
+      event2 () {
+
+      }
+    };
+  }
+});
 ```
 
-
+Due to the semantics of ES6 classes, you must specify any non-prototype members as static. ES6 classes also do not support the object literal syntax. In order to specify properties, just use the getter syntax like we did with `events` above.
 
 ### Attribute Lifecycle
 
@@ -380,7 +404,21 @@ The `removed` handler gets called when:
 
 Callbacks that get fired for attributes that already exist on an element get called after the `attached` callback is triggered.
 
+#### Synchrony
 
+Attribute handlers are notified synchronously. Instead of using mutation observers, `setAttribute` and `removeAttribute` are patched to notify the callback as soon as the change occurs. Your existing code won't need to change, it just means you no longer need to `setTimeout()` to wait until after mutations are triggered.
+
+Currently, updating the attribute instance directly is *not* supported. If you do the following, the `attributes` callback will *not* be notified of the change.
+
+```js
+myElement.attributes.myAttribute.value = 'new value';
+```
+
+You must use the attribute methods instead:
+
+```js
+myElement.setAttribute('myAttribute', 'new value');
+```
 
 #### Catching Unspecified Modifications
 
@@ -473,7 +511,15 @@ The first `click` handler gets executed whenever the component receives a click 
 
 Events listeners are not automatically removed from the element when it is removed from the DOM. This is because Skate does not know if you intend to re-insert the element back into the DOM. Skate leaves it up to you and the JavaScript engine's garbage collector to manage this.
 
+#### Reaching into the Shadow DOM
 
+You may use the `::shadow` pseudo-element when specifying a delegate selector to an event. Underneath, Skate will walk the parent hierarchy from `e.path[0]` instead of `e.target` to find a matching target.
+
+Note:
+
+- It's experimental because the spec may change. As the spec changes, this may also change.
+- Only `::shadow` is supported. Combinators are not because of the [proposed removal](https://www.w3.org/wiki/Webapps/WebComponentsApril2015Meeting).
+- If you are using this in browsers that do not support it natively, you must include a polyfill capable of allowing you to use these selectors.
 
 ### Custom Methods and Properties
 
