@@ -2,8 +2,6 @@ import apiEmit from '../../../src/api/emit';
 import apiEvent from '../../../src/api/event';
 import helpers from '../../lib/helpers';
 
-var CustomEvent = window.CustomEvent;
-
 describe('api/event', function () {
   var supportsShadowRoot = 'createShadowRoot' in window.HTMLElement.prototype;
 
@@ -20,6 +18,8 @@ describe('api/event', function () {
     }
 
     function assertDispatchClick (delegateSelector, btnId, assertionValue) {
+      // If / when /deep/ is removed we'll have to find a different way of
+      // querying for the button.
       var btn = div.querySelector('* /deep/ #' + btnId);
       apiEvent(div, { ['click ' + delegateSelector + ' button']: assertDelegation(btn) });
       apiEmit(btn, 'click');
