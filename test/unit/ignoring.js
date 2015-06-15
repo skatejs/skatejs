@@ -2,8 +2,7 @@
 
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
-
-var supportsCustomElements = 'registerElement' in document;
+import supportsCustomElements from '../../src/support/custom-elements';
 
 describe('ignoring', function () {
   var created;
@@ -20,7 +19,7 @@ describe('ignoring', function () {
 
   function assertCalls (done) {
     helpers.afterMutations(function () {
-      var expected = supportsCustomElements ? 1 : 0;
+      var expected = supportsCustomElements() ? 1 : 0;
       expect(created).to.equal(expected, 'created');
       expect(attached).to.equal(expected, 'attached');
       done();
@@ -43,7 +42,7 @@ describe('ignoring', function () {
     skate(tag.safe, definition);
     helpers.fixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
     assertCalls(done);
-  });
+  })
 
   it('should ignore children of a flagged element if defined after it is inserted', function (done) {
     helpers.fixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);

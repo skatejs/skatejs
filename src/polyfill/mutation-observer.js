@@ -1,5 +1,6 @@
 import debounce from '../util/debounce';
 import elementContains from '../util/element-contains';
+import objEach from '../util/obj-each';
 
 var Attr = window.Attr;
 var elementPrototype = window.HTMLElement.prototype;
@@ -245,12 +246,14 @@ MutationObserver.prototype = {
   },
 
   disconnect: function () {
-    this.elements.forEach(function (observed) {
+    objEach(this.elements, function (observed) {
       observed.target.removeEventListener('DOMNodeInserted', observed.insertHandler);
       observed.target.removeEventListener('DOMNodeRemoved', observed.removeHandler);
       observed.target.removeEventListener('DOMAttrModified', observed.attributeHandler);
     });
+
     this.elements = [];
+
     return this;
   }
 };
