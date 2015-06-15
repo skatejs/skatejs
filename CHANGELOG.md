@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - #205 - Lifecycle callbacks now use `this`.
 - #208 - `attribute` callback is no longer granular and conform to the spec.
-- #209 - Renamed `attribute` to `attribute` because now it's just a single callback.
+- #209 - Renamed `attributes` to `attribute` because now it's just a single callback.
 
 ### Fixed
 
