@@ -1,4 +1,5 @@
 import './boot';
+import './unit/api/chain';
 import './unit/api/event';
 import './unit/attributes';
 import './unit/constructor';
