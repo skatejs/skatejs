@@ -92,7 +92,7 @@ attributes: {
 Current:
 
 ```js
-attributes (name, oldValue, newValue) {
+attribute (name, oldValue, newValue) {
 
 }
 ```
