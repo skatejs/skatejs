@@ -11,9 +11,7 @@ describe('extending', function () {
       created: function () {
         this.textContent = 'test';
       },
-      attributes: {
-        myAttribute: function () {}
-      },
+      attribute: function () {},
       prototype: {
         test: true,
         someFunction: function () {}
@@ -26,7 +24,7 @@ describe('extending', function () {
     expect(Ctor.extends).to.equal('div');
     expect(Ctor.someNonStandardProperty).to.equal(true);
     expect(Ctor.created).to.be.a('function');
-    expect(Ctor.attributes.myAttribute).to.be.a('function');
+    expect(Ctor.attribute).to.be.a('function');
     expect(Ctor.prototype.test).to.equal(true);
     expect(Ctor.prototype.someFunction).to.be.a('function');
   });
@@ -36,7 +34,7 @@ describe('extending', function () {
     expect(ExtendedCtor.extends).to.equal('div');
     expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
     expect(ExtendedCtor.created).to.be.a('function');
-    expect(ExtendedCtor.attributes.myAttribute).to.be.a('function');
+    expect(ExtendedCtor.attribute).to.be.a('function');
     expect(ExtendedCtor.prototype.test).to.equal(true);
     expect(ExtendedCtor.prototype.someFunction).to.be.a('function');
   });

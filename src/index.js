@@ -13,7 +13,7 @@ import apiWatch from './api/watch';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
-import attribute from './lifecycle/attributes';
+import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
 import debounce from './util/debounce';
 import defaults from './defaults';

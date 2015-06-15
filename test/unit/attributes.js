@@ -11,7 +11,7 @@ describe('lifecycle/attributes', function () {
       var tag = helperElement();
 
       skate(tag.safe, {
-        attributes: (...args) => data = args
+        attribute: (...args) => data = args
       });
 
       var elem = tag.create();
@@ -39,7 +39,7 @@ describe('lifecycle/attributes', function () {
       var tag = helperElement();
 
       skate(tag.safe, {
-        attributes: () => called = true
+        attribute: () => called = true
       });
 
       tag.create();

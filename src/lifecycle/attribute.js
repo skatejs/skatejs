@@ -1,7 +1,7 @@
 import data from '../util/data';
 
 export default function (opts) {
-  var callback = opts.attributes;
+  var callback = opts.attribute;
 
   /* jshint expr: true */
   return function (name, oldValue, newValue) {

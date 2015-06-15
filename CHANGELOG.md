@@ -18,7 +18,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - #205 - Lifecycle callbacks now use `this`.
-- #208 - `attributes` are no longer granular and conform to the spec.
+- #208 - `attribute` callback is no longer granular and conform to the spec.
+- #209 - Renamed `attribute` to `attribute` because now it's just a single callback.
 
 ### Fixed
 
@@ -28,7 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 - #184 - The `skate.defaults` property is no longer public and has been removed. No alternative will be provided.
-- #187 - Modifying `element.attributes` directly no longer triggers the `attributes` callback.
+- #187 - Modifying `element.attributes` directly no longer triggers the `attribute` callback.
 
 ### Upgrading
 
@@ -39,7 +40,7 @@ The following callbacks now use `this` to refer to the element instead of it bei
 - `created`
 - `attached`
 - `detached`
-- `attributes`
+- `attribute`
 - `events`
 - `template`
 
@@ -59,9 +60,9 @@ created () {
 }
 ```
 
-####  #208 - `attributes` are no longer granular and conform to the spec
+####  #208 - `attribute` are no longer granular and conform to the spec
 
-- You may now only specify a callback as the `attributes` option.
+- You may now only specify a callback as the `attribute` option.
 - The signature of the callback matches the web component spec.
   - Use `this` to refer to the element.
   - Arguments are: `name`, `oldValue` and `newValue` in that order.
@@ -113,4 +114,4 @@ properties: {
 }
 ```
 
-When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attributes` callback.
+When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attribute` callback.
