@@ -21,9 +21,7 @@ import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
 import registry from './polyfill/registry';
-import supportsCustomElements from './support/custom-elements';
 import walkTree from './util/walk-tree';
-import validCustomElement from './support/valid-custom-element';
 
 function initDocument () {
   walkTree(document.documentElement.childNodes, function (element) {
@@ -70,8 +68,13 @@ function makeNonNewableWrapper (Ctor) {
   return CtorWrapper;
 }
 
+function validCustomElement (id) {
+  return id.indexOf('-') > 0;
+}
+
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
+var supportsCustomElements = typeof document.registerElement === 'function';
 
 function skate (id, userOptions) {
   var Ctor, CtorParent, isElement, isNative;
@@ -79,7 +82,7 @@ function skate (id, userOptions) {
 
   CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
   isElement = options.type === TYPE_ELEMENT;
-  isNative = isElement && supportsCustomElements() && validCustomElement(id);
+  isNative = isElement && supportsCustomElements && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
