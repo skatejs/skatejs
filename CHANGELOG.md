@@ -74,10 +74,17 @@ Previous:
 attributes: {
   myAttribute1 (element, changes) {},
   myAttribute2: {
+    value: 'initial value'
+  },
+  myAttribute3: {
+    value () {
+      return 'initial value';
+    }
+  },
+  myAttribute4: {
     created (element, changes) {},
     updated (element, changes) {},
     removed (element, changes) {},
-    value: 'initial value'
   }
 }
 ```
@@ -90,26 +97,39 @@ attributes (name, oldValue, newValue) {
 }
 ```
 
-If you need to check what type of modification happened:
-
-- If `oldValue` is `null` the attribute was `created`.
-- If `newValue` is `null` the attribute was `removed`.
-
-To regain the ability to do something when a specific attribute has been `created`, `updated` or `removed`, use the new `properties` option:
+To translate the above variations to the new `properties` option, you would do the following:
 
 ```js
 properties: {
-  myProperty1: {
+  myAttribute1: {
     attr: true,
     set (newValue, oldValue) {
 
     }
   },
-  myProperty2: {
+  myAttribute2: {
     attr: true,
     value: 'initial value',
     set (newValue, oldValue) {
 
+    }
+  },
+  myAttribute3: {
+    attr: true,
+    value () {
+      return 'initial value';
+    }
+  },
+  myAttribute4: {
+    attr: true,
+    set (newValue, oldValue) {
+      if (oldValue === null) {
+        // created
+      } else if (newValue === null) {
+        // removed
+      } else {
+        // updated
+      }
     }
   }
 }
