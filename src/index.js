@@ -15,7 +15,6 @@ import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attributes';
 import created from './lifecycle/created';
-import dashCase from './util/dash-case';
 import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
@@ -45,29 +44,6 @@ function initDocumentWhenReady () {
   apiReady(initDocument);
 }
 
-function dashCaseAttributeNames (options) {
-  for (let name in options.attributes) {
-    var dashCasedName = dashCase(name);
-
-    // We only need to define a new attribute if the name is actually different.
-    if (name !== dashCasedName) {
-      options.attributes[dashCasedName] = options.attributes[name];
-
-      // We define a non-enumerable property that links the camelCased version
-      // to the dash-cased version just in case it's referred to in either form.
-      // It is non-enumerable so that there are no duplicate names attributes
-      // during enumeration and that the ones that are enumerable are the
-      // dash-cased versions.
-      Object.defineProperty(options.attributes, name, {
-        enumerable: false,
-        get: function () {
-          return options.attributes[dashCasedName];
-        }
-      });
-    }
-  }
-}
-
 function makeOptions (userOptions) {
   var options = assignSafe({}, defaults);
 
@@ -82,8 +58,6 @@ function makeOptions (userOptions) {
   for (let name in userOptions) {
     options[name] = userOptions[name];
   }
-
-  dashCaseAttributeNames(options);
 
   return options;
 }

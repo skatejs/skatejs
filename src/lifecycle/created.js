@@ -26,26 +26,16 @@ function patchAttributeMethods (elem) {
 
 function triggerAttributesCreated (elem) {
   var attrs = elem.attributes;
-  for (let attr in attrs) {
-    attr = attrs[attr];
-    elem.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
+  var attrsLength = attrs.length;
+  for (let a = 0; a < attrsLength; a++) {
+    let attr = attrs[a];
+    elem.attributeChangedCallback(attr.name, null, attr.value);
   }
 }
 
 function markAsResolved (elem, opts) {
   elem.removeAttribute(opts.unresolvedAttribute);
   elem.setAttribute(opts.resolvedAttribute, '');
-}
-
-function initAttributes (elem, attrs = {}) {
-  Object.keys(attrs).forEach(function (name) {
-    var attr = attrs[name];
-    if (attr && attr.value && !elem.hasAttribute(name)) {
-      var value = attr.value;
-      value = typeof value === 'function' ? value(elem) : value;
-      elem.setAttribute(name, value);
-    }
-  });
 }
 
 function applyPrototype (elem, opts) {
@@ -93,7 +83,6 @@ export default function (opts) {
     isNative || callCreatedOnDescendants(this, opts);
     isNative || patchAttributeMethods(this);
     apiEvent(this, opts.events);
-    initAttributes(this, opts.attributes);
     callCreated(this, opts);
     triggerAttributesCreated(this);
     markAsResolved(this, opts);
