@@ -309,19 +309,20 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  function emit(name, opts) {
+  function emit(elem, name, opts) {
     var e = document.createEvent('CustomEvent');
     opts.bubbles === undefined && (opts.bubbles = true);
     opts.cancelable === undefined && (opts.cancelable = true);
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return this.dispatchEvent(e);
+    return elem.dispatchEvent(e);
   }
   
   exports['default'] = function (elem, name) {
     var opts = arguments[2] === undefined ? {} : arguments[2];
   
-    (name.split && name.split(' ') || []).forEach(emit.bind(elem, name, opts));
-    return this;
+    (name.split && name.split(' ') || []).forEach(function (name) {
+      return emit(elem, name, opts);
+    });
   };
   
   module.exports = exports['default'];
@@ -616,6 +617,63 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 
+// src/api/notify.js
+__9c53d0b55c601bcd876ca0d265bb297a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _emit2 = _interopRequireDefault(_emit);
+  
+  /* jshint expr: true */
+  
+  exports['default'] = function (elem, name) {
+    var detail = arguments[2] === undefined ? {} : arguments[2];
+  
+    // Notifications must *always* have:
+    // - name
+    // - newValue
+    // - oldValue
+    // but may contain other information.
+    detail.name = name;
+    detail.newValue === undefined && (detail.newValue = elem[name]);
+    detail.oldValue === undefined && (detail.oldValue = elem[name]);
+  
+    // Always fire a generic event. These don't bubble because dependencies can
+    // be placed on specific events. If that is done, then the dependency will
+    // trigger a generic event for the element. Bubbling would cause children
+    // to falsely notify parents.
+    (0, _emit2['default'])(elem, 'skate.property', {
+      bubbles: false,
+      cancelable: false,
+      detail: detail
+    });
+  
+    // Fire specific event. This event bubbles so that parents can listen for
+    // changes in children.
+    (0, _emit2['default'])(elem, 'skate.property.' + name, {
+      bubbles: true,
+      cancelable: false,
+      detail: detail
+    });
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -656,13 +714,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
   
-  var _apiEmit2 = _interopRequireDefault(_apiEmit);
-  
-  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
-  
-  var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  var _apiNotify2 = _interopRequireDefault(_apiNotify);
   
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
@@ -675,7 +729,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   function property(name, prop) {
     var internalGetter, internalSetter, internalValue, isBoolean;
   
-    if (typeof prop !== 'object') {
+    if (!prop || typeof prop !== 'object') {
       prop = { type: prop };
     }
   
@@ -689,6 +743,10 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
     if (!Array.isArray(prop.deps)) {
       prop.deps = [];
+    }
+  
+    if (prop.notify === undefined) {
+      prop.notify = true;
     }
   
     if (typeof prop.type !== 'function') {
@@ -754,12 +812,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       }
   
       if (prop.notify) {
-        (0, _apiEmit2['default'])(this, prop.notify, {
-          detail: {
-            name: name,
-            newValue: newValue,
-            oldValue: oldValue
-          }
+        (0, _apiNotify2['default'])(this, name, {
+          newValue: newValue,
+          oldValue: oldValue
         });
       }
     };
@@ -786,7 +841,24 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     // listened to.
     if (prop.notify) {
       prop.deps.forEach(function (dep) {
-        (0, _apiEvent2['default'])(elem, dep, _apiEmit2['default'].bind(null, elem, prop.notify));
+        var depPath = dep.split('.');
+        var depName = depPath.pop();
+  
+        elem.addEventListener('skate.property.' + depName, function (e) {
+          var target = elem;
+  
+          depPath.forEach(function (part) {
+            target = elem && elem[part];
+          });
+  
+          if (elem !== e.target) {
+            e.stopImmediatePropagation();
+          }
+  
+          if (target === e.target) {
+            (0, _apiNotify2['default'])(elem, name);
+          }
+        });
       });
     }
   }
@@ -806,8 +878,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     } else {
       defineProperties(elem, props);
     }
-  
-    return this;
   };
   
   module.exports = exports['default'];
@@ -940,28 +1010,16 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function triggerAttributesCreated(elem) {
     var attrs = elem.attributes;
-    for (var attr in attrs) {
-      attr = attrs[attr];
-      elem.attributeChangedCallback(attr.nodeName, null, attr.value || attr.nodeValue);
+    var attrsLength = attrs.length;
+    for (var a = 0; a < attrsLength; a++) {
+      var attr = attrs[a];
+      elem.attributeChangedCallback(attr.name, null, attr.value);
     }
   }
   
   function markAsResolved(elem, opts) {
     elem.removeAttribute(opts.unresolvedAttribute);
     elem.setAttribute(opts.resolvedAttribute, '');
-  }
-  
-  function initAttributes(elem) {
-    var attrs = arguments[1] === undefined ? {} : arguments[1];
-  
-    Object.keys(attrs).forEach(function (name) {
-      var attr = attrs[name];
-      if (attr && attr.value && !elem.hasAttribute(name)) {
-        var value = attr.value;
-        value = typeof value === 'function' ? value(elem) : value;
-        elem.setAttribute(name, value);
-      }
-    });
   }
   
   function applyPrototype(elem, opts) {
@@ -1011,7 +1069,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       isNative || callCreatedOnDescendants(this, opts);
       isNative || patchAttributeMethods(this);
       (0, _apiEvent2['default'])(this, opts.events);
-      initAttributes(this, opts.attributes);
       callCreated(this, opts);
       triggerAttributesCreated(this);
       markAsResolved(this, opts);
@@ -1656,93 +1713,20 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiChain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
-  
-  var _apiChain2 = _interopRequireDefault(_apiChain);
-  
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
-  
-  var _utilProtos2 = _interopRequireDefault(_utilProtos);
-  
-  var lifecycleNames = ['created', 'updated', 'removed'];
-  
-  function validLifecycles(obj) {
-    return (0, _utilProtos2['default'])(obj || {}).reduce(function (prev, curr) {
-      return prev.concat(Object.getOwnPropertyNames(curr));
-    }, []).filter(function (key, idx, arr) {
-      return arr.lastIndexOf(key) === idx;
-    }).filter(function (key) {
-      return lifecycleNames.some(function (val) {
-        return key.indexOf(val) !== -1;
-      });
-    });
-  }
-  
-  function resolveType(oldValue, newValue) {
-    var newValueIsString = typeof newValue === 'string';
-    var oldValueIsString = typeof oldValue === 'string';
-  
-    if (!oldValueIsString && newValueIsString) {
-      return 'created';
-    } else if (oldValueIsString && newValueIsString) {
-      return 'updated';
-    } else if (oldValueIsString && !newValueIsString) {
-      return 'removed';
-    }
-  }
-  
-  function makeSpecificCallback(types) {
-    if (typeof types === 'function') {
-      return types;
-    }
-  
-    var map = validLifecycles(types).reduce(function (obj, unsplit) {
-      return unsplit.split(' ').reduce(function (obj, split) {
-        (obj[split] = obj[split] || []).push(unsplit);
-        return obj;
-      }, obj);
-    }, {});
-  
-    return function (diff) {
-      var _this = this;
-  
-      (map[diff.type] || []).forEach(function (cb) {
-        return types[cb].call(_this, diff);
-      });
-    };
-  }
-  
-  function makeGlobalCallback(attrs) {
-    if (typeof attrs === 'function') {
-      return attrs;
-    }
-  
-    var fns = Object.keys(attrs || {}).reduce(function (prev, curr) {
-      prev[curr] = makeSpecificCallback(attrs[curr]);
-      return prev;
-    }, {});
-  
-    return function (diff) {
-      (0, _apiChain2['default'])(fns[diff.name]).call(this, diff);
-    };
-  }
-  
   exports['default'] = function (opts) {
-    var callback = makeGlobalCallback(opts.attributes);
+    var callback = opts.attributes;
+  
+    /* jshint expr: true */
     return function (name, oldValue, newValue) {
       var info = (0, _utilData2['default'])(this);
       var attributeToPropertyMap = info.attributeToPropertyMap || {};
   
-      callback.call(this, {
-        name: name,
-        newValue: newValue === undefined ? null : newValue,
-        oldValue: oldValue === undefined ? null : oldValue,
-        type: resolveType(oldValue, newValue)
-      });
+      // Only call a callback if one was specified.
+      typeof callback === 'function' && callback.call(this, name, oldValue, newValue);
   
       // Ensure properties are notified of this change. We only do this if we're
       // not already updating the attribute from the property. This is so that
@@ -2195,10 +2179,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _lifecycleCreated2 = _interopRequireDefault(_lifecycleCreated);
   
-  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
-  
-  var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
-  
   var _utilDebounce = __afcda96357b2c6b7e23ccb9ac8b92f43;
   
   var _utilDebounce2 = _interopRequireDefault(_utilDebounce);
@@ -2254,45 +2234,20 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     (0, _apiReady2['default'])(initDocument);
   }
   
-  function dashCaseAttributeNames(options) {
-    for (var _name in options.attributes) {
-      var dashCasedName = (0, _utilDashCase2['default'])(_name);
-  
-      // We only need to define a new attribute if the name is actually different.
-      if (_name !== dashCasedName) {
-        options.attributes[dashCasedName] = options.attributes[_name];
-  
-        // We define a non-enumerable property that links the camelCased version
-        // to the dash-cased version just in case it's referred to in either form.
-        // It is non-enumerable so that there are no duplicate names attributes
-        // during enumeration and that the ones that are enumerable are the
-        // dash-cased versions.
-        Object.defineProperty(options.attributes, _name, {
-          enumerable: false,
-          get: function get() {
-            return options.attributes[dashCasedName];
-          }
-        });
-      }
-    }
-  }
-  
   function makeOptions(userOptions) {
     var options = (0, _utilAssignSafe2['default'])({}, _defaults2['default']);
   
     // Copy over all standard options if the user has defined them.
-    for (var _name2 in _defaults2['default']) {
-      if (userOptions[_name2] !== undefined) {
-        options[_name2] = userOptions[_name2];
+    for (var _name in _defaults2['default']) {
+      if (userOptions[_name] !== undefined) {
+        options[_name] = userOptions[_name];
       }
     }
   
     // Copy over non-standard options.
-    for (var _name3 in userOptions) {
-      options[_name3] = userOptions[_name3];
+    for (var _name2 in userOptions) {
+      options[_name2] = userOptions[_name2];
     }
-  
-    dashCaseAttributeNames(options);
   
     return options;
   }
