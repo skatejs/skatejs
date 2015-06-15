@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - #178 - `events` now support an array of handlers.
 - #187 - `attribute` handlers are now synchronous.
 - #197 - Event delegation support for selectors containing `::shadow`.
+- #200 - Support for a `properties` definition that defines instance properties and their behaviour.
 - #206 - Element constructors can be called like a function, or instantiated like a constructor.
 
 ### Changed
