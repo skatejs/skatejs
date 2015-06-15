@@ -86,27 +86,5 @@ describe('api/event', function () {
     it(':host::shadow (nested)', function () {
       assertDispatchClick(':host::shadow', 'in-deep-shadow-root', true);
     });
-
-
-    // /deep/
-
-    it(':host /deep/', function () {
-      assertDispatchClick(':host /deep/', 'in-shadow-root', true);
-    });
-
-    it(':host /deep/ (nested)', function () {
-      assertDispatchClick(':host /deep/', 'in-deep-shadow-root', true);
-    });
-
-
-    // >>>
-
-    // it(':host >>>', function () {
-    //   assertDispatchClick(':host >>>', 'in-shadow-root', true);
-    // });
-    //
-    // it(':host >>> (nested)', function () {
-    //   assertDispatchClick(':host >>>', 'in-deep-shadow-root', true);
-    // });
   });
 });

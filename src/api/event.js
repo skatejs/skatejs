@@ -1,7 +1,7 @@
 import apiChain from './chain';
 import matchesSelector from '../util/matches-selector';
 
-var isShadowSelectorRegex = /(::shadow|\/deep\/)/;
+var isShadowSelectorRegex = /(::shadow)/;
 var ShadowRoot = window.ShadowRoot;
 
 function parseEvent (e) {
