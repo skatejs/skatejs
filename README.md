@@ -278,11 +278,17 @@ skate('my-component', {
 
 ### Component Lifecycle
 
-The component lifecycle consists of three callbacks:
+The component lifecycle consists several callbacks:
 
-1. `created`
-2. `attached`
-3. `detached`
+```js
+var myElement = skate('my-element', {
+  created () {},
+  attached () {},
+  detached () {},
+  attribute () {},
+  template () {}
+});
+```
 
 These callbacks try and mimic the spec as closely as possible when native support is unavailable.
 
@@ -293,19 +299,21 @@ The `created` callback gets triggered when the element is created. There are som
 ```js
 // native: called immediately (synchronous)
 // polyfill: called immediately (synchronous)
-new MyEl();
+myElement();
+new myElement();
+skate.create('my-element');
 
 // native: called immediately (synchronous)
 // polyfill: called when inserted to the DOM (asynchronous)
-document.createElement('my-el');
+document.createElement('my-element');
 
 // native: called immediately (synchronous)
 // polyfill: called when the mutation observer fires (asynchronous)
-document.body.innerHTML = '<my-el></my-el>';
+document.body.innerHTML = '<my-element></my-element>';
 
 // native: called immediately (synchronous)
 // polyfill: called when <div> is inserted into the DOM (asynchronous)
-document.createElement('div').innerHTML = '<my-el></my-el>';
+document.createElement('div').innerHTML = '<my-element></my-element>';
 ```
 
 In instances where an element is initialised asynchronously, there may be a flash of unstyled content or jank. For more information see [Preventing FOUC](#preventing-fouc).
