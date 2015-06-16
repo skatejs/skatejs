@@ -876,9 +876,13 @@ click: skate.emit('selected')
 
 #### `skate.event()`
 
+[soon]
+
 
 
 #### `skate.init()`
+
+[soon]
 
 
 
