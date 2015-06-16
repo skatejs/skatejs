@@ -647,7 +647,7 @@ This is very useful during testing, but can be used for any use case that requir
 
 ### API
 
-The following are all available on the `skate` object, or available for use from the `src/api` folder.
+The following are all available on the `skate` object, or available for use from the `src/api` or `lib/api` folders.
 
 #### `chain (...args)`
 
