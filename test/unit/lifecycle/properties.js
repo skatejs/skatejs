@@ -90,9 +90,8 @@ describe('lifecycle/properties', function () {
 
     var el = elem.create();
     el.addEventListener('skate.property', () => ++triggered);
-    el.addEventListener('skate.property.propName1', () => ++triggered);
     el.propName1 = true;
-    expect(triggered).to.equal(2);
+    expect(triggered).to.equal(1);
   });
 
   it('dependencies', function () {
@@ -102,7 +101,10 @@ describe('lifecycle/properties', function () {
       properties: {
         propName1: null,
         propName2: {
-          deps: 'propName1'
+          deps: 'propName1',
+          set: function () {
+            ++triggered;
+          }
         }
       }
     });
@@ -112,17 +114,10 @@ describe('lifecycle/properties', function () {
     // Triggered twice. Once for propName1 and once for propName2.
     el.addEventListener('skate.property', () => ++triggered);
 
-    // Triggered once for propName2.
-    el.addEventListener('skate.property.propName2', () => ++triggered);
-
-    // Will trigger: propName1 -> propName2.
+    // Will notify propName2.
     el.propName1 = true;
 
-    // Chains:
-    // - skate.property
-    // - skate.property.propName1
-    // - skate.property
-    // - skate.property.propName2
+    // Twice for `skate.property` and once for the `propName2` setter.
     expect(triggered).to.equal(3);
   });
 
@@ -133,20 +128,16 @@ describe('lifecycle/properties', function () {
 
     skate(elem.safe, {
       properties: {
-        child: {
-          get: function () {
-            return this.childNodes[0];
-          }
-        },
         propName1: {
-          deps: 'child.propName1'
+          deps: 'firstChild.propName1',
+          set: () => ++triggeredNumber
         }
       }
     });
 
     skate(elem2.safe, {
       properties: {
-        propName1: null
+        propName1: {}
       }
     });
 
@@ -159,8 +150,7 @@ describe('lifecycle/properties', function () {
     // We need to check the number of calls as well which element triggered the
     // property event.
     el1.addEventListener('skate.property', () => ++triggeredNumber);
-    el1.addEventListener('skate.property.propName1', () => ++triggeredNumber);
-    el1.addEventListener('skate.property.propName1', e => triggeredTarget = e.target);
+    el1.addEventListener('skate.property', e => triggeredTarget = e.target);
 
     // Will notify el1.propName1.
     el2.propName1 = true;

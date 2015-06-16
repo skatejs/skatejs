@@ -1,6 +1,24 @@
-import apiNotify from '../api/notify';
+import apiEmit from './emit';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+
+/* jshint expr: true */
+function notify (elem, name, detail = {}) {
+  // Notifications must *always* have:
+  // - name
+  // - newValue
+  // - oldValue
+  // but may contain other information.
+  detail.name = name;
+  detail.newValue === undefined && (detail.newValue = elem[name]);
+  detail.oldValue === undefined && (detail.oldValue = elem[name]);
+
+  apiEmit(elem, `skate.property`, {
+    bubbles: true,
+    cancelable: false,
+    detail: detail
+  });
+}
 
 function property (name, prop) {
   var internalGetter, internalSetter, internalValue, isBoolean;
@@ -50,12 +68,7 @@ function property (name, prop) {
 
     // We report both new and old values;
     var newValue = prop.type(value);
-    var oldValue = internalValue;
-
-    // We do nothing if the value hasn't changed.
-    if (oldValue === newValue) {
-      return;
-    }
+    var oldValue = this[name];
 
     // Regardless of any options, we store the value internally.
     internalValue = newValue;
@@ -86,7 +99,7 @@ function property (name, prop) {
     }
 
     if (prop.notify) {
-      apiNotify(this, name, {
+      notify(this, name, {
         newValue: newValue,
         oldValue: oldValue
       });
@@ -96,19 +109,47 @@ function property (name, prop) {
   return prop;
 }
 
+function makePropertyHandler (elem, name, depPath, depName) {
+  return function (e) {
+    if (depName !== e.detail.name) {
+      return;
+    }
+
+    var target = elem;
+
+    // Resolve the dependency element from the dependecy path. If no path
+    // exists, this will continue to be the main element. If the path
+    // points to a non-element, then it's a no-op.
+    depPath.forEach(function (part) {
+      target = elem && elem[part];
+    });
+
+    // If the event bubbled, ensure that it doesn't call any handlers for
+    // the same property on main element.
+    if (elem !== e.target) {
+      e.stopImmediatePropagation();
+    }
+
+    // Only notify of changes if the main element, or the element matched by
+    // the dependency path, matches the target that triggered the event.
+    if (target === e.target) {
+      // We get and set the property so that logic in the getter and setter
+      // get invoked. When the setter is invoked, it automatically notifies
+      // any dependencies.
+      elem[name] = elem[name];
+    }
+  };
+}
+
 function defineProperty (elem, name, prop) {
   var attributeToPropertyMap = data(elem).attributeToPropertyMap = {};
   prop = property(name, prop);
   Object.defineProperty(elem, name, prop);
 
+  // This ensures that the corresponding attribute will know to update this
+  // property when it is set.
   if (prop.attr) {
     attributeToPropertyMap[dashCase(name)] = name;
-  }
-
-  if (typeof prop.value === 'function') {
-    elem[name] = prop.value();
-  } else if (typeof prop.value !== 'undefined') {
-    elem[name] = prop.value;
   }
 
   // If you aren't notifying of property changes, then dependencies aren't
@@ -117,22 +158,7 @@ function defineProperty (elem, name, prop) {
     prop.deps.forEach(function (dep) {
       var depPath = dep.split('.');
       var depName = depPath.pop();
-
-      elem.addEventListener(`skate.property.${depName}`, function (e) {
-        var target = elem;
-
-        depPath.forEach(function (part) {
-          target = elem && elem[part];
-        });
-
-        if (elem !== e.target) {
-          e.stopImmediatePropagation();
-        }
-
-        if (target === e.target) {
-          apiNotify(elem, name);
-        }
-      });
+      elem.addEventListener('skate.property', makePropertyHandler(elem, name, depPath, depName));
     });
   }
 }
