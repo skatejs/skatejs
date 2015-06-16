@@ -208,4 +208,38 @@ describe('lifecycle/properties', function () {
     var el = elem.create();
     expect(el.propName1).to.equal('test');
   });
+
+  it('custom notify event name', function () {
+    var triggered;
+
+    skate(elem.safe, {
+      properties: {
+        prop: {
+          notify: 'custom-property-event'
+        }
+      }
+    });
+
+    var el = elem.create();
+    el.addEventListener('custom-property-event', () => triggered = true);
+    el.prop = true;
+    expect(triggered).to.equal(true);
+  });
+
+  it('should not notify if set to a falsy value', function () {
+    var triggered = false;
+
+    skate(elem.safe, {
+      properties: {
+        prop: {
+          notify: false
+        }
+      }
+    });
+
+    var el = elem.create();
+    el.addEventListener('skate.property', () => triggered = true);
+    el.prop = true;
+    expect(triggered).to.equal(false);
+  });
 });
