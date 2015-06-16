@@ -1,7 +1,7 @@
 'use strict';
 
-import helpers from '../lib/helpers';
-import skate from '../../src/index';
+import helpers from '../../lib/helpers';
+import skate from '../../../src/index';
 
 describe('skate.init()', function () {
   var MyEl;
