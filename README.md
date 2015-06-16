@@ -820,9 +820,9 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 
 
-#### `skate.emit(targetElement, eventName, eventOptions = {})`
+#### `skate.emit(element, eventName, eventOptions = {})`
 
-Emits a `CustomEvent` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
 skate('x-tabs', {
@@ -847,19 +847,30 @@ It's preferrable not to reach up the DOM hierarchy because that couples your log
 You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
 
 ```js
-skate.emit(targetElement, 'event1 event2');
-skate.emit(targetElement, [ 'event1', 'event2' ]);
+skate.emit(element, 'event1 event2');
+skate.emit(element, [ 'event1', 'event2' ]);
 ```
 
 ##### Return Value
 
 The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
 
+##### Preventing Bubbling or Canceling
+
+If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify those options in the `eventOptions` argument.
+
+```js
+skate.emit(element, 'event', {
+  bubbles: false,
+  cancelable: false
+});
+```
+
 
 
 #### `skate.emit(eventName, eventOptions = {})`
 
-Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `targetElement` and calls `skate.emit(targetElement, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
+Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `element` and calls `skate.emit(element, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
 
 ```js
 click: skate.emit('selected')
@@ -885,9 +896,9 @@ var currentSkate = skate.noConflict();
 
 
 
-#### `skate.property(targetElement, propertyName, propertyDefinition)`
+#### `skate.property(element, propertyName, propertyDefinition)`
 
-Defines the specified `propertyName` using `propertyDefinition` on the `targetElement`. The property definition may contain the following options.
+Defines the specified `propertyName` using `propertyDefinition` on the `element`. The property definition may contain the following options.
 
 ##### `attr`
 
@@ -995,15 +1006,15 @@ value: true
 
 
 
-#### `skate.property(targetElement, propertyDefinitions)`
+#### `skate.property(element, propertyDefinitions)`
 
-A way to define multiple property definitions at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
+A way to define multiple property definitions to an `element` at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
 
 
 
-#### `skate.ready(fn)`
+#### `skate.ready(callback)`
 
-Executes `fn` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
+Executes `callback` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
 
 For example, the following may not work because parents are upgraded before descendants in native custom elements:
 
