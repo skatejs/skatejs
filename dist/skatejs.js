@@ -37,24 +37,48 @@ __4f25f0faaaf0c53e145c08c5d91c9c2b = (function () {
   exports['default'] = chain;
   
   function chain() {
+    var _this = this;
+  
     for (var _len = arguments.length, cbs = Array(_len), _key = 0; _key < _len; _key++) {
       cbs[_key] = arguments[_key];
     }
   
     cbs = cbs.filter(Boolean).map(function (cb) {
-      return typeof cb === 'object' ? chain.apply(null, cb) : cb;
+      // Strings point to a function on the context passed to the proxy fn.
+      if (typeof cb === 'string') {
+        return function () {
+          for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+            args[_key2] = arguments[_key2];
+          }
+  
+          if (typeof this[cb] === 'function') {
+            this[cb].apply(this, args);
+          }
+        };
+      }
+  
+      // Arrays are passed through and object values become an array of values.
+      if (typeof cb === 'object') {
+        cb = Array.isArray(cb) ? cb : Object.keys(cb).map(function (key) {
+          return cb[key];
+        });
+        return chain.apply(_this, cb);
+      }
+  
+      return cb;
     });
   
     return function () {
-      var _this = this;
+      var _this2 = this;
   
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
       }
   
       cbs.forEach(function (cb) {
-        return cb.apply(_this, args);
+        return cb.apply(_this2, args);
       });
+      return this;
     };
   }
   
@@ -304,25 +328,51 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   };
   var exports = module.exports;
   
-  /* jshint expr: true */
+  'use strict';
   
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  function emit(elem, name, opts) {
+  var CustomEvent = window.CustomEvent;
+  
+  function createCustomEvent(name, opts) {
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
     var e = document.createEvent('CustomEvent');
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return elem.dispatchEvent(e);
+    return e;
   }
   
-  exports['default'] = function (elem, name) {
+  function emitOne(elem, name, opts) {
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    return elem.dispatchEvent(createCustomEvent(name, opts));
+  }
+  
+  function emitAll(elem, name, opts) {
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (!emitOne(elem, curr, opts)) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
+  }
+  
+  function emitFn(name, opts) {
+    return function () {
+      return emitAll(this, name, opts);
+    };
+  }
+  
+  exports['default'] = function (elem) {
+    var name = arguments[1] === undefined ? {} : arguments[1];
     var opts = arguments[2] === undefined ? {} : arguments[2];
   
-    (name.split && name.split(' ') || []).forEach(function (name) {
-      return emit(elem, name, opts);
-    });
+    return typeof elem === 'string' ? emitFn(elem, name) : emitAll(elem, name, opts);
   };
   
   module.exports = exports['default'];
@@ -385,7 +435,7 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   
   var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
   
-  var isShadowSelectorRegex = /(::shadow|\/deep\/)/;
+  var isShadowSelectorRegex = /(::shadow)/;
   var ShadowRoot = window.ShadowRoot;
   
   function parseEvent(e) {
@@ -617,63 +667,6 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/notify.js
-__9c53d0b55c601bcd876ca0d265bb297a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
-  
-  var _emit2 = _interopRequireDefault(_emit);
-  
-  /* jshint expr: true */
-  
-  exports['default'] = function (elem, name) {
-    var detail = arguments[2] === undefined ? {} : arguments[2];
-  
-    // Notifications must *always* have:
-    // - name
-    // - newValue
-    // - oldValue
-    // but may contain other information.
-    detail.name = name;
-    detail.newValue === undefined && (detail.newValue = elem[name]);
-    detail.oldValue === undefined && (detail.oldValue = elem[name]);
-  
-    // Always fire a generic event. These don't bubble because dependencies can
-    // be placed on specific events. If that is done, then the dependency will
-    // trigger a generic event for the element. Bubbling would cause children
-    // to falsely notify parents.
-    (0, _emit2['default'])(elem, 'skate.property', {
-      bubbles: false,
-      cancelable: false,
-      detail: detail
-    });
-  
-    // Fire specific event. This event bubbles so that parents can listen for
-    // changes in children.
-    (0, _emit2['default'])(elem, 'skate.property.' + name, {
-      bubbles: true,
-      cancelable: false,
-      detail: detail
-    });
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -714,9 +707,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
   
-  var _apiNotify2 = _interopRequireDefault(_apiNotify);
+  var _emit2 = _interopRequireDefault(_emit);
   
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
@@ -725,6 +718,26 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
+  
+  /* jshint expr: true */
+  function notify(elem, notify, name) {
+    var detail = arguments[3] === undefined ? {} : arguments[3];
+  
+    // Notifications must *always* have:
+    // - name
+    // - newValue
+    // - oldValue
+    // but may contain other information.
+    detail.name = name;
+    detail.newValue === undefined && (detail.newValue = elem[name]);
+    detail.oldValue === undefined && (detail.oldValue = elem[name]);
+  
+    (0, _emit2['default'])(elem, notify, {
+      bubbles: true,
+      cancelable: false,
+      detail: detail
+    });
+  }
   
   function property(name, prop) {
     var internalGetter, internalSetter, internalValue, isBoolean;
@@ -747,6 +760,10 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
     if (prop.notify === undefined) {
       prop.notify = true;
+    }
+  
+    if (prop.notify === true) {
+      prop.notify = 'skate.property';
     }
   
     if (typeof prop.type !== 'function') {
@@ -776,12 +793,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
       // We report both new and old values;
       var newValue = prop.type(value);
-      var oldValue = internalValue;
-  
-      // We do nothing if the value hasn't changed.
-      if (oldValue === newValue) {
-        return;
-      }
+      var oldValue = this[name];
   
       // Regardless of any options, we store the value internally.
       internalValue = newValue;
@@ -812,7 +824,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       }
   
       if (prop.notify) {
-        (0, _apiNotify2['default'])(this, name, {
+        notify(this, prop.notify, name, {
           newValue: newValue,
           oldValue: oldValue
         });
@@ -822,19 +834,47 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     return prop;
   }
   
+  function makePropertyHandler(elem, name, depPath, depName) {
+    return function (e) {
+      if (depName !== e.detail.name) {
+        return;
+      }
+  
+      var target = elem;
+  
+      // Resolve the dependency element from the dependecy path. If no path
+      // exists, this will continue to be the main element. If the path
+      // points to a non-element, then it's a no-op.
+      depPath.forEach(function (part) {
+        target = elem && elem[part];
+      });
+  
+      // If the event bubbled, ensure that it doesn't call any handlers for
+      // the same property on main element.
+      if (elem !== e.target) {
+        e.stopImmediatePropagation();
+      }
+  
+      // Only notify of changes if the main element, or the element matched by
+      // the dependency path, matches the target that triggered the event.
+      if (target === e.target) {
+        // We get and set the property so that logic in the getter and setter
+        // get invoked. When the setter is invoked, it automatically notifies
+        // any dependencies.
+        elem[name] = elem[name];
+      }
+    };
+  }
+  
   function defineProperty(elem, name, prop) {
     var attributeToPropertyMap = (0, _utilData2['default'])(elem).attributeToPropertyMap = {};
     prop = property(name, prop);
     Object.defineProperty(elem, name, prop);
   
+    // This ensures that the corresponding attribute will know to update this
+    // property when it is set.
     if (prop.attr) {
       attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
-    }
-  
-    if (typeof prop.value === 'function') {
-      elem[name] = prop.value();
-    } else if (typeof prop.value !== 'undefined') {
-      elem[name] = prop.value;
     }
   
     // If you aren't notifying of property changes, then dependencies aren't
@@ -843,22 +883,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       prop.deps.forEach(function (dep) {
         var depPath = dep.split('.');
         var depName = depPath.pop();
-  
-        elem.addEventListener('skate.property.' + depName, function (e) {
-          var target = elem;
-  
-          depPath.forEach(function (part) {
-            target = elem && elem[part];
-          });
-  
-          if (elem !== e.target) {
-            e.stopImmediatePropagation();
-          }
-  
-          if (target === e.target) {
-            (0, _apiNotify2['default'])(elem, name);
-          }
-        });
+        elem.addEventListener(prop.notify, makePropertyHandler(elem, name, depPath, depName));
       });
     }
   }
@@ -1677,19 +1702,20 @@ __4390c5a519e11ff146587075b0e7abac = (function () {
   
   var _polyfillMutationObserver2 = _interopRequireDefault(_polyfillMutationObserver);
   
-  exports['default'] = function (elem, callback, opts) {
-    var opts = opts || {};
+  exports['default'] = function (elem, callback) {
+    var opts = arguments[2] === undefined ? {} : arguments[2];
+  
     var observer = new _polyfillMutationObserver2['default'](function (mutations) {
       mutations.forEach(function (mutation) {
         callback(mutation.addedNodes || [], mutation.removedNodes || []);
       });
     });
   
-    if (opts.childList === undefined) {
-      opts.childList = true;
-    }
+    observer.observe(elem, {
+      childList: true,
+      subtree: opts.subtree
+    });
   
-    observer.observe(elem, opts);
     return observer;
   };
   
@@ -1698,8 +1724,8 @@ __4390c5a519e11ff146587075b0e7abac = (function () {
   return module.exports;
 }).call(this);
 
-// src/lifecycle/attributes.js
-__3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
+// src/lifecycle/attribute.js
+__9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   var module = {
     exports: {}
   };
@@ -1718,7 +1744,7 @@ __3339c2eaf2c9e70f911dc8b9c3de6522 = (function () {
   var _utilData2 = _interopRequireDefault(_utilData);
   
   exports['default'] = function (opts) {
-    var callback = opts.attributes;
+    var callback = opts.attribute;
   
     /* jshint expr: true */
     return function (name, oldValue, newValue) {
@@ -2171,9 +2197,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _lifecycleAttached2 = _interopRequireDefault(_lifecycleAttached);
   
-  var _lifecycleAttributes = __3339c2eaf2c9e70f911dc8b9c3de6522;
+  var _lifecycleAttribute = __9f17962f9aa326a94ed3e5d6f6b172e6;
   
-  var _lifecycleAttributes2 = _interopRequireDefault(_lifecycleAttributes);
+  var _lifecycleAttribute2 = _interopRequireDefault(_lifecycleAttribute);
   
   var _lifecycleCreated = __fe1aef0db5b664068b470b21f7c754a5;
   
@@ -2282,7 +2308,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     options.prototype.createdCallback = (0, _lifecycleCreated2['default'])(options);
     options.prototype.attachedCallback = (0, _lifecycleAttached2['default'])(options);
     options.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(options);
-    options.prototype.attributeChangedCallback = (0, _lifecycleAttributes2['default'])(options);
+    options.prototype.attributeChangedCallback = (0, _lifecycleAttribute2['default'])(options);
     Object.defineProperty(options, 'id', {
       configurable: false,
       value: id,
