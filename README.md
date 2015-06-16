@@ -223,11 +223,9 @@ skate('my-component', {
       // Whether or not to trigger events when the property changes. Defaults to
       // `true`. If you do not want events triggered, set this to a falsy value.
       //
-      // If this is truthy, when the property is changed it will trigger two
-      // events:
-      //
-      // - `skate.property` - When any property changes.
-      // - `skate.property.prop1` - When a specific property changes.
+      // If this is truthy, when the property is changed it will trigger an
+      // event called `skate.property` if `notify` is `true`, or an event with
+      // the same name as `notify` if specified as a `String`.
       //
       // The event object for both events contains the following information
       // in the `detail` property:

@@ -3,7 +3,7 @@ import dashCase from '../util/dash-case';
 import data from '../util/data';
 
 /* jshint expr: true */
-function notify (elem, name, detail = {}) {
+function notify (elem, notify, name, detail = {}) {
   // Notifications must *always* have:
   // - name
   // - newValue
@@ -13,7 +13,7 @@ function notify (elem, name, detail = {}) {
   detail.newValue === undefined && (detail.newValue = elem[name]);
   detail.oldValue === undefined && (detail.oldValue = elem[name]);
 
-  apiEmit(elem, `skate.property`, {
+  apiEmit(elem, notify, {
     bubbles: true,
     cancelable: false,
     detail: detail
@@ -41,6 +41,10 @@ function property (name, prop) {
 
   if (prop.notify === undefined) {
     prop.notify = true;
+  }
+
+  if (prop.notify === true) {
+    prop.notify = 'skate.property';
   }
 
   if (typeof prop.type !== 'function') {
@@ -99,7 +103,7 @@ function property (name, prop) {
     }
 
     if (prop.notify) {
-      notify(this, name, {
+      notify(this, prop.notify, name, {
         newValue: newValue,
         oldValue: oldValue
       });
@@ -158,7 +162,7 @@ function defineProperty (elem, name, prop) {
     prop.deps.forEach(function (dep) {
       var depPath = dep.split('.');
       var depName = depPath.pop();
-      elem.addEventListener('skate.property', makePropertyHandler(elem, name, depPath, depName));
+      elem.addEventListener(prop.notify, makePropertyHandler(elem, name, depPath, depName));
     });
   }
 }
