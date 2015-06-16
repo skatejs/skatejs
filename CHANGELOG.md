@@ -19,7 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - #205 - Lifecycle callbacks now use `this`.
-- #208 - `attribute` callback is no longer granular and conform to the spec.
+- #208 - `attributes` are no longer granular and is now closer to the spec.
 - #209 - Renamed `attributes` to `attribute` because now it's just a single callback.
 - #210 - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
 
@@ -62,7 +62,7 @@ created () {
 }
 ```
 
-####  #208 - `attributes` are no longer granular and conform to the spec
+####  #208 - `attributes` are no longer granular and is now closer to the spec
 
 - You may now only specify a callback as the `attribute` option.
 - The signature of the callback matches the web component spec.
