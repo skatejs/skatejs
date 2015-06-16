@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- #162 - Extending existing components.
+- #162 - Extending components.
 - #173 - The presence of the `resolved` attribute skips the `template` callback.
 - #177 - `skate.create()` as an alternative to `document.createElement()`.
 - #178 - `events` now support an array of handlers.
@@ -62,7 +62,7 @@ created () {
 }
 ```
 
-####  #208 - `attribute` are no longer granular and conform to the spec
+####  #208 - `attributes` are no longer granular and conform to the spec
 
 - You may now only specify a callback as the `attribute` option.
 - The signature of the callback matches the web component spec.
