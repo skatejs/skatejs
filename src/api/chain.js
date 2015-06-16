@@ -1,5 +1,6 @@
 export default function chain (...cbs) {
   cbs = cbs.filter(Boolean).map(cb => {
+    // Strings point to a function on the context passed to the proxy fn.
     if (typeof cb === 'string') {
       return function (...args) {
         if (typeof this[cb] === 'function') {
@@ -8,6 +9,7 @@ export default function chain (...cbs) {
       };
     }
 
+    // Arrays are passed through and object values become an array of values.
     if (typeof cb === 'object') {
       cb = Array.isArray(cb) ? cb : Object.keys(cb).map(key => cb[key]);
       return chain.apply(this, cb);
