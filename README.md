@@ -619,8 +619,6 @@ These members are applied directly to the element instance that your component i
 document.getElementById('my-component-id').callMeLikeanyNativeMethod();
 ```
 
-It's important to understand that the `Element.prototype` is not modified as part of this process.
-
 
 
 ### Asynchrony
