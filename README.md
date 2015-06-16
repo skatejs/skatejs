@@ -867,6 +867,14 @@ click: skate.emit('selected')
 
 
 
+#### `skate.event()`
+
+
+
+#### `skate.init()`
+
+
+
 #### `skate.noConflict()`
 
 Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
@@ -874,6 +882,189 @@ Same as what you'd come to expect from most libraries that offer a global namesp
 ```js
 var currentSkate = skate.noConflict();
 ```
+
+
+
+#### `skate.property(targetElement, propertyName, propertyDefinition)`
+
+Defines the specified `propertyName` using `propertyDefinition` on the `targetElement`. The property definition may contain the following options.
+
+##### `attr`
+
+Whether or not to link the property to an attribute. If `true`, then the property name will be converted from `camelCase` to `dash-case` and the result will be used as the linked attribute.
+
+```js
+attr: true
+```
+
+If a `String`, then that will be used as the linked attribute exactly as it is specified.
+
+```js
+attr: 'my-attribute-name`
+```
+
+No attribute is linked by default.
+
+##### `deps`
+
+A space-separated `String` or `Array` of property names that this property depends on. If any of these properties change, then this property's setter will be invoked.
+
+```js
+deps: 'dependency1 dependency2'
+```
+
+Or:
+
+```js
+deps: [ 'dependency1', 'dependency2' ]
+```
+
+You can also specify dependencies on nested components by giving the dependency a dot-separated path.
+
+```js
+deps: 'my.descendant.dependencyProperty`
+```
+
+If you do this, there are a couple requirements that must be met:
+
+- The path (`my.descendant` in the above example) must be accessible from the element in which you're defining the property.
+- The name (`dependencyProperty` in the above example) must be defined as a property on `my.descendant` and notifying turned on.
+
+##### `get`
+
+The custom getter for this property. If not specified, then the value is stored internally when the value is set and returned whenever it is retrieved. The element is passed as `this`.
+
+If you want to make a property read-only, then specify `get` without `set`.
+
+##### `notify`
+
+Whether or not to emit a `skate.property` event when the property is set. This is turned on by default. To disable, set `notify` to a falsy value.
+
+##### `set`
+
+The custom setter for this property. The return value is ignored, so the logic in this method is responsible for setting the value however it needs to. The element is passed in as `this` and it receives two arguments: `newValue` and `oldValue`, in that order.
+
+```js
+set: function (newValue, oldValue) {
+  this.someOtherValue = oldValue + newValue;
+}
+```
+
+##### `type`
+
+Responsible for coercing the value before the setter is called. The return value of this function is what is passed as `newValue` into the setter.
+
+```js
+type: Number
+```
+
+You can use `type` in conjunction with `attr` to make a boolean attribute:
+
+```js
+attr: true,
+type: Boolean
+```
+
+When the property is passed a truthy value, the attribute is added and void of a value. When passed a falsy value, the attribute is removed.
+
+##### `value`
+
+The initial value for the property. It will be coerced and pass through the setter when initialised.
+
+```js
+value: 'initial value'
+```
+
+If you specify a `Function` then it will be called and the return value used as the initial value.
+
+```js
+value: function () {
+  return 'initial value';
+}
+```
+
+The element is *not* passed as `this` because property initialisation order is not guaranteed. If you need the element in order to compute the value, it's better to use `get` or `set` instead.
+
+If you wanted to have a property linked to a boolean attribute and have it set on the element by default, all you'd have to do is:
+
+```js
+attr: true,
+type: Boolean,
+value: true
+```
+
+
+
+#### `skate.property(targetElement, propertyDefinitions)`
+
+A way to define multiple property definitions at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
+
+
+
+#### `skate.ready(fn)`
+
+Executes `fn` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
+
+For example, the following may not work because parents are upgraded before descendants in native custom elements:
+
+```js
+skate('x-parent', {
+  created: function () {
+    this.querySelector('x-child').sayHello();
+  }
+});
+
+skate('x-child', {
+  prototype: {
+    sayHello: function () {
+      console.log('hello');
+    }
+  }
+});
+```
+
+But wrapping the call to `sayHello()` will:
+
+```js
+skate.ready(() => this.querySelector('x-child').sayHello());
+```
+
+
+
+#### `skate.type`
+
+Contains the constants for each type of binding that Skate supports. They are:
+
+- `skate.type.ELEMENT` - Bind to a tag name.
+- `skate.type.ATTRIBUTE` - Bind to an attribute name.
+- `skate.type.CLASSNAME` - Bind to a class name.
+
+
+
+#### `skate.version`
+
+Returns the current version of Skate.
+
+
+
+#### `skate.watch(element, callback, options = {})`
+
+A convenient wrapper around Skate's internal `MutationObserver`. It allows you to watch an element for added or removed nodes.
+
+```js
+skate.watch(element, function (added, removed) {
+  console.log(added.length);
+  console.log(removed.length);
+});
+```
+
+If you want to listen for changes to descendants, pass the `subtree` option:
+
+```js
+skate.watch(element, callback, { subtree: true });
+```
+
+Currently, no other options besides `subtree` are supported.
 
 
 
