@@ -658,51 +658,83 @@ The following are all available on the `skate` object, or available for use from
 Returns a function that attempts to make all arguments passed in callable. The arguments and context passed to the returned function are forwarded, so it can be used to compose behaviour. The context passed to the proxy function is returned.
 
 ```js
-function logCalls () {
-  console.log(++this.calls);
+function increment () {
+  ++this.calls;
 }
 
 var proxy = skate.chain(
-  logCalls,
-  'method1',
-  [
-    logCalls,
-    'method2'
-  ]
+  // Strings point to a method on the context.
+  'method',
+
+  // Functions are invoked and passed the context.
+  increment,
+
+  // A new chain is created from array values.
+  [ 'method', increment ],
+
+  // A new chain is created from object values.
+  { key1: 'method', key2: increment },
+
+  // Same as both the array and object forms.
+  skate.chain('method', increment);
 );
 
-// Logs: 1, 2, 3, 4.
-console.log(proxy.call({
+var context = proxy.call({
   calls: 0,
-  method1: logCalls,
-  method2: logCalls
-}).calls);
+  method: function () {
+    ++this.calls;
+  }
+});
+
+// 8
+console.log(context.calls);
 ```
 
-This makes it very easy to chain together callbacks:
+This makes it really simple to compose functionality:
 
 ```js
+function sharedFunction (e) {}
+
 skate('my-element', {
-  created: skate.chain([
-    'logCreated',
-    'sayHello'
-  ]),
+  events: {
+    click: skate.chain(
+      'instanceMethod',
+      sharedFunction,
+      function (e) {}
+    )
+  },
   prototype: {
-    logCreated () {
-      console.log('created');
-    },
-    sayHello () {
-      console.log('hello!');
-    }
+    instanceMethod (e) {}
   }
 });
 ```
+
+You could do all this with in a function, but it's nice not to have to worry about passing context and arguments. Everything is automatically invoked with the same context and arguments:
+
+```js
+function sharedFunction (e) {}
+
+skate('my-element', {
+  events: {
+    click: function (e) {
+      this.instanceMethod(e);
+      sharedFunction.call(this, e);
+      (function (e) {}(e));
+    }
+  },
+  prototype: {
+    instanceMethod (e) {}
+  }
+});
+```
+
+
 
 #### `skate.create(name, props = {})`
 
 Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
 
-For example, this can be called in browser:
+For example, this can be called in any browser and it will behave consistently:
 
 ```js
 skate.create('my-element');
@@ -749,6 +781,8 @@ element.setAttribute('is', 'my-element');
 skate.init(element);
 ```
 
+Both of the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
+
 ##### Alternative Methods
 
 If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
@@ -777,6 +811,10 @@ Passing properties automatically assigns them to the element:
 // 'value'
 console.log(myElement.prop);
 ```
+
+##### Why not just patch `document.createElement()`?
+
+Skate is designed to work with multiple versions of itself on the same page. If one version patches `document.createElement()` differently than another, then you have problems. Even if we did do this, how `document.createElement()` is called still depends on how the corresponding component has been registered, which is bad, especially when we can infer that information from the component definition.
 
 
 
