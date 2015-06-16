@@ -781,9 +781,9 @@ element.setAttribute('is', 'my-element');
 skate.init(element);
 ```
 
-Both of the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
+Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
 
-##### Alternative Methods
+##### Alternatives
 
 If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
 
@@ -801,9 +801,11 @@ myElement = new MyElement();
 
 All methods of constructing an element support passing properties.
 
-- `myElement = skate.create('my-element', { prop: 'value' })`
-- `myElement = MyElement({ prop: 'value' })`
-- `myElement = new MyElement({ prop: 'value' })`
+```js
+myElement = skate.create('my-element', { prop: 'value' });
+myElement = MyElement({ prop: 'value' });
+myElement = new MyElement({ prop: 'value' });
+```
 
 Passing properties automatically assigns them to the element:
 
@@ -815,6 +817,53 @@ console.log(myElement.prop);
 ##### Why not just patch `document.createElement()`?
 
 Skate is designed to work with multiple versions of itself on the same page. If one version patches `document.createElement()` differently than another, then you have problems. Even if we did do this, how `document.createElement()` is called still depends on how the corresponding component has been registered, which is bad, especially when we can infer that information from the component definition.
+
+
+
+#### `skate.emit(targetElement, eventName, eventOptions = {})`
+
+Emits a `CustomEvent` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+
+```js
+skate('x-tabs', {
+  events: {
+    selected: hideAllAndShowSelected
+  }
+});
+
+skate('x-tab', {
+  events: {
+    click: function () {
+      skate.emit(this, 'selected');
+    }
+  }
+});
+```
+
+It's preferrable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
+
+##### Emitting Several Events at Once
+
+You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
+
+```js
+skate.emit(targetElement, 'event1 event2');
+skate.emit(targetElement, [ 'event1', 'event2' ]);
+```
+
+##### Return Value
+
+The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+
+
+
+#### `skate.emit(eventName, eventOptions = {})`
+
+Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `targetElement` and calls `skate.emit(targetElement, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
+
+```js
+click: skate.emit('selected')
+```
 
 
 
