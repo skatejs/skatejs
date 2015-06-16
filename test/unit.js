@@ -3,6 +3,7 @@ import './unit/api/chain';
 import './unit/api/emit';
 import './unit/api/event';
 import './unit/api/init';
+import './unit/api/no-conflict';
 import './unit/api/property';
 import './unit/attributes';
 import './unit/constructor';

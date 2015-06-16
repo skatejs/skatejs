@@ -867,6 +867,16 @@ click: skate.emit('selected')
 
 
 
+#### `skate.noConflict()`
+
+Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
+
+```js
+var currentSkate = skate.noConflict();
+```
+
+
+
 ## Web Component Differences
 
 Skate uses the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) as a guideline but it does not polyfill it, nor does it polyfill the behaviour of [ShadowDOM](http://w3c.github.io/webcomponents/spec/shadow/) or [HTML Imports](http://w3c.github.io/webcomponents/spec/imports/).

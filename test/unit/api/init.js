@@ -1,9 +1,7 @@
-'use strict';
-
 import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
 
-describe('skate.init()', function () {
+describe('api/init', function () {
   var MyEl;
   var tagName;
 
