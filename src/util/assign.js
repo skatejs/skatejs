@@ -1,11 +1,6 @@
 export default function (child, ...parents) {
-  parents.forEach(function (parent) {
-    Object.getOwnPropertyNames(parent).forEach(function (name) {
-      var childDesc = Object.getOwnPropertyDescriptor(child, name);
-      if (!childDesc || childDesc.configurable) {
-        Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-      }
-    });
-  });
+  parents.forEach(parent =>
+    Object.keys(parent || {}).forEach(name =>
+      child[name] = parent[name]));
   return child;
 }

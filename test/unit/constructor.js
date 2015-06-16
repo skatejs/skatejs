@@ -72,4 +72,14 @@ describe('constructor', function () {
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute('class')).to.equal(id);
   });
+
+  it('without new operator', function () {
+    var ctor = skate(id, {});
+    expect(resolved(ctor())).to.equal(true);
+  });
+
+  it('with properties', function () {
+    var ctor = skate(id, {});
+    expect(ctor({ test: true }).test).to.equal(true);
+  });
 });

@@ -7,15 +7,15 @@ Skate is a web component library that is focused on being a tiny, performant, sy
 HTML
 
 ```html
-<my-component></my-component>
+<my-element></my-element>
 ```
 
 JavaScript
 
 ```js
-skate('my-component', {
-  created: function (element) {
-    element.textContent = 'Hello, World!';
+skate('my-element', {
+  created: function () {
+    this.textContent = 'Hello, World!';
   }
 });
 ```
@@ -23,7 +23,7 @@ skate('my-component', {
 Result
 
 ```html
-<my-component>Hello, World!</my-component>
+<my-element>Hello, World!</my-element>
 ```
 
 
@@ -50,13 +50,13 @@ Include either `dist/skate.js` or `dist/skate.min.js`.
 
 ### UMD (AMD / CommonJS)
 
-UMD files are located in `lib/`. Simply import `lib/skate.js` and use it as normal.
+UMD files are located in `lib/`. Simply `require` the `lib/index.js` file by whatever means you have and use it in accordance with whatever loader you've chosen.
 
 
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/skate';` and use it in your projects as you would any ES6 module.
+The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/index';` and use it in your projects as you would any ES6 module.
 
 
 
@@ -75,80 +75,92 @@ You define a component by passing a component ID and definition to the `skate()`
 - Attribute name
 - Class name
 
-The definition is an object of options defining your component.
+The definition is an object of options that define your component.
 
 ```js
 skate('my-component', {
-  // Called before the element is displayed.
-  created: function (element) {
-
-  },
-
-  // Called after the element is displayed.
-  attached: function (element) {
-
-  },
-
-  // Called after the element is removed.
-  detached: function (element) {
-
-  },
-
-  // Attribute callbacks that get triggered when attributes on the main web
-  // component are inserted, updated or removed. Each callback gets the
-  // element that the change occurred on and the corresponding changes. The
-  // change object contains the following information:
+  // Lifecycle Callbacks
   //
-  // - type: The type of modification (created, updated or removed).
-  // - name: The attribute name.
-  // - newValue: The new value. If type === 'removed', this will be undefined.
-  // - oldValue: The old value. If type === 'created', this will be undefined.
-  attributes: {
-    'my-attribute': {
-      // The element's default value if not already specified on the element.
-      // Can also be a function that returns a value. The function gets passed
-      // The element as its only argument.
-      value: 'default value',
+  // All lifecycle callbacks use `this` to refer to the component element.
 
-      // Called when the attribute is set for the first time.
-      created: function (element, change) {
+  // Called when the element is created.
+  created () {},
 
-      },
+  // Called when the element is attached to the document.
+  attached () {},
 
-      // Called on all attribute modifications except for the intial creation.
-      updated: function (element, change) {
+  // Called when the element is detached from the document.
+  detached () {},
 
-      },
-
-      // Called when the attribute is removed.
-      removed: function (element, change) {
-
-      },
-
-      // Called when created, updated or remove is not specified. This is the
-      // same as specifying a function instead of an options object for a
-      // given attribute.
-      fallback: function (element, change) {
-
-      }
+  // Called when an attribute is created, updated or removed.
+  attribute (name, oldValue, newValue) {
+    if (oldValue === null) {
+      // created
+    } else if (newValue === null) {
+      // removed
+    } else {
+      // updated
     }
   },
 
-  // The event handlers to bind to the web component element. If the event
-  // name is followed by a space and a CSS selector, the handler is only
-  // triggered if a descendant matching the selector triggered the event.
-  // This is synonymous with Backbone's style of event binding in its
-  // views.
-  events: {
-    'click': function (element, eventObject) {
+  // A function that renders a template to your element. Since this function is
+  // responsible for rendering the template, you can literally use anything you
+  // want here.
+  template () {
+    this.innerHTML = 'something';
+  },
 
+
+
+  // Event Listeners
+  events: {
+    // All direct and bubbled events.
+    click (e) {
+      // Refers to the component element.
+      this;
+
+      // Standard DOM event object.
+      e;
+
+      // Same as `this`.
+      e.delegateTarget;
     },
 
-    'click .some-child-selector': function (element, eventObject, currentTarget) {
+    // Restricted to events triggered only on the component element. Arguments
+    // are the same as above.
+    'click my-element' (e) {},
 
-    }
+    // Event delegation.
+    'click .something' (e) {
+      // Same as above.
+      this && e;
+
+      // Instead matches whatever `.something` is.
+      e.delegateTarget;
+    },
+
+    // Multiple handlers.
+    click: [
+      handler1,
+      handler2
+    ],
+
+    // Focus and blur can be delegated, too.
+    'focus .something' () {},
+    'blur .something' () {},
+
+    // Using Shadow DOM selectors.
+    //
+    // *These are only supported if you have native Shadow DOM support or are
+    // using a polyfill.*
+    'click :host::shadow' () {},
+    'click ::shadow ::content' () {}
   },
 
+
+
+  // Extending Elements
+  //
   // Restricts a particular component to binding explicitly to an element with
   // a tag name that matches the specified value. This value is empty by
   // default.
@@ -164,27 +176,103 @@ skate('my-component', {
   //   the value specified here must match the element's tag name.
   //
   // - When specified on a component that is bound using a class name, this
-  //   value must match the element's tag name, as with attribute components.
+  //   value must match the element's tag name.
   //
   // - If the value is empty, then the component is not restricted at all.
   extends: '',
 
-  // Properties and methods to add to each element instance. It's notable
-  // that the element's prototype is not modified. These are added after the
-  // element is instantiated. Since the methods and properties are applied to
-  // the element, `this` inside a method will refer to the element.
-  prototype: {
-    callMeLikeAnyNativeMethod: function () {
 
+
+  // Custom Property Descriptors
+  properties: {
+    prop1: {
+      // Two-way binding to attributes. Changes to this property propagate to
+      // its corresponding attribute and changes to its corresponding attribute
+      // are propagated to the property.
+      //
+      // This defaults to `false`. If you specify `true` the property name is
+      // dash-cased and used as the attribute it should keep in sync with. If
+      // you specify a `string`, it is used as the attribute name.
+      attr: false,
+
+      // This property should be notified of changes when these dependencies
+      // are notified of changes.
+      //
+      // You may also specify dependencies as space-separated string.
+      deps: [
+        // This property's notify events will be triggered when its sibling
+        // `dependencyProperty` is notified of changes.
+        'dependencyProperty',
+
+        // This property's notify events will be triggered when the descendant's
+        // `deepDependencyProperty` notify events are triggered.
+        //
+        // At the time the dependency event bubbles up from the descendant, it
+        // must be accessible via `this.some.nested.child`. If it is not, then
+        // the dependency is ignored.
+        'some.nested.child.deepDependencyProperty'
+      ],
+
+      // Custom getter. The return value is used as the property value when
+      // retrieved. If you don't specify a getter, the value that it was set as
+      // is returned regardless of if you've specified a setter.
+      //
+      // To make a property "readonly", specify a getter without a setter.
+      get () {},
+
+      // Whether or not to trigger events when the property changes. Defaults to
+      // `true`. If you do not want events triggered, set this to a falsy value.
+      //
+      // If this is truthy, when the property is changed it will trigger two
+      // events:
+      //
+      // - `skate.property` - When any property changes.
+      // - `skate.property.prop1` - When a specific property changes.
+      //
+      // The event object for both events contains the following information
+      // in the `detail` property:
+      //
+      // - `name` - The property name.
+      // - `newValue` - The property's new value.
+      // - `oldValue` - The property's old value.
+      notify: true
+
+      // Custom setter. Set value as you see fit. Return value is ignored. If
+      // you don't specify a getter, then whatever `newValue` was passed in to
+      // the setter, is returned by the default getter. If you want to return
+      // a custom value, specify a getter.
+      set (newValue, oldValue) {},
+
+      // A function that coerces the value to another value. You can specify
+      // any function you want here. The return value is then stored internally
+      // and passed as `newValue` in the setter.
+      type: Boolean,
+
+      // This will be used as the initial value for the property. If you specify
+      // a function then it will be invoked and the return value will be used.
+      value: 'initial value'
     }
-  },  
-
-  // A function that renders a template to your element. You can literally use
-  // any templating engine you like here.
-  template: function (element) {
-    bindLatestHipsterTemplateEngineTo(element);
   },
 
+
+
+  // Custom Methods and Properties
+  //
+  // This behaves just like any prototype object does. All methods and
+  // properties are added to the element's prototype (native), or to the element
+  // instance during the `created` lifecycle (polyfill).
+  //
+  // It's recommended you use the `properties` option for all public-api
+  // properties, but nothing is stopping you from putting them here if you
+  // don't need the special behaviour of `properties`.
+  prototype: {
+    get someProperty () {},
+    someMethod () {}
+  },
+
+
+  // Component Types
+  //
   // The binding methods this component supports. For example, if you specify
   // the `type` as `skate.type.ELEMENT`, then the component will only be bound
   // to an element whos tag name matches the component ID.
@@ -194,10 +282,18 @@ skate('my-component', {
   // - `CLASSNAME` Class names.
   type: skate.type.ELEMENT,
 
-  // The attribute name to add after calling the created() callback.
+
+
+  // Preventing FOUC
+  //
+  // The `resolved` and `unresolved` attributes allow you to style a resolved
+  // or unresolved component. You can changes these if you want to use different
+  // names.
+
+  // The attribute name to add after calling the `created` callback.
   resolvedAttribute: 'resolved',
 
-  // The attribute name to remove after calling the created() callback.
+  // The attribute name to remove after calling the `created` callback.
   unresolvedAttribute: 'unresolved'
 });
 
@@ -207,39 +303,49 @@ skate('my-component', {
 
 ### Component Lifecycle
 
-The component lifecycle consists of three callbacks:
+The component lifecycle consists several callbacks:
 
-1. `created`
-2. `attached`
-3. `detached`
-
-These callbacks try and mimic the spec as closely as possible when native support is unavailable.
+- `created`
+- `attached`
+- `detached`
+- `attribute`
+- `template`
 
 #### `created`
 
-The `created` callback gets triggered when the element is created. There are some differences when using native vs polyfilled support.
+```js
+created () {}
+```
+
+The `created` callback gets triggered when the element is created.
+
+##### Timing
+
+There are some differences when using native vs polyfilled support.
 
 ```js
 // native: called immediately (synchronous)
 // polyfill: called immediately (synchronous)
-new MyEl();
+myElement();
+new myElement();
+skate.create('my-element');
 
 // native: called immediately (synchronous)
 // polyfill: called when inserted to the DOM (asynchronous)
-document.createElement('my-el');
+document.createElement('my-element');
 
 // native: called immediately (synchronous)
 // polyfill: called when the mutation observer fires (asynchronous)
-document.body.innerHTML = '<my-el></my-el>';
+document.body.innerHTML = '<my-element></my-element>';
 
 // native: called immediately (synchronous)
 // polyfill: called when <div> is inserted into the DOM (asynchronous)
-document.createElement('div').innerHTML = '<my-el></my-el>';
+document.createElement('div').innerHTML = '<my-element></my-element>';
 ```
 
-In instances where an element is initialised asynchronously, there may be a flash of unstyled content or jank. For more information see [Preventing FOUC](#preventing-fouc).
+In instances where an element is initialized asynchronously, or your definition is loaded after the element is already on the page, there may be a flash of un-styled content. For more information see [Preventing FOUC](#preventing-fouc).
 
-If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists here unless you've used the `template` callback.
+If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists. For more information see [skate.ready()](#skate-ready).
 
 ```js
 // Will not have children.
@@ -252,226 +358,246 @@ document.createElement('div').innerHTML = '<my-el>child</my-el>';
 
 #### `attached`
 
-The `attached` callback is fired when the element is attached to the `document`. It must actually be in the document to be triggered. This means if you attach your custom element to an element that is detached from the `document`, it will not be called until the element in which you've attached it to is inserted into the `document`.
+```js
+attached () {}
+```
+
+The `attached` callback is fired when the element is attached to the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
+
+##### Timing
+
+The `attached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
 
 #### `detached`
 
-The `detached` callback is fired when the element is detached from the `document`. Like the `attached` callback, this only gets fired when the element gets removed from the `document`.
-
-
-
-### Element Constructors
-
-As with the spec, when you define a component that is compatible with tag bindings, your call to `skate()` will return an element constructor for you to use:
-
 ```js
-var MyComponent = skate('my-component', {
-  created: function (element) {
-    element.textContent = 'something';
-  },
-
-  prototype: {
-    logTextContent: function () {
-      console.log(this.textContent);
-    }
-  }
-});
+detached () {}
 ```
 
-It is favourable to use a constructor in your code wherever possible because it will synchronously initialise the component and call the `created` callback. Only when you insert it into the DOM will the `attached` callback be called:
+The `detached` callback is fired when the element is detached from the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
+
+##### Timing
+
+The `detached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
+
+#### `attribute`
 
 ```js
-var element = new MyComponent();
-
-// Logs: "something"
-element.logTextContent();
-
-// Asynchronously calls the `attached` callback.
-document.body.appendChild(element);
-```
-
-
-
-### Extending Components
-
-Once you have an element constructor, you can extend the component that constructor represents. For example, in ES6 you might do this:
-
-```js
-var MyEl = skate('my-el', {});
-var MySuperEl = skate('my-super-el', class extends MyEl);
-```
-
-
-
-### Attribute Lifecycle
-
-An attribute lifecycle definition can take three forms. First, it does something similar to what we see in the Web Component spec:
-
-```js
-skate('my-component', {
-  attributes: function (element, change) {
-
-  }
-});
-```
-
-A notable difference, though, is that this callback gets called for attributes that already exist on the element as this is more predictable. This also allows you to have initialisation code for attributes, rather than forcing the developer to do this in one of the lifecycle callbacks.
-
-This is called for each attribute on an element when:
-
-- The element is created with attributes already on it.
-- Attributes are added to the element.
-- Attributes on the element are updated.
-- Attributes are removed from the element.
-
-The second form of a callback takes an object of attribues and handlers.
-
-```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': function handleAnyChange (element, change) {
-
-    }
-  }
-});
-```
-
-This allows you to specify which attributes you want to listen to and will call the specified function when:
-
-- The element is created with the corresponding attribute already on it.
-- The corresponding attribute is added to the element.
-- The corresponding attribute is updated on the element.
-- The corresponding attribute is removed from the element.
-
-The third form gives you more granularity and flexibility, and is the same form that the example component at the top takes:
-
-```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': {
-      created: function (element, change) {
-
-      },
-
-      updated: function (element, change) {
-
-      },
-
-      removed: function (element, change) {
-
-      }
-    }
-  }
-});
-```
-
-The `created` handler gets called when:
-
-- The element is created with the corresponding attribute already on it.
-- The corresponding attribute is added to the element.
-
-The `updated` handler gets called when:
-
-- The corresponding attribute is updated on the element.
-
-The `removed` handler gets called when:
-
-- The corresponding attribute is removed from the element.
-
-Callbacks that get fired for attributes that already exist on an element get called after the `attached` callback is triggered.
-
-
-
-#### Catching Unspecified Modifications
-
-You may also specify a `fallback` callback that will get called if a specific callback for the type of modification isn't found. For example, if you wanted to do the same thing on `created` and `updated` but something different on `removed`, then you'd do something like:
-
-```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': {
-      fallback: function (element, change) {
-
-      },
-
-      removed: function (element, change) {
-
-      }
-    }
+attribute (name, oldValue, newValue) {
+  if (oldValue === null) {
+    // created
+  } else if (newValue === null) {
+    // removed
+  } else {
+    // updated
   }
 }
 ```
 
-Note that doing:
+The `attribute` callback is fired whenever an element attribute is created, updated or removed. Unlike the native `attributeChangedCallback`, this gets fired for every attribute an element has by the time it is initialised.
+
+##### Timing
+
+Attribute handlers are notified synchronously. Instead of using mutation observers, `setAttribute` and `removeAttribute` are patched to notify the callback as soon as the change occurs. If your existing code uses timeouts to wait until after mutations happen to execute logic related to an attribute change, you don't need to worry about changing it. The only difference is you won't need to write async boilerplate anymore.
+
+However, this means that updating the attribute instance directly is *not* supported. If you do the following, the `attribute` callback will *not* be notified of the change. For example the following will not trigger the `attribute` callback:
 
 ```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': {
-      fallback: function (element, change) {
+myElement.attributes.myAttribute.value = 'new value';
+```
 
-      }
-    }
-  }
+You must use the attribute methods instead:
+
+```js
+myElement.setAttribute('myAttribute', 'new value');
+```
+
+#### `template`
+
+```js
+template () {}
+```
+
+Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
+
+For example, Handlebars:
+
+```js
+template () {
+  var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
+  this.innerHTML = compiled(this);
 }
 ```
 
-Is the same thing as:
+A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string. The following example will compile the HTML using Handlebars and when invoked it will take all the attributes on the element and pass them in to the compiled template function as the context. This way, you can use any of the attributes specified on the element.
 
 ```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': function (element, change) {
-
-    }
-  }
+function handlebarify (html) {
+  var compiled = Handlebars.compile(html);
+  return function () {
+    this.innerHTML = compiled(this);
+  };
 }
 ```
 
-The only difference is that the former allows you to specify other options for that specific attribute.
-
-
-#### Default Values
-
-If you want to specify a default value for your component you may do so by setting the `default` option for an attribute.
+Then you can use it in any component:
 
 ```js
-skate('my-component', {
-  attributes: {
-    'my-attribute': {
-      value: 'default value'
-    }
-  }
+template: handlebarify('<p>Hello, {{name}}!</p>')
+```
+
+If you wanted to fully embrace Web Components, you could even use Shadow DOM:
+
+```js
+function shadowify (html) {
+  return function () {
+    this.createShadowRoot().innerHTML = html;
+  };
 }
 ```
 
-That would ensure that the attribute `my-attribute` is set to `default value` but only if that attribute doesn't already exist.
+Usage would be similar to the `handlebarify` function:
+
+```js
+template: shadowify('<p>Hello, <content></content>!</p>')
+```
 
 
 
 ### Event Binding
 
-Event binding allows you to declare which events you want to listen for and also offers you the ability to use event delegation, Backbone style.
+```js
+events: {
+  // All direct and bubbled events.
+  click (e) {
+    // Refers to the component element.
+    this;
 
-As we saw above:
+    // Standard DOM event object.
+    e;
+
+    // Same as `this`.
+    e.delegateTarget;
+  },
+
+  // Restricted to events triggered only on the component element. Arguments
+  // are the same as above.
+  'click my-element' (e) {},
+
+  // Event delegation.
+  'click .something' (e) {
+    // Same as above.
+    this && e;
+
+    // Instead matches whatever `.something` is.
+    e.delegateTarget;
+  },
+
+  // Multiple handlers.
+  click: [
+    handler1,
+    handler2
+  ],
+
+  // Focus and blur can be delegated, too.
+  'focus .something' () {},
+  'blur .something' () {},
+
+  // Using Shadow DOM selectors.
+  //
+  // *These are only supported if you have native Shadow DOM support or are
+  // using a polyfill.*
+  'click :host::shadow' () {},
+  'click ::shadow ::content' () {}
+}
+```
+
+#### Reaching into the Shadow DOM
+
+You may use the `::shadow` pseudo-element when specifying a delegate selector to an event. Underneath, Skate will walk the parent hierarchy from `e.path[0]` instead of `e.target` to find a matching target.
+
+Note:
+
+- It's experimental because the spec may change. As the spec changes, this may also change.
+- Only `::shadow` is supported. Combinators are not because of the [proposed removal](https://www.w3.org/wiki/Webapps/WebComponentsApril2015Meeting).
+- If you are using this in browsers that do not support it natively, you must include a polyfill capable of allowing you to use these selectors.
+
+
+
+### Constructing Elements
+
+There's several different ways to construct an element.
+
+#### Function Call
 
 ```js
-skate('my-component', {
-  events: {
-    'click': function (element, eventObject) {
+var myElement = skate('my-element', {});
+var myElementInstance = myElement();
+```
 
-    },
+#### `skate.create()`
 
-    'click .some-child-selector': function (element, eventObject, currentTarget) {
+```js
+skate('my-element', {});
+var myElementInstance = skate.create('my-element');
+```
 
+#### Constructor
+
+While not the most elegant way, this serves as an ode to the spec.
+
+```js
+var MyElement = skate('my-element');
+var myElementInstance = new MyElement();
+```
+
+#### Hydrating Properties
+
+For each of these ways you can construct an element, Skate also allows you to pass a properties object to them. The properties object is used to hydrate property values for the element.
+
+```js
+var props = { propname: 'propvalue' };
+var myElementInstance = myElement(props);
+var myElementInstance = skate.create('my-element', props);
+var myElementInstance = new MyElement(props);
+```
+
+
+
+### Extending Elements
+
+You may extend components using ES6 classes or your favorite ES5 library.
+
+```js
+var XParent = skate('x-parent', {
+  static created () {
+
+  }
+  static get events {
+    return {
+      event1 () {}
     }
+  }
+});
+
+var XChild = skate('x-child', class extends XParent {
+  static created () {
+    super.created();
+  }
+  static get events {
+    return class extends super.events {
+      event1 (e) {
+        super.event1(e);
+      }
+      event2 () {
+
+      }
+    };
   }
 });
 ```
 
-The first `click` handler gets executed whenever the component receives a click event regardless of what triggered it. The second `click .some-child-selector` handler gets executed only when it receives a click event that came from a descendant matching the `.some-child-selector` selector, This will also get fired for any ancestor of the target, up to the component element, that matches the selector. The `currentTarget` parameter is the element which the delegate selector matched.
-
-Events listeners are not automatically removed from the element when it is removed from the DOM. This is because Skate does not know if you intend to re-insert the element back into the DOM. Skate leaves it up to you and the JavaScript engine's garbage collector to manage this.
+Due to the semantics of ES6 classes, you must specify any non-prototype members as static. ES6 classes also do not support the object literal syntax. In order to specify properties, just use the getter syntax like we did with `events` above.
 
 
 
@@ -499,60 +625,6 @@ It's important to understand that the `Element.prototype` is not modified as par
 
 
 
-### Templating
-
-To template a component, all you need to do is define a function that takes an element as its first argument. When templating is invoked during an element's lifecycle, this function will be called and the element being Skated will be passed in as the first argument. It's up to you at this point to invoke whatever templating engine you want.
-
-For example, Handlebars:
-
-```js
-skate('my-component', {
-  template: function (element) {
-    var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
-    element.innerHTML = compiled({ name: element.getAttribute('name') });
-  }
-});
-```
-
-A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string. The following example will compile the HTML using Handlebars and when invoked it will take all the attributes on the element and pass them in to the compiled template function as the context. This way, you can use any of the attributes specified on the element.
-
-```js
-function handlebarify (html) {
-  var compiled = Handlebars.compile(html);
-
-  return function (element) {
-    var attrs = {};
-
-    for (var a = 0; a < element.attributes.length; a++) {
-      var attr = element.attributes[a];
-      attrs[attr.name] = attr.value;
-    }
-
-    element.innerHTML = compiled(attrs);
-  };
-}
-
-skate('my-component', {
-  template: handlebarify('<p>Hello, {{ name }}!</p>')
-});
-```
-
-If you wanted to fully embrace Web Components, you could even use Shadow DOM:
-
-```js
-function shadowDomTemplate (shadowHtml) {
-  return function (element) {
-    element.createShadowRoot().innerHTML = shadowHtml;
-  };
-}
-
-skate('my-component', {
-  template: shadowDomTemplate('<header><content select="h2"></content></header><section><content></content></section>')
-});
-```
-
-
-
 ### Asynchrony
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
@@ -574,6 +646,234 @@ element.someCustomMethod();
 ```
 
 This is very useful during testing, but can be used for any use case that requires synchronous operation.
+
+
+
+### API
+
+The following are all available on the `skate` object, or available for use from the `src/api` folder.
+
+#### `chain (...args)`
+
+Returns a function that attempts to make all arguments passed in callable. The arguments and context passed to the returned function are forwarded, so it can be used to compose behaviour. The context passed to the proxy function is returned.
+
+```js
+function increment () {
+  ++this.calls;
+}
+
+var proxy = skate.chain(
+  // Strings point to a method on the context.
+  'method',
+
+  // Functions are invoked and passed the context.
+  increment,
+
+  // A new chain is created from array values.
+  [ 'method', increment ],
+
+  // A new chain is created from object values.
+  { key1: 'method', key2: increment },
+
+  // Same as both the array and object forms.
+  skate.chain('method', increment);
+);
+
+var context = proxy.call({
+  calls: 0,
+  method: function () {
+    ++this.calls;
+  }
+});
+
+// 8
+console.log(context.calls);
+```
+
+This makes it really simple to compose functionality:
+
+```js
+function sharedFunction (e) {}
+
+skate('my-element', {
+  events: {
+    click: skate.chain(
+      'instanceMethod',
+      sharedFunction,
+      function (e) {}
+    )
+  },
+  prototype: {
+    instanceMethod (e) {}
+  }
+});
+```
+
+You could do all this with in a function, but it's nice not to have to worry about passing context and arguments. Everything is automatically invoked with the same context and arguments:
+
+```js
+function sharedFunction (e) {}
+
+skate('my-element', {
+  events: {
+    click: function (e) {
+      this.instanceMethod(e);
+      sharedFunction.call(this, e);
+      (function (e) {}(e));
+    }
+  },
+  prototype: {
+    instanceMethod (e) {}
+  }
+});
+```
+
+
+
+#### `skate.create(name, props = {})`
+
+Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
+
+For example, this can be called in any browser and it will behave consistently:
+
+```js
+skate.create('my-element');
+```
+
+In browsers that support custom elements, it is equivalent to:
+
+```js
+document.createElement('my-element');
+```
+
+In browsers that do not support custom elements, you would have to manually ensure that the element is initialised synchronously:
+
+```js
+var element = document.createElement('my-element');
+skate.init(element);
+```
+
+To take this example further, if we've extended an element:
+
+```js
+skate('my-element', {
+  extends: 'div'
+});
+```
+
+How we call this function does not change:
+
+```js
+skate.create('my-element');
+```
+
+However, in native land this does change:
+
+```js
+document.createElement('div', 'my-element');
+```
+
+And in polyfill land, it's much different:
+
+```js
+var element = document.createElement('div');
+element.setAttribute('is', 'my-element');
+skate.init(element);
+```
+
+Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
+
+##### Alternatives
+
+If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
+
+```js
+var myElement;
+var MyElement = skate('my-element', {});
+
+// Same thing:
+myElement = skate.create('my-element');
+myElement = MyElement();
+myElement = new MyElement();
+```
+
+##### Setting Properties
+
+All methods of constructing an element support passing properties.
+
+```js
+myElement = skate.create('my-element', { prop: 'value' });
+myElement = MyElement({ prop: 'value' });
+myElement = new MyElement({ prop: 'value' });
+```
+
+Passing properties automatically assigns them to the element:
+
+```js
+// 'value'
+console.log(myElement.prop);
+```
+
+##### Why not just patch `document.createElement()`?
+
+Skate is designed to work with multiple versions of itself on the same page. If one version patches `document.createElement()` differently than another, then you have problems. Even if we did do this, how `document.createElement()` is called still depends on how the corresponding component has been registered, which is bad, especially when we can infer that information from the component definition.
+
+
+
+#### `skate.emit(targetElement, eventName, eventOptions = {})`
+
+Emits a `CustomEvent` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+
+```js
+skate('x-tabs', {
+  events: {
+    selected: hideAllAndShowSelected
+  }
+});
+
+skate('x-tab', {
+  events: {
+    click: function () {
+      skate.emit(this, 'selected');
+    }
+  }
+});
+```
+
+It's preferrable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
+
+##### Emitting Several Events at Once
+
+You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
+
+```js
+skate.emit(targetElement, 'event1 event2');
+skate.emit(targetElement, [ 'event1', 'event2' ]);
+```
+
+##### Return Value
+
+The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+
+
+
+#### `skate.emit(eventName, eventOptions = {})`
+
+Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `targetElement` and calls `skate.emit(targetElement, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
+
+```js
+click: skate.emit('selected')
+```
+
+
+
+#### `skate.noConflict()`
+
+Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
+
+```js
+var currentSkate = skate.noConflict();
+```
 
 
 
@@ -645,7 +945,7 @@ jQuery(function ($) {
 });
 ```
 
-There's several problems with this approach. First, you're running a selector against the document. This is unnecessary and can get slow in large DOMs even in the latest browsers. Second, it only gets executed on DOMReady. If you want to dynamically add some tabs to your document, then you've got to manually call that again once they've been added to the DOM.
+There's several problems with this approach. First, you're running a selector against the document. This is unnecessary and can get slow in large DOMs even in the latest browsers. Second, it only gets executed on `DOMContentLoaded`. If you want to dynamically add some tabs to your document, then you've got to manually call that again once they've been added to the DOM.
 
 With Skate, those problems vanish. No selectors are run and your tabs will automatically be initialised regardless of when they are put into the document.
 
@@ -654,8 +954,8 @@ To refactor that into a Skate component, all you need to do is:
 ```js
 skate('tabs', {
   type: skate.type.CLASSNAME
-  created: function (element) {
-    jQuery(element).tabs();
+  created: function () {
+    jQuery(this).tabs();
   }
 });
 ```
@@ -695,11 +995,12 @@ The `unresolved` attribute will be removed after the `created()` callback is cal
 
 Additionally, after removing the `unresolved` attribute, Skate will add the `resolved` attribute. This allows you to transition your styles:
 
-    [resolved] {
-      opacity: 1;
-      transition: opacity .3s ease;
-    }
-
+```css
+[resolved] {
+  opacity: 1;
+  transition: opacity .3s ease;
+}
+```
 
 
 ## Ignoring Elements

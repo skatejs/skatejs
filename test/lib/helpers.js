@@ -1,6 +1,4 @@
-'use strict';
-
-var tagNameCounter = 1;
+import element from './element';
 
 export default {
   /**
@@ -12,11 +10,7 @@ export default {
    *   (value of id) and safe tag name.
    */
   safeTagName: function (id) {
-    id = id || 'my-element';
-    return {
-      unsafe: id,
-      safe: id + (tagNameCounter++).toString()
-    };
+    return element(id);
   },
 
   fixture: function (html, tagName) {

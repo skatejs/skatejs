@@ -1,9 +1,8 @@
-import events from '../../../src/lifecycle/events';
+import apiEmit from '../../../src/api/emit';
+import apiEvent from '../../../src/api/event';
 import helpers from '../../lib/helpers';
 
-var CustomEvent = window.CustomEvent;
-
-describe('lifecycle/events', function () {
+describe('api/event', function () {
   var supportsShadowRoot = 'createShadowRoot' in window.HTMLElement.prototype;
 
   /* jshint expr: true */
@@ -11,21 +10,19 @@ describe('lifecycle/events', function () {
     var div, shr1, shr2, triggered;
 
     function assertDelegation (btn) {
-      return function (elem, evnt, curr) {
+      return function (e) {
         triggered = true;
-        expect(elem).to.equal(div);
-        expect(curr).to.equal(btn);
+        expect(this).to.equal(div);
+        expect(e.delegateTarget).to.equal(btn);
       };
     }
 
-    function dispatchClick (btn) {
-      btn.dispatchEvent(new CustomEvent('click', { bubbles: true }));
-    }
-
     function assertDispatchClick (delegateSelector, btnId, assertionValue) {
+      // If / when /deep/ is removed we'll have to find a different way of
+      // querying for the button.
       var btn = div.querySelector('* /deep/ #' + btnId);
-      events(div, { ['click ' + delegateSelector + ' button']: assertDelegation(btn) });
-      dispatchClick(btn);
+      apiEvent(div, { ['click ' + delegateSelector + ' button']: assertDelegation(btn) });
+      apiEmit(btn, 'click');
       expect(triggered).to.equal(assertionValue);
     }
 
@@ -88,17 +85,6 @@ describe('lifecycle/events', function () {
 
     it(':host::shadow (nested)', function () {
       assertDispatchClick(':host::shadow', 'in-deep-shadow-root', true);
-    });
-
-
-    // /deep/
-
-    it(':host /deep/', function () {
-      assertDispatchClick(':host /deep/', 'in-shadow-root', true);
-    });
-
-    it(':host /deep/ (nested)', function () {
-      assertDispatchClick(':host /deep/', 'in-deep-shadow-root', true);
     });
   });
 });

@@ -2,27 +2,33 @@ import data from '../util/data';
 import registry from '../polyfill/registry';
 import walkTree from '../util/walk-tree';
 
+function callDetachedOnDescendants (elem, opts) {
+  walkTree(elem.childNodes, function (elem) {
+    registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
+  }, function (elem) {
+    return !data(elem, opts.id).attached;
+  });
+}
+
+function callDetached (elem, opts) {
+  if (opts.detached) {
+    opts.detached.call(elem);
+  }
+}
+
 export default function (opts) {
+  /* jshint expr: true */
   return function () {
-    var elem = this;
-    var info = data(elem, opts.id);
+    var info = data(this, opts.id);
+    var isNative = this.detachedCallback;
 
     if (info.detached) {
       return;
     }
 
-    if (!elem.attachedCallback) {
-      walkTree(elem.childNodes, function (elem) {
-        registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
-      }, function (elem) {
-        return !data(elem, opts.id).attached;
-      });
-    }
-
+    isNative || callDetachedOnDescendants(this, opts);
     info.detached = true;
-    if (opts.detached) {
-      opts.detached(elem);
-    }
+    callDetached(this, opts);
     info.attached = false;
   };
 }

@@ -1,14 +1,20 @@
 import { TYPE_ELEMENT } from './constants';
+import apiChain from './api/chain';
 import apiCreate from './api/create';
+import apiEmit from './api/emit';
+import apiEvent from './api/event';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
+import apiProperty from './api/property';
+import apiReady from './api/ready';
 import apiType from './api/type';
 import apiVersion from './api/version';
+import apiWatch from './api/watch';
 import assign from './util/assign';
+import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
-import attribute from './lifecycle/attributes';
+import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import dashCase from './util/dash-case';
 import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
@@ -35,38 +41,11 @@ function initDocument () {
 }
 
 function initDocumentWhenReady () {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initDocument();
-  } else {
-    document.addEventListener('DOMContentLoaded', initDocument);
-  }
-}
-
-function dashCaseAttributeNames (options) {
-  for (let name in options.attributes) {
-    var dashCasedName = dashCase(name);
-
-    // We only need to define a new attribute if the name is actually different.
-    if (name !== dashCasedName) {
-      options.attributes[dashCasedName] = options.attributes[name];
-
-      // We define a non-enumerable property that links the camelCased version
-      // to the dash-cased version just in case it's referred to in either form.
-      // It is non-enumerable so that there are no duplicate names attributes
-      // during enumeration and that the ones that are enumerable are the
-      // dash-cased versions.
-      Object.defineProperty(options.attributes, name, {
-        enumerable: false,
-        get: function () {
-          return options.attributes[dashCasedName];
-        }
-      });
-    }
-  }
+  apiReady(initDocument);
 }
 
 function makeOptions (userOptions) {
-  var options = assign({}, defaults);
+  var options = assignSafe({}, defaults);
 
   // Copy over all standard options if the user has defined them.
   for (let name in defaults) {
@@ -80,9 +59,15 @@ function makeOptions (userOptions) {
     options[name] = userOptions[name];
   }
 
-  dashCaseAttributeNames(options);
-
   return options;
+}
+
+function makeNonNewableWrapper (Ctor) {
+  var CtorWrapper = function (props = {}) {
+    return assign(new Ctor(), props);
+  };
+  CtorWrapper.prototype = Ctor.prototype;
+  return CtorWrapper;
 }
 
 var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
@@ -98,14 +83,14 @@ function skate (id, userOptions) {
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-    options.prototype = assign(Object.create(CtorParent.prototype), options.prototype);
+    options.prototype = assignSafe(Object.create(CtorParent.prototype), options.prototype);
   }
 
   // Extend behaviour of existing callbacks.
   options.prototype.createdCallback = created(options);
   options.prototype.attachedCallback = attached(options);
   options.prototype.detachedCallback = detached(options);
-  options.prototype.attributeChangedCallback = attribute(options.attributes);
+  options.prototype.attributeChangedCallback = attribute(options);
   Object.defineProperty(options, 'id', {
     configurable: false,
     value: id,
@@ -121,7 +106,8 @@ function skate (id, userOptions) {
     documentObserver.register();
   }
 
-  assign(Ctor, options);
+  Ctor = makeNonNewableWrapper(Ctor);
+  assignSafe(Ctor, options);
   registry.set(id, Ctor);
   Object.defineProperty(Ctor.prototype, 'constructor', {
     enumerable: false,
@@ -131,11 +117,17 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
+skate.chain = apiChain;
 skate.create = apiCreate;
+skate.emit = apiEmit;
+skate.event = apiEvent;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
+skate.property = apiProperty;
+skate.ready = apiReady;
 skate.type = apiType;
 skate.version = apiVersion;
+skate.watch = apiWatch;
 
 // Global
 window.skate = skate;

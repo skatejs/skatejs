@@ -7,12 +7,12 @@ describe('Templates', function () {
   it('should execute the template function before created is called', function () {
     var {safe: tagName} = helpers.safeTagName('my-el');
     var MyEl = skate(tagName, {
-      created: function (element) {
-        expect(element.textContent).to.equal('test');
+      created: function () {
+        expect(this.textContent).to.equal('test');
       },
 
-      template: function (element) {
-        element.textContent = 'test';
+      template: function () {
+        this.textContent = 'test';
       }
     });
 
@@ -26,8 +26,8 @@ describe('Templates', function () {
         myfunc: function () {}
       },
 
-      template: function (element) {
-        expect(element.myfunc).to.be.a('function');
+      template: function () {
+        expect(this.myfunc).to.be.a('function');
       }
     });
 
