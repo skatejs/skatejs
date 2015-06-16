@@ -551,7 +551,7 @@ var myElementInstance = new MyElement();
 
 #### Hydrating Properties
 
-For each of these ways you can construct an element, Skate also allows you to pass a properties object to them. The properties object is used to hydrate property values for the element.
+For each of the ways you can construct an element, Skate also allows you to pass a properties object to them. The properties object is used to hydrate property values for the element.
 
 ```js
 var props = { propname: 'propvalue' };
