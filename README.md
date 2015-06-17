@@ -427,7 +427,7 @@ template () {
 }
 ```
 
-A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string. The following example will compile the HTML using Handlebars and when invoked it will take all the attributes on the element and pass them in to the compiled template function as the context. This way, you can use any of the attributes specified on the element.
+A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string onto the element. You could rewrite the above example to be reusable very easily:
 
 ```js
 function handlebarify (html) {
@@ -660,26 +660,24 @@ function increment () {
 
 var proxy = skate.chain(
   // Strings point to a method on the context.
-  'method',
+  'increment',
 
   // Functions are invoked and passed the context.
   increment,
 
   // A new chain is created from array values.
-  [ 'method', increment ],
+  [ 'increment', increment ],
 
   // A new chain is created from object values.
-  { key1: 'method', key2: increment },
+  { key1: 'increment', key2: increment },
 
   // Same as both the array and object forms.
-  skate.chain('method', increment);
+  skate.chain('increment', increment);
 );
 
 var context = proxy.call({
   calls: 0,
-  method: function () {
-    ++this.calls;
-  }
+  increment: increment
 });
 
 // 8
