@@ -28,6 +28,59 @@ Result
 
 
 
+## Documentation
+
+- [Compatibility](#compatibility)
+- [Installing](#installing)
+  - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
+  - [ES6 Modules](#es6-modules)
+  - [Global](#global)
+- [Usage](#usage)
+  - [Component Lifecycle](#component-lifecycle)
+    - [`created`](#created)
+    - [`attached`](#attached)
+    - [`detached`](#detached)
+    - [`attribute`](#attribute)
+    - [`template`](#template)
+  - [Event Binding](#event-binding)
+    - [Reaching into the Shadow DOM](#reaching-into-the-shadow-dom)
+  - [Constructing Elements](#constructing-elements)
+    - [Function Call](#function-call)
+    - [`skate.create()`](#skatecreate)
+    - [Constructor](#constructor)
+    - [Hydrating Properties](#hydrating-properties)
+  - [Extending Elements](#extending-elements)
+  - [Custom Methods and Properties](#custom-methods-and-properties)
+  - [Asynchrony](#asynchrony)
+  - [API](#api)
+    - [`chain (...args)`](#chain-args)
+    - [`skate.create(name, props = {})`](#skatecreatename-props--)
+    - [`skate.emit(element, eventName, eventOptions = {})`](#skateemitelement-eventname-eventoptions--)
+    - [`skate.emit(eventName, eventOptions = {})`](#skateemiteventname-eventoptions--)
+    - [`skate.event()`](#skateevent)
+    - [`skate.init()`](#skateinit)
+    - [`skate.noConflict()`](#skatenoconflict)
+    - [`skate.property(element, propertyName, propertyDefinition)`](#skatepropertyelement-propertyname-propertydefinition)
+    - [`skate.property(element, propertyDefinitions)`](#skatepropertyelement-propertydefinitions)
+    - [`skate.ready(callback)`](#skatereadycallback)
+    - [`skate.type`](#skatetype)
+    - [`skate.version`](#skateversion)
+    - [`skate.watch(element, callback, options = {})`](#skatewatchelement-callback-options--)
+- [Web Component Differences](#web-component-differences)
+- [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
+- [Native Support](#native-support)
+- [Polyfills](#polyfills)
+- [Preventing FOUC](#preventing-fouc)
+- [Ignoring Elements](#ignoring-elements)
+- [No Conflict](#no-conflict)
+- [Multiple Version Support](#multiple-version-support)
+- [Contributing](#contributing)
+- [Who's Using It?](#whos-using-it)
+- [Maintainers](#maintainers)
+- [License](#license)
+
+
+
 ## Compatibility
 
 IE9+ and all evergreens.
