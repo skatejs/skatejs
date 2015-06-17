@@ -335,6 +335,14 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   });
   var CustomEvent = window.CustomEvent;
   
+  if (CustomEvent) {
+    try {
+      new CustomEvent();
+    } catch (e) {
+      CustomEvent = undefined;
+    }
+  }
+  
   function createCustomEvent(name, opts) {
     if (CustomEvent) {
       return new CustomEvent(name, opts);
