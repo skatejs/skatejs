@@ -396,7 +396,7 @@ document.createElement('div').innerHTML = '<my-element></my-element>';
 
 In instances where an element is initialized asynchronously, or your definition is loaded after the element is already on the page, there may be a flash of un-styled content. For more information see [Preventing FOUC](#preventing-fouc).
 
-If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists. For more information see [skate.ready()](#skate-ready).
+If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists. For more information see [skate.ready()](#ready-callback).
 
 ```js
 // Will not have children.
