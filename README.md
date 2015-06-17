@@ -369,7 +369,9 @@ The component lifecycle consists several callbacks:
 #### `created`
 
 ```js
-created () {}
+skate('my-element', {
+  created () {}
+});
 ```
 
 The `created` callback gets triggered when the element is created.
@@ -414,7 +416,9 @@ document.createElement('div').innerHTML = '<my-el>child</my-el>';
 #### `attached`
 
 ```js
-attached () {}
+skate('my-element', {
+  attached () {}
+});
 ```
 
 The `attached` callback is fired when the element is attached to the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
@@ -426,7 +430,9 @@ The `attached` callback is called synchronously in native custom elements and as
 #### `detached`
 
 ```js
-detached () {}
+skate('my-element', {
+  detached () {}
+});
 ```
 
 The `detached` callback is fired when the element is detached from the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
@@ -438,15 +444,17 @@ The `detached` callback is called synchronously in native custom elements and as
 #### `attribute`
 
 ```js
-attribute (name, oldValue, newValue) {
-  if (oldValue === null) {
-    // created
-  } else if (newValue === null) {
-    // removed
-  } else {
-    // updated
+skate('my-element', {
+  attribute (name, oldValue, newValue) {
+    if (oldValue === null) {
+      // created
+    } else if (newValue === null) {
+      // removed
+    } else {
+      // updated
+    }
   }
-}
+});
 ```
 
 The `attribute` callback is fired whenever an element attribute is created, updated or removed. Unlike the native `attributeChangedCallback`, this gets fired for every attribute an element has by the time it is initialised.
@@ -470,7 +478,9 @@ myElement.setAttribute('myAttribute', 'new value');
 #### `template`
 
 ```js
-template () {}
+skate('my-element', {
+  template () {}
+});
 ```
 
 Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
@@ -546,11 +556,13 @@ If you want to re-render your component when properties change, you can listen t
 With Handlebars you might do something like:
 
 ```js
-template () {
-  var render = handlebarify('<p>Hello, {{name}}!</p>');
-  this.addEventListener('skate.property', render);
-  render.call(this);
-}
+skate('my-element', {
+  template () {
+    var render = handlebarify('<p>Hello, {{name}}!</p>');
+    this.addEventListener('skate.property', render);
+    render.call(this);
+  }
+});
 ```
 
 If you're using Virtual DOM you might do something like:
@@ -587,49 +599,51 @@ skate('my-element', {
 ### Event Binding
 
 ```js
-events: {
-  // All direct and bubbled events.
-  click (e) {
-    // Refers to the component element.
-    this;
+skate('my-element', {
+  events: {
+    // All direct and bubbled events.
+    click (e) {
+      // Refers to the component element.
+      this;
 
-    // Standard DOM event object.
-    e;
+      // Standard DOM event object.
+      e;
 
-    // Same as `this`.
-    e.delegateTarget;
-  },
+      // Same as `this`.
+      e.delegateTarget;
+    },
 
-  // Restricted to events triggered only on the component element. Arguments
-  // are the same as above.
-  'click my-element' (e) {},
+    // Restricted to events triggered only on the component element. Arguments
+    // are the same as above.
+    'click my-element' (e) {},
 
-  // Event delegation.
-  'click .something' (e) {
-    // Same as above.
-    this && e;
+    // Event delegation.
+    'click .something' (e) {
+      // Same as above.
+      this && e;
 
-    // Instead matches whatever `.something` is.
-    e.delegateTarget;
-  },
+      // Instead matches whatever `.something` is.
+      e.delegateTarget;
+    },
 
-  // Multiple handlers.
-  click: [
-    handler1,
-    handler2
-  ],
+    // Multiple handlers.
+    click: [
+      handler1,
+      handler2
+    ],
 
-  // Focus and blur can be delegated, too.
-  'focus .something' () {},
-  'blur .something' () {},
+    // Focus and blur can be delegated, too.
+    'focus .something' () {},
+    'blur .something' () {},
 
-  // Using Shadow DOM selectors.
-  //
-  // *These are only supported if you have native Shadow DOM support or are
-  // using a polyfill.*
-  'click :host::shadow' () {},
-  'click ::shadow ::content' () {}
-}
+    // Using Shadow DOM selectors.
+    //
+    // *These are only supported if you have native Shadow DOM support or are
+    // using a polyfill.*
+    'click :host::shadow' () {},
+    'click ::shadow ::content' () {}
+  }
+});
 ```
 
 #### Reaching into the Shadow DOM
@@ -728,9 +742,7 @@ Skate gives you the option to specify custom properties and methods on your comp
 ```js
 skate('my-component', {
   prototype: {
-    callMeLikeAnyNativeMethod: function () {
-
-    }
+    callMeLikeAnyNativeMethod () {}
   }
 });
 ```
