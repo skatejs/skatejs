@@ -1,5 +1,13 @@
 var CustomEvent = window.CustomEvent;
 
+if (CustomEvent) {
+  try {
+    new CustomEvent();
+  } catch (e) {
+    CustomEvent = undefined;
+  }
+}
+
 function createCustomEvent (name, opts) {
   if (CustomEvent) {
     return new CustomEvent(name, opts);
