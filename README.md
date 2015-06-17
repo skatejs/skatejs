@@ -30,63 +30,45 @@ Result
 
 ## Documentation
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
 - [Compatibility](#compatibility)
 - [Installing](#installing)
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
   - [ES6 Modules](#es6-modules)
   - [Global](#global)
 - [Usage](#usage)
-  - [Component Lifecycle](#component-lifecycle)
-    - [`created`](#created)
-      - [Timing](#timing)
-    - [`attached`](#attached)
-      - [Timing](#timing-1)
-    - [`detached`](#detached)
-      - [Timing](#timing-2)
-    - [`attribute`](#attribute)
-      - [Timing](#timing-3)
-    - [`template`](#template)
-      - [Handlebars](#handlebars)
-      - [Shadow DOM](#shadow-dom)
-      - [Virtual DOM](#virtual-dom)
-      - [Responding to Component Changes](#responding-to-component-changes)
-  - [Event Binding](#event-binding)
-    - [Reaching into the Shadow DOM](#reaching-into-the-shadow-dom)
-  - [Constructing Elements](#constructing-elements)
-    - [Function Call](#function-call)
-    - [`skate.create()`](#skatecreate)
-    - [Constructor](#constructor)
-    - [Hydrating Properties](#hydrating-properties)
-  - [Extending Elements](#extending-elements)
-  - [Custom Methods and Properties](#custom-methods-and-properties)
-  - [Asynchrony](#asynchrony)
-  - [API](#api)
-    - [`chain (...args)`](#chain-args)
-    - [`create (name, props = {})`](#create-name-props--)
-      - [Alternatives](#alternatives)
-      - [Setting Properties](#setting-properties)
-      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelement)
-    - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
-      - [Emitting Several Events at Once](#emitting-several-events-at-once)
-      - [Return Value](#return-value)
-      - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
-    - [`emit (eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
-    - [`event ()`](#event-)
-    - [`init ()`](#init-)
-    - [`noConflict ()`](#noconflict-)
-    - [`property (element, propertyName, propertyDefinition)`](#property-element-propertyname-propertydefinition)
-      - [`attr`](#attr)
-      - [`deps`](#deps)
-      - [`get`](#get)
-      - [`notify`](#notify)
-      - [`set`](#set)
-      - [`type`](#type)
-      - [`value`](#value)
-    - [`property (element, propertyDefinitions)`](#property-element-propertydefinitions)
-    - [`ready (callback)`](#ready-callback)
-    - [`type`](#type-1)
-    - [`version`](#version)
-    - [`watch (element, callback, options = {})`](#watch-element-callback-options--)
+- [Component Lifecycle](#component-lifecycle)
+  - [`created`](#created)
+  - [`attached`](#attached)
+  - [`detached`](#detached)
+  - [`attribute`](#attribute)
+  - [`template`](#template)
+- [Event Binding](#event-binding)
+  - [Reaching into the Shadow DOM](#reaching-into-the-shadow-dom)
+- [Constructing Elements](#constructing-elements)
+  - [Function Call](#function-call)
+  - [`skate.create()`](#skatecreate)
+  - [Constructor](#constructor)
+  - [Hydrating Properties](#hydrating-properties)
+- [Extending Elements](#extending-elements)
+- [Custom Methods and Properties](#custom-methods-and-properties)
+- [Asynchrony](#asynchrony)
+- [API](#api)
+  - [`chain (...args)`](#chain-args)
+  - [`create (name, props = {})`](#create-name-props--)
+  - [`emit (eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
+  - [`event ()`](#event-)
+  - [`init ()`](#init-)
+  - [`noConflict ()`](#noconflict-)
+  - [`property (element, propertyName, propertyDefinition)`](#property-element-propertyname-propertydefinition)
+  - [`property (element, propertyDefinitions)`](#property-element-propertydefinitions)
+  - [`ready (callback)`](#ready-callback)
+  - [`type`](#type)
+  - [`version`](#version)
+  - [`watch (element, callback, options = {})`](#watch-element-callback-options--)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
 - [Native Support](#native-support)
@@ -105,6 +87,8 @@ Result
 - [Who's Using It?](#whos-using-it)
 - [Maintainers](#maintainers)
 - [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 
@@ -379,7 +363,7 @@ skate('my-component', {
 
 
 
-### Component Lifecycle
+## Component Lifecycle
 
 The component lifecycle consists several callbacks:
 
@@ -389,7 +373,7 @@ The component lifecycle consists several callbacks:
 - `attribute`
 - `template`
 
-#### `created`
+### `created`
 
 ```js
 skate('my-element', {
@@ -399,7 +383,7 @@ skate('my-element', {
 
 The `created` callback gets triggered when the element is created.
 
-##### Timing
+#### Timing
 
 There are some differences when using native vs polyfilled support.
 
@@ -436,7 +420,7 @@ document.body.innerHTML = '<my-el>child</my-el>';
 document.createElement('div').innerHTML = '<my-el>child</my-el>';
 ```
 
-#### `attached`
+### `attached`
 
 ```js
 skate('my-element', {
@@ -446,11 +430,11 @@ skate('my-element', {
 
 The `attached` callback is fired when the element is attached to the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
 
-##### Timing
+#### Timing
 
 The `attached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
 
-#### `detached`
+### `detached`
 
 ```js
 skate('my-element', {
@@ -460,11 +444,11 @@ skate('my-element', {
 
 The `detached` callback is fired when the element is detached from the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
 
-##### Timing
+#### Timing
 
 The `detached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
 
-#### `attribute`
+### `attribute`
 
 ```js
 skate('my-element', {
@@ -482,7 +466,7 @@ skate('my-element', {
 
 The `attribute` callback is fired whenever an element attribute is created, updated or removed. Unlike the native `attributeChangedCallback`, this gets fired for every attribute an element has by the time it is initialised.
 
-##### Timing
+#### Timing
 
 Attribute handlers are notified synchronously. Instead of using mutation observers, `setAttribute` and `removeAttribute` are patched to notify the callback as soon as the change occurs. If your existing code uses timeouts to wait until after mutations happen to execute logic related to an attribute change, you don't need to worry about changing it. The only difference is you won't need to write async boilerplate anymore.
 
@@ -498,7 +482,7 @@ You must use the attribute methods instead:
 myElement.setAttribute('myAttribute', 'new value');
 ```
 
-#### `template`
+### `template`
 
 ```js
 skate('my-element', {
@@ -508,7 +492,7 @@ skate('my-element', {
 
 Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
 
-##### Handlebars
+#### Handlebars
 
 ```js
 skate('my-element', {
@@ -534,7 +518,7 @@ skate('my-element', {
 });
 ```
 
-##### Shadow DOM
+#### Shadow DOM
 
 If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 
@@ -550,7 +534,7 @@ skate('my-element', {
 });
 ```
 
-##### Virtual DOM
+#### Virtual DOM
 
 You could also use a virtual DOM implementation - such as [virtual-dom](https://github.com/Matt-Esch/virtual-dom) - here if you wanted to.
 
@@ -572,7 +556,7 @@ skate('my-element', {
 });
 ```
 
-##### Responding to Component Changes
+#### Responding to Component Changes
 
 If you want to re-render your component when properties change, you can listen to the `skate.property` event triggered by defined `properties`.
 
@@ -619,7 +603,7 @@ skate('my-element', {
 
 
 
-### Event Binding
+## Event Binding
 
 ```js
 skate('my-element', {
@@ -669,7 +653,7 @@ skate('my-element', {
 });
 ```
 
-#### Reaching into the Shadow DOM
+### Reaching into the Shadow DOM
 
 You may use the `::shadow` pseudo-element when specifying a delegate selector to an event. Underneath, Skate will walk the parent hierarchy from `e.path[0]` instead of `e.target` to find a matching target.
 
@@ -681,25 +665,25 @@ Note:
 
 
 
-### Constructing Elements
+## Constructing Elements
 
 There's several different ways to construct an element.
 
-#### Function Call
+### Function Call
 
 ```js
 var myElement = skate('my-element', {});
 var myElementInstance = myElement();
 ```
 
-#### `skate.create()`
+### `skate.create()`
 
 ```js
 skate('my-element', {});
 var myElementInstance = skate.create('my-element');
 ```
 
-#### Constructor
+### Constructor
 
 While not the most elegant way, this serves as an ode to the spec.
 
@@ -708,7 +692,7 @@ var MyElement = skate('my-element');
 var myElementInstance = new MyElement();
 ```
 
-#### Hydrating Properties
+### Hydrating Properties
 
 For each of the ways you can construct an element, Skate also allows you to pass a properties object to them. The properties object is used to hydrate property values for the element.
 
@@ -721,7 +705,7 @@ var myElementInstance = new MyElement(props);
 
 
 
-### Extending Elements
+## Extending Elements
 
 You may extend components using ES6 classes or your favorite ES5 library.
 
@@ -758,7 +742,7 @@ Due to the semantics of ES6 classes, you must specify any non-prototype members 
 
 
 
-### Custom Methods and Properties
+## Custom Methods and Properties
 
 Skate gives you the option to specify custom properties and methods on your component.
 
@@ -778,7 +762,7 @@ document.getElementById('my-component-id').callMeLikeanyNativeMethod();
 
 
 
-### Asynchrony
+## Asynchrony
 
 Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
@@ -802,11 +786,11 @@ This is very useful during testing, but can be used for any use case that requir
 
 
 
-### API
+## API
 
 The following are all available on the `skate` object, or available for use from the `src/api` or `lib/api` folders.
 
-#### `chain (...args)`
+### `chain (...args)`
 
 Returns a function that attempts to make all arguments passed in callable. The arguments and context passed to the returned function are forwarded, so it can be used to compose behaviour. The context passed to the proxy function is returned.
 
@@ -881,7 +865,7 @@ skate('my-element', {
 
 
 
-#### `create (name, props = {})`
+### `create (name, props = {})`
 
 Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
 
@@ -934,7 +918,7 @@ skate.init(element);
 
 Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
 
-##### Alternatives
+#### Alternatives
 
 If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
 
@@ -948,7 +932,7 @@ myElement = MyElement();
 myElement = new MyElement();
 ```
 
-##### Setting Properties
+#### Setting Properties
 
 All methods of constructing an element support passing properties.
 
@@ -965,7 +949,7 @@ Passing properties automatically assigns them to the element:
 console.log(myElement.prop);
 ```
 
-##### Why not just patch `document.createElement()`?
+#### Why not just patch `document.createElement()`?
 
 Skate is designed to work with multiple versions of itself on the same page. If one version patches `document.createElement()` differently than another, then you have problems. Even if we did do this, how `document.createElement()` is called still depends on how the corresponding component has been registered, which is bad, especially when we can infer that information from the component definition.
 
@@ -993,7 +977,7 @@ skate('x-tab', {
 
 It's preferrable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
 
-##### Emitting Several Events at Once
+#### Emitting Several Events at Once
 
 You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
 
@@ -1002,11 +986,11 @@ skate.emit(element, 'event1 event2');
 skate.emit(element, [ 'event1', 'event2' ]);
 ```
 
-##### Return Value
+#### Return Value
 
 The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
 
-##### Preventing Bubbling or Canceling
+#### Preventing Bubbling or Canceling
 
 If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify those options in the `eventOptions` argument.
 
@@ -1019,7 +1003,7 @@ skate.emit(element, 'event', {
 
 
 
-#### `emit (eventName, eventOptions = {})`
+### `emit (eventName, eventOptions = {})`
 
 Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `element` and calls `skate.emit(element, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
 
@@ -1029,19 +1013,19 @@ click: skate.emit('selected')
 
 
 
-#### `event ()`
+### `event ()`
 
 [soon]
 
 
 
-#### `init ()`
+### `init ()`
 
 [soon]
 
 
 
-#### `noConflict ()`
+### `noConflict ()`
 
 Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
 
@@ -1051,11 +1035,11 @@ var currentSkate = skate.noConflict();
 
 
 
-#### `property (element, propertyName, propertyDefinition)`
+### `property (element, propertyName, propertyDefinition)`
 
 Defines the specified `propertyName` using `propertyDefinition` on the `element`. The property definition may contain the following options.
 
-##### `attr`
+#### `attr`
 
 Whether or not to link the property to an attribute. If `true`, then the property name will be converted from `camelCase` to `dash-case` and the result will be used as the linked attribute.
 
@@ -1071,7 +1055,7 @@ attr: 'my-attribute-name'
 
 No attribute is linked by default.
 
-##### `deps`
+#### `deps`
 
 A space-separated `String` or `Array` of property names that this property depends on. If any of these properties change, then this property's setter will be invoked.
 
@@ -1096,17 +1080,17 @@ If you do this, there are a couple requirements that must be met:
 - The path (`my.descendant` in the above example) must be accessible from the element in which you're defining the property.
 - The name (`dependencyProperty` in the above example) must be defined as a property on `my.descendant` and notifying turned on.
 
-##### `get`
+#### `get`
 
 The custom getter for this property. If not specified, then the value is stored internally when the value is set and returned whenever it is retrieved. The element is passed as `this`.
 
 If you want to make a property read-only, then specify `get` without `set`.
 
-##### `notify`
+#### `notify`
 
 Whether or not to emit an event when the property is set. If `true`, then a `skate.property` event is emitted. If a `String`, then the value is used as the event name that is emitted.
 
-##### `set`
+#### `set`
 
 The custom setter for this property. The return value is ignored, so the logic in this method is responsible for setting the value however it needs to. The element is passed in as `this` and it receives two arguments: `newValue` and `oldValue`, in that order.
 
@@ -1116,7 +1100,7 @@ set: function (newValue, oldValue) {
 }
 ```
 
-##### `type`
+#### `type`
 
 Responsible for coercing the value before the setter is called. The return value of this function is what is passed as `newValue` into the setter.
 
@@ -1133,7 +1117,7 @@ type: Boolean
 
 When the property is passed a truthy value, the attribute is added and void of a value. When passed a falsy value, the attribute is removed.
 
-##### `value`
+#### `value`
 
 The initial value for the property. It will be coerced and pass through the setter when initialised.
 
@@ -1161,13 +1145,13 @@ value: true
 
 
 
-#### `property (element, propertyDefinitions)`
+### `property (element, propertyDefinitions)`
 
 A way to define multiple property definitions to an `element` at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
 
 
 
-#### `ready (callback)`
+### `ready (callback)`
 
 Executes `callback` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
 
@@ -1197,7 +1181,7 @@ skate.ready(() => this.querySelector('x-child').sayHello());
 
 
 
-#### `type`
+### `type`
 
 Contains the constants for each type of binding that Skate supports. They are:
 
@@ -1207,13 +1191,13 @@ Contains the constants for each type of binding that Skate supports. They are:
 
 
 
-#### `version`
+### `version`
 
 Returns the current version of Skate.
 
 
 
-#### `watch (element, callback, options = {})`
+### `watch (element, callback, options = {})`
 
 A convenient wrapper around Skate's internal `MutationObserver`. It allows you to watch an element for added or removed nodes.
 
