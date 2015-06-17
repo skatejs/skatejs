@@ -867,14 +867,19 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   }
   
   function defineProperty(elem, name, prop) {
-    var attributeToPropertyMap = (0, _utilData2['default'])(elem).attributeToPropertyMap = {};
+    var info = (0, _utilData2['default'])(elem);
+  
+    if (!info.attributeToPropertyMap) {
+      info.attributeToPropertyMap = {};
+    }
+  
     prop = property(name, prop);
     Object.defineProperty(elem, name, prop);
   
     // This ensures that the corresponding attribute will know to update this
     // property when it is set.
     if (prop.attr) {
-      attributeToPropertyMap[(0, _utilDashCase2['default'])(name)] = name;
+      info.attributeToPropertyMap[prop.attr] = name;
     }
   
     // If you aren't notifying of property changes, then dependencies aren't
