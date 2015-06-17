@@ -1088,7 +1088,25 @@ If you want to make a property read-only, then specify `get` without `set`.
 
 #### `notify`
 
-Whether or not to emit an event when the property is set. If `true`, then a `skate.property` event is emitted. If a `String`, then the value is used as the event name that is emitted.
+Whether or not to emit an event when the property is set. Defaults to `true`.
+
+If `true`, then a `skate.property` event is emitted:
+
+```js
+notify: true
+```
+
+If a `String`, then the value is used as the event name that is emitted.
+
+```js
+notify: 'emit-this-instead'
+```
+
+The event that gets emitted contains the following information in its `detail` property:
+
+- `e.detail.name` The property name.
+- `e.detail.newValue` The new value that was just set on the property.
+- `e.detail.oldValue` The previous value of the property.
 
 #### `set`
 
