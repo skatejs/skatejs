@@ -54,18 +54,18 @@ Result
   - [Asynchrony](#asynchrony)
   - [API](#api)
     - [`chain (...args)`](#chain-args)
-    - [`skate.create(name, props = {})`](#skatecreatename-props--)
-    - [`skate.emit(element, eventName, eventOptions = {})`](#skateemitelement-eventname-eventoptions--)
-    - [`skate.emit(eventName, eventOptions = {})`](#skateemiteventname-eventoptions--)
-    - [`skate.event()`](#skateevent)
-    - [`skate.init()`](#skateinit)
-    - [`skate.noConflict()`](#skatenoconflict)
-    - [`skate.property(element, propertyName, propertyDefinition)`](#skatepropertyelement-propertyname-propertydefinition)
-    - [`skate.property(element, propertyDefinitions)`](#skatepropertyelement-propertydefinitions)
-    - [`skate.ready(callback)`](#skatereadycallback)
-    - [`skate.type`](#skatetype)
-    - [`skate.version`](#skateversion)
-    - [`skate.watch(element, callback, options = {})`](#skatewatchelement-callback-options--)
+    - [`create (name, props = {})`](#skatecreatename-props--)
+    - [`emit (element, eventName, eventOptions = {})`](#skateemitelement-eventname-eventoptions--)
+    - [`emit (eventName, eventOptions = {})`](#skateemiteventname-eventoptions--)
+    - [`event ()`](#skateevent)
+    - [`init ()`](#skateinit)
+    - [`noConflict ()`](#skatenoconflict)
+    - [`property (element, propertyName, propertyDefinition)`](#skatepropertyelement-propertyname-propertydefinition)
+    - [`property (element, propertyDefinitions)`](#skatepropertyelement-propertydefinitions)
+    - [`ready (callback)`](#skatereadycallback)
+    - [`type`](#skatetype)
+    - [`version`](#skateversion)
+    - [`watch (element, callback, options = {})`](#skatewatchelement-callback-options--)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
 - [Native Support](#native-support)
@@ -777,7 +777,7 @@ skate('my-element', {
 
 
 
-#### `skate.create(name, props = {})`
+#### `create (name, props = {})`
 
 Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
 
@@ -867,7 +867,7 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 
 
-#### `skate.emit(element, eventName, eventOptions = {})`
+#### `emit (element, eventName, eventOptions = {})`
 
 Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
@@ -915,7 +915,7 @@ skate.emit(element, 'event', {
 
 
 
-#### `skate.emit(eventName, eventOptions = {})`
+#### `emit (eventName, eventOptions = {})`
 
 Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `element` and calls `skate.emit(element, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
 
@@ -925,19 +925,19 @@ click: skate.emit('selected')
 
 
 
-#### `skate.event()`
+#### `event ()`
 
 [soon]
 
 
 
-#### `skate.init()`
+#### `init ()`
 
 [soon]
 
 
 
-#### `skate.noConflict()`
+#### `noConflict ()`
 
 Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
 
@@ -947,7 +947,7 @@ var currentSkate = skate.noConflict();
 
 
 
-#### `skate.property(element, propertyName, propertyDefinition)`
+#### `property (element, propertyName, propertyDefinition)`
 
 Defines the specified `propertyName` using `propertyDefinition` on the `element`. The property definition may contain the following options.
 
@@ -962,7 +962,7 @@ attr: true
 If a `String`, then that will be used as the linked attribute exactly as it is specified.
 
 ```js
-attr: 'my-attribute-name`
+attr: 'my-attribute-name'
 ```
 
 No attribute is linked by default.
@@ -984,7 +984,7 @@ deps: [ 'dependency1', 'dependency2' ]
 You can also specify dependencies on nested components by giving the dependency a dot-separated path.
 
 ```js
-deps: 'my.descendant.dependencyProperty`
+deps: 'my.descendant.dependencyProperty'
 ```
 
 If you do this, there are a couple requirements that must be met:
@@ -1057,13 +1057,13 @@ value: true
 
 
 
-#### `skate.property(element, propertyDefinitions)`
+#### `property (element, propertyDefinitions)`
 
 A way to define multiple property definitions to an `element` at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
 
 
 
-#### `skate.ready(callback)`
+#### `ready (callback)`
 
 Executes `callback` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
 
@@ -1093,7 +1093,7 @@ skate.ready(() => this.querySelector('x-child').sayHello());
 
 
 
-#### `skate.type`
+#### `type`
 
 Contains the constants for each type of binding that Skate supports. They are:
 
@@ -1103,13 +1103,13 @@ Contains the constants for each type of binding that Skate supports. They are:
 
 
 
-#### `skate.version`
+#### `version`
 
 Returns the current version of Skate.
 
 
 
-#### `skate.watch(element, callback, options = {})`
+#### `watch (element, callback, options = {})`
 
 A convenient wrapper around Skate's internal `MutationObserver`. It allows you to watch an element for added or removed nodes.
 
