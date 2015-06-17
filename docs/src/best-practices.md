@@ -1,5 +1,5 @@
 ---
-template: layout.html
+template: docs.html
 ---
 
 ## Best Practices

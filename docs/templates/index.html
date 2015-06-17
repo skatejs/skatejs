@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS{{#if title}} - {{title}}{{/if}}</title>
+    <link rel="stylesheet" href="styles/index.css">
+    <script src="scripts/index.js"></script>
+  </head>
+  <body>
+    <skate-app>
+      <skate-navbar brand="Skate" fixed>
+        <skate-navbar-nav>
+          <a href="usage.html">Usage</a>
+          <a href="best-practices.html">Best Practices</a>
+          <a href="contributing.html">Contributing</a>
+          <a href="license.html">License</a>
+        </skate-navbar-nav>
+        <skate-navbar-nav position="right">
+          <skate-imglink
+            href="https://github.com/skatejs/skatejs"
+            src="images/GitHub-Mark-32px.png"
+            img-style="margin-top: 8px; margin-right: 16px;"
+          >SkateJS on GitHub</skate-imglink>
+        </skate-navbar-nav>
+        <skate-navbar-form></skate-navbar-form>
+      </skate-navbar>
+      <div class="jumbotron">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-2">
+              <skate>skate</skate>
+            </div>
+            <div class="col-md-10">
+              <p>Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.</p>
+              <p><a class="btn btn-primary btn-lg" href="https://github.com/skatejs/skatejs">Start Skating!</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid">
+        {{{ contents }}}
+      </div>
+    </skate-app>
+  </body>
+</html>

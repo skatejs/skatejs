@@ -2,19 +2,36 @@ import shade from '../../../../node_modules/shadejs/src/index';
 import skate from '../../../../src/index';
 
 export default skate('skate-navbar', {
-  attributes: {
-    brand: function (elem, diff) {
-      elem.header.brand.textContent = diff.newValue;
-    }
+  attached () {
+    this._toggleClassOnScroll = () => this.scrolled = window.scrollY;
+    document.addEventListener('scroll', this._toggleClassOnScroll);
+  },
+  detached () {
+    document.removeEventListener('scroll', this._toggleClassOnScroll);
+  },
+  properties: {
+    brand: {
+      attr: true,
+      value: ''
+    },
+    brandHref: {
+      attr: true,
+      value: '/'
+    },
+    scrolled: {}
   },
   template: shade(`
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container container-fluid">
-        <content name="header" select="skate-navbar-header">
-          <skate-navbar-header></skate-navbar-header>
-        </content>
+    <nav class="navbar navbar-default navbar-fixed-top" sh-class="scrolled">
+      <div class="container-fluid">
+        <a if="brand" text="brand" attr="href:brandHref" class="navbar-brand"></a>
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <content name="content">
+          <content name="innerHTML">
             <skate-navbar-nav>
               <a href="#">Home</a>
             </skate-navbar-nav>

@@ -1,10 +1,16 @@
 import shade from '../../../../../node_modules/shadejs/src/index';
 import skate from '../../../../../src/index';
-import AttrPosition from '../../attributes/position';
 
 export default skate('skate-navbar-nav', {
-  attributes: {
-    position: new AttrPosition({ prefix: 'navbar-' })
+  properties: {
+    position: {
+      attr: true,
+      value: 'left',
+      set (newValue, oldValue) {
+        this.classList.add(`navbar-${newValue}`);
+        this.classList.remove(`navbar-${oldValue}`);
+      }
+    }
   },
   template: shade(`
     <ul class="nav navbar-nav">
