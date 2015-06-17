@@ -471,13 +471,15 @@ template () {}
 
 Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
 
-For example, Handlebars:
+##### Handlebars
 
 ```js
-template () {
-  var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
-  this.innerHTML = compiled(this);
-}
+skate('my-element', {
+  template () {
+    var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
+    this.innerHTML = compiled(this);
+  }
+});
 ```
 
 A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string onto the element. You could rewrite the above example to be reusable very easily:
@@ -489,13 +491,13 @@ function handlebarify (html) {
     this.innerHTML = compiled(this);
   };
 }
+
+skate('my-element', {
+  template: handlebarify('<p>Hello, {{name}}!</p>')
+});
 ```
 
-Then you can use it in any component:
-
-```js
-template: handlebarify('<p>Hello, {{name}}!</p>')
-```
+##### Shadow DOM
 
 If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 
@@ -505,12 +507,75 @@ function shadowify (html) {
     this.createShadowRoot().innerHTML = html;
   };
 }
+
+skate('my-element', {
+  template: shadowify('<p>Hello, <content></content>!</p>')
+});
 ```
 
-Usage would be similar to the `handlebarify` function:
+##### Virtual DOM
+
+You could also use a virtual DOM implementation - such as [virtual-dom](https://github.com/Matt-Esch/virtual-dom) - here if you wanted to.
 
 ```js
-template: shadowify('<p>Hello, <content></content>!</p>')
+import createElement from './path/to/virtual-dom/create-element';
+
+function createVdomTree (props) {
+  // Return your Virtual DOM tree.
+}
+
+skate('my-element', {
+  template () {
+    var tree = createVdomTree(this);
+    var root = createElement(tree);
+
+    // Initial render.
+    this.appendChild(root);
+  }
+});
+```
+
+##### Responding to Component Changes
+
+If you want to re-render your component when properties change, you can listen to the `skate.property` event triggered by defined `properties`.
+
+With Handlebars you might do something like:
+
+```js
+template () {
+  var render = handlebarify('<p>Hello, {{name}}!</p>');
+  this.addEventListener('skate.property', render);
+  render.call(this);
+}
+```
+
+If you're using Virtual DOM you might do something like:
+
+```js
+import createElement from './path/to/virtual-dom/create-element';
+import diff from './path/to/virtual-dom/diff';
+import patch from './path/to/virtual-dom/patch';
+
+function createVdomTree (props) {
+  // Return your Virtual DOM tree.
+}
+
+skate('my-element', {
+  template () {
+    var tree = createVdomTree(this);
+    var root = createElement(tree);
+
+    // Initial render.
+    this.appendChild(root);
+
+    // Subsequent renders.
+    this.addEventListener('skate.property', function () {
+      var newTree = createVdomTree(this);
+      root = patch(root, diff(tree, newTree));
+      tree = newTree;
+    });
+  }
+});
 ```
 
 
