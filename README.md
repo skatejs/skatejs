@@ -1035,9 +1035,9 @@ var currentSkate = skate.noConflict();
 
 
 
-### `property (element, propertyName, propertyDefinition)`
+### `property (element, name, definition)`
 
-Defines the specified `propertyName` using `propertyDefinition` on the `element`. The property definition may contain the following options.
+Defines the specified property `name` using `definition` on the `element`. The property definition is different than that normally specified to `Object.defineProperty()` and may contain the following options.
 
 #### `attr`
 
@@ -1170,9 +1170,9 @@ value: true
 
 
 
-### `property (element, propertyDefinitions)`
+### `property (element, definitions)`
 
-A way to define multiple property definitions to an `element` at once. The `propertyDefinitions` argument is an object who's keys are the property names and values are the respective property definitions.
+A way to define multiple property definitions to an `element` at once. The `definitions` argument is an object who's keys are the property names and values are the respective property definitions.
 
 
 
