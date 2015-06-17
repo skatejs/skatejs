@@ -55,7 +55,7 @@ describe('lifecycle/properties', function () {
     var el = fixture(`<${elem.safe} prop-name1="testing1"></${elem.safe}>`).querySelector(elem.safe);
     skate.init(el);
     el.propName2 = 'testing2';
-    expect(el.getAttribute('prop-name1')).to.equal('testing1', 'Boolean true will use the property name in dash-case form');
+    expect(el.propName1).to.equal('testing1', 'Boolean true will use the property name in dash-case form');
     expect(el.getAttribute('my-attr')).to.equal('testing2', 'A string is used as the attribute name exactly');
   });
 

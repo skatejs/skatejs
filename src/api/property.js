@@ -146,14 +146,19 @@ function makePropertyHandler (elem, name, depPath, depName) {
 }
 
 function defineProperty (elem, name, prop) {
-  var attributeToPropertyMap = data(elem).attributeToPropertyMap = {};
+  var info = data(elem);
+
+  if (!info.attributeToPropertyMap) {
+    info.attributeToPropertyMap = {};
+  }
+
   prop = property(name, prop);
   Object.defineProperty(elem, name, prop);
 
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.
   if (prop.attr) {
-    attributeToPropertyMap[dashCase(name)] = name;
+    info.attributeToPropertyMap[prop.attr] = name;
   }
 
   // If you aren't notifying of property changes, then dependencies aren't
