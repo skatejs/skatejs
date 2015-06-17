@@ -1102,6 +1102,13 @@ If a `String`, then the value is used as the event name that is emitted.
 notify: 'emit-this-instead'
 ```
 
+You may also specify any type of event spec that [`emit`](emit-element-eventname-eventoptions--) takes. This means you can specify a space-separated string or an array of event names.
+
+```js
+notify: 'event1 event2',
+notify: [ 'event1', 'event2' ]
+```
+
 The event that gets emitted contains the following information in its `detail` property:
 
 - `e.detail.name` The property name.
