@@ -30,7 +30,6 @@ Result
 
 ## Documentation
 
-- [Documentation](#documentation)
 - [Compatibility](#compatibility)
 - [Installing](#installing)
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
