@@ -11,17 +11,18 @@ export default skate('skate-navbar', {
   },
   properties: {
     brand: {
-      attr: true,
-      value: ''
+      attr: true
     },
     brandHref: {
       attr: true,
       value: '/'
     },
-    scrolled: {}
+    scrolled: {
+      type: Boolean
+    }
   },
   template: shade(`
-    <nav class="navbar navbar-default navbar-fixed-top" sh-class="scrolled">
+    <nav class="navbar navbar-default navbar-fixed-top" sh-class="scrolled:scrolled">
       <div class="container-fluid">
         <a if="brand" text="brand" attr="href:brandHref" class="navbar-brand"></a>
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

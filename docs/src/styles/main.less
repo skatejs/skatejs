@@ -16,21 +16,6 @@ code {
   padding: 3px 6px;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 30px;
-  color: #205081;
-}
-
-h1 {
-  margin: 20px auto;
-  text-align: center;
-}
-
 h2 {
   margin-top: 50px;
 }
@@ -59,7 +44,7 @@ pre {
 .jumbotron skate {
   background-color: #333;
   font-size: 3.1rem;
-  margin: 0 auto;
+  margin: 30px auto;
 }
 
 .jumbotron .row > div {
@@ -68,4 +53,21 @@ pre {
 
 .btn-primary {
   background-color: #205081;
+}
+
+.container-fluid {
+  padding: 5px 30px;
+}
+
+
+@media (max-width: 991px) {
+  .jumbotron h1,
+  .jumbotron p:last-of-type {
+    text-align: center;
+  }
+
+  .jumbotron skate {
+    display: block;
+    margin: auto;
+  }
 }

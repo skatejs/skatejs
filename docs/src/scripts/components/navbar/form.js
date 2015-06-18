@@ -18,10 +18,12 @@ export default skate('skate-navbar-form', {
   properties: {
     position: {
       attr: true,
-      value: 'right',
-      set (newValue, oldValue) {
-        this.classList.add(`navbar-${newValue}`);
-        this.classList.remove(`navbar-${oldValue}`);
+      value: 'right'
+    },
+    positionClass: {
+      deps: 'position',
+      get: function () {
+        return 'navbar-' + this.position;
       }
     },
     query: {
@@ -29,9 +31,16 @@ export default skate('skate-navbar-form', {
     }
   },
   template: shade(`
-    <form class="navbar-form" role="search" target="https://www.google.com.au/search" action="get">
+    <form sh-class="positionClass" class="navbar-form" role="search" target="https://www.google.com.au/search" action="get">
       <div class="form-group">
-        <input name="query" type="text" class="form-control" placeholder="Search">
+        <div class="input-group">
+          <input name="query" type="text" class="form-control" placeholder="Search">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          </span>
+        </div>
       </div>
     </form>
   `)
