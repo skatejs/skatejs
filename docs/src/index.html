@@ -1,0 +1,76 @@
+---
+template: index.html
+showHero: true
+---
+
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2">
+        <skate transform>skate</skate>
+      </div>
+      <div class="col-md-10">
+        <h1>SkateJS</h1>
+        <p>Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="well well-loud text-center">
+  <a class="btn btn-default" href="https://github.com/skatejs/skatejs">GitHub <span class="badge badge-default">0.13.4</span></a>
+  <a class="btn btn-default" href="https://www.npmjs.com/package/skatejs">npm install skatejs</a>
+  <a class="btn btn-default" href="http://bower.io/search/?q=skatejs">bower install skatejs</a>
+</div>
+<div class="well well-overview">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h3>HTML</h3>
+        <script is="skate-code" type="text/html">
+          <my-element></my-element>
+        </script>
+      </div>
+      <div class="col-md-4">
+        <h3>JavaScript</h3>
+        <script is="skate-code" type="text/js">
+          skate('my-element', {
+            created: function () {
+              this.textContent = 'Hello, World!';
+            }
+          });
+        </script>
+      </div>
+      <div class="col-md-4">
+        <h3>Output</h3>
+        <script is="skate-code" type="text/html">
+          <my-element>Hello, World!</my-element>
+        </script>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="well well-general">
+  <div class="container">
+    <h2>Compatibility</h2>
+    <p>IE9+ and all evergreens.</p>
+
+    <h2>Installing</h2>
+    <p>You can download the source yourself and put it wherever you want. Additionally you can use Bower:</p>
+    <script is="skate-code" type="text/bash">
+      bower install skatejs
+    </script>
+    <p>Or NPM:</p>
+    <script is="skate-code" type="text/bash">
+      npm install skatejs
+    </script>
+
+    <h3>ES2015</h3>
+    <p>The Skate source is written using ES2015. If you're using a transpilation method, then you can <code>import skate from src/index;</code> and use it in your projects as you would any ES2015 module.</p>
+
+    <h3>UMD</h3>
+    <p>UMD files are located in <code>lib/</code>. Simply require the <code>lib/index.js</code> file using a CommonJS or AMD loader and use it in accordance with whatever loader you've chosen.</p>
+
+    <h3>Global</h3>
+    <p>If you're still skating old school the <code>dist</code> directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with <code>skate</code>.</p>
+  </div>
+</div>

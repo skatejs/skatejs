@@ -7,7 +7,7 @@
 
 @line-colour: white;
 @text-colour: white;
-@circle-colour: #333333;
+@circle-colour: #333;
 
 skate {
   background: @circle-colour;
@@ -52,7 +52,7 @@ skate {
     transform: translate(-3.34em, -0.075em) rotate(60deg);
   }
 
-  &:hover {
+  &[transform]:hover {
     text-shadow: 0 0 0 @text-colour;
 
     &:before {

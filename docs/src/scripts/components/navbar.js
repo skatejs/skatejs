@@ -10,13 +10,6 @@ export default skate('skate-navbar', {
     document.removeEventListener('scroll', this._toggleClassOnScroll);
   },
   properties: {
-    brand: {
-      attr: true
-    },
-    brandHref: {
-      attr: true,
-      value: '/'
-    },
     scrolled: {
       type: Boolean
     }
@@ -24,7 +17,7 @@ export default skate('skate-navbar', {
   template: shade(`
     <nav class="navbar navbar-default navbar-fixed-top" sh-class="scrolled:scrolled">
       <div class="container-fluid">
-        <a if="brand" text="brand" attr="href:brandHref" class="navbar-brand"></a>
+        <content name="brand" select="[brand]"></content>
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>

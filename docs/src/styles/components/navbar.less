@@ -1,11 +1,24 @@
 .navbar {
   background-color: #fff;
   border-bottom: 0;
+  padding: 8px 0;
   transition: box-shadow .3s;
 }
 
 .navbar.scrolled {
-  box-shadow: 0 0 12px #333;
+  box-shadow: 0 0 8px #555;
+}
+
+.navbar-brand skate {
+  font-size: 8px;
+  margin-left: 0;
+  margin-top: -10px;
+  padding-left: 0;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav > li > a {
+  color: #4a6785;
 }
 
 .navbar-right {
@@ -14,4 +27,5 @@
 
 .navbar-right:last-of-type {
   margin-right: 0;
+  padding-right: 0;
 }
