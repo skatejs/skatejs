@@ -675,6 +675,40 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/assign-safe.js
+__d9d26492984e649e5130081ad32bafd6 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (child) {
+    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      parents[_key - 1] = arguments[_key];
+    }
+  
+    parents.forEach(function (parent) {
+      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
+        var childDesc = Object.getOwnPropertyDescriptor(child, name);
+        if (!childDesc || childDesc.configurable) {
+          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
+        }
+      });
+    });
+    return child;
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -715,9 +749,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
-  var _emit2 = _interopRequireDefault(_emit);
+  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
   
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
@@ -727,8 +761,12 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _emit2 = _interopRequireDefault(_emit);
+  
   /* jshint expr: true */
-  function notify(elem, notify, name) {
+  function notify(elem, notifyName, propName) {
     var detail = arguments[3] === undefined ? {} : arguments[3];
   
     // Notifications must *always* have:
@@ -736,11 +774,11 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     // - newValue
     // - oldValue
     // but may contain other information.
-    detail.name = name;
-    detail.newValue === undefined && (detail.newValue = elem[name]);
-    detail.oldValue === undefined && (detail.oldValue = elem[name]);
+    detail.name = propName;
+    detail.newValue === undefined && (detail.newValue = elem[propName]);
+    detail.oldValue === undefined && (detail.oldValue = elem[propName]);
   
-    (0, _emit2['default'])(elem, notify, {
+    (0, _emit2['default'])(elem, notifyName, {
       bubbles: true,
       cancelable: false,
       detail: detail
@@ -750,7 +788,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   function property(name, prop) {
     var internalGetter, internalSetter, internalValue, isBoolean;
   
-    if (!prop || typeof prop !== 'object') {
+    if (typeof prop === 'object') {
+      prop = (0, _utilAssignSafe2['default'])({}, prop);
+    } else {
       prop = { type: prop };
     }
   
@@ -782,7 +822,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
     internalGetter = prop.get;
     internalSetter = prop.set;
-    internalValue = typeof prop.value === 'function' ? prop.value.call(this) : prop.value;
     isBoolean = prop.type && prop.type === Boolean;
     delete prop.value;
   
@@ -875,7 +914,11 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   }
   
   function defineProperty(elem, name, prop) {
+    // We don't need to scope the data to the component ID be cause if multiple
+    // bindings on the same component define the same attribute, then they'd
+    // conflict anyways.
     var info = (0, _utilData2['default'])(elem);
+    var value = prop && prop.value || undefined;
   
     if (!info.attributeToPropertyMap) {
       info.attributeToPropertyMap = {};
@@ -883,6 +926,12 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
     prop = property(name, prop);
     Object.defineProperty(elem, name, prop);
+  
+    // Initialise the value if a initial value was provided. Attributes that exist
+    // on the element should trump any default values that are provided.
+    if (value !== undefined && (!prop.attr || !elem.hasAttribute(prop.attr))) {
+      elem[name] = typeof value === 'function' ? value.call(elem) : value;
+    }
   
     // This ensures that the corresponding attribute will know to update this
     // property when it is set.
@@ -919,40 +968,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   };
   
   module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/assign-safe.js
-__d9d26492984e649e5130081ad32bafd6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
-  
-    parents.forEach(function (parent) {
-      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
-        var childDesc = Object.getOwnPropertyDescriptor(child, name);
-        if (!childDesc || childDesc.configurable) {
-          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-        }
-      });
-    });
-    return child;
-  };
-  
-  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
