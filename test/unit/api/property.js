@@ -1,5 +1,6 @@
 import fixture from '../../lib/fixture';
 import helperElement from '../../lib/element';
+import helperFixture from '../../lib/fixture';
 import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
 
@@ -241,5 +242,35 @@ describe('lifecycle/properties', function () {
     el.addEventListener('skate.property', () => triggered = true);
     el.prop = true;
     expect(triggered).to.equal(false);
+  });
+
+  it('initial value should not trump existing attribute values', function () {
+    skate(elem.safe, {
+      properties: {
+        trump: {
+          attr: true,
+          value: 'property'
+        }
+      }
+    });
+
+    helpers.fixture(`<${elem.safe} trump="attribute"></${elem.safe}>`);
+    skate.init(helpers.fixture());
+    var el = helpers.fixture().querySelector(elem.safe);
+    expect(el.getAttribute('trump')).to.equal('attribute');
+    expect(el.trump).to.equal('attribute');
+  });
+
+  it('internal values should not leak to other element instances of the same type', function () {
+    skate(elem.safe, {
+      properties: {
+        prop1: {}
+      }
+    });
+
+    var el1 = elem.create({ prop1: 'test1' });
+    var el2 = elem.create({ prop1: 'test2' });
+    expect(el1.prop1).to.equal('test1');
+    expect(el2.prop1).to.equal('test2');
   });
 });

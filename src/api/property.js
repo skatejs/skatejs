@@ -1,19 +1,20 @@
-import apiEmit from './emit';
+import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import emit from './emit';
 
 /* jshint expr: true */
-function notify (elem, notify, name, detail = {}) {
+function notify (elem, notifyName, propName, detail = {}) {
   // Notifications must *always* have:
   // - name
   // - newValue
   // - oldValue
   // but may contain other information.
-  detail.name = name;
-  detail.newValue === undefined && (detail.newValue = elem[name]);
-  detail.oldValue === undefined && (detail.oldValue = elem[name]);
+  detail.name = propName;
+  detail.newValue === undefined && (detail.newValue = elem[propName]);
+  detail.oldValue === undefined && (detail.oldValue = elem[propName]);
 
-  apiEmit(elem, notify, {
+  emit(elem, notifyName, {
     bubbles: true,
     cancelable: false,
     detail: detail
@@ -23,7 +24,9 @@ function notify (elem, notify, name, detail = {}) {
 function property (name, prop) {
   var internalGetter, internalSetter, internalValue, isBoolean;
 
-  if (!prop || typeof prop !== 'object') {
+  if (typeof prop === 'object') {
+    prop = assignSafe({}, prop);
+  } else {
     prop = { type: prop };
   }
 
@@ -53,7 +56,6 @@ function property (name, prop) {
 
   internalGetter = prop.get;
   internalSetter = prop.set;
-  internalValue = typeof prop.value === 'function' ? prop.value.call(this) : prop.value;
   isBoolean = prop.type && prop.type === Boolean;
   delete prop.value;
 
@@ -146,7 +148,11 @@ function makePropertyHandler (elem, name, depPath, depName) {
 }
 
 function defineProperty (elem, name, prop) {
+  // We don't need to scope the data to the component ID be cause if multiple
+  // bindings on the same component define the same attribute, then they'd
+  // conflict anyways.
   var info = data(elem);
+  var value = prop && prop.value || undefined;
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
@@ -154,6 +160,12 @@ function defineProperty (elem, name, prop) {
 
   prop = property(name, prop);
   Object.defineProperty(elem, name, prop);
+
+  // Initialise the value if a initial value was provided. Attributes that exist
+  // on the element should trump any default values that are provided.
+  if (value !== undefined && (!prop.attr || !elem.hasAttribute(prop.attr))) {
+    elem[name] = typeof value === 'function' ? value.call(elem) : value;
+  }
 
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.
