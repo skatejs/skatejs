@@ -6,9 +6,13 @@ describe('api/watch', function () {
   var descendant;
 
   beforeEach(function () {
-    parent = document.createElement('div');
+    parent = document.body.appendChild(document.createElement('div'));
     child = document.createElement('div');
     descendant = document.createElement('div');
+  });
+
+  afterEach(function () {
+    document.body.removeChild(parent);
   });
 
   it('should watch for added childNodes', function (done) {
@@ -30,7 +34,7 @@ describe('api/watch', function () {
       done();
     });
 
-    child.remove();
+    parent.removeChild(child);
   });
 
   it('should only watch immediate childNodes by default', function (done) {
@@ -41,7 +45,7 @@ describe('api/watch', function () {
       done('watcher triggered');
     });
 
-    descendant.remove();
+    child.removeChild(descendant);
     setTimeout(done, 100);
   });
 
@@ -57,6 +61,6 @@ describe('api/watch', function () {
       subtree: true
     });
 
-    descendant.remove();
+    child.removeChild(descendant);
   });
 });

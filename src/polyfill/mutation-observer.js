@@ -95,7 +95,7 @@ MutationObserver.prototype = {
       }
 
       var eType = e.type;
-      var eTargetParent = eTarget.parentNode;
+      var eTargetParent = eType === 'DOMNodeInserted' || eType === 'DOMNodeRemoved' ? e.relatedNode : eTarget.parentNode;
 
       if (!canTriggerInsertOrRemove(eTargetParent)) {
         return;
