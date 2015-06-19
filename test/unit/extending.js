@@ -4,6 +4,12 @@ import skate from '../../src/index';
 describe('extending', function () {
   var Ctor, tag;
 
+  // IE <= 10 can't inherit static properties via __proto__ (https://babeljs.io/docs/advanced/caveats/).
+  var canExtendStaticProperties = !!Object.setPrototypeOf;
+
+  // IE <= 10 can't resolve super (https://babeljs.io/docs/advanced/caveats/).
+  var canResolveSuper = !!Object.setPrototypeOf;
+
   beforeEach(function () {
     Ctor = skate(helpers.safeTagName().safe, {
       extends: 'div',
@@ -31,10 +37,12 @@ describe('extending', function () {
 
   it('should copy all configuration options to the extended object', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {});
-    expect(ExtendedCtor.extends).to.equal('div');
-    expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
-    expect(ExtendedCtor.created).to.be.a('function');
-    expect(ExtendedCtor.attribute).to.be.a('function');
+    if (canExtendStaticProperties) {
+      expect(ExtendedCtor.extends).to.equal('div');
+      expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
+      expect(ExtendedCtor.created).to.be.a('function');
+      expect(ExtendedCtor.attribute).to.be.a('function');
+    }
     expect(ExtendedCtor.prototype.test).to.equal(true);
     expect(ExtendedCtor.prototype.someFunction).to.be.a('function');
   });
@@ -46,17 +54,22 @@ describe('extending', function () {
   });
 
   it('should not mess with callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
-    expect(new ExtendedCtor().textContent).to.equal('test');
+    if (canExtendStaticProperties) {
+      var ExtendedCtor = skate(tag, class extends Ctor {
+      });
+      expect(new ExtendedCtor().textContent).to.equal('test');
+    }
   });
 
   it('should allow overriding of callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {
-      static created () {
-        super.created();
-        this.textContent += 'ing';
-      }
-    });
-    expect(new ExtendedCtor().textContent).to.equal('testing');
+    if (canResolveSuper) {
+      var ExtendedCtor = skate(tag, class extends Ctor {
+        static created() {
+          super.created();
+          this.textContent += 'ing';
+        }
+      });
+      expect(new ExtendedCtor().textContent).to.equal('testing');
+    }
   });
 });
