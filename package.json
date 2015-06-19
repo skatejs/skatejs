@@ -10,6 +10,7 @@
     "benchmark": "^1.0.0",
     "bootstrap": "^3.3.0",
     "chippy": "treshugart/chippy#dfc4c5022a103e81eeb0404c8026ddb1ca5fd6da",
+    "font-awesome": "^4.3.0",
     "gulp": "^3.8.11",
     "gulp-auto-task": "0.0.1",
     "highlight.js": "^8.6.0",

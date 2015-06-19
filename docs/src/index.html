@@ -17,20 +17,29 @@ showHero: true
   </div>
 </div>
 <div class="well well-loud text-center">
-  <a class="btn btn-default" target="_blank" href="https://github.com/skatejs/skatejs">Download from GitHub</a>
-  <a class="btn btn-default" target="_blank" href="https://www.npmjs.com/package/skatejs">npm install skatejs</a>
-  <a class="btn btn-default" target="_blank" href="http://bower.io/search/?q=skatejs">bower install skatejs</a>
+  <a class="btn btn-default" target="_blank" href="https://github.com/skatejs/skatejs">
+    <skate-icon type="github-alt"></skate-icon>
+    Skate on GitHub
+  </a>
+  <a class="btn btn-default" target="_blank" href="https://www.npmjs.com/package/skatejs">
+    <skate-icon type="download"></skate-icon>
+    npm install skatejs
+  </a>
+  <a class="btn btn-default" target="_blank" href="http://bower.io/search/?q=skatejs">
+    <skate-icon type="download"></skate-icon>
+    bower install skatejs
+  </a>
 </div>
 <div class="well well-overview">
   <div class="container">
-    <div class="row">
-      <div class="col-md-4">
+    <skate-grid>
+      <div>
         <h3>HTML</h3>
         <script is="skate-code" type="text/html">
           <my-element></my-element>
         </script>
       </div>
-      <div class="col-md-4">
+      <div>
         <h3>JavaScript</h3>
         <script is="skate-code" type="text/js">
           skate('my-element', {
@@ -40,17 +49,40 @@ showHero: true
           });
         </script>
       </div>
-      <div class="col-md-4">
-        <h3>Output</h3>
+      <div>
+        <h3>Result</h3>
         <script is="skate-code" type="text/html">
           <my-element>Hello, World!</my-element>
         </script>
       </div>
-    </div>
+    </skate-grid>
   </div>
 </div>
 <div class="well well-general">
   <div class="container">
+    <skate-grid class="feature">
+      <div>
+        <p><skate-icon from="bs" type="scale" class="fa-flip-horizontal"></skate-icon></p>
+        <p>Embrace the technology of tomorrow without tipping the scales of today.</p>
+      </div>
+      <div>
+        <p><skate-icon type="tachometer"></skate-icon></p>
+        <p>Built to perform under extreme circumstances, even in IE.</p>
+      </div>
+      <div>
+        <p><skate-icon type="birthday-cake"></skate-icon></p>
+        <p>Helps keep you focused and productive while making your code clear and expressive.</p>
+      </div>
+      <div>
+        <p>
+          <skate-icon type="mobile"></skate-icon>
+          <skate-icon type="tablet"></skate-icon>
+          <skate-icon type="laptop"></skate-icon>
+        </p>
+        <p>All browsers, all devices. IE9+.</p>
+      </div>
+    </skate-grid>
+
     <h2>Compatibility</h2>
     <p>IE9+ and all evergreens.</p>
 
