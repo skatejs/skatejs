@@ -12,7 +12,6 @@ import './unit/constructor';
 import './unit/create';
 import './unit/document-observer';
 import './unit/dom';
-import './unit/events';
 import './unit/extending';
 import './unit/ignoring';
 import './unit/lifecycle';
