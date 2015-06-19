@@ -30,7 +30,7 @@ describe('api/watch', function () {
       done();
     });
 
-    child.remove();
+    parent.removeChild(child);
   });
 
   it('should only watch immediate childNodes by default', function (done) {
@@ -41,7 +41,7 @@ describe('api/watch', function () {
       done('watcher triggered');
     });
 
-    descendant.remove();
+    child.removeChild(descendant);
     setTimeout(done, 100);
   });
 
@@ -57,6 +57,6 @@ describe('api/watch', function () {
       subtree: true
     });
 
-    descendant.remove();
+    child.removeChild(descendant);
   });
 });
