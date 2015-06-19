@@ -47,7 +47,6 @@ Result
   - [`attribute`](#attribute)
   - [`template`](#template)
 - [Event Binding](#event-binding)
-  - [Reaching into the Shadow DOM](#reaching-into-the-shadow-dom)
 - [Constructing Elements](#constructing-elements)
   - [Function Call](#function-call)
   - [`skate.create()`](#skatecreate)
@@ -211,14 +210,7 @@ skate('my-component', {
 
     // Focus and blur can be delegated, too.
     'focus .something' () {},
-    'blur .something' () {},
-
-    // Using Shadow DOM selectors.
-    //
-    // *These are only supported if you have native Shadow DOM support or are
-    // using a polyfill.*
-    'click :host::shadow' () {},
-    'click ::shadow ::content' () {}
+    'blur .something' () {}
   },
 
 
@@ -641,27 +633,10 @@ skate('my-element', {
 
     // Focus and blur can be delegated, too.
     'focus .something' () {},
-    'blur .something' () {},
-
-    // Using Shadow DOM selectors.
-    //
-    // *These are only supported if you have native Shadow DOM support or are
-    // using a polyfill.*
-    'click :host::shadow' () {},
-    'click ::shadow ::content' () {}
+    'blur .something' () {}
   }
 });
 ```
-
-### Reaching into the Shadow DOM
-
-You may use the `::shadow` pseudo-element when specifying a delegate selector to an event. Underneath, Skate will walk the parent hierarchy from `e.path[0]` instead of `e.target` to find a matching target.
-
-Note:
-
-- It's experimental because the spec may change. As the spec changes, this may also change.
-- Only `::shadow` is supported. Combinators are not because of the [proposed removal](https://www.w3.org/wiki/Webapps/WebComponentsApril2015Meeting).
-- If you are using this in browsers that do not support it natively, you must include a polyfill capable of allowing you to use these selectors.
 
 
 
