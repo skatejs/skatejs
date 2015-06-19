@@ -7,6 +7,7 @@
   "main": "lib/skate.js",
   "dependencies": {},
   "devDependencies": {
+    "benchmark": "^1.0.0",
     "bootstrap": "^3.3.0",
     "chippy": "treshugart/chippy#dfc4c5022a103e81eeb0404c8026ddb1ca5fd6da",
     "gulp": "^3.8.11",

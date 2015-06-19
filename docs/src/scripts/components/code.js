@@ -35,7 +35,7 @@ export default skate('skate-code', {
     var element = this;
     var oldElement;
     var rawHtml = element.innerHTML;
-    var lang = getLang(element);
+    var lang = getLang(element) || 'html';
     var lines = rawHtml.split('\n');
     var showLines = this.showLines;
 
@@ -73,8 +73,8 @@ export default skate('skate-code', {
 
       num.className = 'skate-code-line-number';
       num.innerHTML = index + 1;
-      code.className = 'skate-code-line-content';
-      code.innerHTML = setIndentLength(indent) + hljs.highlight(lang || 'html', line).value;
+      code.className = 'skate-code-line-content ' + lang;
+      code.innerHTML = setIndentLength(indent) + hljs.highlight(lang, line).value;
 
       if (showLines) {
         pre.appendChild(num);
