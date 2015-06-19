@@ -7,8 +7,15 @@ describe('inserting elements', function () {
 
   function benchFn () {
     var div = document.createElement('div');
-    var fix = this.args.fixture;
+    var fix = this.args.fixture
+
+    // We're actually testing this, but...
     fix.appendChild(div);
+
+    // We must also clean up after the test because if too many elements get
+    // inserted into the DOM, then the browser might crash. The test should
+    // still accurately measure how much overhead a mutation observer on the
+    // document adds, though.
     fix.removeChild(div);
   }
 
