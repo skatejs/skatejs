@@ -6,9 +6,13 @@ describe('api/watch', function () {
   var descendant;
 
   beforeEach(function () {
-    parent = document.createElement('div');
+    parent = document.body.appendChild(document.createElement('div'));
     child = document.createElement('div');
     descendant = document.createElement('div');
+  });
+
+  afterEach(function () {
+    document.body.removeChild(parent);
   });
 
   it('should watch for added childNodes', function (done) {
