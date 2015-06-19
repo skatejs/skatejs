@@ -1,4 +1,6 @@
+import emit from '../../../src/api/emit';
 import helpers from '../../lib/helpers';
+import helperElement from '../../lib/element';
 import skate from '../../../src/index';
 
 describe('api/event', function () {
@@ -141,20 +143,21 @@ describe('api/event', function () {
   });
 
   it('should support an array of event handlers for a given key', function () {
-    var called = function () { ++calledNum; };
+    var increment = function () { ++calledNum; };
     var calledNum = 0;
-    var { safe: tagName } = helpers.safeTagName('my-component');
-    var MyComponent = skate(tagName, {
+    var safe = helperElement();
+
+    skate(safe.safe, {
       events: {
-        click: [
-          called,
-          called
+        test: [
+          increment,
+          increment
         ]
       }
     });
 
-    var myComponent = new MyComponent();
-    helpers.dispatchEvent('click', myComponent);
+    var el = safe.create();
+    emit(el, 'test');
     expect(calledNum).to.equal(2);
   });
 });
