@@ -2,20 +2,20 @@
 <html>
   <head>
     <title>SkateJS{{#if title}} - {{title}}{{/if}}</title>
-    <link rel="stylesheet" href="styles/index.css">
-    <script src="scripts/index.js"></script>
+    <link rel="stylesheet" href="{{root}}/styles/index.css">
+    <script src="{{root}}/scripts/index.js"></script>
   </head>
   <body>
     <skate-app>
       <skate-navbar fixed>
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="{{root}}/">
           <skate>skate</skate>
         </a>
         <skate-navbar-nav>
-          <a href="getting-started.html">Getting Started</a>
-          <a href="docs/">Documentation</a>
-          <a href="contributing.html">Contributing</a>
-          <a href="license.html">License</a>
+          <a href="{{root}}/getting-started.html">Getting Started</a>
+          <a href="{{root}}/docs/">Documentation</a>
+          <a href="{{root}}/contributing.html">Contributing</a>
+          <a href="{{root}}/license.html">License</a>
         </skate-navbar-nav>
         <skate-navbar-form></skate-navbar-form>
       </skate-navbar>
