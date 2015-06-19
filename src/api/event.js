@@ -1,9 +1,6 @@
 import apiChain from './chain';
 import matchesSelector from '../util/matches-selector';
 
-var isShadowSelectorRegex = /(::shadow)/;
-var ShadowRoot = window.ShadowRoot;
-
 function parseEvent (e) {
   var parts = e.split(' ');
   return {
@@ -13,9 +10,8 @@ function parseEvent (e) {
 }
 
 function makeDelegateHandler (elem, handler, delegate) {
-  var isShadowSelector = isShadowSelectorRegex.test(delegate);
   return function (e) {
-    var current = isShadowSelector ? e.path[0] : e.target;
+    var current = e.target;
     while (current && current !== elem.parentNode) {
       if (matchesSelector(current, delegate)) {
         e.delegateTarget = current;
@@ -23,10 +19,6 @@ function makeDelegateHandler (elem, handler, delegate) {
       }
 
       current = current.parentNode;
-
-      if (current && ShadowRoot && current instanceof ShadowRoot) {
-        current = current.host;
-      }
     }
   };
 }
