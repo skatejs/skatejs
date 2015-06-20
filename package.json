@@ -14,7 +14,8 @@
     "gulp": "^3.8.11",
     "gulp-auto-task": "0.0.1",
     "highlight.js": "^8.6.0",
-    "shadejs": "skatejs/shade#8b903d0a7c6ad884353b277b5f19e3e72e118d82"
+    "shadejs": "skatejs/shade#8b903d0a7c6ad884353b277b5f19e3e72e118d82",
+    "whatwg-fetch": "^0.9.0"
   },
   "scripts": {
     "deploy": "gulp deploy",
@@ -22,6 +23,7 @@
     "docs": "gulp docs",
     "lib": "gulp lib",
     "lint": "gulp lint",
+    "postinstall": "ln -s .. node_modules/skatejs",
     "release": "gulp release",
     "test": "gulp test"
   }

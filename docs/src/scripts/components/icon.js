@@ -1,6 +1,6 @@
 import skate from '../../../../src/index';
 
-export default skate('skate-icon', {
+export default skate('bs-icon', {
   properties: {
     from: {
       attr: true,

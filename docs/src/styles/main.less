@@ -9,6 +9,11 @@ body {
   padding-top: 70px;
 }
 
+code {
+  background-color: transparent;
+  padding: 0;
+}
+
 h1 {
   position: relative;
 }
@@ -21,9 +26,20 @@ h1 .badge {
 }
 
 h2 {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
   margin-top: 50px;
-  padding-bottom: 5px;
+  padding-bottom: 7px;
+  &:first-of-type {
+    margin-top: 10px;
+  }
+}
+
+h3 {
+  margin-top: 40px;
+}
+
+h4 {
+  margin-top: 30px;
 }
 
 img[alt="Build Status"] {
@@ -34,7 +50,52 @@ img[alt="Build Status"] {
 pre {
   border: 0;
   border-radius: 0;
+  background-color: #444;
+  color: #f5f5f5;
   padding: 14px 16px;
+
+  .hljs-comment {
+    color: #999;
+  }
+
+  .hljs-keyword {
+    color: #f15c75;
+  }
+
+  .hljs-string {
+    color: #f6c342;
+  }
+
+  .hljs-tag {
+    color: #f6c342;
+  }
+}
+
+sk-item {
+  display: block;
+  a {
+    display: block;
+    padding: 12px;
+  }
+}
+
+sk-sidebar {
+  background-color: #f5f5f5;
+  display: block;
+  a {
+    color: #333;
+    font-size: 1.4em;
+    font-weight: 200;
+    &:hover {
+      background-color: #eee;
+      color: #333;
+      text-decoration: none;
+    }
+  }
+}
+
+skate-app {
+  display: block;
 }
 
 .btn {
@@ -50,7 +111,7 @@ pre {
 }
 
 .feature {
-  skate-icon {
+  bs-icon {
     height: 54px;
     font-size: 50px;
     line-height: 50px;
@@ -88,6 +149,22 @@ pre {
   margin-top: 20px;
 }
 
+.label {
+  background-color: #67ab49;
+  font-weight: normal;
+}
+
+.notice {
+  background-color: #f5f5f5;
+  border-left: 4px solid #ddd;
+  padding: 10px 12px;
+  &.notice-info {
+    background-color: #ebf2f9;
+    border-left-color: #d1e1f1;
+    color: #0a1521;
+  }
+}
+
 .well {
   border: 0;
   border-radius: 0;
@@ -97,46 +174,30 @@ pre {
 
 .well-loud {
   background-color: #f15c75;
-}
 
-.well-loud .btn {
-  border: 0;
-  font-size: 1.4em;
-  font-weight: 200;
-  margin: 10px;
-}
+  .btn {
+    border: 0;
+    font-size: 1.4em;
+    font-weight: 200;
+    margin: 10px;
 
-.well-loud .btn:hover {
-  background-color: #FDECEF;
+    &:hover {
+      background-color: #FDECEF;
+    }
+  }
 }
 
 .well-overview {
   background-color: #333333;
   color: #f5f5f5;
-}
 
-.well-overview h3 {
-  font-weight: 200;
-  text-align: center;
-}
-
-.well-overview pre {
-  background-color: #444;
-  color: #f5f5f5;
-  min-height: 118px;
-}
-
-.well-overview {
-  .hljs-keyword {
-    color: #f15c75;
+  h3 {
+    font-weight: 200;
+    text-align: center;
   }
 
-  .hljs-string {
-    color: #f6c342;
-  }
-
-  .hljs-tag {
-    color: #f6c342;
+  pre {
+    min-height: 118px;
   }
 }
 
