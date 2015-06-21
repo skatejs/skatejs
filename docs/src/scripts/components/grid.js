@@ -6,7 +6,7 @@ function sum (nums) {
   return nums.length ? nums.reduce((prev, curr) => prev + curr) : 0;
 }
 
-export default skate('skate-grid', {
+export default skate('sk-grid', {
   created () {
     this.className += ' row';
   },

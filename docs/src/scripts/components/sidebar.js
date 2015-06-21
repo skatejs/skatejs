@@ -19,13 +19,8 @@ export default skate('sk-sidebar', {
       var offsetLeft = this.offsetLeft;
       var offsetTop = this.parentNode.offsetTop;
 
-      if (this.offsetHeight < offsetHeight) {
-        this.style.height = (offsetHeight - offsetTop - offsetLeft) + 'px';
-      }
-
-      if (this.offsetWidth < offsetWidth) {
-        this.style.width = (offsetWidth - offsetLeft) + 'px';
-      }
+      this.style.height = (offsetHeight - offsetTop - offsetLeft) + 'px';
+      this.style.width = (offsetWidth - offsetLeft) + 'px';
     }
   }
 });

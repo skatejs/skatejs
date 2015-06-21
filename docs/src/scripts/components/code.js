@@ -4,7 +4,7 @@ import skate from '../../../../src/index';
 function setupCodeBlockContents(element) {
   var pre = document.createElement('pre');
   element.innerHTML = '';
-  element.className = 'skate-code-block';
+  element.className = 'sk-code-block';
   element.appendChild(pre);
 }
 
@@ -23,7 +23,7 @@ function setIndentLength (len) {
   return len > 0 ? new Array(len + 1).join(' ') : '';
 }
 
-export default skate('skate-code', {
+export default skate('sk-code', {
   extends: 'script',
   properties: {
     showLines: {
@@ -40,7 +40,7 @@ export default skate('skate-code', {
     var showLines = this.showLines;
 
     if (lang === 'javascript') {
-      console.error('To avoid JavaScript evaluation by the browser, script[is="skate-code"] elements must not have type="text/javascript".');
+      console.error('To avoid JavaScript evaluation by the browser, script[is="sk-code"] elements must not have type="text/javascript".');
     }
 
     oldElement = element;
@@ -71,9 +71,9 @@ export default skate('skate-code', {
       line = line.replace(/&gt;/g, '>');
       line = line.replace(/&lt;/g, '<');
 
-      num.className = 'skate-code-line-number';
+      num.className = 'sk-code-line-number';
       num.innerHTML = index + 1;
-      code.className = 'skate-code-line-content ' + lang;
+      code.className = 'sk-code-line-content ' + lang;
       code.innerHTML = setIndentLength(indent) + hljs.highlight(lang, line).value;
 
       if (showLines) {

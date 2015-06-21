@@ -1,7 +1,7 @@
-import shade from '../../../../../node_modules/shadejs/src/index';
+import shade from 'shadejs';
 import skate from '../../../../../src/index';
 
-export default skate('skate-navbar-nav', {
+export default skate('sk-navbar-nav', {
   properties: {
     position: {
       attr: true,

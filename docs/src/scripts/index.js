@@ -1,5 +1,7 @@
 import './components/app';
 import './components/code';
+import './components/docs-layout';
+import './components/docs-sidebar';
 import './components/grid';
 import './components/icon';
 import './components/label';

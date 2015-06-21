@@ -1,7 +1,7 @@
-import shade from '../../../../node_modules/shadejs/src/index';
+import shade from 'shadejs';
 import skate from '../../../../src/index';
 
-export default skate('skate-navbar', {
+export default skate('sk-navbar', {
   attached () {
     this._toggleClassOnScroll = () => this.scrolled = window.scrollY;
     document.addEventListener('scroll', this._toggleClassOnScroll);
@@ -26,9 +26,9 @@ export default skate('skate-navbar', {
         </button>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <content name="innerHTML">
-            <skate-navbar-nav>
+            <sk-navbar-nav>
               <a href="#">Home</a>
-            </skate-navbar-nav>
+            </sk-navbar-nav>
           </content>
         </div>
       </div>

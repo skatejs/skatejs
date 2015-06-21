@@ -3,7 +3,7 @@ template: index.html
 ---
 
 <div class="container-fluid">
-  <skate-grid fixed="3">
+  <sk-grid fixed="3">
     <div>
       <sk-sidebar>
         <sk-item><a href="#h2-what-is-skate">What is Skate?</a></sk-item>
@@ -20,7 +20,7 @@ template: index.html
       <h3>Custom Elements</h3>
       <p>Skate uses the <a href="http://w3c.github.io/webcomponents/spec/custom/">W3C Custom Element Spec</a> as the basis for defining its functionality and extends it to make it easier for you to build new custom elements as well as transition your legacy components to custom elements.</p>
       <p>Custom elements are just normal HTML elements that you give a custom name and functionality to:</p>
-      <script is="skate-code" type="text/html">
+      <script is="sk-code" type="text/html">
         <todo-list>
           <todo-item>Get milk</todo-item>
           <todo-item>Feed cats</todo-item>
@@ -30,20 +30,20 @@ template: index.html
       <h3>But wait, theres more!</h3>
 
       <p>The spec says that a custom element name must be hyphenated and only allows you to bind functionality to elements whose tag name matches that custom element name. With Skate, you can not only create new custom elements, but you can also define behaviour for existing elements using tag names, attribute names and class names. This means you can do things like polyfill the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output"><code>output</code> element</a>:</p>
-      <script is="skate-code" type="text/html">
+      <script is="sk-code" type="text/html">
         <output></output>
       </script>
-      <script is="skate-code" type="text/js">
+      <script is="sk-code" type="text/js">
         skate('output', {
           // ...
         });
       </script>
 
       <p>or polyfill the <code>placeholder</code> attribute on an <a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/Input"><code>input</code> element</a>:</p>
-      <script is="skate-code" type="text/html">
+      <script is="sk-code" type="text/html">
         <input placeholder="dd-mm-yyyy">
       </script>
-      <script is="skate-code" type="text/js">
+      <script is="sk-code" type="text/js">
         skate('placeholder', {
           type: skate.type.ATTRIBUTE
           // ...
@@ -51,11 +51,11 @@ template: index.html
       </script>
 
       <p>Have a buch of legacy jQuery components? No problem. In most cases you can refactor these without touching any markup. For example, you might have a jQuery tabs plugin:</p>
-      <script is="skate-code" type="text/js">
+      <script is="sk-code" type="text/js">
         $('.tabs').tabs();
       </script>
       <p>You could very easily refactor this into a Skate component.</p>
-      <script is="skate-code" type="text/js">
+      <script is="sk-code" type="text/js">
         skate('tabs', {
           type: skate.type.CLASSNAME,
           created () {
@@ -70,12 +70,12 @@ template: index.html
       <h2 id="h2-installing">Installing</h2>
 
       <p>Skate is available on NPM:</p>
-      <script is="skate-code" type="text/bash">
+      <script is="sk-code" type="text/bash">
         npm install skatejs
       </script>
 
       <p>and Bower:</p>
-      <script is="skate-code" type="text/bash">
+      <script is="sk-code" type="text/bash">
         bower install skatejs
       </script>
 
@@ -159,15 +159,15 @@ template: index.html
         <li>Attached - after the element is attached to the document.</li>
         <li>Detached - after the element is detached from the document.</li>
       </ul>
-      <p>This isn't just Skate specific; all custom element polyfills have these quirks.</p>
+      <p><em>This isn't just Skate specific; all custom element polyfills have these quirks.</em></p>
       <p class="notice notice-info">In both native and polyfilled, the attached and detached stages will be called for every time you insert or remove an element from the DOM.</p>
 
       <h3>A Better Way</h3>
       <p>In order to get around these inconsistencies, and to provide a bit of sugar in how elements are created, Skate gives you a common way to create any type of element:</p>
-      <script is="skate-code" type="text/js">
+      <script is="sk-code" type="text/js">
         var myElement = skate.create('my-element');
       </script>
       <p>This is like <code>document.createElement()</code> except that it will <em>always</em> ensure your element is initialsed synchronously before returning. It also only ever requires one argument instead of making you remember which arguments - and in what order - need to be passed to <code>document.createElement()</code> depending on how your element was registered.</p>
     </div>
-  </skate-grid>
+  </sk-grid>
 </div>
