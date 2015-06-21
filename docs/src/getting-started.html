@@ -39,7 +39,7 @@ template: index.html
         });
       </script>
 
-      <p>or polyfill the <code>placeholder</code> on an <a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/Input"><code>input</code> element</a>:</p>
+      <p>or polyfill the <code>placeholder</code> attribute on an <a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/Input"><code>input</code> element</a>:</p>
       <script is="skate-code" type="text/html">
         <input placeholder="dd-mm-yyyy">
       </script>
@@ -59,7 +59,7 @@ template: index.html
         skate('tabs', {
           type: skate.type.CLASSNAME,
           created () {
-            jQuery(this).tabs();
+            $(this).tabs();
           }
         });
       </script>
@@ -152,10 +152,10 @@ template: index.html
       </ul>
 
       <h3>Quirks</h3>
-      <p>When these lifecycle stages are polyfilled, they behave differently because Mutation Observers batch mutations and fire asynchronously. Mutation Observers also only fire when an element is inserted to the document, which means an element's lifecycle cannot be handled until after it has been inserted into the document and will not be handled asynchronously.</p>
+      <p>When these lifecycle stages are polyfilled, they behave differently because Mutation Observers batch mutations and fire asynchronously. Mutation Observers also only fire when an element is inserted to the document, which means an element's lifecycle cannot be handled until after it has been inserted into the document and cannot be handled synchronously.</p>
       <p>When polyfilled, each lifecycle stage behaves as follows:</p>
       <ul>
-        <li>Created - after the element is attached to the document for the first time. It still happens before the attached lifecycle stage, though.</li>
+        <li>Created - after the element is attached to the document for the first time but before the attached stage occurs.</li>
         <li>Attached - after the element is attached to the document.</li>
         <li>Detached - after the element is detached from the document.</li>
       </ul>
@@ -167,7 +167,7 @@ template: index.html
       <script is="skate-code" type="text/js">
         var myElement = skate.create('my-element');
       </script>
-      <p>This is like <code>document.createElement()</code> except that it will <em>always</em> ensure your element is initialsed synchronously before returning. It also only requires one argument because it can infer the second argument from your component definition that you'd normally have to pass to <code>document.createElement()</code>.</p>
+      <p>This is like <code>document.createElement()</code> except that it will <em>always</em> ensure your element is initialsed synchronously before returning. It also only ever requires one argument instead of making you remember which arguments - and in what order - need to be passed to <code>document.createElement()</code> depending on how your element was registered.</p>
     </div>
   </skate-grid>
 </div>
