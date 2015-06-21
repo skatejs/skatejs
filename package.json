@@ -23,7 +23,6 @@
     "docs": "gulp docs",
     "lib": "gulp lib",
     "lint": "gulp lint",
-    "postinstall": "ln -s .. node_modules/skatejs",
     "release": "gulp release",
     "test": "gulp test"
   }
