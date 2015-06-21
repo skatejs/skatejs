@@ -9,8 +9,9 @@ export default skate('gh-stars', {
       attr: true,
       set (newValue) {
         fetch(`https://api.github.com/repos/${newValue}`)
+          .catch(() => this.textContent = 'n/a')
           .then(r => r.json())
-          .then(r => this.textContent = r.stargazers_count);
+          .then(r => this.textContent = r && r.stargazers_count || 'n/a');
       }
     }
   }

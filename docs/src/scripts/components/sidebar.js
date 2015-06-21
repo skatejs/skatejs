@@ -1,32 +1,31 @@
 import skate from '../../../../src/index';
 
-function windowEvents (evts = {}, func = function(){}) {
-  if (typeof evts === 'string') {
-    evts = { [evts]: func };
-  }
-
-  return function () {
-    Object.keys(evts).forEach(name => {
-      let func = skate.chain(evts[name]).bind(this);
-      this.constructor.attached = skate.chain(
-        this.constructor.attached,
-        () => window.addEventListener(name, func)
-      );
-      this.constructor.detached = skate.chain(
-        this.constructor.detached,
-        () => window.removeEventListener(name, func)
-      );
-    });
-  };
-}
-
 export default skate('sk-sidebar', {
-  created: windowEvents('resize', 'init'),
-  attached: skate.chain('init'),
+  created () {
+    this.resizeHandler = this.resizeHandler.bind(this);
+    this.style.position = 'fixed';
+  },
+  attached () {
+    window.addEventListener('resize', this.resizeHandler);
+    skate.ready(this.resizeHandler);
+  },
+  detached () {
+    window.removeEventListener('resize', this.resizeHandler);
+  },
   prototype: {
-    init () {
-      var parent = this.parentNode;
-      this.style.height = parent.offsetHeight + 'px';
+    resizeHandler () {
+      var offsetHeight = this.parentNode.offsetHeight;
+      var offsetWidth = this.parentNode.offsetWidth;
+      var offsetLeft = this.offsetLeft;
+      var offsetTop = this.parentNode.offsetTop;
+
+      if (this.offsetHeight < offsetHeight) {
+        this.style.height = (offsetHeight - offsetTop - offsetLeft) + 'px';
+      }
+
+      if (this.offsetWidth < offsetWidth) {
+        this.style.width = (offsetWidth - offsetLeft) + 'px';
+      }
     }
   }
 });

@@ -6,12 +6,39 @@ a:hover {
 body {
   color: #333;
   font-family: Helvetica;
-  padding-top: 70px;
+  font-size: 1.8em;
+  font-weight: 200;
+  padding-top: 100px;
 }
 
 code {
   background-color: transparent;
   padding: 0;
+}
+
+footer {
+  background-color: #f5f5f5;
+  padding: 30px;
+  text-align: center;
+
+  ul {
+    margin: 0;
+  }
+
+  li {
+    margin: 0 15px;
+  }
+
+  a {
+    border: 1px solid transparent;
+    padding: 15px;
+
+    &:hover {
+      background-color: #fff;
+      border-color: #eee;
+      text-decoration: none;
+    }
+  }
 }
 
 h1 {
@@ -81,11 +108,10 @@ sk-item {
 
 sk-sidebar {
   background-color: #f5f5f5;
-  display: block;
+  overflow: auto;
+
   a {
     color: #333;
-    font-size: 1.4em;
-    font-weight: 200;
     &:hover {
       background-color: #eee;
       color: #333;
@@ -98,8 +124,21 @@ skate-app {
   display: block;
 }
 
+skate-grid {
+  display: block;
+}
+
+
+
+// Overrides
+
 .btn {
   border-radius: 0;
+  font-weight: 200;
+
+  .label {
+    top: -2px;
+  }
 }
 
 .btn-primary {
@@ -110,23 +149,25 @@ skate-app {
   padding: 5px 30px;
 }
 
+.badge,
+.label {
+  padding: 4px 8px;
+}
+
+
+
+// Custom
+
 .feature {
   bs-icon {
     height: 54px;
     font-size: 50px;
     line-height: 50px;
-    margin: 0 5px;
     padding: 0;
   }
 
   div > p:first-of-type {
     text-align: center;
-  }
-
-  div > p:last-of-type {
-    font-size: 1.4em;
-    font-weight: 200;
-    margin-top: 20px;
   }
 }
 
@@ -158,6 +199,7 @@ skate-app {
   background-color: #f5f5f5;
   border-left: 4px solid #ddd;
   padding: 10px 12px;
+
   &.notice-info {
     background-color: #ebf2f9;
     border-left-color: #d1e1f1;
@@ -170,6 +212,22 @@ skate-app {
   border-radius: 0;
   box-shadow: none;
   margin: 0;
+  padding: 30px;
+
+  h3 {
+    font-weight: 200;
+    margin: 0 0 15px 0;
+    text-align: center;
+  }
+}
+
+.well-general {
+  background-color: #f5f5f5;
+
+  pre {
+    background-color: #555;
+    color: #f5f5f5;
+  }
 }
 
 .well-loud {
@@ -177,9 +235,8 @@ skate-app {
 
   .btn {
     border: 0;
-    font-size: 1.4em;
-    font-weight: 200;
-    margin: 10px;
+    font-size: 1.2em;
+    margin: 0 10px;
 
     &:hover {
       background-color: #FDECEF;
@@ -191,23 +248,9 @@ skate-app {
   background-color: #333333;
   color: #f5f5f5;
 
-  h3 {
-    font-weight: 200;
-    text-align: center;
-  }
-
   pre {
     min-height: 118px;
   }
-}
-
-.well-general {
-  background-color: #f5f5f5;
-}
-
-.well-general pre {
-  background-color: #555;
-  color: #f5f5f5;
 }
 
 @media (max-width: 991px) {

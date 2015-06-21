@@ -10,7 +10,7 @@ export default skate('gh-version', {
       set (newValue) {
         fetch(`https://api.github.com/repos/${newValue}/tags`)
           .then(r => r.json())
-          .then(r => this.textContent = r[0].name);
+          .then(r => this.textContent = r && r[0] && r[0].name || 'n/a');
       }
     }
   }

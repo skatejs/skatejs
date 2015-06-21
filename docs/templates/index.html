@@ -7,7 +7,7 @@
   </head>
   <body>
     <skate-app>
-      <skate-navbar fixed>
+      <skate-navbar fixed{{#if reveal}} class="transition-logo-on-scroll"{{/if}}>
         <a class="navbar-brand" href="{{root}}/">
           <skate>skate</skate>
         </a>
@@ -20,6 +20,13 @@
         <skate-navbar-form></skate-navbar-form>
       </skate-navbar>
       {{{ contents }}}
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
     </skate-app>
   </body>
 </html>
