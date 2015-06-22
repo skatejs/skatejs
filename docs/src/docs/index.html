@@ -3,56 +3,121 @@ template: index.html
 ---
 
 <sk-docs-layout>
-  <h2><code>skate (name, options)</code></h2>
-  <p>You define a component by passing a component name and some options to the <code>skate()</code> function. The name you specify corresponds to one of the following:</p>
+  <h2 id="h2-what-is-skate">What is Skate?</h2>
+  <p>Skate is a library designed to be an easy-to-use, minimal and performant foundation for building modular and reusable web components. It's built on the philosophy that all libraries should be focused on doing one thing well and therefore makes no assumptions about things better left to other libraries such as templating, data-binding and routing. It can be used standalone or along-side your framework of choice.</p>
+
+  <h3>Custom Elements</h3>
+  <p>Skate uses the <a href="http://w3c.github.io/webcomponents/spec/custom/">W3C Custom Element Spec</a> as the basis for defining its functionality and extends it to make it easier for you to build new custom elements as well as transition your legacy components to custom elements.</p>
+  <p>Custom elements are just normal HTML elements that you give a custom name and functionality to:</p>
+  <noscript is="sk-code" lang="html">
+    <todo-list>
+      <todo-item>Get milk</todo-item>
+      <todo-item>Feed cats</todo-item>
+    </todo-list>
+  </noscript>
+
+  <h3>But wait, there's more!</h3>
+
+  <p>The spec says that a custom element name must be hyphenated and only allows you to bind functionality to elements whose tag name matches that custom element name. With Skate, you can not only create new custom elements, but you can also define behaviour for existing elements using tag names, attribute names and class names. This means you can do things like polyfill the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output"><code>output</code> element</a>:</p>
+  <noscript is="sk-code" lang="html">
+    <output></output>
+  </noscript>
+  <noscript is="sk-code" lang="js">
+    skate('output', {
+      // ...
+    });
+  </noscript>
+
+  <p>or polyfill the <code>placeholder</code> attribute on an <a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/Input"><code>input</code> element</a>:</p>
+  <noscript is="sk-code" lang="html">
+    <input placeholder="dd-mm-yyyy">
+  </noscript>
+  <noscript is="sk-code" lang="js">
+    skate('placeholder', {
+      type: skate.type.ATTRIBUTE
+      // ...
+    });
+  </noscript>
+
+  <p>Have a buch of legacy jQuery components? No problem. In most cases you can refactor these without touching any markup. For example, you might have a jQuery tabs plugin:</p>
+  <noscript is="sk-code" lang="js">
+    $('.tabs').tabs();
+  </noscript>
+  <p>You could very easily refactor this into a Skate component.</p>
+  <noscript is="sk-code" lang="js">
+    skate('tabs', {
+      type: skate.type.CLASSNAME,
+      created () {
+        $(this).tabs();
+      }
+    });
+  </noscript>
+  <p>Once a Skate component, you don't have to worry about when the element is inserted to the DOM; no more manual initialsation.</p>
+
+
+
+  <h2 id="h2-installing">Installing</h2>
+
+  <p>Skate is available on NPM:</p>
+  <noscript is="sk-code" lang="bash">
+    npm install skatejs
+  </noscript>
+
+  <p>and Bower:</p>
+  <noscript is="sk-code" lang="bash">
+    bower install skatejs
+  </noscript>
+
+  <p>or you can download the <a href="https://github.com/skatejs/skatejs">source</a> from GitHub.</p>
+
+  <h3>ES6 Modules</h3>
+  <p>The Skate source resides in <code>src/</code> and is written using ES2015 (formerly ES6). If you're using a transpilation method, then you can <code>import skate from 'src/index';</code> and use it in your projects as you would any ES6 module.</p>
+
+  <h3>UMD (AMD / CommonJS)</h3>
+  <p>UMD files are located in the <code>lib/</code> directory. Load the <code>lib/index.js</code> file using the CommonJS or AMD loader of your choice.</p>
+  <p class="notice notice-info">Skate does not provide a named AMD module. You should use an optimiser such as <a href="https://github.com/scalableminds/amd-optimize">amd-optimize</a> or <a href="https://github.com/jrburke/r.js/">r.js</a> that will generate this for you.</p>
+
+  <h3>Global</h3>
+  <p>If you're still skating old school the <code>dist/</code> directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with <code>window.skate</code>.</p>
+  <p class="notice notice-info">The global is always set no matter what and will trump any existing globals stored under <code>window.skate</code>. If you're using multiple versions of Skate on the same page, use a module format if possible. If it is not possible, you may call <code>skate.noConflict()</code> to restore the previous global and return the current one.</p>
+
+
+
+  <h2 id="h2-native-vs-polyfill">Native vs Polyfill</h2>
+  <p>Underneath the hood, Skate will use native custom elements if the following criteria is met:</p>
   <ul>
-    <li>Tag name</li>
-    <li><code>is</code> attribute</li>
-    <li>Attribute name</li>
-    <li>Class name</li>
+    <li>Your browser supports <code>document.registerElement()</code>.</li>
+    <li>Your component uses the <code>ELEMENT</code> binding type.</li>
+    <li>Your component has a hyphen in its name.</li>
+  </ul>
+  <p>In all other instances Skate will use a <code>MutationObserver</code> to polyfill the same behaviour. In browsers that do not have native support for Mutation Observers, Skate will polyfill it internally.</p>
+  <p>When using native vs polyfilled components, the element's lifecycle is handled differently.</p>
+
+
+
+  <h2 id="h2-element-lifecycle">Element Lifecycle</h2>
+  <p>An element's lifecycle consists of three stages. The following describes the stages as they behave when using native custom elements:</p>
+  <ul>
+    <li>Created - when the element is created, or encountered by the parser.</li>
+    <li>Attached - when the element is inserted into the DOM.</li>
+    <li>Detached - when the element is removed from the DOM.</li>
   </ul>
 
-  <h3>Tag Name</h3>
-  <p>Binding to tag names is the <strong>default</strong> and <strong>preferred</strong> way of binding behaviour to elements.</p>
-  <noscript is="sk-code" lang="js">
-    skate('my-element', {});
-  </noscript>
-  <noscript is="sk-code" lang="html">
-    <my-element></my-element>
-  </noscript>
+  <h3>Quirks</h3>
+  <p>When these lifecycle stages are polyfilled, they behave differently because Mutation Observers batch mutations and fire asynchronously. Mutation Observers also only fire when an element is inserted to the document, which means an element's lifecycle cannot be handled until after it has been inserted into the document and cannot be handled synchronously.</p>
+  <p>When polyfilled, each lifecycle stage behaves as follows:</p>
+  <ul>
+    <li>Created - after the element is attached to the document for the first time but before the attached stage occurs.</li>
+    <li>Attached - after the element is attached to the document.</li>
+    <li>Detached - after the element is detached from the document.</li>
+  </ul>
+  <p><em>This isn't just Skate specific; all custom element polyfills have these quirks.</em></p>
+  <p class="notice notice-info">In both native and polyfilled, the attached and detached stages will be called for every time you insert or remove an element from the DOM.</p>
 
-  <h3><code>is</code> Attribute</h3>
-  <p>The <code>is</code> attribute is used when you want to extend the functionality of an element that already has defined functionality, or that already is defined by the HTML spec.</p>
+  <h3>A Better Way</h3>
+  <p>In order to get around these inconsistencies, and to provide a bit of sugar in how elements are created, Skate gives you a common way to create any type of element:</p>
   <noscript is="sk-code" lang="js">
-    skate('my-element', {
-      extends: 'input'
-    });
+    var myElement = skate.create('my-element');
   </noscript>
-  <noscript is="sk-code" lang="html">
-    <input is="my-element">
-  </noscript>
-
-  <h3>Attribute Name</h3>
-  <p>Using arbitrary attribute names is good for mixing in functionality:</p>
-  <noscript is="sk-code" lang="js">
-    skate('my-element', {
-      type: skate.type.ATTRIBUTE
-    });
-  </noscript>
-  <noscript is="sk-code" lang="html">
-    <input my-element type="text">
-  </noscript>
-
-  <h3>Class Name</h3>
-  <p>Class names are the <strong>least preferred</strong> method, but allow you some flexibility when working with legacy code:</p>
-  <noscript is="sk-code" lang="js">
-    skate('ui-tabs', {
-      type: skate.type.CLASSNAME
-    });
-  </noscript>
-  <noscript is="sk-code" lang="html">
-    <div class="ui-tabs">
-      ...
-    </div>
-  </noscript>
+  <p>This is like <code>document.createElement()</code> except that it will <em>always</em> ensure your element is initialsed synchronously before returning. It also only ever requires one argument instead of making you remember which arguments - and in what order - need to be passed to <code>document.createElement()</code> depending on how your element was registered.</p>
 </sk-docs-layout>

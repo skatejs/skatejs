@@ -1,0 +1,47 @@
+---
+template: index.html
+---
+
+<sk-docs-layout>
+  <h2><code>options.type</code></h2>
+
+  <p>Specifies the type of binding that this component supports. Skate offers you three different types:</p>
+  <ul>
+    <li><code>skate.type.ELEMENT</code> (<strong>default</strong>) - Bind to an element whose tag name matches the component name.</li>
+    <li><code>skate.type.ATTRIBUTE</code> - Bind to an element who has an attribute matching the component name.</li>
+    <li><code>skate.type.CLASSNAME</code> - Bind to an element who has a class name matching the component name.</li>
+  </ul>
+  <p>You specify these as the <code>type</code> option:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      type: skate.type.ELEMENT
+    });
+  </noscript>
+
+  <h3>ELEMENT</h3>
+  <p>The <code>ELEMENT</code> type is the <strong>default</strong> and <strong>preferred</strong> type to use because it is the most explicit form of binding behaviour to an element. You should use this form unless you absolutely need to use the other types.</p>
+  <p>Use this form when:</p>
+  <ul>
+    <li>You're not sure what form you should use.</li>
+    <li>Your component is templated.</li>
+    <li>Your element has semantic meaning to the beahviour in which is bound to it.</li>
+  </ul>
+  <p class="notice notice-info">You should hyphenate your element names whenever possible because non-hyphenated names prevent Skate from using the native custom element implementation and it makes it clear to others that it is a custom element. Try to only use non-hyphenated names when you're polyfilling elements for browsers that don't support them such as <code>datalist</code> in IE9.</p>
+
+  <h3>ATTRIBUTE</h3>
+  <p>Use the <code>ATTRIBUTE</code> component type when:</p>
+  <ul>
+    <li>You have functionality that you want to declaratively mix-in to your element.</li>
+    <li>Your component won't conflict with other components on the same element.</li>
+    <li>Your component does <em>not</em> template the element.</li>
+    <li>You are converting legacy components to Skate components and for whatever reason you can't change the markup.</li>
+  </ul>
+
+  <h3>CLASSNAME</h3>
+  <p>The <code>CLASSNAME</code> component type is the least preferred method of binding behaviour to an element as it's not clear that an element may have custom behaviour applied to it.</p>
+  <p>You should use this form when:</p>
+  <ul>
+    <li>You are converting legacy components to Skate components and for whatever reason you can't change the markup.</li>
+    <li>You want to hook into a particular class for non-behavioural purposes such as deprecating classes.</li>
+  </ul>
+</sk-docs-layout>

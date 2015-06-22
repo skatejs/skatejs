@@ -4,14 +4,24 @@ sk-docs-layout,
 sk-docs-sidebar,
 sk-grid,
 sk-item,
+sk-layout,
 sk-navbar,
 sk-sidebar {
   display: block;
 }
 
-a,
+a {
+  color: #3572b0;
+  text-decoration: underline;
+}
+
 a:hover {
-  color: #4a6785;
+  color: #3572b0;
+  text-decoration: none;
+}
+
+a.btn {
+  text-decoration: none;
 }
 
 body {
@@ -43,11 +53,11 @@ footer {
   a {
     border: 1px solid transparent;
     padding: 15px;
+    text-decoration: none;
 
     &:hover {
       background-color: #fff;
       border-color: #eee;
-      text-decoration: none;
     }
   }
 }
@@ -104,10 +114,18 @@ pre {
   }
 }
 
-sk-item {;
+sk-item {
   a {
     display: block;
-    padding: 12px;
+    font-size: 1em;
+    padding: 8px 12px;
+  }
+
+  sk-item {
+    a {
+      font-size: .8em;
+      padding: 4px 12px 4px 24px;
+    }
   }
 }
 
@@ -117,10 +135,17 @@ sk-sidebar {
 
   a {
     color: #333;
+    text-decoration: none;
+
     &:hover {
       background-color: #eee;
       color: #333;
       text-decoration: none;
+    }
+
+    &[selected] {
+      background-color: #fff;
+      font-color: #3572b0;
     }
   }
 }

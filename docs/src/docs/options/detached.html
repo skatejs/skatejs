@@ -1,0 +1,16 @@
+---
+template: index.html
+---
+
+<sk-docs-layout>
+  <h2><code>options.detached</code></h2>
+
+  <p>Called when the element is detached as defined in the <a href="../getting-started.html#h2-element-lifecycle">Element Lifecycle</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      detached () {
+        this.detached = true;
+      }
+    });
+  </noscript>
+</sk-docs-layout>

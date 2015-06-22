@@ -141,7 +141,7 @@ You define a component by passing a component ID and definition to the `skate()`
 The definition is an object of options that define your component.
 
 ```js
-skate('my-component', {
+skate('my-element', {
   // Lifecycle Callbacks
   //
   // All lifecycle callbacks use `this` to refer to the component element.

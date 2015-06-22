@@ -5,6 +5,7 @@ import './components/docs-sidebar';
 import './components/grid';
 import './components/icon';
 import './components/label';
+import './components/layout';
 import './components/navbar';
 import './components/navbar/form';
 import './components/navbar/nav';
