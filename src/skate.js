@@ -29,7 +29,7 @@ var HTMLElement = window.HTMLElement;
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  if (document.readyState === 'complete') {
     initElements(document.documentElement.childNodes);
   } else {
     document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
