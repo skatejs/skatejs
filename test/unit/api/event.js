@@ -1,90 +1,163 @@
-import apiEmit from '../../../src/api/emit';
-import apiEvent from '../../../src/api/event';
+import emit from '../../../src/api/emit';
 import helpers from '../../lib/helpers';
+import helperElement from '../../lib/element';
+import skate from '../../../src/index';
 
 describe('api/event', function () {
-  var supportsShadowRoot = 'createShadowRoot' in window.HTMLElement.prototype;
-
-  /* jshint expr: true */
-  supportsShadowRoot && describe('shadow dom events', function () {
-    var div, shr1, shr2, triggered;
-
-    function assertDelegation (btn) {
-      return function (e) {
-        triggered = true;
-        expect(this).to.equal(div);
-        expect(e.delegateTarget).to.equal(btn);
-      };
-    }
-
-    function assertDispatchClick (delegateSelector, btnId, assertionValue) {
-      // If / when /deep/ is removed we'll have to find a different way of
-      // querying for the button.
-      var btn = div.querySelector('* /deep/ #' + btnId);
-      apiEvent(div, { ['click ' + delegateSelector + ' button']: assertDelegation(btn) });
-      apiEmit(btn, 'click');
-      expect(triggered).to.equal(assertionValue);
-    }
-
-    beforeEach(function () {
-      triggered = false;
-
-      // The main component element with a light DOM button.
-      div = document.createElement('div');
-      div.innerHTML = `
-        <button id="in-light-content"></button>
-      `;
-
-      // Set up a shallow shadow root to trigger events from. The div > button
-      // will get projected into the deep shadow root.
-      shr1 = div.createShadowRoot();
-      shr1.innerHTML = `
-        <button id="in-shadow-root"></button>
-        <content select="#in-light-content"></content>
-        <div><button id="in-deep-light-content"></button></div>
-      `;
-
-      // Set up a second, deep, shadow root to trigger events from.
-      shr2 = shr1.querySelector('div').createShadowRoot();
-      shr2.innerHTML = `
-        <button id="in-deep-shadow-root"></button>
-        <content select="#in-deep-light-content"></content>
-      `;
-
-      helpers.fixture().appendChild(div);
+  it('should bind events', function () {
+    var numTriggered = 0;
+    var tagName = helpers.safeTagName('my-el');
+    var MyEl = skate(tagName.safe, {
+      events: {
+        test: function () {
+          ++numTriggered;
+        }
+      }
     });
 
+    var myEl = new MyEl();
 
-    // Light DOM
+    skate.emit(myEl, 'test');
+    expect(numTriggered).to.equal(1);
+  });
 
-    it('light dom', function () {
-      assertDispatchClick('', 'in-light-content', true);
+  it('should bind to the component element', function () {
+    var numTriggered = 0;
+    var tagName = helpers.safeTagName('my-el');
+    var events = {};
+    var MyEl;
+
+    events[`test ${tagName.safe}`] = function () {
+      ++numTriggered;
+    };
+
+    MyEl = skate(tagName.safe, {
+      events: events
     });
 
-    it('light dom (nested)', function () {
-      assertDispatchClick('', 'in-deep-light-content', false);
+    var myEl = new MyEl();
+    helpers.dispatchEvent('test', myEl);
+    expect(numTriggered).to.equal(1);
+  });
+
+  it('should allow you to re-add the element back into the DOM', function () {
+    var numTriggered = 0;
+    var tagName = helpers.safeTagName('my-el');
+    var MyEl = skate(tagName.safe, {
+      events: {
+        test: function () {
+          ++numTriggered;
+        }
+      }
     });
 
+    var myEl = new MyEl();
+    document.body.appendChild(myEl);
+    var par = myEl.parentNode;
 
-    // ::content
+    par.removeChild(myEl);
+    par.appendChild(myEl);
+    helpers.dispatchEvent('test', myEl);
+    expect(numTriggered).to.equal(1);
+  });
 
-    it('::shadow ::content', function () {
-      assertDispatchClick('::shadow ::content', 'in-light-content', true);
+  it('should support delegate events', function () {
+    var dispatched = 0;
+    var { safe: tagName } = helpers.safeTagName('my-component');
+
+    skate(tagName, {
+      events: {
+        'click': function (e) {
+          ++dispatched;
+          expect(this.tagName).to.equal(tagName.toUpperCase());
+          expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal(tagName.toUpperCase());
+        },
+        'click a': function (e) {
+          ++dispatched;
+          expect(this.tagName).to.equal(tagName.toUpperCase());
+          expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal('A');
+        },
+        'click span': function (e) {
+          ++dispatched;
+          expect(this.tagName).to.equal(tagName.toUpperCase());
+          expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal(tagName.toUpperCase());
+          expect(e.delegateTarget.tagName).to.equal('SPAN');
+        }
+      },
+
+      template: function () {
+        this.innerHTML = '<a><span></span></a>';
+      }
     });
 
-    it('::shadow ::content (nested)', function () {
-      assertDispatchClick('::shadow ::content', 'in-deep-light-content', true);
+    var inst = helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName);
+
+    skate.init(inst);
+    helpers.dispatchEvent('click', inst.querySelector('span'));
+    expect(dispatched).to.equal(3);
+  });
+
+  it('should support delegate blur and focus events', function () {
+    var blur = false;
+    var focus = false;
+    var { safe: tagName } = helpers.safeTagName('my-component');
+
+    skate(tagName, {
+      events: {
+        'blur input': function () {
+          blur = true;
+        },
+
+        'focus input': function () {
+          focus = true;
+        }
+      },
+
+      prototype: {
+        blur: function () {
+          helpers.dispatchEvent('blur', this.querySelector('input'));
+        },
+
+        focus: function () {
+          helpers.dispatchEvent('focus', this.querySelector('input'));
+        }
+      },
+
+      template: function () {
+        this.innerHTML = '<input>';
+      }
     });
 
+    var inst = skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
 
-    // ::shadow
+    inst.blur();
+    expect(blur).to.equal(true);
 
-    it(':host::shadow', function () {
-      assertDispatchClick(':host::shadow', 'in-shadow-root', true);
+    inst.focus();
+    expect(focus).to.equal(true);
+  });
+
+  it('should support an array of event handlers for a given key', function () {
+    var increment = function () { ++calledNum; };
+    var calledNum = 0;
+    var safe = helperElement();
+
+    skate(safe.safe, {
+      events: {
+        test: [
+          increment,
+          increment
+        ]
+      }
     });
 
-    it(':host::shadow (nested)', function () {
-      assertDispatchClick(':host::shadow', 'in-deep-shadow-root', true);
-    });
+    var el = safe.create();
+    emit(el, 'test');
+    expect(calledNum).to.equal(2);
   });
 });
