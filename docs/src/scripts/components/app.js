@@ -1,7 +1,7 @@
-import shade from '../../../../node_modules/shadejs/src/index';
+import shade from 'shadejs';
 import skate from '../../../../src/index';
 
-export default skate('skate-app', {
+export default skate('sk-app', {
   template: shade(`
     <content name="innerHTML"></content>
   `)

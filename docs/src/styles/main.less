@@ -1,3 +1,14 @@
+// All block custom elements.
+sk-app,
+sk-docs-layout,
+sk-docs-sidebar,
+sk-grid,
+sk-item,
+sk-navbar,
+sk-sidebar {
+  display: block;
+}
+
 a,
 a:hover {
   color: #4a6785;
@@ -6,7 +17,39 @@ a:hover {
 body {
   color: #333;
   font-family: Helvetica;
-  padding-top: 70px;
+  font-size: 1.8em;
+  font-weight: 200;
+  padding-top: 100px;
+}
+
+code {
+  background-color: transparent;
+  padding: 0;
+}
+
+footer {
+  background-color: #f5f5f5;
+  padding: 30px;
+  text-align: center;
+
+  ul {
+    margin: 0;
+  }
+
+  li {
+    margin: 0 15px;
+  }
+
+  a {
+    border: 1px solid transparent;
+    padding: 15px;
+
+    &:hover {
+      background-color: #fff;
+      border-color: #eee;
+      text-decoration: none;
+    }
+  }
 }
 
 h1 {
@@ -21,23 +64,78 @@ h1 .badge {
 }
 
 h2 {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
   margin-top: 50px;
-  padding-bottom: 5px;
+  padding-bottom: 7px;
+  &:first-of-type {
+    margin-top: 10px;
+  }
 }
 
-img[alt="Build Status"] {
-  display: block;
-  margin: 20px auto;
+h3 {
+  margin-top: 40px;
+}
+
+h4 {
+  margin-top: 30px;
 }
 
 pre {
   border: 0;
   border-radius: 0;
+  background-color: #444;
+  color: #f5f5f5;
+  padding: 14px 16px;
+
+  .hljs-comment {
+    color: #999;
+  }
+
+  .hljs-keyword {
+    color: #f15c75;
+  }
+
+  .hljs-string {
+    color: #f6c342;
+  }
+
+  .hljs-tag {
+    color: #f6c342;
+  }
 }
+
+sk-item {;
+  a {
+    display: block;
+    padding: 12px;
+  }
+}
+
+sk-sidebar {
+  background-color: #f5f5f5;
+  overflow: auto;
+
+  a {
+    color: #333;
+    &:hover {
+      background-color: #eee;
+      color: #333;
+      text-decoration: none;
+    }
+  }
+}
+
+
+
+// Overrides
 
 .btn {
   border-radius: 0;
+  font-weight: 200;
+
+  .label {
+    top: -2px;
+  }
 }
 
 .btn-primary {
@@ -46,6 +144,28 @@ pre {
 
 .container-fluid {
   padding: 5px 30px;
+}
+
+.badge,
+.label {
+  padding: 4px 8px;
+}
+
+
+
+// Custom
+
+.feature {
+  bs-icon {
+    height: 54px;
+    font-size: 50px;
+    line-height: 50px;
+    padding: 0;
+  }
+
+  div > p:first-of-type {
+    text-align: center;
+  }
 }
 
 .jumbotron {
@@ -67,64 +187,67 @@ pre {
   margin-top: 20px;
 }
 
+.label {
+  background-color: #67ab49;
+  font-weight: normal;
+}
+
+.notice {
+  background-color: #f5f5f5;
+  border-left: 4px solid #ddd;
+  padding: 10px 12px;
+
+  &.notice-info {
+    background-color: #ebf2f9;
+    border-left-color: #d1e1f1;
+    color: #0a1521;
+  }
+}
+
 .well {
   border: 0;
   border-radius: 0;
   box-shadow: none;
   margin: 0;
-}
+  padding: 30px;
 
-.well-loud {
-  background-color: #f15c75;
-}
-
-.well-loud .btn {
-  border: 0;
-  font-size: 1.4em;
-  font-weight: 200;
-  margin: 10px;
-}
-
-.well-loud .btn:hover {
-  background-color: #FDECEF;
-}
-
-.well-overview {
-  background-color: #333333;
-  color: #f5f5f5;
-}
-
-.well-overview h3 {
-  font-weight: 200;
-}
-
-.well-overview pre {
-  background-color: #444;
-  color: #f5f5f5;
-  min-height: 110px;
-}
-
-.well-overview {
-  .hljs-keyword {
-    color: #f15c75;
-  }
-
-  .hljs-string {
-    color: #f6c342;
-  }
-
-  .hljs-tag {
-    color: #f6c342;
+  h3 {
+    font-weight: 200;
+    margin: 0 0 15px 0;
+    text-align: center;
   }
 }
 
 .well-general {
   background-color: #f5f5f5;
+
+  pre {
+    background-color: #555;
+    color: #f5f5f5;
+  }
 }
 
-.well-general pre {
-  background-color: #555;
+.well-loud {
+  background-color: #f15c75;
+
+  .btn {
+    border: 0;
+    font-size: 1.2em;
+    margin: 0 10px;
+
+    &:hover {
+      background-color: #FDECEF;
+    }
+  }
+}
+
+.well-overview {
+  background-color: #333333;
   color: #f5f5f5;
+
+  pre {
+    min-height: 118px;
+  }
 }
 
 @media (max-width: 991px) {

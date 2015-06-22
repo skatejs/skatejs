@@ -6,7 +6,7 @@ function callDetachedOnDescendants (elem, opts) {
   walkTree(elem.childNodes, function (elem) {
     registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
   }, function (elem) {
-    return !data(elem, opts.id).attached;
+    return !data(elem, opts.id).detached;
   });
 }
 

@@ -1,9 +1,9 @@
-import shade from '../../../../../node_modules/shadejs/src/index';
+import shade from 'shadejs';
 import skate from '../../../../../src/index';
 
 const KEY_ESC = 27;
 
-export default skate('skate-navbar-form', {
+export default skate('sk-navbar-form', {
   events: {
     submit: function (e) {
       window.open('https://google.com/search?q=site:skate.js.org ' + this.query);

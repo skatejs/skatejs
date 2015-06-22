@@ -2,24 +2,31 @@
 <html>
   <head>
     <title>SkateJS{{#if title}} - {{title}}{{/if}}</title>
-    <link rel="stylesheet" href="styles/index.css">
-    <script src="scripts/index.js"></script>
+    <link rel="stylesheet" href="{{root}}/styles/index.css">
+    <script src="{{root}}/scripts/index.js"></script>
   </head>
   <body>
-    <skate-app>
-      <skate-navbar fixed>
-        <a class="navbar-brand" href="/">
+    <sk-app>
+      <sk-navbar fixed{{#if reveal}} class="transition-logo-on-scroll"{{/if}}>
+        <a class="navbar-brand" href="{{root}}/">
           <skate>skate</skate>
         </a>
-        <skate-navbar-nav>
-          <a href="usage.html">Usage</a>
-          <a href="best-practices.html">Best Practices</a>
-          <a href="contributing.html">Contributing</a>
-          <a href="license.html">License</a>
-        </skate-navbar-nav>
-        <skate-navbar-form></skate-navbar-form>
-      </skate-navbar>
+        <sk-navbar-nav>
+          <a href="{{root}}/getting-started.html">Getting Started</a>
+          <a href="{{root}}/docs/">Documentation</a>
+          <a href="{{root}}/contributing.html">Contributing</a>
+          <a href="{{root}}/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
       {{{ contents }}}
-    </skate-app>
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
   </body>
 </html>

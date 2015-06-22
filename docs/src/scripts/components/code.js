@@ -4,7 +4,7 @@ import skate from '../../../../src/index';
 function setupCodeBlockContents(element) {
   var pre = document.createElement('pre');
   element.innerHTML = '';
-  element.className = 'skate-code-block';
+  element.className = 'sk-code-block';
   element.appendChild(pre);
 }
 
@@ -14,17 +14,12 @@ function getIndentLength(str) {
   }
 }
 
-function getLang (element) {
-  var type = element.getAttribute('type');
-  return type.split('/')[1];
-}
-
 function setIndentLength (len) {
   return len > 0 ? new Array(len + 1).join(' ') : '';
 }
 
-export default skate('skate-code', {
-  extends: 'script',
+export default skate('sk-code', {
+  extends: 'noscript',
   properties: {
     showLines: {
       attr: true,
@@ -35,12 +30,12 @@ export default skate('skate-code', {
     var element = this;
     var oldElement;
     var rawHtml = element.innerHTML;
-    var lang = getLang(element) || 'html';
+    var lang = element.getAttribute('lang') || 'html';
     var lines = rawHtml.split('\n');
     var showLines = this.showLines;
 
     if (lang === 'javascript') {
-      console.error('To avoid JavaScript evaluation by the browser, script[is="skate-code"] elements must not have type="text/javascript".');
+      console.error('To avoid JavaScript evaluation by the browser, script[is="sk-code"] elements must not have lang="javascript".');
     }
 
     oldElement = element;
@@ -71,9 +66,9 @@ export default skate('skate-code', {
       line = line.replace(/&gt;/g, '>');
       line = line.replace(/&lt;/g, '<');
 
-      num.className = 'skate-code-line-number';
+      num.className = 'sk-code-line-number';
       num.innerHTML = index + 1;
-      code.className = 'skate-code-line-content ' + lang;
+      code.className = 'sk-code-line-content ' + lang;
       code.innerHTML = setIndentLength(indent) + hljs.highlight(lang, line).value;
 
       if (showLines) {

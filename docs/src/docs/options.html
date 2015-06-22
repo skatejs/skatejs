@@ -1,0 +1,101 @@
+---
+template: index.html
+---
+
+<sk-docs-layout>
+  <h2>Options</h2>
+  <p>You define the behaviour of your component by passing options to as the second argument to the `skate()` function.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', options);
+  </noscript>
+
+  <p>The following options are supported:</p>
+  <ul>
+    <li><a href="#h3-type">type</a></li>
+    <li><a href="#h3-extends">extends</a></li>
+    <li><a href="#h3-created">created</a></li>
+    <li><a href="#h3-attached">attached</a></li>
+    <li><a href="#h3-detached">detached</a></li>
+    <li><a href="#h3-attribute">attribute</a></li>
+    <li><a href="#h3-template">template</a></li>
+    <li><a href="#h3-events">events</a></li>
+    <li><a href="#h3-properties">properties</a></li>
+    <li><a href="#h3-prototype">prototype</a></li>
+  </ul>
+
+  <h3><code>type</code></h3>
+  <p>Specifies the type of binding that this component supports using the <a href="../getting-started.html#h2-element-types">element type constants</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      type: skate.type.ELEMENT
+    });
+  </noscript>
+
+  <h3><code>extends</code></h3>
+  <p>The name of the element that this component is extending. This is synonymous with the <a href="http://w3c.github.io/webcomponents/spec/custom/#var-options-extends">W3C Custom Element <code>extends</code> option</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      extends: 'input'
+    });
+  </noscript>
+  <p>When you specify the <code>extends</code> option, instead of your component name mapping to the <code>tagName</code> of an element, it maps to the value of the <code>is</code> attribute. This conforms with the spec.</p>
+  <noscript is="sk-code" lang="html">
+    <input is="my-element">
+  </noscript>
+  <p>However, if you use this option in conjunction with the <code>type</code> option, Skate will only bind the component to an element that has a tag name matching the <code>extends</code> option.</p>
+  <noscript is="sk-code" lang="html">
+    <!-- skate.type.ELEMENT (default) -->
+    <input is="my-element">
+
+    <!-- skate.type.ATTRIBUTE -->
+    <input my-element>
+
+    <!-- skate.type.CLASSNAME -->
+    <input class="my-element">
+  </noscript>
+
+  <h3><code>created</code></h3>
+  <p>Called when the element is created as defined in the <a href="../getting-started.html#h2-element-lifecycle">Element Lifecycle</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      created () {
+        // "this" refers to the element
+      }
+    });
+  </noscript>
+
+  <h3><code>attached</code></h3>
+  <p>Called when the element is attached as defined in the <a href="../getting-started.html#h2-element-lifecycle">Element Lifecycle</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      attached () {
+        // "this" refers to the element
+      }
+    });
+  </noscript>
+
+  <h3><code>detached</code></h3>
+  <p>Called when the element is detached as defined in the <a href="../getting-started.html#h2-element-lifecycle">Element Lifecycle</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      detached () {
+        // "this" refers to the element
+      }
+    });
+  </noscript>
+
+  <h3><code>attribute</code></h3>
+  <p></p>
+
+  <h3><code>template</code></h3>
+  <p></p>
+
+  <h3><code>events</code></h3>
+  <p></p>
+
+  <h3><code>properties</code></h3>
+  <p></p>
+
+  <h3><code>prototype</code></h3>
+  <p></p>
+</sk-docs-layout>
