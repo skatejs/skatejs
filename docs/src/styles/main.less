@@ -77,6 +77,7 @@ h2 {
   border-bottom: 1px solid #eee;
   margin-top: 50px;
   padding-bottom: 7px;
+
   &:first-of-type {
     margin-top: 10px;
   }
@@ -114,17 +115,29 @@ pre {
   }
 }
 
+sk-grid {
+  min-height: 300px;
+}
+
 sk-item {
   a {
     display: block;
     font-size: 1em;
+    font-weight: normal;
     padding: 8px 12px;
   }
 
   sk-item {
     a {
-      font-size: .8em;
-      padding: 4px 12px 4px 24px;
+      font-size: .9em;
+      padding-left: 24px;
+    }
+
+    sk-item {
+      a {
+        font-size: .8em;
+        padding-left: 36px;
+      }
     }
   }
 }
@@ -133,8 +146,24 @@ sk-sidebar {
   background-color: #f5f5f5;
   overflow: auto;
 
+  // By default hide everything.
+  sk-item {
+    display: none;
+  }
+
+  // Always show immediate items.
+  > sk-item,
+
+  // Show anything that has selected items.
+  [has-selected],
+
+  // Always ensure the user has way to drill down the current selected item.
+  [has-selected] > sk-item {
+    display: block;
+  }
+
   a {
-    color: #333;
+    color: #444;
     text-decoration: none;
 
     &:hover {
@@ -144,7 +173,7 @@ sk-sidebar {
     }
 
     &[selected] {
-      background-color: #fff;
+      background-color: #e5e5e5;
       font-color: #3572b0;
     }
   }
@@ -227,6 +256,10 @@ sk-sidebar {
     border-left-color: #d1e1f1;
     color: #0a1521;
   }
+}
+
+.subtle {
+  opacity: .5;
 }
 
 .well {
