@@ -152,7 +152,7 @@ function defineProperty (elem, name, prop) {
   // bindings on the same component define the same attribute, then they'd
   // conflict anyways.
   var info = data(elem);
-  var value = prop && prop.value || undefined;
+  var value = prop && prop.value !== 'undefined' ? prop.value : undefined;
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
