@@ -39,25 +39,25 @@ reveal: true
     <sk-grid>
       <div>
         <h3>HTML</h3>
-        <script is="sk-code" type="text/html">
+        <noscript is="sk-code" lang="html">
           <my-element></my-element>
-        </script>
+        </noscript>
       </div>
       <div>
         <h3>JavaScript</h3>
-        <script is="sk-code" type="text/js">
+        <noscript is="sk-code" lang="js">
           skate('my-element', {
             created: function () {
               this.textContent = 'Hello, World!';
             }
           });
-        </script>
+        </noscript>
       </div>
       <div>
         <h3>Result</h3>
-        <script is="sk-code" type="text/html">
+        <noscript is="sk-code" lang="html">
           <my-element>Hello, World!</my-element>
-        </script>
+        </noscript>
       </div>
     </sk-grid>
   </div>

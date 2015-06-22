@@ -3,7 +3,7 @@ template: index.html
 ---
 
 <sk-docs-layout>
-  <h2><code>skate (name, definition)</code></h2>
+  <h2><code>skate (name, options)</code></h2>
   <p>You define a component by passing a component name and some options to the <code>skate()</code> function. The name you specify corresponds to one of the following:</p>
   <ul>
     <li>Tag name</li>
@@ -14,39 +14,45 @@ template: index.html
 
   <h3>Tag Name</h3>
   <p>Binding to tag names is the <strong>default</strong> and <strong>preferred</strong> way of binding behaviour to elements.</p>
-  <script is="sk-code" type="text/js">
+  <noscript is="sk-code" lang="js">
     skate('my-element', {});
-  </script>
+  </noscript>
+  <noscript is="sk-code" lang="html">
+    <my-element></my-element>
+  </noscript>
 
   <h3><code>is</code> Attribute</h3>
   <p>The <code>is</code> attribute is used when you want to extend the functionality of an element that already has defined functionality, or that already is defined by the HTML spec.</p>
-  <script is="sk-code" type="text/js">
+  <noscript is="sk-code" lang="js">
     skate('my-element', {
       extends: 'input'
     });
-  </script>
+  </noscript>
+  <noscript is="sk-code" lang="html">
+    <input is="my-element">
+  </noscript>
 
   <h3>Attribute Name</h3>
   <p>Using arbitrary attribute names is good for mixing in functionality:</p>
-  <script is="sk-code" type="text/js">
+  <noscript is="sk-code" lang="js">
     skate('my-element', {
       type: skate.type.ATTRIBUTE
     });
-  </script>
-  <script is="sk-code" type="text/html">
+  </noscript>
+  <noscript is="sk-code" lang="html">
     <input my-element type="text">
-  </script>
+  </noscript>
 
   <h3>Class Name</h3>
   <p>Class names are the <strong>least preferred</strong> method, but allow you some flexibility when working with legacy code:</p>
-  <script is="sk-code" type="text/js">
+  <noscript is="sk-code" lang="js">
     skate('ui-tabs', {
       type: skate.type.CLASSNAME
     });
-  </script>
-  <script is="sk-code" type="text/html">
+  </noscript>
+  <noscript is="sk-code" lang="html">
     <div class="ui-tabs">
       ...
     </div>
-  </script>
+  </noscript>
 </sk-docs-layout>

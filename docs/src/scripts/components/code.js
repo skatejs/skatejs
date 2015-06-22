@@ -14,17 +14,12 @@ function getIndentLength(str) {
   }
 }
 
-function getLang (element) {
-  var type = element.getAttribute('type');
-  return type.split('/')[1];
-}
-
 function setIndentLength (len) {
   return len > 0 ? new Array(len + 1).join(' ') : '';
 }
 
 export default skate('sk-code', {
-  extends: 'script',
+  extends: 'noscript',
   properties: {
     showLines: {
       attr: true,
@@ -35,12 +30,12 @@ export default skate('sk-code', {
     var element = this;
     var oldElement;
     var rawHtml = element.innerHTML;
-    var lang = getLang(element) || 'html';
+    var lang = element.getAttribute('lang') || 'html';
     var lines = rawHtml.split('\n');
     var showLines = this.showLines;
 
     if (lang === 'javascript') {
-      console.error('To avoid JavaScript evaluation by the browser, script[is="sk-code"] elements must not have type="text/javascript".');
+      console.error('To avoid JavaScript evaluation by the browser, script[is="sk-code"] elements must not have lang="javascript".');
     }
 
     oldElement = element;
