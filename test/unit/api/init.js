@@ -220,13 +220,13 @@ describe('api/init', function () {
     }
 
     describe(':', function () {
-      assertType('element', skate.type.ELEMENT,   [1, 0, 0, 0]);
+      assertType('element',   skate.type.ELEMENT,   [1, 0, 0, 0]);
       assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 1, 0]);
       assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 1]);
-      assertType('element', skate.type.ELEMENT,   [0, 1, 0, 0], 'div');
+      assertType('element',   skate.type.ELEMENT,   [0, 1, 0, 0], 'div');
       assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 1, 0], 'div');
       assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 1], 'div');
-      assertType('element', skate.type.ELEMENT,   [0, 0, 0, 0], 'span');
+      assertType('element',   skate.type.ELEMENT,   [0, 0, 0, 0], 'span');
       assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 0, 0], 'span');
       assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 0], 'span');
 
