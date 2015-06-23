@@ -1,4 +1,3 @@
-import { TYPE_ELEMENT } from './constants';
 import apiChain from './api/chain';
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
@@ -74,12 +73,11 @@ var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent, isElement, isNative;
+  var Ctor, CtorParent, isNative;
   var options = makeOptions(userOptions);
 
   CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
-  isElement = options.type === TYPE_ELEMENT;
-  isNative = isElement && supportsCustomElements() && validCustomElement(id);
+  isNative = options.type === apiType.ELEMENT && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {

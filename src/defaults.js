@@ -1,4 +1,4 @@
-import { TYPE_ELEMENT } from './constants';
+import apiType from './api/type';
 
 export default {
   // Called when the element is attached to the document.
@@ -35,7 +35,7 @@ export default {
   template: undefined,
 
   // The type of bindings to allow.
-  type: TYPE_ELEMENT,
+  type: apiType.ELEMENT,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
