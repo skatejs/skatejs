@@ -43,6 +43,9 @@ export default skate('sk-docs-sidebar', {
           <a href="/docs/skate/property.html"><span class="subtle">skate.</span>property()</a>
         </sk-item>
         <sk-item>
+          <a href="/docs/skate/queue.html"><span class="subtle">skate.</span>queue()</a>
+        </sk-item>
+        <sk-item>
           <a href="/docs/skate/ready.html"><span class="subtle">skate.</span>ready()</a>
         </sk-item>
         <sk-item>

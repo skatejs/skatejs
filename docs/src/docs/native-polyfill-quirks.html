@@ -8,17 +8,6 @@ template: index.html
 
 
 
-  <h3 id="h3-when-native-polyfill-is-used">When Native / Polyfill is Used</h3>
-  <p>Underneath the hood, Skate will use native custom elements if the following criteria is met:</p>
-  <ul>
-    <li>Your browser supports <code>document.registerElement()</code>.</li>
-    <li>Your component uses the <code>ELEMENT</code> binding type.</li>
-    <li>Your component has a hyphen in its name.</li>
-  </ul>
-  <p>In all other instances Skate will use a <code>MutationObserver</code> to polyfill the same behaviour. In browsers that do not have native support for Mutation Observers, Skate will polyfill it internally.</p>
-
-
-
   <h3 id="h3-element-lifecycle">Element Lifecycle</h3>
   <p>An element's lifecycle consists of three stages. The following describes the stages as they behave when using native custom elements:</p>
   <ul>
