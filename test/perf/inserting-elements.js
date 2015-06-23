@@ -7,7 +7,7 @@ describe('inserting elements', function () {
 
   function benchFn () {
     var div = document.createElement('div');
-    var fix = this.args.fixture
+    var fix = this.args.fixture;
 
     // We're actually testing this, but...
     fix.appendChild(div);
@@ -19,14 +19,27 @@ describe('inserting elements', function () {
     fix.removeChild(div);
   }
 
+  function createMutationObservers (num) {
+    var obs = [];
+    for (let a = 0; a < num; a++) {
+      obs.push(new window.MutationObserver(function () {}));
+      obs[a].observe(document, {
+        childList: true,
+        subtree: true
+      });
+    }
+    return obs;
+  }
+
   beforeEach(function () {
     args = {
+      createMutationObservers: createMutationObservers,
       documentObserver: documentObserver,
       fixture: helpers.fixture()
     };
   });
 
-  bench('(no document observer)', function () {
+  bench('(no observers)', function () {
     return {
       args: args,
       fn: benchFn,
@@ -36,7 +49,49 @@ describe('inserting elements', function () {
     };
   });
 
-  bench('(registered document observer)', function () {
+  bench('(one mutation observer that does nothing)', function () {
+    return {
+      args: args,
+      fn: benchFn,
+      setup: function () {
+        this.args.documentObserver.unregister();
+        this.mutationObservers = this.args.createMutationObservers(1);
+      },
+      teardown: function () {
+        this.mutationObservers.forEach(obs => obs.disconnect());
+      }
+    };
+  });
+
+  bench('(two mutation observers that do nothing)', function () {
+    return {
+      args: args,
+      fn: benchFn,
+      setup: function () {
+        this.args.documentObserver.unregister();
+        this.mutationObservers = this.args.createMutationObservers(2);
+      },
+      teardown: function () {
+        this.mutationObservers.forEach(obs => obs.disconnect());
+      }
+    };
+  });
+
+  bench('(ten mutation observers that do nothing)', function () {
+    return {
+      args: args,
+      fn: benchFn,
+      setup: function () {
+        this.args.documentObserver.unregister();
+        this.mutationObservers = this.args.createMutationObservers(10);
+      },
+      teardown: function () {
+        this.mutationObservers.forEach(obs => obs.disconnect());
+      }
+    };
+  });
+
+  bench('(skate document observer that interrogates elements)', function () {
     return {
       args: args,
       fn: benchFn,
