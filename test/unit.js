@@ -1,5 +1,6 @@
 import './boot';
 import './unit/api/chain';
+import './unit/api/create';
 import './unit/api/emit';
 import './unit/api/event';
 import './unit/api/init';
@@ -9,7 +10,6 @@ import './unit/api/ready';
 import './unit/api/watch';
 import './unit/attributes';
 import './unit/constructor';
-import './unit/create';
 import './unit/document-observer';
 import './unit/dom';
 import './unit/extending';
