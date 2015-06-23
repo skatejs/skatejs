@@ -80,44 +80,4 @@ template: index.html
   <h3>Global</h3>
   <p>If you're still skating old school the <code>dist/</code> directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with <code>window.skate</code>.</p>
   <p class="notice notice-info">The global is always set no matter what and will trump any existing globals stored under <code>window.skate</code>. If you're using multiple versions of Skate on the same page, use a module format if possible. If it is not possible, you may call <code>skate.noConflict()</code> to restore the previous global and return the current one.</p>
-
-
-
-  <h2 id="h2-native-vs-polyfill">Native vs Polyfill</h2>
-  <p>Underneath the hood, Skate will use native custom elements if the following criteria is met:</p>
-  <ul>
-    <li>Your browser supports <code>document.registerElement()</code>.</li>
-    <li>Your component uses the <code>ELEMENT</code> binding type.</li>
-    <li>Your component has a hyphen in its name.</li>
-  </ul>
-  <p>In all other instances Skate will use a <code>MutationObserver</code> to polyfill the same behaviour. In browsers that do not have native support for Mutation Observers, Skate will polyfill it internally.</p>
-  <p>When using native vs polyfilled components, the element's lifecycle is handled differently.</p>
-
-
-
-  <h2 id="h2-element-lifecycle">Element Lifecycle</h2>
-  <p>An element's lifecycle consists of three stages. The following describes the stages as they behave when using native custom elements:</p>
-  <ul>
-    <li>Created - when the element is created, or encountered by the parser.</li>
-    <li>Attached - when the element is inserted into the DOM.</li>
-    <li>Detached - when the element is removed from the DOM.</li>
-  </ul>
-
-  <h3>Quirks</h3>
-  <p>When these lifecycle stages are polyfilled, they behave differently because Mutation Observers batch mutations and fire asynchronously. Mutation Observers also only fire when an element is inserted to the document, which means an element's lifecycle cannot be handled until after it has been inserted into the document and cannot be handled synchronously.</p>
-  <p>When polyfilled, each lifecycle stage behaves as follows:</p>
-  <ul>
-    <li>Created - after the element is attached to the document for the first time but before the attached stage occurs.</li>
-    <li>Attached - after the element is attached to the document.</li>
-    <li>Detached - after the element is detached from the document.</li>
-  </ul>
-  <p><em>This isn't just Skate specific; all custom element polyfills have these quirks.</em></p>
-  <p class="notice notice-info">In both native and polyfilled, the attached and detached stages will be called for every time you insert or remove an element from the DOM.</p>
-
-  <h3>A Better Way</h3>
-  <p>In order to get around these inconsistencies, and to provide a bit of sugar in how elements are created, Skate gives you a common way to create any type of element:</p>
-  <noscript is="sk-code" lang="js">
-    var myElement = skate.create('my-element');
-  </noscript>
-  <p>This is like <code>document.createElement()</code> except that it will <em>always</em> ensure your element is initialsed synchronously before returning. It also only ever requires one argument instead of making you remember which arguments - and in what order - need to be passed to <code>document.createElement()</code> depending on how your element was registered.</p>
 </sk-docs-layout>

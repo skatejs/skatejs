@@ -8,8 +8,6 @@ export default skate('sk-docs-sidebar', {
         <a href="/docs/">Getting Started</a>
         <sk-item><a href="/docs/#h2-what-is-skate">What is Skate?</a></sk-item>
         <sk-item><a href="/docs/#h2-installing">Installing</a></sk-item>
-        <sk-item><a href="/docs/#h2-native-vs-polyfill">Native vs Polyfill</a></sk-item>
-        <sk-item><a href="/docs/#h2-element-lifecycle">Element Lifecycle</a></sk-item>
       </sk-item>
       <sk-item>
         <a href="/docs/skate.html">API</a>
@@ -55,6 +53,18 @@ export default skate('sk-docs-sidebar', {
         </sk-item>
         <sk-item>
           <a href="/docs/skate/watch.html"><span class="subtle">skate.</span>watch()</a>
+        </sk-item>
+      </sk-item>
+      <sk-item>
+        <a href="/docs/native-polyfill-quirks.html">Native / Polyfill Quirks</a>
+        <sk-item>
+          <a href="/docs/native-polyfill-quirks.html#h3-when-native-polyfill-is-used">When Native / Polyfill is Used</a>
+        </sk-item>
+        <sk-item>
+          <a href="/docs/native-polyfill-quirks.html#h3-element-lifecycle">Element Lifecycle</a>
+        </sk-item>
+        <sk-item>
+          <a href="/docs/native-polyfill-quirks.html#h3-script-tags-cut-off-content">Script Tags Cut Off Content</a>
         </sk-item>
       </sk-item>
     </sk-sidebar>

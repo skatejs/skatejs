@@ -18,27 +18,39 @@ function setIndentLength (len) {
   return len > 0 ? new Array(len + 1).join(' ') : '';
 }
 
+function formatLine (line) {
+  line = line.trim();
+  line = line.replace(/&gt;/g, '>');
+  line = line.replace(/&lt;/g, '<');
+  return line;
+}
+
 export default skate('sk-code', {
   extends: 'noscript',
   properties: {
+    inline: {
+      attr: true,
+      type: Boolean
+    },
     showLines: {
       attr: true,
       type: Boolean
     }
   },
   attached: function () {
-    var element = this;
-    var oldElement;
-    var rawHtml = element.innerHTML;
-    var lang = element.getAttribute('lang') || 'html';
+    var element;
+    var rawHtml = this.innerHTML;
+    var lang = this.getAttribute('lang') || 'html';
     var lines = rawHtml.split('\n');
     var showLines = this.showLines;
 
-    if (lang === 'javascript') {
-      console.error('To avoid JavaScript evaluation by the browser, script[is="sk-code"] elements must not have lang="javascript".');
+    if (this.inline) {
+      var code = document.createElement('code');
+      code.innerHTML = hljs.highlight(lang, formatLine(lines[0])).value;
+      this.parentNode.insertBefore(code, this);
+      return;
     }
 
-    oldElement = element;
     element = document.createElement('div');
 
     // Trim leading empty lines.
@@ -62,10 +74,7 @@ export default skate('sk-code', {
       var code = document.createElement('code');
       var nl = document.createTextNode('\n');
 
-      line = line.trim();
-      line = line.replace(/&gt;/g, '>');
-      line = line.replace(/&lt;/g, '<');
-
+      line = formatLine(line);
       num.className = 'sk-code-line-number';
       num.innerHTML = index + 1;
       code.className = 'sk-code-line-content ' + lang;
@@ -79,8 +88,6 @@ export default skate('sk-code', {
       pre.appendChild(nl);
     });
 
-    if (oldElement) {
-      oldElement.parentNode.insertBefore(element, oldElement);
-    }
+    this.parentNode.insertBefore(element, this);
   }
 });

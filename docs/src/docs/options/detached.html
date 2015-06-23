@@ -5,7 +5,7 @@ template: index.html
 <sk-docs-layout>
   <h2><code>options.detached</code></h2>
 
-  <p>A function that is called when the element is detached as defined in the <a href="../index.html#h2-element-lifecycle">Element Lifecycle</a>.</p>
+    <p>A function that is called whenever the element is detached from the DOM. <code>this</code> inside the callback refers to the element.</p>
   <noscript is="sk-code" lang="js">
     skate('my-element', {
       detached () {
@@ -13,4 +13,6 @@ template: index.html
       }
     });
   </noscript>
+
+  <p>For more information about this part of the lifecycle see <a href="/docs/native-polyfill-quirks.html#h3-element-lifecycle">Element Lifecycle</a>.</p>
 </sk-docs-layout>

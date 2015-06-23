@@ -23,7 +23,7 @@ template: index.html
 
   <h3>Event Delegation</h3>
 
-  <p>The following would be called for all events that were triggered from a descendant of, or by an element matching <code>.some [selector]</code></p>
+  <p>The following would be called for all events that were triggered from a descendant of, or by an element matching <code>.some [selector]</code>.</p>
   <noscript is="sk-code" lang="js">
     skate('my-element', {
       events: {
@@ -32,5 +32,5 @@ template: index.html
     });
   </noscript>
 
-  <p class="notice notice-info">The <code>e.delegateTarget</code> property is set on the event object passed to all event handlers. When delegating it is the element that matched the selector. When not delegating, it is the same thing as <code>e.target</code>.</p>
+  <p class="notice notice-info">The <code>e.delegateTarget</code> property is set on the event object that is passed to all event handlers. When delegating it is the element that matched the selector. When not delegating, it is the same thing as <code>e.target</code>.</p>
 </sk-docs-layout>
