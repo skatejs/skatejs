@@ -16,7 +16,7 @@ export default function (opts) {
     // we don't invoke an infinite loop.
     if (attributeToPropertyMap[name] && !info.updatingAttribute) {
       info.updatingProperty = true;
-      this[attributeToPropertyMap[name]] = newValue;
+      this[attributeToPropertyMap[name]] = newValue === null ? undefined : newValue;
       info.updatingProperty = false;
     }
   };

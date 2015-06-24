@@ -1,6 +1,5 @@
 import fixture from '../../lib/fixture';
 import helperElement from '../../lib/element';
-import helperFixture from '../../lib/fixture';
 import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
 
@@ -21,7 +20,7 @@ describe('lifecycle/properties', function () {
     var el = elem.create();
     el.propName1 = 'testing';
     expect(el.propName1).to.equal('testing', 'Value should just be passed through');
-    expect(el.getAttribute('prop-name1')).to.equal(null, 'Attribute linking should be off by default');
+    expect(el.hasAttribute('prop-name1')).to.equal(false, 'Attribute linking should be off by default');
   });
 
   it('type', function () {
@@ -41,23 +40,59 @@ describe('lifecycle/properties', function () {
     expect(el.propName2).to.equal(true, 'Object with only type definition can be specified');
   });
 
-  it('attribute', function () {
+  it('attribute (Boolean)', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
           attr: true
-        },
-        propName2: {
+        }
+      }
+    });
+
+    var el = fixture(`<${elem.safe} prop-name1="test1"></${elem.safe}>`).querySelector(elem.safe);
+    skate.init(el);
+    expect(el.propName1).to.equal('test1', 'property initialised from attribute');
+    expect(el.getAttribute('prop-name1')).to.equal('test1', 'attribute matches initial value');
+    el.propName1 = 'test2';
+    expect(el.propName1).to.equal('test2', 'property updated to new value');
+    expect(el.getAttribute('prop-name1')).to.equal('test2', 'attribute updated to new value');
+  });
+
+  it('attribute (String)', function () {
+    skate(elem.safe, {
+      properties: {
+        propName1: {
           attr: 'my-attr'
         }
       }
     });
 
-    var el = fixture(`<${elem.safe} prop-name1="testing1"></${elem.safe}>`).querySelector(elem.safe);
+    var el = fixture(`<${elem.safe} my-attr="test1"></${elem.safe}>`).querySelector(elem.safe);
     skate.init(el);
-    el.propName2 = 'testing2';
-    expect(el.propName1).to.equal('testing1', 'Boolean true will use the property name in dash-case form');
-    expect(el.getAttribute('my-attr')).to.equal('testing2', 'A string is used as the attribute name exactly');
+    expect(el.propName1).to.equal('test1', 'property initialised from attribute');
+    expect(el.getAttribute('my-attr')).to.equal('test1', 'attribute matches initial value');
+    el.propName1 = 'test2';
+    expect(el.propName1).to.equal('test2', 'property updated to new value');
+    expect(el.getAttribute('my-attr')).to.equal('test2', 'attribute updated to new value');
+  });
+
+  it('attribute - removing', function () {
+    skate(elem.safe, {
+      properties: {
+        propName1: {
+          attr: true
+        }
+      }
+    });
+
+    var el = elem.create();
+    el.propName1 = 'test';
+    el.removeAttribute('prop-name1');
+    expect(el.propName1).to.equal(undefined);
+
+    el.propName1 = 'test';
+    el.setAttribute('prop-name1', '');
+    expect(el.propName1).to.equal('');
   });
 
   it('Boolean + attribute', function () {
@@ -78,7 +113,7 @@ describe('lifecycle/properties', function () {
 
     el.propName1 = '';
     expect(el.propName1).to.equal(false, 'Value should be converted to boolean false');
-    expect(el.getAttribute('prop-name1')).to.equal(null, 'Attribute should be removed if value is false');
+    expect(el.hasAttribute('prop-name1')).to.equal(false, 'Attribute should be removed if value is false');
   });
 
   it('events', function () {
@@ -272,5 +307,50 @@ describe('lifecycle/properties', function () {
     var el2 = elem.create({ prop1: 'test2' });
     expect(el1.prop1).to.equal('test1');
     expect(el2.prop1).to.equal('test2');
+  });
+
+  it('passing undefined should remove the linked attribute', function () {
+    skate(elem.safe, {
+      properties: {
+        prop1: {
+          attr: true
+        }
+      }
+    });
+
+    var el = elem.create({ prop1: 'test1' });
+    expect(el.prop1).to.equal('test1');
+    el.prop1 = undefined;
+    expect(el.hasAttribute('prop1')).to.equal(false);
+  });
+
+  it('passing null should remove the linked attribute', function () {
+    skate(elem.safe, {
+      properties: {
+        prop1: {
+          attr: true
+        }
+      }
+    });
+
+    var el = elem.create({ prop1: 'test1' });
+    expect(el.prop1).to.equal('test1');
+    el.prop1 = null;
+    expect(el.hasAttribute('prop1')).to.equal(false);
+  });
+
+  it('passing an empty string shoud not remove the linked attribute', function () {
+    skate(elem.safe, {
+      properties: {
+        prop1: {
+          attr: true
+        }
+      }
+    });
+
+    var el = elem.create({ prop1: 'test1' });
+    expect(el.prop1).to.equal('test1');
+    el.prop1 = '';
+    expect(el.getAttribute('prop1')).to.equal('');
   });
 });
