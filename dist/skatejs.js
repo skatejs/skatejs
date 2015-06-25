@@ -47,11 +47,11 @@ __4f25f0faaaf0c53e145c08c5d91c9c2b = (function () {
       // Strings point to a function on the context passed to the proxy fn.
       if (typeof cb === 'string') {
         return function () {
-          for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-            args[_key2] = arguments[_key2];
-          }
-  
           if (typeof this[cb] === 'function') {
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+              args[_key2] = arguments[_key2];
+            }
+  
             this[cb].apply(this, args);
           }
         };
@@ -484,6 +484,36 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/maybe-this.js
+__3a71a6ff9ecf4b5639833a53ddd3f993 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (fn) {
+    return function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+  
+      return args[0].nodeType ? fn.apply(this, args) : function () {
+        return fn.apply(window, [this].concat(args));
+      };
+    };
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
 // src/api/event.js
 __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   var module = {
@@ -507,23 +537,44 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   
   var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
   
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
+  
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
+  
   function parseEvent(e) {
     var parts = e.split(' ');
+    var name = parts.shift();
+    var selector = parts.join(' ').trim();
     return {
-      name: parts.shift(),
-      delegate: parts.join(' ')
+      name: name,
+      isAny: selector[0] === '*',
+      isChild: selector[0] === '>',
+      selector: selector
     };
   }
   
-  function makeDelegateHandler(elem, handler, delegate) {
+  function makeDelegateHandler(elem, handler, parsed) {
     return function (e) {
       var current = e.target;
+      var selector = parsed.selector;
+  
+      // Any descendant.
+      if (parsed.isAny) {
+        e.delegateTarget = current;
+        return handler(e);
+      }
+  
+      // Specific children.
+      if (parsed.isChild) {
+        selector = elem.tagName + ' ' + selector;
+      }
+  
+      // Specific descendants.
       while (current && current !== elem.parentNode) {
-        if ((0, _utilMatchesSelector2['default'])(current, delegate)) {
+        if ((0, _utilMatchesSelector2['default'])(current, selector)) {
           e.delegateTarget = current;
           return handler(e);
         }
-  
         current = current.parentNode;
       }
     };
@@ -531,20 +582,21 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   
   function makeNormalHandler(elem, handler) {
     return function (e) {
-      e.delegateTarget = e.currentTarget;
-      handler(e);
+      if (e.target === elem) {
+        e.delegateTarget = elem;
+        handler(e);
+      }
     };
   }
   
   function bindEvent(elem, event, handler) {
-    var _parseEvent = parseEvent(event);
+    var parsed = parseEvent(event);
+    var name = parsed.name;
+    var selector = parsed.selector;
   
-    var name = _parseEvent.name;
-    var delegate = _parseEvent.delegate;
-  
-    var capture = delegate && (name === 'blur' || name === 'focus');
+    var capture = selector && (name === 'blur' || name === 'focus');
     handler = (0, _chain2['default'])(handler).bind(elem);
-    handler = delegate ? makeDelegateHandler(elem, handler, delegate) : makeNormalHandler(elem, handler);
+    handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
     elem.addEventListener(name, handler, capture);
   }
   
@@ -554,14 +606,17 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
     });
   }
   
-  exports['default'] = function (elem, events, handler) {
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, events, handler) {
     if (typeof events === 'string') {
       bindEvent(elem, events, handler);
+    } else if (Array.isArray(events)) {
+      events.forEach(function (e) {
+        return bindEvent(elem, e, handler);
+      });
     } else {
       bindEvents(elem, events || {});
     }
-  };
-  
+  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -617,7 +672,7 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   exports['default'] = function (str) {
     return str.split(/([A-Z])/).reduce(function (one, two, idx) {
       var dash = !one || idx % 2 === 0 ? '' : '-';
-      return '' + one + '' + dash + '' + two.toLowerCase();
+      return '' + one + dash + two.toLowerCase();
     });
   };
   
@@ -638,6 +693,13 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
+  
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
+  
   var CustomEvent = window.CustomEvent;
   
   if (CustomEvent) {
@@ -665,7 +727,9 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
     return elem.dispatchEvent(createCustomEvent(name, opts));
   }
   
-  function emitAll(elem, name, opts) {
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, name) {
+    var opts = arguments[2] === undefined ? {} : arguments[2];
+  
     var names = typeof name === 'string' ? name.split(' ') : name;
     return names.reduce(function (prev, curr) {
       if (!emitOne(elem, curr, opts)) {
@@ -673,21 +737,52 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
       }
       return prev;
     }, []);
-  }
+  });
+  module.exports = exports['default'];
   
-  function emitFn(name, opts) {
-    return function () {
-      return emitAll(this, name, opts);
-    };
-  }
-  
-  exports['default'] = function (elem) {
-    var name = arguments[1] === undefined ? {} : arguments[1];
-    var opts = arguments[2] === undefined ? {} : arguments[2];
-  
-    return typeof elem === 'string' ? emitFn(elem, name) : emitAll(elem, name, opts);
+  return module.exports;
+}).call(this);
+
+// src/api/notify.js
+__9c53d0b55c601bcd876ca0d265bb297a = (function () {
+  var module = {
+    exports: {}
   };
+  var exports = module.exports;
   
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
+  
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
+  
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _emit2 = _interopRequireDefault(_emit);
+  
+  /* jshint expr: true */
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, name) {
+    var detail = arguments[2] === undefined ? {} : arguments[2];
+  
+    // Notifications must *always* have:
+    // - name
+    // - newValue
+    // - oldValue
+    // but may contain other information.
+    detail.name = name;
+    detail.newValue === undefined && (detail.newValue = elem[name]);
+    detail.oldValue === undefined && (detail.oldValue = elem[name]);
+  
+    (0, _emit2['default'])(elem, ['skate.property', 'skate.property.' + name], {
+      detail: detail
+    });
+  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -720,30 +815,19 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  var _event = __6bf39bed4ad969dbb83d42a8ba2be197;
   
-  var _emit2 = _interopRequireDefault(_emit);
+  var _event2 = _interopRequireDefault(_event);
   
-  /* jshint expr: true */
-  function notify(elem, notifyName, propName) {
-    var detail = arguments[3] === undefined ? {} : arguments[3];
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
   
-    // Notifications must *always* have:
-    // - name
-    // - newValue
-    // - oldValue
-    // but may contain other information.
-    detail.name = propName;
-    detail.newValue === undefined && (detail.newValue = elem[propName]);
-    detail.oldValue === undefined && (detail.oldValue = elem[propName]);
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
   
-    (0, _emit2['default'])(elem, notifyName, {
-      bubbles: true,
-      cancelable: false,
-      detail: detail
-    });
-  }
+  var _notify = __9c53d0b55c601bcd876ca0d265bb297a;
   
+  var _notify2 = _interopRequireDefault(_notify);
+  
+  // TODO: Lean out option normalisation.
   function property(name, prop) {
     var internalGetter, internalSetter, internalValue, isBoolean;
   
@@ -758,19 +842,17 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     }
   
     if (typeof prop.deps === 'string') {
-      prop.deps = prop.deps.split(' ');
+      prop.deps = [prop.deps];
     }
   
-    if (!Array.isArray(prop.deps)) {
-      prop.deps = [];
+    if (Array.isArray(prop.deps)) {
+      prop.deps = prop.deps.map(function (name) {
+        return 'skate.property.' + name;
+      });
     }
   
     if (prop.notify === undefined) {
       prop.notify = true;
-    }
-  
-    if (prop.notify === true) {
-      prop.notify = 'skate.property';
     }
   
     if (typeof prop.type !== 'function') {
@@ -779,10 +861,20 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       };
     }
   
+    prop._value = prop.value;
+    delete prop.value;
+    if (prop._value !== undefined && typeof prop._value !== 'function') {
+      (function () {
+        var value = prop._value;
+        prop._value = function () {
+          return value;
+        };
+      })();
+    }
+  
     internalGetter = prop.get;
     internalSetter = prop.set;
     isBoolean = prop.type && prop.type === Boolean;
-    delete prop.value;
   
     prop.get = function () {
       return internalGetter ? internalGetter.apply(this) : internalValue;
@@ -800,6 +892,9 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       // We report both new and old values;
       var newValue = prop.type(value);
       var oldValue = this[name];
+  
+      // TODO: Should we check at this point to see if it has changed and do
+      // nothing if it hasn't? How can we then force-update if we need to?
   
       // Regardless of any options, we store the value internally.
       internalValue = newValue;
@@ -830,7 +925,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       }
   
       if (prop.notify) {
-        notify(this, prop.notify, name, {
+        (0, _notify2['default'])(this, name, {
           newValue: newValue,
           oldValue: oldValue
         });
@@ -840,44 +935,11 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     return prop;
   }
   
-  function makePropertyHandler(elem, name, depPath, depName) {
-    return function (e) {
-      if (depName !== e.detail.name) {
-        return;
-      }
-  
-      var target = elem;
-  
-      // Resolve the dependency element from the dependecy path. If no path
-      // exists, this will continue to be the main element. If the path
-      // points to a non-element, then it's a no-op.
-      depPath.forEach(function (part) {
-        target = elem && elem[part];
-      });
-  
-      // If the event bubbled, ensure that it doesn't call any handlers for
-      // the same property on main element.
-      if (elem !== e.target) {
-        e.stopImmediatePropagation();
-      }
-  
-      // Only notify of changes if the main element, or the element matched by
-      // the dependency path, matches the target that triggered the event.
-      if (target === e.target) {
-        // We get and set the property so that logic in the getter and setter
-        // get invoked. When the setter is invoked, it automatically notifies
-        // any dependencies.
-        elem[name] = elem[name];
-      }
-    };
-  }
-  
   function defineProperty(elem, name, prop) {
     // We don't need to scope the data to the component ID be cause if multiple
     // bindings on the same component define the same attribute, then they'd
     // conflict anyways.
     var info = (0, _utilData2['default'])(elem);
-    var value = prop && prop.value !== 'undefined' ? prop.value : undefined;
   
     if (!info.attributeToPropertyMap) {
       info.attributeToPropertyMap = {};
@@ -886,10 +948,13 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     prop = property(name, prop);
     Object.defineProperty(elem, name, prop);
   
+    // TODO: What happens if the setter does something with a descendant that
+    // may not exist yet?
+    //
     // Initialise the value if a initial value was provided. Attributes that exist
     // on the element should trump any default values that are provided.
-    if (value !== undefined && (!prop.attr || !elem.hasAttribute(prop.attr))) {
-      elem[name] = typeof value === 'function' ? value.call(elem) : value;
+    if (prop._value && (!prop.attr || !elem.hasAttribute(prop.attr))) {
+      elem[name] = prop._value.call(elem);
     }
   
     // This ensures that the corresponding attribute will know to update this
@@ -901,10 +966,10 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     // If you aren't notifying of property changes, then dependencies aren't
     // listened to.
     if (prop.notify) {
-      prop.deps.forEach(function (dep) {
-        var depPath = dep.split('.');
-        var depName = depPath.pop();
-        elem.addEventListener(prop.notify, makePropertyHandler(elem, name, depPath, depName));
+      // TODO: Should we be invoking the setter or just notifying that this
+      // property changed?
+      (0, _event2['default'])(elem, prop.deps, function () {
+        return elem[name] = elem[name];
       });
     }
   }
@@ -915,7 +980,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     });
   }
   
-  exports['default'] = function (elem) {
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem) {
     var props = arguments[1] === undefined ? {} : arguments[1];
     var prop = arguments[2] === undefined ? {} : arguments[2];
   
@@ -924,8 +989,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     } else {
       defineProperties(elem, props);
     }
-  };
-  
+  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -1762,16 +1826,24 @@ __4390c5a519e11ff146587075b0e7abac = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
+  
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
+  
   var _polyfillMutationObserver = __fcd21ac78247116a0bdde5374b0c4641;
   
   var _polyfillMutationObserver2 = _interopRequireDefault(_polyfillMutationObserver);
   
-  exports['default'] = function (elem, callback) {
+  // TODO: skate.watch() should not create a new observer if it doesn't have to.
+  // TODO: Should we allow the watching of attributes?
+  // TODO: Should we allow the watching of character data? If so, then the
+  // polyfill will need to support this.
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, callback) {
     var opts = arguments[2] === undefined ? {} : arguments[2];
   
     var observer = new _polyfillMutationObserver2['default'](function (mutations) {
       mutations.forEach(function (mutation) {
-        callback(mutation.addedNodes || [], mutation.removedNodes || []);
+        callback.call(elem, mutation.addedNodes || [], mutation.removedNodes || []);
       });
     });
   
@@ -1781,8 +1853,7 @@ __4390c5a519e11ff146587075b0e7abac = (function () {
     });
   
     return observer;
-  };
-  
+  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -2229,6 +2300,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiNoConflict2 = _interopRequireDefault(_apiNoConflict);
   
+  var _apiNotify = __9c53d0b55c601bcd876ca0d265bb297a;
+  
+  var _apiNotify2 = _interopRequireDefault(_apiNotify);
+  
   var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
   
   var _apiProperty2 = _interopRequireDefault(_apiProperty);
@@ -2405,6 +2480,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.event = _apiEvent2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
+  skate.notify = _apiNotify2['default'];
   skate.property = _apiProperty2['default'];
   skate.ready = _apiReady2['default'];
   skate.type = _apiType2['default'];
