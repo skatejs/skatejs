@@ -1,23 +1,41 @@
 import apiChain from './chain';
-import matchesSelector from '../util/matches-selector';
+import matches from '../util/matches-selector';
+import maybeThis from '../util/maybe-this';
 
 function parseEvent (e) {
   var parts = e.split(' ');
+  var name = parts.shift();
+  var selector = parts.join(' ').trim();
   return {
-    name: parts.shift(),
-    delegate: parts.join(' ')
+    name: name,
+    isAny: selector[0] === '*',
+    isChild: selector[0] === '>',
+    selector: selector
   };
 }
 
-function makeDelegateHandler (elem, handler, delegate) {
+function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
     var current = e.target;
+    var selector = parsed.selector;
+
+    // Any descendant.
+    if (parsed.isAny) {
+      e.delegateTarget = current;
+      return handler(e);
+    }
+
+    // Specific children.
+    if (parsed.isChild) {
+      selector = `${elem.tagName} ${selector}`;
+    }
+
+    // Specific descendants.
     while (current && current !== elem.parentNode) {
-      if (matchesSelector(current, delegate)) {
+      if (matches(current, selector)) {
         e.delegateTarget = current;
         return handler(e);
       }
-
       current = current.parentNode;
     }
   };
@@ -25,16 +43,19 @@ function makeDelegateHandler (elem, handler, delegate) {
 
 function makeNormalHandler (elem, handler) {
   return function (e) {
-    e.delegateTarget = e.currentTarget;
-    handler(e);
+    if (e.target === elem) {
+      e.delegateTarget = elem;
+      handler(e);
+    }
   };
 }
 
 function bindEvent (elem, event, handler) {
-  var { name, delegate } = parseEvent(event);
-  var capture = delegate && (name === 'blur' || name === 'focus');
+  var parsed = parseEvent(event);
+  var { name, selector } = parsed;
+  var capture = selector && (name === 'blur' || name === 'focus');
   handler = apiChain(handler).bind(elem);
-  handler = delegate ? makeDelegateHandler(elem, handler, delegate) : makeNormalHandler(elem, handler);
+  handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }
 
@@ -44,10 +65,12 @@ function bindEvents (elem, events) {
   });
 }
 
-export default function (elem, events, handler) {
+export default maybeThis(function (elem, events, handler) {
   if (typeof events === 'string') {
     bindEvent(elem, events, handler);
+  } else if (Array.isArray(events)) {
+    events.forEach(e => bindEvent(elem, e, handler));
   } else {
     bindEvents(elem, events || {});
   }
-}
+});

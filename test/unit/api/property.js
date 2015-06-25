@@ -1,10 +1,9 @@
 import fixture from '../../lib/fixture';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
 
-describe('lifecycle/properties', function () {
+describe('api/property', function () {
   var elem;
 
   beforeEach(function () {
@@ -131,7 +130,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          deps: 'firstChild.propName1',
+          deps: `propName1 > *`,
           set: () => ++triggeredNumber
         }
       }
@@ -147,7 +146,7 @@ describe('lifecycle/properties', function () {
     var el2 = elem2.create();
 
     el1.appendChild(el2);
-    helpers.fixture().appendChild(el1);
+    helperFixture().appendChild(el1);
 
     // We need to check the number of calls as well which element triggered the
     // property event.
@@ -157,10 +156,9 @@ describe('lifecycle/properties', function () {
     // Will notify el1.propName1.
     el2.propName1 = true;
 
-    // Deep property events should not call handlers of the same name on the
-    // dependant element. The dependant element dependant property should
-    // trigger the change.
-    expect(triggeredNumber).to.equal(2);
+    // One for the property, and two for the event triggered once by the
+    // descendant and once by the host.
+    expect(triggeredNumber).to.equal(3);
     expect(triggeredTarget).to.equal(el1);
   });
 
@@ -210,23 +208,6 @@ describe('lifecycle/properties', function () {
     expect(el.propName1).to.equal('test');
   });
 
-  it('custom notify event name', function () {
-    var triggered;
-
-    skate(elem.safe, {
-      properties: {
-        prop: {
-          notify: 'custom-property-event'
-        }
-      }
-    });
-
-    var el = elem.create();
-    el.addEventListener('custom-property-event', () => triggered = true);
-    el.prop = true;
-    expect(triggered).to.equal(true);
-  });
-
   it('should not notify if set to a falsy value', function () {
     var triggered = false;
 
@@ -254,9 +235,9 @@ describe('lifecycle/properties', function () {
       }
     });
 
-    helpers.fixture(`<${elem.safe} trump="attribute"></${elem.safe}>`);
-    skate.init(helpers.fixture());
-    var el = helpers.fixture().querySelector(elem.safe);
+    helperFixture(`<${elem.safe} trump="attribute"></${elem.safe}>`);
+    skate.init(helperFixture());
+    var el = helperFixture().querySelector(elem.safe);
     expect(el.getAttribute('trump')).to.equal('attribute');
     expect(el.trump).to.equal('attribute');
   });
