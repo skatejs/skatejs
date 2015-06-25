@@ -77,7 +77,7 @@ function property (name, prop) {
 
       if (isBoolean && internalValue) {
         this.setAttribute(prop.attr, '');
-      } else if (isBoolean && !internalValue) {
+      } else if (internalValue == null || isBoolean && !internalValue) {
         this.removeAttribute(prop.attr, '');
       } else {
         this.setAttribute(prop.attr, internalValue);
