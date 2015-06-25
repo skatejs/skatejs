@@ -37,6 +37,7 @@ describe('api/event', function () {
     });
 
     var myEl = tag.create();
+    helperFixture(myEl);
     myEl.appendChild(document.createElement('span'));
     skate.emit(myEl.children[0], 'test');
     expect(numTriggered).to.equal(1);
@@ -50,6 +51,7 @@ describe('api/event', function () {
     });
 
     var myEl = tag.create();
+    helperFixture(myEl);
     myEl.appendChild(document.createElement('span'));
     skate.emit(myEl.children[0], 'test');
     expect(numTriggered).to.equal(1);
