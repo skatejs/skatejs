@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
 
+*This is the README for the master branch and is probably out of sync with the last stable release. To see the README for the last stable release select it from the list of tags.*
+
 # Skate
 
 Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.

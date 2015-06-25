@@ -1,3 +1,5 @@
+import maybeThis from '../util/maybe-this';
+
 var CustomEvent = window.CustomEvent;
 
 if (CustomEvent) {
@@ -25,7 +27,7 @@ function emitOne (elem, name, opts) {
   return elem.dispatchEvent(createCustomEvent(name, opts));
 }
 
-function emitAll (elem, name, opts) {
+export default maybeThis(function (elem, name, opts = {}) {
   var names = (typeof name === 'string' ? name.split(' ') : name);
   return names.reduce(function (prev, curr) {
     if (!emitOne(elem, curr, opts)) {
@@ -33,14 +35,4 @@ function emitAll (elem, name, opts) {
     }
     return prev;
   }, []);
-}
-
-function emitFn (name, opts) {
-  return function () {
-    return emitAll(this, name, opts);
-  };
-}
-
-export default function (elem, name = {}, opts = {}) {
-  return typeof elem === 'string' ? emitFn(elem, name) : emitAll(elem, name, opts);
-}
+});

@@ -29,8 +29,8 @@ describe('Registry', function () {
     definitions = registry.getForElement(element);
 
     expect(definitions.length).to.equal(3);
-    expect(definitions[0]).to.equal(definition1);
-    expect(definitions[1]).to.equal(definition2);
-    expect(definitions[2]).to.equal(definition3);
+    expect(definitions).to.contain(definition1, 'element');
+    expect(definitions).to.contain(definition2, 'attribute');
+    expect(definitions).to.contain(definition3, 'classname');
   });
 });
