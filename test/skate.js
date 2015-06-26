@@ -599,6 +599,21 @@
     });
   });
 
+  describe('Document Fragments', function () {
+    it('GH-118 - should not trigger the element is inserted, removed and then put into a fragment', function (done) {
+      var div = document.createElement('div');
+      var frag = document.createDocumentFragment();
+
+      document.body.appendChild(div);
+      frag.appendChild(div);
+
+      setTimeout(function () {
+        // No assertions since frag.hasAttribute access by document observer would error otherwise.
+        done();
+      });
+    });
+  });
+
   describe('Templates', function () {
     it('should not replacing existing content if there is no template', function () {
       skate('my-element', {});
