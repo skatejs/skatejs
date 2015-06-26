@@ -1,5 +1,5 @@
 // src/constants.js
-__fa888db5b6d6402fd0ac4d35eb5ba118 = (function () {
+__22848e6eb5ddd68722bf2a03dc73e10d = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -18,7 +18,7 @@ __fa888db5b6d6402fd0ac4d35eb5ba118 = (function () {
 }).call(this);
 
 // src/globals.js
-__30355fda9f93473ee03f533f213bce9e = (function () {
+__906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -35,7 +35,7 @@ __30355fda9f93473ee03f533f213bce9e = (function () {
 }).call(this);
 
 // src/data.js
-__bca8a6e95315fa2f30ad258207cf3acd = (function () {
+__1d31a3a5e497c74976d725fe4ea5e938 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -50,9 +50,11 @@ __bca8a6e95315fa2f30ad258207cf3acd = (function () {
 }).call(this);
 
 // src/utils.js
-__29b5c27790ac363c6cc3ec13a03799ec = (function () {
+__99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
+  
+  
   
   /**
    * Checks {}.hasOwnProperty in a safe way.
@@ -61,8 +63,7 @@ __29b5c27790ac363c6cc3ec13a03799ec = (function () {
    * @param {String} key The object key to check.
    *
    * @returns {Boolean}
-   */
-  exports.hasOwn = hasOwn;
+   */exports.hasOwn = hasOwn;
   
   /**
    * Camel-cases the specified string.
@@ -128,7 +129,7 @@ __29b5c27790ac363c6cc3ec13a03799ec = (function () {
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __fa888db5b6d6402fd0ac4d35eb5ba118.ATTR_IGNORE;
+  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
   var DocumentFragment = window.DocumentFragment;
   var elementPrototype = window.HTMLElement.prototype;
@@ -221,11 +222,11 @@ __29b5c27790ac363c6cc3ec13a03799ec = (function () {
 }).call(this);
 
 // src/mutation-observer.js
-__c3a3352324001a37f9ac4eecebf1279a = (function () {
+__ff611d2c455b299b951f7e794d2d3337 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  var _utils = __29b5c27790ac363c6cc3ec13a03799ec;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var elementContains = _utils.elementContains;
@@ -541,21 +542,21 @@ __c3a3352324001a37f9ac4eecebf1279a = (function () {
 }).call(this);
 
 // src/registry.js
-__22b591c7d0a309138393d7f026780875 = (function () {
+__69e9c62cf40fb0891a2dd34186d09cdb = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __fa888db5b6d6402fd0ac4d35eb5ba118;
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(__30355fda9f93473ee03f533f213bce9e);
+  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _utils = __29b5c27790ac363c6cc3ec13a03799ec;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -670,7 +671,7 @@ __22b591c7d0a309138393d7f026780875 = (function () {
 }).call(this);
 
 // src/lifecycle.js
-__d959233d561ba73001038b3f7510101c = (function () {
+__3afb33416adfdec2a05e8e91247972a7 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -678,15 +679,15 @@ __d959233d561ba73001038b3f7510101c = (function () {
   
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __fa888db5b6d6402fd0ac4d35eb5ba118.ATTR_IGNORE;
+  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
   
-  var data = _interopRequire(__bca8a6e95315fa2f30ad258207cf3acd);
+  var data = _interopRequire(__1d31a3a5e497c74976d725fe4ea5e938);
   
-  var MutationObserver = _interopRequire(__c3a3352324001a37f9ac4eecebf1279a);
+  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
   
-  var registry = _interopRequire(__22b591c7d0a309138393d7f026780875);
+  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var _utils = __29b5c27790ac363c6cc3ec13a03799ec;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -1105,22 +1106,22 @@ __d959233d561ba73001038b3f7510101c = (function () {
 }).call(this);
 
 // src/document-observer.js
-__d2857b193887b71d7f788bc119281200 = (function () {
+__6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(__30355fda9f93473ee03f533f213bce9e);
+  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
   
-  var _lifecycle = __d959233d561ba73001038b3f7510101c;
+  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  var MutationObserver = _interopRequire(__c3a3352324001a37f9ac4eecebf1279a);
+  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
   
-  var getClosestIgnoredElement = __29b5c27790ac363c6cc3ec13a03799ec.getClosestIgnoredElement;
+  var getClosestIgnoredElement = __99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1201,31 +1202,31 @@ __d2857b193887b71d7f788bc119281200 = (function () {
 }).call(this);
 
 // src/version.js
-__831bdc70fca0009268faeab702f29a02 = (function () {
+__6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.5";
+  module.exports = "0.13.6";
   
   return module.exports
 }).call(this);
 
 // src/skate.js
-__1db89b90f34db3b383675d64f9bf6019 = (function () {
+__880d751441dbbd15758abf63053bf506 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __fa888db5b6d6402fd0ac4d35eb5ba118;
+  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(__d2857b193887b71d7f788bc119281200);
+  var documentObserver = _interopRequire(__6d7033c1bbef2b64e54f3f58cc6d2827);
   
-  var _lifecycle = __d959233d561ba73001038b3f7510101c;
+  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1233,14 +1234,14 @@ __1db89b90f34db3b383675d64f9bf6019 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(__22b591c7d0a309138393d7f026780875);
+  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
   
-  var _utils = __29b5c27790ac363c6cc3ec13a03799ec;
+  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
   
-  var version = _interopRequire(__831bdc70fca0009268faeab702f29a02);
+  var version = _interopRequire(__6c7bfcbc0c7a1db6e242c7f7a90b3330);
   
   var HTMLElement = window.HTMLElement;
   
