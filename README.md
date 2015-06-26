@@ -109,6 +109,10 @@ Or NPM:
 
     npm install skatejs
 
+Or JSPM:
+
+    jspm install npm:skatejs
+
 Include either `dist/skate.js` or `dist/skate.min.js`.
 
 
