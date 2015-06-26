@@ -1,4 +1,5 @@
 import apiEvent from '../api/event';
+import apiObserve from '../api/observe';
 import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
@@ -78,6 +79,7 @@ export default function (opts) {
 
     info.created = true;
     isNative || applyPrototype(this, opts);
+    apiObserve(this, opts.observers);
     apiProperty(this, opts.properties);
     template(this, opts);
     isNative || callCreatedOnDescendants(this, opts);

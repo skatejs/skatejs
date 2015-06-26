@@ -38,5 +38,9 @@ describe('api/create', function () {
     it('should set properties on it', function () {
       expect(skate.create('<div></div>', { test: true }).test).to.equal(true);
     });
+
+    it('should work with special tags', function () {
+      expect(skate.create('<td></td>').tagName.to.equal('TD'));
+    });
   });
 });

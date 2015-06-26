@@ -1,27 +1,3 @@
-// src/constants.js
-__22848e6eb5ddd68722bf2a03dc73e10d = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  var ATTR_IGNORE = 'data-skate-ignore';
-  exports.ATTR_IGNORE = ATTR_IGNORE;
-  var TYPE_ATTRIBUTE = 'attribute';
-  exports.TYPE_ATTRIBUTE = TYPE_ATTRIBUTE;
-  var TYPE_CLASSNAME = 'classname';
-  exports.TYPE_CLASSNAME = TYPE_CLASSNAME;
-  var TYPE_ELEMENT = 'element';
-  exports.TYPE_ELEMENT = TYPE_ELEMENT;
-  
-  return module.exports;
-}).call(this);
-
 // src/api/chain.js
 __4f25f0faaaf0c53e145c08c5d91c9c2b = (function () {
   var module = {
@@ -143,6 +119,146 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 
+// src/polyfill/binding.js
+__14275d78fe72c7ff7ed9f7b26af4709c = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = {
+    /* jshint expr: true */
+    create: function create(opts) {
+      var elem = document.createElement(opts['extends'] || opts.id);
+      opts['extends'] && elem.setAttribute('is', opts.id);
+      return elem;
+    },
+    find: function find(elem, defs) {
+      var attrs = elem.attributes;
+      var definitions = [];
+      var isAttr = attrs.is;
+      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+      var tag = elem.tagName.toLowerCase();
+      var definition = defs[isAttrValue || tag];
+  
+      if (definition && definition.type === this) {
+        var tagToExtend = definition['extends'];
+  
+        if (isAttrValue) {
+          if (tag === tagToExtend) {
+            definitions.push(definition);
+          }
+        } else if (!tagToExtend) {
+          definitions.push(definition);
+        }
+      }
+  
+      return definitions;
+    }
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/type.js
+__df5112248641660374a4ff3deedcb65e = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _polyfillBinding = __14275d78fe72c7ff7ed9f7b26af4709c;
+  
+  var _polyfillBinding2 = _interopRequireDefault(_polyfillBinding);
+  
+  function getClassList(element) {
+    var classList = element.classList;
+  
+    if (classList) {
+      return classList;
+    }
+  
+    var attrs = element.attributes;
+  
+    return attrs['class'] && attrs['class'].nodeValue.split(/\s+/) || [];
+  }
+  
+  exports['default'] = {
+    ATTRIBUTE: {
+      create: function create(opts) {
+        var elem = document.createElement(opts['extends'] || 'div');
+        elem.setAttribute(opts.id, '');
+        return elem;
+      },
+      find: function find(elem, defs) {
+        var attrs = elem.attributes;
+        var attrsLen = attrs.length;
+        var definitions = [];
+        var tag = elem.tagName.toLowerCase();
+  
+        for (var a = 0; a < attrsLen; a++) {
+          var attr = attrs[a].nodeName;
+          var definition = defs[attr];
+  
+          if (definition && definition.type === this) {
+            var tagToExtend = definition['extends'];
+            if (!tagToExtend || tag === tagToExtend) {
+              definitions.push(definition);
+            }
+          }
+        }
+  
+        return definitions;
+      }
+    },
+    CLASSNAME: {
+      create: function create(opts) {
+        var elem = document.createElement(opts['extends'] || 'div');
+        elem.className = opts.id;
+        return elem;
+      },
+      find: function find(elem, defs) {
+        var classList = getClassList(elem);
+        var classListLen = classList.length;
+        var definitions = [];
+        var tag = elem.tagName.toLowerCase();
+  
+        for (var a = 0; a < classListLen; a++) {
+          var className = classList[a];
+          var definition = defs[className];
+  
+          if (definition && definition.type === this) {
+            var tagToExtend = definition['extends'];
+            if (!tagToExtend || tag === tagToExtend) {
+              definitions.push(definition);
+            }
+          }
+        }
+  
+        return definitions;
+      }
+    },
+    ELEMENT: _polyfillBinding2['default']
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/globals.js
 __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
   var module = {
@@ -210,7 +326,9 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  var _apiType = __df5112248641660374a4ff3deedcb65e;
+  
+  var _apiType2 = _interopRequireDefault(_apiType);
   
   var _globals = __906dce814f2e16e7f80d2aa958aa9ac6;
   
@@ -220,18 +338,6 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
   
   var _utilHasOwn2 = _interopRequireDefault(_utilHasOwn);
   
-  function getClassList(element) {
-    var classList = element.classList;
-  
-    if (classList) {
-      return classList;
-    }
-  
-    var attrs = element.attributes;
-  
-    return attrs['class'] && attrs['class'].nodeValue.split(/\s+/) || [];
-  }
-  
   exports['default'] = _globals2['default'].registerIfNotExists('registry', {
     definitions: {},
   
@@ -240,72 +346,19 @@ __270cb854b3681e4b614f772d24705d53 = (function () {
     },
   
     set: function set(id, definition) {
-      if ((0, _utilHasOwn2['default'])(this.definitions, id)) {
-        throw new Error('A component definition of type "' + definition.type + '" with the ID of "' + id + '" already exists.');
+      if (this.get(id)) {
+        throw new Error('A Skate component with the name of "' + id + '" already exists.');
       }
       this.definitions[id] = definition;
       return this;
     },
   
-    isType: function isType(id, type) {
-      var def = this.get(id);
-      return def && def.type === type;
-    },
-  
-    getForElement: function getForElement(element) {
-      var attrs = element.attributes;
-      var attrsLen = attrs.length;
-      var definitions = [];
-      var isAttr = attrs.is;
-      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-      var tag = element.tagName.toLowerCase();
-      var isAttrOrTag = isAttrValue || tag;
-      var definition;
-      var tagToExtend;
-  
-      if (this.isType(isAttrOrTag, _constants.TYPE_ELEMENT)) {
-        definition = this.definitions[isAttrOrTag];
-        tagToExtend = definition['extends'];
-  
-        if (isAttrValue) {
-          if (tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        } else if (!tagToExtend) {
-          definitions.push(definition);
-        }
+    getForElement: function getForElement(elem) {
+      var defs = [];
+      for (var a in _apiType2['default']) {
+        defs = defs.concat(_apiType2['default'][a].find(elem, this.definitions) || []);
       }
-  
-      for (var a = 0; a < attrsLen; a++) {
-        var attr = attrs[a].nodeName;
-  
-        if (this.isType(attr, _constants.TYPE_ATTRIBUTE)) {
-          definition = this.definitions[attr];
-          tagToExtend = definition['extends'];
-  
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-  
-      var classList = getClassList(element);
-      var classListLen = classList.length;
-  
-      for (var b = 0; b < classListLen; b++) {
-        var className = classList[b];
-  
-        if (this.isType(className, _constants.TYPE_CLASSNAME)) {
-          definition = this.definitions[className];
-          tagToExtend = definition['extends'];
-  
-          if (!tagToExtend || tag === tagToExtend) {
-            definitions.push(definition);
-          }
-        }
-      }
-  
-      return definitions;
+      return defs;
     }
   });
   module.exports = exports['default'];
@@ -326,11 +379,9 @@ __092f8936e5006bddcb3baf24320a5a06 = (function () {
     value: true
   });
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
   exports['default'] = function (element) {
     var attrs = element.attributes;
-    return attrs && !!attrs[_constants.ATTR_IGNORE];
+    return attrs && !!attrs['data-skate-ignore'];
   };
   
   module.exports = exports['default'];
@@ -514,6 +565,36 @@ __3a71a6ff9ecf4b5639833a53ddd3f993 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/parse-event.js
+__6df5c0c7da45b729d2e997da010b7ee9 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (e) {
+    var parts = e.split(' ');
+    var name = parts.shift();
+    var selector = parts.join(' ').trim();
+    return {
+      name: name,
+      isAny: selector[0] === '*',
+      isChild: selector[0] === '>',
+      selector: selector
+    };
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/api/event.js
 __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   var module = {
@@ -541,17 +622,9 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   
   var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
   
-  function parseEvent(e) {
-    var parts = e.split(' ');
-    var name = parts.shift();
-    var selector = parts.join(' ').trim();
-    return {
-      name: name,
-      isAny: selector[0] === '*',
-      isChild: selector[0] === '>',
-      selector: selector
-    };
-  }
+  var _utilParseEvent = __6df5c0c7da45b729d2e997da010b7ee9;
+  
+  var _utilParseEvent2 = _interopRequireDefault(_utilParseEvent);
   
   function makeDelegateHandler(elem, handler, parsed) {
     return function (e) {
@@ -590,7 +663,7 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   }
   
   function bindEvent(elem, event, handler) {
-    var parsed = parseEvent(event);
+    var parsed = (0, _utilParseEvent2['default'])(event);
     var name = parsed.name;
     var selector = parsed.selector;
   
@@ -615,6 +688,74 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
       });
     } else {
       bindEvents(elem, events || {});
+    }
+  });
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/observe.js
+__fd371d803858ada4bd9e06cbacfae1cf = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _chain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
+  
+  var _chain2 = _interopRequireDefault(_chain);
+  
+  var _event = __6bf39bed4ad969dbb83d42a8ba2be197;
+  
+  var _event2 = _interopRequireDefault(_event);
+  
+  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
+  
+  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
+  
+  var _utilParseEvent = __6df5c0c7da45b729d2e997da010b7ee9;
+  
+  var _utilParseEvent2 = _interopRequireDefault(_utilParseEvent);
+  
+  var slice = Array.prototype.slice;
+  
+  function observeOne(elem, handler, dependencies) {
+    var events;
+    handler = (0, _chain2['default'])(handler);
+    events = dependencies.map(function (e) {
+      return (0, _utilParseEvent2['default'])(e);
+    });
+    events.forEach(function (e) {
+      (0, _event2['default'])(elem, 'skate.property.' + e.name + ' ' + e.selector, function () {
+        handler.apply(elem, events.map(function (e) {
+          return elem.querySelector(e.selector)[e.name];
+        }));
+      });
+    });
+  }
+  
+  function observeAll(elem) {
+    var observers = arguments[1] === undefined ? {} : arguments[1];
+  
+    Object.keys(observers).forEach(function (handler) {
+      return observeOne(elem, handler, observers[handler]);
+    });
+  }
+  
+  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, handler, dependencies) {
+    if (dependencies === undefined) {
+      observeAll(elem, handler);
+    } else {
+      observeOne(elem, handler, dependencies);
     }
   });
   module.exports = exports['default'];
@@ -815,10 +956,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _event = __6bf39bed4ad969dbb83d42a8ba2be197;
-  
-  var _event2 = _interopRequireDefault(_event);
-  
   var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
   
   var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
@@ -841,16 +978,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       prop.attr = (0, _utilDashCase2['default'])(name);
     }
   
-    if (typeof prop.deps === 'string') {
-      prop.deps = [prop.deps];
-    }
-  
-    if (Array.isArray(prop.deps)) {
-      prop.deps = prop.deps.map(function (name) {
-        return 'skate.property.' + name;
-      });
-    }
-  
     if (prop.notify === undefined) {
       prop.notify = true;
     }
@@ -861,12 +988,10 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       };
     }
   
-    prop._value = prop.value;
-    delete prop.value;
-    if (prop._value !== undefined && typeof prop._value !== 'function') {
+    if (prop.init !== undefined && typeof prop.init !== 'function') {
       (function () {
-        var value = prop._value;
-        prop._value = function () {
+        var value = prop.init;
+        prop.init = function () {
           return value;
         };
       })();
@@ -907,7 +1032,7 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
         if (isBoolean && internalValue) {
           this.setAttribute(prop.attr, '');
-        } else if (isBoolean && !internalValue) {
+        } else if (internalValue == null || isBoolean && !internalValue) {
           this.removeAttribute(prop.attr, '');
         } else {
           this.setAttribute(prop.attr, internalValue);
@@ -953,24 +1078,14 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
     //
     // Initialise the value if a initial value was provided. Attributes that exist
     // on the element should trump any default values that are provided.
-    if (prop._value && (!prop.attr || !elem.hasAttribute(prop.attr))) {
-      elem[name] = prop._value.call(elem);
+    if (prop.init && (!prop.attr || !elem.hasAttribute(prop.attr))) {
+      elem[name] = prop.init.call(elem);
     }
   
     // This ensures that the corresponding attribute will know to update this
     // property when it is set.
     if (prop.attr) {
       info.attributeToPropertyMap[prop.attr] = name;
-    }
-  
-    // If you aren't notifying of property changes, then dependencies aren't
-    // listened to.
-    if (prop.notify) {
-      // TODO: Should we be invoking the setter or just notifying that this
-      // property changed?
-      (0, _event2['default'])(elem, prop.deps, function () {
-        return elem[name] = elem[name];
-      });
     }
   }
   
@@ -1041,6 +1156,10 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
   
   var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  
+  var _apiObserve = __fd371d803858ada4bd9e06cbacfae1cf;
+  
+  var _apiObserve2 = _interopRequireDefault(_apiObserve);
   
   var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
   
@@ -1140,6 +1259,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
       info.created = true;
       isNative || applyPrototype(this, opts);
+      (0, _apiObserve2['default'])(this, opts.observers);
       (0, _apiProperty2['default'])(this, opts.properties);
       template(this, opts);
       isNative || callCreatedOnDescendants(this, opts);
@@ -1373,6 +1493,7 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
   });
   
   exports['default'] = function (callback) {
+    callback = callback.bind(this);
     if (document.readyState === 'complete') {
       callback();
     } else {
@@ -1385,8 +1506,8 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/type.js
-__df5112248641660374a4ff3deedcb65e = (function () {
+// src/api/template.js
+__aa055221e174d0eee59fde807667fa69 = (function () {
   var module = {
     exports: {}
   };
@@ -1398,13 +1519,16 @@ __df5112248641660374a4ff3deedcb65e = (function () {
     value: true
   });
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  exports['default'] = function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
   
-  exports['default'] = {
-    ATTRIBUTE: _constants.TYPE_ATTRIBUTE,
-    CLASSNAME: _constants.TYPE_CLASSNAME,
-    ELEMENT: _constants.TYPE_ELEMENT
+    return function () {
+      this.innerHTML = args.join('');
+    };
   };
+  
   module.exports = exports['default'];
   
   return module.exports;
@@ -1894,7 +2018,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
       // we don't invoke an infinite loop.
       if (attributeToPropertyMap[name] && !info.updatingAttribute) {
         info.updatingProperty = true;
-        this[attributeToPropertyMap[name]] = newValue;
+        this[attributeToPropertyMap[name]] = newValue === null ? undefined : newValue;
         info.updatingProperty = false;
       }
     };
@@ -1918,7 +2042,11 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     value: true
   });
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _polyfillBinding = __14275d78fe72c7ff7ed9f7b26af4709c;
+  
+  var _polyfillBinding2 = _interopRequireDefault(_polyfillBinding);
   
   exports['default'] = {
     // Called when the element is attached to the document.
@@ -1955,7 +2083,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     template: undefined,
   
     // The type of bindings to allow.
-    type: _constants.TYPE_ELEMENT,
+    type: _polyfillBinding2['default'],
   
     // The attribute name to remove after calling the created() callback.
     unresolvedAttribute: 'unresolved'
@@ -2159,33 +2287,20 @@ __2a9c84628af99934db58f308e303b691 = (function () {
     value: true
   });
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var DEFAULT_ELEMENT = 'div';
+  var _apiType = __df5112248641660374a4ff3deedcb65e;
+  
+  var _apiType2 = _interopRequireDefault(_apiType);
   
   function createElement(options) {
-    var element;
-    var id = options.id;
-    var parent = options['extends'];
     var type = options.type;
-  
-    // Allow all types of components to be constructed.
-    if (type === _constants.TYPE_ELEMENT) {
-      element = document.createElement(parent || id);
-      if (parent) {
-        element.setAttribute('is', id);
-      }
-    } else {
-      element = document.createElement(parent || DEFAULT_ELEMENT);
-  
-      if (type === _constants.TYPE_ATTRIBUTE) {
-        element.setAttribute(id, '');
-      } else if (type === _constants.TYPE_CLASSNAME) {
-        element.className = id;
+    for (var a in _apiType2['default']) {
+      var binding = _apiType2['default'][a];
+      if (type === binding) {
+        return binding.create(options);
       }
     }
-  
-    return element;
   }
   
   exports['default'] = function (options) {
@@ -2274,8 +2389,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
-  
   var _apiChain = __4f25f0faaaf0c53e145c08c5d91c9c2b;
   
   var _apiChain2 = _interopRequireDefault(_apiChain);
@@ -2304,6 +2417,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiNotify2 = _interopRequireDefault(_apiNotify);
   
+  var _apiObserve = __fd371d803858ada4bd9e06cbacfae1cf;
+  
+  var _apiObserve2 = _interopRequireDefault(_apiObserve);
+  
   var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
   
   var _apiProperty2 = _interopRequireDefault(_apiProperty);
@@ -2311,6 +2428,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _apiReady = __83ca289f5309abef55c338a9f7a22385;
   
   var _apiReady2 = _interopRequireDefault(_apiReady);
+  
+  var _apiTemplate = __aa055221e174d0eee59fde807667fa69;
+  
+  var _apiTemplate2 = _interopRequireDefault(_apiTemplate);
   
   var _apiType = __df5112248641660374a4ff3deedcb65e;
   
@@ -2363,6 +2484,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _polyfillElementConstructor = __2a9c84628af99934db58f308e303b691;
   
   var _polyfillElementConstructor2 = _interopRequireDefault(_polyfillElementConstructor);
+  
+  var _polyfillBinding = __14275d78fe72c7ff7ed9f7b26af4709c;
+  
+  var _polyfillBinding2 = _interopRequireDefault(_polyfillBinding);
   
   var _polyfillRegistry = __270cb854b3681e4b614f772d24705d53;
   
@@ -2431,12 +2556,11 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var HTMLElement = window.HTMLElement;
   
   function skate(id, userOptions) {
-    var Ctor, CtorParent, isElement, isNative;
+    var Ctor, CtorParent, isNative;
     var options = makeOptions(userOptions);
   
     CtorParent = options['extends'] ? document.createElement(options['extends']).constructor : HTMLElement;
-    isElement = options.type === _constants.TYPE_ELEMENT;
-    isNative = isElement && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(id);
+    isNative = options.type === _polyfillBinding2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(id);
   
     // Inherit from parent prototype.
     if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
@@ -2481,8 +2605,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
   skate.notify = _apiNotify2['default'];
+  skate.observe = _apiObserve2['default'];
   skate.property = _apiProperty2['default'];
   skate.ready = _apiReady2['default'];
+  skate.template = _apiTemplate2['default'];
   skate.type = _apiType2['default'];
   skate.version = _apiVersion2['default'];
   skate.watch = _apiWatch2['default'];

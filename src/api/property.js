@@ -1,7 +1,6 @@
 import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
-import event from './event';
 import maybeThis from '../util/maybe-this';
 import notify from './notify';
 
@@ -19,14 +18,6 @@ function property (name, prop) {
     prop.attr = dashCase(name);
   }
 
-  if (typeof prop.deps === 'string') {
-    prop.deps = [prop.deps];
-  }
-
-  if (Array.isArray(prop.deps)) {
-    prop.deps = prop.deps.map(name => `skate.property.${name}`);
-  }
-
   if (prop.notify === undefined) {
     prop.notify = true;
   }
@@ -35,11 +26,9 @@ function property (name, prop) {
     prop.type = val => val;
   }
 
-  prop._value = prop.value;
-  delete prop.value;
-  if (prop._value !== undefined && typeof prop._value !== 'function') {
-    let value = prop._value;
-    prop._value = () => value;
+  if (prop.init !== undefined && typeof prop.init !== 'function') {
+    let value = prop.init;
+    prop.init = () => value;
   }
 
   internalGetter = prop.get;
@@ -123,22 +112,14 @@ function defineProperty (elem, name, prop) {
   //
   // Initialise the value if a initial value was provided. Attributes that exist
   // on the element should trump any default values that are provided.
-  if (prop._value && (!prop.attr || !elem.hasAttribute(prop.attr))) {
-    elem[name] = prop._value.call(elem);
+  if (prop.init && (!prop.attr || !elem.hasAttribute(prop.attr))) {
+    elem[name] = prop.init.call(elem);
   }
 
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.
   if (prop.attr) {
     info.attributeToPropertyMap[prop.attr] = name;
-  }
-
-  // If you aren't notifying of property changes, then dependencies aren't
-  // listened to.
-  if (prop.notify) {
-    // TODO: Should we be invoking the setter or just notifying that this
-    // property changed?
-    event(elem, prop.deps, () => elem[name] = elem[name]);
   }
 }
 
