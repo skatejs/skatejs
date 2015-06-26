@@ -133,6 +133,7 @@ describe('DOM', function () {
       frag.appendChild(div);
 
       helpers.afterMutations(function () {
+        // No assertions since frag.hasAttribute access by document observer would error otherwise.
         done();
       });
     });
