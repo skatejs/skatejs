@@ -20,7 +20,7 @@ export default globals.registerIfNotExists('registry', {
   find (elem) {
     var defs = [];
     for (let a in bindings) {
-      defs = defs.concat(bindings[a].possible(elem, this.definitions) || []);
+      defs = defs.concat(bindings[a].filterDefinitions(elem, this.definitions) || []);
     }
     return defs;
   }
