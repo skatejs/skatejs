@@ -1,4 +1,10 @@
 export default function chain (...cbs) {
+  // Optimisation so that it doesn't wrap at all if you've only passed in a
+  // single function.
+  if (cbs.length === 1 && typeof cbs[0] === 'function') {
+    return cbs[0];
+  }
+
   cbs = cbs.filter(Boolean).map(cb => {
     // Strings point to a function on the context passed to the proxy fn.
     if (typeof cb === 'string') {

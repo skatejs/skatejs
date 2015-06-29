@@ -1,19 +1,14 @@
+import apiChain from '../api/chain';
 import data from '../util/data';
 import registry from '../polyfill/registry';
 import walkTree from '../util/walk-tree';
 
-function callDetachedOnDescendants (elem, opts) {
-  walkTree(elem.childNodes, function (elem) {
-    registry.find(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
-  }, function (elem) {
-    return !data(elem, opts.id).detached;
+function callDetachedOnDescendants (elem, id) {
+  walkTree(elem.childNodes, function (child) {
+    registry.find(child).forEach(Ctor => Ctor.prototype.detachedCallback.call(child));
+  }, function (child) {
+    return !data(child, id).detached;
   });
-}
-
-function callDetached (elem, opts) {
-  if (opts.detached) {
-    opts.detached.call(elem);
-  }
 }
 
 export default function (opts) {
@@ -26,9 +21,9 @@ export default function (opts) {
       return;
     }
 
-    isNative || callDetachedOnDescendants(this, opts);
     info.detached = true;
-    callDetached(this, opts);
+    apiChain(opts.detached).call(this);
+    isNative || callDetachedOnDescendants(this, opts.id);
     info.attached = false;
   };
 }

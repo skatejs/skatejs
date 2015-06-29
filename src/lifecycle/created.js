@@ -1,3 +1,4 @@
+import apiChain from '../api/chain';
 import apiEvent from '../api/event';
 import apiObserve from '../api/observe';
 import apiProperty from '../api/property';
@@ -34,40 +35,44 @@ function triggerAttributesCreated (elem) {
   }
 }
 
-function markAsResolved (elem, opts) {
-  elem.removeAttribute(opts.unresolvedAttribute);
-  elem.setAttribute(opts.resolvedAttribute, '');
+function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
+  elem.removeAttribute(unresolvedAttribute);
+  elem.setAttribute(resolvedAttribute, '');
 }
 
-function applyPrototype (elem, opts) {
-  protos(opts.prototype).forEach(function (proto) {
-    if (!proto.isPrototypeOf(elem)) {
-      assignSafe(elem, proto);
-    }
-  });
+function callCreatedOnDescendants (elem, id) {
+  return function () {
+    walkTree(elem.childNodes, function (child) {
+      registry.find(child).forEach(Ctor => Ctor.prototype.createdCallback.call(child));
+    }, function (child) {
+      return !data(child, id).created;
+    });
+  };
 }
 
-function callCreatedOnDescendants (elem, opts) {
-  walkTree(elem.childNodes, function (elem) {
-    registry.find(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
-  }, function (elem) {
-    return !data(elem, opts.id).created;
-  });
+function fnOrApi (fn, api) {
+  return typeof fn === 'function' ? fn : api(fn);
 }
 
-function callCreated (elem, opts) {
-  if (opts.created) {
-    opts.created.call(elem);
-  }
-}
-
-function callTemplate (elem, opts) {
-  if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
-    opts.template.call(elem);
-  }
+function applyPrototype (proto) {
+  var prototypes = protos(proto);
+  return function () {
+    prototypes.forEach(proto => {
+      if (!proto.isPrototypeOf(this)) {
+        assignSafe(this, proto);
+      }
+    });
+  };
 }
 
 export default function (opts) {
+  var created = apiChain(opts.created);
+  var events = fnOrApi(opts.events, apiEvent);
+  var observers = fnOrApi(opts.observers, apiObserve);
+  var properties = fnOrApi(opts.properties, apiProperty);
+  var prototype = applyPrototype(opts.prototype);
+  var template = apiChain(opts.template);
+
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
@@ -78,15 +83,15 @@ export default function (opts) {
     }
 
     info.created = true;
-    isNative || applyPrototype(this, opts);
+    isNative || prototype.call(this);
     isNative || patchAttributeMethods(this);
-    callTemplate(this, opts);
-    apiObserve(this, opts.observers);
-    apiProperty(this, opts.properties);
-    apiEvent(this, opts.events);
-    callCreated(this, opts);
-    isNative || callCreatedOnDescendants(this, opts);
+    template.call(this);
+    observers.call(this);
+    properties.call(this);
+    events.call(this);
+    created.call(this);
+    isNative || callCreatedOnDescendants(this, opts.id);
     triggerAttributesCreated(this);
-    markAsResolved(this, opts);
+    markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };
 }
