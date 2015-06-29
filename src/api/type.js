@@ -19,7 +19,7 @@ export default {
       elem.setAttribute(opts.id, '');
       return elem;
     },
-    find (elem, defs) {
+    filterDefinitions (elem, defs) {
       var attrs = elem.attributes;
       var attrsLen = attrs.length;
       var definitions = [];
@@ -49,7 +49,7 @@ export default {
       elem.className = opts.id;
       return elem;
     },
-    find (elem, defs) {
+    filterDefinitions (elem, defs) {
       var classList = getClassList(elem);
       var classListLen = classList.length;
       var definitions = [];
