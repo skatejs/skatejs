@@ -38,6 +38,9 @@ export default {
       }
 
       return definitions;
+    },
+    selector (opts) {
+      return `${opts.extends}.${opts.id}`;
     }
   },
   CLASSNAME: {
@@ -65,6 +68,9 @@ export default {
       }
 
       return definitions;
+    },
+    selector (opts) {
+      return `${opts.extends}[${opts.id}]`;
     }
   },
   ELEMENT: binding
