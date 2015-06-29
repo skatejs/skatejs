@@ -20,7 +20,7 @@ export default function (nodes) {
   }
 
   walkTree(nodesToUse, function (element) {
-    var components = registry.getForElement(element);
+    var components = registry.find(element);
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
