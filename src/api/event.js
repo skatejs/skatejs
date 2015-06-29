@@ -1,7 +1,18 @@
 import apiChain from './chain';
 import matches from '../util/matches-selector';
 import maybeThis from '../util/maybe-this';
-import parseEvent from '../util/parse-event';
+
+function parseEvent (e) {
+  var parts = e.split(' ');
+  var name = parts.shift();
+  var selector = parts.join(' ').trim();
+  return {
+    name: name,
+    isAny: selector[0] === '*',
+    isChild: selector[0] === '>',
+    selector: selector
+  };
+}
 
 function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
