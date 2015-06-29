@@ -52,9 +52,6 @@ function property (name, prop) {
     var newValue = prop.type(value);
     var oldValue = this[name];
 
-    // TODO: Should we check at this point to see if it has changed and do
-    // nothing if it hasn't? How can we then force-update if we need to?
-
     // Regardless of any options, we store the value internally.
     internalValue = newValue;
 
