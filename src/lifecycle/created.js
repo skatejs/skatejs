@@ -47,15 +47,9 @@ function applyPrototype (elem, opts) {
   });
 }
 
-function template (elem, opts) {
-  if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
-    opts.template.call(elem);
-  }
-}
-
 function callCreatedOnDescendants (elem, opts) {
   walkTree(elem.childNodes, function (elem) {
-    registry.getForElement(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
+    registry.find(elem).forEach(Ctor => Ctor.prototype.createdCallback.call(elem));
   }, function (elem) {
     return !data(elem, opts.id).created;
   });
@@ -64,6 +58,12 @@ function callCreatedOnDescendants (elem, opts) {
 function callCreated (elem, opts) {
   if (opts.created) {
     opts.created.call(elem);
+  }
+}
+
+function callTemplate (elem, opts) {
+  if (opts.template && !elem.hasAttribute(opts.resolvedAttribute)) {
+    opts.template.call(elem);
   }
 }
 
@@ -79,13 +79,13 @@ export default function (opts) {
 
     info.created = true;
     isNative || applyPrototype(this, opts);
+    isNative || patchAttributeMethods(this);
+    callTemplate(this, opts);
     apiObserve(this, opts.observers);
     apiProperty(this, opts.properties);
-    template(this, opts);
-    isNative || callCreatedOnDescendants(this, opts);
-    isNative || patchAttributeMethods(this);
     apiEvent(this, opts.events);
     callCreated(this, opts);
+    isNative || callCreatedOnDescendants(this, opts);
     triggerAttributesCreated(this);
     markAsResolved(this, opts);
   };
