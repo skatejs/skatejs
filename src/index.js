@@ -30,7 +30,7 @@ import validCustomElement from './support/valid-custom-element';
 
 function initDocument () {
   walkTree(document.documentElement.childNodes, function (element) {
-    var components = registry.getForElement(element);
+    var components = registry.find(element);
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
