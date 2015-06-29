@@ -5,7 +5,7 @@ export default {
     opts.extends && elem.setAttribute('is', opts.id);
     return elem;
   },
-  find (elem, defs) {
+  filterDefinitions (elem, defs) {
     var attrs = elem.attributes;
     var definitions = [];
     var isAttr = attrs.is;
@@ -26,5 +26,8 @@ export default {
     }
 
     return definitions;
+  },
+  selector (opts) {
+    return opts.extends ? `${opts.extends}[is="${opts.id}"]` : opts.id;
   }
 };
