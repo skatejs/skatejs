@@ -112,7 +112,7 @@ function defineProperty (elem, name, prop) {
   //
   // Initialise the value if a initial value was provided. Attributes that exist
   // on the element should trump any default values that are provided.
-  if (prop.init !== undefined && !prop.attr || !elem.hasAttribute(prop.attr)) {
+  if (prop.init && (!prop.attr || !elem.hasAttribute(prop.attr))) {
     elem[name] = prop.init.call(elem);
   }
 
