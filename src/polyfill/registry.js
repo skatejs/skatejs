@@ -17,10 +17,10 @@ export default globals.registerIfNotExists('registry', {
     return this;
   },
 
-  getForElement (elem) {
+  find (elem) {
     var defs = [];
     for (let a in bindings) {
-      defs = defs.concat(bindings[a].find(elem, this.definitions) || []);
+      defs = defs.concat(bindings[a].possible(elem, this.definitions) || []);
     }
     return defs;
   }
