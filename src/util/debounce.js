@@ -1,12 +1,12 @@
 export default function (fn) {
   var called = false;
 
-  return function () {
+  return function (...args) {
     if (!called) {
       called = true;
-      setTimeout(function () {
+      setTimeout(() => {
         called = false;
-        fn();
+        fn.apply(this, args);
       }, 1);
     }
   };
