@@ -27,7 +27,7 @@ function documentObserverHandler (addedNodes, removedNodes) {
   // nodes. This prevents having to check every node.
   if (addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
     walkTree(addedNodes, function (element) {
-      var components = registry.getForElement(element);
+      var components = registry.find(element);
       var componentsLength = components.length;
 
       for (let a = 0; a < componentsLength; a++) {
@@ -43,7 +43,7 @@ function documentObserverHandler (addedNodes, removedNodes) {
   // We can't check batched nodes here because they won't have a parent node.
   if (removedNodes.length) {
     walkTree(removedNodes, function (element) {
-      var components = registry.getForElement(element);
+      var components = registry.find(element);
       var componentsLength = components.length;
 
       for (let a = 0; a < componentsLength; a++) {
