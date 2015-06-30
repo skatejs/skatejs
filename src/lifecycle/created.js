@@ -1,6 +1,5 @@
 import apiChain from '../api/chain';
 import apiEvent from '../api/event';
-import apiObserve from '../api/observe';
 import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
@@ -41,13 +40,11 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 }
 
 function callCreatedOnDescendants (elem, id) {
-  return function () {
-    walkTree(elem.childNodes, function (child) {
-      registry.find(child).forEach(Ctor => Ctor.prototype.createdCallback.call(child));
-    }, function (child) {
-      return !data(child, id).created;
-    });
-  };
+  walkTree(elem.childNodes, function (child) {
+    registry.find(child).forEach(Ctor => Ctor.prototype.createdCallback.call(child));
+  }, function (child) {
+    return !data(child, id).created;
+  });
 }
 
 function fnOrApi (fn, api) {
@@ -68,7 +65,6 @@ function applyPrototype (proto) {
 export default function (opts) {
   var created = apiChain(opts.created);
   var events = fnOrApi(opts.events, apiEvent);
-  var observers = fnOrApi(opts.observers, apiObserve);
   var properties = fnOrApi(opts.properties, apiProperty);
   var prototype = applyPrototype(opts.prototype);
   var template = apiChain(opts.template);
@@ -86,7 +82,6 @@ export default function (opts) {
     isNative || prototype.call(this);
     isNative || patchAttributeMethods(this);
     template.call(this);
-    observers.call(this);
     properties.call(this);
     events.call(this);
     created.call(this);
