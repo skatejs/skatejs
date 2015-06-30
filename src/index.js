@@ -22,7 +22,7 @@ import detached from './lifecycle/detached';
 import documentObserver from './polyfill/document-observer';
 import elementConstructor from './polyfill/element-constructor';
 import polyfillBinding from './polyfill/binding';
-import registry from './polyfill/registry';
+import registry from './registry';
 import supportsCustomElements from './support/custom-elements';
 import walkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';

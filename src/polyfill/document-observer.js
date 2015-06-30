@@ -4,7 +4,7 @@ import created from '../lifecycle/created';
 import detached from '../lifecycle/detached';
 import globals from '../globals';
 import ignored from '../util/ignored';
-import registry from './registry';
+import registry from '../registry';
 import walkTree from '../util/walk-tree';
 
 var DocumentFragment = window.DocumentFragment;
