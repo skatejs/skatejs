@@ -26,8 +26,5 @@ export default {
     }
 
     return definitions;
-  },
-  selector (opts) {
-    return opts.extends ? `${opts.extends}[is="${opts.id}"]` : opts.id;
   }
 };
