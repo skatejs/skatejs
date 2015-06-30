@@ -4,7 +4,7 @@ import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
 import protos from '../util/protos';
-import registry from '../registry';
+import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
 var elProto = window.Element.prototype;

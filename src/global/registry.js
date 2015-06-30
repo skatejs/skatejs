@@ -1,5 +1,5 @@
-import bindings from '../api/type';
-import globals from '../globals';
+import types from '../types';
+import globals from './vars';
 import hasOwn from '../util/has-own';
 
 export default globals.registerIfNotExists('registry', {
@@ -19,8 +19,8 @@ export default globals.registerIfNotExists('registry', {
 
   find (elem) {
     var defs = [];
-    for (let a in bindings) {
-      defs = defs.concat(bindings[a].filterDefinitions(elem, this.definitions) || []);
+    for (let a in types) {
+      defs = defs.concat(types[a].filterDefinitions(elem, this.definitions) || []);
     }
     return defs;
   }

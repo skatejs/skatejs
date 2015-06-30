@@ -1,5 +1,3 @@
-import binding from './polyfill/binding';
-
 export default {
   // Called when the element is attached to the document.
   attached: function () {},
@@ -35,7 +33,7 @@ export default {
   template: undefined,
 
   // The type of bindings to allow.
-  type: binding,
+  type: 'custom-element-spec',
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'

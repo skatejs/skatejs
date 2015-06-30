@@ -1,6 +1,6 @@
 import assign from '../util/assign';
 import init from './init';
-import registry from '../registry';
+import registry from '../global/registry';
 
 var specialMap = {
   caption: 'table',

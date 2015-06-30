@@ -1,7 +1,7 @@
 import attached from '../lifecycle/attached';
 import created from '../lifecycle/created';
 import elementContains from '../util/element-contains';
-import registry from '../registry';
+import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
 var HTMLElement = window.HTMLElement;

@@ -1,5 +1,5 @@
 import bench from '../lib/bench';
-import documentObserver from '../../src/polyfill/document-observer';
+import documentObserver from '../../src/global/document-observer';
 import helpers from '../lib/helpers';
 
 describe('inserting elements', function () {

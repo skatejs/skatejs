@@ -1,7 +1,7 @@
 'use strict';
 
 import helpers from './lib/helpers';
-import observer from '../src/polyfill/document-observer';
+import observer from '../src/global/document-observer';
 
 afterEach(function () {
   // Ensure perf tests have enough time to cleanup after themselves.

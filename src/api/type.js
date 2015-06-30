@@ -1,4 +1,4 @@
-import binding from '../polyfill/binding';
+import binding from '../type/custom-element-spec';
 
 function getClassList (element) {
   var classList = element.classList;

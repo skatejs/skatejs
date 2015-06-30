@@ -1,6 +1,6 @@
 import apiChain from '../api/chain';
 import data from '../util/data';
-import registry from '../registry';
+import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
 function callAttachedOnDescendants (elem, id) {

@@ -1,5 +1,4 @@
 import maybeThis from '../util/maybe-this';
-import MutationObserver from '../polyfill/mutation-observer';
 
 // TODO: skate.watch() should not create a new observer if it doesn't have to.
 // TODO: Should we allow the watching of attributes?
