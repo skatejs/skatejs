@@ -9,8 +9,8 @@ export default maybeThis(function (elem, name, detail = {}) {
   // - oldValue
   // but may contain other information.
   detail.name = name;
-  detail.newValue === undefined && (detail.newValue = elem[name]);
-  detail.oldValue === undefined && (detail.oldValue = elem[name]);
+  detail.newValue === detail.newValue === undefined ? elem[name] : detail.newValue;
+  detail.oldValue === detail.oldValue === undefined ? elem[name] : detail.oldValue;
 
   emit(elem, [
     'skate.property',
