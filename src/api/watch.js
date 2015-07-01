@@ -1,5 +1,7 @@
 import maybeThis from '../util/maybe-this';
 
+var MutationObserver = window.MutationObserver;
+
 // TODO: skate.watch() should not create a new observer if it doesn't have to.
 // TODO: Should we allow the watching of attributes?
 // TODO: Should we allow the watching of character data? If so, then the
