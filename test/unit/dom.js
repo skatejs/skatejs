@@ -94,7 +94,7 @@ describe('DOM', function () {
       `;
 
       skate(tag, {
-        type: skate.type.CLASSNAME,
+        type: 'class',
         prototype: {
           skated: true
         }

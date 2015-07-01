@@ -33,7 +33,7 @@ export default {
   template: undefined,
 
   // The type of bindings to allow.
-  type: 'custom-element-spec',
+  type: 'element',
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'

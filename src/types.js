@@ -1,5 +1,5 @@
-import customElementSpec from './type/custom-element-spec';
+import typeElement from './type/element';
 
 export default {
-  'custom-element-spec': customElementSpec
+  element: typeElement
 };

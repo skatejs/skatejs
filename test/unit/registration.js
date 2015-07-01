@@ -7,7 +7,7 @@ describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
     var multiple = false;
     var tag = helpers.safeTagName('my-el');
-    var Element = skate(tag.safe, {});
+    skate(tag.safe, {});
 
     try {
       skate(tag.safe, {});
@@ -89,7 +89,6 @@ describe('Returning a constructor', function () {
     var { safe: tagName } = helpers.safeTagName('super-input');
     var Input = skate(tagName, {
       extends: 'input',
-      type: skate.type.ELEMENT,
       prototype: {
         focus: function () {
           called = true;
@@ -145,9 +144,7 @@ describe('Native document.registerElement', function () {
 
   it('should be called if it is compatible with tags', function () {
     var { safe: tagName } = helpers.safeTagName('my-element');
-    skate(tagName, {
-      type: skate.type.ELEMENT
-    });
+    skate(tagName, {});
     expect(tagName in definitions).to.equal(true);
   });
 
@@ -156,11 +153,11 @@ describe('Native document.registerElement', function () {
     var { safe: tagName2 } = helpers.safeTagName('my-element');
 
     skate(tagName1, {
-      type: skate.type.ATTRIBUTE
+      type: 'attribute'
     });
 
     skate(tagName2, {
-      type: skate.type.CLASSNAME
+      type: 'class'
     });
 
     expect(tagName1 in definitions).to.equal(false);
@@ -169,11 +166,7 @@ describe('Native document.registerElement', function () {
 
   it('should not be called if the id is invalid', function () {
     var { safe: tagName } = helpers.safeTagName('div');
-
-    skate(tagName, {
-      type: skate.type.ELEMENT
-    });
-
+    skate(tagName, {});
     expect(tagName in definitions).to.equal(false);
   });
 });

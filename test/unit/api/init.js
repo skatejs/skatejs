@@ -154,9 +154,8 @@ describe('api/init', function () {
       div.className = idsToSkate.join(' ');
 
       idsToSkate.forEach(function (id) {
-        var tag = helpers.safeTagName('my-el');
-        skate(tag.safe, {
-          type: skate.type.CLASSNAME,
+        skate(id, {
+          type: 'class',
           created: function () {
             idsToCheck.push(id);
           }
@@ -164,12 +163,12 @@ describe('api/init', function () {
       });
 
       skate.init(div);
+      expect(idsToCheck).to.contain('hasOwnProperty', 'watch');
     });
 
     it('should use a tag name equal to the provided one', function () {
       var {safe: tagName} = helpers.safeTagName('my-element');
       var MyElement = skate(tagName, {
-        type: skate.type.ELEMENT,
         prototype: {
           returnSelf: function () {
             return this;
@@ -183,8 +182,8 @@ describe('api/init', function () {
   });
 
   describe('duplication', function () {
-    function assertType (name, type, expected, tagToExtend) {
-      it(name + (tagToExtend ? `:${tagToExtend}` : ''), function () {
+    function assertType (type, expected, tagToExtend) {
+      it(type + (tagToExtend ? `:${tagToExtend}` : ''), function () {
         var { safe: tagName } = helpers.safeTagName();
         var calls = 0;
 
@@ -220,15 +219,15 @@ describe('api/init', function () {
     }
 
     describe(':', function () {
-      assertType('element',   skate.type.ELEMENT,   [1, 0, 0, 0]);
-      assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 1, 0]);
-      assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 1]);
-      assertType('element',   skate.type.ELEMENT,   [0, 1, 0, 0], 'div');
-      assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 1, 0], 'div');
-      assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 1], 'div');
-      assertType('element',   skate.type.ELEMENT,   [0, 0, 0, 0], 'span');
-      assertType('attribute', skate.type.ATTRIBUTE, [0, 0, 0, 0], 'span');
-      assertType('classname', skate.type.CLASSNAME, [0, 0, 0, 0], 'span');
+      assertType('element',   [1, 0, 0, 0]);
+      assertType('attribute', [0, 0, 1, 0]);
+      assertType('class',     [0, 0, 0, 1]);
+      assertType('element',   [0, 1, 0, 0], 'div');
+      assertType('attribute', [0, 0, 1, 0], 'div');
+      assertType('class',     [0, 0, 0, 1], 'div');
+      assertType('element',   [0, 0, 0, 0], 'span');
+      assertType('attribute', [0, 0, 0, 0], 'span');
+      assertType('class',     [0, 0, 0, 0], 'span');
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;

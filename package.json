@@ -15,6 +15,9 @@
     "gulp-auto-task": "0.0.1",
     "highlight.js": "^8.6.0",
     "shadejs": "skatejs/shade#c68961928939c728bf830eea7dbce884dc637695",
+    "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#ca1da8a32740f005fa87b8df0ddfdc0345826197",
+    "skatejs-type-attribute": "skatejs/type-attribute#8b8c182816f24e8ecc392aa946e0a22910224c95",
+    "skatejs-type-class": "skatejs/type-class#45009269b779236df1d40c654cc492f73f86ae4c",
     "whatwg-fetch": "^0.9.0"
   },
   "scripts": {

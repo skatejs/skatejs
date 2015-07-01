@@ -28,11 +28,11 @@ describe('api/create', function () {
     it('should init an element and its descendants', function () {
       var descendantTagName = helpers.safeTagName().safe;
       skate(tagName, {});
-      skate(descendantTagName, { type: skate.type.ATTRIBUTE });
+      skate(descendantTagName, { type: 'attribute' });
 
       var result = skate.create(`<${tagName}><div ${descendantTagName}></div></${tagName}>`);
-      expect(resolved(result)).to.equal(true);
-      expect(resolved(result.firstElementChild)).to.equal(true);
+      expect(resolved(result)).to.equal(true, 'host');
+      expect(resolved(result.firstElementChild)).to.equal(true, 'descendant');
     });
 
     it('should set properties on it', function () {
@@ -40,7 +40,7 @@ describe('api/create', function () {
     });
 
     it('should work with special tags', function () {
-      expect(skate.create('<td></td>').tagName.to.equal('TD'));
+      expect(skate.create('<td></td>').tagName).to.equal('TD');
     });
   });
 });

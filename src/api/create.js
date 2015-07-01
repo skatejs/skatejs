@@ -15,24 +15,11 @@ var specialMap = {
 
 function matchTag (dom) {
   var tag = dom.match(/\s*<([^\s>]+)/);
-  return tag && tag[1] || 'div';
-}
-
-function resolveCorrectTagParents (tag) {
-  var mapped;
-  var parent = document.createElement(tag);
-
-  while (mapped = specialMap[parent.tagName.toLowerCase()]) {
-    let tempParent = document.createElement(mapped);
-    tempParent.appendChild(parent);
-    parent = tempParent;
-  }
-
-  return parent;
+  return tag && tag[1];
 }
 
 function createFromHtml (html) {
-  var par = resolveCorrectTagParents(matchTag(html));
+  var par = document.createElement(specialMap[matchTag(html)] || 'div');
   par.innerHTML = html;
   return init(par.firstElementChild);
 }

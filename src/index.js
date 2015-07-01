@@ -21,7 +21,6 @@ import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
 import elementConstructor from './util/element-constructor';
-import polyfillBinding from './type/custom-element-spec';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import walkTree from './util/walk-tree';
@@ -77,43 +76,37 @@ var HTMLElement = window.HTMLElement;
 
 function skate (id, userOptions) {
   var Ctor, CtorParent, isNative;
-  var options = makeOptions(userOptions);
+  var opts = makeOptions(userOptions);
 
-  CtorParent = options.extends ? document.createElement(options.extends).constructor : HTMLElement;
-  isNative = options.type === polyfillBinding && supportsCustomElements() && validCustomElement(id);
+  CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
+  isNative = opts.type === 'element' && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
-  if (!CtorParent.prototype.isPrototypeOf(options.prototype)) {
-    options.prototype = assignSafe(Object.create(CtorParent.prototype), options.prototype);
+  if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
+    opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
   }
 
   // Extend behaviour of existing callbacks.
-  options.prototype.createdCallback = created(options);
-  options.prototype.attachedCallback = attached(options);
-  options.prototype.detachedCallback = detached(options);
-  options.prototype.attributeChangedCallback = attribute(options);
-  Object.defineProperty(options, 'id', {
-    configurable: false,
-    value: id,
-    writable: false
-  });
+  opts.prototype.createdCallback = created(opts);
+  opts.prototype.attachedCallback = attached(opts);
+  opts.prototype.detachedCallback = detached(opts);
+  opts.prototype.attributeChangedCallback = attribute(opts);
+
+  // Ensure the ID can be retrieved from the options or constructor.
+  opts.id = id;
 
   // Make a constructor for the definition.
   if (isNative) {
-    Ctor = document.registerElement(id, options);
+    Ctor = document.registerElement(id, opts);
   } else {
-    Ctor = elementConstructor(options);
+    Ctor = elementConstructor(opts);
     debouncedInitDocumentWhenReady();
     documentObserver.register();
   }
 
   Ctor = makeNonNewableWrapper(Ctor);
-  assignSafe(Ctor, options);
+  assignSafe(Ctor, opts);
   registry.set(id, Ctor);
-  Object.defineProperty(Ctor.prototype, 'constructor', {
-    enumerable: false,
-    value: Ctor
-  });
 
   return Ctor;
 }

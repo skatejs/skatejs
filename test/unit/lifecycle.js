@@ -181,7 +181,7 @@ describe('Lifecycle scenarios', function () {
       var created = 0;
       var attached = 0;
       var def = {
-        type: skate.type.ATTRIBUTE,
+        type: 'attribute',
         created: function () { ++created; },
         attached: function () { ++attached; }
       };
