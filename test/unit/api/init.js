@@ -1,5 +1,8 @@
 import helpers from '../../lib/helpers';
 import skate from '../../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
+import typeClass from 'skatejs-type-class';
+import typeElement from '../../../src/type/element';
 
 describe('api/init', function () {
   var MyEl;
@@ -155,7 +158,7 @@ describe('api/init', function () {
 
       idsToSkate.forEach(function (id) {
         skate(id, {
-          type: 'class',
+          type: typeClass,
           created: function () {
             idsToCheck.push(id);
           }
@@ -219,15 +222,15 @@ describe('api/init', function () {
     }
 
     describe(':', function () {
-      assertType('element',   [1, 0, 0, 0]);
-      assertType('attribute', [0, 0, 1, 0]);
-      assertType('class',     [0, 0, 0, 1]);
-      assertType('element',   [0, 1, 0, 0], 'div');
-      assertType('attribute', [0, 0, 1, 0], 'div');
-      assertType('class',     [0, 0, 0, 1], 'div');
-      assertType('element',   [0, 0, 0, 0], 'span');
-      assertType('attribute', [0, 0, 0, 0], 'span');
-      assertType('class',     [0, 0, 0, 0], 'span');
+      assertType(typeElement,   [1, 0, 0, 0]);
+      assertType(typeAttribute, [0, 0, 1, 0]);
+      assertType(typeClass,     [0, 0, 0, 1]);
+      assertType(typeElement,   [0, 1, 0, 0], 'div');
+      assertType(typeAttribute, [0, 0, 1, 0], 'div');
+      assertType(typeClass,     [0, 0, 0, 1], 'div');
+      assertType(typeElement,   [0, 0, 0, 0], 'span');
+      assertType(typeAttribute, [0, 0, 0, 0], 'span');
+      assertType(typeClass,     [0, 0, 0, 0], 'span');
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;

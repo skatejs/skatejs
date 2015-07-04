@@ -1,7 +1,8 @@
-'use strict';
-
+import helperElement from '../lib/element';
+import helperFixture from '../lib/fixture';
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -67,7 +68,7 @@ describe('lifecycle', function () {
   });
 });
 
-describe('Unresolved attribute', function () {
+describe('unresolved attribute', function () {
   it('should not be considred "resolved" until after template() is called', function () {
     var tagName = helpers.safeTagName('my-element');
     skate(tagName.safe, {
@@ -94,7 +95,7 @@ describe('Unresolved attribute', function () {
   });
 });
 
-describe('Lifecycle scenarios', function () {
+describe('lifecycle scenarios', function () {
   var calls;
   var El;
 
@@ -181,7 +182,7 @@ describe('Lifecycle scenarios', function () {
       var created = 0;
       var attached = 0;
       var def = {
-        type: 'attribute',
+        type: typeAttribute,
         created: function () { ++created; },
         attached: function () { ++attached; }
       };
@@ -192,6 +193,70 @@ describe('Lifecycle scenarios', function () {
       skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
       expect(created).to.equal(2, 'created');
       expect(attached).to.equal(2, 'attached');
+    });
+  });
+
+  describe('created callback ordering on parent -> descendants', function () {
+    var child, descendant, host, num, tag;
+
+    function createDefinitions () {
+      skate(`x-host-${tag}`, {
+        created () {
+          host = ++num;
+        }
+      });
+      skate(`x-child-${tag}`, {
+        created () {
+          child = ++num;
+        }
+      });
+      skate(`x-descendant-${tag}`, {
+        created () {
+          descendant = ++num;
+        }
+      });
+    }
+
+    function createStructure () {
+      helperFixture(`
+        <x-host-${tag}>
+          <x-child-${tag}>
+            <x-descendant-${tag}></x-descendant-${tag}>
+          </x-child-${tag}>
+        </x-host-${tag}>
+      `);
+    }
+
+    beforeEach(function () {
+      child = 0;
+      descendant = 0;
+      host = 0;
+      num = 0;
+      tag = helperElement().safe;
+    });
+
+    it('definition exists before element is created', function (done) {
+      createDefinitions();
+      createStructure();
+      setTimeout(function () {
+        expect(num).to.equal(3, 'num');
+        expect(host).to.equal(3, 'host');
+        expect(child).to.equal(2, 'child');
+        expect(descendant).to.equal(1, 'descendant');
+        done();
+      });
+    });
+
+    it('definition exists after element is created', function (done) {
+      createStructure();
+      createDefinitions();
+      setTimeout(function () {
+        expect(num).to.equal(3, 'num');
+        expect(host).to.equal(3, 'host');
+        expect(child).to.equal(2, 'child');
+        expect(descendant).to.equal(1, 'descendant');
+        done();
+      });
     });
   });
 });

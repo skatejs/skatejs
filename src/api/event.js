@@ -1,4 +1,3 @@
-import apiChain from './chain';
 import matches from '../util/matches-selector';
 import maybeThis from '../util/maybe-this';
 
@@ -54,7 +53,7 @@ function bindEvent (elem, event, handler) {
   var parsed = parseEvent(event);
   var { name, selector } = parsed;
   var capture = selector && (name === 'blur' || name === 'focus');
-  handler = apiChain(handler).bind(elem);
+  handler = handler.bind(elem);
   handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }

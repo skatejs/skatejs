@@ -1,16 +1,11 @@
-import apiChain from './api/chain';
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiEvent from './api/event';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
-import apiNotify from './api/notify';
 import apiProperty from './api/property';
-import apiReady from './api/ready';
 import apiTemplate from './api/template';
-import apiType from './api/type';
 import apiVersion from './api/version';
-import apiWatch from './api/watch';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
@@ -42,7 +37,11 @@ function initDocument () {
 }
 
 function initDocumentWhenReady () {
-  apiReady(initDocument);
+  if (document.readyState === 'complete') {
+    initDocument();
+  } else {
+    document.addEventListener('DOMContentLoaded', initDocument);
+  }
 }
 
 function makeOptions (userOptions) {
@@ -111,19 +110,14 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.chain = apiChain;
 skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.event = apiEvent;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
-skate.notify = apiNotify;
 skate.property = apiProperty;
-skate.ready = apiReady;
 skate.template = apiTemplate;
-skate.type = apiType;
 skate.version = apiVersion;
-skate.watch = apiWatch;
 
 // Global
 window.skate = skate;

@@ -1,7 +1,6 @@
-import types from '../types';
-
 export default function (opts) {
-  var type = types[opts.type];
+  var type = opts.type;
+
   function CustomElement () {
     var element = type.create(opts);
 

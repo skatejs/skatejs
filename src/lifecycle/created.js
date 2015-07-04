@@ -1,4 +1,3 @@
-import apiChain from '../api/chain';
 import apiEvent from '../api/event';
 import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
@@ -63,11 +62,11 @@ function applyPrototype (proto) {
 }
 
 export default function (opts) {
-  var created = apiChain(opts.created);
+  var created = opts.created;
   var events = fnOrApi(opts.events, apiEvent);
   var properties = fnOrApi(opts.properties, apiProperty);
   var prototype = applyPrototype(opts.prototype);
-  var template = apiChain(opts.template);
+  var template = opts.template || function () {};
 
   /* jshint expr: true */
   return function () {
@@ -81,11 +80,11 @@ export default function (opts) {
     info.created = true;
     isNative || prototype.call(this);
     isNative || patchAttributeMethods(this);
-    template.call(this);
     properties.call(this);
+    template.call(this);
+    callCreatedOnDescendants(this, opts.id);
     events.call(this);
     created.call(this);
-    isNative || callCreatedOnDescendants(this, opts.id);
     triggerAttributesCreated(this);
     markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };

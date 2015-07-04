@@ -2,6 +2,7 @@
 
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
+import typeClass from 'skatejs-type-class';
 
 describe('DOM', function () {
   describe('General DOM node interaction.', function () {
@@ -94,7 +95,7 @@ describe('DOM', function () {
       `;
 
       skate(tag, {
-        type: 'class',
+        type: typeClass,
         prototype: {
           skated: true
         }

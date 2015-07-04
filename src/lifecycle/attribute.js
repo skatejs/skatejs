@@ -1,8 +1,7 @@
-import apiChain from '../api/chain';
 import data from '../util/data';
 
 export default function (opts) {
-  var callback = apiChain(opts.attribute);
+  var callback = opts.attribute || function () {};
 
   /* jshint expr: true */
   return function (name, oldValue, newValue) {

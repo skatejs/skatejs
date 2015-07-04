@@ -2,20 +2,22 @@
 
 import registry from '../../src/global/registry';
 import skate from '../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
+import typeClass from 'skatejs-type-class';
 
 describe('Registry', function () {
   it('should set definitions', function () {
-    registry.set('test', { type: 'element' });
+    registry.set('test', {});
     try {
-      registry.set('test', { type: 'element' });
+      registry.set('test', {});
       assert(false);
     } catch (e) {}
   });
 
   it('should return definitions for a given element', function () {
-    var definition1 = { type: 'element' };
-    var definition2 = { type: 'attribute' };
-    var definition3 = { type: 'class' };
+    var definition1 = {};
+    var definition2 = { type: typeAttribute };
+    var definition3 = { type: typeClass };
     var definitions;
     var element = document.createElement('test1');
 

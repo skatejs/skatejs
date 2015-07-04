@@ -1,6 +1,8 @@
 import helpers from '../lib/helpers';
 import resolved from '../lib/resolved';
 import skate from '../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
+import typeClass from 'skatejs-type-class';
 
 describe('constructor', function () {
   var id;
@@ -42,7 +44,7 @@ describe('constructor', function () {
   });
 
   it('attributes', function () {
-    var Ctor = skate(id, { type: 'attribute' });
+    var Ctor = skate(id, { type: typeAttribute });
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('div');
@@ -50,7 +52,7 @@ describe('constructor', function () {
   });
 
   it('attributes + extends', function () {
-    var Ctor = skate(id, { type: 'attribute', extends: 'span' });
+    var Ctor = skate(id, { type: typeAttribute, extends: 'span' });
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
@@ -58,7 +60,7 @@ describe('constructor', function () {
   });
 
   it('classes', function () {
-    var Ctor = skate(id, { type: 'class' });
+    var Ctor = skate(id, { type: typeClass });
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('div');
@@ -66,7 +68,7 @@ describe('constructor', function () {
   });
 
   it('classes + extends', function () {
-    var Ctor = skate(id, { type: 'class', extends: 'span' });
+    var Ctor = skate(id, { type: typeClass, extends: 'span' });
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');

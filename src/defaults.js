@@ -1,3 +1,5 @@
+import typeElement from './type/element';
+
 export default {
   // Called when the element is attached to the document.
   attached: function () {},
@@ -33,7 +35,7 @@ export default {
   template: undefined,
 
   // The type of bindings to allow.
-  type: 'element',
+  type: typeElement,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'

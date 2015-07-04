@@ -1,6 +1,7 @@
 import helpers from '../../lib/helpers';
 import resolved from '../../lib/resolved';
 import skate from '../../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
 
 describe('api/create', function () {
   var tagName;
@@ -28,7 +29,7 @@ describe('api/create', function () {
     it('should init an element and its descendants', function () {
       var descendantTagName = helpers.safeTagName().safe;
       skate(tagName, {});
-      skate(descendantTagName, { type: 'attribute' });
+      skate(descendantTagName, { type: typeAttribute });
 
       var result = skate.create(`<${tagName}><div ${descendantTagName}></div></${tagName}>`);
       expect(resolved(result)).to.equal(true, 'host');

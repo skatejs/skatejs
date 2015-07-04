@@ -1,4 +1,3 @@
-import apiChain from '../api/chain';
 import data from '../util/data';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -22,7 +21,7 @@ export default function (opts) {
     }
 
     info.attached = true;
-    apiChain(opts.attached).call(this);
+    opts.attached.call(this);
     isNative || callAttachedOnDescendants(this, opts.id);
     info.detached = false;
   };

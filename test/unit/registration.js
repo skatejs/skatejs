@@ -2,6 +2,8 @@
 
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
+import typeAttribute from 'skatejs-type-attribute';
+import typeClass from 'skatejs-type-class';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
@@ -153,11 +155,11 @@ describe('Native document.registerElement', function () {
     var { safe: tagName2 } = helpers.safeTagName('my-element');
 
     skate(tagName1, {
-      type: 'attribute'
+      type: typeAttribute
     });
 
     skate(tagName2, {
-      type: 'class'
+      type: typeClass
     });
 
     expect(tagName1 in definitions).to.equal(false);
