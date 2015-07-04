@@ -2,7 +2,6 @@ import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 import maybeThis from '../util/maybe-this';
-import notify from './notify';
 
 // TODO: Lean out option normalisation.
 function property (name, prop) {
@@ -16,10 +15,6 @@ function property (name, prop) {
 
   if (prop.attr === true) {
     prop.attr = dashCase(name);
-  }
-
-  if (prop.notify === undefined) {
-    prop.notify = true;
   }
 
   if (typeof prop.type !== 'function') {
@@ -78,13 +73,6 @@ function property (name, prop) {
     // is useful information for the setter.
     if (internalSetter) {
       internalSetter.call(this, newValue, oldValue);
-    }
-
-    if (prop.notify) {
-      notify(this, name, {
-        newValue: newValue,
-        oldValue: oldValue
-      });
     }
   };
 
