@@ -3,6 +3,7 @@ import helperFixture from '../lib/fixture';
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
+import typeClass from 'skatejs-type-class';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -39,7 +40,7 @@ describe('lifecycle', function () {
 
   it('should call the attached() callback when the element is attached', function (done) {
     helpers.fixture().appendChild(myEl);
-    helpers.afterMutations(function () {
+    setTimeout(function () {
       expect(created).to.equal(true);
       expect(attached).to.equal(true);
       expect(detached).to.equal(false);
@@ -49,9 +50,9 @@ describe('lifecycle', function () {
 
   it('should call the detached() callback when the element is detached', function (done) {
     helpers.fixture().appendChild(myEl);
-    helpers.afterMutations(function () {
+    setTimeout(function () {
       helpers.fixture().removeChild(myEl);
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         expect(created).to.equal(true);
         expect(attached).to.equal(true);
         expect(detached).to.equal(true);
@@ -126,14 +127,14 @@ describe('lifecycle scenarios', function () {
     });
 
     it('should call created', function (done) {
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         expect(calls.created).to.be.greaterThan(0);
         done();
       });
     });
 
     it('should call attached', function (done) {
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         expect(calls.attached).to.be.greaterThan(0);
         done();
       });
@@ -147,13 +148,13 @@ describe('lifecycle scenarios', function () {
       el.textContent = 'gagas';
 
       helpers.fixture(el);
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         helpers.fixture().removeChild(el);
-        helpers.afterMutations(function () {
+        setTimeout(function () {
           helpers.fixture(el);
-          helpers.afterMutations(function () {
+          setTimeout(function () {
             helpers.fixture().removeChild(el);
-            helpers.afterMutations(function () {
+            setTimeout(function () {
               expect(calls[num]).to.equal(val, num);
               done();
             });
@@ -252,11 +253,109 @@ describe('lifecycle scenarios', function () {
       createDefinitions();
       setTimeout(function () {
         expect(num).to.equal(3, 'num');
-        expect(host).to.equal(3, 'host');
+        expect(host).to.equal(1, 'host');
         expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(1, 'descendant');
+        expect(descendant).to.equal(3, 'descendant');
         done();
       });
+    });
+  });
+
+  describe('timing', function () {
+    it('should call lifecycle callbacks at appropriate times.', function (done) {
+      var created = false;
+      var attached = false;
+      var detached = false;
+      var tag = helpers.safeTagName('my-el');
+
+      skate(tag.safe, {
+        created: function () {
+          created = true;
+        },
+        attached: function () {
+          attached = true;
+        },
+        detached: function () {
+          detached = true;
+        }
+      });
+
+      var element = tag.create();
+      expect(created).to.equal(true, 'Should call created');
+      expect(attached).to.equal(false, 'Should not call attached');
+      expect(detached).to.equal(false, 'Should not call detached');
+
+      document.body.appendChild(element);
+      skate.init(element);
+      expect(attached).to.equal(true, 'Should call attached');
+      expect(detached).to.equal(false, 'Should not call remove');
+
+      element.parentNode.removeChild(element);
+
+      // Mutation Observers are async.
+      setTimeout(function () {
+        expect(detached).to.equal(true, 'Should call detached');
+        done();
+      });
+    });
+
+    it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
+      var numCreated = 0;
+      var numAttached = 0;
+      var numDetached = 0;
+      var tag = helpers.safeTagName('my-el');
+      var Element = skate(tag.safe, {
+        created: function () {
+          ++numCreated;
+        },
+        attached: function () {
+          ++numAttached;
+        },
+        detached: function () {
+          ++numDetached;
+        }
+      });
+
+      var element1 = new Element();
+      var element2 = new Element();
+
+      document.body.appendChild(element1);
+      document.body.appendChild(element2);
+
+      skate.init(element1);
+      skate.init(element2);
+
+      expect(numCreated).to.equal(2, 'created');
+      expect(numAttached).to.equal(2, 'attached');
+
+      element1.parentNode.removeChild(element1);
+      element2.parentNode.removeChild(element2);
+
+      // Mutation Observers are async.
+      setTimeout(function () {
+        expect(numDetached).to.equal(2, 'detached');
+        done();
+      });
+    });
+
+    it('should not throw an error if using an id with the same name as a method / property on the Object prototype', function () {
+      var idsToSkate = ['hasOwnProperty', 'watch'];
+      var idsToCheck = [];
+
+      var div = document.createElement('div');
+      div.className = idsToSkate.join(' ');
+
+      idsToSkate.forEach(function (id) {
+        skate(id, {
+          type: typeClass,
+          created: function () {
+            idsToCheck.push(id);
+          }
+        });
+      });
+
+      skate.init(div);
+      expect(idsToCheck).to.contain('hasOwnProperty', 'watch');
     });
   });
 });

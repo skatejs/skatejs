@@ -1,5 +1,6 @@
 import globals from './vars';
 import hasOwn from '../util/has-own';
+import typeElement from '../type/element';
 
 var definitions = {};
 var map = [];
@@ -14,7 +15,7 @@ export default globals.registerIfNotExists('registry', {
       throw new Error(`A Skate component with the name of "${id}" already exists.`);
     }
 
-    var type = opts.type;
+    var type = opts.type || typeElement;
     var typeIndex = types.indexOf(type);
 
     if (typeIndex === -1) {

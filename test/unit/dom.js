@@ -1,23 +1,24 @@
 'use strict';
 
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
+import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
 import typeClass from 'skatejs-type-class';
 
-describe('DOM', function () {
+describe('dom', function () {
   describe('General DOM node interaction.', function () {
     it('Modules should pick up nodes already in the DOM.', function (done) {
       var calls = 0;
-      var tag = helpers.safeTagName().safe;
+      var tag = helperElement().safe;
 
-      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
+      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
       skate(tag, {
         attached: function () {
           ++calls;
         }
       });
 
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -25,7 +26,7 @@ describe('DOM', function () {
 
     it('Modules should pick up nodes attached to the DOM after they are defined.', function (done) {
       var calls = 0;
-      var tag = helpers.safeTagName().safe;
+      var tag = helperElement().safe;
 
       skate(tag, {
         attached: function () {
@@ -33,8 +34,8 @@ describe('DOM', function () {
         }
       });
 
-      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
-      helpers.afterMutations(function () {
+      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
+      setTimeout(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -42,7 +43,7 @@ describe('DOM', function () {
 
     it('should pick up descendants that are attached as part of an HTML block.', function (done) {
       var calls = 0;
-      var tag = helpers.safeTagName().safe;
+      var tag = helperElement().safe;
 
       skate(tag, {
         attached: function () {
@@ -50,8 +51,8 @@ describe('DOM', function () {
         }
       });
 
-      skate.init(helpers.fixture(`<div><${tag}></${tag}></div>`));
-      helpers.afterMutations(function () {
+      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
+      setTimeout(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -59,34 +60,42 @@ describe('DOM', function () {
 
     // IE 11 has a bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml.
     it('should pick up descendants that are detached if an ancestor\'s innerHTML is set.', function (done) {
-      var {safe: tagName} = helpers.safeTagName('my-element');
-      skate(tagName, {
-        detached: function () {
-          done();
+      var tag = helperElement().safe;
+      var detached = false;
+
+      skate(tag, {
+        detached () {
+          detached = true;
         }
       });
 
-      skate.init(helpers.fixture(`<div id="removing"><child><${tagName}></${tagName}></child></div>`));
-      helpers.fixture('');
+      helperFixture(`<div><child><${tag}></${tag}></child></div>`);
+      setTimeout(function () {
+        helperFixture('');
+        setTimeout(function () {
+          expect(detached).to.equal(true);
+          done();
+        });
+      });
     });
 
     // IE 9 / 10 have the same bug with removeChild() as IE 11 does with innerHTML.
     it('should pick up descendants that are detached if an ancestor is detached.', function (done) {
-      var tag = helpers.safeTagName().safe;
+      var tag = helperElement().safe;
       skate(tag, {
         detached: function () {
           done();
         }
       });
 
-      skate.init(helpers.fixture(`<div id="removing"><child><${tag}></${tag}></child></div>`));
-      helpers.fixture().removeChild(document.getElementById('removing'));
+      skate.init(helperFixture(`<div id="removing"><child><${tag}></${tag}></child></div>`));
+      helperFixture().removeChild(document.getElementById('removing'));
     });
   });
 
   describe('SVG', function () {
     it('should work for any SVG element', function () {
-      var tag = helpers.safeTagName().safe;
+      var tag = helperElement().safe;
       var html = `
         <svg width="100" height="100">
           <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
@@ -101,8 +110,8 @@ describe('DOM', function () {
         }
       });
 
-      skate.init(helpers.fixture(html));
-      expect(helpers.fixture().querySelector(`.${tag}`).skated).to.equal(true);
+      skate.init(helperFixture(html));
+      expect(helperFixture().querySelector(`.${tag}`).skated).to.equal(true);
     });
   });
 
@@ -115,7 +124,7 @@ describe('DOM', function () {
     beforeEach(function () {
       created = false;
       attached = false;
-      MyEl = skate(helpers.safeTagName('my-element').safe, {
+      MyEl = skate(helperElement('my-element').safe, {
         created: function () {
           created = true;
         },
@@ -142,7 +151,7 @@ describe('DOM', function () {
       document.body.appendChild(div);
       frag.appendChild(div);
 
-      helpers.afterMutations(function () {
+      setTimeout(function () {
         done();
       });
     });

@@ -140,23 +140,4 @@ describe('api/event', function () {
     inst.focus();
     expect(focus).to.equal(true);
   });
-
-  it('should support an array of event handlers for a given key', function () {
-    var increment = function () { ++calledNum; };
-    var calledNum = 0;
-    var safe = helperElement();
-
-    skate(safe.safe, {
-      events: {
-        test: [
-          increment,
-          increment
-        ]
-      }
-    });
-
-    var el = safe.create();
-    emit(el, 'test');
-    expect(calledNum).to.equal(2);
-  });
 });

@@ -18,7 +18,7 @@ describe('ignoring', function () {
   };
 
   function assertCalls (done) {
-    helpers.afterMutations(function () {
+    setTimeout(function () {
       var expected = supportsCustomElements() ? 1 : 0;
       expect(created).to.equal(expected, 'created');
       expect(attached).to.equal(expected, 'attached');

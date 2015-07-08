@@ -19,38 +19,50 @@ function getClosestIgnoredElement (element) {
   }
 }
 
+function triggerAddedNodes (addedNodes) {
+  walkTree(addedNodes, function (element) {
+    var components = registry.find(element);
+    var componentsLength = components.length;
+
+    for (let a = 0; a < componentsLength; a++) {
+      created(components[a]).call(element);
+    }
+
+    for (let a = 0; a < componentsLength; a++) {
+      attached(components[a]).call(element);
+    }
+  });
+}
+
+function triggerRemovedNodes (removedNodes) {
+  walkTree(removedNodes, function (element) {
+    var components = registry.find(element);
+    var componentsLength = components.length;
+
+    for (let a = 0; a < componentsLength; a++) {
+      detached(components[a]).call(element);
+    }
+  });
+}
+
 function documentObserverHandler (mutations) {
-  var addedNodes = mutations.addedNodes;
-  var removedNodes = mutations.removedNodes;
+  var mutationsLength = mutations.length;
 
-  // Since siblings are batched together, we check the first node's parent
-  // node to see if it is ignored. If it is then we don't process any added
-  // nodes. This prevents having to check every node.
-  if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-    walkTree(addedNodes, function (element) {
-      var components = registry.find(element);
-      var componentsLength = components.length;
+  for (let a = 0; a < mutationsLength; a++) {
+    var addedNodes = mutations[a].addedNodes;
+    var removedNodes = mutations[a].removedNodes;
 
-      for (let a = 0; a < componentsLength; a++) {
-        created(components[a]).call(element);
-      }
+    // Since siblings are batched together, we check the first node's parent
+    // node to see if it is ignored. If it is then we don't process any added
+    // nodes. This prevents having to check every node.
+    if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+      triggerAddedNodes(addedNodes);
+    }
 
-      for (let a = 0; a < componentsLength; a++) {
-        attached(components[a]).call(element);
-      }
-    });
-  }
-
-  // We can't check batched nodes here because they won't have a parent node.
-  if (removedNodes && removedNodes.length) {
-    walkTree(removedNodes, function (element) {
-      var components = registry.find(element);
-      var componentsLength = components.length;
-
-      for (let a = 0; a < componentsLength; a++) {
-        detached(components[a]).call(element);
-      }
-    });
+    // We can't check batched nodes here because they won't have a parent node.
+    if (removedNodes && removedNodes.length) {
+      triggerRemovedNodes(removedNodes);
+    }
   }
 }
 

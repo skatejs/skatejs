@@ -18,31 +18,9 @@ import documentObserver from './global/document-observer';
 import elementConstructor from './util/element-constructor';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
-import walkTree from './util/walk-tree';
+import typeElement from './type/element';
+import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
-
-function initDocument () {
-  walkTree(document.documentElement.childNodes, function (element) {
-    var components = registry.find(element);
-    var componentsLength = components.length;
-
-    for (let a = 0; a < componentsLength; a++) {
-      created(components[a]).call(element);
-    }
-
-    for (let a = 0; a < componentsLength; a++) {
-      attached(components[a]).call(element);
-    }
-  });
-}
-
-function initDocumentWhenReady () {
-  if (document.readyState === 'complete') {
-    initDocument();
-  } else {
-    document.addEventListener('DOMContentLoaded', initDocument);
-  }
-}
 
 function makeOptions (userOptions) {
   var options = assignSafe({}, defaults);
@@ -70,15 +48,28 @@ function makeNonNewableWrapper (Ctor) {
   return CtorWrapper;
 }
 
-var debouncedInitDocumentWhenReady = debounce(initDocumentWhenReady);
 var HTMLElement = window.HTMLElement;
+var initDocument = debounce(function () {
+  utilWalkTree(document.documentElement.childNodes, function (element) {
+    var components = registry.find(element);
+    var componentsLength = components.length;
+
+    for (let a = 0; a < componentsLength; a++) {
+      created(components[a]).call(element);
+    }
+
+    for (let a = 0; a < componentsLength; a++) {
+      attached(components[a]).call(element);
+    }
+  });
+});
 
 function skate (id, userOptions) {
   var Ctor, CtorParent, isNative;
   var opts = makeOptions(userOptions);
 
   CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
-  isNative = opts.type === 'element' && supportsCustomElements() && validCustomElement(id);
+  isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
@@ -99,7 +90,7 @@ function skate (id, userOptions) {
     Ctor = document.registerElement(id, opts);
   } else {
     Ctor = elementConstructor(opts);
-    debouncedInitDocumentWhenReady();
+    initDocument();
     documentObserver.register();
   }
 

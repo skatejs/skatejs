@@ -4,6 +4,7 @@ import registry from '../../src/global/registry';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
+import typeElement from '../../src/type/element';
 
 describe('Registry', function () {
   it('should set definitions', function () {
