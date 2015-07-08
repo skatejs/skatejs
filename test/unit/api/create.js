@@ -1,4 +1,4 @@
-import helpers from '../../lib/helpers';
+import element from '../../lib/element';
 import resolved from '../../lib/resolved';
 import skate from '../../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
@@ -7,7 +7,7 @@ describe('api/create', function () {
   var tagName;
 
   beforeEach(function () {
-    tagName = helpers.safeTagName().safe;
+    tagName = element().safe;
   });
 
   describe('name', function () {
@@ -27,7 +27,7 @@ describe('api/create', function () {
 
   describe('html', function () {
     it('should init an element and its descendants', function () {
-      var descendantTagName = helpers.safeTagName().safe;
+      var descendantTagName = element().safe;
       skate(tagName, {});
       skate(descendantTagName, { type: typeAttribute });
 

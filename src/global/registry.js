@@ -20,11 +20,11 @@ export default globals.registerIfNotExists('registry', {
     if (typeIndex === -1) {
       typeIndex = types.length;
       types.push(type);
-      map[typeIndex] = [];
+      map[typeIndex] = {};
     }
 
     definitions[id] = opts;
-    map[typeIndex].push(opts);
+    map[typeIndex][id] = opts;
 
     return this;
   },
