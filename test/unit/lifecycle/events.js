@@ -4,7 +4,7 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('api/event', function () {
+describe('lifecycle/event', function () {
   var numTriggered;
   var tag;
 

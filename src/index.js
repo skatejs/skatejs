@@ -1,6 +1,5 @@
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
-import apiEvent from './api/event';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
 import apiProperty from './api/property';
@@ -103,7 +102,6 @@ function skate (id, userOptions) {
 
 skate.create = apiCreate;
 skate.emit = apiEmit;
-skate.event = apiEvent;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
 skate.property = apiProperty;
