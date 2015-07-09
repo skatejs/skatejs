@@ -2,7 +2,6 @@ import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiInit from './api/init';
 import apiNoConflict from './api/no-conflict';
-import apiProperty from './api/property';
 import apiTemplate from './api/template';
 import apiVersion from './api/version';
 import assign from './util/assign';
@@ -104,7 +103,6 @@ skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.init = apiInit;
 skate.noConflict = apiNoConflict;
-skate.property = apiProperty;
 skate.template = apiTemplate;
 skate.version = apiVersion;
 
