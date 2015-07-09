@@ -263,6 +263,8 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
   var _ignored2 = _interopRequireDefault(_ignored);
   
+  var Node = window.Node;
+  
   function walk(elem, fn, filter) {
     if (elem.nodeType !== 1 || (0, _ignored2['default'])(elem) || filter && filter(elem) === false) {
       return;
@@ -279,11 +281,12 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   }
   
   exports['default'] = function (elems, fn, filter) {
-    if (elems.length === undefined) {
+    if (elems instanceof Node) {
       elems = [elems];
     }
   
-    for (var a = 0; a < elems.length; a++) {
+    var elemsLen = elems.length;
+    for (var a = 0; a < elemsLen; a++) {
       walk(elems[a], fn, filter);
     }
   };
@@ -968,37 +971,25 @@ __3add36046399fead5a83243849207ed7 = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
-  var HTMLElement = window.HTMLElement;
+  exports['default'] = function (element) {
+    var isInDom = (0, _utilElementContains2['default'])(document, element);
   
-  exports['default'] = function (nodes) {
-    var nodesToUse = nodes;
-  
-    if (!nodes) {
-      return nodes;
-    }
-  
-    if (typeof nodes === 'string') {
-      nodesToUse = nodes = document.querySelectorAll(nodes);
-    } else if (nodes instanceof HTMLElement) {
-      nodesToUse = [nodes];
-    }
-  
-    (0, _utilWalkTree2['default'])(nodesToUse, function (element) {
-      var components = _globalRegistry2['default'].find(element);
+    (0, _utilWalkTree2['default'])(element, function (descendant) {
+      var components = _globalRegistry2['default'].find(descendant);
       var componentsLength = components.length;
   
       for (var a = 0; a < componentsLength; a++) {
-        (0, _lifecycleCreated2['default'])(components[a]).call(element);
+        (0, _lifecycleCreated2['default'])(components[a]).call(descendant);
       }
   
       for (var a = 0; a < componentsLength; a++) {
-        if ((0, _utilElementContains2['default'])(document, element)) {
-          (0, _lifecycleAttached2['default'])(components[a]).call(element);
+        if (isInDom) {
+          (0, _lifecycleAttached2['default'])(components[a]).call(descendant);
         }
       }
     });
   
-    return nodes;
+    return element;
   };
   
   module.exports = exports['default'];
