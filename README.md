@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
+[![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=0.13.x)](https://travis-ci.org/skatejs/skatejs)
 
 # Skate
 
