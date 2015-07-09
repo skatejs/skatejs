@@ -19,16 +19,8 @@ describe('api/init', function () {
     helpers.fixture(`<${tagName.safe}></${tagName.safe}>`);
   });
 
-  it('should accept a selector', function () {
-    expect(skate.init(`#${helpers.fixture().id} ${tagName.safe}`).item(0).textContent).to.equal('test');
-  });
-
   it('should accept a node', function () {
     expect(skate.init(helpers.fixture().querySelector(tagName.safe)).textContent).to.equal('test');
-  });
-
-  it('should accept a node list', function () {
-    expect(skate.init(helpers.fixture().querySelectorAll(tagName.safe)).item(0).textContent).to.equal('test');
   });
 
   describe('sync', function () {

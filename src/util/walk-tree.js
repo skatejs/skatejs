@@ -1,5 +1,7 @@
 import ignored from './ignored';
 
+var Node = window.Node;
+
 function walk (elem, fn, filter) {
   if (elem.nodeType !== 1 || ignored(elem) || (filter && filter(elem) === false)) {
     return;
@@ -16,11 +18,12 @@ function walk (elem, fn, filter) {
 }
 
 export default function (elems, fn, filter) {
-  if (elems.length === undefined) {
+  if (elems instanceof Node) {
     elems = [elems];
   }
 
-  for (let a = 0; a < elems.length; a++) {
+  var elemsLen = elems.length;
+  for (let a = 0; a < elemsLen; a++) {
     walk(elems[a], fn, filter);
   }
 }

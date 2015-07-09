@@ -4,35 +4,23 @@ import elementContains from '../util/element-contains';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
-var HTMLElement = window.HTMLElement;
+export default function (element) {
+  var isInDom = elementContains(document, element);
 
-export default function (nodes) {
-  var nodesToUse = nodes;
-
-  if (!nodes) {
-    return nodes;
-  }
-
-  if (typeof nodes === 'string') {
-    nodesToUse = nodes = document.querySelectorAll(nodes);
-  } else if (nodes instanceof HTMLElement) {
-    nodesToUse = [nodes];
-  }
-
-  walkTree(nodesToUse, function (element) {
-    var components = registry.find(element);
+  walkTree(element, function (descendant) {
+    var components = registry.find(descendant);
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
-      created(components[a]).call(element);
+      created(components[a]).call(descendant);
     }
 
     for (let a = 0; a < componentsLength; a++) {
-      if (elementContains(document, element)) {
-        attached(components[a]).call(element);
+      if (isInDom) {
+        attached(components[a]).call(descendant);
       }
     }
   });
 
-  return nodes;
+  return element;
 }
