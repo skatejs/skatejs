@@ -201,9 +201,9 @@ describe('lifecycle scenarios', function () {
     var child, descendant, host, num, tag;
 
     function createDefinitions () {
-      skate(`x-host-${tag}`, {
+      skate(`x-descendant-${tag}`, {
         created () {
-          host = ++num;
+          descendant = ++num;
         }
       });
       skate(`x-child-${tag}`, {
@@ -211,9 +211,9 @@ describe('lifecycle scenarios', function () {
           child = ++num;
         }
       });
-      skate(`x-descendant-${tag}`, {
+      skate(`x-host-${tag}`, {
         created () {
-          descendant = ++num;
+          host = ++num;
         }
       });
     }
@@ -241,9 +241,9 @@ describe('lifecycle scenarios', function () {
       createStructure();
       setTimeout(function () {
         expect(num).to.equal(3, 'num');
-        expect(host).to.equal(3, 'host');
+        expect(host).to.equal(1, 'host');
         expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(1, 'descendant');
+        expect(descendant).to.equal(3, 'descendant');
         done();
       });
     });
@@ -253,9 +253,9 @@ describe('lifecycle scenarios', function () {
       createDefinitions();
       setTimeout(function () {
         expect(num).to.equal(3, 'num');
-        expect(host).to.equal(1, 'host');
+        expect(host).to.equal(3, 'host');
         expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(3, 'descendant');
+        expect(descendant).to.equal(1, 'descendant');
         done();
       });
     });

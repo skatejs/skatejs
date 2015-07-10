@@ -80,12 +80,12 @@ export default function (opts) {
     info.created = true;
     isNative || prototype.call(this);
     isNative || patchAttributeMethods(this);
-    properties.call(this);
-    template.call(this);
-    callCreatedOnDescendants(this, opts.id);
     events.call(this);
+    template.call(this);
+    properties.call(this);
     created.call(this);
     triggerAttributesCreated(this);
     markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
+    isNative || callCreatedOnDescendants(this, opts.id);
   };
 }
