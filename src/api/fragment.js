@@ -26,14 +26,9 @@ function decorateFragmentMethods (frag) {
   };
 }
 
-function createInitingFragment() {
+export default function (html) {
   var frag = document.createDocumentFragment();
   decorateFragmentMethods(frag);
-  return frag;
-}
-
-export default function (html) {
-  var frag = createInitingFragment();
   if (typeof html === 'string') {
     var par = createParentElement(html);
     par.innerHTML = html;
