@@ -3,7 +3,7 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('lifecycle/property', function () {
+describe('api/property', function () {
   var elem;
 
   beforeEach(function () {

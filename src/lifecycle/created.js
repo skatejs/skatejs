@@ -1,7 +1,7 @@
+import apiEvent from '../api/event';
+import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
-import lifecycleEvents from './events';
-import lifecycleProperty from './property';
 import protos from '../util/protos';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -63,8 +63,8 @@ function applyPrototype (proto) {
 
 export default function (opts) {
   var created = opts.created;
-  var events = fnOrApi(opts.events, lifecycleEvents);
-  var properties = fnOrApi(opts.properties, lifecycleProperty);
+  var events = fnOrApi(opts.events, apiEvent);
+  var properties = fnOrApi(opts.properties, apiProperty);
   var prototype = applyPrototype(opts.prototype);
   var template = opts.template || function () {};
 
