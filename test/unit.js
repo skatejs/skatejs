@@ -2,6 +2,7 @@ import './boot';
 import './unit/api/create';
 import './unit/api/emit';
 import './unit/api/event';
+import './unit/api/fragment';
 import './unit/api/init';
 import './unit/api/no-conflict';
 import './unit/api/property';

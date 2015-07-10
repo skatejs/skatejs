@@ -1,25 +1,10 @@
 import assign from '../util/assign';
+import createParentElement from '../util/create-parent-element';
 import init from './init';
 import registry from '../global/registry';
 
-var specialMap = {
-  caption: 'table',
-  dd: 'dl',
-  dt: 'dl',
-  li: 'ul',
-  tbody: 'table',
-  td: 'tr',
-  thead: 'table',
-  tr: 'tbody'
-};
-
-function matchTag (dom) {
-  var tag = dom.match(/\s*<([^\s>]+)/);
-  return tag && tag[1];
-}
-
 function createFromHtml (html) {
-  var par = document.createElement(specialMap[matchTag(html)] || 'div');
+  var par = createParentElement(html);
   par.innerHTML = html;
   return init(par.firstElementChild);
 }
