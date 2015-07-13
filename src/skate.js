@@ -14,12 +14,18 @@ import version from './version';
 
 /**
  * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution.
+ * happen more than once in the same execution, and that it happens after the DOM is ready.
  *
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName('html'));
+  if (document.readyState === 'complete') {
+    initElements(document.getElementsByTagName('html'));
+  } else {
+    document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
+      initElements(document.getElementsByTagName('html'));
+    });
+  }
 });
 
 /**
