@@ -5,7 +5,7 @@ function isReady() {
   if (isOldIE) {
     return document.readyState === 'complete';
   } else {
-    return document.readyState === 'loading' || document.readyState === 'complete';
+    return document.readyState === 'interactive' || document.readyState === 'complete';
   }
 }
 
