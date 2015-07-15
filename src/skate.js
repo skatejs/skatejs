@@ -22,6 +22,17 @@ import version from './version';
 
 var HTMLElement = window.HTMLElement;
 
+// IE <= 10 can fire "interactive" too early (#243).
+var isOldIE = !!document.attachEvent;  // attachEvent was removed in IE11.
+
+function isReady () {
+  if (isOldIE) {
+    return document.readyState === 'complete';
+  } else {
+    return document.readyState === 'interactive' || document.readyState === 'complete';
+  }
+}
+
 /**
  * Initialises all valid elements in the document. Ensures that it does not
  * happen more than once in the same execution, and that it happens after the DOM is ready.
@@ -29,12 +40,17 @@ var HTMLElement = window.HTMLElement;
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  if (document.readyState === 'complete') {
+  var initialiseSkateElementsOnDomLoad = function () {
     initElements(document.documentElement.childNodes);
+  };
+  if (isReady()) {
+    initialiseSkateElementsOnDomLoad();
   } else {
-    document.addEventListener('DOMContentLoaded', function initialiseSkateElementsOnDomLoad() {
-      initElements(document.documentElement.childNodes);
-    });
+    if (isOldIE) {
+      window.addEventListener('load', initialiseSkateElementsOnDomLoad);
+    } else {
+      document.addEventListener('DOMContentLoaded', initialiseSkateElementsOnDomLoad);
+    }
   }
 });
 
