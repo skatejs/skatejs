@@ -2,6 +2,7 @@
 
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
+import helperResolved from '../lib/resolved';
 import skate from '../../src/index';
 import typeClass from 'skatejs-type-class';
 
@@ -104,14 +105,11 @@ describe('dom', function () {
       `;
 
       skate(tag, {
-        type: typeClass,
-        prototype: {
-          skated: true
-        }
+        type: typeClass
       });
 
       skate.init(helperFixture(html));
-      expect(helperFixture().querySelector(`.${tag}`).skated).to.equal(true);
+      expect(helperResolved(helperFixture().querySelector(`.${tag}`))).to.equal(true);
     });
   });
 
