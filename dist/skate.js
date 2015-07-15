@@ -927,14 +927,36 @@ var inherit = _utils.inherit;
 
 var version = _interopRequire(require("./version"));
 
+// IE <= 10 can fire "interactive" too early (#243).
+var isOldIE = !!document.attachEvent; // attachEvent was removed in IE11.
+
+function isReady() {
+  if (isOldIE) {
+    return document.readyState === "complete";
+  } else {
+    return document.readyState === "interactive" || document.readyState === "complete";
+  }
+}
+
 /**
  * Initialises all valid elements in the document. Ensures that it does not
- * happen more than once in the same execution.
+ * happen more than once in the same execution, and that it happens after the DOM is ready.
  *
  * @returns {undefined}
  */
 var initDocument = debounce(function () {
-  initElements(document.getElementsByTagName("html"));
+  var initialiseSkateElementsOnDomLoad = function initialiseSkateElementsOnDomLoad() {
+    initElements(document.getElementsByTagName("html"));
+  };
+  if (isReady()) {
+    initialiseSkateElementsOnDomLoad();
+  } else {
+    if (isOldIE) {
+      window.addEventListener("load", initialiseSkateElementsOnDomLoad);
+    } else {
+      document.addEventListener("DOMContentLoaded", initialiseSkateElementsOnDomLoad);
+    }
+  }
 });
 
 /**
@@ -1239,5 +1261,5 @@ function objEach(obj, fn) {
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-module.exports = "0.12.4";
+module.exports = "0.12.5";
 },{}]},{},[8]);
