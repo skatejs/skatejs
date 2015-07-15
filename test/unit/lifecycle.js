@@ -1,5 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
+import helperReady from '../lib/ready';
 import helpers from '../lib/helpers';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
@@ -40,7 +41,7 @@ describe('lifecycle', function () {
 
   it('should call the attached() callback when the element is attached', function (done) {
     helpers.fixture().appendChild(myEl);
-    setTimeout(function () {
+    helperReady(function () {
       expect(created).to.equal(true);
       expect(attached).to.equal(true);
       expect(detached).to.equal(false);
@@ -50,9 +51,9 @@ describe('lifecycle', function () {
 
   it('should call the detached() callback when the element is detached', function (done) {
     helpers.fixture().appendChild(myEl);
-    setTimeout(function () {
+    helperReady(function () {
       helpers.fixture().removeChild(myEl);
-      setTimeout(function () {
+      helperReady(function () {
         expect(created).to.equal(true);
         expect(attached).to.equal(true);
         expect(detached).to.equal(true);
@@ -127,14 +128,14 @@ describe('lifecycle scenarios', function () {
     });
 
     it('should call created', function (done) {
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls.created).to.be.greaterThan(0);
         done();
       });
     });
 
     it('should call attached', function (done) {
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls.attached).to.be.greaterThan(0);
         done();
       });
@@ -148,13 +149,13 @@ describe('lifecycle scenarios', function () {
       el.textContent = 'gagas';
 
       helpers.fixture(el);
-      setTimeout(function () {
+      helperReady(function () {
         helpers.fixture().removeChild(el);
-        setTimeout(function () {
+        helperReady(function () {
           helpers.fixture(el);
-          setTimeout(function () {
+          helperReady(function () {
             helpers.fixture().removeChild(el);
-            setTimeout(function () {
+            helperReady(function () {
               expect(calls[num]).to.equal(val, num);
               done();
             });
@@ -239,7 +240,7 @@ describe('lifecycle scenarios', function () {
     it('definition exists before element is created', function (done) {
       createDefinitions();
       createStructure();
-      setTimeout(function () {
+      helperReady(function () {
         expect(num).to.equal(3, 'num');
         expect(host).to.equal(1, 'host');
         expect(child).to.equal(2, 'child');
@@ -251,7 +252,7 @@ describe('lifecycle scenarios', function () {
     it('definition exists after element is created', function (done) {
       createStructure();
       createDefinitions();
-      setTimeout(function () {
+      helperReady(function () {
         expect(num).to.equal(3, 'num');
         expect(host).to.equal(3, 'host');
         expect(child).to.equal(2, 'child');
@@ -293,7 +294,7 @@ describe('lifecycle scenarios', function () {
       element.parentNode.removeChild(element);
 
       // Mutation Observers are async.
-      setTimeout(function () {
+      helperReady(function () {
         expect(detached).to.equal(true, 'Should call detached');
         done();
       });
@@ -332,7 +333,7 @@ describe('lifecycle scenarios', function () {
       element2.parentNode.removeChild(element2);
 
       // Mutation Observers are async.
-      setTimeout(function () {
+      helperReady(function () {
         expect(numDetached).to.equal(2, 'detached');
         done();
       });
