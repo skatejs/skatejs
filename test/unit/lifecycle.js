@@ -1,7 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
-import helpers from '../lib/helpers';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
@@ -15,7 +14,7 @@ describe('lifecycle', function () {
   var detached = false;
 
   beforeEach(function () {
-    tagName = helpers.safeTagName('my-el');
+    tagName = helperElement('my-el');
     created = false;
     attached = false;
     detached = false;
@@ -40,7 +39,7 @@ describe('lifecycle', function () {
   });
 
   it('should call the attached() callback when the element is attached', function (done) {
-    helpers.fixture().appendChild(myEl);
+    helperFixture().appendChild(myEl);
     helperReady(function () {
       expect(created).to.equal(true);
       expect(attached).to.equal(true);
@@ -50,9 +49,9 @@ describe('lifecycle', function () {
   });
 
   it('should call the detached() callback when the element is detached', function (done) {
-    helpers.fixture().appendChild(myEl);
+    helperFixture().appendChild(myEl);
     helperReady(function () {
-      helpers.fixture().removeChild(myEl);
+      helperFixture().removeChild(myEl);
       helperReady(function () {
         expect(created).to.equal(true);
         expect(attached).to.equal(true);
@@ -72,7 +71,7 @@ describe('lifecycle', function () {
 
 describe('unresolved attribute', function () {
   it('should not be considred "resolved" until after template() is called', function () {
-    var tagName = helpers.safeTagName('my-element');
+    var tagName = helperElement('my-element');
     skate(tagName.safe, {
       template: function () {
         expect(this.hasAttribute('unresolved')).to.equal(true);
@@ -80,11 +79,11 @@ describe('unresolved attribute', function () {
       }
     });
 
-    skate.init(helpers.fixture('<my-element unresolved></my-element>', tagName));
+    skate.init(helperFixture('<my-element unresolved></my-element>', tagName));
   });
 
   it('should be considred "resolved" after the created lifecycle finishes', function () {
-    var tag = helpers.safeTagName('my-element').safe;
+    var tag = helperElement('my-element').safe;
     skate(tag, {
       created: function () {
         expect(this.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
@@ -92,7 +91,7 @@ describe('unresolved attribute', function () {
       }
     });
 
-    var element = skate.init(helpers.fixture(`<${tag} unresolved></${tag}>`).children[0]);
+    var element = skate.init(helperFixture(`<${tag} unresolved></${tag}>`).children[0]);
     expect(element.hasAttribute('resolved')).to.equal(true, 'should have resolved');
   });
 });
@@ -108,7 +107,7 @@ describe('lifecycle scenarios', function () {
       detached: 0
     };
 
-    var { safe: tagName } = helpers.safeTagName('my-element');
+    var { safe: tagName } = helperElement('my-element');
     El = skate(tagName, {
       created: function () {
         ++calls.created;
@@ -124,7 +123,7 @@ describe('lifecycle scenarios', function () {
 
   describe('use the constructor then add it to the DOM', function () {
     beforeEach(function () {
-      helpers.fixture(new El());
+      helperFixture(new El());
     });
 
     it('should call created', function (done) {
@@ -148,13 +147,13 @@ describe('lifecycle scenarios', function () {
 
       el.textContent = 'gagas';
 
-      helpers.fixture(el);
+      helperFixture(el);
       helperReady(function () {
-        helpers.fixture().removeChild(el);
+        helperFixture().removeChild(el);
         helperReady(function () {
-          helpers.fixture(el);
+          helperFixture(el);
           helperReady(function () {
-            helpers.fixture().removeChild(el);
+            helperFixture().removeChild(el);
             helperReady(function () {
               expect(calls[num]).to.equal(val, num);
               done();
@@ -179,8 +178,8 @@ describe('lifecycle scenarios', function () {
 
   describe('multiple bindings', function () {
     it('should initialise all bindings', function () {
-      var id1 = helpers.safeTagName('my-el');
-      var id2 = helpers.safeTagName('my-el');
+      var id1 = helperElement('my-el');
+      var id2 = helperElement('my-el');
       var created = 0;
       var attached = 0;
       var def = {
@@ -192,7 +191,7 @@ describe('lifecycle scenarios', function () {
       skate(id1.safe, def);
       skate(id2.safe, def);
 
-      skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
+      skate.init(helperFixture(`<div ${id1.safe} ${id2.safe}></div>`));
       expect(created).to.equal(2, 'created');
       expect(attached).to.equal(2, 'attached');
     });
@@ -267,7 +266,7 @@ describe('lifecycle scenarios', function () {
       var created = false;
       var attached = false;
       var detached = false;
-      var tag = helpers.safeTagName('my-el');
+      var tag = helperElement('my-el');
 
       skate(tag.safe, {
         created: function () {
@@ -304,7 +303,7 @@ describe('lifecycle scenarios', function () {
       var numCreated = 0;
       var numAttached = 0;
       var numDetached = 0;
-      var tag = helpers.safeTagName('my-el');
+      var tag = helperElement('my-el');
       var Element = skate(tag.safe, {
         created: function () {
           ++numCreated;

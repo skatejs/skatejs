@@ -1,6 +1,6 @@
 'use strict';
 
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
@@ -8,7 +8,7 @@ import typeClass from 'skatejs-type-class';
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
     var multiple = false;
-    var tag = helpers.safeTagName('my-el');
+    var tag = helperElement('my-el');
     skate(tag.safe, {});
 
     try {
@@ -22,7 +22,7 @@ describe('Registration', function () {
 
 describe('Returning a constructor', function () {
   it('should return a constructor that extends a native element.', function () {
-    var tag = helpers.safeTagName('my-el');
+    var tag = helperElement('my-el');
     var Element = skate(tag.safe, {
       prototype: {
         func1: function () {}
@@ -44,7 +44,7 @@ describe('Returning a constructor', function () {
   });
 
   it('should not allow the constructor property to be enumerated.', function () {
-    var tag = helpers.safeTagName('my-el');
+    var tag = helperElement('my-el');
     var Element = skate(tag.safe, {});
 
     for (var prop in Element.prototype) {
@@ -55,7 +55,7 @@ describe('Returning a constructor', function () {
   });
 
   it('should affect the element prototype even if it was not constructed using the constructor.', function () {
-    var tag = helpers.safeTagName('my-el');
+    var tag = helperElement('my-el');
     var Element = skate(tag.safe, {
       prototype: {
         func1: function () {}
@@ -71,7 +71,7 @@ describe('Returning a constructor', function () {
   });
 
   it('should allow getters and setters on the prototype', function () {
-    var tag = helpers.safeTagName('my-el');
+    var tag = helperElement('my-el');
     var Element = skate(tag.safe, {
       prototype: Object.create({}, {
         test: {
@@ -88,7 +88,7 @@ describe('Returning a constructor', function () {
 
   it('should overwrite prototype members', function () {
     var called = false;
-    var { safe: tagName } = helpers.safeTagName('super-input');
+    var { safe: tagName } = helperElement('super-input');
     var Input = skate(tagName, {
       extends: 'input',
       prototype: {
@@ -109,7 +109,7 @@ describe('Returning a constructor', function () {
     var tagName;
 
     beforeEach(function () {
-      tagName = helpers.safeTagName('my-element');
+      tagName = helperElement('my-element');
       Div = skate(tagName.safe, {
         extends: 'div'
       });
@@ -145,14 +145,14 @@ describe('Native document.registerElement', function () {
   });
 
   it('should be called if it is compatible with tags', function () {
-    var { safe: tagName } = helpers.safeTagName('my-element');
+    var { safe: tagName } = helperElement('my-element');
     skate(tagName, {});
     expect(tagName in definitions).to.equal(true);
   });
 
   it('should not be called if it is not compatible with tags', function () {
-    var { safe: tagName1 } = helpers.safeTagName('my-element');
-    var { safe: tagName2 } = helpers.safeTagName('my-element');
+    var { safe: tagName1 } = helperElement('my-element');
+    var { safe: tagName2 } = helperElement('my-element');
 
     skate(tagName1, {
       type: typeAttribute
@@ -167,7 +167,7 @@ describe('Native document.registerElement', function () {
   });
 
   it('should not be called if the id is invalid', function () {
-    var { safe: tagName } = helpers.safeTagName('div');
+    var { safe: tagName } = helperElement('div');
     skate(tagName, {});
     expect(tagName in definitions).to.equal(false);
   });
