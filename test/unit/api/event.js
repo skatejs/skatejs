@@ -4,7 +4,7 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('lifecycle/event', function () {
+describe('api/event', function () {
   var numTriggered;
   var tag;
 
@@ -32,7 +32,7 @@ describe('lifecycle/event', function () {
   it('events on child elements', function () {
     skate(tag.safe, {
       events: {
-        'test > *': increment
+        test: increment
       }
     });
 
@@ -46,7 +46,7 @@ describe('lifecycle/event', function () {
   it('events on descendant elements', function () {
     skate(tag.safe, {
       events: {
-        'test *': increment
+        test: increment
       }
     });
 

@@ -7,8 +7,6 @@ function parseEvent (e) {
   var selector = parts.join(' ').trim();
   return {
     name: name,
-    isAny: selector[0] === '*',
-    isChild: selector[0] === '>',
     selector: selector
   };
 }
@@ -17,19 +15,6 @@ function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
     var current = e.target;
     var selector = parsed.selector;
-
-    // Any descendant.
-    if (parsed.isAny) {
-      e.delegateTarget = current;
-      return handler(e);
-    }
-
-    // Specific children.
-    if (parsed.isChild) {
-      selector = `${elem.tagName} ${selector}`;
-    }
-
-    // Specific descendants.
     while (current && current !== elem.parentNode) {
       if (matches(current, selector)) {
         e.delegateTarget = current;
@@ -42,10 +27,8 @@ function makeDelegateHandler (elem, handler, parsed) {
 
 function makeNormalHandler (elem, handler) {
   return function (e) {
-    if (e.target === elem) {
-      e.delegateTarget = elem;
-      handler(e);
-    }
+    e.delegateTarget = elem;
+    handler(e);
   };
 }
 
