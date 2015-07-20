@@ -43,7 +43,7 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   });
   
   exports['default'] = function (element) {
-    var namespace = arguments[1] === undefined ? '' : arguments[1];
+    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
   
     var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
     return namespace && (data[namespace] || (data[namespace] = {})) || data;
@@ -355,40 +355,6 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/assign-safe.js
-__d9d26492984e649e5130081ad32bafd6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
-  
-    parents.forEach(function (parent) {
-      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
-        var childDesc = Object.getOwnPropertyDescriptor(child, name);
-        if (!childDesc || childDesc.configurable) {
-          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-        }
-      });
-    });
-    return child;
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
 // src/util/matches-selector.js
 __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   var module = {
@@ -451,8 +417,8 @@ __3a71a6ff9ecf4b5639833a53ddd3f993 = (function () {
   return module.exports;
 }).call(this);
 
-// src/lifecycle/events.js
-__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
+// src/api/event.js
+__6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   var module = {
     exports: {}
   };
@@ -480,8 +446,6 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
     var selector = parts.join(' ').trim();
     return {
       name: name,
-      isAny: selector[0] === '*',
-      isChild: selector[0] === '>',
       selector: selector
     };
   }
@@ -490,19 +454,6 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
     return function (e) {
       var current = e.target;
       var selector = parsed.selector;
-  
-      // Any descendant.
-      if (parsed.isAny) {
-        e.delegateTarget = current;
-        return handler(e);
-      }
-  
-      // Specific children.
-      if (parsed.isChild) {
-        selector = elem.tagName + ' ' + selector;
-      }
-  
-      // Specific descendants.
       while (current && current !== elem.parentNode) {
         if ((0, _utilMatchesSelector2['default'])(current, selector)) {
           e.delegateTarget = current;
@@ -515,10 +466,8 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   
   function makeNormalHandler(elem, handler) {
     return function (e) {
-      if (e.target === elem) {
-        e.delegateTarget = elem;
-        handler(e);
-      }
+      e.delegateTarget = elem;
+      handler(e);
     };
   }
   
@@ -555,6 +504,40 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/assign-safe.js
+__d9d26492984e649e5130081ad32bafd6 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (child) {
+    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      parents[_key - 1] = arguments[_key];
+    }
+  
+    parents.forEach(function (parent) {
+      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
+        var childDesc = Object.getOwnPropertyDescriptor(child, name);
+        if (!childDesc || childDesc.configurable) {
+          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
+        }
+      });
+    });
+    return child;
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -580,8 +563,8 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
-// src/lifecycle/property.js
-__5fe98810c40e8fe796b072491d45fcc6 = (function () {
+// src/api/property.js
+__f57aa4e0179bb8c6b45d999112238add = (function () {
   var module = {
     exports: {}
   };
@@ -729,8 +712,8 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
   }
   
   exports['default'] = (0, _utilMaybeThis2['default'])(function (elem) {
-    var props = arguments[1] === undefined ? {} : arguments[1];
-    var prop = arguments[2] === undefined ? {} : arguments[2];
+    var props = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+    var prop = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
   
     if (typeof props === 'string') {
       defineProperty(elem, props, prop);
@@ -786,6 +769,14 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
+  
+  var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  
+  var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
+  
+  var _apiProperty2 = _interopRequireDefault(_apiProperty);
+  
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
@@ -793,14 +784,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
-  
-  var _events2 = _interopRequireDefault(_events);
-  
-  var _property = __5fe98810c40e8fe796b072491d45fcc6;
-  
-  var _property2 = _interopRequireDefault(_property);
   
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
@@ -875,8 +858,8 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   exports['default'] = function (opts) {
     var created = opts.created;
-    var events = fnOrApi(opts.events, _events2['default']);
-    var properties = fnOrApi(opts.properties, _property2['default']);
+    var events = fnOrApi(opts.events, _apiEvent2['default']);
+    var properties = fnOrApi(opts.properties, _apiProperty2['default']);
     var prototype = applyPrototype(opts.prototype);
     var template = opts.template || function () {};
   
@@ -892,13 +875,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       info.created = true;
       isNative || prototype.call(this);
       isNative || patchAttributeMethods(this);
-      properties.call(this);
-      template.call(this);
-      callCreatedOnDescendants(this, opts.id);
       events.call(this);
+      template.call(this);
+      properties.call(this);
       created.call(this);
       triggerAttributesCreated(this);
       markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
+      isNative || callCreatedOnDescendants(this, opts.id);
     };
   };
   
@@ -1035,15 +1018,34 @@ __1675a7174b713323cc232370699a2714 = (function () {
     tr: 'tbody'
   };
   
+  function fixIeNotAllowingInnerHTMLOnTableElements(tag, html) {
+    var target = document.createElement('div');
+    var levels = 0;
+  
+    while (tag) {
+      html = '<' + tag + '>' + html + '</' + tag + '>';
+      tag = specialMap[tag];
+      ++levels;
+    }
+  
+    target.innerHTML = html;
+    for (var a = 0; a <= levels; a++) {
+      target = target.firstElementChild;
+    }
+  
+    return target;
+  }
+  
   function matchTag(dom) {
     var tag = dom.match(/\s*<([^\s>]+)/);
     return tag && tag[1];
   }
   
   function createFromHtml(html) {
-    var par = document.createElement(specialMap[matchTag(html)] || 'div');
+    var tag = specialMap[matchTag(html)];
+    var par = document.createElement(tag || 'div');
     par.innerHTML = html;
-    return (0, _init2['default'])(par.firstElementChild);
+    return (0, _init2['default'])(par.firstElementChild || fixIeNotAllowingInnerHTMLOnTableElements(tag, html));
   }
   
   function createFromName(name) {
@@ -1108,7 +1110,7 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   }
   
   exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, name) {
-    var opts = arguments[2] === undefined ? {} : arguments[2];
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
   
     var names = typeof name === 'string' ? name.split(' ') : name;
     return names.reduce(function (prev, curr) {
@@ -1415,7 +1417,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
   var DocumentFragment = window.DocumentFragment;
-  var MutationObserver = window.MutationObserver;
+  var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
   
   function getClosestIgnoredElement(element) {
     var parent = element;
@@ -1711,7 +1713,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   function makeNonNewableWrapper(Ctor) {
     var CtorWrapper = function CtorWrapper() {
-      var props = arguments[0] === undefined ? {} : arguments[0];
+      var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   
       return (0, _utilAssign2['default'])(new Ctor(), props);
     };
