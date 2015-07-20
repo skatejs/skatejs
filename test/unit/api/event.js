@@ -1,10 +1,8 @@
-import emit from '../../../src/api/emit';
-import helpers from '../../lib/helpers';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('lifecycle/event', function () {
+describe('api/event', function () {
   var numTriggered;
   var tag;
 
@@ -32,7 +30,7 @@ describe('lifecycle/event', function () {
   it('events on child elements', function () {
     skate(tag.safe, {
       events: {
-        'test > *': increment
+        test: increment
       }
     });
 
@@ -46,7 +44,7 @@ describe('lifecycle/event', function () {
   it('events on descendant elements', function () {
     skate(tag.safe, {
       events: {
-        'test *': increment
+        test: increment
       }
     });
 
@@ -70,7 +68,7 @@ describe('lifecycle/event', function () {
 
     par.removeChild(myEl);
     par.appendChild(myEl);
-    helpers.dispatchEvent('test', myEl);
+    skate.emit(myEl, 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -104,7 +102,7 @@ describe('lifecycle/event', function () {
   it('should support delegate blur and focus events', function () {
     var blur = false;
     var focus = false;
-    var { safe: tagName } = helpers.safeTagName('my-component');
+    var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
       events: {
@@ -119,11 +117,11 @@ describe('lifecycle/event', function () {
 
       prototype: {
         blur: function () {
-          helpers.dispatchEvent('blur', this.querySelector('input'));
+          skate.emit(this.querySelector('input'), 'blur');
         },
 
         focus: function () {
-          helpers.dispatchEvent('focus', this.querySelector('input'));
+          skate.emit(this.querySelector('input'), 'focus');
         }
       },
 
@@ -132,7 +130,7 @@ describe('lifecycle/event', function () {
       }
     });
 
-    var inst = skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+    var inst = skate.init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
 
     inst.blur();
     expect(blur).to.equal(true);

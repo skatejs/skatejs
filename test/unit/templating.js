@@ -1,11 +1,11 @@
 'use strict';
 
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
 import skate from '../../src/index';
 
 describe('Templates', function () {
   it('should execute the template function before created is called', function () {
-    var {safe: tagName} = helpers.safeTagName('my-el');
+    var { safe: tagName } = helperElement('my-el');
     var MyEl = skate(tagName, {
       created: function () {
         expect(this.textContent).to.equal('test');
@@ -20,7 +20,7 @@ describe('Templates', function () {
   });
 
   it('should have access to the extended prototype in the template function', function () {
-    var {safe: tagName} = helpers.safeTagName('my-el');
+    var { safe: tagName } = helperElement('my-el');
     var MyEl = skate(tagName, {
       prototype: {
         myfunc: function () {}

@@ -1,4 +1,5 @@
-import helpers from '../../lib/helpers';
+import helperElement from '../../lib/element';
+import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
@@ -9,24 +10,24 @@ describe('api/init', function () {
   var tagName;
 
   beforeEach(function () {
-    tagName = helpers.safeTagName('my-el');
+    tagName = helperElement('my-el');
     MyEl = skate(tagName.safe, {
       created: function () {
         this.textContent = 'test';
       }
     });
 
-    helpers.fixture(`<${tagName.safe}></${tagName.safe}>`);
+    helperFixture(`<${tagName.safe}></${tagName.safe}>`);
   });
 
   it('should accept a node', function () {
-    expect(skate.init(helpers.fixture().querySelector(tagName.safe)).textContent).to.equal('test');
+    expect(skate.init(helperFixture().querySelector(tagName.safe)).textContent).to.equal('test');
   });
 
   describe('sync', function () {
     it('should take an element', function () {
       var initialised = false;
-      var { safe: tagName } = helpers.safeTagName('div');
+      var { safe: tagName } = helperElement('div');
 
       skate(tagName, {
         attached: function () {
@@ -34,7 +35,7 @@ describe('api/init', function () {
         }
       });
 
-      skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+      skate.init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
       expect(initialised).to.equal(true);
     });
   });
@@ -42,7 +43,7 @@ describe('api/init', function () {
   describe('duplication', function () {
     function assertType (type, expected, tagToExtend) {
       it(type + (tagToExtend ? `:${tagToExtend}` : ''), function () {
-        var { safe: tagName } = helpers.safeTagName();
+        var { safe: tagName } = helperElement();
         var calls = 0;
 
         skate(tagName, {
@@ -89,7 +90,7 @@ describe('api/init', function () {
 
       it('should not initialise a single component more than once on a single element', function () {
         var calls = 0;
-        var {safe: tagName} = helpers.safeTagName('my-element');
+        var {safe: tagName} = helperElement('my-element');
 
         skate(tagName, {
           created: function () {

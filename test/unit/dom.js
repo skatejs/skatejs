@@ -2,6 +2,8 @@
 
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
+import helperReady from '../lib/ready';
+import helperResolved from '../lib/resolved';
 import skate from '../../src/index';
 import typeClass from 'skatejs-type-class';
 
@@ -18,7 +20,7 @@ describe('dom', function () {
         }
       });
 
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -35,7 +37,7 @@ describe('dom', function () {
       });
 
       skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -52,7 +54,7 @@ describe('dom', function () {
       });
 
       skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls).to.equal(1);
         done();
       });
@@ -70,9 +72,9 @@ describe('dom', function () {
       });
 
       helperFixture(`<div><child><${tag}></${tag}></child></div>`);
-      setTimeout(function () {
+      helperReady(function () {
         helperFixture('');
-        setTimeout(function () {
+        helperReady(function () {
           expect(detached).to.equal(true);
           done();
         });
@@ -104,14 +106,11 @@ describe('dom', function () {
       `;
 
       skate(tag, {
-        type: typeClass,
-        prototype: {
-          skated: true
-        }
+        type: typeClass
       });
 
       skate.init(helperFixture(html));
-      expect(helperFixture().querySelector(`.${tag}`).skated).to.equal(true);
+      expect(helperResolved(helperFixture().querySelector(`.${tag}`))).to.equal(true);
     });
   });
 
@@ -151,7 +150,7 @@ describe('dom', function () {
       document.body.appendChild(div);
       frag.appendChild(div);
 
-      setTimeout(function () {
+      helperReady(function () {
         done();
       });
     });
