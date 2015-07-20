@@ -72,7 +72,7 @@ describe('api/event', function () {
     expect(numTriggered).to.equal(1);
   });
 
-  it('should support delegate events', function () {
+  it('should support delegate event selectors', function () {
     skate(tag.safe, {
       events: {
         'test a': function (e) {
