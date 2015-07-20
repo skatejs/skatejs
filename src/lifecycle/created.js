@@ -1,3 +1,4 @@
+import apiEmit from '../api/emit';
 import apiEvent from '../api/event';
 import apiProperty from '../api/property';
 import assignSafe from '../util/assign-safe';
@@ -87,5 +88,11 @@ export default function (opts) {
     triggerAttributesCreated(this);
     markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
     isNative || callCreatedOnDescendants(this, opts.id);
+    apiEmit(this, '_skate-ready', {
+      detail: {
+        element: this,
+        definition: opts
+      }
+    });
   };
 }
