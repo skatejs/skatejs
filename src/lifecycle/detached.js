@@ -1,3 +1,4 @@
+import apiEmit from '../api/emit';
 import data from '../util/data';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -23,6 +24,12 @@ export default function (opts) {
     info.detached = true;
     opts.detached.call(this);
     isNative || callDetachedOnDescendants(this, opts.id);
+    apiEmit(info.attached, '_skate-unready', {
+      detail: {
+        element: this,
+        definition: opts
+      }
+    });
     info.attached = false;
   };
 }
