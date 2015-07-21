@@ -47,7 +47,10 @@ export default {
     var definitions = [];
     var isAttr = attrs.is;
     var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-    var tag = element.tagName.toLowerCase();
+
+    // Using localName as fallback for edge cases when processing <object> tag that is used
+    // as inteface to NPAPI plugin.
+    var tag = (element.tagName || element.localName).toLowerCase();
     var isAttrOrTag = isAttrValue || tag;
     var definition;
     var tagToExtend;

@@ -382,7 +382,9 @@ function initElements (elements) {
       triggerLifecycle(element, currentNodeDefinitions[b]);
     }
 
-    var elementChildNodes = element.childNodes;
+    // When <object> tag is used to expose NPAPI api to js may have different behaviour then other
+    // tags. One of those differences is that it's childNodes can be undefined.
+    var elementChildNodes = element.childNodes || [];
     var elementChildNodesLen = elementChildNodes.length;
 
     if (elementChildNodesLen) {
