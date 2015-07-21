@@ -67,6 +67,7 @@ export default function (opts) {
   var events = fnOrApi(opts.events, apiEvent);
   var properties = fnOrApi(opts.properties, apiProperty);
   var prototype = applyPrototype(opts.prototype);
+  var ready = apiEmit('_skate-ready', { detail: opts });
   var template = opts.template || function () {};
 
   /* jshint expr: true */
@@ -88,11 +89,6 @@ export default function (opts) {
     triggerAttributesCreated(this);
     markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
     isNative || callCreatedOnDescendants(this, opts.id);
-    apiEmit(this, '_skate-ready', {
-      detail: {
-        element: this,
-        definition: opts
-      }
-    });
+    ready.call(this);
   };
 }

@@ -1,26 +1,24 @@
+import apiQuery from './query';
 import utilData from '../util/data';
-import utilMaybeThis from '../util/maybe-this';
-import utilQuery from '../util/query';
 
-const EVENT = '_skate-ready';
-const RESOLVED = 'resolved';
+var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
 
-export default utilMaybeThis(function (elem, name, func, once = false) {
-  var data = once && utilData(elem);
-
-  utilQuery(elem, name).forEach(function (desc) {
-    if (desc.hasAttribute(RESOLVED)) {
-      func.call(desc);
+export default function (elem, name, func) {
+  function mutationObserverHandler (mutations) {
+    if (mutations && mutations[0].addedNodes && mutations[0].addedNodes.length) {
+      apiQuery(elem, name, func);
     }
-  });
+  }
 
-  if (!data || !data.hasReadyListener) {
-    /* jshint expr: true */
-    data && (data.hasReadyListener = true);
-    elem.addEventListener(EVENT, function (e) {
-      if (e.detail.definition.id === name) {
-        func.call(e.detail.element);
-      }
+  var data = utilData(elem);
+
+  if (!data.readyObserver) {
+    data.readyObserver = new MutationObserver(mutationObserverHandler);
+    data.readyObserver.observe(elem, {
+      childList: true,
+      subtree: true
     });
   }
-});
+
+  apiQuery(elem, name, func);
+}

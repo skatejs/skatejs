@@ -11,29 +11,25 @@ describe('api/ready', function () {
 
   it('existing components', function (done) {
     var tag = helperElement();
-    var element1 = host();
-    var element2 = tag.create();
-
-    element1.appendChild(element2);
-    apiReady(element1, tag.safe, function () {
-      expect(this).to.equal(element2);
-      done();
-    });
+    var elem = host();
 
     skate(tag.safe, {});
+    elem.appendChild(tag.create());
+    apiReady(elem, tag.safe, function () {
+      expect(this.tagName.toLowerCase()).to.equal(tag.safe);
+      done();
+    });
   });
 
   it('subsequent components', function (done) {
     var tag = helperElement();
-    var element1 = host();
-    var element2 = tag.create();
+    var elem = host();
 
-    apiReady(element1, tag.safe, function () {
-      expect(this).to.equal(element2);
+    apiReady(elem, tag.safe, function () {
+      expect(this.tagName.toLowerCase()).to.equal(tag.safe);
       done();
     });
-    element1.appendChild(element2);
-
     skate(tag.safe, {});
+    elem.appendChild(tag.create());
   });
 });

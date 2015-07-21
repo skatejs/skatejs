@@ -1,6 +1,7 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
+import supportCustomElements from '../../../src/support/custom-elements';
 
 describe('created callback ordering on parent -> descendants', function () {
   var child, descendant, host, num, tag;
@@ -58,9 +59,17 @@ describe('created callback ordering on parent -> descendants', function () {
     createDefinitions();
     setTimeout(function () {
       expect(num).to.equal(3, 'num');
-      expect(host).to.equal(3, 'host');
-      expect(child).to.equal(1, 'child');
-      expect(descendant).to.equal(2, 'descendant');
+
+      if (supportCustomElements()) {
+        expect(host).to.equal(3, 'host');
+        expect(child).to.equal(1, 'child');
+        expect(descendant).to.equal(2, 'descendant');
+      } else {
+        expect(host).to.equal(1, 'host');
+        expect(child).to.equal(2, 'child');
+        expect(descendant).to.equal(3, 'descendant');
+      }
+
       done();
     });
   });

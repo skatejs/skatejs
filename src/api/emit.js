@@ -33,7 +33,7 @@ function createCustomEvent (name, opts = {}) {
   var child = document.createElement('div');
   parent.appendChild(child);
   parent.addEventListener('test', () => hasBubbleOnDetachedElements = true);
-  child.dispatchEvent(createCustomEvent('test'));
+  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
 }());
 
 function emitOne (elem, name, opts) {

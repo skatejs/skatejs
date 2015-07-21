@@ -14,6 +14,7 @@ import './unit/dom';
 import './unit/extending';
 import './unit/ignoring';
 import './unit/lifecycle';
+import './unit/lifecycle-scenarios';
 import './unit/lifecycle/created';
 import './unit/registration';
 import './unit/registry';

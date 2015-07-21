@@ -18,6 +18,10 @@ function walk (elem, fn, filter) {
 }
 
 export default function (elems, fn, filter) {
+  if (!elems) {
+    return;
+  }
+
   if (elems instanceof Node) {
     elems = [elems];
   }

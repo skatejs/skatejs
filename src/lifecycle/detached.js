@@ -12,6 +12,8 @@ function callDetachedOnDescendants (elem, id) {
 }
 
 export default function (opts) {
+  var unready = apiEmit('_skate-unready', { detail: opts })
+
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
@@ -24,12 +26,7 @@ export default function (opts) {
     info.detached = true;
     opts.detached.call(this);
     isNative || callDetachedOnDescendants(this, opts.id);
-    apiEmit(info.attached, '_skate-unready', {
-      detail: {
-        element: this,
-        definition: opts
-      }
-    });
+    unready.call(this);
     info.attached = false;
   };
 }

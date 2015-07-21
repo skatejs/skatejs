@@ -1,5 +1,4 @@
 import emit from '../../../src/api/emit';
-import fixture from '../../lib/fixture';
 
 describe('api/emit', function () {
   var child;
