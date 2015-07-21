@@ -1,5 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
+import helperReady from '../../lib/ready';
 import skate from '../../../src/index';
 import supportCustomElements from '../../../src/support/custom-elements';
 
@@ -45,7 +46,7 @@ describe('created callback ordering on parent -> descendants', function () {
   it('definition exists before element is created', function (done) {
     createDefinitions();
     createStructure();
-    setTimeout(function () {
+    helperReady(function () {
       expect(num).to.equal(3, 'num');
       expect(host).to.equal(1, 'host');
       expect(child).to.equal(2, 'child');
@@ -57,7 +58,7 @@ describe('created callback ordering on parent -> descendants', function () {
   it('definition exists after element is created', function (done) {
     createStructure();
     createDefinitions();
-    setTimeout(function () {
+    helperReady(function () {
       expect(num).to.equal(3, 'num');
 
       if (supportCustomElements()) {
