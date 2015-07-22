@@ -1,7 +1,6 @@
 import globalRegistry from '../global/registry';
-import utilData from '../util/data';
+import utilElementReady from '../util/element-ready';
 
-const EVENT_READY = '_skate-ready';
 const EVENT_REGISTER = '_skate-register';
 
 function whenRegistered (name, func) {
@@ -19,25 +18,12 @@ function whenRegistered (name, func) {
 }
 
 export default function (elem, name, func) {
-  function eventHandler (e) {
-    if (e.detail.id === name) {
-      func(e.target);
-      e.target.removeEventListener(eventHandler);
-    }
-  }
-
   whenRegistered(name, function (definition) {
     var items = elem.querySelectorAll(definition.type.selector(definition)) || [];
     var itemsLen = items.length;
 
     for (let a = 0; a < itemsLen; a++) {
-      let desc = items[a];
-
-      if (utilData(desc, name).created) {
-        func(desc);
-      } else {
-        desc.addEventListener(EVENT_READY, eventHandler);
-      }
+      utilElementReady(items[a], name, func);
     }
   });
 }
