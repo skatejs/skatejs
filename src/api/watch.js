@@ -7,13 +7,13 @@ export default function (elem, func) {
 
   if (!data.elementObserverHandlers) {
     data.elementObserverHandlers = [];
-    data.elementObserver = new MutationObserver(function mutationObserverHandler (mutations) {
+    data.elementObserver = new MutationObserver(mutations =>
       mutations.forEach(mutation =>
         data.elementObserverHandlers.forEach(mutationHandler =>
           mutationHandler(mutation.addedNodes || [], mutation.removedNodes || [])
         )
-      );
-    });
+      )
+    );
     data.elementObserver.observe(elem, {
       childList: true,
       subtree: true
