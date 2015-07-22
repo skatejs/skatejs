@@ -1,3 +1,4 @@
+import apiEmit from '../api/emit';
 import globals from './vars';
 import hasOwn from '../util/has-own';
 import typeElement from '../type/element';
@@ -26,6 +27,10 @@ export default globals.registerIfNotExists('registry', {
 
     definitions[id] = opts;
     map[typeIndex][id] = opts;
+    apiEmit(document, '_skate-register', {
+      bubbles: false,
+      detail: opts
+    });
 
     return this;
   },

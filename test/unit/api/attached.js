@@ -1,9 +1,9 @@
-import apiReady from '../../../src/api/ready';
+import apiAttached from '../../../src/api/attached';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('api/ready', function () {
+describe('api/attached', function () {
   var host;
 
   beforeEach(function () {
@@ -15,7 +15,7 @@ describe('api/ready', function () {
 
     skate(tag.safe, {});
     host.appendChild(tag.create());
-    apiReady(host, tag.safe, function (desc) {
+    apiAttached(host, tag.safe, function (desc) {
       expect(desc.tagName.toLowerCase()).to.equal(tag.safe);
       done();
     });
@@ -24,7 +24,7 @@ describe('api/ready', function () {
   it('subsequent components', function (done) {
     var tag = helperElement();
 
-    apiReady(host, tag.safe, function (desc) {
+    apiAttached(host, tag.safe, function (desc) {
       expect(desc.tagName.toLowerCase()).to.equal(tag.safe);
       done();
     });

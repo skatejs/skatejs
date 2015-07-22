@@ -1,24 +1,43 @@
-import apiQuery from './query';
+import globalRegistry from '../global/registry';
 import utilData from '../util/data';
 
-var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
+const EVENT_READY = '_skate-ready';
+const EVENT_REGISTER = '_skate-register';
+
+function whenRegistered (name, func) {
+  var definition = globalRegistry.get(name);
+  if (definition) {
+    func(definition);
+  } else {
+    document.addEventListener(EVENT_REGISTER, function handleRegister (e) {
+      if (e.detail.id === name) {
+        func(e.detail);
+        document.removeEventListener(EVENT_REGISTER, handleRegister);
+      }
+    });
+  }
+}
 
 export default function (elem, name, func) {
-  function mutationObserverHandler (mutations) {
-    if (mutations && mutations[0].addedNodes && mutations[0].addedNodes.length) {
-      apiQuery(elem, name, func);
+  function eventHandler (e) {
+    if (e.detail.id === name) {
+      func(e.target);
+      e.target.removeEventListener(eventHandler);
     }
   }
 
-  var data = utilData(elem);
+  whenRegistered(name, function (definition) {
+    var items = elem.querySelectorAll(definition.type.selector(definition)) || [];
+    var itemsLen = items.length;
 
-  if (!data.readyObserver) {
-    data.readyObserver = new MutationObserver(mutationObserverHandler);
-    data.readyObserver.observe(elem, {
-      childList: true,
-      subtree: true
-    });
-  }
+    for (let a = 0; a < itemsLen; a++) {
+      let desc = items[a];
 
-  apiQuery(elem, name, func);
+      if (utilData(desc, name).created) {
+        func(desc);
+      } else {
+        desc.addEventListener(EVENT_READY, eventHandler);
+      }
+    }
+  });
 }

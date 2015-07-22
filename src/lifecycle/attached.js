@@ -20,7 +20,7 @@ export default function (opts) {
       return;
     }
 
-    info.attached = this.parentNode;
+    info.attached = true;
     opts.attached.call(this);
     isNative || callAttachedOnDescendants(this, opts.id);
     info.detached = false;

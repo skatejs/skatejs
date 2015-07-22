@@ -1,4 +1,3 @@
-import apiEmit from '../api/emit';
 import data from '../util/data';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -12,8 +11,6 @@ function callDetachedOnDescendants (elem, id) {
 }
 
 export default function (opts) {
-  var unready = apiEmit('_skate-unready', { detail: opts })
-
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
@@ -26,7 +23,6 @@ export default function (opts) {
     info.detached = true;
     opts.detached.call(this);
     isNative || callDetachedOnDescendants(this, opts.id);
-    unready.call(this);
     info.attached = false;
   };
 }
