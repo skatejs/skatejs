@@ -1,14 +1,10 @@
 import './boot';
-import './unit/api/attached';
 import './unit/api/create';
-import './unit/api/detached';
 import './unit/api/emit';
-import './unit/api/event';
+import './unit/api/events';
 import './unit/api/init';
 import './unit/api/no-conflict';
-import './unit/api/property';
-import './unit/api/ready';
-import './unit/api/watch';
+import './unit/api/properties';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/document-observer';
