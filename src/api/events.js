@@ -1,5 +1,4 @@
 import matches from '../util/matches-selector';
-import maybeThis from '../util/maybe-this';
 
 function parseEvent (e) {
   var parts = e.split(' ');
@@ -41,18 +40,8 @@ function bindEvent (elem, event, handler) {
   elem.addEventListener(name, handler, capture);
 }
 
-function bindEvents (elem, events) {
+export default function (elem, events) {
   Object.keys(events).forEach(function (name) {
     bindEvent(elem, name, events[name]);
   });
 }
-
-export default maybeThis(function (elem, events, handler) {
-  if (typeof events === 'string') {
-    bindEvent(elem, events, handler);
-  } else if (Array.isArray(events)) {
-    events.forEach(e => bindEvent(elem, e, handler));
-  } else {
-    bindEvents(elem, events || {});
-  }
-});

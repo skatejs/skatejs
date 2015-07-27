@@ -16,13 +16,11 @@ export default function (opts) {
     var info = data(this, opts.id);
     var isNative = this.detachedCallback;
 
-    if (info.detached) {
-      return;
-    }
-
+    if (info.detached) return;
     info.detached = true;
+    info.attached = false;
+
     opts.detached.call(this);
     isNative || callDetachedOnDescendants(this, opts.id);
-    info.attached = false;
   };
 }

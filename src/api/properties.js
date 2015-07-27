@@ -1,29 +1,33 @@
 import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
-import maybeThis from '../util/maybe-this';
 
 // TODO: Lean out option normalisation.
-function property (name, prop) {
+function property (elem, name, prop) {
   var internalGetter, internalSetter, internalValue, isBoolean;
 
+  // The property definition can be a function which is set as prop.type.
   if (typeof prop === 'object') {
     prop = assignSafe({}, prop);
   } else {
     prop = { type: prop };
   }
 
+  // Normalise prop.attr to a dash-case version of the propertyName.
   if (prop.attr === true) {
     prop.attr = dashCase(name);
   }
 
+  // Normalise prop.type to a function.
   if (typeof prop.type !== 'function') {
     prop.type = val => val;
   }
 
-  if (prop.init !== undefined && typeof prop.init !== 'function') {
+  // Normalise prop.init as a function bound to the element.
+  if (prop.init !== undefined) {
     let value = prop.init;
-    prop.init = () => value;
+    prop.init = typeof prop.init === 'function' ? prop.init : () => value;
+    prop.init = prop.init.bind(elem);
   }
 
   internalGetter = prop.get;
@@ -47,8 +51,15 @@ function property (name, prop) {
     var newValue = prop.type(value);
     var oldValue = this[name];
 
-    // Regardless of any options, we store the value internally.
-    internalValue = newValue;
+    // Don't do anything if the values are the same.
+    if (newValue === oldValue) {
+      return;
+    }
+
+    // We only store the value internally if a getter isn't specified.
+    if (!internalGetter) {
+      internalValue = newValue;
+    }
 
     // We check first to see if we're already updating the property from
     // the attribute. If we are, then there's no need to update the attribute
@@ -89,35 +100,29 @@ function defineProperty (elem, name, prop) {
     info.attributeToPropertyMap = {};
   }
 
-  prop = property(name, prop);
+  prop = property(elem, name, prop);
   Object.defineProperty(elem, name, prop);
-
-  // TODO: What happens if the setter does something with a descendant that
-  // may not exist yet?
-  //
-  // Initialise the value if a initial value was provided. Attributes that exist
-  // on the element should trump any default values that are provided.
-  if (prop.init && (!prop.attr || !elem.hasAttribute(prop.attr))) {
-    elem[name] = prop.init.call(elem);
-  }
 
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.
   if (prop.attr) {
     info.attributeToPropertyMap[prop.attr] = name;
   }
+
+  return function () {
+    if (prop.attr && elem.hasAttribute(prop.attr)) {
+      elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
+    } else if (prop.init) {
+      elem[name] = prop.init.call(this);
+    }
+  };
 }
 
-function defineProperties (elem, props) {
-  Object.keys(props).forEach(function (name) {
-    defineProperty(elem, name, props[name]);
+export default function (elem, props) {
+  var funcs = Object.keys(props).map(function (name) {
+    return defineProperty(elem, name, props[name]);
   });
+  return function () {
+    funcs.forEach(func => func.call(this));
+  };
 }
-
-export default maybeThis(function (elem, props = {}, prop = {}) {
-  if (typeof props === 'string') {
-    defineProperty(elem, props, prop);
-  } else {
-    defineProperties(elem, props);
-  }
-});

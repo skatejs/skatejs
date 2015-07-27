@@ -1,4 +1,3 @@
-import maybeThis from '../util/maybe-this';
 import utilElementContains from '../util/element-contains';
 
 var CustomEvent = window.CustomEvent;
@@ -71,7 +70,7 @@ function emitOne (elem, name, opts) {
   return status;
 }
 
-export default maybeThis(function (elem, name, opts = {}) {
+export default function (elem, name, opts = {}) {
   var names = (typeof name === 'string' ? name.split(' ') : name);
   return names.reduce(function (prev, curr) {
     if (!emitOne(elem, curr, opts)) {
@@ -79,4 +78,4 @@ export default maybeThis(function (elem, name, opts = {}) {
     }
     return prev;
   }, []);
-});
+}

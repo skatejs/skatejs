@@ -24,8 +24,5 @@ export default {
     } else if (!tagToExtend) {
       return [definition];
     }
-  },
-  selector: function (opts) {
-    return opts.id;
   }
 };
