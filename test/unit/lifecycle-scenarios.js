@@ -18,6 +18,7 @@ describe('lifecycle-scenarios', function () {
 
     if (supportCustomElements()) {
       expect(called).to.equal(true);
+      done();
     } else {
       expect(called).to.equal(false);
       helperReady(function () {
@@ -41,6 +42,7 @@ describe('lifecycle-scenarios', function () {
     // We have to debounce in non-native for performance.
     if (supportCustomElements()) {
       expect(called).to.equal(true);
+      done();
     } else {
       expect(called).to.equal(false);
       helperReady(function () {
