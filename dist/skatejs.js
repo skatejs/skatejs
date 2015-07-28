@@ -684,6 +684,10 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _emit2 = _interopRequireDefault(_emit);
+  
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
@@ -696,40 +700,54 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  // TODO: Lean out option normalisation.
-  function property(elem, name, prop) {
-    var internalGetter, internalSetter, internalValue, isBoolean;
-  
-    // The property definition can be a function which is set as prop.type.
+  function normaliseProp(prop) {
     if (typeof prop === 'object') {
       prop = (0, _utilAssignSafe2['default'])({}, prop);
     } else {
       prop = { type: prop };
     }
+    return prop;
+  }
   
-    // Normalise prop.attr to a dash-case version of the propertyName.
-    if (prop.attr === true) {
-      prop.attr = (0, _utilDashCase2['default'])(name);
-    }
+  function normaliseAttr(prop, name) {
+    var attr = prop.attr;
+    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
+  }
   
-    // Normalise prop.type to a function.
-    if (typeof prop.type !== 'function') {
-      prop.type = function (val) {
-        return val;
-      };
-    }
-  
-    // Normalise prop.init as a function bound to the element.
-    if (prop.init !== undefined) {
+  function normaliseInit(prop, elem) {
+    var init = prop.init;
+    if (init !== undefined) {
       (function () {
-        var value = prop.init;
-        prop.init = typeof prop.init === 'function' ? prop.init : function () {
+        var value = init;
+        init = typeof init === 'function' ? init : function () {
           return value;
         };
-        prop.init = prop.init.bind(elem);
+        init = init.bind(elem);
       })();
     }
+    return init;
+  }
   
+  function normaliseEmit(prop) {
+    var emit = prop.emit;
+    return emit === undefined ? 'skate.property' : emit;
+  }
+  
+  function normaliseType(prop) {
+    var type = prop.type;
+    return typeof type !== 'function' ? function (val) {
+      return val;
+    } : type;
+  }
+  
+  function property(elem, name, prop) {
+    var internalGetter, internalSetter, internalValue, isBoolean;
+  
+    prop = normaliseProp(prop);
+    prop.attr = normaliseAttr(prop, name);
+    prop.init = normaliseInit(prop, elem);
+    prop.emit = normaliseEmit(prop);
+    prop.type = normaliseType(prop);
     internalGetter = prop.get;
     internalSetter = prop.set;
     isBoolean = prop.type && prop.type === Boolean;
@@ -784,6 +802,17 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
       // is useful information for the setter.
       if (internalSetter) {
         internalSetter.call(this, newValue, oldValue);
+      }
+  
+      if (prop.emit) {
+        (0, _emit2['default'])(elem, prop.emit, {
+          bubbles: false,
+          detail: {
+            name: name,
+            newValue: newValue,
+            oldValue: oldValue
+          }
+        });
       }
     };
   
