@@ -218,4 +218,79 @@ describe('api/properties', function () {
     el.prop1 = '';
     expect(el.getAttribute('prop1')).to.equal('');
   });
+
+  describe('emitting events', function () {
+    var el, triggered;
+
+    beforeEach(function () {
+      skate(elem.safe, {
+        properties: {
+          prop1: {}
+        }
+      });
+      el = elem.create();
+      triggered = false;
+    });
+
+    it('default to skate.property.propertyName', function () {
+      el.addEventListener('skate.property', () => triggered = true);
+      el.prop1 = 'new value';
+      expect(triggered).to.equal(true);
+    });
+
+    it('should not bubble', function () {
+      var host = document.createElement('div');
+      host.appendChild(el);
+      host.addEventListener('skate.property', () => triggered = true);
+      el.prop1 = 'new value';
+      expect(triggered).to.equal(false);
+    });
+
+    it('allow custom event name', function () {
+      var elem = helperElement();
+      skate(elem.safe, {
+        properties: {
+          prop1: {
+            emit: 'custom-property-event'
+          }
+        }
+      });
+      el = elem.create();
+      el.addEventListener('custom-property-event', () => triggered = true);
+      el.prop1 = 'new value';
+      expect(triggered).to.equal(true);
+    });
+
+    it('allow space separated strings', function () {
+      var elem = helperElement();
+      skate(elem.safe, {
+        properties: {
+          prop1: {
+            emit: 'custom-property-event-1 custom-property-event-2'
+          }
+        }
+      });
+      el = elem.create();
+      el.addEventListener('custom-property-event-1', () => triggered = 1);
+      el.addEventListener('custom-property-event-2', () => triggered++);
+      el.prop1 = 'new value';
+      expect(triggered).to.equal(2);
+    });
+
+    it('allow an array separated strings', function () {
+      var elem = helperElement();
+      skate(elem.safe, {
+        properties: {
+          prop1: {
+            emit: ['custom-property-event-1', 'custom-property-event-2']
+          }
+        }
+      });
+      el = elem.create();
+      el.addEventListener('custom-property-event-1', () => triggered = 1);
+      el.addEventListener('custom-property-event-2', () => triggered++);
+      el.prop1 = 'new value';
+      expect(triggered).to.equal(2);
+    });
+  });
 });
