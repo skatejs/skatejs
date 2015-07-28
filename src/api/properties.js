@@ -1,35 +1,50 @@
+import apiEmit from './emit';
 import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 
-// TODO: Lean out option normalisation.
-function property (elem, name, prop) {
-  var internalGetter, internalSetter, internalValue, isBoolean;
-
-  // The property definition can be a function which is set as prop.type.
+function normaliseProp (prop) {
   if (typeof prop === 'object') {
     prop = assignSafe({}, prop);
   } else {
     prop = { type: prop };
   }
+  return prop;
+}
 
-  // Normalise prop.attr to a dash-case version of the propertyName.
-  if (prop.attr === true) {
-    prop.attr = dashCase(name);
+function normaliseAttr (prop, name) {
+  var attr = prop.attr;
+  return attr === true ? dashCase(name) : attr;
+}
+
+function normaliseInit (prop, elem) {
+  var init = prop.init;
+  if (init !== undefined) {
+    let value = init;
+    init = typeof init === 'function' ? init : () => value;
+    init = init.bind(elem);
   }
+  return init;
+}
 
-  // Normalise prop.type to a function.
-  if (typeof prop.type !== 'function') {
-    prop.type = val => val;
-  }
+function normaliseEmit (prop) {
+  var emit = prop.emit;
+  return emit === undefined ? `skate.property` : emit;
+}
 
-  // Normalise prop.init as a function bound to the element.
-  if (prop.init !== undefined) {
-    let value = prop.init;
-    prop.init = typeof prop.init === 'function' ? prop.init : () => value;
-    prop.init = prop.init.bind(elem);
-  }
+function normaliseType (prop) {
+  var type = prop.type;
+  return typeof type !== 'function' ? val => val : type;
+}
 
+function property (elem, name, prop) {
+  var internalGetter, internalSetter, internalValue, isBoolean;
+
+  prop = normaliseProp(prop);
+  prop.attr = normaliseAttr(prop, name);
+  prop.init = normaliseInit(prop, elem);
+  prop.emit = normaliseEmit(prop);
+  prop.type = normaliseType(prop);
   internalGetter = prop.get;
   internalSetter = prop.set;
   isBoolean = prop.type && prop.type === Boolean;
@@ -84,6 +99,17 @@ function property (elem, name, prop) {
     // is useful information for the setter.
     if (internalSetter) {
       internalSetter.call(this, newValue, oldValue);
+    }
+
+    if (prop.emit) {
+      apiEmit(elem, prop.emit, {
+        bubbles: false,
+        detail: {
+          name: name,
+          newValue: newValue,
+          oldValue: oldValue
+        }
+      });
     }
   };
 
