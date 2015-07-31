@@ -88,11 +88,16 @@ export default function (opts) {
     // pass on state.
     events.call(this);
 
-    // Apply the template to the element.
+    // Apply the template to the element. In native, this may cause whatever
+    // descendants are in the template (including existing innerHTML) to be
+    // upgraded synchronously.
     template.call(this);
 
     // The properties function returns a function that can be called to
-    // initialise them on the element when appropriate.
+    // initialise them on the element when appropriate. We bind property
+    // handlers before calling any of the lifecycle handlers, but don't
+    // actually initialise their values until after lifecycle callbacks have
+    // been invoked.
     initProps = properties.call(this);
 
     // Call created() on the host. This may be called at any time, so no one
