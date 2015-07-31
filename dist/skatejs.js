@@ -1034,6 +1034,10 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       isNative || prototype.call(this);
   
       // Bind events so we can catch them at the earliest point in the lifecycle.
+      // Any events that happen between here and when `initEvents()` is called
+      // are queued up and not invoked until `initEvents()` is actually called.
+      // This allows us to ensure that everything is set up before we actually
+      // handle the events.
       initEvents = events.call(this);
   
       // The properties function returns a function that can be called to
@@ -1049,7 +1053,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       template.call(this);
   
       // In both polyfill and native we force init all descendant components so
-      // that we can ensure that created() has been called by on all descendants
+      // that we can ensure that created() has been called on all descendants
       // by the time it's called on the host.
       callCreatedOnDescendants(this, opts.id);
   
