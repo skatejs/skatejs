@@ -59,7 +59,6 @@ export default function (opts) {
   var events = fnOr(opts.events, apiEvents);
   var properties = fnOr(opts.properties, apiProperties);
   var prototype = applyPrototype(opts.prototype);
-  var ready = fnOr(opts.ready);
   var template = fnOr(opts.template);
 
   /* jshint expr: true */
@@ -88,11 +87,6 @@ export default function (opts) {
     // pass on state.
     events.call(this);
 
-    // Apply the template to the element. In native, this may cause whatever
-    // descendants are in the template (including existing innerHTML) to be
-    // upgraded synchronously.
-    template.call(this);
-
     // The properties function returns a function that can be called to
     // initialise them on the element when appropriate. We bind property
     // handlers before calling any of the lifecycle handlers, but don't
@@ -100,19 +94,20 @@ export default function (opts) {
     // been invoked.
     initProps = properties.call(this);
 
+    // Apply the template to the element. In native, this may cause whatever
+    // descendants are in the template (including existing innerHTML) to be
+    // upgraded synchronously.
+    template.call(this);
+
+    // In both polyfill and native we force init all descendant components so
+    // that we can ensure that created() has been called by on all descendants
+    // by the time it's called on the host.
+    callCreatedOnDescendants(this, opts.id);
+
     // Call created() on the host. This may be called at any time, so no one
     // should not rely on descendants being initialised yet. This conforms with
     // native behaviour.
     created.call(this);
-
-    // In both polyfill and native we force init all descendant components so
-    // that we can ensure that created() and ready() have been called by the
-    // time ready() is called on the parent / host.
-    callCreatedOnDescendants(this, opts.id);
-
-    // Now call ready. By this time, created() and ready () have been called on
-    // all descendant components because we've forcefully done it above.
-    ready.call(this);
 
     // We trigger all property handlers for properties that exist once all
     // descendants are ready for any incoming state updates. This will also

@@ -2,22 +2,29 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import helperReady from '../../lib/ready';
 import skate from '../../../src/index';
-import supportCustomElements from '../../../src/support/custom-elements';
 
 describe('created callback ordering on parent -> descendants', function () {
   var child, descendant, host, num, tag;
 
+  // Simulate creating definitions in dependency order. This emulates having
+  // separate modules for each definition and each definition importing their
+  // dependencies that they require be upgraded by the time it is upgraded.
   function createDefinitions () {
-    skate(`x-child-${tag}`, {
-      created () {
-        child = ++num;
-      }
-    });
+    // child requires descendant, so this is first
     skate(`x-descendant-${tag}`, {
       created () {
         descendant = ++num;
       }
     });
+
+    // host requires child, so this is second
+    skate(`x-child-${tag}`, {
+      created () {
+        child = ++num;
+      }
+    });
+
+    // host has no dependants so its first
     skate(`x-host-${tag}`, {
       created () {
         host = ++num;
@@ -48,9 +55,9 @@ describe('created callback ordering on parent -> descendants', function () {
     createStructure();
     helperReady(function () {
       expect(num).to.equal(3, 'num');
-      expect(host).to.equal(1, 'host');
+      expect(host).to.equal(3, 'host');
       expect(child).to.equal(2, 'child');
-      expect(descendant).to.equal(3, 'descendant');
+      expect(descendant).to.equal(1, 'descendant');
       done();
     });
   });
@@ -60,17 +67,9 @@ describe('created callback ordering on parent -> descendants', function () {
     createDefinitions();
     helperReady(function () {
       expect(num).to.equal(3, 'num');
-
-      if (supportCustomElements()) {
-        expect(host).to.equal(3, 'host');
-        expect(child).to.equal(1, 'child');
-        expect(descendant).to.equal(2, 'descendant');
-      } else {
-        expect(host).to.equal(1, 'host');
-        expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(3, 'descendant');
-      }
-
+      expect(host).to.equal(3, 'host');
+      expect(child).to.equal(2, 'child');
+      expect(descendant).to.equal(1, 'descendant');
       done();
     });
   });

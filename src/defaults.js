@@ -7,11 +7,9 @@ export default {
   // Attribute lifecycle callback or callbacks.
   attributes: function () {},
 
-  // Called when the element is created.
+  // Called when the element is created after all descendants have had it
+  // called on them.
   created: function () {},
-
-  // Called after all descendants have had "created" and "ready" invoked.
-  ready: function () {},
 
   // Called when the element is detached from the document.
   detached: function () {},
