@@ -496,8 +496,8 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
       info.attached = true;
       info.detached = false;
   
+      callAttachedOnDescendants(this, opts.id);
       opts.attached.call(this);
-      isNative || callAttachedOnDescendants(this, opts.id);
     };
   };
   
@@ -1469,8 +1469,8 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
       info.detached = true;
       info.attached = false;
   
+      callDetachedOnDescendants(this, opts.id);
       opts.detached.call(this);
-      isNative || callDetachedOnDescendants(this, opts.id);
     };
   };
   
