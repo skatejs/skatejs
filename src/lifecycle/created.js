@@ -63,7 +63,7 @@ export default function (opts) {
 
   /* jshint expr: true */
   return function () {
-    var initProps;
+    var initEvents, initProps;
     var info = data(this, opts.id);
     var isNative = this.createdCallback;
 
@@ -110,7 +110,10 @@ export default function (opts) {
     initProps();
 
     // We trigger all event handlers that have queued up so that nothing has
-    // been list since they were bound.
+    // been lost since they were bound. This is done after initialising
+    // properties because events may depend on initialised values. Any events
+    // triggered from property initialisation will be queued up and initialised
+    // here.
     initEvents();
 
     // Resolve after everything in the created lifecycle has run. This is so
