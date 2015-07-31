@@ -600,9 +600,27 @@ __96707d121e85542c0149cb45072882a0 = (function () {
   }
   
   exports['default'] = function (elem, events) {
+    var queue = [];
+    var ready = false;
+  
     Object.keys(events).forEach(function (name) {
-      bindEvent(elem, name, events[name]);
+      var handler = events[name].bind(elem);
+      bindEvent(elem, name, function (e) {
+        if (ready) {
+          handler(e);
+        } else {
+          queue.push(handler.bind(elem, e));
+        }
+      });
     });
+  
+    return function () {
+      ready = true;
+      queue.forEach(function (handler) {
+        return handler();
+      });
+      queue = [];
+    };
   };
   
   module.exports = exports['default'];
@@ -995,7 +1013,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     var events = fnOr(opts.events, _apiEvents2['default']);
     var properties = fnOr(opts.properties, _apiProperties2['default']);
     var prototype = applyPrototype(opts.prototype);
-    var ready = fnOr(opts.ready);
     var template = fnOr(opts.template);
   
     /* jshint expr: true */
@@ -1017,17 +1034,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       isNative || prototype.call(this);
   
       // Bind events so we can catch them at the earliest point in the lifecycle.
-      //
-      // TODO Check to see if we need to delay execution of handlers until after
-      // The ready lifecycle has been invoked so that we can make sure descendants
-      // are initialised and ready just in case any code in the handlers tries to
-      // pass on state.
-      events.call(this);
-  
-      // Apply the template to the element. In native, this may cause whatever
-      // descendants are in the template (including existing innerHTML) to be
-      // upgraded synchronously.
-      template.call(this);
+      initEvents = events.call(this);
   
       // The properties function returns a function that can be called to
       // initialise them on the element when appropriate. We bind property
@@ -1036,24 +1043,29 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       // been invoked.
       initProps = properties.call(this);
   
+      // Apply the template to the element. In native, this may cause whatever
+      // descendants are in the template (including existing innerHTML) to be
+      // upgraded synchronously.
+      template.call(this);
+  
+      // In both polyfill and native we force init all descendant components so
+      // that we can ensure that created() has been called by on all descendants
+      // by the time it's called on the host.
+      callCreatedOnDescendants(this, opts.id);
+  
       // Call created() on the host. This may be called at any time, so no one
       // should not rely on descendants being initialised yet. This conforms with
       // native behaviour.
       created.call(this);
   
-      // In both polyfill and native we force init all descendant components so
-      // that we can ensure that created() and ready() have been called by the
-      // time ready() is called on the parent / host.
-      callCreatedOnDescendants(this, opts.id);
-  
-      // Now call ready. By this time, created() and ready () have been called on
-      // all descendant components because we've forcefully done it above.
-      ready.call(this);
-  
       // We trigger all property handlers for properties that exist once all
       // descendants are ready for any incoming state updates. This will also
       // trigger changes for any attributes that are properties.
       initProps();
+  
+      // We trigger all event handlers that have queued up so that nothing has
+      // been list since they were bound.
+      initEvents();
   
       // Resolve after everything in the created lifecycle has run. This is so
       // that whatever needs to be done before this can be done without FOUC.
@@ -1361,11 +1373,9 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     // Attribute lifecycle callback or callbacks.
     attributes: function attributes() {},
   
-    // Called when the element is created.
+    // Called when the element is created after all descendants have had it
+    // called on them.
     created: function created() {},
-  
-    // Called after all descendants have had "created" and "ready" invoked.
-    ready: function ready() {},
   
     // Called when the element is detached from the document.
     detached: function detached() {},
