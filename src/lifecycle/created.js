@@ -80,12 +80,7 @@ export default function (opts) {
     isNative || prototype.call(this);
 
     // Bind events so we can catch them at the earliest point in the lifecycle.
-    //
-    // TODO Check to see if we need to delay execution of handlers until after
-    // The ready lifecycle has been invoked so that we can make sure descendants
-    // are initialised and ready just in case any code in the handlers tries to
-    // pass on state.
-    events.call(this);
+    initEvents = events.call(this);
 
     // The properties function returns a function that can be called to
     // initialise them on the element when appropriate. We bind property
@@ -113,6 +108,10 @@ export default function (opts) {
     // descendants are ready for any incoming state updates. This will also
     // trigger changes for any attributes that are properties.
     initProps();
+
+    // We trigger all event handlers that have queued up so that nothing has
+    // been list since they were bound.
+    initEvents();
 
     // Resolve after everything in the created lifecycle has run. This is so
     // that whatever needs to be done before this can be done without FOUC.

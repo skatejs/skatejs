@@ -41,7 +41,23 @@ function bindEvent (elem, event, handler) {
 }
 
 export default function (elem, events) {
+  var queue = [];
+  var ready = false;
+
   Object.keys(events).forEach(function (name) {
-    bindEvent(elem, name, events[name]);
+    var handler = events[name].bind(elem);
+    bindEvent(elem, name, function (e) {
+      if (ready) {
+        handler(e);
+      } else {
+        queue.push(handler.bind(elem, e));
+      }
+    });
   });
+
+  return function () {
+    ready = true;
+    queue.forEach(handler => handler());
+    queue = [];
+  };
 }
