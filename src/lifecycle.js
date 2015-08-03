@@ -111,7 +111,7 @@ function addAttributeToPropertyLinks (target, component) {
   }
 
   for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
+    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, camelCase(attribute))) {
       defineAttributeProperty(target, attribute);
     }
   }
