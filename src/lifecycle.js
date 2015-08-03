@@ -80,8 +80,8 @@ function initAttributes (target, component) {
  *
  * @returns {undefined}
  */
-function defineAttributeProperty (target, attribute) {
-  Object.defineProperty(target, camelCase(attribute), {
+function defineAttributeProperty (target, attribute, property) {
+  Object.defineProperty(target, property, {
     get: function () {
       return this.getAttribute(attribute);
     },
@@ -111,8 +111,9 @@ function addAttributeToPropertyLinks (target, component) {
   }
 
   for (var attribute in componentAttributes) {
-    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, camelCase(attribute))) {
-      defineAttributeProperty(target, attribute);
+    var property = camelCase(attribute);
+    if (hasOwn(componentAttributes, attribute) && !hasOwn(target, property)) {
+      defineAttributeProperty(target, attribute, property);
     }
   }
 }
