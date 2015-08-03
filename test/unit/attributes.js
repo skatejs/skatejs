@@ -164,7 +164,7 @@ describe('Attribute listeners', function () {
     });
 
     it('should not override an existing camel cased property', function (done) {
-      myEl.setAttribute('overrideCamelCased', 'false');
+      myEl.setAttribute('override-camel-cased', 'false');
       helpers.afterMutations(function () {
         expect(myEl.overrideCamelCased).to.equal('true');
         done();
