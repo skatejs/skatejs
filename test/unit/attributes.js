@@ -88,10 +88,14 @@ describe('Attribute listeners', function () {
           },
           'override': {
             value: 'false'
+          },
+          'override-camel-cased': {
+            value: 'false'
           }
         },
         prototype: {
-          override: 'true'
+          override: 'true',
+          overrideCamelCased: 'true'
         }
       });
 
@@ -155,6 +159,14 @@ describe('Attribute listeners', function () {
       myEl.setAttribute('override', 'false');
       helpers.afterMutations(function () {
         expect(myEl.override).to.equal('true');
+        done();
+      });
+    });
+
+    it('should not override an existing camel cased property', function (done) {
+      myEl.setAttribute('override-camel-cased', 'false');
+      helpers.afterMutations(function () {
+        expect(myEl.overrideCamelCased).to.equal('true');
         done();
       });
     });
