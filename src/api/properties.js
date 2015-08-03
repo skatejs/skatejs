@@ -1,4 +1,3 @@
-import apiEmit from './emit';
 import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
@@ -27,11 +26,6 @@ function normaliseInit (prop, elem) {
   return init;
 }
 
-function normaliseEmit (prop) {
-  var emit = prop.emit;
-  return emit === undefined ? `skate.property` : emit;
-}
-
 function normaliseType (prop) {
   var type = prop.type;
   return typeof type !== 'function' ? val => val : type;
@@ -43,7 +37,6 @@ function property (elem, name, prop) {
   prop = normaliseProp(prop);
   prop.attr = normaliseAttr(prop, name);
   prop.init = normaliseInit(prop, elem);
-  prop.emit = normaliseEmit(prop);
   prop.type = normaliseType(prop);
   internalGetter = prop.get;
   internalSetter = prop.set;
@@ -99,17 +92,6 @@ function property (elem, name, prop) {
     // is useful information for the setter.
     if (internalSetter) {
       internalSetter.call(this, newValue, oldValue);
-    }
-
-    if (prop.emit) {
-      apiEmit(elem, prop.emit, {
-        bubbles: false,
-        detail: {
-          name: name,
-          newValue: newValue,
-          oldValue: oldValue
-        }
-      });
     }
   };
 
