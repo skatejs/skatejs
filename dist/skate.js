@@ -754,8 +754,8 @@ __d959233d561ba73001038b3f7510101c = (function () {
    *
    * @returns {undefined}
    */
-  function defineAttributeProperty(target, attribute) {
-    Object.defineProperty(target, camelCase(attribute), {
+  function defineAttributeProperty(target, attribute, property) {
+    Object.defineProperty(target, property, {
       get: function get() {
         return this.getAttribute(attribute);
       },
@@ -785,8 +785,9 @@ __d959233d561ba73001038b3f7510101c = (function () {
     }
   
     for (var attribute in componentAttributes) {
-      if (hasOwn(componentAttributes, attribute) && !hasOwn(target, attribute)) {
-        defineAttributeProperty(target, attribute);
+      var property = camelCase(attribute);
+      if (hasOwn(componentAttributes, attribute) && !hasOwn(target, property)) {
+        defineAttributeProperty(target, attribute, property);
       }
     }
   }
@@ -1205,7 +1206,7 @@ __831bdc70fca0009268faeab702f29a02 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.7";
+  module.exports = "0.13.8";
   
   return module.exports
 }).call(this);
