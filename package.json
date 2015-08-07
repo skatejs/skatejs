@@ -4,7 +4,7 @@
   "version": "0.13.2",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
-  "main": "lib/skate.js",
+  "main": "lib/index.js",
   "dependencies": {},
   "devDependencies": {
     "benchmark": "^1.0.0",
