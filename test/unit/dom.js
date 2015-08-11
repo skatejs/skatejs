@@ -145,4 +145,23 @@ describe('DOM', function () {
       });
     });
   });
+
+  describe('Should guard against nodes that may not fully implement the HTMLElement interface', function () {
+    function createElementAndRemove (prop) {
+      var el = document.createElement('div');
+      Object.defineProperty(el, prop, { value: undefined });
+      expect(el[prop]).to.equal(undefined);
+      return el;
+    }
+
+    it('tagName', function () {
+      var el = createElementAndRemove('tagName');
+      skate.init(el);
+    });
+
+    it('childNodes', function () {
+      var el = createElementAndRemove('childNodes');
+      skate.init(el);
+    });
+  });
 });
