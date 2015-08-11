@@ -1,4 +1,3 @@
-import apiEmit from '../api/emit';
 import globals from './vars';
 import hasOwn from '../util/has-own';
 import typeElement from '../type/element';
