@@ -27,10 +27,6 @@ export default globals.registerIfNotExists('registry', {
 
     definitions[id] = opts;
     map[typeIndex][id] = opts;
-    apiEmit(document, '_skate-register', {
-      bubbles: false,
-      detail: opts
-    });
 
     return this;
   },
