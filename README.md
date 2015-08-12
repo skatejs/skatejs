@@ -153,16 +153,16 @@ skate('my-element', {
   // All lifecycle callbacks use `this` to refer to the component element.
 
   // Called when the element is created.
-  created () {},
+  created: function () {},
 
   // Called when the element is attached to the document.
-  attached () {},
+  attached: function () {},
 
   // Called when the element is detached from the document.
-  detached () {},
+  detached: function () {},
 
   // Called when an attribute is created, updated or removed.
-  attribute (name, oldValue, newValue) {
+  attribute: function (name, oldValue, newValue) {
     if (oldValue === null) {
       // created
     } else if (newValue === null) {
@@ -175,7 +175,7 @@ skate('my-element', {
   // A function that renders a template to your element. Since this function is
   // responsible for rendering the template, you can literally use anything you
   // want here.
-  template () {
+  template: function () {
     this.innerHTML = 'something';
   },
 
@@ -184,7 +184,7 @@ skate('my-element', {
   // Event Listeners
   events: {
     // All direct and bubbled events.
-    click (e) {
+    click: function (e) {
       // Refers to the component element.
       this;
 
@@ -197,10 +197,10 @@ skate('my-element', {
 
     // Restricted to events triggered only on the component element. Arguments
     // are the same as above.
-    'click my-element' (e) {},
+    'click my-element': function (e) {},
 
     // Event delegation.
-    'click .something' (e) {
+    'click .something': function (e) {
       // Same as above.
       this && e;
 
@@ -215,8 +215,8 @@ skate('my-element', {
     ],
 
     // Focus and blur can be delegated, too.
-    'focus .something' () {},
-    'blur .something' () {}
+    'focus .something': function () {},
+    'blur .something': function () {}
   },
 
 
@@ -280,7 +280,7 @@ skate('my-element', {
       // is returned regardless of if you've specified a setter.
       //
       // To make a property "readonly", specify a getter without a setter.
-      get () {},
+      get: function () {},
 
       // Whether or not to trigger events when the property changes. Defaults to
       // `true`. If you do not want events triggered, set this to a falsy value.
@@ -301,7 +301,7 @@ skate('my-element', {
       // you don't specify a getter, then whatever `newValue` was passed in to
       // the setter, is returned by the default getter. If you want to return
       // a custom value, specify a getter.
-      set (newValue, oldValue) {},
+      set: function (newValue, oldValue) {},
 
       // A function that coerces the value to another value. You can specify
       // any function you want here. The return value is then stored internally
@@ -327,7 +327,7 @@ skate('my-element', {
   // don't need the special behaviour of `properties`.
   prototype: {
     get someProperty () {},
-    someMethod () {}
+    someMethod: function () {}
   },
 
 
@@ -375,7 +375,7 @@ The component lifecycle consists several callbacks:
 
 ```js
 skate('my-element', {
-  created () {}
+  created: function () {}
 });
 ```
 
@@ -422,7 +422,7 @@ document.createElement('div').innerHTML = '<my-el>child</my-el>';
 
 ```js
 skate('my-element', {
-  attached () {}
+  attached: function () {}
 });
 ```
 
@@ -436,7 +436,7 @@ The `attached` callback is called synchronously in native custom elements and as
 
 ```js
 skate('my-element', {
-  detached () {}
+  detached: function () {}
 });
 ```
 
@@ -450,7 +450,7 @@ The `detached` callback is called synchronously in native custom elements and as
 
 ```js
 skate('my-element', {
-  attribute (name, oldValue, newValue) {
+  attribute: function (name, oldValue, newValue) {
     if (oldValue === null) {
       // created
     } else if (newValue === null) {
@@ -484,7 +484,7 @@ myElement.setAttribute('myAttribute', 'new value');
 
 ```js
 skate('my-element', {
-  template () {}
+  template: function () {}
 });
 ```
 
@@ -494,7 +494,7 @@ Since the template function is just a callback and it's up to you how you templa
 
 ```js
 skate('my-element', {
-  template () {
+  template: function () {
     var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
     this.innerHTML = compiled(this);
   }
@@ -544,7 +544,7 @@ function createVdomTree (props) {
 }
 
 skate('my-element', {
-  template () {
+  template: function () {
     var tree = createVdomTree(this);
     var root = createElement(tree);
 
@@ -562,7 +562,7 @@ With Handlebars you might do something like:
 
 ```js
 skate('my-element', {
-  template () {
+  template: function () {
     var render = handlebarify('<p>Hello, {{name}}!</p>');
     this.addEventListener('skate.property', render);
     render.call(this);
@@ -582,7 +582,7 @@ function createVdomTree (props) {
 }
 
 skate('my-element', {
-  template () {
+  template: function () {
     var tree = createVdomTree(this);
     var root = createElement(tree);
 
@@ -607,7 +607,7 @@ skate('my-element', {
 skate('my-element', {
   events: {
     // All direct and bubbled events.
-    click (e) {
+    click: function (e) {
       // Refers to the component element.
       this;
 
@@ -620,10 +620,10 @@ skate('my-element', {
 
     // Restricted to events triggered only on the component element. Arguments
     // are the same as above.
-    'click my-element' (e) {},
+    'click my-element': function (e) {},
 
     // Event delegation.
-    'click .something' (e) {
+    'click .something': function (e) {
       // Same as above.
       this && e;
 
@@ -638,8 +638,8 @@ skate('my-element', {
     ],
 
     // Focus and blur can be delegated, too.
-    'focus .something' () {},
-    'blur .something' () {}
+    'focus .something': function () {},
+    'blur .something': function () {}
   }
 });
 ```
@@ -730,7 +730,7 @@ Skate gives you the option to specify custom properties and methods on your comp
 ```js
 skate('my-component', {
   prototype: {
-    callMeLikeAnyNativeMethod () {}
+    callMeLikeAnyNativeMethod: function () {}
   }
 });
 ```
@@ -820,7 +820,7 @@ skate('my-element', {
     )
   },
   prototype: {
-    instanceMethod (e) {}
+    instanceMethod: function (e) {}
   }
 });
 ```
@@ -839,7 +839,7 @@ skate('my-element', {
     }
   },
   prototype: {
-    instanceMethod (e) {}
+    instanceMethod: function (e) {}
   }
 });
 ```
@@ -1182,7 +1182,7 @@ skate('x-child', {
 But wrapping the call to `sayHello()` will:
 
 ```js
-skate.ready(() => this.querySelector('x-child').sayHello());
+skate.ready(function () { this.querySelector('x-child').sayHello() });
 ```
 
 
