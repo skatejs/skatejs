@@ -106,25 +106,17 @@ describe('api/events', function () {
 
     skate(tagName, {
       events: {
-        'blur input': function () {
-          blur = true;
-        },
-
-        'focus input': function () {
-          focus = true;
-        }
+        'blur input': () => blur = true,
+        'focus input': () => focus = true,
       },
-
       prototype: {
         blur: function () {
           skate.emit(this.querySelector('input'), 'blur');
         },
-
         focus: function () {
           skate.emit(this.querySelector('input'), 'focus');
         }
       },
-
       template: function () {
         this.innerHTML = '<input>';
       }

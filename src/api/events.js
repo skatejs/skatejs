@@ -35,7 +35,6 @@ function bindEvent (elem, event, handler) {
   var parsed = parseEvent(event);
   var { name, selector } = parsed;
   var capture = selector && (name === 'blur' || name === 'focus');
-  handler = handler.bind(elem);
   handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }
