@@ -1,18 +1,26 @@
 import utilElementContains from '../util/element-contains';
 
-var CustomEvent = window.CustomEvent;
-var hasBubbleOnDetachedElements = false;
-
-// Detect support for using the CustomElement constructor.
-if (CustomEvent) {
-  try {
-    new CustomEvent();
-  } catch (e) {
-    CustomEvent = undefined;
+var CustomEvent = (function (CustomEvent) {
+  if (CustomEvent) {
+    try {
+      new CustomEvent();
+    } catch (e) {
+      return undefined;
+    }
   }
-}
+  return CustomEvent;
+}(window.CustomEvent));
 
-// Common way for constructing a new custom event.
+var hasBubbleOnDetachedElements = (function () {
+  var parent = document.createElement('div');
+  var child = document.createElement('div');
+  var hasBubbleOnDetachedElements = false;
+  parent.appendChild(child);
+  parent.addEventListener('test', () => hasBubbleOnDetachedElements = true);
+  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+  return hasBubbleOnDetachedElements;
+}());
+
 function createCustomEvent (name, opts = {}) {
   if (CustomEvent) {
     return new CustomEvent(name, opts);
@@ -23,57 +31,46 @@ function createCustomEvent (name, opts = {}) {
   return e;
 }
 
-// Detect whether or not bubbling is supported on detached elements. This is
-// non-standard, but Firefox allows it. In a web component world, this is
-// very useful for decoupled inter-component communication without relying on
-// DOM attachment, so we polyfill it.
-(function () {
-  var parent = document.createElement('div');
-  var child = document.createElement('div');
-  parent.appendChild(child);
-  parent.addEventListener('test', () => hasBubbleOnDetachedElements = true);
-  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-}());
+function createReadableStopPropagation (oldStopPropagation) {
+  return function () {
+    this.isPropagationStopped = true;
+    oldStopPropagation.call(this);
+  };
+}
+
+function simulateBubbling (elem, cEvent) {
+  var status;
+  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+  while (elem && !cEvent.isPropagationStopped) {
+    cEvent.currentTarget = elem;
+    if (elem.dispatchEvent(cEvent) === false) {
+      status = false;
+    }
+    elem = elem.parentNode;
+  }
+  return status;
+}
 
 function emitOne (elem, name, opts) {
-  var cevent, status, isBubbling;
+  var cEvent, shouldSimulateBubbling;
 
   /* jshint expr: true */
   opts.bubbles === undefined && (opts.bubbles = true);
   opts.cancelable === undefined && (opts.cancelable = true);
-  cevent = createCustomEvent(name, opts);
-  isBubbling = opts.bubbles;
-  status = elem.dispatchEvent(cevent);
-  elem = elem.parentNode;
+  cEvent = createCustomEvent(name, opts);
+  shouldSimulateBubbling = opts.bubbles &&
+    !hasBubbleOnDetachedElements &&
+    !utilElementContains(document, elem);
 
-  // Simulate bubbling if the browser doesn't support it on detached elements.
-  if (isBubbling && !utilElementContains(document, elem) && !hasBubbleOnDetachedElements) {
-    let oldStopPropagation = cevent.stopPropagation;
-
-    // Patch stopPropagation() to set isPropagationStopped because there's no
-    // other way to tell if it was stopped.
-    cevent.stopPropagation = function () {
-      isBubbling = false;
-      oldStopPropagation.call(cevent);
-    };
-
-    // Bubble.
-    while (elem && isBubbling) {
-      cevent.currentTarget = elem;
-      if (elem.dispatchEvent(cevent) === false) {
-        status = false;
-      }
-      elem = elem.parentNode;
-    }
-  }
-
-  return status;
+  return shouldSimulateBubbling ?
+    simulateBubbling(elem, cEvent) :
+    elem.dispatchEvent(cEvent);
 }
 
 export default function (elem, name, opts = {}) {
   var names = (typeof name === 'string' ? name.split(' ') : name);
   return names.reduce(function (prev, curr) {
-    if (!emitOne(elem, curr, opts)) {
+    if (emitOne(elem, curr, opts) === false) {
       prev.push(curr);
     }
     return prev;

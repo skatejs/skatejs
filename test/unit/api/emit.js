@@ -52,4 +52,11 @@ describe('api/emit', function () {
     expect(triggered).to.equal(2);
     expect(canceled).to.have.length(0);
   });
+
+  it('stopPropagation()', function () {
+    var cancelled;
+    child.addEventListener('test', e => e.stopPropagation());
+    parent.addEventListener('test', () => assert(false, 'propagation should have been stopped'));
+    cancelled = emit(child, 'test');
+  });
 });
