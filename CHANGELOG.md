@@ -1,6 +1,7 @@
 # Change Log
 
 All notable changes to this project will be documented in this file.
+
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
@@ -18,10 +19,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- #200 - The attribute lifecycle callbacks have been implemented in a different API under `properties`.
+- #204 - Event handlers now pass the element as `this` and if using event delegation, put the delegate target as the `delegateTarget` property on the event object instead of passing it as the third argument.
 - #205 - Lifecycle callbacks now use `this`.
 - #208 - `attributes` are no longer granular and is now closer to the spec.
 - #209 - Renamed `attributes` to `attribute` because now it's just a single callback.
 - #210 - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
+- #277 - The `created()` callback is now fired after descendants have been upgraded.
+- #278 - Event handlers queue up before the `created()` callback is fired and are processed after `created()` is called.
+- #279 - Properties since being implemented were updated to be bound before `created()` and values initialised after `created()` (if not already set).
 
 ### Fixed
 
@@ -34,6 +40,92 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - #187 - Modifying `element.attributes` directly no longer triggers the `attribute` callback.
 
 ### Upgrading
+
+####  #200 - Attribute lifecycle moved into `properties`.
+
+The old way of specifying behaviour within properties:
+
+```js
+attributes: {
+  myAttribute1: function (element, changes) {},
+  myAttribute2: {
+    value: 'initial value'
+  },
+  myAttribute3: {
+    value: function () {
+      return 'initial value';
+    }
+  },
+  myAttribute4: {
+    created: function (element, changes) {},
+    updated: function (element, changes) {},
+    removed: function (element, changes) {},
+  }
+}
+```
+
+This is a little backward, though, since not all API points need, or should, have linkage between properties and attributes. Now, everything gets defined as properties and has an option to be linked to an attribute. To translate the above variations to the new `properties` option, you would do the following:
+
+```js
+properties: {
+  myAttribute1: {
+    attr: true,
+    set: function (newValue, oldValue) {
+
+    }
+  },
+  myAttribute2: {
+    attr: true,
+    init: 'initial value',
+    set: function (newValue, oldValue) {
+
+    }
+  },
+  myAttribute3: {
+    attr: true,
+    value: function () {
+      return 'initial value';
+    }
+  },
+  myAttribute4: {
+    attr: true,
+    set: function (newValue, oldValue) {
+      if (oldValue === null) {
+        // created
+      } else if (newValue === null) {
+        // removed
+      } else {
+        // updated
+      }
+    }
+  }
+}
+```
+
+When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attribute` callback.
+
+#### #204 - Event handler using `this` and `e.delegateTarget`.
+
+Before:
+
+```js
+events: {
+  'click button': function (element, e, delegateTarget) {
+
+  }
+}
+```
+
+After:
+
+```js
+events: {
+  'click button': function (e) {
+    this;
+    e.delegateTarget;
+  }
+}
+```
 
 #### #205 - Lifecycle callbacks now use `this`
 
@@ -49,7 +141,7 @@ The following callbacks now use `this` to refer to the element instead of it bei
 For example, this:
 
 ```js
-created (element) {
+created: function (element) {
   element.textContent = 'Hello, World!';
 }
 ```
@@ -57,86 +149,35 @@ created (element) {
 Is now this:
 
 ```js
-created () {
+created: function () {
   this.textContent = 'Hello, World!';
 }
 ```
 
-####  #208 - `attributes` are no longer granular and is now closer to the spec
+For events, you use `this` inside the handler:
+
+```js
+events: {
+  click: function () {
+    this.clicked = true;
+  }
+}
+```
+
+#### #208 - `attributes` are no longer granular and is now closer to the spec.
+
+This callback has been simplified since in most cases the `properties` will be used for specifying side-effects.
 
 - You may now only specify a callback as the `attribute` option.
 - The signature of the callback matches the web component spec.
   - Use `this` to refer to the element.
   - Arguments are: `name`, `oldValue` and `newValue` in that order.
 
-Previous:
-
 ```js
-attributes: {
-  myAttribute1 (element, changes) {},
-  myAttribute2: {
-    value: 'initial value'
-  },
-  myAttribute3: {
-    value () {
-      return 'initial value';
-    }
-  },
-  myAttribute4: {
-    created (element, changes) {},
-    updated (element, changes) {},
-    removed (element, changes) {},
-  }
+attributes: function (name, oldValue, newValue) {
+  this;
 }
 ```
-
-Current:
-
-```js
-attribute (name, oldValue, newValue) {
-
-}
-```
-
-To translate the above variations to the new `properties` option, you would do the following:
-
-```js
-properties: {
-  myAttribute1: {
-    attr: true,
-    set (newValue, oldValue) {
-
-    }
-  },
-  myAttribute2: {
-    attr: true,
-    value: 'initial value',
-    set (newValue, oldValue) {
-
-    }
-  },
-  myAttribute3: {
-    attr: true,
-    value () {
-      return 'initial value';
-    }
-  },
-  myAttribute4: {
-    attr: true,
-    set (newValue, oldValue) {
-      if (oldValue === null) {
-        // created
-      } else if (newValue === null) {
-        // removed
-      } else {
-        // updated
-      }
-    }
-  }
-}
-```
-
-When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attribute` callback.
 
 #### #209 - Renamed `attributes` to `attribute` because now it's just a single callback
 
@@ -145,3 +186,47 @@ Wherever you're specifying the `attributes` option, just rename it to `attribute
 #### #210 - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
 
 If you're using the ES6 or UMD versions of Skate (`lib` and `src` folders), rename the reference to the `skate` file to `index`.
+
+#### #277 - The `created()` callback is now fired after descendants have been upgraded
+
+In native web components, the behaviour around when components are initialise are really inconsistent.
+
+##### Definitions in `<head>` or at the top of `<body>` (before HTML content)
+
+If you put your component definitions at the top of the page, they will be upgraded as they are encountered by the browser's rendering engine. Meaning no matter what order you specify your component definitions a parent component will be upgraded before its descendants. For example:
+
+```html
+<x-parent>
+  <x-child>
+    <x-descendant></x-descendant>
+  </x-child>
+</x-parent>
+```
+
+In the HTML example above, `x-parent` would be upgraded, then `x-child` and finally `x-descendant`. If `x-parent` or `x-child` need something from one of their descendants their out of luck.
+
+##### Definitions at the end of `<body>`
+
+You get something completely different if you put your definitions at the bottom of the page. In that case, your components are initialised in the order which your definitions are registered. Meaning if you register them in this order:
+
+1. `x-child`
+2. `x-descendant`
+3. `x-parent`
+
+Then your elements will be upgraded in that order. This is very unpredictable.
+
+##### Skate to the rescue
+
+What Skate does is assume that you're properly declaring your dependencies. Meaning if `x-parent` needs `x-child` then it will somehow ensure `x-child` is registered before itself. This can easily be done with any module system (AMD, CommonJS, ES2015, etc.).
+
+If you do this then no matter where you put your definitions Skate can descend into a DOM tree and ensure that descendants are initialised before parents. This means you can write predictable compound components without having to worry about browser semantics.
+
+##### Discussed alternatives
+
+We discussed having `created()` behave like native (all over the place) and having a `ready()` callback similar to Polymer's but thought it would be a bad idea to add yet more API when we could simply make `created()` behave sanely.
+
+#### #278 - Event handler binding and handling in relation to the `created()` callback
+
+
+
+#### #279 - Property binding and initialisation in relation to the `created()` callback
