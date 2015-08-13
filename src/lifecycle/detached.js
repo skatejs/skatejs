@@ -14,7 +14,6 @@ export default function (opts) {
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
-    var isNative = this.detachedCallback;
 
     if (info.detached) return;
     info.detached = true;
