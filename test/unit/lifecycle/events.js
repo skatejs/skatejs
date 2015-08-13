@@ -1,8 +1,9 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
+import lifecycleEvents from '../../../src/lifecycle/events';
 import skate from '../../../src/index';
 
-describe('api/events', function () {
+describe('lifecycle/events', function () {
   var numTriggered;
   var tag;
 
@@ -137,7 +138,7 @@ describe('api/events', function () {
     beforeEach(function () {
       triggered = 0;
       element = document.createElement('div');
-      bound = skate.events(element, {
+      bound = lifecycleEvents(element, {
         test: function (e) {
           expect(typeof e).to.equal('object', 'event not passed in to queue handler');
           triggered++;
