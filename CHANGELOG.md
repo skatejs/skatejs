@@ -41,7 +41,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Upgrading
 
-####  #200 - Attribute lifecycle moved into `properties`.
+#### #200 - Attribute lifecycle moved into `properties`.
 
 The old way of specifying behaviour within properties:
 
@@ -174,7 +174,7 @@ This callback has been simplified since in most cases the `properties` will be u
   - Arguments are: `name`, `oldValue` and `newValue` in that order.
 
 ```js
-attributes: function (name, oldValue, newValue) {
+attribute: function (name, oldValue, newValue) {
   this;
 }
 ```
@@ -189,7 +189,7 @@ If you're using the ES6 or UMD versions of Skate (`lib` and `src` folders), rena
 
 #### #277 - The `created()` callback is now fired after descendants have been upgraded
 
-In native web components, the behaviour around when components are initialise are really inconsistent.
+In native web components, the behaviour around when components are initialised are really inconsistent.
 
 ##### Definitions in `<head>` or at the top of `<body>` (before HTML content)
 
