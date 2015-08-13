@@ -1,13 +1,11 @@
-if (!window.__skate0) {
-  window.__skate0 = {
-    registerIfNotExists (name, value) {
-      if (!this[name]) {
-        this[name] = value;
-      }
+const VERSION = '__skate_0_14_0';
 
-      return this[name];
+if (!window[VERSION]) {
+  window[VERSION] = {
+    registerIfNotExists (name, value) {
+      return this[name] || (this[name] = value);
     }
   };
 }
 
-export default window.__skate0;
+export default window[VERSION];
