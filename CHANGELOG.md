@@ -9,10 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - #162 - Extending components.
 - #173 - The presence of the `resolved` attribute skips the `template` callback.
-- #177 - `skate.create()` as an alternative to `document.createElement()`.
+- #177 - `skate.create()` as an alternative to `document.createElement()` and `skate.init()`.
 - #187 - `attribute` handlers are now synchronous.
 - #200 - Support for a `properties` definition that defines instance properties and their behaviour.
 - #206 - Element constructors can be called like a function, or instantiated like a constructor.
+- #275 - Allow an object of properties to be passed to element constructors / functions and `skate.create()`.
+- #276 - `skate.emit()` triggers events and simulates bubbling for detached elements in browsers that don't support it.
 
 ### Changed
 

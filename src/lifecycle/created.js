@@ -1,7 +1,7 @@
-import apiEvents from '../api/events';
-import apiProperties from '../api/properties';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
+import lifecycleEvents from './events';
+import lifecycleProperties from './properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -56,8 +56,8 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 
 export default function (opts) {
   var created = fnOr(opts.created);
-  var events = fnOr(opts.events, apiEvents);
-  var properties = fnOr(opts.properties, apiProperties);
+  var events = fnOr(opts.events, lifecycleEvents);
+  var properties = fnOr(opts.properties, lifecycleProperties);
   var prototype = applyPrototype(opts.prototype);
   var template = fnOr(opts.template);
 
