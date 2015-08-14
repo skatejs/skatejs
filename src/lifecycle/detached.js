@@ -14,15 +14,12 @@ export default function (opts) {
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
-    var isNative = this.detachedCallback;
 
-    if (info.detached) {
-      return;
-    }
-
+    if (info.detached) return;
     info.detached = true;
-    opts.detached.call(this);
-    isNative || callDetachedOnDescendants(this, opts.id);
     info.attached = false;
+
+    callDetachedOnDescendants(this, opts.id);
+    opts.detached.call(this);
   };
 }

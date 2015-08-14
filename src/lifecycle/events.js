@@ -1,5 +1,4 @@
 import matches from '../util/matches-selector';
-import maybeThis from '../util/maybe-this';
 
 function parseEvent (e) {
   var parts = e.split(' ');
@@ -36,23 +35,28 @@ function bindEvent (elem, event, handler) {
   var parsed = parseEvent(event);
   var { name, selector } = parsed;
   var capture = selector && (name === 'blur' || name === 'focus');
-  handler = handler.bind(elem);
   handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }
 
-function bindEvents (elem, events) {
-  Object.keys(events).forEach(function (name) {
-    bindEvent(elem, name, events[name]);
-  });
-}
+export default function (elem, events) {
+  var queue = [];
+  var ready = false;
 
-export default maybeThis(function (elem, events, handler) {
-  if (typeof events === 'string') {
-    bindEvent(elem, events, handler);
-  } else if (Array.isArray(events)) {
-    events.forEach(e => bindEvent(elem, e, handler));
-  } else {
-    bindEvents(elem, events || {});
-  }
-});
+  Object.keys(events).forEach(function (name) {
+    var handler = events[name].bind(elem);
+    bindEvent(elem, name, function (e) {
+      if (ready) {
+        handler(e);
+      } else {
+        queue.push(handler.bind(elem, e));
+      }
+    });
+  });
+
+  return function () {
+    ready = true;
+    queue.forEach(handler => handler());
+    queue = [];
+  };
+}

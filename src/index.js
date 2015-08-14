@@ -73,6 +73,9 @@ function skate (id, userOptions) {
     opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
   }
 
+  // Native doesn't like if you pass a falsy value. Must be undefined.
+  opts.extends = opts.extends || undefined;
+
   // Extend behaviour of existing callbacks.
   opts.prototype.createdCallback = created(opts);
   opts.prototype.attachedCallback = attached(opts);

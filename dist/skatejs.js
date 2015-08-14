@@ -54,6 +54,147 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 
+// src/util/element-contains.js
+__6f793202bae98770dbb2b598df7929ad = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = elementPrototype.contains;
+  
+  exports["default"] = function (source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/emit.js
+__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  
+  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  
+  var CustomEvent = window.CustomEvent;
+  var hasBubbleOnDetachedElements = false;
+  
+  // Detect support for using the CustomElement constructor.
+  if (CustomEvent) {
+    try {
+      new CustomEvent();
+    } catch (e) {
+      CustomEvent = undefined;
+    }
+  }
+  
+  // Common way for constructing a new custom event.
+  function createCustomEvent(name) {
+    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return e;
+  }
+  
+  // Detect whether or not bubbling is supported on detached elements. This is
+  // non-standard, but Firefox allows it. In a web component world, this is
+  // very useful for decoupled inter-component communication without relying on
+  // DOM attachment, so we polyfill it.
+  (function () {
+    var parent = document.createElement('div');
+    var child = document.createElement('div');
+    parent.appendChild(child);
+    parent.addEventListener('test', function () {
+      return hasBubbleOnDetachedElements = true;
+    });
+    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+  })();
+  
+  function emitOne(elem, name, opts) {
+    var cevent, status, isBubbling;
+  
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    cevent = createCustomEvent(name, opts);
+    isBubbling = opts.bubbles;
+    status = elem.dispatchEvent(cevent);
+    elem = elem.parentNode;
+  
+    // Simulate bubbling if the browser doesn't support it on detached elements.
+    if (isBubbling && !(0, _utilElementContains2['default'])(document, elem) && !hasBubbleOnDetachedElements) {
+      (function () {
+        var oldStopPropagation = cevent.stopPropagation;
+  
+        // Patch stopPropagation() to set isPropagationStopped because there's no
+        // other way to tell if it was stopped.
+        cevent.stopPropagation = function () {
+          isBubbling = false;
+          oldStopPropagation.call(cevent);
+        };
+  
+        // Bubble.
+        while (elem && isBubbling) {
+          cevent.currentTarget = elem;
+          if (elem.dispatchEvent(cevent) === false) {
+            status = false;
+          }
+          elem = elem.parentNode;
+        }
+      })();
+    }
+  
+    return status;
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (!emitOne(elem, curr, opts)) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
 // src/global/vars.js
 __dd77578495c1d19b0e115627616ea63a = (function () {
   var module = {
@@ -166,6 +307,10 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
+  
   var _vars = __dd77578495c1d19b0e115627616ea63a;
   
   var _vars2 = _interopRequireDefault(_vars);
@@ -202,6 +347,10 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
       definitions[id] = opts;
       map[typeIndex][id] = opts;
+      (0, _apiEmit2['default'])(document, '_skate-register', {
+        bubbles: false,
+        detail: opts
+      });
   
       return this;
     },
@@ -281,6 +430,10 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   }
   
   exports['default'] = function (elems, fn, filter) {
+    if (!elems) {
+      return;
+    }
+  
     if (elems instanceof Node) {
       elems = [elems];
     }
@@ -339,14 +492,12 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
       var info = (0, _utilData2['default'])(this, opts.id);
       var isNative = this.attachedCallback;
   
-      if (info.attached) {
-        return;
-      }
-  
+      if (info.attached) return;
       info.attached = true;
-      opts.attached.call(this);
-      isNative || callAttachedOnDescendants(this, opts.id);
       info.detached = false;
+  
+      callAttachedOnDescendants(this, opts.id);
+      opts.attached.call(this);
     };
   };
   
@@ -387,38 +538,8 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/maybe-this.js
-__3a71a6ff9ecf4b5639833a53ddd3f993 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (fn) {
-    return function () {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-  
-      return args[0] && args[0].nodeType ? fn.apply(this, args) : function () {
-        return fn.apply(window, [this].concat(args));
-      };
-    };
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
-// src/api/event.js
-__6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
+// src/api/events.js
+__96707d121e85542c0149cb45072882a0 = (function () {
   var module = {
     exports: {}
   };
@@ -435,10 +556,6 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
   var _utilMatchesSelector = __365bd8b7bbfb2b50d6dbfd830f0aa927;
   
   var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
-  
-  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
-  
-  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
   
   function parseEvent(e) {
     var parts = e.split(' ');
@@ -482,23 +599,30 @@ __6bf39bed4ad969dbb83d42a8ba2be197 = (function () {
     elem.addEventListener(name, handler, capture);
   }
   
-  function bindEvents(elem, events) {
-    Object.keys(events).forEach(function (name) {
-      bindEvent(elem, name, events[name]);
-    });
-  }
+  exports['default'] = function (elem, events) {
+    var queue = [];
+    var ready = false;
   
-  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, events, handler) {
-    if (typeof events === 'string') {
-      bindEvent(elem, events, handler);
-    } else if (Array.isArray(events)) {
-      events.forEach(function (e) {
-        return bindEvent(elem, e, handler);
+    Object.keys(events).forEach(function (name) {
+      var handler = events[name].bind(elem);
+      bindEvent(elem, name, function (e) {
+        if (ready) {
+          handler(e);
+        } else {
+          queue.push(handler.bind(elem, e));
+        }
       });
-    } else {
-      bindEvents(elem, events || {});
-    }
-  });
+    });
+  
+    return function () {
+      ready = true;
+      queue.forEach(function (handler) {
+        return handler();
+      });
+      queue = [];
+    };
+  };
+  
   module.exports = exports['default'];
   
   return module.exports;
@@ -563,8 +687,8 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/property.js
-__f57aa4e0179bb8c6b45d999112238add = (function () {
+// src/api/properties.js
+__ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
   var module = {
     exports: {}
   };
@@ -578,6 +702,10 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _emit2 = _interopRequireDefault(_emit);
+  
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
@@ -590,39 +718,54 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
-  
-  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
-  
-  // TODO: Lean out option normalisation.
-  function property(name, prop) {
-    var internalGetter, internalSetter, internalValue, isBoolean;
-  
+  function normaliseProp(prop) {
     if (typeof prop === 'object') {
       prop = (0, _utilAssignSafe2['default'])({}, prop);
     } else {
       prop = { type: prop };
     }
+    return prop;
+  }
   
-    if (prop.attr === true) {
-      prop.attr = (0, _utilDashCase2['default'])(name);
-    }
+  function normaliseAttr(prop, name) {
+    var attr = prop.attr;
+    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
+  }
   
-    if (typeof prop.type !== 'function') {
-      prop.type = function (val) {
-        return val;
-      };
-    }
-  
-    if (prop.init !== undefined && typeof prop.init !== 'function') {
+  function normaliseInit(prop, elem) {
+    var init = prop.init;
+    if (init !== undefined) {
       (function () {
-        var value = prop.init;
-        prop.init = function () {
+        var value = init;
+        init = typeof init === 'function' ? init : function () {
           return value;
         };
+        init = init.bind(elem);
       })();
     }
+    return init;
+  }
   
+  function normaliseEmit(prop) {
+    var emit = prop.emit;
+    return emit === undefined ? 'skate.property' : emit;
+  }
+  
+  function normaliseType(prop) {
+    var type = prop.type;
+    return typeof type !== 'function' ? function (val) {
+      return val;
+    } : type;
+  }
+  
+  function property(elem, name, prop) {
+    var internalGetter, internalSetter, internalValue, isBoolean;
+  
+    prop = normaliseProp(prop);
+    prop.attr = normaliseAttr(prop, name);
+    prop.init = normaliseInit(prop, elem);
+    prop.emit = normaliseEmit(prop);
+    prop.type = normaliseType(prop);
     internalGetter = prop.get;
     internalSetter = prop.set;
     isBoolean = prop.type && prop.type === Boolean;
@@ -644,8 +787,15 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       var newValue = prop.type(value);
       var oldValue = this[name];
   
-      // Regardless of any options, we store the value internally.
-      internalValue = newValue;
+      // Don't do anything if the values are the same.
+      if (newValue === oldValue) {
+        return;
+      }
+  
+      // We only store the value internally if a getter isn't specified.
+      if (!internalGetter) {
+        internalValue = newValue;
+      }
   
       // We check first to see if we're already updating the property from
       // the attribute. If we are, then there's no need to update the attribute
@@ -671,6 +821,17 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       if (internalSetter) {
         internalSetter.call(this, newValue, oldValue);
       }
+  
+      if (prop.emit) {
+        (0, _emit2['default'])(elem, prop.emit, {
+          bubbles: false,
+          detail: {
+            name: name,
+            newValue: newValue,
+            oldValue: oldValue
+          }
+        });
+      }
     };
   
     return prop;
@@ -686,41 +847,37 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       info.attributeToPropertyMap = {};
     }
   
-    prop = property(name, prop);
+    prop = property(elem, name, prop);
     Object.defineProperty(elem, name, prop);
-  
-    // TODO: What happens if the setter does something with a descendant that
-    // may not exist yet?
-    //
-    // Initialise the value if a initial value was provided. Attributes that exist
-    // on the element should trump any default values that are provided.
-    if (prop.init && (!prop.attr || !elem.hasAttribute(prop.attr))) {
-      elem[name] = prop.init.call(elem);
-    }
   
     // This ensures that the corresponding attribute will know to update this
     // property when it is set.
     if (prop.attr) {
       info.attributeToPropertyMap[prop.attr] = name;
     }
+  
+    return function () {
+      if (prop.attr && elem.hasAttribute(prop.attr)) {
+        elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
+      } else if (prop.init) {
+        elem[name] = prop.init.call(this);
+      }
+    };
   }
   
-  function defineProperties(elem, props) {
-    Object.keys(props).forEach(function (name) {
-      defineProperty(elem, name, props[name]);
+  exports['default'] = function (elem, props) {
+    var funcs = Object.keys(props).map(function (name) {
+      return defineProperty(elem, name, props[name]);
     });
-  }
+    return function () {
+      var _this = this;
   
-  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem) {
-    var props = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-    var prop = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+      funcs.forEach(function (func) {
+        return func.call(_this);
+      });
+    };
+  };
   
-    if (typeof props === 'string') {
-      defineProperty(elem, props, prop);
-    } else {
-      defineProperties(elem, props);
-    }
-  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -769,13 +926,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiEvent = __6bf39bed4ad969dbb83d42a8ba2be197;
+  var _apiEvents = __96707d121e85542c0149cb45072882a0;
   
-  var _apiEvent2 = _interopRequireDefault(_apiEvent);
+  var _apiEvents2 = _interopRequireDefault(_apiEvents);
   
-  var _apiProperty = __f57aa4e0179bb8c6b45d999112238add;
+  var _apiProperties = __ce1127ce6317283e8a42ce1bda4c6b09;
   
-  var _apiProperty2 = _interopRequireDefault(_apiProperty);
+  var _apiProperties2 = _interopRequireDefault(_apiProperties);
   
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
@@ -801,46 +958,12 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var oldSetAttribute = elProto.setAttribute;
   var oldRemoveAttribute = elProto.removeAttribute;
   
-  function patchAttributeMethods(elem) {
-    elem.setAttribute = function (name, newValue) {
-      var oldValue = this.getAttribute(name);
-      oldSetAttribute.call(elem, name, newValue);
-      elem.attributeChangedCallback(name, oldValue, String(newValue));
+  function fnOr(fn) {
+    var otherwise = arguments.length <= 1 || arguments[1] === undefined ? function () {} : arguments[1];
+  
+    return typeof fn === 'function' ? fn : function () {
+      return otherwise(this, fn);
     };
-  
-    elem.removeAttribute = function (name) {
-      var oldValue = this.getAttribute(name);
-      oldRemoveAttribute.call(elem, name);
-      elem.attributeChangedCallback(name, oldValue, null);
-    };
-  }
-  
-  function triggerAttributesCreated(elem) {
-    var attrs = elem.attributes;
-    var attrsLength = attrs.length;
-    for (var a = 0; a < attrsLength; a++) {
-      var attr = attrs[a];
-      elem.attributeChangedCallback(attr.name, null, attr.value);
-    }
-  }
-  
-  function markAsResolved(elem, resolvedAttribute, unresolvedAttribute) {
-    elem.removeAttribute(unresolvedAttribute);
-    elem.setAttribute(resolvedAttribute, '');
-  }
-  
-  function callCreatedOnDescendants(elem, id) {
-    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
-      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
-        return Ctor.prototype.createdCallback.call(child);
-      });
-    }, function (child) {
-      return !(0, _utilData2['default'])(child, id).created;
-    });
-  }
-  
-  function fnOrApi(fn, api) {
-    return typeof fn === 'function' ? fn : api(fn);
   }
   
   function applyPrototype(proto) {
@@ -856,65 +979,108 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     };
   }
   
+  function patchAttributeMethods(elem) {
+    elem.setAttribute = function (name, newValue) {
+      var oldValue = this.getAttribute(name);
+      oldSetAttribute.call(elem, name, newValue);
+      elem.attributeChangedCallback(name, oldValue, String(newValue));
+    };
+  
+    elem.removeAttribute = function (name) {
+      var oldValue = this.getAttribute(name);
+      oldRemoveAttribute.call(elem, name);
+      elem.attributeChangedCallback(name, oldValue, null);
+    };
+  }
+  
+  function callCreatedOnDescendants(elem, id) {
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
+      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
+        return Ctor.prototype.createdCallback.call(child);
+      });
+    }, function (child) {
+      return !(0, _utilData2['default'])(child, id).created;
+    });
+  }
+  
+  function markAsResolved(elem, resolvedAttribute, unresolvedAttribute) {
+    elem.removeAttribute(unresolvedAttribute);
+    elem.setAttribute(resolvedAttribute, '');
+  }
+  
   exports['default'] = function (opts) {
-    var created = opts.created;
-    var events = fnOrApi(opts.events, _apiEvent2['default']);
-    var properties = fnOrApi(opts.properties, _apiProperty2['default']);
+    var created = fnOr(opts.created);
+    var events = fnOr(opts.events, _apiEvents2['default']);
+    var properties = fnOr(opts.properties, _apiProperties2['default']);
     var prototype = applyPrototype(opts.prototype);
-    var template = opts.template || function () {};
+    var template = fnOr(opts.template);
   
     /* jshint expr: true */
     return function () {
+      var initEvents, initProps;
       var info = (0, _utilData2['default'])(this, opts.id);
       var isNative = this.createdCallback;
   
-      if (info.created) {
-        return;
-      }
-  
+      // This ensures that this component cannot be triggered more than once on
+      // this element. This is also for native so that we can force-init an
+      // element and when the native callback is fired it can just be a no-op.
+      if (info.created) return;
       info.created = true;
-      isNative || prototype.call(this);
+  
+      // Ensure that attribute changes are propagated synchronously.
       isNative || patchAttributeMethods(this);
-      events.call(this);
+  
+      // The inheriting of the prototype is the first thing to happen in native.
+      isNative || prototype.call(this);
+  
+      // Bind events so we can catch them at the earliest point in the lifecycle.
+      // Any events that happen between here and when `initEvents()` is called
+      // are queued up and not invoked until `initEvents()` is actually called.
+      // This allows us to ensure that everything is set up before we actually
+      // handle the events.
+      initEvents = events.call(this);
+  
+      // The properties function returns a function that can be called to
+      // initialise them on the element when appropriate. We bind property
+      // handlers before calling any of the lifecycle handlers, but don't
+      // actually initialise their values until after lifecycle callbacks have
+      // been invoked.
+      initProps = properties.call(this);
+  
+      // Apply the template to the element. In native, this may cause whatever
+      // descendants are in the template (including existing innerHTML) to be
+      // upgraded synchronously.
       template.call(this);
-      properties.call(this);
+  
+      // In both polyfill and native we force init all descendant components so
+      // that we can ensure that created() has been called on all descendants
+      // by the time it's called on the host.
+      callCreatedOnDescendants(this, opts.id);
+  
+      // Call created() on the host. This may be called at any time, so no one
+      // should not rely on descendants being initialised yet. This conforms with
+      // native behaviour.
       created.call(this);
-      triggerAttributesCreated(this);
+  
+      // We trigger all property handlers for properties that exist once all
+      // descendants are ready for any incoming state updates. This will also
+      // trigger changes for any attributes that are properties.
+      initProps();
+  
+      // We trigger all event handlers that have queued up so that nothing has
+      // been lost since they were bound. This is done after initialising
+      // properties because events may depend on initialised values. Any events
+      // triggered from property initialisation will be queued up and initialised
+      // here.
+      initEvents();
+  
+      // Resolve after everything in the created lifecycle has run. This is so
+      // that whatever needs to be done before this can be done without FOUC.
       markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
-      isNative || callCreatedOnDescendants(this, opts.id);
     };
   };
   
   module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var elementPrototype = window.HTMLElement.prototype;
-  var elementPrototypeContains = elementPrototype.contains;
-  
-  exports["default"] = function (source, target) {
-    // The document element does not have the contains method in IE.
-    if (source === document && !source.contains) {
-      return document.head.contains(target) || document.body.contains(target);
-    }
-  
-    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  };
-  
-  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -1058,68 +1224,6 @@ __1675a7174b713323cc232370699a2714 = (function () {
     return (0, _utilAssign2['default'])(name[0] === '<' ? createFromHtml(name) : createFromName(name), props);
   };
   
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilMaybeThis = __3a71a6ff9ecf4b5639833a53ddd3f993;
-  
-  var _utilMaybeThis2 = _interopRequireDefault(_utilMaybeThis);
-  
-  var CustomEvent = window.CustomEvent;
-  
-  if (CustomEvent) {
-    try {
-      new CustomEvent();
-    } catch (e) {
-      CustomEvent = undefined;
-    }
-  }
-  
-  function createCustomEvent(name, opts) {
-    if (CustomEvent) {
-      return new CustomEvent(name, opts);
-    }
-  
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return e;
-  }
-  
-  function emitOne(elem, name, opts) {
-    /* jshint expr: true */
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
-    return elem.dispatchEvent(createCustomEvent(name, opts));
-  }
-  
-  exports['default'] = (0, _utilMaybeThis2['default'])(function (elem, name) {
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-  
-    var names = typeof name === 'string' ? name.split(' ') : name;
-    return names.reduce(function (prev, curr) {
-      if (!emitOne(elem, curr, opts)) {
-        prev.push(curr);
-      }
-      return prev;
-    }, []);
-  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -1274,9 +1378,10 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     attached: function attached() {},
   
     // Attribute lifecycle callback or callbacks.
-    attributes: undefined,
+    attributes: function attributes() {},
   
-    // Called when the element is created.
+    // Called when the element is created after all descendants have had it
+    // called on them.
     created: function created() {},
   
     // Called when the element is detached from the document.
@@ -1284,15 +1389,18 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   
     // The events to manage the binding and unbinding of during the definition's
     // lifecycle.
-    events: undefined,
+    events: {},
   
     // Restricts a particular definition to binding explicitly to an element with
     // a tag name that matches the specified value.
-    'extends': undefined,
+    'extends': '',
   
     // The ID of the definition. This is automatically set in the `skate()`
     // function.
     id: '',
+  
+    // The special Skate properties to define.
+    properties: {},
   
     // Properties and methods to add to each element.
     prototype: {},
@@ -1301,7 +1409,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     resolvedAttribute: 'resolved',
   
     // The template to replace the content of the element with.
-    template: undefined,
+    template: function template() {},
   
     // The type of bindings to allow.
     type: _typeElement2['default'],
@@ -1357,14 +1465,12 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
       var info = (0, _utilData2['default'])(this, opts.id);
       var isNative = this.detachedCallback;
   
-      if (info.detached) {
-        return;
-      }
-  
+      if (info.detached) return;
       info.detached = true;
-      opts.detached.call(this);
-      isNative || callDetachedOnDescendants(this, opts.id);
       info.attached = false;
+  
+      callDetachedOnDescendants(this, opts.id);
+      opts.detached.call(this);
     };
   };
   
@@ -1621,6 +1727,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
+  var _apiEvents = __96707d121e85542c0149cb45072882a0;
+  
+  var _apiEvents2 = _interopRequireDefault(_apiEvents);
+  
   var _apiInit = __3add36046399fead5a83243849207ed7;
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
@@ -1628,6 +1738,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _apiNoConflict = __82110da8eb4359fb9724f67f4a12febe;
   
   var _apiNoConflict2 = _interopRequireDefault(_apiNoConflict);
+  
+  var _apiProperties = __ce1127ce6317283e8a42ce1bda4c6b09;
+  
+  var _apiProperties2 = _interopRequireDefault(_apiProperties);
   
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
@@ -1749,6 +1863,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
       opts.prototype = (0, _utilAssignSafe2['default'])(Object.create(CtorParent.prototype), opts.prototype);
     }
   
+    // Native doesn't like if you pass a falsy value. Must be undefined.
+    opts['extends'] = opts['extends'] || undefined;
+  
     // Extend behaviour of existing callbacks.
     opts.prototype.createdCallback = (0, _lifecycleCreated2['default'])(opts);
     opts.prototype.attachedCallback = (0, _lifecycleAttached2['default'])(opts);
@@ -1776,8 +1893,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   skate.create = _apiCreate2['default'];
   skate.emit = _apiEmit2['default'];
+  skate.events = _apiEvents2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
+  skate.properties = _apiProperties2['default'];
   skate.version = _apiVersion2['default'];
   
   // Global
