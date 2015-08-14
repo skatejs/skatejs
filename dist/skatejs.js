@@ -876,7 +876,11 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       // Apply the template to the element. In native, this may cause whatever
       // descendants are in the template (including existing innerHTML) to be
       // upgraded synchronously.
-      template.call(this);
+      //
+      // We only template if the "resolved" attribute doesn't exist on the element
+      // so that the developer can render server-side and only bind behaveiour
+      // client-side.
+      this.hasAttribute('resolved') || template.call(this);
   
       // In both polyfill and native we force init all descendant components so
       // that we can ensure that created() has been called on all descendants
