@@ -64,7 +64,7 @@ attributes: {
 }
 ```
 
-This is a little backward, though, since not all API points need, or should, have linkage between properties and attributes. Now, everything gets defined as properties and has an option to be linked to an attribute. To translate the above variations to the new `properties` option, you would do the following:
+In the example above, each attribute would automatically create a property link. All behaviour would be handled by the attribute and there was no disctinction between a property value and an attribute value. This is a little backward, though, since not all API points need, or should, have linkage between properties and attributes. Now, everything gets defined as properties and has an option to be linked to an attribute. To translate the above variations to the new `properties` option, you would do the following:
 
 ```js
 properties: {
@@ -174,7 +174,7 @@ This callback has been simplified since in most cases the `properties` will be u
   - Arguments are: `name`, `oldValue` and `newValue` in that order.
 
 ```js
-attributes: function (name, oldValue, newValue) {
+attribute: function (name, oldValue, newValue) {
   this;
 }
 ```
