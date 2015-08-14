@@ -103,15 +103,15 @@ export default function (opts) {
     // by the time it's called on the host.
     callCreatedOnDescendants(this, opts.id);
 
-    // Call created() on the host. This may be called at any time, so no one
-    // should not rely on descendants being initialised yet. This conforms with
-    // native behaviour.
-    created.call(this);
-
     // We trigger all property handlers for properties that exist once all
     // descendants are ready for any incoming state updates. This will also
     // trigger changes for any attributes that are properties.
     initProps();
+
+    // Call created() on the host. This may be called at any time, so no one
+    // should not rely on descendants being initialised yet. This conforms with
+    // native behaviour.
+    created.call(this);
 
     // We trigger all event handlers that have queued up so that nothing has
     // been lost since they were bound. This is done after initialising
