@@ -5,7 +5,7 @@ export default {
   attached: function () {},
 
   // Attribute lifecycle callback or callbacks.
-  attributes: function () {},
+  attribute: function () {},
 
   // Called when the element is created after all descendants have had it
   // called on them.
