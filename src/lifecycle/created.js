@@ -66,6 +66,7 @@ export default function (opts) {
     var initEvents, initProps;
     var info = data(this, opts.id);
     var isNative = this.createdCallback;
+    var isResolved = this.hasAttribute(opts.resolvedAttribute);
 
     // This ensures that this component cannot be triggered more than once on
     // this element. This is also for native so that we can force-init an
@@ -100,7 +101,7 @@ export default function (opts) {
     // We only template if the "resolved" attribute doesn't exist on the element
     // so that the developer can render server-side and only bind behaveiour
     // client-side.
-    this.hasAttribute('resolved') || template.call(this);
+    isResolved || template.call(this);
 
     // In both polyfill and native we force init all descendant components so
     // that we can ensure that created() has been called on all descendants
@@ -126,6 +127,8 @@ export default function (opts) {
 
     // Resolve after everything in the created lifecycle has run. This is so
     // that whatever needs to be done before this can be done without FOUC.
-    markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
+    //
+    // We only need to do this if it's not resolved.
+    isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };
 }
