@@ -14,6 +14,7 @@ import './unit/lifecycle-scenarios';
 import './unit/lifecycle/created';
 import './unit/lifecycle/events';
 import './unit/lifecycle/properties';
+import './unit/lifecycle/template';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
