@@ -24,7 +24,7 @@ describe('created callback ordering on parent -> descendants', function () {
       }
     });
 
-    // host has no dependants so its first
+    // host has no dependants so it's last
     skate(`x-host-${tag}`, {
       created () {
         host = ++num;
