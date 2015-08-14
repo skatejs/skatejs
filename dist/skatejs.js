@@ -54,37 +54,8 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var elementPrototype = window.HTMLElement.prototype;
-  var elementPrototypeContains = elementPrototype.contains;
-  
-  exports["default"] = function (source, target) {
-    // The document element does not have the contains method in IE.
-    if (source === document && !source.contains) {
-      return document.head.contains(target) || document.body.contains(target);
-    }
-  
-    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
-// src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+// src/global/vars.js
+__dd77578495c1d19b0e115627616ea63a = (function () {
   var module = {
     exports: {}
   };
@@ -95,132 +66,18 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  var VERSION = '__skate_0_14_0';
   
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
-  
-  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
-  
-  var CustomEvent = window.CustomEvent;
-  var hasBubbleOnDetachedElements = false;
-  
-  // Detect support for using the CustomElement constructor.
-  if (CustomEvent) {
-    try {
-      new CustomEvent();
-    } catch (e) {
-      CustomEvent = undefined;
-    }
-  }
-  
-  // Common way for constructing a new custom event.
-  function createCustomEvent(name) {
-    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-  
-    if (CustomEvent) {
-      return new CustomEvent(name, opts);
-    }
-  
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return e;
-  }
-  
-  // Detect whether or not bubbling is supported on detached elements. This is
-  // non-standard, but Firefox allows it. In a web component world, this is
-  // very useful for decoupled inter-component communication without relying on
-  // DOM attachment, so we polyfill it.
-  (function () {
-    var parent = document.createElement('div');
-    var child = document.createElement('div');
-    parent.appendChild(child);
-    parent.addEventListener('test', function () {
-      return hasBubbleOnDetachedElements = true;
-    });
-    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-  })();
-  
-  function emitOne(elem, name, opts) {
-    var cevent, status, isBubbling;
-  
-    /* jshint expr: true */
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
-    cevent = createCustomEvent(name, opts);
-    isBubbling = opts.bubbles;
-    status = elem.dispatchEvent(cevent);
-    elem = elem.parentNode;
-  
-    // Simulate bubbling if the browser doesn't support it on detached elements.
-    if (isBubbling && !(0, _utilElementContains2['default'])(document, elem) && !hasBubbleOnDetachedElements) {
-      (function () {
-        var oldStopPropagation = cevent.stopPropagation;
-  
-        // Patch stopPropagation() to set isPropagationStopped because there's no
-        // other way to tell if it was stopped.
-        cevent.stopPropagation = function () {
-          isBubbling = false;
-          oldStopPropagation.call(cevent);
-        };
-  
-        // Bubble.
-        while (elem && isBubbling) {
-          cevent.currentTarget = elem;
-          if (elem.dispatchEvent(cevent) === false) {
-            status = false;
-          }
-          elem = elem.parentNode;
-        }
-      })();
-    }
-  
-    return status;
-  }
-  
-  exports['default'] = function (elem, name) {
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-  
-    var names = typeof name === 'string' ? name.split(' ') : name;
-    return names.reduce(function (prev, curr) {
-      if (!emitOne(elem, curr, opts)) {
-        prev.push(curr);
-      }
-      return prev;
-    }, []);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-
-// src/global/vars.js
-__dd77578495c1d19b0e115627616ea63a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  if (!window.__skate0) {
-    window.__skate0 = {
+  if (!window[VERSION]) {
+    window[VERSION] = {
       registerIfNotExists: function registerIfNotExists(name, value) {
-        if (!this[name]) {
-          this[name] = value;
-        }
-  
-        return this[name];
+        return this[name] || (this[name] = value);
       }
     };
   }
   
-  exports["default"] = window.__skate0;
-  module.exports = exports["default"];
+  exports['default'] = window[VERSION];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -270,7 +127,7 @@ __43714db526496b3dd90353996f6dce09 = (function () {
       var attrs = elem.attributes;
       var isAttr = attrs.is;
       var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-      var tagName = elem.tagName.toLowerCase();
+      var tagName = (elem.tagName || elem.localName).toLowerCase();
       var definition = defs[isAttrValue || tagName];
   
       if (!definition) {
@@ -306,10 +163,6 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   });
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
-  
-  var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
   var _vars = __dd77578495c1d19b0e115627616ea63a;
   
@@ -347,10 +200,6 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
       definitions[id] = opts;
       map[typeIndex][id] = opts;
-      (0, _apiEmit2['default'])(document, '_skate-register', {
-        bubbles: false,
-        detail: opts
-      });
   
       return this;
     },
@@ -490,7 +339,6 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
     /* jshint expr: true */
     return function () {
       var info = (0, _utilData2['default'])(this, opts.id);
-      var isNative = this.attachedCallback;
   
       if (info.attached) return;
       info.attached = true;
@@ -502,6 +350,40 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   };
   
   module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/assign-safe.js
+__d9d26492984e649e5130081ad32bafd6 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (child) {
+    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      parents[_key - 1] = arguments[_key];
+    }
+  
+    parents.forEach(function (parent) {
+      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
+        var childDesc = Object.getOwnPropertyDescriptor(child, name);
+        if (!childDesc || childDesc.configurable) {
+          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
+        }
+      });
+    });
+    return child;
+  };
+  
+  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -538,8 +420,8 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/events.js
-__96707d121e85542c0149cb45072882a0 = (function () {
+// src/lifecycle/events.js
+__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   var module = {
     exports: {}
   };
@@ -594,7 +476,6 @@ __96707d121e85542c0149cb45072882a0 = (function () {
     var selector = parsed.selector;
   
     var capture = selector && (name === 'blur' || name === 'focus');
-    handler = handler.bind(elem);
     handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
     elem.addEventListener(name, handler, capture);
   }
@@ -628,40 +509,6 @@ __96707d121e85542c0149cb45072882a0 = (function () {
   return module.exports;
 }).call(this);
 
-// src/util/assign-safe.js
-__d9d26492984e649e5130081ad32bafd6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
-  
-    parents.forEach(function (parent) {
-      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
-        var childDesc = Object.getOwnPropertyDescriptor(child, name);
-        if (!childDesc || childDesc.configurable) {
-          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-        }
-      });
-    });
-    return child;
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -687,8 +534,8 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 
-// src/api/properties.js
-__ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
+// src/lifecycle/properties.js
+__dc805244a3f10da2e05ae57781968d52 = (function () {
   var module = {
     exports: {}
   };
@@ -701,10 +548,6 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
   });
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _emit = __639a0d2e0f8a90cd72e6197bdb481558;
-  
-  var _emit2 = _interopRequireDefault(_emit);
   
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
@@ -746,11 +589,6 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
     return init;
   }
   
-  function normaliseEmit(prop) {
-    var emit = prop.emit;
-    return emit === undefined ? 'skate.property' : emit;
-  }
-  
   function normaliseType(prop) {
     var type = prop.type;
     return typeof type !== 'function' ? function (val) {
@@ -764,7 +602,6 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
     prop = normaliseProp(prop);
     prop.attr = normaliseAttr(prop, name);
     prop.init = normaliseInit(prop, elem);
-    prop.emit = normaliseEmit(prop);
     prop.type = normaliseType(prop);
     internalGetter = prop.get;
     internalSetter = prop.set;
@@ -820,17 +657,6 @@ __ce1127ce6317283e8a42ce1bda4c6b09 = (function () {
       // is useful information for the setter.
       if (internalSetter) {
         internalSetter.call(this, newValue, oldValue);
-      }
-  
-      if (prop.emit) {
-        (0, _emit2['default'])(elem, prop.emit, {
-          bubbles: false,
-          detail: {
-            name: name,
-            newValue: newValue,
-            oldValue: oldValue
-          }
-        });
       }
     };
   
@@ -926,14 +752,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiEvents = __96707d121e85542c0149cb45072882a0;
-  
-  var _apiEvents2 = _interopRequireDefault(_apiEvents);
-  
-  var _apiProperties = __ce1127ce6317283e8a42ce1bda4c6b09;
-  
-  var _apiProperties2 = _interopRequireDefault(_apiProperties);
-  
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
@@ -941,6 +759,14 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
+  
+  var _events2 = _interopRequireDefault(_events);
+  
+  var _properties = __dc805244a3f10da2e05ae57781968d52;
+  
+  var _properties2 = _interopRequireDefault(_properties);
   
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
@@ -1010,8 +836,8 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   exports['default'] = function (opts) {
     var created = fnOr(opts.created);
-    var events = fnOr(opts.events, _apiEvents2['default']);
-    var properties = fnOr(opts.properties, _apiProperties2['default']);
+    var events = fnOr(opts.events, _events2['default']);
+    var properties = fnOr(opts.properties, _properties2['default']);
     var prototype = applyPrototype(opts.prototype);
     var template = fnOr(opts.template);
   
@@ -1057,15 +883,15 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       // by the time it's called on the host.
       callCreatedOnDescendants(this, opts.id);
   
-      // Call created() on the host. This may be called at any time, so no one
-      // should not rely on descendants being initialised yet. This conforms with
-      // native behaviour.
-      created.call(this);
-  
       // We trigger all property handlers for properties that exist once all
       // descendants are ready for any incoming state updates. This will also
       // trigger changes for any attributes that are properties.
       initProps();
+  
+      // Call created() on the host. This may be called at any time, so no one
+      // should not rely on descendants being initialised yet. This conforms with
+      // native behaviour.
+      created.call(this);
   
       // We trigger all event handlers that have queued up so that nothing has
       // been lost since they were bound. This is done after initialising
@@ -1081,6 +907,35 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   };
   
   module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/util/element-contains.js
+__6f793202bae98770dbb2b598df7929ad = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = elementPrototype.contains;
+  
+  exports["default"] = function (source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
+  };
+  
+  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -1222,6 +1077,109 @@ __1675a7174b713323cc232370699a2714 = (function () {
   exports['default'] = function (name, props) {
     name = name.trim();
     return (0, _utilAssign2['default'])(name[0] === '<' ? createFromHtml(name) : createFromName(name), props);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+
+// src/api/emit.js
+__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  
+  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  
+  var CustomEvent = (function (CustomEvent) {
+    if (CustomEvent) {
+      try {
+        new CustomEvent();
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return CustomEvent;
+  })(window.CustomEvent);
+  
+  var hasBubbleOnDetachedElements = (function () {
+    var parent = document.createElement('div');
+    var child = document.createElement('div');
+    var hasBubbleOnDetachedElements = false;
+    parent.appendChild(child);
+    parent.addEventListener('test', function () {
+      return hasBubbleOnDetachedElements = true;
+    });
+    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+    return hasBubbleOnDetachedElements;
+  })();
+  
+  function createCustomEvent(name) {
+    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return e;
+  }
+  
+  function createReadableStopPropagation(oldStopPropagation) {
+    return function () {
+      this.isPropagationStopped = true;
+      oldStopPropagation.call(this);
+    };
+  }
+  
+  function simulateBubbling(elem, cEvent) {
+    var didPreventDefault;
+    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+    while (elem && !cEvent.isPropagationStopped) {
+      cEvent.currentTarget = elem;
+      if (elem.dispatchEvent(cEvent) === false) {
+        didPreventDefault = false;
+      }
+      elem = elem.parentNode;
+    }
+    return didPreventDefault;
+  }
+  
+  function emitOne(elem, name, opts) {
+    var cEvent, shouldSimulateBubbling;
+  
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    cEvent = createCustomEvent(name, opts);
+    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
+  
+    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (emitOne(elem, curr, opts) === false) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
   };
   
   module.exports = exports['default'];
@@ -1378,7 +1336,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     attached: function attached() {},
   
     // Attribute lifecycle callback or callbacks.
-    attributes: function attributes() {},
+    attribute: function attribute() {},
   
     // Called when the element is created after all descendants have had it
     // called on them.
@@ -1463,7 +1421,6 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
     /* jshint expr: true */
     return function () {
       var info = (0, _utilData2['default'])(this, opts.id);
-      var isNative = this.detachedCallback;
   
       if (info.detached) return;
       info.detached = true;
@@ -1727,10 +1684,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
-  var _apiEvents = __96707d121e85542c0149cb45072882a0;
-  
-  var _apiEvents2 = _interopRequireDefault(_apiEvents);
-  
   var _apiInit = __3add36046399fead5a83243849207ed7;
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
@@ -1738,10 +1691,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var _apiNoConflict = __82110da8eb4359fb9724f67f4a12febe;
   
   var _apiNoConflict2 = _interopRequireDefault(_apiNoConflict);
-  
-  var _apiProperties = __ce1127ce6317283e8a42ce1bda4c6b09;
-  
-  var _apiProperties2 = _interopRequireDefault(_apiProperties);
   
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
@@ -1893,10 +1842,8 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   skate.create = _apiCreate2['default'];
   skate.emit = _apiEmit2['default'];
-  skate.events = _apiEvents2['default'];
   skate.init = _apiInit2['default'];
   skate.noConflict = _apiNoConflict2['default'];
-  skate.properties = _apiProperties2['default'];
   skate.version = _apiVersion2['default'];
   
   // Global
