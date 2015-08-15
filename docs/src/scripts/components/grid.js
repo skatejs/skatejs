@@ -13,25 +13,23 @@ export default skate('sk-grid', {
   properties: {
     fixed: {
       attr: true,
-      set () { this.init(); },
-      value: ''
+      init: '',
+      set () { this.init(); }
     },
     type: {
       attr: true,
-      set () { this.init(); },
-      value: 'md'
+      init: 'md',
+      set () { this.init(); }
     }
   },
   prototype: {
     init () {
-      skate.ready(() => {
-        var items = [].slice.call(this.children);
-        var fixed = (this.fixed || '').split(' ').filter(Boolean).map(Number);
-        var multiple = (GRID_SIZE - sum(fixed)) / (items.length - fixed.length);
-        items.forEach((item, index) => {
-          let size = fixed[index] || multiple;
-          item.className = `col-${this.type}-${size}`;
-        });
+      var items = [].slice.call(this.children);
+      var fixed = (this.fixed || '').split(' ').filter(Boolean).map(Number);
+      var multiple = (GRID_SIZE - sum(fixed)) / (items.length - fixed.length);
+      items.forEach((item, index) => {
+        let size = fixed[index] || multiple;
+        item.className = `col-${this.type}-${size}`;
       });
     }
   }

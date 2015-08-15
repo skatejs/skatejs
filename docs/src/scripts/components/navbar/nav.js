@@ -5,7 +5,7 @@ export default skate('sk-navbar-nav', {
   properties: {
     position: {
       attr: true,
-      value: 'left',
+      init: 'left',
       set (newValue, oldValue) {
         this.classList.add(`navbar-${newValue}`);
         this.classList.remove(`navbar-${oldValue}`);

@@ -18,12 +18,9 @@ export default skate('sk-navbar-form', {
   properties: {
     position: {
       attr: true,
-      value: 'right'
-    },
-    positionClass: {
-      deps: 'position',
-      get: function () {
-        return 'navbar-' + this.position;
+      init: 'right',
+      set: function (value) {
+        this.querySelector('form').className = `navbar-form navbar-${value}`;
       }
     },
     query: {

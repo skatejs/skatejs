@@ -4,8 +4,8 @@ export default skate('bs-label', {
   properties: {
     type: {
       attr: true,
-      set (newValue) { this.className = `label label-${newValue}`; },
-      value: 'default'
+      init: 'default',
+      set (newValue) { this.className = `label label-${newValue}`; }
     }
   }
 });

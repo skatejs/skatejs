@@ -4,7 +4,7 @@ export default skate('bs-icon', {
   properties: {
     from: {
       attr: true,
-      value: 'fa'
+      init: 'fa'
     },
     prefix: {
       deps: 'from',

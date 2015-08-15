@@ -9,8 +9,8 @@ export default skate('sk-sidebar', {
   attached () {
     window.addEventListener('resize', this.resizeHandler);
     window.addEventListener('scroll', this.scrollHandler);
-    skate.ready(this.resizeHandler);
-    skate.ready(this.scrollHandler);
+    document.addEventListener('DOMContentLoaded', this.resizeHandler);
+    this.scrollHandler();
     this.selectCurrentItem();
   },
   detached () {
@@ -37,23 +37,18 @@ export default skate('sk-sidebar', {
           return item.heading;
         });
       }
-    },
-    footer: {
-      set () {},
-      value: function () {
-        return document.querySelector('footer');
-      }
     }
   },
   prototype: {
     resizeHandler () {
+      var footer = document.querySelector('footer');
       var offsetHeight = window.innerHeight;
       var offsetWidth = this.parentNode.offsetWidth;
       var offsetLeft = this.offsetLeft;
       var offsetTop = this.parentNode.offsetTop;
       var windowBottom = window.scrollY + offsetHeight;
       var calculatedHeight = offsetHeight - offsetTop - offsetLeft;
-      var visibleFooterHeight = windowBottom - this.footer.offsetTop;
+      var visibleFooterHeight = windowBottom - footer.offsetTop;
 
       // If the footer is visible, then subtract its visible height from the sidebar.
       if (visibleFooterHeight > 0) {
