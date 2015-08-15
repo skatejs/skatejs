@@ -9,6 +9,9 @@ template: index.html
   <noscript is="sk-code" lang="js">
     skate('my-element', {
       attribute (name, oldvalue, newValue) {
+        // Reference to the element.
+        this;
+
         if (oldValue === null) {
           // created
         } else if (newValue === null) {

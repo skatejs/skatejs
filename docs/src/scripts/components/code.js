@@ -1,5 +1,13 @@
-import hljs from 'highlight.js';
+//import hljs from 'highlight.js';
 import skate from '../../../../src/index';
+
+var hljs = {
+  highlight: function (lang, html) {
+    return {
+      value: html.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    };
+  }
+};
 
 function setupCodeBlockContents(element) {
   var pre = document.createElement('pre');

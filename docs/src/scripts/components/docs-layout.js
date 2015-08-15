@@ -6,7 +6,7 @@ export default skate('sk-docs-layout', {
     <sk-layout>
       <sk-grid fixed="3">
         <sk-docs-sidebar></sk-docs-sidebar>
-        <div>
+        <div style="margin-bottom: 15px">
           <content></content>
         </div>
       </sk-grid>
