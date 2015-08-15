@@ -76,8 +76,14 @@ export default skate('sk-sidebar', {
     },
     select (anchor) {
       var cur = this.querySelector('a[selected]');
-      cur && cur.removeAttribute('selected');
-      anchor && anchor.setAttribute('selected', '');
+
+      if (cur) {
+        cur.removeAttribute('selected');
+      }
+
+      if (anchor) {
+        anchor.setAttribute('selected', '');
+      }
 
       var hasSelected = this.querySelectorAll('[has-selected]');
       for (let a = 0; a < hasSelected.length; a++) {
