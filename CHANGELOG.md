@@ -203,7 +203,7 @@ If you put your component definitions at the top of the page, they will be upgra
 </x-parent>
 ```
 
-In the HTML example above, `x-parent` would be upgraded, then `x-child` and finally `x-descendant`. If `x-parent` or `x-child` need something from one of their descendants their out of luck.
+In the HTML example above, `x-parent` would be upgraded, then `x-child` and finally `x-descendant`. If `x-parent` or `x-child` need something from one of their descendants they're out of luck.
 
 ##### Definitions at the end of `<body>`
 
