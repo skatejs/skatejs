@@ -22,6 +22,14 @@ template: index.html
       }
     });
   </noscript>
+  <p>
+    The attribute callback has the following parameters:
+    <ul>
+      <li>name (String) - the name of the attribute that was created/updated or removed</li>
+      <li>oldValue (String) - the old value of the attribute before the update</li>
+      <li>newValue (String)- the new value of the attribute after the update</li>
+    </ul>
+  </p>
 
   <p class="notice notice-info">In native custom elements, this is not invoked for attributes that exist on the element before it is upgraded. Skate fixes that so that it <em>is</em> in fact invoked for all attributes no matter if they existed before or were added after the element was upgraded.</p>
 </sk-docs-layout>

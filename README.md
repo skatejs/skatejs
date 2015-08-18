@@ -4,7 +4,7 @@
 
 # Skate
 
-Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.
+Skate provides an API to bind behaviours to DOM elements. It's based on the W3C specification for <a href="http://w3c.github.io/webcomponents/spec/custom/">Custom Elements</a>.
 
 HTML
 
@@ -150,7 +150,7 @@ The definition is an object of options that define your component.
 skate('my-element', {
   // Lifecycle Callbacks
   //
-  // All lifecycle callbacks use `this` to refer to the component element.
+  // All lifecycle callbacks use `this` to refer to the component element (https://developer.mozilla.org/en-US/docs/Web/API/Element).
 
   // Called when the element is created.
   created: function () {},
@@ -184,6 +184,7 @@ skate('my-element', {
   // Event Listeners
   events: {
     // All direct and bubbled events.
+    // e is the event object (https://developer.mozilla.org/en/docs/Web/API/Event)
     click: function (e) {
       // Refers to the component element.
       this;
@@ -292,9 +293,9 @@ skate('my-element', {
       // The event object for both events contains the following information
       // in the `detail` property:
       //
-      // - `name` - The property name.
-      // - `newValue` - The property's new value.
-      // - `oldValue` - The property's old value.
+      // - `name` - The property name (String).
+      // - `newValue` - The property's new value (String).
+      // - `oldValue` - The property's old value (String).
       notify: true
 
       // Custom setter. Set value as you see fit. Return value is ignored. If
