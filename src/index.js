@@ -1,7 +1,6 @@
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiInit from './api/init';
-import apiNoConflict from './api/no-conflict';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
@@ -104,7 +103,6 @@ function skate (id, userOptions) {
 skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.init = apiInit;
-skate.noConflict = apiNoConflict;
 skate.version = apiVersion;
 
 // ES6
