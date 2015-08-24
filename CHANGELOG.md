@@ -38,6 +38,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - #184 - The `skate.defaults` property is no longer public and has been removed. No alternative will be provided.
 - #187 - Modifying `element.attributes` directly no longer triggers the `attribute` callback.
+- #289 - the `skate` global is no longer set when importing `src/index.js`, and the `skate.noConflict()` method is not present when consuming skate in this way.
 
 ### Upgrading
 

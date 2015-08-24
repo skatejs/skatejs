@@ -1,8 +1,8 @@
 import './boot';
 import './unit/api/create';
 import './unit/api/emit';
+import './unit/api/global';
 import './unit/api/init';
-import './unit/api/no-conflict';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/document-observer';
