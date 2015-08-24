@@ -1,4 +1,4 @@
-import skate from '../../../src/index';
+import skate from '../../../src/global';
 
 describe('api/no-conflict', function () {
   it('should set window.skate to the previous window.skate value and return the current skate', function () {

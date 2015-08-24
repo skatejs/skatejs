@@ -107,8 +107,5 @@ skate.init = apiInit;
 skate.noConflict = apiNoConflict;
 skate.version = apiVersion;
 
-// Global
-window.skate = skate;
-
 // ES6
 export default skate;
