@@ -14,6 +14,7 @@ import {
   objEach
 } from './utils';
 
+var {Node} = window;
 var elProto = window.HTMLElement.prototype;
 var nativeMatchesSelector = (
   elProto.matches ||
@@ -367,12 +368,14 @@ function triggerLifecycle (target, component) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  var elementsLen = elements.length;
-
-  for (var a = 0; a < elementsLen; a++) {
+  // [CATION] Browsers that don't support custom-elements natively in very rare cases won't
+  // trigger mutation observer event on subtree changes when component add siblings on `attached`
+  // lifecycle hook. This could lead to issue with components initialization placed at the end
+  // of childNodes list because they will be out of range of cached length value.
+  for (var a = 0; a < elements.length; a++) {
     var element = elements[a];
 
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+    if (element.nodeType !== Node.ELEMENT_NODE || element.attributes[ATTR_IGNORE]) {
       continue;
     }
 
@@ -403,12 +406,11 @@ function initElements (elements) {
  * @returns {undefined}
  */
 function removeElements (elements) {
-  var len = elements.length;
-
-  for (var a = 0; a < len; a++) {
+  // Don't cache `childNodes` length. For more info see description in `initElements` function.
+  for (var a = 0; a < elements.length; a++) {
     var element = elements[a];
 
-    if (element.nodeType !== 1) {
+    if (element.nodeType !== Node.ELEMENT_NODE) {
       continue;
     }
 
