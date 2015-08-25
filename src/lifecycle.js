@@ -368,10 +368,10 @@ function triggerLifecycle (target, component) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  // [CATION] Browsers that don't support custom-elements natively in very rare cases won't
-  // trigger mutation observer event on subtree changes when component add siblings on `attached`
-  // lifecycle hook. This could lead to issue with components initialization placed at the end
-  // of childNodes list because they will be out of range of cached length value.
+  // [CATION] Don't cache elements length! Components initialization could append nodes
+  // as siblings (see label's element behaviour for example) and this could lead to problems with
+  // components placed at the end of processing childNodes because they will change they index
+  // position and get out of cached value range.
   for (var a = 0; a < elements.length; a++) {
     var element = elements[a];
 
