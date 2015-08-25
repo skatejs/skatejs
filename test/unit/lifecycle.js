@@ -1,6 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import helpers from '../lib/helpers';
+import helperReady from '../lib/ready';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
@@ -14,7 +14,7 @@ describe('lifecycle', function () {
   var detached = false;
 
   beforeEach(function () {
-    tagName = helpers.safeTagName('my-el');
+    tagName = helperElement('my-el');
     created = false;
     attached = false;
     detached = false;
@@ -39,8 +39,8 @@ describe('lifecycle', function () {
   });
 
   it('should call the attached() callback when the element is attached', function (done) {
-    helpers.fixture().appendChild(myEl);
-    setTimeout(function () {
+    helperFixture().appendChild(myEl);
+    helperReady(function () {
       expect(created).to.equal(true);
       expect(attached).to.equal(true);
       expect(detached).to.equal(false);
@@ -49,10 +49,10 @@ describe('lifecycle', function () {
   });
 
   it('should call the detached() callback when the element is detached', function (done) {
-    helpers.fixture().appendChild(myEl);
-    setTimeout(function () {
-      helpers.fixture().removeChild(myEl);
-      setTimeout(function () {
+    helperFixture().appendChild(myEl);
+    helperReady(function () {
+      helperFixture().removeChild(myEl);
+      helperReady(function () {
         expect(created).to.equal(true);
         expect(attached).to.equal(true);
         expect(detached).to.equal(true);
@@ -71,7 +71,7 @@ describe('lifecycle', function () {
 
 describe('unresolved attribute', function () {
   it('should not be considred "resolved" until after template() is called', function () {
-    var tagName = helpers.safeTagName('my-element');
+    var tagName = helperElement('my-element');
     skate(tagName.safe, {
       template: function () {
         expect(this.hasAttribute('unresolved')).to.equal(true);
@@ -79,11 +79,11 @@ describe('unresolved attribute', function () {
       }
     });
 
-    skate.init(helpers.fixture('<my-element unresolved></my-element>', tagName));
+    skate.init(helperFixture('<my-element unresolved></my-element>', tagName));
   });
 
   it('should be considred "resolved" after the created lifecycle finishes', function () {
-    var tag = helpers.safeTagName('my-element').safe;
+    var tag = helperElement('my-element').safe;
     skate(tag, {
       created: function () {
         expect(this.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
@@ -91,7 +91,7 @@ describe('unresolved attribute', function () {
       }
     });
 
-    var element = skate.init(helpers.fixture(`<${tag} unresolved></${tag}>`).children[0]);
+    var element = skate.init(helperFixture(`<${tag} unresolved></${tag}>`).children[0]);
     expect(element.hasAttribute('resolved')).to.equal(true, 'should have resolved');
   });
 });
@@ -107,7 +107,7 @@ describe('lifecycle scenarios', function () {
       detached: 0
     };
 
-    var { safe: tagName } = helpers.safeTagName('my-element');
+    var { safe: tagName } = helperElement('my-element');
     El = skate(tagName, {
       created: function () {
         ++calls.created;
@@ -123,18 +123,18 @@ describe('lifecycle scenarios', function () {
 
   describe('use the constructor then add it to the DOM', function () {
     beforeEach(function () {
-      helpers.fixture(new El());
+      helperFixture(new El());
     });
 
     it('should call created', function (done) {
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls.created).to.be.greaterThan(0);
         done();
       });
     });
 
     it('should call attached', function (done) {
-      setTimeout(function () {
+      helperReady(function () {
         expect(calls.attached).to.be.greaterThan(0);
         done();
       });
@@ -147,14 +147,14 @@ describe('lifecycle scenarios', function () {
 
       el.textContent = 'gagas';
 
-      helpers.fixture(el);
-      setTimeout(function () {
-        helpers.fixture().removeChild(el);
-        setTimeout(function () {
-          helpers.fixture(el);
-          setTimeout(function () {
-            helpers.fixture().removeChild(el);
-            setTimeout(function () {
+      helperFixture(el);
+      helperReady(function () {
+        helperFixture().removeChild(el);
+        helperReady(function () {
+          helperFixture(el);
+          helperReady(function () {
+            helperFixture().removeChild(el);
+            helperReady(function () {
               expect(calls[num]).to.equal(val, num);
               done();
             });
@@ -178,8 +178,8 @@ describe('lifecycle scenarios', function () {
 
   describe('multiple bindings', function () {
     it('should initialise all bindings', function () {
-      var id1 = helpers.safeTagName('my-el');
-      var id2 = helpers.safeTagName('my-el');
+      var id1 = helperElement('my-el');
+      var id2 = helperElement('my-el');
       var created = 0;
       var attached = 0;
       var def = {
@@ -191,73 +191,9 @@ describe('lifecycle scenarios', function () {
       skate(id1.safe, def);
       skate(id2.safe, def);
 
-      skate.init(helpers.fixture(`<div ${id1.safe} ${id2.safe}></div>`));
+      skate.init(helperFixture(`<div ${id1.safe} ${id2.safe}></div>`));
       expect(created).to.equal(2, 'created');
       expect(attached).to.equal(2, 'attached');
-    });
-  });
-
-  describe('created callback ordering on parent -> descendants', function () {
-    var child, descendant, host, num, tag;
-
-    function createDefinitions () {
-      skate(`x-descendant-${tag}`, {
-        created () {
-          descendant = ++num;
-        }
-      });
-      skate(`x-child-${tag}`, {
-        created () {
-          child = ++num;
-        }
-      });
-      skate(`x-host-${tag}`, {
-        created () {
-          host = ++num;
-        }
-      });
-    }
-
-    function createStructure () {
-      helperFixture(`
-        <x-host-${tag}>
-          <x-child-${tag}>
-            <x-descendant-${tag}></x-descendant-${tag}>
-          </x-child-${tag}>
-        </x-host-${tag}>
-      `);
-    }
-
-    beforeEach(function () {
-      child = 0;
-      descendant = 0;
-      host = 0;
-      num = 0;
-      tag = helperElement().safe;
-    });
-
-    it('definition exists before element is created', function (done) {
-      createDefinitions();
-      createStructure();
-      setTimeout(function () {
-        expect(num).to.equal(3, 'num');
-        expect(host).to.equal(1, 'host');
-        expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(3, 'descendant');
-        done();
-      });
-    });
-
-    it('definition exists after element is created', function (done) {
-      createStructure();
-      createDefinitions();
-      setTimeout(function () {
-        expect(num).to.equal(3, 'num');
-        expect(host).to.equal(3, 'host');
-        expect(child).to.equal(2, 'child');
-        expect(descendant).to.equal(1, 'descendant');
-        done();
-      });
     });
   });
 
@@ -266,7 +202,7 @@ describe('lifecycle scenarios', function () {
       var created = false;
       var attached = false;
       var detached = false;
-      var tag = helpers.safeTagName('my-el');
+      var tag = helperElement('my-el');
 
       skate(tag.safe, {
         created: function () {
@@ -293,7 +229,7 @@ describe('lifecycle scenarios', function () {
       element.parentNode.removeChild(element);
 
       // Mutation Observers are async.
-      setTimeout(function () {
+      helperReady(function () {
         expect(detached).to.equal(true, 'Should call detached');
         done();
       });
@@ -303,7 +239,7 @@ describe('lifecycle scenarios', function () {
       var numCreated = 0;
       var numAttached = 0;
       var numDetached = 0;
-      var tag = helpers.safeTagName('my-el');
+      var tag = helperElement('my-el');
       var Element = skate(tag.safe, {
         created: function () {
           ++numCreated;
@@ -332,7 +268,7 @@ describe('lifecycle scenarios', function () {
       element2.parentNode.removeChild(element2);
 
       // Mutation Observers are async.
-      setTimeout(function () {
+      helperReady(function () {
         expect(numDetached).to.equal(2, 'detached');
         done();
       });

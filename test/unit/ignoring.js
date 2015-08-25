@@ -1,6 +1,7 @@
 'use strict';
 
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
+import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
 import supportsCustomElements from '../../src/support/custom-elements';
 
@@ -29,42 +30,42 @@ describe('ignoring', function () {
   beforeEach(function () {
     created = 0;
     attached = 0;
-    tag = helpers.safeTagName();
+    tag = helperElement();
   });
 
   it('should ignore a flagged element if defined after it is inserted', function (done) {
-    helpers.fixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
+    helperFixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
     skate(tag.safe, definition);
     assertCalls(done);
   });
 
   it('should ignore a flagged element if defined before it is inserted', function (done) {
     skate(tag.safe, definition);
-    helpers.fixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
+    helperFixture(`<${tag.safe} data-skate-ignore></${tag.safe}>`);
     assertCalls(done);
-  })
+  });
 
   it('should ignore children of a flagged element if defined after it is inserted', function (done) {
-    helpers.fixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
+    helperFixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
     skate(tag.safe, definition);
     assertCalls(done);
   });
 
   it('should ignore children of a flagged element if defined before it is inserted', function (done) {
     skate(tag.safe, definition);
-    helpers.fixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
+    helperFixture(`<div data-skate-ignore><${tag.safe}></${tag.safe}></div>`);
     assertCalls(done);
   });
 
   it('should ignore descendants of a flagged element if defined after it is inserted', function (done) {
-    helpers.fixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
+    helperFixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
     skate(tag.safe, definition);
     assertCalls(done);
   });
 
   it('should ignore descendants of a flagged element if defined before it is inserted', function (done) {
     skate(tag.safe, definition);
-    helpers.fixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
+    helperFixture(`<div data-skate-ignore><div><${tag.safe}></${tag.safe}></div></div>`);
     assertCalls(done);
   });
 });

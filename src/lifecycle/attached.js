@@ -14,15 +14,12 @@ export default function (opts) {
   /* jshint expr: true */
   return function () {
     var info = data(this, opts.id);
-    var isNative = this.attachedCallback;
 
-    if (info.attached) {
-      return;
-    }
-
+    if (info.attached) return;
     info.attached = true;
-    opts.attached.call(this);
-    isNative || callAttachedOnDescendants(this, opts.id);
     info.detached = false;
+
+    callAttachedOnDescendants(this, opts.id);
+    opts.attached.call(this);
   };
 }

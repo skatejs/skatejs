@@ -7,7 +7,7 @@ import registry from './registry';
 import walkTree from '../util/walk-tree';
 
 var DocumentFragment = window.DocumentFragment;
-var MutationObserver = window.MutationObserver;
+var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
 
 function getClosestIgnoredElement (element) {
   var parent = element;

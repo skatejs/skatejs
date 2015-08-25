@@ -19,7 +19,7 @@
     },
   "immed": true,
   "indent": 2,
-  "latedef": true,
+  "latedef": "nofunc",
   "newcap": true,
   "noarg": true,
   "quotmark": "single",

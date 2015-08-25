@@ -1,4 +1,4 @@
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
 import skate from '../../src/index';
 
 describe('extending', function () {
@@ -11,7 +11,7 @@ describe('extending', function () {
   var canResolveSuper = !!Object.setPrototypeOf;
 
   beforeEach(function () {
-    Ctor = skate(helpers.safeTagName().safe, {
+    Ctor = skate(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
       created: function () {
@@ -23,7 +23,7 @@ describe('extending', function () {
         someFunction: function () {}
       }
     });
-    tag = helpers.safeTagName().safe;
+    tag = helperElement().safe;
   });
 
   it('should copy all configuration options to the constructor', function () {

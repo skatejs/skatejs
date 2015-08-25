@@ -9,7 +9,7 @@ export default {
     var attrs = elem.attributes;
     var isAttr = attrs.is;
     var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-    var tagName = elem.tagName.toLowerCase();
+    var tagName = (elem.tagName || elem.localName).toLowerCase();
     var definition = defs[isAttrValue || tagName];
 
     if (!definition) {

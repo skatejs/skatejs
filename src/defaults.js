@@ -5,9 +5,10 @@ export default {
   attached: function () {},
 
   // Attribute lifecycle callback or callbacks.
-  attributes: undefined,
+  attribute: function () {},
 
-  // Called when the element is created.
+  // Called when the element is created after all descendants have had it
+  // called on them.
   created: function () {},
 
   // Called when the element is detached from the document.
@@ -15,15 +16,18 @@ export default {
 
   // The events to manage the binding and unbinding of during the definition's
   // lifecycle.
-  events: undefined,
+  events: {},
 
   // Restricts a particular definition to binding explicitly to an element with
   // a tag name that matches the specified value.
-  extends: undefined,
+  extends: '',
 
   // The ID of the definition. This is automatically set in the `skate()`
   // function.
   id: '',
+
+  // The special Skate properties to define.
+  properties: {},
 
   // Properties and methods to add to each element.
   prototype: {},
@@ -32,7 +36,7 @@ export default {
   resolvedAttribute: 'resolved',
 
   // The template to replace the content of the element with.
-  template: undefined,
+  template: function () {},
 
   // The type of bindings to allow.
   type: typeElement,

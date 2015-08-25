@@ -2,7 +2,6 @@ import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiFragment from './api/fragment';
 import apiInit from './api/init';
-import apiNoConflict from './api/no-conflict';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
@@ -74,6 +73,9 @@ function skate (id, userOptions) {
     opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
   }
 
+  // Native doesn't like if you pass a falsy value. Must be undefined.
+  opts.extends = opts.extends || undefined;
+
   // Extend behaviour of existing callbacks.
   opts.prototype.createdCallback = created(opts);
   opts.prototype.attachedCallback = attached(opts);
@@ -103,11 +105,7 @@ skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.fragment = apiFragment;
 skate.init = apiInit;
-skate.noConflict = apiNoConflict;
 skate.version = apiVersion;
-
-// Global
-window.skate = skate;
 
 // ES6
 export default skate;

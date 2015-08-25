@@ -1,10 +1,9 @@
-import emit from '../../../src/api/emit';
-import helpers from '../../lib/helpers';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
+import lifecycleEvents from '../../../src/lifecycle/events';
 import skate from '../../../src/index';
 
-describe('lifecycle/event', function () {
+describe('lifecycle/events', function () {
   var numTriggered;
   var tag;
 
@@ -32,7 +31,7 @@ describe('lifecycle/event', function () {
   it('events on child elements', function () {
     skate(tag.safe, {
       events: {
-        'test > *': increment
+        test: increment
       }
     });
 
@@ -46,7 +45,7 @@ describe('lifecycle/event', function () {
   it('events on descendant elements', function () {
     skate(tag.safe, {
       events: {
-        'test *': increment
+        test: increment
       }
     });
 
@@ -70,11 +69,11 @@ describe('lifecycle/event', function () {
 
     par.removeChild(myEl);
     par.appendChild(myEl);
-    helpers.dispatchEvent('test', myEl);
+    skate.emit(myEl, 'test');
     expect(numTriggered).to.equal(1);
   });
 
-  it('should support delegate events', function () {
+  it('should support delegate event selectors', function () {
     skate(tag.safe, {
       events: {
         'test a': function (e) {
@@ -104,40 +103,61 @@ describe('lifecycle/event', function () {
   it('should support delegate blur and focus events', function () {
     var blur = false;
     var focus = false;
-    var { safe: tagName } = helpers.safeTagName('my-component');
+    var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
       events: {
-        'blur input': function () {
-          blur = true;
-        },
-
-        'focus input': function () {
-          focus = true;
-        }
+        'blur input': () => blur = true,
+        'focus input': () => focus = true,
       },
-
       prototype: {
         blur: function () {
-          helpers.dispatchEvent('blur', this.querySelector('input'));
+          skate.emit(this.querySelector('input'), 'blur');
         },
-
         focus: function () {
-          helpers.dispatchEvent('focus', this.querySelector('input'));
+          skate.emit(this.querySelector('input'), 'focus');
         }
       },
-
       template: function () {
         this.innerHTML = '<input>';
       }
     });
 
-    var inst = skate.init(helpers.fixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+    var inst = skate.init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
 
     inst.blur();
     expect(blur).to.equal(true);
 
     inst.focus();
     expect(focus).to.equal(true);
+  });
+
+  describe('queue', function () {
+    var bound, element, triggered;
+
+    beforeEach(function () {
+      triggered = 0;
+      element = document.createElement('div');
+      bound = lifecycleEvents(element, {
+        test: function (e) {
+          expect(typeof e).to.equal('object', 'event not passed in to queue handler');
+          triggered++;
+        }
+      });
+    });
+
+    it('should not fire events until the callback is called', function () {
+      skate.emit(element, 'test', { detail: true });
+      expect(triggered).to.equal(0, 'before');
+      bound();
+      expect(triggered).to.equal(1, 'after');
+    });
+
+    it('should dequeue handlers so that if the callback is called more than once, handlers aren not re-executed', function () {
+      skate.emit(element, 'test', { detail: true });
+      bound();
+      bound();
+      expect(triggered).to.equal(1, 'triggered more than once');
+    });
   });
 });

@@ -1,4 +1,4 @@
-import helpers from '../lib/helpers';
+import helperElement from '../lib/element';
 import resolved from '../lib/resolved';
 import skate from '../../src/index';
 import typeAttribute from 'skatejs-type-attribute';
@@ -8,7 +8,7 @@ describe('constructor', function () {
   var id;
 
   beforeEach(function () {
-    id = helpers.safeTagName().safe;
+    id = helperElement().safe;
   });
 
   it('existing elements', function () {
