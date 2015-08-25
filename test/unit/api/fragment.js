@@ -13,7 +13,7 @@ describe('api/fragment', function () {
   it('should return an empty fragment if no argument specified', function () {
     var frag = skate.fragment();
     expect(frag instanceof DocumentFragment).to.equal(true);
-    expect(frag.childElementCount).to.equal(0);
+    expect(frag.childNodes.length).to.equal(0);
   });
 
   describe('overriden methods', function () {
@@ -29,27 +29,27 @@ describe('api/fragment', function () {
 
     it('should init elements added via appendChild', function () {
       frag.appendChild(el1);
-      expect(frag.childElementCount).to.equal(1);
+      expect(frag.childNodes.length).to.equal(1);
       expect(resolved(el1)).to.equal(true);
     });
 
     it('should init elements added via insertBefore', function () {
       frag.appendChild(el1);
       frag.insertBefore(el2, el1);
-      expect(frag.childElementCount).to.equal(2);
+      expect(frag.childNodes.length).to.equal(2);
       expect(resolved(el2)).to.equal(true);
     });
 
     it('should init elements added via replaceChild', function () {
       frag.appendChild(el1);
       frag.replaceChild(el2, el1);
-      expect(frag.childElementCount).to.equal(1);
+      expect(frag.childNodes.length).to.equal(1);
       expect(resolved(el2)).to.equal(true);
     });
 
     it('should return an empty fragment if shallow cloning', function () {
       var clone = frag.cloneNode(false);
-      expect(clone.childElementCount).to.equal(0);
+      expect(clone.childNodes.length).to.equal(0);
     });
 
     it('should init cloned elements if deep cloning', function () {
@@ -65,15 +65,15 @@ describe('api/fragment', function () {
 
       var html = `<${tagName}></${tagName}>`;
       var clone = skate.fragment(html).cloneNode(true);
-      expect(clone.childElementCount).to.equal(1);
+      expect(clone.childNodes.length).to.equal(1);
       expect(created).to.equal(2);
     });
 
     it('should init elements added after cloning', function () {
       var clone = frag.cloneNode(false);
       clone.appendChild(el1);
-      expect(clone.childElementCount).to.equal(1);
-      expect(resolved(clone.firstElementChild)).to.equal(true);
+      expect(clone.childNodes.length).to.equal(1);
+      expect(resolved(clone.childNodes[0])).to.equal(true);
     })
   });
 
@@ -81,21 +81,21 @@ describe('api/fragment', function () {
     it('should not init an element without a definition', function () {
       var html = `<${tagName}></${tagName}>`;
       var frag = skate.fragment(html);
-      expect(resolved(frag.firstElementChild)).to.equal(false);
+      expect(resolved(frag.childNodes[0])).to.equal(false);
     });
 
     it('should init a single element', function () {
       skate(tagName, {});
       var html = `<${tagName}></${tagName}>`;
       var frag = skate.fragment(html);
-      expect(resolved(frag.firstElementChild)).to.equal(true);
+      expect(resolved(frag.childNodes[0])).to.equal(true);
     });
 
     it('should init multiple elements', function () {
       skate(tagName, {});
       var html = `<${tagName}></${tagName}>`;
       var frag = skate.fragment(html + html);
-      expect(frag.childElementCount).to.equal(2);
+      expect(frag.childNodes.length).to.equal(2);
       expect(resolved(frag.childNodes[0])).to.equal(true);
       expect(resolved(frag.childNodes[1])).to.equal(true);
     });
@@ -107,14 +107,14 @@ describe('api/fragment', function () {
 
       var html = `<${tagName}><div ${descendantTagName}></div></${tagName}>`;
       var frag = skate.fragment(html);
-      expect(resolved(frag.firstElementChild)).to.equal(true, 'host');
-      expect(resolved(frag.firstElementChild.firstElementChild)).to.equal(true, 'descendent');
+      expect(resolved(frag.childNodes[0])).to.equal(true, 'host');
+      expect(resolved(frag.childNodes[0].firstElementChild)).to.equal(true, 'descendent');
     });
 
     it('should work with special tags', function () {
       var html = '<td></td><td></td>';
       var frag = skate.fragment(html);
-      expect(frag.childElementCount).to.equal(2);
+      expect(frag.childNodes.length).to.equal(2);
       expect(frag.childNodes[0].tagName).to.equal('TD');
       expect(frag.childNodes[1].tagName).to.equal('TD');
     });

@@ -19,6 +19,7 @@ import './unit/lifecycle/template';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
+import './unit/util/create-from-html';
 import './unit/util/dash-case';
 import './unit/util/walk-tree';
 import './unit/version';
