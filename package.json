@@ -20,7 +20,7 @@
     "gulp-uglify": "^1.2.0",
     "highlight.js": "^8.6.0",
     "mac": "^0.3.0",
-    "shadejs": "skatejs/shade#c68961928939c728bf830eea7dbce884dc637695",
+    "shadejs": "skatejs/shade#2a69707",
     "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#a7dbecfe23ee18efc97dac8fbcbb728deeb65a06",
     "skatejs-type-attribute": "skatejs/type-attribute#28140f7fd864a7e4e85dca3cab597aa4cbc738e2",
     "skatejs-type-class": "skatejs/type-class#8302a2f9d76c35e04261c8b35821fce4c702c4dd",
