@@ -1,6 +1,7 @@
 import './boot';
 import './unit/api/create';
 import './unit/api/emit';
+import './unit/api/fragment';
 import './unit/api/global';
 import './unit/api/init';
 import './unit/attributes';
@@ -18,6 +19,7 @@ import './unit/lifecycle/template';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
+import './unit/util/create-from-html';
 import './unit/util/dash-case';
 import './unit/util/walk-tree';
 import './unit/version';

@@ -1,5 +1,6 @@
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
+import apiFragment from './api/fragment';
 import apiInit from './api/init';
 import apiVersion from './api/version';
 import assign from './util/assign';
@@ -102,6 +103,7 @@ function skate (id, userOptions) {
 
 skate.create = apiCreate;
 skate.emit = apiEmit;
+skate.fragment = apiFragment;
 skate.init = apiInit;
 skate.version = apiVersion;
 
