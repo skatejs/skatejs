@@ -28,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - #277 - The `created()` callback is now fired after descendants have been upgraded.
 - #278 - Event handlers queue up before the `created()` callback is fired and are processed after `created()` is called.
 - #279 - Properties since being implemented were updated to be bound before `created()` and values initialised after `created()` (if not already set).
+- #295 - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer.
 
 ### Fixed
 
@@ -231,3 +232,11 @@ We discussed having `created()` behave like native (all over the place) and havi
 
 
 #### #279 - Property binding and initialisation in relation to the `created()` callback
+
+
+
+#### #295 - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer
+
+If you include SkateJS' `MutationObserver` polyfill on the page, Skate will automatically just pick it up. Since it's up to you to include your own `MutationObserver` polyfill, this means you can use whichever polyfill you want. That said, if you are concerned about performance in IE, it's recommended that you use ours as it's been specifically designed to be performant over other offerings.
+
+Ensure you include the polyfill before any Skate definitions have been defined.
