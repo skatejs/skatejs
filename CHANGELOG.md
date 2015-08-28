@@ -19,16 +19,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- [#200](#200) - The attribute lifecycle callbacks have been implemented in a different API under `properties`.
-- [#204](#204) - Event handlers now pass the element as `this` and if using event delegation, put the delegate target as the `delegateTarget` property on the event object instead of passing it as the third argument.
-- [#205](#205) - Lifecycle callbacks now use `this`.
-- [#208](#208) - `attributes` are no longer granular and is now closer to the spec.
-- [#209](#209) - Renamed `attributes` to `attribute` because now it's just a single callback.
-- [#210](#210) - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
-- [#277](#277) - The `created()` callback is now fired after descendants have been upgraded.
-- [#278](#278) - Event handlers queue up before the `created()` callback is fired and are processed after `created()` is called.
-- [#279](#279) - Properties since being implemented were updated to be bound before `created()` and values initialised after `created()` (if not already set).
-- [#295](#295) - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer.
+- [#200](#user-content-200) - The attribute lifecycle callbacks have been implemented in a different API under `properties`.
+- [#204](#user-content-204) - Event handlers now pass the element as `this` and if using event delegation, put the delegate target as the `delegateTarget` property on the event object instead of passing it as the third argument.
+- [#205](#user-content-205) - Lifecycle callbacks now use `this`.
+- [#208](#user-content-208) - `attributes` are no longer granular and is now closer to the spec.
+- [#209](#user-content-209) - Renamed `attributes` to `attribute` because now it's just a single callback.
+- [#210](#user-content-210) - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
+- [#277](#user-content-277) - The `created()` callback is now fired after descendants have been upgraded.
+- [#278](#user-content-278) - Event handlers queue up before the `created()` callback is fired and are processed after `created()` is called.
+- [#279](#user-content-279) - Properties since being implemented were updated to be bound before `created()` and values initialised after `created()` (if not already set).
+- [#295](#user-content-295) - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer.
 
 ### Fixed
 
@@ -43,7 +43,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Upgrading
 
-#### [#200](https://github.com/skatejs/skatejs/issues/200)<a name="user-content-#200"></a> - Attribute lifecycle moved into `properties`.
+#### [#200](https://github.com/skatejs/skatejs/issues/200)<a name="200"></a> - Attribute lifecycle moved into `properties`.
 
 The old way of specifying behaviour within properties:
 
@@ -106,7 +106,7 @@ properties: {
 
 When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attribute` callback.
 
-#### [#204](https://github.com/skatejs/skatejs/issues/204)<a name="user-content-#204"></a> - Event handler using `this` and `e.delegateTarget`.
+#### [#204](https://github.com/skatejs/skatejs/issues/204)<a name="204"></a> - Event handler using `this` and `e.delegateTarget`.
 
 Before:
 
@@ -129,7 +129,7 @@ events: {
 }
 ```
 
-#### [#205](https://github.com/skatejs/skatejs/issues/205)<a name="user-content-#205"></a> - Lifecycle callbacks now use `this`
+#### [#205](https://github.com/skatejs/skatejs/issues/205)<a name="205"></a> - Lifecycle callbacks now use `this`
 
 The following callbacks now use `this` to refer to the element instead of it being passed as the first argument:
 
@@ -166,7 +166,7 @@ events: {
 }
 ```
 
-#### [#208](https://github.com/skatejs/skatejs/issues/208)<a name="user-content-#208"></a> - `attributes` are no longer granular and is now closer to the spec.
+#### [#208](https://github.com/skatejs/skatejs/issues/208)<a name="208"></a> - `attributes` are no longer granular and is now closer to the spec.
 
 This callback has been simplified since in most cases the `properties` will be used for specifying side-effects.
 
@@ -181,15 +181,15 @@ attribute: function (name, oldValue, newValue) {
 }
 ```
 
-#### [#209](https://github.com/skatejs/skatejs/issues/209)<a name="user-content-#209"></a> - Renamed `attributes` to `attribute` because now it's just a single callback
+#### [#209](https://github.com/skatejs/skatejs/issues/209)<a name="209"></a> - Renamed `attributes` to `attribute` because now it's just a single callback
 
 Wherever you're specifying the `attributes` option, just rename it to `attribute` (singular).
 
-#### [#210](https://github.com/skatejs/skatejs/issues/210)<a name="user-content-#210"></a> - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
+#### [#210](https://github.com/skatejs/skatejs/issues/210)<a name="210"></a> - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
 
 If you're using the ES6 or UMD versions of Skate (`lib` and `src` folders), rename the reference to the `skate` file to `index`.
 
-#### [#277](https://github.com/skatejs/skatejs/issues/277)<a name="user-content-#277"></a> - The `created()` callback is now fired after descendants have been upgraded
+#### [#277](https://github.com/skatejs/skatejs/issues/277)<a name="277"></a> - The `created()` callback is now fired after descendants have been upgraded
 
 In native web components, the behaviour around when components are initialised are really inconsistent.
 
@@ -227,15 +227,15 @@ If you do this then no matter where you put your definitions Skate can descend i
 
 We discussed having `created()` behave like native (all over the place) and having a `ready()` callback similar to Polymer's but thought it would be a bad idea to add yet more API when we could simply make `created()` behave sanely.
 
-#### [#278](https://github.com/skatejs/skatejs/issues/278)<a name="user-content-#278"></a> - Event handler binding and handling in relation to the `created()` callback
+#### [#278](https://github.com/skatejs/skatejs/issues/278)<a name="278"></a> - Event handler binding and handling in relation to the `created()` callback
 
 
 
-#### [#279](https://github.com/skatejs/skatejs/issues/279)<a name="user-content-#279"></a> - Property binding and initialisation in relation to the `created()` callback
+#### [#279](https://github.com/skatejs/skatejs/issues/279)<a name="279"></a> - Property binding and initialisation in relation to the `created()` callback
 
 
 
-#### [#295](https://github.com/skatejs/skatejs/issues/295)<a name="user-content-#295"></a> - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer
+#### [#295](https://github.com/skatejs/skatejs/issues/295)<a name="295"></a> - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer
 
 If you include SkateJS' `MutationObserver` polyfill on the page, Skate will automatically just pick it up. Since it's up to you to include your own `MutationObserver` polyfill, this means you can use whichever polyfill you want. That said, if you are concerned about performance in IE, it's recommended that you use ours as it's been specifically designed to be performant over other offerings.
 
