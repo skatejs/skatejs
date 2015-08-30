@@ -99,6 +99,12 @@ IE9+ and all evergreens.
 
 
 
+## Questions?
+
+If you have any questions about Skate, feel free to join the public [HipChat room](https://www.hipchat.com/gB3fMrnzo) and @mention a member.
+
+
+
 ## Installing
 
 You can download the source yourself and put it wherever you want. Additionally you can use Bower:
