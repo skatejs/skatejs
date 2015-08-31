@@ -3,7 +3,7 @@ import ignored from './ignored';
 var Node = window.Node;
 
 function walk (elem, fn, filter) {
-  if (elem.nodeType !== 1 || ignored(elem) || (filter && filter(elem) === false)) {
+  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem) || (filter && filter(elem) === false)) {
     return;
   }
 
@@ -26,8 +26,7 @@ export default function (elems, fn, filter) {
     elems = [elems];
   }
 
-  var elemsLen = elems.length;
-  for (let a = 0; a < elemsLen; a++) {
+  for (let a = 0; a < elems.length; a++) {
     walk(elems[a], fn, filter);
   }
 }
