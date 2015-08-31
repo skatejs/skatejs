@@ -14,6 +14,7 @@ import {
   objEach
 } from './utils';
 
+var {Node} = window;
 var elProto = window.HTMLElement.prototype;
 var nativeMatchesSelector = (
   elProto.matches ||
@@ -367,12 +368,14 @@ function triggerLifecycle (target, component) {
  * @returns {undefined}
  */
 function initElements (elements) {
-  var elementsLen = elements.length;
-
-  for (var a = 0; a < elementsLen; a++) {
+  // [CATION] Don't cache elements length! Components initialization could append nodes
+  // as siblings (see label's element behaviour for example) and this could lead to problems with
+  // components placed at the end of processing childNodes because they will change they index
+  // position and get out of cached value range.
+  for (var a = 0; a < elements.length; a++) {
     var element = elements[a];
 
-    if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+    if (element.nodeType !== Node.ELEMENT_NODE || element.attributes[ATTR_IGNORE]) {
       continue;
     }
 
@@ -403,12 +406,11 @@ function initElements (elements) {
  * @returns {undefined}
  */
 function removeElements (elements) {
-  var len = elements.length;
-
-  for (var a = 0; a < len; a++) {
+  // Don't cache `childNodes` length. For more info see description in `initElements` function.
+  for (var a = 0; a < elements.length; a++) {
     var element = elements[a];
 
-    if (element.nodeType !== 1) {
+    if (element.nodeType !== Node.ELEMENT_NODE) {
       continue;
     }
 

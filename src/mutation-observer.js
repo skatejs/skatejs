@@ -7,7 +7,7 @@ import {
   objEach
 } from './utils';
 
-var Attr = window.Attr;
+var {Node, Attr} = window;
 var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
 var isFixingIe = false;
 var isIe = window.navigator.userAgent.indexOf('Trident') > -1;
@@ -158,7 +158,7 @@ MutationObserver.prototype = {
       //
       // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
       var shouldWorkAroundIeRemoveBug = isFixingIe && eType === 'DOMNodeRemoved';
-      var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === 1 && elementContains(lastBatchedElement, eTarget);
+      var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === Node.ELEMENT_NODE && elementContains(lastBatchedElement, eTarget);
 
       // This checks to see if the element is contained in the last batched
       // element. If it is, then we don't batch it because elements are
