@@ -174,12 +174,16 @@ describe('lifecycle/properties', function () {
     expect(el2.prop1).to.equal('test2');
   });
 
-  describe('removing attributes if property is set to null or undefined', function () {
+  describe('removing attributes when property is set', function () {
     function setup () {
       skate(elem.safe, {
         properties: {
           prop1: {
-            attr: true
+            attr: true,
+
+            // We add a type so that we can test what happens when the value
+            // is coerced from null / undefined.
+            type: String
           }
         }
       });
