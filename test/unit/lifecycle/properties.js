@@ -218,4 +218,36 @@ describe('lifecycle/properties', function () {
     el.prop1 = '';
     expect(el.getAttribute('prop1')).to.equal('');
   });
+
+  describe('270', function () {
+    function setup (initialValue) {
+      var el = elem.create();
+      el.textContent = 'existing content';
+      skate(elem.safe, {
+        properties: {
+          textContent: {
+            init: initialValue,
+            set (value) {
+              this.children[0].textContent = value;
+            }
+          }
+        },
+        template () {
+          this.innerHTML = `{<span></span>}`;
+        }
+      });
+      skate.init(el);
+      return el;
+    }
+
+    it('should use existing value of overwriting an existing property', function () {
+      var el = setup();
+      expect(el.innerHTML).to.equal('{<span>existing content</span>}');
+    });
+
+    it('should override the init option', function () {
+      var el = setup('init value');
+      expect(el.innerHTML).to.equal('{<span>existing content</span>}');
+    });
+  });
 });

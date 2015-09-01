@@ -103,6 +103,7 @@ function defineProperty (elem, name, prop) {
   // bindings on the same component define the same attribute, then they'd
   // conflict anyways.
   var info = data(elem);
+  var existingValue = elem[name];
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
@@ -120,6 +121,8 @@ function defineProperty (elem, name, prop) {
   return function () {
     if (prop.attr && elem.hasAttribute(prop.attr)) {
       elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
+    } else if (existingValue !== undefined) {
+      elem[name] = existingValue;
     } else if (prop.init) {
       elem[name] = prop.init.call(this);
     }
