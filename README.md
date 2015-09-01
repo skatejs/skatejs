@@ -4,7 +4,12 @@
 
 # Skate
 
-Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.
+Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
+
+- Provides a superset of the Custom Element spec.
+- Hooks for an elements lifecycle, custom properties and event delegation.
+- Small, 4k min+gz.
+- Allows easy transition from selector-based behaviour binding to element binding.
 
 HTML
 
