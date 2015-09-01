@@ -174,49 +174,50 @@ describe('lifecycle/properties', function () {
     expect(el2.prop1).to.equal('test2');
   });
 
-  it('passing undefined should remove the linked attribute', function () {
-    skate(elem.safe, {
-      properties: {
-        prop1: {
-          attr: true
+  describe('removing attributes if property is set to null or undefined', function () {
+    function setup () {
+      skate(elem.safe, {
+        properties: {
+          prop1: {
+            attr: true
+          }
         }
-      }
+      });
+
+      var el = elem.create({ prop1: 'test1' });
+      expect(el.prop1).to.equal('test1');
+      return el;
+    }
+
+    it('passing undefined should remove the linked attribute', function () {
+      let el = setup();
+      el.prop1 = undefined;
+      expect(el.hasAttribute('prop1')).to.equal(false);
     });
 
-    var el = elem.create({ prop1: 'test1' });
-    expect(el.prop1).to.equal('test1');
-    el.prop1 = undefined;
-    expect(el.hasAttribute('prop1')).to.equal(false);
-  });
-
-  it('passing null should remove the linked attribute', function () {
-    skate(elem.safe, {
-      properties: {
-        prop1: {
-          attr: true
-        }
-      }
+    it('passing null should remove the linked attribute', function () {
+      let el = setup();
+      el.prop1 = null;
+      expect(el.hasAttribute('prop1')).to.equal(false);
     });
 
-    var el = elem.create({ prop1: 'test1' });
-    expect(el.prop1).to.equal('test1');
-    el.prop1 = null;
-    expect(el.hasAttribute('prop1')).to.equal(false);
-  });
-
-  it('passing an empty string shoud not remove the linked attribute', function () {
-    skate(elem.safe, {
-      properties: {
-        prop1: {
-          attr: true
-        }
-      }
+    it('passing an empty string shoud not remove the linked attribute', function () {
+      let el = setup();
+      el.prop1 = '';
+      expect(el.getAttribute('prop1')).to.equal('');
     });
 
-    var el = elem.create({ prop1: 'test1' });
-    expect(el.prop1).to.equal('test1');
-    el.prop1 = '';
-    expect(el.getAttribute('prop1')).to.equal('');
+    it('passing false should not remove the linked attribute', function () {
+      let el = setup();
+      el.prop1 = false;
+      expect(el.getAttribute('prop1')).to.equal('false');
+    });
+
+    it('passing 0 should not remove the linked attribute', function () {
+      let el = setup();
+      el.prop1 = 0;
+      expect(el.getAttribute('prop1')).to.equal('0');
+    });
   });
 
   describe('270', function () {
