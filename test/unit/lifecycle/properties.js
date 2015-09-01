@@ -245,9 +245,9 @@ describe('lifecycle/properties', function () {
       expect(el.innerHTML).to.equal('{<span>existing content</span>}');
     });
 
-    it('should not override the init option', function () {
+    it('should override the init option', function () {
       var el = setup('init value');
-      expect(el.innerHTML).to.equal('{<span>init value</span>}');
+      expect(el.innerHTML).to.equal('{<span>existing content</span>}');
     });
   });
 });
