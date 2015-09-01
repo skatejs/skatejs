@@ -7,11 +7,9 @@ var gulpFilter = require('gulp-filter');
 var gulpUglify = require('gulp-uglify');
 
 module.exports = function () {
-  var filterGlobal = gulpFilter('!src/global.js', { restore: true });
+  var filterOutGlobalJs = gulpFilter('!src/global.js', { restore: true });
   return gulp.src('src/global.js')
     .pipe(gulpDebug({ title: 'trace' }))
-
-    // All files are traced from the main js file and inserted into the stream.
     .pipe(galv.trace())
     .pipe(gulpBabel())
     .pipe(galv.globalize())
@@ -25,6 +23,6 @@ module.exports = function () {
     .pipe(gulpDebug({ title: 'js' }))
 
     // lib
-    .pipe(filterGlobal)
+    .pipe(filterOutGlobalJs)
     .pipe(gulp.dest('lib'));
 };

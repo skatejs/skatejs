@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>skate (name, options)</code></h2>
+
+  <p>You define a component by passing a component name and some options to the <code>skate()</code> function. The name you specify corresponds to one of the following:</p>
+  <ul>
+    <li>Tag name</li>
+    <li><code>is</code> attribute</li>
+    <li>Attribute name</li>
+    <li>Class name</li>
+  </ul>
+  <p class="notice notice-info">Skate uses binding <a href="/docs/options/type.html"><code>type</code></a> constants to decide which one of these to use.</p>
+
+
+
+  <h3>Creating a Component</h3>
+
+  <p>The <code>return</code> value is a function / constructor that you can use to instantiate your component as an element:</p>
+  <noscript is="sk-code" lang="js">
+    var element = skate('my-element', {});
+
+    // Use it like a function.
+    // Awesomest way to create an element. Ever.
+    document.body.appendChild(element());
+
+    // Or a constructor.
+    // Not as cool as using a function.
+    document.body.appendChild(new element());
+  </noscript>
+
+  <p>You may also pass properties that you want to set on the element instance after it's constructed:</p>
+  <noscript is="sk-code" lang="js">
+    var element = skate('my-element', {});
+    var instance = element({
+      prop1: true
+    });
+
+    // true;
+    instance.prop1;
+  </noscript>
+
+
+
+  <h3>Native vs Polyfill</h3>
+  <p>Underneath the hood, Skate will use native custom elements if the following criteria is met:</p>
+  <ul>
+    <li>Your browser supports <code>document.registerElement()</code>.</li>
+    <li>Your component uses the <code>ELEMENT</code> binding type.</li>
+    <li>Your component has a hyphen in its name.</li>
+  </ul>
+  <p>In all other instances Skate will use a <code>MutationObserver</code> to polyfill the same behaviour. In browsers that do not have native support for Mutation Observers, Skate will polyfill it internally.</p>
+  <p class="notice notice-info">You should always try and meet this criteria because using Native will <em>always</em> be faster than using Mutation Observers.</p>
+
+
+
+  <h3>Binding Types</h3>
+  <p>Each binding type listed below is supported by the function / constructor and does not change the way they are invoked.</p>
+
+  <h4>Tag Name</h4>
+
+  <p>Tag names are the <strong>default</strong> and <strong>preferred</strong> way to bind behaviour because it is the most explicit form of binding behaviour to an element. You should use this form unless you absolutely need to use the other types.</p>
+  <p>Use this form when:</p>
+  <ul>
+    <li>You're not sure what form you should use.</li>
+    <li>Your component is templated.</li>
+    <li>Your element has semantic meaning to the beahviour in which is bound to it.</li>
+  </ul>
+
+  <p>The following component:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {});
+  </noscript>
+
+  <p>Would bind to:</p>
+  <noscript is="sk-code" lang="html">
+    <my-element></my-element>
+  </noscript>
+
+  <p class="notice notice-info">You should hyphenate your element names whenever possible because non-hyphenated names prevent Skate from using the native custom element implementation and it makes it clear to others that it is a custom element. Try to only use non-hyphenated names when you're polyfilling elements for browsers that don't support them such as <code>datalist</code> in IE9.</p>
+
+
+
+  <h4><code>is</code> Attribute</h4>
+
+  <p>The <code>is</code> attribute is used when you want to extend the functionality of an element that already has defined functionality, or that already is defined by the HTML spec.</p>
+  <p>Use this form when:</p>
+  <ul>
+    <li>You want to use a custom element, but want to bind behaviour to an existing element.</li>
+  </ul>
+
+  <p>The following component:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      extends: 'input'
+    });
+  </noscript>
+
+  <p>Would bind to:</p>
+  <noscript is="sk-code" lang="html">
+    <input is="my-element">
+  </noscript>
+
+
+
+  <h4>Attribute Name</h4>
+
+  <p>Attributes are a great way to mix in functonality but lack the explicitness of tag names, or the <code>is</code> attribute.</p>
+  <p>Use attribute names when:</p>
+  <ul>
+    <li>You have functionality that you want to declaratively mix-in to your element.</li>
+    <li>Your component won't conflict with other components on the same element.</li>
+    <li>Your component does <em>not</em> template the element.</li>
+    <li>You are converting legacy components to Skate components and for whatever reason you can't change the markup.</li>
+  </ul>
+
+  <p>The following component:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      type: skate.type.ATTRIBUTE
+    });
+  </noscript>
+
+  <p>Would bind to:</p>
+  <noscript is="sk-code" lang="html">
+    <input my-element type="text">
+  </noscript>
+
+
+
+  <h4>Class Name</h4>
+
+  <p>Class names are the least preferred method of binding behaviour to an element as it's not clear that an element may have custom behaviour applied to it.</p>
+  <p>You should <em>only</em> use this form when:</p>
+  <ul>
+    <li>You are converting legacy components to Skate components and for whatever reason you can't change the markup.</li>
+    <li>You want to hook into a particular class for non-behavioural purposes such as deprecating classes.</li>
+  </ul>
+
+  <p>The following component:</p>
+  <noscript is="sk-code" lang="js">
+    skate('ui-tabs', {
+      type: skate.type.CLASSNAME
+    });
+  </noscript>
+
+  <p>Would bind to:</p>
+  <noscript is="sk-code" lang="html">
+    <div class="ui-tabs">
+      ...
+    </div>
+  </noscript>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>

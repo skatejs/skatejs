@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>options.extends</code></h2>
+
+  <p>The name of the element that this component is extending. This is synonymous with the <a href="http://w3c.github.io/webcomponents/spec/custom/#var-options-extends">W3C Custom Element <code>extends</code> option</a>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      extends: 'input'
+    });
+  </noscript>
+
+  <p>When you specify the <code>extends</code> option, instead of your component name mapping to the <code>tagName</code> of an element, it maps to the value of the <code>is</code> attribute. This conforms with the spec.</p>
+  <noscript is="sk-code" lang="html">
+    <input is="my-element">
+  </noscript>
+
+  <p>However, if you use this option in conjunction with the <code>type</code> option, Skate will only bind the component to an element that has a tag name matching the <code>extends</code> option.</p>
+  <noscript is="sk-code" lang="html">
+    <!-- skate.type.ELEMENT (default) -->
+    <input is="my-element">
+
+    <!-- skate.type.ATTRIBUTE -->
+    <input my-element>
+
+    <!-- skate.type.CLASSNAME -->
+    <input class="my-element">
+  </noscript>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>

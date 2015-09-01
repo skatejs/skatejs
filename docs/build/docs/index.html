@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2 id="h2-what-is-skate">What is Skate?</h2>
+  <p>Skate is a library designed to be an easy-to-use, minimal and performant foundation for building modular and reusable web components. It's built on the philosophy that all libraries should be focused on doing one thing well and therefore makes no assumptions about things better left to other libraries such as templating, data-binding and routing. It can be used standalone or along-side your framework of choice.</p>
+
+  <h3>Custom Elements</h3>
+  <p>Skate uses the <a href="http://w3c.github.io/webcomponents/spec/custom/">W3C Custom Element Spec</a> as the basis for defining its functionality and extends it to make it easier for you to build new custom elements as well as transition your legacy components to custom elements.</p>
+  <p>Custom elements are just normal HTML elements that you give a custom name and functionality to:</p>
+  <noscript is="sk-code" lang="html">
+    <todo-list>
+      <todo-item>Get milk</todo-item>
+      <todo-item>Feed cats</todo-item>
+    </todo-list>
+  </noscript>
+
+  <h3>But wait, there's more!</h3>
+
+  <p>The spec says that a custom element name must be hyphenated and only allows you to bind functionality to elements whose tag name matches that custom element name. With Skate, you can not only create new custom elements, but you can also define behaviour for existing elements using tag names, attribute names and class names. This means you can do things like polyfill the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output"><code>output</code> element</a>:</p>
+  <noscript is="sk-code" lang="html">
+    <output></output>
+  </noscript>
+  <noscript is="sk-code" lang="js">
+    skate('output', {
+      // ...
+    });
+  </noscript>
+
+  <p>or polyfill the <code>placeholder</code> attribute on an <a href="https://developer.mozilla.org/en/docs/Web/HTML/Element/Input"><code>input</code> element</a>:</p>
+  <noscript is="sk-code" lang="html">
+    <input placeholder="dd-mm-yyyy">
+  </noscript>
+  <noscript is="sk-code" lang="js">
+    skate('placeholder', {
+      type: skate.type.ATTRIBUTE
+      // ...
+    });
+  </noscript>
+
+  <p>Have a buch of legacy jQuery components? No problem. In most cases you can refactor these without touching any markup. For example, you might have a jQuery tabs plugin:</p>
+  <noscript is="sk-code" lang="js">
+    $('.tabs').tabs();
+  </noscript>
+  <p>You could very easily refactor this into a Skate component.</p>
+  <noscript is="sk-code" lang="js">
+    skate('tabs', {
+      type: skate.type.CLASSNAME,
+      created () {
+        $(this).tabs();
+      }
+    });
+  </noscript>
+  <p>Once a Skate component, you don't have to worry about when the element is inserted to the DOM; no more manual initialsation.</p>
+
+
+
+  <h2 id="h2-installing">Installing</h2>
+
+  <p>Skate is available on NPM:</p>
+  <noscript is="sk-code" lang="bash">
+    npm install skatejs
+  </noscript>
+
+  <p>and Bower:</p>
+  <noscript is="sk-code" lang="bash">
+    bower install skatejs
+  </noscript>
+
+  <p>or you can download the <a href="https://github.com/skatejs/skatejs">source</a> from GitHub.</p>
+
+  <h3>ES6 Modules</h3>
+  <p>The Skate source resides in <code>src/</code> and is written using ES2015 (formerly ES6). If you're using a transpilation method, then you can <code>import skate from 'src/index';</code> and use it in your projects as you would any ES6 module.</p>
+
+  <h3>UMD (AMD / CommonJS)</h3>
+  <p>UMD files are located in the <code>lib/</code> directory. Load the <code>lib/index.js</code> file using the CommonJS or AMD loader of your choice.</p>
+  <p class="notice notice-info">Skate does not provide a named AMD module. You should use an optimiser such as <a href="https://github.com/scalableminds/amd-optimize">amd-optimize</a> or <a href="https://github.com/jrburke/r.js/">r.js</a> that will generate this for you.</p>
+
+  <h3>Global</h3>
+  <p>If you're still skating old school the <code>dist/</code> directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with <code>window.skate</code>.</p>
+  <p class="notice notice-info">The global is always set no matter what and will trump any existing globals stored under <code>window.skate</code>. If you're using multiple versions of Skate on the same page, use a module format if possible. If it is not possible, you may call <code>skate.noConflict()</code> to restore the previous global and return the current one.</p>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>
