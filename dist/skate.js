@@ -232,8 +232,9 @@ __ff611d2c455b299b951f7e794d2d3337 = (function () {
   var elementContains = _utils.elementContains;
   var elementPrototype = _utils.elementPrototype;
   var objEach = _utils.objEach;
-  
+  var Node = window.Node;
   var Attr = window.Attr;
+  
   var NativeMutationObserver = window.MutationObserver || window.WebkitMutationObserver || window.MozMutationObserver;
   var isFixingIe = false;
   var isIe = window.navigator.userAgent.indexOf("Trident") > -1;
@@ -384,7 +385,7 @@ __ff611d2c455b299b951f7e794d2d3337 = (function () {
         //
         // IE 11 bug: https://connect.microsoft.com/IE/feedback/details/817132/ie-11-childnodes-are-missing-from-mutationobserver-mutations-removednodes-after-setting-innerhtml
         var shouldWorkAroundIeRemoveBug = isFixingIe && eType === "DOMNodeRemoved";
-        var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === 1 && elementContains(lastBatchedElement, eTarget);
+        var isDescendant = lastBatchedElement && lastBatchedElement.nodeType === Node.ELEMENT_NODE && elementContains(lastBatchedElement, eTarget);
   
         // This checks to see if the element is contained in the last batched
         // element. If it is, then we don't batch it because elements are
@@ -697,6 +698,7 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
   var hasOwn = _utils.hasOwn;
   var inherit = _utils.inherit;
   var objEach = _utils.objEach;
+  var Node = window.Node;
   
   var elProto = window.HTMLElement.prototype;
   var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
@@ -1045,12 +1047,14 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
    * @returns {undefined}
    */
   function initElements(elements) {
-    var elementsLen = elements.length;
-  
-    for (var a = 0; a < elementsLen; a++) {
+    // [CATION] Don't cache elements length! Components initialization could append nodes
+    // as siblings (see label's element behaviour for example) and this could lead to problems with
+    // components placed at the end of processing childNodes because they will change they index
+    // position and get out of cached value range.
+    for (var a = 0; a < elements.length; a++) {
       var element = elements[a];
   
-      if (element.nodeType !== 1 || element.attributes[ATTR_IGNORE]) {
+      if (element.nodeType !== Node.ELEMENT_NODE || element.attributes[ATTR_IGNORE]) {
         continue;
       }
   
@@ -1081,12 +1085,11 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
    * @returns {undefined}
    */
   function removeElements(elements) {
-    var len = elements.length;
-  
-    for (var a = 0; a < len; a++) {
+    // Don't cache `childNodes` length. For more info see description in `initElements` function.
+    for (var a = 0; a < elements.length; a++) {
       var element = elements[a];
   
-      if (element.nodeType !== 1) {
+      if (element.nodeType !== Node.ELEMENT_NODE) {
         continue;
       }
   
@@ -1212,7 +1215,7 @@ __6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.10";
+  module.exports = "0.13.11";
   
   return module.exports
 }).call(this);
