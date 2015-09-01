@@ -6,7 +6,7 @@
 
 Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
 
-- Provides a superset of the Custom Element spec.
+- Provides a superset of the [Custom Element Spec](http://w3c.github.io/webcomponents/spec/custom/).
 - Hooks for an elements lifecycle, custom properties and event delegation.
 - Small, 5k min+gz.
 - Allows easy transition from selector-based behaviour binding to element binding.
