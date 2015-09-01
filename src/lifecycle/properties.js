@@ -103,6 +103,7 @@ function defineProperty (elem, name, prop) {
   // bindings on the same component define the same attribute, then they'd
   // conflict anyways.
   var info = data(elem);
+  var existingValue = elem[name];
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
@@ -110,6 +111,10 @@ function defineProperty (elem, name, prop) {
 
   prop = property(elem, name, prop);
   Object.defineProperty(elem, name, prop);
+
+  if (existingValue !== undefined) {
+    elem[name] = existingValue;
+  }
 
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.

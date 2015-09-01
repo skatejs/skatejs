@@ -218,4 +218,18 @@ describe('lifecycle/properties', function () {
     el.prop1 = '';
     expect(el.getAttribute('prop1')).to.equal('');
   });
+
+  it('270 - should use existing value of overwriting an existing property', function () {
+    var el = elem.create();
+    el.textContent = 'existing content';
+    skate(elem.safe, {
+      properties: {
+        textContent: null
+      },
+      template () {
+        this.innerHTML = `{<span>${this.textContent}</span>}`;
+      }
+    });
+    expect(el.innerHTML).to.equal('{<span>existing content</span>}');
+  });
 });
