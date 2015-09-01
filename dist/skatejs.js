@@ -743,10 +743,10 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
     return function () {
       if (prop.attr && elem.hasAttribute(prop.attr)) {
         elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
-      } else if (prop.init) {
-        elem[name] = prop.init.call(this);
       } else if (existingValue !== undefined) {
         elem[name] = existingValue;
+      } else if (prop.init) {
+        elem[name] = prop.init.call(this);
       }
     };
   }
