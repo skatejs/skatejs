@@ -45,5 +45,9 @@
     "lint": "./node_modules/.bin/gulp lint",
     "release": "./node_modules/.bin/gulp release",
     "test": "./node_modules/.bin/gulp test"
+  },
+  "engines": {
+    "node": ">=0.12.x",
+    "npm": "2.x.x"
   }
 }
