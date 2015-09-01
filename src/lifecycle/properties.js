@@ -112,10 +112,6 @@ function defineProperty (elem, name, prop) {
   prop = property(elem, name, prop);
   Object.defineProperty(elem, name, prop);
 
-  if (existingValue !== undefined) {
-    elem[name] = existingValue;
-  }
-
   // This ensures that the corresponding attribute will know to update this
   // property when it is set.
   if (prop.attr) {
@@ -127,6 +123,8 @@ function defineProperty (elem, name, prop) {
       elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
     } else if (prop.init) {
       elem[name] = prop.init.call(this);
+    } else if (existingValue !== undefined) {
+      elem[name] = existingValue;
     }
   };
 }
