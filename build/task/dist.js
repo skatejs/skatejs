@@ -1,33 +1,30 @@
-'use strict';
-
-var commander = require('../lib/commander');
-var del = require('del');
-var galvatron = require('galvatron')();
+var galv = require('galvatron');
 var gulp = require('gulp');
-var gulpRename = require('gulp-rename');
+var gulpBabel = require('gulp-babel');
+var gulpConcat = require('gulp-concat');
+var gulpDebug = require('gulp-debug');
+var gulpFilter = require('gulp-filter');
 var gulpUglify = require('gulp-uglify');
-var mac = require('../lib/mac');
-var pkg = require('../lib/package');
 
-galvatron.transformer
-  .post('babel')
-  .post('globalize');
+module.exports = function () {
+  var filterGlobal = gulpFilter('!src/global.js', { restore: true });
+  return gulp.src('src/global.js')
+    .pipe(gulpDebug({ title: 'trace' }))
 
-module.exports = mac.series(
-  function (done) {
-    del('dist', done);
-  },
+    // All files are traced from the main js file and inserted into the stream.
+    .pipe(galv.trace())
+    .pipe(gulpBabel())
+    .pipe(galv.globalize())
 
-  function () {
-    var bundle = galvatron.bundle('src/global.js');
-    return gulp
-      .src(bundle.files)
-      .pipe(bundle.watchIf(commander.watch))
-      .pipe(bundle.stream())
-      .pipe(gulpRename( { basename: pkg.name }))
-      .pipe(gulp.dest('dist'))
-      .pipe(gulpUglify())
-      .pipe(gulpRename( { suffix: '.min' }))
-      .pipe(gulp.dest('dist'));
-  }
-);
+    // dist
+    .pipe(gulpConcat('skate.js'))
+    .pipe(gulp.dest('dist'))
+    .pipe(gulpUglify())
+    .pipe(gulpConcat('skate.min.js'))
+    .pipe(gulp.dest('dist'))
+    .pipe(gulpDebug({ title: 'js' }))
+
+    // lib
+    .pipe(filterGlobal)
+    .pipe(gulp.dest('lib'));
+};
