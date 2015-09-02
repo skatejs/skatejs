@@ -1,7 +1,5 @@
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
-import lifecycleEvents from './events';
-import lifecycleProperties from './properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -56,8 +54,6 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 
 export default function (opts) {
   let created = fnOr(opts.created);
-  let events = fnOr(opts.events, lifecycleEvents);
-  let properties = fnOr(opts.properties, lifecycleProperties);
   let prototype = applyPrototype(opts.prototype);
   let ready = fnOr(opts.ready);
 
@@ -71,10 +67,8 @@ export default function (opts) {
 
     isNative || patchAttributeMethods(this);
     isNative || prototype.call(this);
-    callCreatedOnDescendants(this, opts.id);
     created.call(this);
-    properties.call(this);
-    events.call(this);
+    callCreatedOnDescendants(this, opts.id);
     ready.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };

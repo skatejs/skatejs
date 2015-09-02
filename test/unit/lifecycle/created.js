@@ -3,7 +3,7 @@ import helperFixture from '../../lib/fixture';
 import helperReady from '../../lib/ready';
 import skate from '../../../src/index';
 
-describe('created callback ordering on parent -> descendants', function () {
+describe('lifecycle/created ordering parent -> descendants', function () {
   var child, descendant, host, num, tag;
 
   // Simulate creating definitions in dependency order. This emulates having
@@ -55,9 +55,9 @@ describe('created callback ordering on parent -> descendants', function () {
     createStructure();
     helperReady(function () {
       expect(num).to.equal(3, 'num');
-      expect(host).to.equal(3, 'host');
+      expect(host).to.equal(1, 'host');
       expect(child).to.equal(2, 'child');
-      expect(descendant).to.equal(1, 'descendant');
+      expect(descendant).to.equal(3, 'descendant');
       done();
     });
   });
@@ -67,9 +67,9 @@ describe('created callback ordering on parent -> descendants', function () {
     createDefinitions();
     helperReady(function () {
       expect(num).to.equal(3, 'num');
-      expect(host).to.equal(3, 'host');
+      expect(host).to.equal(1, 'host');
       expect(child).to.equal(2, 'child');
-      expect(descendant).to.equal(1, 'descendant');
+      expect(descendant).to.equal(3, 'descendant');
       done();
     });
   });

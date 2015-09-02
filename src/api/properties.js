@@ -122,8 +122,8 @@ function defineProperty (elem, name, prop) {
   }
 }
 
-export default function (elem, props) {
-  Object.keys(props).forEach(function (name) {
-    return defineProperty(elem, name, props[name]);
-  });
+export default function (props) {
+  return function () {
+    Object.keys(props).forEach(name => defineProperty(this, name, props[name]));
+  };
 }

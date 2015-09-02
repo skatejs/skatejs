@@ -2,7 +2,7 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('lifecycle/events', function () {
+describe('api/events', function () {
   var numTriggered;
   var tag;
 
@@ -17,9 +17,9 @@ describe('lifecycle/events', function () {
 
   it('events on own element', function () {
     skate(tag.safe, {
-      events: {
+      created: skate.events({
         test: increment
-      }
+      })
     });
 
     var myEl = tag.create();
@@ -29,9 +29,9 @@ describe('lifecycle/events', function () {
 
   it('events on child elements', function () {
     skate(tag.safe, {
-      events: {
+      created: skate.events({
         test: increment
-      }
+      })
     });
 
     var myEl = tag.create();
@@ -43,9 +43,9 @@ describe('lifecycle/events', function () {
 
   it('events on descendant elements', function () {
     skate(tag.safe, {
-      events: {
+      created: skate.events({
         test: increment
-      }
+      })
     });
 
     var myEl = tag.create();
@@ -57,9 +57,9 @@ describe('lifecycle/events', function () {
 
   it('should allow you to re-add the element back into the DOM', function () {
     skate(tag.safe, {
-      events: {
+      created: skate.events({
         test: increment
-      }
+      })
     });
 
     var myEl = tag.create();
@@ -74,7 +74,7 @@ describe('lifecycle/events', function () {
 
   it('should support delegate event selectors', function () {
     skate(tag.safe, {
-      events: {
+      created: skate.events({
         'test a': function (e) {
           increment();
           expect(this.tagName).to.equal(tag.safe.toUpperCase());
@@ -89,7 +89,7 @@ describe('lifecycle/events', function () {
           expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase());
           expect(e.delegateTarget.tagName).to.equal('SPAN');
         }
-      }
+      })
     });
 
     var inst = skate.create(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
@@ -105,10 +105,15 @@ describe('lifecycle/events', function () {
     var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
-      events: {
-        'blur input': () => blur = true,
-        'focus input': () => focus = true
-      },
+      created: skate.chain(
+        function () {
+          this.innerHTML = '<input>';
+        },
+        skate.events({
+          'blur input': () => blur = true,
+          'focus input': () => focus = true
+        })
+      ),
       prototype: {
         blur: function () {
           skate.emit(this.querySelector('input'), 'blur');
@@ -116,9 +121,6 @@ describe('lifecycle/events', function () {
         focus: function () {
           skate.emit(this.querySelector('input'), 'focus');
         }
-      },
-      created: function () {
-        this.innerHTML = '<input>';
       }
     });
 
