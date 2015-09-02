@@ -2,6 +2,10 @@ import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 
+function isEmpty (value) {
+  return value == null;
+}
+
 function normaliseProp (prop) {
   if (typeof prop === 'object') {
     prop = assignSafe({}, prop);
@@ -49,6 +53,11 @@ function property (elem, name, prop) {
   prop.set = function (value) {
     var info = data(this);
 
+    if (isEmpty(value) && prop.attr && !info.updatingProperty) {
+      this.removeAttribute(prop.attr);
+      return;
+    }
+
     // If the property is being updated and it is a boolean we must just check
     // if the attribute exists because "" is true for a boolean attribute.
     if (info.updatingProperty && isBoolean) {
@@ -77,7 +86,7 @@ function property (elem, name, prop) {
 
       if (isBoolean && internalValue) {
         this.setAttribute(prop.attr, '');
-      } else if (value == null || isBoolean && !internalValue) {
+      } else if (isEmpty(internalValue) || isBoolean && !internalValue) {
         this.removeAttribute(prop.attr, '');
       } else {
         this.setAttribute(prop.attr, internalValue);
