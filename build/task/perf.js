@@ -8,18 +8,16 @@ var gulpKarma = require('gulp-karma');
 
 module.exports = function (opts) {
   opts = assign(opts, {
-    action: 'run',
     browsers: ['Chrome', 'Firefox']
   });
 
-  return gulp.src('test/unit.js')
+  return gulp.src('test/perf.js')
     .pipe(galv.trace())
     .pipe(galv.cache('babel', gulpBabel()))
     .pipe(galv.cache('globalize', galv.globalize()))
-    .pipe(gulpConcat('unit.js'))
+    .pipe(gulpConcat('perf.js'))
     .pipe(gulp.dest('.tmp'))
     .pipe(gulpKarma({
-      action: opts.action,
       browsers: opts.browsers,
       frameworks: ['mocha', 'sinon-chai']
     }));
