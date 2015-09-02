@@ -3,7 +3,6 @@ var galv = require('galvatron');
 var gulp = require('gulp');
 var gulpBabel = require('gulp-babel');
 var gulpConcat = require('gulp-concat');
-var gulpDebug = require('gulp-debug');
 var gulpKarma = require('gulp-karma');
 
 module.exports = function (opts) {
