@@ -118,7 +118,7 @@ describe('lifecycle/events', function () {
           skate.emit(this.querySelector('input'), 'focus');
         }
       },
-      template: function () {
+      created: function () {
         this.innerHTML = '<input>';
       }
     });

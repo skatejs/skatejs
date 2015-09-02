@@ -224,6 +224,9 @@ describe('lifecycle/properties', function () {
       var el = elem.create();
       el.textContent = 'existing content';
       skate(elem.safe, {
+        created () {
+          this.innerHTML = `{<span></span>}`;
+        },
         properties: {
           textContent: {
             init: initialValue,
@@ -231,9 +234,6 @@ describe('lifecycle/properties', function () {
               this.children[0].textContent = value;
             }
           }
-        },
-        template () {
-          this.innerHTML = `{<span></span>}`;
         }
       });
       skate.init(el);

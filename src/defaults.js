@@ -35,8 +35,8 @@ export default {
   // The attribute name to add after calling the created() callback.
   resolvedAttribute: 'resolved',
 
-  // The template to replace the content of the element with.
-  template: function () {},
+  // Called after all lifecycle callbacks have been called.
+  ready: function () {},
 
   // The type of bindings to allow.
   type: typeElement,
