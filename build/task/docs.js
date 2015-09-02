@@ -13,7 +13,7 @@ module.exports = function () {
   var filterIcons = gulpFilter('*.?(eot|svg|ttf|woff|woff2)', { restore: true });
   var filterLess = gulpFilter('{**/*,*}.less', { restore: true });
   var filterJs = gulpFilter('{**/*,*}.js', { restore: true });
-  return gulp.src('docs/src/index.js')
+  return gulp.src('docs/scripts/index.js')
     .pipe(gulpDebug({ title: 'trace' }))
 
     // All files are traced from the main js file and inserted into the stream.
@@ -23,8 +23,8 @@ module.exports = function () {
     .pipe(filterJs)
     .pipe(galv.cache('babel', gulpBabel()))
     .pipe(galv.cache('globalize', galv.globalize()))
-    .pipe(gulpConcat('index.js'))
     .pipe(galv.cache('uglify', gulpUglify()))
+    .pipe(gulpConcat('index.js'))
     .pipe(gulp.dest('dist'))
     .pipe(gulpDebug({ title: 'js' }))
     .pipe(filterJs.restore)
@@ -32,8 +32,8 @@ module.exports = function () {
     // Styles.
     .pipe(filterLess)
     .pipe(galv.cache('less', gulpLess()))
-    .pipe(gulpConcat('index.css'))
     .pipe(galv.cache('minify-css', gulpMinifyCss()))
+    .pipe(gulpConcat('index.css'))
     .pipe(gulp.dest('dist'))
     .pipe(gulpDebug({ title: 'less' }))
     .pipe(filterLess.restore)
