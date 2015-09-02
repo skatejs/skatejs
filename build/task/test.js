@@ -15,7 +15,7 @@ module.exports = function (opts) {
   return gulp.src('test/unit.js')
     .pipe(galv.trace())
     .pipe(galv.cache('babel', gulpBabel()))
-    .pipe(galv.globalize())
+    .pipe(galv.cache('globalize', galv.globalize()))
     .pipe(gulpConcat('unit.js'))
     .pipe(gulp.dest('.tmp'))
     .pipe(gulpDebug({ title: 'babel' }))
