@@ -24,9 +24,7 @@ module.exports = function () {
     .pipe(galv.cache('babel', gulpBabel()))
     .pipe(galv.cache('globalize', galv.globalize()))
     .pipe(gulpConcat('index.js'))
-    .pipe(gulp.dest('dist'))
     .pipe(galv.cache('uglify', gulpUglify()))
-    .pipe(gulpConcat('index.min.js'))
     .pipe(gulp.dest('dist'))
     .pipe(gulpDebug({ title: 'js' }))
     .pipe(filterJs.restore)
@@ -35,9 +33,7 @@ module.exports = function () {
     .pipe(filterLess)
     .pipe(galv.cache('less', gulpLess()))
     .pipe(gulpConcat('index.css'))
-    .pipe(gulp.dest('dist'))
     .pipe(galv.cache('minify-css', gulpMinifyCss()))
-    .pipe(gulpConcat('index.min.css'))
     .pipe(gulp.dest('dist'))
     .pipe(gulpDebug({ title: 'less' }))
     .pipe(filterLess.restore)
@@ -52,5 +48,5 @@ module.exports = function () {
     .pipe(filterIcons.restore)
 
     // Write to `dist`.
-    .pipe(gulp.dest('docs/dist'));
+    .pipe(gulp.dest('.tmp/docs'));
 };
