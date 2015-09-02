@@ -99,11 +99,7 @@ function property (elem, name, prop) {
 }
 
 function defineProperty (elem, name, prop) {
-  // We don't need to scope the data to the component ID be cause if multiple
-  // bindings on the same component define the same attribute, then they'd
-  // conflict anyways.
   var info = data(elem);
-  var existingValue = elem[name];
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
@@ -118,22 +114,16 @@ function defineProperty (elem, name, prop) {
     info.attributeToPropertyMap[prop.attr] = name;
   }
 
-  return function () {
-    if (prop.attr && elem.hasAttribute(prop.attr)) {
-      elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
-    } else if (existingValue !== undefined) {
-      elem[name] = existingValue;
-    } else if (prop.init) {
-      elem[name] = prop.init.call(this);
-    }
-  };
+  // Initialise.
+  if (prop.attr && elem.hasAttribute(prop.attr)) {
+    elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
+  } else if (prop.init) {
+    elem[name] = prop.init.call(this);
+  }
 }
 
 export default function (elem, props) {
-  var funcs = Object.keys(props).map(function (name) {
+  Object.keys(props).forEach(function (name) {
     return defineProperty(elem, name, props[name]);
   });
-  return function () {
-    funcs.forEach(func => func.call(this));
-  };
 }

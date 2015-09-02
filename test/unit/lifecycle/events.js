@@ -1,6 +1,5 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import lifecycleEvents from '../../../src/lifecycle/events';
 import skate from '../../../src/index';
 
 describe('lifecycle/events', function () {
@@ -108,7 +107,7 @@ describe('lifecycle/events', function () {
     skate(tagName, {
       events: {
         'blur input': () => blur = true,
-        'focus input': () => focus = true,
+        'focus input': () => focus = true
       },
       prototype: {
         blur: function () {
@@ -130,34 +129,5 @@ describe('lifecycle/events', function () {
 
     inst.focus();
     expect(focus).to.equal(true);
-  });
-
-  describe('queue', function () {
-    var bound, element, triggered;
-
-    beforeEach(function () {
-      triggered = 0;
-      element = document.createElement('div');
-      bound = lifecycleEvents(element, {
-        test: function (e) {
-          expect(typeof e).to.equal('object', 'event not passed in to queue handler');
-          triggered++;
-        }
-      });
-    });
-
-    it('should not fire events until the callback is called', function () {
-      skate.emit(element, 'test', { detail: true });
-      expect(triggered).to.equal(0, 'before');
-      bound();
-      expect(triggered).to.equal(1, 'after');
-    });
-
-    it('should dequeue handlers so that if the callback is called more than once, handlers aren not re-executed', function () {
-      skate.emit(element, 'test', { detail: true });
-      bound();
-      bound();
-      expect(triggered).to.equal(1, 'triggered more than once');
-    });
   });
 });

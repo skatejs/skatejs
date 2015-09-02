@@ -62,7 +62,6 @@ export default function (opts) {
   let ready = fnOr(opts.ready);
 
   return function () {
-    let initProps, initEvents;
     let info = data(this, opts.id);
     let isNative = this.createdCallback;
     let isResolved = this.hasAttribute(opts.resolvedAttribute);
@@ -72,12 +71,10 @@ export default function (opts) {
 
     isNative || patchAttributeMethods(this);
     isNative || prototype.call(this);
-    initProps = properties.call(this);
-    initEvents = events.call(this);
     callCreatedOnDescendants(this, opts.id);
     created.call(this);
-    initProps.call(this);
-    initEvents.call(this);
+    properties.call(this);
+    events.call(this);
     ready.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };
