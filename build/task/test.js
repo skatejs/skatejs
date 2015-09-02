@@ -8,7 +8,7 @@ var gulpKarma = require('gulp-karma');
 module.exports = function (opts) {
   opts = assign(opts, {
     action: 'run',
-    browsers: ['Chrome', 'Firefox']
+    browsers: ['Firefox']
   });
 
   return gulp.src('test/unit.js')
