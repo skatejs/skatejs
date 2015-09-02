@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>options.events</code></h2>
+  <p>Registers event listeners on the element using <a href=""><code>skate.event()</code></a>. In each listener <code>this</code> refers to the element the listener was bound to. The only parameter is the event object that was dispatched.</p>
+
+
+
+  <h3>Normal Events</h3>
+
+  <p>The following would be called for all <code>click</code> events that were either bubbled or triggered on the element itself:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      events: {
+        click (e) {}
+      }
+    });
+  </noscript>
+
+
+
+  <h3>Event Delegation</h3>
+
+  <p>The following would be called for all events that were triggered from a descendant of, or by an element matching <code>.some [selector]</code>.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      events: {
+        'click .some [selector]' (e) {}
+      }
+    });
+  </noscript>
+
+  <p class="notice notice-info">The <code>e.delegateTarget</code> property is set on the event object that is passed to all event handlers. When delegating it is the element that matched the selector. When not delegating, it is the same thing as <code>e.target</code>.</p>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>

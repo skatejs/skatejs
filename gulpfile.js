@@ -1,9 +1,4 @@
-var gulpAutoTask = require('gulp-auto-task');
-
-gulpAutoTask('{*,**/*}.js', {
-  base: './node_modules/chippy/src/task'
-});
-
-gulpAutoTask('{*,**/*}.js', {
-  base: 'build/task'
+require('gulp-auto-task')({
+  base: 'build/task',
+  gulp: require('gulp')
 });

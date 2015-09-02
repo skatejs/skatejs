@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>options.detached</code></h2>
+
+    <p>A function that is called whenever the element is detached from the DOM. <code>this</code> inside the callback refers to the element.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      detached () {
+        this.detached = true;
+      }
+    });
+  </noscript>
+
+  <p>For more information about this part of the lifecycle see <a href="/docs/native-polyfill-quirks.html#h3-element-lifecycle">Element Lifecycle</a>.</p>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>

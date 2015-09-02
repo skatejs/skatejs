@@ -28,7 +28,6 @@ __d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/create-from-html.js
 __883fff2d161a4239b3efea9bb85204e0 = (function () {
   var module = {
@@ -86,7 +85,6 @@ __883fff2d161a4239b3efea9bb85204e0 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/data.js
 __18291b0452e01f65cf28d6695040736a = (function () {
   var module = {
@@ -111,7 +109,6 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/global/vars.js
 __dd77578495c1d19b0e115627616ea63a = (function () {
   var module = {
@@ -139,7 +136,6 @@ __dd77578495c1d19b0e115627616ea63a = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/has-own.js
 __6d7878404f872c72787f01cd3e06dd21 = (function () {
   var module = {
@@ -161,7 +157,6 @@ __6d7878404f872c72787f01cd3e06dd21 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/type/element.js
 __43714db526496b3dd90353996f6dce09 = (function () {
   var module = {
@@ -206,7 +201,6 @@ __43714db526496b3dd90353996f6dce09 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/global/registry.js
 __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   var module = {
@@ -276,7 +270,6 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/ignored.js
 __092f8936e5006bddcb3baf24320a5a06 = (function () {
   var module = {
@@ -299,7 +292,6 @@ __092f8936e5006bddcb3baf24320a5a06 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/walk-tree.js
 __164e5750c20526cb74a9e443b730eeff = (function () {
   var module = {
@@ -354,7 +346,6 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/attached.js
 __2b55a083f45c9ef157662a1dc1674218 = (function () {
   var module = {
@@ -410,7 +401,6 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/assign-safe.js
 __d9d26492984e649e5130081ad32bafd6 = (function () {
   var module = {
@@ -444,7 +434,6 @@ __d9d26492984e649e5130081ad32bafd6 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/matches-selector.js
 __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   var module = {
@@ -476,7 +465,6 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/events.js
 __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   var module = {
@@ -565,7 +553,6 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/dash-case.js
 __0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
@@ -590,7 +577,6 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/properties.js
 __dc805244a3f10da2e05ae57781968d52 = (function () {
   var module = {
@@ -768,7 +754,6 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/protos.js
 __1d11a28624d684874cb270f137cc0122 = (function () {
   var module = {
@@ -796,7 +781,6 @@ __1d11a28624d684874cb270f137cc0122 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/created.js
 __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var module = {
@@ -978,7 +962,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/element-contains.js
 __6f793202bae98770dbb2b598df7929ad = (function () {
   var module = {
@@ -1007,7 +990,6 @@ __6f793202bae98770dbb2b598df7929ad = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/api/init.js
 __3add36046399fead5a83243849207ed7 = (function () {
   var module = {
@@ -1068,7 +1050,6 @@ __3add36046399fead5a83243849207ed7 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/api/create.js
 __1675a7174b713323cc232370699a2714 = (function () {
   var module = {
@@ -1114,7 +1095,6 @@ __1675a7174b713323cc232370699a2714 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/api/emit.js
 __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   var module = {
@@ -1217,7 +1197,6 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/api/fragment.js
 __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   var module = {
@@ -1284,7 +1263,6 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/api/version.js
 __662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
@@ -1302,7 +1280,6 @@ __662bde51c096e9d79bf327311ea178e0 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/attribute.js
 __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   var module = {
@@ -1347,7 +1324,6 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/debounce.js
 __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   var module = {
@@ -1385,7 +1361,6 @@ __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/defaults.js
 __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   var module = {
@@ -1453,7 +1428,6 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/lifecycle/detached.js
 __8e93439e8a566d1586c9903a75a6a785 = (function () {
   var module = {
@@ -1509,7 +1483,6 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/global/document-observer.js
 __d8200645c4d96aee6940034d9c030d1f = (function () {
   var module = {
@@ -1642,7 +1615,6 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/util/element-constructor.js
 __cdf80614962dbe37e0456f37c35fe468 = (function () {
   var module = {
@@ -1690,7 +1662,6 @@ __cdf80614962dbe37e0456f37c35fe468 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/support/custom-elements.js
 __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   var module = {
@@ -1712,7 +1683,6 @@ __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/support/valid-custom-element.js
 __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   var module = {
@@ -1734,7 +1704,6 @@ __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/index.js
 __abb93179bdc0236a6e77d3eae07c991c = (function () {
   var module = {
@@ -1926,7 +1895,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   return module.exports;
 }).call(this);
-
 // src/global.js
 __9a43120147a4f5a325d55b702c284d36 = (function () {
   var module = {

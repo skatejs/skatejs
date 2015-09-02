@@ -2,8 +2,6 @@
 
 The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, enable these in your editor of choice.
 
-
-
 ## Setup
 
 To get a dev environment up and running, all you should need to do is run:
@@ -11,8 +9,6 @@ To get a dev environment up and running, all you should need to do is run:
 ```bash
 npm install
 ```
-
-
 ## Testing
 
 To run tests:
@@ -24,61 +20,40 @@ npm test
 If you want to keep the Karma server alive to run them in your browser of choice:
 
 ```bash
-npm test -- --watch
+npm run test-watch
 ```
 
 To run tests in a specific browser:
 
 ```bash
 npm test -- --browsers Chrome,Firefox
+npm run test-watch -- --browsers Chrome,Firefox
 ```
 
 ### Testing Notes
 
 - Don't use PhantomJS. It won't work.
 
-
-
 ## Distribution
 
-To build the distribution all you have to do is run:
+To build the `dist/` and `lib/` artefacts run:
 
 ```bash
 npm run dist
 ```
 
-This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
+## Documentation
 
-To build the `lib` (ES5 + UMD) files:
+To build the docs:
 
-```bash
-npm run lib
+```sh
+npm run docs
 ```
 
+If you're developing in docs:
 
-
-## Releasing
-
-To release all you've got to do is run `npm release`. You can either specify the release `type`, or `tag`.
-
-```bash
-npm run release -- --tag x.x.x
-```
-
-Or:
-
-```bash
-npm run release -- --type minor
-```
-
-
-
-## Deploying
-
-To deploy the documentation, run the following command from the branch or tag which you want to deploy:
-
-```bash
-npm run deploy
+```sh
+npm run docs-watch
 ```
 
 ## Notes

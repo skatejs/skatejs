@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>options.attribute</code></h2>
+
+  <p>A function that is called when an attribute is created, updated or removed.</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      attribute (name, oldvalue, newValue) {
+        if (oldValue === null) {
+          // created
+        } else if (newValue === null) {
+          // removed
+        } else {
+          // updated
+        }
+      }
+    });
+  </noscript>
+
+  <p class="notice notice-info">In native custom elements, this is not invoked for attributes that exist on the element before it is upgraded. Skate fixes that so that it <em>is</em> in fact invoked for all attributes no matter if they existed before or were added after the element was upgraded.</p>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>
