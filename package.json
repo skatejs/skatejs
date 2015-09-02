@@ -38,12 +38,6 @@
     "whatwg-fetch": "^0.9.0"
   },
   "scripts": {
-    "deploy": "gulp deploy",
-    "dist": "gulp dist",
-    "docs": "gulp docs",
-    "lib": "gulp lib",
-    "lint": "gulp lint",
-    "release": "gulp release",
     "test": "gulp test"
   }
 }
