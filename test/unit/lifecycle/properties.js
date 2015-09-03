@@ -3,7 +3,7 @@ import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
 
-describe('api/properties', function () {
+describe('lifecycle/properties', function () {
   var elem;
 
   beforeEach(function () {
@@ -217,5 +217,38 @@ describe('api/properties', function () {
     expect(el.prop1).to.equal('test1');
     el.prop1 = '';
     expect(el.getAttribute('prop1')).to.equal('');
+  });
+
+  it('should not be triggered on initialisation', function () {
+    let triggered;
+    let newValue;
+    let oldValue;
+
+    skate(elem.safe, {
+      properties: {
+        prop: {
+          update: function (nv, ov) {
+            triggered = true;
+            newValue = nv;
+            oldValue = ov;
+          }
+        }
+      }
+    });
+
+    let el = elem.create();
+    expect(triggered).to.equal(undefined);
+    expect(newValue).to.equal(undefined);
+    expect(oldValue).to.equal(undefined);
+
+    el.prop = 'one';
+    expect(triggered).to.equal(true);
+    expect(newValue).to.equal('one');
+    expect(oldValue).to.equal(undefined);
+
+    el.prop = 'two';
+    expect(triggered).to.equal(true);
+    expect(newValue).to.equal('two');
+    expect(oldValue).to.equal('one');
   });
 });

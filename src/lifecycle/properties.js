@@ -1,49 +1,19 @@
-import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import emit from '../api/emit';
 
-function normaliseProp (prop) {
-  if (typeof prop === 'object') {
-    prop = assignSafe({}, prop);
-  } else {
-    prop = { type: prop };
+function property (name, prop) {
+  var internalValue;
+  let isBoolean = prop.type === Boolean;
+
+  if (typeof prop.init === 'function') {
+    internalValue = prop.init();
+  } else if (prop.init !== undefined) {
+    internalValue = prop.init;
   }
-  return prop;
-}
-
-function normaliseAttr (prop, name) {
-  var attr = prop.attr;
-  return attr === true ? dashCase(name) : attr;
-}
-
-function normaliseInit (prop, elem) {
-  var init = prop.init;
-  if (init !== undefined) {
-    let value = init;
-    init = typeof init === 'function' ? init : () => value;
-    init = init.bind(elem);
-  }
-  return init;
-}
-
-function normaliseType (prop) {
-  var type = prop.type;
-  return typeof type !== 'function' ? val => val : type;
-}
-
-function property (elem, name, prop) {
-  var internalGetter, internalSetter, internalValue, isBoolean;
-
-  prop = normaliseProp(prop);
-  prop.attr = normaliseAttr(prop, name);
-  prop.init = normaliseInit(prop, elem);
-  prop.type = normaliseType(prop);
-  internalGetter = prop.get;
-  internalSetter = prop.set;
-  isBoolean = prop.type && prop.type === Boolean;
 
   prop.get = function () {
-    return internalGetter ? internalGetter.apply(this) : internalValue;
+    return internalValue;
   };
 
   prop.set = function (value) {
@@ -56,8 +26,8 @@ function property (elem, name, prop) {
     }
 
     // We report both new and old values;
-    var newValue = prop.type(value);
-    var oldValue = this[name];
+    var newValue = prop.type ? prop.type(value) : value;
+    var oldValue = internalValue;
 
     // Don't do anything if the values are the same.
     if (newValue === oldValue) {
@@ -65,9 +35,7 @@ function property (elem, name, prop) {
     }
 
     // We only store the value internally if a getter isn't specified.
-    if (!internalGetter) {
-      internalValue = newValue;
-    }
+    internalValue = newValue;
 
     // We check first to see if we're already updating the property from
     // the attribute. If we are, then there's no need to update the attribute
@@ -90,36 +58,58 @@ function property (elem, name, prop) {
     // value internally because the default getter may still be used to return
     // that value. Even if it's not, we use it to reference the old value which
     // is useful information for the setter.
-    if (internalSetter) {
-      internalSetter.call(this, newValue, oldValue);
+    if (prop.update) {
+      prop.update.call(this, newValue, oldValue);
+    }
+
+    // If we are emitting notify the element of the change.
+    if (prop.emit) {
+      emit(this, prop.emit, {
+        detail: {
+          name: name,
+          newValue: newValue,
+          oldValue: oldValue
+        }
+      });
     }
   };
 
   return prop;
 }
 
-function defineProperty (elem, name, prop) {
-  var info = data(elem);
+function defineProperty (elem, name, prop = {}) {
+  let initialValue;
+  let info = data(elem);
 
   if (!info.attributeToPropertyMap) {
     info.attributeToPropertyMap = {};
   }
 
-  prop = property(elem, name, prop);
-  Object.defineProperty(elem, name, prop);
+  if (typeof prop === 'function') {
+    prop = { type: prop };
+  }
 
-  // This ensures that the corresponding attribute will know to update this
-  // property when it is set.
-  if (prop.attr) {
+  if (prop.attr === true) {
+    prop.attr = dashCase(name);
     info.attributeToPropertyMap[prop.attr] = name;
   }
 
-  // Initialise.
   if (prop.attr && elem.hasAttribute(prop.attr)) {
-    elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
-  } else if (prop.init) {
-    elem[name] = prop.init.call(this);
+    initialValue = elem.getAttribute(prop.attr);
+  } else {
+    initialValue = elem[name];
   }
+
+  if (prop.emit === true) {
+    prop.emit = 'skate.property';
+  }
+
+  if (initialValue !== undefined) {
+    prop.init = initialValue;
+  }
+
+  prop = property(name, prop);
+  Object.defineProperty(elem, name, prop);
 }
 
 export default function (props) {
