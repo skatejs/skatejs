@@ -255,7 +255,7 @@ describe('lifecycle/properties', function () {
   it('should override existing properties', function () {
     skate(elem.safe, {
       properties: {
-        textContent: null
+        textContent: {}
       }
     });
 
@@ -264,5 +264,53 @@ describe('lifecycle/properties', function () {
     el.textContent = 'updated content';
     expect(el.textContent).to.equal('updated content');
     expect(el.innerHTML).to.equal('initial content');
+  });
+
+  describe('templating integration', function () {
+    it('scenario 1', function () {
+      skate(elem.safe, {
+        created () {
+          this.innerHTML = `<span>${this.textContent}</span>`;
+        },
+        properties: {
+          textContent: {
+            update (value) {
+              this.querySelector('span').textContent = value;
+            }
+          }
+        }
+      });
+
+      var el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+      expect(el.innerHTML).to.equal('<span>initial content</span>');
+      expect(el.textContent).to.equal('initial content');
+
+      el.textContent = 'updated content';
+      expect(el.innerHTML).to.equal('<span>updated content</span>');
+      expect(el.textContent).to.equal('updated content');
+    });
+
+    it('scenario 2', function () {
+      function render () {
+        this.innerHTML = `<span>${this.textContent}</span>`;
+      }
+
+      skate(elem.safe, {
+        created: render,
+        properties: {
+          textContent: {
+            update: render
+          }
+        }
+      });
+
+      var el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+      expect(el.innerHTML).to.equal('<span>initial content</span>');
+      expect(el.textContent).to.equal('initial content');
+
+      el.textContent = 'updated content';
+      expect(el.innerHTML).to.equal('<span>updated content</span>');
+      expect(el.textContent).to.equal('updated content');
+    });
   });
 });
