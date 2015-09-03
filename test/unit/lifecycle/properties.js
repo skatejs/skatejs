@@ -251,4 +251,18 @@ describe('lifecycle/properties', function () {
     expect(newValue).to.equal('two');
     expect(oldValue).to.equal('one');
   });
+
+  it('should override existing properties', function () {
+    skate(elem.safe, {
+      properties: {
+        textContent: null
+      }
+    });
+
+    let el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+    expect(el.textContent).to.equal('initial content');
+    el.textContent = 'updated content';
+    expect(el.textContent).to.equal('updated content');
+    expect(el.innerHTML).to.equal('initial content');
+  });
 });
