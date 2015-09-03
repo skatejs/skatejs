@@ -17,9 +17,9 @@ describe('api/events', function () {
 
   it('events on own element', function () {
     skate(tag.safe, {
-      created: skate.events({
+      events: {
         test: increment
-      })
+      }
     });
 
     var myEl = tag.create();
@@ -29,9 +29,9 @@ describe('api/events', function () {
 
   it('events on child elements', function () {
     skate(tag.safe, {
-      created: skate.events({
+      events: {
         test: increment
-      })
+      }
     });
 
     var myEl = tag.create();
@@ -43,9 +43,9 @@ describe('api/events', function () {
 
   it('events on descendant elements', function () {
     skate(tag.safe, {
-      created: skate.events({
+      events: {
         test: increment
-      })
+      }
     });
 
     var myEl = tag.create();
@@ -57,9 +57,9 @@ describe('api/events', function () {
 
   it('should allow you to re-add the element back into the DOM', function () {
     skate(tag.safe, {
-      created: skate.events({
+      events: {
         test: increment
-      })
+      }
     });
 
     var myEl = tag.create();
@@ -74,7 +74,7 @@ describe('api/events', function () {
 
   it('should support delegate event selectors', function () {
     skate(tag.safe, {
-      created: skate.events({
+      events: {
         'test a': function (e) {
           increment();
           expect(this.tagName).to.equal(tag.safe.toUpperCase());
@@ -89,7 +89,7 @@ describe('api/events', function () {
           expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase());
           expect(e.delegateTarget.tagName).to.equal('SPAN');
         }
-      })
+      }
     });
 
     var inst = skate.create(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
@@ -105,15 +105,13 @@ describe('api/events', function () {
     var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
-      created: skate.chain(
-        function () {
-          this.innerHTML = '<input>';
-        },
-        skate.events({
-          'blur input': () => blur = true,
-          'focus input': () => focus = true
-        })
-      ),
+      created: function () {
+        this.innerHTML = '<input>';
+      },
+      events: {
+        'blur input': () => blur = true,
+        'focus input': () => focus = true
+      },
       prototype: {
         blur: function () {
           skate.emit(this.querySelector('input'), 'blur');

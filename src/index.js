@@ -1,4 +1,4 @@
-import apiChain from './api/chain';
+import apiCompose from './api/compose';
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiEvents from './api/events';
@@ -104,7 +104,7 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.chain = apiChain;
+skate.compose = apiCompose;
 skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.events = apiEvents;

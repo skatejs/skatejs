@@ -12,9 +12,9 @@ describe('api/properties', function () {
 
   it('no arguments', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: undefined
-      })
+      }
     });
 
     var el = elem.create();
@@ -25,12 +25,12 @@ describe('api/properties', function () {
 
   it('type', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: Boolean,
         propName2: {
           type: Boolean
         }
-      })
+      }
     });
 
     var el = elem.create();
@@ -42,11 +42,11 @@ describe('api/properties', function () {
 
   it('attribute (Boolean)', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           attr: true
         }
-      })
+      }
     });
 
     var el = fixture(`<${elem.safe} prop-name1="test1"></${elem.safe}>`).querySelector(elem.safe);
@@ -60,11 +60,11 @@ describe('api/properties', function () {
 
   it('attribute (String)', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           attr: 'my-attr'
         }
-      })
+      }
     });
 
     var el = fixture(`<${elem.safe} my-attr="test1"></${elem.safe}>`).querySelector(elem.safe);
@@ -78,11 +78,11 @@ describe('api/properties', function () {
 
   it('attribute - removing', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           attr: true
         }
-      })
+      }
     });
 
     var el = elem.create();
@@ -97,12 +97,12 @@ describe('api/properties', function () {
 
   it('Boolean + attribute', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           attr: true,
           type: Boolean
         }
-      })
+      }
     });
 
     var el = elem.create();
@@ -118,11 +118,11 @@ describe('api/properties', function () {
 
   it('default value (scalar)', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           init: 'test'
         }
-      })
+      }
     });
 
     var el = elem.create();
@@ -131,13 +131,13 @@ describe('api/properties', function () {
 
   it('default value (function)', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         propName1: {
           init: function () {
             return 'test';
           }
         }
-      })
+      }
     });
 
     var el = elem.create();
@@ -146,12 +146,12 @@ describe('api/properties', function () {
 
   it('initial value should not trump existing attribute values', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         trump: {
           attr: true,
           init: 'property'
         }
-      })
+      }
     });
 
     helperFixture(`<${elem.safe} trump="attribute"></${elem.safe}>`);
@@ -163,9 +163,9 @@ describe('api/properties', function () {
 
   it('internal values should not leak to other element instances of the same type', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         prop1: {}
-      })
+      }
     });
 
     var el1 = elem.create({ prop1: 'test1' });
@@ -176,11 +176,11 @@ describe('api/properties', function () {
 
   it('passing undefined should remove the linked attribute', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         prop1: {
           attr: true
         }
-      })
+      }
     });
 
     var el = elem.create({ prop1: 'test1' });
@@ -191,11 +191,11 @@ describe('api/properties', function () {
 
   it('passing null should remove the linked attribute', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         prop1: {
           attr: true
         }
-      })
+      }
     });
 
     var el = elem.create({ prop1: 'test1' });
@@ -206,11 +206,11 @@ describe('api/properties', function () {
 
   it('passing an empty string shoud not remove the linked attribute', function () {
     skate(elem.safe, {
-      created: skate.properties({
+      properties: {
         prop1: {
           attr: true
         }
-      })
+      }
     });
 
     var el = elem.create({ prop1: 'test1' });
