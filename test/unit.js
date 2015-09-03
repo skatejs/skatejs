@@ -1,5 +1,4 @@
 import './boot';
-import './unit/api/compose';
 import './unit/api/create';
 import './unit/api/emit';
 import './unit/api/fragment';

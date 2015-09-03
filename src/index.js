@@ -1,4 +1,3 @@
-import apiCompose from './api/compose';
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiFragment from './api/fragment';
@@ -102,7 +101,6 @@ function skate (id, userOptions) {
   return Ctor;
 }
 
-skate.compose = apiCompose;
 skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.fragment = apiFragment;
