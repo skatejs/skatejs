@@ -1,10 +1,8 @@
 import apiCompose from './api/compose';
 import apiCreate from './api/create';
 import apiEmit from './api/emit';
-import apiEvents from './api/events';
 import apiFragment from './api/fragment';
 import apiInit from './api/init';
-import apiProperties from './api/properties';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
@@ -107,10 +105,8 @@ function skate (id, userOptions) {
 skate.compose = apiCompose;
 skate.create = apiCreate;
 skate.emit = apiEmit;
-skate.events = apiEvents;
 skate.fragment = apiFragment;
 skate.init = apiInit;
-skate.properties = apiProperties;
 skate.version = apiVersion;
 
 // ES6

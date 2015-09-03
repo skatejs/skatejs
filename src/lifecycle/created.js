@@ -1,7 +1,7 @@
-import apiEvents from '../api/events';
-import apiProperties from '../api/properties';
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
+import events from '../lifecycle/events';
+import properties from '../lifecycle/properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -50,8 +50,6 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 
 export default function (opts) {
   let created = opts.created;
-  let events = apiEvents(opts.events);
-  let properties = apiProperties(opts.properties);
   let prototype = applyPrototype(opts.prototype);
   let ready = opts.ready;
 
@@ -65,8 +63,8 @@ export default function (opts) {
 
     isNative || patchAttributeMethods(this);
     isNative || prototype.call(this);
-    properties.call(this);
-    events.call(this);
+    properties.call(this, opts.properties);
+    events.call(this, opts.events);
     opts.created && created.call(this);
     callCreatedOnDescendants(this, opts.id);
     opts.ready && ready.call(this);
