@@ -267,7 +267,7 @@ describe('lifecycle/properties', function () {
   });
 
   describe('templating integration', function () {
-    it('scenario 1', function () {
+    it('scenario 1 - DOM mutation', function () {
       skate(elem.safe, {
         created () {
           this.innerHTML = `<span>${this.textContent}</span>`;
@@ -290,7 +290,7 @@ describe('lifecycle/properties', function () {
       expect(el.textContent).to.equal('updated content');
     });
 
-    it('scenario 2', function () {
+    it('scenario 2 - re-rendering', function () {
       function render () {
         this.innerHTML = `<span>${this.textContent}</span>`;
       }
