@@ -65,6 +65,8 @@ function property (name, prop) {
     // If we are emitting notify the element of the change.
     if (prop.emit) {
       emit(this, prop.emit, {
+        bubbles: false,
+        cancelable: false,
         detail: {
           name: name,
           newValue: newValue,
