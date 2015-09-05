@@ -250,4 +250,18 @@ describe('lifecycle/properties', function () {
       expect(el.innerHTML).to.equal('{<span>existing content</span>}');
     });
   });
+
+  describe('initial values from one element being set on another element', function () {
+    it('the initial value of one element should not affect another element', function () {
+      let elem = helperElement().skate({
+        properties: {
+          textContent: {}
+        }
+      });
+      let el1 = skate.create(`<${elem.name}></${elem.name}>`);
+      let el2 = skate.create(`<${elem.name}>should only be set for this element</${elem.name}>`);
+      expect(el1.textContent).to.equal('');
+      expect(el2.textContent).to.equal('should only be set for this element');
+    });
+  });
 });
