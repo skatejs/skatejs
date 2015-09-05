@@ -6,6 +6,6 @@ module.exports = function () {
   galv.watch('test/**', function (opts) {
     test(assign(opts || {}, {
       action: 'watch'
-    }));
+    })).on('error', function(){});
   });
 };
