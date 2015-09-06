@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#187](https://github.com/skatejs/skatejs/issues/187) - `attribute` handlers are now synchronous.
 - [#200](https://github.com/skatejs/skatejs/issues/200) - Support for a `properties` definition that defines instance properties and their behaviour.
 - [#206](https://github.com/skatejs/skatejs/issues/206) - Element constructors can be called like a function, or instantiated like a constructor.
+- [#270](https://github.com/skatejs/skatejs/issues/270) - Retain existing property value if a defined property overrides it.
 - [#275](https://github.com/skatejs/skatejs/issues/275) - Allow an object of properties to be passed to element constructors / functions and `skate.create()`.
 - [#276](https://github.com/skatejs/skatejs/issues/276) - `skate.emit()` triggers events and simulates bubbling for detached elements in browsers that don't support it.
 
@@ -33,7 +34,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - [#141](https://github.com/skatejs/skatejs/issues/141) - Lifecycle callbacks called separately. First `created` is called on all elements then `attached` is called on all elements. Before, `created` and `attached` would be invoked on an element before moving on to the next.
-- [#174](https://github.com/skatejs/skatejs/issues/174) - Polyfilled custom element prototype members not inherited
+- [#174](https://github.com/skatejs/skatejs/issues/174) - Polyfilled custom element prototype members not inherited.
+- [#292](https://github.com/skatejs/skatejs/pull/292) - Fix race condition with component initialisation.
 
 ### Removed
 

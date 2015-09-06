@@ -4,5 +4,15 @@
   "version": "0.13.2",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
-  "main": "dist/skate.js"
+  "main": "dist/skate.js",
+  "ignore": [
+    "**/.*",
+    "build",
+    "gulpfile.js",
+    "package.json",
+    "perf",
+    "test",
+    "docs",
+    "README.md"
+  ]
 }

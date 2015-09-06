@@ -224,35 +224,112 @@ describe('lifecycle/properties', function () {
     });
   });
 
-  describe('270', function () {
-    function setup (initialValue) {
-      var el = elem.create();
-      el.textContent = 'existing content';
-      skate(elem.safe, {
-        properties: {
-          textContent: {
-            init: initialValue,
-            set (value) {
-              this.children[0].textContent = value;
-            }
-          }
-        },
-        template () {
-          this.innerHTML = `{<span></span>}`;
-        }
-      });
-      skate.init(el);
-      return el;
-    }
+  it('should not be triggered on initialisation', function () {
+    let triggered;
+    let newValue;
+    let oldValue;
 
-    it('should use existing value of overwriting an existing property', function () {
-      var el = setup();
-      expect(el.innerHTML).to.equal('{<span>existing content</span>}');
+    skate(elem.safe, {
+      properties: {
+        prop: {
+          update: function (nv, ov) {
+            triggered = true;
+            newValue = nv;
+            oldValue = ov;
+          }
+        }
+      }
     });
 
-    it('should override the init option', function () {
-      var el = setup('init value');
-      expect(el.innerHTML).to.equal('{<span>existing content</span>}');
+    let el = elem.create();
+    expect(triggered).to.equal(undefined);
+    expect(newValue).to.equal(undefined);
+    expect(oldValue).to.equal(undefined);
+
+    el.prop = 'one';
+    expect(triggered).to.equal(true);
+    expect(newValue).to.equal('one');
+    expect(oldValue).to.equal(undefined);
+
+    el.prop = 'two';
+    expect(triggered).to.equal(true);
+    expect(newValue).to.equal('two');
+    expect(oldValue).to.equal('one');
+  });
+
+  it('should override existing properties', function () {
+    skate(elem.safe, {
+      properties: {
+        textContent: {}
+      }
+    });
+
+    let el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+    expect(el.textContent).to.equal('initial content');
+    el.textContent = 'updated content';
+    expect(el.textContent).to.equal('updated content');
+    expect(el.innerHTML).to.equal('initial content');
+  });
+
+  describe('templating integration', function () {
+    it('scenario 1 - DOM mutation', function () {
+      skate(elem.safe, {
+        created () {
+          this.innerHTML = `<span>${this.textContent}</span>`;
+        },
+        properties: {
+          textContent: {
+            update (value) {
+              this.querySelector('span').textContent = value;
+            }
+          }
+        }
+      });
+
+      var el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+      expect(el.innerHTML).to.equal('<span>initial content</span>');
+      expect(el.textContent).to.equal('initial content');
+
+      el.textContent = 'updated content';
+      expect(el.innerHTML).to.equal('<span>updated content</span>');
+      expect(el.textContent).to.equal('updated content');
+    });
+
+    it('scenario 2 - re-rendering', function () {
+      function render () {
+        this.innerHTML = `<span>${this.textContent}</span>`;
+      }
+
+      skate(elem.safe, {
+        created: render,
+        properties: {
+          textContent: {
+            update: render
+          }
+        }
+      });
+
+      var el = skate.create(`<${elem.safe}>initial content</${elem.safe}>`);
+      expect(el.innerHTML).to.equal('<span>initial content</span>');
+      expect(el.textContent).to.equal('initial content');
+
+      el.textContent = 'updated content';
+      expect(el.innerHTML).to.equal('<span>updated content</span>');
+      expect(el.textContent).to.equal('updated content');
+    });
+  });
+
+  describe('initial values from one element being set on another element', function () {
+    it('the initial value of one element should not affect another element', function () {
+      let elem = helperElement().skate({
+        properties: {
+          textContent: {}
+        }
+      });
+      let el1 = skate.create(`<${elem.name}></${elem.name}>`);
+      let el2 = skate.create(`<${elem.name}>should only be set for this element</${elem.name}>`);
+      expect(el1.textContent).to.equal('');
+      expect(el2.textContent).to.equal('should only be set for this element');
     });
   });
 });

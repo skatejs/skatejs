@@ -1,33 +1,36 @@
-'use strict';
-
-var commander = require('../lib/commander');
-var del = require('del');
-var galvatron = require('galvatron')();
+var galv = require('galvatron');
 var gulp = require('gulp');
+var gulpBabel = require('gulp-babel');
+var gulpConcat = require('gulp-concat');
+var gulpDebug = require('gulp-debug');
+var gulpFilter = require('gulp-filter');
 var gulpRename = require('gulp-rename');
 var gulpUglify = require('gulp-uglify');
-var mac = require('../lib/mac');
-var pkg = require('../lib/package');
+var merge = require('merge-stream');
 
-galvatron.transformer
-  .post('babel')
-  .post('globalize');
-
-module.exports = mac.series(
-  function (done) {
-    del('dist', done);
-  },
-
-  function () {
-    var bundle = galvatron.bundle('src/global.js');
-    return gulp
-      .src(bundle.files)
-      .pipe(bundle.watchIf(commander.watch))
-      .pipe(bundle.stream())
-      .pipe(gulpRename( { basename: pkg.name }))
+function task () {
+  merge(
+    gulp.src('src/global.js')
+      .pipe(gulpDebug({ title: 'trace' }))
+      .pipe(galv.trace())
+      .pipe(gulpBabel())
+      .pipe(galv.globalize())
+      .pipe(gulpConcat('skate.js'))
       .pipe(gulp.dest('dist'))
       .pipe(gulpUglify())
-      .pipe(gulpRename( { suffix: '.min' }))
-      .pipe(gulp.dest('dist'));
-  }
-);
+      .pipe(gulpConcat('skate.min.js'))
+      .pipe(gulp.dest('dist'))
+      .pipe(gulpDebug({ title: 'dist' })),
+    gulp.src('src/index.js')
+      .pipe(gulpDebug({ title: 'trace' }))
+      .pipe(galv.trace())
+      .pipe(gulpBabel({ modules: 'umd' }))
+      .pipe(gulpRename(function (path) {
+        path.dirname = path.dirname.replace(/^src/, '.');
+      }))
+      .pipe(gulp.dest('lib'))
+      .pipe(gulpDebug({ title: 'lib' }))
+  );
+}
+task.dependencies = ['./clean'];
+module.exports = task;

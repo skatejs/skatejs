@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SkateJS</title>
+    <link rel="stylesheet" href="/styles/index.css">
+    <script src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <sk-app>
+      <sk-navbar fixed>
+        <a class="navbar-brand" href="/">
+          <skate>skate</skate>
+        </a>
+        <sk-navbar-nav>
+          <a href="/docs/">Docs</a>
+          <a href="/contributing.html">Contributing</a>
+          <a href="/license.html">License</a>
+        </sk-navbar-nav>
+        <sk-navbar-form></sk-navbar-form>
+      </sk-navbar>
+      
+<sk-docs-layout>
+  <h2><code>options.type</code></h2>
+
+  <p>Optional. Defaults to <code>skate.type.ELEMENT</code>.</p>
+  <p>Specifies the type of binding that this component supports. Skate offers you three different types:</p>
+  <ul>
+    <li><code>skate.type.ELEMENT</code> (<strong>default</strong>) - Bind to an element whose tag name matches the component name.</li>
+    <li><code>skate.type.ATTRIBUTE</code> - Bind to an element who has an attribute matching the component name.</li>
+    <li><code>skate.type.CLASSNAME</code> - Bind to an element who has a class name matching the component name.</li>
+  </ul>
+  <p>You specify these as the <code>type</code> option:</p>
+  <noscript is="sk-code" lang="js">
+    skate('my-element', {
+      type: skate.type.ELEMENT
+    });
+  </noscript>
+
+  <p>For more information on how these affect how these bind to an element, see the <a href="/docs/skate.html"><code>skate()</code> function</a>.</p>
+</sk-docs-layout>
+
+      <footer>
+        <ul class="center-block list-inline">
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs"><bs-icon type="code"></bs-icon> Code</a></li>
+          <li><a target="_blank" href="https://twitter.com/treshugart"><bs-icon type="twitter"></bs-icon> @treshugart</a></li>
+          <li><a target="_blank" href="https://github.com/skatejs/skatejs/issues/new"><bs-icon type="bug"></bs-icon> Create Issue</a></li>
+        </ul>
+      </footer>
+    </sk-app>
+  </body>
+</html>

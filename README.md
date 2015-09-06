@@ -4,7 +4,12 @@
 
 # Skate
 
-Skate is a web component library based on the custom element spec. It's focused on being a tiny, performant, syntactic-sugar for binding behaviour to elements, attributes and classes using a consistent, simple and declarative API.
+Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
+
+- Provides a superset of the [Custom Element Spec](http://w3c.github.io/webcomponents/spec/custom/).
+- Hooks for an elements lifecycle, custom properties and event delegation.
+- Small, 5k min+gz.
+- Allows easy transition from selector-based behaviour binding to element binding.
 
 HTML
 
@@ -1381,106 +1386,3 @@ var mySkate = skate.noConflict();
 ## Multiple Version Support
 
 On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
-
-
-
-## Contributing
-
-The `.editorconfig`, `.jscs` and `.jshint` configs are all set up. If you can, enable these in your editor of choice.
-
-
-
-### Setup
-
-To get a dev environment up and running, all you should need to do is run:
-
-```bash
-npm install
-```
-
-
-### Testing
-
-To run tests:
-
-```bash
-npm test
-```
-
-If you want to keep the Karma server alive to run them in your browser of choice:
-
-```bash
-npm test -- --watch
-```
-
-To run tests in a specific browser:
-
-```bash
-npm test -- --browsers Chrome,Firefox
-```
-
-
-
-### Linting
-
-To lint your files with `jscs` and `jshint`:
-
-```bash
-npm run lint
-```
-
-
-
-### Distribution
-
-To build the distribution all you have to do is run:
-
-```bash
-npm run dist
-```
-
-This will build `dist/skate.js` and `dist/skate.min.js`. Don't worry about doing this in a PR; it'll avoid conflicts.
-
-To build the `lib` (ES5 + UMD) files:
-
-```bash
-npm run lib
-```
-
-
-
-### Releasing
-
-To release all you've got to do is run `npm release`. You can either specify the release `type`, or `tag`.
-
-```bash
-npm run release -- --tag x.x.x
-```
-
-Or:
-
-```bash
-npm run release -- --type minor
-```
-
-
-
-### Deploying
-
-To deploy the documentation, run the following command from the branch or tag which you want to deploy:
-
-```bash
-npm run deploy
-```
-
-
-
-## Who's Using It?
-
-<img alt="Atlassian" src="http://www.atlassian.com/dms/wac/images/press/Atlassian-logos/logoAtlassianPNG.png" width="200">
-
-
-
-## Maintainers
-
-- [Trey Shugart](https://twitter.com/treshugart) (author), Atlassian
