@@ -525,28 +525,12 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
     elem.addEventListener(name, handler, capture);
   }
   
-  exports['default'] = function (elem, events) {
-    var queue = [];
-    var ready = false;
+  exports['default'] = function (events) {
+    var _this = this;
   
     Object.keys(events).forEach(function (name) {
-      var handler = events[name].bind(elem);
-      bindEvent(elem, name, function (e) {
-        if (ready) {
-          handler(e);
-        } else {
-          queue.push(handler.bind(elem, e));
-        }
-      });
+      return bindEvent(_this, name, events[name].bind(_this));
     });
-  
-    return function () {
-      ready = true;
-      queue.forEach(function (handler) {
-        return handler();
-      });
-      queue = [];
-    };
   };
   
   module.exports = exports['default'];
@@ -577,6 +561,136 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   
   return module.exports;
 }).call(this);
+// src/util/element-contains.js
+__6f793202bae98770dbb2b598df7929ad = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = elementPrototype.contains;
+  
+  exports["default"] = function (source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/api/emit.js
+__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  
+  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  
+  var CustomEvent = (function (CustomEvent) {
+    if (CustomEvent) {
+      try {
+        new CustomEvent();
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return CustomEvent;
+  })(window.CustomEvent);
+  
+  var hasBubbleOnDetachedElements = (function () {
+    var parent = document.createElement('div');
+    var child = document.createElement('div');
+    var hasBubbleOnDetachedElements = false;
+    parent.appendChild(child);
+    parent.addEventListener('test', function () {
+      return hasBubbleOnDetachedElements = true;
+    });
+    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+    return hasBubbleOnDetachedElements;
+  })();
+  
+  function createCustomEvent(name) {
+    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return e;
+  }
+  
+  function createReadableStopPropagation(oldStopPropagation) {
+    return function () {
+      this.isPropagationStopped = true;
+      oldStopPropagation.call(this);
+    };
+  }
+  
+  function simulateBubbling(elem, cEvent) {
+    var didPreventDefault;
+    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+    while (elem && !cEvent.isPropagationStopped) {
+      cEvent.currentTarget = elem;
+      if (elem.dispatchEvent(cEvent) === false) {
+        didPreventDefault = false;
+      }
+      elem = elem.parentNode;
+    }
+    return didPreventDefault;
+  }
+  
+  function emitOne(elem, name, opts) {
+    var cEvent, shouldSimulateBubbling;
+  
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    cEvent = createCustomEvent(name, opts);
+    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
+  
+    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (emitOne(elem, curr, opts) === false) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/lifecycle/properties.js
 __dc805244a3f10da2e05ae57781968d52 = (function () {
   var module = {
@@ -592,10 +706,6 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
-  
-  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
-  
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
   var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
@@ -604,54 +714,22 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  function normaliseProp(prop) {
-    if (typeof prop === 'object') {
-      prop = (0, _utilAssignSafe2['default'])({}, prop);
-    } else {
-      prop = { type: prop };
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
+  
+  function property(name, prop) {
+    var internalValue;
+    var isBoolean = prop.type === Boolean;
+  
+    if (typeof prop.init === 'function') {
+      internalValue = prop.init();
+    } else if (prop.init !== undefined) {
+      internalValue = prop.init;
     }
-    return prop;
-  }
-  
-  function normaliseAttr(prop, name) {
-    var attr = prop.attr;
-    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
-  }
-  
-  function normaliseInit(prop, elem) {
-    var init = prop.init;
-    if (init !== undefined) {
-      (function () {
-        var value = init;
-        init = typeof init === 'function' ? init : function () {
-          return value;
-        };
-        init = init.bind(elem);
-      })();
-    }
-    return init;
-  }
-  
-  function normaliseType(prop) {
-    var type = prop.type;
-    return typeof type !== 'function' ? function (val) {
-      return val;
-    } : type;
-  }
-  
-  function property(elem, name, prop) {
-    var internalGetter, internalSetter, internalValue, isBoolean;
-  
-    prop = normaliseProp(prop);
-    prop.attr = normaliseAttr(prop, name);
-    prop.init = normaliseInit(prop, elem);
-    prop.type = normaliseType(prop);
-    internalGetter = prop.get;
-    internalSetter = prop.set;
-    isBoolean = prop.type && prop.type === Boolean;
   
     prop.get = function () {
-      return internalGetter ? internalGetter.apply(this) : internalValue;
+      return internalValue;
     };
   
     prop.set = function (value) {
@@ -664,8 +742,8 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       }
   
       // We report both new and old values;
-      var newValue = prop.type(value);
-      var oldValue = this[name];
+      var newValue = prop.type ? prop.type(value) : value;
+      var oldValue = internalValue;
   
       // Don't do anything if the values are the same.
       if (newValue === oldValue) {
@@ -673,9 +751,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       }
   
       // We only store the value internally if a getter isn't specified.
-      if (!internalGetter) {
-        internalValue = newValue;
-      }
+      internalValue = newValue;
   
       // We check first to see if we're already updating the property from
       // the attribute. If we are, then there's no need to update the attribute
@@ -698,56 +774,70 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       // value internally because the default getter may still be used to return
       // that value. Even if it's not, we use it to reference the old value which
       // is useful information for the setter.
-      if (internalSetter) {
-        internalSetter.call(this, newValue, oldValue);
+      if (prop.update) {
+        prop.update.call(this, newValue, oldValue);
+      }
+  
+      // If we are emitting notify the element of the change.
+      if (prop.emit) {
+        (0, _apiEmit2['default'])(this, prop.emit, {
+          bubbles: false,
+          cancelable: false,
+          detail: {
+            name: name,
+            newValue: newValue,
+            oldValue: oldValue
+          }
+        });
       }
     };
   
     return prop;
   }
   
-  function defineProperty(elem, name, prop) {
-    // We don't need to scope the data to the component ID be cause if multiple
-    // bindings on the same component define the same attribute, then they'd
-    // conflict anyways.
+  function defineProperty(elem, name) {
+    var prop = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var initialValue = undefined;
     var info = (0, _utilData2['default'])(elem);
-    var existingValue = elem[name];
   
     if (!info.attributeToPropertyMap) {
       info.attributeToPropertyMap = {};
     }
   
-    prop = property(elem, name, prop);
-    Object.defineProperty(elem, name, prop);
+    if (typeof prop === 'function') {
+      prop = { type: prop };
+    }
   
-    // This ensures that the corresponding attribute will know to update this
-    // property when it is set.
-    if (prop.attr) {
+    if (prop.attr === true) {
+      prop.attr = (0, _utilDashCase2['default'])(name);
       info.attributeToPropertyMap[prop.attr] = name;
     }
   
-    return function () {
-      if (prop.attr && elem.hasAttribute(prop.attr)) {
-        elem.attributeChangedCallback(prop.attr, null, elem.getAttribute(prop.attr));
-      } else if (existingValue !== undefined) {
-        elem[name] = existingValue;
-      } else if (prop.init) {
-        elem[name] = prop.init.call(this);
-      }
-    };
+    if (prop.attr && elem.hasAttribute(prop.attr)) {
+      initialValue = elem.getAttribute(prop.attr);
+    } else {
+      initialValue = elem[name];
+    }
+  
+    if (prop.emit === true) {
+      prop.emit = 'skate.property';
+    }
+  
+    if (initialValue !== undefined) {
+      prop.init = initialValue;
+    }
+  
+    prop = property(name, prop);
+    Object.defineProperty(elem, name, prop);
   }
   
-  exports['default'] = function (elem, props) {
-    var funcs = Object.keys(props).map(function (name) {
-      return defineProperty(elem, name, props[name]);
-    });
-    return function () {
-      var _this = this;
+  exports['default'] = function (props) {
+    var _this = this;
   
-      funcs.forEach(function (func) {
-        return func.call(_this);
-      });
-    };
+    Object.keys(props).forEach(function (name) {
+      return defineProperty(_this, name, props[name]);
+    });
   };
   
   module.exports = exports['default'];
@@ -804,13 +894,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _events = __d48fcc3ecf3585518bbce659c1ba4116;
+  var _lifecycleEvents = __d48fcc3ecf3585518bbce659c1ba4116;
   
-  var _events2 = _interopRequireDefault(_events);
+  var _lifecycleEvents2 = _interopRequireDefault(_lifecycleEvents);
   
-  var _properties = __dc805244a3f10da2e05ae57781968d52;
+  var _lifecycleProperties = __dc805244a3f10da2e05ae57781968d52;
   
-  var _properties2 = _interopRequireDefault(_properties);
+  var _lifecycleProperties2 = _interopRequireDefault(_lifecycleProperties);
   
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
@@ -827,14 +917,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var elProto = window.Element.prototype;
   var oldSetAttribute = elProto.setAttribute;
   var oldRemoveAttribute = elProto.removeAttribute;
-  
-  function fnOr(fn) {
-    var otherwise = arguments.length <= 1 || arguments[1] === undefined ? function () {} : arguments[1];
-  
-    return typeof fn === 'function' ? fn : function () {
-      return otherwise(this, fn);
-    };
-  }
   
   function applyPrototype(proto) {
     var prototypes = (0, _utilProtos2['default'])(proto);
@@ -879,114 +961,30 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   }
   
   exports['default'] = function (opts) {
-    var created = fnOr(opts.created);
-    var events = fnOr(opts.events, _events2['default']);
-    var properties = fnOr(opts.properties, _properties2['default']);
+    var created = opts.created;
     var prototype = applyPrototype(opts.prototype);
-    var template = fnOr(opts.template);
+    var ready = opts.ready;
   
-    /* jshint expr: true */
     return function () {
-      var initEvents, initProps;
       var info = (0, _utilData2['default'])(this, opts.id);
       var isNative = this.createdCallback;
       var isResolved = this.hasAttribute(opts.resolvedAttribute);
   
-      // This ensures that this component cannot be triggered more than once on
-      // this element. This is also for native so that we can force-init an
-      // element and when the native callback is fired it can just be a no-op.
       if (info.created) return;
       info.created = true;
   
-      // Ensure that attribute changes are propagated synchronously.
       isNative || patchAttributeMethods(this);
-  
-      // The inheriting of the prototype is the first thing to happen in native.
       isNative || prototype.call(this);
-  
-      // Bind events so we can catch them at the earliest point in the lifecycle.
-      // Any events that happen between here and when `initEvents()` is called
-      // are queued up and not invoked until `initEvents()` is actually called.
-      // This allows us to ensure that everything is set up before we actually
-      // handle the events.
-      initEvents = events.call(this);
-  
-      // The properties function returns a function that can be called to
-      // initialise them on the element when appropriate. We bind property
-      // handlers before calling any of the lifecycle handlers, but don't
-      // actually initialise their values until after lifecycle callbacks have
-      // been invoked.
-      initProps = properties.call(this);
-  
-      // Apply the template to the element. In native, this may cause whatever
-      // descendants are in the template (including existing innerHTML) to be
-      // upgraded synchronously.
-      //
-      // We only template if the "resolved" attribute doesn't exist on the element
-      // so that the developer can render server-side and only bind behaveiour
-      // client-side.
-      isResolved || template.call(this);
-  
-      // In both polyfill and native we force init all descendant components so
-      // that we can ensure that created() has been called on all descendants
-      // by the time it's called on the host.
+      _lifecycleProperties2['default'].call(this, opts.properties);
+      _lifecycleEvents2['default'].call(this, opts.events);
+      opts.created && created.call(this);
       callCreatedOnDescendants(this, opts.id);
-  
-      // We trigger all property handlers for properties that exist once all
-      // descendants are ready for any incoming state updates. This will also
-      // trigger changes for any attributes that are properties.
-      initProps();
-  
-      // Call created() on the host. If you properly declare your dependencies
-      // (i.e., element-x needs element-y, you load element-y before element-x),
-      // then you can assume that this created callback will be executed after
-      // all descendant components' created callbacks have been executed.
-      created.call(this);
-  
-      // We trigger all event handlers that have queued up so that nothing has
-      // been lost since they were bound. This is done after initialising
-      // properties because events may depend on initialised values. Any events
-      // triggered from property initialisation will be queued up and initialised
-      // here.
-      initEvents();
-  
-      // Resolve after everything in the created lifecycle has run. This is so
-      // that whatever needs to be done before this can be done without FOUC.
-      //
-      // We only need to do this if it's not resolved.
+      opts.ready && ready.call(this);
       isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
     };
   };
   
   module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var elementPrototype = window.HTMLElement.prototype;
-  var elementPrototypeContains = elementPrototype.contains;
-  
-  exports["default"] = function (source, target) {
-    // The document element does not have the contains method in IE.
-    if (source === document && !source.contains) {
-      return document.head.contains(target) || document.body.contains(target);
-    }
-  
-    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  };
-  
-  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -1089,108 +1087,6 @@ __1675a7174b713323cc232370699a2714 = (function () {
   exports['default'] = function (name, props) {
     name = name.trim();
     return (0, _utilAssign2['default'])(name[0] === '<' ? (0, _init2['default'])((0, _utilCreateFromHtml2['default'])(name).firstElementChild) : createFromName(name), props);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
-  
-  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
-  
-  var CustomEvent = (function (CustomEvent) {
-    if (CustomEvent) {
-      try {
-        new CustomEvent();
-      } catch (e) {
-        return undefined;
-      }
-    }
-    return CustomEvent;
-  })(window.CustomEvent);
-  
-  var hasBubbleOnDetachedElements = (function () {
-    var parent = document.createElement('div');
-    var child = document.createElement('div');
-    var hasBubbleOnDetachedElements = false;
-    parent.appendChild(child);
-    parent.addEventListener('test', function () {
-      return hasBubbleOnDetachedElements = true;
-    });
-    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-    return hasBubbleOnDetachedElements;
-  })();
-  
-  function createCustomEvent(name) {
-    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-  
-    if (CustomEvent) {
-      return new CustomEvent(name, opts);
-    }
-  
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return e;
-  }
-  
-  function createReadableStopPropagation(oldStopPropagation) {
-    return function () {
-      this.isPropagationStopped = true;
-      oldStopPropagation.call(this);
-    };
-  }
-  
-  function simulateBubbling(elem, cEvent) {
-    var didPreventDefault;
-    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-    while (elem && !cEvent.isPropagationStopped) {
-      cEvent.currentTarget = elem;
-      if (elem.dispatchEvent(cEvent) === false) {
-        didPreventDefault = false;
-      }
-      elem = elem.parentNode;
-    }
-    return didPreventDefault;
-  }
-  
-  function emitOne(elem, name, opts) {
-    var cEvent, shouldSimulateBubbling;
-  
-    /* jshint expr: true */
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
-    cEvent = createCustomEvent(name, opts);
-    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
-  
-    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
-  }
-  
-  exports['default'] = function (elem, name) {
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-  
-    var names = typeof name === 'string' ? name.split(' ') : name;
-    return names.reduce(function (prev, curr) {
-      if (emitOne(elem, curr, opts) === false) {
-        prev.push(curr);
-      }
-      return prev;
-    }, []);
   };
   
   module.exports = exports['default'];
@@ -1302,7 +1198,6 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   exports['default'] = function (opts) {
     var callback = opts.attribute || function () {};
   
-    /* jshint expr: true */
     return function (name, oldValue, newValue) {
       var info = (0, _utilData2['default'])(this);
       var attributeToPropertyMap = info.attributeToPropertyMap || {};
@@ -1415,8 +1310,8 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
     // The attribute name to add after calling the created() callback.
     resolvedAttribute: 'resolved',
   
-    // The template to replace the content of the element with.
-    template: function template() {},
+    // Called after all lifecycle callbacks have been called.
+    ready: function ready() {},
   
     // The type of bindings to allow.
     type: _typeElement2['default'],
