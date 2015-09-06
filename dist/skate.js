@@ -718,6 +718,10 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
+  function isEmpty(value) {
+    return value == null;
+  }
+  
   function property(name, prop) {
     var internalValue;
     var isBoolean = prop.type === Boolean;
@@ -734,6 +738,11 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
     prop.set = function (value) {
       var info = (0, _utilData2['default'])(this);
+  
+      if (isEmpty(value) && prop.attr && !info.updatingProperty) {
+        this.removeAttribute(prop.attr);
+        return;
+      }
   
       // If the property is being updated and it is a boolean we must just check
       // if the attribute exists because "" is true for a boolean attribute.
@@ -761,7 +770,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
         if (isBoolean && internalValue) {
           this.setAttribute(prop.attr, '');
-        } else if (internalValue == null || isBoolean && !internalValue) {
+        } else if (isEmpty(internalValue) || isBoolean && !internalValue) {
           this.removeAttribute(prop.attr, '');
         } else {
           this.setAttribute(prop.attr, internalValue);
