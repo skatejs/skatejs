@@ -70,10 +70,10 @@ describe('lifecycle', function () {
 });
 
 describe('unresolved attribute', function () {
-  it('should not be considred "resolved" until after template() is called', function () {
+  it('should not be considred "resolved" until after ready() is called', function () {
     var tagName = helperElement('my-element');
     skate(tagName.safe, {
-      template: function () {
+      ready: function () {
         expect(this.hasAttribute('unresolved')).to.equal(true);
         expect(this.hasAttribute('resolved')).to.equal(false);
       }

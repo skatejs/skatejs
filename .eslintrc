@@ -22,5 +22,15 @@
         "node": true,
         "browser": true
     },
-    "extends": "eslint:recommended"
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+      "afterEach": true,
+      "beforeEach": true,
+      "describe": true,
+      "expect": true,
+      "it": true
+    }
 }
