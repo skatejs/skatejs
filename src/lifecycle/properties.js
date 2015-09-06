@@ -2,6 +2,10 @@ import dashCase from '../util/dash-case';
 import data from '../util/data';
 import emit from '../api/emit';
 
+function isEmpty (value) {
+  return value == null;
+}
+
 function property (name, prop) {
   var internalValue;
   let isBoolean = prop.type === Boolean;
@@ -18,6 +22,11 @@ function property (name, prop) {
 
   prop.set = function (value) {
     var info = data(this);
+
+    if (isEmpty(value) && prop.attr && !info.updatingProperty) {
+      this.removeAttribute(prop.attr);
+      return;
+    }
 
     // If the property is being updated and it is a boolean we must just check
     // if the attribute exists because "" is true for a boolean attribute.
@@ -45,7 +54,7 @@ function property (name, prop) {
 
       if (isBoolean && internalValue) {
         this.setAttribute(prop.attr, '');
-      } else if (internalValue == null || isBoolean && !internalValue) {
+      } else if (isEmpty(internalValue) || isBoolean && !internalValue) {
         this.removeAttribute(prop.attr, '');
       } else {
         this.setAttribute(prop.attr, internalValue);
