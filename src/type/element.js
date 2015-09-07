@@ -1,5 +1,4 @@
 export default {
-  /* jshint expr: true */
   create (opts) {
     var elem = document.createElement(opts.extends || opts.id);
     opts.extends && elem.setAttribute('is', opts.id);
