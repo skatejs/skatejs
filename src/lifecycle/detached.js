@@ -11,10 +11,8 @@ function callDetachedOnDescendants (elem, id) {
 }
 
 export default function (opts) {
-  /* jshint expr: true */
   return function () {
-    var info = data(this, opts.id);
-
+    let info = data(this, opts.id);
     if (info.detached) return;
     info.detached = true;
     info.attached = false;

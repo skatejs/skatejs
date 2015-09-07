@@ -7,7 +7,7 @@ function isEmpty (value) {
 }
 
 function property (name, prop) {
-  var internalValue;
+  let internalValue;
   let isBoolean = prop.type === Boolean;
 
   if (typeof prop.init === 'function') {
@@ -21,7 +21,7 @@ function property (name, prop) {
   };
 
   prop.set = function (value) {
-    var info = data(this);
+    let info = data(this);
 
     if (isEmpty(value) && prop.attr && !info.updatingProperty) {
       this.removeAttribute(prop.attr);
@@ -35,8 +35,8 @@ function property (name, prop) {
     }
 
     // We report both new and old values;
-    var newValue = prop.type ? prop.type(value) : value;
-    var oldValue = internalValue;
+    let newValue = prop.type ? prop.type(value) : value;
+    let oldValue = internalValue;
 
     // Don't do anything if the values are the same.
     if (newValue === oldValue) {

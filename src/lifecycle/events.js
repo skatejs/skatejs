@@ -1,9 +1,9 @@
 import matches from '../util/matches-selector';
 
 function parseEvent (e) {
-  var parts = e.split(' ');
-  var name = parts.shift();
-  var selector = parts.join(' ').trim();
+  let parts = e.split(' ');
+  let name = parts.shift();
+  let selector = parts.join(' ').trim();
   return {
     name: name,
     selector: selector
@@ -12,8 +12,8 @@ function parseEvent (e) {
 
 function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
-    var current = e.target;
-    var selector = parsed.selector;
+    let current = e.target;
+    let selector = parsed.selector;
     while (current && current !== elem.parentNode) {
       if (matches(current, selector)) {
         e.delegateTarget = current;
@@ -32,9 +32,9 @@ function makeNormalHandler (elem, handler) {
 }
 
 function bindEvent (elem, event, handler) {
-  var parsed = parseEvent(event);
-  var { name, selector } = parsed;
-  var capture = selector && (name === 'blur' || name === 'focus');
+  let parsed = parseEvent(event);
+  let { name, selector } = parsed;
+  let capture = selector && (name === 'blur' || name === 'focus');
   handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }

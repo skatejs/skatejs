@@ -6,12 +6,12 @@ import protos from '../util/protos';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
-var elProto = window.Element.prototype;
-var oldSetAttribute = elProto.setAttribute;
-var oldRemoveAttribute = elProto.removeAttribute;
+let elProto = window.Element.prototype;
+let oldSetAttribute = elProto.setAttribute;
+let oldRemoveAttribute = elProto.removeAttribute;
 
 function applyPrototype (proto) {
-  var prototypes = protos(proto);
+  let prototypes = protos(proto);
   return function () {
     prototypes.forEach(proto => {
       if (!proto.isPrototypeOf(this)) {
@@ -23,13 +23,13 @@ function applyPrototype (proto) {
 
 function patchAttributeMethods (elem) {
   elem.setAttribute = function (name, newValue) {
-    var oldValue = this.getAttribute(name);
+    let oldValue = this.getAttribute(name);
     oldSetAttribute.call(elem, name, newValue);
     elem.attributeChangedCallback(name, oldValue, String(newValue));
   };
 
   elem.removeAttribute = function (name) {
-    var oldValue = this.getAttribute(name);
+    let oldValue = this.getAttribute(name);
     oldRemoveAttribute.call(elem, name);
     elem.attributeChangedCallback(name, oldValue, null);
   };

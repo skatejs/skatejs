@@ -11,10 +11,8 @@ function callAttachedOnDescendants (elem, id) {
 }
 
 export default function (opts) {
-  /* jshint expr: true */
   return function () {
-    var info = data(this, opts.id);
-
+    let info = data(this, opts.id);
     if (info.attached) return;
     info.attached = true;
     info.detached = false;

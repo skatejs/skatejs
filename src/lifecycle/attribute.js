@@ -1,11 +1,11 @@
 import data from '../util/data';
 
 export default function (opts) {
-  var callback = opts.attribute || function () {};
+  let callback = opts.attribute || function () {};
 
   return function (name, oldValue, newValue) {
-    var info = data(this);
-    var attributeToPropertyMap = info.attributeToPropertyMap || {};
+    let info = data(this);
+    let attributeToPropertyMap = info.attributeToPropertyMap || {};
 
     callback.call(this, name, oldValue, newValue);
 
