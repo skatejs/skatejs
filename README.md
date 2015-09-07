@@ -163,7 +163,8 @@ skate('my-element', {
   //
   // All lifecycle callbacks use `this` to refer to the component element.
 
-  // Called when the element is created.
+  // Called before the element is set up. Descendants components may or may not
+  // be initialised yet.
   created: function () {},
 
   // Called when the element is attached to the document.
@@ -183,14 +184,10 @@ skate('my-element', {
     }
   },
 
-  // A function that renders a template to your element. Since this function is
-  // responsible for rendering the template, you can literally use anything you
-  // want here.
-  template: function () {
-    this.innerHTML = 'something';
-  },
-
-
+  // Gets called after the element is set up and all descendant components are
+  // initialised. This callback will be called on descendants before it is
+  // called on the host element.
+  ready: function () {},
 
   // Event Listeners
   events: {
@@ -377,10 +374,10 @@ skate('my-element', {
 The component lifecycle consists several callbacks:
 
 - `created`
+- `ready`
 - `attached`
 - `detached`
 - `attribute`
-- `template`
 
 ### `created`
 
@@ -491,21 +488,29 @@ You must use the attribute methods instead:
 myElement.setAttribute('myAttribute', 'new value');
 ```
 
-### `template`
+### `ready`
 
 ```js
 skate('my-element', {
-  template: function () {}
+  ready: function () {}
 });
 ```
 
-Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
+The `ready` callback is called after the element and all of its descendants have been initialised. Descendant components will already have had this callback called on them. This is a good place to do anything that requires that a custom element tree be initialised and ready to be worked with.
 
-#### Handlebars
+## Templating
+
+Skate has no opinion about how you should approach templating, however, it does everything it can to make sure that the lifecycle callbacks will give you what you need to set this up within your component.
+
+The recommended place to put your templating is in the `created` callback. Events and properties will already be set up and after it is called, Skate will ensure that all descendant components are synchronously initialised. This means that whatever your template does, your element's template will be set up by the time anythig interacts with it.
+
+Below are some ways you could implement templating.
+
+### Handlebars
 
 ```js
 skate('my-element', {
-  template: function () {
+  created: function () {
     var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
     this.innerHTML = compiled(this);
   }
@@ -523,11 +528,11 @@ function handlebarify (html) {
 }
 
 skate('my-element', {
-  template: handlebarify('<p>Hello, {{name}}!</p>')
+  created: handlebarify('<p>Hello, {{name}}!</p>')
 });
 ```
 
-#### Shadow DOM
+### Shadow DOM
 
 If you wanted to fully embrace Web Components, you could even use Shadow DOM:
 
@@ -539,11 +544,11 @@ function shadowify (html) {
 }
 
 skate('my-element', {
-  template: shadowify('<p>Hello, <content></content>!</p>')
+  created: shadowify('<p>Hello, <content></content>!</p>')
 });
 ```
 
-#### Virtual DOM
+### Virtual DOM
 
 You could also use a virtual DOM implementation - such as [virtual-dom](https://github.com/Matt-Esch/virtual-dom) - here if you wanted to.
 
@@ -555,7 +560,7 @@ function createVdomTree (props) {
 }
 
 skate('my-element', {
-  template: function () {
+  created: function () {
     var tree = createVdomTree(this);
     var root = createElement(tree);
 
@@ -565,7 +570,7 @@ skate('my-element', {
 });
 ```
 
-#### Responding to Component Changes
+### Responding to Component Changes
 
 If you want to re-render your component when properties change, you can listen to the `skate.property` event triggered by defined `properties`.
 
@@ -573,7 +578,7 @@ With Handlebars you might do something like:
 
 ```js
 skate('my-element', {
-  template: function () {
+  created: function () {
     var render = handlebarify('<p>Hello, {{name}}!</p>');
     this.addEventListener('skate.property', render);
     render.call(this);
@@ -593,7 +598,7 @@ function createVdomTree (props) {
 }
 
 skate('my-element', {
-  template: function () {
+  created: function () {
     var tree = createVdomTree(this);
     var root = createElement(tree);
 
