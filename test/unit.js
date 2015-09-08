@@ -13,4 +13,5 @@ import './unit/lifecycle';
 import './unit/registration';
 import './unit/registry';
 import './unit/templating';
+import './unit/utils';
 import './unit/version';
