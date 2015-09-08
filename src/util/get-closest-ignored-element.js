@@ -1,6 +1,6 @@
 import ignored from './ignored';
 
-let { Element } = window;
+const { Element } = window;
 
 export default function (element) {
   let parent = element;
