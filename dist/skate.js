@@ -1,5 +1,5 @@
 // src/constants.js
-__22848e6eb5ddd68722bf2a03dc73e10d = (function () {
+__10f74132617af1e9db354a69a6137ed9 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -18,7 +18,7 @@ __22848e6eb5ddd68722bf2a03dc73e10d = (function () {
 }).call(this);
 
 // src/globals.js
-__906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
+__9530f6109e08062f0eaa9181a353e95b = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -35,7 +35,7 @@ __906dce814f2e16e7f80d2aa958aa9ac6 = (function () {
 }).call(this);
 
 // src/data.js
-__1d31a3a5e497c74976d725fe4ea5e938 = (function () {
+__999688be389d5d200a2b76835d928f06 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -50,7 +50,7 @@ __1d31a3a5e497c74976d725fe4ea5e938 = (function () {
 }).call(this);
 
 // src/utils.js
-__99aa25dcdde6f58792ecf7632c64ef45 = (function () {
+__5857b15d12981fd573e95316a4b1e434 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -129,7 +129,7 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  });var ATTR_IGNORE = __10f74132617af1e9db354a69a6137ed9.ATTR_IGNORE;
   
   var DocumentFragment = window.DocumentFragment;
   var elementPrototype = window.HTMLElement.prototype;
@@ -171,7 +171,8 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
   function getClosestIgnoredElement(element) {
     var parent = element;
   
-    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
+    // e.g. document doesn't have a function hasAttribute; no need to go further up
+    while (parent instanceof Element) {
       if (parent.hasAttribute(ATTR_IGNORE)) {
         return parent;
       }
@@ -222,11 +223,11 @@ __99aa25dcdde6f58792ecf7632c64ef45 = (function () {
 }).call(this);
 
 // src/mutation-observer.js
-__ff611d2c455b299b951f7e794d2d3337 = (function () {
+__b4bf54f6d146855a246b8fd910637e74 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __5857b15d12981fd573e95316a4b1e434;
   
   var debounce = _utils.debounce;
   var elementContains = _utils.elementContains;
@@ -543,21 +544,21 @@ __ff611d2c455b299b951f7e794d2d3337 = (function () {
 }).call(this);
 
 // src/registry.js
-__69e9c62cf40fb0891a2dd34186d09cdb = (function () {
+__8c168adaf6d9bc8304615305e023ebeb = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __10f74132617af1e9db354a69a6137ed9;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__9530f6109e08062f0eaa9181a353e95b);
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __5857b15d12981fd573e95316a4b1e434;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -675,7 +676,7 @@ __69e9c62cf40fb0891a2dd34186d09cdb = (function () {
 }).call(this);
 
 // src/lifecycle.js
-__3afb33416adfdec2a05e8e91247972a7 = (function () {
+__22deae80e5eac09ab678f655d071f281 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -683,15 +684,15 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
   
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __22848e6eb5ddd68722bf2a03dc73e10d.ATTR_IGNORE;
+  });var ATTR_IGNORE = __10f74132617af1e9db354a69a6137ed9.ATTR_IGNORE;
   
-  var data = _interopRequire(__1d31a3a5e497c74976d725fe4ea5e938);
+  var data = _interopRequire(__999688be389d5d200a2b76835d928f06);
   
-  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(__b4bf54f6d146855a246b8fd910637e74);
   
-  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(__8c168adaf6d9bc8304615305e023ebeb);
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __5857b15d12981fd573e95316a4b1e434;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -1115,22 +1116,22 @@ __3afb33416adfdec2a05e8e91247972a7 = (function () {
 }).call(this);
 
 // src/document-observer.js
-__6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
+__b88987b06680625e0a30415d081bab19 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(__906dce814f2e16e7f80d2aa958aa9ac6);
+  var globals = _interopRequire(__9530f6109e08062f0eaa9181a353e95b);
   
-  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __22deae80e5eac09ab678f655d071f281;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  var MutationObserver = _interopRequire(__ff611d2c455b299b951f7e794d2d3337);
+  var MutationObserver = _interopRequire(__b4bf54f6d146855a246b8fd910637e74);
   
-  var getClosestIgnoredElement = __99aa25dcdde6f58792ecf7632c64ef45.getClosestIgnoredElement;
+  var getClosestIgnoredElement = __5857b15d12981fd573e95316a4b1e434.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1211,31 +1212,31 @@ __6d7033c1bbef2b64e54f3f58cc6d2827 = (function () {
 }).call(this);
 
 // src/version.js
-__6c7bfcbc0c7a1db6e242c7f7a90b3330 = (function () {
+__d8766c6039a92999ed6024612aa7c2aa = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.11";
+  module.exports = "0.13.12";
   
   return module.exports
 }).call(this);
 
 // src/skate.js
-__880d751441dbbd15758abf63053bf506 = (function () {
+__128c78a781d299b023d3a0124085906c = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __22848e6eb5ddd68722bf2a03dc73e10d;
+  var _constants = __10f74132617af1e9db354a69a6137ed9;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(__6d7033c1bbef2b64e54f3f58cc6d2827);
+  var documentObserver = _interopRequire(__b88987b06680625e0a30415d081bab19);
   
-  var _lifecycle = __3afb33416adfdec2a05e8e91247972a7;
+  var _lifecycle = __22deae80e5eac09ab678f655d071f281;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1243,14 +1244,14 @@ __880d751441dbbd15758abf63053bf506 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(__69e9c62cf40fb0891a2dd34186d09cdb);
+  var registry = _interopRequire(__8c168adaf6d9bc8304615305e023ebeb);
   
-  var _utils = __99aa25dcdde6f58792ecf7632c64ef45;
+  var _utils = __5857b15d12981fd573e95316a4b1e434;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
   
-  var version = _interopRequire(__6c7bfcbc0c7a1db6e242c7f7a90b3330);
+  var version = _interopRequire(__d8766c6039a92999ed6024612aa7c2aa);
   
   var HTMLElement = window.HTMLElement;
   
