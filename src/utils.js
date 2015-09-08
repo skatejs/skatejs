@@ -85,7 +85,7 @@ export function getClosestIgnoredElement (element) {
   var parent = element;
 
   // e.g. document doesn't have a function hasAttribute; no need to go further up
-  while (parent && typeof parent.hasAttribute === 'function' && !(parent instanceof DocumentFragment)) {
+  while (parent instanceof Element) {
     if (parent.hasAttribute(ATTR_IGNORE)) {
       return parent;
     }
