@@ -103,7 +103,7 @@ describe('Returning a constructor', function () {
     expect(called).to.equal(true);
   });
 
-  it('should merge prototype methods if skate is called on an element more than once', function () {
+  it('should merge prototype functions if an element is skated more than once', function () {
     var tag = helperElement('my-el');
     var element = document.createElement(tag.safe);
 
