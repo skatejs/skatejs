@@ -84,7 +84,8 @@ export function debounce (fn) {
 export function getClosestIgnoredElement (element) {
   var parent = element;
 
-  while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
+  // e.g. document doesn't have a function hasAttribute; no need to go further up
+  while (parent && typeof parent.hasAttribute === 'function' && !(parent instanceof DocumentFragment)) {
     if (parent.hasAttribute(ATTR_IGNORE)) {
       return parent;
     }
