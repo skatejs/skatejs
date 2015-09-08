@@ -55,7 +55,7 @@ export default function (opts) {
 
   return function () {
     let info = data(this, opts.id);
-    let isNative = this.createdCallback;
+    let isNative = !this.hasOwnProperty('_isPolyfill') && this.createdCallback || !(this._isPolyfill = true);
     let isResolved = this.hasAttribute(opts.resolvedAttribute);
 
     if (info.created) return;
