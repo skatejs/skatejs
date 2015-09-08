@@ -2,22 +2,11 @@ import attached from '../lifecycle/attached';
 import created from '../lifecycle/created';
 import detached from '../lifecycle/detached';
 import globals from './vars';
-import ignored from '../util/ignored';
+import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
 
-var DocumentFragment = window.DocumentFragment;
 var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
-
-function getClosestIgnoredElement (element) {
-  var parent = element;
-  while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
-    if (ignored(parent)) {
-      return parent;
-    }
-    parent = parent.parentNode;
-  }
-}
 
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
