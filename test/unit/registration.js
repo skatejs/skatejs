@@ -104,20 +104,20 @@ describe('Returning a constructor', function () {
   });
 
   it('should merge prototype functions if an element is skated more than once', function () {
-    var tag = helperElement('my-el');
-    var element = document.createElement(tag.safe);
+    var { safe: tagName } = helperElement('my-el');
 
-    skate(tag.safe, {
+    var Element = skate(tagName, {
       prototype: {
         func1:  function () {
           return true;
         }
       }
     });
-    skate.init(element);
 
-    element.setAttribute('test-attr', '');
-    skate('test-attr', {
+    var element = new Element();
+    var { safe: attrName } = helperElement('my-attr');
+    element.setAttribute(attrName, '');
+    skate(attrName, {
       type: typeAttribute,
       prototype: {
         func2:  function () {
