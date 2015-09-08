@@ -170,7 +170,6 @@ __43714db526496b3dd90353996f6dce09 = (function () {
     value: true
   });
   exports['default'] = {
-    /* jshint expr: true */
     create: function create(opts) {
       var elem = document.createElement(opts['extends'] || opts.id);
       opts['extends'] && elem.setAttribute('is', opts.id);
@@ -384,10 +383,8 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   }
   
   exports['default'] = function (opts) {
-    /* jshint expr: true */
     return function () {
       var info = (0, _utilData2['default'])(this, opts.id);
-  
       if (info.attached) return;
       info.attached = true;
       info.detached = false;
@@ -723,7 +720,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   }
   
   function property(name, prop) {
-    var internalValue;
+    var internalValue = undefined;
     var isBoolean = prop.type === Boolean;
   
     if (typeof prop.init === 'function') {
@@ -1370,10 +1367,8 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   }
   
   exports['default'] = function (opts) {
-    /* jshint expr: true */
     return function () {
       var info = (0, _utilData2['default'])(this, opts.id);
-  
       if (info.detached) return;
       info.detached = true;
       info.attached = false;
@@ -1381,6 +1376,41 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
       callDetachedOnDescendants(this, opts.id);
       opts.detached.call(this);
     };
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/get-closest-ignored-element.js
+__a56dab24700df352eb84caec3fe615e5 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
+  
+  var _ignored2 = _interopRequireDefault(_ignored);
+  
+  var Element = window.Element;
+  
+  exports['default'] = function (element) {
+    var parent = element;
+    while (parent instanceof Element) {
+      if ((0, _ignored2['default'])(parent)) {
+        return parent;
+      }
+      parent = parent.parentNode;
+    }
   };
   
   module.exports = exports['default'];
@@ -1418,9 +1448,9 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   var _vars2 = _interopRequireDefault(_vars);
   
-  var _utilIgnored = __092f8936e5006bddcb3baf24320a5a06;
+  var _utilGetClosestIgnoredElement = __a56dab24700df352eb84caec3fe615e5;
   
-  var _utilIgnored2 = _interopRequireDefault(_utilIgnored);
+  var _utilGetClosestIgnoredElement2 = _interopRequireDefault(_utilGetClosestIgnoredElement);
   
   var _registry = __9cff21a9f41cc9ecfe56139e1040c954;
   
@@ -1430,18 +1460,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
-  var DocumentFragment = window.DocumentFragment;
   var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
-  
-  function getClosestIgnoredElement(element) {
-    var parent = element;
-    while (parent && parent !== document && !(parent instanceof DocumentFragment)) {
-      if ((0, _utilIgnored2['default'])(parent)) {
-        return parent;
-      }
-      parent = parent.parentNode;
-    }
-  }
   
   function triggerAddedNodes(addedNodes) {
     (0, _utilWalkTree2['default'])(addedNodes, function (element) {
@@ -1479,7 +1498,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
       // Since siblings are batched together, we check the first node's parent
       // node to see if it is ignored. If it is then we don't process any added
       // nodes. This prevents having to check every node.
-      if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+      if (addedNodes && addedNodes.length && !(0, _utilGetClosestIgnoredElement2['default'])(addedNodes[0].parentNode)) {
         triggerAddedNodes(addedNodes);
       }
   
