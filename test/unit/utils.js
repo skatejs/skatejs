@@ -1,8 +1,6 @@
 import helpers from '../lib/helpers';
 import { getClosestIgnoredElement } from '../../src/utils';
 
-let { Element } = window;
-
 describe('utils', function () {
   describe('getClosestIgnoredElement()', function () {
     it('should not fail called on an element in an iframe', function () {
