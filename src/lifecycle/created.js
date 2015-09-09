@@ -55,7 +55,7 @@ export default function (opts) {
 
   return function () {
     let info = data(this, opts.id);
-    let isNative = this.createdCallback;
+    let isNative = opts.isNative;
     let isResolved = this.hasAttribute(opts.resolvedAttribute);
 
     if (info.created) return;
