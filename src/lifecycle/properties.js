@@ -100,8 +100,10 @@ function defineProperty (elem, name, prop = {}) {
     prop = { type: prop };
   }
 
-  if (prop.attr === true) {
-    prop.attr = dashCase(name);
+  if (prop.attr) {
+    if (prop.attr === true) {
+      prop.attr = dashCase(name);
+    }
     info.attributeToPropertyMap[prop.attr] = name;
   }
 
