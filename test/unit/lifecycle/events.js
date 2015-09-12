@@ -105,20 +105,20 @@ describe('lifecycle/events', function () {
     var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
-      created: function () {
-        this.innerHTML = '<input>';
-      },
-      events: {
-        'blur input': () => blur = true,
-        'focus input': () => focus = true
-      },
       prototype: {
+        createdCallback () {
+          this.innerHTML = '<input>';
+        },
         blur: function () {
           skate.emit(this.querySelector('input'), 'blur');
         },
         focus: function () {
           skate.emit(this.querySelector('input'), 'focus');
         }
+      },
+      events: {
+        'blur input': () => blur = true,
+        'focus input': () => focus = true
       }
     });
 

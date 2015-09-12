@@ -15,8 +15,10 @@ describe('dom', function () {
 
       skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
       skate(tag, {
-        attached: function () {
-          ++calls;
+        prototype: {
+          attachedCallback () {
+            ++calls;
+          }
         }
       });
 
@@ -31,8 +33,10 @@ describe('dom', function () {
       var tag = helperElement().safe;
 
       skate(tag, {
-        attached: function () {
-          ++calls;
+        prototype: {
+          attachedCallback () {
+            ++calls;
+          }
         }
       });
 
@@ -48,8 +52,10 @@ describe('dom', function () {
       var tag = helperElement().safe;
 
       skate(tag, {
-        attached: function () {
-          ++calls;
+        prototype: {
+          attachedCallback () {
+            ++calls;
+          }
         }
       });
 
@@ -66,8 +72,10 @@ describe('dom', function () {
       var detached = false;
 
       skate(tag, {
-        detached () {
-          detached = true;
+        prototype: {
+          detachedCallback () {
+            detached = true;
+          }
         }
       });
 
@@ -85,8 +93,10 @@ describe('dom', function () {
     it('should pick up descendants that are detached if an ancestor is detached.', function (done) {
       var tag = helperElement().safe;
       skate(tag, {
-        detached: function () {
-          done();
+        prototype: {
+          detachedCallback () {
+            done();
+          }
         }
       });
 
@@ -124,12 +134,13 @@ describe('dom', function () {
       created = false;
       attached = false;
       MyEl = skate(helperElement('my-element').safe, {
-        created: function () {
-          created = true;
-        },
-
-        attached: function () {
-          attached = true;
+        prototype: {
+          createdCallback () {
+            created = true;
+          },
+          attachedCallback () {
+            attached = true;
+          }
         }
       });
       frag = document.createDocumentFragment();

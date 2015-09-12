@@ -19,14 +19,16 @@ describe('lifecycle', function () {
     attached = false;
     detached = false;
     MyEl = skate(tagName.safe, {
-      created: function () {
-        created = true;
-      },
-      attached: function () {
-        attached = true;
-      },
-      detached: function () {
-        detached = true;
+      prototype: {
+        createdCallback () {
+          created = true;
+        },
+        attachedCallback () {
+          attached = true;
+        },
+        detachedCallback () {
+          detached = true;
+        }
       }
     });
     myEl = new MyEl();
@@ -73,9 +75,11 @@ describe('unresolved attribute', function () {
   it('should not be considred "resolved" until after ready() is called', function () {
     var tagName = helperElement('my-element');
     skate(tagName.safe, {
-      ready: function () {
-        expect(this.hasAttribute('unresolved')).to.equal(true);
-        expect(this.hasAttribute('resolved')).to.equal(false);
+      prototype: {
+        readyCallback () {
+          expect(this.hasAttribute('unresolved')).to.equal(true);
+          expect(this.hasAttribute('resolved')).to.equal(false);
+        }
       }
     });
 
@@ -85,9 +89,11 @@ describe('unresolved attribute', function () {
   it('should be considred "resolved" after the created lifecycle finishes', function () {
     var tag = helperElement('my-element').safe;
     skate(tag, {
-      created: function () {
-        expect(this.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
-        expect(this.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
+      prototype: {
+        createdCallback () {
+          expect(this.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
+          expect(this.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
+        }
       }
     });
 
@@ -109,14 +115,16 @@ describe('lifecycle scenarios', function () {
 
     var { safe: tagName } = helperElement('my-element');
     El = skate(tagName, {
-      created: function () {
-        ++calls.created;
-      },
-      attached: function () {
-        ++calls.attached;
-      },
-      detached: function () {
-        ++calls.detached;
+      prototype: {
+        createdCallback () {
+          ++calls.created;
+        },
+        attachedCallback () {
+          ++calls.attached;
+        },
+        detachedCallback () {
+          ++calls.detached;
+        }
       }
     });
   });
@@ -184,8 +192,10 @@ describe('lifecycle scenarios', function () {
       var attached = 0;
       var def = {
         type: typeAttribute,
-        created: function () { ++created; },
-        attached: function () { ++attached; }
+        prototype: {
+          createdCallback () { ++created; },
+          attachedCallback () { ++attached; }
+        }
       };
 
       skate(id1.safe, def);
@@ -205,14 +215,16 @@ describe('lifecycle scenarios', function () {
       var tag = helperElement('my-el');
 
       skate(tag.safe, {
-        created: function () {
-          created = true;
-        },
-        attached: function () {
-          attached = true;
-        },
-        detached: function () {
-          detached = true;
+        prototype: {
+          createdCallback () {
+            created = true;
+          },
+          attachedCallback () {
+            attached = true;
+          },
+          detachedCallback () {
+            detached = true;
+          }
         }
       });
 
@@ -241,14 +253,16 @@ describe('lifecycle scenarios', function () {
       var numDetached = 0;
       var tag = helperElement('my-el');
       var Element = skate(tag.safe, {
-        created: function () {
-          ++numCreated;
-        },
-        attached: function () {
-          ++numAttached;
-        },
-        detached: function () {
-          ++numDetached;
+        prototype: {
+          createdCallback () {
+            ++numCreated;
+          },
+          attachedCallback () {
+            ++numAttached;
+          },
+          detachedCallback () {
+            ++numDetached;
+          }
         }
       });
 
@@ -284,8 +298,10 @@ describe('lifecycle scenarios', function () {
       idsToSkate.forEach(function (id) {
         skate(id, {
           type: typeClass,
-          created: function () {
-            idsToCheck.push(id);
+          prototype: {
+            createdCallback () {
+              idsToCheck.push(id);
+            }
           }
         });
       });

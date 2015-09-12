@@ -1,7 +1,7 @@
 import data from '../util/data';
 
 export default function (opts) {
-  let callback = opts.attribute || function () {};
+  let callback = opts.prototype.attributeChangedCallback || function () {};
 
   return function (name, oldValue, newValue) {
     let info = data(this);

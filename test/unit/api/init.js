@@ -6,14 +6,15 @@ import typeClass from 'skatejs-type-class';
 import typeElement from '../../../src/type/element';
 
 describe('api/init', function () {
-  var MyEl;
-  var tagName;
+  let tagName;
 
   beforeEach(function () {
     tagName = helperElement('my-el');
-    MyEl = skate(tagName.safe, {
-      created: function () {
-        this.textContent = 'test';
+    skate(tagName.safe, {
+      prototype: {
+        createdCallback () {
+          this.textContent = 'test';
+        }
       }
     });
 
@@ -30,8 +31,10 @@ describe('api/init', function () {
       var { safe: tagName } = helperElement('div');
 
       skate(tagName, {
-        attached: function () {
-          initialised = true;
+        prototype: {
+          attachedCallback () {
+            initialised = true;
+          }
         }
       });
 
@@ -49,7 +52,11 @@ describe('api/init', function () {
         skate(tagName, {
           type: type,
           extends: tagToExtend,
-          created () { ++calls; }
+          prototype: {
+            createdCallback () {
+              ++calls;
+            }
+          }
         });
 
         calls = 0;
@@ -93,8 +100,10 @@ describe('api/init', function () {
         var {safe: tagName} = helperElement('my-element');
 
         skate(tagName, {
-          created: function () {
-            ++calls;
+          prototype: {
+            createdCallback () {
+              ++calls;
+            }
           }
         });
 
@@ -110,8 +119,10 @@ describe('api/init', function () {
     it('#110 - should initialise forms properly', function () {
       var form = document.createElement('form');
       skate('form', {
-        created: function () {
-          this.initialised = true;
+        prototype: {
+          createdCallback () {
+            this.initialised = true;
+          }
         }
       });
 

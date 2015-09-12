@@ -10,11 +10,13 @@ describe('ignoring', function () {
   var attached;
   var tag;
   var definition = {
-    created: function () {
-      ++created;
-    },
-    attached: function () {
-      ++attached;
+    prototype: {
+      createdCallback () {
+        ++created;
+      },
+      attachedCallback () {
+        ++attached;
+      }
     }
   };
 

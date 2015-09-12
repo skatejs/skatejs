@@ -12,22 +12,28 @@ describe('lifecycle/created ordering parent -> descendants', function () {
   function createDefinitions () {
     // child requires descendant, so this is first
     skate(`x-descendant-${tag}`, {
-      created () {
-        descendant = ++num;
+      prototype: {
+        createdCallback () {
+          descendant = ++num;
+        }
       }
     });
 
     // host requires child, so this is second
     skate(`x-child-${tag}`, {
-      created () {
-        child = ++num;
+      prototype: {
+        createdCallback () {
+          child = ++num;
+        }
       }
     });
 
     // host has no dependants so it's last
     skate(`x-host-${tag}`, {
-      created () {
-        host = ++num;
+      prototype: {
+        createdCallback () {
+          host = ++num;
+        }
       }
     });
   }

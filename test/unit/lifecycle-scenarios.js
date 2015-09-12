@@ -10,8 +10,10 @@ describe('lifecycle-scenarios', function () {
     var called = false;
 
     skate(el.safe, {
-      created () {
-        called = true;
+      prototype: {
+        createdCallback () {
+          called = true;
+        }
       }
     });
     helperFixture(document.createElement(el.safe));
@@ -34,8 +36,10 @@ describe('lifecycle-scenarios', function () {
 
     helperFixture(el.create());
     skate(el.safe, {
-      created () {
-        called = true;
+      prototype: {
+        createdCallback () {
+          called = true;
+        }
       }
     });
 
