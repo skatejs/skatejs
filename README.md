@@ -373,15 +373,15 @@ skate('my-element', {
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-- `prototype` is set up in non-native (alread set up in native)
-- `events` are set up
-- `properties` are defined
-- `created` is invoked
-- descendant custom elements are synchronously initialised
-- `ready` is invoked
-- `attached` is invoked when added to the document (or if already in the document)
-- `detached` is invoked when removed from the document
-- `attribute` is invoked whenever an attribute is updated
+1. `prototype` is set up in non-native (alread set up in native)
+2. `events` are set up
+3. `properties` are defined
+4. `created` is invoked
+5. descendant custom elements are synchronously initialised
+6. `ready` is invoked
+7. `attached` is invoked when added to the document (or if already in the document)
+8. `detached` is invoked when removed from the document
+9. `attribute` is invoked whenever an attribute is updated
 
 Each callback gets the element passed in as `this` and is invoked with no arguments except for the `attribute` callback shown below.
 
