@@ -26,8 +26,11 @@ function createCustomEvent (name, opts = {}) {
     return new CustomEvent(name, opts);
   }
 
-  var e = document.createEvent('CustomEvent');
-  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+  // We use HTMLEvents instead of custom events if falling back because JSDom
+  // doesn't support e.initCustomEvent().
+  let e = document.createEvent('HTMLEvents');
+  e.detail = opts.detail;
+  e.initEvent(name, opts.bubbles, opts.cancelable);
   return e;
 }
 
