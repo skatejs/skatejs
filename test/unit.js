@@ -16,6 +16,7 @@ import './unit/lifecycle/created';
 import './unit/lifecycle/events';
 import './unit/lifecycle/properties';
 import './unit/lifecycle/ready';
+import './unit/lifecycle/template';
 import './unit/registration';
 import './unit/registry';
 import './unit/util/create-from-html';

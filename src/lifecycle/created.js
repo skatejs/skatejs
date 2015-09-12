@@ -1,9 +1,10 @@
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
-import events from '../lifecycle/events';
-import properties from '../lifecycle/properties';
+import events from './events';
+import properties from './properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
+import template from './template';
 import walkTree from '../util/walk-tree';
 
 let elProto = window.Element.prototype;
@@ -66,6 +67,7 @@ export default function (opts) {
     properties.call(this, opts.properties);
     events.call(this, opts.events);
     opts.created && created.call(this);
+    template(this, opts);
     callCreatedOnDescendants(this, opts.id);
     opts.ready && ready.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
