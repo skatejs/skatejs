@@ -50,12 +50,12 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 
 export default function (opts) {
   let created = opts.created;
+  let isNative = opts.isNative;
   let prototype = applyPrototype(opts.prototype);
   let ready = opts.ready;
 
   return function () {
     let info = data(this, opts.id);
-    let isNative = opts.isNative;
     let isResolved = this.hasAttribute(opts.resolvedAttribute);
 
     if (info.created) return;
