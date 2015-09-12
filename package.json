@@ -2,10 +2,13 @@
   "name": "skatejs",
   "description": "Skate is a web component library based loosely on the Custom Element spec that allows you to define behaviour for custom and existing elements using tag names, attribute names and class names.",
   "version": "0.13.2",
+  "engines": ">= 4.0.0",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "lib/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "jsdom": "^6.3.0"
+  },
   "devDependencies": {
     "benchmark": "^1.0.0",
     "bootstrap": "^3.3.0",
@@ -40,6 +43,7 @@
     "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#a7dbecf",
     "skatejs-type-attribute": "skatejs/type-attribute#28140f7",
     "skatejs-type-class": "skatejs/type-class#8302a2f",
+    "tape": "^4.2.0",
     "whatwg-fetch": "^0.9.0"
   },
   "scripts": {
