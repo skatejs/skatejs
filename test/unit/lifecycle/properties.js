@@ -306,6 +306,42 @@ describe('lifecycle/properties', function () {
     expect(el.innerHTML).to.equal('initial content');
   });
 
+  it('should not trigger the attribute callback if not linked', function () {
+    let triggered = false;
+
+    elem.skate({
+      attribute: function (name) {
+        if (name !== 'resolved' && name !== 'unresolved') {
+          triggered = true;
+        }
+      },
+      properties: {
+        test: {}
+      }
+    });
+
+    elem.create().test = 'something';
+    expect(triggered).to.equal(false);
+  });
+
+  it('should trigger the attribute callback if linked', function () {
+    let triggered = false;
+
+    elem.skate({
+      attribute: function (name) {
+        if (name !== 'resolved' && name !== 'unresolved') {
+          triggered = true;
+        }
+      },
+      properties: {
+        test: { attr: true }
+      }
+    });
+
+    elem.create().test = 'something';
+    expect(triggered).to.equal(true);
+  });
+
   describe('templating integration', function () {
     it('scenario 1 - DOM mutation', function () {
       skate(elem.safe, {
