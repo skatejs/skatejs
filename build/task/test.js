@@ -6,10 +6,15 @@ var gulpConcat = require('gulp-concat');
 var gulpKarma = require('gulp-karma');
 
 module.exports = function (opts) {
+  var args = [];
   opts = assign(opts, {
-    action: 'run',
     browsers: ['Firefox']
   });
+
+  if (opts.grep) {
+    args.push('--grep');
+    args.push(opts.grep);
+  }
 
   return gulp.src('test/unit.js')
     .pipe(galv.trace())
@@ -18,8 +23,9 @@ module.exports = function (opts) {
     .pipe(gulpConcat('unit.js'))
     .pipe(gulp.dest('.tmp'))
     .pipe(gulpKarma({
-      action: opts.action,
+      autoWatch: opts.watch,
       browsers: opts.browsers,
+      client: { args: args },
       frameworks: ['mocha', 'sinon-chai']
     }));
 };

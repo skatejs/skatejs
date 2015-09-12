@@ -76,6 +76,41 @@ describe('lifecycle/properties', function () {
     expect(el.getAttribute('my-attr')).to.equal('test2', 'attribute updated to new value');
   });
 
+  describe('attribute - setting', function() {
+    it('with `attr` set to true', function() {
+      skate(elem.safe, {
+        properties: {
+          test: {
+            attr: true
+          }
+        }
+      });
+
+      var el = fixture(`<${elem.safe}></${elem.safe}>`).querySelector(elem.safe);
+      skate.init(el);
+
+      el.test = 'value1';
+      el.setAttribute('test', 'value2');
+      expect(el.test).to.equal('value2');
+    });
+
+    it('with `attr` set to a string value', function() {
+      skate(elem.safe, {
+        properties: {
+          test: {
+            attr: 'test2'
+          }
+        }
+      });
+
+      var el = fixture(`<${elem.safe}></${elem.safe}>`).querySelector(elem.safe);
+      skate.init(el);
+      el.test = 'value1';
+      el.setAttribute('test2', 'value2');
+      expect(el.test).to.equal('value2');
+    });
+  });
+
   it('attribute - removing', function () {
     skate(elem.safe, {
       properties: {
@@ -269,6 +304,42 @@ describe('lifecycle/properties', function () {
     el.textContent = 'updated content';
     expect(el.textContent).to.equal('updated content');
     expect(el.innerHTML).to.equal('initial content');
+  });
+
+  it('should not trigger the attribute callback if not linked', function () {
+    let triggered = false;
+
+    elem.skate({
+      attribute: function (name) {
+        if (name !== 'resolved' && name !== 'unresolved') {
+          triggered = true;
+        }
+      },
+      properties: {
+        test: {}
+      }
+    });
+
+    elem.create().test = 'something';
+    expect(triggered).to.equal(false);
+  });
+
+  it('should trigger the attribute callback if linked', function () {
+    let triggered = false;
+
+    elem.skate({
+      attribute: function (name) {
+        if (name !== 'resolved' && name !== 'unresolved') {
+          triggered = true;
+        }
+      },
+      properties: {
+        test: { attr: true }
+      }
+    });
+
+    elem.create().test = 'something';
+    expect(triggered).to.equal(true);
   });
 
   describe('templating integration', function () {

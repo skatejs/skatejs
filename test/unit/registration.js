@@ -103,6 +103,34 @@ describe('Returning a constructor', function () {
     expect(called).to.equal(true);
   });
 
+  it('should merge prototype functions if an element is skated more than once', function () {
+    var { safe: tagName } = helperElement('my-el');
+
+    var Element = skate(tagName, {
+      prototype: {
+        func1:  function () {
+          return true;
+        }
+      }
+    });
+
+    var element = new Element();
+    var { safe: attrName } = helperElement('my-attr');
+    element.setAttribute(attrName, '');
+    skate(attrName, {
+      type: typeAttribute,
+      prototype: {
+        func2:  function () {
+          return true;
+        }
+      }
+    });
+    skate.init(element);
+
+    expect(element.func1).to.be.a('function');
+    expect(element.func2).to.be.a('function');
+  });
+
   describe('when an extends option is specified', function () {
     var Div;
     var div;
