@@ -371,13 +371,17 @@ skate('my-element', {
 
 ## Component Lifecycle
 
-The component lifecycle consists several callbacks:
+The component lifecycle consists of several paths in the following order:
 
-- `created`
-- `ready`
-- `attached`
-- `detached`
-- `attribute`
+- `prototype` is set up in non-native (alread set up in native)
+- `events` are set up
+- `properties` are defined
+- `created` is invoked
+- descendant custom elements are synchronously initialised
+- `ready` is invoked
+- `attached` is invoked when added to the document (or if already in the document)
+- `detached` is invoked when removed from the document
+- `attribute` is invoked whenever an attribute is updated
 
 ### `created`
 
