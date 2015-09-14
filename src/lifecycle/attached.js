@@ -11,13 +11,13 @@ function callAttachedOnDescendants (elem, id) {
 }
 
 export default function (opts) {
+  let fnAttached = opts.prototype.attachedCallback || function(){};
   return function () {
     let info = data(this, opts.id);
     if (info.attached) return;
     info.attached = true;
     info.detached = false;
-
     callAttachedOnDescendants(this, opts.id);
-    opts.attached.call(this);
+    fnAttached.call(this);
   };
 }

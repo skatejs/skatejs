@@ -49,10 +49,10 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 }
 
 export default function (opts) {
-  let created = opts.created;
   let isNative = opts.isNative;
   let prototype = applyPrototype(opts.prototype);
-  let ready = opts.ready;
+  let fnCreated = opts.prototype.createdCallback || function(){};
+  let fnReady = opts.prototype.readyCallback || function(){};
 
   return function () {
     let info = data(this, opts.id);
@@ -65,9 +65,9 @@ export default function (opts) {
     isNative || prototype.call(this);
     properties.call(this, opts.properties);
     events.call(this, opts.events);
-    opts.created && created.call(this);
+    fnCreated.call(this);
     callCreatedOnDescendants(this, opts.id);
-    opts.ready && ready.call(this);
+    fnReady.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };
 }

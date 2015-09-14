@@ -56,10 +56,10 @@ describe('api/fragment', function () {
       tagName = element().safe;
       var created = 0;
       skate(tagName, {
-        created: function () {
-          // Can't use the "resolved" attr in assertions about the clone since cloning will copy
-          // the attr but not init the cloned element's lifecycle.
-          created++;
+        prototype: {
+          createdCallback () {
+            ++created;
+          }
         }
       });
 
@@ -74,7 +74,7 @@ describe('api/fragment', function () {
       clone.appendChild(el1);
       expect(clone.childNodes.length).to.equal(1);
       expect(resolved(clone.childNodes[0])).to.equal(true);
-    })
+    });
   });
 
   describe('html', function () {

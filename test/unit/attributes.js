@@ -1,7 +1,4 @@
-'use strict';
-
 import helperElement from '../lib/element';
-import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
 
 describe('lifecycle/attributes', function () {
@@ -11,7 +8,9 @@ describe('lifecycle/attributes', function () {
       var tag = helperElement();
 
       skate(tag.safe, {
-        attribute: (...args) => data = args
+        prototype: {
+          attributeChangedCallback: (...args) => data = args
+        }
       });
 
       var elem = tag.create();
@@ -39,7 +38,9 @@ describe('lifecycle/attributes', function () {
       var tag = helperElement();
 
       skate(tag.safe, {
-        attribute: () => called = true
+        prototype: {
+          attributeChangedCallback: () => called = true
+        }
       });
 
       tag.create();

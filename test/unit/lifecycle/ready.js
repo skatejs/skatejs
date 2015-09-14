@@ -9,8 +9,10 @@ describe('lifecycle/ready', function () {
   beforeEach(function () {
     tag = helperElement();
     skate(tag.safe, {
-      ready: function () {
-        this.innerHTML = 'templated';
+      prototype: {
+        readyCallback () {
+          this.innerHTML = 'templated';
+        }
       }
     });
   });
@@ -23,11 +25,13 @@ describe('lifecycle/ready', function () {
   it('should be called after created is called', function () {
     var { safe: tagName } = helperElement('my-el');
     var MyEl = skate(tagName, {
-      created: function () {
-        this.textContent = 'test';
-      },
-      ready: function () {
-        expect(this.textContent).to.equal('test');
+      prototype: {
+        createdCallback () {
+          this.textContent = 'test';
+        },
+        readyCallback () {
+          expect(this.textContent).to.equal('test');
+        }
       }
     });
 
@@ -38,10 +42,13 @@ describe('lifecycle/ready', function () {
     var { safe: tagName } = helperElement('my-el');
     var MyEl = skate(tagName, {
       prototype: {
+        createdCallback () {
+          this.textContent = 'test';
+        },
+        readyCallback () {
+          expect(this.myfunc).to.be.a('function');
+        },
         myfunc: function () {}
-      },
-      ready: function () {
-        expect(this.myfunc).to.be.a('function');
       }
     });
 
@@ -57,22 +64,28 @@ describe('lifecycle/ready', function () {
     function createDefinitions () {
       // child requires descendant, so this is first
       skate(`x-descendant-${tag}`, {
-        ready () {
-          descendant = ++num;
+        prototype: {
+          readyCallback () {
+            descendant = ++num;
+          }
         }
       });
 
       // host requires child, so this is second
       skate(`x-child-${tag}`, {
-        ready () {
-          child = ++num;
+        prototype: {
+          readyCallback () {
+            child = ++num;
+          }
         }
       });
 
       // host has no dependants so it's last
       skate(`x-host-${tag}`, {
-        ready () {
-          host = ++num;
+        prototype: {
+          readyCallback () {
+            host = ++num;
+          }
         }
       });
     }

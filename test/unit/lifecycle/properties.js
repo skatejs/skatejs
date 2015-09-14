@@ -310,9 +310,11 @@ describe('lifecycle/properties', function () {
     let triggered = false;
 
     elem.skate({
-      attribute: function (name) {
-        if (name !== 'resolved' && name !== 'unresolved') {
-          triggered = true;
+      prototype: {
+        attributeChangedCallback: function (name) {
+          if (name !== 'resolved' && name !== 'unresolved') {
+            triggered = true;
+          }
         }
       },
       properties: {
@@ -328,9 +330,11 @@ describe('lifecycle/properties', function () {
     let triggered = false;
 
     elem.skate({
-      attribute: function (name) {
-        if (name !== 'resolved' && name !== 'unresolved') {
-          triggered = true;
+      prototype: {
+        attributeChangedCallback: function (name) {
+          if (name !== 'resolved' && name !== 'unresolved') {
+            triggered = true;
+          }
         }
       },
       properties: {
@@ -345,8 +349,10 @@ describe('lifecycle/properties', function () {
   describe('templating integration', function () {
     it('scenario 1 - DOM mutation', function () {
       skate(elem.safe, {
-        created () {
-          this.innerHTML = `<span>${this.textContent}</span>`;
+        prototype: {
+          createdCallback () {
+            this.innerHTML = `<span>${this.textContent}</span>`;
+          }
         },
         properties: {
           textContent: {
@@ -372,11 +378,13 @@ describe('lifecycle/properties', function () {
       }
 
       skate(elem.safe, {
-        created: render,
         properties: {
           textContent: {
             update: render
           }
+        },
+        prototype: {
+          createdCallback: render
         }
       });
 

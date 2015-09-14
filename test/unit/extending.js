@@ -14,11 +14,11 @@ describe('extending', function () {
     Ctor = skate(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created: function () {
-        this.textContent = 'test';
-      },
-      attribute: function () {},
       prototype: {
+        attributeChangedCallback () {},
+        createdCallback () {
+          this.textContent = 'test';
+        },
         test: true,
         someFunction: function () {}
       }
@@ -64,8 +64,8 @@ describe('extending', function () {
   it('should allow overriding of callbacks', function () {
     if (canResolveSuper) {
       var ExtendedCtor = skate(tag, class extends Ctor {
-        static created() {
-          super.created();
+        createdCallback () {
+          super.createdCallback();
           this.textContent += 'ing';
         }
       });
