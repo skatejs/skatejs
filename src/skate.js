@@ -11,6 +11,7 @@ import {
   inherit
 } from './utils';
 import version from './version';
+import { types } from './constants';
 
 // IE <= 10 can fire "interactive" too early (#243).
 var isOldIE = !!document.attachEvent;  // attachEvent was removed in IE11.
@@ -117,7 +118,7 @@ function skate (id, definition) {
 
   // Only make and return an element constructor if it can be used as a custom
   // element.
-  if (definition.type.indexOf(skate.types.TAG) > -1) {
+  if (definition.type.indexOf(types.TAG) > -1) {
     return makeElementConstructor(definition);
   }
 }
@@ -146,15 +147,7 @@ skate.init = function (nodes) {
 };
 
 // Restriction type constants.
-skate.types = {
-  ANY: 'act',
-  ATTR: 'a',
-  CLASS: 'c',
-  NOATTR: 'ct',
-  NOCLASS: 'at',
-  NOTAG: 'ac',
-  TAG: 't'
-};
+skate.types = types;
 
 // Makes checking the version easy when debugging.
 skate.version = version;
@@ -190,7 +183,7 @@ skate.defaults = {
   template: undefined,
 
   // The type of bindings to allow.
-  type: skate.types.ANY,
+  type: types.ANY,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: 'unresolved'
