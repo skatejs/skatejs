@@ -37,14 +37,12 @@ function property (name, prop) {
     // We report both new and old values;
     let newValue = prop.type ? prop.type(value) : value;
     let oldValue = internalValue;
+    internalValue = newValue;
 
     // Don't do anything if the values are the same.
     if (newValue === oldValue) {
       return;
     }
-
-    // We only store the value internally if a getter isn't specified.
-    internalValue = newValue;
 
     // We check first to see if we're already updating the property from
     // the attribute. If we are, then there's no need to update the attribute
