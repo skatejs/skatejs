@@ -259,39 +259,6 @@ describe('lifecycle/properties', function () {
     });
   });
 
-  it('should not be triggered on initialisation', function () {
-    let triggered;
-    let newValue;
-    let oldValue;
-
-    skate(elem.safe, {
-      properties: {
-        prop: {
-          update: function (nv, ov) {
-            triggered = true;
-            newValue = nv;
-            oldValue = ov;
-          }
-        }
-      }
-    });
-
-    let el = elem.create();
-    expect(triggered).to.equal(undefined);
-    expect(newValue).to.equal(undefined);
-    expect(oldValue).to.equal(undefined);
-
-    el.prop = 'one';
-    expect(triggered).to.equal(true);
-    expect(newValue).to.equal('one');
-    expect(oldValue).to.equal(undefined);
-
-    el.prop = 'two';
-    expect(triggered).to.equal(true);
-    expect(newValue).to.equal('two');
-    expect(oldValue).to.equal('one');
-  });
-
   it('should override existing properties', function () {
     skate(elem.safe, {
       properties: {
@@ -401,6 +368,63 @@ describe('lifecycle/properties', function () {
       let el2 = skate.create(`<${elem.name}>should only be set for this element</${elem.name}>`);
       expect(el1.textContent).to.equal('');
       expect(el2.textContent).to.equal('should only be set for this element');
+    });
+  });
+
+  describe('callbacks', function () {
+    describe('update()', function () {
+      let triggered;
+      let newValue;
+      let oldValue;
+      let order;
+      let elem;
+
+      beforeEach(function () {
+        triggered = 0;
+        order = [];
+        elem = helperElement().skate({
+          properties: {
+            textContent: {
+              update (nv, ov) {
+                ++triggered;
+                newValue = nv;
+                oldValue = ov;
+                order.push('property');
+              }
+            }
+          },
+          ready () {
+            order.push('ready');
+          }
+        });
+      });
+
+      it('should be called just before ready', function () {
+        elem();
+        expect(order[0]).to.equal('property');
+        expect(order[1]).to.equal('ready');
+      });
+
+      it('should be called when created', function () {
+        elem();
+        expect(triggered).to.equal(1);
+        expect(newValue).to.equal('');
+        expect(oldValue).to.equal(undefined);
+      });
+
+      it('should be called when a property is updated', function () {
+        let el = elem();
+
+        el.textContent = 'one';
+        expect(triggered).to.equal(2);
+        expect(newValue).to.equal('one');
+        expect(oldValue).to.equal('');
+
+        el.textContent = 'two';
+        expect(triggered).to.equal(3);
+        expect(newValue).to.equal('two');
+        expect(oldValue).to.equal('one');
+      });
     });
   });
 });

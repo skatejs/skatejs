@@ -44,6 +44,18 @@ function callCreatedOnDescendants (elem, id) {
   });
 }
 
+function createCallUpdateOnProperties (opts) {
+  let props = opts.properties || {};
+  let names = Object.keys(props);
+  return function (elem) {
+    names.forEach(function (name) {
+      let prop = props[name];
+      let update = prop && prop.update;
+      update && update.call(elem, elem[name]);
+    });
+  };
+}
+
 function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
   elem.removeAttribute(unresolvedAttribute);
   elem.setAttribute(resolvedAttribute, '');
@@ -51,12 +63,13 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 
 export default function (opts) {
   let created = opts.created;
+  let isNative = opts.isNative;
+  let callUpdateOnProperties = createCallUpdateOnProperties(opts);
   let prototype = applyPrototype(opts.prototype);
   let ready = opts.ready;
 
   return function () {
     let info = data(this, opts.id);
-    let isNative = opts.isNative;
     let isResolved = this.hasAttribute(opts.resolvedAttribute);
 
     if (info.created) return;
@@ -69,6 +82,7 @@ export default function (opts) {
     events.call(this, opts.events);
     template(this, opts);
     callCreatedOnDescendants(this, opts.id);
+    callUpdateOnProperties(this);
     opts.ready && ready.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };

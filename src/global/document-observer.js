@@ -1,6 +1,3 @@
-import attached from '../lifecycle/attached';
-import created from '../lifecycle/created';
-import detached from '../lifecycle/detached';
 import globals from './vars';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import registry from './registry';
@@ -14,11 +11,11 @@ function triggerAddedNodes (addedNodes) {
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
-      created(components[a]).call(element);
+      components[a].prototype.createdCallback.call(element);
     }
 
     for (let a = 0; a < componentsLength; a++) {
-      attached(components[a]).call(element);
+      components[a].prototype.attachedCallback.call(element);
     }
   });
 }
@@ -29,7 +26,7 @@ function triggerRemovedNodes (removedNodes) {
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
-      detached(components[a]).call(element);
+      components[a].prototype.detachedCallback.call(element);
     }
   });
 }

@@ -163,7 +163,8 @@ skate('my-element', {
   //
   // All lifecycle callbacks use `this` to refer to the component element.
 
-  // Called when the element is created.
+  // Called before the element is set up. Descendants components may or may not
+  // be initialised yet.
   created: function () {},
 
   // Called when the element is attached to the document.
@@ -183,14 +184,10 @@ skate('my-element', {
     }
   },
 
-  // A function that renders a template to your element. Since this function is
-  // responsible for rendering the template, you can literally use anything you
-  // want here.
-  template: function () {
-    this.innerHTML = 'something';
-  },
-
-
+  // Gets called after the element is set up and all descendant components are
+  // initialised. This callback will be called on descendants before it is
+  // called on the host element.
+  ready: function () {},
 
   // Event Listeners
   events: {
@@ -374,90 +371,19 @@ skate('my-element', {
 
 ## Component Lifecycle
 
-The component lifecycle consists several callbacks:
+The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-- `created`
-- `attached`
-- `detached`
-- `attribute`
-- `template`
+1. `prototype` is set up in non-native (alread set up in native)
+2. `events` are set up
+3. `properties` are defined
+4. `created` is invoked
+5. descendant custom elements are synchronously initialised
+6. `ready` is invoked
+7. `attached` is invoked when added to the document (or if already in the document)
+8. `detached` is invoked when removed from the document
+9. `attribute` is invoked whenever an attribute is updated
 
-### `created`
-
-```js
-skate('my-element', {
-  created: function () {}
-});
-```
-
-The `created` callback gets triggered when the element is created.
-
-#### Timing
-
-There are some differences when using native vs polyfilled support.
-
-```js
-// native: called immediately (synchronous)
-// polyfill: called immediately (synchronous)
-myElement();
-new myElement();
-skate.create('my-element');
-
-// native: called immediately (synchronous)
-// polyfill: called when inserted to the DOM (asynchronous)
-document.createElement('my-element');
-
-// native: called immediately (synchronous)
-// polyfill: called when the mutation observer fires (asynchronous)
-document.body.innerHTML = '<my-element></my-element>';
-
-// native: called immediately (synchronous)
-// polyfill: called when <div> is inserted into the DOM (asynchronous)
-document.createElement('div').innerHTML = '<my-element></my-element>';
-```
-
-In instances where an element is initialized asynchronously, or your definition is loaded after the element is already on the page, there may be a flash of un-styled content. For more information see [Preventing FOUC](#preventing-fouc).
-
-If using native custom elements, the element may not have any children when the `created` callback is invoked. You should not assume a specific structure exists. For more information see [skate.ready()](#ready-callback).
-
-```js
-// Will not have children.
-document.createElement('my-el');
-
-// Will have children.
-document.body.innerHTML = '<my-el>child</my-el>';
-document.createElement('div').innerHTML = '<my-el>child</my-el>';
-```
-
-### `attached`
-
-```js
-skate('my-element', {
-  attached: function () {}
-});
-```
-
-The `attached` callback is fired when the element is attached to the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
-
-#### Timing
-
-The `attached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
-
-### `detached`
-
-```js
-skate('my-element', {
-  detached: function () {}
-});
-```
-
-The `detached` callback is fired when the element is detached from the `document`. It can be invoked more than once. For example, if you were to add and remove the same element multiple times.
-
-#### Timing
-
-The `detached` callback is called synchronously in native custom elements and asynchronously when polyfilled.
-
-### `attribute`
+Each callback gets the element passed in as `this` and is invoked with no arguments except for the `attribute` callback shown below.
 
 ```js
 skate('my-element', {
@@ -473,142 +399,7 @@ skate('my-element', {
 });
 ```
 
-The `attribute` callback is fired whenever an element attribute is created, updated or removed. Unlike the native `attributeChangedCallback`, this gets fired for every attribute an element has by the time it is initialised.
-
-#### Timing
-
-Attribute handlers are notified synchronously. Instead of using mutation observers, `setAttribute` and `removeAttribute` are patched to notify the callback as soon as the change occurs. If your existing code uses timeouts to wait until after mutations happen to execute logic related to an attribute change, you don't need to worry about changing it. The only difference is you won't need to write async boilerplate anymore.
-
-However, this means that updating the attribute instance directly is *not* supported. If you do the following, the `attribute` callback will *not* be notified of the change. For example the following will not trigger the `attribute` callback:
-
-```js
-myElement.attributes.myAttribute.value = 'new value';
-```
-
-You must use the attribute methods instead:
-
-```js
-myElement.setAttribute('myAttribute', 'new value');
-```
-
-### `template`
-
-```js
-skate('my-element', {
-  template: function () {}
-});
-```
-
-Since the template function is just a callback and it's up to you how you template the element, you can use any templating engine that you want.
-
-#### Handlebars
-
-```js
-skate('my-element', {
-  template: function () {
-    var compiled = Handlebars.compile('<p>Hello, {{ name }}!</p>');
-    this.innerHTML = compiled(this);
-  }
-});
-```
-
-A good way to reuse a template function is to simply create a function that takes a string and returns a function that templates that string onto the element. You could rewrite the above example to be reusable very easily:
-
-```js
-function handlebarify (html) {
-  var compiled = Handlebars.compile(html);
-  return function () {
-    this.innerHTML = compiled(this);
-  };
-}
-
-skate('my-element', {
-  template: handlebarify('<p>Hello, {{name}}!</p>')
-});
-```
-
-#### Shadow DOM
-
-If you wanted to fully embrace Web Components, you could even use Shadow DOM:
-
-```js
-function shadowify (html) {
-  return function () {
-    this.createShadowRoot().innerHTML = html;
-  };
-}
-
-skate('my-element', {
-  template: shadowify('<p>Hello, <content></content>!</p>')
-});
-```
-
-#### Virtual DOM
-
-You could also use a virtual DOM implementation - such as [virtual-dom](https://github.com/Matt-Esch/virtual-dom) - here if you wanted to.
-
-```js
-import createElement from './path/to/virtual-dom/create-element';
-
-function createVdomTree (props) {
-  // Return your Virtual DOM tree.
-}
-
-skate('my-element', {
-  template: function () {
-    var tree = createVdomTree(this);
-    var root = createElement(tree);
-
-    // Initial render.
-    this.appendChild(root);
-  }
-});
-```
-
-#### Responding to Component Changes
-
-If you want to re-render your component when properties change, you can listen to the `skate.property` event triggered by defined `properties`.
-
-With Handlebars you might do something like:
-
-```js
-skate('my-element', {
-  template: function () {
-    var render = handlebarify('<p>Hello, {{name}}!</p>');
-    this.addEventListener('skate.property', render);
-    render.call(this);
-  }
-});
-```
-
-If you're using Virtual DOM you might do something like:
-
-```js
-import createElement from './path/to/virtual-dom/create-element';
-import diff from './path/to/virtual-dom/diff';
-import patch from './path/to/virtual-dom/patch';
-
-function createVdomTree (props) {
-  // Return your Virtual DOM tree.
-}
-
-skate('my-element', {
-  template: function () {
-    var tree = createVdomTree(this);
-    var root = createElement(tree);
-
-    // Initial render.
-    this.appendChild(root);
-
-    // Subsequent renders.
-    this.addEventListener('skate.property', function () {
-      var newTree = createVdomTree(this);
-      root = patch(root, diff(tree, newTree));
-      tree = newTree;
-    });
-  }
-});
-```
+The `attribute` callback is fired whenever an element attribute is created, updated or removed. This is synonymous with the `attributeChangedCallback` in the web component spec.
 
 
 
