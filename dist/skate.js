@@ -790,6 +790,8 @@ var globals = _interopRequire(require("./globals"));
 
 var hasOwn = require("./utils").hasOwn;
 
+var skate = _interopRequire(require("./skate"));
+
 /**
  * Returns the class list for the specified element.
  *
@@ -906,7 +908,7 @@ module.exports = {
     return this;
   }
 };
-},{"./globals":4,"./utils":9}],8:[function(require,module,exports){
+},{"./globals":4,"./skate":8,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -1141,7 +1143,7 @@ if (typeof exports === "object") {
 // ES6
 module.exports = skate;
 },{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
-"use strict";
+
 
 /**
  * Checks {}.hasOwnProperty in a safe way.
@@ -1151,6 +1153,8 @@ module.exports = skate;
  *
  * @returns {Boolean}
  */
+"use strict";
+
 exports.hasOwn = hasOwn;
 
 /**

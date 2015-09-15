@@ -204,7 +204,7 @@ var previousSkate = window.skate;
 skate.noConflict = function () {
   window.skate = previousSkate;
   return this;
-}
+};
 
 // Always export the global. We don't know how consumers are using it and what
 // their environments are like. Doing this affords them the flexibility of
