@@ -7,9 +7,9 @@ var gulpKarma = require('gulp-karma');
 
 module.exports = function (opts) {
   var args = [];
-  opts = assign(opts, {
-    browsers: ['Firefox']
-  });
+  opts = assign({
+    browsers: 'Chrome,Firefox'
+  }, opts);
 
   if (opts.grep) {
     args.push('--grep');
@@ -24,7 +24,7 @@ module.exports = function (opts) {
     .pipe(gulp.dest('.tmp'))
     .pipe(gulpKarma({
       autoWatch: opts.watch,
-      browsers: opts.browsers,
+      browsers: opts.browsers.split(','),
       client: { args: args },
       frameworks: ['mocha', 'sinon-chai']
     }));
