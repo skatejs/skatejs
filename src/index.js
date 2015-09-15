@@ -62,11 +62,11 @@ var initDocument = debounce(function () {
 });
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent, isNative;
+  var Ctor, CtorParent;
   var opts = makeOptions(userOptions);
 
   CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
-  isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
+  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
@@ -86,13 +86,12 @@ function skate (id, userOptions) {
   opts.id = id;
 
   // Make a constructor for the definition.
-  if (isNative) {
-    Ctor = document.registerElement(id, opts);
+  if (opts.isNative) {
+    Ctor = document.registerElement(id, {
+      extends: opts.extends || undefined,
+      prototype: opts.prototype
+    });
   } else {
-
-    // Store the check for a native custom element so we don't need to re-calculate it later.
-    opts.isNative = isNative;
-
     Ctor = elementConstructor(opts);
     initDocument();
     documentObserver.register();
