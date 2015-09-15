@@ -64,9 +64,9 @@ export default function (opts) {
 
     isNative || patchAttributeMethods(this);
     isNative || prototype.call(this);
+    opts.created && created.call(this);
     properties.call(this, opts.properties);
     events.call(this, opts.events);
-    opts.created && created.call(this);
     template(this, opts);
     callCreatedOnDescendants(this, opts.id);
     opts.ready && ready.call(this);
