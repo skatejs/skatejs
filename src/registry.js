@@ -1,7 +1,7 @@
 'use strict';
 
 import globals from './globals';
-import skate from './skate';
+import { types } from './constants.js';
 import {
   hasOwn
 } from './utils';
@@ -55,7 +55,7 @@ export default {
     var definition;
     var tagToExtend;
 
-    if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+    if (isDefinitionOfType(isAttrOrTag, types.TAG)) {
       definition = globals.registry[isAttrOrTag];
       tagToExtend = definition.extends;
 
@@ -71,7 +71,7 @@ export default {
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
-      if (isDefinitionOfType(attr, skate.types.ATTR)) {
+      if (isDefinitionOfType(attr, types.ATTR)) {
         definition = globals.registry[attr];
         tagToExtend = definition.extends;
 
@@ -87,7 +87,7 @@ export default {
     for (var b = 0; b < classListLen; b++) {
       var className = classList[b];
 
-      if (isDefinitionOfType(className, skate.types.CLASS)) {
+      if (isDefinitionOfType(className, types.CLASS)) {
         definition = globals.registry[className];
         tagToExtend = definition.extends;
 

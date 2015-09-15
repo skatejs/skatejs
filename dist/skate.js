@@ -8,6 +8,16 @@ Object.defineProperty(exports, "__esModule", {
 
 var ATTR_IGNORE = "data-skate-ignore";
 exports.ATTR_IGNORE = ATTR_IGNORE;
+var types = {
+  ANY: "act",
+  ATTR: "a",
+  CLASS: "c",
+  NOATTR: "ct",
+  NOCLASS: "at",
+  NOTAG: "ac",
+  TAG: "t"
+};
+exports.types = types;
 },{}],2:[function(require,module,exports){
 "use strict";
 
@@ -788,9 +798,9 @@ var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["defau
 
 var globals = _interopRequire(require("./globals"));
 
-var hasOwn = require("./utils").hasOwn;
+var types = require("./constants.js").types;
 
-var skate = _interopRequire(require("./skate"));
+var hasOwn = require("./utils").hasOwn;
 
 /**
  * Returns the class list for the specified element.
@@ -841,7 +851,7 @@ module.exports = {
     var definition;
     var tagToExtend;
 
-    if (isDefinitionOfType(isAttrOrTag, skate.types.TAG)) {
+    if (isDefinitionOfType(isAttrOrTag, types.TAG)) {
       definition = globals.registry[isAttrOrTag];
       tagToExtend = definition["extends"];
 
@@ -857,7 +867,7 @@ module.exports = {
     for (var a = 0; a < attrsLen; a++) {
       var attr = attrs[a].nodeName;
 
-      if (isDefinitionOfType(attr, skate.types.ATTR)) {
+      if (isDefinitionOfType(attr, types.ATTR)) {
         definition = globals.registry[attr];
         tagToExtend = definition["extends"];
 
@@ -873,7 +883,7 @@ module.exports = {
     for (var b = 0; b < classListLen; b++) {
       var className = classList[b];
 
-      if (isDefinitionOfType(className, skate.types.CLASS)) {
+      if (isDefinitionOfType(className, types.CLASS)) {
         definition = globals.registry[className];
         tagToExtend = definition["extends"];
 
@@ -908,7 +918,7 @@ module.exports = {
     return this;
   }
 };
-},{"./globals":4,"./skate":8,"./utils":9}],8:[function(require,module,exports){
+},{"./constants.js":1,"./globals":4,"./utils":9}],8:[function(require,module,exports){
 "use strict";
 
 var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
@@ -928,6 +938,8 @@ var debounce = _utils.debounce;
 var inherit = _utils.inherit;
 
 var version = _interopRequire(require("./version"));
+
+var types = require("./constants").types;
 
 // IE <= 10 can fire "interactive" too early (#243).
 var isOldIE = !!document.attachEvent; // attachEvent was removed in IE11.
@@ -1034,7 +1046,7 @@ function skate(id, definition) {
 
   // Only make and return an element constructor if it can be used as a custom
   // element.
-  if (definition.type.indexOf(skate.types.TAG) > -1) {
+  if (definition.type.indexOf(types.TAG) > -1) {
     return makeElementConstructor(definition);
   }
 }
@@ -1063,15 +1075,7 @@ skate.init = function (nodes) {
 };
 
 // Restriction type constants.
-skate.types = {
-  ANY: "act",
-  ATTR: "a",
-  CLASS: "c",
-  NOATTR: "ct",
-  NOCLASS: "at",
-  NOTAG: "ac",
-  TAG: "t"
-};
+skate.types = types;
 
 // Makes checking the version easy when debugging.
 skate.version = version;
@@ -1107,7 +1111,7 @@ skate.defaults = {
   template: undefined,
 
   // The type of bindings to allow.
-  type: skate.types.ANY,
+  type: types.ANY,
 
   // The attribute name to remove after calling the created() callback.
   unresolvedAttribute: "unresolved"
@@ -1142,7 +1146,7 @@ if (typeof exports === "object") {
 
 // ES6
 module.exports = skate;
-},{"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
+},{"./constants":1,"./document-observer":3,"./lifecycle":5,"./registry":7,"./utils":9,"./version":10}],9:[function(require,module,exports){
 
 
 /**
