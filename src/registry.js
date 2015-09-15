@@ -1,6 +1,7 @@
 'use strict';
 
 import globals from './globals';
+import skate from './skate';
 import {
   hasOwn
 } from './utils';
