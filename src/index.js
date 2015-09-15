@@ -62,19 +62,16 @@ var initDocument = debounce(function () {
 });
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent, isNative;
+  var Ctor, CtorParent;
   var opts = makeOptions(userOptions);
 
   CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
-  isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
+  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
     opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
   }
-
-  // Native doesn't like if you pass a falsy value. Must be undefined.
-  opts.extends = opts.extends || undefined;
 
   // Extend behaviour of existing callbacks.
   opts.prototype.createdCallback = created(opts);
@@ -85,12 +82,12 @@ function skate (id, userOptions) {
   // Ensure the ID can be retrieved from the options or constructor.
   opts.id = id;
 
-  // Store the check for a native custom element so we don't need to re-calculate it later.
-  opts.isNative = isNative;
-
   // Make a constructor for the definition.
-  if (isNative) {
-    Ctor = document.registerElement(id, opts);
+  if (opts.isNative) {
+    Ctor = document.registerElement(id, {
+      extends: opts.extends || undefined,
+      prototype: opts.prototype
+    });
   } else {
     Ctor = elementConstructor(opts);
     initDocument();
