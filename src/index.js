@@ -62,11 +62,12 @@ var initDocument = debounce(function () {
 });
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent;
-  var opts = makeOptions(userOptions);
+  let Ctor, CtorParent;
+  let opts = makeOptions(userOptions);
 
-  CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
+  opts.id = id;
   opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
+  CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
@@ -78,9 +79,6 @@ function skate (id, userOptions) {
   opts.prototype.attachedCallback = attached(opts);
   opts.prototype.detachedCallback = detached(opts);
   opts.prototype.attributeChangedCallback = attribute(opts);
-
-  // Ensure the ID can be retrieved from the options or constructor.
-  opts.id = id;
 
   // Make a constructor for the definition.
   if (opts.isNative) {
