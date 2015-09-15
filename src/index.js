@@ -20,7 +20,7 @@ import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function makeOptions (userOptions) {
-  var options = assignSafe({}, defaults);
+  let options = assignSafe({}, defaults);
 
   // Copy over all standard options if the user has defined them.
   for (let name in defaults) {
@@ -38,18 +38,18 @@ function makeOptions (userOptions) {
 }
 
 function makeNonNewableWrapper (Ctor) {
-  var CtorWrapper = function (props = {}) {
+  let CtorWrapper = function (props = {}) {
     return assign(new Ctor(), props);
   };
   CtorWrapper.prototype = Ctor.prototype;
   return CtorWrapper;
 }
 
-var HTMLElement = window.HTMLElement;
-var initDocument = debounce(function () {
+let HTMLElement = window.HTMLElement;
+let initDocument = debounce(function () {
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    var components = registry.find(element);
-    var componentsLength = components.length;
+    let components = registry.find(element);
+    let componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
       created(components[a]).call(element);
