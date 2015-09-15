@@ -43,12 +43,13 @@ function callCreatedOnDescendants (elem, id) {
   });
 }
 
-function callUpdateOnProperties (opts) {
+function createCallUpdateOnProperties (opts) {
   let props = opts.properties || {};
   let names = Object.keys(props);
   return function (elem) {
     names.forEach(function (name) {
-      let update = props[name].update;
+      let prop = props[name];
+      let update = prop && prop.update;
       update && update.call(elem, elem[name]);
     });
   };
@@ -62,7 +63,7 @@ function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
 export default function (opts) {
   let created = opts.created;
   let isNative = opts.isNative;
-  let initProps = callUpdateOnProperties(opts);
+  let callUpdateOnProperties = createCallUpdateOnProperties(opts);
   let prototype = applyPrototype(opts.prototype);
   let ready = opts.ready;
 
@@ -79,7 +80,7 @@ export default function (opts) {
     events.call(this, opts.events);
     opts.created && created.call(this);
     callCreatedOnDescendants(this, opts.id);
-    initProps(this);
+    callUpdateOnProperties(this);
     opts.ready && ready.call(this);
     isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
   };
