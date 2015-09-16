@@ -209,6 +209,32 @@ describe('lifecycle/properties', function () {
     expect(el2.prop1).to.equal('test2');
   });
 
+  it('initial property values should not leak to other elements', function() {
+    let { safe: tagName } = helperElement();
+
+    skate(tagName, {
+      properties: {
+        foo: {
+          attr: true,
+          update: function (value) {
+            this.textContent = value;
+          }
+        }
+      }
+    });
+
+    skate.init(helperFixture(`
+      <${tagName} foo="foo"></${tagName}>
+      <${tagName} foo="bar"></${tagName}>
+      <${tagName}></${tagName}>
+    `));
+
+    let elements = helperFixture().querySelectorAll(tagName);
+    expect(elements[0].textContent).to.equal('foo');
+    expect(elements[1].textContent).to.equal('bar');
+    expect(elements[2].textContent).to.equal('');
+  });
+
   describe('removing attributes when property is set', function () {
     function setup () {
       skate(elem.safe, {
@@ -240,7 +266,7 @@ describe('lifecycle/properties', function () {
       expect(el.hasAttribute('prop1')).to.equal(false);
     });
 
-    it('passing an empty string shoud not remove the linked attribute', function () {
+    it('passing an empty string should not remove the linked attribute', function () {
       let el = setup();
       el.prop1 = '';
       expect(el.getAttribute('prop1')).to.equal('');
