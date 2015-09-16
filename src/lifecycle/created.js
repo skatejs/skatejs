@@ -4,7 +4,7 @@ import events from './events';
 import properties from './properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
-import template from './template';
+import render from './render';
 import walkTree from '../util/walk-tree';
 
 let elProto = window.Element.prototype;
@@ -80,7 +80,7 @@ export default function (opts) {
     opts.created && created.call(this);
     properties.call(this, opts.properties);
     events.call(this, opts.events);
-    template(this, opts);
+    render(this, opts);
     callCreatedOnDescendants(this, opts.id);
     callUpdateOnProperties(this);
     opts.ready && ready.call(this);

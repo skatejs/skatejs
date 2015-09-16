@@ -43,10 +43,10 @@ describe('lifecycle/created ordering parent -> descendants', function () {
         this.someNonStandardProperty = 'ready';
         order.push('ready');
       },
-      template () {
+      render () {
         skate.emit(this, 'someNonStandardEvent');
-        this.someNonStandardProperty = 'template';
-        order.push('template');
+        this.someNonStandardProperty = 'render';
+        order.push('render');
       }
     })();
 
@@ -54,9 +54,9 @@ describe('lifecycle/created ordering parent -> descendants', function () {
     expect(order[0]).to.equal('prototype');
     expect(order[1]).to.equal('created');
     expect(order[2]).to.equal('events');
-    expect(order[3]).to.equal('properties.template');
-    expect(order[4]).to.equal('template');
-    expect(order[5]).to.equal('properties.template');
+    expect(order[3]).to.equal('properties.render');
+    expect(order[4]).to.equal('render');
+    expect(order[5]).to.equal('properties.render');
     expect(order[6]).to.equal('properties.ready');
     expect(order[7]).to.equal('ready');
   });

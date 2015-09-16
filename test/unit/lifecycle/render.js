@@ -1,11 +1,11 @@
 import elem from '../../lib/element';
 import skate from '../../../src/index';
 
-describe('lifecycle/template', function () {
+describe('lifecycle/render', function () {
   it('should be called', function () {
     let called = false;
     elem().skate({
-      template () {
+      render () {
         called = true;
       }
     })();
@@ -18,12 +18,12 @@ describe('lifecycle/template', function () {
       created () {
         called.push('created');
       },
-      template () {
-        called.push('template');
+      render () {
+        called.push('render');
       }
     })();
     expect(called[0]).to.equal('created');
-    expect(called[1]).to.equal('template');
+    expect(called[1]).to.equal('render');
   });
 
   it('should get called before descendants are initialised', function () {
@@ -31,7 +31,7 @@ describe('lifecycle/template', function () {
     let elem1 = elem();
     let elem2 = elem();
     elem1.skate({
-      template () {
+      render () {
         called.push('elem1');
       }
     });
@@ -48,14 +48,14 @@ describe('lifecycle/template', function () {
   it('should get called before ready', function () {
     let called = [];
     elem().skate({
-      template () {
-        called.push('template');
+      render () {
+        called.push('render');
       },
       ready () {
         called.push('ready');
       }
     })();
-    expect(called[0]).to.equal('template');
+    expect(called[0]).to.equal('render');
     expect(called[1]).to.equal('ready');
   });
 
@@ -65,7 +65,7 @@ describe('lifecycle/template', function () {
       created () {
         this.setAttribute('resolved', '');
       },
-      template () {
+      render () {
         called = true;
       }
     })();
