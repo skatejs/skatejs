@@ -1,5 +1,5 @@
 // src/util/assign.js
-__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
+__034bba69dcb153979512026016cf1267 = (function () {
   var module = {
     exports: {}
   };
@@ -29,7 +29,7 @@ __d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
   return module.exports;
 }).call(this);
 // src/util/create-from-html.js
-__883fff2d161a4239b3efea9bb85204e0 = (function () {
+__24eba7325ef5a9f7f75206fb859ab1a6 = (function () {
   var module = {
     exports: {}
   };
@@ -86,7 +86,7 @@ __883fff2d161a4239b3efea9bb85204e0 = (function () {
   return module.exports;
 }).call(this);
 // src/util/data.js
-__18291b0452e01f65cf28d6695040736a = (function () {
+__215a8daa4eb986b5b259ae208d9c9fa8 = (function () {
   var module = {
     exports: {}
   };
@@ -110,7 +110,7 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 // src/global/vars.js
-__dd77578495c1d19b0e115627616ea63a = (function () {
+__3cdb322c13e5f095322724d97745c78d = (function () {
   var module = {
     exports: {}
   };
@@ -137,7 +137,7 @@ __dd77578495c1d19b0e115627616ea63a = (function () {
   return module.exports;
 }).call(this);
 // src/util/has-own.js
-__6d7878404f872c72787f01cd3e06dd21 = (function () {
+__a3c1195d526c44e03da4d6f6b70aff26 = (function () {
   var module = {
     exports: {}
   };
@@ -158,7 +158,7 @@ __6d7878404f872c72787f01cd3e06dd21 = (function () {
   return module.exports;
 }).call(this);
 // src/type/element.js
-__43714db526496b3dd90353996f6dce09 = (function () {
+__44cb5bdcedde6a1b8f3c44a130afb60d = (function () {
   var module = {
     exports: {}
   };
@@ -201,7 +201,7 @@ __43714db526496b3dd90353996f6dce09 = (function () {
   return module.exports;
 }).call(this);
 // src/global/registry.js
-__9cff21a9f41cc9ecfe56139e1040c954 = (function () {
+__d8c0f1f68b71a61c30d7eda3f51cfe0b = (function () {
   var module = {
     exports: {}
   };
@@ -215,15 +215,15 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _vars = __dd77578495c1d19b0e115627616ea63a;
+  var _vars = __3cdb322c13e5f095322724d97745c78d;
   
   var _vars2 = _interopRequireDefault(_vars);
   
-  var _utilHasOwn = __6d7878404f872c72787f01cd3e06dd21;
+  var _utilHasOwn = __a3c1195d526c44e03da4d6f6b70aff26;
   
   var _utilHasOwn2 = _interopRequireDefault(_utilHasOwn);
   
-  var _typeElement = __43714db526496b3dd90353996f6dce09;
+  var _typeElement = __44cb5bdcedde6a1b8f3c44a130afb60d;
   
   var _typeElement2 = _interopRequireDefault(_typeElement);
   
@@ -270,7 +270,7 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   return module.exports;
 }).call(this);
 // src/util/ignored.js
-__092f8936e5006bddcb3baf24320a5a06 = (function () {
+__a98c758213a5d57f5a988f42fd802b8c = (function () {
   var module = {
     exports: {}
   };
@@ -292,7 +292,7 @@ __092f8936e5006bddcb3baf24320a5a06 = (function () {
   return module.exports;
 }).call(this);
 // src/util/walk-tree.js
-__164e5750c20526cb74a9e443b730eeff = (function () {
+__9df260836a1b1d605c5ddac24aa13917 = (function () {
   var module = {
     exports: {}
   };
@@ -306,7 +306,7 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
+  var _ignored = __a98c758213a5d57f5a988f42fd802b8c;
   
   var _ignored2 = _interopRequireDefault(_ignored);
   
@@ -346,7 +346,7 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/attached.js
-__2b55a083f45c9ef157662a1dc1674218 = (function () {
+__aa947a1b83f4a10799f11f619b8e037f = (function () {
   var module = {
     exports: {}
   };
@@ -360,15 +360,15 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  var _utilData = __215a8daa4eb986b5b259ae208d9c9fa8;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
@@ -399,7 +399,7 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 // src/util/assign-safe.js
-__d9d26492984e649e5130081ad32bafd6 = (function () {
+__4733e4a8b9f5d8208f57d623f6613f6c = (function () {
   var module = {
     exports: {}
   };
@@ -432,7 +432,7 @@ __d9d26492984e649e5130081ad32bafd6 = (function () {
   return module.exports;
 }).call(this);
 // src/util/matches-selector.js
-__365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
+__a4bdc06d804802a393d090d796049981 = (function () {
   var module = {
     exports: {}
   };
@@ -463,7 +463,7 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/events.js
-__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
+__73a6c7ed1240e78c2a48fbfdc3e261a9 = (function () {
   var module = {
     exports: {}
   };
@@ -477,7 +477,7 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilMatchesSelector = __365bd8b7bbfb2b50d6dbfd830f0aa927;
+  var _utilMatchesSelector = __a4bdc06d804802a393d090d796049981;
   
   var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
   
@@ -535,7 +535,7 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   return module.exports;
 }).call(this);
 // src/util/dash-case.js
-__0cd264077c1ca567539d11e826d3c00e = (function () {
+__1a93c060999bff3e855758dad2704fa7 = (function () {
   var module = {
     exports: {}
   };
@@ -559,7 +559,7 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 // src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
+__97773fd81209e6f33120b08affbe7b0e = (function () {
   var module = {
     exports: {}
   };
@@ -587,7 +587,7 @@ __6f793202bae98770dbb2b598df7929ad = (function () {
   return module.exports;
 }).call(this);
 // src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+__b359927dfc87426749e0a1725c399b3f = (function () {
   var module = {
     exports: {}
   };
@@ -601,7 +601,7 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  var _utilElementContains = __97773fd81209e6f33120b08affbe7b0e;
   
   var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
   
@@ -689,7 +689,7 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/properties.js
-__dc805244a3f10da2e05ae57781968d52 = (function () {
+__9203e13b6f36ca26b469289752199c39 = (function () {
   var module = {
     exports: {}
   };
@@ -703,15 +703,15 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
+  var _utilDashCase = __1a93c060999bff3e855758dad2704fa7;
   
   var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
   
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  var _utilData = __215a8daa4eb986b5b259ae208d9c9fa8;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  var _apiEmit = __b359927dfc87426749e0a1725c399b3f;
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
@@ -750,14 +750,12 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
       // We report both new and old values;
       var newValue = prop.type ? prop.type(value) : value;
       var oldValue = internalValue;
+      internalValue = newValue;
   
       // Don't do anything if the values are the same.
       if (newValue === oldValue) {
         return;
       }
-  
-      // We only store the value internally if a getter isn't specified.
-      internalValue = newValue;
   
       // We check first to see if we're already updating the property from
       // the attribute. If we are, then there's no need to update the attribute
@@ -853,7 +851,7 @@ __dc805244a3f10da2e05ae57781968d52 = (function () {
   return module.exports;
 }).call(this);
 // src/util/protos.js
-__1d11a28624d684874cb270f137cc0122 = (function () {
+__045fd6618a25021574f48d1649f7d6d4 = (function () {
   var module = {
     exports: {}
   };
@@ -880,7 +878,7 @@ __1d11a28624d684874cb270f137cc0122 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/created.js
-__fe1aef0db5b664068b470b21f7c754a5 = (function () {
+__1f947a75fdbe7749687fe46bf6e1d60e = (function () {
   var module = {
     exports: {}
   };
@@ -894,31 +892,31 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
+  var _utilAssignSafe = __4733e4a8b9f5d8208f57d623f6613f6c;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
   
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  var _utilData = __215a8daa4eb986b5b259ae208d9c9fa8;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _lifecycleEvents = __d48fcc3ecf3585518bbce659c1ba4116;
+  var _lifecycleEvents = __73a6c7ed1240e78c2a48fbfdc3e261a9;
   
   var _lifecycleEvents2 = _interopRequireDefault(_lifecycleEvents);
   
-  var _lifecycleProperties = __dc805244a3f10da2e05ae57781968d52;
+  var _lifecycleProperties = __9203e13b6f36ca26b469289752199c39;
   
   var _lifecycleProperties2 = _interopRequireDefault(_lifecycleProperties);
   
-  var _utilProtos = __1d11a28624d684874cb270f137cc0122;
+  var _utilProtos = __045fd6618a25021574f48d1649f7d6d4;
   
   var _utilProtos2 = _interopRequireDefault(_utilProtos);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
@@ -963,6 +961,22 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     });
   }
   
+  function createCallUpdateOnProperties(opts) {
+    var props = opts.properties || {};
+    var names = Object.keys(props);
+    return function (elem) {
+      names.forEach(function (name) {
+        var prop = props[name];
+        var update = prop && prop.update;
+        var val = elem[name];
+        if (prop && prop.type) {
+          val = prop.type === Boolean && elem.hasAttribute(typeof prop.attr === 'string' ? prop.attr : name) || prop.type(val);
+        }
+        update && update.call(elem, val);
+      });
+    };
+  }
+  
   function markAsResolved(elem, resolvedAttribute, unresolvedAttribute) {
     elem.removeAttribute(unresolvedAttribute);
     elem.setAttribute(resolvedAttribute, '');
@@ -971,6 +985,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   exports['default'] = function (opts) {
     var created = opts.created;
     var isNative = opts.isNative;
+    var callUpdateOnProperties = createCallUpdateOnProperties(opts);
     var prototype = applyPrototype(opts.prototype);
     var ready = opts.ready;
   
@@ -987,6 +1002,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       _lifecycleEvents2['default'].call(this, opts.events);
       opts.created && created.call(this);
       callCreatedOnDescendants(this, opts.id);
+      callUpdateOnProperties(this);
       opts.ready && ready.call(this);
       isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
     };
@@ -997,7 +1013,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   return module.exports;
 }).call(this);
 // src/api/init.js
-__3add36046399fead5a83243849207ed7 = (function () {
+__06e29e46909e467d7e2981534433c718 = (function () {
   var module = {
     exports: {}
   };
@@ -1011,23 +1027,23 @@ __3add36046399fead5a83243849207ed7 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _lifecycleAttached = __2b55a083f45c9ef157662a1dc1674218;
+  var _lifecycleAttached = __aa947a1b83f4a10799f11f619b8e037f;
   
   var _lifecycleAttached2 = _interopRequireDefault(_lifecycleAttached);
   
-  var _lifecycleCreated = __fe1aef0db5b664068b470b21f7c754a5;
+  var _lifecycleCreated = __1f947a75fdbe7749687fe46bf6e1d60e;
   
   var _lifecycleCreated2 = _interopRequireDefault(_lifecycleCreated);
   
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  var _utilElementContains = __97773fd81209e6f33120b08affbe7b0e;
   
   var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
@@ -1057,7 +1073,7 @@ __3add36046399fead5a83243849207ed7 = (function () {
   return module.exports;
 }).call(this);
 // src/api/create.js
-__1675a7174b713323cc232370699a2714 = (function () {
+__5aebd7b360f6035fcb5eae3cf167aa0c = (function () {
   var module = {
     exports: {}
   };
@@ -1071,19 +1087,19 @@ __1675a7174b713323cc232370699a2714 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _utilAssign = __034bba69dcb153979512026016cf1267;
   
   var _utilAssign2 = _interopRequireDefault(_utilAssign);
   
-  var _utilCreateFromHtml = __883fff2d161a4239b3efea9bb85204e0;
+  var _utilCreateFromHtml = __24eba7325ef5a9f7f75206fb859ab1a6;
   
   var _utilCreateFromHtml2 = _interopRequireDefault(_utilCreateFromHtml);
   
-  var _init = __3add36046399fead5a83243849207ed7;
+  var _init = __06e29e46909e467d7e2981534433c718;
   
   var _init2 = _interopRequireDefault(_init);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
@@ -1102,7 +1118,7 @@ __1675a7174b713323cc232370699a2714 = (function () {
   return module.exports;
 }).call(this);
 // src/api/fragment.js
-__ef86f48ff9050407fed1e142d9fe2629 = (function () {
+__b52416022c1e1bb0b8d0e9a0d4f9b47b = (function () {
   var module = {
     exports: {}
   };
@@ -1116,11 +1132,11 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _init = __3add36046399fead5a83243849207ed7;
+  var _init = __06e29e46909e467d7e2981534433c718;
   
   var _init2 = _interopRequireDefault(_init);
   
-  var _utilCreateFromHtml = __883fff2d161a4239b3efea9bb85204e0;
+  var _utilCreateFromHtml = __24eba7325ef5a9f7f75206fb859ab1a6;
   
   var _utilCreateFromHtml2 = _interopRequireDefault(_utilCreateFromHtml);
   
@@ -1168,7 +1184,7 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   return module.exports;
 }).call(this);
 // src/api/version.js
-__662bde51c096e9d79bf327311ea178e0 = (function () {
+__d7460f0e422a37e1a7fc24ec178e4d71 = (function () {
   var module = {
     exports: {}
   };
@@ -1185,7 +1201,7 @@ __662bde51c096e9d79bf327311ea178e0 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/attribute.js
-__9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
+__63c1f23fc5efbc0955d713fed60ee665 = (function () {
   var module = {
     exports: {}
   };
@@ -1199,7 +1215,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  var _utilData = __215a8daa4eb986b5b259ae208d9c9fa8;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
@@ -1228,7 +1244,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   return module.exports;
 }).call(this);
 // src/util/debounce.js
-__afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
+__b549e9c39bdd678050fb5dddb32f9781 = (function () {
   var module = {
     exports: {}
   };
@@ -1265,7 +1281,7 @@ __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   return module.exports;
 }).call(this);
 // src/defaults.js
-__46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
+__645440f8123d3f52f948ad81734055e9 = (function () {
   var module = {
     exports: {}
   };
@@ -1279,7 +1295,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _typeElement = __43714db526496b3dd90353996f6dce09;
+  var _typeElement = __44cb5bdcedde6a1b8f3c44a130afb60d;
   
   var _typeElement2 = _interopRequireDefault(_typeElement);
   
@@ -1332,7 +1348,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/detached.js
-__8e93439e8a566d1586c9903a75a6a785 = (function () {
+__45656e87bb6d0fdcb19110dccb365d03 = (function () {
   var module = {
     exports: {}
   };
@@ -1346,15 +1362,15 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  var _utilData = __215a8daa4eb986b5b259ae208d9c9fa8;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
@@ -1385,7 +1401,7 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   return module.exports;
 }).call(this);
 // src/util/get-closest-ignored-element.js
-__a56dab24700df352eb84caec3fe615e5 = (function () {
+__be4cf76d43d442cf553a377fd4406fa8 = (function () {
   var module = {
     exports: {}
   };
@@ -1399,7 +1415,7 @@ __a56dab24700df352eb84caec3fe615e5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
+  var _ignored = __a98c758213a5d57f5a988f42fd802b8c;
   
   var _ignored2 = _interopRequireDefault(_ignored);
   
@@ -1420,7 +1436,7 @@ __a56dab24700df352eb84caec3fe615e5 = (function () {
   return module.exports;
 }).call(this);
 // src/global/document-observer.js
-__d8200645c4d96aee6940034d9c030d1f = (function () {
+__98461b36e4f8a93b23b917015ba8e013 = (function () {
   var module = {
     exports: {}
   };
@@ -1434,19 +1450,19 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _vars = __dd77578495c1d19b0e115627616ea63a;
+  var _vars = __3cdb322c13e5f095322724d97745c78d;
   
   var _vars2 = _interopRequireDefault(_vars);
   
-  var _utilGetClosestIgnoredElement = __a56dab24700df352eb84caec3fe615e5;
+  var _utilGetClosestIgnoredElement = __be4cf76d43d442cf553a377fd4406fa8;
   
   var _utilGetClosestIgnoredElement2 = _interopRequireDefault(_utilGetClosestIgnoredElement);
   
-  var _registry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _registry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _registry2 = _interopRequireDefault(_registry);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
@@ -1529,7 +1545,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   return module.exports;
 }).call(this);
 // src/util/element-constructor.js
-__cdf80614962dbe37e0456f37c35fe468 = (function () {
+__e7294cbe499255967719a22237dce52b = (function () {
   var module = {
     exports: {}
   };
@@ -1576,7 +1592,7 @@ __cdf80614962dbe37e0456f37c35fe468 = (function () {
   return module.exports;
 }).call(this);
 // src/support/custom-elements.js
-__c6f5e18624750ce93a74df6369c85ef0 = (function () {
+__26dfb5025c821c9d8bfe394e6ecc76df = (function () {
   var module = {
     exports: {}
   };
@@ -1597,7 +1613,7 @@ __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   return module.exports;
 }).call(this);
 // src/support/valid-custom-element.js
-__6e1dfed2b03894ef63a4b65d5038d223 = (function () {
+__fd7d0a0f6a811a4f7337fd79efac02fc = (function () {
   var module = {
     exports: {}
   };
@@ -1618,7 +1634,7 @@ __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   return module.exports;
 }).call(this);
 // src/index.js
-__abb93179bdc0236a6e77d3eae07c991c = (function () {
+__463caf43c0e7b4d3b58c86b511303fa0 = (function () {
   var module = {
     exports: {}
   };
@@ -1632,83 +1648,83 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiCreate = __1675a7174b713323cc232370699a2714;
+  var _apiCreate = __5aebd7b360f6035fcb5eae3cf167aa0c;
   
   var _apiCreate2 = _interopRequireDefault(_apiCreate);
   
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  var _apiEmit = __b359927dfc87426749e0a1725c399b3f;
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
-  var _apiFragment = __ef86f48ff9050407fed1e142d9fe2629;
+  var _apiFragment = __b52416022c1e1bb0b8d0e9a0d4f9b47b;
   
   var _apiFragment2 = _interopRequireDefault(_apiFragment);
   
-  var _apiInit = __3add36046399fead5a83243849207ed7;
+  var _apiInit = __06e29e46909e467d7e2981534433c718;
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
   
-  var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
+  var _apiVersion = __d7460f0e422a37e1a7fc24ec178e4d71;
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _utilAssign = __034bba69dcb153979512026016cf1267;
   
   var _utilAssign2 = _interopRequireDefault(_utilAssign);
   
-  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
+  var _utilAssignSafe = __4733e4a8b9f5d8208f57d623f6613f6c;
   
   var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
   
-  var _lifecycleAttached = __2b55a083f45c9ef157662a1dc1674218;
+  var _lifecycleAttached = __aa947a1b83f4a10799f11f619b8e037f;
   
   var _lifecycleAttached2 = _interopRequireDefault(_lifecycleAttached);
   
-  var _lifecycleAttribute = __9f17962f9aa326a94ed3e5d6f6b172e6;
+  var _lifecycleAttribute = __63c1f23fc5efbc0955d713fed60ee665;
   
   var _lifecycleAttribute2 = _interopRequireDefault(_lifecycleAttribute);
   
-  var _lifecycleCreated = __fe1aef0db5b664068b470b21f7c754a5;
+  var _lifecycleCreated = __1f947a75fdbe7749687fe46bf6e1d60e;
   
   var _lifecycleCreated2 = _interopRequireDefault(_lifecycleCreated);
   
-  var _utilDebounce = __afcda96357b2c6b7e23ccb9ac8b92f43;
+  var _utilDebounce = __b549e9c39bdd678050fb5dddb32f9781;
   
   var _utilDebounce2 = _interopRequireDefault(_utilDebounce);
   
-  var _defaults = __46b087e8c15b2e0ebc2c4d4cbc36d975;
+  var _defaults = __645440f8123d3f52f948ad81734055e9;
   
   var _defaults2 = _interopRequireDefault(_defaults);
   
-  var _lifecycleDetached = __8e93439e8a566d1586c9903a75a6a785;
+  var _lifecycleDetached = __45656e87bb6d0fdcb19110dccb365d03;
   
   var _lifecycleDetached2 = _interopRequireDefault(_lifecycleDetached);
   
-  var _globalDocumentObserver = __d8200645c4d96aee6940034d9c030d1f;
+  var _globalDocumentObserver = __98461b36e4f8a93b23b917015ba8e013;
   
   var _globalDocumentObserver2 = _interopRequireDefault(_globalDocumentObserver);
   
-  var _utilElementConstructor = __cdf80614962dbe37e0456f37c35fe468;
+  var _utilElementConstructor = __e7294cbe499255967719a22237dce52b;
   
   var _utilElementConstructor2 = _interopRequireDefault(_utilElementConstructor);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _supportCustomElements = __c6f5e18624750ce93a74df6369c85ef0;
+  var _supportCustomElements = __26dfb5025c821c9d8bfe394e6ecc76df;
   
   var _supportCustomElements2 = _interopRequireDefault(_supportCustomElements);
   
-  var _typeElement = __43714db526496b3dd90353996f6dce09;
+  var _typeElement = __44cb5bdcedde6a1b8f3c44a130afb60d;
   
   var _typeElement2 = _interopRequireDefault(_typeElement);
   
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
-  var _supportValidCustomElement = __6e1dfed2b03894ef63a4b65d5038d223;
+  var _supportValidCustomElement = __fd7d0a0f6a811a4f7337fd79efac02fc;
   
   var _supportValidCustomElement2 = _interopRequireDefault(_supportValidCustomElement);
   
@@ -1757,19 +1773,18 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   });
   
   function skate(id, userOptions) {
-    var Ctor, CtorParent, isNative;
+    var Ctor = undefined,
+        CtorParent = undefined;
     var opts = makeOptions(userOptions);
   
+    opts.id = id;
+    opts.isNative = opts.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(id);
     CtorParent = opts['extends'] ? document.createElement(opts['extends']).constructor : HTMLElement;
-    isNative = opts.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(id);
   
     // Inherit from parent prototype.
     if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
       opts.prototype = (0, _utilAssignSafe2['default'])(Object.create(CtorParent.prototype), opts.prototype);
     }
-  
-    // Native doesn't like if you pass a falsy value. Must be undefined.
-    opts['extends'] = opts['extends'] || undefined;
   
     // Extend behaviour of existing callbacks.
     opts.prototype.createdCallback = (0, _lifecycleCreated2['default'])(opts);
@@ -1777,15 +1792,12 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     opts.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(opts);
     opts.prototype.attributeChangedCallback = (0, _lifecycleAttribute2['default'])(opts);
   
-    // Ensure the ID can be retrieved from the options or constructor.
-    opts.id = id;
-  
-    // Store the check for a native custom element so we don't need to re-calculate it later.
-    opts.isNative = isNative;
-  
     // Make a constructor for the definition.
-    if (isNative) {
-      Ctor = document.registerElement(id, opts);
+    if (opts.isNative) {
+      Ctor = document.registerElement(id, {
+        'extends': opts['extends'] || undefined,
+        prototype: opts.prototype
+      });
     } else {
       Ctor = (0, _utilElementConstructor2['default'])(opts);
       initDocument();
@@ -1812,7 +1824,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   return module.exports;
 }).call(this);
 // src/global.js
-__9a43120147a4f5a325d55b702c284d36 = (function () {
+__99361808da1b0f6b886d6f11257e7232 = (function () {
   var module = {
     exports: {}
   };
@@ -1826,7 +1838,7 @@ __9a43120147a4f5a325d55b702c284d36 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _index = __abb93179bdc0236a6e77d3eae07c991c;
+  var _index = __463caf43c0e7b4d3b58c86b511303fa0;
   
   var _index2 = _interopRequireDefault(_index);
   

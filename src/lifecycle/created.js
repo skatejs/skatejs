@@ -51,7 +51,11 @@ function createCallUpdateOnProperties (opts) {
     names.forEach(function (name) {
       let prop = props[name];
       let update = prop && prop.update;
-      update && update.call(elem, elem[name]);
+      let val = elem[name];
+      if (prop && prop.type) {
+        val = (prop.type === Boolean && elem.hasAttribute(typeof prop.attr === 'string' ? prop.attr : name)) || prop.type(val);
+      }
+      update && update.call(elem, val);
     });
   };
 }
