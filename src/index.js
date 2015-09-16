@@ -20,7 +20,7 @@ import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function makeOptions (userOptions) {
-  var options = assignSafe({}, defaults);
+  let options = assignSafe({}, defaults);
 
   // Copy over all standard options if the user has defined them.
   for (let name in defaults) {
@@ -38,18 +38,18 @@ function makeOptions (userOptions) {
 }
 
 function makeNonNewableWrapper (Ctor) {
-  var CtorWrapper = function (props = {}) {
+  let CtorWrapper = function (props = {}) {
     return assign(new Ctor(), props);
   };
   CtorWrapper.prototype = Ctor.prototype;
   return CtorWrapper;
 }
 
-var HTMLElement = window.HTMLElement;
-var initDocument = debounce(function () {
+let HTMLElement = window.HTMLElement;
+let initDocument = debounce(function () {
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    var components = registry.find(element);
-    var componentsLength = components.length;
+    let components = registry.find(element);
+    let componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
       created(components[a]).call(element);
@@ -62,19 +62,17 @@ var initDocument = debounce(function () {
 });
 
 function skate (id, userOptions) {
-  var Ctor, CtorParent, isNative;
-  var opts = makeOptions(userOptions);
+  let Ctor, CtorParent;
+  let opts = makeOptions(userOptions);
 
+  opts.id = id;
+  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
   CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
-  isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
 
   // Inherit from parent prototype.
   if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
     opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
   }
-
-  // Native doesn't like if you pass a falsy value. Must be undefined.
-  opts.extends = opts.extends || undefined;
 
   // Extend behaviour of existing callbacks.
   opts.prototype.createdCallback = created(opts);
@@ -82,15 +80,12 @@ function skate (id, userOptions) {
   opts.prototype.detachedCallback = detached(opts);
   opts.prototype.attributeChangedCallback = attribute(opts);
 
-  // Ensure the ID can be retrieved from the options or constructor.
-  opts.id = id;
-
-  // Store the check for a native custom element so we don't need to re-calculate it later.
-  opts.isNative = isNative;
-
   // Make a constructor for the definition.
-  if (isNative) {
-    Ctor = document.registerElement(id, opts);
+  if (opts.isNative) {
+    Ctor = document.registerElement(id, {
+      extends: opts.extends || undefined,
+      prototype: opts.prototype
+    });
   } else {
     Ctor = elementConstructor(opts);
     initDocument();
