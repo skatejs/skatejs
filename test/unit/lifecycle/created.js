@@ -17,7 +17,7 @@ describe('lifecycle/created ordering parent -> descendants', function () {
         skate.emit(this, 'someNonStandardEvent');
 
         // This should cause "properties" to appear before "created".
-        this.someNonStandardProperty = 'create';
+        this.someNonStandardProperty = 'created';
 
         // Now push created onto the order stack.
         order.push('created');
@@ -40,22 +40,24 @@ describe('lifecycle/created ordering parent -> descendants', function () {
         }
       },
       ready () {
-        this.someNonStandardProperty = 'update';
+        this.someNonStandardProperty = 'ready';
         order.push('ready');
+      },
+      render () {
+        skate.emit(this, 'someNonStandardEvent');
+        this.someNonStandardProperty = 'render';
+        order.push('render');
       }
     })();
 
-    expect(order).to.have.length(7, order.map(format).join(''));
+    expect(order).to.have.length(8, order.map(format).join(''));
     expect(order[0]).to.equal('prototype');
-    expect(order[1]).to.equal('events');
-
-    // This is from created setting the property.
-    expect(order[2]).to.equal('properties.create');
-    expect(order[3]).to.equal('created');
-
-    // This is from calling update() once created is invoked on descendants.
-    expect(order[4]).to.equal('properties.create');
-    expect(order[5]).to.equal('properties.update');
-    expect(order[6]).to.equal('ready');
+    expect(order[1]).to.equal('created');
+    expect(order[2]).to.equal('events');
+    expect(order[3]).to.equal('properties.render');
+    expect(order[4]).to.equal('render');
+    expect(order[5]).to.equal('properties.render');
+    expect(order[6]).to.equal('properties.ready');
+    expect(order[7]).to.equal('ready');
   });
 });

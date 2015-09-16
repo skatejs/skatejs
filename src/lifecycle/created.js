@@ -1,9 +1,10 @@
 import assignSafe from '../util/assign-safe';
 import data from '../util/data';
-import events from '../lifecycle/events';
-import properties from '../lifecycle/properties';
+import events from './events';
+import properties from './properties';
 import protos from '../util/protos';
 import registry from '../global/registry';
+import render from './render';
 import walkTree from '../util/walk-tree';
 
 let elProto = window.Element.prototype;
@@ -76,9 +77,10 @@ export default function (opts) {
 
     isNative || patchAttributeMethods(this);
     isNative || prototype.call(this);
+    opts.created && created.call(this);
     properties.call(this, opts.properties);
     events.call(this, opts.events);
-    opts.created && created.call(this);
+    render(this, opts);
     callCreatedOnDescendants(this, opts.id);
     callUpdateOnProperties(this);
     opts.ready && ready.call(this);
