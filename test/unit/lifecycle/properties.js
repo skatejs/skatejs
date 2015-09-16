@@ -426,5 +426,82 @@ describe('lifecycle/properties', function () {
         expect(oldValue).to.equal('one');
       });
     });
+
+    describe('update() when linked to attribute', function () {
+      let val;
+      let updated;
+
+      describe('on initialisation', function () {
+        let { safe: tagName } = helperElement();
+        skate(tagName, {
+          properties: {
+            test: {
+              attr: true,
+              update: function (value) {
+                val = value;
+                updated = true;
+              }
+            }
+          }
+        });
+
+        it('with no attribute present', function () {
+          helperFixture(`<${tagName}></${tagName}>`);
+          skate.init(helperFixture());
+
+          expect(val).to.equal(undefined);
+          expect(updated).to.equal(true);
+        });
+
+        it('with attribute present', function () {
+          helperFixture(`<${tagName} test="value"></${tagName}>`);
+          skate.init(helperFixture());
+
+          expect(val).to.equal('value');
+          expect(updated).to.equal(true);
+        });
+      });
+
+      describe('on initialisation with Boolean type', function () {
+        let { safe: tagName } = helperElement();
+        skate(tagName, {
+          properties: {
+            test: {
+              attr: true,
+              type: Boolean,
+              update: function (value) {
+                val = value;
+                updated = true;
+              }
+            }
+          }
+        });
+
+        it('with no attribute present', function () {
+          helperFixture(`<${tagName}></${tagName}>`);
+
+          skate.init(helperFixture());
+
+          expect(val).to.equal(false);
+          expect(updated).to.equal(true);
+        });
+
+        it('with attribute present', function () {
+          helperFixture(`<${tagName} test></${tagName}>`);
+          skate.init(helperFixture());
+
+          expect(val).to.equal(true);
+          expect(updated).to.equal(true);
+        });
+
+        it('with attribute set to a string value present', function () {
+          helperFixture(`<${tagName} test="some value"></${tagName}>`);
+          skate.init(helperFixture());
+
+          expect(val).to.equal(true);
+          expect(updated).to.equal(true);
+        });
+      });
+    });
   });
 });
