@@ -1,3 +1,4 @@
+import assignSafe from '../util/assign-safe';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 import emit from '../api/emit';
@@ -86,7 +87,7 @@ function property (name, prop) {
   return prop;
 }
 
-function defineProperty (elem, name, prop = {}) {
+function defineProperty (elem, name, properties = {}) {
   let initialValue;
   let info = data(elem);
 
@@ -94,9 +95,7 @@ function defineProperty (elem, name, prop = {}) {
     info.attributeToPropertyMap = {};
   }
 
-  if (typeof prop === 'function') {
-    prop = { type: prop };
-  }
+  let prop = typeof properties === 'function' ? { type: properties } : assignSafe({}, properties);
 
   if (prop.attr) {
     if (prop.attr === true) {
