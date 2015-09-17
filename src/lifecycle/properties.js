@@ -118,6 +118,10 @@ function defineProperty (elem, name, properties = {}) {
     prop.init = initialValue;
   }
 
+  if (prop.type) {
+    prop.init = (prop.type === Boolean && prop.init === '') || prop.type(prop.init);
+  }
+
   prop = property(name, prop);
   Object.defineProperty(elem, name, prop);
 }
