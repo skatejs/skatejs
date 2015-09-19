@@ -8,56 +8,58 @@ function format (value, index) {
 describe('lifecycle/created ordering parent -> descendants', function () {
   it('lifecycle feature ordering', function () {
     let order = [];
+
+    function test (lifecycle) {
+      return function () {
+        this.test(lifecycle);
+        skate.emit(this, 'someNonStandardEvent', { detail: lifecycle });
+        this.someNonStandardProperty = lifecycle;
+        order.push(`${lifecycle}.callback`);
+      };
+    }
+
     helperElement().skate({
-      created () {
-        // The prototype should already be set up.
-        this.test();
-
-        // This event should be triggered at this point.
-        skate.emit(this, 'someNonStandardEvent');
-
-        // This should cause "properties" to appear before "created".
-        this.someNonStandardProperty = 'created';
-
-        // Now push created onto the order stack.
-        order.push('created');
-      },
+      created: test('created'),
       events: {
-        someNonStandardEvent () {
-          order.push('events');
+        someNonStandardEvent (e) {
+          order.push(`${e.detail}.event`);
         }
       },
       prototype: {
-        test () {
-          order.push('prototype');
+        test (lifecycle) {
+          order.push(`${lifecycle}.prototype`);
         }
       },
       properties: {
         someNonStandardProperty: {
-          update (value) {
-            order.push('properties.' + value);
+          update (lifecycle) {
+            order.push(`${lifecycle}.property`);
           }
         }
       },
-      ready () {
-        this.someNonStandardProperty = 'ready';
-        order.push('ready');
-      },
-      render () {
-        skate.emit(this, 'someNonStandardEvent');
-        this.someNonStandardProperty = 'render';
-        order.push('render');
-      }
+      ready: test('ready'),
+      render: test('render'),
+      renderer: test('renderer')
     })();
 
-    expect(order).to.have.length(8, order.map(format).join(''));
-    expect(order[0]).to.equal('prototype');
-    expect(order[1]).to.equal('created');
-    expect(order[2]).to.equal('events');
-    expect(order[3]).to.equal('properties.render');
-    expect(order[4]).to.equal('render');
-    expect(order[5]).to.equal('properties.render');
-    expect(order[6]).to.equal('properties.ready');
-    expect(order[7]).to.equal('ready');
+    let formatted = order.map(format).join('');
+    expect(order).to.have.length(17, formatted);
+    expect(order[0]).to.equal('created.prototype');
+    expect(order[1]).to.equal('created.event');
+    expect(order[2]).to.equal('created.property');
+    expect(order[3]).to.equal('created.callback');
+    expect(order[4]).to.equal('render.prototype');
+    expect(order[5]).to.equal('render.event');
+    expect(order[6]).to.equal('render.property');
+    expect(order[7]).to.equal('render.callback');
+    expect(order[8]).to.equal('renderer.prototype');
+    expect(order[9]).to.equal('renderer.event');
+    expect(order[10]).to.equal('renderer.property');
+    expect(order[11]).to.equal('renderer.callback');
+    expect(order[12]).to.equal('renderer.property');
+    expect(order[13]).to.equal('ready.prototype');
+    expect(order[14]).to.equal('ready.event');
+    expect(order[15]).to.equal('ready.property');
+    expect(order[16]).to.equal('ready.callback');
   });
 });

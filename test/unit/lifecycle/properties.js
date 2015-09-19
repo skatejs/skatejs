@@ -26,18 +26,15 @@ describe('lifecycle/properties', function () {
   it('type', function () {
     skate(elem.safe, {
       properties: {
-        propName1: Boolean,
-        propName2: {
+        propName1: {
           type: Boolean
         }
       }
     });
 
     var el = elem.create();
-    el.propName1 = '';
-    el.propName2 = 'something';
-    expect(el.propName1).to.equal(false, 'Type function can be specified instead of object');
-    expect(el.propName2).to.equal(true, 'Object with only type definition can be specified');
+    el.propName1 = 'something';
+    expect(el.propName1).to.equal(true, 'Object with only type definition can be specified');
   });
 
   it('attribute (Boolean)', function () {
@@ -260,12 +257,6 @@ describe('lifecycle/properties', function () {
       expect(el.hasAttribute('prop1')).to.equal(false);
     });
 
-    it('passing null should remove the linked attribute', function () {
-      let el = setup();
-      el.prop1 = null;
-      expect(el.hasAttribute('prop1')).to.equal(false);
-    });
-
     it('passing an empty string should not remove the linked attribute', function () {
       let el = setup();
       el.prop1 = '';
@@ -322,7 +313,7 @@ describe('lifecycle/properties', function () {
 
     elem.skate({
       attribute: function (name) {
-        if (name !== 'resolved' && name !== 'unresolved') {
+        if (name === 'test') {
           triggered = true;
         }
       },
@@ -338,8 +329,8 @@ describe('lifecycle/properties', function () {
   describe('templating integration', function () {
     it('scenario 1 - DOM mutation', function () {
       skate(elem.safe, {
-        created () {
-          this.innerHTML = `<span>${this.textContent}</span>`;
+        render () {
+          return '<span></span>';
         },
         properties: {
           textContent: {
