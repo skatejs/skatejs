@@ -39,6 +39,11 @@ function bindEvent (elem, event, handler) {
   elem.addEventListener(name, handler, capture);
 }
 
-export default function (events) {
-  Object.keys(events).forEach(name => bindEvent(this, name, events[name].bind(this)));
+export default function events (opts) {
+  let events = opts.events;
+  return function (elem) {
+    Object.keys(events).forEach(function (name) {
+      bindEvent(elem, name, events[name].bind(elem));
+    });
+  };
 }

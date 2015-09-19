@@ -12,7 +12,7 @@ function callAttachedOnDescendants (elem, id) {
 
 export default function (opts) {
   return function () {
-    let info = data(this, opts.id);
+    let info = data(this, `lifecycle/${opts.id}`);
     if (info.attached) return;
     info.attached = true;
     info.detached = false;
