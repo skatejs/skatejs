@@ -2,6 +2,7 @@ import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiFragment from './api/fragment';
 import apiInit from './api/init';
+import apiProperty from './api/property';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
@@ -62,19 +63,19 @@ let initDocument = debounce(function () {
 });
 
 function skate (id, userOptions) {
-  let Ctor, CtorParent;
+  let Ctor, parentProto;
   let opts = makeOptions(userOptions);
 
   opts.id = id;
   opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
-  CtorParent = opts.extends ? document.createElement(opts.extends).constructor : HTMLElement;
+  parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
 
   // Inherit from parent prototype.
-  if (!CtorParent.prototype.isPrototypeOf(opts.prototype)) {
-    opts.prototype = assignSafe(Object.create(CtorParent.prototype), opts.prototype);
+  if (!parentProto.isPrototypeOf(opts.prototype)) {
+    opts.prototype = assignSafe(Object.create(parentProto), opts.prototype);
   }
 
-  // Extend behaviour of existing callbacks.
+  // Make custom definition conform to native.
   opts.prototype.createdCallback = created(opts);
   opts.prototype.attachedCallback = attached(opts);
   opts.prototype.detachedCallback = detached(opts);
@@ -103,7 +104,7 @@ skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.fragment = apiFragment;
 skate.init = apiInit;
+skate.property = apiProperty;
 skate.version = apiVersion;
 
-// ES6
 export default skate;
