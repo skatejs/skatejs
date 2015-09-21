@@ -602,8 +602,6 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       if (info.linkedAttribute) {
         if (!info.attributeMap) {
           info.attributeMap = {};
-          info.removeAttribute = elem.removeAttribute;
-          info.setAttribute = elem.setAttribute;
   
           elem.removeAttribute = function (attrName) {
             info.removeAttribute.call(this, attrName);
