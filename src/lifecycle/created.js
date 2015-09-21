@@ -14,12 +14,12 @@ import resolve from './resolve';
 function ensurePropertyFunctions (opts) {
   let props = opts.properties;
   let names = Object.keys(props || {});
-  return names.reduce(function (prev, curr) {
-    prev[curr] = opts.properties[curr];
-    if (typeof prev[curr] !== 'function') {
-      prev[curr] = apiProperty(prev[curr]);
+  return names.reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = opts.properties[descriptorName];
+    if (typeof descriptors[descriptorName] !== 'function') {
+      descriptors[descriptorName] = apiProperty(descriptors[descriptorName]);
     }
-    return prev;
+    return descriptors;
   }, {});
 }
 
