@@ -25,8 +25,6 @@ function createNativePropertyDefinition (name, opts) {
     if (info.linkedAttribute) {
       if (!info.attributeMap) {
         info.attributeMap = {};
-        info.removeAttribute = elem.removeAttribute;
-        info.setAttribute = elem.setAttribute;
 
         elem.removeAttribute = function (attrName) {
           info.removeAttribute.call(this, attrName);
