@@ -24,9 +24,9 @@ function ensurePropertyFunctions (opts) {
 }
 
 function ensurePropertyDefinitions (elem, propertyFunctions) {
-  return Object.keys(propertyFunctions || {}).reduce(function (prev, curr) {
-    prev[curr] = propertyFunctions[curr](curr);
-    return prev;
+  return Object.keys(propertyFunctions || {}).reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = propertyFunctions[descriptorName](descriptorName);
+    return descriptors;
   }, {});
 }
 
