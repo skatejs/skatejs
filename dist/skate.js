@@ -703,6 +703,10 @@ __9203e13b6f36ca26b469289752199c39 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _utilAssignSafe = __4733e4a8b9f5d8208f57d623f6613f6c;
+  
+  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
+  
   var _utilDashCase = __1a93c060999bff3e855758dad2704fa7;
   
   var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
@@ -800,7 +804,7 @@ __9203e13b6f36ca26b469289752199c39 = (function () {
   }
   
   function defineProperty(elem, name) {
-    var prop = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+    var properties = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
   
     var initialValue = undefined;
     var info = (0, _utilData2['default'])(elem);
@@ -809,9 +813,7 @@ __9203e13b6f36ca26b469289752199c39 = (function () {
       info.attributeToPropertyMap = {};
     }
   
-    if (typeof prop === 'function') {
-      prop = { type: prop };
-    }
+    var prop = typeof properties === 'function' ? { type: properties } : (0, _utilAssignSafe2['default'])({}, properties);
   
     if (prop.attr) {
       if (prop.attr === true) {
@@ -832,6 +834,10 @@ __9203e13b6f36ca26b469289752199c39 = (function () {
   
     if (initialValue !== undefined) {
       prop.init = initialValue;
+    }
+  
+    if (prop.type) {
+      prop.init = prop.type === Boolean && prop.init === '' || prop.type(prop.init);
     }
   
     prop = property(name, prop);
@@ -877,6 +883,31 @@ __045fd6618a25021574f48d1649f7d6d4 = (function () {
   
   return module.exports;
 }).call(this);
+// src/lifecycle/render.js
+__a76faf89d78dc88949edae6dca2a3fc3 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports["default"] = lifecycleRender;
+  
+  function lifecycleRender(elem, opts) {
+    var temp = opts.render;
+    if (temp && !elem.hasAttribute(opts.resolvedAttribute)) {
+      temp.call(elem);
+    }
+  }
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
 // src/lifecycle/created.js
 __1f947a75fdbe7749687fe46bf6e1d60e = (function () {
   var module = {
@@ -900,13 +931,13 @@ __1f947a75fdbe7749687fe46bf6e1d60e = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _lifecycleEvents = __73a6c7ed1240e78c2a48fbfdc3e261a9;
+  var _events = __73a6c7ed1240e78c2a48fbfdc3e261a9;
   
-  var _lifecycleEvents2 = _interopRequireDefault(_lifecycleEvents);
+  var _events2 = _interopRequireDefault(_events);
   
-  var _lifecycleProperties = __9203e13b6f36ca26b469289752199c39;
+  var _properties = __9203e13b6f36ca26b469289752199c39;
   
-  var _lifecycleProperties2 = _interopRequireDefault(_lifecycleProperties);
+  var _properties2 = _interopRequireDefault(_properties);
   
   var _utilProtos = __045fd6618a25021574f48d1649f7d6d4;
   
@@ -915,6 +946,10 @@ __1f947a75fdbe7749687fe46bf6e1d60e = (function () {
   var _globalRegistry = __d8c0f1f68b71a61c30d7eda3f51cfe0b;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  var _render = __a76faf89d78dc88949edae6dca2a3fc3;
+  
+  var _render2 = _interopRequireDefault(_render);
   
   var _utilWalkTree = __9df260836a1b1d605c5ddac24aa13917;
   
@@ -998,9 +1033,10 @@ __1f947a75fdbe7749687fe46bf6e1d60e = (function () {
   
       isNative || patchAttributeMethods(this);
       isNative || prototype.call(this);
-      _lifecycleProperties2['default'].call(this, opts.properties);
-      _lifecycleEvents2['default'].call(this, opts.events);
       opts.created && created.call(this);
+      _properties2['default'].call(this, opts.properties);
+      _events2['default'].call(this, opts.events);
+      (0, _render2['default'])(this, opts);
       callCreatedOnDescendants(this, opts.id);
       callUpdateOnProperties(this);
       opts.ready && ready.call(this);
