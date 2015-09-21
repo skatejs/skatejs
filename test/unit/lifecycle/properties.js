@@ -466,6 +466,9 @@ describe('lifecycle/properties', function () {
           helperFixture(`<${tagName}></${tagName}>`);
           skate.init(helperFixture());
 
+          let el = helperFixture().querySelector(tagName);
+          expect(el.test).to.equal(undefined);
+
           expect(val).to.equal(undefined);
           expect(updated).to.equal(true);
         });
@@ -473,6 +476,9 @@ describe('lifecycle/properties', function () {
         it('with attribute present', function () {
           helperFixture(`<${tagName} test="value"></${tagName}>`);
           skate.init(helperFixture());
+
+          let el = helperFixture().querySelector(tagName);
+          expect(el.test).to.equal('value');
 
           expect(val).to.equal('value');
           expect(updated).to.equal(true);
@@ -496,8 +502,10 @@ describe('lifecycle/properties', function () {
 
         it('with no attribute present', function () {
           helperFixture(`<${tagName}></${tagName}>`);
-
           skate.init(helperFixture());
+
+          let el = helperFixture().querySelector(tagName);
+          expect(el.test).to.equal(false);
 
           expect(val).to.equal(false);
           expect(updated).to.equal(true);
@@ -507,6 +515,9 @@ describe('lifecycle/properties', function () {
           helperFixture(`<${tagName} test></${tagName}>`);
           skate.init(helperFixture());
 
+          let el = helperFixture().querySelector(tagName);
+          expect(el.test).to.equal(true);
+
           expect(val).to.equal(true);
           expect(updated).to.equal(true);
         });
@@ -514,6 +525,9 @@ describe('lifecycle/properties', function () {
         it('with attribute set to a string value present', function () {
           helperFixture(`<${tagName} test="some value"></${tagName}>`);
           skate.init(helperFixture());
+
+          let el = helperFixture().querySelector(tagName);
+          expect(el.test).to.equal(true);
 
           expect(val).to.equal(true);
           expect(updated).to.equal(true);
