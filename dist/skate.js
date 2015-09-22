@@ -1299,13 +1299,13 @@ __03f25cd56ca0ce454f98fb8408e75422 = (function () {
   };
   
   function renderer(opts) {
-    var render = opts.render ? opts.render.bind(opts) : null;
+    var render = opts.render ? opts.render : null;
     var renderer = opts.renderer ? opts.renderer.bind(opts) : defaultRenderer;
     var resolvedAttribute = opts.resolvedAttribute;
   
     return function (elem) {
       if (render && !elem.hasAttribute(resolvedAttribute)) {
-        renderer(elem, render);
+        renderer(elem, render.bind(opts, elem));
       }
     };
   }
