@@ -1294,23 +1294,20 @@ __03f25cd56ca0ce454f98fb8408e75422 = (function () {
     value: true
   });
   exports["default"] = renderer;
+  var defaultRenderer = function defaultRenderer(elem, render) {
+    elem.innerHTML = render();
+  };
   
-  function renderer(elem, opts) {
-    var render = opts.render;
-    var rendered = undefined;
-    var renderer = opts.renderer;
+  function renderer(opts) {
+    var render = opts.render ? opts.render.bind(opts) : null;
+    var renderer = opts.renderer ? opts.renderer.bind(opts) : defaultRenderer;
+    var resolvedAttribute = opts.resolvedAttribute;
   
-    if (elem.hasAttribute(opts.resolvedAttribute)) {
-      return;
-    }
-  
-    rendered = render && render(elem);
-  
-    if (renderer) {
-      renderer(elem, rendered);
-    } else if (rendered) {
-      elem.innerHTML = rendered;
-    }
+    return function (elem) {
+      if (render && !elem.hasAttribute(resolvedAttribute)) {
+        renderer(elem, render);
+      }
+    };
   }
   
   module.exports = exports["default"];
@@ -1419,9 +1416,8 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   exports['default'] = function (opts) {
     var applyEvents = (0, _events2['default'])(opts);
     var applyPrototype = (0, _prototype2['default'])(opts);
-    var created = opts.created || function () {};
+    var applyRenderer = (0, _renderer2['default'])(opts);
     var propertyFunctions = ensurePropertyFunctions(opts);
-    var ready = opts.ready || function () {};
   
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
@@ -1435,11 +1431,11 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       applyPrototype(this);
       (0, _propertiesCreated2['default'])(this, propertyDefinitions);
       applyEvents(this);
-      created(this);
-      (0, _renderer2['default'])(this, opts);
+      opts.created && opts.created(this);
+      applyRenderer(this);
       (0, _createdOnDescendants2['default'])(this, opts);
       (0, _propertiesReady2['default'])(this, propertyDefinitions);
-      ready(this, opts);
+      opts.ready && opts.ready(this);
       (0, _resolve2['default'])(this, opts);
     };
   };
