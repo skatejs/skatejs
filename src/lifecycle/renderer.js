@@ -1,17 +1,15 @@
-export default function renderer (elem, opts) {
-  let render = opts.render;
-  let rendered;
-  let renderer = opts.renderer;
+const defaultRenderer = function (elem, render) {
+  elem.innerHTML = render();
+};
 
-  if (elem.hasAttribute(opts.resolvedAttribute)) {
-    return;
-  }
+export default function renderer (opts) {
+  let render = opts.render ? opts.render.bind(opts) : null;
+  let renderer = opts.renderer ? opts.renderer.bind(opts) : defaultRenderer;
+  let resolvedAttribute = opts.resolvedAttribute;
 
-  rendered = render && render(elem);
-
-  if (renderer) {
-    renderer(elem, rendered);
-  } else if (rendered) {
-    elem.innerHTML = rendered;
-  }
+  return function (elem) {
+    if (render && !elem.hasAttribute(resolvedAttribute)) {
+      renderer(elem, render);
+    }
+  };
 }

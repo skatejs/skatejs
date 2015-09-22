@@ -39,7 +39,10 @@ describe('lifecycle/created ordering parent -> descendants', function () {
       },
       ready: test('ready'),
       render: test('render'),
-      renderer: test('renderer')
+      renderer: function (elem, render) {
+        render(elem);
+        test('renderer')(elem);
+      }
     })();
 
     let formatted = order.map(format).join('');

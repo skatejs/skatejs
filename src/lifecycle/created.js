@@ -33,9 +33,8 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
 export default function (opts) {
   let applyEvents = events(opts);
   let applyPrototype = prototype(opts);
-  let created = opts.created || function () {};
+  let applyRenderer = renderer(opts);
   let propertyFunctions = ensurePropertyFunctions(opts);
-  let ready = opts.ready || function () {};
 
   return function () {
     let info = data(this, `lifecycle/${opts.id}`);
@@ -49,11 +48,11 @@ export default function (opts) {
     applyPrototype(this);
     propertiesCreated(this, propertyDefinitions);
     applyEvents(this);
-    created(this);
-    renderer(this, opts);
+    opts.created && opts.created(this);
+    applyRenderer(this);
     createdOnDescendants(this, opts);
     propertiesReady(this, propertyDefinitions);
-    ready(this, opts);
+    opts.ready && opts.ready(this);
     resolve(this, opts);
   };
 }
