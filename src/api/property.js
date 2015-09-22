@@ -111,7 +111,13 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     if (opts.emit) {
-      emit(this, opts.emit, {
+      let eventName = opts.emit;
+
+      if (eventName === true) {
+        eventName = 'skate.property';
+      }
+
+      emit(this, eventName, {
         bubbles: false,
         cancelable: false,
         detail: changeData

@@ -535,4 +535,36 @@ describe('lifecycle/properties', function () {
       });
     });
   });
+
+  describe('emit', function () {
+    it('should emit a default skate.property event if true is specified', function (done) {
+      let elem = helperElement().skate({
+        properties: {
+          test: {
+            emit: true
+          }
+        }
+      })();
+
+      elem.addEventListener('skate.property', function () {
+        done();
+      });
+      elem.test = true;
+    });
+
+    it('should emit the specified event if a string is specified', function (done) {
+      let elem = helperElement().skate({
+        properties: {
+          test: {
+            emit: 'custom.property.event'
+          }
+        }
+      })();
+
+      elem.addEventListener('custom.property.event', function () {
+        done();
+      });
+      elem.test = true;
+    });
+  });
 });
