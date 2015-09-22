@@ -1294,14 +1294,24 @@ __03f25cd56ca0ce454f98fb8408e75422 = (function () {
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports["default"] = renderer;
+  exports['default'] = renderer;
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _apiFragment = __ef86f48ff9050407fed1e142d9fe2629;
+  
+  var _apiFragment2 = _interopRequireDefault(_apiFragment);
+  
   var defaultRenderer = function defaultRenderer(elem, render) {
-    elem.innerHTML = render();
+    while (elem.childNodes.length) {
+      elem.removeChild(elem.childNodes[0]);
+    }
+    elem.appendChild((0, _apiFragment2['default'])(render()));
   };
   
   function renderer(opts) {
@@ -1316,7 +1326,7 @@ __03f25cd56ca0ce454f98fb8408e75422 = (function () {
     };
   }
   
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
