@@ -1,5 +1,10 @@
+import fragment from '../api/fragment';
+
 const defaultRenderer = function (elem, render) {
-  elem.innerHTML = render();
+  while (elem.childNodes.length) {
+    elem.removeChild(elem.childNodes[0]);
+  }
+  elem.appendChild(fragment(render()));
 };
 
 export default function renderer (opts) {
