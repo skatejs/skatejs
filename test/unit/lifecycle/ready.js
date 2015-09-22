@@ -9,8 +9,8 @@ describe('lifecycle/ready', function () {
   beforeEach(function () {
     tag = helperElement();
     skate(tag.safe, {
-      ready: function () {
-        this.innerHTML = 'templated';
+      ready: function (elem) {
+        elem.innerHTML = 'templated';
       }
     });
   });
@@ -23,11 +23,11 @@ describe('lifecycle/ready', function () {
   it('should be called after created is called', function () {
     var { safe: tagName } = helperElement('my-el');
     var MyEl = skate(tagName, {
-      created: function () {
-        this.textContent = 'test';
+      created: function (elem) {
+        elem.textContent = 'test';
       },
-      ready: function () {
-        expect(this.textContent).to.equal('test');
+      ready: function (elem) {
+        expect(elem.textContent).to.equal('test');
       }
     });
 
@@ -40,8 +40,8 @@ describe('lifecycle/ready', function () {
       prototype: {
         myfunc: function () {}
       },
-      ready: function () {
-        expect(this.myfunc).to.be.a('function');
+      ready: function (elem) {
+        expect(elem.myfunc).to.be.a('function');
       }
     });
 

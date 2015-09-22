@@ -2,7 +2,8 @@ import data from '../util/data';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
 
-function callDetachedOnDescendants (elem, id) {
+function callDetachedOnDescendants (elem, opts) {
+  let id = opts.id;
   walkTree(elem.childNodes, function (child) {
     registry.find(child).forEach(Ctor => Ctor.prototype.detachedCallback.call(child));
   }, function (child) {
@@ -16,8 +17,7 @@ export default function (opts) {
     if (info.detached) return;
     info.detached = true;
     info.attached = false;
-
-    callDetachedOnDescendants(this, opts.id);
-    opts.detached.call(this);
+    callDetachedOnDescendants(this, opts);
+    opts.detached(this);
   };
 }

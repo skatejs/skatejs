@@ -10,10 +10,10 @@ describe('lifecycle/created ordering parent -> descendants', function () {
     let order = [];
 
     function test (lifecycle) {
-      return function () {
-        this.test(lifecycle);
-        skate.emit(this, 'someNonStandardEvent', { detail: lifecycle });
-        this.someNonStandardProperty = lifecycle;
+      return function (elem) {
+        elem.test(lifecycle);
+        skate.emit(elem, 'someNonStandardEvent', { detail: lifecycle });
+        elem.someNonStandardProperty = lifecycle;
         order.push(`${lifecycle}.callback`);
       };
     }
@@ -32,8 +32,8 @@ describe('lifecycle/created ordering parent -> descendants', function () {
       },
       properties: {
         someNonStandardProperty: {
-          update (lifecycle) {
-            order.push(`${lifecycle}.property`);
+          update (name, data) {
+            order.push(`${data.newValue}.property`);
           }
         }
       },

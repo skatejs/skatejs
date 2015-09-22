@@ -53,11 +53,11 @@ let initDocument = debounce(function () {
     let componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
-      created(components[a]).call(element);
+      components[a].prototype.createdCallback.call(element);
     }
 
     for (let a = 0; a < componentsLength; a++) {
-      attached(components[a]).call(element);
+      components[a].prototype.attachedCallback.call(element);
     }
   });
 });

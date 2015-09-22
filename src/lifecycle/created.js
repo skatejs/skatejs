@@ -49,11 +49,11 @@ export default function (opts) {
     applyPrototype(this);
     propertiesCreated(this, propertyDefinitions);
     applyEvents(this);
-    created.call(this);
+    created(this);
     renderer(this, opts);
     createdOnDescendants(this, opts);
     propertiesReady(this, propertyDefinitions);
-    ready.call(this, opts);
+    ready(this, opts);
     resolve(this, opts);
   };
 }

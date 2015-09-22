@@ -62,9 +62,13 @@ function createNativePropertyDefinition (name, opts) {
     return info.internalValue;
   };
 
-  prop.ready = function (value) {
+  prop.ready = function (elem, value) {
     if (opts.update) {
-      opts.update.call(this, value);
+      opts.update(elem, {
+        name: name,
+        newValue: value,
+        oldValue: null
+      });
     }
   };
 
@@ -96,19 +100,21 @@ function createNativePropertyDefinition (name, opts) {
       }
     }
 
+    let changeData = {
+      name: name,
+      newValue: newValue,
+      oldValue: oldValue
+    };
+
     if (opts.update) {
-      opts.update.call(this, newValue, oldValue);
+      opts.update(this, changeData);
     }
 
     if (opts.emit) {
       emit(this, opts.emit, {
         bubbles: false,
         cancelable: false,
-        detail: {
-          name: name,
-          newValue: newValue,
-          oldValue: oldValue
-        }
+        detail: changeData
       });
     }
 

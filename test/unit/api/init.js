@@ -12,8 +12,8 @@ describe('api/init', function () {
   beforeEach(function () {
     tagName = helperElement('my-el');
     MyEl = skate(tagName.safe, {
-      created: function () {
-        this.textContent = 'test';
+      created: function (elem) {
+        elem.textContent = 'test';
       }
     });
 
@@ -110,8 +110,8 @@ describe('api/init', function () {
     it('#110 - should initialise forms properly', function () {
       var form = document.createElement('form');
       skate('form', {
-        created: function () {
-          this.initialised = true;
+        created: function (elem) {
+          elem.initialised = true;
         }
       });
 

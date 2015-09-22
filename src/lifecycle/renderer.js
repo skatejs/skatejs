@@ -7,10 +7,10 @@ export default function renderer (elem, opts) {
     return;
   }
 
-  rendered = render && render.call(elem);
+  rendered = render && render(elem);
 
   if (renderer) {
-    renderer.call(elem, rendered);
+    renderer(elem, rendered);
   } else if (rendered) {
     elem.innerHTML = rendered;
   }

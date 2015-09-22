@@ -1,35 +1,30 @@
-'use strict';
-
 import helperElement from '../lib/element';
-import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
 
-describe('lifecycle/attributes', function () {
+describe('lifecycle/attribute', function () {
   describe('Callback', function () {
     it('should call the callback just like attributeChangedCallback', function () {
       var data;
-      var tag = helperElement();
-
-      skate(tag.safe, {
-        attribute: (...args) => data = args
-      });
-
-      var elem = tag.create();
+      let elem = helperElement().skate({
+        attribute (elem, change) {
+          data = change;
+        }
+      })();
 
       elem.setAttribute('name', 'created');
-      expect(data[0]).to.equal('name');
-      expect(data[1]).to.equal(null);
-      expect(data[2]).to.equal('created');
+      expect(data.name).to.equal('name');
+      expect(data.newValue).to.equal('created');
+      expect(data.oldValue).to.equal(null);
 
       elem.setAttribute('name', 'updated');
-      expect(data[0]).to.equal('name');
-      expect(data[1]).to.equal('created');
-      expect(data[2]).to.equal('updated');
+      expect(data.name).to.equal('name');
+      expect(data.newValue).to.equal('updated');
+      expect(data.oldValue).to.equal('created');
 
       elem.removeAttribute('name');
-      expect(data[0]).to.equal('name');
-      expect(data[1]).to.equal('updated');
-      expect(data[2]).to.equal(null);
+      expect(data.name).to.equal('name');
+      expect(data.newValue).to.equal(null);
+      expect(data.oldValue).to.equal('updated');
     });
   });
 
