@@ -216,8 +216,8 @@ describe('lifecycle/properties', function () {
       properties: {
         foo: {
           attr: true,
-          update: function (value) {
-            this.textContent = value;
+          update: function (elem, data) {
+            elem.textContent = data.newValue;
           }
         }
       }
@@ -303,8 +303,8 @@ describe('lifecycle/properties', function () {
     let triggered = false;
 
     elem.skate({
-      attribute: function (name) {
-        if (name !== 'resolved' && name !== 'unresolved') {
+      attribute: function (elem, data) {
+        if (data.name === 'test') {
           triggered = true;
         }
       },
@@ -321,8 +321,8 @@ describe('lifecycle/properties', function () {
     let triggered = false;
 
     elem.skate({
-      attribute: function (name) {
-        if (name !== 'resolved' && name !== 'unresolved') {
+      attribute: function (elem, data) {
+        if (data.name === 'test') {
           triggered = true;
         }
       },
@@ -338,13 +338,13 @@ describe('lifecycle/properties', function () {
   describe('templating integration', function () {
     it('scenario 1 - DOM mutation', function () {
       skate(elem.safe, {
-        created () {
-          this.innerHTML = `<span>${this.textContent}</span>`;
+        created (elem) {
+          elem.innerHTML = `<span>${elem.textContent}</span>`;
         },
         properties: {
           textContent: {
-            update (value) {
-              this.querySelector('span').textContent = value;
+            update (elem, data) {
+              elem.querySelector('span').textContent = data.newValue;
             }
           }
         }
@@ -360,8 +360,8 @@ describe('lifecycle/properties', function () {
     });
 
     it('scenario 2 - re-rendering', function () {
-      function render () {
-        this.innerHTML = `<span>${this.textContent}</span>`;
+      function render (elem) {
+        elem.innerHTML = `<span>${elem.textContent}</span>`;
       }
 
       skate(elem.safe, {
@@ -411,10 +411,10 @@ describe('lifecycle/properties', function () {
         elem = helperElement().skate({
           properties: {
             textContent: {
-              update (nv, ov) {
+              update (elem, data) {
                 ++triggered;
-                newValue = nv;
-                oldValue = ov;
+                newValue = data.newValue;
+                oldValue = data.oldValue;
                 order.push('property');
               }
             }
@@ -435,7 +435,7 @@ describe('lifecycle/properties', function () {
         elem();
         expect(triggered).to.equal(1);
         expect(newValue).to.equal('');
-        expect(oldValue).to.equal(undefined);
+        expect(oldValue).to.equal(null);
       });
 
       it('should be called when a property is updated', function () {
@@ -463,8 +463,8 @@ describe('lifecycle/properties', function () {
           properties: {
             test: {
               attr: true,
-              update: function (value) {
-                val = value;
+              update (elem, data) {
+                val = data.newValue;
                 updated = true;
               }
             }
@@ -501,8 +501,8 @@ describe('lifecycle/properties', function () {
             test: {
               attr: true,
               type: Boolean,
-              update: function (value) {
-                val = value;
+              update (elem, data) {
+                val = data.newValue;
                 updated = true;
               }
             }

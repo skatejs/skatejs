@@ -1,5 +1,3 @@
-import attached from '../lifecycle/attached';
-import created from '../lifecycle/created';
 import elementContains from '../util/element-contains';
 import registry from '../global/registry';
 import walkTree from '../util/walk-tree';
@@ -12,12 +10,12 @@ export default function (element) {
     var componentsLength = components.length;
 
     for (let a = 0; a < componentsLength; a++) {
-      created(components[a]).call(descendant);
+      components[a].prototype.createdCallback.call(descendant);
     }
 
     for (let a = 0; a < componentsLength; a++) {
       if (isInDom) {
-        attached(components[a]).call(descendant);
+        components[a].prototype.attachedCallback.call(descendant);
       }
     }
   });

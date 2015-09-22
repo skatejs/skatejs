@@ -62,8 +62,8 @@ describe('lifecycle/render', function () {
   it('should not get called if the resolved attribute is already on the element', function () {
     let called = false;
     elem().skate({
-      created () {
-        this.setAttribute('resolved', '');
+      created (elem) {
+        elem.setAttribute('resolved', '');
       },
       render () {
         called = true;

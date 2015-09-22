@@ -7,7 +7,11 @@ export default function (opts) {
     let info = data(this);
     let attributeToPropertyMap = info.attributeToPropertyMap || {};
 
-    callback.call(this, name, oldValue, newValue);
+    callback(this, {
+      name: name,
+      newValue: newValue,
+      oldValue: oldValue
+    });
 
     // Ensure properties are notified of this change. We only do this if we're
     // not already updating the attribute from the property. This is so that
