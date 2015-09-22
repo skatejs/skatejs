@@ -798,7 +798,13 @@ __f57aa4e0179bb8c6b45d999112238add = (function () {
       }
   
       if (opts.emit) {
-        (0, _apiEmit2['default'])(this, opts.emit, {
+        var eventName = opts.emit;
+  
+        if (eventName === true) {
+          eventName = 'skate.property';
+        }
+  
+        (0, _apiEmit2['default'])(this, eventName, {
           bubbles: false,
           cancelable: false,
           detail: changeData
@@ -948,8 +954,8 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
     return function (name, oldValue, newValue) {
       callback(this, {
         name: name,
-        newValue: newValue,
-        oldValue: oldValue
+        newValue: newValue === null ? undefined : newValue,
+        oldValue: oldValue === null ? undefined : oldValue
       });
     };
   };
