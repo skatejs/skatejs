@@ -14,7 +14,7 @@ describe('lifecycle/attribute', function () {
       elem.setAttribute('name', 'created');
       expect(data.name).to.equal('name');
       expect(data.newValue).to.equal('created');
-      expect(data.oldValue).to.equal(null);
+      expect(data.oldValue).to.equal(undefined);
 
       elem.setAttribute('name', 'updated');
       expect(data.name).to.equal('name');
@@ -23,7 +23,7 @@ describe('lifecycle/attribute', function () {
 
       elem.removeAttribute('name');
       expect(data.name).to.equal('name');
-      expect(data.newValue).to.equal(null);
+      expect(data.newValue).to.equal(undefined);
       expect(data.oldValue).to.equal('updated');
     });
   });

@@ -3,8 +3,8 @@ export default function (opts) {
   return function (name, oldValue, newValue) {
     callback(this, {
       name: name,
-      newValue: newValue,
-      oldValue: oldValue
+      newValue: newValue === null ? undefined : newValue,
+      oldValue: oldValue === null ? undefined : oldValue
     });
   };
 }
