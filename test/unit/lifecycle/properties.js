@@ -546,7 +546,12 @@ describe('lifecycle/properties', function () {
         }
       })();
 
-      elem.addEventListener('skate.property', function () {
+      elem.addEventListener('skate.property', function (e) {
+        expect(e.detail).to.contain({
+          name: 'test',
+          newValue: true,
+          oldValue: undefined
+        });
         done();
       });
       elem.test = true;
@@ -561,7 +566,12 @@ describe('lifecycle/properties', function () {
         }
       })();
 
-      elem.addEventListener('custom.property.event', function () {
+      elem.addEventListener('custom.property.event', function (e) {
+        expect(e.detail).to.contain({
+          name: 'test',
+          newValue: true,
+          oldValue: undefined
+        });
         done();
       });
       elem.test = true;
