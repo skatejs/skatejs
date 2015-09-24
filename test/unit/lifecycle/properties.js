@@ -152,7 +152,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          init: 'test'
+          default: 'test'
         }
       }
     });
@@ -165,7 +165,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          init: function () {
+          default: function () {
             return 'test';
           }
         }
@@ -181,7 +181,7 @@ describe('lifecycle/properties', function () {
       properties: {
         trump: {
           attr: true,
-          init: 'property'
+          default: 'property'
         }
       }
     });

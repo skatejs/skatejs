@@ -92,20 +92,37 @@ describe('api/property', function () {
       });
     });
 
-    describe('init', function () {
-      it('when a function, returns the initial value that the property should be initialised with', function () {
-        let elem = create({ init: () => 'something' });
+    describe('get()', function () {
+      it('returns the value of the property', function () {
+        let elem = create({ get: () => 'something' });
         expect(elem.test).to.equal('something');
       });
 
-      it('when anything else, it is the initial value that the property should be initialised with', function () {
-        let elem = create({ init: 'something' });
+      it('context and arguments', function () {
+        let opts = {
+          get () {
+            expect(this).to.equal(opts);
+            expect(arguments.length).to.equal(1);
+          }
+        };
+        create(opts);
+      });
+    });
+
+    describe('default', function () {
+      it('when a function, returns the default value that the property should be initialised with', function () {
+        let elem = create({ default: () => 'something' });
+        expect(elem.test).to.equal('something');
+      });
+
+      it('when anything else, it is the default value that the property should be initialised with', function () {
+        let elem = create({ default: 'something' });
         expect(elem.test).to.equal('something');
       });
 
       it('context and arguments', function (done) {
         let opts = {
-          init () {
+          default () {
             expect(this).to.equal(opts);
             expect(arguments.length).to.equal(0);
             done();

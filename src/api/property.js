@@ -49,10 +49,10 @@ function createNativePropertyDefinition (name, opts) {
 
     if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
       info.internalValue = info.isBoolean ? elem.hasAttribute(info.linkedAttribute) : elem.getAttribute(info.linkedAttribute);
-    } else if (typeof opts.init === 'function') {
-      info.internalValue = opts.init();
-    } else if (typeof opts.init !== 'undefined') {
-      info.internalValue = opts.init;
+    } else if (typeof opts.default === 'function') {
+      info.internalValue = opts.default();
+    } else if (typeof opts.default !== 'undefined') {
+      info.internalValue = opts.default;
     }
 
     if (opts.type) {
@@ -61,8 +61,7 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.get = function () {
-    let info = data(this, `api/property/${name}`);
-    return info.internalValue;
+    return opts.get ? opts.get(this) : data(this, `api/property/${name}`).internalValue;
   };
 
   prop.ready = function (elem, value) {
@@ -85,8 +84,11 @@ function createNativePropertyDefinition (name, opts) {
     info.updatingProperty = true;
 
     let newValue = opts.type ? opts.type(value) : value;
-    let oldValue = info.internalValue;
-    info.internalValue = newValue;
+    let oldValue = this[name];
+
+    if (!opts.get) {
+      info.internalValue = newValue;
+    }
 
     if (newValue === oldValue) {
       info.updatingProperty = false;
