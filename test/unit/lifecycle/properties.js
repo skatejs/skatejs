@@ -426,7 +426,7 @@ describe('lifecycle/properties', function () {
         elem();
         expect(triggered).to.equal(1);
         expect(newValue).to.equal('');
-        expect(oldValue).to.equal(null);
+        expect(oldValue).to.equal(undefined);
       });
 
       it('should be called when a property is updated', function () {
