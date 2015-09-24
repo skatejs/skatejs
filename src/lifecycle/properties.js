@@ -67,7 +67,11 @@ function property (name, prop) {
     // that value. Even if it's not, we use it to reference the old value which
     // is useful information for the setter.
     if (prop.update) {
-      prop.update.call(this, newValue, oldValue);
+      prop.update(this, {
+        name: name,
+        newValue: newValue,
+        oldValue: oldValue
+      });
     }
 
     // If we are emitting notify the element of the change.
@@ -126,6 +130,7 @@ function defineProperty (elem, name, properties = {}) {
   Object.defineProperty(elem, name, prop);
 }
 
-export default function (props) {
-  Object.keys(props).forEach(name => defineProperty(this, name, props[name]));
+export default function (elem, opts) {
+  let props = opts.properties;
+  Object.keys(props).forEach(name => defineProperty(elem, name, props[name]));
 }

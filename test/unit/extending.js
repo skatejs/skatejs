@@ -14,8 +14,8 @@ describe('extending', function () {
     Ctor = skate(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created: function () {
-        this.textContent = 'test';
+      created: function (elem) {
+        elem.textContent = 'test';
       },
       attribute: function () {},
       prototype: {
@@ -64,9 +64,9 @@ describe('extending', function () {
   it('should allow overriding of callbacks', function () {
     if (canResolveSuper) {
       var ExtendedCtor = skate(tag, class extends Ctor {
-        static created() {
-          super.created();
-          this.textContent += 'ing';
+        static created(elem) {
+          super.created(elem);
+          elem.textContent += 'ing';
         }
       });
       expect(new ExtendedCtor().textContent).to.equal('testing');

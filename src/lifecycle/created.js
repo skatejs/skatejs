@@ -11,12 +11,12 @@ let elProto = window.Element.prototype;
 let oldSetAttribute = elProto.setAttribute;
 let oldRemoveAttribute = elProto.removeAttribute;
 
-function applyPrototype (proto) {
-  let prototypes = protos(proto);
-  return function () {
+function applyPrototype (opts) {
+  let prototypes = protos(opts.prototype);
+  return function (elem) {
     prototypes.forEach(proto => {
-      if (!proto.isPrototypeOf(this)) {
-        assignSafe(this, proto);
+      if (!proto.isPrototypeOf(elem)) {
+        assignSafe(elem, proto);
       }
     });
   };
@@ -36,7 +36,8 @@ function patchAttributeMethods (elem) {
   };
 }
 
-function callCreatedOnDescendants (elem, id) {
+function callCreatedOnDescendants (elem, opts) {
+  let id = opts.id;
   walkTree(elem.childNodes, function (child) {
     registry.find(child).forEach(Ctor => Ctor.prototype.createdCallback.call(child));
   }, function (child) {
@@ -55,21 +56,25 @@ function createCallUpdateOnProperties (opts) {
       if (prop && prop.type) {
         val = (prop.type === Boolean && elem.hasAttribute(typeof prop.attr === 'string' ? prop.attr : name)) || prop.type(val);
       }
-      update && update.call(elem, val);
+      update && update(elem, {
+        name: name,
+        newValue: val,
+        oldValue: null
+      });
     });
   };
 }
 
-function markAsResolved (elem, resolvedAttribute, unresolvedAttribute) {
-  elem.removeAttribute(unresolvedAttribute);
-  elem.setAttribute(resolvedAttribute, '');
+function markAsResolved (elem, opts) {
+  elem.removeAttribute(opts.unresolvedAttribute);
+  elem.setAttribute(opts.resolvedAttribute, '');
 }
 
 export default function (opts) {
   let created = opts.created;
   let isNative = opts.isNative;
   let callUpdateOnProperties = createCallUpdateOnProperties(opts);
-  let prototype = applyPrototype(opts.prototype);
+  let prototype = applyPrototype(opts);
   let ready = opts.ready;
 
   return function () {
@@ -80,14 +85,14 @@ export default function (opts) {
     info.created = true;
 
     isNative || patchAttributeMethods(this);
-    isNative || prototype.call(this);
-    opts.created && created.call(this);
-    properties.call(this, opts.properties);
-    events.call(this, opts.events);
+    isNative || prototype(this);
+    created && created(this);
+    properties(this, opts);
+    events(this, opts);
     render(this, opts);
-    callCreatedOnDescendants(this, opts.id);
+    callCreatedOnDescendants(this, opts);
     callUpdateOnProperties(this);
-    opts.ready && ready.call(this);
-    isResolved || markAsResolved(this, opts.resolvedAttribute, opts.unresolvedAttribute);
+    ready && ready(this);
+    isResolved || markAsResolved(this, opts);
   };
 }

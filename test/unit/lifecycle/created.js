@@ -9,15 +9,15 @@ describe('lifecycle/created ordering parent -> descendants', function () {
   it('lifecycle feature ordering', function () {
     let order = [];
     helperElement().skate({
-      created () {
+      created (elem) {
         // The prototype should already be set up.
-        this.test();
+        elem.test();
 
         // This event should be triggered at this point.
-        skate.emit(this, 'someNonStandardEvent');
+        skate.emit(elem, 'someNonStandardEvent');
 
         // This should cause "properties" to appear before "created".
-        this.someNonStandardProperty = 'created';
+        elem.someNonStandardProperty = 'created';
 
         // Now push created onto the order stack.
         order.push('created');
@@ -34,18 +34,18 @@ describe('lifecycle/created ordering parent -> descendants', function () {
       },
       properties: {
         someNonStandardProperty: {
-          update (value) {
-            order.push('properties.' + value);
+          update (elem, data) {
+            order.push('properties.' + data.newValue);
           }
         }
       },
-      ready () {
-        this.someNonStandardProperty = 'ready';
+      ready (elem) {
+        elem.someNonStandardProperty = 'ready';
         order.push('ready');
       },
-      render () {
-        skate.emit(this, 'someNonStandardEvent');
-        this.someNonStandardProperty = 'render';
+      render (elem) {
+        skate.emit(elem, 'someNonStandardEvent');
+        elem.someNonStandardProperty = 'render';
         order.push('render');
       }
     })();
