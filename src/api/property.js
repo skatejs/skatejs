@@ -10,7 +10,10 @@ function getLinkedAttribute (name, attr) {
 }
 
 function createNativePropertyDefinition (name, opts) {
-  let prop = {};
+  let prop = {
+    configurable: true,
+    enumerable: true
+  };
 
   prop.created = function (elem, initialValue) {
     let info = data(elem, `api/property/${name}`);
@@ -67,7 +70,7 @@ function createNativePropertyDefinition (name, opts) {
       opts.update(elem, {
         name: name,
         newValue: value,
-        oldValue: null
+        oldValue: undefined
       });
     }
   };
