@@ -19,7 +19,7 @@ function createNativePropertyDefinition (name, opts) {
     let info = data(elem, `api/property/${name}`);
     info.internalValue = initialValue;
     info.isBoolean = opts.type === Boolean;
-    info.linkedAttribute = getLinkedAttribute(name, opts.attr);
+    info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
     info.removeAttribute = elem.removeAttribute;
     info.setAttribute = elem.setAttribute;
     info.updatingProperty = false;

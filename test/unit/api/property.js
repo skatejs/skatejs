@@ -60,13 +60,13 @@ describe('api/property', function () {
 
     describe('attr', function () {
       it('when true, links an attribute of the name (dash-cased)', function () {
-        let elem = create({ attr: true });
+        let elem = create({ attribute: true });
         elem.test = 'something';
         expect(elem.getAttribute('test')).to.equal('something');
       });
 
       it('when a string, the value is used as the attribute name', function () {
-        let elem = create({ attr: 'some-attr' });
+        let elem = create({ attribute: 'some-attr' });
         elem.test = 'something';
         expect(elem.getAttribute('some-attr')).to.equal('something');
       });

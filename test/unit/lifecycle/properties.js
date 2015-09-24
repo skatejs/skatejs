@@ -41,7 +41,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          attr: true
+          attribute: true
         }
       }
     });
@@ -59,7 +59,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          attr: 'my-attr'
+          attribute: 'my-attr'
         }
       }
     });
@@ -78,7 +78,7 @@ describe('lifecycle/properties', function () {
       skate(elem.safe, {
         properties: {
           test: {
-            attr: true
+            attribute: true
           }
         }
       });
@@ -95,7 +95,7 @@ describe('lifecycle/properties', function () {
       skate(elem.safe, {
         properties: {
           test: {
-            attr: 'test2'
+            attribute: 'test2'
           }
         }
       });
@@ -112,7 +112,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          attr: true
+          attribute: true
         }
       }
     });
@@ -131,7 +131,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         propName1: {
-          attr: true,
+          attribute: true,
           type: Boolean
         }
       }
@@ -180,7 +180,7 @@ describe('lifecycle/properties', function () {
     skate(elem.safe, {
       properties: {
         trump: {
-          attr: true,
+          attribute: true,
           default: 'property'
         }
       }
@@ -212,7 +212,7 @@ describe('lifecycle/properties', function () {
     skate(tagName, {
       properties: {
         foo: {
-          attr: true,
+          attribute: true,
           set: function (elem, data) {
             elem.textContent = data.newValue;
           }
@@ -237,7 +237,7 @@ describe('lifecycle/properties', function () {
       skate(elem.safe, {
         properties: {
           prop1: {
-            attr: true,
+            attribute: true,
 
             // We add a type so that we can test what happens when the value
             // is coerced from null / undefined.
@@ -318,7 +318,7 @@ describe('lifecycle/properties', function () {
         }
       },
       properties: {
-        test: { attr: true }
+        test: { attribute: true }
       }
     });
 
@@ -453,7 +453,7 @@ describe('lifecycle/properties', function () {
         skate(tagName, {
           properties: {
             test: {
-              attr: true,
+              attribute: true,
               set (elem, data) {
                 val = data.newValue;
                 updated = true;
@@ -490,7 +490,7 @@ describe('lifecycle/properties', function () {
         skate(tagName, {
           properties: {
             test: {
-              attr: true,
+              attribute: true,
               type: Boolean,
               set (elem, data) {
                 val = data.newValue;
