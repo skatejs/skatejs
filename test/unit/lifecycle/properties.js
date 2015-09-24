@@ -213,7 +213,7 @@ describe('lifecycle/properties', function () {
       properties: {
         foo: {
           attr: true,
-          update: function (elem, data) {
+          set: function (elem, data) {
             elem.textContent = data.newValue;
           }
         }
@@ -334,7 +334,7 @@ describe('lifecycle/properties', function () {
         },
         properties: {
           textContent: {
-            update (elem, data) {
+            set (elem, data) {
               elem.querySelector('span').textContent = data.newValue;
             }
           }
@@ -359,7 +359,7 @@ describe('lifecycle/properties', function () {
         created: render,
         properties: {
           textContent: {
-            update: render
+            set: render
           }
         }
       });
@@ -402,7 +402,7 @@ describe('lifecycle/properties', function () {
         elem = helperElement().skate({
           properties: {
             textContent: {
-              update (elem, data) {
+              set (elem, data) {
                 ++triggered;
                 newValue = data.newValue;
                 oldValue = data.oldValue;
@@ -454,7 +454,7 @@ describe('lifecycle/properties', function () {
           properties: {
             test: {
               attr: true,
-              update (elem, data) {
+              set (elem, data) {
                 val = data.newValue;
                 updated = true;
               }
@@ -492,7 +492,7 @@ describe('lifecycle/properties', function () {
             test: {
               attr: true,
               type: Boolean,
-              update (elem, data) {
+              set (elem, data) {
                 val = data.newValue;
                 updated = true;
               }

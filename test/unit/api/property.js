@@ -115,6 +115,44 @@ describe('api/property', function () {
       });
     });
 
+    describe('set()', function () {
+      it('is called when the property is initialised', function (done) {
+        create({ set: () => done() });
+      });
+
+      it('is called when the property is updated', function () {
+        let calls = 0;
+        let elem = create({ set: () => ++calls });
+        elem.test = true;
+        expect(calls).to.equal(2);
+      });
+
+      it('is not called if the property is set to the same value that it already is', function () {
+        let calls = 0;
+        let elem = create({ set: () => ++calls });
+        elem.test = true;
+        elem.test = true;
+        expect(calls).to.equal(2);
+      });
+
+      it('context and arguments', function (done) {
+        let opts = {
+          set (elem, data) {
+            expect(this).to.equal(opts);
+            expect(arguments.length).to.equal(2);
+            expect(elem.tagName).to.equal('DIV');
+            expect(data).to.contain({
+              name: 'test',
+              newValue: undefined,
+              oldValue: undefined
+            });
+            done();
+          }
+        };
+        create(opts);
+      });
+    });
+
     describe('type', function () {
       it('should return the value that the property will be set to', function () {
         let elem = create({ type: Boolean });
@@ -128,44 +166,6 @@ describe('api/property', function () {
             expect(this).to.equal(opts);
             expect(arguments.length).to.equal(1);
             expect(value).to.equal(undefined);
-            done();
-          }
-        };
-        create(opts);
-      });
-    });
-
-    describe('update()', function () {
-      it('is called when the property is initialised', function (done) {
-        create({ update: () => done() });
-      });
-
-      it('is called when the property is updated', function () {
-        let calls = 0;
-        let elem = create({ update: () => ++calls });
-        elem.test = true;
-        expect(calls).to.equal(2);
-      });
-
-      it('is not called if the property is set to the same value that it already is', function () {
-        let calls = 0;
-        let elem = create({ update: () => ++calls });
-        elem.test = true;
-        elem.test = true;
-        expect(calls).to.equal(2);
-      });
-
-      it('context and arguments', function (done) {
-        let opts = {
-          update (elem, data) {
-            expect(this).to.equal(opts);
-            expect(arguments.length).to.equal(2);
-            expect(elem.tagName).to.equal('DIV');
-            expect(data).to.contain({
-              name: 'test',
-              newValue: undefined,
-              oldValue: undefined
-            });
             done();
           }
         };

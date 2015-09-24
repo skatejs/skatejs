@@ -66,8 +66,8 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.ready = function (elem, value) {
-    if (opts.update) {
-      opts.update(elem, {
+    if (opts.set) {
+      opts.set(elem, {
         name: name,
         newValue: value,
         oldValue: undefined
@@ -109,8 +109,8 @@ function createNativePropertyDefinition (name, opts) {
       oldValue: oldValue
     };
 
-    if (opts.update) {
-      opts.update(this, changeData);
+    if (opts.set) {
+      opts.set(this, changeData);
     }
 
     if (opts.emit) {

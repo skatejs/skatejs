@@ -32,7 +32,7 @@ describe('lifecycle/created ordering parent -> descendants', function () {
       },
       properties: {
         someNonStandardProperty: {
-          update (name, data) {
+          set (name, data) {
             order.push(`${data.newValue}.property`);
           }
         }
