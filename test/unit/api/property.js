@@ -11,35 +11,41 @@ describe('api/property', function () {
     expect(property()).to.be.a('function');
   });
 
-  describe('native property definition', function () {
-    it('should define a getter', function () {
-      expect(property()().get).to.be.a('function');
+  describe('property definition', function () {
+    function create () {
+      return property()();
+    }
+
+    describe('native', function () {
+      it('should define a getter', function () {
+        expect(create().get).to.be.a('function');
+      });
+
+      it('should define a setter', function () {
+        expect(create().set).to.be.a('function');
+      });
+
+      it('should be enumerable', function () {
+        expect(create().enumerable).to.equal(true);
+      });
+
+      it('should be configurable', function () {
+        expect(create().configurable).to.equal(true);
+      });
+
+      it('should not contain a value', function () {
+        expect(create().value).to.equal(undefined);
+      });
     });
 
-    it('should define a setter', function () {
-      expect(property()().set).to.be.a('function');
-    });
+    describe('custom', function () {
+      it('should define a created() callback', function () {
+        expect(create().created).to.be.a('function');
+      });
 
-    it('should be enumerable', function () {
-      expect(property()().enumerable).to.equal(true);
-    });
-
-    it('should be configurable', function () {
-      expect(property()().configurable).to.equal(true);
-    });
-
-    it('should not contain a value', function () {
-      expect(property()().value).to.equal(undefined);
-    });
-  });
-
-  describe('custom property definition', function () {
-    it('should define a created() callback', function () {
-      expect(property()().created).to.be.a('function');
-    });
-
-    it('should define a ready() callback', function () {
-      expect(property()().ready).to.be.a('function');
+      it('should define a ready() callback', function () {
+        expect(create().ready).to.be.a('function');
+      });
     });
   });
 
