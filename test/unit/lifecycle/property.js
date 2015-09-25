@@ -50,35 +50,40 @@ describe('api/property', function () {
   });
 
   describe('api', function () {
-    function initProperty (elem, definition) {
-      let prop = { test: property(definition)('test') };
+    function initProperty (elem, definition, name = 'test') {
+      let prop = { [name]: property(definition)(name) };
       propertiesCreated(elem, prop);
       propertiesReady(elem, prop);
       return elem;
     }
 
-    function create (definition) {
-      return initProperty(document.createElement('div'), definition);
+    function create (definition, name) {
+      return initProperty(document.createElement('div'), definition, name);
     }
 
-    function createFromHtml (html, definition) {
+    function createFromHtml (html, definition, name) {
       let elem = document.createElement('div');
       elem.innerHTML = html;
       elem = elem.childNodes[0];
-      return initProperty(elem, definition);
+      return initProperty(elem, definition, name);
     }
 
     describe('attribute', function () {
       it('when true, links an attribute of the name (dash-cased)', function () {
-        let elem = create({ attribute: true });
-        elem.test = 'something';
-        expect(elem.getAttribute('test')).to.equal('something');
+        let elem = createFromHtml('<span test-name="something"></span>', { attribute: true }, 'testName');
+
+        expect(elem.testName).to.equal('something');
+        expect(elem.getAttribute('test-name')).to.equal('something');
+
+        elem.testName = 'something else';
+        expect(elem.testName).to.equal('something else');
+        expect(elem.getAttribute('test-name')).to.equal('something else');
       });
 
       it('when a string, the value is used as the attribute name', function () {
-        let elem = create({ attribute: 'some-attr' });
+        let elem = create({ attribute: 'test-name' });
         elem.test = 'something';
-        expect(elem.getAttribute('some-attr')).to.equal('something');
+        expect(elem.getAttribute('test-name')).to.equal('something');
       });
 
       describe('deserialize()', function () {

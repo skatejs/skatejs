@@ -48,8 +48,8 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     if (initialValue === undefined) {
-      if (info.linkedAttribute && elem.hasAttribute(name)) {
-        let attributeValue = elem.getAttribute(name);
+      if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
+        let attributeValue = elem.getAttribute(info.linkedAttribute);
         initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
       } else if (typeof opts.default === 'function') {
         initialValue = opts.default();
