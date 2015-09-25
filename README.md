@@ -160,34 +160,32 @@ The definition is an object of options that define your component.
 ```js
 skate('my-element', {
   // Lifecycle Callbacks
-  //
-  // All lifecycle callbacks use `this` to refer to the component element.
 
   // Called before the element is set up. Descendants components may or may not
   // be initialised yet.
-  created: function () {},
+  created: function (elem) {},
 
   // Called when the element is attached to the document.
-  attached: function () {},
+  attached: function (elem) {},
 
   // Called when the element is detached from the document.
-  detached: function () {},
+  detached: function (elem) {},
+
+  // Gets called after the element is set up and all descendant components are
+  // initialised. This callback will be called on descendants before it is
+  // called on the host element.
+  ready: function (elem) {},
 
   // Called when an attribute is created, updated or removed.
-  attribute: function (name, oldValue, newValue) {
-    if (oldValue === null) {
+  attribute: function (elem, data) {
+    if (data.oldValue === undefined) {
       // created
-    } else if (newValue === null) {
+    } else if (data.newValue === undefined) {
       // removed
     } else {
       // updated
     }
   },
-
-  // Gets called after the element is set up and all descendant components are
-  // initialised. This callback will be called on descendants before it is
-  // called on the host element.
-  ready: function () {},
 
   // Event Listeners
   events: {
@@ -263,25 +261,38 @@ skate('my-element', {
       // This defaults to `false`. If you specify `true` the property name is
       // dash-cased and used as the attribute it should keep in sync with. If
       // you specify a `string`, it is used as the attribute name.
-      attr: false,
+      attribute: false,
 
-      // This property should be notified of changes when these dependencies
-      // are notified of changes.
+      // Serializes the property value when it is set so that it can be stored
+      // as an attribute value. This only is called if this property is linked
+      // to an attribute.
+      serializeToAttribute: function () {},
+
+      // Deserializes the attribute value when it is set so that it can be
+      // set as the property value. This only is called if this property is
+      // linked to an attribute.
+      deserializeFromAttribute: function () {},
+
+      // This will be used as the default value for the property. If you specify
+      // a function then it will be invoked and the return value will be used.
+      // This option will also be used in place of the value returned from the
+      // `get()` option if it returns `undefined`.
+      default: 'initial value'
+
+      // Whether or not to trigger events when the property changes. Defaults to
+      // `false`. If you do not want events triggered, set this to a falsy value.
       //
-      // You may also specify dependencies as space-separated string.
-      deps: [
-        // This property's notify events will be triggered when its sibling
-        // `dependencyProperty` is notified of changes.
-        'dependencyProperty',
-
-        // This property's notify events will be triggered when the descendant's
-        // `deepDependencyProperty` notify events are triggered.
-        //
-        // At the time the dependency event bubbles up from the descendant, it
-        // must be accessible via `this.some.nested.child`. If it is not, then
-        // the dependency is ignored.
-        'some.nested.child.deepDependencyProperty'
-      ],
+      // If this is truthy, when the property is changed it will trigger an
+      // event called `skate.property` if it is `true`, or an event with
+      // the same name as the specified value is emitted.
+      //
+      // The event object for the event that is triggered contains the following
+      // information:
+      //
+      // - `name` - The property name.
+      // - `newValue` - The property's new value.
+      // - `oldValue` - The property's old value.
+      emit: false,
 
       // Custom getter. The return value is used as the property value when
       // retrieved. If you don't specify a getter, the value that it was set as
@@ -290,35 +301,17 @@ skate('my-element', {
       // To make a property "readonly", specify a getter without a setter.
       get: function () {},
 
-      // Whether or not to trigger events when the property changes. Defaults to
-      // `true`. If you do not want events triggered, set this to a falsy value.
-      //
-      // If this is truthy, when the property is changed it will trigger an
-      // event called `skate.property` if `notify` is `true`, or an event with
-      // the same name as `notify` if specified as a `String`.
-      //
-      // The event object for both events contains the following information
-      // in the `detail` property:
-      //
-      // - `name` - The property name.
-      // - `newValue` - The property's new value.
-      // - `oldValue` - The property's old value.
-      notify: true
-
       // Custom setter. Set value as you see fit. Return value is ignored. If
       // you don't specify a getter, then whatever `newValue` was passed in to
       // the setter, is returned by the default getter. If you want to return
       // a custom value, specify a getter.
       set: function (newValue, oldValue) {},
 
-      // A function that coerces the value to another value. You can specify
-      // any function you want here. The return value is then stored internally
-      // and passed as `newValue` in the setter.
-      type: Boolean,
-
-      // This will be used as the initial value for the property. If you specify
-      // a function then it will be invoked and the return value will be used.
-      value: 'initial value'
+      // A function that gets called before `set()`. It's up to you what you do
+      // here. You can log, warn, or throw an exception if an unacceptable value
+      // is detected. By default this does nothing and the return value is not
+      // used.
+      type: function () {}
     }
   },
 
@@ -341,14 +334,13 @@ skate('my-element', {
 
   // Component Types
   //
-  // The binding methods this component supports. For example, if you specify
-  // the `type` as `skate.type.ELEMENT`, then the component will only be bound
-  // to an element whos tag name matches the component ID.
+  // The type of component this is. By default, this makes your component
+  // conform to the custom element spec, but you can use custom types if
+  // required.
   //
-  // - `ELEMENT` Tag name only.
-  // - `ATTRIBUTE` Attribute names.
-  // - `CLASSNAME` Class names.
-  type: skate.type.ELEMENT,
+  // - Attribute type: https://github.com/skatejs/type-attribute
+  // - Class type: https://github.com/skatejs/type-class
+  type: {}
 
 
 
@@ -377,11 +369,13 @@ The component lifecycle consists of several paths in the following order startin
 2. `events` are set up
 3. `properties` are defined
 4. `created` is invoked
+5. `renderer` is invoked with the result of `render` to stamp out the component's structure
 5. descendant custom elements are synchronously initialised
-6. `ready` is invoked
-7. `attached` is invoked when added to the document (or if already in the document)
-8. `detached` is invoked when removed from the document
-9. `attribute` is invoked whenever an attribute is updated
+6. `properties` are initialised so setters may now affect descendant DOM
+7. `ready` is invoked
+8. `attached` is invoked when added to the document (or if already in the document)
+9. `detached` is invoked when removed from the document
+10. `attribute` is invoked whenever an attribute is updated
 
 Each callback gets the element passed in as `this` and is invoked with no arguments except for the `attribute` callback shown below.
 
