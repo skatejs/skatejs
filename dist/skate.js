@@ -1053,8 +1053,8 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       }
   
       if (initialValue === undefined) {
-        if (info.linkedAttribute && elem.hasAttribute(name)) {
-          var attributeValue = elem.getAttribute(name);
+        if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
+          var attributeValue = elem.getAttribute(info.linkedAttribute);
           initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
         } else if (typeof opts['default'] === 'function') {
           initialValue = opts['default']();
