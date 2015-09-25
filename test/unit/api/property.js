@@ -50,15 +50,25 @@ describe('api/property', function () {
   });
 
   describe('api', function () {
-    function create (definition) {
-      let elem = document.createElement('div');
+    function initProperty (elem, definition) {
       let prop = { test: property(definition)('test') };
       propertiesCreated(elem, prop);
       propertiesReady(elem, prop);
       return elem;
     }
 
-    describe('attr', function () {
+    function create (definition) {
+      return initProperty(document.createElement('div'), definition);
+    }
+
+    function createFromHtml (html, definition) {
+      let elem = document.createElement('div');
+      elem.innerHTML = html;
+      elem = elem.childNodes[0];
+      return initProperty(elem, definition);
+    }
+
+    describe('attribute', function () {
       it('when true, links an attribute of the name (dash-cased)', function () {
         let elem = create({ attribute: true });
         elem.test = 'something';
@@ -69,6 +79,166 @@ describe('api/property', function () {
         let elem = create({ attribute: 'some-attr' });
         elem.test = 'something';
         expect(elem.getAttribute('some-attr')).to.equal('something');
+      });
+
+      describe('deserialize()', function () {
+        it('only works with attribute present', function () {
+          let called = false;
+          let elem = create({ deserialize: () => called = true });
+          elem.test = true;
+          expect(called).to.equal(false);
+        });
+
+        it('coerces the value from the attribute to the property', function () {
+          let elem = create({
+            attribute: true,
+            deserialize: value => value.split(':').map(Number)
+          });
+          elem.setAttribute('test', '1:2:3');
+          expect(elem.test).to.be.an('array');
+          expect(elem.test).to.have.length(3);
+          expect(elem.test[0]).to.equal(1);
+          expect(elem.test[1]).to.equal(2);
+          expect(elem.test[2]).to.equal(3);
+        });
+
+        // This test is a
+        it('coerces the initial value if serialized from an attribute', function () {
+          let elem = createFromHtml('<span test=""></span>', {
+            attribute: true,
+            deserialize: value => value.split(':').map(Number)
+          });
+          elem.setAttribute('test', '1:2:3');
+          expect(elem.test).to.be.an('array');
+          expect(elem.test).to.have.length(3);
+          expect(elem.test[0]).to.equal(1);
+          expect(elem.test[1]).to.equal(2);
+          expect(elem.test[2]).to.equal(3);
+        });
+      });
+
+      describe('serialize()', function () {
+        it('only works with attribute present', function () {
+          let called = false;
+          let elem = create({ serialize: () => called = true });
+          elem.test = true;
+          expect(called).to.equal(false);
+        });
+
+        it('coerces the value from the property to the attribute', function () {
+          let elem = create({
+            attribute: true,
+            serialize: value => value.join(':')
+          });
+          elem.test = [1, 2, 3];
+          expect(elem.getAttribute('test')).to.equal('1:2:3');
+        });
+
+        it('removes the attribute if undefined is returned', function () {
+          let elem = create({
+            attribute: true,
+            serialize: value => value ? '' : undefined
+          });
+          elem.test = true;
+          expect(elem.getAttribute('test')).to.equal('');
+          elem.test = false;
+          expect(elem.getAttribute('test')).to.equal(null);
+        });
+      });
+
+      describe('boolean', function () {
+        it('serialize and deserialize', function () {
+          let elem = create({
+            attribute: true,
+            default: false,
+            deserialize: value => value === null ? false : true,
+            serialize: value => value ? '' : undefined
+          });
+
+          // Initial values.
+          expect(elem.test).to.equal(false);
+          expect(elem.getAttribute('test')).to.equal(null);
+
+          // Setting from property.
+          elem.test = true;
+          expect(elem.test).to.equal(true);
+          expect(elem.getAttribute('test')).to.equal('');
+
+          elem.test = false;
+          expect(elem.test).to.equal(false);
+          expect(elem.getAttribute('test')).to.equal(null);
+
+          // Setting to undefined.
+          elem.setAttribute('test', undefined);
+          expect(elem.test).to.equal(true);
+
+          // Setting to null.
+          elem.setAttribute('test', null);
+          expect(elem.test).to.equal(true);
+
+          // Setting to false.
+          elem.setAttribute('test', false);
+          expect(elem.test).to.equal(true);
+
+          // Setting to 0.
+          elem.setAttribute('test', 0);
+          expect(elem.test).to.equal(true);
+
+          // Setting to an empty string.
+          elem.setAttribute('test', '');
+          expect(elem.test).to.equal(true);
+
+          // Setting to a non-empty string.
+          elem.setAttribute('test', 'something');
+          expect(elem.test).to.equal(true);
+
+          // Removing the attribute.
+          elem.removeAttribute('test');
+          expect(elem.test).to.equal(false);
+        });
+      });
+    });
+
+    describe('default', function () {
+      describe('when a function', function () {
+        it('returns the default value that the property should be initialised with', function () {
+          let elem = create({ default: () => 'something' });
+          expect(elem.test).to.equal('something');
+        });
+
+        it('is returned by get() when the property is not defined', function () {
+          let elem = create({ default: () => 'something' });
+          elem.test = 'something else';
+          expect(elem.test).to.equal('something else');
+          elem.test = undefined;
+          expect(elem.test).to.equal('something');
+        });
+      });
+
+      describe('when not a function', function () {
+        it('it is the default value that the property should be initialised with', function () {
+          let elem = create({ default: 'something' });
+          expect(elem.test).to.equal('something');
+        });
+
+        it('is returned by get() when the property is not defined', function () {
+          let elem = create({ default: 'something' });
+          elem.test = 'something else';
+          expect(elem.test).to.equal('something else');
+          elem.test = undefined;
+          expect(elem.test).to.equal('something');
+        });
+      });
+
+      it('context and arguments', function (done) {
+        let opts = {
+          default () {
+            expect(this).to.equal(opts);
+            expect(arguments.length).to.equal(0);
+            done();
+          }
+        };
+        create(opts);
       });
     });
 
@@ -109,32 +279,28 @@ describe('api/property', function () {
       });
     });
 
-    describe('default', function () {
-      it('when a function, returns the default value that the property should be initialised with', function () {
-        let elem = create({ default: () => 'something' });
-        expect(elem.test).to.equal('something');
-      });
-
-      it('when anything else, it is the default value that the property should be initialised with', function () {
-        let elem = create({ default: 'something' });
-        expect(elem.test).to.equal('something');
-      });
-
-      it('context and arguments', function (done) {
-        let opts = {
-          default () {
-            expect(this).to.equal(opts);
-            expect(arguments.length).to.equal(0);
-            done();
-          }
-        };
-        create(opts);
-      });
-    });
-
     describe('set()', function () {
-      it('is called when the property is initialised', function (done) {
-        create({ set: () => done() });
+      it('is called once if the value does not exist on the element when it is initialised', function () {
+        let calls = 0;
+        create({
+          set (elem, data) {
+            expect(data.newValue).to.equal(undefined);
+            ++calls;
+          }
+        });
+        expect(calls).to.equal(1);
+      });
+
+      it('is called once if the value exists on the element when it is initialised', function () {
+        let calls = 0;
+        createFromHtml('<span test="something"></span>', {
+          attribute: true,
+          set (elem, data) {
+            expect(data.newValue).to.equal('something');
+            ++calls;
+          }
+        });
+        expect(calls).to.equal(1);
       });
 
       it('is called when the property is updated', function () {
@@ -171,18 +337,33 @@ describe('api/property', function () {
     });
 
     describe('type', function () {
-      it('should return the value that the property will be set to', function () {
-        let elem = create({ type: Boolean });
+      it('is an arbitrary function that has no return value (the user can do whatever type checking they want here)', function () {
+        let called = false;
+        let elem = create({
+          type: () => called = true
+        });
         elem.test = 'something';
-        expect(elem.test).to.equal(true);
+        expect(called).to.equal(true);
+      });
+
+      it('is called before set()', function () {
+        let order = [];
+        let elem = create({
+          set: () => order.push('set'),
+          type: () => order.push('type')
+        });
+        elem.test = 'something';
+        expect(order[0]).to.equal('type');
+        expect(order[1]).to.equal('set');
       });
 
       it('context and arguments', function (done) {
         let opts = {
+          default: 'something',
           type (value) {
             expect(this).to.equal(opts);
             expect(arguments.length).to.equal(1);
-            expect(value).to.equal(undefined);
+            expect(value).to.equal('something');
             done();
           }
         };

@@ -17,8 +17,6 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.created = function (elem, initialValue) {
     let info = data(elem, `api/property/${name}`);
-    info.internalValue = initialValue;
-    info.isBoolean = opts.type === Boolean;
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
     info.removeAttribute = elem.removeAttribute;
     info.setAttribute = elem.setAttribute;
@@ -39,7 +37,9 @@ function createNativePropertyDefinition (name, opts) {
         elem.setAttribute = function (attrName, attrValue) {
           info.setAttribute.call(this, attrName, attrValue);
           if (attrName in info.attributeMap) {
-            elem[info.attributeMap[attrName]] = attrValue;
+            // Could also call getAttribute() but this does the same thing.
+            attrValue = String(attrValue);
+            elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
           }
         };
       }
@@ -47,24 +47,39 @@ function createNativePropertyDefinition (name, opts) {
       info.attributeMap[info.linkedAttribute] = name;
     }
 
-    if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
-      info.internalValue = info.isBoolean ? elem.hasAttribute(info.linkedAttribute) : elem.getAttribute(info.linkedAttribute);
-    } else if (typeof opts.default === 'function') {
-      info.internalValue = opts.default();
-    } else if (typeof opts.default !== 'undefined') {
-      info.internalValue = opts.default;
+    if (initialValue === undefined) {
+      if (info.linkedAttribute && elem.hasAttribute(name)) {
+        let attributeValue = elem.getAttribute(name);
+        initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
+      } else if (typeof opts.default === 'function') {
+        initialValue = opts.default();
+      } else if (typeof opts.default !== 'undefined') {
+        initialValue = opts.default;
+      }
     }
 
-    if (opts.type) {
-      info.internalValue = opts.type(info.internalValue);
-    }
+    info.internalValue = initialValue;
   };
 
   prop.get = function () {
-    return opts.get ? opts.get(this) : data(this, `api/property/${name}`).internalValue;
+    let value = opts.get ? opts.get(this) : data(this, `api/property/${name}`).internalValue;
+
+    if (value === undefined && opts.default !== undefined) {
+      if (typeof opts.default === 'function') {
+        value = opts.default();
+      } else {
+        value = opts.default;
+      }
+    }
+
+    return value;
   };
 
   prop.ready = function (elem, value) {
+    if (opts.type) {
+      opts.type(value);
+    }
+
     if (opts.set) {
       opts.set(elem, {
         name: name,
@@ -74,7 +89,7 @@ function createNativePropertyDefinition (name, opts) {
     }
   };
 
-  prop.set = function (value) {
+  prop.set = function (newValue) {
     let info = data(this, `api/property/${name}`);
 
     if (info.updatingProperty) {
@@ -82,8 +97,6 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     info.updatingProperty = true;
-
-    let newValue = opts.type ? opts.type(value) : value;
     let oldValue = this[name];
 
     if (!opts.get) {
@@ -95,13 +108,16 @@ function createNativePropertyDefinition (name, opts) {
       return;
     }
 
+    if (opts.type) {
+      opts.type(newValue);
+    }
+
     if (info.linkedAttribute) {
-      if (info.isBoolean && newValue) {
-        info.setAttribute.call(this, info.linkedAttribute, '');
-      } else if (value === undefined || info.isBoolean && !newValue) {
-        info.removeAttribute.call(this, info.linkedAttribute, '');
+      let serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
+      if (serializedValue === undefined) {
+        info.removeAttribute.call(this, info.linkedAttribute);
       } else {
-        info.setAttribute.call(this, info.linkedAttribute, newValue);
+        info.setAttribute.call(this, info.linkedAttribute, serializedValue);
       }
     }
 
