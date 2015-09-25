@@ -1,8 +1,8 @@
-import apiProperty from '../api/property';
 import createdOnDescendants from './created-on-descendants';
 import data from '../util/data';
 import events from './events';
 import patchAttributeMethods from './patch-attribute-methods';
+import property from './property';
 import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
 import prototype from './prototype';
@@ -17,7 +17,7 @@ function ensurePropertyFunctions (opts) {
   return names.reduce(function (descriptors, descriptorName) {
     descriptors[descriptorName] = opts.properties[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = apiProperty(descriptors[descriptorName]);
+      descriptors[descriptorName] = property(descriptors[descriptorName]);
     }
     return descriptors;
   }, {});
