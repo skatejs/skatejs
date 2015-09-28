@@ -1,5 +1,6 @@
 export default {
   default: '',
   deserialize: String,
-  serialize: String
+  serialize: String,
+  type: String
 };

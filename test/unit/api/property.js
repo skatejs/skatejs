@@ -21,47 +21,32 @@ describe('api/property', function () {
   });
 
   describe('boolean', function () {
-    it('serialize and deserialize', function () {
+    it('initial value', function () {
       let elem = create(property.boolean());
-
-      // Initial values.
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
+    });
 
-      // Setting from property.
-      elem.test = true;
-      expect(elem.test).to.equal(true);
-      expect(elem.getAttribute('test')).to.equal('');
+    [undefined, null, false, 0, '', 'something'].forEach(function (value) {
+      value = (typeof value === 'string' ? '"' + value + '"' : value);
+      it('setting attribute to ' + value, function () {
+        let elem = create(property.boolean());
+        elem.setAttribute('test', value);
+        expect(elem.test).to.equal(true, 'property');
+        expect(elem.getAttribute('test')).to.equal(String(value), 'attribute');
+      });
+      it('setting property to ' + value, function () {
+        let elem = create(property.boolean());
+        elem.test = value;
+        expect(elem.test).to.equal(!!value, 'property');
+        expect(elem.getAttribute('test')).to.equal(value ? '' : null, 'attribute');
+      });
+    });
 
-      elem.test = false;
-      expect(elem.test).to.equal(false);
-      expect(elem.getAttribute('test')).to.equal(null);
-
-      // Setting to undefined.
-      elem.setAttribute('test', undefined);
-      expect(elem.test).to.equal(true);
-
-      // Setting to null.
-      elem.setAttribute('test', null);
-      expect(elem.test).to.equal(true);
-
-      // Setting to false.
-      elem.setAttribute('test', false);
-      expect(elem.test).to.equal(true);
-
-      // Setting to 0.
-      elem.setAttribute('test', 0);
-      expect(elem.test).to.equal(true);
-
-      // Setting to an empty string.
+    it('removing attribute', function () {
+      let elem = create(property.boolean());
       elem.setAttribute('test', '');
       expect(elem.test).to.equal(true);
-
-      // Setting to a non-empty string.
-      elem.setAttribute('test', 'something');
-      expect(elem.test).to.equal(true);
-
-      // Removing the attribute.
       elem.removeAttribute('test');
       expect(elem.test).to.equal(false);
     });

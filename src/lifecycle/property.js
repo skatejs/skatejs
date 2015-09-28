@@ -28,19 +28,23 @@ function createNativePropertyDefinition (name, opts) {
         info.attributeMap = {};
 
         elem.removeAttribute = function (attrName) {
+          info.updatingAttribute = true;
           info.removeAttribute.call(this, attrName);
           if (attrName in info.attributeMap) {
             elem[info.attributeMap[attrName]] = undefined;
           }
+          info.updatingAttribute = false;
         };
 
         elem.setAttribute = function (attrName, attrValue) {
+          info.updatingAttribute = true;
           info.setAttribute.call(this, attrName, attrValue);
           if (attrName in info.attributeMap) {
             // Could also call getAttribute() but this does the same thing.
             attrValue = String(attrValue);
             elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
           }
+          info.updatingAttribute = false;
         };
       }
 
@@ -85,15 +89,15 @@ function createNativePropertyDefinition (name, opts) {
     info.updatingProperty = true;
     let oldValue = this[name];
 
+    if (opts.type) {
+      newValue = opts.type(newValue);
+    }
+
     if (!opts.get) {
       info.internalValue = newValue;
     }
 
-    if (opts.type) {
-      opts.type(newValue);
-    }
-
-    if (info.linkedAttribute) {
+    if (info.linkedAttribute && !info.updatingAttribute) {
       let serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
       if (serializedValue === undefined) {
         info.removeAttribute.call(this, info.linkedAttribute);
