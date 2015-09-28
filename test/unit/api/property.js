@@ -1,6 +1,7 @@
 import property from '../../../src/api/property';
 import propertiesCreated from '../../../src/lifecycle/properties-created';
 import propertiesReady from '../../../src/lifecycle/properties-ready';
+import skate from '../../../src/index';
 
 function create (definition) {
   let elem = document.createElement('div');
@@ -11,6 +12,14 @@ function create (definition) {
 }
 
 describe('api/property', function () {
+  it('skate.property', function () {
+    expect(skate.property).to.be.an('object');
+    expect(skate.property.boolean).to.be.a('function');
+    expect(skate.property.float).to.be.a('function');
+    expect(skate.property.number).to.be.a('function');
+    expect(skate.property.string).to.be.a('function');
+  });
+
   describe('boolean', function () {
     it('serialize and deserialize', function () {
       let elem = create(property.boolean());
