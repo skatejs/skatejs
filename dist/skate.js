@@ -715,19 +715,23 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
           info.attributeMap = {};
   
           elem.removeAttribute = function (attrName) {
+            info.updatingAttribute = true;
             info.removeAttribute.call(this, attrName);
             if (attrName in info.attributeMap) {
               elem[info.attributeMap[attrName]] = undefined;
             }
+            info.updatingAttribute = false;
           };
   
           elem.setAttribute = function (attrName, attrValue) {
+            info.updatingAttribute = true;
             info.setAttribute.call(this, attrName, attrValue);
             if (attrName in info.attributeMap) {
               // Could also call getAttribute() but this does the same thing.
               attrValue = String(attrValue);
               elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
             }
+            info.updatingAttribute = false;
           };
         }
   
@@ -772,15 +776,15 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       info.updatingProperty = true;
       var oldValue = this[name];
   
+      if (opts.type) {
+        newValue = opts.type(newValue);
+      }
+  
       if (!opts.get) {
         info.internalValue = newValue;
       }
   
-      if (opts.type) {
-        opts.type(newValue);
-      }
-  
-      if (info.linkedAttribute) {
+      if (info.linkedAttribute && !info.updatingAttribute) {
         var serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
         if (serializedValue === undefined) {
           info.removeAttribute.call(this, info.linkedAttribute);
@@ -854,6 +858,9 @@ __ceb223b354343ac9f009816425363726 = (function () {
     },
     serialize: function serialize(value) {
       return value ? '' : undefined;
+    },
+    type: function type(value) {
+      return !!value;
     }
   };
   module.exports = exports['default'];
@@ -875,7 +882,8 @@ __1eefbd388455cbf61d2082ee22acadca = (function () {
   exports["default"] = {
     "default": 0,
     serialize: String,
-    deserialize: parseFloat
+    deserialize: parseFloat,
+    type: parseFloat
   };
   module.exports = exports["default"];
   
@@ -896,7 +904,8 @@ __360a03d396e00a10ad74a76ba72f9d83 = (function () {
   exports["default"] = {
     "default": 0,
     serialize: String,
-    deserialize: Number
+    deserialize: Number,
+    type: Number
   };
   module.exports = exports["default"];
   
@@ -917,7 +926,8 @@ __b0d0e2f7f4af4b006d134d92ec6375b9 = (function () {
   exports['default'] = {
     'default': '',
     deserialize: String,
-    serialize: String
+    serialize: String,
+    type: String
   };
   module.exports = exports['default'];
   
