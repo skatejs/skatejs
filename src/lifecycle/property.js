@@ -53,7 +53,7 @@ function createNativePropertyDefinition (name, opts) {
         initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
       } else if (typeof opts.default === 'function') {
         initialValue = opts.default();
-      } else if (typeof opts.default !== 'undefined') {
+      } else if (opts.default !== undefined) {
         initialValue = opts.default;
       }
     }
@@ -75,20 +75,6 @@ function createNativePropertyDefinition (name, opts) {
     return value;
   };
 
-  prop.ready = function (elem, value) {
-    if (opts.type) {
-      opts.type(value);
-    }
-
-    if (opts.set) {
-      opts.set(elem, {
-        name: name,
-        newValue: value,
-        oldValue: undefined
-      });
-    }
-  };
-
   prop.set = function (newValue) {
     let info = data(this, `api/property/${name}`);
 
@@ -101,11 +87,6 @@ function createNativePropertyDefinition (name, opts) {
 
     if (!opts.get) {
       info.internalValue = newValue;
-    }
-
-    if (newValue === oldValue) {
-      info.updatingProperty = false;
-      return;
     }
 
     if (opts.type) {

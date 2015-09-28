@@ -2,7 +2,7 @@ import property from '../../../src/lifecycle/property';
 import propertiesCreated from '../../../src/lifecycle/properties-created';
 import propertiesReady from '../../../src/lifecycle/properties-ready';
 
-describe('api/property', function () {
+describe('lifecycle/property', function () {
   it('should accept zero arguments', function () {
     property();
   });
@@ -41,10 +41,6 @@ describe('api/property', function () {
     describe('custom', function () {
       it('should define a created() callback', function () {
         expect(create().created).to.be.a('function');
-      });
-
-      it('should define a ready() callback', function () {
-        expect(create().ready).to.be.a('function');
       });
     });
   });
@@ -133,6 +129,7 @@ describe('api/property', function () {
         it('coerces the value from the property to the attribute', function () {
           let elem = create({
             attribute: true,
+            default: () => [],
             serialize: value => value.join(':')
           });
           elem.test = [1, 2, 3];
@@ -148,58 +145,6 @@ describe('api/property', function () {
           expect(elem.getAttribute('test')).to.equal('');
           elem.test = false;
           expect(elem.getAttribute('test')).to.equal(null);
-        });
-      });
-
-      describe('boolean', function () {
-        it('serialize and deserialize', function () {
-          let elem = create({
-            attribute: true,
-            default: false,
-            deserialize: value => value === null ? false : true,
-            serialize: value => value ? '' : undefined
-          });
-
-          // Initial values.
-          expect(elem.test).to.equal(false);
-          expect(elem.getAttribute('test')).to.equal(null);
-
-          // Setting from property.
-          elem.test = true;
-          expect(elem.test).to.equal(true);
-          expect(elem.getAttribute('test')).to.equal('');
-
-          elem.test = false;
-          expect(elem.test).to.equal(false);
-          expect(elem.getAttribute('test')).to.equal(null);
-
-          // Setting to undefined.
-          elem.setAttribute('test', undefined);
-          expect(elem.test).to.equal(true);
-
-          // Setting to null.
-          elem.setAttribute('test', null);
-          expect(elem.test).to.equal(true);
-
-          // Setting to false.
-          elem.setAttribute('test', false);
-          expect(elem.test).to.equal(true);
-
-          // Setting to 0.
-          elem.setAttribute('test', 0);
-          expect(elem.test).to.equal(true);
-
-          // Setting to an empty string.
-          elem.setAttribute('test', '');
-          expect(elem.test).to.equal(true);
-
-          // Setting to a non-empty string.
-          elem.setAttribute('test', 'something');
-          expect(elem.test).to.equal(true);
-
-          // Removing the attribute.
-          elem.removeAttribute('test');
-          expect(elem.test).to.equal(false);
         });
       });
     });
@@ -315,12 +260,12 @@ describe('api/property', function () {
         expect(calls).to.equal(2);
       });
 
-      it('is not called if the property is set to the same value that it already is', function () {
+      it('is called even if the property is set to the same value that it already is', function () {
         let calls = 0;
         let elem = create({ set: () => ++calls });
         elem.test = true;
         elem.test = true;
-        expect(calls).to.equal(2);
+        expect(calls).to.equal(3);
       });
 
       it('context and arguments', function (done) {

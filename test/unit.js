@@ -4,6 +4,7 @@ import './unit/api/emit';
 import './unit/api/fragment';
 import './unit/api/global';
 import './unit/api/init';
+import './unit/api/property';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/document-observer';
