@@ -43,7 +43,7 @@
     "whatwg-fetch": "^0.9.0"
   },
   "scripts": {
-    "dist": "gulp dist",
+    "build": "gulp build",
     "docs": "gulp docs",
     "docs-watch": "gulp docs-watch",
     "test": "gulp test",
