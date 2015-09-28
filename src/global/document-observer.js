@@ -2,6 +2,7 @@ import globals from './vars';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
+import warn from '../util/warn';
 
 var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
 
@@ -53,6 +54,10 @@ function documentObserverHandler (mutations) {
 }
 
 function createDocumentObserver () {
+  if (!MutationObserver) {
+    warn('Your browser does not support native custom elements or mutation observers. In order for Skate to automatically initialise components you must at the very least have a mutation observer polyfill loaded.\n\n- http://w3c.github.io/webcomponents/spec/custom/\n- https://developer.mozilla.org/en/docs/Web/API/MutationObserver\n- https://github.com/skatejs/polyfill-mutation-observer');
+    return;
+  }
   var observer = new MutationObserver(documentObserverHandler);
   observer.observe(document, {
     childList: true,
