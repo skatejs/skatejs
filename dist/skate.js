@@ -614,6 +614,372 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   return module.exports;
 }).call(this);
+// src/util/dash-case.js
+__0cd264077c1ca567539d11e826d3c00e = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (str) {
+    return str.split(/([A-Z])/).reduce(function (one, two, idx) {
+      var dash = !one || idx % 2 === 0 ? '' : '-';
+      return '' + one + dash + two.toLowerCase();
+    });
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/data.js
+__18291b0452e01f65cf28d6695040736a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (element) {
+    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+  
+    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+    return namespace && (data[namespace] || (data[namespace] = {})) || data;
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/lifecycle/property.js
+__5fe98810c40e8fe796b072491d45fcc6 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
+  
+  var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
+  
+  // TODO Decouple boolean attributes from the Boolean function.
+  // TODO Split apart createNativePropertyDefinition function.
+  
+  function getLinkedAttribute(name, attr) {
+    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
+  }
+  
+  function createNativePropertyDefinition(name, opts) {
+    var prop = {
+      configurable: true,
+      enumerable: true
+    };
+  
+    prop.created = function (elem, initialValue) {
+      var info = (0, _utilData2['default'])(elem, 'api/property/' + name);
+      info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
+      info.removeAttribute = elem.removeAttribute;
+      info.setAttribute = elem.setAttribute;
+      info.updatingProperty = false;
+  
+      // TODO Refactor
+      if (info.linkedAttribute) {
+        if (!info.attributeMap) {
+          info.attributeMap = {};
+  
+          elem.removeAttribute = function (attrName) {
+            info.removeAttribute.call(this, attrName);
+            if (attrName in info.attributeMap) {
+              elem[info.attributeMap[attrName]] = undefined;
+            }
+          };
+  
+          elem.setAttribute = function (attrName, attrValue) {
+            info.setAttribute.call(this, attrName, attrValue);
+            if (attrName in info.attributeMap) {
+              // Could also call getAttribute() but this does the same thing.
+              attrValue = String(attrValue);
+              elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
+            }
+          };
+        }
+  
+        info.attributeMap[info.linkedAttribute] = name;
+      }
+  
+      if (initialValue === undefined) {
+        if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
+          var attributeValue = elem.getAttribute(info.linkedAttribute);
+          initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
+        } else if (typeof opts['default'] === 'function') {
+          initialValue = opts['default']();
+        } else if (opts['default'] !== undefined) {
+          initialValue = opts['default'];
+        }
+      }
+  
+      info.internalValue = initialValue;
+    };
+  
+    prop.get = function () {
+      var value = opts.get ? opts.get(this) : (0, _utilData2['default'])(this, 'api/property/' + name).internalValue;
+  
+      if (value === undefined && opts['default'] !== undefined) {
+        if (typeof opts['default'] === 'function') {
+          value = opts['default']();
+        } else {
+          value = opts['default'];
+        }
+      }
+  
+      return value;
+    };
+  
+    prop.set = function (newValue) {
+      var info = (0, _utilData2['default'])(this, 'api/property/' + name);
+  
+      if (info.updatingProperty) {
+        return;
+      }
+  
+      info.updatingProperty = true;
+      var oldValue = this[name];
+  
+      if (!opts.get) {
+        info.internalValue = newValue;
+      }
+  
+      if (opts.type) {
+        opts.type(newValue);
+      }
+  
+      if (info.linkedAttribute) {
+        var serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
+        if (serializedValue === undefined) {
+          info.removeAttribute.call(this, info.linkedAttribute);
+        } else {
+          info.setAttribute.call(this, info.linkedAttribute, serializedValue);
+        }
+      }
+  
+      var changeData = {
+        name: name,
+        newValue: newValue,
+        oldValue: oldValue
+      };
+  
+      if (opts.set) {
+        opts.set(this, changeData);
+      }
+  
+      if (opts.emit) {
+        var eventName = opts.emit;
+  
+        if (eventName === true) {
+          eventName = 'skate.property';
+        }
+  
+        (0, _apiEmit2['default'])(this, eventName, {
+          bubbles: false,
+          cancelable: false,
+          detail: changeData
+        });
+      }
+  
+      info.updatingProperty = false;
+    };
+  
+    return prop;
+  }
+  
+  exports['default'] = function (opts) {
+    opts = opts || {};
+  
+    if (typeof opts === 'function') {
+      opts = { type: opts };
+    }
+  
+    return function (name) {
+      return createNativePropertyDefinition(name, opts);
+    };
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/property/boolean.js
+__ceb223b354343ac9f009816425363726 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = {
+    'default': false,
+    deserialize: function deserialize(value) {
+      return value === null ? false : true;
+    },
+    serialize: function serialize(value) {
+      return value ? '' : undefined;
+    }
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/property/float.js
+__1eefbd388455cbf61d2082ee22acadca = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports["default"] = {
+    "default": 0,
+    serialize: String,
+    deserialize: parseFloat
+  };
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/api/property/number.js
+__360a03d396e00a10ad74a76ba72f9d83 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports["default"] = {
+    "default": 0,
+    serialize: String,
+    deserialize: Number
+  };
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/api/property/string.js
+__b0d0e2f7f4af4b006d134d92ec6375b9 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = {
+    'default': '',
+    deserialize: String,
+    serialize: String
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/property/index.js
+__8e32f3287770e2db0e284f8ed6cd72cf = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  
+  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  
+  var _lifecycleProperty = __5fe98810c40e8fe796b072491d45fcc6;
+  
+  var _lifecycleProperty2 = _interopRequireDefault(_lifecycleProperty);
+  
+  var _boolean = __ceb223b354343ac9f009816425363726;
+  
+  var _boolean2 = _interopRequireDefault(_boolean);
+  
+  var _float = __1eefbd388455cbf61d2082ee22acadca;
+  
+  var _float2 = _interopRequireDefault(_float);
+  
+  var _number = __360a03d396e00a10ad74a76ba72f9d83;
+  
+  var _number2 = _interopRequireDefault(_number);
+  
+  var _string = __b0d0e2f7f4af4b006d134d92ec6375b9;
+  
+  var _string2 = _interopRequireDefault(_string);
+  
+  function prop(type) {
+    return function (opts) {
+      return (0, _lifecycleProperty2['default'])((0, _utilAssign2['default'])({
+        attribute: true
+      }, type, opts));
+    };
+  }
+  
+  exports['default'] = {
+    boolean: prop(_boolean2['default']),
+    float: prop(_float2['default']),
+    number: prop(_number2['default']),
+    string: prop(_string2['default'])
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/api/version.js
 __662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
@@ -661,30 +1027,6 @@ __d9d26492984e649e5130081ad32bafd6 = (function () {
   };
   
   module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-// src/util/data.js
-__18291b0452e01f65cf28d6695040736a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (element) {
-    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-  
-    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
-    return namespace && (data[namespace] || (data[namespace] = {})) || data;
-  };
-  
-  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -956,222 +1298,6 @@ __cbc0eefc77aa7d958ec51e53ef2568fc = (function () {
   
   return module.exports;
 }).call(this);
-// src/util/dash-case.js
-__0cd264077c1ca567539d11e826d3c00e = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (str) {
-    return str.split(/([A-Z])/).reduce(function (one, two, idx) {
-      var dash = !one || idx % 2 === 0 ? '' : '-';
-      return '' + one + dash + two.toLowerCase();
-    });
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/lifecycle/property.js
-__5fe98810c40e8fe796b072491d45fcc6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
-  
-  var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
-  
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
-  
-  var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
-  
-  var _apiEmit2 = _interopRequireDefault(_apiEmit);
-  
-  // TODO Decouple boolean attributes from the Boolean function.
-  // TODO Split apart createNativePropertyDefinition function.
-  
-  function getLinkedAttribute(name, attr) {
-    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
-  }
-  
-  function createNativePropertyDefinition(name, opts) {
-    var prop = {
-      configurable: true,
-      enumerable: true
-    };
-  
-    prop.created = function (elem, initialValue) {
-      var info = (0, _utilData2['default'])(elem, 'api/property/' + name);
-      info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-      info.removeAttribute = elem.removeAttribute;
-      info.setAttribute = elem.setAttribute;
-      info.updatingProperty = false;
-  
-      // TODO Refactor
-      if (info.linkedAttribute) {
-        if (!info.attributeMap) {
-          info.attributeMap = {};
-  
-          elem.removeAttribute = function (attrName) {
-            info.removeAttribute.call(this, attrName);
-            if (attrName in info.attributeMap) {
-              elem[info.attributeMap[attrName]] = undefined;
-            }
-          };
-  
-          elem.setAttribute = function (attrName, attrValue) {
-            info.setAttribute.call(this, attrName, attrValue);
-            if (attrName in info.attributeMap) {
-              // Could also call getAttribute() but this does the same thing.
-              attrValue = String(attrValue);
-              elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
-            }
-          };
-        }
-  
-        info.attributeMap[info.linkedAttribute] = name;
-      }
-  
-      if (initialValue === undefined) {
-        if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
-          var attributeValue = elem.getAttribute(info.linkedAttribute);
-          initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
-        } else if (typeof opts['default'] === 'function') {
-          initialValue = opts['default']();
-        } else if (typeof opts['default'] !== 'undefined') {
-          initialValue = opts['default'];
-        }
-      }
-  
-      info.internalValue = initialValue;
-    };
-  
-    prop.get = function () {
-      var value = opts.get ? opts.get(this) : (0, _utilData2['default'])(this, 'api/property/' + name).internalValue;
-  
-      if (value === undefined && opts['default'] !== undefined) {
-        if (typeof opts['default'] === 'function') {
-          value = opts['default']();
-        } else {
-          value = opts['default'];
-        }
-      }
-  
-      return value;
-    };
-  
-    prop.ready = function (elem, value) {
-      if (opts.type) {
-        opts.type(value);
-      }
-  
-      if (opts.set) {
-        opts.set(elem, {
-          name: name,
-          newValue: value,
-          oldValue: undefined
-        });
-      }
-    };
-  
-    prop.set = function (newValue) {
-      var info = (0, _utilData2['default'])(this, 'api/property/' + name);
-  
-      if (info.updatingProperty) {
-        return;
-      }
-  
-      info.updatingProperty = true;
-      var oldValue = this[name];
-  
-      if (!opts.get) {
-        info.internalValue = newValue;
-      }
-  
-      if (newValue === oldValue) {
-        info.updatingProperty = false;
-        return;
-      }
-  
-      if (opts.type) {
-        opts.type(newValue);
-      }
-  
-      if (info.linkedAttribute) {
-        var serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
-        if (serializedValue === undefined) {
-          info.removeAttribute.call(this, info.linkedAttribute);
-        } else {
-          info.setAttribute.call(this, info.linkedAttribute, serializedValue);
-        }
-      }
-  
-      var changeData = {
-        name: name,
-        newValue: newValue,
-        oldValue: oldValue
-      };
-  
-      if (opts.set) {
-        opts.set(this, changeData);
-      }
-  
-      if (opts.emit) {
-        var eventName = opts.emit;
-  
-        if (eventName === true) {
-          eventName = 'skate.property';
-        }
-  
-        (0, _apiEmit2['default'])(this, eventName, {
-          bubbles: false,
-          cancelable: false,
-          detail: changeData
-        });
-      }
-  
-      info.updatingProperty = false;
-    };
-  
-    return prop;
-  }
-  
-  exports['default'] = function (opts) {
-    opts = opts || {};
-  
-    if (typeof opts === 'function') {
-      opts = { type: opts };
-    }
-  
-    return function (name) {
-      return createNativePropertyDefinition(name, opts);
-    };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
 // src/lifecycle/properties-created.js
 __a66903f10d803226e4691dfa301c4f3e = (function () {
   var module = {
@@ -1229,8 +1355,8 @@ __06885fcc635bf6a67cb67ec77a6e8b17 = (function () {
   
   function propertiesApply(elem, props) {
     Object.keys(props).forEach(function (name) {
-      var ready = props[name].ready;
-      ready && ready(elem, elem[name]);
+      var prop = props[name];
+      prop.set && prop.set.call(elem, elem[name]);
     });
   }
   
@@ -1902,6 +2028,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
   
+  var _apiProperty = __8e32f3287770e2db0e284f8ed6cd72cf;
+  
+  var _apiProperty2 = _interopRequireDefault(_apiProperty);
+  
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
@@ -2053,6 +2183,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.emit = _apiEmit2['default'];
   skate.fragment = _apiFragment2['default'];
   skate.init = _apiInit2['default'];
+  skate.property = _apiProperty2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
