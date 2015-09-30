@@ -2,7 +2,6 @@ import dashCase from '../util/dash-case';
 import data from '../util/data';
 import emit from '../api/emit';
 
-// TODO Decouple boolean attributes from the Boolean function.
 // TODO Split apart createNativePropertyDefinition function.
 
 function getLinkedAttribute (name, attr) {
