@@ -266,25 +266,26 @@ skate('my-element', {
       // Serializes the property value when it is set so that it can be stored
       // as an attribute value. This only is called if this property is linked
       // to an attribute.
-      serializeToAttribute: function () {},
+      serialize: function () {},
 
       // Deserializes the attribute value when it is set so that it can be
       // set as the property value. This only is called if this property is
       // linked to an attribute.
-      deserializeFromAttribute: function () {},
+      deserialize: function () {},
 
       // This will be used as the default value for the property. If you specify
       // a function then it will be invoked and the return value will be used.
       // This option will also be used in place of the value returned from the
-      // `get()` option if it returns `undefined`.
-      default: 'initial value'
+      // `get()` option if it returns `undefined`. This does not override any
+      // values present on the element when at the time it is initialised.
+      default: 'default value'
 
       // Whether or not to trigger events when the property changes. Defaults to
-      // `false`. If you do not want events triggered, set this to a falsy value.
+      // `false`.
       //
-      // If this is truthy, when the property is changed it will trigger an
-      // event called `skate.property` if it is `true`, or an event with
-      // the same name as the specified value is emitted.
+      // If `true`, a `skate.property` event is emitted when the property is
+      // set. If a `string`, it is used as the event name that will be emitted
+      // when the property is set.
       //
       // The event object for the event that is triggered contains the following
       // information:
@@ -298,19 +299,36 @@ skate('my-element', {
       // retrieved. If you don't specify a getter, the value that it was set as
       // is returned regardless of if you've specified a setter.
       //
+      // The getter is passed a single argument which is the element in which
+      // the property was accessed.
+      //
       // To make a property "readonly", specify a getter without a setter.
       get: function () {},
 
       // Custom setter. Set value as you see fit. Return value is ignored. If
       // you don't specify a getter, then whatever `newValue` was passed in to
-      // the setter, is returned by the default getter. If you want to return
-      // a custom value, specify a getter.
-      set: function (newValue, oldValue) {},
+      // the setter, is returned when you access the property.
+      // You receive two arguments:
+      //
+      // - `element` The element that the property is being set on.
+      // - `changeData` Information about the change.
+      //
+      // The `changeData` property has three entries:
+      //
+      // - `name`
+      // - `newValue`
+      // - `oldValue`
+      //
+      // If you set the value to the same value that the property already
+      // is, then the setter is still triggered. However, both `newValue` and
+      // `oldValue` will be the same value.
+      set: function (element, changeData) {},
 
       // A function that gets called before `set()`. It's up to you what you do
       // here. You can log, warn, or throw an exception if an unacceptable value
-      // is detected. By default this does nothing and the return value is not
-      // used.
+      // is detected. If you simply want to coerce the value, return the coerced
+      // value. You *must* return a value from this. If you don't return, then
+      // the coerced value becomes `undefined`.
       type: function () {}
     }
   },
