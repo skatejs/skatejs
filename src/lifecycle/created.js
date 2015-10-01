@@ -1,98 +1,58 @@
-import assignSafe from '../util/assign-safe';
+import createdOnDescendants from './created-on-descendants';
 import data from '../util/data';
 import events from './events';
-import properties from './properties';
-import protos from '../util/protos';
-import registry from '../global/registry';
-import render from './render';
-import walkTree from '../util/walk-tree';
+import patchAttributeMethods from './patch-attribute-methods';
+import property from './property';
+import propertiesCreated from './properties-created';
+import propertiesReady from './properties-ready';
+import prototype from './prototype';
+import renderer from './renderer';
+import resolve from './resolve';
 
-let elProto = window.Element.prototype;
-let oldSetAttribute = elProto.setAttribute;
-let oldRemoveAttribute = elProto.removeAttribute;
-
-function applyPrototype (opts) {
-  let prototypes = protos(opts.prototype);
-  return function (elem) {
-    prototypes.forEach(proto => {
-      if (!proto.isPrototypeOf(elem)) {
-        assignSafe(elem, proto);
-      }
-    });
-  };
+// TODO Remove this when we no longer support the legacy definitions and only
+// support a superset of a native property definition.
+function ensurePropertyFunctions (opts) {
+  let props = opts.properties;
+  let names = Object.keys(props || {});
+  return names.reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = opts.properties[descriptorName];
+    if (typeof descriptors[descriptorName] !== 'function') {
+      descriptors[descriptorName] = property(descriptors[descriptorName]);
+    }
+    return descriptors;
+  }, {});
 }
 
-function patchAttributeMethods (elem) {
-  elem.setAttribute = function (name, newValue) {
-    let oldValue = this.getAttribute(name);
-    oldSetAttribute.call(elem, name, newValue);
-    elem.attributeChangedCallback(name, oldValue, String(newValue));
-  };
-
-  elem.removeAttribute = function (name) {
-    let oldValue = this.getAttribute(name);
-    oldRemoveAttribute.call(elem, name);
-    elem.attributeChangedCallback(name, oldValue, null);
-  };
-}
-
-function callCreatedOnDescendants (elem, opts) {
-  let id = opts.id;
-  walkTree(elem.childNodes, function (child) {
-    registry.find(child).forEach(Ctor => Ctor.prototype.createdCallback.call(child));
-  }, function (child) {
-    return !data(child, id).created;
-  });
-}
-
-function createCallUpdateOnProperties (opts) {
-  let props = opts.properties || {};
-  let names = Object.keys(props);
-  return function (elem) {
-    names.forEach(function (name) {
-      let prop = props[name];
-      let update = prop && prop.update;
-      let val = elem[name];
-      if (prop && prop.type) {
-        val = (prop.type === Boolean && elem.hasAttribute(typeof prop.attr === 'string' ? prop.attr : name)) || prop.type(val);
-      }
-      update && update(elem, {
-        name: name,
-        newValue: val,
-        oldValue: null
-      });
-    });
-  };
-}
-
-function markAsResolved (elem, opts) {
-  elem.removeAttribute(opts.unresolvedAttribute);
-  elem.setAttribute(opts.resolvedAttribute, '');
+function ensurePropertyDefinitions (elem, propertyFunctions) {
+  return Object.keys(propertyFunctions || {}).reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = propertyFunctions[descriptorName](descriptorName);
+    return descriptors;
+  }, {});
 }
 
 export default function (opts) {
-  let created = opts.created;
-  let isNative = opts.isNative;
-  let callUpdateOnProperties = createCallUpdateOnProperties(opts);
-  let prototype = applyPrototype(opts);
-  let ready = opts.ready;
+  let applyEvents = events(opts);
+  let applyPrototype = prototype(opts);
+  let applyRenderer = renderer(opts);
+  let propertyFunctions = ensurePropertyFunctions(opts);
 
   return function () {
-    let info = data(this, opts.id);
-    let isResolved = this.hasAttribute(opts.resolvedAttribute);
+    let info = data(this, `lifecycle/${opts.id}`);
+    let propertyDefinitions;
 
     if (info.created) return;
     info.created = true;
+    propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
-    isNative || patchAttributeMethods(this);
-    isNative || prototype(this);
-    created && created(this);
-    properties(this, opts);
-    events(this, opts);
-    render(this, opts);
-    callCreatedOnDescendants(this, opts);
-    callUpdateOnProperties(this);
-    ready && ready(this);
-    isResolved || markAsResolved(this, opts);
+    patchAttributeMethods(this, opts);
+    applyPrototype(this);
+    propertiesCreated(this, propertyDefinitions);
+    applyEvents(this);
+    opts.created && opts.created(this);
+    applyRenderer(this);
+    createdOnDescendants(this, opts);
+    propertiesReady(this, propertyDefinitions);
+    opts.ready && opts.ready(this);
+    resolve(this, opts);
   };
 }

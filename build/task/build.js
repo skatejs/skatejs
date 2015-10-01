@@ -3,7 +3,6 @@ var gulp = require('gulp');
 var gulpBabel = require('gulp-babel');
 var gulpConcat = require('gulp-concat');
 var gulpDebug = require('gulp-debug');
-var gulpFilter = require('gulp-filter');
 var gulpRename = require('gulp-rename');
 var gulpUglify = require('gulp-uglify');
 var merge = require('merge-stream');
