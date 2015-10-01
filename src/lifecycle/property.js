@@ -29,20 +29,25 @@ function createNativePropertyDefinition (name, opts) {
         elem.removeAttribute = function (attrName) {
           info.updatingAttribute = true;
           info.removeAttribute.call(this, attrName);
+
           if (attrName in info.attributeMap) {
-            elem[info.attributeMap[attrName]] = undefined;
+            const propertyName = info.attributeMap[attrName];
+            elem[propertyName] = undefined;
           }
+
           info.updatingAttribute = false;
         };
 
         elem.setAttribute = function (attrName, attrValue) {
           info.updatingAttribute = true;
           info.setAttribute.call(this, attrName, attrValue);
+
           if (attrName in info.attributeMap) {
-            // Could also call getAttribute() but this does the same thing.
+            const propertyName = info.attributeMap[attrName];
             attrValue = String(attrValue);
-            elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
+            elem[propertyName] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
           }
+
           info.updatingAttribute = false;
         };
       }
