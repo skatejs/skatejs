@@ -63,18 +63,12 @@ Result
 - [Custom Methods and Properties](#custom-methods-and-properties)
 - [Asynchrony](#asynchrony)
 - [API](#api)
-  - [`chain (...args)`](#chain-args)
   - [`create (name, props = {})`](#create-name-props--)
   - [`emit (eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
-  - [`event ()`](#event-)
+  - [`fragment ()`](#fragment-)
   - [`init ()`](#init-)
   - [`noConflict ()`](#noconflict-)
-  - [`property (element, propertyName, propertyDefinition)`](#property-element-propertyname-propertydefinition)
-  - [`property (element, propertyDefinitions)`](#property-element-propertydefinitions)
-  - [`ready (callback)`](#ready-callback)
-  - [`type`](#type)
   - [`version`](#version)
-  - [`watch (element, callback, options = {})`](#watch-element-callback-options--)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
 - [Native Support](#native-support)
@@ -395,14 +389,14 @@ The component lifecycle consists of several paths in the following order startin
 9. `detached` is invoked when removed from the document
 10. `attribute` is invoked whenever an attribute is updated
 
-Each callback gets the element passed in as `this` and is invoked with no arguments except for the `attribute` callback shown below.
+Each callback gets the element passed in as the first argument. The attribute callback gets an additional argument with information about the change:
 
 ```js
 skate('my-element', {
-  attribute: function (name, oldValue, newValue) {
-    if (oldValue === null) {
+  attribute: function (element, change) {
+    if (change.oldValue === undefined) {
       // created
-    } else if (newValue === null) {
+    } else if (change.newValue === undefined) {
       // removed
     } else {
       // updated
@@ -411,7 +405,16 @@ skate('my-element', {
 });
 ```
 
-The `attribute` callback is fired whenever an element attribute is created, updated or removed. This is synonymous with the `attributeChangedCallback` in the web component spec.
+The change object contains the following properties:
+
+- `name` The name of the attribute that was changed.
+- `newValue` The new value of the attribute.
+- `oldValue` The old value of the attribute.
+
+The `attribute` callback is fired whenever an element attribute is created, updated or removed, but not if the attribute already exists on the element when it is first initialised. This is synonymous with the `attributeChangedCallback` in the web component spec. The only differences are:
+
+- Undefined attribute values are normalised to be `undefined` instead of `null` to be consistent across the board.
+- The function signature is different: the element is the first argument and the parameters are consolidated into a change object.
 
 
 
@@ -585,79 +588,6 @@ This is very useful during testing, but can be used for any use case that requir
 
 The following are all available on the `skate` object, or available for use from the `src/api` or `lib/api` folders.
 
-### `chain (...args)`
-
-Returns a function that attempts to make all arguments passed in callable. The arguments and context passed to the returned function are forwarded, so it can be used to compose behaviour. The context passed to the proxy function is returned.
-
-```js
-function increment () {
-  ++this.calls;
-}
-
-var proxy = skate.chain(
-  // Strings point to a method on the context.
-  'increment',
-
-  // Functions are invoked and passed the context.
-  increment,
-
-  // A new chain is created from array values.
-  [ 'increment', increment ],
-
-  // A new chain is created from object values.
-  { key1: 'increment', key2: increment },
-
-  // Same as both the array and object forms.
-  skate.chain('increment', increment);
-);
-
-var context = proxy.call({
-  calls: 0,
-  increment: increment
-});
-
-// 8
-console.log(context.calls);
-```
-
-This makes it really simple to compose functionality:
-
-```js
-function sharedFunction (e) {}
-
-skate('my-element', {
-  events: {
-    click: skate.chain(
-      'instanceMethod',
-      sharedFunction,
-      function (e) {}
-    )
-  },
-  prototype: {
-    instanceMethod: function (e) {}
-  }
-});
-```
-
-You could do all this with in a function, but it's nice not to have to worry about passing context and arguments. Everything is automatically invoked with the same context and arguments:
-
-```js
-function sharedFunction (e) {}
-
-skate('my-element', {
-  events: {
-    click: function (e) {
-      this.instanceMethod(e);
-      sharedFunction.call(this, e);
-      (function (e) {}(e));
-    }
-  },
-  prototype: {
-    instanceMethod: function (e) {}
-  }
-});
-```
-
 
 
 ### `create (name, props = {})`
@@ -808,12 +738,6 @@ click: skate.emit('selected')
 
 
 
-### `event ()`
-
-[soon]
-
-
-
 ### `init ()`
 
 [soon]
@@ -830,211 +754,9 @@ var currentSkate = skate.noConflict();
 
 
 
-### `property (element, name, definition)`
-
-Defines the specified property `name` using `definition` on the `element`. The property definition is different than that normally specified to `Object.defineProperty()` and may contain the following options.
-
-#### `attr`
-
-Whether or not to link the property to an attribute. If `true`, then the property name will be converted from `camelCase` to `dash-case` and the result will be used as the linked attribute.
-
-```js
-attr: true
-```
-
-If a `String`, then that will be used as the linked attribute exactly as it is specified.
-
-```js
-attr: 'my-attribute-name'
-```
-
-No attribute is linked by default.
-
-#### `deps`
-
-A space-separated `String` or `Array` of property names that this property depends on. If any of these properties change, then this property's setter will be invoked.
-
-```js
-deps: 'dependency1 dependency2'
-```
-
-Or:
-
-```js
-deps: [ 'dependency1', 'dependency2' ]
-```
-
-You can also specify dependencies on nested components by giving the dependency a dot-separated path.
-
-```js
-deps: 'my.descendant.dependencyProperty'
-```
-
-If you do this, there are a couple requirements that must be met:
-
-- The path (`my.descendant` in the above example) must be accessible from the element in which you're defining the property.
-- The name (`dependencyProperty` in the above example) must be defined as a property on `my.descendant` and notifying turned on.
-
-#### `get`
-
-The custom getter for this property. If not specified, then the value is stored internally when the value is set and returned whenever it is retrieved. The element is passed as `this`.
-
-If you want to make a property read-only, then specify `get` without `set`.
-
-#### `notify`
-
-Whether or not to emit an event when the property is set. Defaults to `true`.
-
-If `true`, then a `skate.property` event is emitted:
-
-```js
-notify: true
-```
-
-If a `String`, then the value is used as the event name that is emitted.
-
-```js
-notify: 'emit-this-instead'
-```
-
-You may also specify any type of event spec that [`emit`](emit-element-eventname-eventoptions--) takes. This means you can specify a space-separated string or an array of event names.
-
-```js
-notify: 'event1 event2',
-notify: [ 'event1', 'event2' ]
-```
-
-The event that gets emitted contains the following information in its `detail` property:
-
-- `e.detail.name` The property name.
-- `e.detail.newValue` The new value that was just set on the property.
-- `e.detail.oldValue` The previous value of the property.
-
-#### `set`
-
-The custom setter for this property. The return value is ignored, so the logic in this method is responsible for setting the value however it needs to. The element is passed in as `this` and it receives two arguments: `newValue` and `oldValue`, in that order.
-
-```js
-set: function (newValue, oldValue) {
-  this.someOtherValue = oldValue + newValue;
-}
-```
-
-#### `type`
-
-Responsible for coercing the value before the setter is called. The return value of this function is what is passed as `newValue` into the setter.
-
-```js
-type: Number
-```
-
-You can use `type` in conjunction with `attr` to make a boolean attribute:
-
-```js
-attr: true,
-type: Boolean
-```
-
-When the property is passed a truthy value, the attribute is added and void of a value. When passed a falsy value, the attribute is removed.
-
-#### `value`
-
-The initial value for the property. It will be coerced and pass through the setter when initialised.
-
-```js
-value: 'initial value'
-```
-
-If you specify a `Function` then it will be called and the return value used as the initial value.
-
-```js
-value: function () {
-  return 'initial value';
-}
-```
-
-The element is *not* passed as `this` because property initialisation order is not guaranteed. If you need the element in order to compute the value, it's better to use `get` or `set` instead.
-
-If you wanted to have a property linked to a boolean attribute and have it set on the element by default, all you'd have to do is:
-
-```js
-attr: true,
-type: Boolean,
-value: true
-```
-
-
-
-### `property (element, definitions)`
-
-A way to define multiple property definitions to an `element` at once. The `definitions` argument is an object who's keys are the property names and values are the respective property definitions.
-
-
-
-### `ready (callback)`
-
-Executes `callback` when all components are loaded and all elements are upgraded. This comes in handy inside a component when it requires descendants to be upgraded before it uses them.
-
-For example, the following may not work because parents are upgraded before descendants in native custom elements:
-
-```js
-skate('x-parent', {
-  created: function () {
-    this.querySelector('x-child').sayHello();
-  }
-});
-
-skate('x-child', {
-  prototype: {
-    sayHello: function () {
-      console.log('hello');
-    }
-  }
-});
-```
-
-But wrapping the call to `sayHello()` will:
-
-```js
-skate.ready(function () { this.querySelector('x-child').sayHello() });
-```
-
-
-
-### `type`
-
-Contains the constants for each type of binding that Skate supports. They are:
-
-- `skate.type.ELEMENT` - Bind to a tag name.
-- `skate.type.ATTRIBUTE` - Bind to an attribute name.
-- `skate.type.CLASSNAME` - Bind to a class name.
-
-
-
 ### `version`
 
 Returns the current version of Skate.
-
-
-
-### `watch (element, callback, options = {})`
-
-A convenient wrapper around Skate's internal `MutationObserver`. It allows you to watch an element for added or removed nodes.
-
-```js
-skate.watch(element, function (added, removed) {
-  console.log(added.length);
-  console.log(removed.length);
-});
-```
-
-If you want to listen for changes to descendants, pass the `subtree` option:
-
-```js
-skate.watch(element, callback, { subtree: true });
-```
-
-Currently, no other options besides `subtree` are supported.
 
 
 
@@ -1055,9 +777,11 @@ skate('datalist', {
 `<input placeholder="">`:
 
 ```js
+var typeAttribute = require('skatejs-type-attribute');
+
 skate('placeholder', {
   extends: 'input',
-  type: skate.type.ATTRIBUTE,
+  type: typeAttribute,
   created: polyfillInputPlaceholder
 });
 ```
@@ -1065,15 +789,19 @@ skate('placeholder', {
 `<input type="date">`:
 
 ```js
+var typeAttribute = require('skatejs-type-attribute');
+
 skate('type', {
   extends: 'input',
-  type: skate.type.ATTRIBUTE,
-  attributes: {
-    type: function (element, change) {
-      if (change.newValue === 'date') {
-        makeIntoDatepicker(element);
+  type: typeAttribute,
+  properties: {
+    type: skate.property.string({
+      set: function (element, change) {
+        if (change.newValue === 'date') {
+          makeIntoDatepicker(element);
+        }
       }
-    }
+    })
   }
 });
 ```
@@ -1081,15 +809,19 @@ skate('type', {
 `<link rel="import" href="path/to/import.html">` (HTML Imports):
 
 ```js
+var typeAttribute = require('skatejs-type-attribute');
+
 skate('rel', {
   extends: 'link',
-  type: skate.type.ATTRIBUTE,
-  attributes: {
-    rel: function (element, change) {
-      if (change.newValue === 'import') {
-        makeIntoHtmlImport(element);
+  type: typeAttribute,
+  properties: {
+    rel: skate.property.string({
+      set: function (element, change) {
+        if (change.newValue === 'import') {
+          makeIntoHtmlImport(element);
+        }
       }
-    }
+    })
   }
 });
 ```
@@ -1113,10 +845,12 @@ With Skate, those problems vanish. No selectors are run and your tabs will autom
 To refactor that into a Skate component, all you need to do is:
 
 ```js
+var typeClass = require('skatejs-type-class');
+
 skate('tabs', {
-  type: skate.type.CLASSNAME
-  created: function () {
-    jQuery(this).tabs();
+  type: typeClass,
+  created: function (element) {
+    jQuery(element).tabs();
   }
 });
 ```
