@@ -1,3 +1,4 @@
+import assign from '../util/assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 import emit from '../api/emit';
@@ -51,7 +52,7 @@ function createNativePropertyDefinition (name, opts) {
           if (attrName in info.attributeMap) {
             const propertyName = info.attributeMap[attrName];
             attrValue = String(attrValue);
-            elem[propertyName] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
+            elem[propertyName] = opts.deserialize(attrValue);
           }
 
           info.updatingAttribute = false;
@@ -64,7 +65,7 @@ function createNativePropertyDefinition (name, opts) {
     if (initialValue === undefined) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
         let attributeValue = elem.getAttribute(info.linkedAttribute);
-        initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
+        initialValue = opts.deserialize(attributeValue);
       } else {
         initialValue = info.defaultValue;
       }
@@ -106,7 +107,7 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     if (info.linkedAttribute && !info.updatingAttribute) {
-      let serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
+      let serializedValue = opts.serialize(newValue);
       if (serializedValue === undefined) {
         info.removeAttribute.call(this, info.linkedAttribute);
       } else {
@@ -152,6 +153,9 @@ export default function (opts) {
   }
 
   return function (name) {
-    return createNativePropertyDefinition(name, opts);
+    return createNativePropertyDefinition(name, assign({
+      deserialize: value => value,
+      serialize: value => value
+    }, opts));
   };
 }

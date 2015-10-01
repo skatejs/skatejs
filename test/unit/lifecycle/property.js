@@ -183,7 +183,7 @@ describe('lifecycle/property', function () {
       it('context and arguments', function (done) {
         let opts = {
           default () {
-            expect(this).to.equal(opts);
+            expect(this.default).to.equal(opts.default);
             expect(arguments.length).to.equal(0);
             done();
           }
@@ -221,7 +221,7 @@ describe('lifecycle/property', function () {
       it('context and arguments', function () {
         let opts = {
           get () {
-            expect(this).to.equal(opts);
+            expect(this.get).to.equal(opts.get);
             expect(arguments.length).to.equal(1);
           }
         };
@@ -271,7 +271,7 @@ describe('lifecycle/property', function () {
       it('context and arguments', function (done) {
         let opts = {
           set (elem, data) {
-            expect(this).to.equal(opts);
+            expect(this.set).to.equal(opts.set);
             expect(arguments.length).to.equal(2);
             expect(elem.tagName).to.equal('DIV');
             expect(data).to.contain({
@@ -311,7 +311,7 @@ describe('lifecycle/property', function () {
         let opts = {
           default: 'something',
           type (value) {
-            expect(this).to.equal(opts);
+            expect(this.type).to.equal(opts.type);
             expect(arguments.length).to.equal(1);
             expect(value).to.equal('something');
             done();
