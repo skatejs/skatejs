@@ -21,6 +21,12 @@ function createNativePropertyDefinition (name, opts) {
     info.setAttribute = elem.setAttribute;
     info.updatingProperty = false;
 
+    if (typeof opts.default === 'function') {
+      info.defaultValue = opts.default();
+    } else if (opts.default !== undefined) {
+      info.defaultValue = opts.default;
+    }
+
     // TODO Refactor
     if (info.linkedAttribute) {
       if (!info.attributeMap) {
@@ -59,10 +65,8 @@ function createNativePropertyDefinition (name, opts) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
         let attributeValue = elem.getAttribute(info.linkedAttribute);
         initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
-      } else if (typeof opts.default === 'function') {
-        initialValue = opts.default();
-      } else if (opts.default !== undefined) {
-        initialValue = opts.default;
+      } else {
+        initialValue = info.defaultValue;
       }
     }
 
@@ -70,17 +74,17 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.get = function () {
-    let value = opts.get ? opts.get(this) : data(this, `api/property/${name}`).internalValue;
+    const info = data(this, `api/property/${name}`);
 
-    if (value === undefined && opts.default !== undefined) {
-      if (typeof opts.default === 'function') {
-        value = opts.default();
-      } else {
-        value = opts.default;
-      }
+    if (opts.get) {
+      return opts.get(this);
     }
 
-    return value;
+    if (info.internalValue !== undefined) {
+      return info.internalValue;
+    }
+
+    return info.defaultValue;
   };
 
   prop.set = function (newValue) {
