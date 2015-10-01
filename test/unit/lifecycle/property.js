@@ -205,10 +205,13 @@ describe('lifecycle/property', function () {
         elem.test = true;
       });
 
-      it('when an array, the values are the events that are emitted', function (done) {
-        let elem = create({ emit: ['some.prop.event'] });
-        elem.addEventListener('some.prop.event', () => done());
+      it('when an array, the values are the events that are emitted', function () {
+        let elem = create({ emit: ['e1', 'e2'] });
+        let calls = 0;
+        elem.addEventListener('e1', () => ++calls);
+        elem.addEventListener('e2', () => ++calls);
         elem.test = true;
+        expect(calls).to.equal(2);
       });
     });
 
