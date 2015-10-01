@@ -75,19 +75,26 @@ describe('lifecycle/events', function () {
   it('should support delegate event selectors', function () {
     skate(tag.safe, {
       events: {
-        'test a': function (e) {
+        test (e) {
           increment();
           expect(this.tagName).to.equal(tag.safe.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
           expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.delegateTarget.tagName).to.equal('A');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
         },
-        'test span': function (e) {
+        'test a' (e) {
           increment();
           expect(this.tagName).to.equal(tag.safe.toUpperCase());
           expect(e.target.tagName).to.equal('SPAN');
-          expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.delegateTarget.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal('A');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
+        },
+        'test span' (e) {
+          increment();
+          expect(this.tagName).to.equal(tag.safe.toUpperCase());
+          expect(e.target.tagName).to.equal('SPAN');
+          expect(e.currentTarget.tagName).to.equal('SPAN');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
         }
       }
     });
@@ -96,7 +103,7 @@ describe('lifecycle/events', function () {
     helperFixture(inst);
     skate.init(inst);
     skate.emit(inst.querySelector('span'), 'test');
-    expect(numTriggered).to.equal(2);
+    expect(numTriggered).to.equal(3);
   });
 
   it('should support delegate blur and focus events', function () {
