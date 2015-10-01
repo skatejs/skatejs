@@ -1,5 +1,14 @@
 import matches from '../util/matches-selector';
 
+function readonly (obj, prop, val) {
+  Object.defineProperty(obj, prop, {
+    configurable: true,
+    get () {
+      return val;
+    }
+  });
+}
+
 function parseEvent (e) {
   let parts = e.split(' ');
   let name = parts.shift();
@@ -16,7 +25,8 @@ function makeDelegateHandler (elem, handler, parsed) {
     let selector = parsed.selector;
     while (current && current !== elem.parentNode) {
       if (matches(current, selector)) {
-        e.delegateTarget = current;
+        readonly(e, 'currentTarget', current);
+        readonly(e, 'delegateTarget', elem);
         return handler(e);
       }
       current = current.parentNode;
@@ -26,7 +36,7 @@ function makeDelegateHandler (elem, handler, parsed) {
 
 function makeNormalHandler (elem, handler) {
   return function (e) {
-    e.delegateTarget = elem;
+    readonly(e, 'delegateTarget', elem);
     handler(e);
   };
 }
