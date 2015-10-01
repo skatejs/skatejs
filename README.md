@@ -165,6 +165,35 @@ skate('my-element', {
   // called on the host element.
   ready: function (elem) {},
 
+  // Should return a value for the renderer() lifecycle callback to use. By
+  // default this should return a string, but if you supply a custom renderer()
+  // then the return value can be anything that the renderer() can understand.
+  //
+  // When running in the browser, the element will be passed as the only
+  // argument. It's recommended that you use the object as a state object, or
+  // an object of properties. If you do this, then you can use this callback
+  // standalone to render the element on the server-side without having to
+  // support a DOM API.
+  //
+  // All properties that you define in the component definition will be
+  // available on the element. This means that if you override the innerHTML
+  // property that the original value of that property will be available for
+  // you to use here.
+  render: function (elem) {
+    return '<shadow><dom>' + elem.innerHTML + '</dom></shadow>';
+  },
+
+  // The renderer() is responsible for rendering the result of the render()
+  // callback. This callback is optional and defaults to setting the inner HTML
+  // of the host element once. It's up to update the element how you see fit.
+  //
+  // It gets two parameters. The first is the element that is being rendered to
+  // and the second is a function that is already bound with the correct
+  // arguments that returns the rendered content every time it is called.
+  renderer: function (elem, render) {
+    elem.innerHTML = render();
+  },
+
   // Called when an attribute is created, updated or removed.
   attribute: function (elem, data) {
     if (data.oldValue === undefined) {
