@@ -48,11 +48,6 @@ Result
   - [Global](#global)
 - [Usage](#usage)
 - [Component Lifecycle](#component-lifecycle)
-  - [`created`](#created)
-  - [`attached`](#attached)
-  - [`detached`](#detached)
-  - [`attribute`](#attribute)
-  - [`template`](#template)
 - [Event Binding](#event-binding)
 - [Constructing Elements](#constructing-elements)
   - [Function Call](#function-call)
@@ -735,6 +730,12 @@ Same as above except that it makes forwarding events simpler by returning a func
 ```js
 click: skate.emit('selected')
 ```
+
+
+
+### `fragment ()`
+
+[soon]
 
 
 
