@@ -677,6 +677,10 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  
+  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
   var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
@@ -689,7 +693,6 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
   
   var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
-  // TODO Decouple boolean attributes from the Boolean function.
   // TODO Split apart createNativePropertyDefinition function.
   
   function getLinkedAttribute(name, attr) {
@@ -709,6 +712,12 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       info.setAttribute = elem.setAttribute;
       info.updatingProperty = false;
   
+      if (typeof opts['default'] === 'function') {
+        info.defaultValue = opts['default']();
+      } else if (opts['default'] !== undefined) {
+        info.defaultValue = opts['default'];
+      }
+  
       // TODO Refactor
       if (info.linkedAttribute) {
         if (!info.attributeMap) {
@@ -717,20 +726,25 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
           elem.removeAttribute = function (attrName) {
             info.updatingAttribute = true;
             info.removeAttribute.call(this, attrName);
+  
             if (attrName in info.attributeMap) {
-              elem[info.attributeMap[attrName]] = undefined;
+              var propertyName = info.attributeMap[attrName];
+              elem[propertyName] = undefined;
             }
+  
             info.updatingAttribute = false;
           };
   
           elem.setAttribute = function (attrName, attrValue) {
             info.updatingAttribute = true;
             info.setAttribute.call(this, attrName, attrValue);
+  
             if (attrName in info.attributeMap) {
-              // Could also call getAttribute() but this does the same thing.
+              var propertyName = info.attributeMap[attrName];
               attrValue = String(attrValue);
-              elem[info.attributeMap[attrName]] = opts.deserialize ? opts.deserialize(attrValue) : attrValue;
+              elem[propertyName] = opts.deserialize(attrValue);
             }
+  
             info.updatingAttribute = false;
           };
         }
@@ -741,11 +755,9 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       if (initialValue === undefined) {
         if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
           var attributeValue = elem.getAttribute(info.linkedAttribute);
-          initialValue = opts.deserialize ? opts.deserialize(attributeValue) : attributeValue;
-        } else if (typeof opts['default'] === 'function') {
-          initialValue = opts['default']();
-        } else if (opts['default'] !== undefined) {
-          initialValue = opts['default'];
+          initialValue = opts.deserialize(attributeValue);
+        } else {
+          initialValue = info.defaultValue;
         }
       }
   
@@ -753,17 +765,17 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
     };
   
     prop.get = function () {
-      var value = opts.get ? opts.get(this) : (0, _utilData2['default'])(this, 'api/property/' + name).internalValue;
+      var info = (0, _utilData2['default'])(this, 'api/property/' + name);
   
-      if (value === undefined && opts['default'] !== undefined) {
-        if (typeof opts['default'] === 'function') {
-          value = opts['default']();
-        } else {
-          value = opts['default'];
-        }
+      if (opts.get) {
+        return opts.get(this);
       }
   
-      return value;
+      if (info.internalValue !== undefined) {
+        return info.internalValue;
+      }
+  
+      return info.defaultValue;
     };
   
     prop.set = function (newValue) {
@@ -785,7 +797,7 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       }
   
       if (info.linkedAttribute && !info.updatingAttribute) {
-        var serializedValue = opts.serialize ? opts.serialize(newValue) : newValue;
+        var serializedValue = opts.serialize(newValue);
         if (serializedValue === undefined) {
           info.removeAttribute.call(this, info.linkedAttribute);
         } else {
@@ -831,7 +843,14 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
     }
   
     return function (name) {
-      return createNativePropertyDefinition(name, opts);
+      return createNativePropertyDefinition(name, (0, _utilAssign2['default'])({
+        deserialize: function deserialize(value) {
+          return value;
+        },
+        serialize: function serialize(value) {
+          return value;
+        }
+      }, opts));
     };
   };
   
@@ -1215,6 +1234,15 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   
   var _utilMatchesSelector2 = _interopRequireDefault(_utilMatchesSelector);
   
+  function readonly(obj, prop, val) {
+    Object.defineProperty(obj, prop, {
+      configurable: true,
+      get: function get() {
+        return val;
+      }
+    });
+  }
+  
   function parseEvent(e) {
     var parts = e.split(' ');
     var name = parts.shift();
@@ -1231,7 +1259,8 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
       var selector = parsed.selector;
       while (current && current !== elem.parentNode) {
         if ((0, _utilMatchesSelector2['default'])(current, selector)) {
-          e.delegateTarget = current;
+          readonly(e, 'currentTarget', current);
+          readonly(e, 'delegateTarget', elem);
           return handler(e);
         }
         current = current.parentNode;
@@ -1241,7 +1270,7 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   
   function makeNormalHandler(elem, handler) {
     return function (e) {
-      e.delegateTarget = elem;
+      readonly(e, 'delegateTarget', elem);
       handler(e);
     };
   }
@@ -2038,9 +2067,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
   
-  var _apiProperty = __8e32f3287770e2db0e284f8ed6cd72cf;
+  var _apiPropertyIndex = __8e32f3287770e2db0e284f8ed6cd72cf;
   
-  var _apiProperty2 = _interopRequireDefault(_apiProperty);
+  var _apiPropertyIndex2 = _interopRequireDefault(_apiPropertyIndex);
   
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
@@ -2193,7 +2222,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.emit = _apiEmit2['default'];
   skate.fragment = _apiFragment2['default'];
   skate.init = _apiInit2['default'];
-  skate.property = _apiProperty2['default'];
+  skate.property = _apiPropertyIndex2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
