@@ -11,6 +11,8 @@ Skate is a web component library that provides an API to bind behaviour to DOM e
 - Small, 5k min+gz.
 - Allows easy transition from selector-based behaviour binding to element binding.
 
+Skate will soon be joining the [jQuery Foundation Project Incubator](https://jquery.org/) and will be helping to define that process moving forward. Nothing will change for users or contributors.
+
 HTML
 
 ```html
