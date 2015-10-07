@@ -1,6 +1,6 @@
 import bench from '../lib/bench';
 import documentObserver from '../../src/global/document-observer';
-import helpers from '../lib/helpers';
+import fixture from '../lib/fixture';
 
 describe('inserting elements', function () {
   var args;
@@ -35,7 +35,7 @@ describe('inserting elements', function () {
     args = {
       createMutationObservers: createMutationObservers,
       documentObserver: documentObserver,
-      fixture: helpers.fixture()
+      fixture: fixture()
     };
   });
 
