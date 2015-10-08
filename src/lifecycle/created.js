@@ -1,4 +1,3 @@
-import createdOnDescendants from './created-on-descendants';
 import data from '../util/data';
 import events from './events';
 import patchAttributeMethods from './patch-attribute-methods';
@@ -50,7 +49,6 @@ export default function (opts) {
     applyEvents(this);
     opts.created && opts.created(this);
     applyRenderer(this);
-    createdOnDescendants(this, opts);
     propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
     resolve(this, opts);

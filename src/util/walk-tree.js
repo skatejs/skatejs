@@ -2,8 +2,8 @@ import ignored from './ignored';
 
 var Node = window.Node;
 
-function walk (elem, fn, filter) {
-  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem) || (filter && filter(elem) === false)) {
+function walk (elem, fn) {
+  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem)) {
     return;
   }
 
@@ -12,12 +12,12 @@ function walk (elem, fn, filter) {
 
   fn(elem);
   while (child) {
-    walk(child, fn, filter);
+    walk(child, fn);
     child = child.nextSibling;
   }
 }
 
-export default function (elems, fn, filter) {
+export default function (elems, fn) {
   if (!elems) {
     return;
   }
@@ -27,6 +27,6 @@ export default function (elems, fn, filter) {
   }
 
   for (let a = 0; a < elems.length; a++) {
-    walk(elems[a], fn, filter);
+    walk(elems[a], fn);
   }
 }
