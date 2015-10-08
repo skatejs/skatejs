@@ -13,7 +13,6 @@ import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
-import elementConstructor from './util/element-constructor';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
@@ -39,11 +38,31 @@ function makeOptions (userOptions) {
 }
 
 function makeNonNewableWrapper (Ctor) {
-  let CtorWrapper = function (props = {}) {
+  function CtorWrapper (props = {}) {
     return assign(new Ctor(), props);
-  };
+  }
+
+  // Copy prototype.
   CtorWrapper.prototype = Ctor.prototype;
+
+  // Ensure a non-enumerable constructor property exists.
+  Object.defineProperty(Ctor.prototype, 'constructor', {
+    enumerable: false,
+    value: CtorWrapper
+  });
+
   return CtorWrapper;
+}
+
+function polyfillElementConstructor (opts) {
+  const type = opts.type;
+  function CustomElement () {
+    const element = type.create(opts);
+    opts.prototype.createdCallback.call(element);
+    return element;
+  }
+  CustomElement.prototype = opts.prototype;
+  return CustomElement;
 }
 
 let HTMLElement = window.HTMLElement;
@@ -88,7 +107,7 @@ function skate (id, userOptions) {
       prototype: opts.prototype
     });
   } else {
-    Ctor = elementConstructor(opts);
+    Ctor = polyfillElementConstructor(opts);
     initDocument();
     documentObserver.register();
   }

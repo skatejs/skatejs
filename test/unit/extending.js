@@ -55,8 +55,7 @@ describe('extending', function () {
 
   it('should not mess with callbacks', function () {
     if (canExtendStaticProperties) {
-      var ExtendedCtor = skate(tag, class extends Ctor {
-      });
+      var ExtendedCtor = skate(tag, class extends Ctor {});
       expect(new ExtendedCtor().textContent).to.equal('test');
     }
   });
@@ -71,5 +70,12 @@ describe('extending', function () {
       });
       expect(new ExtendedCtor().textContent).to.equal('testing');
     }
+  });
+
+  it('constructor should be accessible', function () {
+    skate(tag, class extends Ctor {});
+    let el = skate.create(tag);
+    expect(el.constructor).to.be.a('function');
+    expect(el.constructor.extends).to.equal('div');
   });
 });
