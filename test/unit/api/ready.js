@@ -30,8 +30,15 @@ describe('api/ready', function () {
   });
 
   it('should fire for an element when it is already ready', function (done) {
+    let called = false;
+
     setup();
     initialise();
+
+    // Ensure it's called right away.
+    ready(elem, () => called = true);
+    expect(called).to.equal(true);
+
     ready(elem, function (shouldBeElem) {
       expect(arguments.length).to.equal(1);
       expect(shouldBeElem).to.equal(elem);
