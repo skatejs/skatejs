@@ -59,7 +59,7 @@ export default function (opts) {
     applyRenderer(this);
     propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
-    resolve(this, opts);
     notifyReady(this);
+    resolve(this, opts);
   };
 }
