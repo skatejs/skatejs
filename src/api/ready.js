@@ -3,7 +3,8 @@ import registry from '../global/registry';
 
 function ready (element) {
   const components = registry.find(element);
-  for (let a = 0; a < components.length; a++) {
+  const componentsLength = components.length;
+  for (let a = 0; a < componentsLength; a++) {
     if (!data(element, `lifecycle/${components[a].id}`).created) {
       return false;
     }
