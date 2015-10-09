@@ -1,4 +1,5 @@
 import data from '../util/data';
+import emit from '../api/emit';
 import events from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import property from './property';
@@ -29,6 +30,13 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
+function notifyReady (elem) {
+  emit(elem, 'skate.ready', {
+    bubbles: false,
+    cancelable: false
+  });
+}
+
 export default function (opts) {
   let applyEvents = events(opts);
   let applyPrototype = prototype(opts);
@@ -52,5 +60,6 @@ export default function (opts) {
     propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
     resolve(this, opts);
+    notifyReady(this);
   };
 }
