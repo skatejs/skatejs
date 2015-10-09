@@ -23,7 +23,7 @@ export default function (elements, callback) {
   const collectionLength = collection.length;
 
   // If there's no elements we don't do anything.
-  if (!collection.length) {
+  if (!collectionLength) {
     return elements;
   }
 
