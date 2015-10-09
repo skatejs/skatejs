@@ -316,8 +316,8 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
   var Node = window.Node;
   
-  function walk(elem, fn) {
-    if (elem.nodeType !== Node.ELEMENT_NODE || (0, _ignored2['default'])(elem)) {
+  function walk(elem, fn, filter) {
+    if (elem.nodeType !== Node.ELEMENT_NODE || (0, _ignored2['default'])(elem) || filter && filter(elem) === false) {
       return;
     }
   
@@ -326,12 +326,12 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
     fn(elem);
     while (child) {
-      walk(child, fn);
+      walk(child, fn, filter);
       child = child.nextSibling;
     }
   }
   
-  exports['default'] = function (elems, fn) {
+  exports['default'] = function (elems, fn, filter) {
     if (!elems) {
       return;
     }
@@ -341,7 +341,7 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
     }
   
     for (var a = 0; a < elems.length; a++) {
-      walk(elems[a], fn);
+      walk(elems[a], fn, filter);
     }
   };
   
@@ -1078,12 +1078,32 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  function callAttachedOnDescendants(elem, opts) {
+    var id = opts.id;
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
+      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
+        return Ctor.prototype.attachedCallback.call(child);
+      });
+    }, function (child) {
+      return !(0, _utilData2['default'])(child, id).attached;
+    });
+  }
+  
   exports['default'] = function (opts) {
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
       if (info.attached) return;
       info.attached = true;
       info.detached = false;
+      callAttachedOnDescendants(this, opts);
       opts.attached(this);
     };
   };
@@ -1117,6 +1137,49 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   };
   
   module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/lifecycle/created-on-descendants.js
+__2d301fc9e6acee7ed6bed70273102f25 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  exports['default'] = createdOnDescendants;
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  function createdOnDescendants(elem, opts) {
+    var id = opts.id;
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
+      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
+        return Ctor.prototype.createdCallback.call(child);
+      });
+    }, function (child) {
+      return !(0, _utilData2['default'])(child, id).created;
+    });
+  }
+  
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -1491,6 +1554,10 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _createdOnDescendants = __2d301fc9e6acee7ed6bed70273102f25;
+  
+  var _createdOnDescendants2 = _interopRequireDefault(_createdOnDescendants);
+  
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
@@ -1568,6 +1635,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       applyEvents(this);
       opts.created && opts.created(this);
       applyRenderer(this);
+      (0, _createdOnDescendants2['default'])(this, opts);
       (0, _propertiesReady2['default'])(this, propertyDefinitions);
       opts.ready && opts.ready(this);
       (0, _resolve2['default'])(this, opts);
@@ -1701,12 +1769,32 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
+  
+  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  function callDetachedOnDescendants(elem, opts) {
+    var id = opts.id;
+    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
+      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
+        return Ctor.prototype.detachedCallback.call(child);
+      });
+    }, function (child) {
+      return !(0, _utilData2['default'])(child, id).detached;
+    });
+  }
+  
   exports['default'] = function (opts) {
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
       if (info.detached) return;
       info.detached = true;
       info.attached = false;
+      callDetachedOnDescendants(this, opts);
       opts.detached(this);
     };
   };
