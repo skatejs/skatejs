@@ -13,16 +13,9 @@ function ready (element) {
 }
 
 export default function (elements, callback) {
-  // If a selector is provided we convert it to to a collection of elements.
-  if (typeof elements === 'string') {
-    elements = document.querySelectorAll(elements);
-  }
-
-  // Ensure the collection is traversable.
   const collection = elements.length === undefined ? [elements] : elements;
   const collectionLength = collection.length;
 
-  // If there's no elements we don't do anything.
   if (!collectionLength) {
     return elements;
   }

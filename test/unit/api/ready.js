@@ -59,16 +59,4 @@ describe('api/ready', function () {
     });
     initialise();
   });
-
-  it('should take a selector', function (done) {
-    fixture(elem);
-    setup();
-    ready(tag, function (shouldBeElements) {
-      expect(arguments.length).to.equal(1);
-      expect(shouldBeElements.length).to.equal(1);
-      expect(shouldBeElements[0].tagName.toLowerCase()).to.equal(tag);
-      done();
-    });
-    initialise();
-  });
 });
