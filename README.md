@@ -408,8 +408,7 @@ The component lifecycle consists of several paths in the following order startin
 3. `properties` are defined
 4. `created` is invoked
 5. `renderer` is invoked with the result of `render` to stamp out the component's structure
-5. descendant custom elements are synchronously initialised
-6. `properties` are initialised so setters may now affect descendant DOM
+6. `properties` are initialised
 7. `ready` is invoked
 8. `attached` is invoked when added to the document (or if already in the document)
 9. `detached` is invoked when removed from the document
