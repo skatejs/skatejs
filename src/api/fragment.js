@@ -31,15 +31,13 @@ function decorateFragmentMethods (frag) {
 export default function (html) {
   var frag = document.createDocumentFragment();
   decorateFragmentMethods(frag);
-  if (html) {
-    if (typeof html === 'string') {
-      var par = createFromHtml(html);
-      while (par.firstElementChild) {
-        frag.appendChild(par.firstElementChild);
-      }
-    } else if (html.nodeType) {
-      frag.appendChild(html);
+  if (typeof html === 'string') {
+    let parent = createFromHtml(html);
+    while (parent.firstChild) {
+      frag.appendChild(parent.firstChild);
     }
+  } else if (html) {
+    frag.appendChild(html);
   }
   return frag;
 }
