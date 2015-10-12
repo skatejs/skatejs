@@ -35,7 +35,8 @@ export default function (html) {
     let par = createFromHtml(html);
 
     if (par.nodeType !== 1) {
-      return par;
+      frag.appendChild(par);
+      return frag;
     }
 
     while (par.firstElementChild) {

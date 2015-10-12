@@ -119,4 +119,14 @@ describe('api/fragment', function () {
       expect(frag.childNodes[1].tagName).to.equal('TD');
     });
   });
+
+  describe('text', function () {
+    it('should pass through text nodes', function () {
+      var html = 'text node';
+      var frag = skate.fragment(html);
+      expect(frag).to.be.an.instanceOf(DocumentFragment);
+      expect(frag.childNodes[0].nodeType).to.equal(3);
+      expect(frag.childNodes[0].textContent).to.equal('text node');
+    });
+  });
 });
