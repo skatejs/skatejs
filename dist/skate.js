@@ -316,8 +316,8 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
   var Node = window.Node;
   
-  function walk(elem, fn, filter) {
-    if (elem.nodeType !== Node.ELEMENT_NODE || (0, _ignored2['default'])(elem) || filter && filter(elem) === false) {
+  function walk(elem, fn) {
+    if (elem.nodeType !== Node.ELEMENT_NODE || (0, _ignored2['default'])(elem)) {
       return;
     }
   
@@ -326,12 +326,12 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   
     fn(elem);
     while (child) {
-      walk(child, fn, filter);
+      walk(child, fn);
       child = child.nextSibling;
     }
   }
   
-  exports['default'] = function (elems, fn, filter) {
+  exports['default'] = function (elems, fn) {
     if (!elems) {
       return;
     }
@@ -341,7 +341,7 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
     }
   
     for (var a = 0; a < elems.length; a++) {
-      walk(elems[a], fn, filter);
+      walk(elems[a], fn);
     }
   };
   
@@ -1009,6 +1009,74 @@ __8e32f3287770e2db0e284f8ed6cd72cf = (function () {
   
   return module.exports;
 }).call(this);
+// src/api/ready.js
+__83ca289f5309abef55c338a9f7a22385 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  function ready(element) {
+    var components = _globalRegistry2['default'].find(element);
+    var componentsLength = components.length;
+    for (var a = 0; a < componentsLength; a++) {
+      if (!(0, _utilData2['default'])(element, 'lifecycle/' + components[a].id).created) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  exports['default'] = function (elements, callback) {
+    var collection = elements.length === undefined ? [elements] : elements;
+    var collectionLength = collection.length;
+    var readyCount = 0;
+  
+    function callbackIfReady() {
+      if (readyCount === collectionLength) {
+        callback(elements);
+      }
+    }
+  
+    for (var a = 0; a < collectionLength; a++) {
+      var elem = collection[a];
+  
+      if (ready(elem)) {
+        ++readyCount;
+      } else {
+        // skate.ready is only fired if the element has not been initialised yet.
+        elem.addEventListener('skate.ready', function () {
+          ++readyCount;
+          callbackIfReady();
+        });
+      }
+    }
+  
+    // If the elements are all ready by this time that means nothing was ever
+    // bound to skate.ready above.
+    callbackIfReady();
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/api/version.js
 __662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
@@ -1078,32 +1146,12 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
-  
-  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
-  
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
-  
-  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
-  
-  function callAttachedOnDescendants(elem, opts) {
-    var id = opts.id;
-    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
-      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
-        return Ctor.prototype.attachedCallback.call(child);
-      });
-    }, function (child) {
-      return !(0, _utilData2['default'])(child, id).attached;
-    });
-  }
-  
   exports['default'] = function (opts) {
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
       if (info.attached) return;
       info.attached = true;
       info.detached = false;
-      callAttachedOnDescendants(this, opts);
       opts.attached(this);
     };
   };
@@ -1137,49 +1185,6 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   };
   
   module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-// src/lifecycle/created-on-descendants.js
-__2d301fc9e6acee7ed6bed70273102f25 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  exports['default'] = createdOnDescendants;
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilData = __18291b0452e01f65cf28d6695040736a;
-  
-  var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
-  
-  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
-  
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
-  
-  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
-  
-  function createdOnDescendants(elem, opts) {
-    var id = opts.id;
-    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
-      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
-        return Ctor.prototype.createdCallback.call(child);
-      });
-    }, function (child) {
-      return !(0, _utilData2['default'])(child, id).created;
-    });
-  }
-  
-  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -1554,13 +1559,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _createdOnDescendants = __2d301fc9e6acee7ed6bed70273102f25;
-  
-  var _createdOnDescendants2 = _interopRequireDefault(_createdOnDescendants);
-  
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
+  
+  var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
   var _events = __d48fcc3ecf3585518bbce659c1ba4116;
   
@@ -1615,6 +1620,13 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     }, {});
   }
   
+  function notifyReady(elem) {
+    (0, _apiEmit2['default'])(elem, 'skate.ready', {
+      bubbles: false,
+      cancelable: false
+    });
+  }
+  
   exports['default'] = function (opts) {
     var applyEvents = (0, _events2['default'])(opts);
     var applyPrototype = (0, _prototype2['default'])(opts);
@@ -1635,9 +1647,9 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       applyEvents(this);
       opts.created && opts.created(this);
       applyRenderer(this);
-      (0, _createdOnDescendants2['default'])(this, opts);
       (0, _propertiesReady2['default'])(this, propertyDefinitions);
       opts.ready && opts.ready(this);
+      notifyReady(this);
       (0, _resolve2['default'])(this, opts);
     };
   };
@@ -1769,32 +1781,12 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
-  
-  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
-  
-  var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
-  
-  var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
-  
-  function callDetachedOnDescendants(elem, opts) {
-    var id = opts.id;
-    (0, _utilWalkTree2['default'])(elem.childNodes, function (child) {
-      _globalRegistry2['default'].find(child).forEach(function (Ctor) {
-        return Ctor.prototype.detachedCallback.call(child);
-      });
-    }, function (child) {
-      return !(0, _utilData2['default'])(child, id).detached;
-    });
-  }
-  
   exports['default'] = function (opts) {
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
       if (info.detached) return;
       info.detached = true;
       info.attached = false;
-      callDetachedOnDescendants(this, opts);
       opts.detached(this);
     };
   };
@@ -2024,6 +2016,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiPropertyIndex2 = _interopRequireDefault(_apiPropertyIndex);
   
+  var _apiReady = __83ca289f5309abef55c338a9f7a22385;
+  
+  var _apiReady2 = _interopRequireDefault(_apiReady);
+  
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
@@ -2192,6 +2188,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.fragment = _apiFragment2['default'];
   skate.init = _apiInit2['default'];
   skate.property = _apiPropertyIndex2['default'];
+  skate.ready = _apiReady2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
