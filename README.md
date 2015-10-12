@@ -766,7 +766,15 @@ click: skate.emit('selected')
 
 ### `fragment ()`
 
-[soon]
+Creates a document fragment from the specified node or HTML string and ensures any components within the fragment are synchronously initialised.
+
+```js
+skate.fragment(document.createElement('my-element'));
+```
+
+```js
+skate.fragment('<my-element></my-element>');
+```
 
 
 
