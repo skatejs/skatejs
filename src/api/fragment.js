@@ -1,43 +1,20 @@
 import init from './init';
 import createFromHtml from '../util/create-from-html';
 
-const DocumentFragmentPrototype = DocumentFragment.prototype;
-const slice = Array.prototype.slice;
-
-function decorateFragmentMethods (frag) {
-  frag.appendChild = function (el) {
-    return DocumentFragmentPrototype.appendChild.call(this, init(el));
-  };
-
-  frag.insertBefore = function (el, beforeEl) {
-    return DocumentFragmentPrototype.insertBefore.call(this, init(el), beforeEl);
-  };
-
-  frag.replaceChild = function (el, replacedEl) {
-    return DocumentFragmentPrototype.replaceChild.call(this, init(el), replacedEl);
-  };
-
-  frag.cloneNode = function () {
-    var clone = DocumentFragmentPrototype.cloneNode.apply(this, arguments);
-    decorateFragmentMethods(clone);
-    var children = slice.call(clone.childNodes);
-    for (var i = 0; i < children.length; i++) {
-      init(children[i]);
+function buildFragment (frag, arg) {
+  if (arg) {
+    if (typeof arg === 'string') {
+      arg = fragment(...createFromHtml(arg).childNodes);
+    } else if (arg.length) {
+      arg = fragment(...arg);
+    } else if (arg.nodeType) {
+      init(arg);
     }
-    return clone;
-  };
-}
-
-export default function (html) {
-  var frag = document.createDocumentFragment();
-  decorateFragmentMethods(frag);
-  if (typeof html === 'string') {
-    let parent = createFromHtml(html);
-    while (parent.firstChild) {
-      frag.appendChild(parent.firstChild);
-    }
-  } else if (html) {
-    frag.appendChild(html);
+    frag.appendChild(arg);
   }
   return frag;
+}
+
+export default function fragment (...args) {
+  return args.reduce(buildFragment, document.createDocumentFragment());
 }
