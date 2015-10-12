@@ -74,7 +74,7 @@ describe('api/fragment', function () {
       clone.appendChild(el1);
       expect(clone.childNodes.length).to.equal(1);
       expect(resolved(clone.childNodes[0])).to.equal(true);
-    })
+    });
   });
 
   describe('html', function () {
@@ -117,6 +117,26 @@ describe('api/fragment', function () {
       expect(frag.childNodes.length).to.equal(2);
       expect(frag.childNodes[0].tagName).to.equal('TD');
       expect(frag.childNodes[1].tagName).to.equal('TD');
+    });
+  });
+
+  describe('node', function () {
+    it('should work with element nodes', function () {
+      const node = document.createElement('div');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with text nodes', function () {
+      const node = document.createTextNode('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with comment nodes', function () {
+      const node = document.createComment('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
     });
   });
 });

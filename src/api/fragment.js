@@ -1,5 +1,5 @@
 import init from './init';
-import createFromHtml from '../util/create-from-html'
+import createFromHtml from '../util/create-from-html';
 
 const DocumentFragmentPrototype = DocumentFragment.prototype;
 const slice = Array.prototype.slice;
@@ -31,10 +31,14 @@ function decorateFragmentMethods (frag) {
 export default function (html) {
   var frag = document.createDocumentFragment();
   decorateFragmentMethods(frag);
-  if (typeof html === 'string') {
-    var par = createFromHtml(html);
-    while (par.firstElementChild) {
-      frag.appendChild(par.firstElementChild);
+  if (html) {
+    if (typeof html === 'string') {
+      var par = createFromHtml(html);
+      while (par.firstElementChild) {
+        frag.appendChild(par.firstElementChild);
+      }
+    } else if (html.nodeType) {
+      frag.appendChild(html);
     }
   }
   return frag;
