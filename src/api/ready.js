@@ -40,6 +40,4 @@ export default function (elements, callback) {
   // If the elements are all ready by this time that means nothing was ever
   // bound to skate.ready above.
   callbackIfReady();
-
-  return elements;
 }
