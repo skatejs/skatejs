@@ -15,12 +15,13 @@ function ready (element) {
 export default function (elements, callback) {
   const collection = elements.length === undefined ? [elements] : elements;
   const collectionLength = collection.length;
-
-  if (!collectionLength) {
-    return elements;
-  }
-
   let readyCount = 0;
+
+  function callbackIfReady () {
+    if (readyCount === collectionLength) {
+      callback(elements);
+    }
+  }
 
   for (let a = 0; a < collectionLength; a++) {
     const elem = collection[a];
@@ -28,21 +29,17 @@ export default function (elements, callback) {
     if (ready(elem)) {
       ++readyCount;
     } else {
+      // skate.ready is only fired if the element has not been initialised yet.
       elem.addEventListener('skate.ready', function () {
         ++readyCount;
-
-        // Check on every completion to see if we're done.
-        if (readyCount === collectionLength) {
-          callback(elements);
-        }
+        callbackIfReady();
       });
     }
   }
 
-  // If they're ready immediately, then execute.
-  if (readyCount === collectionLength) {
-    callback(elements);
-  }
+  // If the elements are all ready by this time that means nothing was ever
+  // bound to skate.ready above.
+  callbackIfReady();
 
   return elements;
 }

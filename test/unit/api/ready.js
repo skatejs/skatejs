@@ -1,4 +1,3 @@
-import fixture from '../../lib/fixture';
 import init from '../../../src/api/init';
 import ready from '../../../src/api/ready';
 import skate from '../../../src/index';
@@ -23,7 +22,6 @@ describe('api/ready', function () {
 
   it('should fire for an element if no definitions are registered for it', function (done) {
     ready(elem, function (shouldBeElem) {
-      expect(arguments.length).to.equal(1);
       expect(shouldBeElem).to.equal(elem);
       done();
     });
@@ -40,7 +38,6 @@ describe('api/ready', function () {
     expect(called).to.equal(true);
 
     ready(elem, function (shouldBeElem) {
-      expect(arguments.length).to.equal(1);
       expect(shouldBeElem).to.equal(elem);
       done();
     });
@@ -49,7 +46,6 @@ describe('api/ready', function () {
   it('should fire for an element when it is eventually ready', function (done) {
     setup();
     ready(elem, function (shouldBeElem) {
-      expect(arguments.length).to.equal(1);
       expect(shouldBeElem).to.equal(elem);
       done();
     });
@@ -60,10 +56,17 @@ describe('api/ready', function () {
     let elements = [elem, document.createElement(unique().safe)];
     setup();
     ready(elements, function (shouldBeElements) {
-      expect(arguments.length).to.equal(1);
       expect(shouldBeElements).to.equal(elements);
       done();
     });
     initialise();
+  });
+
+  it('should fire if no elements are passed in', function (done) {
+    let elements = [];
+    ready(elements, function (shouldBeArray) {
+      expect(shouldBeArray).to.equal(elements);
+      done();
+    });
   });
 });
