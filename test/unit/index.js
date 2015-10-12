@@ -28,6 +28,10 @@ describe('exports', function () {
     expect(skate.property.string).to.be.a('function', 'string');
   });
 
+  it('skate.ready', function () {
+    expect(skate.ready).to.be.a('function');
+  });
+
   it('skate.version', function () {
     expect(skate.version).to.be.a('string');
   });
