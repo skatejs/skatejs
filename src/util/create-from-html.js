@@ -30,11 +30,14 @@ function resolveParent (tag, html) {
 }
 
 function matchTag (html) {
-  var tag = html.match(/\s*<([^\s>]+)/);
+  var tag = html.match(/^<([^\s>]+)/);
   return tag && tag[1];
 }
 
 export default function (html) {
-  var tag = matchTag(html);
-  return resolveParent(tag, html);
+  html = html.trim();
+  if (html[0] === '<') {
+    return resolveParent(matchTag(html), html);
+  }
+  return document.createTextNode(html);
 }

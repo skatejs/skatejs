@@ -4,6 +4,7 @@ import apiFragment from './api/fragment';
 import apiInit from './api/init';
 import apiProperty from './api/property/index';
 import apiReady from './api/ready';
+import apiRender from './api/render';
 import apiVersion from './api/version';
 import assign from './util/assign';
 import assignSafe from './util/assign-safe';
@@ -126,6 +127,7 @@ skate.fragment = apiFragment;
 skate.init = apiInit;
 skate.property = apiProperty;
 skate.ready = apiReady;
+skate.render = apiRender;
 skate.version = apiVersion;
 
 export default skate;
