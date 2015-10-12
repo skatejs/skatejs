@@ -1947,53 +1947,6 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   return module.exports;
 }).call(this);
-// src/util/element-constructor.js
-__cdf80614962dbe37e0456f37c35fe468 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (opts) {
-    var type = opts.type;
-  
-    function CustomElement() {
-      var element = type.create(opts);
-  
-      // Ensure the definition prototype is up to date with the element's
-      // prototype. This ensures that overwriting the element prototype still
-      // works.
-      opts.prototype = CustomElement.prototype;
-  
-      // Initialises. This will always exist.
-      opts.prototype.createdCallback.call(element);
-  
-      return element;
-    }
-  
-    // This allows modifications to the element prototype propagate to the
-    // definition prototype.
-    CustomElement.prototype = opts.prototype;
-  
-    // Ensure the prototype has a non-enumerable constructor.
-    Object.defineProperty(CustomElement.prototype, 'constructor', {
-      enumerable: false,
-      value: CustomElement
-    });
-  
-    return CustomElement;
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
 // src/support/custom-elements.js
 __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   var module = {
@@ -2111,10 +2064,6 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _globalDocumentObserver2 = _interopRequireDefault(_globalDocumentObserver);
   
-  var _utilElementConstructor = __cdf80614962dbe37e0456f37c35fe468;
-  
-  var _utilElementConstructor2 = _interopRequireDefault(_utilElementConstructor);
-  
   var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
@@ -2154,13 +2103,33 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   }
   
   function makeNonNewableWrapper(Ctor) {
-    var CtorWrapper = function CtorWrapper() {
+    function CtorWrapper() {
       var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   
       return (0, _utilAssign2['default'])(new Ctor(), props);
-    };
+    }
+  
+    // Copy prototype.
     CtorWrapper.prototype = Ctor.prototype;
+  
+    // Ensure a non-enumerable constructor property exists.
+    Object.defineProperty(Ctor.prototype, 'constructor', {
+      enumerable: false,
+      value: CtorWrapper
+    });
+  
     return CtorWrapper;
+  }
+  
+  function polyfillElementConstructor(opts) {
+    var type = opts.type;
+    function CustomElement() {
+      var element = type.create(opts);
+      opts.prototype.createdCallback.call(element);
+      return element;
+    }
+    CustomElement.prototype = opts.prototype;
+    return CustomElement;
   }
   
   var HTMLElement = window.HTMLElement;
@@ -2206,7 +2175,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
         prototype: opts.prototype
       });
     } else {
-      Ctor = (0, _utilElementConstructor2['default'])(opts);
+      Ctor = polyfillElementConstructor(opts);
       initDocument();
       _globalDocumentObserver2['default'].register();
     }
