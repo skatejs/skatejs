@@ -40,7 +40,7 @@
     "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#a7dbecf",
     "skatejs-type-attribute": "skatejs/type-attribute#28140f7",
     "skatejs-type-class": "skatejs/type-class#8302a2f",
-    "whatwg-fetch": "0.9.0"
+    "whatwg-fetch": "0.10.0"
   },
   "scripts": {
     "build": "gulp build",
