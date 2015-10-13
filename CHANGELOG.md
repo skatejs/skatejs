@@ -28,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#225](#user-content-225) - Moved attribute and class binding types to separate repositories.
 - [#295](#user-content-295) - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer.
 - [#337](#user-content-337) - Streamlined, consistent and predictable lifecycle.
+- [#359](#user-content-359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
 
 ### Fixed
 
@@ -153,3 +154,17 @@ Ensure you include the polyfill before any Skate definitions have been defined.
 #### [#337](https://github.com/skatejs/skatejs/issues/337)<a name="277"></a> - Streamlined, consistent and predictable lifecycle
 
 In native web components, the behaviour around when components are initialised is really inconsistent. The Skate lifecycle has been streamlined to make this consistent especially when building compound components. See the issue for more details.
+
+#### [#337](https://github.com/skatejs/skatejs/issues/337)<a name="277"></a> - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
+
+`skate.init()` only supports DOM elements as arguments. This means that you cannot pass a selector or DOMNodeList as an argument. If you do want to pass multiple nodes at once, you can use the ES6 spread operator:
+
+```js
+skate.init(...document.querySelectorAll('some-elements'));
+```
+
+Or you can convert it to an array if you can't use ES6:
+
+```js
+skate.init.apply(null, [].slice.call(document.querySelectorAll('some-elements')));
+```
