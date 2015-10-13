@@ -7,6 +7,7 @@ import './unit/api/global';
 import './unit/api/init';
 import './unit/api/property';
 import './unit/api/ready';
+import './unit/api/render';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/document-observer';

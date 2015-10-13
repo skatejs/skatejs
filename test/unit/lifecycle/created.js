@@ -39,8 +39,8 @@ describe('lifecycle/created ordering parent -> descendants', function () {
       },
       ready: test('ready'),
       render: test('render'),
-      renderer: function (elem, render) {
-        render();
+      renderer: function (elem) {
+        this.render(elem);
         test('renderer')(elem);
       }
     })();
