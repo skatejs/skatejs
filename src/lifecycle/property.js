@@ -125,6 +125,10 @@ function createNativePropertyDefinition (name, opts) {
       opts.set(this, changeData);
     }
 
+    if (opts.change && oldValue !== newValue) {
+      opts.change(this, changeData);
+    }
+
     if (opts.emit) {
       let eventName = opts.emit;
 
