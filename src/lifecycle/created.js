@@ -37,10 +37,15 @@ function notifyReady (elem) {
   });
 }
 
+function renderIfNotResolved (elem, opts) {
+  if (!elem.hasAttribute(opts.resolvedAttribute)) {
+    renderer(elem, opts);
+  }
+}
+
 export default function (opts) {
   let applyEvents = events(opts);
   let applyPrototype = prototype(opts);
-  let applyRenderer = renderer(opts);
   let propertyFunctions = ensurePropertyFunctions(opts);
 
   return function () {
@@ -56,7 +61,7 @@ export default function (opts) {
     propertiesCreated(this, propertyDefinitions);
     applyEvents(this);
     opts.created && opts.created(this);
-    applyRenderer(this);
+    renderIfNotResolved(this, opts);
     propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
     notifyReady(this);

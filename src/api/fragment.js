@@ -29,7 +29,7 @@ function decorateFragmentMethods (frag) {
 }
 
 export default function (html) {
-  var frag = document.createDocumentFragment();
+  const frag = document.createDocumentFragment();
   decorateFragmentMethods(frag);
   if (typeof html === 'string') {
     let parent = createFromHtml(html);

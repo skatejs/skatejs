@@ -17,4 +17,10 @@ describe('utils/create-from-html:', function () {
     expect(parent.tagName.toLowerCase()).to.equal('div', 'parent');
     expect(parent.parentNode).to.equal(null, 'no grand parent');
   });
+
+  it('should work for text nodes', function () {
+    let text = createFromHtml('text node');
+    expect(text.nodeType).to.equal(3);
+    expect(text.textContent).to.equal('text node');
+  });
 });

@@ -23,7 +23,7 @@
     "gulp-less": "3.0.3",
     "gulp-minify-css": "1.2.1",
     "gulp-rename": "1.2.2",
-    "gulp-uglify": "1.4.1",
+    "gulp-uglify": "1.4.2",
     "gulp-webserver": "0.9.1",
     "highlight.js": "8.8.0",
     "karma": "0.13.10",
@@ -40,7 +40,7 @@
     "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#a7dbecf",
     "skatejs-type-attribute": "skatejs/type-attribute#28140f7",
     "skatejs-type-class": "skatejs/type-class#8302a2f",
-    "whatwg-fetch": "0.9.0"
+    "whatwg-fetch": "0.10.0"
   },
   "scripts": {
     "build": "gulp build",

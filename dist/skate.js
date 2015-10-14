@@ -72,13 +72,16 @@ __883fff2d161a4239b3efea9bb85204e0 = (function () {
   }
   
   function matchTag(html) {
-    var tag = html.match(/\s*<([^\s>]+)/);
+    var tag = html.match(/^<([^\s>]+)/);
     return tag && tag[1];
   }
   
   exports['default'] = function (html) {
-    var tag = matchTag(html);
-    return resolveParent(tag, html);
+    html = html.trim();
+    if (html[0] === '<') {
+      return resolveParent(matchTag(html), html);
+    }
+    return document.createTextNode(html);
   };
   
   module.exports = exports['default'];
@@ -603,6 +606,12 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
     decorateFragmentMethods(frag);
     if (typeof html === 'string') {
       var par = (0, _utilCreateFromHtml2['default'])(html);
+  
+      if (par.nodeType !== 1) {
+        frag.appendChild(par);
+        return frag;
+      }
+  
       while (par.firstElementChild) {
         frag.appendChild(par.firstElementChild);
       }
@@ -1077,6 +1086,79 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
   
   return module.exports;
 }).call(this);
+// src/lifecycle/renderer.js
+__03f25cd56ca0ce454f98fb8408e75422 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _apiFragment = __ef86f48ff9050407fed1e142d9fe2629;
+  
+  var _apiFragment2 = _interopRequireDefault(_apiFragment);
+  
+  function defaultRenderer(elem, opts) {
+    while (elem.childNodes.length) {
+      elem.removeChild(elem.childNodes[0]);
+    }
+    elem.appendChild((0, _apiFragment2['default'])(opts.render(elem)));
+  }
+  
+  exports['default'] = function (elem, opts) {
+    if (opts.render) {
+      if (opts.renderer) {
+        opts.renderer(elem);
+      } else {
+        defaultRenderer(elem, opts);
+      }
+    }
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/render.js
+__413d80034b00b5aeb5c6177f97cceae5 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  var _lifecycleRenderer = __03f25cd56ca0ce454f98fb8408e75422;
+  
+  var _lifecycleRenderer2 = _interopRequireDefault(_lifecycleRenderer);
+  
+  exports['default'] = function (elem) {
+    _globalRegistry2['default'].find(elem).forEach(function (component) {
+      return (0, _lifecycleRenderer2['default'])(elem, component);
+    });
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/api/version.js
 __662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
@@ -1478,49 +1560,6 @@ __7ba2ecf93401318a8fb40e4b0fe295ea = (function () {
   
   return module.exports;
 }).call(this);
-// src/lifecycle/renderer.js
-__03f25cd56ca0ce454f98fb8408e75422 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  exports['default'] = renderer;
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _apiFragment = __ef86f48ff9050407fed1e142d9fe2629;
-  
-  var _apiFragment2 = _interopRequireDefault(_apiFragment);
-  
-  var defaultRenderer = function defaultRenderer(elem, render) {
-    while (elem.childNodes.length) {
-      elem.removeChild(elem.childNodes[0]);
-    }
-    elem.appendChild((0, _apiFragment2['default'])(render()));
-  };
-  
-  function renderer(opts) {
-    var render = opts.render ? opts.render : null;
-    var renderer = opts.renderer ? opts.renderer.bind(opts) : defaultRenderer;
-    var resolvedAttribute = opts.resolvedAttribute;
-  
-    return function (elem) {
-      if (render && !elem.hasAttribute(resolvedAttribute)) {
-        renderer(elem, render.bind(opts, elem));
-      }
-    };
-  }
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
 // src/lifecycle/resolve.js
 __4b4eecf91d77990b080189047604b709 = (function () {
   var module = {
@@ -1627,10 +1666,15 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     });
   }
   
+  function renderIfNotResolved(elem, opts) {
+    if (!elem.hasAttribute(opts.resolvedAttribute)) {
+      (0, _renderer2['default'])(elem, opts);
+    }
+  }
+  
   exports['default'] = function (opts) {
     var applyEvents = (0, _events2['default'])(opts);
     var applyPrototype = (0, _prototype2['default'])(opts);
-    var applyRenderer = (0, _renderer2['default'])(opts);
     var propertyFunctions = ensurePropertyFunctions(opts);
   
     return function () {
@@ -1646,7 +1690,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
       (0, _propertiesCreated2['default'])(this, propertyDefinitions);
       applyEvents(this);
       opts.created && opts.created(this);
-      applyRenderer(this);
+      renderIfNotResolved(this, opts);
       (0, _propertiesReady2['default'])(this, propertyDefinitions);
       opts.ready && opts.ready(this);
       notifyReady(this);
@@ -2020,6 +2064,10 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiReady2 = _interopRequireDefault(_apiReady);
   
+  var _apiRender = __413d80034b00b5aeb5c6177f97cceae5;
+  
+  var _apiRender2 = _interopRequireDefault(_apiRender);
+  
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
@@ -2189,6 +2237,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.init = _apiInit2['default'];
   skate.property = _apiPropertyIndex2['default'];
   skate.ready = _apiReady2['default'];
+  skate.render = _apiRender2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
