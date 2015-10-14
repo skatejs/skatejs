@@ -17,7 +17,7 @@ skate('x-text', {
     yell: skate.property.boolean({ attribute: true })
   },
   render (elem) {
-    return `<span>$quot;${elem.yell ? elem.textContent.toUpperCase() : elem.textContent}$quot;</span>`;
+    return `<span>&quot;${elem.yell ? elem.textContent.toUpperCase() : elem.textContent}&quot;</span>`;
   }
 });
 
