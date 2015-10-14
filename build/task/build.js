@@ -12,18 +12,18 @@ function task () {
     gulp.src('src/global.js')
       .pipe(gulpDebug({ title: 'trace' }))
       .pipe(galv.trace())
-      .pipe(gulpBabel())
-      .pipe(galv.globalize())
-      .pipe(gulpConcat('skate.js'))
+      .pipe(galv.cache('babel', gulpBabel()))
+      .pipe(galv.cache('globalize', galv.globalize()))
+      .pipe(galv.cache('concat', gulpConcat('skate.js')))
       .pipe(gulp.dest('dist'))
-      .pipe(gulpUglify())
+      .pipe(galv.cache('uglify', gulpUglify()))
       .pipe(gulpConcat('skate.min.js'))
       .pipe(gulp.dest('dist'))
       .pipe(gulpDebug({ title: 'dist' })),
     gulp.src('src/index.js')
       .pipe(gulpDebug({ title: 'trace' }))
       .pipe(galv.trace())
-      .pipe(gulpBabel({ modules: 'umd' }))
+      .pipe(galv.cache('babel-umd', gulpBabel({ modules: 'umd' })))
       .pipe(gulpRename(function (path) {
         path.dirname = path.dirname.replace(/^src/, '.');
       }))
