@@ -65,6 +65,7 @@ Result
   - [`fragment ()`](#fragment-)
   - [`init ()`](#init-)
   - [`noConflict ()`](#noconflict-)
+  - [`render ()`](#render-)
   - [`version`](#version)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
@@ -824,6 +825,50 @@ Same as what you'd come to expect from most libraries that offer a global namesp
 
 ```js
 var currentSkate = skate.noConflict();
+```
+
+
+
+### `render ()`
+
+Renders the specified element using the render lifecycle specified in the first matched component. If no component is found for the element, nothing happens.
+
+```js
+var hello = skate('x-hello', {
+  render: function (elem) {
+    return `Hello, ${elem.name || 'World'}!`;
+  }
+});
+
+// <x-hello>Hello, World!</x-hello>
+var elem = hello();
+
+// <x-hello>Hello, Bob!</x-hello>
+elem.name = 'Bob';
+skate.render(elem);
+```
+
+This makes it extremely useful when using properties because you can rewrite the above component to re-render itself while taking advantave of all that `properties` has to offer:
+
+```js
+var hello = skate('x-hello', {
+  properties: {
+    name: {
+      attribute: true,
+      default: 'World',
+      set: skate.render
+    }
+  },
+  render: function (elem) {
+    return `Hello, ${elem.name}!`;
+  }
+});
+
+// <x-hello name="World">Hello, World!</x-hello>
+var elem = hello();
+
+// <x-hello name="Bob">Hello, Bob!</x-hello>
+elem.name = 'Bob';
 ```
 
 

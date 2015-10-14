@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#270](https://github.com/skatejs/skatejs/issues/270) - Retain existing property value if a defined property overrides it.
 - [#275](https://github.com/skatejs/skatejs/issues/275) - Allow an object of properties to be passed to element constructors / functions and `skate.create()`.
 - [#276](https://github.com/skatejs/skatejs/issues/276) - `skate.emit()` triggers events and simulates bubbling for detached elements in browsers that don't support it.
+- [#354](https://github.com/skatejs/skatejs/issues/354) - `skate.render()` renders the specified element in accordance with the first matched component definition.
 
 ### Changed
 

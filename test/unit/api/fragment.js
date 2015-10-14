@@ -59,6 +59,14 @@ describe('api/fragment', function () {
     });
   });
 
+  describe('text', function () {
+    it('works with text that has no parent element', function () {
+      const text = 'some text';
+      const frag = skate.fragment(text);
+      expect(frag.childNodes[0].textContent).to.equal('some text');
+    });
+  });
+
   describe('node', function () {
     it('should work with element nodes', function () {
       const node = document.createElement('div');
@@ -76,6 +84,14 @@ describe('api/fragment', function () {
       const node = document.createComment('');
       const frag = skate.fragment(node);
       expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should initialise element nodes that are custom elements', function () {
+      const elem = skate(element().safe, {});
+      const node = document.createElement(elem.id);
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+      expect(resolved(frag.childNodes[0])).to.equal(true);
     });
   });
 });

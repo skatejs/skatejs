@@ -32,6 +32,10 @@ describe('exports', function () {
     expect(skate.ready).to.be.a('function');
   });
 
+  it('skate.render', function () {
+    expect(skate.render).to.be.a('function');
+  });
+
   it('skate.version', function () {
     expect(skate.version).to.be.a('string');
   });
