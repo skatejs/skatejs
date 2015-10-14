@@ -32,16 +32,12 @@ export default function (html) {
   const frag = document.createDocumentFragment();
   decorateFragmentMethods(frag);
   if (typeof html === 'string') {
-    let par = createFromHtml(html);
-
-    if (par.nodeType !== 1) {
-      frag.appendChild(par);
-      return frag;
+    let parent = createFromHtml(html);
+    while (parent.firstChild) {
+      frag.appendChild(parent.firstChild);
     }
-
-    while (par.firstElementChild) {
-      frag.appendChild(par.firstElementChild);
-    }
+  } else if (html) {
+    frag.appendChild(html);
   }
   return frag;
 }

@@ -74,7 +74,7 @@ describe('api/fragment', function () {
       clone.appendChild(el1);
       expect(clone.childNodes.length).to.equal(1);
       expect(resolved(clone.childNodes[0])).to.equal(true);
-    })
+    });
   });
 
   describe('html', function () {
@@ -120,13 +120,31 @@ describe('api/fragment', function () {
     });
   });
 
-  describe('text', function () {
-    it('should pass through text nodes', function () {
-      var html = 'text node';
-      var frag = skate.fragment(html);
-      expect(frag).to.be.an.instanceOf(DocumentFragment);
-      expect(frag.childNodes[0].nodeType).to.equal(3);
-      expect(frag.childNodes[0].textContent).to.equal('text node');
+  describe('node', function () {
+    it('should work with element nodes', function () {
+      const node = document.createElement('div');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with text nodes', function () {
+      const node = document.createTextNode('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with comment nodes', function () {
+      const node = document.createComment('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should initialise element nodes that are custom elements', function () {
+      const elem = skate(element().safe, {});
+      const node = document.createElement(elem.id);
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+      expect(resolved(frag.childNodes[0])).to.equal(true);
     });
   });
 });
