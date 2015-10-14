@@ -1,43 +1,62 @@
 import init from './init';
-import createFromHtml from '../util/create-from-html';
 
-const DocumentFragmentPrototype = DocumentFragment.prototype;
 const slice = Array.prototype.slice;
+const specialMap = {
+  caption: 'table',
+  dd: 'dl',
+  dt: 'dl',
+  li: 'ul',
+  tbody: 'table',
+  td: 'tr',
+  thead: 'table',
+  tr: 'tbody'
+};
 
-function decorateFragmentMethods (frag) {
-  frag.appendChild = function (el) {
-    return DocumentFragmentPrototype.appendChild.call(this, init(el));
-  };
+function resolveParent (tag, html) {
+  const container = document.createElement('div');
+  let levels = 0;
+  let parentTag = specialMap[tag];
 
-  frag.insertBefore = function (el, beforeEl) {
-    return DocumentFragmentPrototype.insertBefore.call(this, init(el), beforeEl);
-  };
+  while (parentTag) {
+    html = `<${parentTag}>${html}</${parentTag}>`;
+    ++levels;
+    parentTag = specialMap[parentTag];
+  }
 
-  frag.replaceChild = function (el, replacedEl) {
-    return DocumentFragmentPrototype.replaceChild.call(this, init(el), replacedEl);
-  };
+  container.innerHTML = html;
 
-  frag.cloneNode = function () {
-    var clone = DocumentFragmentPrototype.cloneNode.apply(this, arguments);
-    decorateFragmentMethods(clone);
-    var children = slice.call(clone.childNodes);
-    for (var i = 0; i < children.length; i++) {
-      init(children[i]);
-    }
-    return clone;
-  };
+  let parent = container;
+  for (let a = 0; a < levels; a++) {
+    parent = parent.firstElementChild;
+  }
+  return parent;
 }
 
-export default function (html) {
-  const frag = document.createDocumentFragment();
-  decorateFragmentMethods(frag);
-  if (typeof html === 'string') {
-    let parent = createFromHtml(html);
-    while (parent.firstChild) {
-      frag.appendChild(parent.firstChild);
+function matchTag (html) {
+  const tag = html.match(/^<([^\s>]+)/);
+  return tag && tag[1];
+}
+
+function buildFragment (frag, arg) {
+  if (arg) {
+    if (typeof arg === 'string') {
+      arg = arg.trim();
+      if (arg[0] === '<') {
+        arg = resolveParent(matchTag(arg), arg).childNodes;
+        arg = fragment.apply(null, slice.call(arg));
+      } else {
+        arg = document.createTextNode(arg);
+      }
+    } else if (arg.length) {
+      arg = fragment.apply(null, slice.call(arg));
+    } else if (arg.nodeType) {
+      init(arg);
     }
-  } else if (html) {
-    frag.appendChild(html);
+    frag.appendChild(arg);
   }
   return frag;
+}
+
+export default function fragment (...args) {
+  return args.reduce(buildFragment, document.createDocumentFragment());
 }
