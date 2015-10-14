@@ -138,5 +138,13 @@ describe('api/fragment', function () {
       const frag = skate.fragment(node);
       expect(frag.childNodes[0]).to.equal(node);
     });
+
+    it('should initialise element nodes that are custom elements', function () {
+      const elem = skate(element().safe, {});
+      const node = document.createElement(elem.id);
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+      expect(resolved(frag.childNodes[0])).to.equal(true);
+    });
   });
 });
