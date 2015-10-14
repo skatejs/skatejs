@@ -15,10 +15,11 @@ import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
+import global from './util/global';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
-import utilWalkTree from './util/walk-tree';
+import walkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function makeOptions (userOptions) {
@@ -69,7 +70,7 @@ function polyfillElementConstructor (opts) {
 
 let HTMLElement = global.HTMLElement;
 let initDocument = debounce(function () {
-  utilWalkTree(document.documentElement.childNodes, function (element) {
+  walkTree(document.documentElement.childNodes, function (element) {
     let components = registry.find(element);
     let componentsLength = components.length;
 
@@ -83,16 +84,22 @@ let initDocument = debounce(function () {
   });
 });
 
+function getParentPrototype (name) {
+  if (global.document) {
+    return (name ? document.createElement(name).constructor : HTMLElement).prototype;
+  }
+}
+
 function skate (id, userOptions) {
   let Ctor, parentProto;
   let opts = makeOptions(userOptions);
 
   opts.id = id;
   opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
-  parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
+  parentProto = getParentPrototype(opts.extends);
 
   // Inherit from parent prototype.
-  if (!parentProto.isPrototypeOf(opts.prototype)) {
+  if (parentProto && !parentProto.isPrototypeOf(opts.prototype)) {
     opts.prototype = assignSafe(Object.create(parentProto), opts.prototype);
   }
 
@@ -110,8 +117,11 @@ function skate (id, userOptions) {
     });
   } else {
     Ctor = polyfillElementConstructor(opts);
-    initDocument();
-    documentObserver.register();
+
+    if (global.document) {
+      initDocument();
+      documentObserver.register();
+    }
   }
 
   Ctor = makeNonNewableWrapper(Ctor);

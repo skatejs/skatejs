@@ -1,3 +1,4 @@
+import global from '../util/global';
 export default function () {
-  return typeof document.registerElement === 'function';
+  return global.document && typeof document.registerElement === 'function';
 }
