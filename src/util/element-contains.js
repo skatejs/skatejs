@@ -1,5 +1,4 @@
-var elementPrototype = window.HTMLElement.prototype;
-var elementPrototypeContains = elementPrototype.contains;
+const elementPrototypeContains = typeof window === 'undefined' ? () => {} : window.HTMLElement.prototype.contains;
 
 export default function (source, target) {
   // The document element does not have the contains method in IE.

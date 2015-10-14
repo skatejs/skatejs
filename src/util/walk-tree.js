@@ -1,9 +1,11 @@
 import ignored from './ignored';
 
-var Node = window.Node;
+// We don't use the global Node because we want this to be able to be included
+// in a NodeJS environment.
+const nodeTypeElement = 1;
 
 function walk (elem, fn) {
-  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem)) {
+  if (elem.nodeType !== nodeTypeElement || ignored(elem)) {
     return;
   }
 
@@ -22,7 +24,7 @@ export default function (elems, fn) {
     return;
   }
 
-  if (elems instanceof Node) {
+  if (elems.nodeType) {
     elems = [elems];
   }
 

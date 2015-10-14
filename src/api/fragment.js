@@ -1,7 +1,9 @@
+import global from '../util/global';
 import init from './init';
 import createFromHtml from '../util/create-from-html';
 
-const DocumentFragmentPrototype = DocumentFragment.prototype;
+const DocumentFragment = global.DocumentFragment;
+const DocumentFragmentPrototype = DocumentFragment && DocumentFragment.prototype;
 const slice = Array.prototype.slice;
 
 function decorateFragmentMethods (frag) {

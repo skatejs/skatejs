@@ -67,7 +67,7 @@ function polyfillElementConstructor (opts) {
   return CustomElement;
 }
 
-let HTMLElement = window.HTMLElement;
+let HTMLElement = global.HTMLElement;
 let initDocument = debounce(function () {
   utilWalkTree(document.documentElement.childNodes, function (element) {
     let components = registry.find(element);

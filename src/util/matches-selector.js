@@ -1,5 +1,8 @@
-var elProto = window.HTMLElement.prototype;
-var nativeMatchesSelector = (
+import global from './global';
+
+var el = global.HTMLElement;
+var elProto = el && el.prototype;
+var nativeMatchesSelector = elProto && (
   elProto.matches ||
   elProto.msMatchesSelector ||
   elProto.webkitMatchesSelector ||
@@ -8,7 +11,7 @@ var nativeMatchesSelector = (
 );
 
 // Only IE9 has this msMatchesSelector bug, but best to detect it.
-var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
+var hasNativeMatchesSelectorDetattachedBug = nativeMatchesSelector && !nativeMatchesSelector.call(document.createElement('div'), 'div');
 
 export default function (element, selector) {
   if (hasNativeMatchesSelectorDetattachedBug) {

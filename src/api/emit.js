@@ -1,3 +1,4 @@
+import global from '../util/global';
 import utilElementContains from '../util/element-contains';
 
 var CustomEvent = (function (CustomEvent) {
@@ -9,9 +10,9 @@ var CustomEvent = (function (CustomEvent) {
     }
   }
   return CustomEvent;
-}(window.CustomEvent));
+}(global.CustomEvent));
 
-var hasBubbleOnDetachedElements = (function () {
+var hasBubbleOnDetachedElements = global.document && (function () {
   var parent = document.createElement('div');
   var child = document.createElement('div');
   var hasBubbleOnDetachedElements = false;
