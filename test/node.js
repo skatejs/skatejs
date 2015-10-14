@@ -22,4 +22,4 @@ skate('x-text', {
 });
 
 /* eslint no-console: 0 */
-console.log(render('<x-hello>World</x-hello>'));
+console.log(render('<x-hello yell>World</x-hello>'));
