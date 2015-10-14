@@ -48,18 +48,23 @@ function makeNonNewableWrapper (Ctor, opts) {
   // Copy prototype.
   CtorWrapper.prototype = Ctor.prototype;
 
-  // Set the function name to the component name for easier debugging.
-  Object.defineProperty(CtorWrapper, 'name', {
-    configurable: true,
-    enumerable: false,
-    writable: false,
-    value: opts.id
-  });
+  // Set the function name to the component name for easier debugging. Certain
+  // browsers *cough* Safari (and earlier versions of Firefox) don't support
+  // this so we must check to see if it's configurable first.
+  if (Object.getOwnPropertyDescriptor(CtorWrapper, 'name').configurable) {
+    Object.defineProperty(CtorWrapper, 'name', {
+      configurable: true,
+      enumerable: false,
+      writable: false,
+      value: opts.id
+    });
+  }
 
   // Ensure a non-enumerable constructor property exists.
   Object.defineProperty(CtorWrapper.prototype, 'constructor', {
     configurable: true,
     enumerable: false,
+    writable: false,
     value: CtorWrapper
   });
 
