@@ -40,7 +40,7 @@ function makeOptions (userOptions) {
   return options;
 }
 
-function makeNonNewableWrapper (Ctor) {
+function makeNonNewableWrapper (Ctor, opts) {
   function CtorWrapper (props = {}) {
     return assign(new Ctor(), props);
   }
@@ -48,8 +48,17 @@ function makeNonNewableWrapper (Ctor) {
   // Copy prototype.
   CtorWrapper.prototype = Ctor.prototype;
 
+  // Set the function name to the component name for easier debugging.
+  Object.defineProperty(CtorWrapper, 'name', {
+    configurable: true,
+    enumerable: false,
+    writable: false,
+    value: opts.id
+  });
+
   // Ensure a non-enumerable constructor property exists.
-  Object.defineProperty(Ctor.prototype, 'constructor', {
+  Object.defineProperty(CtorWrapper.prototype, 'constructor', {
+    configurable: true,
     enumerable: false,
     value: CtorWrapper
   });
@@ -117,14 +126,13 @@ function skate (id, userOptions) {
     });
   } else {
     Ctor = polyfillElementConstructor(opts);
-
     if (global.document) {
       initDocument();
       documentObserver.register();
     }
   }
 
-  Ctor = makeNonNewableWrapper(Ctor);
+  Ctor = makeNonNewableWrapper(Ctor, opts);
   assignSafe(Ctor, opts);
   registry.set(id, Ctor);
 

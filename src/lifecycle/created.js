@@ -1,6 +1,7 @@
 import data from '../util/data';
 import emit from '../api/emit';
 import events from './events';
+import global from '../util/global';
 import patchAttributeMethods from './patch-attribute-methods';
 import property from './property';
 import propertiesCreated from './properties-created';
@@ -8,6 +9,8 @@ import propertiesReady from './properties-ready';
 import prototype from './prototype';
 import renderer from './renderer';
 import resolve from './resolve';
+
+const isBrowser = !!global.document;
 
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
@@ -56,15 +59,15 @@ export default function (opts) {
     info.created = true;
     propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
-    patchAttributeMethods(this, opts);
-    applyPrototype(this);
+    isBrowser && patchAttributeMethods(this, opts);
+    isBrowser && applyPrototype(this);
     propertiesCreated(this, propertyDefinitions);
-    applyEvents(this);
+    isBrowser && applyEvents(this);
     opts.created && opts.created(this);
-    renderIfNotResolved(this, opts);
+    isBrowser && renderIfNotResolved(this, opts);
     propertiesReady(this, propertyDefinitions);
-    opts.ready && opts.ready(this);
-    notifyReady(this);
+    isBrowser && opts.ready && opts.ready(this);
+    isBrowser && notifyReady(this);
     resolve(this, opts);
   };
 }
