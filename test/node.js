@@ -7,7 +7,7 @@ skate('x-hello', {
     textContent: null
   },
   render (elem) {
-    return `Hello, <x-text>${elem.textContent}</x-text>!`;
+    return `Hello, <x-text yell>${elem.textContent}</x-text>!`;
   }
 });
 
@@ -17,9 +17,9 @@ skate('x-text', {
     yell: skate.property.boolean({ attribute: true })
   },
   render (elem) {
-    return `<span>&quot;${elem.yell ? elem.textContent.toUpperCase() : elem.textContent}&quot;</span>`;
+    return `<span>${elem.yell ? elem.textContent.toUpperCase() : elem.textContent}</span>`;
   }
 });
 
 /* eslint no-console: 0 */
-console.log(render('<x-hello yell>World</x-hello>'));
+console.log(render('<x-hello>World</x-hello>'));
