@@ -28,94 +28,6 @@ __d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
   
   return module.exports;
 }).call(this);
-// src/util/create-from-html.js
-__883fff2d161a4239b3efea9bb85204e0 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  var specialMap = {
-    caption: 'table',
-    dd: 'dl',
-    dt: 'dl',
-    li: 'ul',
-    tbody: 'table',
-    td: 'tr',
-    thead: 'table',
-    tr: 'tbody'
-  };
-  
-  function resolveParent(tag, html) {
-    var container = document.createElement('div');
-    var levels = 0;
-  
-    var parentTag = specialMap[tag];
-    while (parentTag) {
-      html = '<' + parentTag + '>' + html + '</' + parentTag + '>';
-      ++levels;
-      parentTag = specialMap[parentTag];
-    }
-  
-    container.innerHTML = html;
-  
-    var parent = container;
-    for (var a = 0; a < levels; a++) {
-      parent = parent.firstElementChild;
-    }
-    return parent;
-  }
-  
-  function matchTag(html) {
-    var tag = html.match(/^<([^\s>]+)/);
-    return tag && tag[1];
-  }
-  
-  exports['default'] = function (html) {
-    html = html.trim();
-    if (html[0] === '<') {
-      return resolveParent(matchTag(html), html);
-    }
-    return document.createTextNode(html);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  var elementPrototype = window.HTMLElement.prototype;
-  var elementPrototypeContains = elementPrototype.contains;
-  
-  exports["default"] = function (source, target) {
-    // The document element does not have the contains method in IE.
-    if (source === document && !source.contains) {
-      return document.head.contains(target) || document.body.contains(target);
-    }
-  
-    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
 // src/global/vars.js
 __dd77578495c1d19b0e115627616ea63a = (function () {
   var module = {
@@ -276,6 +188,171 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   
   return module.exports;
 }).call(this);
+// src/api/create.js
+__1675a7174b713323cc232370699a2714 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  
+  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  exports['default'] = function (name, props) {
+    var trimmedName = name.trim();
+    var constructor = _globalRegistry2['default'].get(trimmedName);
+    return constructor ? constructor(props) : (0, _utilAssign2['default'])(document.createElement(trimmedName), props);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/element-contains.js
+__6f793202bae98770dbb2b598df7929ad = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  var elementPrototype = window.HTMLElement.prototype;
+  var elementPrototypeContains = elementPrototype.contains;
+  
+  exports["default"] = function (source, target) {
+    // The document element does not have the contains method in IE.
+    if (source === document && !source.contains) {
+      return document.head.contains(target) || document.body.contains(target);
+    }
+  
+    return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/api/emit.js
+__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  
+  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  
+  var CustomEvent = (function (CustomEvent) {
+    if (CustomEvent) {
+      try {
+        new CustomEvent();
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return CustomEvent;
+  })(window.CustomEvent);
+  
+  var hasBubbleOnDetachedElements = (function () {
+    var parent = document.createElement('div');
+    var child = document.createElement('div');
+    var hasBubbleOnDetachedElements = false;
+    parent.appendChild(child);
+    parent.addEventListener('test', function () {
+      return hasBubbleOnDetachedElements = true;
+    });
+    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+    return hasBubbleOnDetachedElements;
+  })();
+  
+  function createCustomEvent(name) {
+    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return e;
+  }
+  
+  function createReadableStopPropagation(oldStopPropagation) {
+    return function () {
+      this.isPropagationStopped = true;
+      oldStopPropagation.call(this);
+    };
+  }
+  
+  function simulateBubbling(elem, cEvent) {
+    var didPreventDefault = undefined;
+    var currentElem = elem;
+    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+    Object.defineProperty(cEvent, 'target', { value: elem });
+    while (currentElem && !cEvent.isPropagationStopped) {
+      cEvent.currentTarget = currentElem;
+      if (currentElem.dispatchEvent(cEvent) === false) {
+        didPreventDefault = false;
+      }
+      currentElem = currentElem.parentNode;
+    }
+    return didPreventDefault;
+  }
+  
+  function emitOne(elem, name, opts) {
+    var cEvent, shouldSimulateBubbling;
+  
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    cEvent = createCustomEvent(name, opts);
+    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
+  
+    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (emitOne(elem, curr, opts) === false) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/util/ignored.js
 __092f8936e5006bddcb3baf24320a5a06 = (function () {
   var module = {
@@ -379,172 +456,28 @@ __3add36046399fead5a83243849207ed7 = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
-  exports['default'] = function (element) {
-    var isInDom = (0, _utilElementContains2['default'])(document, element);
+  exports['default'] = function () {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
   
-    (0, _utilWalkTree2['default'])(element, function (descendant) {
-      var components = _globalRegistry2['default'].find(descendant);
-      var componentsLength = components.length;
+    args.forEach(function (arg) {
+      var isInDom = (0, _utilElementContains2['default'])(document, arg);
+      (0, _utilWalkTree2['default'])(arg, function (descendant) {
+        var components = _globalRegistry2['default'].find(descendant);
+        var componentsLength = components.length;
   
-      for (var a = 0; a < componentsLength; a++) {
-        components[a].prototype.createdCallback.call(descendant);
-      }
-  
-      for (var a = 0; a < componentsLength; a++) {
-        if (isInDom) {
-          components[a].prototype.attachedCallback.call(descendant);
+        for (var a = 0; a < componentsLength; a++) {
+          components[a].prototype.createdCallback.call(descendant);
         }
-      }
+  
+        for (var a = 0; a < componentsLength; a++) {
+          if (isInDom) {
+            components[a].prototype.attachedCallback.call(descendant);
+          }
+        }
+      });
     });
-  
-    return element;
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/api/create.js
-__1675a7174b713323cc232370699a2714 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
-  
-  var _utilAssign2 = _interopRequireDefault(_utilAssign);
-  
-  var _utilCreateFromHtml = __883fff2d161a4239b3efea9bb85204e0;
-  
-  var _utilCreateFromHtml2 = _interopRequireDefault(_utilCreateFromHtml);
-  
-  var _init = __3add36046399fead5a83243849207ed7;
-  
-  var _init2 = _interopRequireDefault(_init);
-  
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
-  
-  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
-  
-  function createFromName(name) {
-    var ctor = _globalRegistry2['default'].get(name);
-    return ctor && ctor() || document.createElement(name);
-  }
-  
-  exports['default'] = function (name, props) {
-    name = name.trim();
-    return (0, _utilAssign2['default'])(name[0] === '<' ? (0, _init2['default'])((0, _utilCreateFromHtml2['default'])(name).firstElementChild) : createFromName(name), props);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
-  
-  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
-  
-  var CustomEvent = (function (CustomEvent) {
-    if (CustomEvent) {
-      try {
-        new CustomEvent();
-      } catch (e) {
-        return undefined;
-      }
-    }
-    return CustomEvent;
-  })(window.CustomEvent);
-  
-  var hasBubbleOnDetachedElements = (function () {
-    var parent = document.createElement('div');
-    var child = document.createElement('div');
-    var hasBubbleOnDetachedElements = false;
-    parent.appendChild(child);
-    parent.addEventListener('test', function () {
-      return hasBubbleOnDetachedElements = true;
-    });
-    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-    return hasBubbleOnDetachedElements;
-  })();
-  
-  function createCustomEvent(name) {
-    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-  
-    if (CustomEvent) {
-      return new CustomEvent(name, opts);
-    }
-  
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return e;
-  }
-  
-  function createReadableStopPropagation(oldStopPropagation) {
-    return function () {
-      this.isPropagationStopped = true;
-      oldStopPropagation.call(this);
-    };
-  }
-  
-  function simulateBubbling(elem, cEvent) {
-    var didPreventDefault;
-    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-    while (elem && !cEvent.isPropagationStopped) {
-      cEvent.currentTarget = elem;
-      if (elem.dispatchEvent(cEvent) === false) {
-        didPreventDefault = false;
-      }
-      elem = elem.parentNode;
-    }
-    return didPreventDefault;
-  }
-  
-  function emitOne(elem, name, opts) {
-    var cEvent, shouldSimulateBubbling;
-  
-    /* jshint expr: true */
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
-    cEvent = createCustomEvent(name, opts);
-    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
-  
-    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
-  }
-  
-  exports['default'] = function (elem, name) {
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-  
-    var names = typeof name === 'string' ? name.split(' ') : name;
-    return names.reduce(function (prev, curr) {
-      if (emitOne(elem, curr, opts) === false) {
-        prev.push(curr);
-      }
-      return prev;
-    }, []);
   };
   
   module.exports = exports['default'];
@@ -563,6 +496,7 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  exports['default'] = fragment;
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
@@ -570,54 +504,70 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   var _init2 = _interopRequireDefault(_init);
   
-  var _utilCreateFromHtml = __883fff2d161a4239b3efea9bb85204e0;
-  
-  var _utilCreateFromHtml2 = _interopRequireDefault(_utilCreateFromHtml);
-  
-  var DocumentFragmentPrototype = DocumentFragment.prototype;
   var slice = Array.prototype.slice;
+  var specialMap = {
+    caption: 'table',
+    dd: 'dl',
+    dt: 'dl',
+    li: 'ul',
+    tbody: 'table',
+    td: 'tr',
+    thead: 'table',
+    tr: 'tbody'
+  };
   
-  function decorateFragmentMethods(frag) {
-    frag.appendChild = function (el) {
-      return DocumentFragmentPrototype.appendChild.call(this, (0, _init2['default'])(el));
-    };
+  function resolveParent(tag, html) {
+    var container = document.createElement('div');
+    var levels = 0;
+    var parentTag = specialMap[tag];
   
-    frag.insertBefore = function (el, beforeEl) {
-      return DocumentFragmentPrototype.insertBefore.call(this, (0, _init2['default'])(el), beforeEl);
-    };
+    while (parentTag) {
+      html = '<' + parentTag + '>' + html + '</' + parentTag + '>';
+      ++levels;
+      parentTag = specialMap[parentTag];
+    }
   
-    frag.replaceChild = function (el, replacedEl) {
-      return DocumentFragmentPrototype.replaceChild.call(this, (0, _init2['default'])(el), replacedEl);
-    };
+    container.innerHTML = html;
   
-    frag.cloneNode = function () {
-      var clone = DocumentFragmentPrototype.cloneNode.apply(this, arguments);
-      decorateFragmentMethods(clone);
-      var children = slice.call(clone.childNodes);
-      for (var i = 0; i < children.length; i++) {
-        (0, _init2['default'])(children[i]);
-      }
-      return clone;
-    };
+    var parent = container;
+    for (var a = 0; a < levels; a++) {
+      parent = parent.firstElementChild;
+    }
+    return parent;
   }
   
-  exports['default'] = function (html) {
-    var frag = document.createDocumentFragment();
-    decorateFragmentMethods(frag);
-    if (typeof html === 'string') {
-      var par = (0, _utilCreateFromHtml2['default'])(html);
+  function matchTag(html) {
+    var tag = html.match(/^<([^\s>]+)/);
+    return tag && tag[1];
+  }
   
-      if (par.nodeType !== 1) {
-        frag.appendChild(par);
-        return frag;
+  function buildFragment(frag, arg) {
+    if (arg) {
+      if (typeof arg === 'string') {
+        arg = arg.trim();
+        if (arg[0] === '<') {
+          arg = resolveParent(matchTag(arg), arg).childNodes;
+          arg = fragment.apply(null, slice.call(arg));
+        } else {
+          arg = document.createTextNode(arg);
+        }
+      } else if (arg.length) {
+        arg = fragment.apply(null, slice.call(arg));
+      } else if (arg.nodeType) {
+        (0, _init2['default'])(arg);
       }
-  
-      while (par.firstElementChild) {
-        frag.appendChild(par.firstElementChild);
-      }
+      frag.appendChild(arg);
     }
     return frag;
-  };
+  }
+  
+  function fragment() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+  
+    return args.reduce(buildFragment, document.createDocumentFragment());
+  }
   
   module.exports = exports['default'];
   
@@ -697,10 +647,6 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
-  
-  var _apiEmit = __639a0d2e0f8a90cd72e6197bdb481558;
-  
-  var _apiEmit2 = _interopRequireDefault(_apiEmit);
   
   // TODO Split apart createNativePropertyDefinition function.
   
@@ -820,22 +766,12 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
         oldValue: oldValue
       };
   
-      if (opts.set) {
+      if (typeof opts.set === 'function') {
         opts.set(this, changeData);
       }
   
-      if (opts.emit) {
-        var eventName = opts.emit;
-  
-        if (eventName === true) {
-          eventName = 'skate.property';
-        }
-  
-        (0, _apiEmit2['default'])(this, eventName, {
-          bubbles: false,
-          cancelable: false,
-          detail: changeData
-        });
+      if (typeof opts.change === 'function' && oldValue !== newValue) {
+        opts.change(this, changeData);
       }
   
       info.updatingProperty = false;
