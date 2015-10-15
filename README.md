@@ -409,8 +409,7 @@ The component lifecycle consists of several paths in the following order startin
 3. `properties` are defined
 4. `created` is invoked
 5. `renderer` is invoked with the result of `render` to stamp out the component's structure
-5. descendant custom elements are synchronously initialised
-6. `properties` are initialised so setters may now affect descendant DOM
+6. `properties` are initialised
 7. `ready` is invoked
 8. `attached` is invoked when added to the document (or if already in the document)
 9. `detached` is invoked when removed from the document
@@ -767,13 +766,56 @@ click: skate.emit('selected')
 
 ### `fragment ()`
 
-[soon]
+Creates a document fragment from the specified node or HTML string and ensures any components within the fragment are synchronously initialised.
 
+You can pass a DOM node:
+
+```js
+skate.fragment(document.createElement('my-element'));
+```
+
+A string:
+
+```js
+skate.fragment('<my-element></my-element>');
+```
+
+Any traversible item:
+
+```js
+skate.fragment([document.createElement('my-element'), '<my-element></my-element>']);
+```
+
+Or a combination of those:
+
+```js
+skate.fragment(
+  document.createElement('my-element'),
+  '<my-element></my-element>',
+  [document.createElement('my-element'), '<my-element></my-element>']
+);
+```
+
+You are returned a document fragment that contains synchronously initialised components (if you added any components). It's just a normal `DocumentFragment` so you can do anything you would normally be able to do. However, it should be noted that the methods aren't decorated to sync init components that you add after calling `skate.fragment()`.
+
+If you want to add components that are synchronously initialised, you can just chain `skate.fragment()` calls:
+
+```js
+skate
+  .fragment('<my-element></my-element>')
+  .appendChild(skate.fragment('<my-other-element></my-other-element>'));
+```
 
 
 ### `init ()`
 
-[soon]
+It's encouraged that you use `skate.create()` and `skate.fragment()` for creating elements and ensuring that they're synchronously initialised, however, there are edge-cases where synchronously initialising an existing element `skate.init()` may be necessary.
+
+```js
+skate.init(element1, element2);
+```
+
+Note, that if you use a functional approach to rendering your custom elements, you should *never* need to use `skate.init()` as you shouldn't be querying for elements and interacting with them directly.
 
 
 

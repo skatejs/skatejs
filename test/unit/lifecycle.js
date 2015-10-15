@@ -91,7 +91,8 @@ describe('unresolved attribute', function () {
       }
     });
 
-    var element = skate.init(helperFixture(`<${tag} unresolved></${tag}>`).children[0]);
+    var element = helperFixture(`<${tag} unresolved></${tag}>`).children[0];
+    skate.init(element);
     expect(element.hasAttribute('resolved')).to.equal(true, 'should have resolved');
   });
 });

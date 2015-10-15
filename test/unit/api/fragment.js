@@ -16,67 +16,6 @@ describe('api/fragment', function () {
     expect(frag.childNodes.length).to.equal(0);
   });
 
-  describe('overriden methods', function () {
-    var frag;
-    var el1;
-    var el2;
-    beforeEach(function () {
-      skate(tagName, {});
-      frag = skate.fragment();
-      el1 = document.createElement(tagName);
-      el2 = document.createElement(tagName);
-    });
-
-    it('should init elements added via appendChild', function () {
-      frag.appendChild(el1);
-      expect(frag.childNodes.length).to.equal(1);
-      expect(resolved(el1)).to.equal(true);
-    });
-
-    it('should init elements added via insertBefore', function () {
-      frag.appendChild(el1);
-      frag.insertBefore(el2, el1);
-      expect(frag.childNodes.length).to.equal(2);
-      expect(resolved(el2)).to.equal(true);
-    });
-
-    it('should init elements added via replaceChild', function () {
-      frag.appendChild(el1);
-      frag.replaceChild(el2, el1);
-      expect(frag.childNodes.length).to.equal(1);
-      expect(resolved(el2)).to.equal(true);
-    });
-
-    it('should return an empty fragment if shallow cloning', function () {
-      var clone = frag.cloneNode(false);
-      expect(clone.childNodes.length).to.equal(0);
-    });
-
-    it('should init cloned elements if deep cloning', function () {
-      tagName = element().safe;
-      var created = 0;
-      skate(tagName, {
-        created: function () {
-          // Can't use the "resolved" attr in assertions about the clone since cloning will copy
-          // the attr but not init the cloned element's lifecycle.
-          created++;
-        }
-      });
-
-      var html = `<${tagName}></${tagName}>`;
-      var clone = skate.fragment(html).cloneNode(true);
-      expect(clone.childNodes.length).to.equal(1);
-      expect(created).to.equal(2);
-    });
-
-    it('should init elements added after cloning', function () {
-      var clone = frag.cloneNode(false);
-      clone.appendChild(el1);
-      expect(clone.childNodes.length).to.equal(1);
-      expect(resolved(clone.childNodes[0])).to.equal(true);
-    })
-  });
-
   describe('html', function () {
     it('should not init an element without a definition', function () {
       var html = `<${tagName}></${tagName}>`;
@@ -121,12 +60,38 @@ describe('api/fragment', function () {
   });
 
   describe('text', function () {
-    it('should pass through text nodes', function () {
-      var html = 'text node';
-      var frag = skate.fragment(html);
-      expect(frag).to.be.an.instanceOf(DocumentFragment);
-      expect(frag.childNodes[0].nodeType).to.equal(3);
-      expect(frag.childNodes[0].textContent).to.equal('text node');
+    it('works with text that has no parent element', function () {
+      const text = 'some text';
+      const frag = skate.fragment(text);
+      expect(frag.childNodes[0].textContent).to.equal('some text');
+    });
+  });
+
+  describe('node', function () {
+    it('should work with element nodes', function () {
+      const node = document.createElement('div');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with text nodes', function () {
+      const node = document.createTextNode('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should work with comment nodes', function () {
+      const node = document.createComment('');
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+    });
+
+    it('should initialise element nodes that are custom elements', function () {
+      const elem = skate(element().safe, {});
+      const node = document.createElement(elem.id);
+      const frag = skate.fragment(node);
+      expect(frag.childNodes[0]).to.equal(node);
+      expect(resolved(frag.childNodes[0])).to.equal(true);
     });
   });
 });
