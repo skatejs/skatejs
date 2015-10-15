@@ -192,29 +192,6 @@ describe('lifecycle/property', function () {
       });
     });
 
-    describe('emit', function () {
-      it('when true, emits a skate.property event', function (done) {
-        let elem = create({ emit: true });
-        elem.addEventListener('skate.property', () => done());
-        elem.test = true;
-      });
-
-      it('when a string, the value is used as the attribute name', function (done) {
-        let elem = create({ emit: 'some.prop.event' });
-        elem.addEventListener('some.prop.event', () => done());
-        elem.test = true;
-      });
-
-      it('when an array, the values are the events that are emitted', function () {
-        let elem = create({ emit: ['e1', 'e2'] });
-        let calls = 0;
-        elem.addEventListener('e1', () => ++calls);
-        elem.addEventListener('e2', () => ++calls);
-        elem.test = true;
-        expect(calls).to.equal(2);
-      });
-    });
-
     describe('get()', function () {
       it('returns the value of the property', function () {
         let elem = create({ get: () => 'something' });

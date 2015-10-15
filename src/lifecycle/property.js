@@ -1,7 +1,6 @@
 import assign from '../util/assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
-import emit from '../api/emit';
 
 // TODO Split apart createNativePropertyDefinition function.
 
@@ -127,20 +126,6 @@ function createNativePropertyDefinition (name, opts) {
 
     if (opts.change && oldValue !== newValue) {
       opts.change(this, changeData);
-    }
-
-    if (opts.emit) {
-      let eventName = opts.emit;
-
-      if (eventName === true) {
-        eventName = 'skate.property';
-      }
-
-      emit(this, eventName, {
-        bubbles: false,
-        cancelable: false,
-        detail: changeData
-      });
     }
 
     info.updatingProperty = false;
