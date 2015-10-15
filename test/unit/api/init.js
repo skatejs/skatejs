@@ -6,22 +6,22 @@ import typeClass from 'skatejs-type-class';
 import typeElement from '../../../src/type/element';
 
 describe('api/init', function () {
-  var MyEl;
-  var tagName;
+  let tagName;
 
   beforeEach(function () {
     tagName = helperElement('my-el');
-    MyEl = skate(tagName.safe, {
+    skate(tagName.safe, {
       created: function (elem) {
         elem.textContent = 'test';
       }
     });
-
     helperFixture(`<${tagName.safe}></${tagName.safe}>`);
   });
 
   it('should accept a node', function () {
-    expect(skate.init(helperFixture().querySelector(tagName.safe)).textContent).to.equal('test');
+    const elem = helperFixture().querySelector(tagName.safe);
+    skate.init(elem);
+    expect(elem.textContent).to.equal('test');
   });
 
   describe('sync', function () {

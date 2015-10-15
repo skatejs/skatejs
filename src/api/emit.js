@@ -40,14 +40,16 @@ function createReadableStopPropagation (oldStopPropagation) {
 }
 
 function simulateBubbling (elem, cEvent) {
-  var didPreventDefault;
+  let didPreventDefault;
+  let currentElem = elem;
   cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-  while (elem && !cEvent.isPropagationStopped) {
-    cEvent.currentTarget = elem;
-    if (elem.dispatchEvent(cEvent) === false) {
+  Object.defineProperty(cEvent, 'target', { value: elem });
+  while (currentElem && !cEvent.isPropagationStopped) {
+    cEvent.currentTarget = currentElem;
+    if (currentElem.dispatchEvent(cEvent) === false) {
       didPreventDefault = false;
     }
-    elem = elem.parentNode;
+    currentElem = currentElem.parentNode;
   }
   return didPreventDefault;
 }

@@ -99,10 +99,8 @@ describe('lifecycle/events', function () {
       }
     });
 
-    var inst = skate.create(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
-    helperFixture(inst);
-    skate.init(inst);
-    skate.emit(inst.querySelector('span'), 'test');
+    const frag = skate.fragment(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
+    skate.emit(frag.querySelector('span'), 'test');
     expect(numTriggered).to.equal(3);
   });
 
@@ -129,7 +127,8 @@ describe('lifecycle/events', function () {
       }
     });
 
-    var inst = skate.init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+    var inst = helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName);
+    skate.init(inst);
 
     inst.blur();
     expect(blur).to.equal(true);
