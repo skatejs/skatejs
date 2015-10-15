@@ -16,7 +16,7 @@
     "galvatron": "treshugart/galvatron#5b7c948",
     "gulp": "3.9.0",
     "gulp-auto-task": "treshugart/gulp-auto-task#460b425",
-    "gulp-babel": "5.2.1",
+    "gulp-babel": "5.3.0",
     "gulp-concat": "2.6.0",
     "gulp-debug": "2.1.2",
     "gulp-filter": "3.0.1",
