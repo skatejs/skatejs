@@ -325,7 +325,7 @@ describe('lifecycle/property', function () {
     });
 
     describe('change()', function () {
-      it('is not called if the property has no default value', function () {
+      it('is not called if the property has no default value, when it is set up', function () {
         let calls = 0;
         create({
           change () {
@@ -335,18 +335,7 @@ describe('lifecycle/property', function () {
         expect(calls).to.equal(0);
       });
 
-      it('is called if the property has no default value and it is set', function () {
-        let calls = 0;
-        let elem = create({
-          change () {
-            ++calls;
-          }
-        });
-        elem.test = true;
-        expect(calls).to.equal(1);
-      });
-
-      it('is not called if the property has a default value', function () {
+      it('is not called if the property has a default value, when it is set up', function () {
         let calls = 0;
         create({
           default: true,
@@ -369,18 +358,6 @@ describe('lifecycle/property', function () {
         expect(calls).to.equal(0);
       });
 
-      it('is called if the property has a default value and it does change', function () {
-        let calls = 0;
-        let elem = create({
-          default: true,
-          change () {
-            ++calls;
-          }
-        });
-        elem.test = false;
-        expect(calls).to.equal(1);
-      });
-
       it('is not called if the property value does not change', function () {
         let calls = 0;
         let elem = create({
@@ -392,6 +369,29 @@ describe('lifecycle/property', function () {
         elem.test = true;
         elem.test = true;
         expect(calls).to.equal(0);
+      });
+
+      it('is called if the property has no default value and it is set', function () {
+        let calls = 0;
+        let elem = create({
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = true;
+        expect(calls).to.equal(1);
+      });
+
+      it('is called if the property has a default value and it is set to a different value', function () {
+        let calls = 0;
+        let elem = create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = false;
+        expect(calls).to.equal(1);
       });
 
       it('is called if the property value changes', function () {
