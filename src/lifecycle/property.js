@@ -120,11 +120,11 @@ function createNativePropertyDefinition (name, opts) {
       oldValue: oldValue
     };
 
-    if (opts.set) {
+    if (typeof opts.set === 'function') {
       opts.set(this, changeData);
     }
 
-    if (opts.change && oldValue !== newValue) {
+    if (typeof opts.change === 'function' && oldValue !== newValue) {
       opts.change(this, changeData);
     }
 
