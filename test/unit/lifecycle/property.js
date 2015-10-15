@@ -192,29 +192,6 @@ describe('lifecycle/property', function () {
       });
     });
 
-    describe('emit', function () {
-      it('when true, emits a skate.property event', function (done) {
-        let elem = create({ emit: true });
-        elem.addEventListener('skate.property', () => done());
-        elem.test = true;
-      });
-
-      it('when a string, the value is used as the attribute name', function (done) {
-        let elem = create({ emit: 'some.prop.event' });
-        elem.addEventListener('some.prop.event', () => done());
-        elem.test = true;
-      });
-
-      it('when an array, the values are the events that are emitted', function () {
-        let elem = create({ emit: ['e1', 'e2'] });
-        let calls = 0;
-        elem.addEventListener('e1', () => ++calls);
-        elem.addEventListener('e2', () => ++calls);
-        elem.test = true;
-        expect(calls).to.equal(2);
-      });
-    });
-
     describe('get()', function () {
       it('returns the value of the property', function () {
         let elem = create({ get: () => 'something' });
@@ -321,6 +298,108 @@ describe('lifecycle/property', function () {
           }
         };
         create(opts);
+      });
+    });
+
+    describe('change()', function () {
+      it('is not called if the property has no default value, when it is set up', function () {
+        let calls = 0;
+        create({
+          change () {
+            ++calls;
+          }
+        });
+        expect(calls).to.equal(0);
+      });
+
+      it('is not called if the property has a default value, when it is set up', function () {
+        let calls = 0;
+        create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        expect(calls).to.equal(0);
+      });
+
+      it('is not called if the property has a default value and it does not change', function () {
+        let calls = 0;
+        let elem = create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = true;
+        expect(calls).to.equal(0);
+      });
+
+      it('is not called if the property value does not change', function () {
+        let calls = 0;
+        let elem = create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = true;
+        elem.test = true;
+        expect(calls).to.equal(0);
+      });
+
+      it('is called if the property has no default value and it is set', function () {
+        let calls = 0;
+        let elem = create({
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = true;
+        expect(calls).to.equal(1);
+      });
+
+      it('is called if the property has a default value and it is set to a different value', function () {
+        let calls = 0;
+        let elem = create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = false;
+        expect(calls).to.equal(1);
+      });
+
+      it('is called if the property value changes', function () {
+        let calls = 0;
+        let elem = create({
+          default: true,
+          change () {
+            ++calls;
+          }
+        });
+        elem.test = true;
+        elem.test = false;
+        expect(calls).to.equal(1);
+      });
+
+      it('context and arguments', function (done) {
+        let opts = {
+          change (elem, data) {
+            expect(this.change).to.equal(opts.change);
+            expect(arguments.length).to.equal(2);
+            expect(elem.tagName).to.equal('DIV');
+            expect(data).to.contain({
+              name: 'test',
+              newValue: true,
+              oldValue: undefined
+            });
+            done();
+          }
+        };
+        let elem = create(opts);
+        elem.test = true;
       });
     });
   });
