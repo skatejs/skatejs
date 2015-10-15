@@ -23,8 +23,8 @@ JavaScript
 
 ```js
 skate('my-element', {
-  created: function () {
-    this.textContent = 'Hello, World!';
+  created: function (elem) {
+    elem.textContent = 'Hello, World!';
   }
 });
 ```
