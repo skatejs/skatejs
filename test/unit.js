@@ -15,3 +15,4 @@ import './unit/registry';
 import './unit/templating';
 import './unit/utils';
 import './unit/version';
+import './unit/mutation-observer';
