@@ -48,7 +48,8 @@
     "build": "gulp build",
     "docs": "gulp docs",
     "docs-watch": "gulp docs-watch",
-    "test": "gulp eslint && gulp test",
+    "lint": "gulp eslint",
+    "test": "gulp test",
     "test-watch": "gulp test-watch"
   }
 }
