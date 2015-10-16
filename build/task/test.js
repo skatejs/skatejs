@@ -1,11 +1,8 @@
 var assign = require('lodash/object/assign');
-var galv = require('galvatron');
-var gulp = require('gulp');
-var gulpBabel = require('gulp-babel');
-var gulpConcat = require('gulp-concat');
-var gulpKarma = require('gulp-karma');
+var buildTest = require('./build-test');
+var Server = require('karma').Server;
 
-module.exports = function (opts) {
+module.exports = function (opts, done) {
   var args = [];
   opts = assign({
     browsers: 'Firefox'
@@ -16,16 +13,36 @@ module.exports = function (opts) {
     args.push(opts.grep);
   }
 
-  return gulp.src('test/unit.js')
-    .pipe(galv.trace())
-    .pipe(galv.cache('babel', gulpBabel()))
-    .pipe(galv.cache('globalize', galv.globalize()))
-    .pipe(gulpConcat('unit.js'))
-    .pipe(gulp.dest('.tmp'))
-    .pipe(gulpKarma({
-      autoWatch: opts.watch,
-      browsers: opts.browsers.split(','),
-      client: { args: args },
-      frameworks: ['mocha', 'sinon-chai']
-    }));
+  var config = {
+    autoWatch: opts.watch,
+    browsers: opts.browsers.split(','),
+    client: { args: args },
+    frameworks: ['mocha', 'sinon-chai'],
+    singleRun: true,
+    files: [
+      '.tmp/unit.js'
+    ]
+  };
+
+  if (opts.saucelabs) {
+    var saucelabsLaunchers = require('./saucelabsLaunchers');
+    config = assign(config, {
+      saucelabs: {
+        testName: 'Skate unit tests',
+        recordScreenshots: false
+      },
+      customLaunchers: saucelabsLaunchers,
+      browsers: Object.keys(saucelabsLaunchers),
+      captureTimeout: 120000,
+      reporters: ['saucelabs'],
+      autoWatch: false,
+      client: {}
+    });
+  }
+
+  buildTest(opts).on('error', function(e){
+    throw e;
+  }).on('end', function() {
+    new Server(config, done).start();
+  });
 };

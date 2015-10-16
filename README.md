@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=master)](https://travis-ci.org/skatejs/skatejs)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
 *This is the README for the master branch and is probably out of sync with the last stable release. To see the README for the last stable release select it from the list of tags.*
 
