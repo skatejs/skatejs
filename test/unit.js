@@ -23,3 +23,4 @@ import './unit/util/create-from-html';
 import './unit/util/dash-case';
 import './unit/util/walk-tree';
 import './unit/version';
+import './unit/mutation-observer';
