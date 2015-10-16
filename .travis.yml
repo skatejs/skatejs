@@ -7,3 +7,6 @@ before_script:
   - npm install -g bower
   - npm install
   - bower install
+script:
+  - npm run lint
+  - npm test

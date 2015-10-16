@@ -19,6 +19,7 @@
     "gulp-babel": "5.2.1",
     "gulp-concat": "2.6.0",
     "gulp-debug": "2.1.2",
+    "gulp-eslint": "1.0.0",
     "gulp-filter": "3.0.1",
     "gulp-karma": "0.0.5",
     "gulp-less": "3.0.3",
@@ -47,6 +48,7 @@
     "build": "gulp build",
     "docs": "gulp docs",
     "docs-watch": "gulp docs-watch",
+    "lint": "gulp eslint",
     "test": "gulp test",
     "test-watch": "gulp test-watch"
   }

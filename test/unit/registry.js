@@ -10,7 +10,9 @@ describe('Registry', function () {
     try {
       registry.set('test', {});
       assert(false);
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing
+    }
   });
 
   it('should return definitions for a given element', function () {
