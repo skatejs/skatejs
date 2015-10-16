@@ -11,7 +11,7 @@
     "benchmark": "1.0.0",
     "bootstrap": "3.3.5",
     "del": "2.0.2",
-    "eslint": "1.6.0",
+    "eslint": "1.7.0",
     "font-awesome": "4.4.0",
     "galvatron": "treshugart/galvatron#5b7c948",
     "gulp": "3.9.0",
