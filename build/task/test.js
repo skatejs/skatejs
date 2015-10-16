@@ -1,7 +1,8 @@
 var assign = require('lodash/object/assign');
+var buildTest = require('./build-test');
 var Server = require('karma').Server;
 
-function Test(opts, done) {
+module.exports = function (opts, done) {
   var args = [];
   opts = assign({
     browsers: 'Firefox'
@@ -39,9 +40,9 @@ function Test(opts, done) {
     });
   }
 
-  new Server(config, done).start();
-}
-
-Test.deps = ['build-test'];
-
-module.exports = Test;
+  buildTest(opts).on('error', function(e){
+    throw e;
+  }).on('end', function() {
+    new Server(config, done).start();
+  });
+};
