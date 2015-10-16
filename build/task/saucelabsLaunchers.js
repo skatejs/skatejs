@@ -44,12 +44,8 @@ module.exports = {
     base: 'SauceLabs',
     browserName: 'firefox',
     version: '40'
-  }
-
-
-  /* we need to get the following to work
-  ,
-  safari: {
+  },
+  safari_latest_osx: {
     base: 'SauceLabs',
     browserName: 'safari',
     platform: 'OS X 10.11'
@@ -72,5 +68,4 @@ module.exports = {
     version: '11',
     platform: 'Windows 8.1'
   }
-  */
 };
