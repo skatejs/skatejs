@@ -27,7 +27,7 @@ module.exports = function (opts, done) {
   if (opts.saucelabs) {
     var saucelabsLaunchers = require('./saucelabsLaunchers');
     config = assign(config, {
-      saucelabs: {
+      sauceLabs: {
         testName: 'Skate unit tests',
         recordScreenshots: false
       },
