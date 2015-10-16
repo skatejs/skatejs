@@ -1,7 +1,6 @@
 import element from '../../lib/element';
 import resolved from '../../lib/resolved';
 import skate from '../../../src/index';
-import typeAttribute from 'skatejs-type-attribute';
 
 describe('api/create', function () {
   var tagName;

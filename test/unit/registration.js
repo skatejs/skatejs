@@ -14,7 +14,9 @@ describe('Registration', function () {
     try {
       skate(tag.safe, {});
       multiple = true;
-    } catch (e) {}
+    } catch (e) {
+      // Do nothing
+    }
 
     assert(!multiple);
   });

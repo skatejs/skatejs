@@ -54,9 +54,8 @@ describe('api/emit', function () {
   });
 
   it('stopPropagation()', function () {
-    var cancelled;
     child.addEventListener('test', e => e.stopPropagation());
     parent.addEventListener('test', () => assert(false, 'propagation should have been stopped'));
-    cancelled = emit(child, 'test');
+    emit(child, 'test');
   });
 });
