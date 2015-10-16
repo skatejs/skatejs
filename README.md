@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/skatejs/skatejs.png?branch=0.13.x)](https://travis-ci.org/skatejs/skatejs)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
 # Skate
 
