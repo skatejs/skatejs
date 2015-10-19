@@ -1,6 +1,18 @@
+'use strict';
+
 var assign = require('lodash/object/assign');
 var buildTest = require('./build-test');
+var commander = require('../lib/commander');
+var galvatron = require('galvatron');
+var gulp = require('gulp');
 var Server = require('karma').Server;
+
+commander
+  .option('-b, --browsers [Chrome,Firefox]', 'The browsers to run the tests in.')
+  .option('-g, --grep [pattern]', 'The grep pattern matching the tests you want to run.')
+  .option('-h, --host [localhost]', 'The host to listen on.')
+  .option('-p, --port [9876]', 'The port to listen on.')
+  .parse(process.argv);
 
 module.exports = function (opts, done) {
   var args = [];
@@ -28,7 +40,7 @@ module.exports = function (opts, done) {
     var saucelabsLaunchers = require('../lib/saucelabs-launchers');
     config = assign(config, {
       sauceLabs: {
-        testName: 'Skate unit tests',
+        testName: 'Skate unit tests (0.13.x)',
         recordScreenshots: false
       },
       customLaunchers: saucelabsLaunchers,

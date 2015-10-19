@@ -1,13 +1,16 @@
-var galv = require('galvatron');
+'use strict';
+
+var galvatron = require('galvatron');
 var gulp = require('gulp');
-var gulpBabel = require('gulp-babel');
-var gulpConcat = require('gulp-concat');
+
+galvatron.transformer
+  .post('babel')
+  .post('globalize');
 
 module.exports = function () {
-  return gulp.src('test/unit.js')
-    .pipe(galv.trace())
-    .pipe(galv.cache('babel', gulpBabel()))
-    .pipe(galv.cache('globalize', galv.globalize()))
-    .pipe(gulpConcat('unit.js'))
+  var bundle = galvatron.bundle('test/unit.js');
+
+  return gulp.src(bundle.files)
+    .pipe(bundle.stream())
     .pipe(gulp.dest('.tmp'));
 };
