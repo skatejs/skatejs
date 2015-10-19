@@ -5,7 +5,7 @@ import {
   initElements,
   removeElements
 } from './lifecycle';
-import MutationObserver from './mutation-observer';
+import './mutation-observer';
 import {
   getClosestIgnoredElement
 } from './utils';
@@ -48,7 +48,7 @@ function documentObserverHandler (mutations) {
  * @returns {MutationObserver}
  */
 function createDocumentObserver () {
-  var observer = new MutationObserver(documentObserverHandler);
+  var observer = new window.MutationObserver(documentObserverHandler);
 
   // Observe after the DOM content has loaded.
   observer.observe(document, {
@@ -64,7 +64,6 @@ export default {
     // IE has issues with reporting removedNodes correctly. See the polyfill for
     // details. If we fix IE, we must also re-define the document observer.
     if (fixIe) {
-      MutationObserver.fixIe();
       this.unregister();
     }
 
