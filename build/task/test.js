@@ -3,8 +3,6 @@
 var assign = require('lodash/object/assign');
 var buildTest = require('./build-test');
 var commander = require('../lib/commander');
-var galvatron = require('galvatron');
-var gulp = require('gulp');
 var Server = require('karma').Server;
 
 commander
