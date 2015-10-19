@@ -15,10 +15,11 @@ import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
+import global from './util/global';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
-import utilWalkTree from './util/walk-tree';
+import walkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
 function makeOptions (userOptions) {
@@ -39,7 +40,7 @@ function makeOptions (userOptions) {
   return options;
 }
 
-function makeNonNewableWrapper (Ctor) {
+function makeNonNewableWrapper (Ctor, opts) {
   function CtorWrapper (props = {}) {
     return assign(new Ctor(), props);
   }
@@ -47,9 +48,23 @@ function makeNonNewableWrapper (Ctor) {
   // Copy prototype.
   CtorWrapper.prototype = Ctor.prototype;
 
+  // Set the function name to the component name for easier debugging. Certain
+  // browsers *cough* Safari (and earlier versions of Firefox) don't support
+  // this so we must check to see if it's configurable first.
+  if (Object.getOwnPropertyDescriptor(CtorWrapper, 'name').configurable) {
+    Object.defineProperty(CtorWrapper, 'name', {
+      configurable: true,
+      enumerable: false,
+      writable: false,
+      value: opts.id
+    });
+  }
+
   // Ensure a non-enumerable constructor property exists.
-  Object.defineProperty(Ctor.prototype, 'constructor', {
+  Object.defineProperty(CtorWrapper.prototype, 'constructor', {
+    configurable: true,
     enumerable: false,
+    writable: false,
     value: CtorWrapper
   });
 
@@ -67,9 +82,9 @@ function polyfillElementConstructor (opts) {
   return CustomElement;
 }
 
-let HTMLElement = window.HTMLElement;
+let HTMLElement = global.HTMLElement;
 let initDocument = debounce(function () {
-  utilWalkTree(document.documentElement.childNodes, function (element) {
+  walkTree(document.documentElement.childNodes, function (element) {
     let components = registry.find(element);
     let componentsLength = components.length;
 
@@ -83,16 +98,22 @@ let initDocument = debounce(function () {
   });
 });
 
+function getParentPrototype (name) {
+  if (global.document) {
+    return (name ? document.createElement(name).constructor : HTMLElement).prototype;
+  }
+}
+
 function skate (id, userOptions) {
   let Ctor, parentProto;
   let opts = makeOptions(userOptions);
 
   opts.id = id;
   opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
-  parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
+  parentProto = getParentPrototype(opts.extends);
 
   // Inherit from parent prototype.
-  if (!parentProto.isPrototypeOf(opts.prototype)) {
+  if (parentProto && !parentProto.isPrototypeOf(opts.prototype)) {
     opts.prototype = assignSafe(Object.create(parentProto), opts.prototype);
   }
 
@@ -110,11 +131,13 @@ function skate (id, userOptions) {
     });
   } else {
     Ctor = polyfillElementConstructor(opts);
-    initDocument();
-    documentObserver.register();
+    if (global.document) {
+      initDocument();
+      documentObserver.register();
+    }
   }
 
-  Ctor = makeNonNewableWrapper(Ctor);
+  Ctor = makeNonNewableWrapper(Ctor, opts);
   assignSafe(Ctor, opts);
   registry.set(id, Ctor);
 

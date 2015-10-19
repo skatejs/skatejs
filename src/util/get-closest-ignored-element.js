@@ -1,6 +1,7 @@
+import global from './global';
 import ignored from './ignored';
 
-const { Element } = window;
+const { Element } = global;
 
 export default function (element) {
   let parent = element;

@@ -5,7 +5,7 @@ import typeAttribute from 'skatejs-type-attribute';
 import typeClass from 'skatejs-type-class';
 
 describe('constructor', function () {
-  var id;
+  let id;
 
   beforeEach(function () {
     id = helperElement().safe;
@@ -13,75 +13,82 @@ describe('constructor', function () {
 
   it('existing elements', function () {
     id = id.replace(/-/, '');
-    var Ctor = skate(id, {});
-    var ctor = new Ctor();
+    const Ctor = skate(id, {});
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal(id);
   });
 
   it('existing elements + extends', function () {
     id = id.replace(/-/, '');
-    var Ctor = skate(id, { extends: 'span' });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { extends: 'span' });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute('is')).to.equal(id);
   });
 
   it('custom elements', function () {
-    var Ctor = skate(id, {});
-    var ctor = new Ctor();
+    const Ctor = skate(id, {});
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal(id);
   });
 
   it('custom elements + extends', function () {
-    var Ctor = skate(id, { extends: 'span' });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { extends: 'span' });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute('is')).to.equal(id);
   });
 
   it('attributes', function () {
-    var Ctor = skate(id, { type: typeAttribute });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { type: typeAttribute });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('div');
     expect(ctor.getAttribute(id)).to.equal('');
   });
 
   it('attributes + extends', function () {
-    var Ctor = skate(id, { type: typeAttribute, extends: 'span' });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { type: typeAttribute, extends: 'span' });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute(id)).to.equal('');
   });
 
   it('classes', function () {
-    var Ctor = skate(id, { type: typeClass });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { type: typeClass });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('div');
     expect(ctor.getAttribute('class')).to.equal(id);
   });
 
   it('classes + extends', function () {
-    var Ctor = skate(id, { type: typeClass, extends: 'span' });
-    var ctor = new Ctor();
+    const Ctor = skate(id, { type: typeClass, extends: 'span' });
+    const ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute('class')).to.equal(id);
   });
 
   it('without new operator', function () {
-    var ctor = skate(id, {});
+    const ctor = skate(id, {});
     expect(resolved(ctor())).to.equal(true);
   });
 
   it('with properties', function () {
-    var ctor = skate(id, {});
+    const ctor = skate(id, {});
     expect(ctor({ test: true }).test).to.equal(true);
+  });
+
+  it('the name should be overridden on supported browsers', function () {
+    const ctor = skate(id, {});
+    if (Object.getOwnPropertyDescriptor(ctor, 'name').configurable) {
+      expect(ctor.name).to.equal(id);
+    }
   });
 });

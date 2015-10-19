@@ -6,7 +6,9 @@
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "lib/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "htmlparser2": "^3.8.3"
+  },
   "devDependencies": {
     "benchmark": "1.0.0",
     "bootstrap": "3.3.5",
