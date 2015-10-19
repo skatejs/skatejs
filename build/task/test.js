@@ -1,9 +1,9 @@
 'use strict';
 
+var assign = require('lodash/object/assign');
+var buildTest = require('./build-test');
 var commander = require('../lib/commander');
-var galvatron = require('galvatron');
-var gulp = require('gulp');
-var karma = require('karma').server;
+var Server = require('karma').Server;
 
 commander
   .option('-b, --browsers [Chrome,Firefox]', 'The browsers to run the tests in.')
@@ -12,40 +12,47 @@ commander
   .option('-p, --port [9876]', 'The port to listen on.')
   .parse(process.argv);
 
-galvatron.transformer
-  .post('babel')
-  .post('globalize');
+module.exports = function (opts, done) {
+  var args = [];
+  opts = assign({
+    browsers: 'Firefox'
+  }, opts);
 
-var clientArgs = [];
-
-if (commander.grep) {
-  clientArgs.push('--grep');
-  clientArgs.push(commander.grep);
-}
-
-function run () {
-  karma.start({
-    autoWatch: !!commander.watch,
-    singleRun: !commander.watch,
-    hostname: commander.host || '0.0.0.0',
-    port: commander.port || 9876,
-    frameworks: ['mocha', 'sinon-chai'],
-    browsers: (commander.browsers || 'Firefox').split(','),
-    client: { args: clientArgs },
-    files: [ '.tmp/unit.js' ]
-  });
-}
-
-module.exports = function () {
-  var bundle = galvatron.bundle('test/unit.js');
-
-  if (commander.watch) {
-    run();
+  if (opts.grep) {
+    args.push('--grep');
+    args.push(opts.grep);
   }
 
-  gulp.src(bundle.files)
-    .pipe(bundle.watchIf(commander.watch))
-    .pipe(bundle.stream())
-    .pipe(gulp.dest('.tmp'))
-    .on('finish', run);
+  var config = {
+    autoWatch: opts.watch,
+    browsers: opts.browsers.split(','),
+    client: { args: args },
+    frameworks: ['mocha', 'sinon-chai'],
+    singleRun: true,
+    files: [
+      '.tmp/unit.js'
+    ]
+  };
+
+  if (opts.saucelabs) {
+    var saucelabsLaunchers = require('../lib/saucelabs-launchers');
+    config = assign(config, {
+      sauceLabs: {
+        testName: 'Skate unit tests (0.13.x)',
+        recordScreenshots: false
+      },
+      customLaunchers: saucelabsLaunchers,
+      browsers: Object.keys(saucelabsLaunchers),
+      captureTimeout: 120000,
+      reporters: ['saucelabs'],
+      autoWatch: false,
+      client: {}
+    });
+  }
+
+  buildTest(opts).on('error', function(e){
+    throw e;
+  }).on('end', function() {
+    new Server(config, function() { done(); }).start();
+  });
 };

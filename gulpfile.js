@@ -2,6 +2,7 @@
 
 var gulpAutoTask = require('gulp-auto-task');
 
-gulpAutoTask('{*,**/*}.js', {
-  base: './build/task'
+gulpAutoTask({
+  base: 'build/task',
+  gulp: require('gulp')
 });
