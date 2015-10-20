@@ -504,6 +504,9 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   var _init2 = _interopRequireDefault(_init);
   
+  var Node = window.Node;
+  var NodeList = window.NodeList;
+  
   var slice = Array.prototype.slice;
   var specialMap = {
     caption: 'table',
@@ -536,29 +539,13 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
     return parent;
   }
   
-  function matchTag(html) {
+  function resolveTag(html) {
     var tag = html.match(/^<([^\s>]+)/);
     return tag && tag[1];
   }
   
-  function buildFragment(frag, arg) {
-    if (arg) {
-      if (typeof arg === 'string') {
-        arg = arg.trim();
-        if (arg[0] === '<') {
-          arg = resolveParent(matchTag(arg), arg).childNodes;
-          arg = fragment.apply(null, slice.call(arg));
-        } else {
-          arg = document.createTextNode(arg);
-        }
-      } else if (arg.length) {
-        arg = fragment.apply(null, slice.call(arg));
-      } else if (arg.nodeType) {
-        (0, _init2['default'])(arg);
-      }
-      frag.appendChild(arg);
-    }
-    return frag;
+  function resolveHtml(html) {
+    return resolveParent(resolveTag(html), html);
   }
   
   function fragment() {
@@ -566,7 +553,21 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
       args[_key] = arguments[_key];
     }
   
-    return args.reduce(buildFragment, document.createDocumentFragment());
+    return args.reduce(function (frag, node) {
+      if (typeof node === 'string') {
+        node = fragment.apply(null, slice.call(resolveHtml(node).childNodes));
+      } else if (node instanceof NodeList || Array.isArray(node)) {
+        node = fragment.apply(null, slice.call(node));
+      } else if (node instanceof Node) {
+        (0, _init2['default'])(node);
+      }
+  
+      if (node) {
+        frag.appendChild(node);
+      }
+  
+      return frag;
+    }, document.createDocumentFragment());
   }
   
   module.exports = exports['default'];
