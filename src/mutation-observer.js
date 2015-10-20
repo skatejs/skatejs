@@ -1,4 +1,4 @@
-(function() { // Atlassian: added IIFE
+(function(self) { // Atlassian: added IIFE
 /**
  * @license
  * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
@@ -349,4 +349,4 @@ if (typeof WeakMap === "undefined") {
     JsMutationObserver._isPolyfilled = true;
   }
 })(self);
-})(); // Atlassian: added IIFE
+})(window); // Atlassian: added IIFE
