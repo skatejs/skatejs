@@ -13,9 +13,9 @@ describe('api/render', function () {
           set: render
         }
       },
-      render (state) {
-        return `${state.name}`;
-      }
+      render: render.html(function (elem) {
+        return `${elem.name}`;
+      })
     })();
   });
 

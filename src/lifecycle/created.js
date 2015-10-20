@@ -6,7 +6,6 @@ import property from './property';
 import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
 import prototype from './prototype';
-import renderer from './renderer';
 import resolve from './resolve';
 
 // TODO Remove this when we no longer support the legacy definitions and only
@@ -38,8 +37,8 @@ function notifyReady (elem) {
 }
 
 function renderIfNotResolved (elem, opts) {
-  if (!elem.hasAttribute(opts.resolvedAttribute)) {
-    renderer(elem, opts);
+  if (opts.render && !elem.hasAttribute(opts.resolvedAttribute)) {
+    opts.render(elem);
   }
 }
 
