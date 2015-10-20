@@ -40,7 +40,7 @@ module.exports = function (opts, done) {
     });
   }
 
-  buildTest(opts).on('error', function(e){
+  return buildTest(opts).on('error', function(e){
     throw e;
   }).on('end', function() {
     new Server(config, function() { done(); }).start();
