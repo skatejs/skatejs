@@ -101,6 +101,13 @@ describe('api/fragment', function () {
       expect(frag.childNodes[0]).to.equal(node);
     });
 
+    it('should work with document fragments', function () {
+      const frag = document.createDocumentFragment();
+      const elem = document.createElement('div');
+      frag.appendChild(elem);
+      expect(skate.fragment(frag).childNodes[0]).to.equal(elem);
+    });
+
     it('should initialise element nodes that are custom elements', function () {
       const elem = skate(element().safe, {});
       const node = document.createElement(elem.id);
