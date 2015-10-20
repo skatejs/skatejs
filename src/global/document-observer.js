@@ -3,8 +3,6 @@ import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
 
-var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
-
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
     var components = registry.find(element);
@@ -53,7 +51,7 @@ function documentObserverHandler (mutations) {
 }
 
 function createDocumentObserver () {
-  var observer = new MutationObserver(documentObserverHandler);
+  var observer = new window.MutationObserver(documentObserverHandler);
   observer.observe(document, {
     childList: true,
     subtree: true

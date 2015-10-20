@@ -27,7 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#209](#user-content-209) - Renamed `attributes` to `attribute` because now it's just a single callback.
 - [#210](#user-content-210) - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
 - [#225](#user-content-225) - Moved attribute and class binding types to separate repositories.
-- [#295](#user-content-295) - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer.
+- [#295](#user-content-295), [#377](#user-content-377) - (Re-)moved `MutationObserver` polyfill.
 - [#337](#user-content-337) - Streamlined, consistent and predictable lifecycle.
 - [#359](#user-content-359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
 
@@ -146,11 +146,13 @@ The attribute and class bindings have been moved out of core:
 
 The issue contains details as to why this has been done.
 
-#### [#295](https://github.com/skatejs/skatejs/issues/295)<a name="295"></a> - Moved `MutationObserver` polyfill to https://github.com/skatejs/polyfill-mutation-observer
+#### [#295](https://github.com/skatejs/skatejs/issues/295) <a name="295"></a>, [#377](https://github.com/skatejs/skatejs/pull/377) <a name="377"></a> - Removed `MutationObserver` polyfill (moved to https://github.com/skatejs/polyfill-mutation-observer and marked as unmaintained)
 
-If you include SkateJS' `MutationObserver` polyfill on the page, Skate will automatically just pick it up. Since it's up to you to include your own `MutationObserver` polyfill, this means you can use whichever polyfill you want. That said, if you are concerned about performance in IE, it's recommended that you use ours as it's been specifically designed to be performant over other offerings.
+Since it's up to you to include your own `MutationObserver` polyfill, this means you can use whichever polyfill you want. That said, if you are concerned about performance in IE, it's recommended that you use ours as it's been specifically designed to be performant over other offerings.
 
 Ensure you include the polyfill before any Skate definitions have been defined.
+
+A polyfill that generally seems to work well is the one from [webcomponents/webcomponentsjs](https://github.com/webcomponents/webcomponentsjs/blob/v0.7.15/MutationObserver.js).
 
 #### [#337](https://github.com/skatejs/skatejs/issues/337)<a name="277"></a> - Streamlined, consistent and predictable lifecycle
 
