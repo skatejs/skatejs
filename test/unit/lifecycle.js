@@ -295,42 +295,4 @@ describe('lifecycle scenarios', function () {
       expect(idsToCheck).to.contain('hasOwnProperty', 'watch');
     });
   });
-
-  describe('attribute handler', function () {
-    let myToggle;
-    let spy;
-    beforeEach(() => {
-      let tag = helperElement('test-toggle');
-      spy = sinon.spy();
-      let MyToggle = skate(tag.safe, {
-        attribute: spy
-      });
-      myToggle = new MyToggle();
-    });
-
-    it('should properly call the attribute callback for resolved', function(done) {
-
-      let unresolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'unresolved'}));
-      let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'resolved', newValue: ''}));
-
-      helperReady(function() {
-        expect(unresolvedSpy.calledOnce).to.be.true;
-        expect(resolvedSpy.calledOnce).to.be.true;
-        done();
-      });
-    });
-
-    it('should properly call the specific callbacks', function(done) {
-      let newValueSpy = spy.withArgs(myToggle, sinon.match({name: 'foo', newValue: 'bar'}));
-      let removeValueSpy = spy.withArgs(myToggle, sinon.match({name: 'foo', oldValue: 'bar'}));
-
-      myToggle.setAttribute('foo', 'bar');
-      myToggle.removeAttribute('foo');
-      helperReady(() => {
-        expect(newValueSpy.calledOnce).to.be.true;
-        expect(removeValueSpy.calledOnce).to.be.true;
-        done();
-      });
-    });
-  });
 });
