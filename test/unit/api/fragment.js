@@ -57,6 +57,21 @@ describe('api/fragment', function () {
       expect(frag.childNodes[0].tagName).to.equal('TD');
       expect(frag.childNodes[1].tagName).to.equal('TD');
     });
+
+    it('should work with normal tags', function () {
+      const html = '<form><input></form>';
+      const frag = skate.fragment(html);
+      expect(frag.childNodes[0].tagName).to.equal('FORM');
+      expect(frag.childNodes[0].childNodes[0].tagName).to.equal('INPUT');
+    });
+
+    it('should treat as html even if it starts with text', function () {
+      const html = 'test<form><input></form>';
+      const frag = skate.fragment(html);
+      expect(frag.childNodes[0].textContent).to.equal('test');
+      expect(frag.childNodes[1].tagName).to.equal('FORM');
+      expect(frag.childNodes[1].childNodes[0].tagName).to.equal('INPUT');
+    });
   });
 
   describe('text', function () {

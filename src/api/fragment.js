@@ -1,5 +1,6 @@
 import init from './init';
 
+const { Node, NodeList } = window;
 const slice = Array.prototype.slice;
 const specialMap = {
   caption: 'table',
@@ -32,31 +33,29 @@ function resolveParent (tag, html) {
   return parent;
 }
 
-function matchTag (html) {
+function resolveTag (html) {
   const tag = html.match(/^<([^\s>]+)/);
   return tag && tag[1];
 }
 
-function buildFragment (frag, arg) {
-  if (arg) {
-    if (typeof arg === 'string') {
-      arg = arg.trim();
-      if (arg[0] === '<') {
-        arg = resolveParent(matchTag(arg), arg).childNodes;
-        arg = fragment.apply(null, slice.call(arg));
-      } else {
-        arg = document.createTextNode(arg);
-      }
-    } else if (arg.length) {
-      arg = fragment.apply(null, slice.call(arg));
-    } else if (arg.nodeType) {
-      init(arg);
-    }
-    frag.appendChild(arg);
-  }
-  return frag;
+function resolveHtml (html) {
+  return resolveParent(resolveTag(html), html);
 }
 
 export default function fragment (...args) {
-  return args.reduce(buildFragment, document.createDocumentFragment());
+  return args.reduce(function (frag, node) {
+    if (typeof node === 'string') {
+      node = fragment.apply(null, slice.call(resolveHtml(node).childNodes));
+    } else if (node instanceof NodeList || Array.isArray(node)) {
+      node = fragment.apply(null, slice.call(node));
+    } else if (node instanceof Node) {
+      init(node);
+    }
+
+    if (node) {
+      frag.appendChild(node);
+    }
+
+    return frag;
+  }, document.createDocumentFragment());
 }
