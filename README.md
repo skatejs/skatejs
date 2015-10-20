@@ -184,7 +184,7 @@ skate('my-element', {
   // property that the original value of that property will be available for
   // you to use here.
   render: function (elem) {
-    return '<shadow><dom>' + elem.innerHTML + '</dom></shadow>';
+    return '<span>' + elem.innerHTML + '</span>';
   },
 
   // The renderer() is responsible for rendering the result of the render()
@@ -755,16 +755,6 @@ skate.emit(element, 'event', {
 
 
 
-### `emit (eventName, eventOptions = {})`
-
-Same as above except that it makes forwarding events simpler by returning a function that uses `this` as the `element` and calls `skate.emit(element, eventName, eventOptions)`. Using this form, the `x-tab` component's `click` handler from the example above could be simplified as:
-
-```js
-click: skate.emit('selected')
-```
-
-
-
 ### `fragment ()`
 
 Creates a document fragment from the specified node or HTML string and ensures any components within the fragment are synchronously initialised.
@@ -989,7 +979,11 @@ If your component is bound via custom tags and your browser supports custom elem
 
 As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback.
 
-Skate mostly polyfills [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver), but only internally. It is not usable outside of Skate since it only polyfills what Skate needs to function. Its code is written to withstand an extreme number of incoming DOM elements. It's fast in Internet Explorer, not just modern browsers, and this is what sets it apart from other polyfills. It also ensures that mutation events are queued, rather than executed as they come in. Once queued, they are batched into a single callback.
+Skate requires that you BYO your own [Mutation Observers](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) implementation. There are several out there:
+
+- https://github.com/webcomponents/webcomponentsjs (requires WeakMap polyfill)
+- https://github.com/megawac/MutationObserver.js
+- https://github.com/bitovi/mutationobserver
 
 
 
