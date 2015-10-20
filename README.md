@@ -184,7 +184,7 @@ skate('my-element', {
   // property that the original value of that property will be available for
   // you to use here.
   render: function (elem) {
-    return '<shadow><dom>' + elem.innerHTML + '</dom></shadow>';
+    return '<span>' + elem.innerHTML + '</span>';
   },
 
   // The renderer() is responsible for rendering the result of the render()
