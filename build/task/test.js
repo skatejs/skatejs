@@ -2,7 +2,7 @@ var assign = require('lodash/object/assign');
 var buildTest = require('./build-test');
 var Server = require('karma').Server;
 
-module.exports = function (opts, done) {
+module.exports = function (opts) {
   var args = [];
   opts = assign({
     browsers: 'Firefox'
@@ -40,9 +40,14 @@ module.exports = function (opts, done) {
     });
   }
 
-  return buildTest(opts).on('error', function(e){
-    throw e;
-  }).on('end', function() {
-    new Server(config, function() { done(); }).start();
-  });
+  return buildTest(opts)
+    .on('error', function (e) {
+      throw e;
+    })
+    .on('end', function () {
+      new Server(config, function() {
+        /* exit with an error code here in the future when all our tests passed once */
+      })
+        .start();
+    });
 };
