@@ -28,7 +28,7 @@ module.exports = function (opts, done) {
     browsers: opts.browsers.split(','),
     client: { args: args },
     frameworks: ['mocha', 'sinon-chai'],
-    singleRun: true,
+    singleRun: !opts.watch,
     files: [
       '.tmp/unit.js'
     ]
