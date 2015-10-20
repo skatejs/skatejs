@@ -4,7 +4,7 @@ import {
   ATTR_IGNORE
 } from './constants';
 import data from './data';
-import MutationObserver from './mutation-observer';
+import './mutation-observer';
 import registry from './registry';
 import {
   camelCase,
@@ -194,7 +194,7 @@ function addAttributeListeners (target, component) {
     return;
   }
 
-  var observer = new MutationObserver(function (mutations) {
+  var observer = new window.MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
       var name = mutation.attributeName;
       var attr = attrs[name];

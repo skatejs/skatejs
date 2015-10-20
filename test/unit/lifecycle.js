@@ -214,4 +214,74 @@ describe('Lifecycle scenarios', function () {
       expect(attached).to.equal(2, 'attached');
     });
   });
+
+  describe('attribute handlers', function () {
+
+    it('should only call fallback once', function(done) {
+      let tagName = helpers.safeTagName('test-toggle');
+      let fallbackSpy = sinon.spy(function fallback() {
+        expect(fallbackSpy.calledOnce, `Fallback should have been called once, but was called ${fallbackSpy.callCount} times.`).to.be.true;
+        done();
+      });
+      let MyToggle = skate(tagName.safe, {
+        attributes: {
+          foo: {
+            fallback: fallbackSpy
+          }
+        }
+      });
+      let myToggle = new MyToggle();
+
+      helpers.afterMutations(function() {
+          myToggle.setAttribute('foo', 'bar');
+      });
+    });
+
+    it('should properly call the removed callback', function(done) {
+      let tagName = helpers.safeTagName('test-toggle');
+      let fallbackSpy = sinon.spy(function fallback(target, data) {
+        expect(fallbackSpy.calledOnce, 'Call fallback once').to.be.true;
+
+        expect(target).to.equal(myToggle);
+        expect(data).to.eql({
+          type: 'created',
+          name: attributeName,
+          newValue: '',
+          oldValue: null
+        });
+      });
+      let removedSpy = sinon.spy(function removed(target, data) {
+        expect(removedSpy.calledOnce, 'Call removed once').to.be.true;
+        expect(fallbackSpy.calledBefore(removedSpy), 'Call fallback before remove').to.be.true;
+
+        expect(target).to.equal(myToggle);
+        expect(data).to.eql({
+          type: 'removed',
+          name: attributeName,
+          newValue: null,
+          oldValue: ''
+        });
+        done();
+      });
+
+      let attributeName = 'checked';
+
+      let attributes = {};
+      attributes[attributeName] = {
+          removed: removedSpy,
+          fallback: fallbackSpy
+      };
+      let MyToggle = skate(tagName.safe, {
+        attributes: attributes
+      });
+      let myToggle = new MyToggle();
+
+      myToggle.setAttribute(attributeName, '');
+
+      helpers.afterMutations(function() {
+        expect(fallbackSpy.calledOnce, 'Call fallback once').to.be.true;
+        myToggle.removeAttribute(attributeName);
+      });
+    });
+  });
 });
