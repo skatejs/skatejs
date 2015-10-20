@@ -1,5 +1,10 @@
+import html from './html';
 import registry from '../global/registry';
 
-export default function (elem) {
+function render (elem) {
   registry.find(elem).forEach(component => component.render && component.render(elem));
 }
+
+render.html = html;
+
+export default render;

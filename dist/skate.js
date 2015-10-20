@@ -1022,8 +1022,8 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
   
   return module.exports;
 }).call(this);
-// src/lifecycle/renderer.js
-__03f25cd56ca0ce454f98fb8408e75422 = (function () {
+// src/api/render/html.js
+__094bf660ba7ebd6f4b14ca8053e00764 = (function () {
   var module = {
     exports: {}
   };
@@ -1037,33 +1037,25 @@ __03f25cd56ca0ce454f98fb8408e75422 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _apiFragment = __ef86f48ff9050407fed1e142d9fe2629;
+  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
   
-  var _apiFragment2 = _interopRequireDefault(_apiFragment);
+  var _fragment2 = _interopRequireDefault(_fragment);
   
-  function defaultRenderer(elem, opts) {
-    while (elem.childNodes.length) {
-      elem.removeChild(elem.childNodes[0]);
-    }
-    elem.appendChild((0, _apiFragment2['default'])(opts.render(elem)));
-  }
-  
-  exports['default'] = function (elem, opts) {
-    if (opts.render) {
-      if (opts.renderer) {
-        opts.renderer(elem);
-      } else {
-        defaultRenderer(elem, opts);
+  exports['default'] = function (render) {
+    return function (elem) {
+      while (elem.childNodes.length) {
+        elem.removeChild(elem.childNodes[0]);
       }
-    }
+      elem.appendChild((0, _fragment2['default'])(render(elem)));
+    };
   };
   
   module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
-// src/api/render.js
-__413d80034b00b5aeb5c6177f97cceae5 = (function () {
+// src/api/render/index.js
+__d31d2ff71da7095bf8886568461d8537 = (function () {
   var module = {
     exports: {}
   };
@@ -1077,20 +1069,23 @@ __413d80034b00b5aeb5c6177f97cceae5 = (function () {
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _html = __094bf660ba7ebd6f4b14ca8053e00764;
+  
+  var _html2 = _interopRequireDefault(_html);
+  
   var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  var _lifecycleRenderer = __03f25cd56ca0ce454f98fb8408e75422;
-  
-  var _lifecycleRenderer2 = _interopRequireDefault(_lifecycleRenderer);
-  
-  exports['default'] = function (elem) {
+  function render(elem) {
     _globalRegistry2['default'].find(elem).forEach(function (component) {
-      return (0, _lifecycleRenderer2['default'])(elem, component);
+      return component.render && component.render(elem);
     });
-  };
+  }
   
+  render.html = _html2['default'];
+  
+  exports['default'] = render;
   module.exports = exports['default'];
   
   return module.exports;
@@ -1566,10 +1561,6 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   
   var _prototype2 = _interopRequireDefault(_prototype);
   
-  var _renderer = __03f25cd56ca0ce454f98fb8408e75422;
-  
-  var _renderer2 = _interopRequireDefault(_renderer);
-  
   var _resolve = __4b4eecf91d77990b080189047604b709;
   
   var _resolve2 = _interopRequireDefault(_resolve);
@@ -1603,8 +1594,8 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   }
   
   function renderIfNotResolved(elem, opts) {
-    if (!elem.hasAttribute(opts.resolvedAttribute)) {
-      (0, _renderer2['default'])(elem, opts);
+    if (opts.render && !elem.hasAttribute(opts.resolvedAttribute)) {
+      opts.render(elem);
     }
   }
   
@@ -1841,8 +1832,6 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
   
-  var MutationObserver = window.MutationObserver || window.SkateMutationObserver;
-  
   function triggerAddedNodes(addedNodes) {
     (0, _utilWalkTree2['default'])(addedNodes, function (element) {
       var components = _registry2['default'].find(element);
@@ -1891,7 +1880,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   }
   
   function createDocumentObserver() {
-    var observer = new MutationObserver(documentObserverHandler);
+    var observer = new window.MutationObserver(documentObserverHandler);
     observer.observe(document, {
       childList: true,
       subtree: true
@@ -2000,9 +1989,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
   var _apiReady2 = _interopRequireDefault(_apiReady);
   
-  var _apiRender = __413d80034b00b5aeb5c6177f97cceae5;
+  var _apiRenderIndex = __d31d2ff71da7095bf8886568461d8537;
   
-  var _apiRender2 = _interopRequireDefault(_apiRender);
+  var _apiRenderIndex2 = _interopRequireDefault(_apiRenderIndex);
   
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
@@ -2173,7 +2162,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   skate.init = _apiInit2['default'];
   skate.property = _apiPropertyIndex2['default'];
   skate.ready = _apiReady2['default'];
-  skate.render = _apiRender2['default'];
+  skate.render = _apiRenderIndex2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
