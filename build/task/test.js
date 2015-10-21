@@ -10,6 +10,8 @@ function isVitalBrowser(name) {
 module.exports = function (opts, done) {
   var args = [];
   opts = assign({
+    singleRun: true,
+    watch: false,
     browsers: vitalBrowsers.join(',')
   }, opts);
 
@@ -23,7 +25,7 @@ module.exports = function (opts, done) {
     browsers: opts.browsers.split(','),
     client: { args: args },
     frameworks: ['mocha', 'sinon-chai'],
-    singleRun: true,
+    singleRun: opts.singleRun,
     files: [
       '.tmp/unit.js'
     ]
@@ -47,30 +49,28 @@ module.exports = function (opts, done) {
 
   var vitalBrowsersFailed = false;
 
-  var stream = buildTest(opts)
+  function runKarma (done) {
+    new Server(config, function onKarmaEnd (exitCode) {
+      done(exitCode);
+    })
+      .on('run_complete', function onRunComplete (browsers) {
+        browsers.forEach(function eachBrowser (browser) {
+          if (isVitalBrowser(browser.name)) {
+            vitalBrowsersFailed = vitalBrowsersFailed || !!browser.lastResult.failed;
+          }
+        });
+      })
+      .start();
+  }
+
+  buildTest(opts)
     .on('error', function (e) {
       throw e;
     })
     .on('end', function () {
-      new Server(config, function(exitCode) {
-        if (typeof done === 'function') {
-          // we do this, because we use this ask both async and as input to another task
-          done();
-          process.exit(opts.saucelabs ? (0 + vitalBrowsersFailed) : exitCode);
-        }
-      })
-        .on('run_complete', function(browsers) {
-          browsers.forEach(function (browser) {
-            if (isVitalBrowser(browser.name)) {
-              vitalBrowsersFailed = vitalBrowsersFailed || !!browser.lastResult.failed;
-            }
-          });
-        })
-        .start();
+      runKarma(function finishTaskAndExit (exitCode) {
+        done();
+        process.exit(opts.saucelabs ? (0 + vitalBrowsersFailed) : exitCode);
+      });
     });
-
-  if (typeof done === 'undefined') {
-    // we do this, because we use this ask both async and as input to another task
-    return stream;
-  }
 };
