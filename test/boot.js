@@ -1,6 +1,6 @@
 'use strict';
 
-import 'skatejs-polyfill-mutation-observer';
+import 'webcomponents.js/MutationObserver';
 import helperFixture from './lib/fixture';
 import observer from '../src/global/document-observer';
 

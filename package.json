@@ -39,9 +39,9 @@
     "merge-stream": "1.0.0",
     "mocha": "2.3.3",
     "shadejs": "skatejs/shade#2a69707",
-    "skatejs-polyfill-mutation-observer": "skatejs/polyfill-mutation-observer#a7dbecf",
     "skatejs-type-attribute": "skatejs/type-attribute#28140f7",
     "skatejs-type-class": "skatejs/type-class#8302a2f",
+    "webcomponents.js": "0.7.2",
     "whatwg-fetch": "0.10.0"
   },
   "scripts": {
