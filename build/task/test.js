@@ -39,7 +39,7 @@ module.exports = function (opts, done) {
       customLaunchers: saucelabsLaunchers,
       browsers: Object.keys(saucelabsLaunchers),
       captureTimeout: 120000,
-      reporters: ['saucelabs'],
+      reporters: ['saucelabs', 'dots'],
       autoWatch: false,
       client: {}
     });
