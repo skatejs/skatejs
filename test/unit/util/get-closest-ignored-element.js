@@ -6,7 +6,12 @@ describe('util/get-closest-ignored-element', function () {
     var iframe = document.createElement('iframe');
     var descendant = document.createElement('div');
     fixture().appendChild(iframe);
-    iframe.contentDocument.body.appendChild(descendant);
+    var doc = (iframe.contentDocument || iframe.contentWindow.document);
+    if (!doc.body) {
+      // iframe <body> does not get initalised correctly in older IE's
+      doc.write('<body></body>');
+    }
+    doc.body.appendChild(descendant);
     expect(getClosestIgnoredElement(descendant)).to.equal(undefined);
   });
 });
