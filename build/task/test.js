@@ -61,9 +61,12 @@ module.exports = function (opts, done) {
       throw e;
     })
     .on('end', function () {
-      new Server(config, function() {
-        /* we can use the exitCode parameter in the future when all our tests passed once */
-        process.exit(0 + vitalBrowsersFailed);
+      new Server(config, function(exitCode) {
+        if (opts.saucelabs) {
+          process.exit(0 + vitalBrowsersFailed);
+        } else {
+          process.exit(exitCode);
+        }
       })
         .on('run_complete', function(browsers) {
           browsers.forEach(function (browser) {
