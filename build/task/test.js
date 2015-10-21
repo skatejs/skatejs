@@ -2,10 +2,15 @@ var assign = require('lodash/object/assign');
 var buildTest = require('./build-test');
 var Server = require('karma').Server;
 
+var vitalBrowsers = ['Firefox', 'Chrome'];
+function isVitalBrowser(name) {
+  return new RegExp(vitalBrowsers.join('|')).test(name);
+}
+
 module.exports = function (opts) {
   var args = [];
   opts = assign({
-    browsers: 'Firefox'
+    browsers: vitalBrowsers.join(',')
   }, opts);
 
   if (opts.grep) {
@@ -40,14 +45,24 @@ module.exports = function (opts) {
     });
   }
 
+  var vitalBrowsersFailed = false;
+
   return buildTest(opts)
     .on('error', function (e) {
       throw e;
     })
     .on('end', function () {
       new Server(config, function() {
-        /* exit with an error code here in the future when all our tests passed once */
+        /* we can use the exitCode parameter in the future when all our tests passed once */
+        process.exit(0 + vitalBrowsersFailed);
       })
+        .on('run_complete', function(browsers) {
+          browsers.forEach(function (browser) {
+            if (isVitalBrowser(browser.name)) {
+              vitalBrowsersFailed |= !!browser.lastResult.failed;
+            }
+          });
+        })
         .start();
     });
 };
