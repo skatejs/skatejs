@@ -1181,14 +1181,20 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  var noop = function noop() {};
   
-  exports["default"] = function (opts) {
-    var callback = opts.attribute || function () {};
+  exports['default'] = function (opts) {
+    var callback = opts.attribute;
+  
+    if (typeof callback !== 'function') {
+      return noop;
+    }
+  
     return function (name, oldValue, newValue) {
       callback(this, {
         name: name,
@@ -1198,7 +1204,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
     };
   };
   
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
