@@ -5,6 +5,7 @@
   "camelcase": true,
   "curly": true,
   "eqeqeq": true,
+  "browser": true,
   "globals": {
       "afterEach": false,
       "assert": false,
@@ -16,7 +17,7 @@
       "it": false,
       "NodeFilter": false,
       "skate": false,
-      "window": false
+      "sinon": false
     },
   "immed": true,
   "indent": 2,

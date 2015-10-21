@@ -14,7 +14,7 @@ import {
   objEach
 } from './utils';
 
-var {Node} = window;
+var {Node} = window; //jshint ignore:line
 var elProto = window.HTMLElement.prototype;
 var nativeMatchesSelector = (
   elProto.matches ||

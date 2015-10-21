@@ -239,6 +239,9 @@ describe('Lifecycle scenarios', function () {
 
     it('should properly call the removed callback', function(done) {
       let tagName = helpers.safeTagName('test-toggle');
+      let attributeName = 'checked';
+      let MyToggle;
+      let myToggle;
       let fallbackSpy = sinon.spy(function fallback(target, data) {
         expect(fallbackSpy.calledOnce, 'Call fallback once').to.be.true;
 
@@ -264,17 +267,15 @@ describe('Lifecycle scenarios', function () {
         done();
       });
 
-      let attributeName = 'checked';
-
       let attributes = {};
       attributes[attributeName] = {
           removed: removedSpy,
           fallback: fallbackSpy
       };
-      let MyToggle = skate(tagName.safe, {
+      MyToggle = skate(tagName.safe, {
         attributes: attributes
       });
-      let myToggle = new MyToggle();
+      myToggle = new MyToggle();
 
       myToggle.setAttribute(attributeName, '');
 
