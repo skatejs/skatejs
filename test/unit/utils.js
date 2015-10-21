@@ -1,3 +1,5 @@
+'use strict';
+
 import helpers from '../lib/helpers';
 import { getClosestIgnoredElement } from '../../src/utils';
 

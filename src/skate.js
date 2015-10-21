@@ -20,7 +20,7 @@ import {
 } from './utils';
 import version from './version';
 
-var HTMLElement = window.HTMLElement;
+var HTMLElement = window.HTMLElement; //jshint ignore:line
 
 // IE <= 10 can fire "interactive" too early (#243).
 var isOldIE = !!document.attachEvent;  // attachEvent was removed in IE11.
