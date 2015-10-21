@@ -62,7 +62,7 @@ module.exports = function (opts, done) {
         .on('run_complete', function(browsers) {
           browsers.forEach(function (browser) {
             if (isVitalBrowser(browser.name)) {
-              vitalBrowsersFailed |= !!browser.lastResult.failed;
+              vitalBrowsersFailed = vitalBrowsersFailed || !!browser.lastResult.failed;
             }
           });
         })
