@@ -5,6 +5,10 @@ var buildTest = require('./build-test');
 var commander = require('../lib/commander');
 var Server = require('karma').Server;
 
+var vitalBrowsers = ['Firefox', 'Chrome'];
+function isVitalBrowser(name) {
+  return new RegExp(vitalBrowsers.join('|')).test(name);
+}
 commander
   .option('-b, --browsers [Chrome,Firefox]', 'The browsers to run the tests in.')
   .option('-g, --grep [pattern]', 'The grep pattern matching the tests you want to run.')
@@ -15,7 +19,7 @@ commander
 module.exports = function (opts, done) {
   var args = [];
   opts = assign({
-    browsers: 'Firefox'
+    browsers: vitalBrowsers.join(',')
   }, opts);
 
   if (opts.grep) {
@@ -50,9 +54,24 @@ module.exports = function (opts, done) {
     });
   }
 
-  buildTest(opts).on('error', function(e){
-    throw e;
-  }).on('end', function() {
-    new Server(config, function() { done(); }).start();
-  });
+  var vitalBrowsersFailed = false;
+
+  return buildTest(opts)
+    .on('error', function (e) {
+      throw e;
+    })
+    .on('end', function () {
+      new Server(config, function() {
+        /* we can use the exitCode parameter in the future when all our tests passed once */
+        process.exit(0 + vitalBrowsersFailed);
+      })
+        .on('run_complete', function(browsers) {
+          browsers.forEach(function (browser) {
+            if (isVitalBrowser(browser.name)) {
+              vitalBrowsersFailed |= !!browser.lastResult.failed;
+            }
+          });
+        })
+        .start();
+    });
 };
