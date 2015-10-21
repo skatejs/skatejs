@@ -7,7 +7,7 @@ function isVitalBrowser(name) {
   return new RegExp(vitalBrowsers.join('|')).test(name);
 }
 
-module.exports = function (opts) {
+module.exports = function (opts, done) {
   var args = [];
   opts = assign({
     browsers: vitalBrowsers.join(',')
@@ -39,7 +39,7 @@ module.exports = function (opts) {
       customLaunchers: saucelabsLaunchers,
       browsers: Object.keys(saucelabsLaunchers),
       captureTimeout: 120000,
-      reporters: ['saucelabs'],
+      reporters: ['saucelabs', 'dots'],
       autoWatch: false,
       client: {}
     });
@@ -47,16 +47,16 @@ module.exports = function (opts) {
 
   var vitalBrowsersFailed = false;
 
-  return buildTest(opts)
+  var stream = buildTest(opts)
     .on('error', function (e) {
       throw e;
     })
     .on('end', function () {
       new Server(config, function(exitCode) {
-        if (opts.saucelabs) {
-          process.exit(0 + vitalBrowsersFailed);
-        } else {
-          process.exit(exitCode);
+        if (typeof done === 'function') {
+          // we do this, because we use this ask both async and as input to another task
+          done();
+          process.exit(opts.saucelabs ? (0 + vitalBrowsersFailed) : exitCode);
         }
       })
         .on('run_complete', function(browsers) {
@@ -68,4 +68,9 @@ module.exports = function (opts) {
         })
         .start();
     });
+
+  if (typeof done === 'undefined') {
+    // we do this, because we use this ask both async and as input to another task
+    return stream;
+  }
 };
