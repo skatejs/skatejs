@@ -33,7 +33,7 @@ module.exports = function (opts) {
     var saucelabsLaunchers = require('../lib/saucelabs-launchers');
     config = assign(config, {
       sauceLabs: {
-        testName: 'Skate unit tests',
+        testName: 'Skate unit tests (master)',
         recordScreenshots: false
       },
       customLaunchers: saucelabsLaunchers,
