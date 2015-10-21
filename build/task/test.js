@@ -5,6 +5,10 @@ var buildTest = require('./build-test');
 var commander = require('../lib/commander');
 var Server = require('karma').Server;
 
+var vitalBrowsers = ['Firefox', 'Chrome'];
+function isVitalBrowser(name) {
+  return new RegExp(vitalBrowsers.join('|')).test(name);
+}
 commander
   .option('-b, --browsers [Chrome,Firefox]', 'The browsers to run the tests in.')
   .option('-g, --grep [pattern]', 'The grep pattern matching the tests you want to run.')
@@ -15,7 +19,7 @@ commander
 module.exports = function (opts, done) {
   var args = [];
   opts = assign({
-    browsers: 'Firefox'
+    browsers: vitalBrowsers.join(',')
   }, opts);
 
   if (opts.grep) {
@@ -50,9 +54,32 @@ module.exports = function (opts, done) {
     });
   }
 
-  buildTest(opts).on('error', function(e){
-    throw e;
-  }).on('end', function() {
-    new Server(config, function() { done(); }).start();
-  });
+  var vitalBrowsersFailed = false;
+
+  var stream = buildTest(opts)
+    .on('error', function (e) {
+      throw e;
+    })
+    .on('end', function () {
+      new Server(config, function(exitCode) {
+        if (typeof done === 'function') {
+          // we do this, because we use this ask both async and as input to another task
+          done();
+          process.exit(opts.saucelabs ? (0 + vitalBrowsersFailed) : exitCode);
+        }
+      })
+        .on('run_complete', function(browsers) {
+          browsers.forEach(function (browser) {
+            if (isVitalBrowser(browser.name)) {
+              vitalBrowsersFailed |= !!browser.lastResult.failed;
+            }
+          });
+        })
+        .start();
+    });
+
+  if (typeof done === 'undefined') {
+    // we do this, because we use this ask both async and as input to another task
+    return stream;
+  }
 };
