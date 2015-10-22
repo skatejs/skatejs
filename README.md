@@ -899,6 +899,89 @@ And you could use it in the exact same way as used above. The only difference be
 
 
 
+### `ready()`
+
+The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
+
+#### Background
+
+You maybe thinking "that sucks, why wouldn't they have been initialised?" That's a very good question. In order to realise the problem, we must first know how native custom elements behave.
+
+If you put your component definitions before your components in the DOM loading `component-a` before `component-b`:
+
+```html
+<script src="component-a.js"></script>
+<script src="component-b.js"></script>
+<component-a>
+  <component-b></component-b>
+</component-a>
+```
+
+The initialisation order will be:
+
+1. `component-a`
+2. `component-b`
+
+If you flip that around so that `component-b` is loaded before `component-a`, the order is the same. This is because the browser will initialise elements with their corresponding definitions as it descends the DOM tree.
+
+However, if you put your component definitions at the bottom of the page, it gets really hairy. For example:
+
+```html
+<component-a>
+  <component-b></component-b>
+</component-a>
+<script src="component-a.js"></script>
+<script src="component-b.js"></script>
+```
+
+In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `document.registerElement()`, it will look for elements to upgrade *immediately*.
+
+#### The problem
+
+If you want `component-a` to be able to rely on `component-b` being initialised you'd have to put some constraints on your consumers:
+
+- If you're running native, you must load your definitions at the bottom of the page. Oh, but also ensure that you're loading `component-b` before `component-a`. You could use a module loader to ensure `component-b` is imported by `component-a`, but you still have the constraint of making the consumer load the definitions at the bottom of the page.
+- If you're running in polyfill land, just make sure that you load `component-b` before `component-a`. As above, you could just use a module loader for this.
+
+The problem here is that your consumer is now concerned with implementation details and have constraints placed on them that they shouldn't have to worry about.
+
+#### The solution
+
+If you want to do something when `component-b` is initialised from `component-a`, you can use `skate.ready()`. We can make the assumption that the `component-b` element will be in the DOM no matter what, we just can't assume that it will be initialised yet.
+
+```js
+skate('component-a', {
+  created: function (elem) {
+    var b = elem.querySelector('component-b');
+
+    // undefined
+    b.initialised;
+
+    // Your selected elements are passed to the callback as the first argument.
+    skate.ready(elem.querySelector('component-b'), function (b) {
+      // true
+      b.initialised;
+    });
+  },
+  render: function (elem) {
+    elem.innerHTML = '<component-b></component-b>';
+  }
+});
+
+skate('component-b', {
+  created: function (elem) {
+    elem.initialised = true;
+  }
+});
+```
+
+#### Drawbacks
+
+This does not solve the situation where you want to be notified of future elements that may be added somewhere in your descendant DOM. That is more a concern of what API you choose to expose to your consumers, the rendering path you choose and the problem you're trying to solve. This only concerns itself with the descendant nodes that you *know* exist. Most of the time this will come from the `render` lifecycle callback.
+
+
+
+
 ### `version`
 
 Returns the current version of Skate.
