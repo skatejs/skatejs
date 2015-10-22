@@ -68,6 +68,8 @@ Result
   - [`init ()`](#init-)
   - [`noConflict ()`](#noconflict-)
   - [`render ()`](#render-)
+  - [`render.html()`](#render-html-)
+    - [`Writing your own renderers`](#writing-your-own-renderers)
   - [`version`](#version)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
@@ -170,33 +172,10 @@ skate('my-element', {
   // called on the host element.
   ready: function (elem) {},
 
-  // Should return a value for the renderer() lifecycle callback to use. By
-  // default this should return a string, but if you supply a custom renderer()
-  // then the return value can be anything that the renderer() can understand.
-  //
-  // When running in the browser, the element will be passed as the only
-  // argument. It's recommended that you use the object as a state object, or
-  // an object of properties. If you do this, then you can use this callback
-  // standalone to render the element on the server-side without having to
-  // support a DOM API.
-  //
-  // All properties that you define in the component definition will be
-  // available on the element. This means that if you override the innerHTML
-  // property that the original value of that property will be available for
-  // you to use here.
+  // Responsible for rendering stuff to the host element. This can do anything
+  // you like.
   render: function (elem) {
-    return '<span>' + elem.innerHTML + '</span>';
-  },
-
-  // The renderer() is responsible for rendering the result of the render()
-  // callback. This callback is optional and defaults to setting the inner HTML
-  // of the host element once. It's up to update the element how you see fit.
-  //
-  // It gets two parameters. The first is the element that is being rendered to
-  // and the second is a function that is already bound with the correct
-  // arguments that returns the rendered content every time it is called.
-  renderer: function (elem, render) {
-    elem.innerHTML = render();
+    elem.innerHTML = 'Hello, World!';
   },
 
   // Called when an attribute is created, updated or removed.
@@ -410,7 +389,7 @@ The component lifecycle consists of several paths in the following order startin
 2. `events` are set up
 3. `properties` are defined
 4. `created` is invoked
-5. `renderer` is invoked with the result of `render` to stamp out the component's structure
+5. `render` is invoked to render an HTML structure to the component
 6. `properties` are initialised
 7. `ready` is invoked
 8. `attached` is invoked when added to the document (or if already in the document)
@@ -807,7 +786,7 @@ It's encouraged that you use `skate.create()` and `skate.fragment()` for creatin
 skate.init(element1, element2);
 ```
 
-Note, that if you use a functional approach to rendering your custom elements, you should *never* need to use `skate.init()` as you shouldn't be querying for elements and interacting with them directly.
+*You shouldn't use skate.init() in native to ensure descendant DOM is initialised as there's stuff native does that we don't emulate with it. See the docs on `skate.ready()` for how you can interact with descendant components after they've been upgraded.*
 
 
 
@@ -823,12 +802,12 @@ var currentSkate = skate.noConflict();
 
 ### `render ()`
 
-Renders the specified element using the render lifecycle specified in the first matched component. If no component is found for the element, nothing happens.
+Renders invokes the `render()` lifecycle callback on the specified element for the components that are bound to it. If no components are found for the element, nothing happens.
 
 ```js
 var hello = skate('x-hello', {
   render: function (elem) {
-    return `Hello, ${elem.name || 'World'}!`;
+    elem.innerHTML = `Hello, ${elem.name || 'World'}!`;
   }
 });
 
@@ -852,7 +831,7 @@ var hello = skate('x-hello', {
     }
   },
   render: function (elem) {
-    return `Hello, ${elem.name}!`;
+    elem.innerHTML = `Hello, ${elem.name}!`;
   }
 });
 
@@ -862,6 +841,61 @@ var elem = hello();
 // <x-hello name="Bob">Hello, Bob!</x-hello>
 elem.name = 'Bob';
 ```
+
+*If you are using the polyfill and are using custom bindings (i.e. classes and attributes) then it will invoke `render()` in each of those if they are specified. It's recommended that you only bind one component that does rendering otherwise the result is not predictable. It's up to component authors to write components that follow best practices and it's up to component consumers to use components that follow best practices.*
+
+
+
+### `render.html()`
+
+This function exists for a simple, default way to render content to your host component. It doesn't do any special diffing or anything, it simply removes all current nodes and adds the new ones. You can return a document fragment, node or string (that will be converted to nodes).
+
+```js
+var hello = skate('x-hello', {
+  render: skate.render.html(function (elem) {
+    return `Hello, ${elem.name || 'World'}!`;
+  })
+});
+```
+
+Using this is good for simple components, or components where you're using properties to mutate the template that you render from here. Functional UI proponents won't like this method, but this offers the simplest, least opinionated method to build a component as Skate strives to have as little opinion about this as possible.
+
+If you want to re-render your entire component but have it only update the parts that need updating, you can use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) in a custom renderer. For more information, see the next section.
+
+#### Writing your own renderers
+
+Writing your own renderers consists of writing a function that returns a function:
+
+```js
+function render (renderFn) {
+  return function (elem) {
+    elem.innerHTML = renderFn(elem);
+  };
+}
+```
+
+And you could use it like so:
+
+```js
+render: render(function (elem) {
+  return `Hello, ${elem.name || 'World'}!`;
+});
+```
+
+If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
+
+```js
+function render (renderFn) {
+  return function (elem) {
+    skateDomDiff.merge({
+      destination: skate.fragment(renderFn(elem)),
+      source: elem
+    });
+  };
+}
+```
+
+And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
 
 
 
