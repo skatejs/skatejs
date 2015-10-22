@@ -1,30 +1,45 @@
 import helperElement from '../lib/element';
+import helperReady from '../lib/ready';
 import skate from '../../src/index';
 
 describe('lifecycle/attribute', function () {
   describe('Callback', function () {
-    it('should call the callback just like attributeChangedCallback', function () {
-      var data;
-      let elem = helperElement().skate({
-        attribute (elem, change) {
-          data = change;
-        }
-      })();
+    let myToggle;
+    let spy;
+    beforeEach(() => {
+      let tag = helperElement('test-toggle');
+      spy = sinon.spy();
+      let MyToggle = skate(tag.safe, {
+        attribute: spy
+      });
+      myToggle = new MyToggle();
+    });
 
-      elem.setAttribute('name', 'created');
-      expect(data.name).to.equal('name');
-      expect(data.newValue).to.equal('created');
-      expect(data.oldValue).to.equal(undefined);
+    it('should properly call the attribute callback for resolved', function(done) {
+      let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'resolved', newValue: ''}));
 
-      elem.setAttribute('name', 'updated');
-      expect(data.name).to.equal('name');
-      expect(data.newValue).to.equal('updated');
-      expect(data.oldValue).to.equal('created');
+      helperReady(function() {
+        expect(resolvedSpy.calledOnce).to.be.true;
+        done();
+      });
+    });
 
-      elem.removeAttribute('name');
-      expect(data.name).to.equal('name');
-      expect(data.newValue).to.equal(undefined);
-      expect(data.oldValue).to.equal('updated');
+    it('should call the callback just like attributeChangedCallback', function(done) {
+      let newValueSpy = spy.withArgs(myToggle, sinon.match({name: 'name', newValue: 'created', oldValue: undefined}));
+      let updatedValueSpy = spy.withArgs(myToggle, sinon.match({name: 'name', newValue: 'updated', oldValue: 'created'}));
+      let removeValueSpy = spy.withArgs(myToggle, sinon.match({name: 'name', newValue: undefined, oldValue: 'updated'}));
+
+      myToggle.setAttribute('name', 'created');
+      myToggle.setAttribute('name', 'updated');
+      myToggle.removeAttribute('name');
+
+      helperReady(() => {
+        expect(newValueSpy.calledOnce).to.be.true;
+        expect(updatedValueSpy.calledOnce).to.be.true;
+        expect(removeValueSpy.calledOnce).to.be.true;
+        sinon.assert.callOrder(newValueSpy, updatedValueSpy, removeValueSpy);
+        done();
+      });
     });
   });
 

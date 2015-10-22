@@ -2,10 +2,17 @@ var assign = require('lodash/object/assign');
 var buildTest = require('./build-test');
 var Server = require('karma').Server;
 
-module.exports = function (opts) {
+var vitalBrowsers = ['Firefox', 'Chrome'];
+function isVitalBrowser(name) {
+  return new RegExp(vitalBrowsers.join('|')).test(name);
+}
+
+module.exports = function (opts, done) {
   var args = [];
   opts = assign({
-    browsers: 'Firefox'
+    singleRun: true,
+    watch: false,
+    browsers: vitalBrowsers.join(',')
   }, opts);
 
   if (opts.grep) {
@@ -18,7 +25,7 @@ module.exports = function (opts) {
     browsers: opts.browsers.split(','),
     client: { args: args },
     frameworks: ['mocha', 'sinon-chai'],
-    singleRun: true,
+    singleRun: opts.singleRun,
     files: [
       '.tmp/unit.js'
     ]
@@ -28,26 +35,42 @@ module.exports = function (opts) {
     var saucelabsLaunchers = require('../lib/saucelabs-launchers');
     config = assign(config, {
       sauceLabs: {
-        testName: 'Skate unit tests',
+        testName: 'Skate unit tests (master)',
         recordScreenshots: false
       },
       customLaunchers: saucelabsLaunchers,
       browsers: Object.keys(saucelabsLaunchers),
       captureTimeout: 120000,
-      reporters: ['saucelabs'],
+      reporters: ['saucelabs', 'dots'],
       autoWatch: false,
       client: {}
     });
   }
 
-  return buildTest(opts)
+  var vitalBrowsersFailed = false;
+
+  function runKarma (done) {
+    new Server(config, function onKarmaEnd (exitCode) {
+      done(exitCode);
+    })
+      .on('run_complete', function onRunComplete (browsers) {
+        browsers.forEach(function eachBrowser (browser) {
+          if (isVitalBrowser(browser.name)) {
+            vitalBrowsersFailed = vitalBrowsersFailed || !!browser.lastResult.failed;
+          }
+        });
+      })
+      .start();
+  }
+
+  buildTest(opts)
     .on('error', function (e) {
       throw e;
     })
     .on('end', function () {
-      new Server(config, function() {
-        /* exit with an error code here in the future when all our tests passed once */
-      })
-        .start();
+      runKarma(function finishTaskAndExit (exitCode) {
+        done();
+        process.exit(opts.saucelabs ? (0 + vitalBrowsersFailed) : exitCode);
+      });
     });
 };
