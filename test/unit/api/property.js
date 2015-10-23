@@ -28,7 +28,7 @@ describe('api/property', function () {
     });
 
     [undefined, null, false, 0, '', 'something'].forEach(function (value) {
-      value = (typeof value === 'string' ? '"' + value + '"' : value);
+      value = JSON.stringify(value);
       it('setting attribute to ' + value, function () {
         let elem = create(property.boolean());
         elem.setAttribute('test', value);
