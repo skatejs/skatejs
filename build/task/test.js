@@ -48,10 +48,8 @@ module.exports = function (opts, done) {
     })
     .on('end', function () {
       new Server(config, function finishTaskAndExit (exitCode) {
-        if (exitCode !== 0) {
-          process.exit(exitCode);
-        }
         done();
+        process.exit(exitCode);
       }).start();
     });
 };
