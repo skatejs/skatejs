@@ -9,7 +9,7 @@
 Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
 
 - Provides a superset of the [Custom Element Spec](http://w3c.github.io/webcomponents/spec/custom/).
-- Hooks for an elements lifecycle, custom properties and event delegation.
+- Hooks for the spec'd lifecycle, templating, custom properties and event delegation.
 - Small, 5k min+gz.
 - Allows easy transition from selector-based behaviour binding to element binding.
 
@@ -62,14 +62,22 @@ Result
 - [Custom Methods and Properties](#custom-methods-and-properties)
 - [Asynchrony](#asynchrony)
 - [API](#api)
-  - [`create (name, props = {})`](#create-name-props--)
-  - [`emit (eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
-  - [`fragment ()`](#fragment-)
-  - [`init ()`](#init-)
+  - [`create (componentName, elementProperties = {})`](#create-name-props--)
+    - [Alternatives](#alternatives)
+    - [Setting properties](#setting-properties)
+    - [Why not just patch `document.createElement()`?](#why-not-just-patch-document-createelement-)
+  - [`emit (element, eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
+  - [`fragment (...almostAnything)`](#fragment-)
+  - [`init (...elements)`](#init-)
   - [`noConflict ()`](#noconflict-)
-  - [`render ()`](#render-)
-  - [`render.html()`](#render-html-)
-    - [`Writing your own renderers`](#writing-your-own-renderers)
+  - [`render (element)`](#render-)
+  - [`render.html(renderFunction)`](#render-html-)
+    - [Writing your own renderers](#writing-your-own-renderers)
+  - [`ready(elementOrElements, callback)`](#ready-)
+    - [Background](#background)
+    - [The problem](#the-problem)
+    - [The solution](#the-solution)
+    - [Drawbacks](#drawbacks)
   - [`version`](#version)
 - [Web Component Differences](#web-component-differences)
 - [Transitioning Away from jQuery-style Plugins](#transitioning-away-from-jquery-style-plugins)
@@ -597,7 +605,7 @@ The following are all available on the `skate` object, or available for use from
 
 
 
-### `create (name, props = {})`
+### `create (componentName, elementProperties = {})`
 
 Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
 
@@ -735,7 +743,7 @@ skate.emit(element, 'event', {
 
 
 
-### `fragment ()`
+### `fragment (...almostAnything)`
 
 Creates a document fragment from the specified node or HTML string and ensures any components within the fragment are synchronously initialised.
 
@@ -778,7 +786,7 @@ skate
 ```
 
 
-### `init ()`
+### `init (...elements)`
 
 It's encouraged that you use `skate.create()` and `skate.fragment()` for creating elements and ensuring that they're synchronously initialised, however, there are edge-cases where synchronously initialising an existing element `skate.init()` may be necessary.
 
@@ -800,7 +808,7 @@ var currentSkate = skate.noConflict();
 
 
 
-### `render ()`
+### `render (element)`
 
 Renders invokes the `render()` lifecycle callback on the specified element for the components that are bound to it. If no components are found for the element, nothing happens.
 
@@ -846,7 +854,7 @@ elem.name = 'Bob';
 
 
 
-### `render.html()`
+### `render.html(renderFunction)`
 
 This function exists for a simple, default way to render content to your host component. It doesn't do any special diffing or anything, it simply removes all current nodes and adds the new ones. You can return a document fragment, node or string (that will be converted to nodes).
 
@@ -899,7 +907,7 @@ And you could use it in the exact same way as used above. The only difference be
 
 
 
-### `ready()`
+### `ready(elementOrElements, callback)`
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
