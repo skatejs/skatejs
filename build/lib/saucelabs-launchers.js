@@ -50,6 +50,12 @@ module.exports = {
     browserName: 'safari',
     platform: 'OS X 10.11'
   },
+  safari_8_osx: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '8.0',
+    platform: 'OS X 10.10'
+  },
   ie_9: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
