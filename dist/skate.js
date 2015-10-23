@@ -1807,6 +1807,72 @@ __a56dab24700df352eb84caec3fe615e5 = (function () {
   
   return module.exports;
 }).call(this);
+// src/fix/ie/innerhtml.js
+__c88e1e3ebc3bc643629f4b153969a85f = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  var isIeUntil10 = /MSIE/.test(navigator.userAgent);
+  var isIe11 = /Trident/.test(navigator.userAgent);
+  var fixed = false;
+  
+  // ! This walkTree method differs from the implementation in ../../utils/walk-tree
+  // It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
+  function walkTree(node, cb) {
+    var childNodes = node.childNodes;
+  
+    if (!childNodes) {
+      return;
+    }
+  
+    var childNodesLen = childNodes.length;
+  
+    for (var a = 0; a < childNodesLen; a++) {
+      var childNode = childNodes[a];
+      cb(childNode, node);
+      walkTree(childNode, cb);
+    }
+  }
+  
+  function fixInnerHTML() {
+    var elementPrototype = window.HTMLElement.prototype;
+    var originalInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+  
+    // This redefines the innerHTML property so that we can ensure that events
+    // are properly triggered.
+    Object.defineProperty(elementPrototype, 'innerHTML', {
+      get: function get() {
+        return originalInnerHTML.get.call(this);
+      },
+      set: function set(html) {
+        walkTree(this, function (node, parentNode) {
+          var mutationEvent = document.createEvent('MutationEvent');
+          mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, parentNode, null, null, null, null);
+          node.dispatchEvent(mutationEvent);
+        });
+        originalInnerHTML.set.call(this, html);
+      }
+    });
+  }
+  
+  if (!fixed && (isIeUntil10 || isIe11)) {
+    // IE 9-11
+    fixed = true; // make sure we add the enhancement only once
+  
+    if (isIe11) {
+      // IE11's native MutationObserver needs some help as well :()
+      window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+    }
+  
+    fixInnerHTML();
+  }
+  
+  return module.exports;
+}).call(this);
 // src/global/document-observer.js
 __d8200645c4d96aee6940034d9c030d1f = (function () {
   var module = {
@@ -1837,6 +1903,8 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
+  
+  __c88e1e3ebc3bc643629f4b153969a85f;
   
   function triggerAddedNodes(addedNodes) {
     (0, _utilWalkTree2['default'])(addedNodes, function (element) {
