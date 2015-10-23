@@ -2,7 +2,7 @@ import globals from './vars';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
-import './ie/fix-innerhtml';
+import '../fix/ie/innerhtml';
 
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
