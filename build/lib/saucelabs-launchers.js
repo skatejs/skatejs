@@ -67,5 +67,11 @@ module.exports = {
     browserName: 'internet explorer',
     version: '11',
     platform: 'Windows 8.1'
+  },
+  ie_edge: {
+    base: 'SauceLabs',
+    browserName: 'microsoftedge',
+    version: '20.10240',
+    platform: 'Windows 10'
   }
 };
