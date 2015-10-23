@@ -1056,9 +1056,46 @@ skate('rel', {
 
 
 
+## Custom bindings
+
+Skate supports custom bindings like the ability to bind functionality to elements that have a particular attribute or classname. This comes in handy when wanting to work with legacy code that uses class / attribute selectors to bind stuff to elements on `DOMContentLoaded` because it negates the need to use selectors and / or `DOMContentLoaded` altogether. Not only does this have added performance benefits because you're not running selectors or blocking, it also means that you don't have to run any manual initialisation code. Just write your HTML and things happen.
+
+The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provided a particular interface for Skate to call.
+
+```js
+var myCustomBidning = {
+  create: function (componentDefinition) {
+    // Create an element matching the component definition.
+  },
+  filter: function (element, componentDefinitions) {
+    // Return an array of definitions that the element should initialise with.
+  }
+};
+```
+
+There's some that we've already built for you over at https://github.com/skatejs/type-attribute.
+
+### Considerations
+
+There's a few things that you must consider when building and using custom bindings:
+
+#### 1. You're deviating from the spec.
+
+Skate will always be a superset of the custom element spec. This means that core-Skate will never stray too far from the spec other than offering a more convenient API and featureset.
+
+#### 2. Performance
+
+The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be wary of this.
+
+#### 3. With great power comes great responsibility
+
+No matter if we decided to expose this as API or not, we'd still have to do a similar algorithm behind the scenes. Since there are many use-cases where writing a component with the Skate API is useful, we felt it was best to offer safe, spec-backed defaults while giving developers a little bit of breathing room.
+
+
+
 ## Transitioning Away from jQuery-style Plugins
 
-Because Skate can also bind to attributes and classes, it offers a way to transition away from jQuery-style plugins to web components.
+Because Skate supports custom bindings as mentioned above, it allows you to do things like refactor your jQuery initialisation code without touching any HTML:
 
 ```js
 jQuery(function ($) {
