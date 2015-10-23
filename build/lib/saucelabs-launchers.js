@@ -73,5 +73,10 @@ module.exports = {
     browserName: 'microsoftedge',
     version: '20.10240',
     platform: 'Windows 10'
+  },
+  opera_12: {
+    base: 'SauceLabs',
+    browserName: 'opera',
+    version: '12'
   }
 };
