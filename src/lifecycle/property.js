@@ -22,7 +22,7 @@ function createNativePropertyDefinition (name, opts) {
     info.updatingProperty = false;
 
     if (typeof opts.default === 'function') {
-      info.defaultValue = opts.default();
+      info.defaultValue = opts.default(elem);
     } else if (opts.default !== undefined) {
       info.defaultValue = opts.default;
     }
@@ -80,29 +80,32 @@ function createNativePropertyDefinition (name, opts) {
       return opts.get(this);
     }
 
-    if (info.internalValue !== undefined) {
-      return info.internalValue;
-    }
-
-    return info.defaultValue;
+    return info.internalValue;
   };
 
   prop.set = function (newValue) {
     let info = data(this, `api/property/${name}`);
+    let oldValue;
 
     if (info.updatingProperty) {
       return;
     }
 
     info.updatingProperty = true;
-    let oldValue = this[name];
+
+    if (info.hasBeenSetOnce) {
+      oldValue = this[name];
+    } else {
+      oldValue = undefined;
+      info.hasBeenSetOnce = true;
+    }
 
     if (opts.type) {
       newValue = opts.type(newValue);
     }
 
     if (!opts.get) {
-      info.internalValue = newValue;
+      info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
     }
 
     if (info.linkedAttribute && !info.updatingAttribute) {
@@ -122,10 +125,6 @@ function createNativePropertyDefinition (name, opts) {
 
     if (typeof opts.set === 'function') {
       opts.set(this, changeData);
-    }
-
-    if (typeof opts.change === 'function' && oldValue !== newValue) {
-      opts.change(this, changeData);
     }
 
     info.updatingProperty = false;
