@@ -669,7 +669,7 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
       info.updatingProperty = false;
   
       if (typeof opts['default'] === 'function') {
-        info.defaultValue = opts['default']();
+        info.defaultValue = opts['default'](elem);
       } else if (opts['default'] !== undefined) {
         info.defaultValue = opts['default'];
       }
@@ -727,29 +727,32 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
         return opts.get(this);
       }
   
-      if (info.internalValue !== undefined) {
-        return info.internalValue;
-      }
-  
-      return info.defaultValue;
+      return info.internalValue;
     };
   
     prop.set = function (newValue) {
       var info = (0, _utilData2['default'])(this, 'api/property/' + name);
+      var oldValue = undefined;
   
       if (info.updatingProperty) {
         return;
       }
   
       info.updatingProperty = true;
-      var oldValue = this[name];
+  
+      if (info.hasBeenSetOnce) {
+        oldValue = this[name];
+      } else {
+        oldValue = undefined;
+        info.hasBeenSetOnce = true;
+      }
   
       if (opts.type) {
         newValue = opts.type(newValue);
       }
   
       if (!opts.get) {
-        info.internalValue = newValue;
+        info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
       }
   
       if (info.linkedAttribute && !info.updatingAttribute) {
@@ -769,10 +772,6 @@ __5fe98810c40e8fe796b072491d45fcc6 = (function () {
   
       if (typeof opts.set === 'function') {
         opts.set(this, changeData);
-      }
-  
-      if (typeof opts.change === 'function' && oldValue !== newValue) {
-        opts.change(this, changeData);
       }
   
       info.updatingProperty = false;
@@ -819,7 +818,7 @@ __ceb223b354343ac9f009816425363726 = (function () {
   exports['default'] = {
     'default': false,
     deserialize: function deserialize(value) {
-      return value === null ? false : true;
+      return !(value === null);
     },
     serialize: function serialize(value) {
       return value ? '' : undefined;
