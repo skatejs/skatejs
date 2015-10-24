@@ -57,7 +57,8 @@ function makeNonNewableWrapper (Ctor, opts) {
 
   // Make Function.prototype.name behave like native custom elements but only
   // if it's allowed (i.e. not Safari).
-  if (Object.getOwnPropertyDescriptor(CtorWrapper, 'name').configurable) {
+  const nameProp = Object.getOwnPropertyDescriptor(CtorWrapper, 'name');
+  if (nameProp && nameProp.configurable) {
     Object.defineProperty(CtorWrapper, 'name', {
       configurable: true,
       enumerable: false,
