@@ -39,7 +39,7 @@ function makeOptions (userOptions) {
   return options;
 }
 
-function makeNonNewableWrapper (Ctor) {
+function makeNonNewableWrapper (Ctor, opts) {
   function CtorWrapper (props = {}) {
     return assign(new Ctor(), props);
   }
@@ -48,9 +48,17 @@ function makeNonNewableWrapper (Ctor) {
   CtorWrapper.prototype = Ctor.prototype;
 
   // Ensure a non-enumerable constructor property exists.
-  Object.defineProperty(Ctor.prototype, 'constructor', {
+  Object.defineProperty(CtorWrapper.prototype, 'constructor', {
     enumerable: false,
-    value: CtorWrapper
+    value: CtorWrapper,
+    writable: false
+  });
+
+  // Make Function.prototype.name behave like native custom elements.
+  Object.defineProperty(CtorWrapper, 'name', {
+    enumerable: false,
+    value: opts.name,
+    writable: false
   });
 
   return CtorWrapper;
@@ -83,12 +91,13 @@ let initDocument = debounce(function () {
   });
 });
 
-function skate (id, userOptions) {
+function skate (name, userOptions) {
   let Ctor, parentProto;
   let opts = makeOptions(userOptions);
 
-  opts.id = id;
-  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(id);
+  opts.id = name;
+  opts.name = name;
+  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(name);
   parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
 
   // Inherit from parent prototype.
@@ -104,7 +113,7 @@ function skate (id, userOptions) {
 
   // Make a constructor for the definition.
   if (opts.isNative) {
-    Ctor = document.registerElement(id, {
+    Ctor = document.registerElement(name, {
       extends: opts.extends || undefined,
       prototype: opts.prototype
     });
@@ -114,9 +123,9 @@ function skate (id, userOptions) {
     documentObserver.register();
   }
 
-  Ctor = makeNonNewableWrapper(Ctor);
+  Ctor = makeNonNewableWrapper(Ctor, opts);
   assignSafe(Ctor, opts);
-  registry.set(id, Ctor);
+  registry.set(name, Ctor);
 
   return Ctor;
 }

@@ -1,7 +1,7 @@
 export default {
   create (opts) {
-    var elem = document.createElement(opts.extends || opts.id);
-    opts.extends && elem.setAttribute('is', opts.id);
+    var elem = document.createElement(opts.extends || opts.name);
+    opts.extends && elem.setAttribute('is', opts.name);
     return elem;
   },
   filter (elem, defs) {

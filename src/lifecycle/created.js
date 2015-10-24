@@ -48,7 +48,7 @@ export default function (opts) {
   let propertyFunctions = ensurePropertyFunctions(opts);
 
   return function () {
-    let info = data(this, `lifecycle/${opts.id}`);
+    let info = data(this, `lifecycle/${opts.name}`);
     let propertyDefinitions;
 
     if (info.created) return;

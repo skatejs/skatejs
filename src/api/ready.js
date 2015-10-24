@@ -5,7 +5,7 @@ function ready (element) {
   const components = registry.find(element);
   const componentsLength = components.length;
   for (let a = 0; a < componentsLength; a++) {
-    if (!data(element, `lifecycle/${components[a].id}`).created) {
+    if (!data(element, `lifecycle/${components[a].name}`).created) {
       return false;
     }
   }
