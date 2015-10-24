@@ -90,8 +90,8 @@ __43714db526496b3dd90353996f6dce09 = (function () {
   });
   exports['default'] = {
     create: function create(opts) {
-      var elem = document.createElement(opts['extends'] || opts.id);
-      opts['extends'] && elem.setAttribute('is', opts.id);
+      var elem = document.createElement(opts['extends'] || opts.name);
+      opts['extends'] && elem.setAttribute('is', opts.name);
       return elem;
     },
     filter: function filter(elem, defs) {
@@ -981,7 +981,7 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
     var components = _globalRegistry2['default'].find(element);
     var componentsLength = components.length;
     for (var a = 0; a < componentsLength; a++) {
-      if (!(0, _utilData2['default'])(element, 'lifecycle/' + components[a].id).created) {
+      if (!(0, _utilData2['default'])(element, 'lifecycle/' + components[a].name).created) {
         return false;
       }
     }
@@ -1161,7 +1161,7 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   
   exports['default'] = function (opts) {
     return function () {
-      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
+      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.name);
       if (info.attached) return;
       info.attached = true;
       info.detached = false;
@@ -1611,7 +1611,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
     var propertyFunctions = ensurePropertyFunctions(opts);
   
     return function () {
-      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
+      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.name);
       var propertyDefinitions = undefined;
   
       if (info.created) return;
@@ -1760,7 +1760,7 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   
   exports['default'] = function (opts) {
     return function () {
-      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
+      var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.name);
       if (info.detached) return;
       info.detached = true;
       info.attached = false;
@@ -2145,7 +2145,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     return options;
   }
   
-  function makeNonNewableWrapper(Ctor) {
+  function makeNonNewableWrapper(Ctor, opts) {
     function CtorWrapper() {
       var props = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   
@@ -2156,9 +2156,17 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     CtorWrapper.prototype = Ctor.prototype;
   
     // Ensure a non-enumerable constructor property exists.
-    Object.defineProperty(Ctor.prototype, 'constructor', {
+    Object.defineProperty(CtorWrapper.prototype, 'constructor', {
       enumerable: false,
-      value: CtorWrapper
+      value: CtorWrapper,
+      writable: false
+    });
+  
+    // Make Function.prototype.name behave like native custom elements.
+    Object.defineProperty(CtorWrapper, 'name', {
+      enumerable: false,
+      value: opts.name,
+      writable: false
     });
   
     return CtorWrapper;
@@ -2191,13 +2199,14 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
     });
   });
   
-  function skate(id, userOptions) {
+  function skate(name, userOptions) {
     var Ctor = undefined,
         parentProto = undefined;
     var opts = makeOptions(userOptions);
   
-    opts.id = id;
-    opts.isNative = opts.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(id);
+    opts.id = name;
+    opts.name = name;
+    opts.isNative = opts.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(name);
     parentProto = (opts['extends'] ? document.createElement(opts['extends']).constructor : HTMLElement).prototype;
   
     // Inherit from parent prototype.
@@ -2213,7 +2222,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   
     // Make a constructor for the definition.
     if (opts.isNative) {
-      Ctor = document.registerElement(id, {
+      Ctor = document.registerElement(name, {
         'extends': opts['extends'] || undefined,
         prototype: opts.prototype
       });
@@ -2223,9 +2232,9 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
       _globalDocumentObserver2['default'].register();
     }
   
-    Ctor = makeNonNewableWrapper(Ctor);
+    Ctor = makeNonNewableWrapper(Ctor, opts);
     (0, _utilAssignSafe2['default'])(Ctor, opts);
-    _globalRegistry2['default'].set(id, Ctor);
+    _globalRegistry2['default'].set(name, Ctor);
   
     return Ctor;
   }
