@@ -49,17 +49,22 @@ function makeNonNewableWrapper (Ctor, opts) {
 
   // Ensure a non-enumerable constructor property exists.
   Object.defineProperty(CtorWrapper.prototype, 'constructor', {
+    configurable: true,
     enumerable: false,
     value: CtorWrapper,
     writable: false
   });
 
-  // Make Function.prototype.name behave like native custom elements.
-  Object.defineProperty(CtorWrapper, 'name', {
-    enumerable: false,
-    value: opts.name,
-    writable: false
-  });
+  // Make Function.prototype.name behave like native custom elements but only
+  // if it's allowed (i.e. not Safari).
+  if (Object.getOwnPropertyDescriptor(CtorWrapper, 'name').configurable) {
+    Object.defineProperty(CtorWrapper, 'name', {
+      configurable: true,
+      enumerable: false,
+      value: opts.id,
+      writable: false
+    });
+  }
 
   return CtorWrapper;
 }
@@ -96,7 +101,6 @@ function skate (name, userOptions) {
   let opts = makeOptions(userOptions);
 
   opts.id = name;
-  opts.name = name;
   opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(name);
   parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
 
