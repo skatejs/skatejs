@@ -30,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#295](#user-content-295), [#377](#user-content-377) - (Re-)moved `MutationObserver` polyfill.
 - [#337](#user-content-337) - Streamlined, consistent and predictable lifecycle.
 - [#359](#user-content-359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
+- [#413](#user-content-413) - Renamed the `id` property on the function returned from `skate()` to `name` to polyfill native behaviour.
 
 ### Fixed
 
