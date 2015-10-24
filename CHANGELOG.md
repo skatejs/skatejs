@@ -196,3 +196,21 @@ skate.init(...document.querySelector('.items'));
 This was also done to follow the same convention that `skate.fragment()` does when accepting arguments.
 
 #### [#413](https://github.com/skatejs/skatejs/issues/413) - Renamed the `id` property on the function returned from `skate()` to `name` to polyfill native behaviour.
+
+Before, we automatically added a property called `id` to the constructor returned by `skate()`:
+
+```js
+var element = skate('some-element');
+
+// "some-element";
+console.log(element.id);
+```
+
+This property has been renamed to `name` to reflect what happens in native custom elements.
+
+```js
+var element = skate('some-element');
+
+// "some-element"
+console.log(element.id);
+```
