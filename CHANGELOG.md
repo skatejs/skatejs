@@ -172,3 +172,27 @@ Or you can convert it to an array if you can't use ES6:
 ```js
 skate.init.apply(null, [].slice.call(document.querySelectorAll('some-elements')));
 ```
+
+#### [#359](https://github.com/skatejs/skatejs/issues/359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
+
+Before you could specify a selector or pass an traversable list:
+
+```js
+skate.init(document.querySelectorAll('.items'));
+```
+
+This was changed to support only a single element for simplicity:
+
+```js
+skate.init(element);
+```
+
+But since ES6 supports the spread (`...`) operator, we've expanded this to take multiple arguments so that you can:
+
+```js
+skate.init(...document.querySelector('.items'));
+```
+
+This was also done to follow the same convention that `skate.fragment()` does when accepting arguments.
+
+#### [#413](https://github.com/skatejs/skatejs/issues/413) - Renamed the `id` property on the function returned from `skate()` to `name` to polyfill native behaviour.
