@@ -946,16 +946,16 @@ In this example, we are loading `component-a` before `component-b` and the same 
 
 #### The problem
 
-If you want `component-a` to be able to rely on `component-b` being initialised you'd have to put some constraints on your consumers:
+If you want `component-a` to be able to rely on `component-b` being initialised, you'd have to put some constraints on your consumers:
 
-- If you're running native, you must load your definitions at the bottom of the page. Oh, but also ensure that you're loading `component-b` before `component-a`. You could use a module loader to ensure `component-b` is imported by `component-a`, but you still have the constraint of making the consumer load the definitions at the bottom of the page.
+- If you're running native, you must load your definitions at the bottom of the page. You must also ensure that you're loading `component-b` before `component-a`. You could use a module loader to ensure `component-b` is imported by `component-a`, but you still have the constraint of making the consumer load the definitions at the bottom of the page.
 - If you're running in polyfill land, just make sure that you load `component-b` before `component-a`. As above, you could just use a module loader for this.
 
 The problem here is that your consumer is now concerned with implementation details and have constraints placed on them that they shouldn't have to worry about.
 
 #### The solution
 
-If you want to do something when `component-b` is initialised from `component-a`, you can use `skate.ready()`. We can make the assumption that the `component-b` element will be in the DOM no matter what, we just can't assume that it will be initialised yet.
+If you want to do something when `component-b` is initialised, you can use `skate.ready()`.
 
 ```js
 skate('component-a', {
@@ -1066,7 +1066,7 @@ skate('rel', {
 
 ## Custom bindings
 
-Skate supports custom bindings like the ability to bind functionality to elements that have a particular attribute or classname. This comes in handy when wanting to work with legacy code that uses class / attribute selectors to bind stuff to elements on `DOMContentLoaded` because it negates the need to use selectors and / or `DOMContentLoaded` altogether. Not only does this have added performance benefits because you're not running selectors or blocking, it also means that you don't have to run any manual initialisation code. Just write your HTML and things happen.
+Skate supports custom bindings such as the ability to bind functionality to elements that have a particular attribute or classname. This comes in handy when wanting to work with legacy code that uses class / attribute selectors to bind stuff to elements on `DOMContentLoaded` because it negates the need to use selectors and / or `DOMContentLoaded` altogether. Not only does this have added performance benefits because you're not running selectors or blocking, it also means that you don't have to run any manual initialisation code. Just write your HTML and things happen.
 
 The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provided a particular interface for Skate to call.
 
@@ -1081,7 +1081,7 @@ var myCustomBidning = {
 };
 ```
 
-There's some that we've already built for you over at https://github.com/skatejs/type-attribute.
+There's some that we've already built for you over at https://github.com/skatejs/types.
 
 ### Considerations
 
