@@ -53,26 +53,22 @@ describe('extending', function () {
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
-  it('should not mess with callbacks', function () {
-    if (canExtendStaticProperties) {
-      var ExtendedCtor = skate(tag, class extends Ctor {});
-      expect(new ExtendedCtor().textContent).to.equal('test');
-    }
+  canExtendStaticProperties && it('should not mess with callbacks', function () {
+    var ExtendedCtor = skate(tag, class extends Ctor {});
+    expect(new ExtendedCtor().textContent).to.equal('test');
   });
 
-  it('should allow overriding of callbacks', function () {
-    if (canResolveSuper) {
-      var ExtendedCtor = skate(tag, class extends Ctor {
-        static created(elem) {
-          super.created(elem);
-          elem.textContent += 'ing';
-        }
-      });
-      expect(new ExtendedCtor().textContent).to.equal('testing');
-    }
+  canResolveSuper && it('should allow overriding of callbacks', function () {
+    var ExtendedCtor = skate(tag, class extends Ctor {
+      static created(elem) {
+        super.created(elem);
+        elem.textContent += 'ing';
+      }
+    });
+    expect(new ExtendedCtor().textContent).to.equal('testing');
   });
 
-  it('constructor should be accessible', function () {
+  canExtendStaticProperties && it('constructor should be accessible', function () {
     skate(tag, class extends Ctor {});
     let el = skate.create(tag);
     expect(el.constructor).to.be.a('function');
