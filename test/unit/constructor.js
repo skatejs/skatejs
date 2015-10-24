@@ -1,8 +1,8 @@
 import helperElement from '../lib/element';
 import resolved from '../lib/resolved';
 import skate from '../../src/index';
-import typeAttribute from 'skatejs-type-attribute';
-import typeClass from 'skatejs-type-class';
+import { attribute as typeAttribute } from 'skatejs-types';
+import { classname as typeClass } from 'skatejs-types';
 
 describe('constructor', function () {
   var id;

@@ -1,7 +1,7 @@
 import element from '../../lib/element';
 import resolved from '../../lib/resolved';
 import skate from '../../../src/index';
-import typeAttribute from 'skatejs-type-attribute';
+import { attribute as typeAttribute } from 'skatejs-types';
 
 describe('api/fragment', function () {
   var tagName;
@@ -110,7 +110,7 @@ describe('api/fragment', function () {
 
     it('should initialise element nodes that are custom elements', function () {
       const elem = skate(element().safe, {});
-      const node = document.createElement(elem.id);
+      const node = document.createElement(elem.name);
       const frag = skate.fragment(node);
       expect(frag.childNodes[0]).to.equal(node);
       expect(resolved(frag.childNodes[0])).to.equal(true);

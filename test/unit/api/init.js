@@ -1,8 +1,8 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
-import typeAttribute from 'skatejs-type-attribute';
-import typeClass from 'skatejs-type-class';
+import { attribute as typeAttribute } from 'skatejs-types';
+import { classname as typeClass } from 'skatejs-types';
 import typeElement from '../../../src/type/element';
 
 describe('api/init', function () {

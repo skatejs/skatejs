@@ -2,8 +2,8 @@
 
 import helperElement from '../lib/element';
 import skate from '../../src/index';
-import typeAttribute from 'skatejs-type-attribute';
-import typeClass from 'skatejs-type-class';
+import { attribute as typeAttribute } from 'skatejs-types';
+import { classname as typeClass } from 'skatejs-types';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {

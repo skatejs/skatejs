@@ -5,7 +5,7 @@ import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
 import helperResolved from '../lib/resolved';
 import skate from '../../src/index';
-import typeClass from 'skatejs-type-class';
+import { classname as typeClass } from 'skatejs-types';
 
 describe('dom', function () {
   describe('General DOM node interaction.', function () {

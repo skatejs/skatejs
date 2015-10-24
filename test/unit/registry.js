@@ -1,8 +1,8 @@
 'use strict';
 
 import registry from '../../src/global/registry';
-import typeAttribute from 'skatejs-type-attribute';
-import typeClass from 'skatejs-type-class';
+import { attribute as typeAttribute } from 'skatejs-types';
+import { classname as typeClass } from 'skatejs-types';
 
 describe('Registry', function () {
   it('should set definitions', function () {
