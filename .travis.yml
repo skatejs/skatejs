@@ -10,6 +10,7 @@ before_script:
 - bower install
 script:
 - npm run lint
+- npm run perf
 - npm test -- --saucelabs
 env:
   global:
