@@ -1,8 +1,7 @@
 const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);
+const isIe = isIeUntil10 || isIe11;
 const elementPrototype = window.HTMLElement.prototype;
-const propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
-const hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
 
 // ! This walkTree method differs from the implementation in ../../utils/walk-tree
 // It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
@@ -45,13 +44,17 @@ function fixInnerHTML() {
   });
 }
 
-if (!hasBeenEnhanced && (isIeUntil10 || isIe11)) {
+if (isIe) {
   // IE 9-11
+  const propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+  const hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
 
-  if (isIe11) {
-    // IE11's native MutationObserver needs some help as well :()
-    window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+  if (!hasBeenEnhanced) {
+    if (isIe11) {
+      // IE11's native MutationObserver needs some help as well :()
+      window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+    }
+
+    fixInnerHTML();
   }
-
-  fixInnerHTML();
 }
