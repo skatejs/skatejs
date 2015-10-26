@@ -2,7 +2,7 @@ const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);
 const elementPrototype = window.HTMLElement.prototype;
 const propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
-let hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
+const hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
 
 // ! This walkTree method differs from the implementation in ../../utils/walk-tree
 // It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
