@@ -6,7 +6,7 @@ import {
   removeElements
 } from './lifecycle';
 import './mutation-observer';
-import './fix/ie/innerhtml';
+import './fix-ie-innerhtml';
 import {
   getClosestIgnoredElement
 } from './utils';

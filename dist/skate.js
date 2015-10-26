@@ -1161,8 +1161,8 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
   return module.exports
 }).call(this);
 
-// src/fix/ie/innerhtml.js
-__7ee54b225766d3f111ea27c4ec044a6d = (function () {
+// src/fix-ie-innerhtml.js
+__25bbb45478bbbfb9b276939664d5dd0e = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1246,7 +1246,7 @@ __ecf86e5efec0eb80abec667d595d90da = (function () {
   
   __a0dd52a9bf0c67f149b6843846f244ea;
   
-  __7ee54b225766d3f111ea27c4ec044a6d;
+  __25bbb45478bbbfb9b276939664d5dd0e;
   
   var getClosestIgnoredElement = __be20d0d72414feb56785eb40e436cbe2.getClosestIgnoredElement;
   
