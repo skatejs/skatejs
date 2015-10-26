@@ -499,7 +499,6 @@ __be20d0d72414feb56785eb40e436cbe2 = (function () {
     value: true
   });var ATTR_IGNORE = __724634c9149913f1fb43f8ebd813ad28.ATTR_IGNORE;
   
-  var DocumentFragment = window.DocumentFragment;
   var elementPrototype = window.HTMLElement.prototype;
   exports.elementPrototype = elementPrototype;
   var elementPrototypeContains = elementPrototype.contains;
@@ -747,7 +746,7 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
   var inherit = _utils.inherit;
   var objEach = _utils.objEach;
   var Node = window.Node;
-  
+  //jshint ignore:line
   var elProto = window.HTMLElement.prototype;
   var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
   // Only IE9 has this msMatchesSelector bug, but best to detect it.
@@ -1162,6 +1161,75 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
   return module.exports
 }).call(this);
 
+// src/fix/ie/innerhtml.js
+__7ee54b225766d3f111ea27c4ec044a6d = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  var isIeUntil10 = /MSIE/.test(navigator.userAgent);
+  var isIe11 = /Trident/.test(navigator.userAgent);
+  var isIe = isIeUntil10 || isIe11;
+  var elementPrototype = window.HTMLElement.prototype;
+  
+  // ! This walkTree method differs from the implementation in ../../utils/walk-tree
+  // It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
+  function walkTree(node, cb) {
+    var childNodes = node.childNodes;
+  
+    if (!childNodes) {
+      return;
+    }
+  
+    var childNodesLen = childNodes.length;
+  
+    for (var a = 0; a < childNodesLen; a++) {
+      var childNode = childNodes[a];
+      cb(childNode, node);
+      walkTree(childNode, cb);
+    }
+  }
+  
+  function fixInnerHTML() {
+    var originalInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, "innerHTML");
+  
+    var get = function get() {
+      return originalInnerHTML.get.call(this);
+    };
+    get._hasBeenEnhanced = true;
+  
+    // This redefines the innerHTML property so that we can ensure that events
+    // are properly triggered.
+    Object.defineProperty(elementPrototype, "innerHTML", {
+      get: get,
+      set: function set(html) {
+        walkTree(this, function (node, parentNode) {
+          var mutationEvent = document.createEvent("MutationEvent");
+          mutationEvent.initMutationEvent("DOMNodeRemoved", true, false, parentNode, null, null, null, null);
+          node.dispatchEvent(mutationEvent);
+        });
+        originalInnerHTML.set.call(this, html);
+      }
+    });
+  }
+  
+  if (isIe) {
+    // IE 9-11
+    var propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype, "innerHTML");
+    var hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
+  
+    if (!hasBeenEnhanced) {
+      if (isIe11) {
+        // IE11's native MutationObserver needs some help as well :()
+        window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+      }
+  
+      fixInnerHTML();
+    }
+  }
+  
+  return module.exports
+}).call(this);
+
 // src/document-observer.js
 __ecf86e5efec0eb80abec667d595d90da = (function () {
   var module = { exports: {} };
@@ -1177,6 +1245,8 @@ __ecf86e5efec0eb80abec667d595d90da = (function () {
   var removeElements = _lifecycle.removeElements;
   
   __a0dd52a9bf0c67f149b6843846f244ea;
+  
+  __7ee54b225766d3f111ea27c4ec044a6d;
   
   var getClosestIgnoredElement = __be20d0d72414feb56785eb40e436cbe2.getClosestIgnoredElement;
   
@@ -1262,7 +1332,7 @@ __299ad4a84aec4d82016b954edf692edb = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.13";
+  module.exports = "0.13.14";
   
   return module.exports
 }).call(this);
@@ -1299,7 +1369,7 @@ __de441a6b64570d579a941766dc14a048 = (function () {
   
   var version = _interopRequire(__299ad4a84aec4d82016b954edf692edb);
   
-  var HTMLElement = window.HTMLElement;
+  var HTMLElement = window.HTMLElement; //jshint ignore:line
   
   // IE <= 10 can fire "interactive" too early (#243).
   var isOldIE = !!document.attachEvent; // attachEvent was removed in IE11.
