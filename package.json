@@ -20,6 +20,7 @@
     "gulp-less": "^3.0.1",
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^1.1.0",
+    "gulp-watch": "^4.3.5",
     "handlebars": "^2.0.0",
     "jscs": "^1.11.3",
     "jshint": "^2.6.3",
@@ -47,7 +48,8 @@
     "lib": "./node_modules/.bin/gulp lib",
     "lint": "./node_modules/.bin/gulp lint",
     "release": "./node_modules/.bin/gulp release",
-    "test": "./node_modules/.bin/gulp test"
+    "test": "./node_modules/.bin/gulp test",
+    "test-watch": "./node_modules/.bin/gulp test-watch"
   },
   "engines": {
     "node": ">=0.12.x",
