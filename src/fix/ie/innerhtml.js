@@ -1,3 +1,5 @@
+'use strict';
+
 const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);
 let fixed = false;
