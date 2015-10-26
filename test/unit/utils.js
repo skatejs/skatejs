@@ -9,7 +9,12 @@ describe('utils', function () {
       var iframe = document.createElement('iframe');
       var descendant = document.createElement('div');
       helpers.fixture().appendChild(iframe);
-      iframe.contentDocument.body.appendChild(descendant);
+      var doc = (iframe.contentDocument || iframe.contentWindow.document);
+      if (!doc.body) {
+        // iframe <body> does not get initalised correctly in older IE's
+        doc.write('<body></body>');
+      }
+      doc.body.appendChild(descendant);
       getClosestIgnoredElement(descendant);
     });
   });
