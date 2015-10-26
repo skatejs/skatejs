@@ -50,6 +50,12 @@ module.exports = {
     browserName: 'safari',
     platform: 'OS X 10.11'
   },
+  safari_8_osx: {
+    base: 'SauceLabs',
+    browserName: 'safari',
+    version: '8.0',
+    platform: 'OS X 10.10'
+  },
   ie_9: {
     base: 'SauceLabs',
     browserName: 'internet explorer',
@@ -67,5 +73,16 @@ module.exports = {
     browserName: 'internet explorer',
     version: '11',
     platform: 'Windows 8.1'
+  },
+  ie_edge: {
+    base: 'SauceLabs',
+    browserName: 'microsoftedge',
+    version: '20.10240',
+    platform: 'Windows 10'
+  },
+  opera_12: {
+    base: 'SauceLabs',
+    browserName: 'opera',
+    version: '12'
   }
 };
