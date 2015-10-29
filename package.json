@@ -13,7 +13,7 @@
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
     "shadejs": "skatejs/shade#2a69707",
-    "skatejs-build": "skatejs/build#a1a1dcc",
+    "skatejs-build": "skatejs/build#2ed098e",
     "skatejs-types": "skatejs/types#1e9725b",
     "webcomponents.js": "0.7.2",
     "whatwg-fetch": "0.10.0"
