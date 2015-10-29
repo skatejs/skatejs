@@ -48,6 +48,7 @@ module.exports = function (opts, done) {
       captureTimeout: 120000,
       reporters: ['saucelabs', 'dots'],
       autoWatch: false,
+      concurrency: 5,
       client: {}
     });
   }
