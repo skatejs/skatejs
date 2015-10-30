@@ -10,5 +10,5 @@ export default function (name) {
     'missing-glyph'
   ];
 
-  return name.indexOf('-') > 0 && name.toUpperCase() === name && reservedNames.indexOf(name) < 0;
+  return name.indexOf('-') > 0 && name.toLowerCase() === name && reservedNames.indexOf(name) < 0;
 }
