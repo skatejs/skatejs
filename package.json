@@ -9,7 +9,7 @@
   "dependencies": {},
   "devDependencies": {
     "bootstrap": "3.3.5",
-    "eslint": "1.7.3",
+    "eslint": "1.8.0",
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
     "shadejs": "skatejs/shade#2a69707",
