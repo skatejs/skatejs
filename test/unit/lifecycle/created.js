@@ -30,7 +30,7 @@ describe('lifecycle/created', function () {
           order.push(`${lifecycle}.prototype`);
         }
       },
-      properties: {
+      props: {
         someNonStandardProperty: {
           set (name, data) {
             order.push(`${data.newValue}.property`);

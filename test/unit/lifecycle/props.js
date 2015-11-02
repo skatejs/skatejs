@@ -1,19 +1,19 @@
-import property from '../../../src/lifecycle/property';
-import propertiesCreated from '../../../src/lifecycle/properties-created';
-import propertiesReady from '../../../src/lifecycle/properties-ready';
+import propsInit from '../../../src/lifecycle/props-init';
+import propsCreated from '../../../src/lifecycle/props-created';
+import propsReady from '../../../src/lifecycle/props-ready';
 
 describe('lifecycle/property', function () {
   it('should accept zero arguments', function () {
-    property();
+    propsInit();
   });
 
   it('should return an function', function () {
-    expect(property()).to.be.a('function');
+    expect(propsInit()).to.be.a('function');
   });
 
   describe('property definition', function () {
     function create () {
-      return property()();
+      return propsInit()();
     }
 
     describe('native', function () {
@@ -47,9 +47,9 @@ describe('lifecycle/property', function () {
 
   describe('api', function () {
     function initProperty (elem, definition, name = 'test') {
-      let prop = { [name]: property(definition)(name) };
-      propertiesCreated(elem, prop);
-      propertiesReady(elem, prop);
+      let prop = { [name]: propsInit(definition)(name) };
+      propsCreated(elem, prop);
+      propsReady(elem, prop);
       return elem;
     }
 

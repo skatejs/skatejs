@@ -6,7 +6,7 @@ describe('api/render', function () {
 
   beforeEach(function () {
     elem = element().skate({
-      properties: {
+      props: {
         name: {
           attribute: true,
           default: 'default',
