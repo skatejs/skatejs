@@ -11,7 +11,3 @@ script:
 - npm run lint
 - npm run perf
 - npm test -- --saucelabs
-env:
-  global:
-  - secure: mq7U8NpFQwOSMRaHOyqZ7xkol47JGeb5pYaZ2XTKKrEoenpitPIECBJpVNZw6+568/coSe5j5i5kdSLduDKCmFbRwc6xQdO+ju+v6+pXuZ7SfP+uP/pQlRphYm82HGrukLTfiLFBaN9mCC88WGHvZyRkyruyTzVPRTbrA6mPDHY=
-  - secure: pHrASmndHGyrqnBIc20lsnpO7+siJjzzv23422EzeFycpY35UOzmAVcKPNdOWxzZoGe3fD0BpFrQvYolFoF1jq1Wy5vZaU5KhX5yvbLD80qRzLwL8ORdKZpNACXygy0atTJD00hY1hi21yhGiORr3irAC4WCWvJig0ThosA/Qlk=
