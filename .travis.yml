@@ -10,7 +10,8 @@ before_script:
 script:
 - npm run lint
 - npm run perf
-- npm test -- --saucelabs
+- '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm test -- --saucelabs || false'
+- '[ "${TRAVIS_PULL_REQUEST}" != "false" ] && npm test || false'
 env:
   global:
   - secure: k00BVlgfFnvYE/wikDY9c8HhPR/hgeB1U9cIs8rV3SNGVau1VtYsvYLAiLatO7VqE6HmITr5VxQMoOgkAeO/ATS7tXIJydlq0GMTwjtx38Vtc3/HqfuXKVVpZBahIHyNraodiGs5gl0aHZUH8pExNJl3i19aOHZXIXj6NUXNlOA=
