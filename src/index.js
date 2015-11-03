@@ -2,7 +2,7 @@ import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiFragment from './api/fragment';
 import apiInit from './api/init';
-import apiProperty from './api/property/index';
+import apiproperties from './api/properties/index';
 import apiReady from './api/ready';
 import apiRender from './api/render/index';
 import apiVersion from './api/version';
@@ -40,8 +40,8 @@ function makeOptions (userOptions) {
 }
 
 function makeNonNewableWrapper (Ctor, opts) {
-  function CtorWrapper (props = {}) {
-    return assign(new Ctor(), props);
+  function CtorWrapper (properties = {}) {
+    return assign(new Ctor(), properties);
   }
 
   // Copy prototype.
@@ -139,7 +139,7 @@ skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.fragment = apiFragment;
 skate.init = apiInit;
-skate.property = apiProperty;
+skate.properties = apiproperties;
 skate.ready = apiReady;
 skate.render = apiRender;
 skate.version = apiVersion;

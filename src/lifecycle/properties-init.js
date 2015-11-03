@@ -100,8 +100,8 @@ function createNativePropertyDefinition (name, opts) {
       info.hasBeenSetOnce = true;
     }
 
-    if (opts.type) {
-      newValue = opts.type(newValue);
+    if (typeof opts.coerce === 'function') {
+      newValue = opts.coerce(newValue);
     }
 
     if (!opts.get) {
@@ -137,7 +137,7 @@ export default function (opts) {
   opts = opts || {};
 
   if (typeof opts === 'function') {
-    opts = { type: opts };
+    opts = { coerce: opts };
   }
 
   return function (name) {

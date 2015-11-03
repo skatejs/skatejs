@@ -12,6 +12,7 @@
     "eslint": "1.8.0",
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
+    "object-assign": "^4.0.1",
     "shadejs": "skatejs/shade#2a69707",
     "skatejs-build": "skatejs/build#184a544",
     "skatejs-types": "skatejs/types#1e9725b",
