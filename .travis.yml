@@ -13,7 +13,7 @@ script:
 - if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
   npm test -- --saucelabs;
   else
-  npm test;
+  npm test -- --browsers Firefox;
   fi
 env:
   global:
