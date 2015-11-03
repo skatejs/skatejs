@@ -269,11 +269,11 @@ describe('lifecycle/property', function () {
       });
     });
 
-    describe('type', function () {
+    describe('coerce', function () {
       it('is an arbitrary function that has no return value (the user can do whatever type checking they want here)', function () {
         let called = false;
         let elem = create({
-          type: () => called = true
+          coerce: () => called = true
         });
         elem.test = 'something';
         expect(called).to.equal(true);
@@ -282,8 +282,8 @@ describe('lifecycle/property', function () {
       it('is called before set()', function () {
         let order = [];
         let elem = create({
-          set: () => order.push('set'),
-          type: () => order.push('type')
+          coerce: () => order.push('type'),
+          set: () => order.push('set')
         });
         elem.test = 'something';
         expect(order[0]).to.equal('type');
@@ -292,13 +292,13 @@ describe('lifecycle/property', function () {
 
       it('context and arguments', function (done) {
         let opts = {
-          default: 'something',
-          type (value) {
+          coerce (value) {
             expect(this.type).to.equal(opts.type);
             expect(arguments.length).to.equal(1);
             expect(value).to.equal('something');
             done();
-          }
+          },
+          default: 'something'
         };
         create(opts);
       });

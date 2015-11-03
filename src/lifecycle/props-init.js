@@ -100,8 +100,8 @@ function createNativePropertyDefinition (name, opts) {
       info.hasBeenSetOnce = true;
     }
 
-    if (opts.type) {
-      newValue = opts.type(newValue);
+    if (typeof opts.coerce === 'function') {
+      newValue = opts.coerce(newValue);
     }
 
     if (!opts.get) {
