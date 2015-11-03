@@ -16,7 +16,7 @@
     "skatejs-build": "skatejs/build#184a544",
     "skatejs-types": "skatejs/types#1e9725b",
     "webcomponents.js": "0.7.2",
-    "whatwg-fetch": "0.10.0"
+    "whatwg-fetch": "0.10.1"
   },
   "scripts": {
     "build": "gulp build",
