@@ -22,10 +22,10 @@ describe('exports', function () {
   });
 
   it('skate.props', function () {
-    expect(skate.props.boolean).to.be.a('function', 'boolean');
-    expect(skate.props.float).to.be.a('function', 'float');
-    expect(skate.props.number).to.be.a('function', 'number');
-    expect(skate.props.string).to.be.a('function', 'string');
+    expect(skate.props.boolean).to.be.an('object', 'boolean');
+    expect(skate.props.float).to.be.an('object', 'float');
+    expect(skate.props.number).to.be.an('object', 'number');
+    expect(skate.props.string).to.be.an('object', 'string');
   });
 
   it('skate.ready', function () {

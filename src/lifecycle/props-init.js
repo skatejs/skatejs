@@ -137,7 +137,7 @@ export default function (opts) {
   opts = opts || {};
 
   if (typeof opts === 'function') {
-    opts = { type: opts };
+    opts = { coerce: opts };
   }
 
   return function (name) {
