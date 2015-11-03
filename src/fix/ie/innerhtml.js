@@ -1,6 +1,7 @@
 const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);
-let fixed = false;
+const isIe = isIeUntil10 || isIe11;
+const elementPrototype = window.HTMLElement.prototype;
 
 // ! This walkTree method differs from the implementation in ../../utils/walk-tree
 // It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
@@ -21,15 +22,17 @@ function walkTree (node, cb) {
 }
 
 function fixInnerHTML() {
-  const elementPrototype = window.HTMLElement.prototype;
   const originalInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+
+  var get = function () {
+    return originalInnerHTML.get.call(this);
+  };
+  get._hasBeenEnhanced =  true;
 
   // This redefines the innerHTML property so that we can ensure that events
   // are properly triggered.
   Object.defineProperty(elementPrototype, 'innerHTML', {
-    get: function () {
-      return originalInnerHTML.get.call(this);
-    },
+    get: get,
     set: function (html) {
       walkTree(this, function (node, parentNode) {
         let mutationEvent = document.createEvent('MutationEvent');
@@ -41,14 +44,17 @@ function fixInnerHTML() {
   });
 }
 
-if (!fixed && (isIeUntil10 || isIe11)) {
+if (isIe) {
   // IE 9-11
-  fixed = true; // make sure we add the enhancement only once
+  const propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype, 'innerHTML');
+  const hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
 
-  if (isIe11) {
-    // IE11's native MutationObserver needs some help as well :()
-    window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+  if (!hasBeenEnhanced) {
+    if (isIe11) {
+      // IE11's native MutationObserver needs some help as well :()
+      window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
+    }
+
+    fixInnerHTML();
   }
-
-  fixInnerHTML();
 }
