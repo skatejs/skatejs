@@ -1,8 +1,8 @@
 import assign from '../util/assign';
 import registry from '../global/registry';
 
-export default function (name, props) {
+export default function (name, properties) {
   const trimmedName = name.trim();
   const constructor = registry.get(trimmedName);
-  return constructor ? constructor(props) : assign(document.createElement(trimmedName), props);
+  return constructor ? constructor(properties) : assign(document.createElement(trimmedName), properties);
 }

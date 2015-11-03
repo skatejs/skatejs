@@ -21,11 +21,11 @@ describe('exports', function () {
     expect(skate.init).to.be.a('function');
   });
 
-  it('skate.props', function () {
-    expect(skate.props.boolean).to.be.an('object', 'boolean');
-    expect(skate.props.float).to.be.an('object', 'float');
-    expect(skate.props.number).to.be.an('object', 'number');
-    expect(skate.props.string).to.be.an('object', 'string');
+  it('skate.properties', function () {
+    expect(skate.properties.boolean).to.be.an('object', 'boolean');
+    expect(skate.properties.float).to.be.an('object', 'float');
+    expect(skate.properties.number).to.be.an('object', 'number');
+    expect(skate.properties.string).to.be.an('object', 'string');
   });
 
   it('skate.ready', function () {

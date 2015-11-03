@@ -2,21 +2,21 @@ import data from '../util/data';
 import emit from '../api/emit';
 import events from './events';
 import patchAttributeMethods from './patch-attribute-methods';
-import propsInit from './props-init';
-import propsCreated from './props-created';
-import propsReady from './props-ready';
+import propertiesInit from './properties-init';
+import propertiesCreated from './properties-created';
+import propertiesReady from './properties-ready';
 import prototype from './prototype';
 import resolve from './resolve';
 
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
 function ensurePropertyFunctions (opts) {
-  let props = opts.props;
-  let names = Object.keys(props || {});
+  let properties = opts.properties;
+  let names = Object.keys(properties || {});
   return names.reduce(function (descriptors, descriptorName) {
-    descriptors[descriptorName] = opts.props[descriptorName];
+    descriptors[descriptorName] = opts.properties[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = propsInit(descriptors[descriptorName]);
+      descriptors[descriptorName] = propertiesInit(descriptors[descriptorName]);
     }
     return descriptors;
   }, {});
@@ -57,11 +57,11 @@ export default function (opts) {
 
     patchAttributeMethods(this, opts);
     applyPrototype(this);
-    propsCreated(this, propertyDefinitions);
+    propertiesCreated(this, propertyDefinitions);
     applyEvents(this);
     opts.created && opts.created(this);
     renderIfNotResolved(this, opts);
-    propsReady(this, propertyDefinitions);
+    propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
     notifyReady(this);
     resolve(this, opts);

@@ -1,6 +1,6 @@
-export default function propertiesApply (elem, props) {
-  Object.keys(props).forEach(function (name) {
-    let prop = props[name];
+export default function propertiesApply (elem, properties) {
+  Object.keys(properties).forEach(function (name) {
+    let prop = properties[name];
     let initialValue = elem[name];
 
     // https://bugs.webkit.org/show_bug.cgi?id=49739
