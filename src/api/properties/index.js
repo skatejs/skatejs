@@ -1,11 +1,11 @@
-import propertiesBoolean from './boolean';
-import propertiesFloat from './float';
-import propertiesNumber from './number';
-import propertiesString from './string';
+import boolean from './boolean';
+import float from './float';
+import number from './number';
+import string from './string';
 
 export default {
-  boolean: propertiesBoolean,
-  float: propertiesFloat,
-  number: propertiesNumber,
-  string: propertiesString
+  boolean,
+  float,
+  number,
+  string
 };
