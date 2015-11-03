@@ -10,10 +10,10 @@ before_script:
 script:
 - npm run lint
 - npm run perf
-- if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
   npm test -- --saucelabs;
   else
-  npm test;
+  npm test -- --browsers Firefox;
   fi
 env:
   global:
