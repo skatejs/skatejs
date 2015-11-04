@@ -1,3 +1,4 @@
+[![Join the chat at https://gitter.im/skatejs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
