@@ -1031,13 +1031,13 @@ skate('type', {
   extends: 'input',
   type: typeAttribute,
   properties: {
-    type: skate.property.string({
+    type: {
       set: function (element, change) {
         if (change.newValue === 'date') {
           makeIntoDatepicker(element);
         }
       }
-    })
+    }
   }
 });
 ```
@@ -1051,13 +1051,13 @@ skate('rel', {
   extends: 'link',
   type: typeAttribute,
   properties: {
-    rel: skate.property.string({
+    rel: {
       set: function (element, change) {
         if (change.newValue === 'import') {
           makeIntoHtmlImport(element);
         }
       }
-    })
+    }
   }
 });
 ```
