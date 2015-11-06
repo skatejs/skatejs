@@ -9,7 +9,7 @@
   "dependencies": {},
   "devDependencies": {
     "bootstrap": "3.3.5",
-    "eslint": "1.8.0",
+    "eslint": "1.9.0",
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
     "object-assign": "^4.0.1",
