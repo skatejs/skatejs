@@ -1,7 +1,6 @@
 import assign from 'object-assign';
 export default assign.bind(null, {}, {
-  type: Number,
-  default: 0,
-  serialize: String,
-  deserialize: Number
+  coerce: value => typeof value === 'undefined' ? value : Number(value),
+  deserialize: value => value === null ? undefined : value,
+  serialize: value => typeof value === 'undefined' ? value : Number(value)
 });

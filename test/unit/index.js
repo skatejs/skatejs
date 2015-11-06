@@ -23,7 +23,6 @@ describe('exports', function () {
 
   it('skate.properties', function () {
     expect(skate.properties.boolean).to.be.a('function', 'boolean');
-    expect(skate.properties.float).to.be.a('function', 'float');
     expect(skate.properties.number).to.be.a('function', 'number');
     expect(skate.properties.string).to.be.a('function', 'string');
   });

@@ -10,6 +10,15 @@ function create (prop) {
   })();
 }
 
+function testTypeValues (type, values) {
+  const elem = create(properties[type]());
+  values.forEach(function (value) {
+    elem.test = value[0];
+    expect(elem.test).to.equal(value[1], 'property');
+    expect(elem.getAttribute('test')).to.equal(value[2], 'attribute');
+  });
+}
+
 describe('api/properties', function () {
   describe('boolean', function () {
     it('initial value', function () {
@@ -43,27 +52,47 @@ describe('api/properties', function () {
     });
   });
 
-  describe('float', function () {
-    it('default', function () {
-      let elem = create(properties.float());
-      expect(elem.test).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal('0');
-    });
-  });
-
   describe('number', function () {
     it('default', function () {
       let elem = create(properties.number());
-      expect(elem.test).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal('0');
+      expect(elem.test).to.equal(undefined);
+      expect(elem.getAttribute('test')).to.equal(null);
+      testTypeValues('number', [
+        [false, 0, '0'],
+        [null, 0, '0'],
+        [undefined, undefined, null],
+        [0.1, 0.1, '0.1'],
+        ['', 0, '0']
+      ]);
     });
   });
 
   describe('string', function () {
-    it('default', function () {
+    it('values', function () {
       let elem = create(properties.string());
-      expect(elem.test).to.equal('');
-      expect(elem.getAttribute('test')).to.equal('');
+      expect(elem.test).to.equal(undefined);
+      expect(elem.getAttribute('test')).to.equal(null);
+      testTypeValues('string', [
+        [false, 'false', 'false'],
+        [null, 'null', 'null'],
+        [undefined, undefined, null],
+        [0, '0', '0'],
+        ['', '', '']
+      ]);
+    });
+  });
+
+  describe('overriding', function () {
+    it('boolean', function () {
+      expect(properties.boolean({ default: true }).default).to.equal(true);
+    });
+
+    it('number', function () {
+      expect(properties.number({ default: 1 }).default).to.equal(1);
+    });
+
+    it('string', function () {
+      expect(properties.string({ default: 'test' }).default).to.equal('test');
     });
   });
 });
