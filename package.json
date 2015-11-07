@@ -6,13 +6,14 @@
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "lib/index.js",
-  "dependencies": {},
+  "dependencies": {
+    "object-assign": "^4.0.1"
+  },
   "devDependencies": {
     "bootstrap": "3.3.5",
     "eslint": "1.9.0",
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
-    "object-assign": "^4.0.1",
     "shadejs": "skatejs/shade#2a69707",
     "skatejs-build": "skatejs/build#184a544",
     "skatejs-types": "skatejs/types#1e9725b",
