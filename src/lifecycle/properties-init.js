@@ -1,4 +1,4 @@
-import assign from '../util/assign';
+import assign from 'object-assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
 

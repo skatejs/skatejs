@@ -6,7 +6,7 @@ import apiProperties from './api/properties/index';
 import apiReady from './api/ready';
 import apiRender from './api/render/index';
 import apiVersion from './api/version';
-import assign from './util/assign';
+import assign from 'object-assign';
 import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';

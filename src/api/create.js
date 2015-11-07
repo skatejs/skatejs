@@ -1,4 +1,4 @@
-import assign from '../util/assign';
+import assign from 'object-assign';
 import registry from '../global/registry';
 
 export default function (name, properties) {
