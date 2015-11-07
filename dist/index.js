@@ -1,30 +1,49 @@
-// src/util/assign.js
-(typeof window === 'undefined' ? global : window).__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
+// node_modules/object-assign/index.js
+(typeof window === 'undefined' ? global : window).__bbda433df4ec72c4488e3a2f0e6a59a1 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
   
-  "use strict";
+  /* eslint-disable no-unused-vars */
+  var hasOwnProperty = Object.prototype.hasOwnProperty;
+  var propIsEnumerable = Object.prototype.propertyIsEnumerable;
   
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
+  function toObject(val) {
+  	if (val === null || val === undefined) {
+  		throw new TypeError('Object.assign cannot be called with null or undefined');
+  	}
   
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
+  	return Object(val);
+  }
   
-    parents.forEach(function (parent) {
-      return Object.keys(parent || {}).forEach(function (name) {
-        return child[name] = parent[name];
-      });
-    });
-    return child;
+  module.exports = Object.assign || function (target, source) {
+  	var from;
+  	var to = toObject(target);
+  	var symbols;
+  
+  	for (var s = 1; s < arguments.length; s++) {
+  		from = Object(arguments[s]);
+  
+  		for (var key in from) {
+  			if (hasOwnProperty.call(from, key)) {
+  				to[key] = from[key];
+  			}
+  		}
+  
+  		if (Object.getOwnPropertySymbols) {
+  			symbols = Object.getOwnPropertySymbols(from);
+  			for (var i = 0; i < symbols.length; i++) {
+  				if (propIsEnumerable.call(from, symbols[i])) {
+  					to[symbols[i]] = from[symbols[i]];
+  				}
+  			}
+  		}
+  	}
+  
+  	return to;
   };
   
-  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -203,9 +222,9 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
   
-  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
   
   var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
   
@@ -214,7 +233,7 @@
   exports['default'] = function (name, properties) {
     var trimmedName = name.trim();
     var constructor = _globalRegistry2['default'].get(trimmedName);
-    return constructor ? constructor(properties) : (0, _utilAssign2['default'])(document.createElement(trimmedName), properties);
+    return constructor ? constructor(properties) : (0, _objectAssign2['default'])(document.createElement(trimmedName), properties);
   };
   
   module.exports = exports['default'];
@@ -571,55 +590,6 @@
   }
   
   module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// node_modules/object-assign/index.js
-(typeof window === 'undefined' ? global : window).__bbda433df4ec72c4488e3a2f0e6a59a1 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  /* eslint-disable no-unused-vars */
-  var hasOwnProperty = Object.prototype.hasOwnProperty;
-  var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-  
-  function toObject(val) {
-  	if (val === null || val === undefined) {
-  		throw new TypeError('Object.assign cannot be called with null or undefined');
-  	}
-  
-  	return Object(val);
-  }
-  
-  module.exports = Object.assign || function (target, source) {
-  	var from;
-  	var to = toObject(target);
-  	var symbols;
-  
-  	for (var s = 1; s < arguments.length; s++) {
-  		from = Object(arguments[s]);
-  
-  		for (var key in from) {
-  			if (hasOwnProperty.call(from, key)) {
-  				to[key] = from[key];
-  			}
-  		}
-  
-  		if (Object.getOwnPropertySymbols) {
-  			symbols = Object.getOwnPropertySymbols(from);
-  			for (var i = 0; i < symbols.length; i++) {
-  				if (propIsEnumerable.call(from, symbols[i])) {
-  					to[symbols[i]] = from[symbols[i]];
-  				}
-  			}
-  		}
-  	}
-  
-  	return to;
-  };
-  
   
   return module.exports;
 }).call(this);
@@ -1232,9 +1202,9 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
   
-  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
   
   var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
   
@@ -1383,7 +1353,7 @@
     }
   
     return function (name) {
-      return createNativePropertyDefinition(name, (0, _utilAssign2['default'])({
+      return createNativePropertyDefinition(name, (0, _objectAssign2['default'])({
         deserialize: function deserialize(value) {
           return value;
         },
@@ -2116,9 +2086,9 @@
   
   var _apiVersion2 = _interopRequireDefault(_apiVersion);
   
-  var _utilAssign = __d48ab0568b1578e9cac74e66baa6d3e7;
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
   
-  var _utilAssign2 = _interopRequireDefault(_utilAssign);
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
   
   var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
   
@@ -2194,7 +2164,7 @@
     function CtorWrapper() {
       var properties = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
   
-      return (0, _utilAssign2['default'])(new Ctor(), properties);
+      return (0, _objectAssign2['default'])(new Ctor(), properties);
     }
   
     // Copy prototype.
