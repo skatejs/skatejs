@@ -36,25 +36,10 @@ npm run test-watch -- --browsers Chrome,Firefox
 
 ## Distribution
 
-To build the `dist/` and `lib/` artefacts run:
+To build the `dist/` and `lib/` artifacts run:
 
 ```bash
-npm run dist
-```
-
-## Documentation
-
-To build the docs:
-
-```sh
-npm run docs
-```
-
-If you're developing in docs:
-
-```sh
-npm run docs-watch
-```
+npm run build
 
 ## Notes
 
