@@ -15,7 +15,7 @@
     "font-awesome": "4.4.0",
     "highlight.js": "8.9.1",
     "shadejs": "skatejs/shade#2a69707",
-    "skatejs-build": "skatejs/build#184a544",
+    "skatejs-build": "skatejs/build#68d0d6f",
     "skatejs-types": "skatejs/types#1e9725b",
     "webcomponents.js": "0.7.2",
     "whatwg-fetch": "0.10.1"
@@ -24,7 +24,7 @@
     "build": "gulp build",
     "docs": "gulp docs",
     "docs-watch": "gulp docs-watch",
-    "lint": "gulp eslint",
+    "lint": "gulp lint",
     "perf": "gulp perf",
     "test": "gulp test",
     "test-watch": "gulp test-watch"
