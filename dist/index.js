@@ -1,5 +1,5 @@
 // src/util/assign.js
-__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
+(typeof window === 'undefined' ? global : window).__d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
   var module = {
     exports: {}
   };
@@ -29,7 +29,7 @@ __d48ab0568b1578e9cac74e66baa6d3e7 = (function () {
   return module.exports;
 }).call(this);
 // src/global/vars.js
-__dd77578495c1d19b0e115627616ea63a = (function () {
+(typeof window === 'undefined' ? global : window).__dd77578495c1d19b0e115627616ea63a = (function () {
   var module = {
     exports: {}
   };
@@ -56,7 +56,7 @@ __dd77578495c1d19b0e115627616ea63a = (function () {
   return module.exports;
 }).call(this);
 // src/util/has-own.js
-__6d7878404f872c72787f01cd3e06dd21 = (function () {
+(typeof window === 'undefined' ? global : window).__6d7878404f872c72787f01cd3e06dd21 = (function () {
   var module = {
     exports: {}
   };
@@ -77,7 +77,7 @@ __6d7878404f872c72787f01cd3e06dd21 = (function () {
   return module.exports;
 }).call(this);
 // src/type/element.js
-__43714db526496b3dd90353996f6dce09 = (function () {
+(typeof window === 'undefined' ? global : window).__43714db526496b3dd90353996f6dce09 = (function () {
   var module = {
     exports: {}
   };
@@ -120,7 +120,7 @@ __43714db526496b3dd90353996f6dce09 = (function () {
   return module.exports;
 }).call(this);
 // src/global/registry.js
-__9cff21a9f41cc9ecfe56139e1040c954 = (function () {
+(typeof window === 'undefined' ? global : window).__9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   var module = {
     exports: {}
   };
@@ -189,7 +189,7 @@ __9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   return module.exports;
 }).call(this);
 // src/api/create.js
-__1675a7174b713323cc232370699a2714 = (function () {
+(typeof window === 'undefined' ? global : window).__1675a7174b713323cc232370699a2714 = (function () {
   var module = {
     exports: {}
   };
@@ -222,7 +222,7 @@ __1675a7174b713323cc232370699a2714 = (function () {
   return module.exports;
 }).call(this);
 // src/util/element-contains.js
-__6f793202bae98770dbb2b598df7929ad = (function () {
+(typeof window === 'undefined' ? global : window).__6f793202bae98770dbb2b598df7929ad = (function () {
   var module = {
     exports: {}
   };
@@ -250,7 +250,7 @@ __6f793202bae98770dbb2b598df7929ad = (function () {
   return module.exports;
 }).call(this);
 // src/api/emit.js
-__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+(typeof window === 'undefined' ? global : window).__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   var module = {
     exports: {}
   };
@@ -354,7 +354,7 @@ __639a0d2e0f8a90cd72e6197bdb481558 = (function () {
   return module.exports;
 }).call(this);
 // src/util/ignored.js
-__092f8936e5006bddcb3baf24320a5a06 = (function () {
+(typeof window === 'undefined' ? global : window).__092f8936e5006bddcb3baf24320a5a06 = (function () {
   var module = {
     exports: {}
   };
@@ -376,7 +376,7 @@ __092f8936e5006bddcb3baf24320a5a06 = (function () {
   return module.exports;
 }).call(this);
 // src/util/walk-tree.js
-__164e5750c20526cb74a9e443b730eeff = (function () {
+(typeof window === 'undefined' ? global : window).__164e5750c20526cb74a9e443b730eeff = (function () {
   var module = {
     exports: {}
   };
@@ -430,7 +430,7 @@ __164e5750c20526cb74a9e443b730eeff = (function () {
   return module.exports;
 }).call(this);
 // src/api/init.js
-__3add36046399fead5a83243849207ed7 = (function () {
+(typeof window === 'undefined' ? global : window).__3add36046399fead5a83243849207ed7 = (function () {
   var module = {
     exports: {}
   };
@@ -485,7 +485,7 @@ __3add36046399fead5a83243849207ed7 = (function () {
   return module.exports;
 }).call(this);
 // src/api/fragment.js
-__ef86f48ff9050407fed1e142d9fe2629 = (function () {
+(typeof window === 'undefined' ? global : window).__ef86f48ff9050407fed1e142d9fe2629 = (function () {
   var module = {
     exports: {}
   };
@@ -574,8 +574,119 @@ __ef86f48ff9050407fed1e142d9fe2629 = (function () {
   
   return module.exports;
 }).call(this);
+// node_modules/object-assign/index.js
+(typeof window === 'undefined' ? global : window).__bbda433df4ec72c4488e3a2f0e6a59a1 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  var defineDependencies = {
+    "module": module,
+    "exports": exports
+  };
+  var define = function defineReplacementWrapper(generatedModuleName) {
+    return function defineReplacement(name, deps, func) {
+      var root = (typeof window === 'undefined' ? global : window);
+      var defineGlobal = root.define;
+      var rval;
+      var type;
+  
+      func = [func, deps, name].filter(function (cur) {
+        return typeof cur === 'function';
+      })[0];
+      deps = [deps, name, []].filter(Array.isArray)[0];
+      rval = func.apply(null, deps.map(function (value) {
+        return defineDependencies[value];
+      }));
+      type = typeof rval;
+  
+      // Support existing AMD libs.
+      if (typeof defineGlobal === 'function') {
+        // Almond always expects a name so resolve one (#29).
+        defineGlobal(typeof name === 'string' ? name : generatedModuleName, deps, func);
+      }
+  
+      // Some processors like Babel don't check to make sure that the module value
+      // is not a primitive before calling Object.defineProperty() on it. We ensure
+      // it is an instance so that it can.
+      if (type === 'string') {
+        rval = String(rval);
+      } else if (type === 'number') {
+        rval = Number(rval);
+      } else if (type === 'boolean') {
+        rval = Boolean(rval);
+      }
+  
+      // Reset the exports to the defined module. This is how we convert AMD to
+      // CommonJS and ensures both can either co-exist, or be used separately. We
+      // only set it if it is not defined because there is no object representation
+      // of undefined, thus calling Object.defineProperty() on it would fail.
+      if (rval !== undefined) {
+        exports = module.exports = rval;
+      }
+    };
+  }("__bbda433df4ec72c4488e3a2f0e6a59a1");
+  define.amd = true;
+  
+  'use strict';
+  
+  (function (global, factory) {
+  	if (typeof define === 'function' && define.amd) {
+  		define(['exports'], factory);
+  	} else if (typeof exports !== 'undefined') {
+  		factory(exports);
+  	} else {
+  		var mod = {
+  			exports: {}
+  		};
+  		factory(mod.exports);
+  		global.index = mod.exports;
+  	}
+  })(undefined, function (exports) {
+  	/* eslint-disable no-unused-vars */
+  	var hasOwnProperty = Object.prototype.hasOwnProperty;
+  	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+  
+  	function toObject(val) {
+  		if (val === null || val === undefined) {
+  			throw new TypeError('Object.assign cannot be called with null or undefined');
+  		}
+  
+  		return Object(val);
+  	}
+  
+  	module.exports = Object.assign || function (target, source) {
+  		var from;
+  		var to = toObject(target);
+  		var symbols;
+  
+  		for (var s = 1; s < arguments.length; s++) {
+  			from = Object(arguments[s]);
+  
+  			for (var key in from) {
+  				if (hasOwnProperty.call(from, key)) {
+  					to[key] = from[key];
+  				}
+  			}
+  
+  			if (Object.getOwnPropertySymbols) {
+  				symbols = Object.getOwnPropertySymbols(from);
+  				for (var i = 0; i < symbols.length; i++) {
+  					if (propIsEnumerable.call(from, symbols[i])) {
+  						to[symbols[i]] = from[symbols[i]];
+  					}
+  				}
+  			}
+  		}
+  
+  		return to;
+  	};
+  });
+  
+  return module.exports;
+}).call(this);
 // src/api/properties/boolean.js
-__3c628d88db5d9b47debcf1c6200b02c4 = (function () {
+(typeof window === 'undefined' ? global : window).__3c628d88db5d9b47debcf1c6200b02c4 = (function () {
   var module = {
     exports: {}
   };
@@ -586,7 +697,14 @@ __3c628d88db5d9b47debcf1c6200b02c4 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = {
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
+  
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
+  
+  exports['default'] = _objectAssign2['default'].bind(null, {}, {
     coerce: function coerce(value) {
       return !!value;
     },
@@ -597,57 +715,13 @@ __3c628d88db5d9b47debcf1c6200b02c4 = (function () {
     serialize: function serialize(value) {
       return value ? '' : undefined;
     }
-  };
+  });
   module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
-// src/api/properties/float.js
-__fafcce48a4f55e57ae23c76256fe577e = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports["default"] = {
-    coerce: parseFloat,
-    "default": 0,
-    serialize: String,
-    deserialize: parseFloat
-  };
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
 // src/api/properties/number.js
-__01110a33f4fc3195613143c4e23f759c = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports["default"] = {
-    type: Number,
-    "default": 0,
-    serialize: String,
-    deserialize: Number
-  };
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-// src/api/properties/string.js
-__d729413b2e2accb8d590160fefbda485 = (function () {
+(typeof window === 'undefined' ? global : window).__01110a33f4fc3195613143c4e23f759c = (function () {
   var module = {
     exports: {}
   };
@@ -658,18 +732,64 @@ __d729413b2e2accb8d590160fefbda485 = (function () {
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = {
-    type: String,
-    'default': '',
-    deserialize: String,
-    serialize: String
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
+  
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
+  
+  exports['default'] = _objectAssign2['default'].bind(null, {}, {
+    coerce: function coerce(value) {
+      return typeof value === 'undefined' ? value : Number(value);
+    },
+    deserialize: function deserialize(value) {
+      return value === null ? undefined : value;
+    },
+    serialize: function serialize(value) {
+      return typeof value === 'undefined' ? value : Number(value);
+    }
+  });
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/properties/string.js
+(typeof window === 'undefined' ? global : window).__d729413b2e2accb8d590160fefbda485 = (function () {
+  var module = {
+    exports: {}
   };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
+  
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
+  
+  exports['default'] = _objectAssign2['default'].bind(null, {}, {
+    coerce: function coerce(value) {
+      return typeof value === 'undefined' ? value : String(value);
+    },
+    deserialize: function deserialize(value) {
+      return value === null ? undefined : value;
+    },
+    serialize: function serialize(value) {
+      return typeof value === 'undefined' ? value : String(value);
+    }
+  });
   module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
 // src/api/properties/index.js
-__db9d338f5bdfd7eb6a3bcf299ff15f91 = (function () {
+(typeof window === 'undefined' ? global : window).__db9d338f5bdfd7eb6a3bcf299ff15f91 = (function () {
   var module = {
     exports: {}
   };
@@ -687,10 +807,6 @@ __db9d338f5bdfd7eb6a3bcf299ff15f91 = (function () {
   
   var _boolean2 = _interopRequireDefault(_boolean);
   
-  var _float = __fafcce48a4f55e57ae23c76256fe577e;
-  
-  var _float2 = _interopRequireDefault(_float);
-  
   var _number = __01110a33f4fc3195613143c4e23f759c;
   
   var _number2 = _interopRequireDefault(_number);
@@ -701,7 +817,6 @@ __db9d338f5bdfd7eb6a3bcf299ff15f91 = (function () {
   
   exports['default'] = {
     boolean: _boolean2['default'],
-    float: _float2['default'],
     number: _number2['default'],
     string: _string2['default']
   };
@@ -710,7 +825,7 @@ __db9d338f5bdfd7eb6a3bcf299ff15f91 = (function () {
   return module.exports;
 }).call(this);
 // src/util/data.js
-__18291b0452e01f65cf28d6695040736a = (function () {
+(typeof window === 'undefined' ? global : window).__18291b0452e01f65cf28d6695040736a = (function () {
   var module = {
     exports: {}
   };
@@ -734,7 +849,7 @@ __18291b0452e01f65cf28d6695040736a = (function () {
   return module.exports;
 }).call(this);
 // src/api/ready.js
-__83ca289f5309abef55c338a9f7a22385 = (function () {
+(typeof window === 'undefined' ? global : window).__83ca289f5309abef55c338a9f7a22385 = (function () {
   var module = {
     exports: {}
   };
@@ -802,7 +917,7 @@ __83ca289f5309abef55c338a9f7a22385 = (function () {
   return module.exports;
 }).call(this);
 // src/api/render/html.js
-__094bf660ba7ebd6f4b14ca8053e00764 = (function () {
+(typeof window === 'undefined' ? global : window).__094bf660ba7ebd6f4b14ca8053e00764 = (function () {
   var module = {
     exports: {}
   };
@@ -834,7 +949,7 @@ __094bf660ba7ebd6f4b14ca8053e00764 = (function () {
   return module.exports;
 }).call(this);
 // src/api/render/index.js
-__d31d2ff71da7095bf8886568461d8537 = (function () {
+(typeof window === 'undefined' ? global : window).__d31d2ff71da7095bf8886568461d8537 = (function () {
   var module = {
     exports: {}
   };
@@ -870,7 +985,7 @@ __d31d2ff71da7095bf8886568461d8537 = (function () {
   return module.exports;
 }).call(this);
 // src/api/version.js
-__662bde51c096e9d79bf327311ea178e0 = (function () {
+(typeof window === 'undefined' ? global : window).__662bde51c096e9d79bf327311ea178e0 = (function () {
   var module = {
     exports: {}
   };
@@ -887,7 +1002,7 @@ __662bde51c096e9d79bf327311ea178e0 = (function () {
   return module.exports;
 }).call(this);
 // src/util/assign-safe.js
-__d9d26492984e649e5130081ad32bafd6 = (function () {
+(typeof window === 'undefined' ? global : window).__d9d26492984e649e5130081ad32bafd6 = (function () {
   var module = {
     exports: {}
   };
@@ -920,7 +1035,7 @@ __d9d26492984e649e5130081ad32bafd6 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/attached.js
-__2b55a083f45c9ef157662a1dc1674218 = (function () {
+(typeof window === 'undefined' ? global : window).__2b55a083f45c9ef157662a1dc1674218 = (function () {
   var module = {
     exports: {}
   };
@@ -953,7 +1068,7 @@ __2b55a083f45c9ef157662a1dc1674218 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/attribute.js
-__9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
+(typeof window === 'undefined' ? global : window).__9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   var module = {
     exports: {}
   };
@@ -987,7 +1102,7 @@ __9f17962f9aa326a94ed3e5d6f6b172e6 = (function () {
   return module.exports;
 }).call(this);
 // src/util/matches-selector.js
-__365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
+(typeof window === 'undefined' ? global : window).__365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   var module = {
     exports: {}
   };
@@ -1018,7 +1133,7 @@ __365bd8b7bbfb2b50d6dbfd830f0aa927 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/events.js
-__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
+(typeof window === 'undefined' ? global : window).__d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   var module = {
     exports: {}
   };
@@ -1102,7 +1217,7 @@ __d48fcc3ecf3585518bbce659c1ba4116 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/patch-attribute-methods.js
-__cbc0eefc77aa7d958ec51e53ef2568fc = (function () {
+(typeof window === 'undefined' ? global : window).__cbc0eefc77aa7d958ec51e53ef2568fc = (function () {
   var module = {
     exports: {}
   };
@@ -1141,7 +1256,7 @@ __cbc0eefc77aa7d958ec51e53ef2568fc = (function () {
   return module.exports;
 }).call(this);
 // src/util/dash-case.js
-__0cd264077c1ca567539d11e826d3c00e = (function () {
+(typeof window === 'undefined' ? global : window).__0cd264077c1ca567539d11e826d3c00e = (function () {
   var module = {
     exports: {}
   };
@@ -1165,7 +1280,7 @@ __0cd264077c1ca567539d11e826d3c00e = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/properties-init.js
-__cc21ec7ac4c07d035d1a19269f5d2bb6 = (function () {
+(typeof window === 'undefined' ? global : window).__cc21ec7ac4c07d035d1a19269f5d2bb6 = (function () {
   var module = {
     exports: {}
   };
@@ -1346,7 +1461,7 @@ __cc21ec7ac4c07d035d1a19269f5d2bb6 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/properties-created.js
-__a66903f10d803226e4691dfa301c4f3e = (function () {
+(typeof window === 'undefined' ? global : window).__a66903f10d803226e4691dfa301c4f3e = (function () {
   var module = {
     exports: {}
   };
@@ -1387,7 +1502,7 @@ __a66903f10d803226e4691dfa301c4f3e = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/properties-ready.js
-__06885fcc635bf6a67cb67ec77a6e8b17 = (function () {
+(typeof window === 'undefined' ? global : window).__06885fcc635bf6a67cb67ec77a6e8b17 = (function () {
   var module = {
     exports: {}
   };
@@ -1412,7 +1527,7 @@ __06885fcc635bf6a67cb67ec77a6e8b17 = (function () {
   return module.exports;
 }).call(this);
 // src/util/protos.js
-__1d11a28624d684874cb270f137cc0122 = (function () {
+(typeof window === 'undefined' ? global : window).__1d11a28624d684874cb270f137cc0122 = (function () {
   var module = {
     exports: {}
   };
@@ -1439,7 +1554,7 @@ __1d11a28624d684874cb270f137cc0122 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/prototype.js
-__7ba2ecf93401318a8fb40e4b0fe295ea = (function () {
+(typeof window === 'undefined' ? global : window).__7ba2ecf93401318a8fb40e4b0fe295ea = (function () {
   var module = {
     exports: {}
   };
@@ -1482,7 +1597,7 @@ __7ba2ecf93401318a8fb40e4b0fe295ea = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/resolve.js
-__4b4eecf91d77990b080189047604b709 = (function () {
+(typeof window === 'undefined' ? global : window).__4b4eecf91d77990b080189047604b709 = (function () {
   var module = {
     exports: {}
   };
@@ -1505,7 +1620,7 @@ __4b4eecf91d77990b080189047604b709 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/created.js
-__fe1aef0db5b664068b470b21f7c754a5 = (function () {
+(typeof window === 'undefined' ? global : window).__fe1aef0db5b664068b470b21f7c754a5 = (function () {
   var module = {
     exports: {}
   };
@@ -1620,7 +1735,7 @@ __fe1aef0db5b664068b470b21f7c754a5 = (function () {
   return module.exports;
 }).call(this);
 // src/util/debounce.js
-__afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
+(typeof window === 'undefined' ? global : window).__afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   var module = {
     exports: {}
   };
@@ -1657,7 +1772,7 @@ __afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
   return module.exports;
 }).call(this);
 // src/defaults.js
-__46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
+(typeof window === 'undefined' ? global : window).__46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   var module = {
     exports: {}
   };
@@ -1724,7 +1839,7 @@ __46b087e8c15b2e0ebc2c4d4cbc36d975 = (function () {
   return module.exports;
 }).call(this);
 // src/lifecycle/detached.js
-__8e93439e8a566d1586c9903a75a6a785 = (function () {
+(typeof window === 'undefined' ? global : window).__8e93439e8a566d1586c9903a75a6a785 = (function () {
   var module = {
     exports: {}
   };
@@ -1757,7 +1872,7 @@ __8e93439e8a566d1586c9903a75a6a785 = (function () {
   return module.exports;
 }).call(this);
 // src/util/get-closest-ignored-element.js
-__a56dab24700df352eb84caec3fe615e5 = (function () {
+(typeof window === 'undefined' ? global : window).__a56dab24700df352eb84caec3fe615e5 = (function () {
   var module = {
     exports: {}
   };
@@ -1792,7 +1907,7 @@ __a56dab24700df352eb84caec3fe615e5 = (function () {
   return module.exports;
 }).call(this);
 // src/fix/ie/innerhtml.js
-__c88e1e3ebc3bc643629f4b153969a85f = (function () {
+(typeof window === 'undefined' ? global : window).__c88e1e3ebc3bc643629f4b153969a85f = (function () {
   var module = {
     exports: {}
   };
@@ -1864,7 +1979,7 @@ __c88e1e3ebc3bc643629f4b153969a85f = (function () {
   return module.exports;
 }).call(this);
 // src/global/document-observer.js
-__d8200645c4d96aee6940034d9c030d1f = (function () {
+(typeof window === 'undefined' ? global : window).__d8200645c4d96aee6940034d9c030d1f = (function () {
   var module = {
     exports: {}
   };
@@ -1973,7 +2088,7 @@ __d8200645c4d96aee6940034d9c030d1f = (function () {
   return module.exports;
 }).call(this);
 // src/support/custom-elements.js
-__c6f5e18624750ce93a74df6369c85ef0 = (function () {
+(typeof window === 'undefined' ? global : window).__c6f5e18624750ce93a74df6369c85ef0 = (function () {
   var module = {
     exports: {}
   };
@@ -1994,7 +2109,7 @@ __c6f5e18624750ce93a74df6369c85ef0 = (function () {
   return module.exports;
 }).call(this);
 // src/support/valid-custom-element.js
-__6e1dfed2b03894ef63a4b65d5038d223 = (function () {
+(typeof window === 'undefined' ? global : window).__6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   var module = {
     exports: {}
   };
@@ -2017,7 +2132,7 @@ __6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   return module.exports;
 }).call(this);
 // src/index.js
-__abb93179bdc0236a6e77d3eae07c991c = (function () {
+(typeof window === 'undefined' ? global : window).__abb93179bdc0236a6e77d3eae07c991c = (function () {
   var module = {
     exports: {}
   };
@@ -2251,7 +2366,7 @@ __abb93179bdc0236a6e77d3eae07c991c = (function () {
   return module.exports;
 }).call(this);
 // src/global.js
-__9a43120147a4f5a325d55b702c284d36 = (function () {
+(typeof window === 'undefined' ? global : window).__9a43120147a4f5a325d55b702c284d36 = (function () {
   var module = {
     exports: {}
   };
