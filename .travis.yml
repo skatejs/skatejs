@@ -9,7 +9,6 @@ before_script:
 - bower install
 script:
 - npm run lint
-- npm run perf
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
   npm test -- --saucelabs;
   else
