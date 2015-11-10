@@ -1138,11 +1138,7 @@
   });
   exports["default"] = patchAttributeMethods;
   
-  function patchAttributeMethods(elem, opts) {
-    if (opts.isNative) {
-      return;
-    }
-  
+  function patchAttributeMethods(elem) {
     var removeAttribute = elem.removeAttribute;
     var setAttribute = elem.setAttribute;
   
@@ -1486,10 +1482,6 @@
   var _utilProtos2 = _interopRequireDefault(_utilProtos);
   
   function prototype(opts) {
-    if (opts.isNative) {
-      return function () {};
-    }
-  
     var prototypes = (0, _utilProtos2['default'])(opts.prototype);
     return function (elem) {
       prototypes.forEach(function (proto) {
@@ -1578,6 +1570,9 @@
   
   var _resolve2 = _interopRequireDefault(_resolve);
   
+  var readyEventName = 'skate.ready';
+  var readyEventOptions = { bubbles: false, cancelable: false };
+  
   // TODO Remove this when we no longer support the legacy definitions and only
   // support a superset of a native property definition.
   function ensurePropertyFunctions(opts) {
@@ -1599,19 +1594,6 @@
     }, {});
   }
   
-  function notifyReady(elem) {
-    (0, _apiEmit2['default'])(elem, 'skate.ready', {
-      bubbles: false,
-      cancelable: false
-    });
-  }
-  
-  function renderIfNotResolved(elem, opts) {
-    if (opts.render && !elem.hasAttribute(opts.resolvedAttribute)) {
-      opts.render(elem);
-    }
-  }
-  
   exports['default'] = function (opts) {
     var applyEvents = (0, _events2['default'])(opts);
     var applyPrototype = (0, _prototype2['default'])(opts);
@@ -1619,22 +1601,24 @@
   
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
+      var native = opts.isNative;
       var propertyDefinitions = undefined;
+      var resolved = this.hasAttribute('resolved');
   
       if (info.created) return;
       info.created = true;
       propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
   
-      (0, _patchAttributeMethods2['default'])(this, opts);
-      applyPrototype(this);
-      (0, _propertiesCreated2['default'])(this, propertyDefinitions);
-      applyEvents(this);
+      native || opts.attribute && (0, _patchAttributeMethods2['default'])(this);
+      native || opts.prototype && applyPrototype(this);
+      opts.properties && (0, _propertiesCreated2['default'])(this, propertyDefinitions);
+      opts.events && applyEvents(this);
       opts.created && opts.created(this);
-      renderIfNotResolved(this, opts);
-      (0, _propertiesReady2['default'])(this, propertyDefinitions);
+      resolved || opts.render && opts.render(this);
+      opts.properties && (0, _propertiesReady2['default'])(this, propertyDefinitions);
       opts.ready && opts.ready(this);
-      notifyReady(this);
-      (0, _resolve2['default'])(this, opts);
+      (0, _apiEmit2['default'])(this, readyEventName, readyEventOptions);
+      resolved || (0, _resolve2['default'])(this, opts);
     };
   };
   
