@@ -33,19 +33,18 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
 }
 
 export default function (opts) {
-  let applyEvents = events(opts);
-  let applyPrototype = prototype(opts);
-  let propertyFunctions = ensurePropertyFunctions(opts);
+  const applyEvents = events(opts);
+  const applyPrototype = prototype(opts);
+  const propertyFunctions = ensurePropertyFunctions(opts);
 
   return function () {
-    let info = data(this, `lifecycle/${opts.id}`);
-    let native = opts.isNative;
-    let propertyDefinitions;
-    let resolved = this.hasAttribute('resolved');
+    const info = data(this, `lifecycle/${opts.id}`);
+    const native = opts.isNative;
+    const resolved = this.hasAttribute('resolved');
 
     if (info.created) return;
     info.created = true;
-    propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
+    const propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
     native || opts.attribute && patchAttributeMethods(this);
     native || opts.prototype && applyPrototype(this);
