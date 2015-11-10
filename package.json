@@ -22,8 +22,6 @@
   },
   "scripts": {
     "build": "gulp build",
-    "docs": "gulp docs",
-    "docs-watch": "gulp docs-watch",
     "lint": "gulp lint",
     "perf": "gulp perf",
     "test": "gulp test",
