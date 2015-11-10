@@ -1,8 +1,4 @@
-export default function patchAttributeMethods (elem, opts) {
-  if (opts.isNative) {
-    return;
-  }
-
+export default function patchAttributeMethods (elem) {
   let { removeAttribute, setAttribute } = elem;
 
   elem.removeAttribute = function (name) {

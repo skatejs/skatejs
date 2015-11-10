@@ -8,6 +8,9 @@ import propertiesReady from './properties-ready';
 import prototype from './prototype';
 import resolve from './resolve';
 
+const readyEventName = 'skate.ready';
+const readyEventOptions = { bubbles: false, cancelable: false };
+
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
 function ensurePropertyFunctions (opts) {
@@ -29,19 +32,6 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
-function notifyReady (elem) {
-  emit(elem, 'skate.ready', {
-    bubbles: false,
-    cancelable: false
-  });
-}
-
-function renderIfNotResolved (elem, opts) {
-  if (opts.render && !elem.hasAttribute(opts.resolvedAttribute)) {
-    opts.render(elem);
-  }
-}
-
 export default function (opts) {
   let applyEvents = events(opts);
   let applyPrototype = prototype(opts);
@@ -49,21 +39,23 @@ export default function (opts) {
 
   return function () {
     let info = data(this, `lifecycle/${opts.id}`);
+    let native = opts.isNative;
     let propertyDefinitions;
+    let resolved = this.hasAttribute('resolved');
 
     if (info.created) return;
     info.created = true;
     propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
-    patchAttributeMethods(this, opts);
-    applyPrototype(this);
-    propertiesCreated(this, propertyDefinitions);
-    applyEvents(this);
+    native || opts.attribute && patchAttributeMethods(this);
+    native || opts.prototype && applyPrototype(this);
+    opts.properties && propertiesCreated(this, propertyDefinitions);
+    opts.events && applyEvents(this);
     opts.created && opts.created(this);
-    renderIfNotResolved(this, opts);
-    propertiesReady(this, propertyDefinitions);
+    resolved || opts.render && opts.render(this);
+    opts.properties && propertiesReady(this, propertyDefinitions);
     opts.ready && opts.ready(this);
-    notifyReady(this);
-    resolve(this, opts);
+    emit(this, readyEventName, readyEventOptions);
+    resolved || resolve(this, opts);
   };
 }
