@@ -113,11 +113,6 @@ When `set` is called, `newValue` and `oldValue` have the same meaning as when us
 
 This callback has been simplified since in most cases the `properties` will be used for specifying side-effects.
 
-- You may now only specify a callback as the `attribute` option.
-- The signature of the callback matches the web component spec.
-  - Use `this` to refer to the element.
-  - Arguments are: `name`, `oldValue` and `newValue` in that order.
-
 ```js
 attribute: function (elem, data) {
 
