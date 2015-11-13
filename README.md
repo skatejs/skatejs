@@ -277,12 +277,19 @@ skate('my-element', {
       // Serializes the property value when it is set so that it can be stored
       // as an attribute value. This only is called if this property is linked
       // to an attribute.
-      serialize: function () {},
+      serialize: function (value) {},
 
       // Deserializes the attribute value when it is set so that it can be
       // set as the property value. This only is called if this property is
       // linked to an attribute.
-      deserialize: function () {},
+      deserialize: function (value) {},
+
+      // A function that gets called before `set()`. It's up to you what you do
+      // here. You can log, warn, or throw an exception if an unacceptable value
+      // is detected. If you simply want to coerce the value, return the coerced
+      // value. You *must* return a value from this. If you don't return, then
+      // the coerced value becomes `undefined`.
+      coerce: function (value) {}
 
       // This will be used as the default value for the property. If you specify
       // a function then it will be invoked and the return value will be used.
@@ -290,21 +297,6 @@ skate('my-element', {
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
       default: 'default value'
-
-      // Whether or not to trigger events when the property changes. Defaults to
-      // `false`.
-      //
-      // If `true`, a `skate.property` event is emitted when the property is
-      // set. If a `string`, it is used as the event name that will be emitted
-      // when the property is set.
-      //
-      // The event object for the event that is triggered contains the following
-      // information:
-      //
-      // - `name` - The property name.
-      // - `newValue` - The property's new value.
-      // - `oldValue` - The property's old value.
-      emit: false,
 
       // Custom getter. The return value is used as the property value when
       // retrieved. If you don't specify a getter, the value that it was set as
@@ -314,7 +306,7 @@ skate('my-element', {
       // the property was accessed.
       //
       // To make a property "readonly", specify a getter without a setter.
-      get: function () {},
+      get: function (element) {},
 
       // Custom setter. Set value as you see fit. Return value is ignored. If
       // you don't specify a getter, then whatever `newValue` was passed in to
@@ -333,14 +325,7 @@ skate('my-element', {
       // If you set the value to the same value that the property already
       // is, then the setter is still triggered. However, both `newValue` and
       // `oldValue` will be the same value.
-      set: function (element, changeData) {},
-
-      // A function that gets called before `set()`. It's up to you what you do
-      // here. You can log, warn, or throw an exception if an unacceptable value
-      // is detected. If you simply want to coerce the value, return the coerced
-      // value. You *must* return a value from this. If you don't return, then
-      // the coerced value becomes `undefined`.
-      type: function () {}
+      set: function (element, changeData) {}
     }
   },
 
@@ -367,8 +352,7 @@ skate('my-element', {
   // conform to the custom element spec, but you can use custom types if
   // required.
   //
-  // - Attribute type: https://github.com/skatejs/type-attribute
-  // - Class type: https://github.com/skatejs/type-class
+  // Alternate binding types: https://github.com/skatejs/types
   type: {}
 
 
