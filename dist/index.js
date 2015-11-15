@@ -605,14 +605,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
-  
-  var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
-  exports['default'] = _objectAssign2['default'].bind(null, {}, {
+  exports['default'] = {
     coerce: function coerce(value) {
       return !!value;
     },
@@ -623,7 +616,7 @@
     serialize: function serialize(value) {
       return value ? '' : undefined;
     }
-  });
+  };
   module.exports = exports['default'];
   
   return module.exports;
@@ -640,14 +633,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
-  
-  var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
-  exports['default'] = _objectAssign2['default'].bind(null, {}, {
+  exports['default'] = {
     coerce: function coerce(value) {
       return typeof value === 'undefined' ? value : Number(value);
     },
@@ -657,7 +643,7 @@
     serialize: function serialize(value) {
       return typeof value === 'undefined' ? value : Number(value);
     }
-  });
+  };
   module.exports = exports['default'];
   
   return module.exports;
@@ -674,14 +660,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
-  
-  var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
-  exports['default'] = _objectAssign2['default'].bind(null, {}, {
+  exports['default'] = {
     coerce: function coerce(value) {
       return typeof value === 'undefined' ? value : String(value);
     },
@@ -691,7 +670,7 @@
     serialize: function serialize(value) {
       return typeof value === 'undefined' ? value : String(value);
     }
-  });
+  };
   module.exports = exports['default'];
   
   return module.exports;
@@ -711,6 +690,10 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
+  
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
+  
   var _boolean = __3c628d88db5d9b47debcf1c6200b02c4;
   
   var _boolean2 = _interopRequireDefault(_boolean);
@@ -723,10 +706,22 @@
   
   var _string2 = _interopRequireDefault(_string);
   
+  function prop(def) {
+    return function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+  
+      args.unshift(def);
+      args.unshift({});
+      return _objectAssign2['default'].apply(null, args);
+    };
+  }
+  
   exports['default'] = {
-    boolean: _boolean2['default'],
-    number: _number2['default'],
-    string: _string2['default']
+    boolean: prop(_boolean2['default']),
+    number: prop(_number2['default']),
+    string: prop(_string2['default'])
   };
   module.exports = exports['default'];
   
@@ -1602,12 +1597,11 @@
     return function () {
       var info = (0, _utilData2['default'])(this, 'lifecycle/' + opts.id);
       var native = opts.isNative;
-      var propertyDefinitions = undefined;
       var resolved = this.hasAttribute('resolved');
   
       if (info.created) return;
       info.created = true;
-      propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
+      var propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
   
       native || opts.attribute && (0, _patchAttributeMethods2['default'])(this);
       native || opts.prototype && applyPrototype(this);

@@ -6,6 +6,7 @@ import string from './string';
 function prop (def) {
   return function (...args) {
     args.unshift(def);
+    args.unshift({});
     return assign.apply(null, args);
   };
 }

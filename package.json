@@ -10,15 +10,10 @@
     "object-assign": "^4.0.1"
   },
   "devDependencies": {
-    "bootstrap": "3.3.5",
     "eslint": "1.9.0",
-    "font-awesome": "4.4.0",
-    "highlight.js": "8.9.1",
-    "shadejs": "skatejs/shade#2a69707",
     "skatejs-build": "skatejs/build#15656c8",
     "skatejs-types": "skatejs/types#1e9725b",
-    "webcomponents.js": "0.7.2",
-    "whatwg-fetch": "0.10.1"
+    "webcomponents.js": "0.7.2"
   },
   "scripts": {
     "build": "gulp build",
