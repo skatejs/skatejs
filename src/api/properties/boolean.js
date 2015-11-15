@@ -1,7 +1,6 @@
-import assign from 'object-assign';
-export default assign.bind(null, {}, {
+export default {
   coerce: value => !!value,
   default: false,
   deserialize: value => !(value === null),
   serialize: value => value ? '' : undefined
-});
+};
