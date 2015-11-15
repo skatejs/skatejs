@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.14.1
+
+### Fixed
+
+- [#436](https://github.com/skatejs/skatejs/issues/436) - Fix issue where property definition objects were being mutated and shared.
+
+## 0.14.0
 
 ### Added
 
