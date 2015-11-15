@@ -5,8 +5,7 @@ import string from './string';
 
 function prop (def) {
   return function (...args) {
-    args.unshift(def);
-    args.unshift({});
+    args.unshift({}, def);
     return assign.apply(null, args);
   };
 }

@@ -712,8 +712,7 @@
         args[_key] = arguments[_key];
       }
   
-      args.unshift(def);
-      args.unshift({});
+      args.unshift({}, def);
       return _objectAssign2['default'].apply(null, args);
     };
   }
