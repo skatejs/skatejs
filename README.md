@@ -176,9 +176,10 @@ skate('my-element', {
   // Called when the element is detached from the document.
   detached: function (elem) {},
 
-  // Gets called after the element is set up and all descendant components are
-  // initialised. This callback will be called on descendants before it is
-  // called on the host element.
+  // Gets called after the host element (this component) is is ready to be
+  // interacted with. Both `created` and `render` will be called prior to this
+  // being called. Descendants, however, may not be ready yet. If you need to
+  // interact with descendants, use the `skate.ready()` function.
   ready: function (elem) {},
 
   // Responsible for rendering stuff to the host element. This can do anything
@@ -892,7 +893,7 @@ And you could use it in the exact same way as used above. The only difference be
 
 
 
-### `ready(elementOrElements, callback)`
+### `ready (elementOrElements, callback)`
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
