@@ -43,4 +43,11 @@ describe('Document Observer', function () {
     observer.register();
     expect(getObserver()).to.equal(oldObserver);
   });
+
+  it('should throw an error if a MutationObserver implementation isn\'t found', function () {
+    const oldMutationObserver = window.MutationObserver;
+    window.MutationObserver = undefined;
+    expect(observer.register).to.throw('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
+    window.MutationObserver = oldMutationObserver;
+  });
 });
