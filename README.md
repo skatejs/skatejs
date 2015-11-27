@@ -69,7 +69,7 @@ Result
     - [Why not just patch `document.createElement()`?](#why-not-just-patch-document-createelement-)
   - [`emit (element, eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
   - [`fragment (...almostAnything)`](#fragment-)
-  - [`init (...elements)`](#init-)
+  - [`init (...elements)`](#init-elements)
   - [`noConflict ()`](#noconflict-)
   - [`render (element)`](#render-)
   - [`render.html(renderFunction)`](#render-html-)
