@@ -333,7 +333,9 @@
     var didPreventDefault = undefined;
     var currentElem = elem;
     cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-    Object.defineProperty(cEvent, 'target', { value: elem });
+    Object.defineProperty(cEvent, 'target', { get: function get() {
+        return elem;
+      } });
     while (currentElem && !cEvent.isPropagationStopped) {
       cEvent.currentTarget = currentElem;
       if (currentElem.dispatchEvent(cEvent) === false) {
@@ -898,7 +900,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = '0.14.1';
+  exports['default'] = '0.14.2';
   module.exports = exports['default'];
   
   return module.exports;
@@ -2219,10 +2221,13 @@
   
     // Make a constructor for the definition.
     if (opts.isNative) {
-      Ctor = document.registerElement(name, {
-        'extends': opts['extends'] || undefined,
+      var nativeDefinition = {
         prototype: opts.prototype
-      });
+      };
+      if (opts['extends']) {
+        nativeDefinition['extends'] = opts['extends'];
+      }
+      Ctor = document.registerElement(name, nativeDefinition);
     } else {
       Ctor = polyfillElementConstructor(opts);
       initDocument();
