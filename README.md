@@ -792,6 +792,8 @@ Same as what you'd come to expect from most libraries that offer a global namesp
 var currentSkate = skate.noConflict();
 ```
 
+*No conflict mode is only available from the version in `dist/` since that's the only version that exports a global.*
+
 
 
 ### `ready (elementOrElements, callback)`
