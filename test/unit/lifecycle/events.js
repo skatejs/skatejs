@@ -77,24 +77,24 @@ describe('lifecycle/events', function () {
       events: {
         test (e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.target.tagName).to.equal('SPAN');
-          expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
+          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test');
+          expect(e.target.tagName).to.equal('SPAN', 'test');
+          expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
         },
         'test a' (e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.target.tagName).to.equal('SPAN');
-          expect(e.currentTarget.tagName).to.equal('A');
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
+          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
+          expect(e.target.tagName).to.equal('SPAN', 'test a');
+          expect(e.currentTarget.tagName).to.equal('A', 'test a');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
         },
         'test span' (e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase());
-          expect(e.target.tagName).to.equal('SPAN');
-          expect(e.currentTarget.tagName).to.equal('SPAN');
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase());
+          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
+          expect(e.target.tagName).to.equal('SPAN', 'test span');
+          expect(e.currentTarget.tagName).to.equal('SPAN', 'test span');
+          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
         }
       }
     });

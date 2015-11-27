@@ -159,7 +159,7 @@ describe('dom', function () {
   describe('Should guard against nodes that may not fully implement the HTMLElement interface', function () {
     function createElementAndRemove (prop) {
       var el = document.createElement('div');
-      Object.defineProperty(el, prop, { value: undefined });
+      Object.defineProperty(el, prop, { get: () => undefined });
       expect(el[prop]).to.equal(undefined);
       return el;
     }

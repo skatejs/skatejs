@@ -118,10 +118,13 @@ function skate (name, userOptions) {
 
   // Make a constructor for the definition.
   if (opts.isNative) {
-    Ctor = document.registerElement(name, {
-      extends: opts.extends || undefined,
+    const nativeDefinition = {
       prototype: opts.prototype
-    });
+    };
+    if (opts.extends) {
+      nativeDefinition.extends = opts.extends;
+    }
+    Ctor = document.registerElement(name, nativeDefinition);
   } else {
     Ctor = polyfillElementConstructor(opts);
     initDocument();
