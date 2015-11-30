@@ -71,7 +71,7 @@ Result
   - [`fragment (...almostAnything)`](#fragment-almostanything)
   - [`init (...elements)`](#init-elements)
   - [`noConflict ()`](#noconflict-)
-  - [`ready(elementOrElements, callback)`](#ready-elementorelements-callback)
+  - [`ready (elementOrElements, callback)`](#ready-elementorelements-callback)
     - [Background](#background)
     - [The problem](#the-problem)
     - [The solution](#the-solution)
