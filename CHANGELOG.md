@@ -6,6 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.14.3
 
+### Fixed
+
 - [#441](https://github.com/skatejs/skatejs/issues/441) - Throw error if Mutation Observer is not found and it is required.
 
 ## 0.14.2
