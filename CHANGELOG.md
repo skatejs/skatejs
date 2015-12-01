@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.14.3
+
+- [#441](https://github.com/skatejs/skatejs/issues/441) - Throw error if Mutation Observer is not found and it is required.
+
+## 0.14.2
+
+### Fixed
+
+- [#440](https://github.com/skatejs/skatejs/issues/440) - Ensure docs for ready lifecycle callback and ready function are in sync.
+
 ## 0.14.1
 
 ### Fixed
