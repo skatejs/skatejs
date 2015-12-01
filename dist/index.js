@@ -900,7 +900,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = '0.14.2';
+  exports['default'] = '0.14.3';
   module.exports = exports['default'];
   
   return module.exports;
@@ -1945,8 +1945,17 @@
     }
   }
   
+  function createMutationObserver() {
+    var MutationObserver = window.MutationObserver;
+  
+    if (!MutationObserver) {
+      throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
+    }
+    return new MutationObserver(documentObserverHandler);
+  }
+  
   function createDocumentObserver() {
-    var observer = new window.MutationObserver(documentObserverHandler);
+    var observer = createMutationObserver();
     observer.observe(document, {
       childList: true,
       subtree: true
