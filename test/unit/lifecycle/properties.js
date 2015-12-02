@@ -314,6 +314,15 @@ describe('lifecycle/property', function () {
         expect(order[0]).to.equal('created');
         expect(order[1]).to.equal('set');
       });
+
+      it('is called once', function () {
+        let called = 0;
+        const elem = create({
+          created: () => ++called
+        });
+        elem.test = 'something else';
+        expect(called).to.equal(1);
+      });
     });
   });
 });
