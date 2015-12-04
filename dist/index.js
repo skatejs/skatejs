@@ -1275,6 +1275,10 @@
       }
   
       info.internalValue = initialValue;
+  
+      if (typeof opts.created === 'function') {
+        opts.created(elem, initialValue);
+      }
     };
   
     prop.get = function () {
