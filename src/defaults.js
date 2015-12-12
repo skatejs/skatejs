@@ -11,6 +11,10 @@ export default {
   // called on them.
   created: function () {},
 
+  // Responsible for rendering stuff to the host element. This can do anything
+  // you like.
+  render: function () {},
+
   // Called when the element is detached from the document.
   detached: function () {},
 
