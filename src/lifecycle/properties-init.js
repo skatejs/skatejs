@@ -13,6 +13,9 @@ function createNativePropertyDefinition (name, opts) {
     configurable: true,
     enumerable: true
   };
+  
+  
+  // Custom accessor lifecycle functions.
 
   prop.created = function (elem, initialValue) {
     let info = data(elem, `api/property/${name}`);
@@ -73,9 +76,25 @@ function createNativePropertyDefinition (name, opts) {
     info.internalValue = initialValue;
 
     if (typeof opts.created === 'function') {
-      opts.created(elem, initialValue);
+      opts.created(elem, {
+        name,
+        value: initialValue
+      });
     }
   };
+  
+  prop.ready = function (elem, initialValue) {
+    elem[name] = initialValue;
+    if (typeof opts.ready === 'function') {
+      opts.ready(elem, {
+        name,
+        value: initialValue
+      });
+    }
+  };
+  
+  
+  // Native accessor functions.
 
   prop.get = function () {
     const info = data(this, `api/property/${name}`);
