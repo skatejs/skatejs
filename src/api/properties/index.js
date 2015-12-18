@@ -1,5 +1,6 @@
 import assign from 'object-assign';
 import boolean from './boolean';
+import content from './content';
 import number from './number';
 import string from './string';
 
@@ -12,6 +13,7 @@ function prop (def) {
 
 export default {
   boolean: prop(boolean),
+  content: prop(content),
   number: prop(number),
   string: prop(string)
 };

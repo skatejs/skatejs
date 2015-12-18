@@ -623,6 +623,84 @@
   
   return module.exports;
 }).call(this);
+// src/api/properties/content.js
+(typeof window === 'undefined' ? global : window).__a183f72c67680b5e74dc8d39a9e2aaaa = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
+  
+  var _fragment2 = _interopRequireDefault(_fragment);
+  
+  function createDomArray(initialState, onUpdate) {
+    var childNodes = [].slice.call(initialState);
+    var onUpdateFn = typeof onUpdate === 'function' ? onUpdate : function () {};
+  
+    return Object.defineProperties({
+      appendChild: function appendChild(child) {
+        childNodes.push(child);
+        onUpdateFn();
+      },
+      removeChild: function removeChild(child) {
+        var index = childNodes.indexOf(child);
+        index > -1 && childNodes.splice(index, 1);
+        onUpdateFn();
+        return this;
+      },
+      replaceChild: function replaceChild(newChild, oldChild) {
+        var index = childNodes.indexOf(oldChild);
+        childNodes.splice(index, 1, newChild);
+        onUpdateFn();
+        return this;
+      }
+    }, {
+      childNodes: {
+        get: function get() {
+          return childNodes;
+        },
+        configurable: true,
+        enumerable: true
+      },
+      value: {
+        get: function get() {
+          return childNodes.length ? childNodes : '';
+        },
+        configurable: true,
+        enumerable: true
+      }
+    });
+  }
+  
+  exports['default'] = {
+    created: function created(elem) {
+      elem.__content = createDomArray(elem.childNodes, this.change.bind(null, elem));
+    },
+    get: function get(elem) {
+      return elem.__content;
+    },
+    set: function set(elem, data) {
+      if (data.newValue !== elem.__content) {
+        while (elem.__content.childNodes.length) {
+          elem.__content.childNodes.removeChild(elem.__content.childNodes[0]);
+        }
+        elem.__content.appendChild((0, _fragment2['default'])(data.newValue));
+      }
+    }
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/api/properties/number.js
 (typeof window === 'undefined' ? global : window).__01110a33f4fc3195613143c4e23f759c = (function () {
   var module = {
@@ -700,6 +778,10 @@
   
   var _boolean2 = _interopRequireDefault(_boolean);
   
+  var _content = __a183f72c67680b5e74dc8d39a9e2aaaa;
+  
+  var _content2 = _interopRequireDefault(_content);
+  
   var _number = __01110a33f4fc3195613143c4e23f759c;
   
   var _number2 = _interopRequireDefault(_number);
@@ -721,6 +803,7 @@
   
   exports['default'] = {
     boolean: prop(_boolean2['default']),
+    content: prop(_content2['default']),
     number: prop(_number2['default']),
     string: prop(_string2['default'])
   };
@@ -1691,6 +1774,10 @@
     // Called when the element is created after all descendants have had it
     // called on them.
     created: function created() {},
+  
+    // Responsible for rendering stuff to the host element. This can do anything
+    // you like.
+    render: function render() {},
   
     // Called when the element is detached from the document.
     detached: function detached() {},
