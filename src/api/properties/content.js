@@ -13,18 +13,29 @@ function createDomArray (initialState, onUpdate) {
     },
     appendChild (child) {
       childNodes.push(child);
-      onUpdateFn();
+      onUpdateFn({
+        newValue: child,
+        oldValue: null
+      });
     },
     removeChild (child) {
       const index = childNodes.indexOf(child);
       index > -1 && childNodes.splice(index, 1);
-      onUpdateFn();
+      onUpdateFn({
+        index: index,
+        newValue: null,
+        oldValue: child
+      });
       return this;
     },
     replaceChild (newChild, oldChild) {
       const index = childNodes.indexOf(oldChild);
       childNodes.splice(index, 1, newChild);
-      onUpdateFn();
+      onUpdateFn({
+        index: index,
+        newValue: newChild,
+        oldValue: oldChild
+      });
       return this;
     }
   };
