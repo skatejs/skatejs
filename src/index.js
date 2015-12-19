@@ -32,7 +32,7 @@ function makeOptions (userOptions) {
   }
 
   // Copy over non-standard options.
-  for (let name in userOptions) {
+  for (let name of Object.getOwnPropertyNames(userOptions)) {
     options[name] = userOptions[name];
   }
 
