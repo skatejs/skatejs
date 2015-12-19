@@ -13,7 +13,7 @@ function prop (def) {
 
 export default {
   boolean: prop(boolean),
-  content: prop(content),
+  content: content,
   number: prop(number),
   string: prop(string)
 };

@@ -1,102 +1,75 @@
+import assign from 'object-assign';
 import data from '../../util/data';
-import fragment from '../fragment';
 
-function normalize (node) {
-  return node instanceof DocumentFragment ? [].slice.call(node.childNodes) : [node];
+const { MutationObserver } = window;
+
+if (!MutationObserver) {
+  throw new Error('Usage of the content property requires MutationObserver support.');
 }
 
-function createDomArray (onUpdate) {
-  const childNodes = [];
-  const onUpdateFn = typeof onUpdate === 'function' ? onUpdate : function () {};
-	
-  return {
-    get childNodes () {
-      return childNodes;
+function change (el, cb) {
+  cb = cb || function () {};
+  return function (mo) {
+    cb(el, mo.addedNodes || [], mo.removedNodes || []);
+  };
+}
+
+function createFakeProperty (node, opts) {
+  return { 
+    get [opts.nodeAccessor] () {
+      return node;
     },
-    appendChild (newNode) {
-      childNodes.push.apply(childNodes, normalize(newNode));
-      onUpdateFn({
-        type: 'appendChild',
-        newValue: newNode,
-        oldValue: null
-      });
-      return newNode;
-    },
-    insertBefore (newNode, referenceNode) {
-      childNodes.splice.apply(null, [childNodes.indexOf(referenceNode), 0].concat(normalize(newNode)));
-      onUpdateFn({
-        type: 'insertBefore',
-        newValue: newNode,
-        oldValue: referenceNode
-      });
-      return newNode;
-    },
-    removeChild (oldNode) {
-      normalize(oldNode).forEach(function (oldNode) {
-        childNodes.splice(childNodes.indexOf(oldNode), 1);
-      });
-      onUpdateFn({
-        type: 'removeChild',
-        newValue: null,
-        oldValue: oldNode
-      });
-      return oldNode;
-    },
-    replaceChild (newNode, oldNode) {
-      childNodes.splice.apply(null, [childNodes.indexOf(oldNode), 1].concat(normalize(newNode)));
-      onUpdateFn({
-        type: 'replaceChild',
-        newValue: newNode,
-        oldValue: oldNode
-      });
-      return oldNode;
-    },
-    toArray () {
-      return childNodes;
-    },
-    toFragment () {
-      const frag = document.createDocumentFragment();
-      childNodes.forEach(child => frag.appendChild(child));
-      return frag;
-    },
-    toString () {
-      return childNodes.map(child => child.outerHTML || child.textContent).join('');
-    },
-    toValue () {
-      return childNodes.length ? childNodes : '';
+    get [opts.valueAccessor] () {
+      return null;
     }
   };
 }
 
-export default {
-  created (elem) {
-    const change = (this.change || function() {});
-    const eldata = data(elem);
-    eldata.contentProperty = createDomArray(change.bind(null, elem));
-    eldata.contentPropertyInitiaState = [].slice.call(elem.childNodes);
-  },
-  get (elem) {
-    return data(elem).contentProperty;
-  },
-  ready (elem) {
-    const eldata = data(elem);
-    eldata.contentProperty.appendChild(fragment(elem.__initialState));
-    delete eldata.contentPropertyIntialState;
-  },
-  set (elem, data) {
-    const eldata = data(elem);
-    
-    if (data.newValue === eldata.contentProperty) {
-      return;
+function createRealProperty (node, opts) {
+  Object.defineProperties(node, {
+    [opts.nodeAccessor]: {
+      get () {
+        return node;
+      }
+    },
+    [opts.valueAccessor]: {
+      get () {
+        const ch = this.childNodes;
+        return ch && ch.length ? [].slice.call(ch) : null;
+      }
     }
-    
-    const content = eldata.contentProperty;
-    const childNodes = content.childNodes;
-    
-    while (childNodes.length) {
-      childNodes.removeChild(childNodes[0]);
-    }
-    
-    content.appendChild(fragment(data.newValue));
+  });
+  return node;
+}
+
+function init (el, nodes) {
+  for (let a = 0; a < nodes.length; a++) {
+    el.appendChild(nodes[a]);
   }
-};
+}
+
+export default function (opts = {}) {
+  opts = assign({
+    nodeAccessor: 'node',
+    valueAccessor: 'nodes',
+    change: function () {},
+    type: 'div'
+  }, opts);
+  return {
+    created (el) {
+      const info = data(el);
+      info.contentNode = createFakeProperty(document.createElement(opts.type), opts);
+      info.initialState = [].slice.call(el.childNodes);
+    },
+    get (el) {
+      return data(el).contentNode;
+    },
+    ready (el) {
+      const info = data(el);
+      const observer = new MutationObserver(change(el, opts.change));
+      info.contentNode = createRealProperty(info.contentNode.node, opts);
+      init(info.contentNode, info.initialState);
+      observer.observe(info.contentNode, { childList: true });
+    }
+  };
+}
