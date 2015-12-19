@@ -623,6 +623,30 @@
   
   return module.exports;
 }).call(this);
+// src/util/data.js
+(typeof window === 'undefined' ? global : window).__18291b0452e01f65cf28d6695040736a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (element) {
+    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+  
+    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+    return namespace && (data[namespace] || (data[namespace] = {})) || data;
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/api/properties/content.js
 (typeof window === 'undefined' ? global : window).__a183f72c67680b5e74dc8d39a9e2aaaa = (function () {
   var module = {
@@ -638,76 +662,99 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
   
-  var _fragment2 = _interopRequireDefault(_fragment);
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
   
-  function createDomArray(initialState, onUpdate) {
-    var childNodes = [].slice.call(initialState);
-    var onUpdateFn = typeof onUpdate === 'function' ? onUpdate : function () {};
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
   
-    return Object.defineProperties({
-      appendChild: function appendChild(child) {
-        childNodes.push(child);
-        onUpdateFn({
-          newValue: child,
-          oldValue: null
-        });
-      },
-      removeChild: function removeChild(child) {
-        var index = childNodes.indexOf(child);
-        index > -1 && childNodes.splice(index, 1);
-        onUpdateFn({
-          index: index,
-          newValue: null,
-          oldValue: child
-        });
-        return this;
-      },
-      replaceChild: function replaceChild(newChild, oldChild) {
-        var index = childNodes.indexOf(oldChild);
-        childNodes.splice(index, 1, newChild);
-        onUpdateFn({
-          index: index,
-          newValue: newChild,
-          oldValue: oldChild
-        });
-        return this;
-      }
-    }, {
-      childNodes: {
-        get: function get() {
-          return childNodes;
-        },
-        configurable: true,
-        enumerable: true
-      },
-      value: {
-        get: function get() {
-          return childNodes.length ? childNodes : '';
-        },
-        configurable: true,
-        enumerable: true
-      }
-    });
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var MutationObserver = window.MutationObserver;
+  
+  if (!MutationObserver) {
+    throw new Error('Usage of the content property requires MutationObserver support.');
   }
   
-  exports['default'] = {
-    created: function created(elem) {
-      elem.__content = createDomArray(elem.childNodes, this.change.bind(null, elem));
-    },
-    get: function get(elem) {
-      return elem.__content;
-    },
-    set: function set(elem, data) {
-      if (data.newValue !== elem.__content) {
-        while (elem.__content.childNodes.length) {
-          elem.__content.childNodes.removeChild(elem.__content.childNodes[0]);
-        }
-        elem.__content.appendChild((0, _fragment2['default'])(data.newValue));
+  // Calls the `change` callback if it's defined.
+  function change(el, cb) {
+    cb = cb || function () {};
+    return function (mo) {
+      cb(el, mo.addedNodes || [], mo.removedNodes || []);
+    };
+  }
+  
+  // Creates a fake node for usage before the element is rendered so that the way
+  // of accessing the value of the content node does not change at any point
+  // during the rendering process. This is basically syntanctic sugar for not
+  // having to do something like:
+  //
+  //     elem.content && elem.content.value
+  //
+  // In your `render` function. Instead, you can just do:
+  //
+  //     elem.content.value
+  //
+  // This is to get around having to know about the implementation details which
+  // vary depending on if we're in native or polyfilled custom element land.
+  function createFakeNode(name) {
+    return Object.defineProperties({}, _defineProperty({}, name, {
+      get: function get() {
+        return null;
+      },
+      configurable: true,
+      enumerable: true
+    }));
+  }
+  
+  // Creates a real node so that the renering process can attach nodes to it.
+  function createRealNode(elem, name, selector) {
+    var node = selector ? elem.querySelector(selector) : document.createElement('div');
+    Object.defineProperty(node, name, {
+      get: function get() {
+        var ch = this.childNodes;
+        return ch && ch.length ? [].slice.call(ch) : null;
       }
+    });
+    return node;
+  }
+  
+  // Sets initial content for the specified node.
+  function init(node, nodes) {
+    for (var a = 0; a < nodes.length; a++) {
+      node.appendChild(nodes[a]);
     }
+  }
+  
+  exports['default'] = function () {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  
+    opts = (0, _objectAssign2['default'])({
+      accessor: 'nodes',
+      change: function change() {},
+      selector: ''
+    }, opts);
+    return {
+      created: function created(el) {
+        var info = (0, _utilData2['default'])(el);
+        info.contentNode = createFakeNode(opts.accessor);
+        info.initialState = [].slice.call(el.childNodes);
+      },
+      get: function get(el) {
+        return (0, _utilData2['default'])(el).contentNode;
+      },
+      ready: function ready(elem) {
+        var info = (0, _utilData2['default'])(elem);
+        var observer = new MutationObserver(change(elem, opts.change));
+        info.contentNode = createRealNode(elem, opts.accessor, opts.selector);
+        init(info.contentNode, info.initialState);
+        observer.observe(info.contentNode, { childList: true });
+      }
+    };
   };
+  
   module.exports = exports['default'];
   
   return module.exports;
@@ -814,34 +861,10 @@
   
   exports['default'] = {
     boolean: prop(_boolean2['default']),
-    content: prop(_content2['default']),
+    content: _content2['default'],
     number: prop(_number2['default']),
     string: prop(_string2['default'])
   };
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/data.js
-(typeof window === 'undefined' ? global : window).__18291b0452e01f65cf28d6695040736a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (element) {
-    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-  
-    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
-    return namespace && (data[namespace] || (data[namespace] = {})) || data;
-  };
-  
   module.exports = exports['default'];
   
   return module.exports;
@@ -1312,6 +1335,8 @@
       enumerable: true
     };
   
+    // Custom accessor lifecycle functions.
+  
     prop.created = function (elem, initialValue) {
       var info = (0, _utilData2['default'])(elem, 'api/property/' + name);
       info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
@@ -1371,9 +1396,24 @@
       info.internalValue = initialValue;
   
       if (typeof opts.created === 'function') {
-        opts.created(elem, initialValue);
+        opts.created(elem, {
+          name: name,
+          value: initialValue
+        });
       }
     };
+  
+    prop.ready = function (elem, initialValue) {
+      elem[name] = initialValue;
+      if (typeof opts.ready === 'function') {
+        opts.ready(elem, {
+          name: name,
+          value: initialValue
+        });
+      }
+    };
+  
+    // Native accessor functions.
   
     prop.get = function () {
       var info = (0, _utilData2['default'])(this, 'api/property/' + name);
@@ -1475,7 +1515,6 @@
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
       var prop = properties[name];
-      var initialValue = elem[name];
   
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -1491,7 +1530,9 @@
       // Once that bug is fixed, the initial value being passed as the second
       // argument to prop.created() can use the overridden property definition to
       // get the initial value.
-      prop.created && prop.created(elem, initialValue);
+      if (prop.created) {
+        prop.created(elem, elem[name]);
+      }
     });
   }
   
@@ -1506,21 +1547,23 @@
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports["default"] = propertiesApply;
+  exports['default'] = propertiesApply;
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
       var prop = properties[name];
-      prop.set && prop.set.call(elem, elem[name]);
+      if (typeof prop.ready === 'function') {
+        prop.ready(elem, elem[name]);
+      }
     });
   }
   
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
