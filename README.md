@@ -1009,7 +1009,7 @@ Now you can use your component imperatively:
 
 ```js
 var el = skate.create('my-element');
-el.content.innerHTML = '<p>test</p>';
+el.content.appendChild(skate.fragment('<p>test</p>'));
 ```
 
 Or declaratively:
