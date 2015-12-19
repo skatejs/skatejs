@@ -379,7 +379,7 @@ skate('my-element', {
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-1. `prototype` is set up in non-native (alread set up in native)
+1. `prototype` is set up in non-native (already set up in native)
 2. `events` are set up
 3. `properties` are defined
 4. `created` is invoked
