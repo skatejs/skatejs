@@ -2,7 +2,7 @@ import apiCreate from './api/create';
 import apiEmit from './api/emit';
 import apiFragment from './api/fragment';
 import apiInit from './api/init';
-import apiProperties from './api/properties/index';
+import apiProperties from './api/properties';
 import apiReady from './api/ready';
 import apiRender from './api/render/index';
 import apiVersion from './api/version';
