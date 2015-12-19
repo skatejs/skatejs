@@ -662,99 +662,83 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-  
-  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
-  
-  var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
   var _utilData2 = _interopRequireDefault(_utilData);
   
-  var MutationObserver = window.MutationObserver;
+  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
   
-  if (!MutationObserver) {
-    throw new Error('Usage of the content property requires MutationObserver support.');
+  var _fragment2 = _interopRequireDefault(_fragment);
+  
+  function normalize(node) {
+    return node instanceof DocumentFragment ? [].slice.call(node.childNodes) : [node];
   }
   
-  // Calls the `change` callback if it's defined.
-  function change(el, cb) {
-    cb = cb || function () {};
-    return function (mo) {
-      cb(el, mo.addedNodes || [], mo.removedNodes || []);
+  function mutate(elem, type, args) {
+    var desc = (0, _utilData2['default'])(elem).contentPropertyProjectee;
+    desc && desc[type].apply(desc, args);
+  }
+  
+  function update(elem, change) {
+    return function (type, args) {
+      mutate(elem, type, args);
+      change && change(elem, type, args);
     };
   }
   
-  // Creates a fake node for usage before the element is rendered so that the way
-  // of accessing the value of the content node does not change at any point
-  // during the rendering process. This is basically syntanctic sugar for not
-  // having to do something like:
-  //
-  //     elem.content && elem.content.value
-  //
-  // In your `render` function. Instead, you can just do:
-  //
-  //     elem.content.value
-  //
-  // This is to get around having to know about the implementation details which
-  // vary depending on if we're in native or polyfilled custom element land.
-  function createFakeNode(name) {
-    return Object.defineProperties({}, _defineProperty({}, name, {
-      get: function get() {
-        return null;
-      },
-      configurable: true,
-      enumerable: true
-    }));
-  }
+  function createDomArray(elem, update) {
+    var childNodes = [];
   
-  // Creates a real node so that the renering process can attach nodes to it.
-  function createRealNode(elem, name, selector) {
-    var node = selector ? elem.querySelector(selector) : document.createElement('div');
-    Object.defineProperty(node, name, {
-      get: function get() {
-        var ch = this.childNodes;
-        return ch && ch.length ? [].slice.call(ch) : null;
+    return Object.defineProperties({
+      appendChild: function appendChild(newNode) {
+        childNodes.push.apply(childNodes, normalize(newNode));
+        update('appendChild', [newNode]);
+        return newNode;
+      },
+      insertBefore: function insertBefore(newNode, referenceNode) {
+        childNodes.splice.apply(null, [childNodes.indexOf(referenceNode), 0].concat(normalize(newNode)));
+        update('insertBefore', [newNode, referenceNode]);
+        return newNode;
+      },
+      removeChild: function removeChild(oldNode) {
+        normalize(oldNode).forEach(function (oldNode) {
+          childNodes.splice(childNodes.indexOf(oldNode), 1);
+        });
+        update('removeChild', [oldNode]);
+        return oldNode;
+      },
+      replaceChild: function replaceChild(newNode, oldNode) {
+        childNodes.splice.apply(null, [childNodes.indexOf(oldNode), 1].concat(normalize(newNode)));
+        update('replaceChild', [newNode, oldNode]);
+        return oldNode;
+      }
+    }, {
+      childNodes: {
+        get: function get() {
+          return childNodes;
+        },
+        configurable: true,
+        enumerable: true
       }
     });
-    return node;
   }
   
-  // Sets initial content for the specified node.
-  function init(node, nodes) {
-    for (var a = 0; a < nodes.length; a++) {
-      node.appendChild(nodes[a]);
+  exports['default'] = {
+    created: function created(elem) {
+      var eldata = (0, _utilData2['default'])(elem);
+      eldata.contentProperty = createDomArray(elem, update(elem, this.change));
+      eldata.contentPropertyInitiaState = [].slice.call(elem.childNodes);
+      eldata.contentPropertyProjectee = this.selector ? elem.querySelector(this.selector) : null;
+    },
+    get: function get(elem) {
+      return (0, _utilData2['default'])(elem).contentProperty;
+    },
+    ready: function ready(elem) {
+      var eldata = (0, _utilData2['default'])(elem);
+      eldata.contentProperty.appendChild((0, _fragment2['default'])(eldata.contentPropertyInitiaState));
+      delete eldata.contentPropertyIntialState;
     }
-  }
-  
-  exports['default'] = function () {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-  
-    opts = (0, _objectAssign2['default'])({
-      accessor: 'nodes',
-      change: function change() {},
-      selector: ''
-    }, opts);
-    return {
-      created: function created(el) {
-        var info = (0, _utilData2['default'])(el);
-        info.contentNode = createFakeNode(opts.accessor);
-        info.initialState = [].slice.call(el.childNodes);
-      },
-      get: function get(el) {
-        return (0, _utilData2['default'])(el).contentNode;
-      },
-      ready: function ready(elem) {
-        var info = (0, _utilData2['default'])(elem);
-        var observer = new MutationObserver(change(elem, opts.change));
-        info.contentNode = createRealNode(elem, opts.accessor, opts.selector);
-        init(info.contentNode, info.initialState);
-        observer.observe(info.contentNode, { childList: true });
-      }
-    };
   };
-  
   module.exports = exports['default'];
   
   return module.exports;
@@ -861,7 +845,7 @@
   
   exports['default'] = {
     boolean: prop(_boolean2['default']),
-    content: _content2['default'],
+    content: prop(_content2['default']),
     number: prop(_number2['default']),
     string: prop(_string2['default'])
   };
@@ -2203,9 +2187,9 @@
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
   
-  var _apiPropertiesIndex = __db9d338f5bdfd7eb6a3bcf299ff15f91;
+  var _apiProperties = __db9d338f5bdfd7eb6a3bcf299ff15f91;
   
-  var _apiPropertiesIndex2 = _interopRequireDefault(_apiPropertiesIndex);
+  var _apiProperties2 = _interopRequireDefault(_apiProperties);
   
   var _apiReady = __83ca289f5309abef55c338a9f7a22385;
   
@@ -2399,7 +2383,7 @@
   skate.emit = _apiEmit2['default'];
   skate.fragment = _apiFragment2['default'];
   skate.init = _apiInit2['default'];
-  skate.properties = _apiPropertiesIndex2['default'];
+  skate.properties = _apiProperties2['default'];
   skate.ready = _apiReady2['default'];
   skate.render = _apiRenderIndex2['default'];
   skate.version = _apiVersion2['default'];
