@@ -53,7 +53,7 @@ export default {
   created (elem) {
     const eldata = data(elem);
     eldata.contentProperty = createDomArray(elem, update(elem, this.change));
-    eldata.contentPropertyInitiaState = [].slice.call(elem.childNodes);
+    eldata.contentPropertyInitialState = [].slice.call(elem.childNodes);
     eldata.contentPropertyProjectee = this.selector ? elem.querySelector(this.selector) : null;
   },
   get (elem) {
@@ -61,7 +61,7 @@ export default {
   },
   ready (elem) {
     const eldata = data(elem);
-    eldata.contentProperty.appendChild(fragment(eldata.contentPropertyInitiaState));
-    delete eldata.contentPropertyIntialState;
+    eldata.contentProperty.appendChild(fragment(eldata.contentPropertyInitialState));
+    delete eldata.contentPropertyInitialState;
   }
 };
