@@ -727,7 +727,7 @@
     created: function created(elem) {
       var eldata = (0, _utilData2['default'])(elem);
       eldata.contentProperty = createDomArray(elem, update(elem, this.change));
-      eldata.contentPropertyInitiaState = [].slice.call(elem.childNodes);
+      eldata.contentPropertyInitialState = [].slice.call(elem.childNodes);
       eldata.contentPropertyProjectee = this.selector ? elem.querySelector(this.selector) : null;
     },
     get: function get(elem) {
@@ -735,8 +735,8 @@
     },
     ready: function ready(elem) {
       var eldata = (0, _utilData2['default'])(elem);
-      eldata.contentProperty.appendChild((0, _fragment2['default'])(eldata.contentPropertyInitiaState));
-      delete eldata.contentPropertyIntialState;
+      eldata.contentProperty.appendChild((0, _fragment2['default'])(eldata.contentPropertyInitialState));
+      delete eldata.contentPropertyInitialState;
     }
   };
   module.exports = exports['default'];
@@ -2187,9 +2187,9 @@
   
   var _apiInit2 = _interopRequireDefault(_apiInit);
   
-  var _apiProperties = __db9d338f5bdfd7eb6a3bcf299ff15f91;
+  var _apiPropertiesIndex = __db9d338f5bdfd7eb6a3bcf299ff15f91;
   
-  var _apiProperties2 = _interopRequireDefault(_apiProperties);
+  var _apiPropertiesIndex2 = _interopRequireDefault(_apiPropertiesIndex);
   
   var _apiReady = __83ca289f5309abef55c338a9f7a22385;
   
@@ -2383,7 +2383,7 @@
   skate.emit = _apiEmit2['default'];
   skate.fragment = _apiFragment2['default'];
   skate.init = _apiInit2['default'];
-  skate.properties = _apiProperties2['default'];
+  skate.properties = _apiPropertiesIndex2['default'];
   skate.ready = _apiReady2['default'];
   skate.render = _apiRenderIndex2['default'];
   skate.version = _apiVersion2['default'];
