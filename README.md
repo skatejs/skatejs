@@ -52,6 +52,7 @@ Result
   - [ES6 Modules](#es6-modules)
   - [Global](#global)
 - [Examples](https://github.com/skatejs/skatejs#examples)
+- [Resources](https://github.com/skatejs/skatejs#resources)
 - [Usage](#usage)
 - [Component Lifecycle](#component-lifecycle)
 - [Event Binding](#event-binding)
@@ -157,6 +158,14 @@ If you're still skating old school the `dist` directory contains the compiled ES
 - [TodoMVC, classic DOM](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs)
 - [TodoMVC, functional UI](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs-dom-diff) (DOM diffing etc)
 - [AUI](https://bitbucket.org/atlassian/aui) (only some components)
+
+
+
+## Resources
+
+- [Web Platform Podcast: Custom Elements & SkateJS (#66)](https://www.youtube.com/watch?v=AbolmN4mp-g)
+- [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
+- [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
 
 
 
