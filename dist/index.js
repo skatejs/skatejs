@@ -738,12 +738,12 @@
       eldata.contentProperty.appendChild((0, _fragment2['default'])(eldata.contentPropertyInitialState));
       delete eldata.contentPropertyInitialState;
     },
-    set: function set(elem, data) {
-      var eldata = data(elem);
+    set: function set(elem, change) {
+      var eldata = (0, _utilData2['default'])(elem);
   
       // If the initial state hasn't been set yet then we can't do anything.
       if (!eldata.contentPropertyInitialState) {
-        eldata.contentProperty.appendChild((0, _fragment2['default'])(data.newValue));
+        eldata.contentProperty.appendChild((0, _fragment2['default'])(change.newValue));
       }
     }
   };
