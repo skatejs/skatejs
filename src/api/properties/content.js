@@ -63,5 +63,13 @@ export default {
     const eldata = data(elem);
     eldata.contentProperty.appendChild(fragment(eldata.contentPropertyInitialState));
     delete eldata.contentPropertyInitialState;
+  },
+  set (elem, data) {
+    const eldata = data(elem);
+    
+    // If the initial state hasn't been set yet then we can't do anything.
+    if (!eldata.contentPropertyInitialState) {
+      eldata.contentProperty.appendChild(fragment(data.newValue));
+    }
   }
 };
