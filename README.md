@@ -51,6 +51,7 @@ Result
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
   - [ES6 Modules](#es6-modules)
   - [Global](#global)
+- [Examples](https://github.com/skatejs/skatejs#examples)
 - [Usage](#usage)
 - [Component Lifecycle](#component-lifecycle)
 - [Event Binding](#event-binding)
