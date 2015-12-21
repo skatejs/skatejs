@@ -151,6 +151,14 @@ If you're still skating old school the `dist` directory contains the compiled ES
 
 
 
+## Examples
+
+- [TodoMVC, classic DOM](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs)
+- [TodoMVC, functional UI](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs-dom-diff) (DOM diffing etc)
+- [AUI](https://bitbucket.org/atlassian/aui) (only some components)
+
+
+
 ## Usage
 
 You define a component by passing a component ID and definition to the `skate()` function. The ID you specify corresponds to one of the following:
@@ -981,6 +989,55 @@ And you could use it in the exact same way as used above. The only difference be
 ### `version`
 
 Returns the current version of Skate.
+
+
+
+## Properties
+
+Skate ships with property definitions that solve common use cases. These are accessed by `skate.properties.propertyName()` and they are always functions that take a single argument.
+
+### `content`
+
+The content property allows you to define properties that you can expose to your component consumers which act like a DOM node but notify you of updates.
+
+A common example is when you have a component that accepts user-defined content and you want that content to be displayed at a specific place in your component.
+
+```js
+skate('my-component', {
+  properties: {
+    content: skate.properties.content({ selector: '.content' });
+  },
+  render: skate.render.html(function () {
+    return '<h1>Title</h1><section class="content"></section>';
+  });
+});
+```
+
+Now you can use your component imperatively:
+
+```js
+var el = skate.create('my-element');
+el.content.appendChild(skate.fragment('<p>test</p>'));
+```
+
+Or declaratively:
+
+```html
+<my-component>
+  <p>test</p>
+</my-component>
+```
+
+And the result would be the same:
+
+```html
+<my-component>
+  <h1>Title</h1>
+  <section>
+    <p>test</p>
+  </section>
+</my-component>
+```
 
 
 
