@@ -583,7 +583,7 @@
         (0, _init2['default'])(node);
       }
   
-      if (node) {
+      if (node instanceof Node) {
         frag.appendChild(node);
       }
   
@@ -740,11 +740,7 @@
     },
     set: function set(elem, change) {
       var eldata = (0, _utilData2['default'])(elem);
-  
-      // If the initial state hasn't been set yet then we can't do anything.
-      if (!eldata.contentPropertyInitialState) {
-        eldata.contentProperty.appendChild((0, _fragment2['default'])(change.newValue));
-      }
+      eldata.contentProperty.appendChild((0, _fragment2['default'])(change.newValue));
     }
   };
   module.exports = exports['default'];
