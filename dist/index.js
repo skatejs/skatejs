@@ -950,10 +950,11 @@
   
   exports['default'] = function (render) {
     return function (elem) {
+      var rendered = render(elem);
       while (elem.childNodes.length) {
         elem.removeChild(elem.childNodes[0]);
       }
-      elem.appendChild((0, _fragment2['default'])(render(elem)));
+      elem.appendChild((0, _fragment2['default'])(rendered));
     };
   };
   
@@ -1009,7 +1010,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = '0.15.0';
+  exports['default'] = '0.15.1';
   module.exports = exports['default'];
   
   return module.exports;

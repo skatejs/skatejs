@@ -1,11 +1,11 @@
-[![Join the chat at https://gitter.im/skatejs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# Skate
+
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
+[![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
 *This is the README for the master branch and is probably out of sync with the last stable release. To see the README for the last stable release select it from the list of tags.*
-
-# Skate
 
 Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
 
@@ -51,6 +51,8 @@ Result
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
   - [ES6 Modules](#es6-modules)
   - [Global](#global)
+- [Examples](https://github.com/skatejs/skatejs#examples)
+- [Resources](https://github.com/skatejs/skatejs#resources)
 - [Usage](#usage)
 - [Component Lifecycle](#component-lifecycle)
 - [Event Binding](#event-binding)
@@ -109,12 +111,6 @@ See the Sauce Labs badge at the top.
 
 
 
-## Questions?
-
-If you have any questions about Skate, feel free to join the public [HipChat room](https://www.hipchat.com/gB3fMrnzo) and @mention a member.
-
-
-
 ## Installing
 
 You can download the source yourself and put it wherever you want. Additionally you can use Bower:
@@ -148,6 +144,32 @@ The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es
 ### Global
 
 If you're still skating old school the `dist` directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with `skate`.
+
+
+
+## Examples
+
+- [SkateJS website (WIP)](https://github.com/skatejs/skatejs.github.io/tree/future)
+- [TodoMVC, classic DOM](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs)
+- [TodoMVC, functional UI](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs-dom-diff) (DOM diffing etc)
+- [AUI](https://bitbucket.org/atlassian/aui) (only some components)
+
+
+
+## Resources
+
+- [Web Platform Podcast: Custom Elements & SkateJS (#66)](https://www.youtube.com/watch?v=AbolmN4mp-g)
+- [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
+- [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
+
+
+
+## Questions?
+
+If you have any questions about Skate you can use one of these:
+
+- [Gitter](https://gitter.im/skatejs/skatejs)
+- [HipChat](https://www.hipchat.com/gB3fMrnzo)
 
 
 
@@ -379,7 +401,7 @@ skate('my-element', {
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-1. `prototype` is set up in non-native (alread set up in native)
+1. `prototype` is set up in non-native (already set up in native)
 2. `events` are set up
 3. `properties` are defined
 4. `created` is invoked

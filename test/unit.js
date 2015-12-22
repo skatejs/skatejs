@@ -8,6 +8,7 @@ import './unit/api/init';
 import './unit/api/properties';
 import './unit/api/ready';
 import './unit/api/render';
+import './unit/api/render/html';
 import './unit/attributes';
 import './unit/constructor';
 import './unit/document-observer';
