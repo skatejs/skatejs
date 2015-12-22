@@ -179,6 +179,9 @@ You define a component by passing a component ID and definition to the `skate()`
 
 - Tag name
 - Value of the `is` attribute
+
+Or the following if using [skatejs-types](https://github.com/skatejs/types) to specify a `type`:
+
 - Attribute name
 - Class name
 
@@ -248,12 +251,6 @@ skate('my-element', {
       e.delegateTarget;
     },
 
-    // Multiple handlers.
-    click: [
-      handler1,
-      handler2
-    ],
-
     // Focus and blur can be delegated, too.
     'focus .something': function () {},
     'blur .something': function () {}
@@ -266,21 +263,6 @@ skate('my-element', {
   // Restricts a particular component to binding explicitly to an element with
   // a tag name that matches the specified value. This value is empty by
   // default.
-  //
-  // Depending on the component type, it behaves like so:
-  //
-  // - When applied to a custom element, the component ID is used to match the
-  //   value of the element's `is` attribute and the element's tag name is
-  //   matched against the value specified here. This conforms with the custom
-  //   element spec.
-  //
-  // - When given to a component that binds to an element using an attribute,
-  //   the value specified here must match the element's tag name.
-  //
-  // - When specified on a component that is bound using a class name, this
-  //   value must match the element's tag name.
-  //
-  // - If the value is empty, then the component is not restricted at all.
   extends: '',
 
 
@@ -312,14 +294,21 @@ skate('my-element', {
       // is detected. If you simply want to coerce the value, return the coerced
       // value. You *must* return a value from this. If you don't return, then
       // the coerced value becomes `undefined`.
-      coerce: function (value) {}
+      coerce: function (value) {},
 
       // This will be used as the default value for the property. If you specify
       // a function then it will be invoked and the return value will be used.
       // This option will also be used in place of the value returned from the
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
-      default: 'default value'
+      default: 'default value',
+      
+      // Called when the property is created on the element. The value of
+      // `data` is an object containing:
+      //
+      // - `name` the name of the property
+      // - `value` the initial value of the property
+      created: function (elem, data) {},
 
       // Custom getter. The return value is used as the property value when
       // retrieved. If you don't specify a getter, the value that it was set as
@@ -329,15 +318,15 @@ skate('my-element', {
       // the property was accessed.
       //
       // To make a property "readonly", specify a getter without a setter.
-      get: function (element) {},
+      get: function (elem) {},
 
       // Custom setter. Set value as you see fit. Return value is ignored. If
       // you don't specify a getter, then whatever `newValue` was passed in to
       // the setter, is returned when you access the property.
       // You receive two arguments:
       //
-      // - `element` The element that the property is being set on.
-      // - `changeData` Information about the change.
+      // - `elem` The element that the property is being set on.
+      // - `data` Information about the change.
       //
       // The `changeData` property has three entries:
       //
@@ -348,7 +337,7 @@ skate('my-element', {
       // If you set the value to the same value that the property already
       // is, then the setter is still triggered. However, both `newValue` and
       // `oldValue` will be the same value.
-      set: function (element, changeData) {}
+      set: function (elem, data) {}
     }
   },
 
@@ -1069,6 +1058,8 @@ skate('datalist', {
 });
 ```
 
+Or if you're using [skatejs-types](https://github.com/skatejs/types):
+
 `<input placeholder="">`:
 
 ```js
@@ -1152,7 +1143,7 @@ Skate will always be a superset of the custom element spec. This means that core
 
 #### 2. Performance
 
-The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be wary of this.
+The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
 
 #### 3. With great power comes great responsibility
 
@@ -1242,16 +1233,6 @@ If you have a DOM tree that you don't want Skate to polyfill then you can add th
 <div data-skate-ignore>
   <!-- Everything including the container will be ignored. -->
 </div>
-```
-
-
-
-## No Conflict
-
-Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring the global `skate` to the previous value.
-
-```js
-var mySkate = skate.noConflict();
 ```
 
 
