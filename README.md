@@ -7,6 +7,8 @@
 
 # Skate
 
+[![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Skate is a web component library that provides an API to bind behaviour to DOM elements. It's based on the W3C specification for Custom Elements.
 
 - Provides a superset of the [Custom Element Spec](http://w3c.github.io/webcomponents/spec/custom/).
