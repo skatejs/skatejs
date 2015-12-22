@@ -900,7 +900,7 @@
   Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports['default'] = '0.15.0';
+  exports['default'] = '0.15.1';
   module.exports = exports['default'];
   
   return module.exports;
@@ -1691,6 +1691,10 @@
     // Called when the element is created after all descendants have had it
     // called on them.
     created: function created() {},
+  
+    // Responsible for rendering stuff to the host element. This can do anything
+    // you like.
+    render: function render() {},
   
     // Called when the element is detached from the document.
     detached: function detached() {},
