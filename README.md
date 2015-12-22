@@ -111,12 +111,6 @@ See the Sauce Labs badge at the top.
 
 
 
-## Questions?
-
-If you have any questions about Skate, feel free to join the public [HipChat room](https://www.hipchat.com/gB3fMrnzo) and @mention a member.
-
-
-
 ## Installing
 
 You can download the source yourself and put it wherever you want. Additionally you can use Bower:
@@ -167,6 +161,15 @@ If you're still skating old school the `dist` directory contains the compiled ES
 - [Web Platform Podcast: Custom Elements & SkateJS (#66)](https://www.youtube.com/watch?v=AbolmN4mp-g)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
+
+
+
+## Questions?
+
+If you have any questions about Skate you can use one of these:
+
+- [Gitter](https://gitter.im/skatejs/skatejs)
+- [HipChat](https://www.hipchat.com/gB3fMrnzo)
 
 
 
