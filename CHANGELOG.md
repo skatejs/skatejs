@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.1
+
+### Fixed
+
+- [#114](https://github.com/skatejs/skatejs/issues/114) - TodoMVC style example. Documented in `README`.
+- [#450](https://github.com/skatejs/skatejs/issues/450) - Missing default of `render`.
+
 ## 0.15.0
+
+### Fixed
 
 - [#445](https://github.com/skatejs/skatejs/issues/445) - Add a created callback to the property definition.
 
