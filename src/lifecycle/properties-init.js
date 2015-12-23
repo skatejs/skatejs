@@ -92,7 +92,7 @@ function createNativePropertyDefinition (name, opts) {
     const info = data(this, `api/property/${name}`);
     const init = info.internalValue;
     this[name] = typeof init === 'undefined' ? this[name] : init;
-  },
+  };
 
   prop.set = function (newValue) {
     let info = data(this, `api/property/${name}`);
