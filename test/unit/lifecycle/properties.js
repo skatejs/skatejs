@@ -76,10 +76,38 @@ describe('lifecycle/property', function () {
         expect(elem.getAttribute('test-name')).to.equal('something else');
       });
 
-      it('when a string, the value is used as the attribute name', function () {
-        let elem = create({ attribute: 'test-name' });
-        elem.test = 'something';
-        expect(elem.getAttribute('test-name')).to.equal('something');
+      describe('undefined and null', function () {
+        it('when a string, the value is used as the attribute name', function () {
+          let elem = create({ attribute: 'test-name' });
+          elem.test = 'something';
+          expect(elem.getAttribute('test-name')).to.equal('something');
+        });
+        
+        it('when a property is set to undefined, the attribute should not be set', function () {
+          let elem = create({ attribute: true });
+          elem.test = undefined;
+          expect(elem.hasAttribute('test')).to.equal(false);
+        });
+        
+        it('when a property is set to null, the attribute should not be set', function () {
+          let elem = create({ attribute: true });
+          elem.test = null;
+          expect(elem.hasAttribute('test')).to.equal(false);
+        });
+        
+        it('when an attribute is set to a string, the property should be set to an empty string', function () {
+          let elem = create({ attribute: true });
+          elem.setAttribute('test', '');
+          expect(elem.test).to.equal('');
+        });
+        
+        it('when an attribute is removed, the property should be set to undefined', function () {
+          let elem = create({ attribute: true });
+          elem.setAttribute('test', 'test');
+          expect(elem.test).to.equal('test');
+          elem.removeAttribute('test');
+          expect(elem.test).to.equal(undefined);
+        });
       });
 
       describe('deserialize()', function () {
@@ -103,7 +131,6 @@ describe('lifecycle/property', function () {
           expect(elem.test[2]).to.equal(3);
         });
 
-        // This test is a
         it('coerces the initial value if serialized from an attribute', function () {
           let elem = createFromHtml('<span test=""></span>', {
             attribute: true,
@@ -156,11 +183,19 @@ describe('lifecycle/property', function () {
           expect(elem.test).to.equal('something');
         });
 
-        it('is returned by get() when the property is not defined', function () {
+        it('is returned by get() when the property is undefined', function () {
           let elem = create({ default: () => 'something' });
           elem.test = 'something else';
           expect(elem.test).to.equal('something else');
           elem.test = undefined;
+          expect(elem.test).to.equal('something');
+        });
+        
+        it('is returned by get() when the property is null', function () {
+          let elem = create({ default: () => 'something' });
+          elem.test = 'something else';
+          expect(elem.test).to.equal('something else');
+          elem.test = null;
           expect(elem.test).to.equal('something');
         });
 
