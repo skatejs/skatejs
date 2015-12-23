@@ -112,7 +112,7 @@ function createNativePropertyDefinition (name, opts) {
 
     if (info.linkedAttribute && !info.updatingAttribute) {
       let serializedValue = opts.serialize(newValue);
-      if (serializedValue === undefined) {
+      if (serializedValue == null) {
         info.removeAttribute.call(this, info.linkedAttribute);
       } else {
         info.setAttribute.call(this, info.linkedAttribute, serializedValue);
