@@ -108,7 +108,7 @@ function createNativePropertyDefinition (name, opts) {
       newValue = opts.coerce(newValue);
     }
 
-    info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
+    info.internalValue = newValue == null ? info.defaultValue : newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
       let serializedValue = opts.serialize(newValue);
