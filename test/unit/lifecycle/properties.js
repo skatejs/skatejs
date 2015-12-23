@@ -203,6 +203,21 @@ describe('lifecycle/property', function () {
           let elem = create({ default: null });
           expect(elem.test).to.equal(undefined);
         });
+        
+        it('should return the default value if a linked attribute is removed', function () {
+          const elem = create({ attribute: true, default: 'something' });
+          
+          // Ensure defaults are there.
+          expect(elem.test).to.equal('something');
+          expect(elem.getAttribute('test')).to.equal('something');
+          
+          // Remove.
+          elem.removeAttribute('test');
+          
+          // Should be in the same state because the default is "something".
+          expect(elem.test).to.equal('something');
+          expect(elem.getAttribute('test')).to.equal('something');
+        });
 
         it('context and arguments', function (done) {
           let opts = {

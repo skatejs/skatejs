@@ -31,19 +31,27 @@ function createNativePropertyDefinition (name, opts) {
     } else if (!empty(opts.default)) {
       info.defaultValue = opts.default;
     }
+    
+    const defaultValue = info.defaultValue;
+    const defaultValueIsEmpty = empty(defaultValue);
 
-    // TODO Refactor
+    // TODO Refactor to be cleaner.
     if (info.linkedAttribute) {
       if (!info.attributeMap) {
         info.attributeMap = {};
 
         elem.removeAttribute = function (attrName) {
           info.updatingAttribute = true;
-          info.removeAttribute.call(this, attrName);
+
+          if (defaultValueIsEmpty) {
+            info.removeAttribute.call(this, attrName);
+          } else {
+            info.setAttribute.call(this, attrName, defaultValue);
+          }
 
           if (attrName in info.attributeMap) {
             const propertyName = info.attributeMap[attrName];
-            elem[propertyName] = undefined;
+            elem[propertyName] = defaultValueIsEmpty ? undefined : defaultValue;
           }
 
           info.updatingAttribute = false;
