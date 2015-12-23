@@ -1,6 +1,7 @@
 import assign from 'object-assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import empty from '../util/empty';
 
 // TODO Split apart createNativePropertyDefinition function.
 
@@ -23,7 +24,7 @@ function createNativePropertyDefinition (name, opts) {
 
     if (typeof opts.default === 'function') {
       info.defaultValue = opts.default(elem);
-    } else if (opts.default !== undefined) {
+    } else if (!empty(opts.default)) {
       info.defaultValue = opts.default;
     }
 
@@ -108,11 +109,11 @@ function createNativePropertyDefinition (name, opts) {
       newValue = opts.coerce(newValue);
     }
 
-    info.internalValue = newValue == null ? info.defaultValue : newValue;
+    info.internalValue = empty(newValue) ? info.defaultValue : newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
       let serializedValue = opts.serialize(newValue);
-      if (serializedValue == null) {
+      if (empty(serializedValue)) {
         info.removeAttribute.call(this, info.linkedAttribute);
       } else {
         info.setAttribute.call(this, info.linkedAttribute, serializedValue);

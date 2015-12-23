@@ -198,6 +198,11 @@ describe('lifecycle/property', function () {
           elem.test = null;
           expect(elem.test).to.equal('something');
         });
+        
+        it('is normalized to undefined if null is passed', function () {
+          let elem = create({ default: null });
+          expect(elem.test).to.equal(undefined);
+        });
 
         it('context and arguments', function (done) {
           let opts = {
