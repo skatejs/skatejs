@@ -5,6 +5,10 @@ import empty from '../util/empty';
 
 // TODO Split apart createNativePropertyDefinition function.
 
+function getData (elem, name) {
+  return data(elem, `api/property/${name}`);
+}
+
 function getLinkedAttribute (name, attr) {
   return attr === true ? dashCase(name) : attr;
 }
@@ -16,7 +20,7 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.created = function (elem, initialValue) {
-    let info = data(elem, `api/property/${name}`);
+    let info = getData(elem, name);
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
     info.removeAttribute = elem.removeAttribute;
     info.setAttribute = elem.setAttribute;
@@ -79,7 +83,7 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.get = function () {
-    const info = data(this, `api/property/${name}`);
+    const info = getData(this, name);
     const internalValue = info.internalValue;
 
     if (opts.get) {
@@ -90,13 +94,13 @@ function createNativePropertyDefinition (name, opts) {
   };
   
   prop.init = function () {
-    const info = data(this, `api/property/${name}`);
+    const info = getData(this, name);
     const init = info.internalValue;
     this[name] = typeof init === 'undefined' ? this[name] : init;
   };
 
   prop.set = function (newValue) {
-    let info = data(this, `api/property/${name}`);
+    const info = getData(this, name);
     let oldValue;
 
     if (info.updatingProperty) {
