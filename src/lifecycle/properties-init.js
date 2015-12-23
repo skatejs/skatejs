@@ -79,13 +79,20 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.get = function () {
     const info = data(this, `api/property/${name}`);
+    const internalValue = info.internalValue;
 
     if (opts.get) {
-      return opts.get(this);
+      return opts.get(this, { name, internalValue });
     }
 
-    return info.internalValue;
+    return internalValue;
   };
+  
+  prop.init = function () {
+    const info = data(this, `api/property/${name}`);
+    const init = info.internalValue;
+    this[name] = typeof init === 'undefined' ? this[name] : init;
+  },
 
   prop.set = function (newValue) {
     let info = data(this, `api/property/${name}`);
@@ -97,20 +104,11 @@ function createNativePropertyDefinition (name, opts) {
 
     info.updatingProperty = true;
 
-    if (info.hasBeenSetOnce) {
-      oldValue = this[name];
-    } else {
-      oldValue = undefined;
-      info.hasBeenSetOnce = true;
-    }
-
     if (typeof opts.coerce === 'function') {
       newValue = opts.coerce(newValue);
     }
 
-    if (!opts.get) {
-      info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
-    }
+    info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
       let serializedValue = opts.serialize(newValue);

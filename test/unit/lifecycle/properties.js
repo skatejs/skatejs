@@ -3,6 +3,24 @@ import propertiesCreated from '../../../src/lifecycle/properties-created';
 import propertiesReady from '../../../src/lifecycle/properties-ready';
 
 describe('lifecycle/property', function () {
+  function initProperty (elem, definition, name = 'test') {
+    let prop = { [name]: propertiesInit(definition)(name) };
+    propertiesCreated(elem, prop);
+    propertiesReady(elem, prop);
+    return elem;
+  }
+
+  function create (definition, name) {
+    return initProperty(document.createElement('div'), definition, name);
+  }
+
+  function createFromHtml (html, definition, name) {
+    let elem = document.createElement('div');
+    elem.innerHTML = html;
+    elem = elem.childNodes[0];
+    return initProperty(elem, definition, name);
+  }
+    
   it('should accept zero arguments', function () {
     propertiesInit();
   });
@@ -46,24 +64,6 @@ describe('lifecycle/property', function () {
   });
 
   describe('api', function () {
-    function initProperty (elem, definition, name = 'test') {
-      let prop = { [name]: propertiesInit(definition)(name) };
-      propertiesCreated(elem, prop);
-      propertiesReady(elem, prop);
-      return elem;
-    }
-
-    function create (definition, name) {
-      return initProperty(document.createElement('div'), definition, name);
-    }
-
-    function createFromHtml (html, definition, name) {
-      let elem = document.createElement('div');
-      elem.innerHTML = html;
-      elem = elem.childNodes[0];
-      return initProperty(elem, definition, name);
-    }
-
     describe('attribute', function () {
       it('when true, links an attribute of the name (dash-cased)', function () {
         let elem = createFromHtml('<span test-name="something"></span>', { attribute: true }, 'testName');
@@ -199,14 +199,27 @@ describe('lifecycle/property', function () {
         expect(elem.test).to.equal('something');
       });
 
-      it('context and arguments', function () {
+      it('context and arguments', function (done) {
         let opts = {
-          get () {
+          attribute: true,
+          get (elem, data) {
             expect(this.get).to.equal(opts.get);
-            expect(arguments.length).to.equal(1);
+            expect(arguments.length).to.equal(2);
+            expect(elem.tagName).to.equal('DIV');
+            expect(data).to.contain({
+              name: 'test',
+              internalValue: 'initial'
+            });
+            done();
           }
         };
-        create(opts);
+        
+        // We create from HTML so that we can set the initial value and see if
+        // that gets passed as the internal value.
+        const elem = createFromHtml('<div test="initial"></div>', opts);
+        
+        // Trigger the getter.
+        elem.test;
       });
     });
 
@@ -323,6 +336,23 @@ describe('lifecycle/property', function () {
         elem.test = 'something else';
         expect(called).to.equal(1);
       });
+    });
+  });
+  
+  describe('patterns', function () {
+    it('should allow you to do something with a set value but return a completely different value', function () {
+      let set;
+      const elem = createFromHtml('<div test="initial"></div>', {
+        attribute: true,
+        set: (elem, data) => set = data.newValue,
+        get: () => 'get'
+      });
+      
+      expect(set).to.equal('initial');
+      expect(elem.test).to.equal('get');
+      elem.test = 'set';
+      expect(set).to.equal('set');
+      expect(elem.test).to.equal('get');
     });
   });
 });
