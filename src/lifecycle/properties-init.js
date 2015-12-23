@@ -66,7 +66,7 @@ function createNativePropertyDefinition (name, opts) {
       info.attributeMap[info.linkedAttribute] = name;
     }
 
-    if (initialValue === undefined) {
+    if (empty(initialValue)) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
         let attributeValue = elem.getAttribute(info.linkedAttribute);
         initialValue = opts.deserialize(attributeValue);
@@ -94,9 +94,8 @@ function createNativePropertyDefinition (name, opts) {
   };
   
   prop.init = function () {
-    const info = getData(this, name);
-    const init = info.internalValue;
-    this[name] = typeof init === 'undefined' ? this[name] : init;
+    const init = getData(this, name).internalValue;
+    this[name] = empty(init) ? this[name] : init;
   };
 
   prop.set = function (newValue) {
