@@ -70,14 +70,14 @@ describe('api/properties', function () {
   describe('string', function () {
     it('values', function () {
       let elem = create(properties.string());
-      expect(elem.test).to.equal(undefined);
+      expect(elem.test).to.equal('');
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
         [false, 'false', 'false'],
-        [null, 'null', 'null'],
-        [undefined, undefined, null],
+        [null, '', null],
+        [undefined, '', null],
         [0, '0', '0'],
-        ['', '', '']
+        ['', '', null]
       ]);
     });
   });
