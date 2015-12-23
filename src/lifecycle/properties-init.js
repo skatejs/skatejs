@@ -51,7 +51,7 @@ function createNativePropertyDefinition (name, opts) {
 
           if (attrName in info.attributeMap) {
             const propertyName = info.attributeMap[attrName];
-            elem[propertyName] = defaultValueIsEmpty ? undefined : defaultValue;
+            elem[propertyName] = undefined;
           }
 
           info.updatingAttribute = false;
