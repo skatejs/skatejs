@@ -33,8 +33,18 @@ describe('lifecycle/property', function () {
   it('should not leak options to other definitions', function () {
     const elem = element().skate({
       properties: {
-        test1: { attribute: true, default: 'test1' },
-        test2: { attribute: true, default: 'test2' }
+        test1: { 
+          attribute: true, 
+          default: 'test1', 
+          deserialize: () => 'test1',
+          serialize: () => 'test1' 
+        },
+        test2: { 
+          attribute: true, 
+          default: 'test2', 
+          deserialize: () => 'test2',
+          serialize: () => 'test2' 
+        }
       }
     })();
 

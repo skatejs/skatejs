@@ -26,6 +26,7 @@ function createNativePropertyDefinition (name, opts) {
   prop.created = function (elem, initialValue) {
     let info = getData(elem, name);
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
+    info.opts = opts;
     info.updatingProperty = false;
     
     // Ensure we can get the info from inside the attribute methods.
@@ -55,7 +56,7 @@ function createNativePropertyDefinition (name, opts) {
           if (empty(info.defaultValue)) {
             removeAttribute.call(this, attrName);
           } else {
-            setAttribute.call(this, attrName, opts.serialize(info.defaultValue));
+            setAttribute.call(this, attrName, info.opts.serialize(info.defaultValue));
           }
 
           if (prop) {
@@ -77,7 +78,7 @@ function createNativePropertyDefinition (name, opts) {
           setAttribute.call(this, attrName, attrValue);
 
           if (prop) {
-            elem[prop] = opts.deserialize(attrValue);
+            elem[prop] = info.opts.deserialize(attrValue);
           }
 
           info.updatingAttribute = false;
