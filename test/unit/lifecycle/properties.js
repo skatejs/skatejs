@@ -45,11 +45,15 @@ describe('lifecycle/property', function () {
     elem.test2 = undefined;
     expect(elem.test1).to.equal('test1');
     expect(elem.test2).to.equal('test2');
+    expect(elem.getAttribute('test1')).to.equal('test1');
+    expect(elem.getAttribute('test2')).to.equal('test2');
     
     elem.removeAttribute('test1');
     elem.removeAttribute('test2');
     expect(elem.test1).to.equal('test1');
     expect(elem.test2).to.equal('test2');
+    expect(elem.getAttribute('test1')).to.equal('test1');
+    expect(elem.getAttribute('test2')).to.equal('test2');
   });
 
   describe('property definition', function () {

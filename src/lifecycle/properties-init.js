@@ -36,9 +36,6 @@ function createNativePropertyDefinition (name, opts) {
     } else if (!empty(opts.default)) {
       info.defaultValue = opts.default;
     }
-    
-    const defaultValue = info.defaultValue;
-    const defaultValueIsEmpty = empty(defaultValue);
 
     // TODO Refactor to be cleaner.
     if (info.linkedAttribute) {
@@ -55,10 +52,10 @@ function createNativePropertyDefinition (name, opts) {
           const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
 
-          if (defaultValueIsEmpty) {
+          if (empty(info.defaultValue)) {
             removeAttribute.call(this, attrName);
           } else {
-            setAttribute.call(this, attrName, opts.serialize(defaultValue));
+            setAttribute.call(this, attrName, opts.serialize(info.defaultValue));
           }
 
           if (prop) {
