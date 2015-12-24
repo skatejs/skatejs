@@ -65,6 +65,17 @@ describe('lifecycle/property', function () {
     expect(elem.getAttribute('test1')).to.equal('test1');
     expect(elem.getAttribute('test2')).to.equal('test2');
   });
+  
+  it('should not set a linked attribute to "undefined" if the prop is set to undefined', function () {
+    const elem = create({ attribute: true });
+    
+    expect(elem.test).to.equal(undefined);
+    expect(elem.getAttribute('test')).to.equal(null);
+    
+    elem.test = undefined;
+    expect(elem.test).to.equal(undefined);
+    expect(elem.getAttribute('test')).to.equal(null);
+  });
 
   describe('property definition', function () {
     function create () {
@@ -387,12 +398,26 @@ describe('lifecycle/property', function () {
       it('is called before set()', function () {
         let order = [];
         let elem = create({
-          coerce: () => order.push('type'),
+          coerce: () => order.push('coerce'),
           set: () => order.push('set')
         });
+        
         elem.test = 'something';
-        expect(order[0]).to.equal('type');
-        expect(order[1]).to.equal('set');
+        
+        // Called to coerce the initial value in created.
+        expect(order[0]).to.equal('coerce');
+        
+        // Called just before set, after ready.
+        expect(order[1]).to.equal('coerce');
+        
+        // Called after coerce, after ready.
+        expect(order[2]).to.equal('set');
+        
+        // Called before set upon manual setting.
+        expect(order[3]).to.equal('coerce');
+        
+        // Called after coerce upon manual setting.
+        expect(order[4]).to.equal('set');
       });
 
       it('context and arguments', function (done) {

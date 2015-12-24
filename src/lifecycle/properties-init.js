@@ -39,6 +39,11 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // TODO Refactor to be cleaner.
+    //
+    // We only override removeAttribute and setAttribute once. This means that
+    // if you define 10 properties, they still only get overridden once. For
+    // this reason, we must re-get info / opts from within the property methods
+    // since the functions aren't recreated for each scope.
     if (info.linkedAttribute) {
       if (!info.attributeMap) {
         info.attributeMap = {};
@@ -88,6 +93,7 @@ function createNativePropertyDefinition (name, opts) {
       info.attributeMap[info.linkedAttribute] = name;
     }
 
+    // Set up initial value if it wasn't specified.
     if (empty(initialValue)) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
         initialValue = opts.deserialize(elem.getAttribute(info.linkedAttribute));
@@ -96,8 +102,10 @@ function createNativePropertyDefinition (name, opts) {
       }
     }
 
-    info.internalValue = initialValue;
+    // We must coerce the initial value just in case it wasn't already.
+    info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
 
+    // User-defined created callback.
     if (typeof opts.created === 'function') {
       opts.created(elem, initialValue);
     }
@@ -121,7 +129,7 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.set = function (newValue) {
     const info = getData(this, name);
-    let oldValue;
+    const oldValue = info.oldValue;
 
     if (info.updatingProperty) {
       return;
@@ -148,16 +156,11 @@ function createNativePropertyDefinition (name, opts) {
       }
     }
 
-    let changeData = {
-      name: name,
-      newValue: newValue,
-      oldValue: oldValue
-    };
-
     if (typeof opts.set === 'function') {
-      opts.set(this, changeData);
+      opts.set(this, { name, newValue, oldValue });
     }
 
+    info.oldValue = newValue;
     info.updatingProperty = false;
   };
 
