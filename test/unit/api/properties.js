@@ -53,13 +53,13 @@ describe('api/properties', function () {
   });
 
   describe('number', function () {
-    it('default', function () {
+    it('values', function () {
       let elem = create(properties.number());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
         [false, 0, '0'],
-        [null, 0, '0'],
+        [null, undefined, null],
         [undefined, undefined, null],
         [0.1, 0.1, '0.1'],
         ['', 0, '0']
@@ -70,14 +70,14 @@ describe('api/properties', function () {
   describe('string', function () {
     it('values', function () {
       let elem = create(properties.string());
-      expect(elem.test).to.equal('');
+      expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
         [false, 'false', 'false'],
-        [null, '', null],
-        [undefined, '', null],
+        [null, undefined, null],
+        [undefined, undefined, null],
         [0, '0', '0'],
-        ['', '', null]
+        ['', '', '']
       ]);
     });
   });
