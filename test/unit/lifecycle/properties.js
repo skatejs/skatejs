@@ -1,3 +1,4 @@
+import element from '../../lib/element';
 import propertiesInit from '../../../src/lifecycle/properties-init';
 import propertiesCreated from '../../../src/lifecycle/properties-created';
 import propertiesReady from '../../../src/lifecycle/properties-ready';
@@ -27,6 +28,28 @@ describe('lifecycle/property', function () {
 
   it('should return an function', function () {
     expect(propertiesInit()).to.be.a('function');
+  });
+  
+  it('should not leak options to other definitions', function () {
+    const elem = element().skate({
+      properties: {
+        test1: { attribute: true, default: 'test1' },
+        test2: { attribute: true, default: 'test2' }
+      }
+    })();
+
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
+    
+    elem.test1 = undefined;
+    elem.test2 = undefined;
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
+    
+    elem.removeAttribute('test1');
+    elem.removeAttribute('test2');
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
   });
 
   describe('property definition', function () {

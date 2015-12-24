@@ -3,10 +3,14 @@ import dashCase from '../util/dash-case';
 import data from '../util/data';
 import empty from '../util/empty';
 
-// TODO Split apart createNativePropertyDefinition function.
+const { removeAttribute, setAttribute } = window.Element.prototype;
 
 function getData (elem, name) {
   return data(elem, `api/property/${name}`);
+}
+
+function getDataForAttribute (elem, name) {
+  return getData(elem, getData(elem, name).linkedProperty);
 }
 
 function getLinkedAttribute (name, attr) {
@@ -22,9 +26,10 @@ function createNativePropertyDefinition (name, opts) {
   prop.created = function (elem, initialValue) {
     let info = getData(elem, name);
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-    info.removeAttribute = elem.removeAttribute;
-    info.setAttribute = elem.setAttribute;
     info.updatingProperty = false;
+    
+    // Ensure we can get the info from inside the attribute methods.
+    getData(elem, info.linkedAttribute).linkedProperty = name;
 
     if (typeof opts.default === 'function') {
       info.defaultValue = opts.default(elem);
@@ -41,30 +46,41 @@ function createNativePropertyDefinition (name, opts) {
         info.attributeMap = {};
 
         elem.removeAttribute = function (attrName) {
+          const info = getDataForAttribute(this, attrName);
+          
+          if (!info.linkedAttribute) {
+            return removeAttribute.call(this, attrName);
+          }
+          
+          const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
 
           if (defaultValueIsEmpty) {
-            info.removeAttribute.call(this, attrName);
+            removeAttribute.call(this, attrName);
           } else {
-            info.setAttribute.call(this, attrName, defaultValue);
+            setAttribute.call(this, attrName, opts.serialize(defaultValue));
           }
 
-          if (attrName in info.attributeMap) {
-            const propertyName = info.attributeMap[attrName];
-            elem[propertyName] = undefined;
+          if (prop) {
+            elem[prop] = undefined;
           }
 
           info.updatingAttribute = false;
         };
 
         elem.setAttribute = function (attrName, attrValue) {
+          const info = getDataForAttribute(this, attrName);
+          
+          if (!info.linkedAttribute) {
+            return setAttribute.call(this, attrName, attrValue);
+          }
+          
+          const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
-          info.setAttribute.call(this, attrName, attrValue);
+          setAttribute.call(this, attrName, attrValue);
 
-          if (attrName in info.attributeMap) {
-            const propertyName = info.attributeMap[attrName];
-            attrValue = String(attrValue);
-            elem[propertyName] = opts.deserialize(attrValue);
+          if (prop) {
+            elem[prop] = opts.deserialize(attrValue);
           }
 
           info.updatingAttribute = false;
@@ -76,8 +92,7 @@ function createNativePropertyDefinition (name, opts) {
 
     if (empty(initialValue)) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
-        let attributeValue = elem.getAttribute(info.linkedAttribute);
-        initialValue = opts.deserialize(attributeValue);
+        initialValue = opts.deserialize(elem.getAttribute(info.linkedAttribute));
       } else {
         initialValue = info.defaultValue;
       }
@@ -115,19 +130,23 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     info.updatingProperty = true;
+    
+    if (empty(newValue)) {
+      newValue = info.defaultValue;
+    }
 
     if (typeof opts.coerce === 'function') {
       newValue = opts.coerce(newValue);
     }
 
-    info.internalValue = empty(newValue) ? info.defaultValue : newValue;
+    info.internalValue = newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
-      let serializedValue = opts.serialize(newValue);
+      const serializedValue = opts.serialize(newValue);
       if (empty(serializedValue)) {
-        info.removeAttribute.call(this, info.linkedAttribute);
+        removeAttribute.call(this, info.linkedAttribute);
       } else {
-        info.setAttribute.call(this, info.linkedAttribute, serializedValue);
+        setAttribute.call(this, info.linkedAttribute, serializedValue);
       }
     }
 
