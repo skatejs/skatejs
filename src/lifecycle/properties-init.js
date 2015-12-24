@@ -56,12 +56,13 @@ function createNativePropertyDefinition (name, opts) {
           }
           
           const prop = info.attributeMap[attrName];
+          const serializedValue = info.opts.serialize(info.defaultValue);
           info.updatingAttribute = true;
-
-          if (empty(info.defaultValue)) {
+          
+          if (empty(serializedValue)) {
             removeAttribute.call(this, attrName);
           } else {
-            setAttribute.call(this, attrName, info.opts.serialize(info.defaultValue));
+            setAttribute.call(this, attrName, serializedValue);
           }
 
           if (prop) {

@@ -76,6 +76,17 @@ describe('lifecycle/property', function () {
     expect(elem.test).to.equal(undefined);
     expect(elem.getAttribute('test')).to.equal(null);
   });
+  
+  it('should not set a linked attribute to "undefined" if the attribute is removed', function () {
+    const elem = create({ attribute: true });
+    
+    expect(elem.test).to.equal(undefined);
+    expect(elem.getAttribute('test')).to.equal(null);
+    
+    elem.removeAttribute('test');
+    expect(elem.test).to.equal(undefined);
+    expect(elem.getAttribute('test')).to.equal(null);
+  });
 
   describe('property definition', function () {
     function create () {
