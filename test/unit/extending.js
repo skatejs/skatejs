@@ -70,7 +70,7 @@ describe('extending', function () {
 
   canExtendStaticProperties && it('constructor should be accessible', function () {
     skate(tag, class extends Ctor {});
-    let el = skate.create(tag);
+    const el = skate.create(tag);
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
