@@ -738,6 +738,17 @@ skate.emit(element, 'event', {
 });
 ```
 
+#### Passing Data
+
+You can pass data when initializing the event with the `detail` option in the `eventOptions` argument.
+
+```js
+skate.emit(element, 'event', {
+  detail: {
+    data: 'my-data'
+  }
+});
+```
 
 
 ### `fragment (...almostAnything)`
