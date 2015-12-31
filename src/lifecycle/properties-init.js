@@ -1,8 +1,17 @@
 import assign from 'object-assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import empty from '../util/empty';
 
-// TODO Split apart createNativePropertyDefinition function.
+const { removeAttribute, setAttribute } = window.Element.prototype;
+
+function getData (elem, name) {
+  return data(elem, `api/property/${name}`);
+}
+
+function getDataForAttribute (elem, name) {
+  return getData(elem, getData(elem, name).linkedProperty);
+}
 
 function getLinkedAttribute (name, attr) {
   return attr === true ? dashCase(name) : attr;
@@ -18,43 +27,67 @@ function createNativePropertyDefinition (name, opts) {
   // Custom accessor lifecycle functions.
 
   prop.created = function (elem, initialValue) {
-    let info = data(elem, `api/property/${name}`);
+    let info = getData(elem, name);
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-    info.removeAttribute = elem.removeAttribute;
-    info.setAttribute = elem.setAttribute;
+    info.opts = opts;
     info.updatingProperty = false;
+    
+    // Ensure we can get the info from inside the attribute methods.
+    getData(elem, info.linkedAttribute).linkedProperty = name;
 
     if (typeof opts.default === 'function') {
       info.defaultValue = opts.default(elem);
-    } else if (opts.default !== undefined) {
+    } else if (!empty(opts.default)) {
       info.defaultValue = opts.default;
     }
 
-    // TODO Refactor
+    // TODO Refactor to be cleaner.
+    //
+    // We only override removeAttribute and setAttribute once. This means that
+    // if you define 10 properties, they still only get overridden once. For
+    // this reason, we must re-get info / opts from within the property methods
+    // since the functions aren't recreated for each scope.
     if (info.linkedAttribute) {
       if (!info.attributeMap) {
         info.attributeMap = {};
 
         elem.removeAttribute = function (attrName) {
+          const info = getDataForAttribute(this, attrName);
+          
+          if (!info.linkedAttribute) {
+            return removeAttribute.call(this, attrName);
+          }
+          
+          const prop = info.attributeMap[attrName];
+          const serializedValue = info.opts.serialize(info.defaultValue);
           info.updatingAttribute = true;
-          info.removeAttribute.call(this, attrName);
+          
+          if (empty(serializedValue)) {
+            removeAttribute.call(this, attrName);
+          } else {
+            setAttribute.call(this, attrName, serializedValue);
+          }
 
-          if (attrName in info.attributeMap) {
-            const propertyName = info.attributeMap[attrName];
-            elem[propertyName] = undefined;
+          if (prop) {
+            elem[prop] = undefined;
           }
 
           info.updatingAttribute = false;
         };
 
         elem.setAttribute = function (attrName, attrValue) {
+          const info = getDataForAttribute(this, attrName);
+          
+          if (!info.linkedAttribute) {
+            return setAttribute.call(this, attrName, attrValue);
+          }
+          
+          const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
-          info.setAttribute.call(this, attrName, attrValue);
+          setAttribute.call(this, attrName, attrValue);
 
-          if (attrName in info.attributeMap) {
-            const propertyName = info.attributeMap[attrName];
-            attrValue = String(attrValue);
-            elem[propertyName] = opts.deserialize(attrValue);
+          if (prop) {
+            elem[prop] = info.opts.deserialize(attrValue);
           }
 
           info.updatingAttribute = false;
@@ -64,17 +97,19 @@ function createNativePropertyDefinition (name, opts) {
       info.attributeMap[info.linkedAttribute] = name;
     }
 
-    if (initialValue === undefined) {
+    // Set up initial value if it wasn't specified.
+    if (empty(initialValue)) {
       if (info.linkedAttribute && elem.hasAttribute(info.linkedAttribute)) {
-        let attributeValue = elem.getAttribute(info.linkedAttribute);
-        initialValue = opts.deserialize(attributeValue);
+        initialValue = opts.deserialize(elem.getAttribute(info.linkedAttribute));
       } else {
         initialValue = info.defaultValue;
       }
     }
 
-    info.internalValue = initialValue;
+    // We must coerce the initial value just in case it wasn't already.
+    info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
 
+    // User-defined created callback.
     if (typeof opts.created === 'function') {
       opts.created(elem, {
         name,
@@ -97,59 +132,55 @@ function createNativePropertyDefinition (name, opts) {
   // Native accessor functions.
 
   prop.get = function () {
-    const info = data(this, `api/property/${name}`);
+    const info = getData(this, name);
+    const internalValue = info.internalValue;
 
     if (opts.get) {
-      return opts.get(this);
+      return opts.get(this, { name, internalValue });
     }
 
-    return info.internalValue;
+    return internalValue;
+  };
+  
+  prop.init = function () {
+    const init = getData(this, name).internalValue;
+    this[name] = empty(init) ? this[name] : init;
   };
 
   prop.set = function (newValue) {
-    let info = data(this, `api/property/${name}`);
-    let oldValue;
+    const info = getData(this, name);
+    const oldValue = info.oldValue;
 
     if (info.updatingProperty) {
       return;
     }
 
     info.updatingProperty = true;
-
-    if (info.hasBeenSetOnce) {
-      oldValue = this[name];
-    } else {
-      oldValue = undefined;
-      info.hasBeenSetOnce = true;
+    
+    if (empty(newValue)) {
+      newValue = info.defaultValue;
     }
 
     if (typeof opts.coerce === 'function') {
       newValue = opts.coerce(newValue);
     }
 
-    if (!opts.get) {
-      info.internalValue = typeof newValue === 'undefined' ? info.defaultValue : newValue;
-    }
+    info.internalValue = newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
-      let serializedValue = opts.serialize(newValue);
-      if (serializedValue === undefined) {
-        info.removeAttribute.call(this, info.linkedAttribute);
+      const serializedValue = opts.serialize(newValue);
+      if (empty(serializedValue)) {
+        removeAttribute.call(this, info.linkedAttribute);
       } else {
-        info.setAttribute.call(this, info.linkedAttribute, serializedValue);
+        setAttribute.call(this, info.linkedAttribute, serializedValue);
       }
     }
 
-    let changeData = {
-      name: name,
-      newValue: newValue,
-      oldValue: oldValue
-    };
-
     if (typeof opts.set === 'function') {
-      opts.set(this, changeData);
+      opts.set(this, { name, newValue, oldValue });
     }
 
+    info.oldValue = newValue;
     info.updatingProperty = false;
   };
 

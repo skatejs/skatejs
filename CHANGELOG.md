@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.2
+
+### Fixed
+
+- [#374](https://github.com/skatejs/skatejs/issues/374) - Fix innerHTML being empty in `skate.render.html()` when it's not overridden.
+
 ## 0.15.1
 
 ### Fixed
