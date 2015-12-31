@@ -45,21 +45,25 @@ describe('api/properties', function () {
 
     it('removing attribute', function () {
       let elem = create(properties.boolean());
+      
       elem.setAttribute('test', '');
       expect(elem.test).to.equal(true);
+      expect(elem.getAttribute('test')).to.equal('');
+      
       elem.removeAttribute('test');
       expect(elem.test).to.equal(false);
+      expect(elem.getAttribute('test')).to.equal(null);
     });
   });
 
   describe('number', function () {
-    it('default', function () {
+    it('values', function () {
       let elem = create(properties.number());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
         [false, 0, '0'],
-        [null, 0, '0'],
+        [null, undefined, null],
         [undefined, undefined, null],
         [0.1, 0.1, '0.1'],
         ['', 0, '0']
@@ -74,7 +78,7 @@ describe('api/properties', function () {
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
         [false, 'false', 'false'],
-        [null, 'null', 'null'],
+        [null, undefined, null],
         [undefined, undefined, null],
         [0, '0', '0'],
         ['', '', '']
