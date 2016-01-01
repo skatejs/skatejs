@@ -1,4 +1,5 @@
 import assign from 'object-assign';
+import dashCase from '../util/dash-case';
 import data from '../util/data';
 import empty from '../util/empty';
 
@@ -13,7 +14,7 @@ function getDataForAttribute (elem, name) {
 }
 
 function getLinkedAttribute (name, attr) {
-  return attr === true ? name : attr;
+  return attr === true ? dashCase(name) : attr;
 }
 
 function createNativePropertyDefinition (name, opts) {
