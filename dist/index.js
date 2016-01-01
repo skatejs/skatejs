@@ -1292,30 +1292,6 @@
   
   return module.exports;
 }).call(this);
-// src/util/dash-case.js
-(typeof window === 'undefined' ? global : window).__0cd264077c1ca567539d11e826d3c00e = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (str) {
-    return str.split(/([A-Z])/).reduce(function (one, two, idx) {
-      var dash = !one || idx % 2 === 0 ? '' : '-';
-      return '' + one + dash + two.toLowerCase();
-    });
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
 // src/lifecycle/properties-init.js
 (typeof window === 'undefined' ? global : window).__cc21ec7ac4c07d035d1a19269f5d2bb6 = (function () {
   var module = {
@@ -1334,10 +1310,6 @@
   var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
   
   var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
-  var _utilDashCase = __0cd264077c1ca567539d11e826d3c00e;
-  
-  var _utilDashCase2 = _interopRequireDefault(_utilDashCase);
   
   var _utilData = __18291b0452e01f65cf28d6695040736a;
   
@@ -1360,7 +1332,7 @@
   }
   
   function getLinkedAttribute(name, attr) {
-    return attr === true ? (0, _utilDashCase2['default'])(name) : attr;
+    return attr === true ? name : attr;
   }
   
   function createNativePropertyDefinition(name, opts) {
