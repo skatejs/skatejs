@@ -3,7 +3,7 @@ import propertiesInit from '../../../src/lifecycle/properties-init';
 import propertiesCreated from '../../../src/lifecycle/properties-created';
 import propertiesReady from '../../../src/lifecycle/properties-ready';
 
-describe('lifecycle/properties', function () {
+describe('lifecycle/property', function () {
   function initProperty (elem, definition, name = 'test') {
     const prop = { [name]: propertiesInit(definition)(name) };
     propertiesCreated(elem, prop);
@@ -124,15 +124,15 @@ describe('lifecycle/properties', function () {
 
   describe('api', function () {
     describe('attribute', function () {
-      it('when true, links an attribute of the name (lower-cased)', function () {
-        let elem = createFromHtml('<span testname="something"></span>', { attribute: true }, 'testName');
+      it('when true, links an attribute of the name (dash-cased)', function () {
+        let elem = createFromHtml('<span test-name="something"></span>', { attribute: true }, 'testName');
 
         expect(elem.testName).to.equal('something');
-        expect(elem.getAttribute('testname')).to.equal('something');
+        expect(elem.getAttribute('test-name')).to.equal('something');
 
         elem.testName = 'something else';
         expect(elem.testName).to.equal('something else');
-        expect(elem.getAttribute('testname')).to.equal('something else');
+        expect(elem.getAttribute('test-name')).to.equal('something else');
       });
 
       describe('undefined and null', function () {

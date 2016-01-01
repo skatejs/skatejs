@@ -24,6 +24,7 @@ import './unit/lifecycle/ready';
 import './unit/lifecycle/render';
 import './unit/registration';
 import './unit/registry';
+import './unit/util/dash-case';
 import './unit/util/get-closest-ignored-element';
 import './unit/util/walk-tree';
 import './unit/version';
