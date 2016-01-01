@@ -18,22 +18,28 @@ function getLinkedAttribute (name, attr) {
 }
 
 function createNativePropertyDefinition (name, opts) {
-  let prop = {
+  const prop = {
     configurable: true,
     enumerable: true
   };
-  
-  
+
+
   // Custom accessor lifecycle functions.
 
+  // Called right when the element is created, but before it's ready.
   prop.created = function (elem, initialValue) {
-    let info = getData(elem, name);
+    const info = getData(elem, name);
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-    info.opts = opts;
     info.updatingProperty = false;
-    
+
+    // This is so that we can access the original options from inside the
+    // overridden attribute methods.
+    info.opts = opts;
+
     // Ensure we can get the info from inside the attribute methods.
-    getData(elem, info.linkedAttribute).linkedProperty = name;
+    if (info.linkedAttribute) {
+      getData(elem, info.linkedAttribute).linkedProperty = name;
+    }
 
     if (typeof opts.default === 'function') {
       info.defaultValue = opts.default(elem);
@@ -53,15 +59,15 @@ function createNativePropertyDefinition (name, opts) {
 
         elem.removeAttribute = function (attrName) {
           const info = getDataForAttribute(this, attrName);
-          
+
           if (!info.linkedAttribute) {
             return removeAttribute.call(this, attrName);
           }
-          
+
           const prop = info.attributeMap[attrName];
           const serializedValue = info.opts.serialize(info.defaultValue);
           info.updatingAttribute = true;
-          
+
           if (empty(serializedValue)) {
             removeAttribute.call(this, attrName);
           } else {
@@ -77,11 +83,11 @@ function createNativePropertyDefinition (name, opts) {
 
         elem.setAttribute = function (attrName, attrValue) {
           const info = getDataForAttribute(this, attrName);
-          
+
           if (!info.linkedAttribute) {
             return setAttribute.call(this, attrName, attrValue);
           }
-          
+
           const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
           setAttribute.call(this, attrName, attrValue);
@@ -111,42 +117,34 @@ function createNativePropertyDefinition (name, opts) {
 
     // User-defined created callback.
     if (typeof opts.created === 'function') {
-      opts.created(elem, {
-        name,
-        value: initialValue
-      });
+      opts.created(elem, { name, initialValue });
     }
   };
-  
-  prop.ready = function (elem, initialValue) {
-    elem[name] = initialValue;
-    if (typeof opts.ready === 'function') {
-      opts.ready(elem, {
-        name,
-        value: initialValue
-      });
-    }
+
+  // Called when the element is ready.
+  prop.ready = function () {
+    const init = getData(this, name).internalValue;
+    this[name] = empty(init) ? this[name] : init;
   };
-  
-  
+
+
   // Native accessor functions.
 
+  // Calls the user-defined getter with more information than would normally be
+  // accessible from the native getter.
   prop.get = function () {
     const info = getData(this, name);
     const internalValue = info.internalValue;
 
-    if (opts.get) {
+    if (typeof opts.get === 'function') {
       return opts.get(this, { name, internalValue });
     }
 
     return internalValue;
   };
-  
-  prop.init = function () {
-    const init = getData(this, name).internalValue;
-    this[name] = empty(init) ? this[name] : init;
-  };
 
+  // Calls the user-defined setter with more information than would normally be
+  // accessible from the native setter.
   prop.set = function (newValue) {
     const info = getData(this, name);
     const oldValue = info.oldValue;
@@ -156,7 +154,7 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     info.updatingProperty = true;
-    
+
     if (empty(newValue)) {
       newValue = info.defaultValue;
     }

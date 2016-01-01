@@ -52,7 +52,7 @@ function documentObserverHandler (mutations) {
 }
 
 function createMutationObserver () {
-  const { MutationObserver} = window;
+  const MutationObserver = window.MutationObserver;
   if (!MutationObserver) {
     throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
   }

@@ -1,6 +1,7 @@
 export default function propertiesApply (elem, properties) {
   Object.keys(properties).forEach(function (name) {
     const prop = properties[name];
+    const initialValue = elem[name];
 
     // https://bugs.webkit.org/show_bug.cgi?id=49739
     //
@@ -16,8 +17,8 @@ export default function propertiesApply (elem, properties) {
     // Once that bug is fixed, the initial value being passed as the second
     // argument to prop.created() can use the overridden property definition to
     // get the initial value.
-    if (prop.created) {
-      prop.created(elem, elem[name]);
+    if (typeof prop.created === 'function') {
+      prop.created(elem, initialValue);
     }
   });
 }
