@@ -1371,14 +1371,20 @@
   
     // Custom accessor lifecycle functions.
   
+    // Called right when the element is created, but before it's ready.
     prop.created = function (elem, initialValue) {
       var info = getData(elem, name);
       info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-      info.opts = opts;
       info.updatingProperty = false;
   
+      // This is so that we can access the original options from inside the
+      // overridden attribute methods.
+      info.opts = opts;
+  
       // Ensure we can get the info from inside the attribute methods.
-      getData(elem, info.linkedAttribute).linkedProperty = name;
+      if (info.linkedAttribute) {
+        getData(elem, info.linkedAttribute).linkedProperty = name;
+      }
   
       if (typeof opts['default'] === 'function') {
         info.defaultValue = opts['default'](elem);
@@ -1456,41 +1462,33 @@
   
       // User-defined created callback.
       if (typeof opts.created === 'function') {
-        opts.created(elem, {
-          name: name,
-          value: initialValue
-        });
+        opts.created(elem, { name: name, initialValue: initialValue });
       }
     };
   
-    prop.ready = function (elem, initialValue) {
-      elem[name] = initialValue;
-      if (typeof opts.ready === 'function') {
-        opts.ready(elem, {
-          name: name,
-          value: initialValue
-        });
-      }
+    // Called when the element is ready.
+    prop.ready = function () {
+      var init = getData(this, name).internalValue;
+      this[name] = (0, _utilEmpty2['default'])(init) ? this[name] : init;
     };
   
     // Native accessor functions.
   
+    // Calls the user-defined getter with more information than would normally be
+    // accessible from the native getter.
     prop.get = function () {
       var info = getData(this, name);
       var internalValue = info.internalValue;
   
-      if (opts.get) {
+      if (typeof opts.get === 'function') {
         return opts.get(this, { name: name, internalValue: internalValue });
       }
   
       return internalValue;
     };
   
-    prop.init = function () {
-      var init = getData(this, name).internalValue;
-      this[name] = (0, _utilEmpty2['default'])(init) ? this[name] : init;
-    };
-  
+    // Calls the user-defined setter with more information than would normally be
+    // accessible from the native setter.
     prop.set = function (newValue) {
       var info = getData(this, name);
       var oldValue = info.oldValue;
@@ -1561,16 +1559,17 @@
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports["default"] = propertiesApply;
+  exports['default'] = propertiesApply;
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
       var prop = properties[name];
+      var initialValue = elem[name];
   
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -1586,13 +1585,13 @@
       // Once that bug is fixed, the initial value being passed as the second
       // argument to prop.created() can use the overridden property definition to
       // get the initial value.
-      if (prop.created) {
-        prop.created(elem, elem[name]);
+      if (typeof prop.created === 'function') {
+        prop.created(elem, initialValue);
       }
     });
   }
   
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -1612,7 +1611,7 @@
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
-      properties[name].init.call(elem);
+      properties[name].ready.call(elem);
     });
   }
   
@@ -2145,7 +2144,6 @@
   
   function createMutationObserver() {
     var MutationObserver = window.MutationObserver;
-  
     if (!MutationObserver) {
       throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
     }
