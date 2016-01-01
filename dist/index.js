@@ -1467,9 +1467,13 @@
     };
   
     // Called when the element is ready.
-    prop.ready = function () {
-      var init = getData(this, name).internalValue;
-      this[name] = (0, _utilEmpty2['default'])(init) ? this[name] : init;
+    prop.init = function () {
+      var internalValue = getData(this, name).internalValue;
+      var initialValue = (0, _utilEmpty2['default'])(internalValue) ? this[name] : internalValue;
+      this[name] = initialValue;
+      if (typeof opts.ready === 'function') {
+        opts.ready(this, { name: name, initialValue: initialValue });
+      }
     };
   
     // Native accessor functions.
@@ -1611,7 +1615,7 @@
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
-      properties[name].ready.call(elem);
+      properties[name].init.call(elem);
     });
   }
   
