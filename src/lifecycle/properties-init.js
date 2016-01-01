@@ -122,9 +122,13 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   // Called when the element is ready.
-  prop.ready = function () {
-    const init = getData(this, name).internalValue;
-    this[name] = empty(init) ? this[name] : init;
+  prop.init = function () {
+    const internalValue = getData(this, name).internalValue;
+    const initialValue = empty(internalValue) ? this[name] : internalValue;
+    this[name] = initialValue;
+    if (typeof opts.ready === 'function') {
+      opts.ready(this, { name, initialValue });
+    }
   };
 
 
