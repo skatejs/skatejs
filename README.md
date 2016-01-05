@@ -1119,12 +1119,12 @@ With Skate, those problems vanish. No selectors are run and your tabs will autom
 To refactor that into a Skate component, all you need to do is:
 
 ```js
-var typeClass = require('skatejs-type-class');
+var types = require('skatejs-types');
 
 skate('tabs', {
-  type: typeClass,
-  created: function (element) {
-    jQuery(element).tabs();
+  type: types.classname,
+  created: function (elem) {
+    jQuery(elem).tabs();
   }
 });
 ```
