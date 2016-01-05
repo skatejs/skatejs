@@ -69,7 +69,7 @@ Result
     - [Alternatives](#alternatives)
     - [Setting properties](#setting-properties)
     - [Why not just patch `document.createElement()`?](#why-not-just-patch-document-createelement-)
-  - [`emit (element, eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
+  - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
   - [`fragment (...almostAnything)`](#fragment-almostanything)
   - [`init (...elements)`](#init-elements)
   - [`noConflict ()`](#noconflict-)
@@ -302,7 +302,7 @@ skate('my-element', {
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
       default: 'default value',
-      
+
       // Called when the property is created on the element. The value of
       // `data` is an object containing:
       //
@@ -859,7 +859,7 @@ If you want to do something when `component-b` is initialised, you can use `skat
 
 ```js
 skate('component-a', {
-  created: function (elem) {
+  ready: function (elem) {
     var b = elem.querySelector('component-b');
 
     // undefined
