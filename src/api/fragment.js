@@ -52,7 +52,7 @@ export default function fragment (...args) {
       init(node);
     }
 
-    if (node) {
+    if (node instanceof Node) {
       frag.appendChild(node);
     }
 

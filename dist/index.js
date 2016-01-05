@@ -583,7 +583,7 @@
         (0, _init2['default'])(node);
       }
   
-      if (node) {
+      if (node instanceof Node) {
         frag.appendChild(node);
       }
   
@@ -617,6 +617,130 @@
     },
     serialize: function serialize(value) {
       return value ? '' : undefined;
+    }
+  };
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/data.js
+(typeof window === 'undefined' ? global : window).__18291b0452e01f65cf28d6695040736a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (element) {
+    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+  
+    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+    return namespace && (data[namespace] || (data[namespace] = {})) || data;
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/properties/content.js
+(typeof window === 'undefined' ? global : window).__a183f72c67680b5e74dc8d39a9e2aaaa = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilData = __18291b0452e01f65cf28d6695040736a;
+  
+  var _utilData2 = _interopRequireDefault(_utilData);
+  
+  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
+  
+  var _fragment2 = _interopRequireDefault(_fragment);
+  
+  function normalize(node) {
+    return node instanceof DocumentFragment ? [].slice.call(node.childNodes) : [node];
+  }
+  
+  function mutate(elem, type, args) {
+    var desc = (0, _utilData2['default'])(elem).contentPropertyProjectee;
+    desc && desc[type].apply(desc, args);
+  }
+  
+  function update(elem, change) {
+    return function (type, args) {
+      mutate(elem, type, args);
+      change && change(elem, type, args);
+    };
+  }
+  
+  function createDomArray(elem, update) {
+    var childNodes = [];
+  
+    return Object.defineProperties({
+      appendChild: function appendChild(newNode) {
+        childNodes.push.apply(childNodes, normalize(newNode));
+        update('appendChild', [newNode]);
+        return newNode;
+      },
+      insertBefore: function insertBefore(newNode, referenceNode) {
+        childNodes.splice.apply(null, [childNodes.indexOf(referenceNode), 0].concat(normalize(newNode)));
+        update('insertBefore', [newNode, referenceNode]);
+        return newNode;
+      },
+      removeChild: function removeChild(oldNode) {
+        normalize(oldNode).forEach(function (oldNode) {
+          childNodes.splice(childNodes.indexOf(oldNode), 1);
+        });
+        update('removeChild', [oldNode]);
+        return oldNode;
+      },
+      replaceChild: function replaceChild(newNode, oldNode) {
+        childNodes.splice.apply(null, [childNodes.indexOf(oldNode), 1].concat(normalize(newNode)));
+        update('replaceChild', [newNode, oldNode]);
+        return oldNode;
+      }
+    }, {
+      childNodes: {
+        get: function get() {
+          return childNodes;
+        },
+        configurable: true,
+        enumerable: true
+      }
+    });
+  }
+  
+  exports['default'] = {
+    created: function created(elem) {
+      var eldata = (0, _utilData2['default'])(elem);
+      eldata.contentProperty = createDomArray(elem, update(elem, this.change));
+      eldata.contentPropertyInitialState = [].slice.call(elem.childNodes);
+      eldata.contentPropertyProjectee = this.selector ? elem.querySelector(this.selector) : null;
+    },
+    get: function get(elem) {
+      return (0, _utilData2['default'])(elem).contentProperty;
+    },
+    ready: function ready(elem) {
+      var eldata = (0, _utilData2['default'])(elem);
+      eldata.contentProperty.appendChild((0, _fragment2['default'])(eldata.contentPropertyInitialState));
+      delete eldata.contentPropertyInitialState;
+    },
+    set: function set(elem, change) {
+      var eldata = (0, _utilData2['default'])(elem);
+      eldata.contentProperty.appendChild((0, _fragment2['default'])(change.newValue));
     }
   };
   module.exports = exports['default'];
@@ -731,6 +855,10 @@
   
   var _boolean2 = _interopRequireDefault(_boolean);
   
+  var _content = __a183f72c67680b5e74dc8d39a9e2aaaa;
+  
+  var _content2 = _interopRequireDefault(_content);
+  
   var _number = __01110a33f4fc3195613143c4e23f759c;
   
   var _number2 = _interopRequireDefault(_number);
@@ -752,33 +880,10 @@
   
   exports['default'] = {
     boolean: prop(_boolean2['default']),
+    content: prop(_content2['default']),
     number: prop(_number2['default']),
     string: prop(_string2['default'])
   };
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/data.js
-(typeof window === 'undefined' ? global : window).__18291b0452e01f65cf28d6695040736a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  exports['default'] = function (element) {
-    var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-  
-    var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
-    return namespace && (data[namespace] || (data[namespace] = {})) || data;
-  };
-  
   module.exports = exports['default'];
   
   return module.exports;
@@ -1264,14 +1369,22 @@
       enumerable: true
     };
   
+    // Custom accessor lifecycle functions.
+  
+    // Called right when the element is created, but before it's ready.
     prop.created = function (elem, initialValue) {
       var info = getData(elem, name);
       info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
-      info.opts = opts;
       info.updatingProperty = false;
   
+      // This is so that we can access the original options from inside the
+      // overridden attribute methods.
+      info.opts = opts;
+  
       // Ensure we can get the info from inside the attribute methods.
-      getData(elem, info.linkedAttribute).linkedProperty = name;
+      if (info.linkedAttribute) {
+        getData(elem, info.linkedAttribute).linkedProperty = name;
+      }
   
       if (typeof opts['default'] === 'function') {
         info.defaultValue = opts['default'](elem);
@@ -1349,26 +1462,37 @@
   
       // User-defined created callback.
       if (typeof opts.created === 'function') {
-        opts.created(elem, initialValue);
+        opts.created(elem, { name: name, initialValue: initialValue });
       }
     };
   
+    // Called when the element is ready.
+    prop.init = function () {
+      var internalValue = getData(this, name).internalValue;
+      var initialValue = (0, _utilEmpty2['default'])(internalValue) ? this[name] : internalValue;
+      this[name] = initialValue;
+      if (typeof opts.ready === 'function') {
+        opts.ready(this, { name: name, initialValue: initialValue });
+      }
+    };
+  
+    // Native accessor functions.
+  
+    // Calls the user-defined getter with more information than would normally be
+    // accessible from the native getter.
     prop.get = function () {
       var info = getData(this, name);
       var internalValue = info.internalValue;
   
-      if (opts.get) {
+      if (typeof opts.get === 'function') {
         return opts.get(this, { name: name, internalValue: internalValue });
       }
   
       return internalValue;
     };
   
-    prop.init = function () {
-      var init = getData(this, name).internalValue;
-      this[name] = (0, _utilEmpty2['default'])(init) ? this[name] : init;
-    };
-  
+    // Calls the user-defined setter with more information than would normally be
+    // accessible from the native setter.
     prop.set = function (newValue) {
       var info = getData(this, name);
       var oldValue = info.oldValue;
@@ -1439,12 +1563,12 @@
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
-  exports["default"] = propertiesApply;
+  exports['default'] = propertiesApply;
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
@@ -1465,11 +1589,13 @@
       // Once that bug is fixed, the initial value being passed as the second
       // argument to prop.created() can use the overridden property definition to
       // get the initial value.
-      prop.created && prop.created(elem, initialValue);
+      if (typeof prop.created === 'function') {
+        prop.created(elem, initialValue);
+      }
     });
   }
   
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -2022,7 +2148,6 @@
   
   function createMutationObserver() {
     var MutationObserver = window.MutationObserver;
-  
     if (!MutationObserver) {
       throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
     }

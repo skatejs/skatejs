@@ -69,7 +69,7 @@ Result
     - [Alternatives](#alternatives)
     - [Setting properties](#setting-properties)
     - [Why not just patch `document.createElement()`?](#why-not-just-patch-document-createelement-)
-  - [`emit (element, eventName, eventOptions = {})`](#emit-eventname-eventoptions--)
+  - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
   - [`fragment (...almostAnything)`](#fragment-almostanything)
   - [`init (...elements)`](#init-elements)
   - [`noConflict ()`](#noconflict-)
@@ -302,7 +302,7 @@ skate('my-element', {
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
       default: 'default value',
-      
+
       // Called when the property is created on the element. The value of
       // `data` is an object containing:
       //
@@ -574,7 +574,7 @@ document.getElementById('my-component-id').callMeLikeanyNativeMethod();
 
 ## Asynchrony
 
-Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
+Due to the fact that Skate uses Mutation Observers, elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
 ```js
 document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
@@ -870,7 +870,7 @@ If you want to do something when `component-b` is initialised, you can use `skat
 
 ```js
 skate('component-a', {
-  created: function (elem) {
+  ready: function (elem) {
     var b = elem.querySelector('component-b');
 
     // undefined
@@ -1025,11 +1025,11 @@ Or if you're using [skatejs-types](https://github.com/skatejs/types):
 `<input placeholder="">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('placeholder', {
   extends: 'input',
-  type: typeAttribute,
+  type: types.attribute,
   created: polyfillInputPlaceholder
 });
 ```
@@ -1037,16 +1037,16 @@ skate('placeholder', {
 `<input type="date">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('type', {
   extends: 'input',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     type: {
-      set: function (element, change) {
-        if (change.newValue === 'date') {
-          makeIntoDatepicker(element);
+      set: function (elem, data) {
+        if (data.newValue === 'date') {
+          makeIntoDatepicker(elem);
         }
       }
     }
@@ -1057,16 +1057,16 @@ skate('type', {
 `<link rel="import" href="path/to/import.html">` (HTML Imports):
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('rel', {
   extends: 'link',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     rel: {
-      set: function (element, change) {
-        if (change.newValue === 'import') {
-          makeIntoHtmlImport(element);
+      set: function (elem, data) {
+        if (data.newValue === 'import') {
+          makeIntoHtmlImport(elem);
         }
       }
     }
@@ -1130,12 +1130,12 @@ With Skate, those problems vanish. No selectors are run and your tabs will autom
 To refactor that into a Skate component, all you need to do is:
 
 ```js
-var typeClass = require('skatejs-type-class');
+var types = require('skatejs-types');
 
 skate('tabs', {
-  type: typeClass,
-  created: function (element) {
-    jQuery(element).tabs();
+  type: types.classname,
+  created: function (elem) {
+    jQuery(elem).tabs();
   }
 });
 ```
