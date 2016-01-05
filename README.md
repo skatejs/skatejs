@@ -1014,11 +1014,11 @@ Or if you're using [skatejs-types](https://github.com/skatejs/types):
 `<input placeholder="">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('placeholder', {
   extends: 'input',
-  type: typeAttribute,
+  type: types.attribute,
   created: polyfillInputPlaceholder
 });
 ```
@@ -1026,16 +1026,16 @@ skate('placeholder', {
 `<input type="date">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('type', {
   extends: 'input',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     type: {
-      set: function (element, change) {
-        if (change.newValue === 'date') {
-          makeIntoDatepicker(element);
+      set: function (elem, data) {
+        if (data.newValue === 'date') {
+          makeIntoDatepicker(elem);
         }
       }
     }
@@ -1046,16 +1046,16 @@ skate('type', {
 `<link rel="import" href="path/to/import.html">` (HTML Imports):
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('rel', {
   extends: 'link',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     rel: {
-      set: function (element, change) {
-        if (change.newValue === 'import') {
-          makeIntoHtmlImport(element);
+      set: function (elem, data) {
+        if (data.newValue === 'import') {
+          makeIntoHtmlImport(elem);
         }
       }
     }
