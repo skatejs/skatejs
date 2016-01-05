@@ -32,11 +32,7 @@ function makeOptions (userOptions) {
   }
 
   // Copy over non-standard options.
-  for (let name in userOptions) {
-    options[name] = userOptions[name];
-  }
-
-  return options;
+  return assignSafe(options, userOptions);
 }
 
 function makeNonNewableWrapper (Ctor, opts) {
