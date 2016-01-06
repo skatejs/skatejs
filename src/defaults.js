@@ -1,19 +1,19 @@
 import type from './type/element';
 
-const attached = attribute = created = render = detached = ready = function () {};
+const noop = function () {};
 
 export default {
-  attached,
-  attribute,
-  created,
-  render,
-  detached,
+  attached: noop,
+  attribute: noop,
+  created: noop,
+  render: noop,
+  detached: noop,
   events: {},
   extends: '',
   properties: {},
   prototype: {},
   resolvedAttribute: 'resolved',
-  ready,
+  ready: noop,
   type,
   unresolvedAttribute: 'unresolved'
 };
