@@ -10,13 +10,11 @@ export default function (...args) {
       const componentsLength = components.length;
 
       for (let a = 0; a < componentsLength; a++) {
-        console.log('created', components[a].id, components[a].prototype.createdCallback);
         components[a].prototype.createdCallback.call(descendant);
       }
 
       for (let a = 0; a < componentsLength; a++) {
         if (isInDom) {
-          console.log('attached', components[a].id, components[a].prototype.attachedCallback);
           components[a].prototype.attachedCallback.call(descendant);
         }
       }
