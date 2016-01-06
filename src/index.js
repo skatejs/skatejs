@@ -10,7 +10,6 @@ import assign from 'object-assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import debounce from 'debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
@@ -19,6 +18,7 @@ import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
 import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
+import utilDebounce from './util/debounce';
 import utilDefineProperties from './util/define-properties';
 import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
@@ -26,7 +26,7 @@ import validCustomElement from './support/valid-custom-element';
 const HTMLElement = window.HTMLElement;
 
 // A function that initialises the document once in a given event loop.
-const initDocument = debounce(function () {
+const initDocument = utilDebounce(function () {
   // For performance in older browsers, we use:
   //
   // - childNodes instead of children
@@ -46,7 +46,7 @@ const initDocument = debounce(function () {
       components[a].prototype.attachedCallback.call(element);
     }
   });
-}, 0);
+});
 
 // Creates a configurable, non-writable, non-enumerable property.
 function fixedProp (obj, name, value) {

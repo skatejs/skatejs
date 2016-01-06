@@ -1,5 +1,4 @@
 import globals from './vars';
-import hasOwn from '../util/has-own';
 
 const definitions = {};
 const map = [];
@@ -7,7 +6,7 @@ const types = [];
 
 export default globals.registerIfNotExists('registry', {
   get (name) {
-    return hasOwn(definitions, name) && definitions[name];
+    return Object.prototype.hasOwnProperty.call(definitions, name) && definitions[name];
   },
   set (name, Ctor) {
     if (this.get(name)) {
