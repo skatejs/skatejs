@@ -33,10 +33,13 @@ const initDocument = debounce(function () {
     const components = registry.find(element);
     const componentsLength = components.length;
 
+    // Created callbacks are called first.
     for (let a = 0; a < componentsLength; a++) {
       components[a].prototype.createdCallback.call(element);
     }
 
+    // Attached callbacks are called separately because this emulates how
+    // native works internally.
     for (let a = 0; a < componentsLength; a++) {
       components[a].prototype.attachedCallback.call(element);
     }
