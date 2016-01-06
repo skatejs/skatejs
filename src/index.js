@@ -10,7 +10,7 @@ import assign from 'object-assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import debounce from './util/debounce';
+import debounce from 'debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
@@ -46,7 +46,7 @@ const initDocument = debounce(function () {
       components[a].prototype.attachedCallback.call(element);
     }
   });
-});
+}, 0);
 
 // Creates a configurable, non-writable, non-enumerable property.
 function fixedProp (obj, name, value) {
