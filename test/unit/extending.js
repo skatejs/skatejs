@@ -1,6 +1,5 @@
 import helperElement from '../lib/element';
 import skate from '../../src/index';
-import protos from '../../src/util/protos';
 
 describe('extending', function () {
   var Ctor, tag;
