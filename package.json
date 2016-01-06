@@ -6,8 +6,16 @@
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "lib/index.js",
-  "keywords": ["components", "custom", "custom-elements", "elements", "web", "web-components"],
+  "keywords": [
+    "components",
+    "custom",
+    "custom-elements",
+    "elements",
+    "web",
+    "web-components"
+  ],
   "dependencies": {
+    "debounce": "^1.0.0",
     "object-assign": "^4.0.1"
   },
   "devDependencies": {

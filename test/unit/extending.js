@@ -60,7 +60,7 @@ describe('extending', function () {
 
   canResolveSuper && it('should allow overriding of callbacks', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {
-      static created(elem) {
+      static created (elem) {
         super.created(elem);
         elem.textContent += 'ing';
       }
@@ -70,7 +70,7 @@ describe('extending', function () {
 
   canExtendStaticProperties && it('constructor should be accessible', function () {
     skate(tag, class extends Ctor {});
-    let el = skate.create(tag);
+    const el = skate.create(tag);
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
