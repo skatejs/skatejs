@@ -19,6 +19,7 @@ import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
 import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
+import utilDefineProperties from './util/define-properties';
 import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
@@ -65,7 +66,7 @@ function makeCtor (name, opts) {
   // Inherit all options. This takes into account object literals as well as
   // ES2015 classes that may have inherited static props which would not be
   // considered "own".
-  Object.defineProperties(func, utilGetAllPropertyDescriptors(opts));
+  utilDefineProperties(func, utilGetAllPropertyDescriptors(opts));
 
   // Fixed info.
   fixedProp(func.prototype, 'constructor', func);
