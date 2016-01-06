@@ -7,7 +7,6 @@ import apiReady from './api/ready';
 import apiRender from './api/render/index';
 import apiVersion from './api/version';
 import assign from 'object-assign';
-import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
@@ -18,6 +17,8 @@ import documentObserver from './global/document-observer';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
+import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
+import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
 import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
@@ -55,10 +56,16 @@ function fixedProp (obj, name, value) {
 
 // Makes a function / constructor that can be called as either.
 function makeCtor (name, opts) {
-  const func = assign(apiCreate.bind(null, name), defaults);
+  const func = apiCreate.bind(null, name);
 
-  // We need to copy all props, not just own props.
-  for (let prop in opts) func[prop] = opts[prop];
+  // Assigning defaults gives a predictable definition and prevents us from
+  // having to do defaults checks everywhere.
+  assign(func, defaults);
+
+  // Inherit all options. This takes into account object literals as well as
+  // ES2015 classes that may have inherited static props which would not be
+  // considered "own".
+  Object.defineProperties(func, utilGetAllPropertyDescriptors(opts));
 
   // Fixed info.
   fixedProp(func.prototype, 'constructor', func);
@@ -83,18 +90,23 @@ function skate (name, opts) {
   const Ctor = makeCtor(name, opts);
   const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 
-  // If the options don't inherit a native element prototype, we do it for them.
+  // If the options don't inherit a native element prototype, we ensure it does
+  // because native unnecessarily requires you explicitly do this.
   if (!proto.isPrototypeOf(Ctor.prototype)) {
-    Ctor.prototype = assignSafe(Object.create(proto), Ctor.prototype);
+    Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 
-  // Make custom definition conform to native.
+  // We not assign native callbacks to handle the callbacks specified in the
+  // Skate definition. This allows us to abstract away any changes that may
+  // occur in the spec.
   Ctor.prototype.createdCallback = created(Ctor);
   Ctor.prototype.attachedCallback = attached(Ctor);
   Ctor.prototype.detachedCallback = detached(Ctor);
   Ctor.prototype.attributeChangedCallback = attribute(Ctor);
 
-  // Native or polyfill.
+  // In native, we have to massage the definition so that the browser doesn't
+  // spit out errors for a malformed definition. In polyfill land we must
+  // emulate what the browser would normally do in native.
   if (Ctor.isNative) {
     const nativeDefinition = { prototype: Ctor.prototype };
     Ctor.extends && (nativeDefinition.extends = Ctor.extends);

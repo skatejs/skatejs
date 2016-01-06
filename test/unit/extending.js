@@ -1,5 +1,6 @@
 import helperElement from '../lib/element';
 import skate from '../../src/index';
+import protos from '../../src/util/protos';
 
 describe('extending', function () {
   var Ctor, tag;
@@ -60,7 +61,7 @@ describe('extending', function () {
 
   canResolveSuper && it('should allow overriding of callbacks', function () {
     var ExtendedCtor = skate(tag, class extends Ctor {
-      static created(elem) {
+      static created (elem) {
         super.created(elem);
         elem.textContent += 'ing';
       }
