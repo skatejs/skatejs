@@ -43,31 +43,30 @@ const initDocument = debounce(function () {
   });
 });
 
+// Creates a configurable, non-writable, non-enumerable property.
 function fixedProp (obj, name, value) {
   const configurable = true;
   const enumerable = writable = false;
   Object.defineProperty(obj, name, { configurable, enumerable, value, writable });
 }
 
+// Makes a function / constructor that can be called as either.
 function makeCtor (name, opts) {
   const func = assign(apiCreate.bind(null, name), defaults);
 
+  // We need to copy all props, not just own props.
   for (let prop in opts) func[prop] = opts[prop];
+
+  // Fixed info.
   fixedProp(func.prototype, 'constructor', func);
   fixedProp(func, 'id', name);
   fixedProp(func, 'isNative', func.type === typeElement && supportsCustomElements() && validCustomElement(name));
 
-  // To support the passing of a function instead of an object.
-  //
-  // https://github.com/w3c/webcomponents/wiki/Custom-Elements:-Contentious-Bits#constructor-vs-createdcallback
-  if (typeof opts === 'function') {
-    //func.created = opts;
-  }
-
   // *sigh* WebKit
   //
-  // We'd like to be able to define the function name as the same value as the
-  // component id but WebKit has made this a non-configurable property.
+  // In native, the function name is the same as the custom element name, but
+  // WebKit prevents this from being defined. We do this where possible and
+  // still define `id` for cross-browser compatibility.
   const nameProp = Object.getOwnPropertyDescriptor(func, 'name');
   if (nameProp && nameProp.configurable) {
     fixedProp(func, 'name', name);
@@ -76,6 +75,7 @@ function makeCtor (name, opts) {
   return func;
 }
 
+// The main skate() function.
 function skate (name, opts) {
   const Ctor = makeCtor(name, opts);
   const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
