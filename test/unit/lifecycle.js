@@ -236,7 +236,7 @@ describe('lifecycle scenarios', function () {
       });
     });
 
-    it.only('should initialise multiple instances of the same type of element (possible bug).', function (done) {
+    it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
       var numCreated = 0;
       var numAttached = 0;
       var numDetached = 0;
@@ -259,9 +259,13 @@ describe('lifecycle scenarios', function () {
       document.body.appendChild(element1);
       document.body.appendChild(element2);
 
-      // Using ready here gets around an odd issue in Chrome where a native
-      // custom element may not have its prototype set up yet.
-      skate.ready([element1, element2], function () {
+      // Using setTimeout here gets around an odd issue in Chrome where a
+      // native custom element may not have its prototype set up yet. We have
+      // to use setTimeout() because skate.ready() errors in Firefox because
+      // the MutationObserver will fire after it's ready. Therefore to cover
+      // all scenarios we must use setTimeout(). For practical usage, you would
+      // be able to use skate.ready().
+      setTimeout(function () {
         expect(numCreated).to.equal(2, 'created');
         expect(numAttached).to.equal(2, 'attached');
 
