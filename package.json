@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "eslint": "1.10.3",
-    "skatejs-build": "skatejs/build#15656c8",
+    "gulp": "gulpjs/gulp#73eced0",
+    "skatejs-build": "skatejs/build#feda154",
     "skatejs-types": "skatejs/types#1e9725b",
     "webcomponents.js": "0.7.20"
   },
