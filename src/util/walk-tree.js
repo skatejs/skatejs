@@ -1,9 +1,7 @@
-import ignored from './ignored';
-
 var Node = window.Node;
 
 function walk (elem, fn) {
-  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem)) {
+  if (elem.nodeType !== Node.ELEMENT_NODE) {
     return;
   }
 
