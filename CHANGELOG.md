@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.15.3
+
+### Fixed
+
+- [#463](https://github.com/skatejs/skatejs/issues/463) - `skate.emit` events no longer fire on disabled elements.
+
 ## 0.15.2
 
 ### Fixed

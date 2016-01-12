@@ -11,6 +11,13 @@ var CustomEvent = (function (CustomEvent) {
   return CustomEvent;
 }(window.CustomEvent));
 
+function dispatch (elem, cEvent) {
+  if (!elem.disabled) {
+    return elem.dispatchEvent(cEvent);
+  }
+  cEvent.isPropagationStopped = true;
+}
+
 var hasBubbleOnDetachedElements = (function () {
   var parent = document.createElement('div');
   var child = document.createElement('div');
@@ -45,7 +52,7 @@ function simulateBubbling (elem, cEvent) {
   Object.defineProperty(cEvent, 'target', { get: () => elem });
   while (currentElem && !cEvent.isPropagationStopped) {
     cEvent.currentTarget = currentElem;
-    if (currentElem.dispatchEvent(cEvent) === false) {
+    if (dispatch(currentElem, cEvent) === false) {
       didPreventDefault = false;
     }
     currentElem = currentElem.parentNode;
@@ -66,7 +73,7 @@ function emitOne (elem, name, opts) {
 
   return shouldSimulateBubbling ?
     simulateBubbling(elem, cEvent) :
-    elem.dispatchEvent(cEvent);
+    dispatch(elem, cEvent);
 }
 
 export default function (elem, name, opts = {}) {
