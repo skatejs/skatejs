@@ -47,199 +47,6 @@
   
   return module.exports;
 }).call(this);
-// src/global/vars.js
-(typeof window === 'undefined' ? global : window).__dd77578495c1d19b0e115627616ea63a = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  var VERSION = '__skate_0_14_0';
-  
-  if (!window[VERSION]) {
-    window[VERSION] = {
-      registerIfNotExists: function registerIfNotExists(name, value) {
-        return this[name] || (this[name] = value);
-      }
-    };
-  }
-  
-  exports['default'] = window[VERSION];
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/has-own.js
-(typeof window === 'undefined' ? global : window).__6d7878404f872c72787f01cd3e06dd21 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (obj, key) {
-    return Object.prototype.hasOwnProperty.call(obj, key);
-  };
-  
-  module.exports = exports["default"];
-  
-  return module.exports;
-}).call(this);
-// src/type/element.js
-(typeof window === 'undefined' ? global : window).__43714db526496b3dd90353996f6dce09 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  exports['default'] = {
-    create: function create(opts) {
-      var elem = document.createElement(opts['extends'] || opts.id);
-      opts['extends'] && elem.setAttribute('is', opts.id);
-      return elem;
-    },
-    filter: function filter(elem, defs) {
-      var attrs = elem.attributes;
-      var isAttr = attrs.is;
-      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-      var tagName = (elem.tagName || elem.localName).toLowerCase();
-      var definition = defs[isAttrValue || tagName];
-  
-      if (!definition) {
-        return;
-      }
-  
-      var tagToExtend = definition['extends'];
-      if (isAttrValue) {
-        if (tagName === tagToExtend) {
-          return [definition];
-        }
-      } else if (!tagToExtend) {
-        return [definition];
-      }
-    }
-  };
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/global/registry.js
-(typeof window === 'undefined' ? global : window).__9cff21a9f41cc9ecfe56139e1040c954 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _vars = __dd77578495c1d19b0e115627616ea63a;
-  
-  var _vars2 = _interopRequireDefault(_vars);
-  
-  var _utilHasOwn = __6d7878404f872c72787f01cd3e06dd21;
-  
-  var _utilHasOwn2 = _interopRequireDefault(_utilHasOwn);
-  
-  var _typeElement = __43714db526496b3dd90353996f6dce09;
-  
-  var _typeElement2 = _interopRequireDefault(_typeElement);
-  
-  var definitions = {};
-  var map = [];
-  var types = [];
-  
-  exports['default'] = _vars2['default'].registerIfNotExists('registry', {
-    get: function get(id) {
-      return (0, _utilHasOwn2['default'])(definitions, id) && definitions[id];
-    },
-    set: function set(id, opts) {
-      if (this.get(id)) {
-        throw new Error('A Skate component with the name of "' + id + '" already exists.');
-      }
-  
-      var type = opts.type || _typeElement2['default'];
-      var typeIndex = types.indexOf(type);
-  
-      if (typeIndex === -1) {
-        typeIndex = types.length;
-        types.push(type);
-        map[typeIndex] = {};
-      }
-  
-      definitions[id] = opts;
-      map[typeIndex][id] = opts;
-  
-      return this;
-    },
-    find: function find(elem) {
-      var filtered = [];
-      var typesLength = types.length;
-  
-      for (var a = 0; a < typesLength; a++) {
-        filtered = filtered.concat(types[a].filter(elem, map[a]) || []);
-      }
-  
-      return filtered;
-    }
-  });
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/api/create.js
-(typeof window === 'undefined' ? global : window).__1675a7174b713323cc232370699a2714 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
-  
-  var _objectAssign2 = _interopRequireDefault(_objectAssign);
-  
-  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
-  
-  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
-  
-  exports['default'] = function (name, properties) {
-    var trimmedName = name.trim();
-    var constructor = _globalRegistry2['default'].get(trimmedName);
-    return constructor ? constructor(properties) : (0, _objectAssign2['default'])(document.createElement(trimmedName), properties);
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
 // src/util/element-contains.js
 (typeof window === 'undefined' ? global : window).__6f793202bae98770dbb2b598df7929ad = (function () {
   var module = {
@@ -268,8 +75,35 @@
   
   return module.exports;
 }).call(this);
-// src/api/emit.js
-(typeof window === 'undefined' ? global : window).__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+// src/global/vars.js
+(typeof window === 'undefined' ? global : window).__dd77578495c1d19b0e115627616ea63a = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  var VERSION = '__skate_0_14_0';
+  
+  if (!window[VERSION]) {
+    window[VERSION] = {
+      registerIfNotExists: function registerIfNotExists(name, value) {
+        return this[name] || (this[name] = value);
+      }
+    };
+  }
+  
+  exports['default'] = window[VERSION];
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/global/registry.js
+(typeof window === 'undefined' ? global : window).__9cff21a9f41cc9ecfe56139e1040c954 = (function () {
   var module = {
     exports: {}
   };
@@ -283,93 +117,43 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  var _vars = __dd77578495c1d19b0e115627616ea63a;
   
-  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  var _vars2 = _interopRequireDefault(_vars);
   
-  var CustomEvent = (function (CustomEvent) {
-    if (CustomEvent) {
-      try {
-        new CustomEvent();
-      } catch (e) {
-        return undefined;
+  var definitions = {};
+  var map = [];
+  var types = [];
+  
+  exports['default'] = _vars2['default'].registerIfNotExists('registry', {
+    get: function get(name) {
+      return Object.prototype.hasOwnProperty.call(definitions, name) && definitions[name];
+    },
+    set: function set(name, Ctor) {
+      if (this.get(name)) {
+        throw new Error('A Skate component with the name of "' + name + '" already exists.');
       }
-    }
-    return CustomEvent;
-  })(window.CustomEvent);
   
-  var hasBubbleOnDetachedElements = (function () {
-    var parent = document.createElement('div');
-    var child = document.createElement('div');
-    var hasBubbleOnDetachedElements = false;
-    parent.appendChild(child);
-    parent.addEventListener('test', function () {
-      return hasBubbleOnDetachedElements = true;
-    });
-    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-    return hasBubbleOnDetachedElements;
-  })();
+      var type = Ctor.type;
+      var typeIndex = types.indexOf(type);
   
-  function createCustomEvent(name) {
-    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-  
-    if (CustomEvent) {
-      return new CustomEvent(name, opts);
-    }
-  
-    var e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    return e;
-  }
-  
-  function createReadableStopPropagation(oldStopPropagation) {
-    return function () {
-      this.isPropagationStopped = true;
-      oldStopPropagation.call(this);
-    };
-  }
-  
-  function simulateBubbling(elem, cEvent) {
-    var didPreventDefault = undefined;
-    var currentElem = elem;
-    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-    Object.defineProperty(cEvent, 'target', { get: function get() {
-        return elem;
-      } });
-    while (currentElem && !cEvent.isPropagationStopped) {
-      cEvent.currentTarget = currentElem;
-      if (currentElem.dispatchEvent(cEvent) === false) {
-        didPreventDefault = false;
+      if (typeIndex === -1) {
+        typeIndex = types.length;
+        types.push(type);
+        map[typeIndex] = {};
       }
-      currentElem = currentElem.parentNode;
-    }
-    return didPreventDefault;
-  }
   
-  function emitOne(elem, name, opts) {
-    var cEvent, shouldSimulateBubbling;
-  
-    /* jshint expr: true */
-    opts.bubbles === undefined && (opts.bubbles = true);
-    opts.cancelable === undefined && (opts.cancelable = true);
-    cEvent = createCustomEvent(name, opts);
-    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
-  
-    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
-  }
-  
-  exports['default'] = function (elem, name) {
-    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-  
-    var names = typeof name === 'string' ? name.split(' ') : name;
-    return names.reduce(function (prev, curr) {
-      if (emitOne(elem, curr, opts) === false) {
-        prev.push(curr);
+      return definitions[name] = map[typeIndex][name] = Ctor;
+    },
+    find: function find(elem) {
+      var filtered = [];
+      var typesLength = types.length;
+      for (var a = 0; a < typesLength; a++) {
+        filtered = filtered.concat(types[a].filter(elem, map[a]) || []);
       }
-      return prev;
-    }, []);
-  };
-  
+      return filtered;
+    }
+  });
   module.exports = exports['default'];
   
   return module.exports;
@@ -499,6 +283,150 @@
         }
       });
     });
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/create.js
+(typeof window === 'undefined' ? global : window).__1675a7174b713323cc232370699a2714 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _objectAssign = __bbda433df4ec72c4488e3a2f0e6a59a1;
+  
+  var _objectAssign2 = _interopRequireDefault(_objectAssign);
+  
+  var _init = __3add36046399fead5a83243849207ed7;
+  
+  var _init2 = _interopRequireDefault(_init);
+  
+  var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
+  
+  var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
+  
+  exports['default'] = function (name, props) {
+    var Ctor = _globalRegistry2['default'].get(name);
+    var elem = Ctor ? Ctor.type.create(Ctor) : document.createElement(name);
+    Ctor && Ctor.isNative || (0, _init2['default'])(elem);
+    return (0, _objectAssign2['default'])(elem, props);
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/api/emit.js
+(typeof window === 'undefined' ? global : window).__639a0d2e0f8a90cd72e6197bdb481558 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _utilElementContains = __6f793202bae98770dbb2b598df7929ad;
+  
+  var _utilElementContains2 = _interopRequireDefault(_utilElementContains);
+  
+  var CustomEvent = (function (CustomEvent) {
+    if (CustomEvent) {
+      try {
+        new CustomEvent();
+      } catch (e) {
+        return undefined;
+      }
+    }
+    return CustomEvent;
+  })(window.CustomEvent);
+  
+  var hasBubbleOnDetachedElements = (function () {
+    var parent = document.createElement('div');
+    var child = document.createElement('div');
+    var hasBubbleOnDetachedElements = false;
+    parent.appendChild(child);
+    parent.addEventListener('test', function () {
+      return hasBubbleOnDetachedElements = true;
+    });
+    child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+    return hasBubbleOnDetachedElements;
+  })();
+  
+  function createCustomEvent(name) {
+    var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+  
+    if (CustomEvent) {
+      return new CustomEvent(name, opts);
+    }
+  
+    var e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    return e;
+  }
+  
+  function createReadableStopPropagation(oldStopPropagation) {
+    return function () {
+      this.isPropagationStopped = true;
+      oldStopPropagation.call(this);
+    };
+  }
+  
+  function simulateBubbling(elem, cEvent) {
+    var didPreventDefault = undefined;
+    var currentElem = elem;
+    cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+    Object.defineProperty(cEvent, 'target', { get: function get() {
+        return elem;
+      } });
+    while (currentElem && !cEvent.isPropagationStopped) {
+      cEvent.currentTarget = currentElem;
+      if (currentElem.dispatchEvent(cEvent) === false) {
+        didPreventDefault = false;
+      }
+      currentElem = currentElem.parentNode;
+    }
+    return didPreventDefault;
+  }
+  
+  function emitOne(elem, name, opts) {
+    var cEvent, shouldSimulateBubbling;
+  
+    /* jshint expr: true */
+    opts.bubbles === undefined && (opts.bubbles = true);
+    opts.cancelable === undefined && (opts.cancelable = true);
+    cEvent = createCustomEvent(name, opts);
+    shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !(0, _utilElementContains2['default'])(document, elem);
+  
+    return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : elem.dispatchEvent(cEvent);
+  }
+  
+  exports['default'] = function (elem, name) {
+    var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+  
+    var names = typeof name === 'string' ? name.split(' ') : name;
+    return names.reduce(function (prev, curr) {
+      if (emitOne(elem, curr, opts) === false) {
+        prev.push(curr);
+      }
+      return prev;
+    }, []);
   };
   
   module.exports = exports['default'];
@@ -934,39 +862,6 @@
   });
   exports['default'] = '0.15.2';
   module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/assign-safe.js
-(typeof window === 'undefined' ? global : window).__d9d26492984e649e5130081ad32bafd6 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  "use strict";
-  
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  
-  exports["default"] = function (child) {
-    for (var _len = arguments.length, parents = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      parents[_key - 1] = arguments[_key];
-    }
-  
-    parents.forEach(function (parent) {
-      Object.getOwnPropertyNames(parent || {}).forEach(function (name) {
-        var childDesc = Object.getOwnPropertyDescriptor(child, name);
-        if (!childDesc || childDesc.configurable) {
-          Object.defineProperty(child, name, Object.getOwnPropertyDescriptor(parent, name));
-        }
-      });
-    });
-    return child;
-  };
-  
-  module.exports = exports["default"];
   
   return module.exports;
 }).call(this);
@@ -1511,13 +1406,69 @@
   });
   
   exports["default"] = function (proto) {
-    var chains = [proto];
-    /* jshint boss: true */
-    while (proto = Object.getPrototypeOf(proto)) {
+    var chains = [];
+    while (proto) {
       chains.push(proto);
+      proto = Object.getPrototypeOf(proto);
     }
     chains.reverse();
     return chains;
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
+// src/util/define-properties.js
+(typeof window === 'undefined' ? global : window).__c819e2253d759a2f3c5b825e783f9d11 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  exports['default'] = function (obj, props) {
+    Object.keys(props).forEach(function (name) {
+      var prop = props[name];
+      var descrptor = Object.getOwnPropertyDescriptor(obj, name);
+      var isDinosaurBrowser = name !== 'arguments' && name !== 'caller' && 'value' in prop;
+      var isConfigurable = !descrptor || descrptor.configurable;
+  
+      if (isConfigurable) {
+        Object.defineProperty(obj, name, prop);
+      } else if (isDinosaurBrowser) {
+        obj[name] = prop.value;
+      }
+    });
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/get-own-property-descriptors.js
+(typeof window === 'undefined' ? global : window).__8e463076249d3268e7c5be060a0d00d9 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (obj) {
+    return Object.getOwnPropertyNames(obj).reduce(function (prev, curr) {
+      prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
+      return prev;
+    }, {});
   };
   
   module.exports = exports["default"];
@@ -1540,20 +1491,24 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
-  
-  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
-  
   var _utilProtos = __1d11a28624d684874cb270f137cc0122;
   
   var _utilProtos2 = _interopRequireDefault(_utilProtos);
+  
+  var _utilDefineProperties = __c819e2253d759a2f3c5b825e783f9d11;
+  
+  var _utilDefineProperties2 = _interopRequireDefault(_utilDefineProperties);
+  
+  var _utilGetOwnPropertyDescriptors = __8e463076249d3268e7c5be060a0d00d9;
+  
+  var _utilGetOwnPropertyDescriptors2 = _interopRequireDefault(_utilGetOwnPropertyDescriptors);
   
   function prototype(opts) {
     var prototypes = (0, _utilProtos2['default'])(opts.prototype);
     return function (elem) {
       prototypes.forEach(function (proto) {
         if (!proto.isPrototypeOf(elem)) {
-          (0, _utilAssignSafe2['default'])(elem, proto);
+          (0, _utilDefineProperties2['default'])(elem, (0, _utilGetOwnPropertyDescriptors2['default'])(proto));
         }
       });
     };
@@ -1692,40 +1647,48 @@
   
   return module.exports;
 }).call(this);
-// src/util/debounce.js
-(typeof window === 'undefined' ? global : window).__afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
+// src/type/element.js
+(typeof window === 'undefined' ? global : window).__43714db526496b3dd90353996f6dce09 = (function () {
   var module = {
     exports: {}
   };
   var exports = module.exports;
   
-  "use strict";
+  'use strict';
   
-  Object.defineProperty(exports, "__esModule", {
+  Object.defineProperty(exports, '__esModule', {
     value: true
   });
+  var documentCreateElement = document.createElement.bind(document);
   
-  exports["default"] = function (fn) {
-    var called = false;
+  exports['default'] = {
+    create: function create(Ctor) {
+      var elem = Ctor['extends'] ? documentCreateElement(Ctor['extends'], Ctor.id) : documentCreateElement(Ctor.id);
+      !Ctor.isNative && Ctor['extends'] && elem.setAttribute('is', Ctor.id);
+      return elem;
+    },
+    filter: function filter(elem, defs) {
+      var attrs = elem.attributes;
+      var isAttr = attrs.is;
+      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
+      var tagName = (elem.tagName || elem.localName).toLowerCase();
+      var definition = defs[isAttrValue || tagName];
   
-    return function () {
-      var _this = this;
-  
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
+      if (!definition) {
+        return;
       }
   
-      if (!called) {
-        called = true;
-        setTimeout(function () {
-          called = false;
-          fn.apply(_this, args);
-        }, 1);
+      var tagToExtend = definition['extends'];
+      if (isAttrValue) {
+        if (tagName === tagToExtend) {
+          return [definition];
+        }
+      } else if (!tagToExtend) {
+        return [definition];
       }
-    };
+    }
   };
-  
-  module.exports = exports["default"];
+  module.exports = exports['default'];
   
   return module.exports;
 }).call(this);
@@ -1748,52 +1711,21 @@
   
   var _typeElement2 = _interopRequireDefault(_typeElement);
   
+  var noop = function noop() {};
+  
   exports['default'] = {
-    // Called when the element is attached to the document.
-    attached: function attached() {},
-  
-    // Attribute lifecycle callback or callbacks.
-    attribute: function attribute() {},
-  
-    // Called when the element is created after all descendants have had it
-    // called on them.
-    created: function created() {},
-  
-    // Responsible for rendering stuff to the host element. This can do anything
-    // you like.
-    render: function render() {},
-  
-    // Called when the element is detached from the document.
-    detached: function detached() {},
-  
-    // The events to manage the binding and unbinding of during the definition's
-    // lifecycle.
+    attached: noop,
+    attribute: noop,
+    created: noop,
+    render: noop,
+    detached: noop,
     events: {},
-  
-    // Restricts a particular definition to binding explicitly to an element with
-    // a tag name that matches the specified value.
     'extends': '',
-  
-    // The ID of the definition. This is automatically set in the `skate()`
-    // function.
-    id: '',
-  
-    // The special Skate properties to define.
     properties: {},
-  
-    // Properties and methods to add to each element.
     prototype: {},
-  
-    // The attribute name to add after calling the created() callback.
     resolvedAttribute: 'resolved',
-  
-    // Called after all lifecycle callbacks have been called.
-    ready: function ready() {},
-  
-    // The type of bindings to allow.
+    ready: noop,
     type: _typeElement2['default'],
-  
-    // The attribute name to remove after calling the created() callback.
     unresolvedAttribute: 'unresolved'
   };
   module.exports = exports['default'];
@@ -1827,41 +1759,6 @@
       info.attached = false;
       opts.detached(this);
     };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/util/get-closest-ignored-element.js
-(typeof window === 'undefined' ? global : window).__a56dab24700df352eb84caec3fe615e5 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
-  
-  var _ignored2 = _interopRequireDefault(_ignored);
-  
-  var Element = window.Element;
-  
-  exports['default'] = function (element) {
-    var parent = element;
-    while (parent instanceof Element) {
-      if ((0, _ignored2['default'])(parent)) {
-        return parent;
-      }
-      parent = parent.parentNode;
-    }
   };
   
   module.exports = exports['default'];
@@ -1940,6 +1837,41 @@
   
   return module.exports;
 }).call(this);
+// src/util/get-closest-ignored-element.js
+(typeof window === 'undefined' ? global : window).__a56dab24700df352eb84caec3fe615e5 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _ignored = __092f8936e5006bddcb3baf24320a5a06;
+  
+  var _ignored2 = _interopRequireDefault(_ignored);
+  
+  var Element = window.Element;
+  
+  exports['default'] = function (element) {
+    var parent = element;
+    while (parent instanceof Element) {
+      if ((0, _ignored2['default'])(parent)) {
+        return parent;
+      }
+      parent = parent.parentNode;
+    }
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
 // src/global/document-observer.js
 (typeof window === 'undefined' ? global : window).__d8200645c4d96aee6940034d9c030d1f = (function () {
   var module = {
@@ -1955,13 +1887,15 @@
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
   
-  var _vars = __dd77578495c1d19b0e115627616ea63a;
-  
-  var _vars2 = _interopRequireDefault(_vars);
+  __c88e1e3ebc3bc643629f4b153969a85f;
   
   var _utilGetClosestIgnoredElement = __a56dab24700df352eb84caec3fe615e5;
   
   var _utilGetClosestIgnoredElement2 = _interopRequireDefault(_utilGetClosestIgnoredElement);
+  
+  var _vars = __dd77578495c1d19b0e115627616ea63a;
+  
+  var _vars2 = _interopRequireDefault(_vars);
   
   var _registry = __9cff21a9f41cc9ecfe56139e1040c954;
   
@@ -1970,8 +1904,6 @@
   var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
-  
-  __c88e1e3ebc3bc643629f4b153969a85f;
   
   function triggerAddedNodes(addedNodes) {
     (0, _utilWalkTree2['default'])(addedNodes, function (element) {
@@ -2079,6 +2011,81 @@
   
   return module.exports;
 }).call(this);
+// src/util/get-all-property-descriptors.js
+(typeof window === 'undefined' ? global : window).__438ba7615037843725db158638ce4d68 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  'use strict';
+  
+  Object.defineProperty(exports, '__esModule', {
+    value: true
+  });
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+  
+  var _getOwnPropertyDescriptors = __8e463076249d3268e7c5be060a0d00d9;
+  
+  var _getOwnPropertyDescriptors2 = _interopRequireDefault(_getOwnPropertyDescriptors);
+  
+  var _protos = __1d11a28624d684874cb270f137cc0122;
+  
+  var _protos2 = _interopRequireDefault(_protos);
+  
+  exports['default'] = function (obj) {
+    return (0, _protos2['default'])(obj).reduce(function (result, proto) {
+      var descriptors = (0, _getOwnPropertyDescriptors2['default'])(proto);
+      Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
+        result[name] = descriptors[name];
+        return result;
+      }, result);
+      return result;
+    }, {});
+  };
+  
+  module.exports = exports['default'];
+  
+  return module.exports;
+}).call(this);
+// src/util/debounce.js
+(typeof window === 'undefined' ? global : window).__afcda96357b2c6b7e23ccb9ac8b92f43 = (function () {
+  var module = {
+    exports: {}
+  };
+  var exports = module.exports;
+  
+  "use strict";
+  
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  
+  exports["default"] = function (fn) {
+    var called = false;
+  
+    return function () {
+      var _this = this;
+  
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+  
+      if (!called) {
+        called = true;
+        setTimeout(function () {
+          called = false;
+          fn.apply(_this, args);
+        }, 1);
+      }
+    };
+  };
+  
+  module.exports = exports["default"];
+  
+  return module.exports;
+}).call(this);
 // src/support/valid-custom-element.js
 (typeof window === 'undefined' ? global : window).__6e1dfed2b03894ef63a4b65d5038d223 = (function () {
   var module = {
@@ -2153,10 +2160,6 @@
   
   var _objectAssign2 = _interopRequireDefault(_objectAssign);
   
-  var _utilAssignSafe = __d9d26492984e649e5130081ad32bafd6;
-  
-  var _utilAssignSafe2 = _interopRequireDefault(_utilAssignSafe);
-  
   var _lifecycleAttached = __2b55a083f45c9ef157662a1dc1674218;
   
   var _lifecycleAttached2 = _interopRequireDefault(_lifecycleAttached);
@@ -2168,10 +2171,6 @@
   var _lifecycleCreated = __fe1aef0db5b664068b470b21f7c754a5;
   
   var _lifecycleCreated2 = _interopRequireDefault(_lifecycleCreated);
-  
-  var _utilDebounce = __afcda96357b2c6b7e23ccb9ac8b92f43;
-  
-  var _utilDebounce2 = _interopRequireDefault(_utilDebounce);
   
   var _defaults = __46b087e8c15b2e0ebc2c4d4cbc36d975;
   
@@ -2197,6 +2196,22 @@
   
   var _typeElement2 = _interopRequireDefault(_typeElement);
   
+  var _utilGetAllPropertyDescriptors = __438ba7615037843725db158638ce4d68;
+  
+  var _utilGetAllPropertyDescriptors2 = _interopRequireDefault(_utilGetAllPropertyDescriptors);
+  
+  var _utilGetOwnPropertyDescriptors = __8e463076249d3268e7c5be060a0d00d9;
+  
+  var _utilGetOwnPropertyDescriptors2 = _interopRequireDefault(_utilGetOwnPropertyDescriptors);
+  
+  var _utilDebounce = __afcda96357b2c6b7e23ccb9ac8b92f43;
+  
+  var _utilDebounce2 = _interopRequireDefault(_utilDebounce);
+  
+  var _utilDefineProperties = __c819e2253d759a2f3c5b825e783f9d11;
+  
+  var _utilDefineProperties2 = _interopRequireDefault(_utilDefineProperties);
+  
   var _utilWalkTree = __164e5750c20526cb74a9e443b730eeff;
   
   var _utilWalkTree2 = _interopRequireDefault(_utilWalkTree);
@@ -2205,126 +2220,107 @@
   
   var _supportValidCustomElement2 = _interopRequireDefault(_supportValidCustomElement);
   
-  function makeOptions(userOptions) {
-    var options = (0, _utilAssignSafe2['default'])({}, _defaults2['default']);
-  
-    // Copy over all standard options if the user has defined them.
-    for (var _name in _defaults2['default']) {
-      if (userOptions[_name] !== undefined) {
-        options[_name] = userOptions[_name];
-      }
-    }
-  
-    // Copy over non-standard options.
-    for (var _name2 in userOptions) {
-      options[_name2] = userOptions[_name2];
-    }
-  
-    return options;
-  }
-  
-  function makeNonNewableWrapper(Ctor, opts) {
-    function CtorWrapper() {
-      var properties = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-  
-      return (0, _objectAssign2['default'])(new Ctor(), properties);
-    }
-  
-    // Copy prototype.
-    CtorWrapper.prototype = Ctor.prototype;
-  
-    // Ensure a non-enumerable constructor property exists.
-    Object.defineProperty(CtorWrapper.prototype, 'constructor', {
-      configurable: true,
-      enumerable: false,
-      value: CtorWrapper,
-      writable: false
-    });
-  
-    // Make Function.prototype.name behave like native custom elements but only
-    // if it's allowed (i.e. not Safari).
-    var nameProp = Object.getOwnPropertyDescriptor(CtorWrapper, 'name');
-    if (nameProp && nameProp.configurable) {
-      Object.defineProperty(CtorWrapper, 'name', {
-        configurable: true,
-        enumerable: false,
-        value: opts.id,
-        writable: false
-      });
-    }
-  
-    return CtorWrapper;
-  }
-  
-  function polyfillElementConstructor(opts) {
-    var type = opts.type;
-    function CustomElement() {
-      var element = type.create(opts);
-      opts.prototype.createdCallback.call(element);
-      return element;
-    }
-    CustomElement.prototype = opts.prototype;
-    return CustomElement;
-  }
-  
   var HTMLElement = window.HTMLElement;
+  
+  // A function that initialises the document once in a given event loop.
   var initDocument = (0, _utilDebounce2['default'])(function () {
+    // For performance in older browsers, we use:
+    //
+    // - childNodes instead of children
+    // - for instead of forEach
     (0, _utilWalkTree2['default'])(document.documentElement.childNodes, function (element) {
       var components = _globalRegistry2['default'].find(element);
       var componentsLength = components.length;
   
+      // Created callbacks are called first.
       for (var a = 0; a < componentsLength; a++) {
         components[a].prototype.createdCallback.call(element);
       }
   
+      // Attached callbacks are called separately because this emulates how
+      // native works internally.
       for (var a = 0; a < componentsLength; a++) {
         components[a].prototype.attachedCallback.call(element);
       }
     });
   });
   
-  function skate(name, userOptions) {
-    var Ctor = undefined,
-        parentProto = undefined;
-    var opts = makeOptions(userOptions);
+  // Creates a configurable, non-writable, non-enumerable property.
+  function fixedProp(obj, name, value) {
+    Object.defineProperty(obj, name, {
+      configurable: true,
+      enumerable: false, value: value,
+      writable: false
+    });
+  }
   
-    opts.id = name;
-    opts.isNative = opts.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(name);
-    parentProto = (opts['extends'] ? document.createElement(opts['extends']).constructor : HTMLElement).prototype;
+  // Makes a function / constructor that can be called as either.
+  function makeCtor(name, opts) {
+    var func = _apiCreate2['default'].bind(null, name);
   
-    // Inherit from parent prototype.
-    if (!parentProto.isPrototypeOf(opts.prototype)) {
-      opts.prototype = (0, _utilAssignSafe2['default'])(Object.create(parentProto), opts.prototype);
+    // Assigning defaults gives a predictable definition and prevents us from
+    // having to do defaults checks everywhere.
+    (0, _objectAssign2['default'])(func, _defaults2['default']);
+  
+    // Inherit all options. This takes into account object literals as well as
+    // ES2015 classes that may have inherited static props which would not be
+    // considered "own".
+    (0, _utilDefineProperties2['default'])(func, (0, _utilGetAllPropertyDescriptors2['default'])(opts));
+  
+    // Fixed info.
+    fixedProp(func.prototype, 'constructor', func);
+    fixedProp(func, 'id', name);
+    fixedProp(func, 'isNative', func.type === _typeElement2['default'] && (0, _supportCustomElements2['default'])() && (0, _supportValidCustomElement2['default'])(name));
+  
+    // *sigh* WebKit
+    //
+    // In native, the function name is the same as the custom element name, but
+    // WebKit prevents this from being defined. We do this where possible and
+    // still define `id` for cross-browser compatibility.
+    var nameProp = Object.getOwnPropertyDescriptor(func, 'name');
+    if (nameProp && nameProp.configurable) {
+      fixedProp(func, 'name', name);
     }
   
-    // Make custom definition conform to native.
-    opts.prototype.createdCallback = (0, _lifecycleCreated2['default'])(opts);
-    opts.prototype.attachedCallback = (0, _lifecycleAttached2['default'])(opts);
-    opts.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(opts);
-    opts.prototype.attributeChangedCallback = (0, _lifecycleAttribute2['default'])(opts);
+    return func;
+  }
   
-    // Make a constructor for the definition.
-    if (opts.isNative) {
-      var nativeDefinition = {
-        prototype: opts.prototype
-      };
-      if (opts['extends']) {
-        nativeDefinition['extends'] = opts['extends'];
-      }
-      Ctor = document.registerElement(name, nativeDefinition);
+  // The main skate() function.
+  function skate(name, opts) {
+    var Ctor = makeCtor(name, opts);
+    var proto = (Ctor['extends'] ? document.createElement(Ctor['extends']).constructor : HTMLElement).prototype;
+  
+    // If the options don't inherit a native element prototype, we ensure it does
+    // because native unnecessarily requires you explicitly do this.
+    if (!proto.isPrototypeOf(Ctor.prototype)) {
+      Ctor.prototype = Object.create(proto, (0, _utilGetOwnPropertyDescriptors2['default'])(Ctor.prototype));
+    }
+  
+    // We not assign native callbacks to handle the callbacks specified in the
+    // Skate definition. This allows us to abstract away any changes that may
+    // occur in the spec.
+    Ctor.prototype.createdCallback = (0, _lifecycleCreated2['default'])(Ctor);
+    Ctor.prototype.attachedCallback = (0, _lifecycleAttached2['default'])(Ctor);
+    Ctor.prototype.detachedCallback = (0, _lifecycleDetached2['default'])(Ctor);
+    Ctor.prototype.attributeChangedCallback = (0, _lifecycleAttribute2['default'])(Ctor);
+  
+    // In native, we have to massage the definition so that the browser doesn't
+    // spit out errors for a malformed definition. In polyfill land we must
+    // emulate what the browser would normally do in native.
+    if (Ctor.isNative) {
+      var nativeDefinition = { prototype: Ctor.prototype };
+      Ctor['extends'] && (nativeDefinition['extends'] = Ctor['extends']);
+      document.registerElement(name, nativeDefinition);
     } else {
-      Ctor = polyfillElementConstructor(opts);
       initDocument();
       _globalDocumentObserver2['default'].register();
     }
   
-    Ctor = makeNonNewableWrapper(Ctor, opts);
-    (0, _utilAssignSafe2['default'])(Ctor, opts);
-    _globalRegistry2['default'].set(name, Ctor);
-  
-    return Ctor;
+    // We keep our own registry since we can't access the native one.
+    return _globalRegistry2['default'].set(name, Ctor);
   }
   
+  // Public API.
   skate.create = _apiCreate2['default'];
   skate.emit = _apiEmit2['default'];
   skate.fragment = _apiFragment2['default'];
