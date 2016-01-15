@@ -1294,7 +1294,7 @@ skate('my-select', {
     var div = document.createElement('div');
     div.classList.add('wrapper');
     while (elem.childNodes.length) {
-      div.appendChild(elem.childNodes[elem.childNodes.length - 1]);
+      div.appendChild(elem.childNodes[0]);
     }
     elem.appendChild(div);
   }
