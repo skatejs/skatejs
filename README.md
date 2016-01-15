@@ -302,7 +302,7 @@ skate('my-element', {
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
       default: 'default value',
-      
+
       // Called when the property is created on the element. The value of
       // `data` is an object containing:
       //
@@ -1202,3 +1202,137 @@ If you have a DOM tree that you don't want Skate to polyfill then you can add th
 ## Multiple Version Support
 
 On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
+
+
+
+
+## Designing Web Components
+
+A web component's public API should be available both imperatively (via JavaScript) and declaratively (via HTML). You should be able to do everything in one, that you can do in the other within reason.
+
+### Imperative
+
+You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
+
+```js
+window.MyComponent = skate('my-component', {});
+
+// Somewhere else.
+var element = window.MyComponent();
+```
+
+### Declarative
+
+By declaring a Skate component, you are automatically making your element available to be used as HTML:
+
+```html
+<my-component></my-component>
+```
+
+### Properties and attributes
+
+Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, it's API remains as consistent as the constrains of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
+
+```js
+skate('my-component', {
+  properties: {
+    // Links the `name` property to the `name` attribute.
+    name: { attribute: true }
+  }
+});
+```
+
+Sometimes this may not be viable, for example when passing complex data types to attributes. In this scenario, you can try and serialize / deserialize to / from attributes. For example, if you wanted to take a comma-separated list in an attribute and have the property take an array, but still have them linked, you could do something like:
+
+```js
+skate('my-component', {
+  properties: {
+    values: {
+      attribute: true,
+      deserialize: function (val) {
+        return val.split(',');
+      },
+      serialize: function (val) {
+        return val.join(',');
+      }
+    }
+  }
+});
+```
+
+### Content Projection
+
+Content projection - or allowing the user to define content which the component can use in its template - is a difficult subject not to be opinionated about. The Shadow DOM spec is supposed to deal with this, but it's still being fully fleshed out and is probably a ways off from full browser support. Until then, we have to find other ways to do this.
+
+An example of this would be if you wanted to create a custom select box that the user can pass options to. And in this select box, you want to put the user's options into a particular spot in your template.
+
+```js
+<my-select>
+  <my-option>1</my-option>
+  <my-option>2</my-option>
+</my-select>
+```
+
+And you want it to render out to:
+
+```js
+<my-select>
+  <div class="wrapper">
+    <my-option>1</my-option>
+    <my-option>2</my-option>
+  </div>
+</my-select>
+```
+
+Dealing with this can be done in many ways.
+
+A simple, straight-forward way to do this would be to take the `childNodes` at the time of rendering, and put them where you want them. In this case, you're creating a `<div>`, putting all initial children in it and then appending that div to the main component:
+
+```js
+skate('my-select', {
+  render: function (elem) {
+    var div = document.createElement('div');
+    div.classList.add('wrapper');
+    while (elem.childNodes.length) {
+      div.appendChild(elem.childNodes[elem.childNodes.length - 1]);
+    }
+    elem.appendChild(div);
+  }
+});
+```
+
+This can very easily be abstracted to a function and reused. However, with updates, it starts to get awkward. Your user shouldn't have to `querySelector` for the `<div>` where all the content is and append children to it; they shouldn't even know about that `<div>` at all.
+
+A simple way to get around this, is to create a property that represents that `<div>` and expose it as part of your public API. In the above `render` function, you could add:
+
+```js
+Object.defineProperty(elem, 'content', {
+  value: div,
+  writable: false
+});
+```
+
+Your consumers can then use that property to add more options:
+
+```js
+var option = document.createElement('option');
+var select = document.querySelector('my-select');
+option.textContent = '3';
+select.content.appendChild(option);
+```
+
+Which would result in:
+
+```js
+<my-select>
+  <div class="wrapper">
+    <my-option>1</my-option>
+    <my-option>2</my-option>
+    <my-option>3</my-option>
+  </div>
+</my-select>
+```
+
+### React Integration
+
+You can create React components from web components (thus Skate components work) using [react-integration](https://github.com/skatejs/react-integration).
