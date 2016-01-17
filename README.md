@@ -90,16 +90,12 @@ Result
 - [Ignoring Elements](#ignoring-elements)
 - [No Conflict](#no-conflict)
 - [Multiple Version Support](#multiple-version-support)
-- [Contributing](#contributing)
-  - [Setup](#setup)
-  - [Testing](#testing)
-  - [Linting](#linting)
-  - [Distribution](#distribution)
-  - [Releasing](#releasing)
-  - [Deploying](#deploying)
-- [Who's Using It?](#whos-using-it)
-- [Maintainers](#maintainers)
-- [License](#license)
+- [Designing Web Components](#designing-web-components)
+  - [Imperative](#imperative)
+  - [Declarative](#declarative)
+  - [Properties and Attributes](#properties-and-attributes)
+  - [Content Projection](#content-projection)
+  - [React Integration](#react-integration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1266,7 +1262,7 @@ Content projection - or allowing the user to define content which the component 
 
 An example of this would be if you wanted to create a custom select box that the user can pass options to. And in this select box, you want to put the user's options into a particular spot in your template.
 
-```js
+```html
 <my-select>
   <my-option>1</my-option>
   <my-option>2</my-option>
@@ -1275,7 +1271,7 @@ An example of this would be if you wanted to create a custom select box that the
 
 And you want it to render out to:
 
-```js
+```html
 <my-select>
   <div class="wrapper">
     <my-option>1</my-option>
@@ -1323,7 +1319,7 @@ select.content.appendChild(option);
 
 Which would result in:
 
-```js
+```html
 <my-select>
   <div class="wrapper">
     <my-option>1</my-option>
