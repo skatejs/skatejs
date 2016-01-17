@@ -1258,7 +1258,7 @@ skate('my-component', {
 
 ### Content Projection
 
-Content projection - or allowing the user to define content which the component can use in its template - is a difficult subject not to be opinionated about. The Shadow DOM spec is supposed to deal with this, but it's still being fully fleshed out and is probably a ways off from full browser support. Until then, we have to find other ways to do this.
+Content projection - or allowing the user to define content which the component can use in its template - is a difficult subject not to be opinionated about. The Shadow DOM spec is supposed to deal with this, but it's still being fully fleshed out and is ~~probably~~ a ways off from full browser support. Until then, we have to find other ways to do this.
 
 An example of this would be if you wanted to create a custom select box that the user can pass options to. And in this select box, you want to put the user's options into a particular spot in your template.
 
