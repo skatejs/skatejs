@@ -44,3 +44,20 @@ npm run build
 ## Notes
 
 - Default branch should always be the latest stable branch.
+
+## Releasing
+
+To release a new version of Skate:
+
+```bash
+npm run release
+```
+
+This will run tests, generate the build (dist and lib), commit, tag, push and publish to NPM.
+
+The available options are:
+
+- `semver` The exact semantic version of this release in lieu of specifying `type`.
+- `type` The type of release to do. Valid values are `patch` (default), `minor` and `major`. The version will be auto-generated.
+
+*Make sure you have `npm install`ed for the branch that you're releasing so the deps are correct for that version.*
