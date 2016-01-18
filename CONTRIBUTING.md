@@ -40,10 +40,7 @@ To build the `dist/` and `lib/` artifacts run:
 
 ```bash
 npm run build
-
-## Notes
-
-- Default branch should always be the latest stable branch.
+```
 
 ## Releasing
 
@@ -61,3 +58,7 @@ The available options are:
 - `type` The type of release to do. Valid values are `patch` (default), `minor` and `major`. The version will be auto-generated.
 
 *Make sure you have `npm install`ed for the branch that you're releasing so the deps are correct for that version.*
+
+## Notes
+
+- Default branch should always be the latest stable branch.
