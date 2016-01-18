@@ -1,5 +1,9 @@
+import empty from '../../util/empty';
+
+const alwaysUndefinedIfEmpty = val => empty(val) ? undefined : String(val);
+
 export default {
-  coerce: value => typeof value === 'undefined' ? value : String(value),
-  deserialize: value => value === null ? undefined : value,
-  serialize: value => typeof value === 'undefined' ? value : String(value)
+  coerce: alwaysUndefinedIfEmpty,
+  deserialize: alwaysUndefinedIfEmpty,
+  serialize: alwaysUndefinedIfEmpty
 };
