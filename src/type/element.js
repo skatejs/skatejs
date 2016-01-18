@@ -1,7 +1,9 @@
+const documentCreateElement = document.createElement.bind(document);
+
 export default {
-  create (opts) {
-    var elem = document.createElement(opts.extends || opts.id);
-    opts.extends && elem.setAttribute('is', opts.id);
+  create (Ctor) {
+    const elem = Ctor.extends ? documentCreateElement(Ctor.extends, Ctor.id) : documentCreateElement(Ctor.id);
+    !Ctor.isNative && Ctor.extends && elem.setAttribute('is', Ctor.id);
     return elem;
   },
   filter (elem, defs) {

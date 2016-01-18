@@ -1,8 +1,8 @@
-import globals from './vars';
+import '../fix/ie/innerhtml';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
+import globals from './vars';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
-import '../fix/ie/innerhtml';
 
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
@@ -52,7 +52,7 @@ function documentObserverHandler (mutations) {
 }
 
 function createMutationObserver () {
-  const { MutationObserver} = window;
+  const { MutationObserver } = window;
   if (!MutationObserver) {
     throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
   }

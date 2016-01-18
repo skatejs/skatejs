@@ -1,0 +1,3 @@
+{
+  "base": "node_modules/skatejs-build/task"
+}

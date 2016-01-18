@@ -90,16 +90,12 @@ Result
 - [Ignoring Elements](#ignoring-elements)
 - [No Conflict](#no-conflict)
 - [Multiple Version Support](#multiple-version-support)
-- [Contributing](#contributing)
-  - [Setup](#setup)
-  - [Testing](#testing)
-  - [Linting](#linting)
-  - [Distribution](#distribution)
-  - [Releasing](#releasing)
-  - [Deploying](#deploying)
-- [Who's Using It?](#whos-using-it)
-- [Maintainers](#maintainers)
-- [License](#license)
+- [Designing Web Components](#designing-web-components)
+  - [Imperative](#imperative)
+  - [Declarative](#declarative)
+  - [Properties and Attributes](#properties-and-attributes)
+  - [Content Projection](#content-projection)
+  - [React Integration](#react-integration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -179,6 +175,9 @@ You define a component by passing a component ID and definition to the `skate()`
 
 - Tag name
 - Value of the `is` attribute
+
+Or the following if using [skatejs-types](https://github.com/skatejs/types) to specify a `type`:
+
 - Attribute name
 - Class name
 
@@ -248,12 +247,6 @@ skate('my-element', {
       e.delegateTarget;
     },
 
-    // Multiple handlers.
-    click: [
-      handler1,
-      handler2
-    ],
-
     // Focus and blur can be delegated, too.
     'focus .something': function () {},
     'blur .something': function () {}
@@ -266,21 +259,6 @@ skate('my-element', {
   // Restricts a particular component to binding explicitly to an element with
   // a tag name that matches the specified value. This value is empty by
   // default.
-  //
-  // Depending on the component type, it behaves like so:
-  //
-  // - When applied to a custom element, the component ID is used to match the
-  //   value of the element's `is` attribute and the element's tag name is
-  //   matched against the value specified here. This conforms with the custom
-  //   element spec.
-  //
-  // - When given to a component that binds to an element using an attribute,
-  //   the value specified here must match the element's tag name.
-  //
-  // - When specified on a component that is bound using a class name, this
-  //   value must match the element's tag name.
-  //
-  // - If the value is empty, then the component is not restricted at all.
   extends: '',
 
 
@@ -312,14 +290,21 @@ skate('my-element', {
       // is detected. If you simply want to coerce the value, return the coerced
       // value. You *must* return a value from this. If you don't return, then
       // the coerced value becomes `undefined`.
-      coerce: function (value) {}
+      coerce: function (value) {},
 
       // This will be used as the default value for the property. If you specify
       // a function then it will be invoked and the return value will be used.
       // This option will also be used in place of the value returned from the
       // `get()` option if it returns `undefined`. This does not override any
       // values present on the element when at the time it is initialised.
-      default: 'default value'
+      default: 'default value',
+
+      // Called when the property is created on the element. The value of
+      // `data` is an object containing:
+      //
+      // - `name` the name of the property
+      // - `value` the initial value of the property
+      created: function (elem, data) {},
 
       // Custom getter. The return value is used as the property value when
       // retrieved. If you don't specify a getter, the value that it was set as
@@ -329,15 +314,15 @@ skate('my-element', {
       // the property was accessed.
       //
       // To make a property "readonly", specify a getter without a setter.
-      get: function (element) {},
+      get: function (elem) {},
 
       // Custom setter. Set value as you see fit. Return value is ignored. If
       // you don't specify a getter, then whatever `newValue` was passed in to
       // the setter, is returned when you access the property.
       // You receive two arguments:
       //
-      // - `element` The element that the property is being set on.
-      // - `changeData` Information about the change.
+      // - `elem` The element that the property is being set on.
+      // - `data` Information about the change.
       //
       // The `changeData` property has three entries:
       //
@@ -348,7 +333,7 @@ skate('my-element', {
       // If you set the value to the same value that the property already
       // is, then the setter is still triggered. However, both `newValue` and
       // `oldValue` will be the same value.
-      set: function (element, changeData) {}
+      set: function (elem, data) {}
     }
   },
 
@@ -751,6 +736,17 @@ skate.emit(element, 'event', {
 });
 ```
 
+#### Passing Data
+
+You can pass data when initializing the event with the `detail` option in the `eventOptions` argument.
+
+```js
+skate.emit(element, 'event', {
+  detail: {
+    data: 'my-data'
+  }
+});
+```
 
 
 ### `fragment (...almostAnything)`
@@ -1022,6 +1018,8 @@ skate('datalist', {
 });
 ```
 
+Or if you're using [skatejs-types](https://github.com/skatejs/types):
+
 `<input placeholder="">`:
 
 ```js
@@ -1105,7 +1103,7 @@ Skate will always be a superset of the custom element spec. This means that core
 
 #### 2. Performance
 
-The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be wary of this.
+The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
 
 #### 3. With great power comes great responsibility
 
@@ -1199,16 +1197,140 @@ If you have a DOM tree that you don't want Skate to polyfill then you can add th
 
 
 
-## No Conflict
-
-Skate has a `noConflict()` method that we have come to expect from libraries that may come into conflict with the same name, or multiple versions of itself. It returns the new `skate` while restoring the global `skate` to the previous value.
-
-```js
-var mySkate = skate.noConflict();
-```
-
-
-
 ## Multiple Version Support
 
 On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
+
+
+
+
+## Designing Web Components
+
+A web component's public API should be available both imperatively (via JavaScript) and declaratively (via HTML). You should be able to do everything in one, that you can do in the other within reason.
+
+### Imperative
+
+You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
+
+```js
+window.MyComponent = skate('my-component', {});
+
+// Somewhere else.
+var element = window.MyComponent();
+```
+
+### Declarative
+
+By declaring a Skate component, you are automatically making your element available to be used as HTML:
+
+```html
+<my-component></my-component>
+```
+
+### Properties and Attributes
+
+Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, its API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
+
+```js
+skate('my-component', {
+  properties: {
+    // Links the `name` property to the `name` attribute.
+    name: { attribute: true }
+  }
+});
+```
+
+Sometimes this may not be viable, for example when passing complex data types to attributes. In this scenario, you can try and serialize / deserialize to / from attributes. For example, if you wanted to take a comma-separated list in an attribute and have the property take an array, but still have them linked, you could do something like:
+
+```js
+skate('my-component', {
+  properties: {
+    values: {
+      attribute: true,
+      deserialize: function (val) {
+        return val.split(',');
+      },
+      serialize: function (val) {
+        return val.join(',');
+      }
+    }
+  }
+});
+```
+
+### Content Projection
+
+Content projection - or allowing the user to define content which the component can use in its template - is a difficult subject not to be opinionated about. The Shadow DOM spec is supposed to deal with this, but it's still being fully fleshed out and is ~~probably~~ a ways off from full browser support. Until then, we have to find other ways to do this.
+
+An example of this would be if you wanted to create a custom select box that the user can pass options to. And in this select box, you want to put the user's options into a particular spot in your template.
+
+```html
+<my-select>
+  <my-option>1</my-option>
+  <my-option>2</my-option>
+</my-select>
+```
+
+And you want it to render out to:
+
+```html
+<my-select>
+  <div class="wrapper">
+    <my-option>1</my-option>
+    <my-option>2</my-option>
+  </div>
+</my-select>
+```
+
+Dealing with this can be done in many ways.
+
+A simple, straight-forward way to do this would be to take the `childNodes` at the time of rendering, and put them where you want them. In this case, you're creating a `<div>`, putting all initial children in it and then appending that div to the main component:
+
+```js
+skate('my-select', {
+  render: function (elem) {
+    var div = document.createElement('div');
+    div.classList.add('wrapper');
+    while (elem.childNodes.length) {
+      div.appendChild(elem.childNodes[0]);
+    }
+    elem.appendChild(div);
+  }
+});
+```
+
+This can very easily be abstracted to a function and reused. However, with updates, it starts to get awkward. Your user shouldn't have to `querySelector` for the `<div>` where all the content is and append children to it; they shouldn't even know about that `<div>` at all.
+
+A simple way to get around this, is to create a property that represents that `<div>` and expose it as part of your public API. In the above `render` function, you could add:
+
+```js
+Object.defineProperty(elem, 'content', {
+  value: div,
+  writable: false
+});
+```
+
+Your consumers can then use that property to add more options:
+
+```js
+var option = document.createElement('option');
+var select = document.querySelector('my-select');
+option.textContent = '3';
+select.content.appendChild(option);
+```
+
+Which would result in:
+
+```html
+<my-select>
+  <div class="wrapper">
+    <my-option>1</my-option>
+    <my-option>2</my-option>
+    <my-option>3</my-option>
+  </div>
+</my-select>
+```
+
+### React Integration
+
+You can create React components from web components (thus Skate components work) using [react-integration](https://github.com/skatejs/react-integration).

@@ -7,137 +7,123 @@ import apiReady from './api/ready';
 import apiRender from './api/render/index';
 import apiVersion from './api/version';
 import assign from 'object-assign';
-import assignSafe from './util/assign-safe';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
-import debounce from './util/debounce';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
 import registry from './global/registry';
 import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
+import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
+import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
+import utilDebounce from './util/debounce';
+import utilDefineProperties from './util/define-properties';
 import utilWalkTree from './util/walk-tree';
 import validCustomElement from './support/valid-custom-element';
 
-function makeOptions (userOptions) {
-  let options = assignSafe({}, defaults);
+const HTMLElement = window.HTMLElement;
 
-  // Copy over all standard options if the user has defined them.
-  for (let name in defaults) {
-    if (userOptions[name] !== undefined) {
-      options[name] = userOptions[name];
-    }
-  }
-
-  // Copy over non-standard options.
-  for (let name in userOptions) {
-    options[name] = userOptions[name];
-  }
-
-  return options;
-}
-
-function makeNonNewableWrapper (Ctor, opts) {
-  function CtorWrapper (properties = {}) {
-    return assign(new Ctor(), properties);
-  }
-
-  // Copy prototype.
-  CtorWrapper.prototype = Ctor.prototype;
-
-  // Ensure a non-enumerable constructor property exists.
-  Object.defineProperty(CtorWrapper.prototype, 'constructor', {
-    configurable: true,
-    enumerable: false,
-    value: CtorWrapper,
-    writable: false
-  });
-
-  // Make Function.prototype.name behave like native custom elements but only
-  // if it's allowed (i.e. not Safari).
-  const nameProp = Object.getOwnPropertyDescriptor(CtorWrapper, 'name');
-  if (nameProp && nameProp.configurable) {
-    Object.defineProperty(CtorWrapper, 'name', {
-      configurable: true,
-      enumerable: false,
-      value: opts.id,
-      writable: false
-    });
-  }
-
-  return CtorWrapper;
-}
-
-function polyfillElementConstructor (opts) {
-  const type = opts.type;
-  function CustomElement () {
-    const element = type.create(opts);
-    opts.prototype.createdCallback.call(element);
-    return element;
-  }
-  CustomElement.prototype = opts.prototype;
-  return CustomElement;
-}
-
-let HTMLElement = window.HTMLElement;
-let initDocument = debounce(function () {
+// A function that initialises the document once in a given event loop.
+const initDocument = utilDebounce(function () {
+  // For performance in older browsers, we use:
+  //
+  // - childNodes instead of children
+  // - for instead of forEach
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    let components = registry.find(element);
-    let componentsLength = components.length;
+    const components = registry.find(element);
+    const componentsLength = components.length;
 
+    // Created callbacks are called first.
     for (let a = 0; a < componentsLength; a++) {
       components[a].prototype.createdCallback.call(element);
     }
 
+    // Attached callbacks are called separately because this emulates how
+    // native works internally.
     for (let a = 0; a < componentsLength; a++) {
       components[a].prototype.attachedCallback.call(element);
     }
   });
 });
 
-function skate (name, userOptions) {
-  let Ctor, parentProto;
-  let opts = makeOptions(userOptions);
+// Creates a configurable, non-writable, non-enumerable property.
+function fixedProp (obj, name, value) {
+  Object.defineProperty(obj, name, {
+    configurable: true,
+    enumerable: false, value,
+    writable: false
+  });
+}
 
-  opts.id = name;
-  opts.isNative = opts.type === typeElement && supportsCustomElements() && validCustomElement(name);
-  parentProto = (opts.extends ? document.createElement(opts.extends).constructor : HTMLElement).prototype;
+// Makes a function / constructor that can be called as either.
+function makeCtor (name, opts) {
+  const func = apiCreate.bind(null, name);
 
-  // Inherit from parent prototype.
-  if (!parentProto.isPrototypeOf(opts.prototype)) {
-    opts.prototype = assignSafe(Object.create(parentProto), opts.prototype);
+  // Assigning defaults gives a predictable definition and prevents us from
+  // having to do defaults checks everywhere.
+  assign(func, defaults);
+
+  // Inherit all options. This takes into account object literals as well as
+  // ES2015 classes that may have inherited static props which would not be
+  // considered "own".
+  utilDefineProperties(func, utilGetAllPropertyDescriptors(opts));
+
+  // Fixed info.
+  fixedProp(func.prototype, 'constructor', func);
+  fixedProp(func, 'id', name);
+  fixedProp(func, 'isNative', func.type === typeElement && supportsCustomElements() && validCustomElement(name));
+
+  // *sigh* WebKit
+  //
+  // In native, the function name is the same as the custom element name, but
+  // WebKit prevents this from being defined. We do this where possible and
+  // still define `id` for cross-browser compatibility.
+  const nameProp = Object.getOwnPropertyDescriptor(func, 'name');
+  if (nameProp && nameProp.configurable) {
+    fixedProp(func, 'name', name);
   }
 
-  // Make custom definition conform to native.
-  opts.prototype.createdCallback = created(opts);
-  opts.prototype.attachedCallback = attached(opts);
-  opts.prototype.detachedCallback = detached(opts);
-  opts.prototype.attributeChangedCallback = attribute(opts);
+  return func;
+}
 
-  // Make a constructor for the definition.
-  if (opts.isNative) {
-    const nativeDefinition = {
-      prototype: opts.prototype
-    };
-    if (opts.extends) {
-      nativeDefinition.extends = opts.extends;
-    }
-    Ctor = document.registerElement(name, nativeDefinition);
+// The main skate() function.
+function skate (name, opts) {
+  const Ctor = makeCtor(name, opts);
+  const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
+
+  // If the options don't inherit a native element prototype, we ensure it does
+  // because native unnecessarily requires you explicitly do this.
+  if (!proto.isPrototypeOf(Ctor.prototype)) {
+    Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
+  }
+
+  // We not assign native callbacks to handle the callbacks specified in the
+  // Skate definition. This allows us to abstract away any changes that may
+  // occur in the spec.
+  Ctor.prototype.createdCallback = created(Ctor);
+  Ctor.prototype.attachedCallback = attached(Ctor);
+  Ctor.prototype.detachedCallback = detached(Ctor);
+  Ctor.prototype.attributeChangedCallback = attribute(Ctor);
+
+  // In native, we have to massage the definition so that the browser doesn't
+  // spit out errors for a malformed definition. In polyfill land we must
+  // emulate what the browser would normally do in native.
+  if (Ctor.isNative) {
+    const nativeDefinition = { prototype: Ctor.prototype };
+    Ctor.extends && (nativeDefinition.extends = Ctor.extends);
+    document.registerElement(name, nativeDefinition);
   } else {
-    Ctor = polyfillElementConstructor(opts);
     initDocument();
     documentObserver.register();
   }
 
-  Ctor = makeNonNewableWrapper(Ctor, opts);
-  assignSafe(Ctor, opts);
-  registry.set(name, Ctor);
-
-  return Ctor;
+  // We keep our own registry since we can't access the native one.
+  return registry.set(name, Ctor);
 }
 
+// Public API.
 skate.create = apiCreate;
 skate.emit = apiEmit;
 skate.fragment = apiFragment;

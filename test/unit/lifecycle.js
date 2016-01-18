@@ -259,19 +259,24 @@ describe('lifecycle scenarios', function () {
       document.body.appendChild(element1);
       document.body.appendChild(element2);
 
-      skate.init(element1);
-      skate.init(element2);
+      // Using setTimeout here gets around an odd issue in Chrome where a
+      // native custom element may not have its prototype set up yet. We have
+      // to use setTimeout() because skate.ready() errors in Firefox because
+      // the MutationObserver will fire after it's ready. Therefore to cover
+      // all scenarios we must use setTimeout(). For practical usage, you would
+      // be able to use skate.ready().
+      setTimeout(function () {
+        expect(numCreated).to.equal(2, 'created');
+        expect(numAttached).to.equal(2, 'attached');
 
-      expect(numCreated).to.equal(2, 'created');
-      expect(numAttached).to.equal(2, 'attached');
+        element1.parentNode.removeChild(element1);
+        element2.parentNode.removeChild(element2);
 
-      element1.parentNode.removeChild(element1);
-      element2.parentNode.removeChild(element2);
-
-      // Mutation Observers are async.
-      helperReady(function () {
-        expect(numDetached).to.equal(2, 'detached');
-        done();
+        // For testing the detached callback in polyfill land.
+        setTimeout(function () {
+          expect(numDetached).to.equal(2, 'detached');
+          done();
+        });
       });
     });
 
