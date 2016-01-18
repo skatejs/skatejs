@@ -1227,7 +1227,7 @@ By declaring a Skate component, you are automatically making your element availa
 
 ### Properties and Attributes
 
-Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, it's API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
+Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, its API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
 
 ```js
 skate('my-component', {
