@@ -3,19 +3,23 @@ import emit from '../../../src/api/emit';
 describe('api/emit', function () {
   var child;
   var parent;
+  var disabled;
   var triggered;
 
   beforeEach(function () {
     child = document.createElement('child');
+    disabled = document.createElement('button');
+    disabled.setAttribute('disabled', '');
     parent = document.createElement('parent');
     parent.appendChild(child);
+    parent.appendChild(disabled);
 
     triggered = 0;
 
     child.addEventListener('test', () => ++triggered);
     child.addEventListener('test', e => e.preventDefault());
     parent.addEventListener('test', () => ++triggered);
-    parent.addEventListener('test', e => e.preventDefault());
+    disabled.addEventListener('test', () => ++triggered);
   });
 
   it('string eventName', function () {
@@ -31,6 +35,16 @@ describe('api/emit', function () {
   it('array eventName', function () {
     emit(parent, [ 'test', 'test' ]);
     expect(triggered).to.equal(2);
+  });
+
+  it('disabled element', function () {
+    emit(disabled, 'test');
+    expect(triggered).to.equal(0);
+  });
+
+  it('{ bubbles: true } disabled element', function () {
+    emit(disabled, 'test', {bubbles: true});
+    expect(triggered).to.equal(0);
   });
 
   it('undefined eventOptions', function () {
