@@ -481,21 +481,21 @@ describe('lifecycle/property', function () {
       });
     });
 
-    describe('init', function () {
+    describe('initial', function () {
       it('is called before created', function () {
         const order = [];
         create({
-          init: () => order.push('init'),
+          initial: () => order.push('initial'),
           created: () => order.push('created')
         });
-        expect(order[0]).to.equal('init');
+        expect(order[0]).to.equal('initial');
         expect(order[1]).to.equal('created');
       });
 
       it('is called once', function () {
         let called = 0;
         const elem = create({
-          init: () => ++called
+          initial: () => ++called
         });
         elem.test = 'something else';
         expect(called).to.equal(1);
@@ -503,8 +503,8 @@ describe('lifecycle/property', function () {
 
       it('context and arguments', function (done) {
         const opts = {
-          init (elem, data) {
-            expect(this.init).to.equal(opts.init);
+          initial (elem, data) {
+            expect(this.initial).to.equal(opts.initial);
             expect(arguments.length).to.equal(2);
             expect(elem.tagName).to.equal('DIV');
             expect(data.name).to.equal('test');

@@ -123,13 +123,13 @@ function createNativePropertyDefinition (name, opts) {
     return internalValue;
   };
 
-  prop.init = function (elem) {
-    return typeof opts.init === 'function' ? opts.init(elem, { name }) : elem[name];
+  prop.initial = function (elem) {
+    return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : elem[name];
   };
 
   prop.ready = function (elem) {
-    const init = getData(elem, name).internalValue;
-    elem[name] = empty(init) ? elem[name] : init;
+    const initial = getData(elem, name).internalValue;
+    elem[name] = empty(initial) ? this.initial(elem) : initial;
   };
 
   prop.set = function (newValue) {
