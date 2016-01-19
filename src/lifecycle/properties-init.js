@@ -28,12 +28,12 @@ function createNativePropertyDefinition (name, opts) {
     info.linkedAttribute = getLinkedAttribute(name, opts.attribute);
     info.opts = opts;
     info.updatingProperty = false;
-    
+
     // Ensure we can get the info from inside the attribute methods.
     getData(elem, info.linkedAttribute).linkedProperty = name;
 
     if (typeof opts.default === 'function') {
-      info.defaultValue = opts.default(elem);
+      info.defaultValue = opts.default(elem, { name });
     } else if (!empty(opts.default)) {
       info.defaultValue = opts.default;
     }
@@ -50,15 +50,15 @@ function createNativePropertyDefinition (name, opts) {
 
         elem.removeAttribute = function (attrName) {
           const info = getDataForAttribute(this, attrName);
-          
+
           if (!info.linkedAttribute) {
             return removeAttribute.call(this, attrName);
           }
-          
+
           const prop = info.attributeMap[attrName];
           const serializedValue = info.opts.serialize(info.defaultValue);
           info.updatingAttribute = true;
-          
+
           if (empty(serializedValue)) {
             removeAttribute.call(this, attrName);
           } else {
@@ -74,11 +74,11 @@ function createNativePropertyDefinition (name, opts) {
 
         elem.setAttribute = function (attrName, attrValue) {
           const info = getDataForAttribute(this, attrName);
-          
+
           if (!info.linkedAttribute) {
             return setAttribute.call(this, attrName, attrValue);
           }
-          
+
           const prop = info.attributeMap[attrName];
           info.updatingAttribute = true;
           setAttribute.call(this, attrName, attrValue);
@@ -104,11 +104,11 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // We must coerce the initial value just in case it wasn't already.
-    info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+    const internalValue = info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
 
     // User-defined created callback.
     if (typeof opts.created === 'function') {
-      opts.created(elem, initialValue);
+      opts.created(elem, { name, internalValue });
     }
   };
 
@@ -122,10 +122,14 @@ function createNativePropertyDefinition (name, opts) {
 
     return internalValue;
   };
-  
-  prop.init = function () {
-    const init = getData(this, name).internalValue;
-    this[name] = empty(init) ? this[name] : init;
+
+  prop.init = function (elem) {
+    return typeof opts.init === 'function' ? opts.init(elem, { name }) : elem[name];
+  };
+
+  prop.ready = function (elem) {
+    const init = getData(elem, name).internalValue;
+    elem[name] = empty(init) ? elem[name] : init;
   };
 
   prop.set = function (newValue) {
@@ -137,7 +141,7 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     info.updatingProperty = true;
-    
+
     if (empty(newValue)) {
       newValue = info.defaultValue;
     }
