@@ -4,7 +4,7 @@ import apiFragment from './api/fragment';
 import apiInit from './api/init';
 import apiProperties from './api/properties/index';
 import apiReady from './api/ready';
-import apiRender from './api/render/index';
+import apiRender from './api/render';
 import apiVersion from './api/version';
 import assign from 'object-assign';
 import attached from './lifecycle/attached';

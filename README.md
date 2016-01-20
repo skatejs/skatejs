@@ -688,7 +688,7 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 
 
-#### `emit (element, eventName, eventOptions = {})`
+### `emit (element, eventName, eventOptions = {})`
 
 Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
@@ -944,22 +944,6 @@ elem.name = 'Bob';
 
 
 
-### `render.html(renderFunction)`
-
-This function exists for a simple, default way to render content to your host component. It doesn't do any special diffing or anything, it simply removes all current nodes and adds the new ones. You can return a document fragment, node or string (that will be converted to nodes).
-
-```js
-var hello = skate('x-hello', {
-  render: skate.render.html(function (elem) {
-    return `Hello, ${elem.name || 'World'}!`;
-  })
-});
-```
-
-Using this is good for simple components, or components where you're using properties to mutate the template that you render from here. Functional UI proponents won't like this method, but this offers the simplest, least opinionated method to build a component as Skate strives to have as little opinion about this as possible.
-
-If you want to re-render your entire component but have it only update the parts that need updating, you can use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) in a custom renderer. For more information, see the next section.
-
 #### Writing your own renderers
 
 Writing your own renderers consists of writing a function that returns a function:
@@ -980,7 +964,7 @@ render: render(function (elem) {
 });
 ```
 
-If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
+If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff):
 
 ```js
 function render (renderFn) {
@@ -994,7 +978,6 @@ function render (renderFn) {
 ```
 
 And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
-
 
 
 
