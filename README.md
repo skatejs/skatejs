@@ -202,15 +202,21 @@ The `componentName` is a string that is the tag name of the custom element that 
 
 The `componentDefinition` argument is an object literal or constructor / function / class that houses your component definition. The component definition may contain the following:
 
+
+
 ### `prototype`
 
 The element's prototype. This is the first thing that happens in the element's lifecycle.
+
+
 
 ### `events`
 
 Event listeners to add to the custom element. These happens after the `prototype` is set up and before `created` is called.
 
 Event descriptors can use selectors to target descendants using event delegation.
+
+
 
 ### `created`
 
@@ -220,9 +226,13 @@ Function that is called when the element is created. It is the first lifecycle c
 
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
 
+
+
 ### `render`
 
 Function that is called to render the element. This is called after the `properties` have been set up on the element so they are accessible here. This function is not called if the `resolvedAttribute` has been applied to the element. This means that you can render your componnent on the server and still go through its lifecycle.
+
+
 
 ### `ready`
 
@@ -232,25 +242,37 @@ Function that is called after the element has been rendered (see `render`).
 
 Function that is called after the element has been inserted to the document. This can be called several times, for example, if you were to remove the element and re-insert it.
 
+
+
 ### `detached`
 
 Function that is called after the element has been removed from the document. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
+
+
 
 ### `attribute`
 
 Function that is called whenever an attribute is added, updated or removed. This is *not* called for attributes that exist on the element before it is upgraded, just like with native custom elements. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback.
 
+
+
 ### `extends` *
 
 The built-in element to extend. This option is up for contention in the custom element spec and may be removed in a future release. It exists because it's currently the only way to extend built-in types natively.
+
+
 
 ### `type`
 
 The [custom type](https://github.com/skatejs/types) to use if diverging from the spec.
 
+
+
 ### `resolvedAttribute`
 
 The name of the attribute that is added after the element is upgraded. This can be used to server-side render your custom element because if this is present, `render` will not be called. It can also be added to target elements without this attribute to have styling that helps to prevent FOUC or jank.
+
+
 
 ### `unresolvedAttribute`
 
