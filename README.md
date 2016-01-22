@@ -336,13 +336,13 @@ The only argument passed to `created` is component element. In this case that is
 
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
 
-The custom property definition accepts the following options.
-
 ```js
 skate('my-component', {
   properties: { ...properties }
 });
 ```
+
+The custom property definition accepts the following options.
 
 
 
