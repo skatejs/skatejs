@@ -1340,25 +1340,18 @@ Due to the semantics of ES6 classes, you must specify any non-prototype members 
 
 ## Asynchrony
 
-Due to the fact that Skate uses Mutation Observers, elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
+When native support for custom elements aren't supported, Skate uses Mutation Observers and elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
 ```js
 document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
-
 document.getElementById('my-component-id').someCustomMethod();
 ```
 
-This is because the component will not be processed until after the block this code is in releases control back to the JavaScript engine. If you need to use the element right away, you must explicitly initialise it in a synchronous manner using `skate.init()`:
+This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you'll need to use one of the following depending on your use case:
 
-```js
-var element = document.getElementById('my-component-id');
-
-skate.init(element);
-
-element.someCustomMethod();
-```
-
-This is very useful during testing, but can be used for any use case that requires synchronous operation.
+- `skate.create()`
+- `skate.fragment()`
+- `skate.ready()`
 
 
 
