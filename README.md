@@ -108,7 +108,7 @@ Result
     - [The solution](#the-solution)
     - [Drawbacks](#drawbacks)
   - [`render (element)`](#render-element)
-  - [`render.html(renderFunction)`](#renderhtmlrenderfunction)
+    - [Writing your own renderers](#writing-your-own-renderers-1)
   - [`version`](#version)
 - [Component Lifecycle](#component-lifecycle)
 - [Extending Elements](#extending-elements)
@@ -1240,21 +1240,42 @@ elem.name = 'Bob';
 
 
 
-### `render.html(renderFunction)`
+#### Writing your own renderers
 
-This function exists for a simple, default way to render content to your host component. It doesn't do any special diffing or anything, it simply removes all current nodes and adds the new ones. You can return a document fragment, node or string (that will be converted to nodes).
+Writing your own renderers consists of writing a function that returns a function:
 
 ```js
-var hello = skate('x-hello', {
-  render: skate.render.html(function (elem) {
-    return `Hello, ${elem.name || 'World'}!`;
-  })
+function render (renderFn) {
+  return function (elem) {
+    elem.innerHTML = renderFn(elem);
+  };
+}
+```
+
+And you could use it like so:
+
+```js
+render: render(function (elem) {
+  return `Hello, ${elem.name || 'World'}!`;
 });
 ```
 
-Using this is good for simple components, or components where you're using properties to mutate the template that you render from here. Functional UI proponents won't like this method, but this offers the simplest, least opinionated method to build a component as Skate strives to have as little opinion about this as possible.
+If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
 
-If you want to re-render your entire component but have it only update the parts that need updating, you can use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) in a custom renderer. For more information, see the next section.
+```js
+function render (renderFn) {
+  return function (elem) {
+    skateDomDiff.merge({
+      destination: skate.fragment(renderFn(elem)),
+      source: elem
+    });
+  };
+}
+```
+
+And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
+
+
 
 
 
@@ -1499,6 +1520,8 @@ On top of offering a no-conflict mode, Skate plays well with multiple versions o
 
 A web component's public API should be available both imperatively (via JavaScript) and declaratively (via HTML). You should be able to do everything in one, that you can do in the other within reason.
 
+
+
 ### Imperative
 
 You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
@@ -1510,6 +1533,8 @@ window.MyComponent = skate('my-component', {});
 var element = window.MyComponent();
 ```
 
+
+
 ### Declarative
 
 By declaring a Skate component, you are automatically making your element available to be used as HTML:
@@ -1517,6 +1542,8 @@ By declaring a Skate component, you are automatically making your element availa
 ```html
 <my-component></my-component>
 ```
+
+
 
 ### Properties and Attributes
 
@@ -1548,6 +1575,8 @@ skate('my-component', {
   }
 });
 ```
+
+
 
 ### Content Projection
 
@@ -1621,6 +1650,8 @@ Which would result in:
   </div>
 </my-select>
 ```
+
+
 
 ### React Integration
 
