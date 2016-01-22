@@ -1340,7 +1340,7 @@ Due to the semantics of ES6 classes, you must specify any non-prototype members 
 
 ## Asynchrony
 
-Due to the fact that Skate uses Mutation Observers - and polyfills it for older browsers - elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
+Due to the fact that Skate uses Mutation Observers, elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
 
 ```js
 document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
