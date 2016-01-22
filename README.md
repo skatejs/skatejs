@@ -1236,8 +1236,6 @@ var elem = hello();
 elem.name = 'Bob';
 ```
 
-*If you are using the polyfill and are using custom bindings (i.e. classes and attributes) then it will invoke `render()` in each of those if they are specified. It's recommended that you only bind one component that does rendering otherwise the result is not predictable. It's up to component authors to write components that follow best practices and it's up to component consumers to use components that follow best practices.*
-
 
 
 #### Writing your own renderers
