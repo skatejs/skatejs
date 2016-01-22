@@ -941,7 +941,7 @@ skate('x-tab', {
 
 It's preferrable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
 
-Note that events cannot be triggered with `skate.emit` on disabled elements. Events also can't bubble through disabled elements.
+*Note that events cannot be triggered with `skate.emit()` on disabled elements. Events also can't bubble through disabled elements.*
 
 
 
