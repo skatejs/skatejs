@@ -1355,6 +1355,12 @@ This is because Mutation Observers queue a [microtask](https://jakearchibald.com
 
 
 
+## Native Custom Element Support
+
+If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
+
+
+
 ## Web Component Differences
 
 Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) with a custom API but it does not polyfill the native methods. Since Skate is a custom element library, it does not polyfill [ShadowDOM](http://w3c.github.io/webcomponents/spec/shadow/) or [HTML Imports](http://w3c.github.io/webcomponents/spec/imports/).
@@ -1424,12 +1430,6 @@ skate('rel', {
   }
 });
 ```
-
-
-
-## Native Support
-
-If your component is bound via custom tags and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 
 
