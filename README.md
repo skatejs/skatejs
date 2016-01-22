@@ -285,7 +285,7 @@ With Skate, if your `prototype` doesn't inherit from the base `HTMLElement`, it 
 
 #### `events`
 
-Event listeners to add to the custom element. These happens after the `prototype` is set up and before `created` is called.
+Event listeners to add to the custom element. These get bound after the `prototype` is set up and before `created` is called.
 
 ```js
 skate('my-component', {
