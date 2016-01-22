@@ -194,89 +194,582 @@ If you have any questions about Skate you can use one of these:
 
 
 
-## `skate(componentName, componentDefinition)` API
+## `skate (componentName, componentDefinition)` API
 
-The main `skate()` function is the entry-point to the API. It's what defines a component and returns your element constructor and definition.
+The main `skate()` function is the entry-point to the API and is what defines your custom element.
+
+
+
+### Return Value
+
+The `skate()` function returns you a function / constructor that you can use to create an instance of your component.
+
+```js
+var MyComponent = skate('my-component', {
+  created: function (elem) {}
+});
+```
+
+Can be created in both of the following ways:
+
+```js
+MyComponent();
+new MyComponent();
+```
+
+The returned function also contains the information specified in your definition:
+
+```js
+// function (elem) {}
+MyComponent.created;
+```
+
+It also contains extra information about the component:
+
+- `id` The id / name of the component. In this case it would be `my-component`.
+- `isNative` Whether or not the definition is using native custom elements underneath the hood.
+- `name` Same as `id`, but the name of the function / constructor is reflected properly when debugging. This doesn't work in WebKit because it's non-configurable.
+
+
+
+### `componentName`
 
 The `componentName` is a string that is the tag name of the custom element that you are creating. If you are using / creating [custom component types](https://github.com/skatejs/types), then this may correspond to something else. Even though that's possible, Skate is a custom element library. It always will be at its core.
 
-The `componentDefinition` argument is an object literal or constructor / function / class that houses your component definition. The component definition may contain the following:
+
+
+### `componentDefinition`
+
+The `componentDefinition` argument is an object literal or constructor / function / class that houses your component definition. The following options are supported and are chronologically ordered in terms of where they get used in the component's lifecycle.
 
 
 
-### `prototype`
+#### `prototype`
 
 The element's prototype. This is the first thing that happens in the element's lifecycle.
 
+```js
+skate('my-component', {
+  prototype: {
+    get someProperty () {},
+    set someProperty () {},
+    someMethod: function () {},
+  }
+});
+```
+
+In native custom elements, you must provide the entire prototype for your custom element. This means that even if you're creating a new custom element, you must be explicit about it:
+
+```js
+document.registerElement('my-component', {
+  prototype: Object.create(HTMLElement.prototype, {
+    someProperty: {
+      get: function () {},
+      set: function () {}
+    },
+    someMethod: {
+      value: function () {}
+    }
+  })
+});
+```
+
+With Skate, if your `prototype` doesn't inherit from the base `HTMLElement`, it will automatically do this for you.
 
 
-### `events`
+
+#### `events`
 
 Event listeners to add to the custom element. These happens after the `prototype` is set up and before `created` is called.
 
+```js
+skate('my-component', {
+  events: {
+    click: function (e) {}
+  }
+});
+```
+
+The context and arguments passed to the event handler are the same as the native [`EventTarget.addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) method:
+
+- `this` is the DOM element
+- `e` is the native event object that was dispatched on the DOM element
+
+
+
+##### Event Delegation
+
 Event descriptors can use selectors to target descendants using event delegation.
 
+```js
+skate('my-component', {
+  events: {
+    'click button': function (e) {}
+  }
+});
+```
+
+Instead of firing for every click on the component element - or that bubbles to the component element - it will only fire if a descendant `<button>` was clicked.
 
 
-### `created`
 
-Function that is called when the element is created. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+#### `created`
 
-### `properties`
+Function that is called when the element is created. This corredsponds to the native `createdCallback`. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+
+```js
+skate('my-component', {
+  created: function (elem) {}
+});
+```
+
+The only argument passed to `created` is component element. In this case that is `<my-component>`.
+
+
+
+#### `properties`
 
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
 
+The custom property definition accepts the following options.
+
+```js
+skate('my-component', {
+  properties: { ...properties }
+});
+```
 
 
-### `render`
+
+##### `attribute`
+
+Whether or not to link the property to an attribute. This can be either a `Boolean` or `String`.
+
+- If it's `false`, it's not linked to an attribute. This is the default.
+- If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
+- If it's a `String`, the value is used as the attribute name it should be linked to.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      attribute: true
+    }
+  }
+});
+```
+
+
+
+##### `coerce`
+
+A function that coerces the incoming property value and returns the coerced value. This value is used as the internal value of the property.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      coerce (value) {
+        return value;
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `value` - the value that should be coerced
+
+
+
+##### `created`
+
+A function that is called during the `created` lifecycle of the element. It's useful when you need to some setup that is specific to a given property.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      created (elem, data) {
+        // do some setup
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `elem` - the component element
+- `data` - an object containing information about the property
+  - `name` - the property name
+  - `internalValue` - the internal value of the property at the time of creation
+
+
+
+##### `default`
+
+Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being empty, the `default` value will be used instead.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      default: 'default value'
+    }
+  }
+});
+```
+
+You may also specify a function that returns the default value. This is useful if you are doing calculations or need to return a reference:
+
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      default (elem, data) {
+        return [];
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `elem` - the component element
+- `data` - an object containing information about the property
+  - `name` - the property name
+
+
+
+##### `deserialize`
+
+A function that coerces the property value to a `String` so that it can be set to the linked attribute, if it is linked.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      deserialize (value) {
+        return value ? value.toString() : '';
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `value` - the property value that needs to be coerced to the attribute value.
+
+
+
+##### `get`
+
+A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      get (elem, data) {
+        return `prefix_${data.internalValue}`;
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `elem` - the component element
+- `data` - an object containing information about the property
+  - `name` - the property name
+  - `internalValue` - the current internal value of the property
+
+
+
+##### `initial`
+
+The initial value the property should have. This is different from `default` in the sense that it is only ever invoked once to set the initial value. If this is not specified, then `default` is used in its place.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      initial: 'initial value'
+    }
+  }
+});
+```
+
+It can also be a function that returns the initial value:
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      initial (elem, data) {
+        return 'initial value';
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `elem` - the component element
+- `data` - an object containing information about the property
+  - `name` - the property name
+
+
+
+##### `serialize`
+
+A function that coerces the attribute value back to the property value, if it is linked.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      deserialize (value) {
+        return value ? value.toString() : '';
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `value` - the attribute value that needs to be coerced to the property value.
+
+
+
+##### `set`
+
+A function that is called whenever the property is set. This is also called when the property is first initialised.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      set (elem, data) {
+        // do something
+      }
+    }
+  }
+});
+```
+
+The parameters passed to the function are:
+
+- `elem` - the component element
+- `data` - an object containing information about the property
+  - `name` - the property name
+  - `newValue` - the new property value
+  - `oldValue` - the old property value.
+
+When the property is initialised, `oldValue` will always be `undefined` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the value is normalised to be `undefined` for consistency.
+
+*An important thing to note is that native property setters are not invoked if you use the `delete` keyword. For that reason, Skate property setters are also not able to be invoked, so keep this in mind when using your components.*
+
+
+
+
+#### `render`
 
 Function that is called to render the element. This is called after the `properties` have been set up on the element so they are accessible here. This function is not called if the `resolvedAttribute` has been applied to the element. This means that you can render your componnent on the server and still go through its lifecycle.
 
+```js
+skate('my-component', {
+  render: function (elem) {
+    elem.innerHTML = '<p>something</p>';
+  }
+});
+```
+
+The only argument passed to `render` is component element. In this case that is `<my-component>`.
 
 
-### `ready`
+
+#### `ready`
 
 Function that is called after the element has been rendered (see `render`).
 
+```js
+skate('my-component', {
+  ready: function (elem) {}
+});
+```
+
+The only argument passed to `ready` is component element. In this case that is `<my-component>`.
+
+
+
 ### `attached`
 
-Function that is called after the element has been inserted to the document. This can be called several times, for example, if you were to remove the element and re-insert it.
+Function that is called after the element has been inserted to the document. This corredsponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
+
+```js
+skate('my-component', {
+  attached: function (elem) {}
+});
+```
+
+The only argument passed to `attached` is component element. In this case that is `<my-component>`.
 
 
 
-### `detached`
+#### `detached`
 
-Function that is called after the element has been removed from the document. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
+Function that is called after the element has been removed from the document. This corredsponds to the native `detachedCallback`. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
+
+```js
+skate('my-component', {
+  detached: function (elem) {}
+});
+```
+
+The only argument passed to `detached` is component element. In this case that is `<my-component>`.
 
 
 
-### `attribute`
+#### `attribute`
 
-Function that is called whenever an attribute is added, updated or removed. This is *not* called for attributes that exist on the element before it is upgraded, just like with native custom elements. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback.
+Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` and is *not* called for attributes that exist on the element before it is upgraded, just like with native custom elements. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback.
+
+```js
+skate('my-component', {
+  attribute: function (elem, data) {
+    if (data.oldValue === undefined) {
+      // created
+    } else if (data.newValue === undefined) {
+      // removed
+    } else {
+      // updated
+    }
+  }
+});
+```
+
+The arguments passed to the `attribute` callback differ from the native `attributeChanged` callback to provide consistency and predictability with the rest of the Skate API:
+
+- `elem` is the component element
+- `data` is an object containing attribute `name`, `newValue` and `oldValue`. If `newValue` and `oldValue` are empty, the values are `undefined`.
 
 
 
-### `extends` *
+#### `extends` *
 
 The built-in element to extend. This option is up for contention in the custom element spec and may be removed in a future release. It exists because it's currently the only way to extend built-in types natively.
 
+```js
+skate('my-component', {
+  extends: 'input'
+});
+```
+
+Skate will automatically detect the native prototype for the element that you are extending and ensure that your `prototype` extends it, rather than you having to do this manually. This is also explained in the `prototype` option.
 
 
-### `type`
+
+#### `type`
 
 The [custom type](https://github.com/skatejs/types) to use if diverging from the spec.
 
+```js
+skate('my-component', {
+  type: customType
+});
+```
 
 
-### `resolvedAttribute`
+
+##### Custom bindings
+
+Skate supports custom bindings such as the ability to bind functionality to elements that have a particular attribute or classname. This comes in handy when wanting to work with legacy code that uses class / attribute selectors to bind stuff to elements on `DOMContentLoaded` because it negates the need to use selectors and / or `DOMContentLoaded` altogether. Not only does this have added performance benefits because you're not running selectors or blocking, it also means that you don't have to run any manual initialisation code. Just write your HTML and things happen.
+
+The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provided a particular interface for Skate to call.
+
+```js
+var myCustomBidning = {
+  create: function (componentDefinition) {
+    // Create an element matching the component definition.
+  },
+  filter: function (element, componentDefinitions) {
+    // Return an array of definitions that the element should initialise with.
+  }
+};
+```
+
+There's some that we've already built for you over at https://github.com/skatejs/types.
+
+
+
+###### Considerations
+
+There's a few things that you must consider when building and using custom bindings:
+
+- You're deviating from the spec - Skate will always be a superset of the custom element spec. This means that core-Skate will never stray too far from the spec other than offering a more convenient API and featureset.
+- Performance - The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
+- With great power comes great responsibility - No matter if we decided to expose this as API or not, we'd still have to do a similar algorithm behind the scenes. Since there are many use-cases where writing a component with the Skate API is useful, we felt it was best to offer safe, spec-backed defaults while giving developers a little bit of breathing room.
+
+
+
+###### Transitioning Away from jQuery-style Plugins
+
+Because Skate supports custom bindings as mentioned above, it allows you to do things like refactor your jQuery initialisation code without touching any HTML:
+
+```js
+jQuery(function ($) {
+  $('.tabs').tabs();
+});
+```
+
+There's several problems with this approach. First, you're running a selector against the document. This is unnecessary and can get slow in large DOMs even in the latest browsers. Second, it only gets executed on `DOMContentLoaded`. If you want to dynamically add some tabs to your document, then you've got to manually call that again once they've been added to the DOM.
+
+With Skate, those problems vanish. No selectors are run and your tabs will automatically be initialised regardless of when they are put into the document.
+
+To refactor that into a Skate component, all you need to do is:
+
+```js
+var typeClass = require('skatejs-type-class');
+
+skate('tabs', {
+  type: typeClass,
+  created: function (element) {
+    jQuery(element).tabs();
+  }
+});
+```
+
+Possibly the best part about this is that you don't need to touch any markup and only a minimal amount of JavaScript.
+
+
+
+
+#### `resolvedAttribute`
 
 The name of the attribute that is added after the element is upgraded. This can be used to server-side render your custom element because if this is present, `render` will not be called. It can also be added to target elements without this attribute to have styling that helps to prevent FOUC or jank.
 
+```html
+<my-component resolved />
+```
 
 
-### `unresolvedAttribute`
+
+#### `unresolvedAttribute`
 
 The name of the attribute that is removed from the element after it is upgraded. It can be used to selectively target elements that have not been upgraded yet.
+
+```html
+<my-component unresolved />
+```
 
 
 
@@ -339,6 +832,8 @@ skate.init(element);
 
 Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
 
+
+
 #### Alternatives
 
 If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
@@ -352,6 +847,8 @@ myElement = skate.create('my-element');
 myElement = MyElement();
 myElement = new MyElement();
 ```
+
+
 
 #### Setting Properties
 
@@ -369,6 +866,8 @@ Passing properties automatically assigns them to the element:
 // 'value'
 console.log(myElement.prop);
 ```
+
+
 
 #### Why not just patch `document.createElement()`?
 
@@ -400,6 +899,8 @@ It's preferrable not to reach up the DOM hierarchy because that couples your log
 
 Note that events cannot be triggered with `skate.emit` on disabled elements. Events also can't bubble through disabled elements.
 
+
+
 #### Emitting Several Events at Once
 
 You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
@@ -409,9 +910,13 @@ skate.emit(element, 'event1 event2');
 skate.emit(element, [ 'event1', 'event2' ]);
 ```
 
+
+
 #### Return Value
 
 The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+
+
 
 #### Preventing Bubbling or Canceling
 
@@ -424,6 +929,8 @@ skate.emit(element, 'event', {
 });
 ```
 
+
+
 #### Passing Data
 
 You can pass data when initializing the event with the `detail` option in the `eventOptions` argument.
@@ -435,6 +942,7 @@ skate.emit(element, 'event', {
   }
 });
 ```
+
 
 
 ### `fragment (...almostAnything)`
@@ -478,6 +986,7 @@ skate
   .fragment('<my-element></my-element>')
   .appendChild(skate.fragment('<my-other-element></my-other-element>'));
 ```
+
 
 
 ### `init (...elements)`
@@ -555,6 +1064,8 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
+
+
 #### Background
 
 You maybe thinking "that sucks, why wouldn't they have been initialised?" That's a very good question. In order to realise the problem, we must first know how native custom elements behave.
@@ -588,6 +1099,8 @@ However, if you put your component definitions at the bottom of the page, it get
 
 In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `document.registerElement()`, it will look for elements to upgrade *immediately*.
 
+
+
 #### The problem
 
 If you want `component-a` to be able to rely on `component-b` being initialised, you'd have to put some constraints on your consumers:
@@ -596,6 +1109,8 @@ If you want `component-a` to be able to rely on `component-b` being initialised,
 - If you're running in polyfill land, just make sure that you load `component-b` before `component-a`. As above, you could just use a module loader for this.
 
 The problem here is that your consumer is now concerned with implementation details and have constraints placed on them that they shouldn't have to worry about.
+
+
 
 #### The solution
 
@@ -626,6 +1141,8 @@ skate('component-b', {
   }
 });
 ```
+
+
 
 #### Drawbacks
 
@@ -695,6 +1212,8 @@ Using this is good for simple components, or components where you're using prope
 
 If you want to re-render your entire component but have it only update the parts that need updating, you can use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) in a custom renderer. For more information, see the next section.
 
+
+
 #### Writing your own renderers
 
 Writing your own renderers consists of writing a function that returns a function:
@@ -753,73 +1272,6 @@ The component lifecycle consists of several paths in the following order startin
 8. `attached` is invoked when added to the document (or if already in the document)
 9. `detached` is invoked when removed from the document
 10. `attribute` is invoked whenever an attribute is updated
-
-Each callback gets the element passed in as the first argument. The attribute callback gets an additional argument with information about the change:
-
-```js
-skate('my-element', {
-  attribute: function (element, change) {
-    if (change.oldValue === undefined) {
-      // created
-    } else if (change.newValue === undefined) {
-      // removed
-    } else {
-      // updated
-    }
-  }
-});
-```
-
-The change object contains the following properties:
-
-- `name` The name of the attribute that was changed.
-- `newValue` The new value of the attribute.
-- `oldValue` The old value of the attribute.
-
-The `attribute` callback is fired whenever an element attribute is created, updated or removed, but not if the attribute already exists on the element when it is first initialised. This is synonymous with the `attributeChangedCallback` in the web component spec. The only differences are:
-
-- Undefined attribute values are normalised to be `undefined` instead of `null` to be consistent across the board.
-- The function signature is different: the element is the first argument and the parameters are consolidated into a change object.
-
-
-
-## Constructing Elements
-
-There's several different ways to construct an element.
-
-### Function Call
-
-```js
-var myElement = skate('my-element', {});
-var myElementInstance = myElement();
-```
-
-### `skate.create()`
-
-```js
-skate('my-element', {});
-var myElementInstance = skate.create('my-element');
-```
-
-### Constructor
-
-While not the most elegant way, this serves as an ode to the spec.
-
-```js
-var MyElement = skate('my-element');
-var myElementInstance = new MyElement();
-```
-
-### Hydrating Properties
-
-For each of the ways you can construct an element, Skate also allows you to pass a properties object to them. The properties object is used to hydrate property values for the element.
-
-```js
-var props = { propname: 'propvalue' };
-var myElementInstance = myElement(props);
-var myElementInstance = skate.create('my-element', props);
-var myElementInstance = new MyElement(props);
-```
 
 
 
@@ -971,74 +1423,6 @@ skate('rel', {
   }
 });
 ```
-
-
-
-## Custom bindings
-
-Skate supports custom bindings such as the ability to bind functionality to elements that have a particular attribute or classname. This comes in handy when wanting to work with legacy code that uses class / attribute selectors to bind stuff to elements on `DOMContentLoaded` because it negates the need to use selectors and / or `DOMContentLoaded` altogether. Not only does this have added performance benefits because you're not running selectors or blocking, it also means that you don't have to run any manual initialisation code. Just write your HTML and things happen.
-
-The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provided a particular interface for Skate to call.
-
-```js
-var myCustomBidning = {
-  create: function (componentDefinition) {
-    // Create an element matching the component definition.
-  },
-  filter: function (element, componentDefinitions) {
-    // Return an array of definitions that the element should initialise with.
-  }
-};
-```
-
-There's some that we've already built for you over at https://github.com/skatejs/types.
-
-### Considerations
-
-There's a few things that you must consider when building and using custom bindings:
-
-#### 1. You're deviating from the spec.
-
-Skate will always be a superset of the custom element spec. This means that core-Skate will never stray too far from the spec other than offering a more convenient API and featureset.
-
-#### 2. Performance
-
-The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
-
-#### 3. With great power comes great responsibility
-
-No matter if we decided to expose this as API or not, we'd still have to do a similar algorithm behind the scenes. Since there are many use-cases where writing a component with the Skate API is useful, we felt it was best to offer safe, spec-backed defaults while giving developers a little bit of breathing room.
-
-
-
-## Transitioning Away from jQuery-style Plugins
-
-Because Skate supports custom bindings as mentioned above, it allows you to do things like refactor your jQuery initialisation code without touching any HTML:
-
-```js
-jQuery(function ($) {
-  $('.tabs').tabs();
-});
-```
-
-There's several problems with this approach. First, you're running a selector against the document. This is unnecessary and can get slow in large DOMs even in the latest browsers. Second, it only gets executed on `DOMContentLoaded`. If you want to dynamically add some tabs to your document, then you've got to manually call that again once they've been added to the DOM.
-
-With Skate, those problems vanish. No selectors are run and your tabs will automatically be initialised regardless of when they are put into the document.
-
-To refactor that into a Skate component, all you need to do is:
-
-```js
-var typeClass = require('skatejs-type-class');
-
-skate('tabs', {
-  type: typeClass,
-  created: function (element) {
-    jQuery(element).tabs();
-  }
-});
-```
-
-Possibly the best part about this is that you don't need to touch any markup and only a minimal amount of JavaScript.
 
 
 
