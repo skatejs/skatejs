@@ -597,6 +597,45 @@ The only argument passed to `render` is component element. In this case that is 
 
 
 
+##### Writing your own renderers
+
+Writing your own renderers consists of writing a function that returns a function:
+
+```js
+function render (renderFn) {
+  return function (elem) {
+    elem.innerHTML = renderFn(elem);
+  };
+}
+```
+
+And you could use it like so:
+
+```js
+skate('my-component', {
+  render: render(function (elem) {
+    return `Hello, ${elem.name || 'World'}!`;
+  })
+}
+```
+
+If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
+
+```js
+function render (renderFn) {
+  return function (elem) {
+    skateDomDiff.merge({
+      destination: skate.fragment(renderFn(elem)),
+      source: elem
+    });
+  };
+}
+```
+
+And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
+
+
+
 #### `ready`
 
 Function that is called after the element has been rendered (see `render`).
@@ -1211,43 +1250,6 @@ var hello = skate('x-hello', {
 Using this is good for simple components, or components where you're using properties to mutate the template that you render from here. Functional UI proponents won't like this method, but this offers the simplest, least opinionated method to build a component as Skate strives to have as little opinion about this as possible.
 
 If you want to re-render your entire component but have it only update the parts that need updating, you can use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) in a custom renderer. For more information, see the next section.
-
-
-
-#### Writing your own renderers
-
-Writing your own renderers consists of writing a function that returns a function:
-
-```js
-function render (renderFn) {
-  return function (elem) {
-    elem.innerHTML = renderFn(elem);
-  };
-}
-```
-
-And you could use it like so:
-
-```js
-render: render(function (elem) {
-  return `Hello, ${elem.name || 'World'}!`;
-});
-```
-
-If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
-
-```js
-function render (renderFn) {
-  return function (elem) {
-    skateDomDiff.merge({
-      destination: skate.fragment(renderFn(elem)),
-      source: elem
-    });
-  };
-}
-```
-
-And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
 
 
 
