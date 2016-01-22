@@ -786,8 +786,8 @@
   
   return module.exports;
 }).call(this);
-// src/api/render/html.js
-(typeof window === 'undefined' ? global : window).__094bf660ba7ebd6f4b14ca8053e00764 = (function () {
+// src/api/render.js
+(typeof window === 'undefined' ? global : window).__413d80034b00b5aeb5c6177f97cceae5 = (function () {
   var module = {
     exports: {}
   };
@@ -800,57 +800,17 @@
   });
   
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _fragment = __ef86f48ff9050407fed1e142d9fe2629;
-  
-  var _fragment2 = _interopRequireDefault(_fragment);
-  
-  exports['default'] = function (render) {
-    return function (elem) {
-      var rendered = render(elem);
-      while (elem.childNodes.length) {
-        elem.removeChild(elem.childNodes[0]);
-      }
-      elem.appendChild((0, _fragment2['default'])(rendered));
-    };
-  };
-  
-  module.exports = exports['default'];
-  
-  return module.exports;
-}).call(this);
-// src/api/render/index.js
-(typeof window === 'undefined' ? global : window).__d31d2ff71da7095bf8886568461d8537 = (function () {
-  var module = {
-    exports: {}
-  };
-  var exports = module.exports;
-  
-  'use strict';
-  
-  Object.defineProperty(exports, '__esModule', {
-    value: true
-  });
-  
-  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-  
-  var _html = __094bf660ba7ebd6f4b14ca8053e00764;
-  
-  var _html2 = _interopRequireDefault(_html);
   
   var _globalRegistry = __9cff21a9f41cc9ecfe56139e1040c954;
   
   var _globalRegistry2 = _interopRequireDefault(_globalRegistry);
   
-  function render(elem) {
+  exports['default'] = function (elem) {
     _globalRegistry2['default'].find(elem).forEach(function (component) {
       return component.render && component.render(elem);
     });
-  }
+  };
   
-  render.html = _html2['default'];
-  
-  exports['default'] = render;
   module.exports = exports['default'];
   
   return module.exports;
@@ -2159,9 +2119,9 @@
   
   var _apiReady2 = _interopRequireDefault(_apiReady);
   
-  var _apiRenderIndex = __d31d2ff71da7095bf8886568461d8537;
+  var _apiRender = __413d80034b00b5aeb5c6177f97cceae5;
   
-  var _apiRenderIndex2 = _interopRequireDefault(_apiRenderIndex);
+  var _apiRender2 = _interopRequireDefault(_apiRender);
   
   var _apiVersion = __662bde51c096e9d79bf327311ea178e0;
   
@@ -2338,7 +2298,7 @@
   skate.init = _apiInit2['default'];
   skate.properties = _apiPropertiesIndex2['default'];
   skate.ready = _apiReady2['default'];
-  skate.render = _apiRenderIndex2['default'];
+  skate.render = _apiRender2['default'];
   skate.version = _apiVersion2['default'];
   
   exports['default'] = skate;
