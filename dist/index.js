@@ -1176,7 +1176,7 @@
       getData(elem, info.linkedAttribute).linkedProperty = name;
   
       if (typeof opts['default'] === 'function') {
-        info.defaultValue = opts['default'](elem);
+        info.defaultValue = opts['default'](elem, { name: name });
       } else if (!(0, _utilEmpty2['default'])(opts['default'])) {
         info.defaultValue = opts['default'];
       }
@@ -1247,11 +1247,11 @@
       }
   
       // We must coerce the initial value just in case it wasn't already.
-      info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+      var internalValue = info.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
   
       // User-defined created callback.
       if (typeof opts.created === 'function') {
-        opts.created(elem, initialValue);
+        opts.created(elem, { name: name, internalValue: internalValue });
       }
     };
   
@@ -1266,9 +1266,13 @@
       return internalValue;
     };
   
-    prop.init = function () {
-      var init = getData(this, name).internalValue;
-      this[name] = (0, _utilEmpty2['default'])(init) ? this[name] : init;
+    prop.initial = function (elem) {
+      return typeof opts.initial === 'function' ? opts.initial(elem, { name: name }) : elem[name];
+    };
+  
+    prop.ready = function (elem) {
+      var initial = getData(elem, name).internalValue;
+      elem[name] = (0, _utilEmpty2['default'])(initial) ? this.initial(elem) : initial;
     };
   
     prop.set = function (newValue) {
@@ -1351,14 +1355,14 @@
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
       var prop = properties[name];
-      var initialValue = elem[name];
+      var initialValue = prop.initial(elem);
   
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
-      // When Webkit fixes that bug so that native property we can move defining
-      // the property to the prototype and away from having to do if for every
-      // instance since all other browsers support accessing native property
-      // getters / setters.
+      // When Webkit fixes that bug so that native property accessors can be
+      // retrieved, we can move defining the property to the prototype and away
+      // from having to do if for every instance as all other browsers support
+      // this.
       Object.defineProperty(elem, name, prop);
   
       // This will still be needed to do any setup for the property if it needs
@@ -1367,7 +1371,7 @@
       // Once that bug is fixed, the initial value being passed as the second
       // argument to prop.created() can use the overridden property definition to
       // get the initial value.
-      prop.created && prop.created(elem, initialValue);
+      prop.created(elem, initialValue);
     });
   }
   
@@ -1391,7 +1395,7 @@
   
   function propertiesApply(elem, properties) {
     Object.keys(properties).forEach(function (name) {
-      properties[name].init.call(elem);
+      properties[name].ready(elem);
     });
   }
   
