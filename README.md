@@ -1369,28 +1369,30 @@ skate('datalist', {
 });
 ```
 
+This is because natively Skate will use mutation observers if your element name doesn't match a valid native custom element name.
+
 Or if you're using [skatejs-types](https://github.com/skatejs/types):
 
 `<input placeholder="">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('placeholder', {
   extends: 'input',
   type: typeAttribute,
-  created: polyfillInputPlaceholder
+  created: types.attribute
 });
 ```
 
 `<input type="date">`:
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('type', {
   extends: 'input',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     type: {
       set: function (element, change) {
@@ -1406,11 +1408,11 @@ skate('type', {
 `<link rel="import" href="path/to/import.html">` (HTML Imports):
 
 ```js
-var typeAttribute = require('skatejs-type-attribute');
+var types = require('skatejs-types');
 
 skate('rel', {
   extends: 'link',
-  type: typeAttribute,
+  type: types.attribute,
   properties: {
     rel: {
       set: function (element, change) {
