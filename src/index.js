@@ -48,9 +48,12 @@ const initDocument = utilDebounce(function () {
 
 // Creates a configurable, non-writable, non-enumerable property.
 function fixedProp (obj, name, value) {
-  const configurable = true;
-  const enumerable = writable = false;
-  Object.defineProperty(obj, name, { configurable, enumerable, value, writable });
+  Object.defineProperty(obj, name, {
+    configurable: true,
+    enumerable: false,
+    value,
+    writable: false
+  });
 }
 
 // Makes a function / constructor that can be called as either.
