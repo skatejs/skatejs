@@ -1,5 +1,4 @@
 import '../fix/ie/innerhtml';
-import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import globals from './vars';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
@@ -40,7 +39,7 @@ function documentObserverHandler (mutations) {
     // Since siblings are batched together, we check the first node's parent
     // node to see if it is ignored. If it is then we don't process any added
     // nodes. This prevents having to check every node.
-    if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
+    if (addedNodes && addedNodes.length) {
       triggerAddedNodes(addedNodes);
     }
 
