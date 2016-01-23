@@ -2,7 +2,8 @@ import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
 import skate from '../../src/index';
-import supportCustomElements from '../../src/support/custom-elements';
+
+const supportsCustomElements = 'registerElement' in document;
 
 describe('lifecycle-scenarios', function () {
   it('definition is registered before the element is created', function (done) {
@@ -16,7 +17,7 @@ describe('lifecycle-scenarios', function () {
     });
     helperFixture(document.createElement(el.safe));
 
-    if (supportCustomElements()) {
+    if (supportsCustomElements) {
       expect(called).to.equal(true);
       done();
     } else {
@@ -40,7 +41,7 @@ describe('lifecycle-scenarios', function () {
     });
 
     // We have to debounce in non-native for performance.
-    if (supportCustomElements()) {
+    if (supportsCustomElements) {
       expect(called).to.equal(true);
       done();
     } else {
