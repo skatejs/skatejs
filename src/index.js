@@ -14,14 +14,12 @@ import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './global/document-observer';
 import registry from './global/registry';
-import supportsCustomElements from './support/custom-elements';
 import typeElement from './type/element';
 import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
 import utilDebounce from './util/debounce';
 import utilDefineProperties from './util/define-properties';
 import utilWalkTree from './util/walk-tree';
-import validCustomElement from './support/valid-custom-element';
 
 const HTMLElement = window.HTMLElement;
 
@@ -52,7 +50,8 @@ const initDocument = utilDebounce(function () {
 function fixedProp (obj, name, value) {
   Object.defineProperty(obj, name, {
     configurable: true,
-    enumerable: false, value,
+    enumerable: false,
+    value,
     writable: false
   });
 }
@@ -73,7 +72,7 @@ function makeCtor (name, opts) {
   // Fixed info.
   fixedProp(func.prototype, 'constructor', func);
   fixedProp(func, 'id', name);
-  fixedProp(func, 'isNative', func.type === typeElement && supportsCustomElements() && validCustomElement(name));
+  fixedProp(func, 'isNative', func.type === typeElement && document.registerElement);
 
   // *sigh* WebKit
   //
@@ -107,16 +106,19 @@ function skate (name, opts) {
   Ctor.prototype.detachedCallback = detached(Ctor);
   Ctor.prototype.attributeChangedCallback = attribute(Ctor);
 
-  // In native, we have to massage the definition so that the browser doesn't
-  // spit out errors for a malformed definition. In polyfill land we must
-  // emulate what the browser would normally do in native.
-  if (Ctor.isNative) {
-    const nativeDefinition = { prototype: Ctor.prototype };
-    Ctor.extends && (nativeDefinition.extends = Ctor.extends);
-    document.registerElement(name, nativeDefinition);
-  } else {
+  // In polyfill land we must emulate what the browser would normally do in
+  // native.
+  if (!Ctor.isNative) {
     initDocument();
     documentObserver.register();
+  }
+
+  // Call register hook. We could put this in the registry, but since the
+  // registry is shared across versions, we try and churn that as little as
+  // possible. It's fine here for now.
+  const type = Ctor.type;
+  if (type.register) {
+    type.register(Ctor);
   }
 
   // We keep our own registry since we can't access the native one.
