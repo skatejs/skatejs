@@ -1338,8 +1338,9 @@ document.getElementById('my-component-id').someCustomMethod();
 
 This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you'll need to use one of the following depending on your use case:
 
-- `skate.create()`
+- `skate.create()` or the element constructor
 - `skate.fragment()`
+- `skate.init()`
 - `skate.ready()`
 
 
