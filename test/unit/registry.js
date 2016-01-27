@@ -1,6 +1,6 @@
 'use strict';
 
-import registry from '../../src/global/registry';
+import registry from '../../src/shared/registry';
 import typeElement from '../../src/type/element';
 import { attribute as typeAttribute } from 'skatejs-types';
 import { classname as typeClass } from 'skatejs-types';

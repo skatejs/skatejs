@@ -1,6 +1,6 @@
 import assign from 'object-assign';
 import init from './init';
-import registry from '../global/registry';
+import registry from '../shared/registry';
 
 export default function (name, props) {
   const Ctor = registry.get(name);

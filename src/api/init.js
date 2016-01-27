@@ -1,5 +1,5 @@
 import elementContains from '../util/element-contains';
-import registry from '../global/registry';
+import registry from '../shared/registry';
 import walkTree from '../util/walk-tree';
 
 export default function (...args) {

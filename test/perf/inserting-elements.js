@@ -1,5 +1,5 @@
 import bench from '../lib/bench';
-import documentObserver from '../../src/global/document-observer';
+import documentObserver from '../../src/shared/document-observer';
 import fixture from '../lib/fixture';
 
 describe('inserting elements', function () {

@@ -1,5 +1,5 @@
-import globals from '../../src/global/vars';
-import observer from '../../src/global/document-observer';
+import globals from '../../src/shared/vars';
+import observer from '../../src/shared/document-observer';
 
 describe('Document Observer', function () {
   function getObserver () {

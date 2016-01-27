@@ -3,7 +3,6 @@ import './unit/index';
 import './unit/api/create';
 import './unit/api/emit';
 import './unit/api/fragment';
-import './unit/api/global';
 import './unit/api/init';
 import './unit/api/properties';
 import './unit/api/ready';

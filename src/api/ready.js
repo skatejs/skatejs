@@ -1,5 +1,5 @@
 import data from '../util/data';
-import registry from '../global/registry';
+import registry from '../shared/registry';
 
 function ready (element) {
   const components = registry.find(element);

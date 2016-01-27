@@ -2,7 +2,7 @@
 
 import 'webcomponents.js/MutationObserver';
 import helperFixture from './lib/fixture';
-import observer from '../src/global/document-observer';
+import observer from '../src/shared/document-observer';
 
 afterEach(function () {
   // Ensure perf tests have enough time to cleanup after themselves.
