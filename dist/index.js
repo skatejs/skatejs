@@ -889,11 +889,15 @@
 	}
 
 	var documentCreateElement = document.createElement.bind(document);
+	var reservedNames = ['annotation-xml', 'color-profile', 'font-face', 'font-face-src', 'font-face-uri', 'font-face-format', 'font-face-name', 'missing-glyph'];
+	var customElementCriteria = ['contain at least one dash', 'not start with a dash', 'not be one of: ' + reservedNames.join(', ')];
 
 	var type = {
 	  create: function create(Ctor) {
 	    var elem = Ctor.extends ? documentCreateElement(Ctor.extends, Ctor.id) : documentCreateElement(Ctor.id);
-	    !Ctor.isNative && Ctor.extends && elem.setAttribute('is', Ctor.id);
+	    if (!Ctor.isNative && Ctor.extends) {
+	      elem.setAttribute('is', Ctor.id);
+	    }
 	    return elem;
 	  },
 	  filter: function filter(elem, defs) {
@@ -914,6 +918,24 @@
 	      }
 	    } else if (!tagToExtend) {
 	      return [definition];
+	    }
+	  },
+	  register: function register(Ctor) {
+	    var name = Ctor.id;
+
+	    // Screen non-native names and try and be more helpful than native.
+	    if (name.indexOf('-') < 1 || reservedNames.indexOf(name) > -1) {
+	      throw new Error(name + ' is not a valid custom element name. A custom element name must: ' + customElementCriteria.map(function (a) {
+	        return '\n- ' + a;
+	      }).join(''));
+	    }
+
+	    // In native, we have to massage the definition so that the browser doesn't
+	    // spit out errors for a malformed definition.
+	    if (Ctor.isNative) {
+	      var nativeDefinition = { prototype: Ctor.prototype };
+	      Ctor.extends && (nativeDefinition.extends = Ctor.extends);
+	      document.registerElement(name, nativeDefinition);
 	    }
 	  }
 	};
@@ -1103,10 +1125,6 @@
 	  }
 	});
 
-	function supportsCustomElements () {
-	  return typeof document.registerElement === 'function';
-	}
-
 	function utilGetAllPropertyDescriptors (obj) {
 	  return protos(obj).reduce(function (result, proto) {
 	    var descriptors = utilGetOwnPropertyDescriptors(proto);
@@ -1138,12 +1156,6 @@
 	  };
 	}
 
-	function validCustomElement (name) {
-	  var reservedNames = ['annotation-xml', 'color-profile', 'font-face', 'font-face-src', 'font-face-uri', 'font-face-format', 'font-face-name', 'missing-glyph'];
-
-	  return name.indexOf('-') > 0 && name.toLowerCase() === name && reservedNames.indexOf(name) < 0;
-	}
-
 	var HTMLElement = window.HTMLElement;
 
 	// A function that initialises the document once in a given event loop.
@@ -1173,7 +1185,8 @@
 	function fixedProp(obj, name, value) {
 	  Object.defineProperty(obj, name, {
 	    configurable: true,
-	    enumerable: false, value: value,
+	    enumerable: false,
+	    value: value,
 	    writable: false
 	  });
 	}
@@ -1194,7 +1207,7 @@
 	  // Fixed info.
 	  fixedProp(func.prototype, 'constructor', func);
 	  fixedProp(func, 'id', name);
-	  fixedProp(func, 'isNative', func.type === type && supportsCustomElements() && validCustomElement(name));
+	  fixedProp(func, 'isNative', func.type === type && document.registerElement);
 
 	  // *sigh* WebKit
 	  //
@@ -1228,16 +1241,19 @@
 	  Ctor.prototype.detachedCallback = detached(Ctor);
 	  Ctor.prototype.attributeChangedCallback = attribute(Ctor);
 
-	  // In native, we have to massage the definition so that the browser doesn't
-	  // spit out errors for a malformed definition. In polyfill land we must
-	  // emulate what the browser would normally do in native.
-	  if (Ctor.isNative) {
-	    var nativeDefinition = { prototype: Ctor.prototype };
-	    Ctor.extends && (nativeDefinition.extends = Ctor.extends);
-	    document.registerElement(name, nativeDefinition);
-	  } else {
+	  // In polyfill land we must emulate what the browser would normally do in
+	  // native.
+	  if (!Ctor.isNative) {
 	    initDocument();
 	    documentObserver.register();
+	  }
+
+	  // Call register hook. We could put this in the registry, but since the
+	  // registry is shared across versions, we try and churn that as little as
+	  // possible. It's fine here for now.
+	  var type = Ctor.type;
+	  if (type.register) {
+	    type.register(Ctor);
 	  }
 
 	  // We keep our own registry since we can't access the native one.
@@ -1254,12 +1270,12 @@
 	skate.render = apiRender;
 	skate.version = apiVersion;
 
-	var previousGlobal = window.skatejs;
+	var previousGlobal = window.skate;
 	skate.noConflict = function noConflict() {
-	  window.skatejs = previousGlobal;
+	  window.skate = previousGlobal;
 	  return this;
 	};
-	window.skatejs = skate;
+	window.skate = skate;
 
 	return skate;
 

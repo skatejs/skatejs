@@ -1,3 +1,4 @@
 {
-  "base": "node_modules/skatejs-build/task"
+  "base": "node_modules/skatejs-build/task",
+  "global": "skate"
 }
