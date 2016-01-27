@@ -113,8 +113,8 @@ Result
 - [Component Lifecycle](#component-lifecycle)
 - [Extending Elements](#extending-elements)
 - [Asynchrony](#asynchrony)
-- [Native Custom Element Support](#native-custom-element-support)
 - [Web Component Differences](#web-component-differences)
+- [Native Custom Element Support](#native-custom-element-support)
 - [Polyfills](#polyfills)
 - [Preventing FOUC](#preventing-fouc)
 - [Ignoring Elements](#ignoring-elements)
@@ -1344,81 +1344,15 @@ This is because Mutation Observers queue a [microtask](https://jakearchibald.com
 
 
 
-## Native Custom Element Support
-
-If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
-
-
-
 ## Web Component Differences
 
 Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) with a custom API but it does not polyfill the native methods. Since Skate is a custom element library, it does not polyfill [ShadowDOM](http://w3c.github.io/webcomponents/spec/shadow/) or [HTML Imports](http://w3c.github.io/webcomponents/spec/imports/).
 
-You can do some pretty cool things with Skate that you can't do with Web Components. For example, you can write polyfills for existing elements:
 
-`<datalist>...</datalist>`:
 
-```js
-skate('datalist', {
-  created: polyfillDatalistElement
-});
-```
+## Native Custom Element Support
 
-This is because natively Skate will use mutation observers if your element name doesn't match a valid native custom element name.
-
-Or if you're using [skatejs-types](https://github.com/skatejs/types):
-
-`<input placeholder="">`:
-
-```js
-var types = require('skatejs-types');
-
-skate('placeholder', {
-  extends: 'input',
-  type: typeAttribute,
-  created: types.attribute
-});
-```
-
-`<input type="date">`:
-
-```js
-var types = require('skatejs-types');
-
-skate('type', {
-  extends: 'input',
-  type: types.attribute,
-  properties: {
-    type: {
-      set: function (element, change) {
-        if (change.newValue === 'date') {
-          makeIntoDatepicker(element);
-        }
-      }
-    }
-  }
-});
-```
-
-`<link rel="import" href="path/to/import.html">` (HTML Imports):
-
-```js
-var types = require('skatejs-types');
-
-skate('rel', {
-  extends: 'link',
-  type: types.attribute,
-  properties: {
-    rel: {
-      set: function (element, change) {
-        if (change.newValue === 'import') {
-          makeIntoHtmlImport(element);
-        }
-      }
-    }
-  }
-});
-```
+If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 
 
@@ -1457,6 +1391,7 @@ Additionally, after removing the `unresolved` attribute, Skate will add the `res
   transition: opacity .3s ease;
 }
 ```
+
 
 
 ## Ignoring Elements
