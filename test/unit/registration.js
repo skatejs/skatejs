@@ -196,9 +196,7 @@ describe('Native document.registerElement', function () {
     expect(tagName2 in definitions).to.equal(false);
   });
 
-  it('should not be called if the id is invalid', function () {
-    var { safe: tagName } = helperElement('div');
-    skate(tagName, {});
-    expect(tagName in definitions).to.equal(false);
+  it('should throw an error if the tag name is invalid', function () {
+    expect(() => skate('someinvalidtagname', {})).to.throw();
   });
 });

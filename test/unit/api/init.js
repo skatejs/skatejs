@@ -108,13 +108,23 @@ describe('api/init', function () {
 
   describe('forms', function () {
     it('#110 - should initialise forms properly', function () {
-      var form = document.createElement('form');
-      skate('form', {
-        created: function (elem) {
-          elem.initialised = true;
+      skate('x-form', {
+        properties: {
+          initialised: {
+            get (elem) {
+              return elem.querySelector('form').initialised;
+            }
+          }
+        },
+        render (elem) {
+          elem.innerHTML = '<form></form>';
+        },
+        ready (elem) {
+          elem.querySelector('form').initialised = true;
         }
       });
 
+      const form = document.createElement('x-form');
       skate.init(form);
       expect(form.initialised).to.equal(true);
     });

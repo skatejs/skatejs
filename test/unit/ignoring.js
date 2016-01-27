@@ -3,7 +3,8 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
-import supportsCustomElements from '../../src/support/custom-elements';
+
+const supportsCustomElements = 'registerElement' in document;
 
 describe('ignoring', function () {
   var created;
@@ -20,7 +21,7 @@ describe('ignoring', function () {
 
   function assertCalls (done) {
     setTimeout(function () {
-      var expected = supportsCustomElements() ? 1 : 0;
+      var expected = supportsCustomElements ? 1 : 0;
       expect(created).to.equal(expected, 'created');
       expect(attached).to.equal(expected, 'attached');
       done();
