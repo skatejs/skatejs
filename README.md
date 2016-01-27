@@ -90,7 +90,7 @@ Result
     - [Alternatives](#alternatives)
     - [Setting Properties](#setting-properties)
     - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelement)
-    - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
+  - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
     - [Emitting Several Events at Once](#emitting-several-events-at-once)
     - [Return Value](#return-value-1)
     - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
@@ -918,7 +918,7 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 
 
-#### `emit (element, eventName, eventOptions = {})`
+### `emit (element, eventName, eventOptions = {})`
 
 Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
