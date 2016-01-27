@@ -742,12 +742,13 @@ Skate supports custom bindings such as the ability to bind functionality to elem
 The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provide a particular interface for Skate to call.
 
 ```js
-var myCustomBidning = {
+var myCustomBinding = {
   create: function (componentDefinition) {
     // Create an element matching the component definition.
   },
-  filter: function (element, componentDefinitions) {
-    // Return an array of definitions that the element should initialise with.
+  reduce: function (element, componentDefinitions) {
+    // Return the component that the element should upgrade to, or falsy if it
+    // doesn't exist.
   }
 };
 ```
@@ -761,7 +762,7 @@ There's some that we've already built for you over at https://github.com/skatejs
 There's a few things that you must consider when building and using custom bindings:
 
 - You're deviating from the spec - Skate will always be a superset of the custom element spec. This means that core-Skate will never stray too far from the spec other than offering a more convenient API and featureset.
-- Performance - The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
+- Performance - The `reduce` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
 - With great power comes great responsibility - No matter if we decided to expose this as API or not, we'd still have to do a similar algorithm behind the scenes. Since there are many use-cases where writing a component with the Skate API is useful, we felt it was best to offer safe, spec-backed defaults while giving developers a little bit of breathing room.
 
 
@@ -783,10 +784,10 @@ With Skate, those problems vanish. No selectors are run and your tabs will autom
 To refactor that into a Skate component, all you need to do is:
 
 ```js
-var typeClass = require('skatejs-type-class');
+var types = require('skatejs-types');
 
 skate('tabs', {
-  type: typeClass,
+  type: types.classname,
   created: function (element) {
     jQuery(element).tabs();
   }
