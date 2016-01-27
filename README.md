@@ -202,6 +202,8 @@ If you have any questions about Skate you can use one of these:
 
 The main `skate()` function is the entry-point to the API and is what defines your custom element.
 
+*All experimental members are marked with an asterisk (\*).*
+
 
 
 ### Return Value
@@ -1103,7 +1105,7 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 
 
-### `ready (elementOrElements, callback)`
+### `ready (elementOrElements, callback)` *
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
@@ -1157,7 +1159,7 @@ The problem here is that your consumer is now concerned with implementation deta
 
 #### The solution
 
-If you want to do something when `component-b` is initialised, you can use `skate.ready()`.
+The best solution here would be to use a module loader and property declare dependencies. For those cases where that's not possible, you can use `skate.ready()` to do something when the passed elements become initialised.
 
 ```js
 skate('component-a', {
@@ -1212,32 +1214,11 @@ elem.name = 'Bob';
 skate.render(elem);
 ```
 
-This makes it extremely useful when using properties because you can rewrite the above component to re-render itself while taking advantave of all that `properties` has to offer:
-
-```js
-var hello = skate('x-hello', {
-  properties: {
-    name: {
-      attribute: true,
-      default: 'World',
-      set: skate.render
-    }
-  },
-  render: function (elem) {
-    elem.innerHTML = `Hello, ${elem.name}!`;
-  }
-});
-
-// <x-hello name="World">Hello, World!</x-hello>
-var elem = hello();
-
-// <x-hello name="Bob">Hello, Bob!</x-hello>
-elem.name = 'Bob';
-```
+This is extremely useful when using properties in conjunction with a virtual DOM renderer. More on that in the next section.
 
 
 
-#### Writing your own renderers
+#### Custom renderers
 
 Writing your own renderers consists of writing a function that returns a function:
 
@@ -1247,33 +1228,42 @@ function render (renderFn) {
     elem.innerHTML = renderFn(elem);
   };
 }
-```
 
-And you could use it like so:
-
-```js
-render: render(function (elem) {
-  return `Hello, ${elem.name || 'World'}!`;
+skate('x-hello', {
+  properties: {
+    name: {
+      attribute: true,
+      set: skate.render
+    }
+  },
+  render: render(function (elem) {
+    return `<div>Hello, ${elem.name || 'World'}!</div>`;
+  })
 });
 ```
 
-If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
+Or using something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) for virtual DOM diffing and patching:
 
 ```js
-function render (renderFn) {
-  return function (elem) {
-    skateDomDiff.merge({
-      destination: skate.fragment(renderFn(elem)),
-      source: elem
-    });
-  };
-}
+var div = skatejsDomDiff.vdom.div;
+var render = skatejsDomDiff.render;
+
+skate('x-hello', {
+  properties: {
+    name: {
+      attribute: true,
+      set: skate.render
+    }
+  },
+  render: render(function (elem) {
+    return div('Hello, ', elem.name || 'World', '!');
+  })
+});
 ```
 
-And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
+Both components have the same result, however, the latter only patches the DOM that needs updating which means the `Hello, ` and `!` text nodes won't be updated when the `name` changes and the component re-renders.
 
-
-
+*A complete approach to writing more functional web components can be found in the [`kickflip`](https://github.com/skatejs/kickflip) repo.*
 
 
 
