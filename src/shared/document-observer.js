@@ -6,36 +6,28 @@ import walkTree from '../util/walk-tree';
 
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
-    var components = registry.find(element);
-    var componentsLength = components.length;
-
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.createdCallback.call(element);
-    }
-
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.attachedCallback.call(element);
+    const component = registry.find(element);
+    if (component) {
+      component.prototype.createdCallback.call(element);
+      component.prototype.attachedCallback.call(element);
     }
   });
 }
 
 function triggerRemovedNodes (removedNodes) {
   walkTree(removedNodes, function (element) {
-    var components = registry.find(element);
-    var componentsLength = components.length;
-
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.detachedCallback.call(element);
+    const component = registry.find(element);
+    if (component) {
+      component.prototype.detachedCallback.call(element);
     }
   });
 }
 
 function documentObserverHandler (mutations) {
-  var mutationsLength = mutations.length;
-
+  const mutationsLength = mutations.length;
   for (let a = 0; a < mutationsLength; a++) {
-    var addedNodes = mutations[a].addedNodes;
-    var removedNodes = mutations[a].removedNodes;
+    const addedNodes = mutations[a].addedNodes;
+    const removedNodes = mutations[a].removedNodes;
 
     // Since siblings are batched together, we check the first node's parent
     // node to see if it is ignored. If it is then we don't process any added
@@ -60,7 +52,7 @@ function createMutationObserver () {
 }
 
 function createDocumentObserver () {
-  var observer = createMutationObserver();
+  const observer = createMutationObserver();
   observer.observe(document, {
     childList: true,
     subtree: true

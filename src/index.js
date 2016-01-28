@@ -25,23 +25,11 @@ const HTMLElement = window.HTMLElement;
 
 // A function that initialises the document once in a given event loop.
 const initDocument = utilDebounce(function () {
-  // For performance in older browsers, we use:
-  //
-  // - childNodes instead of children
-  // - for instead of forEach
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    const components = registry.find(element);
-    const componentsLength = components.length;
-
-    // Created callbacks are called first.
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.createdCallback.call(element);
-    }
-
-    // Attached callbacks are called separately because this emulates how
-    // native works internally.
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.attachedCallback.call(element);
+    const component = registry.find(element);
+    if (component) {
+      component.prototype.createdCallback.call(element);
+      component.prototype.attachedCallback.call(element);
     }
   });
 });

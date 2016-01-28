@@ -3,9 +3,7 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
-import helperResolved from '../lib/resolved';
 import skate from '../../src/index';
-import { classname as typeClass } from 'skatejs-types';
 
 describe('dom', function () {
   describe('General DOM node interaction.', function () {
@@ -98,19 +96,22 @@ describe('dom', function () {
   describe('SVG', function () {
     it('should work for any SVG element', function () {
       var tag = helperElement().safe;
-      var html = `
-        <svg width="100" height="100">
-          <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-          <circle class="${tag}" cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-        </svg>
-      `;
+      var calls = 0;
 
       skate(tag, {
-        type: typeClass
+        created () {
+          calls++;
+        }
       });
 
-      skate.init(helperFixture(html));
-      expect(helperResolved(helperFixture().querySelector(`.${tag}`))).to.equal(true);
+      skate.fragment(`
+        <svg width="100" height="100">
+          <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+          <${tag}></${tag}>
+        </svg>
+      `);
+
+      expect(calls).to.equal(1);
     });
   });
 

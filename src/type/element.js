@@ -23,24 +23,18 @@ export default {
     }
     return elem;
   },
-  filter (elem, defs) {
-    const attrs = elem.attributes;
-    const isAttr = attrs.is;
-    const isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-    const tagName = (elem.tagName || elem.localName).toLowerCase();
-    const definition = defs[isAttrValue || tagName];
-
-    if (!definition) {
-      return;
+  reduce (elem, defs) {
+    const tagName = elem.tagName;
+    const tagNameLc = tagName && tagName.toLowerCase();
+    if (tagNameLc in defs) {
+      return defs[tagNameLc];
     }
 
-    const tagToExtend = definition.extends;
-    if (isAttrValue) {
-      if (tagName === tagToExtend) {
-        return [definition];
-      }
-    } else if (!tagToExtend) {
-      return [definition];
+    const attributes = elem.attributes;
+    const isAttributeNode = attributes && attributes.is;
+    const isAttributeValue = isAttributeNode && isAttributeNode .value;
+    if (isAttributeValue in defs) {
+      return defs[isAttributeValue];
     }
   },
   register (Ctor) {
