@@ -73,7 +73,7 @@ Result
       - [`serialize`](#serialize)
       - [`set`](#set)
     - [`render`](#render)
-      - [Writing your own renderers](#writing-your-own-renderers)
+      - [Custom renderers](#custom-renderers)
     - [`ready`](#ready)
   - [`attached`](#attached)
     - [`detached`](#detached)
@@ -108,7 +108,6 @@ Result
     - [The solution](#the-solution)
     - [Drawbacks](#drawbacks)
   - [`render (element)`](#render-element)
-    - [Custom renderers](#custom-renderers)
   - [`version`](#version)
 - [Component Lifecycle](#component-lifecycle)
 - [Extending Elements](#extending-elements)
@@ -603,7 +602,7 @@ The only argument passed to `render` is component element. In this case that is 
 
 
 
-##### Writing your own renderers
+##### Custom renderers
 
 Writing your own renderers consists of writing a function that returns a function:
 
@@ -613,32 +612,42 @@ function render (renderFn) {
     elem.innerHTML = renderFn(elem);
   };
 }
-```
 
-And you could use it like so:
-
-```js
-skate('my-component', {
+skate('x-hello', {
+  properties: {
+    name: {
+      attribute: true,
+      set: skate.render
+    }
+  },
   render: render(function (elem) {
-    return `Hello, ${elem.name || 'World'}!`;
+    return `<div>Hello, ${elem.name || 'World'}!</div>`;
   })
-}
+});
 ```
 
-If you wanted to do something a little bit more complex, you could use something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) as stated at the end of the previous section:
+Or using something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) for virtual DOM diffing and patching:
 
 ```js
-function render (renderFn) {
-  return function (elem) {
-    skateDomDiff.merge({
-      destination: skate.fragment(renderFn(elem)),
-      source: elem
-    });
-  };
-}
+var div = skatejsDomDiff.vdom.div;
+var render = skatejsDomDiff.render;
+
+skate('x-hello', {
+  properties: {
+    name: {
+      attribute: true,
+      set: skate.render
+    }
+  },
+  render: render(function (elem) {
+    return div('Hello, ', elem.name || 'World', '!');
+  })
+});
 ```
 
-And you could use it in the exact same way as used above. The only difference being that it will only update the parts of your element's tree that changed. Everything else stays intact as it was before.
+Both components have the same result, however, the latter only patches the DOM that needs updating which means the `Hello, ` and `!` text nodes won't be updated when the `name` changes and the component re-renders.
+
+*A complete approach to writing more functional web components can be found in the [`kickflip`](https://github.com/skatejs/kickflip) repo.*
 
 
 
@@ -1159,7 +1168,7 @@ The problem here is that your consumer is now concerned with implementation deta
 
 #### The solution
 
-The best solution here would be to use a module loader and property declare dependencies. For those cases where that's not possible, you can use `skate.ready()` to do something when the passed elements become initialised.
+If you need to interact with components that may not be initialised yet (at any level), you can use `skate.ready()`. It works for both native and polyfill no matter when the element is upgraded.
 
 ```js
 skate('component-a', {
@@ -1214,56 +1223,7 @@ elem.name = 'Bob';
 skate.render(elem);
 ```
 
-This is extremely useful when using properties in conjunction with a virtual DOM renderer. More on that in the next section.
-
-
-
-#### Custom renderers
-
-Writing your own renderers consists of writing a function that returns a function:
-
-```js
-function render (renderFn) {
-  return function (elem) {
-    elem.innerHTML = renderFn(elem);
-  };
-}
-
-skate('x-hello', {
-  properties: {
-    name: {
-      attribute: true,
-      set: skate.render
-    }
-  },
-  render: render(function (elem) {
-    return `<div>Hello, ${elem.name || 'World'}!</div>`;
-  })
-});
-```
-
-Or using something like [skatejs-dom-diff](https://github.com/skatejs/dom-diff) for virtual DOM diffing and patching:
-
-```js
-var div = skatejsDomDiff.vdom.div;
-var render = skatejsDomDiff.render;
-
-skate('x-hello', {
-  properties: {
-    name: {
-      attribute: true,
-      set: skate.render
-    }
-  },
-  render: render(function (elem) {
-    return div('Hello, ', elem.name || 'World', '!');
-  })
-});
-```
-
-Both components have the same result, however, the latter only patches the DOM that needs updating which means the `Hello, ` and `!` text nodes won't be updated when the `name` changes and the component re-renders.
-
-*A complete approach to writing more functional web components can be found in the [`kickflip`](https://github.com/skatejs/kickflip) repo.*
+This is extremely useful when using properties in conjunction with a virtual DOM renderer. See [custom renderers](#custom-renderers) for more information.
 
 
 
