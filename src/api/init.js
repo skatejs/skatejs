@@ -7,7 +7,7 @@ export default function (...args) {
     const isInDom = elementContains(document, arg);
     walkTree(arg, function (descendant) {
       const component = registry.find(descendant);
-      if (component) {
+      if (component && !component.isNative) {
         component.prototype.createdCallback.call(descendant);
         isInDom && component.prototype.attachedCallback.call(descendant);
       }

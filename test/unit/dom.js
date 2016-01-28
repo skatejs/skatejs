@@ -105,9 +105,13 @@ describe('dom', function () {
       });
 
       skate.fragment(`
-        <svg width="100" height="100">
-          <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-          <${tag}></${tag}>
+        <svg xmlns="http://www.w3.org/2000/svg">
+          <circle />
+          <foreignObject class="node">
+            <body xmlns="http://www.w3.org/1999/xhtml">
+              <${tag}></${tag}>
+            </body>
+          </foreignOject>
         </svg>
       `);
 
