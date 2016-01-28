@@ -46,7 +46,6 @@ Result
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Compatibility](#compatibility)
 - [Installing](#installing)
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
   - [ES6 Modules](#es6-modules)
@@ -130,27 +129,15 @@ Result
 
 
 
-## Compatibility
-
-See the Sauce Labs badge at the top.
-
-
-
 ## Installing
 
-You can download the source yourself and put it wherever you want. Additionally you can use Bower:
+Using package managers:
 
     bower install skatejs
-
-Or NPM:
-
+    jspm install npm:skatejs
     npm install skatejs
 
-Or JSPM:
-
-    jspm install npm:skatejs
-
-Include either `dist/skate.js` or `dist/skate.min.js`.
+Or you can DIY by downloading the zip and consuming it via one of the following ways.
 
 
 
@@ -162,13 +149,13 @@ UMD files are located in `lib/`. Simply `require` the `lib/index.js` file by wha
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/index';` and use it in your projects as you would any ES6 module.
+The Skate source is written using [ES2015 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/index';` and use it in your projects as you would any ES6 module.
 
 
 
 ### Global
 
-If you're still skating old school the `dist` directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with `skate`.
+If you're still skating old school the `dist` directory contains the bundled ES5 source and contains both a UMD definition and a global `skate` variable.
 
 
 
@@ -186,6 +173,7 @@ If you're still skating old school the `dist` directory contains the compiled ES
 - [Web Platform Podcast: Custom Elements & SkateJS (#66)](https://www.youtube.com/watch?v=AbolmN4mp-g)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
+- [Kickflip: Functional web components with SkateJS](https://github.com/skatejs/kickflip)
 
 
 
@@ -280,7 +268,7 @@ document.registerElement('my-component', {
 });
 ```
 
-With Skate, if your `prototype` doesn't inherit from the base `HTMLElement`, it will automatically do this for you.
+If your `prototype` doesn't inherit from the base `HTMLElement`, Skate will automatically do this for you.
 
 
 
@@ -599,7 +587,7 @@ skate('my-component', {
 });
 ```
 
-The only argument passed to `render` is component element. In this case that is `<my-component>`.
+The only argument passed to `render` is the component element. In this case that is `<my-component>`.
 
 
 
