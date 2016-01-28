@@ -78,11 +78,12 @@ function makeCtor (name, opts) {
 // The main skate() function.
 function skate (name, opts) {
   const Ctor = makeCtor(name, opts);
-  const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 
   // If the options don't inherit a native element prototype, we ensure it does
-  // because native unnecessarily requires you explicitly do this.
-  if (!proto.isPrototypeOf(Ctor.prototype)) {
+  // because native requires you explicitly do this. Here we solve the common
+  // use case by defaulting to HTMLElement.prototype.
+  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
+    const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
     Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 

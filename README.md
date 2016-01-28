@@ -1346,6 +1346,32 @@ If your component is not using custom types and your browser supports custom ele
 
 
 
+## SVG
+
+When using custom elements in SVG, you need to explicitly extend the `SVGElement.prototype` as well as set the `extends` option to a valid `SVGElement` name:
+
+```js
+skate('my-path', {
+  extends: 'path',
+  prototype: Object.create(SVGElement.prototype)
+});
+```
+
+Then you may write the following:
+
+```js
+<svg xmlns="http://www.w3.org/2000/svg">
+  <circle />
+  <path is="my-path" />
+</svg>
+```
+
+The [custom element spec](http://w3c.github.io/webcomponents/spec/custom/#registering-custom-elements) is very vague on SVG and it would seem that it implies you don't need to specify `extends`. However, this is not the case in Chrome under native support it would seem. This is not an implementation detail of Skate, but the spec and the browser implementations.
+
+Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG element), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
+
+
+
 ## Polyfills
 
 As you may know, the only way to polyfill Mutation Observers is to use the deprecated DOM 3 Mutation Events. They were deprecated because if you insert 5k elements at once, you then trigger 5k handlers at once. Mutation Observers will batch that into a single callback.

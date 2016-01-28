@@ -101,17 +101,15 @@ describe('dom', function () {
       skate(tag, {
         created () {
           calls++;
-        }
+        },
+        extends: 'path',
+        prototype: Object.create(SVGElement.prototype)
       });
 
       skate.fragment(`
-        <svg xmlns="http://www.w3.org/2000/svg">
+        <svg>
           <circle />
-          <foreignObject class="node">
-            <body xmlns="http://www.w3.org/1999/xhtml">
-              <${tag}></${tag}>
-            </body>
-          </foreignOject>
+          <path is="${tag}" />
         </svg>
       `);
 
@@ -132,7 +130,6 @@ describe('dom', function () {
         created: function () {
           created = true;
         },
-
         attached: function () {
           attached = true;
         }
@@ -145,6 +142,7 @@ describe('dom', function () {
 
       frag.appendChild(myEl);
       skate.init(frag);
+
       expect(created).to.equal(true);
       expect(attached).to.equal(false);
     });
