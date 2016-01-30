@@ -2,8 +2,6 @@
 
 import helperElement from '../lib/element';
 import skate from '../../src/index';
-import { attribute as typeAttribute } from 'skatejs-types';
-import { classname as typeClass } from 'skatejs-types';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
@@ -105,34 +103,6 @@ describe('Returning a constructor', function () {
     expect(called).to.equal(true);
   });
 
-  it('should merge prototype functions if an element is skated more than once', function () {
-    var { safe: tagName } = helperElement('my-el');
-
-    var Element = skate(tagName, {
-      prototype: {
-        func1:  function () {
-          return true;
-        }
-      }
-    });
-
-    var element = new Element();
-    var { safe: attrName } = helperElement('my-attr');
-    element.setAttribute(attrName, '');
-    skate(attrName, {
-      type: typeAttribute,
-      prototype: {
-        func2:  function () {
-          return true;
-        }
-      }
-    });
-    skate.init(element);
-
-    expect(element.func1).to.be.a('function');
-    expect(element.func2).to.be.a('function');
-  });
-
   describe('when an extends option is specified', function () {
     var Div;
     var div;
@@ -181,19 +151,13 @@ describe('Native document.registerElement', function () {
   });
 
   it('should not be called if it is not compatible with tags', function () {
-    var { safe: tagName1 } = helperElement('my-element');
-    var { safe: tagName2 } = helperElement('my-element');
-
-    skate(tagName1, {
-      type: typeAttribute
+    var elem = helperElement('my-element').skate({
+      type: {
+        create () {},
+        reduce () {}
+      }
     });
-
-    skate(tagName2, {
-      type: typeClass
-    });
-
-    expect(tagName1 in definitions).to.equal(false);
-    expect(tagName2 in definitions).to.equal(false);
+    expect(elem.id in definitions).to.equal(false);
   });
 
   it('should throw an error if the tag name is invalid', function () {

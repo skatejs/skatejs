@@ -1,8 +1,6 @@
 import helperElement from '../lib/element';
 import resolved from '../lib/resolved';
 import skate from '../../src/index';
-import { attribute as typeAttribute } from 'skatejs-types';
-import { classname as typeClass } from 'skatejs-types';
 
 describe('constructor', function () {
   var id;
@@ -41,38 +39,6 @@ describe('constructor', function () {
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal('span');
     expect(ctor.getAttribute('is')).to.equal(id);
-  });
-
-  it('attributes', function () {
-    var Ctor = skate(id, { type: typeAttribute });
-    var ctor = new Ctor();
-    expect(resolved(ctor)).to.equal(true);
-    expect(ctor.tagName.toLowerCase()).to.equal('div');
-    expect(ctor.getAttribute(id)).to.equal('');
-  });
-
-  it('attributes + extends', function () {
-    var Ctor = skate(id, { type: typeAttribute, extends: 'span' });
-    var ctor = new Ctor();
-    expect(resolved(ctor)).to.equal(true);
-    expect(ctor.tagName.toLowerCase()).to.equal('span');
-    expect(ctor.getAttribute(id)).to.equal('');
-  });
-
-  it('classes', function () {
-    var Ctor = skate(id, { type: typeClass });
-    var ctor = new Ctor();
-    expect(resolved(ctor)).to.equal(true);
-    expect(ctor.tagName.toLowerCase()).to.equal('div');
-    expect(ctor.getAttribute('class')).to.equal(id);
-  });
-
-  it('classes + extends', function () {
-    var Ctor = skate(id, { type: typeClass, extends: 'span' });
-    var ctor = new Ctor();
-    expect(resolved(ctor)).to.equal(true);
-    expect(ctor.tagName.toLowerCase()).to.equal('span');
-    expect(ctor.getAttribute('class')).to.equal(id);
   });
 
   it('without new operator', function () {

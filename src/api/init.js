@@ -6,17 +6,10 @@ export default function (...args) {
   args.forEach(function (arg) {
     const isInDom = elementContains(document, arg);
     walkTree(arg, function (descendant) {
-      const components = registry.find(descendant);
-      const componentsLength = components.length;
-
-      for (let a = 0; a < componentsLength; a++) {
-        components[a].prototype.createdCallback.call(descendant);
-      }
-
-      for (let a = 0; a < componentsLength; a++) {
-        if (isInDom) {
-          components[a].prototype.attachedCallback.call(descendant);
-        }
+      const component = registry.find(descendant);
+      if (component && !component.isNative) {
+        component.prototype.createdCallback.call(descendant);
+        isInDom && component.prototype.attachedCallback.call(descendant);
       }
     });
   });

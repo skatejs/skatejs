@@ -46,7 +46,6 @@ Result
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [Compatibility](#compatibility)
 - [Installing](#installing)
   - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
   - [ES6 Modules](#es6-modules)
@@ -129,27 +128,15 @@ Result
 
 
 
-## Compatibility
-
-See the Sauce Labs badge at the top.
-
-
-
 ## Installing
 
-You can download the source yourself and put it wherever you want. Additionally you can use Bower:
+Using package managers:
 
     bower install skatejs
-
-Or NPM:
-
+    jspm install npm:skatejs
     npm install skatejs
 
-Or JSPM:
-
-    jspm install npm:skatejs
-
-Include either `dist/skate.js` or `dist/skate.min.js`.
+Or you can DIY by downloading the zip and consuming it via one of the following ways.
 
 
 
@@ -161,13 +148,13 @@ UMD files are located in `lib/`. Simply `require` the `lib/index.js` file by wha
 
 ### ES6 Modules
 
-The Skate source is written using [ES6 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/index';` and use it in your projects as you would any ES6 module.
+The Skate source is written using [ES2015 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'src/index';` and use it in your projects as you would any ES6 module.
 
 
 
 ### Global
 
-If you're still skating old school the `dist` directory contains the compiled ES5 source. The compiled source does not use a module loader; everything will just work. Access Skate as a global with `skate`.
+If you're still skating old school the `dist` directory contains the bundled ES5 source and contains both a UMD definition and a global `skate` variable.
 
 
 
@@ -185,6 +172,7 @@ If you're still skating old school the `dist` directory contains the compiled ES
 - [Web Platform Podcast: Custom Elements & SkateJS (#66)](https://www.youtube.com/watch?v=AbolmN4mp-g)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
+- [Kickflip: Functional web components with SkateJS](https://github.com/skatejs/kickflip)
 
 
 
@@ -279,7 +267,7 @@ document.registerElement('my-component', {
 });
 ```
 
-With Skate, if your `prototype` doesn't inherit from the base `HTMLElement`, it will automatically do this for you.
+If your `prototype` doesn't inherit from the base `HTMLElement`, Skate will automatically do this for you.
 
 
 
@@ -598,7 +586,7 @@ skate('my-component', {
 });
 ```
 
-The only argument passed to `render` is component element. In this case that is `<my-component>`.
+The only argument passed to `render` is the component element. In this case that is `<my-component>`.
 
 
 
@@ -751,12 +739,13 @@ Skate supports custom bindings such as the ability to bind functionality to elem
 The actual binding functionality isn't built into Skate. Skate simply offers an API for you to use custom bindings that you or others have written. If you want to write a binding, all you have to do is provide a particular interface for Skate to call.
 
 ```js
-var myCustomBidning = {
+var myCustomBinding = {
   create: function (componentDefinition) {
     // Create an element matching the component definition.
   },
-  filter: function (element, componentDefinitions) {
-    // Return an array of definitions that the element should initialise with.
+  reduce: function (element, componentDefinitions) {
+    // Return the component that the element should upgrade to, or falsy if it
+    // doesn't exist.
   }
 };
 ```
@@ -770,7 +759,7 @@ There's some that we've already built for you over at https://github.com/skatejs
 There's a few things that you must consider when building and using custom bindings:
 
 - You're deviating from the spec - Skate will always be a superset of the custom element spec. This means that core-Skate will never stray too far from the spec other than offering a more convenient API and featureset.
-- Performance - The `filter` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
+- Performance - The `reduce` callback is performance-critical. This function *must* be run for every single element that comes into existence. Be very aware of this.
 - With great power comes great responsibility - No matter if we decided to expose this as API or not, we'd still have to do a similar algorithm behind the scenes. Since there are many use-cases where writing a component with the Skate API is useful, we felt it was best to offer safe, spec-backed defaults while giving developers a little bit of breathing room.
 
 
@@ -792,10 +781,10 @@ With Skate, those problems vanish. No selectors are run and your tabs will autom
 To refactor that into a Skate component, all you need to do is:
 
 ```js
-var typeClass = require('skatejs-type-class');
+var types = require('skatejs-types');
 
 skate('tabs', {
-  type: typeClass,
+  type: types.classname,
   created: function (element) {
     jQuery(element).tabs();
   }
@@ -1314,6 +1303,32 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 ## Native Custom Element Support
 
 If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
+
+
+
+## SVG
+
+When using custom elements in SVG, you need to explicitly extend the `SVGElement.prototype` as well as set the `extends` option to a valid `SVGElement` name:
+
+```js
+skate('my-path', {
+  extends: 'path',
+  prototype: Object.create(SVGElement.prototype)
+});
+```
+
+Then you may write the following:
+
+```js
+<svg xmlns="http://www.w3.org/2000/svg">
+  <circle />
+  <path is="my-path" />
+</svg>
+```
+
+The [custom element spec](http://w3c.github.io/webcomponents/spec/custom/#registering-custom-elements) is very vague on SVG and it would seem that it implies you don't need to specify `extends`. However, this is not the case in Chrome under native support it would seem. This is not an implementation detail of Skate, but the spec and the browser implementations.
+
+Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG element), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
 
 
 

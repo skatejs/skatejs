@@ -1,9 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
-import { attribute as typeAttribute } from 'skatejs-types';
-import { classname as typeClass } from 'skatejs-types';
-import typeElement from '../../../src/type/element';
 
 describe('api/init', function () {
   let tagName;
@@ -41,68 +38,20 @@ describe('api/init', function () {
   });
 
   describe('duplication', function () {
-    function assertType (type, expected, tagToExtend) {
-      it(type + (tagToExtend ? `:${tagToExtend}` : ''), function () {
-        var { safe: tagName } = helperElement();
-        var calls = 0;
+    it('should not initialise a single component more than once on a single element', function () {
+      var calls = 0;
+      var {safe: tagName} = helperElement('my-element');
 
-        skate(tagName, {
-          type: type,
-          extends: tagToExtend,
-          created () { ++calls; }
-        });
-
-        calls = 0;
-        var el1 = document.createElement(tagName);
-        skate.init(el1);
-        expect(calls).to.equal(expected[0], tagName);
-
-        calls = 0;
-        var el2 = document.createElement('div');
-        el2.setAttribute('is', tagName);
-        skate.init(el2);
-        expect(calls).to.equal(expected[1], `div[is="${tagName}"]`);
-
-        calls = 0;
-        var el3 = document.createElement('div');
-        el3.setAttribute(tagName, '');
-        skate.init(el3);
-        expect(calls).to.equal(expected[2], `div[${tagName}]`);
-
-        calls = 0;
-        var el4 = document.createElement('div');
-        el4.className = tagName;
-        skate.init(el4);
-        expect(calls).to.equal(expected[3], `div.${tagName}`);
+      skate(tagName, {
+        created: function () {
+          ++calls;
+        }
       });
-    }
 
-    describe(':', function () {
-      assertType(typeElement,   [1, 0, 0, 0]);
-      assertType(typeAttribute, [0, 0, 1, 0]);
-      assertType(typeClass,     [0, 0, 0, 1]);
-      assertType(typeElement,   [0, 1, 0, 0], 'div');
-      assertType(typeAttribute, [0, 0, 1, 0], 'div');
-      assertType(typeClass,     [0, 0, 0, 1], 'div');
-      assertType(typeElement,   [0, 0, 0, 0], 'span');
-      assertType(typeAttribute, [0, 0, 0, 0], 'span');
-      assertType(typeClass,     [0, 0, 0, 0], 'span');
-
-      it('should not initialise a single component more than once on a single element', function () {
-        var calls = 0;
-        var {safe: tagName} = helperElement('my-element');
-
-        skate(tagName, {
-          created: function () {
-            ++calls;
-          }
-        });
-
-        var el = skate.create(tagName);
-        el.setAttribute(tagName, '');
-        el.className = tagName;
-        expect(calls).to.equal(1);
-      });
+      var el = skate.create(tagName);
+      expect(calls).to.equal(1);
+      skate.init(el);
+      expect(calls).to.equal(1);
     });
   });
 

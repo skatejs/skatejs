@@ -2,8 +2,6 @@ import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
 import skate from '../../src/index';
-import { attribute as typeAttribute } from 'skatejs-types';
-import { classname as typeClass } from 'skatejs-types';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -177,27 +175,6 @@ describe('lifecycle scenarios', function () {
     });
   });
 
-  describe('multiple bindings', function () {
-    it('should initialise all bindings', function () {
-      var id1 = helperElement('my-el');
-      var id2 = helperElement('my-el');
-      var created = 0;
-      var attached = 0;
-      var def = {
-        type: typeAttribute,
-        created: function () { ++created; },
-        attached: function () { ++attached; }
-      };
-
-      skate(id1.safe, def);
-      skate(id2.safe, def);
-
-      skate.init(helperFixture(`<div ${id1.safe} ${id2.safe}></div>`));
-      expect(created).to.equal(2, 'created');
-      expect(attached).to.equal(2, 'attached');
-    });
-  });
-
   describe('timing', function () {
     it('should call lifecycle callbacks at appropriate times.', function (done) {
       var created = false;
@@ -283,19 +260,26 @@ describe('lifecycle scenarios', function () {
     it('should not throw an error if using an id with the same name as a method / property on the Object prototype', function () {
       const idsToSkate = ['hasOwnProperty', 'watch'];
       const idsToCheck = [];
-      const div = document.createElement('div');
-      div.className = idsToSkate.join(' ');
 
       idsToSkate.forEach(function (id) {
+        const div = document.createElement('div');
+        div.className = idsToSkate.join(' ');
+
         skate(id, {
-          type: typeClass,
+          type: {
+            create () {},
+            reduce (elem, defs) {
+              return Object.prototype.hasOwnProperty.call(defs, elem.className) && defs[elem.className];
+            }
+          },
           created () {
             idsToCheck.push(id);
           }
         });
+
+        skate.fragment(`<div class="${id}"></div>`);
       });
 
-      skate.init(div);
       expect(idsToCheck).to.deep.equal(idsToSkate);
     });
   });

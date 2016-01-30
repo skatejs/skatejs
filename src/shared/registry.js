@@ -3,10 +3,11 @@ import globals from './vars';
 const definitions = {};
 const map = [];
 const types = [];
+const hasOwn = Object.prototype.hasOwnProperty;
 
 export default globals.registerIfNotExists('registry', {
   get (name) {
-    return Object.prototype.hasOwnProperty.call(definitions, name) && definitions[name];
+    return hasOwn.call(definitions, name) && definitions[name];
   },
   set (name, Ctor) {
     if (this.get(name)) {
@@ -25,11 +26,12 @@ export default globals.registerIfNotExists('registry', {
     return definitions[name] = map[typeIndex][name] = Ctor;
   },
   find (elem) {
-    let filtered = [];
     const typesLength = types.length;
     for (let a = 0; a < typesLength; a++) {
-      filtered = filtered.concat(types[a].filter(elem, map[a]) || []);
+      const reduced = types[a].reduce(elem, map[a]);
+      if (reduced) {
+        return reduced;
+      }
     }
-    return filtered;
   }
 });
