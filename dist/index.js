@@ -336,24 +336,18 @@
 	      }
 	      return elem;
 	    },
-	    filter: function filter(elem, defs) {
-	      var attrs = elem.attributes;
-	      var isAttr = attrs.is;
-	      var isAttrValue = isAttr && (isAttr.value || isAttr.nodeValue);
-	      var tagName = (elem.tagName || elem.localName).toLowerCase();
-	      var definition = defs[isAttrValue || tagName];
-
-	      if (!definition) {
-	        return;
+	    reduce: function reduce(elem, defs) {
+	      var tagName = elem.tagName;
+	      var tagNameLc = tagName && tagName.toLowerCase();
+	      if (tagNameLc in defs) {
+	        return defs[tagNameLc];
 	      }
 
-	      var tagToExtend = definition.extends;
-	      if (isAttrValue) {
-	        if (tagName === tagToExtend) {
-	          return [definition];
-	        }
-	      } else if (!tagToExtend) {
-	        return [definition];
+	      var attributes = elem.attributes;
+	      var isAttributeNode = attributes && attributes.is;
+	      var isAttributeValue = isAttributeNode && isAttributeNode.value;
+	      if (isAttributeValue in defs) {
+	        return defs[isAttributeValue];
 	      }
 	    },
 	    register: function register(Ctor) {
@@ -448,9 +442,10 @@
 	  var definitions = {};
 	  var map = [];
 	  var types = [];
+	  var hasOwn = Object.prototype.hasOwnProperty;
 	  exports.default = _vars2.default.registerIfNotExists('registry', {
 	    get: function get(name) {
-	      return Object.prototype.hasOwnProperty.call(definitions, name) && definitions[name];
+	      return hasOwn.call(definitions, name) && definitions[name];
 	    },
 	    set: function set(name, Ctor) {
 	      if (this.get(name)) {
@@ -469,12 +464,13 @@
 	      return definitions[name] = map[typeIndex][name] = Ctor;
 	    },
 	    find: function find(elem) {
-	      var filtered = [];
 	      var typesLength = types.length;
 	      for (var a = 0; a < typesLength; a++) {
-	        filtered = filtered.concat(types[a].filter(elem, map[a]) || []);
+	        var reduced = types[a].reduce(elem, map[a]);
+	        if (reduced) {
+	          return reduced;
+	        }
 	      }
-	      return filtered;
 	    }
 	  });
 	  module.exports = exports['default'];
@@ -640,28 +636,21 @@
 
 	  function triggerAddedNodes(addedNodes) {
 	    (0, _walkTree2.default)(addedNodes, function (element) {
-	      var components = _registry2.default.find(element);
+	      var component = _registry2.default.find(element);
 
-	      var componentsLength = components.length;
-
-	      for (var a = 0; a < componentsLength; a++) {
-	        components[a].prototype.createdCallback.call(element);
-	      }
-
-	      for (var a = 0; a < componentsLength; a++) {
-	        components[a].prototype.attachedCallback.call(element);
+	      if (component) {
+	        component.prototype.createdCallback.call(element);
+	        component.prototype.attachedCallback.call(element);
 	      }
 	    });
 	  }
 
 	  function triggerRemovedNodes(removedNodes) {
 	    (0, _walkTree2.default)(removedNodes, function (element) {
-	      var components = _registry2.default.find(element);
+	      var component = _registry2.default.find(element);
 
-	      var componentsLength = components.length;
-
-	      for (var a = 0; a < componentsLength; a++) {
-	        components[a].prototype.detachedCallback.call(element);
+	      if (component) {
+	        component.prototype.detachedCallback.call(element);
 	      }
 	    });
 	  }
@@ -1930,9 +1919,10 @@
 	  });
 
 	  exports.default = function (elem) {
-	    _registry2.default.find(elem).forEach(function (component) {
-	      return component.render && component.render(elem);
-	    });
+	    var component = _registry2.default.find(elem);
+	    if (component && component.render) {
+	      component.render(elem);
+	    }
 	  };
 
 	  var _registry2 = _interopRequireDefault(_registry);
@@ -2010,17 +2000,9 @@
 	  }
 
 	  function ready(element) {
-	    var components = _registry2.default.find(element);
+	    var component = _registry2.default.find(element);
 
-	    var componentsLength = components.length;
-
-	    for (var a = 0; a < componentsLength; a++) {
-	      if (!(0, _data2.default)(element, 'lifecycle/' + components[a].id).created) {
-	        return false;
-	      }
-	    }
-
-	    return true;
+	    return !component || (0, _data2.default)(element, 'lifecycle/' + component.id).created;
 	  }
 
 	  module.exports = exports['default'];
@@ -2236,17 +2218,10 @@
 	    args.forEach(function (arg) {
 	      var isInDom = (0, _elementContains2.default)(document, arg);
 	      (0, _walkTree2.default)(arg, function (descendant) {
-	        var components = _registry2.default.find(descendant);
-	        var componentsLength = components.length;
-
-	        for (var a = 0; a < componentsLength; a++) {
-	          components[a].prototype.createdCallback.call(descendant);
-	        }
-
-	        for (var a = 0; a < componentsLength; a++) {
-	          if (isInDom) {
-	            components[a].prototype.attachedCallback.call(descendant);
-	          }
+	        var component = _registry2.default.find(descendant);
+	        if (component && !component.isNative) {
+	          component.prototype.createdCallback.call(descendant);
+	          isInDom && component.prototype.attachedCallback.call(descendant);
 	        }
 	      });
 	    });
@@ -2395,7 +2370,7 @@
 	  exports.default = function (name, props) {
 	    var Ctor = _registry2.default.get(name);
 	    var elem = Ctor ? Ctor.type.create(Ctor) : document.createElement(name);
-	    Ctor && Ctor.isNative || (0, _init2.default)(elem);
+	    Ctor && (0, _init2.default)(elem);
 	    return (0, _objectAssign2.default)(elem, props);
 	  };
 
@@ -2490,16 +2465,11 @@
 	  var HTMLElement = window.HTMLElement;
 	  var initDocument = (0, _debounce2.default)(function () {
 	    (0, _walkTree2.default)(document.documentElement.childNodes, function (element) {
-	      var components = _registry2.default.find(element);
+	      var component = _registry2.default.find(element);
 
-	      var componentsLength = components.length;
-
-	      for (var a = 0; a < componentsLength; a++) {
-	        components[a].prototype.createdCallback.call(element);
-	      }
-
-	      for (var a = 0; a < componentsLength; a++) {
-	        components[a].prototype.attachedCallback.call(element);
+	      if (component) {
+	        component.prototype.createdCallback.call(element);
+	        component.prototype.attachedCallback.call(element);
 	      }
 	    });
 	  });
@@ -2532,9 +2502,9 @@
 
 	  function skate(name, opts) {
 	    var Ctor = makeCtor(name, opts);
-	    var proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 
-	    if (!proto.isPrototypeOf(Ctor.prototype)) {
+	    if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
+	      var proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 	      Ctor.prototype = Object.create(proto, (0, _getOwnPropertyDescriptors2.default)(Ctor.prototype));
 	    }
 
