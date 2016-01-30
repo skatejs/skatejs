@@ -10,9 +10,9 @@ function readonly (obj, prop, val) {
 }
 
 function parseEvent (e) {
-  let parts = e.split(' ');
-  let name = parts.shift();
-  let selector = parts.join(' ').trim();
+  const parts = e.split(' ');
+  const name = parts.shift();
+  const selector = parts.join(' ').trim();
   return {
     name: name,
     selector: selector
@@ -21,8 +21,8 @@ function parseEvent (e) {
 
 function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
-    let current = e.target;
-    let selector = parsed.selector;
+    const current = e.target;
+    const selector = parsed.selector;
     while (current && current !== elem.parentNode) {
       if (matches(current, selector)) {
         readonly(e, 'currentTarget', current);
@@ -42,15 +42,15 @@ function makeNormalHandler (elem, handler) {
 }
 
 function bindEvent (elem, event, handler) {
-  let parsed = parseEvent(event);
-  let { name, selector } = parsed;
-  let capture = selector && (name === 'blur' || name === 'focus');
+  const parsed = parseEvent(event);
+  const { name, selector } = parsed;
+  const capture = selector && (name === 'blur' || name === 'focus');
   handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
   elem.addEventListener(name, handler, capture);
 }
 
 export default function events (opts) {
-  let events = opts.events;
+  const events = opts.events;
   return function (elem) {
     Object.keys(events).forEach(function (name) {
       bindEvent(elem, name, events[name].bind(elem));
