@@ -21,7 +21,7 @@ function parseEvent (e) {
 
 function makeDelegateHandler (elem, handler, parsed) {
   return function (e) {
-    const current = e.target;
+    let current = e.target;
     const selector = parsed.selector;
     while (current && current !== elem.parentNode) {
       if (matches(current, selector)) {
