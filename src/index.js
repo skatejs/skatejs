@@ -25,23 +25,11 @@ const HTMLElement = window.HTMLElement;
 
 // A function that initialises the document once in a given event loop.
 const initDocument = utilDebounce(function () {
-  // For performance in older browsers, we use:
-  //
-  // - childNodes instead of children
-  // - for instead of forEach
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    const components = registry.find(element);
-    const componentsLength = components.length;
-
-    // Created callbacks are called first.
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.createdCallback.call(element);
-    }
-
-    // Attached callbacks are called separately because this emulates how
-    // native works internally.
-    for (let a = 0; a < componentsLength; a++) {
-      components[a].prototype.attachedCallback.call(element);
+    const component = registry.find(element);
+    if (component) {
+      component.prototype.createdCallback.call(element);
+      component.prototype.attachedCallback.call(element);
     }
   });
 });
@@ -90,11 +78,12 @@ function makeCtor (name, opts) {
 // The main skate() function.
 function skate (name, opts) {
   const Ctor = makeCtor(name, opts);
-  const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 
   // If the options don't inherit a native element prototype, we ensure it does
-  // because native unnecessarily requires you explicitly do this.
-  if (!proto.isPrototypeOf(Ctor.prototype)) {
+  // because native requires you explicitly do this. Here we solve the common
+  // use case by defaulting to HTMLElement.prototype.
+  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
+    const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
     Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 

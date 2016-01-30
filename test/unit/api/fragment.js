@@ -1,7 +1,6 @@
 import element from '../../lib/element';
 import resolved from '../../lib/resolved';
 import skate from '../../../src/index';
-import { attribute as typeAttribute } from 'skatejs-types';
 
 describe('api/fragment', function () {
   var tagName;
@@ -42,9 +41,9 @@ describe('api/fragment', function () {
     it('should init an element and its descendents', function () {
       var descendantTagName = element().safe;
       skate(tagName, {});
-      skate(descendantTagName, { type: typeAttribute });
+      skate(descendantTagName, {});
 
-      var html = `<${tagName}><div ${descendantTagName}></div></${tagName}>`;
+      var html = `<${tagName}><${descendantTagName}></${descendantTagName}></${tagName}>`;
       var frag = skate.fragment(html);
       expect(resolved(frag.childNodes[0])).to.equal(true, 'host');
       expect(resolved(frag.childNodes[0].firstElementChild)).to.equal(true, 'descendent');

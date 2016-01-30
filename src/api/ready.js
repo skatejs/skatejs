@@ -2,14 +2,8 @@ import data from '../util/data';
 import registry from '../shared/registry';
 
 function ready (element) {
-  const components = registry.find(element);
-  const componentsLength = components.length;
-  for (let a = 0; a < componentsLength; a++) {
-    if (!data(element, `lifecycle/${components[a].id}`).created) {
-      return false;
-    }
-  }
-  return true;
+  const component = registry.find(element);
+  return !component || data(element, `lifecycle/${component.id}`).created;
 }
 
 export default function (elements, callback) {
