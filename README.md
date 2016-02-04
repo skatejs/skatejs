@@ -74,7 +74,7 @@ Result
     - [`render`](#render)
       - [Custom renderers](#custom-renderers)
     - [`ready`](#ready)
-  - [`attached`](#attached)
+    - [`attached`](#attached)
     - [`detached`](#detached)
     - [`attribute`](#attribute-1)
     - [`extends` *](#extends-)
@@ -113,6 +113,7 @@ Result
 - [Asynchrony](#asynchrony)
 - [Web Component Differences](#web-component-differences)
 - [Native Custom Element Support](#native-custom-element-support)
+- [SVG](#svg)
 - [Polyfills](#polyfills)
 - [Preventing FOUC](#preventing-fouc)
 - [Ignoring Elements](#ignoring-elements)
@@ -653,7 +654,7 @@ The only argument passed to `ready` is component element. In this case that is `
 
 
 
-### `attached`
+#### `attached`
 
 Function that is called after the element has been inserted to the document. This corredsponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
 
