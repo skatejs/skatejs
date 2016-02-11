@@ -49,7 +49,7 @@ describe('inserting elements', function () {
     };
   });
 
-  bench('(one mutation observer that does nothing)', function () {
+  bench('(one mutation observer)', function () {
     return {
       args: args,
       fn: benchFn,
@@ -63,35 +63,7 @@ describe('inserting elements', function () {
     };
   });
 
-  bench('(two mutation observers that do nothing)', function () {
-    return {
-      args: args,
-      fn: benchFn,
-      setup: function () {
-        this.args.documentObserver.unregister();
-        this.mutationObservers = this.args.createMutationObservers(2);
-      },
-      teardown: function () {
-        this.mutationObservers.forEach(obs => obs.disconnect());
-      }
-    };
-  });
-
-  bench('(ten mutation observers that do nothing)', function () {
-    return {
-      args: args,
-      fn: benchFn,
-      setup: function () {
-        this.args.documentObserver.unregister();
-        this.mutationObservers = this.args.createMutationObservers(10);
-      },
-      teardown: function () {
-        this.mutationObservers.forEach(obs => obs.disconnect());
-      }
-    };
-  });
-
-  bench('(skate document observer that interrogates elements)', function () {
+  bench('(skate document observer)', function () {
     return {
       args: args,
       fn: benchFn,
