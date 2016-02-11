@@ -1,14 +1,12 @@
-const noop = () => {};
-
 export default function (opts) {
-  let callback = opts.attribute;
+  const { attribute } = opts;
 
-  if (typeof callback !== 'function') {
-    return noop;
+  if (typeof attribute !== 'function') {
+    return;
   }
 
   return function (name, oldValue, newValue) {
-    callback(this, {
+    attribute(this, {
       name: name,
       newValue: newValue === null ? undefined : newValue,
       oldValue: oldValue === null ? undefined : oldValue

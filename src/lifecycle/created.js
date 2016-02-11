@@ -1,11 +1,11 @@
 import data from '../util/data';
 import emit from '../api/emit';
-import events from './events';
+import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import propertiesInit from './properties-init';
 import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
-import prototype from './prototype';
+import prototypeApplier from './prototype';
 import resolve from './resolve';
 
 const readyEventName = 'skate.ready';
@@ -33,28 +33,69 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
 }
 
 export default function (opts) {
-  const applyEvents = events(opts);
-  const applyPrototype = prototype(opts);
+  const {
+    attribute,
+    created,
+    events,
+    isNative,
+    properties,
+    prototype,
+    ready,
+    render,
+    resolvedAttribute
+  } = opts;
+  const applyEvents = eventsApplier(opts);
+  const applyPrototype = prototypeApplier(opts);
   const propertyFunctions = ensurePropertyFunctions(opts);
 
+  // Performance critical code!
   return function () {
     const info = data(this, `lifecycle/${opts.id}`);
-    const native = opts.isNative;
-    const resolved = this.hasAttribute('resolved');
+    const resolved = this.hasAttribute(resolvedAttribute);
+    const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
 
     if (info.created) return;
     info.created = true;
-    const propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
-    native || opts.attribute && patchAttributeMethods(this);
-    native || opts.prototype && applyPrototype(this);
-    opts.properties && propertiesCreated(this, propertyDefinitions);
-    opts.events && applyEvents(this);
-    opts.created && opts.created(this);
-    resolved || opts.render && opts.render(this);
-    opts.properties && propertiesReady(this, propertyDefinitions);
-    opts.ready && opts.ready(this);
+    if (!isNative) {
+      if (attribute) {
+        patchAttributeMethods(this);
+      }
+
+      if (prototype) {
+        applyPrototype(this);
+      }
+    }
+
+    if (propertyDefinitions) {
+      propertiesCreated(this, propertyDefinitions);
+    }
+
+    if (events) {
+      applyEvents(this);
+    }
+
+    if (created) {
+      created(this);
+    }
+
+    if (render && !resolved) {
+      render(this);
+    }
+
+    if (propertyDefinitions) {
+      propertiesReady(this, propertyDefinitions);
+    }
+
+    if (ready) {
+      ready(this);
+    }
+
+    // This is terrible for performance.
     emit(this, readyEventName, readyEventOptions);
-    resolved || resolve(this, opts);
+
+    if (!resolved) {
+      resolve(this, opts);
+    }
   };
 }

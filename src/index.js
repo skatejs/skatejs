@@ -28,8 +28,13 @@ const initDocument = utilDebounce(function () {
   utilWalkTree(document.documentElement.childNodes, function (element) {
     const component = registry.find(element);
     if (component) {
-      component.prototype.createdCallback.call(element);
-      component.prototype.attachedCallback.call(element);
+      if (component.prototype.createdCallback) {
+        component.prototype.createdCallback.call(element);
+      }
+
+      if (component.prototype.attachedCallback) {
+        component.prototype.attachedCallback.call(element);
+      }
     }
   });
 });
