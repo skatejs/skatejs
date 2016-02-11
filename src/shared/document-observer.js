@@ -8,8 +8,13 @@ function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
     const component = registry.find(element);
     if (component) {
-      component.prototype.createdCallback.call(element);
-      component.prototype.attachedCallback.call(element);
+      if (component.prototype.createdCallback) {
+        component.prototype.createdCallback.call(element);
+      }
+
+      if (component.prototype.attachedCallback) {
+        component.prototype.attachedCallback.call(element);
+      }
     }
   });
 }
@@ -17,7 +22,7 @@ function triggerAddedNodes (addedNodes) {
 function triggerRemovedNodes (removedNodes) {
   walkTree(removedNodes, function (element) {
     const component = registry.find(element);
-    if (component) {
+    if (component && component.prototype.detachedCallback) {
       component.prototype.detachedCallback.call(element);
     }
   });

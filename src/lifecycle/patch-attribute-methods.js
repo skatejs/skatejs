@@ -4,12 +4,16 @@ export default function patchAttributeMethods (elem) {
   elem.removeAttribute = function (name) {
     let oldValue = this.getAttribute(name);
     removeAttribute.call(elem, name);
-    elem.attributeChangedCallback(name, oldValue, null);
+    if (elem.attributeChangedCallback) {
+      elem.attributeChangedCallback(name, oldValue, null);
+    }
   };
 
   elem.setAttribute = function (name, newValue) {
     let oldValue = this.getAttribute(name);
     setAttribute.call(elem, name, newValue);
-    elem.attributeChangedCallback(name, oldValue, String(newValue));
+    if (elem.attributeChangedCallback) {
+      elem.attributeChangedCallback(name, oldValue, String(newValue));
+    }
   };
 }

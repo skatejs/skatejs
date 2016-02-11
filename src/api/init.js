@@ -8,8 +8,13 @@ export default function (...args) {
     walkTree(arg, function (descendant) {
       const component = registry.find(descendant);
       if (component && !component.isNative) {
-        component.prototype.createdCallback.call(descendant);
-        isInDom && component.prototype.attachedCallback.call(descendant);
+        if (component.prototype.createdCallback) {
+          component.prototype.createdCallback.call(descendant);
+        }
+
+        if (isInDom && component.prototype.attachedCallback) {
+          isInDom && component.prototype.attachedCallback.call(descendant);
+        }
       }
     });
   });
