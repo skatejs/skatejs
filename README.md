@@ -1308,6 +1308,7 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 
 Like the web component differences mentioned above, Skate only polyfills and value-adds to the Custom Element spec, so it will only compare to the Custom Element polyfill. The notable differences are:
 
+- Skate does much more.
 - Skate is faster. If it's not, it's a bug. See the [perf tests](https://github.com/skatejs/skatejs/tree/master/test/perf).
 - Skate is smaller (15k vs 17k min, no gzip).
 - Skate does not override any native methods.
