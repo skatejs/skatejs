@@ -1,5 +1,6 @@
 import init from './init';
 import utilCreateElement from '../util/create-element';
+import utilCreateDocumentFragment from '../util/create-document-fragment';
 
 const { Node, NodeList } = window;
 const slice = Array.prototype.slice;
@@ -58,5 +59,5 @@ export default function fragment (...args) {
     }
 
     return frag;
-  }, document.createDocumentFragment());
+  }, utilCreateDocumentFragment());
 }

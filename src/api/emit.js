@@ -1,7 +1,6 @@
 import utilCreateElement from '../util/create-element';
+import utilCreateEvent from '../util/create-event';
 import utilElementContains from '../util/element-contains';
-
-const createEvent = Document.prototype.createEvent.bind(document);
 
 var CustomEvent = (function (CustomEvent) {
   if (CustomEvent) {
@@ -36,7 +35,7 @@ function createCustomEvent (name, opts = {}) {
     return new CustomEvent(name, opts);
   }
 
-  var e = createEvent('CustomEvent');
+  var e = utilCreateEvent('CustomEvent');
   e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
   return e;
 }
