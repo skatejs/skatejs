@@ -1301,9 +1301,23 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 
 
 
+## [WebComponentsJS](https://github.com/webcomponents/webcomponentsjs) Differences
+
+Like the web component differences mentioned above, Skate only polyfills and value-adds to the Custom Element spec, so it will only compare to the Custom Element polyfill. The notable differences are:
+
+- Skate is faster. If it's not, it's a bug. See the perf tests.
+- Skate is smaller (15k vs 17k min, no gzip).
+- Skate does not override any native methods.
+- You can have multiple versions of Skate on the page.
+- Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill.
+
+
+
 ## Native Custom Element Support
 
 If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
+
+We strive to ensure Skate has as little base overhead as possible. What this means is that if you build a component with Skate vs with native it should not have a negative impact on performance. Of course, there will always be some overhead, but it should not be significant.
 
 
 
