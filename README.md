@@ -1402,7 +1402,7 @@ If you have a DOM tree that you don't want Skate to polyfill then you can add th
 
 ## Multiple Version Support
 
-On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that we don't have more than main mutation observer on the page scanning incoming elements which helps with performance.
+On top of offering a no-conflict mode, Skate plays well with multiple versions of itself on the same page. Prior to version `0.11` Skate did not share a registry or mutation observers. `0.11` and later share a registry and a mutation observer. This means that trying to register the same component in `0.11` and `0.12` would result in an error. Sharing a mutation observer ensures that there is only a single mutation observer on the page that is scanning incoming elements if the versions are compatible. This drastically helps with performance. If the shared code is updated in a backward incompatible way, the different versions will still function, but will not be able to share code. This is an implementation detail that you generally won't need to be concerned with.
 
 
 
