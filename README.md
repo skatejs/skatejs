@@ -112,7 +112,7 @@ Result
 - [Extending Elements](#extending-elements)
 - [Asynchrony](#asynchrony)
 - [Web Component Differences](#web-component-differences)
-- [[WebComponentsJS](https://github.com/webcomponents/webcomponentsjs) Differences](#webcomponentsjshttpsgithubcomwebcomponentswebcomponentsjs-differences)
+- [WebComponentsJS Differences](#webcomponentsjs-differences)
 - [Native Custom Element Support](#native-custom-element-support)
 - [SVG](#svg)
 - [Polyfills](#polyfills)
@@ -1302,7 +1302,9 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 
 
 
-## [WebComponentsJS](https://github.com/webcomponents/webcomponentsjs) Differences
+## WebComponentsJS Differences
+
+[webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 
 Like the web component differences mentioned above, Skate only polyfills and value-adds to the Custom Element spec, so it will only compare to the Custom Element polyfill. The notable differences are:
 
