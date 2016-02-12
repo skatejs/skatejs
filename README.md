@@ -1502,8 +1502,8 @@ skate('my-select', {
   render: function (elem) {
     var div = document.createElement('div');
     div.classList.add('wrapper');
-    while (elem.childNodes.length) {
-      div.appendChild(elem.childNodes[0]);
+    while (elem.hasChildNodes()) {
+      div.appendChild(elem.firstChild);
     }
     elem.appendChild(div);
   }
