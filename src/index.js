@@ -69,8 +69,6 @@ function makeCtor (name, opts) {
   fixedProp(func, 'id', name);
   fixedProp(func, 'isNative', func.type === typeElement && registerElement);
 
-  // *sigh* WebKit
-  //
   // In native, the function name is the same as the custom element name, but
   // WebKit prevents this from being defined. We do this where possible and
   // still define `id` for cross-browser compatibility.
