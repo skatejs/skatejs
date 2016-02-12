@@ -3,7 +3,8 @@
   "global": "skate",
   "perf": {
     "files": [
-      "node_modules/webcomponents.js/MutationObserver.js"
+      "node_modules/webcomponents.js/MutationObserver.js",
+      "node_modules/webcomponents.js/CustomElements.js"
     ]
   },
   "unit": {

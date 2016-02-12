@@ -2,13 +2,9 @@ import bench from '../lib/bench';
 import fixture from '../lib/fixture';
 import skate from '../../src/index';
 
-const supportsNative = !!document.registerElement;
-
-if (supportsNative) {
-  document.registerElement('x-native', {
-    prototype: Object.create(HTMLElement.prototype, {})
-  });
-}
+document.registerElement('x-native', {
+  prototype: Object.create(HTMLElement.prototype, {})
+});
 
 skate('x-skate', {});
 
@@ -37,7 +33,7 @@ describe('upgrading components', function () {
     };
   });
 
-  bench(`native ${supportsNative ? '' : '(unavailable in this browser)'}`, function () {
+  bench(`document.registerElement()`, function () {
     return {
       args: args,
       fn: benchFn('x-native')
