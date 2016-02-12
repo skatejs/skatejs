@@ -112,6 +112,7 @@ Result
 - [Extending Elements](#extending-elements)
 - [Asynchrony](#asynchrony)
 - [Web Component Differences](#web-component-differences)
+- [[WebComponentsJS](https://github.com/webcomponents/webcomponentsjs) Differences](#webcomponentsjshttpsgithubcomwebcomponentswebcomponentsjs-differences)
 - [Native Custom Element Support](#native-custom-element-support)
 - [SVG](#svg)
 - [Polyfills](#polyfills)
