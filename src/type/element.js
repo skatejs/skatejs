@@ -1,4 +1,6 @@
-const documentCreateElement = document.createElement.bind(document);
+import utilCreateElement from '../util/create-element';
+import utilRegisterElement from '../util/register-element';
+
 const reservedNames = [
   'annotation-xml',
   'color-profile',
@@ -17,7 +19,7 @@ const customElementCriteria = [
 
 export default {
   create (Ctor) {
-    const elem = Ctor.extends ? documentCreateElement(Ctor.extends, Ctor.id) : documentCreateElement(Ctor.id);
+    const elem = Ctor.extends ? utilCreateElement(Ctor.extends, Ctor.id) : utilCreateElement(Ctor.id);
     if (!Ctor.isNative && Ctor.extends) {
       elem.setAttribute('is', Ctor.id);
     }
@@ -50,7 +52,7 @@ export default {
     if (Ctor.isNative) {
       const nativeDefinition = { prototype: Ctor.prototype };
       Ctor.extends && (nativeDefinition.extends = Ctor.extends);
-      document.registerElement(name, nativeDefinition);
+      utilRegisterElement(name, nativeDefinition);
     }
   }
 };

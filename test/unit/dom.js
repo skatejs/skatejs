@@ -6,8 +6,8 @@ import helperReady from '../lib/ready';
 import skate from '../../src/index';
 
 describe('dom', function () {
-  describe('General DOM node interaction.', function () {
-    it('Modules should pick up nodes already in the DOM.', function (done) {
+  describe('general', function () {
+    it('should pick up nodes already in the DOM.', function (done) {
       var calls = 0;
       var tag = helperElement().safe;
 
@@ -24,7 +24,7 @@ describe('dom', function () {
       });
     });
 
-    it('Modules should pick up nodes attached to the DOM after they are defined.', function (done) {
+    it('should pick up nodes attached to the DOM after they are defined.', function (done) {
       var calls = 0;
       var tag = helperElement().safe;
 

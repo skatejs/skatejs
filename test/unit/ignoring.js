@@ -3,8 +3,9 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import skate from '../../src/index';
+import utilRegisterElement from '../../src/util/register-element';
 
-const supportsCustomElements = 'registerElement' in document;
+const supportsCustomElements = !!utilRegisterElement;
 
 describe('ignoring', function () {
   var created;

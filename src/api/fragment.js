@@ -1,4 +1,5 @@
 import init from './init';
+import utilCreateElement from '../util/create-element';
 
 const { Node, NodeList } = window;
 const slice = Array.prototype.slice;
@@ -14,7 +15,7 @@ const specialMap = {
 };
 
 function resolveParent (tag, html) {
-  const container = document.createElement('div');
+  const container = utilCreateElement('div');
   let levels = 0;
   let parentTag = specialMap[tag];
 

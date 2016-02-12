@@ -1,6 +1,3 @@
-'use strict';
-
-import 'webcomponents.js/MutationObserver';
 import helperFixture from './lib/fixture';
 import observer from '../src/shared/document-observer';
 
