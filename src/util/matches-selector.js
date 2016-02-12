@@ -1,4 +1,4 @@
-import utilCreateElement from './create-element';
+import createElement from '../native/create-element';
 
 var elProto = window.HTMLElement.prototype;
 var nativeMatchesSelector = (
@@ -10,12 +10,12 @@ var nativeMatchesSelector = (
 );
 
 // Only IE9 has this msMatchesSelector bug, but best to detect it.
-var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(utilCreateElement('div'), 'div');
+var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(createElement('div'), 'div');
 
 export default function (element, selector) {
   if (hasNativeMatchesSelectorDetattachedBug) {
     var clone = element.cloneNode();
-    utilCreateElement('div').appendChild(clone);
+    createElement('div').appendChild(clone);
     return nativeMatchesSelector.call(clone, selector);
   }
   return nativeMatchesSelector.call(element, selector);

@@ -1,5 +1,5 @@
-import utilCreateElement from '../util/create-element';
-import utilRegisterElement from '../util/register-element';
+import createElement from '../native/create-element';
+import registerElement from '../native/register-element';
 
 const reservedNames = [
   'annotation-xml',
@@ -19,7 +19,7 @@ const customElementCriteria = [
 
 export default {
   create (Ctor) {
-    const elem = Ctor.extends ? utilCreateElement(Ctor.extends, Ctor.id) : utilCreateElement(Ctor.id);
+    const elem = Ctor.extends ? createElement(Ctor.extends, Ctor.id) : createElement(Ctor.id);
     if (!Ctor.isNative && Ctor.extends) {
       elem.setAttribute('is', Ctor.id);
     }
@@ -52,7 +52,7 @@ export default {
     if (Ctor.isNative) {
       const nativeDefinition = { prototype: Ctor.prototype };
       Ctor.extends && (nativeDefinition.extends = Ctor.extends);
-      utilRegisterElement(name, nativeDefinition);
+      registerElement(name, nativeDefinition);
     }
   }
 };

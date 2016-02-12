@@ -1,10 +1,10 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 import helperReady from '../lib/ready';
+import registerElement from '../../src/native/register-element';
 import skate from '../../src/index';
-import utilRegisterElement from '../../src/util/register-element';
 
-const supportsCustomElements = !!utilRegisterElement;
+const supportsCustomElements = !!registerElement;
 
 describe('lifecycle-scenarios', function () {
   it('definition is registered before the element is created', function (done) {

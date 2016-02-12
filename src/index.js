@@ -10,17 +10,17 @@ import assign from 'object-assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
 import created from './lifecycle/created';
+import createElement from './native/create-element';
 import defaults from './defaults';
 import detached from './lifecycle/detached';
 import documentObserver from './shared/document-observer';
+import registerElement from './native/register-element';
 import registry from './shared/registry';
 import typeElement from './type/element';
-import utilCreateElement from './util/create-element';
 import utilGetAllPropertyDescriptors from './util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from './util/get-own-property-descriptors';
 import utilDebounce from './util/debounce';
 import utilDefineProperties from './util/define-properties';
-import utilRegisterElement from './util/register-element';
 import utilWalkTree from './util/walk-tree';
 
 const HTMLElement = window.HTMLElement;
@@ -67,7 +67,7 @@ function makeCtor (name, opts) {
   // Fixed info.
   fixedProp(func.prototype, 'constructor', func);
   fixedProp(func, 'id', name);
-  fixedProp(func, 'isNative', func.type === typeElement && utilRegisterElement);
+  fixedProp(func, 'isNative', func.type === typeElement && registerElement);
 
   // *sigh* WebKit
   //
@@ -90,7 +90,7 @@ function skate (name, opts) {
   // because native requires you explicitly do this. Here we solve the common
   // use case by defaulting to HTMLElement.prototype.
   if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-    const proto = (Ctor.extends ? utilCreateElement(Ctor.extends).constructor : HTMLElement).prototype;
+    const proto = (Ctor.extends ? createElement(Ctor.extends).constructor : HTMLElement).prototype;
     Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 

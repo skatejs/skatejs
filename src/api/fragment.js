@@ -1,6 +1,6 @@
+import createDocumentFragment from '../native/create-document-fragment';
+import createElement from '../native/create-element';
 import init from './init';
-import utilCreateElement from '../util/create-element';
-import utilCreateDocumentFragment from '../util/create-document-fragment';
 
 const { Node, NodeList } = window;
 const slice = Array.prototype.slice;
@@ -16,7 +16,7 @@ const specialMap = {
 };
 
 function resolveParent (tag, html) {
-  const container = utilCreateElement('div');
+  const container = createElement('div');
   let levels = 0;
   let parentTag = specialMap[tag];
 
@@ -59,5 +59,5 @@ export default function fragment (...args) {
     }
 
     return frag;
-  }, utilCreateDocumentFragment());
+  }, createDocumentFragment());
 }

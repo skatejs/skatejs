@@ -1,4 +1,4 @@
-import utilCreateEvent from '../util/create-event';
+import createEvent from '../native/create-event';
 
 const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);
@@ -37,7 +37,7 @@ function fixInnerHTML() {
     get: get,
     set: function (html) {
       walkTree(this, function (node, parentNode) {
-        let mutationEvent = utilCreateEvent('MutationEvent');
+        let mutationEvent = createEvent('MutationEvent');
         mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, parentNode, null, null, null, null);
         node.dispatchEvent(mutationEvent);
       });

@@ -1,5 +1,5 @@
 import assign from 'object-assign';
-import createElement from '../util/create-element';
+import createElement from '../native/create-element';
 import init from './init';
 import registry from '../shared/registry';
 
