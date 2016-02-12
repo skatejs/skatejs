@@ -1337,7 +1337,7 @@ skate('my-path', {
 
 Then you may write the following:
 
-```js
+```html
 <svg xmlns="http://www.w3.org/2000/svg">
   <circle />
   <path is="my-path" />
