@@ -49,8 +49,12 @@ export default function (opts) {
     const info = data(this);
     const resolved = this.hasAttribute(resolvedAttribute);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+    const readyCallbacks = info.readyCallbacks;
 
-    if (info.created) return;
+    if (info.created) {
+      return;
+    }
+
     info.created = true;
 
     if (!isNative) {
@@ -87,8 +91,8 @@ export default function (opts) {
       ready(this);
     }
 
-    if (info.readyCallbacks) {
-      info.readyCallbacks.forEach(cb => cb());
+    if (readyCallbacks) {
+      readyCallbacks.forEach(cb => cb());
       info.readyCallbacks = null;
     }
 
