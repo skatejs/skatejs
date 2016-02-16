@@ -114,6 +114,7 @@ Result
 - [Web Component Differences](#web-component-differences)
 - [WebComponentsJS Differences](#webcomponentsjs-differences)
 - [Native Custom Element Support](#native-custom-element-support)
+  - [Spec Stability](#spec-stability)
 - [SVG](#svg)
 - [Polyfills](#polyfills)
 - [Preventing FOUC](#preventing-fouc)
