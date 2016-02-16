@@ -1323,6 +1323,9 @@ If your component is not using custom types and your browser supports custom ele
 
 We strive to ensure Skate has as little base overhead as possible. What this means is that if you build a component with Skate vs with native it should not have a negative impact on performance. Of course, there will always be some overhead, but it should not be significant.
 
+### Spec Stability
+
+Currently, the custom element spec is no longer contentious. There is still a lot of work for them to finalise which will hold up browser adoption and there are quite a few changes than what is currently implemented in browsers that have native implementations. For this reason, we will strive to keep things as stable as possible and make transitions between changes as smooth as possible. However, it won't come without some breaking changes. For this reason we are opting to not release a `1.0` until the custom element spec is stable. This is so that our versioning stays semantic and reflects our confidence in the stability of the spec. Breaking changes will *always* be made in minor releases while still in `0.*` releases.
 
 
 ## SVG
