@@ -1,5 +1,4 @@
 import data from '../util/data';
-import emit from '../api/emit';
 import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import propertiesInit from './properties-init';
@@ -7,9 +6,6 @@ import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
 import prototypeApplier from './prototype';
 import resolve from './resolve';
-
-const readyEventName = 'skate.ready';
-const readyEventOptions = { bubbles: false, cancelable: false };
 
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
