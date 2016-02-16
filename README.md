@@ -310,7 +310,7 @@ Instead of firing for every click on the component element - or that bubbles to 
 
 #### `created`
 
-Function that is called when the element is created. This corredsponds to the native `createdCallback`. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+Function that is called when the element is created. This corresponds to the native `createdCallback`. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
 
 ```js
 skate('my-component', {
