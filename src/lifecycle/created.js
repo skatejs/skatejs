@@ -50,7 +50,7 @@ export default function (opts) {
 
   // Performance critical code!
   return function () {
-    const info = data(this, `lifecycle/${opts.id}`);
+    const info = data(this);
     const resolved = this.hasAttribute(resolvedAttribute);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
 
@@ -91,8 +91,10 @@ export default function (opts) {
       ready(this);
     }
 
-    // This is terrible for performance.
-    emit(this, readyEventName, readyEventOptions);
+    if (info.readyCallbacks) {
+      info.readyCallbacks.forEach(cb => cb());
+      info.readyCallbacks = null;
+    }
 
     if (!resolved) {
       resolve(this, opts);
