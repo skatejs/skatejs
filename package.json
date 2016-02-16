@@ -20,7 +20,7 @@
     "object-assign": "^4.0.1"
   },
   "devDependencies": {
-    "eslint": "2.0.0",
+    "eslint": "2.1.0",
     "gulp": "gulpjs/gulp#73eced0",
     "skatejs-build": "skatejs/build#1242c84",
     "webcomponents.js": "0.7.20"
