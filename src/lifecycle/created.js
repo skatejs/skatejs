@@ -1,5 +1,4 @@
 import data from '../util/data';
-import emit from '../api/emit';
 import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import propertiesInit from './properties-init';
@@ -7,9 +6,6 @@ import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
 import prototypeApplier from './prototype';
 import resolve from './resolve';
-
-const readyEventName = 'skate.ready';
-const readyEventOptions = { bubbles: false, cancelable: false };
 
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
@@ -50,11 +46,15 @@ export default function (opts) {
 
   // Performance critical code!
   return function () {
-    const info = data(this, `lifecycle/${opts.id}`);
+    const info = data(this);
     const resolved = this.hasAttribute(resolvedAttribute);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+    const readyCallbacks = info.readyCallbacks;
 
-    if (info.created) return;
+    if (info.created) {
+      return;
+    }
+
     info.created = true;
 
     if (!isNative) {
@@ -91,8 +91,10 @@ export default function (opts) {
       ready(this);
     }
 
-    // This is terrible for performance.
-    emit(this, readyEventName, readyEventOptions);
+    if (readyCallbacks) {
+      readyCallbacks.forEach(cb => cb());
+      info.readyCallbacks = null;
+    }
 
     if (!resolved) {
       resolve(this, opts);

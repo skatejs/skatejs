@@ -3,7 +3,7 @@ import registry from '../shared/registry';
 
 function ready (element) {
   const component = registry.find(element);
-  return !component || data(element, `lifecycle/${component.id}`).created;
+  return component && data(element).created;
 }
 
 export default function (elements, callback) {
@@ -12,6 +12,7 @@ export default function (elements, callback) {
   let readyCount = 0;
 
   function callbackIfReady () {
+    ++readyCount;
     if (readyCount === collectionLength) {
       callback(elements);
     }
@@ -21,17 +22,14 @@ export default function (elements, callback) {
     const elem = collection[a];
 
     if (ready(elem)) {
-      ++readyCount;
+      callbackIfReady();
     } else {
-      // skate.ready is only fired if the element has not been initialised yet.
-      elem.addEventListener('skate.ready', function () {
-        ++readyCount;
-        callbackIfReady();
-      });
+      const info = data(elem);
+      if (info.readyCallbacks) {
+        info.readyCallbacks.push(callbackIfReady);
+      } else {
+        info.readyCallbacks = [callbackIfReady];
+      }
     }
   }
-
-  // If the elements are all ready by this time that means nothing was ever
-  // bound to skate.ready above.
-  callbackIfReady();
 }
