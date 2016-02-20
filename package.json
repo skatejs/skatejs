@@ -23,7 +23,7 @@
     "eslint": "2.2.0",
     "gulp": "gulpjs/gulp#73eced0",
     "skatejs-build": "skatejs/build#1242c84",
-    "webcomponents.js": "0.7.20"
+    "webcomponents.js": "0.7.21"
   },
   "scripts": {
     "build": "gulp build",
