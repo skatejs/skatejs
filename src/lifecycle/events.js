@@ -53,7 +53,7 @@ function bindEvent (elem, event, handler) {
 export default function events (opts) {
   const events = opts.events || {};
   return function (elem) {
-    for (name in events) {
+    for (let name in events) {
       bindEvent(elem, name, events[name].bind(elem));
     }
   };
