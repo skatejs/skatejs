@@ -546,7 +546,7 @@
 	function events(opts) {
 	  var events = opts.events || {};
 	  return function (elem) {
-	    for (name in events) {
+	    for (var name in events) {
 	      bindEvent(elem, name, events[name].bind(elem));
 	    }
 	  };
