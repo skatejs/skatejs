@@ -10,9 +10,10 @@ function readonly (obj, prop, val) {
 }
 
 function parseEvent (e) {
-  const parts = e.split(' ');
-  const name = parts.shift();
-  const selector = parts.join(' ').trim();
+  const indexOfSpace = e.indexOf(' ');
+  const hasSpace = indexOfSpace > 0;
+  const name = hasSpace ? e.substring(0, indexOfSpace) : e;
+  const selector = hasSpace ? e.substring(indexOfSpace + 1) : '';
   return {
     name: name,
     selector: selector
@@ -50,10 +51,10 @@ function bindEvent (elem, event, handler) {
 }
 
 export default function events (opts) {
-  const events = opts.events;
+  const events = opts.events || {};
   return function (elem) {
-    Object.keys(events).forEach(function (name) {
+    for (name in events) {
       bindEvent(elem, name, events[name].bind(elem));
-    });
+    }
   };
 }
