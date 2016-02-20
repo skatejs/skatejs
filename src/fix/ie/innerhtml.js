@@ -1,4 +1,4 @@
-import createEvent from '../native/create-event';
+import createEvent from '../../native/create-event';
 
 const isIeUntil10 = /MSIE/.test(navigator.userAgent);
 const isIe11 = /Trident/.test(navigator.userAgent);

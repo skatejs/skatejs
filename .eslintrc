@@ -10,9 +10,6 @@
     "node": true,
     "browser": true
   },
-  "ecmaFeatures": {
-    "modules": true
-  },
   "extends": "eslint:recommended",
   "globals": {
     "afterEach": true,
@@ -21,5 +18,9 @@
     "describe": true,
     "expect": true,
     "it": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
   }
 }

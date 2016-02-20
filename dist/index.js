@@ -51,15 +51,22 @@
 
 	var assign = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
 
+	// Just in case native document.createElement() was overridden, we ensure we're
+	// using the native one so that we're not bogged down by any polyfills.
+	var createElement = Document.prototype.createElement.bind(document);
+
+	var _document = document;
+	var body = _document.body;
+	var head = _document.head;
+
 	var elementPrototype = window.HTMLElement.prototype;
 	var elementPrototypeContains = elementPrototype.contains;
 
-	function elementContains (source, target) {
+	function utilElementContains (source, target) {
 	  // The document element does not have the contains method in IE.
 	  if (source === document && !source.contains) {
-	    return document.head.contains(target) || document.body.contains(target);
+	    return head.contains(target) || body.contains(target);
 	  }
-
 	  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
 	}
 
@@ -116,10 +123,10 @@
 	  return attrs && !!attrs['data-skate-ignore'];
 	}
 
-	var Node$1 = window.Node;
+	var Node = window.Node;
 
 	function walk(elem, fn) {
-	  if (elem.nodeType !== Node$1.ELEMENT_NODE || ignored(elem)) {
+	  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem)) {
 	    return;
 	  }
 
@@ -138,7 +145,7 @@
 	    return;
 	  }
 
-	  if (elems instanceof Node$1) {
+	  if (elems instanceof Node) {
 	    elems = [elems];
 	  }
 
@@ -153,12 +160,17 @@
 	  }
 
 	  args.forEach(function (arg) {
-	    var isInDom = elementContains(document, arg);
+	    var isInDom = utilElementContains(document, arg);
 	    walkTree(arg, function (descendant) {
 	      var component = registry.find(descendant);
 	      if (component && !component.isNative) {
-	        component.prototype.createdCallback.call(descendant);
-	        isInDom && component.prototype.attachedCallback.call(descendant);
+	        if (component.prototype.createdCallback) {
+	          component.prototype.createdCallback.call(descendant);
+	        }
+
+	        if (isInDom && component.prototype.attachedCallback) {
+	          isInDom && component.prototype.attachedCallback.call(descendant);
+	        }
 	      }
 	    });
 	  });
@@ -166,10 +178,12 @@
 
 	function apiCreate (name, props) {
 	  var Ctor = registry.get(name);
-	  var elem = Ctor ? Ctor.type.create(Ctor) : document.createElement(name);
+	  var elem = Ctor ? Ctor.type.create(Ctor) : createElement(name);
 	  Ctor && init(elem);
 	  return assign(elem, props);
 	}
+
+	var createEvent = Document.prototype.createEvent.bind(document);
 
 	var CustomEvent = function (CustomEvent) {
 	  if (CustomEvent) {
@@ -190,8 +204,8 @@
 	}
 
 	var hasBubbleOnDetachedElements = function () {
-	  var parent = document.createElement('div');
-	  var child = document.createElement('div');
+	  var parent = createElement('div');
+	  var child = createElement('div');
 	  var hasBubbleOnDetachedElements = false;
 	  parent.appendChild(child);
 	  parent.addEventListener('test', function () {
@@ -208,7 +222,7 @@
 	    return new CustomEvent(name, opts);
 	  }
 
-	  var e = document.createEvent('CustomEvent');
+	  var e = createEvent('CustomEvent');
 	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
 	  return e;
 	}
@@ -244,12 +258,12 @@
 	  opts.bubbles === undefined && (opts.bubbles = true);
 	  opts.cancelable === undefined && (opts.cancelable = true);
 	  cEvent = createCustomEvent(name, opts);
-	  shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !elementContains(document, elem);
+	  shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !utilElementContains(document, elem);
 
 	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
 	}
 
-	function emit (elem, name) {
+	function apiEmit (elem, name) {
 	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
 	  var names = typeof name === 'string' ? name.split(' ') : name;
@@ -261,8 +275,10 @@
 	  }, []);
 	}
 
+	var createDocumentFragment = Document.prototype.createDocumentFragment.bind(document);
+
 	var _window = window;
-	var Node = _window.Node;
+	var Node$1 = _window.Node;
 	var NodeList = _window.NodeList;
 
 	var slice = Array.prototype.slice;
@@ -278,7 +294,7 @@
 	};
 
 	function resolveParent(tag, html) {
-	  var container = document.createElement('div');
+	  var container = createElement('div');
 	  var levels = 0;
 	  var parentTag = specialMap[tag];
 
@@ -316,7 +332,7 @@
 	      node = fragment.apply(null, slice.call(resolveHtml(node).childNodes));
 	    } else if (node instanceof NodeList || Array.isArray(node)) {
 	      node = fragment.apply(null, slice.call(node));
-	    } else if (node instanceof Node) {
+	    } else if (node instanceof Node$1) {
 	      init(node);
 	    }
 
@@ -325,7 +341,7 @@
 	    }
 
 	    return frag;
-	  }, document.createDocumentFragment());
+	  }, createDocumentFragment());
 	}
 
 	var boolean = {
@@ -391,7 +407,7 @@
 
 	function ready(element) {
 	  var component = registry.find(element);
-	  return !component || data(element, 'lifecycle/' + component.id).created;
+	  return component && data(element).created;
 	}
 
 	function apiReady (elements, callback) {
@@ -400,6 +416,7 @@
 	  var readyCount = 0;
 
 	  function callbackIfReady() {
+	    ++readyCount;
 	    if (readyCount === collectionLength) {
 	      callback(elements);
 	    }
@@ -409,19 +426,16 @@
 	    var elem = collection[a];
 
 	    if (ready(elem)) {
-	      ++readyCount;
+	      callbackIfReady();
 	    } else {
-	      // skate.ready is only fired if the element has not been initialised yet.
-	      elem.addEventListener('skate.ready', function () {
-	        ++readyCount;
-	        callbackIfReady();
-	      });
+	      var info = data(elem);
+	      if (info.readyCallbacks) {
+	        info.readyCallbacks.push(callbackIfReady);
+	      } else {
+	        info.readyCallbacks = [callbackIfReady];
+	      }
 	    }
 	  }
-
-	  // If the elements are all ready by this time that means nothing was ever
-	  // bound to skate.ready above.
-	  callbackIfReady();
 	}
 
 	function apiRender (elem) {
@@ -434,26 +448,27 @@
 	var apiVersion = '0.15.2';
 
 	function attached (opts) {
-	  return function () {
-	    var info = data(this, 'lifecycle/' + opts.id);
+	  var attached = opts.attached;
+
+	  return attached ? function () {
+	    var info = data(this);
 	    if (info.attached) return;
 	    info.attached = true;
 	    info.detached = false;
-	    opts.attached(this);
-	  };
+	    attached(this);
+	  } : undefined;
 	}
 
-	var noop = function noop() {};
-
 	function attribute (opts) {
-	  var callback = opts.attribute;
+	  var attribute = opts.attribute;
 
-	  if (typeof callback !== 'function') {
-	    return noop;
+
+	  if (typeof attribute !== 'function') {
+	    return;
 	  }
 
 	  return function (name, oldValue, newValue) {
-	    callback(this, {
+	    attribute(this, {
 	      name: name,
 	      newValue: newValue === null ? undefined : newValue,
 	      oldValue: oldValue === null ? undefined : oldValue
@@ -465,12 +480,12 @@
 	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
 
 	// Only IE9 has this msMatchesSelector bug, but best to detect it.
-	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
+	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(createElement('div'), 'div');
 
 	function matches (element, selector) {
 	  if (hasNativeMatchesSelectorDetattachedBug) {
 	    var clone = element.cloneNode();
-	    document.createElement('div').appendChild(clone);
+	    createElement('div').appendChild(clone);
 	    return nativeMatchesSelector.call(clone, selector);
 	  }
 	  return nativeMatchesSelector.call(element, selector);
@@ -540,16 +555,21 @@
 	  var removeAttribute = elem.removeAttribute;
 	  var setAttribute = elem.setAttribute;
 
+
 	  elem.removeAttribute = function (name) {
 	    var oldValue = this.getAttribute(name);
 	    removeAttribute.call(elem, name);
-	    elem.attributeChangedCallback(name, oldValue, null);
+	    if (elem.attributeChangedCallback) {
+	      elem.attributeChangedCallback(name, oldValue, null);
+	    }
 	  };
 
 	  elem.setAttribute = function (name, newValue) {
 	    var oldValue = this.getAttribute(name);
 	    setAttribute.call(elem, name, newValue);
-	    elem.attributeChangedCallback(name, oldValue, String(newValue));
+	    if (elem.attributeChangedCallback) {
+	      elem.attributeChangedCallback(name, oldValue, String(newValue));
+	    }
 	  };
 	}
 
@@ -563,6 +583,7 @@
 	var _window$Element$proto = window.Element.prototype;
 	var removeAttribute = _window$Element$proto.removeAttribute;
 	var setAttribute = _window$Element$proto.setAttribute;
+
 
 	function getData(elem, name) {
 	  return data(elem, 'api/property/' + name);
@@ -804,7 +825,7 @@
 	  });
 	}
 
-	function utilGetOwnPropertyDescriptors (obj) {
+	function getOwnPropertyDescriptors (obj) {
 	  return Object.getOwnPropertyNames(obj).reduce(function (prev, curr) {
 	    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
 	    return prev;
@@ -816,7 +837,7 @@
 	  return function (elem) {
 	    prototypes.forEach(function (proto) {
 	      if (!proto.isPrototypeOf(elem)) {
-	        utilDefineProperties(elem, utilGetOwnPropertyDescriptors(proto));
+	        utilDefineProperties(elem, getOwnPropertyDescriptors(proto));
 	      }
 	    });
 	  };
@@ -826,9 +847,6 @@
 	  elem.removeAttribute(opts.unresolvedAttribute);
 	  elem.setAttribute(opts.resolvedAttribute, '');
 	}
-
-	var readyEventName = 'skate.ready';
-	var readyEventOptions = { bubbles: false, cancelable: false };
 
 	// TODO Remove this when we no longer support the legacy definitions and only
 	// support a superset of a native property definition.
@@ -852,39 +870,89 @@
 	}
 
 	function created (opts) {
+	  var attribute = opts.attribute;
+	  var created = opts.created;
+	  var events$$ = opts.events;
+	  var isNative = opts.isNative;
+	  var properties = opts.properties;
+	  var prototype$$ = opts.prototype;
+	  var ready = opts.ready;
+	  var render = opts.render;
+	  var resolvedAttribute = opts.resolvedAttribute;
+
 	  var applyEvents = events(opts);
 	  var applyPrototype = prototype(opts);
 	  var propertyFunctions = ensurePropertyFunctions(opts);
 
+	  // Performance critical code!
 	  return function () {
-	    var info = data(this, 'lifecycle/' + opts.id);
-	    var native = opts.isNative;
-	    var resolved = this.hasAttribute('resolved');
+	    var info = data(this);
+	    var resolved = this.hasAttribute(resolvedAttribute);
+	    var propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+	    var readyCallbacks = info.readyCallbacks;
 
-	    if (info.created) return;
+	    if (info.created) {
+	      return;
+	    }
+
 	    info.created = true;
-	    var propertyDefinitions = ensurePropertyDefinitions(this, propertyFunctions);
 
-	    native || opts.attribute && patchAttributeMethods(this);
-	    native || opts.prototype && applyPrototype(this);
-	    opts.properties && propertiesApply(this, propertyDefinitions);
-	    opts.events && applyEvents(this);
-	    opts.created && opts.created(this);
-	    resolved || opts.render && opts.render(this);
-	    opts.properties && propertiesApply$1(this, propertyDefinitions);
-	    opts.ready && opts.ready(this);
-	    emit(this, readyEventName, readyEventOptions);
-	    resolved || resolve(this, opts);
+	    if (!isNative) {
+	      if (attribute) {
+	        patchAttributeMethods(this);
+	      }
+
+	      if (prototype$$) {
+	        applyPrototype(this);
+	      }
+	    }
+
+	    if (propertyDefinitions) {
+	      propertiesApply(this, propertyDefinitions);
+	    }
+
+	    if (events$$) {
+	      applyEvents(this);
+	    }
+
+	    if (created) {
+	      created(this);
+	    }
+
+	    if (render && !resolved) {
+	      render(this);
+	    }
+
+	    if (propertyDefinitions) {
+	      propertiesApply$1(this, propertyDefinitions);
+	    }
+
+	    if (ready) {
+	      ready(this);
+	    }
+
+	    if (readyCallbacks) {
+	      readyCallbacks.forEach(function (cb) {
+	        return cb();
+	      });
+	      info.readyCallbacks = null;
+	    }
+
+	    if (!resolved) {
+	      resolve(this, opts);
+	    }
 	  };
 	}
 
-	var documentCreateElement = document.createElement.bind(document);
+	var re = Document.prototype.registerElement;
+	var registerElement = re && re.bind(document);
+
 	var reservedNames = ['annotation-xml', 'color-profile', 'font-face', 'font-face-src', 'font-face-uri', 'font-face-format', 'font-face-name', 'missing-glyph'];
 	var customElementCriteria = ['contain at least one dash', 'not start with a dash', 'not be one of: ' + reservedNames.join(', ')];
 
 	var type = {
 	  create: function create(Ctor) {
-	    var elem = Ctor.extends ? documentCreateElement(Ctor.extends, Ctor.id) : documentCreateElement(Ctor.id);
+	    var elem = Ctor.extends ? createElement(Ctor.extends, Ctor.id) : createElement(Ctor.id);
 	    if (!Ctor.isNative && Ctor.extends) {
 	      elem.setAttribute('is', Ctor.id);
 	    }
@@ -919,37 +987,39 @@
 	    if (Ctor.isNative) {
 	      var nativeDefinition = { prototype: Ctor.prototype };
 	      Ctor.extends && (nativeDefinition.extends = Ctor.extends);
-	      document.registerElement(name, nativeDefinition);
+	      registerElement(name, nativeDefinition);
 	    }
 	  }
 	};
 
-	var noop$1 = function noop() {};
+	var nope = null;
 
 	var defaults = {
-	  attached: noop$1,
-	  attribute: noop$1,
-	  created: noop$1,
-	  render: noop$1,
-	  detached: noop$1,
-	  events: {},
-	  extends: '',
-	  properties: {},
+	  attached: nope,
+	  attribute: nope,
+	  created: nope,
+	  render: nope,
+	  detached: nope,
+	  events: nope,
+	  extends: nope,
+	  properties: nope,
 	  prototype: {},
 	  resolvedAttribute: 'resolved',
-	  ready: noop$1,
+	  ready: nope,
 	  type: type,
 	  unresolvedAttribute: 'unresolved'
 	};
 
 	function detached (opts) {
-	  return function () {
-	    var info = data(this, 'lifecycle/' + opts.id);
+	  var detached = opts.detached;
+
+	  return detached ? function () {
+	    var info = data(this);
 	    if (info.detached) return;
 	    info.detached = true;
 	    info.attached = false;
-	    opts.detached(this);
-	  };
+	    detached(this);
+	  } : undefined;
 	}
 
 	var isIeUntil10 = /MSIE/.test(navigator.userAgent);
@@ -989,7 +1059,7 @@
 	    get: get,
 	    set: function set(html) {
 	      walkTree$1(this, function (node, parentNode) {
-	        var mutationEvent = document.createEvent('MutationEvent');
+	        var mutationEvent = createEvent('MutationEvent');
 	        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, parentNode, null, null, null, null);
 	        node.dispatchEvent(mutationEvent);
 	      });
@@ -1016,6 +1086,7 @@
 	var _window$1 = window;
 	var Element = _window$1.Element;
 
+
 	function getClosestIgnoredElement (element) {
 	  var parent = element;
 	  while (parent instanceof Element) {
@@ -1030,8 +1101,13 @@
 	  walkTree(addedNodes, function (element) {
 	    var component = registry.find(element);
 	    if (component) {
-	      component.prototype.createdCallback.call(element);
-	      component.prototype.attachedCallback.call(element);
+	      if (component.prototype.createdCallback) {
+	        component.prototype.createdCallback.call(element);
+	      }
+
+	      if (component.prototype.attachedCallback) {
+	        component.prototype.attachedCallback.call(element);
+	      }
 	    }
 	  });
 	}
@@ -1039,7 +1115,7 @@
 	function triggerRemovedNodes(removedNodes) {
 	  walkTree(removedNodes, function (element) {
 	    var component = registry.find(element);
-	    if (component) {
+	    if (component && component.prototype.detachedCallback) {
 	      component.prototype.detachedCallback.call(element);
 	    }
 	  });
@@ -1103,7 +1179,7 @@
 
 	function utilGetAllPropertyDescriptors (obj) {
 	  return protos(obj).reduce(function (result, proto) {
-	    var descriptors = utilGetOwnPropertyDescriptors(proto);
+	    var descriptors = getOwnPropertyDescriptors(proto);
 	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
 	      result[name] = descriptors[name];
 	      return result;
@@ -1139,8 +1215,13 @@
 	  walkTree(document.documentElement.childNodes, function (element) {
 	    var component = registry.find(element);
 	    if (component) {
-	      component.prototype.createdCallback.call(element);
-	      component.prototype.attachedCallback.call(element);
+	      if (component.prototype.createdCallback) {
+	        component.prototype.createdCallback.call(element);
+	      }
+
+	      if (component.prototype.attachedCallback) {
+	        component.prototype.attachedCallback.call(element);
+	      }
 	    }
 	  });
 	});
@@ -1171,10 +1252,8 @@
 	  // Fixed info.
 	  fixedProp(func.prototype, 'constructor', func);
 	  fixedProp(func, 'id', name);
-	  fixedProp(func, 'isNative', func.type === type && document.registerElement);
+	  fixedProp(func, 'isNative', func.type === type && registerElement);
 
-	  // *sigh* WebKit
-	  //
 	  // In native, the function name is the same as the custom element name, but
 	  // WebKit prevents this from being defined. We do this where possible and
 	  // still define `id` for cross-browser compatibility.
@@ -1194,8 +1273,8 @@
 	  // because native requires you explicitly do this. Here we solve the common
 	  // use case by defaulting to HTMLElement.prototype.
 	  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-	    var proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
-	    Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
+	    var proto = (Ctor.extends ? createElement(Ctor.extends).constructor : HTMLElement).prototype;
+	    Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
 	  }
 
 	  // We not assign native callbacks to handle the callbacks specified in the
@@ -1227,7 +1306,7 @@
 
 	// Public API.
 	skate.create = apiCreate;
-	skate.emit = emit;
+	skate.emit = apiEmit;
 	skate.fragment = fragment;
 	skate.init = init;
 	skate.properties = apiProperties;
