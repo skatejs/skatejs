@@ -344,6 +344,21 @@
 	  }, createDocumentFragment());
 	}
 
+	var array = {
+	  coerce: function coerce(val) {
+	    return Array.isArray(val) ? val : [val];
+	  },
+	  default: function _default() {
+	    return [];
+	  },
+	  deserialize: function deserialize(val) {
+	    return val.split(',');
+	  },
+	  serialize: function serialize(val) {
+	    return val.join(',');
+	  }
+	};
+
 	var boolean = {
 	  coerce: function coerce(value) {
 	    return !!value;
@@ -393,6 +408,7 @@
 	}
 
 	var apiProperties = {
+	  array: prop(array),
 	  boolean: prop(boolean),
 	  number: prop(number),
 	  string: prop(string)
