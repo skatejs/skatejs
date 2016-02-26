@@ -1,4 +1,6 @@
-const VERSION = '__skate_0_14_0';
+import version from '../api/version';
+
+const VERSION = `__skate_${version.replace(/[^\w]/g, '_')}`;
 
 if (!window[VERSION]) {
   window[VERSION] = {

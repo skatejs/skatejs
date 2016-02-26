@@ -20,6 +20,7 @@ import './unit/lifecycle/events';
 import './unit/lifecycle/properties';
 import './unit/lifecycle/ready';
 import './unit/lifecycle/render';
+import './unit/multiple-versions';
 import './unit/registration';
 import './unit/registry';
 import './unit/util/dash-case';
