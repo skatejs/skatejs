@@ -70,7 +70,7 @@
 	  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
 	}
 
-	var VERSION = '__skate_0_14_0';
+	var VERSION = '__skate_0_16_0';
 
 	if (!window[VERSION]) {
 	  window[VERSION] = {
