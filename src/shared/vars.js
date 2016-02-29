@@ -1,4 +1,4 @@
-const VERSION = '__skate_0_14_0';
+const VERSION = '__skate_0_16_0';
 
 if (!window[VERSION]) {
   window[VERSION] = {
