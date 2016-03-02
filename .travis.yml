@@ -1,16 +1,16 @@
-language: node_js
-node_js: "0.11"
 sudo: false
+language: node_js
+node_js: '0.11'
 before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - npm install -g bower grunt-cli
-  - npm install
-  - bower install
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- npm install
 script:
 - npm run lint
-- npm test -- --saucelabs
+- npm run dist
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then npm test -- --saucelabs; else
+  npm test -- --browsers Firefox; fi
 env:
   global:
-  - secure: mq7U8NpFQwOSMRaHOyqZ7xkol47JGeb5pYaZ2XTKKrEoenpitPIECBJpVNZw6+568/coSe5j5i5kdSLduDKCmFbRwc6xQdO+ju+v6+pXuZ7SfP+uP/pQlRphYm82HGrukLTfiLFBaN9mCC88WGHvZyRkyruyTzVPRTbrA6mPDHY=
-  - secure: pHrASmndHGyrqnBIc20lsnpO7+siJjzzv23422EzeFycpY35UOzmAVcKPNdOWxzZoGe3fD0BpFrQvYolFoF1jq1Wy5vZaU5KhX5yvbLD80qRzLwL8ORdKZpNACXygy0atTJD00hY1hi21yhGiORr3irAC4WCWvJig0ThosA/Qlk=
+  - secure: U4iIMBx53RcEy+y6cvhyJvXy4CjrFIjpkHy+z+Nyc7mBidPYpQVr/IY7VOWcGMnQEEpEi3yq+Ai2UiNUEWFi40EKbd5hSWkHB1qpNQ9FECESJ6AdLeLXCxWozB1fGovOkxPtVZOqlFFKtkeEjvvK5z21u7ZpM+dSY/Dfa20s4Mo=
+  - secure: Qak5Trxl6Yvt9cu4cS43aw5Pd1gHeQu4o/Zr2mlPM6nv1599dNyizpeNlvdH+598aqfIJ3pBsRVvv9NA3bN7ZR99UGgy9Pwhgqb5wfv8JgUcGaxfoO7rae8XnxqRAmV9JlYMGXPE1b89X1aLC39PrgvOSyEvyTHl131eLYQKc7M=

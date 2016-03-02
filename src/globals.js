@@ -1,10 +1,14 @@
 'use strict';
 
-if (!window.__skate) {
-  window.__skate = {
+import version from './version';
+
+const VERSION = `__skate_${version.replace(/[^\w]/g, '_')}`;
+
+if (!window[VERSION]) {
+  window[VERSION] = {
     observer: undefined,
     registry: {}
   };
 }
 
-export default window.__skate;
+export default window[VERSION];
