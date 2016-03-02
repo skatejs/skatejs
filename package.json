@@ -24,7 +24,7 @@
     "handlebars": "^2.0.0",
     "jscs": "^1.11.3",
     "jshint": "^2.6.3",
-    "karma": "0.13.11",
+    "karma": "^0.13.21",
     "karma-chrome-launcher": "0.2.0",
     "karma-firefox-launcher": "0.1.6",
     "karma-mocha": "^0.1.10",
@@ -40,7 +40,8 @@
     "metalsmith-templates": "^0.6.0",
     "mocha": "^2.3.3",
     "semver": "^4.1.0",
-    "shelljs": "~0.3.0"
+    "shelljs": "~0.3.0",
+    "stream-browserify": "^2.0.1"
   },
   "scripts": {
     "deploy": "./node_modules/.bin/gulp deploy",
