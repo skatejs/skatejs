@@ -8,11 +8,9 @@ before_script:
 script:
 - npm run lint
 - npm run dist
-- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-  npm test -- --saucelabs;
-  else
-  npm test -- --browsers Firefox;
-  fi
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then npm test -- --saucelabs; else
+  npm test -- --browsers Firefox; fi
 env:
   global:
-    secure: U4iIMBx53RcEy+y6cvhyJvXy4CjrFIjpkHy+z+Nyc7mBidPYpQVr/IY7VOWcGMnQEEpEi3yq+Ai2UiNUEWFi40EKbd5hSWkHB1qpNQ9FECESJ6AdLeLXCxWozB1fGovOkxPtVZOqlFFKtkeEjvvK5z21u7ZpM+dSY/Dfa20s4Mo=
+  - secure: U4iIMBx53RcEy+y6cvhyJvXy4CjrFIjpkHy+z+Nyc7mBidPYpQVr/IY7VOWcGMnQEEpEi3yq+Ai2UiNUEWFi40EKbd5hSWkHB1qpNQ9FECESJ6AdLeLXCxWozB1fGovOkxPtVZOqlFFKtkeEjvvK5z21u7ZpM+dSY/Dfa20s4Mo=
+  - secure: Qak5Trxl6Yvt9cu4cS43aw5Pd1gHeQu4o/Zr2mlPM6nv1599dNyizpeNlvdH+598aqfIJ3pBsRVvv9NA3bN7ZR99UGgy9Pwhgqb5wfv8JgUcGaxfoO7rae8XnxqRAmV9JlYMGXPE1b89X1aLC39PrgvOSyEvyTHl131eLYQKc7M=
