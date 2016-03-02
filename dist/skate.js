@@ -1184,5 +1184,5 @@ function objEach(obj, fn) {
 },{"./constants":1}],10:[function(require,module,exports){
 "use strict";
 
-exports["default"] = "0.12.6";
+exports["default"] = "0.12.7";
 },{}]},{},[8]);
