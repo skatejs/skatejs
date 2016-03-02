@@ -5,6 +5,7 @@
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
   "main": "src/skate.js",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "6to5": "^1.10.10",
