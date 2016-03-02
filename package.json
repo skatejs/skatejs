@@ -29,6 +29,7 @@
     "build": "gulp build",
     "lint": "gulp lint",
     "perf": "gulp perf",
+    "release": "gulp release",
     "test": "gulp test",
     "test-watch": "gulp test-watch"
   }
