@@ -70,7 +70,9 @@
 	  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
 	}
 
-	var VERSION = '__skate_0_14_0';
+	var version = '0.15.3';
+
+	var VERSION = '__skate_' + version.replace(/[^\w]/g, '_');
 
 	if (!window[VERSION]) {
 	  window[VERSION] = {
@@ -444,8 +446,6 @@
 	    component.render(elem);
 	  }
 	}
-
-	var apiVersion = '0.15.2';
 
 	function attached (opts) {
 	  var attached = opts.attached;
@@ -1313,7 +1313,7 @@
 	skate.properties = apiProperties;
 	skate.ready = apiReady;
 	skate.render = apiRender;
-	skate.version = apiVersion;
+	skate.version = version;
 
 	var previousGlobal = window.skate;
 	skate.noConflict = function noConflict() {
