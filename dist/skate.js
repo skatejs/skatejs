@@ -17,19 +17,35 @@ __724634c9149913f1fb43f8ebd813ad28 = (function () {
   return module.exports
 }).call(this);
 
+// src/version.js
+__299ad4a84aec4d82016b954edf692edb = (function () {
+  var module = { exports: {} };
+  var exports = module.exports;
+  
+  module.exports = "0.13.15";
+  
+  return module.exports
+}).call(this);
+
 // src/globals.js
 __3a98c4f9598cb5ea30ccb64feef9d3ef = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  if (!window.__skate) {
-    window.__skate = {
+  var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+  
+  var version = _interopRequire(__299ad4a84aec4d82016b954edf692edb);
+  
+  var VERSION = "__skate_" + version.replace(/[^\w]/g, "_");
+  
+  if (!window[VERSION]) {
+    window[VERSION] = {
       observer: undefined,
       registry: {}
     };
   }
   
-  module.exports = window.__skate;
+  module.exports = window[VERSION];
   
   return module.exports
 }).call(this);
@@ -1323,16 +1339,6 @@ __ecf86e5efec0eb80abec667d595d90da = (function () {
       return this;
     }
   };
-  
-  return module.exports
-}).call(this);
-
-// src/version.js
-__299ad4a84aec4d82016b954edf692edb = (function () {
-  var module = { exports: {} };
-  var exports = module.exports;
-  
-  module.exports = "0.13.15";
   
   return module.exports
 }).call(this);
