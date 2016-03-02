@@ -1,6 +1,6 @@
+sudo: false
 language: node_js
 node_js: "0.11"
-sudo: false
 before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
@@ -9,8 +9,13 @@ before_script:
   - bower install
 script:
 - npm run lint
-- npm test -- --saucelabs
+- npm run dist
+- if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
+  npm test -- --saucelabs;
+  else
+  npm test -- --browsers Firefox;
+  fi
 env:
   global:
-  - secure: mq7U8NpFQwOSMRaHOyqZ7xkol47JGeb5pYaZ2XTKKrEoenpitPIECBJpVNZw6+568/coSe5j5i5kdSLduDKCmFbRwc6xQdO+ju+v6+pXuZ7SfP+uP/pQlRphYm82HGrukLTfiLFBaN9mCC88WGHvZyRkyruyTzVPRTbrA6mPDHY=
-  - secure: pHrASmndHGyrqnBIc20lsnpO7+siJjzzv23422EzeFycpY35UOzmAVcKPNdOWxzZoGe3fD0BpFrQvYolFoF1jq1Wy5vZaU5KhX5yvbLD80qRzLwL8ORdKZpNACXygy0atTJD00hY1hi21yhGiORr3irAC4WCWvJig0ThosA/Qlk=
+  - secure: k00BVlgfFnvYE/wikDY9c8HhPR/hgeB1U9cIs8rV3SNGVau1VtYsvYLAiLatO7VqE6HmITr5VxQMoOgkAeO/ATS7tXIJydlq0GMTwjtx38Vtc3/HqfuXKVVpZBahIHyNraodiGs5gl0aHZUH8pExNJl3i19aOHZXIXj6NUXNlOA=
+  - secure: bbZWoSRo2838rWq/BdqUi3pMD4aXt6VdpRwNgC80GyxqS44pRvexV45bax4jfH+Cvv/IoDjQFrFalMEcDkhxfQ37EwMJB0YW1tfiUwqRZGHyKjKXoUBzOznNObxTVp7tEjra+MFKVsUKsKE80XFFgaKV6CvNbMr+qYxql+EP70M=
