@@ -1,3 +1,4 @@
 lib/
 dist/
 .tmp/
+test/skate/
