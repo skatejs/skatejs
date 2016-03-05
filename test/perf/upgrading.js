@@ -33,7 +33,7 @@ describe('upgrading components', function () {
     };
   });
 
-  bench(`document.registerElement()`, function () {
+  bench('document.registerElement()', function () {
     return {
       args: args,
       fn: benchFn('x-native')
