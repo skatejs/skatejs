@@ -1,11 +1,9 @@
-import globals from './vars';
-
 const definitions = {};
 const map = [];
 const types = [];
 const hasOwn = Object.prototype.hasOwnProperty;
 
-export default globals.registerIfNotExists('registry', {
+export default {
   get (name) {
     return hasOwn.call(definitions, name) && definitions[name];
   },
@@ -34,4 +32,4 @@ export default globals.registerIfNotExists('registry', {
       }
     }
   }
-});
+};
