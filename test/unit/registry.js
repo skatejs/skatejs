@@ -8,6 +8,7 @@ describe('registry', function () {
   it('should set definitions', function () {
     registry.set('test', { type: typeElement });
     try {
+      // It should throw an error for duplicate definitions.
       registry.set('test', {});
       assert(false);
     } catch (e) {
