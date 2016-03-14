@@ -1,9 +1,10 @@
-import globals from '../../src/shared/vars';
 import observer from '../../src/shared/document-observer';
 
 describe('Document Observer', function () {
+  let localObserver;
+
   function getObserver () {
-    return globals.observer.observer;
+    return (localObserver || observer).observer;
   }
 
   function hasObserver () {
@@ -11,7 +12,7 @@ describe('Document Observer', function () {
   }
 
   function mockObserver () {
-    globals.observer = {
+    localObserver = {
       observe: function () {},
       disconnect: function () {},
       takeRecords: function () {}

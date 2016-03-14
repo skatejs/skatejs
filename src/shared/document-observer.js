@@ -1,6 +1,5 @@
 import '../fix/ie/innerhtml';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
-import globals from './vars';
 import registry from './registry';
 import walkTree from '../util/walk-tree';
 
@@ -65,7 +64,7 @@ function createDocumentObserver () {
   return observer;
 }
 
-export default globals.registerIfNotExists('observer', {
+export default {
   observer: undefined,
   register: function () {
     if (!this.observer) {
@@ -80,4 +79,4 @@ export default globals.registerIfNotExists('observer', {
     }
     return this;
   }
-});
+};
