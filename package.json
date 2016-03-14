@@ -1,7 +1,7 @@
 {
   "name": "skatejs",
   "description": "Skate is a web component library based loosely on the Custom Element spec that allows you to define behaviour for custom and existing elements using tag names, attribute names and class names.",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": "git@github.com:skatejs/skatejs",
@@ -20,15 +20,16 @@
     "object-assign": "^4.0.1"
   },
   "devDependencies": {
-    "eslint": "2.2.0",
+    "eslint": "2.4.0",
     "gulp": "gulpjs/gulp#73eced0",
-    "skatejs-build": "skatejs/build#1242c84",
+    "skatejs-build": "skatejs/build#3ad7270",
     "webcomponents.js": "0.7.21"
   },
   "scripts": {
     "build": "gulp build",
     "lint": "gulp lint",
     "perf": "gulp perf",
+    "release": "gulp release",
     "test": "gulp test",
     "test-watch": "gulp test-watch"
   }

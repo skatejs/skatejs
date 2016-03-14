@@ -70,30 +70,18 @@
 	  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
 	}
 
-	var VERSION = '__skate_0_16_0';
-
-	if (!window[VERSION]) {
-	  window[VERSION] = {
-	    registerIfNotExists: function registerIfNotExists(name, value) {
-	      return this[name] || (this[name] = value);
-	    }
-	  };
-	}
-
-	var globals = window[VERSION];
-
 	var definitions = {};
 	var map = [];
 	var types = [];
 	var hasOwn = Object.prototype.hasOwnProperty;
 
-	var registry = globals.registerIfNotExists('registry', {
+	var registry = {
 	  get: function get(name) {
 	    return hasOwn.call(definitions, name) && definitions[name];
 	  },
 	  set: function set(name, Ctor) {
 	    if (this.get(name)) {
-	      throw new Error('A Skate component with the name of "' + name + '" already exists.');
+	      throw new Error("A Skate component with the name of \"" + name + "\" already exists.");
 	    }
 
 	    var type = Ctor.type;
@@ -116,7 +104,7 @@
 	      }
 	    }
 	  }
-	});
+	};
 
 	function ignored (element) {
 	  var attrs = element.attributes;
@@ -235,7 +223,7 @@
 	}
 
 	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = undefined;
+	  var didPreventDefault = void 0;
 	  var currentElem = elem;
 	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
 	  Object.defineProperty(cEvent, 'target', { get: function get() {
@@ -461,7 +449,7 @@
 	  }
 	}
 
-	var apiVersion = '0.15.2';
+	var apiVersion = '0.15.3';
 
 	function attached (opts) {
 	  var attached = opts.attached;
@@ -1177,7 +1165,7 @@
 	  return observer;
 	}
 
-	var documentObserver = globals.registerIfNotExists('observer', {
+	var documentObserver = {
 	  observer: undefined,
 	  register: function register() {
 	    if (!this.observer) {
@@ -1192,7 +1180,7 @@
 	    }
 	    return this;
 	  }
-	});
+	};
 
 	function utilGetAllPropertyDescriptors (obj) {
 	  return protos(obj).reduce(function (result, proto) {

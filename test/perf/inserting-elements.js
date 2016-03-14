@@ -49,13 +49,27 @@ describe('inserting elements', function () {
     };
   });
 
-  bench('(one mutation observer)', function () {
+  bench('(1 mutation observer)', function () {
     return {
       args: args,
       fn: benchFn,
       setup: function () {
         this.args.documentObserver.unregister();
         this.mutationObservers = this.args.createMutationObservers(1);
+      },
+      teardown: function () {
+        this.mutationObservers.forEach(obs => obs.disconnect());
+      }
+    };
+  });
+
+  bench('(2 mutation observers)', function () {
+    return {
+      args: args,
+      fn: benchFn,
+      setup: function () {
+        this.args.documentObserver.unregister();
+        this.mutationObservers = this.args.createMutationObservers(2);
       },
       teardown: function () {
         this.mutationObservers.forEach(obs => obs.disconnect());
