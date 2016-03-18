@@ -15,9 +15,13 @@ var hasBubbleOnDetachedElements = (function () {
   var hasBubbleOnDetachedElements = false;
   parent.appendChild(child);
   parent.addEventListener('test', () => hasBubbleOnDetachedElements = true);
-  child.dispatchEvent(new CustomEvent('test', { bubbles: true }));
+  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
   return hasBubbleOnDetachedElements;
 }());
+
+function createCustomEvent (name, opts = {}) {
+  return new CustomEvent(name, opts);
+}
 
 function createReadableStopPropagation (oldStopPropagation) {
   return function () {
@@ -54,7 +58,7 @@ function emitOne (elem, name, opts) {
   /* jshint expr: true */
   opts.bubbles === undefined && (opts.bubbles = true);
   opts.cancelable === undefined && (opts.cancelable = true);
-  cEvent = new CustomEvent(name, opts);
+  cEvent = createCustomEvent(name, opts);
   shouldSimulateBubbling = opts.bubbles &&
     !hasBubbleOnDetachedElements &&
     !utilElementContains(document, elem);
