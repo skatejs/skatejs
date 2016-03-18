@@ -51,7 +51,14 @@ function simulateBubbling (elem, cEvent) {
   let didPreventDefault;
   let currentElem = elem;
   cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-  Object.defineProperty(cEvent, 'target', { get: () => elem });
+  try {
+    // Safari 7.0 fails here with
+    // "Attempting to change access mechanism for an unconfigurable property"
+    // 7.1 and up seem to be fine
+    Object.defineProperty(cEvent, 'target', { get: () => elem });
+  } catch(e) {
+    cEvent.target = elem;
+  }
   while (currentElem && !cEvent.isPropagationStopped) {
     cEvent.currentTarget = currentElem;
     if (dispatch(currentElem, cEvent) === false) {
