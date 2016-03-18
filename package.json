@@ -22,7 +22,7 @@
   "devDependencies": {
     "eslint": "2.4.0",
     "gulp": "gulpjs/gulp#73eced0",
-    "skatejs-build": "skatejs/build#0aa14aca659abb50402ad45df20d7bd76abf24de",
+    "skatejs-build": "skatejs/build#2e25df1",
     "webcomponents.js": "0.7.21"
   },
   "scripts": {
