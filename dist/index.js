@@ -223,7 +223,7 @@
 	}
 
 	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = undefined;
+	  var didPreventDefault = void 0;
 	  var currentElem = elem;
 	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
 	  Object.defineProperty(cEvent, 'target', { get: function get() {
