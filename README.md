@@ -3,9 +3,7 @@
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-<!-- [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs) -->
-
-*The Sauce Labs tests have been temporarily removed because of an issue we're experiencing with them. This will be back on soon. Skate still supports IE9+ and all other modern browsers.*
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
 *This is the README for the master branch and is probably out of sync with the last stable release. To see the README for the last stable release select it from the list of tags.*
 
