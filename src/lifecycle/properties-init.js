@@ -1,6 +1,8 @@
 import assign from 'object-assign';
+import createCustomEvent from '../util/create-custom-event';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import dispatch from '../util/dispatch-event';
 import empty from '../util/empty';
 
 const { removeAttribute, setAttribute } = window.Element.prototype;
@@ -150,6 +152,17 @@ function createNativePropertyDefinition (name, opts) {
       newValue = opts.coerce(newValue);
     }
 
+    let cancelled = dispatch(this, createCustomEvent(createCustomEvent('propertychange', {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        oldValue: oldValue,
+        newValue: newValue
+      }
+    })));
+    if (cancelled) {
+      return;
+    }
     info.internalValue = newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {

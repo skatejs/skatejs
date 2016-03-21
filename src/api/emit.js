@@ -1,24 +1,7 @@
 import createElement from '../native/create-element';
-import createEvent from '../native/create-event';
+import createCustomEvent from '../util/crete-custom-event';
+import dispatch from '../util/dispatch-event';
 import utilElementContains from '../util/element-contains';
-
-var CustomEvent = (function (CustomEvent) {
-  if (CustomEvent) {
-    try {
-      new CustomEvent();
-    } catch (e) {
-      return undefined;
-    }
-  }
-  return CustomEvent;
-}(window.CustomEvent));
-
-function dispatch (elem, cEvent) {
-  if (!elem.disabled) {
-    return elem.dispatchEvent(cEvent);
-  }
-  cEvent.isPropagationStopped = true;
-}
 
 var hasBubbleOnDetachedElements = (function () {
   var parent = createElement('div');
@@ -29,16 +12,6 @@ var hasBubbleOnDetachedElements = (function () {
   child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
   return hasBubbleOnDetachedElements;
 }());
-
-function createCustomEvent (name, opts = {}) {
-  if (CustomEvent) {
-    return new CustomEvent(name, opts);
-  }
-
-  var e = createEvent('CustomEvent');
-  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-  return e;
-}
 
 function createReadableStopPropagation (oldStopPropagation) {
   return function () {
