@@ -1,5 +1,5 @@
 import createElement from '../native/create-element';
-import createCustomEvent from '../util/crete-custom-event';
+import createCustomEvent from '../util/create-custom-event';
 import dispatch from '../util/dispatch-event';
 import utilElementContains from '../util/element-contains';
 

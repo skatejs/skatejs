@@ -461,6 +461,22 @@ The parameters passed to the function are:
 
 
 
+##### `event`
+
+An event name to trigger whenever the property changes. This event is cancelable, and does not bubble.
+
+```js
+skate('my-component', {
+  properties: {
+    myProp: {
+      event: 'my-prop-changed'
+  }
+});
+```
+
+By default, no events are triggered.
+
+
 ##### `get`
 
 A function that is used to return the value of the property. If this is not specified, the internal property value is returned.

@@ -19,6 +19,21 @@ function getLinkedAttribute (name, attr) {
   return attr === true ? dashCase(name) : attr;
 }
 
+function triggerPropertyChangedEvent (elem, {propertyName, eventName, oldValue, newValue}) {
+  let propertyChangeEvent = createCustomEvent(eventName, {
+    bubbles: false,
+    cancelable: true,
+    detail: {
+      name: propertyName,
+      oldValue: oldValue,
+      newValue: newValue
+    }
+  });
+
+  const cancelled = !dispatch(elem, propertyChangeEvent);
+  return cancelled;
+}
+
 function createNativePropertyDefinition (name, opts) {
   let prop = {
     configurable: true,
@@ -152,17 +167,20 @@ function createNativePropertyDefinition (name, opts) {
       newValue = opts.coerce(newValue);
     }
 
-    let cancelled = dispatch(this, createCustomEvent(createCustomEvent('propertychange', {
-      bubbles: false,
-      cancelable: true,
-      detail: {
+    const propertyHasChanged = newValue !== oldValue;
+    if (propertyHasChanged && opts.event) {
+      const cancelled = triggerPropertyChangedEvent(this, {
+        eventName: String(opts.event),
+        propertyName: name,
         oldValue: oldValue,
         newValue: newValue
+      });
+      if (cancelled) {
+        return;
       }
-    })));
-    if (cancelled) {
-      return;
     }
+
+
     info.internalValue = newValue;
 
     if (info.linkedAttribute && !info.updatingAttribute) {
