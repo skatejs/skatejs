@@ -1,8 +1,7 @@
 import assign from 'object-assign';
-import createCustomEvent from '../util/create-custom-event';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
-import dispatch from '../util/dispatch-event';
+import emit from '../api/emit';
 import empty from '../util/empty';
 
 const { removeAttribute, setAttribute } = window.Element.prototype;
@@ -19,19 +18,14 @@ function getLinkedAttribute (name, attr) {
   return attr === true ? dashCase(name) : attr;
 }
 
-function triggerPropertyChangedEvent (elem, {propertyName, eventName, oldValue, newValue}) {
-  let propertyChangeEvent = createCustomEvent(eventName, {
+function triggerPropertyChangedEvent (elem, {eventName, detail}) {
+  const cancelledEvents = emit(elem, eventName, {
     bubbles: false,
     cancelable: true,
-    detail: {
-      name: propertyName,
-      oldValue: oldValue,
-      newValue: newValue
-    }
+    detail: detail
   });
 
-  const cancelled = !dispatch(elem, propertyChangeEvent);
-  return cancelled;
+  return cancelledEvents.length > 0;
 }
 
 function createNativePropertyDefinition (name, opts) {
@@ -171,9 +165,7 @@ function createNativePropertyDefinition (name, opts) {
     if (propertyHasChanged && opts.event) {
       const cancelled = triggerPropertyChangedEvent(this, {
         eventName: String(opts.event),
-        propertyName: name,
-        oldValue: oldValue,
-        newValue: newValue
+        detail: {name, oldValue, newValue}
       });
       if (cancelled) {
         return;

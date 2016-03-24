@@ -1,9 +1,36 @@
 import createElement from '../native/create-element';
-import createCustomEvent from '../util/create-custom-event';
-import dispatch from '../util/dispatch-event';
+import createEvent from '../native/create-event';
 import utilElementContains from '../util/element-contains';
 
-var hasBubbleOnDetachedElements = (function () {
+const CustomEvent = (function (CustomEvent) {
+  if (CustomEvent) {
+    try {
+      new CustomEvent();
+    } catch (e) {
+      return undefined;
+    }
+  }
+  return CustomEvent;
+}(window.CustomEvent));
+
+function createCustomEvent (name, opts = {}) {
+  if (CustomEvent) {
+    return new CustomEvent(name, opts);
+  }
+
+  var e = createEvent('CustomEvent');
+  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+  return e;
+}
+
+function dispatch (elem, cEvent) {
+  if (!elem.disabled) {
+    return elem.dispatchEvent(cEvent);
+  }
+  cEvent.isPropagationStopped = true;
+}
+
+const hasBubbleOnDetachedElements = (function () {
   var parent = createElement('div');
   var child = createElement('div');
   var hasBubbleOnDetachedElements = false;

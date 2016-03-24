@@ -470,6 +470,7 @@ skate('my-component', {
   properties: {
     myProp: {
       event: 'my-prop-changed'
+    }
   }
 });
 ```

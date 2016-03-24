@@ -20,7 +20,7 @@ function testTypeValues (type, values) {
 }
 
 describe('api/properties', function () {
-  describe.only('property change event', function () {
+  describe('property change event', function () {
     it('is not triggered when `opts.event` is not set', function () {
       let elem = create(properties.boolean());
       elem.test = false;
@@ -77,7 +77,7 @@ describe('api/properties', function () {
       elem.addEventListener('propertychange', (e) => event = e);
       elem.test = true;
 
-      expect(event).to.not.equal(null);
+      expect(event.detail).to.be.an('object');
       expect(event.detail.name).to.equal('test');
       expect(event.detail.oldValue).to.equal(false);
       expect(event.detail.newValue).to.equal(true);
