@@ -184,6 +184,18 @@
 	  return CustomEvent;
 	}(window.CustomEvent);
 
+	function createCustomEvent(name) {
+	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  if (CustomEvent) {
+	    return new CustomEvent(name, opts);
+	  }
+
+	  var e = createEvent('CustomEvent');
+	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+	  return e;
+	}
+
 	function dispatch(elem, cEvent) {
 	  if (!elem.disabled) {
 	    return elem.dispatchEvent(cEvent);
@@ -202,18 +214,6 @@
 	  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
 	  return hasBubbleOnDetachedElements;
 	}();
-
-	function createCustomEvent(name) {
-	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-	  if (CustomEvent) {
-	    return new CustomEvent(name, opts);
-	  }
-
-	  var e = createEvent('CustomEvent');
-	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-	  return e;
-	}
 
 	function createReadableStopPropagation(oldStopPropagation) {
 	  return function () {
@@ -251,7 +251,7 @@
 	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
 	}
 
-	function apiEmit (elem, name) {
+	function emit (elem, name) {
 	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
 	  var names = typeof name === 'string' ? name.split(' ') : name;
@@ -717,6 +717,19 @@
 
 	    if (typeof opts.coerce === 'function') {
 	      newValue = opts.coerce(newValue);
+	    }
+
+	    var propertyHasChanged = newValue !== oldValue;
+	    if (propertyHasChanged && opts.event) {
+	      var cancelledEvents = emit(this, String(opts.event), {
+	        bubbles: false,
+	        cancelable: true,
+	        detail: { name: name, oldValue: oldValue, newValue: newValue }
+	      });
+
+	      if (cancelledEvents.length > 0) {
+	        return;
+	      }
 	    }
 
 	    info.internalValue = newValue;
@@ -1295,7 +1308,7 @@
 
 	// Public API.
 	skate.create = apiCreate;
-	skate.emit = apiEmit;
+	skate.emit = emit;
 	skate.fragment = fragment;
 	skate.init = init;
 	skate.properties = apiProperties;
