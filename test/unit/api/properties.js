@@ -61,6 +61,20 @@ describe('api/properties', function () {
       expect(calls).to.equal(2);
     });
 
+    it('does not bubble', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+
+      let parent = document.createElement('div');
+      parent.appendChild(elem);
+
+      let calls = 0;
+      parent.addEventListener('propertychange', () => calls++);
+      elem.test = true;
+
+      expect(calls).to.equal(0);
+    });
+
     it('can be cancelled', function () {
       let elem = create(assign({event: 'propertychange'}, properties.boolean()));
       elem.test = false;
