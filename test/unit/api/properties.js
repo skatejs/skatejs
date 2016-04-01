@@ -87,15 +87,20 @@ describe('api/properties', function () {
       let elem = create(assign({event: 'propertychange'}, properties.boolean()));
       elem.test = false;
 
-      let alreadyPrevented = false;
-      elem.addEventListener('propertychange', function (e) {
-        if (!alreadyPrevented) {
-          alreadyPrevented = true;
-          e.preventDefault()
+      function preventOnce () {
+        let alreadyPrevented = false;
+        return function (e) {
+          if (!alreadyPrevented) {
+            alreadyPrevented = true;
+            e.preventDefault()
+          }
         }
-      });
+      }
+
+      elem.addEventListener('propertychange', preventOnce());
 
       elem.test = true;
+      expect(elem.test).to.equal(false);
       elem.test = true;
       expect(elem.test).to.equal(true);
     });
