@@ -83,6 +83,24 @@ describe('api/properties', function () {
       expect(elem.test).to.equal(false);
     });
 
+    it.only('after cancelling events, subsequent sets pass through', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+
+      let alreadyPrevented = false;
+      elem.addEventListener('propertychange', function (e) {
+        if (!alreadyPrevented) {
+          alreadyPrevented = true;
+          e.preventDefault()
+        }
+      });
+
+      elem.test = true;
+      elem.test = true;
+      expect(elem.test).to.equal(true);
+
+    });
+
     it('contains property name, and change details', function () {
       let elem = create(assign({event: 'propertychange'}, properties.boolean()));
       let event = null;
