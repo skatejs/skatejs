@@ -160,6 +160,7 @@ function createNativePropertyDefinition (name, opts) {
       });
 
       if (cancelledEvents.length > 0) {
+        info.updatingProperty = false;
         return;
       }
     }
