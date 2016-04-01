@@ -83,7 +83,7 @@ describe('api/properties', function () {
       expect(elem.test).to.equal(false);
     });
 
-    it.only('after cancelling events, subsequent sets pass through', function () {
+    it('after cancelling events, subsequent sets pass through', function () {
       let elem = create(assign({event: 'propertychange'}, properties.boolean()));
       elem.test = false;
 
@@ -98,7 +98,6 @@ describe('api/properties', function () {
       elem.test = true;
       elem.test = true;
       expect(elem.test).to.equal(true);
-
     });
 
     it('contains property name, and change details', function () {
