@@ -1,6 +1,7 @@
 import assign from 'object-assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import emit from '../api/emit';
 import empty from '../util/empty';
 
 const { removeAttribute, setAttribute } = window.Element.prototype;
@@ -149,6 +150,20 @@ function createNativePropertyDefinition (name, opts) {
     if (typeof opts.coerce === 'function') {
       newValue = opts.coerce(newValue);
     }
+
+    const propertyHasChanged = newValue !== oldValue;
+    if (propertyHasChanged && opts.event) {
+      const cancelledEvents = emit(this, String(opts.event), {
+        bubbles: false,
+        cancelable: true,
+        detail: {name, oldValue, newValue}
+      });
+
+      if (cancelledEvents.length > 0) {
+        return;
+      }
+    }
+
 
     info.internalValue = newValue;
 
