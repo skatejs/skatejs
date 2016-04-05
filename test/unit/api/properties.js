@@ -92,9 +92,9 @@ describe('api/properties', function () {
         return function (e) {
           if (!alreadyPrevented) {
             alreadyPrevented = true;
-            e.preventDefault()
+            e.preventDefault();
           }
-        }
+        };
       }
 
       elem.addEventListener('propertychange', preventOnce());
@@ -145,11 +145,11 @@ describe('api/properties', function () {
 
     it('removing attribute', function () {
       let elem = create(properties.boolean());
-      
+
       elem.setAttribute('test', '');
       expect(elem.test).to.equal(true);
       expect(elem.getAttribute('test')).to.equal('');
-      
+
       elem.removeAttribute('test');
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
