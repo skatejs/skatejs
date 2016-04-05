@@ -534,7 +534,7 @@ This will only get executed on DOM Ready. If you ever insert some tabs dynamical
 
 ```js
 skate('tabs', {
-  type: skate.types.CLASS
+  type: skate.types.CLASS,
   created: function (element) {
     jQuery(element).tabs();
   }
