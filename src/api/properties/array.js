@@ -1,3 +1,5 @@
+const { parse, stringify } = window.JSON;
+
 export default {
   coerce (val) {
     return Array.isArray(val) ? val : [val];
@@ -6,9 +8,9 @@ export default {
     return [];
   },
   deserialize (val) {
-    return val.split(',');
+    return parse(val);
   },
   serialize (val) {
-    return val.join(',');
+    return stringify(val);
   }
 };
