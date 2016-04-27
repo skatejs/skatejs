@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.16.0 (Unreleased)
+
+### Added
+
+- [#513](https://github.com/skatejs/skatejs/issues/513) - events can be added to property changes
+
 ## 0.15.3
 
 ### Fixed

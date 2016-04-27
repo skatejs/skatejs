@@ -4,7 +4,7 @@ import helperElement from '../lib/element';
 import registry from '../../src/shared/registry';
 import typeElement from '../../src/type/element';
 
-describe('registry', function () {
+describe.only('registry', function () {
   it('should set definitions', function () {
     registry.set('test', { type: typeElement });
     try {

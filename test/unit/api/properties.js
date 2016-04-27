@@ -143,4 +143,104 @@ describe('api/properties', function () {
       expect(properties.string({ default: 'test' }).default).to.equal('test');
     });
   });
+
+  describe('property change event', function () {
+    it('is not triggered when `opts.event` is not set', function () {
+      let elem = create(properties.boolean());
+      elem.test = false;
+
+      let calls = 0;
+      elem.addEventListener('propertychange', () => calls++);
+      elem.test = true;
+
+      expect(calls).to.equal(0);
+    });
+
+    it('the event name can be changed', function () {
+      let elem = create(assign({event: 'foo'}, properties.boolean()));
+      elem.test = false;
+
+      let propertyChangeCalled = false;
+      let fooCalled = false;
+      elem.addEventListener('propertychange', () => propertyChangeCalled = true);
+      elem.addEventListener('foo', () => fooCalled = true);
+      elem.test = true;
+
+      expect(propertyChangeCalled).to.equal(false);
+      expect(fooCalled).to.equal(true);
+    });
+
+    it('is triggered only when properties change', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+
+      let calls = 0;
+      elem.addEventListener('propertychange', () => calls++);
+      elem.test = true;
+
+      expect(calls).to.equal(1);
+      elem.test = true;
+      expect(calls).to.equal(1);
+      elem.test = false;
+      expect(calls).to.equal(2);
+    });
+
+    it('does not bubble', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+
+      let parent = document.createElement('div');
+      parent.appendChild(elem);
+
+      let calls = 0;
+      parent.addEventListener('propertychange', () => calls++);
+      elem.test = true;
+
+      expect(calls).to.equal(0);
+    });
+
+    it('can be cancelled', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+      elem.addEventListener('propertychange', (e) => e.preventDefault());
+      elem.test = true;
+      expect(elem.test).to.equal(false);
+    });
+
+    it('after cancelling events, subsequent sets pass through', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      elem.test = false;
+
+      function preventOnce () {
+        let alreadyPrevented = false;
+        return function (e) {
+          if (!alreadyPrevented) {
+            alreadyPrevented = true;
+            e.preventDefault();
+          }
+        };
+      }
+
+      elem.addEventListener('propertychange', preventOnce());
+
+      elem.test = true;
+      expect(elem.test).to.equal(false);
+      elem.test = true;
+      expect(elem.test).to.equal(true);
+    });
+
+    it('contains property name, and change details', function () {
+      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      let event = null;
+      elem.test = false;
+
+      elem.addEventListener('propertychange', (e) => event = e);
+      elem.test = true;
+
+      expect(event.detail).to.be.an('object');
+      expect(event.detail.name).to.equal('test');
+      expect(event.detail.oldValue).to.equal(false);
+      expect(event.detail.newValue).to.equal(true);
+    });
+  });
 });

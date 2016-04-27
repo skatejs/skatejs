@@ -1,7 +1,7 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global.skatejs = factory());
+	(global.skate = factory());
 }(this, function () {
 
 	function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports), module.exports; }
@@ -164,7 +164,7 @@
 	  });
 	}
 
-	function apiCreate (name, props) {
+	function create (name, props) {
 	  var Ctor = registry.get(name);
 	  var elem = Ctor ? Ctor.type.create(Ctor) : createElement(name);
 	  Ctor && init(elem);
@@ -183,6 +183,18 @@
 	  }
 	  return CustomEvent;
 	}(window.CustomEvent);
+
+	function createCustomEvent(name) {
+	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  if (CustomEvent) {
+	    return new CustomEvent(name, opts);
+	  }
+
+	  var e = createEvent('CustomEvent');
+	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+	  return e;
+	}
 
 	function dispatch(elem, cEvent) {
 	  if (!elem.disabled) {
@@ -203,18 +215,6 @@
 	  return hasBubbleOnDetachedElements;
 	}();
 
-	function createCustomEvent(name) {
-	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-	  if (CustomEvent) {
-	    return new CustomEvent(name, opts);
-	  }
-
-	  var e = createEvent('CustomEvent');
-	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-	  return e;
-	}
-
 	function createReadableStopPropagation(oldStopPropagation) {
 	  return function () {
 	    this.isPropagationStopped = true;
@@ -223,7 +223,7 @@
 	}
 
 	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = void 0;
+	  var didPreventDefault = undefined;
 	  var currentElem = elem;
 	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
 	  Object.defineProperty(cEvent, 'target', { get: function get() {
@@ -251,7 +251,7 @@
 	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
 	}
 
-	function apiEmit (elem, name) {
+	function emit (elem, name) {
 	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
 	  var names = typeof name === 'string' ? name.split(' ') : name;
@@ -395,7 +395,7 @@
 	  };
 	}
 
-	var apiProperties = {
+	var properties = {
 	  array: prop(array),
 	  boolean: prop(boolean),
 	  number: prop(number),
@@ -414,7 +414,7 @@
 	  return component && data(element).created;
 	}
 
-	function apiReady (elements, callback) {
+	function ready$1 (elements, callback) {
 	  var collection = elements.length === undefined ? [elements] : elements;
 	  var collectionLength = collection.length;
 	  var readyCount = 0;
@@ -442,14 +442,14 @@
 	  }
 	}
 
-	function apiRender (elem) {
+	function render (elem) {
 	  var component = registry.find(elem);
 	  if (component && component.render) {
 	    component.render(elem);
 	  }
 	}
 
-	var apiVersion = '0.15.3';
+	var version = '0.15.3';
 
 	function attached (opts) {
 	  var attached = opts.attached;
@@ -465,7 +465,6 @@
 
 	function attribute (opts) {
 	  var attribute = opts.attribute;
-
 
 	  if (typeof attribute !== 'function') {
 	    return;
@@ -560,7 +559,6 @@
 	  var removeAttribute = elem.removeAttribute;
 	  var setAttribute = elem.setAttribute;
 
-
 	  elem.removeAttribute = function (name) {
 	    var oldValue = this.getAttribute(name);
 	    removeAttribute.call(elem, name);
@@ -588,7 +586,6 @@
 	var _window$Element$proto = window.Element.prototype;
 	var removeAttribute = _window$Element$proto.removeAttribute;
 	var setAttribute = _window$Element$proto.setAttribute;
-
 
 	function getData(elem, name) {
 	  return data(elem, 'api/property/' + name);
@@ -733,6 +730,20 @@
 
 	    if (typeof opts.coerce === 'function') {
 	      newValue = opts.coerce(newValue);
+	    }
+
+	    var propertyHasChanged = newValue !== oldValue;
+	    if (propertyHasChanged && opts.event) {
+	      var cancelledEvents = emit(this, String(opts.event), {
+	        bubbles: false,
+	        cancelable: true,
+	        detail: { name: name, oldValue: oldValue, newValue: newValue }
+	      });
+
+	      if (cancelledEvents.length > 0) {
+	        info.updatingProperty = false;
+	        return;
+	      }
 	    }
 
 	    info.internalValue = newValue;
@@ -1091,7 +1102,6 @@
 	var _window$1 = window;
 	var Element = _window$1.Element;
 
-
 	function getClosestIgnoredElement (element) {
 	  var parent = element;
 	  while (parent instanceof Element) {
@@ -1243,7 +1253,7 @@
 
 	// Makes a function / constructor that can be called as either.
 	function makeCtor(name, opts) {
-	  var func = apiCreate.bind(null, name);
+	  var func = create.bind(null, name);
 
 	  // Assigning defaults gives a predictable definition and prevents us from
 	  // having to do defaults checks everywhere.
@@ -1309,15 +1319,28 @@
 	  return registry.set(name, Ctor);
 	}
 
-	// Public API.
-	skate.create = apiCreate;
-	skate.emit = apiEmit;
+	skate.create = create;
+	skate.emit = emit;
 	skate.fragment = fragment;
 	skate.init = init;
-	skate.properties = apiProperties;
-	skate.ready = apiReady;
-	skate.render = apiRender;
-	skate.version = apiVersion;
+	skate.properties = properties;
+	skate.ready = ready$1;
+	skate.render = render;
+	skate.version = version;
+
+
+
+	var api = Object.freeze({
+	  default: skate,
+	  create: create,
+	  emit: emit,
+	  fragment: fragment,
+	  init: init,
+	  properties: properties,
+	  ready: ready$1,
+	  render: render,
+	  version: version
+	});
 
 	var previousGlobal = window.skate;
 	skate.noConflict = function noConflict() {
@@ -1325,6 +1348,10 @@
 	  return this;
 	};
 	window.skate = skate;
+	for (var name in api) {
+	  skate[name] = api[name];
+	}
+	skate.version = '0.15.3';
 
 	return skate;
 
