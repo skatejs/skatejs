@@ -1,11 +1,14 @@
-import apiCreate from './api/create';
-import apiEmit from './api/emit';
-import apiFragment from './api/fragment';
-import apiInit from './api/init';
-import apiProperties from './api/properties/index';
-import apiReady from './api/ready';
-import apiRender from './api/render';
-import apiVersion from './api/version';
+// Public API
+import create from './api/create';
+import emit from './api/emit';
+import fragment from './api/fragment';
+import init from './api/init';
+import properties from './api/properties/index';
+import ready from './api/ready';
+import render from './api/render';
+import version from './api/version';
+
+// Internal
 import assign from 'object-assign';
 import attached from './lifecycle/attached';
 import attribute from './lifecycle/attribute';
@@ -53,7 +56,7 @@ function fixedProp (obj, name, value) {
 
 // Makes a function / constructor that can be called as either.
 function makeCtor (name, opts) {
-  const func = apiCreate.bind(null, name);
+  const func = create.bind(null, name);
 
   // Assigning defaults gives a predictable definition and prevents us from
   // having to do defaults checks everywhere.
@@ -119,14 +122,23 @@ function skate (name, opts) {
   return registry.set(name, Ctor);
 }
 
-// Public API.
-skate.create = apiCreate;
-skate.emit = apiEmit;
-skate.fragment = apiFragment;
-skate.init = apiInit;
-skate.properties = apiProperties;
-skate.ready = apiReady;
-skate.render = apiRender;
-skate.version = apiVersion;
+skate.create = create;
+skate.emit = emit;
+skate.fragment = fragment;
+skate.init = init;
+skate.properties = properties;
+skate.ready = ready;
+skate.render = render;
+skate.version = version;
 
 export default skate;
+export {
+  create,
+  emit,
+  fragment,
+  init,
+  properties,
+  ready,
+  render,
+  version
+};
