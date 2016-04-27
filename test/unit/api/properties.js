@@ -31,7 +31,7 @@ describe('api/properties', function () {
       expect(elem.test).to.be.an('array');
       expect(elem.test.length).to.equal(0);
       expect(elem.getAttribute('test')).to.be.a('string');
-      expect(elem.getAttribute('test')).to.equal('');
+      expect(elem.getAttribute('test')).to.equal('[]');
     });
 
     describe('coerce', function () {
@@ -50,7 +50,7 @@ describe('api/properties', function () {
     });
 
     it('deserialize', function () {
-      elem.setAttribute('test', 'val1,val2');
+      elem.setAttribute('test', '["val1","val2"]');
       expect(elem.test).to.be.an('array');
       expect(elem.test).to.be.length(2);
       expect(elem.test[0]).to.equal('val1');
@@ -60,7 +60,7 @@ describe('api/properties', function () {
     it('serialize', function () {
       elem.test = ['val1', 'val2'];
       expect(elem.getAttribute('test')).to.be.a('string');
-      expect(elem.getAttribute('test')).to.equal('val1,val2');
+      expect(elem.getAttribute('test')).to.equal('["val1","val2"]');
     });
   });
 
