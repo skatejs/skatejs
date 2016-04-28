@@ -1,3 +1,3 @@
 export default function resolved (element) {
-  return element.hasAttribute('resolved');
+  return element.hasAttribute('defined');
 }

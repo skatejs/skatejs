@@ -5,7 +5,6 @@ import propertiesInit from './properties-init';
 import propertiesCreated from './properties-created';
 import propertiesReady from './properties-ready';
 import prototypeApplier from './prototype';
-import resolve from './resolve';
 
 // TODO Remove this when we no longer support the legacy definitions and only
 // support a superset of a native property definition.
@@ -32,13 +31,14 @@ export default function (opts) {
   const {
     attribute,
     created,
+    definedAttribute,
     events,
     isNative,
     properties,
     prototype,
     ready,
     render,
-    resolvedAttribute
+    renderedAttribute
   } = opts;
   const applyEvents = eventsApplier(opts);
   const applyPrototype = prototypeApplier(opts);
@@ -47,7 +47,6 @@ export default function (opts) {
   // Performance critical code!
   return function () {
     const info = data(this);
-    const resolved = this.hasAttribute(resolvedAttribute);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
     const readyCallbacks = info.readyCallbacks;
 
@@ -79,8 +78,9 @@ export default function (opts) {
       created(this);
     }
 
-    if (render && !resolved) {
+    if (render && !this.hasAttribute(renderedAttribute)) {
       render(this);
+      this.setAttribute(renderedAttribute, '');
     }
 
     if (propertyDefinitions) {
@@ -96,8 +96,8 @@ export default function (opts) {
       info.readyCallbacks = null;
     }
 
-    if (!resolved) {
-      resolve(this, opts);
+    if (!this.hasAttribute(definedAttribute)) {
+      this.setAttribute(definedAttribute, '');
     }
   };
 }

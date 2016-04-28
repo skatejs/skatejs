@@ -84,14 +84,13 @@ describe('unresolved attribute', function () {
     var tag = helperElement('my-element').safe;
     skate(tag, {
       created: function (elem) {
-        expect(elem.hasAttribute('unresolved')).to.equal(true, 'should have unresolved');
-        expect(elem.hasAttribute('resolved')).to.equal(false, 'should not have resolved');
+        expect(elem.hasAttribute('defined')).to.equal(false, 'should not have resolved');
       }
     });
 
-    var element = helperFixture(`<${tag} unresolved></${tag}>`).children[0];
+    var element = helperFixture(`<${tag}></${tag}>`).children[0];
     skate.init(element);
-    expect(element.hasAttribute('resolved')).to.equal(true, 'should have resolved');
+    expect(element.hasAttribute('defined')).to.equal(true, 'should have defined');
   });
 });
 

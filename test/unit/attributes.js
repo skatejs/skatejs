@@ -15,8 +15,8 @@ describe('lifecycle/attribute', function () {
       myToggle = new MyToggle();
     });
 
-    it('should properly call the attribute callback for resolved', function(done) {
-      let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'resolved', newValue: ''}));
+    it('should properly call the attribute callback for defined', function(done) {
+      let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'defined', newValue: ''}));
 
       helperReady(function() {
         expect(resolvedSpy.calledOnce).to.be.true;
