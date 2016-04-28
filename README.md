@@ -1219,7 +1219,7 @@ This does not solve the situation where you want to be notified of future elemen
 
 ### `render (element)`
 
-Invokes the `render()` lifecycle callback on the specified element for the components that are bound to it. If no components are found for the element, nothing happens.
+Invokes the `render()` lifecycle callback on the specified element for the component that is bound to it. If no component is found for the element, nothing happens.
 
 ```js
 var hello = skate('x-hello', {
