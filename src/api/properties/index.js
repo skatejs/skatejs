@@ -1,3 +1,4 @@
+import array from './array';
 import assign from 'object-assign';
 import boolean from './boolean';
 import number from './number';
@@ -11,6 +12,7 @@ function prop (def) {
 }
 
 export default {
+  array: prop(array),
   boolean: prop(boolean),
   number: prop(number),
   string: prop(string)
