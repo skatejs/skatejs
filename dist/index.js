@@ -339,12 +339,8 @@
 	  default: function _default() {
 	    return [];
 	  },
-	  deserialize: function deserialize(val) {
-	    return val.split(',');
-	  },
-	  serialize: function serialize(val) {
-	    return val.join(',');
-	  }
+	  deserialize: JSON.parse,
+	  serialize: JSON.stringify
 	};
 
 	var boolean = {
