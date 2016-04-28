@@ -80,7 +80,6 @@ export default function (opts) {
 
     if (render && !this.hasAttribute(renderedAttribute)) {
       render(this);
-      this.setAttribute(renderedAttribute, '');
     }
 
     if (propertyDefinitions) {
