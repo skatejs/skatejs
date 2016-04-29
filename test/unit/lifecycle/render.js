@@ -59,11 +59,11 @@ describe('lifecycle/render', function () {
     expect(called[1]).to.equal('ready');
   });
 
-  it('should not get called if the resolved attribute is already on the element', function () {
+  it('should not get called if the rendered attribute is already on the element', function () {
     let called = false;
     let el = elem();
     el.skate({ render: () => called = true });
-    skate.fragment(`<${el.safe} resolved></${el.safe}>`);
+    skate.fragment(`<${el.safe} rendered></${el.safe}>`);
     expect(called).to.equal(false);
   });
 });

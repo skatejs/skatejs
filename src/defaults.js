@@ -6,14 +6,14 @@ export default {
   attached: nope,
   attribute: nope,
   created: nope,
+  definedAttribute: 'defined',
   render: nope,
   detached: nope,
   events: nope,
   extends: nope,
   properties: nope,
   prototype: {},
-  resolvedAttribute: 'resolved',
   ready: nope,
-  type,
-  unresolvedAttribute: 'unresolved'
+  renderedAttribute: 'rendered',
+  type
 };
