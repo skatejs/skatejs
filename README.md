@@ -92,6 +92,7 @@ Result
     - [Return Value](#return-value-1)
     - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
     - [Passing Data](#passing-data)
+  - [`factory (componentDefinition)`](#factory-componentdefinition)
   - [`fragment (...almostAnything)`](#fragment-almostanything)
   - [`init (...elements)`](#init-elements)
   - [`noConflict ()`](#noconflict-)
@@ -1002,6 +1003,20 @@ skate.emit(element, 'event', {
     data: 'my-data'
   }
 });
+```
+
+
+
+### `factory (componentDefinition)`
+
+The `factory()` function gives you a way to define a custom element without defining its name. This is useful because it allows your consumers to decide which name your component should have. This is also effective in maintaining UI components that may have breaking changes made to them as you don't have to change their global name in order to have multiple versions of them on the same page. It can be up to your consumers to decide how they want to do that based on how they're using them.
+
+```js
+var oldComponent = skate.factory({ ... });
+var newComponent = skate.factory({ ... });
+
+oldComponent('x-component-v1');
+newComponent('x-component-v2');
 ```
 
 
