@@ -1,8 +1,9 @@
-import skate from '../../src/index';
+import skate, * as api from '../../src/index';
 
 describe('exports', function () {
   it('skate', function () {
     expect(skate).to.be.a('function');
+    expect(api).to.be.an('object');
   });
 
   it('skate.create', function () {
@@ -11,6 +12,11 @@ describe('exports', function () {
 
   it('skate.emit', function () {
     expect(skate.emit).to.be.a('function');
+  });
+
+  it('skate.factory', function () {
+    expect(skate.factory).to.be.a('function');
+    expect(api.factory).to.be.a('function');
   });
 
   it('skate.fragment', function () {
