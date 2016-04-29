@@ -1339,6 +1339,14 @@ Like the web component differences mentioned above, Skate only polyfills and val
 
 
 
+## Polymer Differences
+
+Polymer uses webcomponentsjs and adds an abstraction on top of it. Fundamentally, Polymer and Skate are very different things. Skate gives you an abstarction over custom elements rather than the entire spec making it more of a library than a framework. The differences to webcomponentsjs above also apply to Polymer.
+
+If you want a more full featured solution, have a look at [kickflip](https://github.com/skatejs/kickflip). It's similar to Polymer in the sense that it combines custom elements and shadow DOM, however, it is designed around the same concepts as React and takes a more functional approach to rendering.
+
+
+
 ## Native Custom Element Support
 
 If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
