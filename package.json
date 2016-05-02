@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "debounce": "^1.0.0",
-    "object-assign": "^4.0.1"
+    "object-assign": "^4.1.0"
   },
   "devDependencies": {
     "eslint": "2.8.0",
