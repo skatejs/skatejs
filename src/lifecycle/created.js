@@ -68,9 +68,7 @@ export default function (opts) {
     info.created = true;
 
     if (!isNative) {
-      if (attribute) {
-        patchAttributeMethods(this);
-      }
+      patchAttributeMethods(this);
 
       if (prototype) {
         applyPrototype(this);
