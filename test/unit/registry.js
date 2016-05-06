@@ -19,7 +19,6 @@ describe('registry', function () {
   it('get()', function () {
     const definition = function () {};
     const name = helperElement().safe;
-    const element = create(name);
 
     customElements.define(name, definition);
 
