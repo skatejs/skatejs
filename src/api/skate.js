@@ -4,12 +4,11 @@ import attribute from '../lifecycle/attribute';
 import create from './create';
 import created from '../lifecycle/created';
 import createElement from '../native/create-element';
+import customElements from '../native/custom-elements';
 import defaults from '../defaults';
 import detached from '../lifecycle/detached';
-import documentObserver from '../shared/document-observer';
-import registerElement from '../native/register-element';
-import registry from '../shared/registry';
-import typeElement from '../type/element';
+import documentObserver from '../native/document-observer';
+import support from '../native/support';
 import utilGetAllPropertyDescriptors from '../util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import utilDebounce from '../util/debounce';
@@ -21,7 +20,8 @@ const HTMLElement = window.HTMLElement;
 // A function that initialises the document once in a given event loop.
 const initDocument = utilDebounce(function () {
   utilWalkTree(document.documentElement.childNodes, function (element) {
-    const component = registry.find(element);
+    const component = customElements.get(element.tagName.toLowerCase());
+
     if (component) {
       if (component.prototype.createdCallback) {
         component.prototype.createdCallback.call(element);
@@ -45,7 +45,7 @@ function fixedProp (obj, name, value) {
 }
 
 // Makes a function / constructor that can be called as either.
-function makeCtor (name, opts) {
+function createConstructor (name, opts) {
   const func = create.bind(null, name);
 
   // Assigning defaults gives a predictable definition and prevents us from
@@ -57,25 +57,26 @@ function makeCtor (name, opts) {
   // considered "own".
   utilDefineProperties(func, utilGetAllPropertyDescriptors(opts));
 
-  // Fixed info.
-  fixedProp(func.prototype, 'constructor', func);
-  fixedProp(func, 'id', name);
-  fixedProp(func, 'isNative', func.type === typeElement && registerElement);
+  return func;
+}
+
+function addConstructorInformation (name, Ctor) {
+  fixedProp(Ctor.prototype, 'constructor', Ctor);
+  fixedProp(Ctor, 'id', name);
 
   // In native, the function name is the same as the custom element name, but
   // WebKit prevents this from being defined. We do this where possible and
   // still define `id` for cross-browser compatibility.
-  const nameProp = Object.getOwnPropertyDescriptor(func, 'name');
+  const nameProp = Object.getOwnPropertyDescriptor(Ctor, 'name');
   if (nameProp && nameProp.configurable) {
-    fixedProp(func, 'name', name);
+    fixedProp(Ctor, 'name', name);
   }
-
-  return func;
 }
 
 // The main skate() function.
 export default function (name, opts) {
-  const Ctor = makeCtor(name, opts);
+  const Ctor = createConstructor(name, opts);
+  addConstructorInformation(name, Ctor);
 
   // If the options don't inherit a native element prototype, we ensure it does
   // because native requires you explicitly do this. Here we solve the common
@@ -85,29 +86,23 @@ export default function (name, opts) {
     Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 
-  // We not assign native callbacks to handle the callbacks specified in the
+  // We assign native callbacks to handle the callbacks specified in the
   // Skate definition. This allows us to abstract away any changes that may
   // occur in the spec.
-  Ctor.prototype.createdCallback = created(Ctor);
-  Ctor.prototype.attachedCallback = attached(Ctor);
-  Ctor.prototype.detachedCallback = detached(Ctor);
-  Ctor.prototype.attributeChangedCallback = attribute(Ctor);
+  assign(Ctor.prototype, {
+    createdCallback: created(Ctor),
+    attachedCallback: attached(Ctor),
+    detachedCallback: detached(Ctor),
+    attributeChangedCallback: attribute(Ctor)
+  });
 
   // In polyfill land we must emulate what the browser would normally do in
   // native.
-  if (!Ctor.isNative) {
+  if (support.polyfilled) {
     initDocument();
     documentObserver.register();
   }
 
-  // Call register hook. We could put this in the registry, but since the
-  // registry is shared across versions, we try and churn that as little as
-  // possible. It's fine here for now.
-  const type = Ctor.type;
-  if (type.register) {
-    type.register(Ctor);
-  }
-
-  // We keep our own registry since we can't access the native one.
-  return registry.set(name, Ctor);
+  customElements.define(name, Ctor);
+  return customElements.get(name);
 }
