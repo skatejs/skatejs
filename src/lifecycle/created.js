@@ -40,7 +40,6 @@ function iniitaliseProperties (elem, propertyDefinitions) {
 
 export default function (opts) {
   const {
-    attribute,
     created,
     definedAttribute,
     events,

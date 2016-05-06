@@ -37,7 +37,7 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.created = function (elem) {
-    const propertyData = data(elem, `api/property/${name}`)
+    const propertyData = data(elem, `api/property/${name}`);
     const attributeName = getLinkedAttribute(name, opts.attribute);
     let initialValue = elem[name];
 
