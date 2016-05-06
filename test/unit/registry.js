@@ -1,7 +1,6 @@
 'use strict';
 
 import customElements from '../../src/native/custom-elements';
-import create from '../../src/api/create';
 import helperElement from '../lib/element';
 
 describe('registry', function () {
