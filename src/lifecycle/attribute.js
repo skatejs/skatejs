@@ -10,7 +10,7 @@ export default function (opts) {
       const propertyData = data(this, `api/property/${propertyName}`);
       if (!propertyData.settingProperty) {
         const propOpts = this.constructor.properties[propertyName];
-        this[propertyName] = propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
       }
     }
 
