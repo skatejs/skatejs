@@ -41,6 +41,10 @@ describe('exports', function () {
     expect(skate.render).to.be.a('function');
   });
 
+  it('vdom', function () {
+    expect(skate.vdom).to.equal(api.vdom);
+  });
+
   it('skate.version', function () {
     expect(skate.version).to.be.a('string');
   });
