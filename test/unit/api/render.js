@@ -1,5 +1,6 @@
 import element from '../../lib/element';
 import render from '../../../src/api/render';
+import { text } from '../../../src/api/vdom';
 
 describe('api/render', function () {
   let elem;
@@ -7,21 +8,21 @@ describe('api/render', function () {
   beforeEach(function () {
     elem = element().skate({
       properties: {
-        name: {
+        test: {
           attribute: true,
-          default: 'default',
-          set: render
+          default: 'default'
         }
       },
-      render: function (elem) {
-        elem.innerHTML = `${elem.name}`;
+      render (elem) {
+        text(elem.test);
       }
     })();
   });
 
   it('should render the component', function () {
-    expect(elem.textContent).to.equal('default');
-    elem.name = 'updated';
-    expect(elem.textContent).to.equal('updated');
+    expect(elem.shadowRoot.textContent).to.equal('default');
+    elem.test = 'updated';
+    render(elem);
+    expect(elem.shadowRoot.textContent).to.equal('updated');
   });
 });

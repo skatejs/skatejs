@@ -13,7 +13,7 @@ describe('dom', function () {
 
       skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
       skate(tag, {
-        attached: function () {
+        attached () {
           ++calls;
         }
       });
