@@ -9,6 +9,7 @@ import data from './data';
 import defaults from '../defaults';
 import detached from '../lifecycle/detached';
 import documentObserver from '../native/document-observer';
+import render from '../lifecycle/render';
 import support from '../native/support';
 import utilGetAllPropertyDescriptors from '../util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from '../util/get-own-property-descriptors';
@@ -87,6 +88,9 @@ function ensureIncrementalDomKnowsToSetPropsForLinkedAtrs (name, opts) {
 
 // The main skate() function.
 export default function (name, opts) {
+  // Ensure the render function render's using Incremental DOM.
+  opts.render = render(opts);
+
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
   ensureIncrementalDomKnowsToSetPropsForLinkedAtrs(name, opts);
