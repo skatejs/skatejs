@@ -1,8 +1,12 @@
 import assign from 'object-assign';
 import dashCase from '../util/dash-case';
 import data from '../util/data';
+import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
+import render from '../api/render';
+
+const $debounce = Symbol();
 
 function getDefaultValue (elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
@@ -31,7 +35,7 @@ function syncAttribute (elem, propertyName, attributeName, newValue, opts) {
 }
 
 function createNativePropertyDefinition (name, opts) {
-  let prop = {
+  const prop = {
     configurable: true,
     enumerable: true
   };
@@ -74,6 +78,21 @@ function createNativePropertyDefinition (name, opts) {
     return internalValue;
   };
 
+  prop.render = (function () {
+    const shouldUpdate = opts.render;
+    if (typeof shouldUpdate === 'undefined') {
+      return function (elem, data) {
+        return data.newValue !== data.oldValue;
+      };
+    }
+    if (typeof shouldUpdate === 'function') {
+      return shouldUpdate;
+    }
+    return function () {
+      return !!shouldUpdate;
+    };
+  }());
+
   prop.set = function (newValue) {
     const propertyData = data(this, `api/property/${name}`);
 
@@ -111,8 +130,16 @@ function createNativePropertyDefinition (name, opts) {
     propertyData.internalValue = newValue;
     syncAttribute(this, name, attributeName, newValue, opts);
 
+    const changeData = { name, newValue, oldValue };
+
     if (typeof opts.set === 'function') {
-      opts.set(this, { name, newValue, oldValue });
+      opts.set(this, changeData);
+    }
+
+    // Re-render on property updates if the should-update check passes.
+    if (opts.render(this, changeData)) {
+      const deb = this[$debounce] || (this[$debounce] = debounce(render, 1));
+      deb(this);
     }
 
     propertyData.settingProperty = false;
