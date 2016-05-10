@@ -1,5 +1,6 @@
+import { IncrementalDOM as VdomIncrementalDOM } from '../../../src/api/vdom';
 
-import { IncrementalDOM as VdomIncrementalDOM } from '../src/vdom';
+const { IncrementalDOM } = window;
 
 describe('IncrementalDOM', function () {
   it('should export all the same members as the incremental-dom we consume', function () {

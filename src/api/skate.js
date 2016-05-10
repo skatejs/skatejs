@@ -5,7 +5,7 @@ import create from './create';
 import created from '../lifecycle/created';
 import createElement from '../native/create-element';
 import customElements from '../native/custom-elements';
-import data from './data';
+import data from '../data';
 import defaults from '../defaults';
 import detached from '../lifecycle/detached';
 import documentObserver from '../native/document-observer';

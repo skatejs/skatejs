@@ -1,5 +1,5 @@
 import * as IncrementalDOM from 'incremental-dom';
-import internalData from './data';
+import internalData from '../data';
 
 // Could import these, but we have to import all of IncrementalDOM anyways so
 // that we can export our configured IncrementalDOM.
