@@ -1,6 +1,5 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import helperReady from '../lib/ready';
 
 import skateMaster from '../../src/index';
 import '../skate/0.14.3.js';
@@ -9,7 +8,8 @@ const { skate } = window;
 
 describe('multiple-versions', function () {
   it('is possible to have multiple versions of skate on the page', function (done) {
-    var called = [];
+    let called = [];
+    let elem;
 
     function skateAndCreate(customSkate) {
       const el = helperElement();
@@ -18,15 +18,16 @@ describe('multiple-versions', function () {
           called.push(customSkate.version);
         }
       });
-      helperFixture(document.createElement(el.safe));
+      let elem = document.createElement(el.safe);
+      helperFixture(elem);
     }
 
     skateAndCreate(skateMaster);
     skateAndCreate(skate);
 
-    helperReady(function () {
+    setTimeout(function () {
       expect(called.sort()).to.deep.equal([skateMaster.version, skate.version].sort());
       done();
-    });
+    }, 1);
   });
 });
