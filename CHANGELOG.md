@@ -9,12 +9,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - [#513](https://github.com/skatejs/skatejs/issues/513) - events can be added to property changes
+- [#517](https://github.com/skatejs/skatejs/issues/517) - add `skate.factory()`
 
 ## 0.15.3
 
 ### Fixed
 
-- [#463](https://github.com/skatejs/skatejs/issues/463) - `skate.emit` events no longer fire on disabled elements.
+- [#463](https://github.com/skatejs/skatejs/issues/463) - `skate.emit()` events no longer fire on disabled elements.
 
 ## 0.15.2
 
