@@ -1,7 +1,7 @@
-import customElements from '../native/custom-elements';
+import findElementInRegistry from '../util/find-element-in-registry';
 
 export default function (elem) {
-  const component = customElements.get(elem.tagName.toLowerCase());
+  const component = findElementInRegistry(elem);
   if (component && component.render) {
     component.render(elem);
   }
