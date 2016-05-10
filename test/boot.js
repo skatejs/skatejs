@@ -1,3 +1,4 @@
+import 'skatejs-named-slots';
 import helperFixture from './lib/fixture';
 import observer from '../src/native/document-observer';
 
