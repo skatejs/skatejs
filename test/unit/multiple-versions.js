@@ -9,7 +9,6 @@ const { skate } = window;
 describe('multiple-versions', function () {
   it('is possible to have multiple versions of skate on the page', function (done) {
     let called = [];
-    let elem;
 
     function skateAndCreate(customSkate) {
       const el = helperElement();
