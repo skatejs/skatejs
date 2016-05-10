@@ -6,7 +6,8 @@ import emit from '../api/emit';
 import empty from '../util/empty';
 import render from '../api/render';
 
-const $debounce = Symbol();
+// Symbol() wasn't transpiling properly.
+const $debounce = '____debouncedRender';
 
 function getDefaultValue (elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
