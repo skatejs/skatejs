@@ -24,7 +24,7 @@
     "gulp": "gulpjs/gulp#73eced0",
     "incremental-dom": "^0.3.0",
     "skatejs-build": "skatejs/build#22dc0e2",
-    "skatejs-named-slots": "skatejs/named-slots#4939500",
+    "skatejs-named-slots": "skatejs/named-slots#00daacd",
     "webcomponents.js": "0.7.22"
   },
   "scripts": {
