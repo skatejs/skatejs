@@ -295,7 +295,7 @@ document.registerElement('my-component', {
 });
 ```
 
-In Skate, however, if your `prototype` doesn't inherit from the base `HTMLElement`, Skate will automatically do this for you so you don't have to worry about it.
+In Skate, however, if your `prototype` doesn't inherit from the base `HTMLElement`, Skate will automatically do this for you, so you don't have to worry about it.
 
 
 
