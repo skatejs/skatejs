@@ -1561,7 +1561,7 @@ By declaring a Skate component, you are automatically making your element availa
 
 ### Naming Collisions
 
-You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you've haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can use `skate.factory()` to export a function that will allow your consumers to define a name for your component while preventing them from having to use `skate()` (or even know about it).
+You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can use `skate.factory()` to export a function that will allow your consumers to define a name for your component while preventing them from having to use `skate()` (or even know about it).
 
 ```js
 export default skate.factory({
