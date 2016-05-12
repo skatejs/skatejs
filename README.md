@@ -480,6 +480,7 @@ skate('my-component', {
 By default, no events are triggered.
 
 
+
 ##### `get`
 
 A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
