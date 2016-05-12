@@ -1544,10 +1544,7 @@ A web component's public API should be available both imperatively (via JavaScri
 You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
 
 ```js
-window.MyComponent = skate('my-component', {});
-
-// Somewhere else.
-const element = window.MyComponent();
+export default skate('my-component', {});
 ```
 
 
@@ -1562,7 +1559,7 @@ By declaring a Skate component, you are automatically making your element availa
 
 
 
-### Compatible with multiple versions of itself
+### Naming Collisions
 
 You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you've haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can use `skate.factory()` to export a function that will allow your consumers to define a name for your component while preventing them from having to use `skate()` (or even know about it).
 
@@ -1573,6 +1570,12 @@ export default skate.factory({
   }
 });
 ```
+
+
+
+### Compatible with multiple versions of itself
+
+Skate is designed so that you can have multiple versions of it on the same page. This is so that if you have several components, your upgrades and releases aren't coupled. If you have a UI library based on Skate and those consuming your library also have Skate, you're versions aren't coupled.
 
 
 
