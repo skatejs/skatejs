@@ -1575,7 +1575,7 @@ export default skate.factory({
 
 ### Compatible with multiple versions of itself
 
-Skate is designed so that you can have multiple versions of it on the same page. This is so that if you have several components, your upgrades and releases aren't coupled. If you have a UI library based on Skate and those consuming your library also have Skate, you're versions aren't coupled.
+Skate is designed so that you can have multiple versions of it on the same page. This is so that if you have several components, your upgrades and releases aren't coupled. If you have a UI library based on Skate and those consuming your library also have Skate, your versions aren't coupled.
 
 
 
