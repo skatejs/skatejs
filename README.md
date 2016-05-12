@@ -37,7 +37,7 @@ skate('x-hello', {
 Result
 
 ```html
-<my-element>Hello, Bob!</my-element>
+<x-hello name="Bob">Hello, Bob!</x-hello>
 ```
 
 Whenever you change the `name` property - or attribute - the component will re-render, only changing the part of the DOM that requires updating.
