@@ -2,14 +2,16 @@ import element from '../../lib/element';
 import propertiesInit from '../../../src/lifecycle/properties-init';
 
 describe('lifecycle/property', function () {
-  function create (definition, name = 'testName', value = null) {
-    return element().skate({
+  function create (definition, name = 'testName', value) {
+    const elem = element().skate({
       properties: {
         [name]: definition
       }
-    })({
-      [name]: value
-    });
+    })();
+    if (arguments.length === 3) {
+      elem[name] = value;
+    }
+    return elem;
   }
 
   it('should accept zero arguments', function () {
@@ -327,7 +329,7 @@ describe('lifecycle/property', function () {
     });
 
     describe('set()', function () {
-      it('is called once if the value does not exist on the element when it is initialised', function () {
+      it('is not called if no value is on the element when it is initialised', function () {
         let calls = 0;
         create({
           set (elem, data) {
@@ -336,7 +338,7 @@ describe('lifecycle/property', function () {
             ++calls;
           }
         });
-        expect(calls).to.equal(1);
+        expect(calls).to.equal(0);
       });
 
       it('is called once if the value exists on the element when it is initialised', function () {
@@ -348,7 +350,7 @@ describe('lifecycle/property', function () {
             expect(data.oldValue).to.equal(undefined);
             ++calls;
           }
-        }, 'test-name', 'something');
+        }, 'testName', 'something');
         expect(calls).to.equal(1);
       });
 
@@ -356,7 +358,7 @@ describe('lifecycle/property', function () {
         let calls = 0;
         let elem = create({ set: () => ++calls });
         elem.testName = true;
-        expect(calls).to.equal(2);
+        expect(calls).to.equal(1);
       });
 
       it('is called even if the property is set to the same value that it already is', function () {
@@ -364,7 +366,7 @@ describe('lifecycle/property', function () {
         let elem = create({ set: () => ++calls });
         elem.testName = true;
         elem.testName = true;
-        expect(calls).to.equal(3);
+        expect(calls).to.equal(2);
       });
 
       it('context and arguments', function (done) {
@@ -381,7 +383,7 @@ describe('lifecycle/property', function () {
             done();
           }
         };
-        create(opts);
+        create(opts, 'testName', undefined);
       });
     });
 
@@ -404,20 +406,14 @@ describe('lifecycle/property', function () {
 
         elem.testName = 'something';
 
-        // Called to coerce the initial value in created.
+        // Called to coerce the initial value.
         expect(order[0]).to.equal('coerce');
 
-        // Called just before set, after ready.
+        // Called to coerce the manual set().
         expect(order[1]).to.equal('coerce');
 
-        // Called after coerce, after ready.
+        // Called after coercing the manual value.
         expect(order[2]).to.equal('set');
-
-        // Called before set upon manual setting.
-        expect(order[3]).to.equal('coerce');
-
-        // Called after coerce upon manual setting.
-        expect(order[4]).to.equal('set');
       });
 
       it('context and arguments', function (done) {
@@ -442,6 +438,28 @@ describe('lifecycle/property', function () {
         });
         elem.testName = 'something else';
         expect(called).to.equal(1);
+      });
+
+      it('a value that is not a function becomes the initial value', function () {
+        const elem = create({
+          initial: 'test'
+        });
+        expect(elem.testName).to.equal('test');
+      });
+
+      it('a function should return the initial value', function () {
+        const elem = create({
+          initial: () => 'test'
+        });
+        expect(elem.testName).to.equal('test');
+      });
+
+      it('does not get used as the default value', function () {
+        const elem = create({
+          initial: 'test'
+        });
+        elem.testName = undefined;
+        expect(elem.testName).to.equal(undefined);
       });
 
       it('context and arguments', function (done) {
