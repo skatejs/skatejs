@@ -679,7 +679,7 @@ The only argument passed to `detached` is component element. In this case that i
 
 #### `attribute`
 
-Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback`. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback but there are still use cases where this could come in handy.
+Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback`. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
 
 ```js
 skate('my-component', {
