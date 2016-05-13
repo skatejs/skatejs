@@ -1615,4 +1615,4 @@ skate('my-component', {
 
 ## React Integration
 
-We written a [integration layer](https://github.com/skatejs/react-integration) for React that transforms your web components into React components so that they can be used as first-class citizens within React.
+We provide an [integration layer](https://github.com/skatejs/react-integration) for React that transforms your web components into React components so that they can be used as first-class citizens within React.
