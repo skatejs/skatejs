@@ -1,6 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import helperReady from '../lib/ready';
+import ready from '../src/api/ready';
 import skate from '../../src/index';
 
 describe('lifecycle', function () {
@@ -38,24 +38,24 @@ describe('lifecycle', function () {
 
   it('should call the attached() callback when the element is attached', function (done) {
     helperFixture().appendChild(myEl);
-    helperReady(function () {
+    setTimeout(function () {
       expect(created).to.equal(true);
       expect(attached).to.equal(true);
       expect(detached).to.equal(false);
       done();
-    });
+    }, 1);
   });
 
   it('should call the detached() callback when the element is detached', function (done) {
     helperFixture().appendChild(myEl);
-    helperReady(function () {
+    ready(myEl, function () {
       helperFixture().removeChild(myEl);
-      helperReady(function () {
+      setTimeout(function () {
         expect(created).to.equal(true);
         expect(attached).to.equal(true);
         expect(detached).to.equal(true);
         done();
-      });
+      }, 1);
     });
   });
 
@@ -120,21 +120,26 @@ describe('lifecycle scenarios', function () {
   });
 
   describe('use the constructor then add it to the DOM', function () {
+    let myEl;
+
     beforeEach(function () {
-      helperFixture(new El());
+      myEl = new El();
+      helperFixture(myEl);
     });
 
     it('should call created', function (done) {
-      helperReady(function () {
+      ready(myEl, function () {
         expect(calls.created).to.be.greaterThan(0);
         done();
       });
     });
 
     it('should call attached', function (done) {
-      helperReady(function () {
-        expect(calls.attached).to.be.greaterThan(0);
-        done();
+      ready(myEl, function () {
+        setTimeout(function () {
+          expect(calls.attached).to.be.greaterThan(0);
+          done();
+        }, 1);
       });
     });
   });
@@ -146,18 +151,18 @@ describe('lifecycle scenarios', function () {
       el.textContent = 'gagas';
 
       helperFixture(el);
-      helperReady(function () {
+      ready(el, function () {
         helperFixture().removeChild(el);
-        helperReady(function () {
+        setTimeout(function () {
           helperFixture(el);
-          helperReady(function () {
+          setTimeout(function () {
             helperFixture().removeChild(el);
-            helperReady(function () {
+            setTimeout(function () {
               expect(calls[num]).to.equal(val, num);
               done();
-            });
-          });
-        });
+            }, 1);
+          }, 1);
+        }, 1);
       });
     }
 
@@ -205,11 +210,10 @@ describe('lifecycle scenarios', function () {
 
       element.parentNode.removeChild(element);
 
-      // Mutation Observers are async.
-      helperReady(function () {
+      setTimeout(function () {
         expect(detached).to.equal(true, 'Should call detached');
         done();
-      });
+      }, 1);
     });
 
     it('should initialise multiple instances of the same type of element (possible bug).', function (done) {
@@ -252,8 +256,8 @@ describe('lifecycle scenarios', function () {
         setTimeout(function () {
           expect(numDetached).to.equal(2, 'detached');
           done();
-        });
-      });
+        }, 1);
+      }, 1);
     });
   });
 });

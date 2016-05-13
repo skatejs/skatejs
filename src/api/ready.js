@@ -1,8 +1,8 @@
-import customElements from '../native/custom-elements';
 import data from '../util/data';
+import findElementInRegistry from '../util/find-element-in-registry';
 
 function ready (element) {
-  const component = customElements.get(element.tagName.toLowerCase());
+  const component = findElementInRegistry(element);
   return component && data(element).created;
 }
 

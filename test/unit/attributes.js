@@ -1,5 +1,5 @@
 import helperElement from '../lib/element';
-import helperReady from '../lib/ready';
+import ready from '../../src/api/ready';
 import skate from '../../src/index';
 
 describe('lifecycle/attribute', function () {
@@ -18,7 +18,7 @@ describe('lifecycle/attribute', function () {
     it('should properly call the attribute callback for defined', function(done) {
       let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'defined', newValue: ''}));
 
-      helperReady(function() {
+      ready(myToggle, function() {
         expect(resolvedSpy.calledOnce).to.be.true;
         done();
       });
@@ -33,7 +33,7 @@ describe('lifecycle/attribute', function () {
       myToggle.setAttribute('name', 'updated');
       myToggle.removeAttribute('name');
 
-      helperReady(() => {
+      ready(myToggle, () => {
         expect(newValueSpy.calledOnce).to.be.true;
         expect(updatedValueSpy.calledOnce).to.be.true;
         expect(removeValueSpy.calledOnce).to.be.true;

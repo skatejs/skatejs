@@ -1,6 +1,7 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
 import skate from '../../../src/index';
+import vdom from '../../../src/api/vdom';
 
 describe('api/init', function () {
   let tagName;
@@ -65,8 +66,8 @@ describe('api/init', function () {
             }
           }
         },
-        render (elem) {
-          elem.innerHTML = '<form></form>';
+        render () {
+          vdom('form');
         },
         ready (elem) {
           elem.querySelector('form').initialised = true;

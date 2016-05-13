@@ -5,9 +5,11 @@ import create from './create';
 import created from '../lifecycle/created';
 import createElement from '../native/create-element';
 import customElements from '../native/custom-elements';
+import data from '../data';
 import defaults from '../defaults';
 import detached from '../lifecycle/detached';
 import documentObserver from '../native/document-observer';
+import render from '../lifecycle/render';
 import support from '../native/support';
 import utilGetAllPropertyDescriptors from '../util/get-all-property-descriptors';
 import utilGetOwnPropertyDescriptors from '../util/get-own-property-descriptors';
@@ -73,10 +75,25 @@ function addConstructorInformation (name, Ctor) {
   }
 }
 
+// When passing props, Incremental DOM defaults to setting an attribute. When
+// you pass around data to components it's better to use properties because you
+// can pass things other than strings. This tells incremental DOM to use props
+// for all defined properties on components.
+function ensureIncrementalDomKnowsToSetPropsForLinkedAtrs (name, opts) {
+  Object.keys(opts).forEach(function (optKey) {
+    const propKey = name + '.' + optKey;
+    data.applyProp[propKey] = true;
+  });
+}
+
 // The main skate() function.
 export default function (name, opts) {
+  // Ensure the render function render's using Incremental DOM.
+  opts.render = render(opts);
+
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
+  ensureIncrementalDomKnowsToSetPropsForLinkedAtrs(name, opts);
 
   // If the options don't inherit a native element prototype, we ensure it does
   // because native requires you explicitly do this. Here we solve the common
