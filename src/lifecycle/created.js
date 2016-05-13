@@ -2,12 +2,8 @@ import data from '../util/data';
 import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import propertiesInit from './properties-init';
-import propertiesCreated from './properties-created';
-import propertiesReady from './properties-ready';
 import prototypeApplier from './prototype';
 
-// TODO Remove this when we no longer support the legacy definitions and only
-// support a superset of a native property definition.
 function ensurePropertyFunctions (opts) {
   let properties = opts.properties;
   let names = Object.keys(properties || {});
@@ -27,9 +23,23 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
+function initialiseProperties (elem, propertyDefinitions) {
+  Object.keys(propertyDefinitions).forEach(function (name) {
+    const prop = propertyDefinitions[name];
+    prop.created(elem);
+
+    // https://bugs.webkit.org/show_bug.cgi?id=49739
+    //
+    // When Webkit fixes that bug so that native property accessors can be
+    // retrieved, we can move defining the property to the prototype and away
+    // from having to do if for every instance as all other browsers support
+    // this.
+    Object.defineProperty(elem, name, prop);
+  });
+}
+
 export default function (opts) {
   const {
-    attribute,
     created,
     definedAttribute,
     events,
@@ -57,9 +67,7 @@ export default function (opts) {
     info.created = true;
 
     if (!isNative) {
-      if (attribute) {
-        patchAttributeMethods(this);
-      }
+      patchAttributeMethods(this);
 
       if (prototype) {
         applyPrototype(this);
@@ -67,7 +75,7 @@ export default function (opts) {
     }
 
     if (propertyDefinitions) {
-      propertiesCreated(this, propertyDefinitions);
+      initialiseProperties(this, propertyDefinitions);
     }
 
     if (events) {
@@ -80,10 +88,6 @@ export default function (opts) {
 
     if (render && !this.hasAttribute(renderedAttribute)) {
       render(this);
-    }
-
-    if (propertyDefinitions) {
-      propertiesReady(this, propertyDefinitions);
     }
 
     if (ready) {

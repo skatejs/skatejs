@@ -41,8 +41,8 @@ describe('lifecycle/created', function () {
       render: test('render')
     })();
 
-    let formatted = order.map(format).join('');
-    expect(order).to.have.length(13, formatted);
+    const formatted = order.map(format).join('');
+    expect(order).to.have.length(12, formatted);
     expect(order[0]).to.equal('created.prototype');
     expect(order[1]).to.equal('created.event');
     expect(order[2]).to.equal('created.property');
@@ -51,10 +51,9 @@ describe('lifecycle/created', function () {
     expect(order[5]).to.equal('render.event');
     expect(order[6]).to.equal('render.property');
     expect(order[7]).to.equal('render.callback');
-    expect(order[8]).to.equal('render.property');
-    expect(order[9]).to.equal('ready.prototype');
-    expect(order[10]).to.equal('ready.event');
-    expect(order[11]).to.equal('ready.property');
-    expect(order[12]).to.equal('ready.callback');
+    expect(order[8]).to.equal('ready.prototype');
+    expect(order[9]).to.equal('ready.event');
+    expect(order[10]).to.equal('ready.property');
+    expect(order[11]).to.equal('ready.callback');
   });
 });
