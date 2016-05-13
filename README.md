@@ -142,18 +142,20 @@ In [browsers](http://caniuse.com/#search=custom%20elements) that don't natively 
   - [Extending Elements](#extending-elements)
   - [Asynchrony](#asynchrony)
   - [Web Component Differences](#web-component-differences)
-  - [WebComponentsJS Differences](#webcomponentsjs-differences)
+  - [VS WebComponentsJS](#vs-webcomponentsjs)
   - [VS Polymer](#vs-polymer)
+  - [VS X-Tags](#vs-x-tags)
+  - [VS React](#vs-react)
   - [Native Custom Element Support](#native-custom-element-support)
-    - [Spec Stability](#spec-stability)
   - [SVG](#svg)
   - [Preventing FOUC](#preventing-fouc)
   - [Designing Web Components](#designing-web-components)
     - [Imperative](#imperative)
     - [Declarative](#declarative)
+    - [Naming Collisions](#naming-collisions)
     - [Compatible with multiple versions of itself](#compatible-with-multiple-versions-of-itself)
     - [Properties and Attributes](#properties-and-attributes)
-    - [React Integration](#react-integration)
+  - [React Integration](#react-integration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
