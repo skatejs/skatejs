@@ -1486,7 +1486,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
 - Skate is larger than X-Tags without the Custom Element polyfill, but is smaller than X-Tags after you include the Custom Element polyfill. This is due to the fact that Skate provides the Custom Element implementation internally.
 - Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since X-Tags uses the WebComponentsJS polyfill.
-- Since Skate has an opinion on rendering, there's no mutation your component's DOM from property accessors. This is all handled for you underneath the hood.
+- There's no mutating your component's DOM from property accessors which can become unweidly.
 
 
 
@@ -1496,7 +1496,7 @@ React has definitely had an influence on Skate. That said, they're completely di
 
 - React is massive: a whopping 145k minified vs 23k.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
-- **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative);
+- **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.
 
 
