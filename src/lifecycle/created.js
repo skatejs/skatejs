@@ -24,7 +24,7 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
-function iniitaliseProperties (elem, propertyDefinitions) {
+function initialiseProperties (elem, propertyDefinitions) {
   Object.keys(propertyDefinitions).forEach(function (name) {
     const prop = propertyDefinitions[name];
     prop.created(elem);
@@ -75,7 +75,7 @@ export default function (opts) {
     }
 
     if (propertyDefinitions) {
-      iniitaliseProperties(this, propertyDefinitions);
+      initialiseProperties(this, propertyDefinitions);
     }
 
     if (events) {

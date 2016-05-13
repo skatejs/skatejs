@@ -14,7 +14,7 @@ function getDefaultValue (elem, name, opts) {
 }
 
 function getInitialValue (elem, name, opts) {
-  typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
+  return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
 }
 
 function getLinkedAttribute (name, attr) {
