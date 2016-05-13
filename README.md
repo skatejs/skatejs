@@ -1448,23 +1448,19 @@ This is because Mutation Observers queue a [microtask](https://jakearchibald.com
 
 ## Web Component Differences
 
-Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) with a custom API but it does not polyfill the native methods. Since Skate requires that you BYO your own Shadow DOM polyfill. Some polyfills are:
-
-- https://github.com/skatejs/named-slots/
-- https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
+Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) with a custom API but it does not polyfill the native methods. This allows it to minimise code overhead and optimise performance. Because of this, Skate is around the same size as the custom element polyfill, performs better and can have multiple versions of itself on the page if need be. However, you cannot abstract the Shadow DOM in the same way, which is why we've opted to have the user provide their own Shadow DOM polyfill instead of bundling it.
 
 
 
-## WebComponentsJS Differences
+## VS WebComponentsJS
 
 [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 
-Like the web component differences mentioned above, Skate only polyfills and value-adds to the Custom Element spec, so it will only compare to the Custom Element polyfill. The notable differences are:
+WebComponentsJS is a suite of polyfills. Skate can work along side these, but is a superset of these so it provides you with an opinionated layer on top of them. There are a few things to note:
 
-- Skate does much more.
-- Skate is faster. If it's not, it's a bug. See the [perf tests](https://github.com/skatejs/skatejs/tree/master/test/perf).
-- Skate is smaller (15k vs 17k min, no gzip).
-- Skate does not override any native methods.
+- Skate's Custom Element implementation is faster than the WebComponentsJS polyfill.
+- Skate does not override any native Custom Element methods.
+- Skate is only slightly larger than the Custom Element polyfill (23k vs 17k, min not gzipped).
 - You can have multiple versions of Skate on the page.
 - Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill.
 
@@ -1472,9 +1468,38 @@ Like the web component differences mentioned above, Skate only polyfills and val
 
 ## VS Polymer
 
-Polymer uses webcomponentsjs and adds an abstraction on top of it. Fundamentally, Polymer and Skate are very different things. Skate gives you an abstarction over custom elements rather than the entire spec making it more of a library than a framework. The differences to webcomponentsjs above also apply to Polymer.
+Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundametally, Skate and Polymer are very different.
 
-If you want a more full featured solution, have a look at [kickflip](https://github.com/skatejs/kickflip). It's similar to Polymer in the sense that it combines custom elements and shadow DOM, however, it is designed around the same concepts as React and takes a more functional approach to rendering.
+- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
+- Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions. All versions listed below for Polymer don't include the size of the Custom Element polyfill (17k):
+  - `polymer-micro.html` 17k vs 23k
+  - `polymer-mini.html` 54k vs 23k
+  - `polymer.html` 124k vs 23k
+- Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since X-Tags uses the WebComponentsJS polyfill.
+- Polymer uses HTML Imports to build their codebase. HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
+- Skate supports JSPM, Bower, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
+
+
+
+## VS X-Tags
+
+Skate is very close to X-Tags in terms of API shape, however, it is very different in the way it is applied and shares a lot of the same differences with X-Tags as it does with Polymer.
+
+- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
+- Skate is larger than X-Tags without the Custom Element polyfill, but is smaller than X-Tags after you include the Custom Element polyfill. This is due to the fact that Skate provides the Custom Element implementation internally.
+- Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since X-Tags uses the WebComponentsJS polyfill.
+- Since Skate has an opinion on rendering, there's no mutation your component's DOM from property accessors. This is all handled for you underneath the hood.
+
+
+
+## Vs React
+
+React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
+
+- React is massive: a whopping 145k minified vs 23k.
+- In the performance tests you can see a Skate component is several times faster than a similarly written React component.
+- Skate is written on top of W3C standards. The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate.
+- We have plans to support server-side rendering.
 
 
 
@@ -1483,10 +1508,6 @@ If you want a more full featured solution, have a look at [kickflip](https://git
 If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 We strive to ensure Skate has as little base overhead as possible. What this means is that if you build a component with Skate vs with native it should not have a negative impact on performance. Of course, there will always be some overhead, but it should not be significant.
-
-### Spec Stability
-
-Currently, the custom element spec is no longer contentious. There is still a lot of work for them to finalise which will hold up browser adoption and there are quite a few changes than what is currently implemented in browsers that have native implementations. For this reason, we will strive to keep things as stable as possible and make transitions between changes as smooth as possible. However, it won't come without some breaking changes. For this reason we are opting to not release a `1.0` until the custom element spec is stable. This is so that our versioning stays semantic and reflects our confidence in the stability of the spec. Breaking changes will *always* be made in minor releases while still in `0.*` releases.
 
 
 
@@ -1557,6 +1578,22 @@ By declaring a Skate component, you are automatically making your element availa
 ```html
 <my-component></my-component>
 ```
+
+Instead of providing just imperative methods such as `play()` for a video player, you should try to provide attributes that offer the same functionality. For example, if you had a player component you could offer a `playing` boolean attribute so that it can be put on the element so that it starts playing when it's put on the page.
+
+```html
+<x-player playing></x-player>
+```
+
+To pause / stop the player, you remove the attribute.
+
+```html
+<x-player></x-player>
+```
+
+If you're something like React or Skate to render this component, you don't have to write any imperative code to remove that attribute as the virtual DOM implementations will do that for you.
+
+The nice part about thinking this way is that you get both a declarative and imperative API for free. You can think about this in simpler terms by designing your API around attributes rather than methods.
 
 
 
