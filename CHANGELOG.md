@@ -6,10 +6,31 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 1.0.0 (Unreleased)
 
+### Fixed
+
 ### Added
 
-- [#513](https://github.com/skatejs/skatejs/issues/513) - events can be added to property changes
-- [#517](https://github.com/skatejs/skatejs/issues/517) - add `skate.factory()`
+- [#419](https://github.com/skatejs/skatejs/issues/491) - Add an `array()` property type.
+- [#478](https://github.com/skatejs/skatejs/issues/478) - Improve overall performance.
+- [#479](https://github.com/skatejs/skatejs/issues/479) - Fix performance issues with `skate.ready()`.
+- [#484](https://github.com/skatejs/skatejs/issues/484) - Add support for native `window.customElements.define()`.
+- [#513](https://github.com/skatejs/skatejs/issues/513) - Property changes can now trigger a non-bubbling event.
+- [#516](https://github.com/skatejs/skatejs/issues/516) - Add support for native `window.customElements.get()`.
+- [#517](https://github.com/skatejs/skatejs/issues/517) - Add `skate.factory()`.
+
+### Changed
+
+- [#501](https://github.com/skatejs/skatejs/issues/501) - Shared document observer and registry is *not* shared anymore. This means that if you have two versions of Skate on the page that there will be two mutation observers for the two separate versions on the document. The maintenance overhead of sharing outweights the performance hit in older browsers for the edge-case of sharing versions.
+- [#508](https://github.com/skatejs/skatejs/issues/508) - All instances of `resolved` were changed to be `defined`.
+- [#542](https://github.com/skatejs/skatejs/pull/542) - Remove support for `created` and `ready` property options as they're not needed anymore. Add in functionality to support the Incremental DOM rendering API.
+- [#543](https://github.com/skatejs/skatejs/pull/543) - Remove support for custom binding types. Only custom elements to the spec are supported now.
+- [#544](https://github.com/skatejs/skatejs/pull/544) - Remove support for custom renderers. Incremental DOM is now the defeacto renderer and all properties cause a re-render or have the option to specify when it does similar to `shouldComponentUpdate()` in React.
+
+### Removed
+
+- [#471](https://github.com/skatejs/skatejs/issues/471) - Remove `skate.render.html()`.
+- [#473](https://github.com/skatejs/skatejs/issues/473) - Remove support for components in polyfill-land that have an invalid name in native-land.
+- [#475](https://github.com/skatejs/skatejs/issues/475) - No more binding multiple components to a single element. Removes ambiguity.
 
 ## 0.15.3
 
