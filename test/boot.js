@@ -1,5 +1,6 @@
+import 'skatejs-named-slots';
 import helperFixture from './lib/fixture';
-import observer from '../src/shared/document-observer';
+import observer from '../src/native/document-observer';
 
 afterEach(function () {
   // Ensure perf tests have enough time to cleanup after themselves.

@@ -1,8 +1,8 @@
 import data from '../util/data';
-import registry from '../shared/registry';
+import findElementInRegistry from '../util/find-element-in-registry';
 
 function ready (element) {
-  const component = registry.find(element);
+  const component = findElementInRegistry(element);
   return component && data(element).created;
 }
 

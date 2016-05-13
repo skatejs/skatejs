@@ -77,7 +77,7 @@ describe('api/properties', function () {
         let elem = create(properties.boolean());
         elem.setAttribute('test', value);
         expect(elem.test).to.equal(true, 'property');
-        expect(elem.getAttribute('test')).to.equal(String(value), 'attribute');
+        expect(elem.getAttribute('test')).to.equal('', 'attribute');
       });
       it('setting property to ' + value, function () {
         let elem = create(properties.boolean());
@@ -157,7 +157,7 @@ describe('api/properties', function () {
     });
 
     it('the event name can be changed', function () {
-      let elem = create(assign({event: 'foo'}, properties.boolean()));
+      let elem = create(assign({ event: 'foo' }, properties.boolean()));
       elem.test = false;
 
       let propertyChangeCalled = false;
@@ -171,7 +171,7 @@ describe('api/properties', function () {
     });
 
     it('is triggered only when properties change', function () {
-      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
       elem.test = false;
 
       let calls = 0;
@@ -186,7 +186,7 @@ describe('api/properties', function () {
     });
 
     it('does not bubble', function () {
-      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
       elem.test = false;
 
       let parent = document.createElement('div');
@@ -200,7 +200,7 @@ describe('api/properties', function () {
     });
 
     it('can be cancelled', function () {
-      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
       elem.test = false;
       elem.addEventListener('propertychange', (e) => e.preventDefault());
       elem.test = true;
@@ -208,8 +208,7 @@ describe('api/properties', function () {
     });
 
     it('after cancelling events, subsequent sets pass through', function () {
-      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
-      elem.test = false;
+      const elem = create(assign({ event: 'propertychange' }, properties.boolean()));
 
       function preventOnce () {
         let alreadyPrevented = false;
@@ -224,13 +223,14 @@ describe('api/properties', function () {
       elem.addEventListener('propertychange', preventOnce());
 
       elem.test = true;
-      expect(elem.test).to.equal(false);
+      expect(elem.test).to.equal(false, 'prevented');
+
       elem.test = true;
-      expect(elem.test).to.equal(true);
+      expect(elem.test).to.equal(true, 'passed through');
     });
 
     it('contains property name, and change details', function () {
-      let elem = create(assign({event: 'propertychange'}, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
       let event = null;
       elem.test = false;
 

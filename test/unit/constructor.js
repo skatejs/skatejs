@@ -18,7 +18,6 @@ describe('constructor', function () {
   });
 
   it('existing elements + extends', function () {
-    id = id.replace(/-/, '');
     var Ctor = skate(id, { extends: 'span' });
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);

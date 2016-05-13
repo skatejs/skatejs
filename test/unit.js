@@ -27,4 +27,7 @@ import './unit/registry';
 import './unit/util/dash-case';
 import './unit/util/get-closest-ignored-element';
 import './unit/util/walk-tree';
+import './unit/vdom/events';
+import './unit/vdom/incremental-dom';
+import './unit/vdom/properties';
 import './unit/version';

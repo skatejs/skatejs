@@ -1,5 +1,3 @@
-import type from './type/element';
-
 const nope = null;
 
 export default {
@@ -14,6 +12,5 @@ export default {
   properties: nope,
   prototype: {},
   ready: nope,
-  renderedAttribute: 'rendered',
-  type
+  renderedAttribute: 'rendered'
 };
