@@ -1571,22 +1571,28 @@ export default skate('my-component', {});
 
 ### Declarative
 
-By declaring a Skate component, you are automatically making your element available to be used as HTML:
+By declaring a Skate component, you are automatically making your element available to be used as HTML. For example, if you were to create a custom element for a video player:
 
-```html
-<my-component></my-component>
+```js
+skate('x-video', {});
 ```
 
-Instead of providing just imperative methods - such as `play()` for a video player - you should try to provide attributes that offer the same functionality. For example, if you had a player component, you could offer a `playing` boolean attribute, so that it starts playing when it's put on the page.
+You could now just write:
 
 ```html
-<x-player playing></x-player>
+<x-video></x-video>
+```
+
+Instead of providing just imperative methods - such as `play()` for the natve `<video>` element - you should try to provide attributes that offer the same functionality. For example, if you had a player component, you could offer a `playing` boolean attribute, so that it starts playing when it's put on the page.
+
+```html
+<x-video playing></x-video>
 ```
 
 To pause / stop the player, you remove the attribute.
 
 ```html
-<x-player></x-player>
+<x-video></x-video>
 ```
 
 If you're using something like React or Skate to render this component, you don't have to write any imperative code to remove that attribute as the virtual DOM implementations will do that for you.
