@@ -79,7 +79,7 @@ function addConstructorInformation (name, Ctor) {
 // you pass around data to components it's better to use properties because you
 // can pass things other than strings. This tells incremental DOM to use props
 // for all defined properties on components.
-function ensureIncrementalDomKnowsToSetPropsForLinkedAtrs (name, opts) {
+function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs (name, opts) {
   Object.keys(opts).forEach(function (optKey) {
     const propKey = name + '.' + optKey;
     data.applyProp[propKey] = true;
@@ -93,7 +93,7 @@ export default function (name, opts) {
 
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
-  ensureIncrementalDomKnowsToSetPropsForLinkedAtrs(name, opts);
+  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, opts);
 
   // If the options don't inherit a native element prototype, we ensure it does
   // because native requires you explicitly do this. Here we solve the common
