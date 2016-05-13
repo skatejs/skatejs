@@ -1,11 +1,12 @@
 import '../fix/ie/innerhtml';
+import findElementInRegistry from '../util/find-element-in-registry';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
-import registry from './registry';
 import walkTree from '../util/walk-tree';
 
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
-    const component = registry.find(element);
+    const component = findElementInRegistry(element);
+
     if (component) {
       if (component.prototype.createdCallback) {
         component.prototype.createdCallback.call(element);
@@ -20,7 +21,8 @@ function triggerAddedNodes (addedNodes) {
 
 function triggerRemovedNodes (removedNodes) {
   walkTree(removedNodes, function (element) {
-    const component = registry.find(element);
+    const component = findElementInRegistry(element);
+
     if (component && component.prototype.detachedCallback) {
       component.prototype.detachedCallback.call(element);
     }

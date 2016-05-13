@@ -255,31 +255,5 @@ describe('lifecycle scenarios', function () {
         });
       });
     });
-
-    it('should not throw an error if using an id with the same name as a method / property on the Object prototype', function () {
-      const idsToSkate = ['hasOwnProperty', 'watch'];
-      const idsToCheck = [];
-
-      idsToSkate.forEach(function (id) {
-        const div = document.createElement('div');
-        div.className = idsToSkate.join(' ');
-
-        skate(id, {
-          type: {
-            create () {},
-            reduce (elem, defs) {
-              return Object.prototype.hasOwnProperty.call(defs, elem.className) && defs[elem.className];
-            }
-          },
-          created () {
-            idsToCheck.push(id);
-          }
-        });
-
-        skate.fragment(`<div class="${id}"></div>`);
-      });
-
-      expect(idsToCheck).to.deep.equal(idsToSkate);
-    });
   });
 });

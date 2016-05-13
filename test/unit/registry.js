@@ -1,30 +1,28 @@
 'use strict';
 
+import customElements from '../../src/native/custom-elements';
 import helperElement from '../lib/element';
-import registry from '../../src/shared/registry';
-import typeElement from '../../src/type/element';
 
 describe('registry', function () {
-  it('should set definitions', function () {
-    registry.set('test', { type: typeElement });
+  it('define()', function () {
+    customElements.define(helperElement().safe, {});
     try {
       // It should throw an error for duplicate definitions.
-      registry.set('test', {});
+      customElements.define('test', function () {});
       assert(false);
     } catch (e) {
       // Do nothing
     }
   });
 
-  it('should return definitions for a given element', function () {
-    const definition = { type: typeElement };
+  it('get()', function () {
+    const definition = function () {};
     const name = helperElement().safe;
-    const element = document.createElement(name);
 
-    registry.set(name, definition);
+    customElements.define(name, definition);
 
-    const reduced = registry.find(element);
+    const found = customElements.get(name);
 
-    expect(reduced).to.equal(definition);
+    expect(found).to.equal(definition, 'found === definition');
   });
 });

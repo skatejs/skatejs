@@ -65,7 +65,9 @@ describe('extending', function () {
         elem.textContent += 'ing';
       }
     });
-    expect(new ExtendedCtor().textContent).to.equal('testing');
+
+    const elem = new ExtendedCtor();
+    expect(elem.textContent).to.equal('testing');
   });
 
   canExtendStaticProperties && it('constructor should be accessible', function () {

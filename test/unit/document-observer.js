@@ -1,4 +1,4 @@
-import observer from '../../src/shared/document-observer';
+import observer from '../../src/native/document-observer';
 
 describe('Document Observer', function () {
   let localObserver;

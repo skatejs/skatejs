@@ -3,6 +3,7 @@ import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
 import propertiesInit from './properties-init';
 import prototypeApplier from './prototype';
+import support from '../native/support';
 
 function ensurePropertyFunctions (opts) {
   let properties = opts.properties;
@@ -43,7 +44,6 @@ export default function (opts) {
     created,
     definedAttribute,
     events,
-    isNative,
     properties,
     prototype,
     ready,
@@ -66,7 +66,7 @@ export default function (opts) {
 
     info.created = true;
 
-    if (!isNative) {
+    if (support.polyfilled) {
       patchAttributeMethods(this);
 
       if (prototype) {
