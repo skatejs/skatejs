@@ -1577,7 +1577,7 @@ By declaring a Skate component, you are automatically making your element availa
 <my-component></my-component>
 ```
 
-Instead of providing just imperative methods such as `play()` for a video player, you should try to provide attributes that offer the same functionality. For example, if you had a player component you could offer a `playing` boolean attribute so that it can be put on the element so that it starts playing when it's put on the page.
+Instead of providing just imperative methods - such as `play()` for a video player - you should try to provide attributes that offer the same functionality. For example, if you had a player component, you could offer a `playing` boolean attribute, so that it starts playing when it's put on the page.
 
 ```html
 <x-player playing></x-player>
@@ -1589,7 +1589,7 @@ To pause / stop the player, you remove the attribute.
 <x-player></x-player>
 ```
 
-If you're something like React or Skate to render this component, you don't have to write any imperative code to remove that attribute as the virtual DOM implementations will do that for you.
+If you're using something like React or Skate to render this component, you don't have to write any imperative code to remove that attribute as the virtual DOM implementations will do that for you.
 
 The nice part about thinking this way is that you get both a declarative and imperative API for free. You can think about this in simpler terms by designing your API around attributes rather than methods.
 
