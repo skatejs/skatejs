@@ -136,7 +136,6 @@ In [browsers](http://caniuse.com/#search=custom%20elements) that don't natively 
         - [`attrs.statics`](#attrsstatics)
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
-- [{elem.title}](#elemtitle)
     - [`version`](#version)
   - [Component Lifecycle](#component-lifecycle)
   - [Extending Elements](#extending-elements)
