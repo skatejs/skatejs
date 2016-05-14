@@ -51,7 +51,7 @@ Skate requires [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) sup
 - https://github.com/skatejs/named-slots/
 - https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
 
-In [browsers](http://caniuse.com/#search=custom%20elements) that don't natively support [Custom Elements](http://w3c.github.io/webcomponents/spec/custom/), Skate requires that you BYO a [Mutation Observer](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) polyfill:
+In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) polyfill:
 
 - https://github.com/webcomponents/webcomponentsjs (requires WeakMap polyfill)
 - https://github.com/megawac/MutationObserver.js
