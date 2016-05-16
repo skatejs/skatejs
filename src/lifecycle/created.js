@@ -24,6 +24,15 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
+function callAttributeChangedForEachAttribute (elem) {
+  const attrs = elem.attributes;
+  const attrsLen = attrs.length;
+  for (let a = 0; a < attrsLen; a++) {
+    const attr = attrs[a];
+    elem.attributeChangedCallback(attr.name, null, attr.value);
+  }
+}
+
 function initialiseProperties (elem, propertyDefinitions) {
   Object.keys(propertyDefinitions).forEach(function (name) {
     const prop = propertyDefinitions[name];
@@ -97,6 +106,13 @@ export default function (opts) {
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb());
       info.readyCallbacks = null;
+    }
+
+    // Invoking the attribute handler should be emulated in non-v1-land. This
+    // is supposed to happen after the constructor is called and this is the
+    // closest point to that.
+    if (!support.v1) {
+      callAttributeChangedForEachAttribute(this);
     }
 
     if (!this.hasAttribute(definedAttribute)) {
