@@ -5,6 +5,7 @@ import create from './create';
 import created from '../lifecycle/created';
 import createElement from '../native/create-element';
 import customElements from '../native/custom-elements';
+import dashCase from '../util/dash-case';
 import data from '../data';
 import defaults from '../defaults';
 import detached from '../lifecycle/detached';
@@ -86,6 +87,24 @@ function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs (name, opts) {
   });
 }
 
+// Ensures linked properties that have linked attributes are pre-formatted to
+// the attribute name in which they are linked.
+function ensureLinkedAttributesAreFormatted (opts) {
+  const { properties } = opts;
+
+  if (!properties) {
+    return;
+  }
+
+  Object.keys(properties).forEach(function (name) {
+    const prop = properties[name];
+    const attr = prop.attribute;
+    if (attr) {
+      prop.attribute = attr === true ? dashCase(name) : attr;
+    }
+  });
+}
+
 // The main skate() function.
 export default function (name, opts) {
   // Ensure the observed attributes are initialised.
@@ -96,7 +115,8 @@ export default function (name, opts) {
 
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
-  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, opts);
+  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, Ctor);
+  ensureLinkedAttributesAreFormatted(Ctor);
 
   // If the options don't inherit a native element prototype, we ensure it does
   // because native requires you explicitly do this. Here we solve the common
