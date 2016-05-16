@@ -90,7 +90,7 @@ function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs (name, opts) {
 // Ensures linked properties that have linked attributes are pre-formatted to
 // the attribute name in which they are linked.
 function ensureLinkedAttributesAreFormatted (opts) {
-  const { properties } = opts;
+  const { observedAttributes, properties } = opts;
 
   if (!properties) {
     return;
@@ -100,7 +100,14 @@ function ensureLinkedAttributesAreFormatted (opts) {
     const prop = properties[name];
     const attr = prop.attribute;
     if (attr) {
-      prop.attribute = attr === true ? dashCase(name) : attr;
+      // Ensure the property is updated.
+      const linkedAttr = prop.attribute = attr === true ? dashCase(name) : attr;
+
+      // Automatically observe the attribute since they're linked from the
+      // attributeChangedCallback.
+      if (observedAttributes.indexOf(linkedAttr) === -1) {
+        observedAttributes.push(linkedAttr);
+      }
     }
   });
 }
