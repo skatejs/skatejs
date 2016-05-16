@@ -1,9 +1,16 @@
 import data from '../util/data';
+import support from '../native/support';
 
-export default function (opts) {
-  const { attribute } = opts;
+export default function (Ctor) {
+  const { attribute, observedAttributes } = Ctor;
 
   return function (name, oldValue, newValue) {
+    // If native support for custom elements v1 exists, then it will natively
+    // do this check before calling the attributeChangedCallback.
+    if (!support.v1 && observedAttributes.indexOf(name) === -1) {
+      return;
+    }
+
     const propertyName = data(this, 'attributeLinks')[name];
 
     if (propertyName) {
