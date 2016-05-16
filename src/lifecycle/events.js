@@ -28,7 +28,7 @@ function makeDelegateHandler (elem, handler, parsed) {
       if (matches(current, selector)) {
         readonly(e, 'currentTarget', current);
         readonly(e, 'delegateTarget', elem);
-        return handler(e);
+        return handler(elem, e);
       }
       current = current.parentNode;
     }
@@ -38,7 +38,7 @@ function makeDelegateHandler (elem, handler, parsed) {
 function makeNormalHandler (elem, handler) {
   return function (e) {
     readonly(e, 'delegateTarget', elem);
-    handler(e);
+    handler(elem, e);
   };
 }
 
@@ -54,7 +54,7 @@ export default function events (opts) {
   const events = opts.events || {};
   return function (elem) {
     for (let name in events) {
-      bindEvent(elem, name, events[name].bind(elem));
+      bindEvent(elem, name, events[name]);
     }
   };
 }
