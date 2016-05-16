@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- [#483](https://github.com/skatejs/skatejs/issues/483) - `attribute` is now called for properties that exist on the element when it is upgraded.
 - [#501](https://github.com/skatejs/skatejs/issues/501) - Shared document observer and registry is *not* shared anymore. This means that if you have two versions of Skate on the page that there will be two mutation observers for the two separate versions on the document. The maintenance overhead of sharing outweights the performance hit in older browsers for the edge-case of sharing versions.
 - [#508](https://github.com/skatejs/skatejs/issues/508) - All instances of `resolved` were changed to be `defined`.
 - [#542](https://github.com/skatejs/skatejs/pull/542) - Remove support for `created` and `ready` property options as they're not needed anymore. Add in functionality to support the Incremental DOM rendering API.
