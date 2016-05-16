@@ -46,6 +46,11 @@ function createNativePropertyDefinition (name, opts) {
     const attributeName = getLinkedAttribute(name, opts.attribute);
     let initialValue = elem[name];
 
+    const observedAttributes = elem.constructor.observedAttributes;
+    if (observedAttributes.indexOf(attributeName) === -1) {
+      observedAttributes.push(attributeName);
+    }
+
     // Store property to attribute link information.
     data(elem, 'attributeLinks')[attributeName] = name;
     data(elem, 'propertyLinks')[name] = attributeName;
