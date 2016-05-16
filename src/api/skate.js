@@ -88,6 +88,9 @@ function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs (name, opts) {
 
 // The main skate() function.
 export default function (name, opts) {
+  // Ensure the observed attributes are initialised.
+  opts.observedAttributes = opts.observedAttributes || [];
+
   // Ensure the render function render's using Incremental DOM.
   opts.render = render(opts);
 
