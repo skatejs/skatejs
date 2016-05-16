@@ -76,13 +76,12 @@ export default function (opts) {
     info.created = true;
 
     if (support.polyfilled) {
-      patchAttributeMethods(this);
-
       if (prototype) {
         applyPrototype(this);
       }
     }
 
+    // Sets up properties, but does not invoke anything.
     if (propertyDefinitions) {
       initialiseProperties(this, propertyDefinitions);
     }
@@ -106,6 +105,11 @@ export default function (opts) {
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb());
       info.readyCallbacks = null;
+    }
+
+    // We patch attribute methods so that they behave in a synchronous manner.
+    if (support.polyfilled) {
+      patchAttributeMethods(this);
     }
 
     // Invoking the attribute handler should be emulated in non-v1-land. This
