@@ -28,7 +28,7 @@ skate('x-hello', {
   properties: {
     name { attribute: true }
   },
-  render (elem) {
+  render (element) {
     skate.vdom.text(`Hello, ${elem.name}`);
   }
 });
@@ -243,7 +243,7 @@ new MyComponent();
 The returned function also contains the information specified in your definition:
 
 ```js
-// function (elem) {}
+// function (element) {}
 MyComponent.render;
 ```
 
@@ -307,15 +307,15 @@ Event listeners to add to the custom element. These get bound after the `prototy
 ```js
 skate('my-component', {
   events: {
-    click (e) {}
+    click (element, eventObject) {}
   }
 });
 ```
 
 The context and arguments passed to the event handler are the same as the native [`EventTarget.addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) method:
 
-- `this` is the DOM element
-- `e` is the native event object that was dispatched on the DOM element
+- `element` is the DOM element
+- `eventObject` is the native event object that was dispatched on the DOM element
 
 
 
@@ -326,7 +326,7 @@ Event descriptors can use selectors to target descendants using event delegation
 ```js
 skate('my-component', {
   events: {
-    'click button' (e) {}
+    'click button' (element, eventObject) {}
   }
 });
 ```
@@ -341,7 +341,7 @@ Function that is called when the element is created. This corresponds to the nat
 
 ```js
 skate('my-component', {
-  created (elem) {}
+  created (element) {}
 });
 ```
 
@@ -625,7 +625,7 @@ Function that is called to render the element. This is called when the element i
 
 ```js
 skate('my-component', {
-  render (elem) {
+  render (element) {
     skate.vdom.p(`My name is ${elem.tagName}.`);
   }
 });
@@ -643,7 +643,7 @@ Function that is called after the element has been rendered for the first time (
 
 ```js
 skate('my-component', {
-  ready (elem) {}
+  ready (element) {}
 });
 ```
 
@@ -657,7 +657,7 @@ Function that is called after the element has been inserted to the document. Thi
 
 ```js
 skate('my-component', {
-  attached (elem) {}
+  attached (element) {}
 });
 ```
 
@@ -671,7 +671,7 @@ Function that is called after the element has been removed from the document. Th
 
 ```js
 skate('my-component', {
-  detached (elem) {}
+  detached (element) {}
 });
 ```
 
@@ -981,8 +981,8 @@ skate('my-input', function () {
   properties: {
     value: { attribute: true }
   },
-  render (elem) {
-    skate.vdom.input({ onchange: skate.link(elem), type: 'text' });
+  render (element) {
+    skate.vdom.input({ onchange: skate.link(element), type: 'text' });
   }
 });
 ```
@@ -990,7 +990,7 @@ skate('my-input', function () {
 By default the `propSpec` defaults to `e.currentTarget.getAttribute('name')` or `"value"` which is why it wasn't specified in the example above. In the example above, it would set `value` on the component. If you were to give your input a name, it would use the name from the event `currentTarget` as the name that should be set. For example if you changed your input to read:
 
 ```js
-skate.vdom.input({ name: 'someValue', onchange: skate.link(elem), type: 'text' });
+skate.vdom.input({ name: 'someValue', onchange: skate.link(element), type: 'text' });
 ```
 
 Then instead of setting `value` on the component, it would set `someValue`.
@@ -1162,7 +1162,7 @@ If you need to interact with components that may not be initialised yet (at any 
 
 ```js
 skate('component-a', {
-  ready (elem) {
+  ready (element) {
     const b = elem.querySelector('component-b');
 
     // Would be `undefined` because it's not defined yet.
@@ -1174,13 +1174,13 @@ skate('component-a', {
       b.initialised;
     });
   },
-  render (elem) {
+  render (element) {
     skate.vdom('component-b');
   }
 });
 
 skate('component-b', {
-  created (elem) {
+  created (element) {
     elem.initialised = true;
   }
 });
@@ -1216,7 +1216,7 @@ skate.state(elem, {
 
 // Only returns props you've defined on your component.
 // { prop1: 'value 1' }
-skate.state(elem);
+skate.state(element);
 ```
 
 
@@ -1342,7 +1342,7 @@ skate('my-element', {
   properties: {
     title: skate.properties.string()
   },
-  render (elem) {
+  render (element) {
     <div>
       <h1>{elem.title}</h1>
       <slot name="description" />
@@ -1607,7 +1607,7 @@ You may write a component that you change in a backward incompatible way. In ord
 
 ```js
 export default skate.factory({
-  render (elem) {
+  render (element) {
     skate.vdom.text(`This element has been called: ${elem.tagName}.`);
   }
 });
