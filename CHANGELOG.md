@@ -25,7 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#542](https://github.com/skatejs/skatejs/pull/542) - Remove support for `created` and `ready` property options as they're not needed anymore. Add in functionality to support the Incremental DOM rendering API.
 - [#543](https://github.com/skatejs/skatejs/pull/543) - Remove support for custom binding types. Only custom elements to the spec are supported now.
 - [#544](https://github.com/skatejs/skatejs/pull/544) - Remove support for custom renderers. Incremental DOM is now the defeacto renderer and all properties cause a re-render or have the option to specify when it does similar to `shouldComponentUpdate()` in React.
-- [$547](https://github.com/skatejs/skatejs/issues/547) - Remove `skate.render()` and synchronously render after calling `skate.state()`.
+- [#547](https://github.com/skatejs/skatejs/issues/547) - Remove `skate.render()` and synchronously render after calling `skate.state()`.
 
 ### Removed
 
