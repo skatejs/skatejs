@@ -3,7 +3,7 @@ import fixture from '../../lib/fixture';
 import ready from '../../src/api/ready';
 import skate from '../../src/index';
 
-describe('lifecycle/attribute', function (done) {
+describe('lifecycle/attribute', function () {
   it('should be invoked for attributes that exist on the element when it is created', function (done) {
     const tag = element();
     const elem = document.createElement(tag.safe);
@@ -20,6 +20,97 @@ describe('lifecycle/attribute', function (done) {
         expect(data.newValue).to.equal('testing');
         done();
       }
+    });
+  });
+
+  describe('observed attributes', function () {
+    it('should allow an array as attributes', function (done) {
+      const calls = [];
+      const elem = element().skate({
+        attributes: ['test-attr'],
+        attribute (elem, data) {
+          calls.push(data.name);
+        }
+      })();
+
+      fixture(elem);
+
+      ready(elem, function () {
+        elem.setAttribute('test-attr', '');
+        elem.setAttribute('test-prop', '');
+        expect(calls.length).to.equal(1);
+        expect(calls[0]).to.equal('test-attr');
+        done();
+      });
+    });
+
+    it('should automatically observe linked attributes', function (done) {
+      const calls = [];
+      const elem = element().skate({
+        properties: {
+          testProp: { attribute: true }
+        },
+        attribute (elem, data) {
+          calls.push(data.name);
+        }
+      })();
+
+      fixture(elem);
+
+      ready(elem, function () {
+        elem.setAttribute('test-attr', '');
+        elem.setAttribute('test-prop', '');
+        expect(calls.length).to.equal(1);
+        expect(calls[0]).to.equal('test-prop');
+        done();
+      });
+    });
+
+    it('should fire for both attributes added to the array and linked attributes', function (done) {
+      const calls = [];
+      const elem = element().skate({
+        attributes: ['test-attr'],
+        properties: {
+          testProp: { attribute: true }
+        },
+        attribute (elem, data) {
+          calls.push(data.name);
+        }
+      })();
+
+      fixture(elem);
+
+      ready(elem, function () {
+        elem.setAttribute('test-attr', '');
+        elem.setAttribute('test-prop', '');
+        expect(calls.length).to.equal(2);
+        expect(calls[0]).to.equal('test-attr');
+        expect(calls[0]).to.equal('test-prop');
+        done();
+      });
+    });
+
+    it('should fire for both attributes and properties even if the property is the same as an attribute added manually', function (done) {
+      const calls = [];
+      const elem = element().skate({
+        attributes: ['test-attr'],
+        properties: {
+          testAttr: { attribute: true }
+        },
+        attribute (elem, data) {
+          calls.push(data.name);
+        }
+      })();
+
+      fixture(elem);
+
+      ready(elem, function () {
+        elem.setAttribute('test-attr', '');
+        elem.setAttribute('test-prop', '');
+        expect(calls.length).to.equal(1);
+        expect(calls[0]).to.equal('test-attr');
+        done();
+      });
     });
   });
 
