@@ -5,6 +5,9 @@ import propertiesInit from './properties-init';
 import prototypeApplier from './prototype';
 import support from '../native/support';
 
+const isPolyfilled = support.polyfilled;
+const isCustomElementsV1 = support.v1;
+
 function ensurePropertyFunctions (opts) {
   let properties = opts.properties;
   let names = Object.keys(properties || {});
@@ -24,13 +27,16 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
-function callAttributeChangedForEachAttribute (elem) {
-  const attrs = elem.attributes;
-  const attrsLen = attrs.length;
-  for (let a = 0; a < attrsLen; a++) {
-    const attr = attrs[a];
-    elem.attributeChangedCallback(attr.name, null, attr.value);
-  }
+function callAttributeChangedForEachAttribute (elem, observedAttributes, definedAttribute) {
+  observedAttributes.forEach(function (name) {
+    const attr = elem.attributes[name];
+
+    // We don't call it for the defined attribute because that will have
+    // already called the handler via setAttribute().
+    if (attr && name !== definedAttribute) {
+      elem.attributeChangedCallback(name, null, attr.value);
+    }
+  });
 }
 
 function initialiseProperties (elem, propertyDefinitions) {
@@ -53,6 +59,7 @@ export default function (opts) {
     created,
     definedAttribute,
     events,
+    observedAttributes,
     properties,
     prototype,
     ready,
@@ -75,10 +82,8 @@ export default function (opts) {
 
     info.created = true;
 
-    if (support.polyfilled) {
-      if (prototype) {
-        applyPrototype(this);
-      }
+    if (isPolyfilled && prototype) {
+      applyPrototype(this);
     }
 
     // Sets up properties, but does not invoke anything.
@@ -102,25 +107,27 @@ export default function (opts) {
       ready(this);
     }
 
+    // We patch attribute methods so that they behave in a synchronous manner.
+    if (isPolyfilled) {
+      patchAttributeMethods(this);
+    }
+
+    // Defined attribute is last before notifying listeners.
+    if (!this.hasAttribute(definedAttribute)) {
+      this.setAttribute(definedAttribute, '');
+    }
+
+    // We trigger ready after we add the defined attribute.
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb());
       info.readyCallbacks = null;
     }
 
-    // We patch attribute methods so that they behave in a synchronous manner.
-    if (support.polyfilled) {
-      patchAttributeMethods(this);
-    }
-
     // Invoking the attribute handler should be emulated in non-v1-land. This
     // is supposed to happen after the constructor is called and this is the
     // closest point to that.
-    if (!support.v1) {
-      callAttributeChangedForEachAttribute(this);
-    }
-
-    if (!this.hasAttribute(definedAttribute)) {
-      this.setAttribute(definedAttribute, '');
+    if (!isCustomElementsV1) {
+      callAttributeChangedForEachAttribute(this, observedAttributes, definedAttribute);
     }
   };
 }

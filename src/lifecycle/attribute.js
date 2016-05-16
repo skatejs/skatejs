@@ -15,10 +15,27 @@ export default function (Ctor) {
 
     if (propertyName) {
       const propertyData = data(this, `api/property/${propertyName}`);
+
+      // This ensures a property set doesn't cause the attribute changed
+      // handler to run again once we set this flag. This only ever has a
+      // chance to run when you set an attribute, it then sets a property and
+      // then that causes the attribute to be set again.
+      if (propertyData.settingAttribute) {
+        return;
+      }
+
+      // Set this here so the next set to the attribute doesn't cause this
+      // handler to run a gain.
+      propertyData.settingAttribute = true;
+
+      // Sync up the property.
       if (!propertyData.settingProperty) {
         const propOpts = this.constructor.properties[propertyName];
         this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
       }
+
+      // Allow this handler to run again.
+      propertyData.settingAttribute = false;
     }
 
     if (attribute) {

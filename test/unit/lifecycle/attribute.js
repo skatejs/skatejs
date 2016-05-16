@@ -11,6 +11,7 @@ describe('lifecycle/attribute', function () {
     elem.setAttribute('test', 'testing');
     expect(elem.hasAttribute('defined')).to.equal(false);
     tag.skate({
+      observedAttributes: ['test'],
       attribute (elem, data) {
         if (data.name === 'defined') {
           return;
@@ -24,10 +25,10 @@ describe('lifecycle/attribute', function () {
   });
 
   describe('observed attributes', function () {
-    it('should allow an array as attributes', function (done) {
+    it('should allow an array as observedAttributes', function (done) {
       const calls = [];
       const elem = element().skate({
-        attributes: ['test-attr'],
+        observedAttributes: ['test-attr'],
         attribute (elem, data) {
           calls.push(data.name);
         }
@@ -66,10 +67,10 @@ describe('lifecycle/attribute', function () {
       });
     });
 
-    it('should fire for both attributes added to the array and linked attributes', function (done) {
+    it('should fire for both observedAttributes added to the array and linked attributes', function (done) {
       const calls = [];
       const elem = element().skate({
-        attributes: ['test-attr'],
+        observedAttributes: ['test-attr'],
         properties: {
           testProp: { attribute: true }
         },
@@ -85,15 +86,15 @@ describe('lifecycle/attribute', function () {
         elem.setAttribute('test-prop', '');
         expect(calls.length).to.equal(2);
         expect(calls[0]).to.equal('test-attr');
-        expect(calls[0]).to.equal('test-prop');
+        expect(calls[1]).to.equal('test-prop');
         done();
       });
     });
 
-    it('should fire for both attributes and properties even if the property is the same as an attribute added manually', function (done) {
+    it('should fire for both observedAttributes and properties even if the property is the same as an attribute added manually', function (done) {
       const calls = [];
       const elem = element().skate({
-        attributes: ['test-attr'],
+        observedAttributes: ['test-attr'],
         properties: {
           testAttr: { attribute: true }
         },
@@ -121,6 +122,7 @@ describe('lifecycle/attribute', function () {
     beforeEach(function () {
       spy = sinon.spy();
       let MyToggle = element().skate({
+        observedAttributes: ['defined', 'name'],
         attribute: spy
       });
       myToggle = new MyToggle();
@@ -130,7 +132,7 @@ describe('lifecycle/attribute', function () {
       let resolvedSpy = spy.withArgs(myToggle, sinon.match({name: 'defined', newValue: '' }));
 
       ready(myToggle, function() {
-        expect(resolvedSpy.calledOnce).to.be.true;
+        expect(resolvedSpy.callCount).to.equal(1);
         done();
       });
     });
@@ -160,6 +162,7 @@ describe('lifecycle/attribute', function () {
       var tag = element();
 
       skate(tag.safe, {
+        observedAttributes: ['defined'],
         attribute: () => called = true
       });
 
