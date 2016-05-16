@@ -6,7 +6,6 @@ import init from './api/init';
 import link from './api/link';
 import properties from './api/properties/index';
 import ready from './api/ready';
-import render from './api/render';
 import skate from './api/skate';
 import state from './api/state';
 import vdom from './api/vdom';
@@ -20,7 +19,6 @@ skate.init = init;
 skate.link = link;
 skate.properties = properties;
 skate.ready = ready;
-skate.render = render;
 skate.state = state;
 skate.vdom = vdom;
 skate.version = version;
@@ -35,7 +33,6 @@ export {
   link,
   properties,
   ready,
-  render,
   state,
   vdom,
   version

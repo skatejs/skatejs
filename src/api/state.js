@@ -12,6 +12,11 @@ function get (elem) {
   return state;
 }
 
+function set (elem, newState) {
+  assign(elem, newState);
+  elem.constructor.render(elem);
+}
+
 export default function (elem, newState) {
-  return typeof newState === 'undefined' ? get(elem) : assign(elem, newState);
+  return typeof newState === 'undefined' ? get(elem) : set(elem, newState);
 }

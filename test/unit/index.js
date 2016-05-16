@@ -53,11 +53,6 @@ describe('exports', function () {
     expect(api.ready).to.equal(skate.ready);
   });
 
-  it('skate.render', function () {
-    expect(skate.render).to.be.a('function');
-    expect(api.render).to.equal(skate.render);
-  });
-
   it('skate.state', function () {
     expect(skate.state).to.be.a('function');
     expect(api.state).to.equal(skate.state);
