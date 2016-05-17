@@ -1157,7 +1157,7 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 
 
-### `ready (elementOrElements, callback)`
+### `ready (elemOrElems, callback)`
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
