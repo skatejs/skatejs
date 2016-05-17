@@ -28,8 +28,8 @@ skate('x-hello', {
   properties: {
     name { attribute: true }
   },
-  render (element) {
-    skate.vdom.text(`Hello, ${element.name}`);
+  render (elem) {
+    skate.vdom.text(`Hello, ${elem.name}`);
   }
 });
 ```
@@ -102,7 +102,7 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
     - [`create (componentName, elementProperties = {})`](#create-componentname-elementproperties--)
       - [Alternatives](#alternatives)
       - [Setting Properties](#setting-properties)
-      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelement)
+      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelem)
     - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
       - [Emitting Several Events at Once](#emitting-several-events-at-once)
       - [Return Value](#return-value-1)
@@ -243,7 +243,7 @@ new MyComponent();
 The returned function also contains the information specified in your definition:
 
 ```js
-// function (element) {}
+// function (elem) {}
 MyComponent.render;
 ```
 
@@ -341,7 +341,7 @@ Function that is called when the element is created. This corresponds to the nat
 
 ```js
 skate('my-component', {
-  created (element) {}
+  created (elem) {}
 });
 ```
 
@@ -576,8 +576,8 @@ skate('my-component', {
       }
     }
   },
-  render () {
-    skate.vdom.div(element.myProp);
+  render (elem) {
+    skate.vdom.div(elem.myProp);
   }
 });
 ```
@@ -625,8 +625,8 @@ Function that is called to render the element. This is called when the element i
 
 ```js
 skate('my-component', {
-  render (element) {
-    skate.vdom.p(`My name is ${element.tagName}.`);
+  render (elem) {
+    skate.vdom.p(`My name is ${elem.tagName}.`);
   }
 });
 ```
@@ -643,7 +643,7 @@ Function that is called after the element has been rendered for the first time (
 
 ```js
 skate('my-component', {
-  ready (element) {}
+  ready (elem) {}
 });
 ```
 
@@ -657,7 +657,7 @@ Function that is called after the element has been inserted to the document. Thi
 
 ```js
 skate('my-component', {
-  attached (element) {}
+  attached (elem) {}
 });
 ```
 
@@ -671,7 +671,7 @@ Function that is called after the element has been removed from the document. Th
 
 ```js
 skate('my-component', {
-  detached (element) {}
+  detached (elem) {}
 });
 ```
 
@@ -755,7 +755,7 @@ In browsers that do not support custom elements, you would have to manually ensu
 
 ```js
 const element = document.createElement('my-element');
-skate.init(element);
+skate.init(elem);
 ```
 
 To take this example further, if we've extended an element:
@@ -785,9 +785,9 @@ document.createElement('div', { is: 'my-element' });
 And in polyfill land, it's much different:
 
 ```js
-const element = document.createElement('div');
-element.setAttribute('is', 'my-element');
-skate.init(element);
+const elem = document.createElement('div');
+elem.setAttribute('is', 'my-element');
+skate.init(elem);
 ```
 
 Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
@@ -874,7 +874,7 @@ skate.emit(element, [ 'event1', 'event2' ]);
 
 #### Return Value
 
-The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+The native `Element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
 
 
 
@@ -981,8 +981,8 @@ skate('my-input', function () {
   properties: {
     value: { attribute: true }
   },
-  render (element) {
-    skate.vdom.input({ onchange: skate.link(element), type: 'text' });
+  render (elem) {
+    skate.vdom.input({ onchange: skate.link(elem), type: 'text' });
   }
 });
 ```
@@ -990,7 +990,7 @@ skate('my-input', function () {
 By default the `propSpec` defaults to `e.currentTarget.getAttribute('name')` or `"value"` which is why it wasn't specified in the example above. In the example above, it would set `value` on the component. If you were to give your input a name, it would use the name from the event `currentTarget` as the name that should be set. For example if you changed your input to read:
 
 ```js
-skate.vdom.input({ name: 'someValue', onchange: skate.link(element), type: 'text' });
+skate.vdom.input({ name: 'someValue', onchange: skate.link(elem), type: 'text' });
 ```
 
 Then instead of setting `value` on the component, it would set `someValue`.
@@ -1162,8 +1162,8 @@ If you need to interact with components that may not be initialised yet (at any 
 
 ```js
 skate('component-a', {
-  ready (element) {
-    const b = element.querySelector('component-b');
+  ready (elem) {
+    const b = elem.querySelector('component-b');
 
     // Would be `undefined` because it's not defined yet.
     b.initialised;
@@ -1174,14 +1174,14 @@ skate('component-a', {
       b.initialised;
     });
   },
-  render (element) {
+  render (elem) {
     skate.vdom('component-b');
   }
 });
 
 skate('component-b', {
-  created (element) {
-    element.initialised = true;
+  created (elem) {
+    elem.initialised = true;
   }
 });
 ```
@@ -1216,7 +1216,7 @@ skate.state(elem, {
 
 // Only returns props you've defined on your component.
 // { prop1: 'value 1' }
-skate.state(element);
+skate.state(elem);
 ```
 
 
@@ -1342,9 +1342,9 @@ skate('my-element', {
   properties: {
     title: skate.properties.string()
   },
-  render (element) {
+  render (elem) {
     <div>
-      <h1>{element.title}</h1>
+      <h1>{elem.title}</h1>
       <slot name="description" />
       <article>
         <slot />
@@ -1531,7 +1531,7 @@ Then you may write the following:
 
 The [custom element spec](http://w3c.github.io/webcomponents/spec/custom/#registering-custom-elements) is very vague on SVG and it would seem that it implies you don't need to specify `extends`. However, this is not the case in Chrome under native support it would seem. This is not an implementation detail of Skate, but the spec and the browser implementations.
 
-Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG element), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
+Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG elem), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
 
 
 
@@ -1607,8 +1607,8 @@ You may write a component that you change in a backward incompatible way. In ord
 
 ```js
 export default skate.factory({
-  render (element) {
-    skate.vdom.text(`This element has been called: ${element.tagName}.`);
+  render (elem) {
+    skate.vdom.text(`This element has been called: ${elem.tagName}.`);
   }
 });
 ```
