@@ -24,6 +24,57 @@ describe('lifecycle/attribute', function () {
     });
   });
 
+  it('should only be invokable after the created lifecycle has completed', function (done) {
+    const calls =  [];
+    const elem = element().skate({
+      observedAttributes: ['test'],
+      attributeChanged (elem, data) {
+        calls.push(data.name + ':' + data.oldValue + ':' + data.newValue);
+      },
+      created (elem) {
+        // This should not trigger attributeChanged.
+        elem.setAttribute('test', 'created');
+        expect(calls.length).to.equal(0, 'inside created() lifecycle');
+      },
+      render (elem) {
+        // This should not trigger attributeChanged.
+        elem.setAttribute('test', 'render');
+        expect(calls.length).to.equal(0, 'inside render() lifecycle');
+      },
+      ready (elem) {
+        // This should not trigger attributeChanged. However, this should set
+        // the attribute and it should be initialised after the created callback.
+        elem.setAttribute('test', 'ready');
+        expect(calls.length).to.equal(0, 'inside ready() lifecycle');
+      }
+    })();
+
+    ready(elem, function () {
+      // We set a timeout here to ensure that the created lifecycle has time to
+      // call attributeChanged() for all existing attributes since this happens
+      // after ready() is invoked. This is what happens in native v1, so this
+      // should pass for that, too. In native, you wouldn't need this because
+      // the element would be initialised prior to calling ready(). In polyfill
+      // we must use ready() to do stuff when the element is initialised.
+      setTimeout(function () {
+        // Initialisations should have happened. Since we setAttribute()
+        // within created(), we should expect this to have initialised based on
+        // that setting.
+        expect(calls.length).to.equal(1, 'inside setTimeout()');
+        expect(calls[0]).to.equal('test:undefined:ready', 'inside setTimeout()');
+
+        // This should now trigger since initialisation has occurred.
+        elem.setAttribute('test', 'setTimeout');
+
+        expect(calls.length).to.equal(2);
+        expect(calls[0]).to.equal('test:undefined:ready', 'inside setTimeout()');
+        expect(calls[1]).to.equal('test:ready:setTimeout', 'inside setTimeout()');
+
+        done();
+      }, 1);
+    });
+  });
+
   describe('observed attributes', function () {
     it('should allow an array as observedAttributes', function (done) {
       const calls = [];

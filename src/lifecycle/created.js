@@ -6,6 +6,7 @@ import prototypeApplier from './prototype';
 import support from '../native/support';
 
 const isPolyfilled = support.polyfilled;
+const isCustomElementsV0 = support.v0;
 const isCustomElementsV1 = support.v1;
 
 function ensurePropertyFunctions (opts) {
@@ -27,13 +28,13 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
   }, {});
 }
 
-function callAttributeChangedForEachAttribute (elem, observedAttributes, definedAttribute) {
+function callAttributeChangedForEachAttribute (elem, observedAttributes) {
   observedAttributes.forEach(function (name) {
     const attr = elem.attributes[name];
 
     // We don't call it for the defined attribute because that will have
     // already called the handler via setAttribute().
-    if (attr && name !== definedAttribute) {
+    if (attr) {
       elem.attributeChangedCallback(name, null, attr.value);
     }
   });
@@ -72,15 +73,15 @@ export default function (opts) {
 
   // Performance critical code!
   return function () {
-    const info = data(this);
+    const elemData = data(this);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
-    const readyCallbacks = info.readyCallbacks;
+    const readyCallbacks = elemData.readyCallbacks;
 
-    if (info.created) {
+    if (elemData.created) {
       return;
     }
 
-    info.created = true;
+    elemData.created = true;
 
     if (isPolyfilled && prototype) {
       applyPrototype(this);
@@ -107,11 +108,6 @@ export default function (opts) {
       ready(this);
     }
 
-    // We patch attribute methods so that they behave in a synchronous manner.
-    if (isPolyfilled) {
-      patchAttributeMethods(this);
-    }
-
     // Defined attribute is last before notifying listeners.
     if (!this.hasAttribute(definedAttribute)) {
       this.setAttribute(definedAttribute, '');
@@ -120,14 +116,32 @@ export default function (opts) {
     // We trigger ready after we add the defined attribute.
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb());
-      info.readyCallbacks = null;
+      elemData.readyCallbacks = null;
+    }
+
+    // In Chrome's legacy implementation (v0), it queues microtasks to call
+    // attributeChanged(). We can't just set a flag here to start triggering
+    // and check in our attributeChanged() because any attribute changes that
+    // happen before this point, will actually get executed after this point.
+    if (isCustomElementsV0) {
+      this.setAttribute('____can_start_triggering_now', '');
+      this.removeAttribute('____can_start_triggering_now');
+    }
+
+    // We patch attribute methods here in full-polyfill-land so that
+    // attributeChanged() is only fired after this point when an attribute is
+    // changed.
+    if (isPolyfilled) {
+      patchAttributeMethods(this);
     }
 
     // Invoking the attribute handler should be emulated in non-v1-land. This
     // is supposed to happen after the constructor is called and this is the
     // closest point to that.
     if (!isCustomElementsV1) {
-      callAttributeChangedForEachAttribute(this, observedAttributes, definedAttribute);
+      elemData.canStartTriggeringNow = true;
+      callAttributeChangedForEachAttribute(this, observedAttributes);
+      elemData.canStartTriggeringNow = false;
     }
   };
 }
