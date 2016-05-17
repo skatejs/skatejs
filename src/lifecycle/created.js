@@ -5,6 +5,10 @@ import propertiesInit from './properties-init';
 import prototypeApplier from './prototype';
 import support from '../native/support';
 
+const isPolyfilled = support.polyfilled;
+const isCustomElementsV0 = support.v0;
+const isCustomElementsV1 = support.v1;
+
 function ensurePropertyFunctions (opts) {
   let properties = opts.properties;
   let names = Object.keys(properties || {});
@@ -22,6 +26,18 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
     descriptors[descriptorName] = propertyFunctions[descriptorName](descriptorName);
     return descriptors;
   }, {});
+}
+
+function callAttributeChangedForEachAttribute (elem, observedAttributes) {
+  observedAttributes.forEach(function (name) {
+    const attr = elem.attributes[name];
+
+    // We don't call it for the defined attribute because that will have
+    // already called the handler via setAttribute().
+    if (attr) {
+      elem.attributeChangedCallback(name, null, attr.value);
+    }
+  });
 }
 
 function initialiseProperties (elem, propertyDefinitions) {
@@ -44,6 +60,7 @@ export default function (opts) {
     created,
     definedAttribute,
     events,
+    observedAttributes,
     properties,
     prototype,
     ready,
@@ -56,24 +73,21 @@ export default function (opts) {
 
   // Performance critical code!
   return function () {
-    const info = data(this);
+    const elemData = data(this);
     const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
-    const readyCallbacks = info.readyCallbacks;
+    const readyCallbacks = elemData.readyCallbacks;
 
-    if (info.created) {
+    if (elemData.created) {
       return;
     }
 
-    info.created = true;
+    elemData.created = true;
 
-    if (support.polyfilled) {
-      patchAttributeMethods(this);
-
-      if (prototype) {
-        applyPrototype(this);
-      }
+    if (isPolyfilled && prototype) {
+      applyPrototype(this);
     }
 
+    // Sets up properties, but does not invoke anything.
     if (propertyDefinitions) {
       initialiseProperties(this, propertyDefinitions);
     }
@@ -94,13 +108,51 @@ export default function (opts) {
       ready(this);
     }
 
-    if (readyCallbacks) {
-      readyCallbacks.forEach(cb => cb());
-      info.readyCallbacks = null;
-    }
-
+    // Defined attribute is last before notifying listeners.
     if (!this.hasAttribute(definedAttribute)) {
       this.setAttribute(definedAttribute, '');
+    }
+
+    // We trigger ready after we add the defined attribute.
+    if (readyCallbacks) {
+      readyCallbacks.forEach(cb => cb());
+      elemData.readyCallbacks = null;
+    }
+
+    // In the early versions of the spec ("v0", only implemented by Blink) all
+    // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
+    // However, no attributes that exist when the element is upgraded would queue
+    // a task.
+    //
+    // In Custom Elements v1, nothing is queued until after the constructor
+    // (createdCallback in v0) is invoked. After it is invoked, the
+    // attributeChangedCallback() is executed for all existing attributes. All
+    // subsequent calls behave as normal.
+    //
+    // Any attribute change before this point is a no-op. Anything after works
+    // as normal.
+    if (isCustomElementsV0) {
+      this.setAttribute('____can_start_triggering_now', '');
+      this.removeAttribute('____can_start_triggering_now');
+    }
+
+    // Make attribute sets synchronous for polyfill-land.
+    if (isPolyfilled) {
+      patchAttributeMethods(this);
+    }
+
+    // Emulate v1 attribute initialisation behaviour.
+    if (!isCustomElementsV1) {
+      // We force this flag to be true so that attributeChanged() actually gets
+      // called in Chrome v0.
+      elemData.canStartTriggeringNow = true;
+
+      // Force the change.
+      callAttributeChangedForEachAttribute(this, observedAttributes);
+
+      // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
+      // until *after* it receives the set for "____can_start_triggering_now".
+      elemData.canStartTriggeringNow = false;
     }
   };
 }

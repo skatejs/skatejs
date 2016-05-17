@@ -1,5 +1,4 @@
 import assign from 'object-assign';
-import dashCase from '../util/dash-case';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import emit from '../api/emit';
@@ -14,10 +13,6 @@ function getDefaultValue (elem, name, opts) {
 
 function getInitialValue (elem, name, opts) {
   return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
-}
-
-function getLinkedAttribute (name, attr) {
-  return attr === true ? dashCase(name) : attr;
 }
 
 function syncAttribute (elem, propertyName, attributeName, newValue, opts) {
@@ -42,7 +37,7 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.created = function (elem) {
     const propertyData = data(elem, `api/property/${name}`);
-    const attributeName = getLinkedAttribute(name, opts.attribute);
+    const attributeName = opts.attribute;
     let initialValue = elem[name];
 
     // Store property to attribute link information.
