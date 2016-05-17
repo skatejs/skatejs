@@ -215,6 +215,15 @@ If you have any questions about Skate you can use one of these:
 
 
 
+## Terminology
+
+Wherever we refer to "v0" or "v1" we are referring to the Custom Element spec and can be categorised as:
+
+- v0 - the original Blink implementation when the spec was still contentious that used the `document.registerElement()` method.
+- v1 - the non-contentious spec that uses the `window.customElements` namespace.
+
+
+
 ## `skate (componentName, componentDefinition)` API
 
 The main `skate()` function is the entry-point to the API and is what defines your custom element.
