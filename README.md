@@ -102,8 +102,8 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
     - [`create (componentName, elementProperties = {})`](#create-componentname-elementproperties--)
       - [Alternatives](#alternatives)
       - [Setting Properties](#setting-properties)
-      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelement)
-    - [`emit (element, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
+      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelem)
+    - [`emit (elem, eventName, eventOptions = {})`](#emit-element-eventname-eventoptions--)
       - [Emitting Several Events at Once](#emitting-several-events-at-once)
       - [Return Value](#return-value-1)
       - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
@@ -111,7 +111,7 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
     - [`factory (componentDefinition)`](#factory-componentdefinition)
     - [`fragment (...almostAnything)`](#fragment-almostanything)
     - [`init (...elements)`](#init-elements)
-    - [`link (element, propSpec)`](#link-element-propspec)
+    - [`link (elem, propSpec)`](#link-element-propspec)
     - [`noConflict ()`](#noconflict-)
     - [`properties`](#properties-1)
       - [`array`](#array)
@@ -307,15 +307,15 @@ Event listeners to add to the custom element. These get bound after the `prototy
 ```js
 skate('my-component', {
   events: {
-    click (e) {}
+    click (elem, eventObject) {}
   }
 });
 ```
 
 The context and arguments passed to the event handler are the same as the native [`EventTarget.addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) method:
 
-- `this` is the DOM element
-- `e` is the native event object that was dispatched on the DOM element
+- `elem` is the DOM element
+- `eventObject` is the native event object that was dispatched on the DOM element
 
 
 
@@ -326,7 +326,7 @@ Event descriptors can use selectors to target descendants using event delegation
 ```js
 skate('my-component', {
   events: {
-    'click button' (e) {}
+    'click button' (elem, eventObject) {}
   }
 });
 ```
@@ -576,7 +576,7 @@ skate('my-component', {
       }
     }
   },
-  render () {
+  render (elem) {
     skate.vdom.div(elem.myProp);
   }
 });
@@ -754,8 +754,8 @@ document.createElement('my-element');
 In browsers that do not support custom elements, you would have to manually ensure that the element is initialised synchronously:
 
 ```js
-const element = document.createElement('my-element');
-skate.init(element);
+const elem = document.createElement('my-element');
+skate.init(elem);
 ```
 
 To take this example further, if we've extended an element:
@@ -785,9 +785,9 @@ document.createElement('div', { is: 'my-element' });
 And in polyfill land, it's much different:
 
 ```js
-const element = document.createElement('div');
-element.setAttribute('is', 'my-element');
-skate.init(element);
+const elem = document.createElement('div');
+elem.setAttribute('is', 'my-element');
+skate.init(elem);
 ```
 
 Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
@@ -835,9 +835,9 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 
 
-### `emit (element, eventName, eventOptions = {})`
+### `emit (elem, eventName, eventOptions = {})`
 
-Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
 skate('x-tabs', {
@@ -866,15 +866,15 @@ It's preferrable not to reach up the DOM hierarchy because that couples your log
 You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
 
 ```js
-skate.emit(element, 'event1 event2');
-skate.emit(element, [ 'event1', 'event2' ]);
+skate.emit(elem, 'event1 event2');
+skate.emit(elem, [ 'event1', 'event2' ]);
 ```
 
 
 
 #### Return Value
 
-The native `element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+The native `Element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
 
 
 
@@ -883,7 +883,7 @@ The native `element.dispatchEvent()` method returns `false` if the event was can
 If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify those options in the `eventOptions` argument.
 
 ```js
-skate.emit(element, 'event', {
+skate.emit(elem, 'event', {
   bubbles: false,
   cancelable: false
 });
@@ -896,7 +896,7 @@ skate.emit(element, 'event', {
 You can pass data when emitting the event with the `detail` option in the `eventOptions` argument.
 
 ```js
-skate.emit(element, 'event', {
+skate.emit(elem, 'event', {
   detail: {
     data: 'my-data'
   }
@@ -960,7 +960,7 @@ skate
 
 
 
-### `init (...elements)`
+### `init (...elems)`
 
 It's encouraged that you use `skate.create()` and `skate.fragment()` for creating elements and ensuring that they're synchronously initialised, however, there are edge-cases where synchronously initialising an existing element `skate.init()` may be necessary.
 
@@ -972,9 +972,9 @@ skate.init(element1, element2);
 
 
 
-### `link (element, propSpec)`
+### `link (elem, propSpec)`
 
-The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the `element`. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
+The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the ``. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
 
 ```js
 skate('my-input', function () {
@@ -1196,7 +1196,7 @@ This does not solve the situation where you want to be notified of future elemen
 
 ### `state (elem[, state])`
 
-The `state` function is a getter or setter depending on if you specify the second `state` argument. If you do not provide `state`, then the current state of the component is returned. If you pass `state`, then the current state of the component is set. When you set state, each property is set which queues a re-render depending on if the properties you have specified want to re-render.
+The `state` function is a getter or setter depending on if you specify the second `state` argument. If you do not provide `state`, then the current state of the component is returned. If you pass `state`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
 
 Component state is derived from the declared properties. It will only ever return properties that are defined in the `properties` object. However, when you set state, whatever state you specify will be set even if they're not declared in `properties`.
 
