@@ -75,23 +75,23 @@ describe('lifecycle/events', function () {
   it('should support delegate event selectors', function () {
     skate(tag.safe, {
       events: {
-        test (e) {
+        test (elem, e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test');
+          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test');
           expect(e.target.tagName).to.equal('SPAN', 'test');
           expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
           expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
         },
-        'test a' (e) {
+        'test a' (elem, e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
+          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
           expect(e.target.tagName).to.equal('SPAN', 'test a');
           expect(e.currentTarget.tagName).to.equal('A', 'test a');
           expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
         },
-        'test span' (e) {
+        'test span' (elem, e) {
           increment();
-          expect(this.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
+          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
           expect(e.target.tagName).to.equal('SPAN', 'test span');
           expect(e.currentTarget.tagName).to.equal('SPAN', 'test span');
           expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
