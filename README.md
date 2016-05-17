@@ -754,7 +754,7 @@ document.createElement('my-element');
 In browsers that do not support custom elements, you would have to manually ensure that the element is initialised synchronously:
 
 ```js
-const element = document.createElement('my-element');
+const elem = document.createElement('my-element');
 skate.init(elem);
 ```
 
