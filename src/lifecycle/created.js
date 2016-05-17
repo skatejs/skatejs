@@ -122,7 +122,8 @@ export default function (opts) {
     // In Chrome's legacy implementation (v0), it queues microtasks to call
     // attributeChanged(). We can't just set a flag here to start triggering
     // and check in our attributeChanged() because any attribute changes that
-    // happen before this point, will actually get executed after this point.
+    // happen before this point, will end up triggering attributeChanged()
+    // *after* this point due to the microtask.
     if (isCustomElementsV0) {
       this.setAttribute('____can_start_triggering_now', '');
       this.removeAttribute('____can_start_triggering_now');
@@ -130,7 +131,8 @@ export default function (opts) {
 
     // We patch attribute methods here in full-polyfill-land so that
     // attributeChanged() is only fired after this point when an attribute is
-    // changed.
+    // changed. This is ok todo here because this isn't used in Chrome's v0
+    // implementation.
     if (isPolyfilled) {
       patchAttributeMethods(this);
     }
@@ -139,8 +141,15 @@ export default function (opts) {
     // is supposed to happen after the constructor is called and this is the
     // closest point to that.
     if (!isCustomElementsV1) {
+      // We force this flag to be true so that attributeChanged() actually gets
+      // called in Chrome v0.
       elemData.canStartTriggeringNow = true;
+
+      // Force the change.
       callAttributeChangedForEachAttribute(this, observedAttributes);
+
+      // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
+      // until *after* it receives the set for "____can_start_triggering_now".
       elemData.canStartTriggeringNow = false;
     }
   };
