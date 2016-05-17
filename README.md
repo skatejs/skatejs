@@ -1505,7 +1505,7 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 
 ## VS other libraries
 
-We hold no ill thoughts against other libraries and we are just trying to inform why one would choose Skate over another. If any information here is inaccurate, please feel free to raise an issue to discuss how we can make it accurate.
+We hold no ill thoughts against other libraries and we are just trying to articulate why one would choose Skate over another. If any information here is inaccurate, please feel free to raise an issue to discuss how we can make it accurate.
 
 
 
