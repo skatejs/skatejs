@@ -962,8 +962,9 @@ skate.emit(elem, 'event', {
 The `factory()` function gives you a way to define a custom element without defining its name. This is useful because it allows your consumers to decide which name your component should have. This is also effective in maintaining UI components that may have breaking changes made to them as you don't have to change their global name in order to have multiple versions of them on the same page. It can be up to your consumers to decide how they want to do that based on how they're using them.
 
 ```js
-var componentFactory = skate.factory({ ... });
-var myComponent = componentFactory('my-component');
+const myComponentFactory = skate.factory({ ... });
+const createMyComponent = myComponentFactory('my-component');
+const myElementInstance = createMyComponent();
 ```
 
 
