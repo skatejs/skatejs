@@ -312,7 +312,7 @@ skate('my-component', {
 });
 ```
 
-The context and arguments passed to the event handler are the same as the native [`EventTarget.addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) method:
+The arguments passed to the handler are:
 
 - `elem` is the DOM element
 - `eventObject` is the native event object that was dispatched on the DOM element
