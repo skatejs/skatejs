@@ -1531,7 +1531,7 @@ Then you may write the following:
 
 The [custom element spec](http://w3c.github.io/webcomponents/spec/custom/#registering-custom-elements) is very vague on SVG and it would seem that it implies you don't need to specify `extends`. However, this is not the case in Chrome under native support it would seem. This is not an implementation detail of Skate, but the spec and the browser implementations.
 
-Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG elem), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
+Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG element), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
 
 
 
