@@ -119,27 +119,29 @@ export default function (opts) {
       elemData.readyCallbacks = null;
     }
 
-    // In Chrome's legacy implementation (v0), it queues microtasks to call
-    // attributeChanged(). We can't just set a flag here to start triggering
-    // and check in our attributeChanged() because any attribute changes that
-    // happen before this point, will end up triggering attributeChanged()
-    // *after* this point due to the microtask.
+    // In the early versions of the spec ("v0", only implemented by Blink) all
+    // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
+    // However, no attributes that exist when the element is upgraded would queue
+    // a task.
+    //
+    // In Custom Elements v1, nothing is queued until after the constructor
+    // (createdCallback in v0) is invoked. After it is invoked, the
+    // attributeChangedCallback() is executed for all existing attributes. All
+    // subsequent calls behave as normal.
+    //
+    // Any attribute change before this point is a no-op. Anything after works
+    // as normal.
     if (isCustomElementsV0) {
       this.setAttribute('____can_start_triggering_now', '');
       this.removeAttribute('____can_start_triggering_now');
     }
 
-    // We patch attribute methods here in full-polyfill-land so that
-    // attributeChanged() is only fired after this point when an attribute is
-    // changed. This is ok todo here because this isn't used in Chrome's v0
-    // implementation.
+    // Make attribute sets synchronous for polyfill-land.
     if (isPolyfilled) {
       patchAttributeMethods(this);
     }
 
-    // Invoking the attribute handler should be emulated in non-v1-land. This
-    // is supposed to happen after the constructor is called and this is the
-    // closest point to that.
+    // Emulate v1 attribute initialisation behaviour.
     if (!isCustomElementsV1) {
       // We force this flag to be true so that attributeChanged() actually gets
       // called in Chrome v0.
