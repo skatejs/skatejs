@@ -1533,7 +1533,7 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
   - `polymer-mini.html` 54k vs 23k
   - `polymer.html` 124k vs 23k
 - Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since Polymer uses the WebComponentsJS polyfill.
-- Polymer uses HTML Imports to build their codebase. HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
+- Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, Bower, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
 
