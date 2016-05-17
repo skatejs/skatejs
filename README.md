@@ -219,6 +219,8 @@ If you have any questions about Skate you can use one of these:
 
 Wherever we refer to "v0" or "v1" we are referring to the Custom Element spec and can be categorised as:
 
+- polyfill, polyfilled, polyfill-land - not v0 or v1; no native custom element support at all.
+- upgrade, upgraded, upgrading - when an element is initialised as a custom element.
 - v0 - the original Blink implementation - when the spec was still contentious - that used the `document.registerElement()` method.
 - v1 - the non-contentious - modern-day - spec that uses the `window.customElements` namespace.
 
@@ -389,6 +391,8 @@ skate('my-component', {
   }
 });
 ```
+
+*When you declare a linked attribute, it automatically adds this attribute to the list of `observedAttributes`.*
 
 
 
@@ -688,13 +692,13 @@ The only argument passed to `detached` is component element. In this case that i
 
 
 
-#### `attribute`
+#### `attributeChanged`
 
-Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback`. Generally, you'll probably end up using `properties` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
+Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` (both v0 and v1). Generally, you'll probably end up using `properties` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
 
 ```js
 skate('my-component', {
-  attribute (elem, data) {
+  attributeChanged (elem, data) {
     if (data.oldValue === undefined) {
       // created
     } else if (data.newValue === undefined) {
@@ -706,10 +710,20 @@ skate('my-component', {
 });
 ```
 
-The arguments passed to the `attribute` callback differ from the native `attributeChanged` callback to provide consistency and predictability with the rest of the Skate API:
+The arguments passed to the `attributeChanged()` callback differ from the native `attributeChangedCallback()` to provide consistency and predictability with the rest of the Skate API:
 
 - `elem` is the component element
 - `data` is an object containing attribute `name`, `newValue` and `oldValue`. If `newValue` and `oldValue` are empty, the values are `undefined`.
+
+There are differences between v0 and v1 that Skate normalises to behave like v1. In v0:
+
+1. The `attributeChangedCallback()` is *not* invoked for every attribute that exists on the element at the time of upgrading.
+2. You can call `setAttribute()` at any point in the element lifecycle and it will queue a call to it.
+
+In v1:
+
+1. The `attributeChangedCallback()` *is* invoked for every attribute that exists on the element at the time of creation.
+2. Only once the constructor has been called and `attributeChangedCallback()` invoked for each existing attribute, can calls to `setAttribute()` begin to queue calls to `attributeChangedCallback()`.
 
 
 
