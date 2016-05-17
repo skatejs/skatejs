@@ -29,7 +29,7 @@ skate('x-hello', {
     name { attribute: true }
   },
   render (element) {
-    skate.vdom.text(`Hello, ${elem.name}`);
+    skate.vdom.text(`Hello, ${element.name}`);
   }
 });
 ```
@@ -577,7 +577,7 @@ skate('my-component', {
     }
   },
   render () {
-    skate.vdom.div(elem.myProp);
+    skate.vdom.div(element.myProp);
   }
 });
 ```
@@ -626,7 +626,7 @@ Function that is called to render the element. This is called when the element i
 ```js
 skate('my-component', {
   render (element) {
-    skate.vdom.p(`My name is ${elem.tagName}.`);
+    skate.vdom.p(`My name is ${element.tagName}.`);
   }
 });
 ```
@@ -1163,7 +1163,7 @@ If you need to interact with components that may not be initialised yet (at any 
 ```js
 skate('component-a', {
   ready (element) {
-    const b = elem.querySelector('component-b');
+    const b = element.querySelector('component-b');
 
     // Would be `undefined` because it's not defined yet.
     b.initialised;
@@ -1181,7 +1181,7 @@ skate('component-a', {
 
 skate('component-b', {
   created (element) {
-    elem.initialised = true;
+    element.initialised = true;
   }
 });
 ```
@@ -1344,7 +1344,7 @@ skate('my-element', {
   },
   render (element) {
     <div>
-      <h1>{elem.title}</h1>
+      <h1>{element.title}</h1>
       <slot name="description" />
       <article>
         <slot />
@@ -1608,7 +1608,7 @@ You may write a component that you change in a backward incompatible way. In ord
 ```js
 export default skate.factory({
   render (element) {
-    skate.vdom.text(`This element has been called: ${elem.tagName}.`);
+    skate.vdom.text(`This element has been called: ${element.tagName}.`);
   }
 });
 ```
