@@ -727,9 +727,38 @@ In v1:
 
 
 
+#### `observedAttributes`
+
+This behaves exactly like described in the [v1 spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example). The only things we do here are to make it behave consistently in both polyfill-land and in v0, and automatically add attributes that are linked to properties to it so that you don't have to duplicate any code between the two.
+
+For example, the following:
+
+```js
+skate('my-component', {
+  observedAttributes: ['some-attribute'],
+  attributeChanged () {}
+});
+```
+
+Could similarly be written as:
+
+```js
+skate('my-component', {
+  properties: {
+    someAttribute: { attribute: true }
+  }
+});
+```
+
+The differences being that as a result of defining it as a property, it is now linked to an attribute and will cause a re-render. If you only want to observe attribute changes within the `attributeChanged()` callback, then that is totally valid.
+
+*Observing attributes directly using `observedAttributes` doesn't make sense without specifying an `attributeChanged()` callback.*
+
+
+
 #### `extends`
 
-The built-in element to extend. This is how you create "type extensions" as outlined in [the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-type-extension-example).
+The built-in element to extend. This is how you create a "customised built-in element" as outlined in [the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-customized-builtin-example). This used to be known as "type extensions" and *was* contentious, but no longer is.
 
 ```js
 skate('my-component', {
