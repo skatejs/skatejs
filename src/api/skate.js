@@ -1,6 +1,6 @@
 import assign from 'object-assign';
 import attached from '../lifecycle/attached';
-import attribute from '../lifecycle/attribute';
+import attribute from '../lifecycle/attribute-changed';
 import create from './create';
 import created from '../lifecycle/created';
 import createElement from '../native/create-element';

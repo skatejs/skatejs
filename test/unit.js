@@ -15,7 +15,7 @@ import './unit/extending';
 import './unit/ignoring';
 import './unit/lifecycle';
 import './unit/lifecycle-scenarios';
-import './unit/lifecycle/attribute';
+import './unit/lifecycle/attribute-changed';
 import './unit/lifecycle/created';
 import './unit/lifecycle/events';
 import './unit/lifecycle/properties';

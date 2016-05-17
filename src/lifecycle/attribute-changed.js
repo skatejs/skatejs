@@ -2,7 +2,7 @@ import data from '../util/data';
 import support from '../native/support';
 
 export default function (Ctor) {
-  const { attribute, observedAttributes } = Ctor;
+  const { attributeChanged, observedAttributes } = Ctor;
 
   return function (name, oldValue, newValue) {
     // If native support for custom elements v1 exists, then it will natively
@@ -38,8 +38,8 @@ export default function (Ctor) {
       propertyData.settingAttribute = false;
     }
 
-    if (attribute) {
-      attribute(this, {
+    if (attributeChanged) {
+      attributeChanged(this, {
         name: name,
         newValue: newValue === null ? undefined : newValue,
         oldValue: oldValue === null ? undefined : oldValue

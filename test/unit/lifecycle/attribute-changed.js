@@ -12,7 +12,7 @@ describe('lifecycle/attribute', function () {
     expect(elem.hasAttribute('defined')).to.equal(false);
     tag.skate({
       observedAttributes: ['test'],
-      attribute (elem, data) {
+      attributeChanged (elem, data) {
         if (data.name === 'defined') {
           return;
         }
@@ -29,7 +29,7 @@ describe('lifecycle/attribute', function () {
       const calls = [];
       const elem = element().skate({
         observedAttributes: ['test-attr'],
-        attribute (elem, data) {
+        attributeChanged (elem, data) {
           calls.push(data.name);
         }
       })();
@@ -51,7 +51,7 @@ describe('lifecycle/attribute', function () {
         properties: {
           testProp: { attribute: true }
         },
-        attribute (elem, data) {
+        attributeChanged (elem, data) {
           calls.push(data.name);
         }
       })();
@@ -74,7 +74,7 @@ describe('lifecycle/attribute', function () {
         properties: {
           testProp: { attribute: true }
         },
-        attribute (elem, data) {
+        attributeChanged (elem, data) {
           calls.push(data.name);
         }
       })();
@@ -98,7 +98,7 @@ describe('lifecycle/attribute', function () {
         properties: {
           testAttr: { attribute: true }
         },
-        attribute (elem, data) {
+        attributeChanged (elem, data) {
           calls.push(data.name);
         }
       })();
@@ -123,7 +123,7 @@ describe('lifecycle/attribute', function () {
       spy = sinon.spy();
       let MyToggle = element().skate({
         observedAttributes: ['defined', 'name'],
-        attribute: spy
+        attributeChanged: spy
       });
       myToggle = new MyToggle();
     });
@@ -163,7 +163,9 @@ describe('lifecycle/attribute', function () {
 
       skate(tag.safe, {
         observedAttributes: ['defined'],
-        attribute: () => called = true
+        attributeChanged () {
+          called = true;
+        }
       });
 
       tag.create();
