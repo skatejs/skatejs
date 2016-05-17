@@ -314,7 +314,7 @@ skate('my-component', {
 
 The context and arguments passed to the event handler are the same as the native [`EventTarget.addEventListener()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) method:
 
-- `element` is the DOM element
+- `elem` is the DOM element
 - `eventObject` is the native event object that was dispatched on the DOM element
 
 
@@ -837,7 +837,7 @@ Skate is designed to work with multiple versions of itself on the same page. If 
 
 ### `emit (elem, eventName, eventOptions = {})`
 
-Emits a `CustomEvent` on `element` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
 skate('x-tabs', {
@@ -974,7 +974,7 @@ skate.init(element1, element2);
 
 ### `link (elem, propSpec)`
 
-The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the `element`. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
+The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the ``. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
 
 ```js
 skate('my-input', function () {
