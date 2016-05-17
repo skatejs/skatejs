@@ -1519,7 +1519,7 @@ WebComponentsJS is a suite of polyfills. Skate can work along side these, but is
 - Skate does not override any native Custom Element methods.
 - Skate is only slightly larger than the Custom Element polyfill (23k vs 17k, min not gzipped).
 - You can have multiple versions of Skate on the page.
-- Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill.
+- Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill for v0 (it cannot ignore it for v1 yet, unfortunately).
 
 
 
