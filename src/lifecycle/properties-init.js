@@ -4,7 +4,6 @@ import data from '../util/data';
 import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
-import render from '../api/render';
 
 // Symbol() wasn't transpiling properly.
 const $debounce = '____debouncedRender';
@@ -95,16 +94,16 @@ function createNativePropertyDefinition (name, opts) {
   }());
 
   prop.set = function (newValue) {
-    const propertyData = data(this, `api/property/${name}`);
+    const propData = data(this, `api/property/${name}`);
 
-    if (propertyData.settingProperty) {
+    if (propData.settingProperty) {
       return;
     }
 
     const attributeName = data(this, 'propertyLinks')[name];
-    const { oldValue } = propertyData;
+    const { oldValue } = propData;
 
-    propertyData.settingProperty = true;
+    propData.settingProperty = true;
 
     if (empty(newValue)) {
       newValue = getDefaultValue(this, name, opts);
@@ -123,12 +122,12 @@ function createNativePropertyDefinition (name, opts) {
       });
 
       if (cancelledEvents.length > 0) {
-        propertyData.settingProperty = false;
+        propData.settingProperty = false;
         return;
       }
     }
 
-    propertyData.internalValue = newValue;
+    propData.internalValue = newValue;
     syncAttribute(this, name, attributeName, newValue, opts);
 
     const changeData = { name, newValue, oldValue };
@@ -139,12 +138,12 @@ function createNativePropertyDefinition (name, opts) {
 
     // Re-render on property updates if the should-update check passes.
     if (prop.render(this, changeData)) {
-      const deb = this[$debounce] || (this[$debounce] = debounce(render, 1));
+      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.render));
       deb(this);
     }
 
-    propertyData.settingProperty = false;
-    propertyData.oldValue = newValue;
+    propData.settingProperty = false;
+    propData.oldValue = newValue;
   };
 
   return prop;
