@@ -1503,7 +1503,13 @@ Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/sp
 
 
 
-## VS WebComponentsJS
+## VS other libraries
+
+We hold no ill thoughts against other libraries and we are just trying to inform why one would choose Skate over another. If any information here is inaccurate, please feel free to raise an issue to discuss how we can make it accurate.
+
+
+
+### VS WebComponentsJS
 
 [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 
@@ -1517,7 +1523,7 @@ WebComponentsJS is a suite of polyfills. Skate can work along side these, but is
 
 
 
-## VS Polymer
+### VS Polymer
 
 Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundametally, Skate and Polymer are very different.
 
@@ -1532,7 +1538,7 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 
 
 
-## VS X-Tags
+### VS X-Tags
 
 Skate is very close to X-Tags in terms of API shape, however, it is very different in the way it is applied and shares a lot of the same differences with X-Tags as it does with Polymer.
 
@@ -1543,7 +1549,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 
 
-## VS React
+### VS React
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
