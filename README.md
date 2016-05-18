@@ -9,7 +9,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's only 8k min+gz and it will only get smaller as more browsers start supporting web components natively.
+- It's only 10k min+gz and it will only get smaller as more browsers start supporting web components natively.
 - It's very fast. It's roughly 4x as fast as React for similarly written components.
 - It works with multiple versions of itself on the page, if need be.
 
@@ -1517,7 +1517,7 @@ WebComponentsJS is a suite of polyfills. Skate can work along side these, but is
 
 - Skate's Custom Element implementation is faster than the WebComponentsJS polyfill.
 - Skate does not override any native Custom Element methods.
-- Skate is only slightly larger than the Custom Element polyfill (23k vs 17k, min not gzipped).
+- Skate is only slightly larger than the Custom Element polyfill (28k vs 17k, min not gzipped).
 - You can have multiple versions of Skate on the page.
 - Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill for v0 (it cannot ignore it for v1 yet, unfortunately).
 
@@ -1529,9 +1529,9 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions. All versions listed below for Polymer don't include the size of the Custom Element polyfill (17k):
-  - `polymer-micro.html` 17k vs 23k
-  - `polymer-mini.html` 54k vs 23k
-  - `polymer.html` 124k vs 23k
+  - `polymer-micro.html` 17k vs 28k
+  - `polymer-mini.html` 54k vs 28k
+  - `polymer.html` 124k vs 28k
 - Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since Polymer uses the WebComponentsJS polyfill.
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, Bower, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
@@ -1553,7 +1553,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
-- React is massive: a whopping 145k minified vs 23k.
+- React is massive: a whopping 145k minified vs 28k.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
 - **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.
