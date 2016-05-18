@@ -1,70 +1,73 @@
 import skate, * as api from '../../src/index';
+import umd from '../../dist/index';
 
 describe('exports', function () {
   it('skate', function () {
     expect(skate).to.be.a('function');
     expect(api).to.be.an('object');
+    expect(umd).to.be.an('object');
   });
 
   it('skate.create', function () {
-    expect(skate.create).to.be.a('function');
-    expect(api.create).to.equal(skate.create);
+    expect(api.create).to.be.a('function');
+    expect(umd.create).to.be.a('function');
   });
 
   it('skate.emit', function () {
-    expect(skate.emit).to.be.a('function');
-    expect(api.emit).to.equal(skate.emit);
+    expect(api.emit).to.be.a('function');
+    expect(umd.emit).to.be.a('function');
   });
 
   it('skate.factory', function () {
-    expect(skate.factory).to.be.a('function');
-    expect(api.factory).to.equal(skate.factory);
+    expect(api.factory).to.be.a('function');
+    expect(umd.factory).to.be.a('function');
   });
 
   it('skate.fragment', function () {
-    expect(skate.fragment).to.be.a('function');
-    expect(api.fragment).to.equal(skate.fragment);
+    expect(api.fragment).to.be.a('function');
+    expect(umd.fragment).to.be.a('function');
   });
 
   it('skate.init', function () {
-    expect(skate.init).to.be.a('function');
-    expect(api.init).to.equal(skate.init);
+    expect(api.init).to.be.a('function');
+    expect(umd.init).to.be.a('function');
   });
 
   it('skate.link', function () {
-    expect(skate.link).to.be.a('function');
-    expect(api.link).to.equal(skate.link);
+    expect(api.link).to.be.a('function');
+    expect(umd.link).to.be.a('function');
   });
 
   it('skate.prop', function () {
-    expect(skate.prop.array).to.be.a('function', 'array');
-    expect(skate.prop.boolean).to.be.a('function', 'boolean');
-    expect(skate.prop.number).to.be.a('function', 'number');
-    expect(skate.prop.string).to.be.a('function', 'string');
-
-    expect(api.prop.array).to.equal(skate.prop.array);
-    expect(api.prop.boolean).to.equal(skate.prop.boolean);
-    expect(api.prop.number).to.equal(skate.prop.number);
-    expect(api.prop.string).to.equal(skate.prop.string);
+    expect(api.prop).to.be.an('function');
+    expect(api.prop.array).to.be.a('function', 'api array');
+    expect(api.prop.boolean).to.be.a('function', 'api boolean');
+    expect(api.prop.number).to.be.a('function', 'api number');
+    expect(api.prop.string).to.be.a('function', 'api string');
+    expect(umd.prop).to.be.an('function');
+    expect(umd.prop.array).to.be.a('function', 'umd array');
+    expect(umd.prop.boolean).to.be.a('function', 'umd boolean');
+    expect(umd.prop.number).to.be.a('function', 'umd number');
+    expect(umd.prop.string).to.be.a('function', 'umd string');
   });
 
   it('skate.ready', function () {
-    expect(skate.ready).to.be.a('function');
-    expect(api.ready).to.equal(skate.ready);
+    expect(api.ready).to.be.a('function');
+    expect(umd.ready).to.be.a('function');
   });
 
   it('skate.state', function () {
-    expect(skate.state).to.be.a('function');
-    expect(api.state).to.equal(skate.state);
+    expect(api.state).to.be.a('function');
+    expect(umd.state).to.be.a('function');
   });
 
   it('vdom', function () {
-    expect(skate.vdom).to.be.a('function');
-    expect(api.vdom).to.equal(skate.vdom);
+    expect(api.vdom).to.be.a('function');
+    expect(umd.vdom).to.be.a('function');
   });
 
   it('skate.version', function () {
-    expect(skate.version).to.be.a('string');
-    expect(api.version).to.equal(skate.version);
+    expect(api.version).to.be.a('string');
+    expect(umd.version).to.be.a('string');
   });
 });

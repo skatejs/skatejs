@@ -1,9 +1,6 @@
-'use strict';
-
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import ready from '../../src/api/ready';
-import skate from '../../src/index';
+import skate, { init, fragment, ready } from '../../src/index';
 
 describe('dom', function () {
   describe('general', function () {
@@ -11,7 +8,7 @@ describe('dom', function () {
       var calls = 0;
       var tag = helperElement().safe;
 
-      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
+      init(helperFixture(`<div><${tag}></${tag}></div>`));
       skate(tag, {
         created () {
           ++calls;
@@ -34,7 +31,7 @@ describe('dom', function () {
         }
       });
 
-      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
+      init(helperFixture(`<div><${tag}></${tag}></div>`));
       ready(helperFixture().querySelector(tag), function () {
         expect(calls).to.equal(1);
         done();
@@ -51,7 +48,7 @@ describe('dom', function () {
         }
       });
 
-      skate.init(helperFixture(`<div><${tag}></${tag}></div>`));
+      init(helperFixture(`<div><${tag}></${tag}></div>`));
       ready(helperFixture().querySelector(tag), function () {
         expect(calls).to.equal(1);
         done();
@@ -88,7 +85,7 @@ describe('dom', function () {
         }
       });
 
-      skate.init(helperFixture(`<div id="removing"><child><${tag}></${tag}></child></div>`));
+      init(helperFixture(`<div id="removing"><child><${tag}></${tag}></child></div>`));
       helperFixture().removeChild(document.getElementById('removing'));
     });
   });
@@ -106,7 +103,7 @@ describe('dom', function () {
         prototype: Object.create(SVGElement.prototype)
       });
 
-      skate.fragment(`
+      fragment(`
         <svg>
           <circle />
           <path is="${tag}" />
@@ -141,7 +138,7 @@ describe('dom', function () {
       var myEl = new MyEl();
 
       frag.appendChild(myEl);
-      skate.init(frag);
+      init(frag);
 
       expect(created).to.equal(true);
       expect(attached).to.equal(false);
@@ -169,12 +166,12 @@ describe('dom', function () {
 
     it('tagName', function () {
       var el = createElementAndRemove('tagName');
-      skate.init(el);
+      init(el);
     });
 
     it('childNodes', function () {
       var el = createElementAndRemove('childNodes');
-      skate.init(el);
+      init(el);
     });
   });
 });

@@ -1,9 +1,9 @@
 'use strict';
 
-import skate from '../../src/index';
+import { version } from '../../src/index';
 
 describe('version', function () {
   it('should be exposed', function () {
-    expect(skate.version).to.be.a('string');
+    expect(version).to.be.a('string');
   });
 });

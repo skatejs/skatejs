@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate from '../../../src/index';
+import skate, { emit, fragment, init } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -23,7 +23,7 @@ describe('lifecycle/events', function () {
     });
 
     var myEl = tag.create();
-    skate.emit(myEl, 'test');
+    emit(myEl, 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -37,7 +37,7 @@ describe('lifecycle/events', function () {
     var myEl = tag.create();
     helperFixture(myEl);
     myEl.appendChild(document.createElement('span'));
-    skate.emit(myEl.children[0], 'test');
+    emit(myEl.children[0], 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -51,7 +51,7 @@ describe('lifecycle/events', function () {
     var myEl = tag.create();
     helperFixture(myEl);
     myEl.appendChild(document.createElement('span'));
-    skate.emit(myEl.children[0], 'test');
+    emit(myEl.children[0], 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -68,7 +68,7 @@ describe('lifecycle/events', function () {
 
     par.removeChild(myEl);
     par.appendChild(myEl);
-    skate.emit(myEl, 'test');
+    emit(myEl, 'test');
     expect(numTriggered).to.equal(1);
   });
 
@@ -99,8 +99,8 @@ describe('lifecycle/events', function () {
       }
     });
 
-    const frag = skate.fragment(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
-    skate.emit(frag.querySelector('span'), 'test');
+    const frag = fragment(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
+    emit(frag.querySelector('span'), 'test');
     expect(numTriggered).to.equal(3);
   });
 
@@ -119,16 +119,16 @@ describe('lifecycle/events', function () {
       },
       prototype: {
         blur: function () {
-          skate.emit(this.querySelector('input'), 'blur');
+          emit(this.querySelector('input'), 'blur');
         },
         focus: function () {
-          skate.emit(this.querySelector('input'), 'focus');
+          emit(this.querySelector('input'), 'focus');
         }
       }
     });
 
     var inst = helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName);
-    skate.init(inst);
+    init(inst);
 
     inst.blur();
     expect(blur).to.equal(true);

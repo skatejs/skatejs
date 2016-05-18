@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate from '../../../src/index';
+import skate, { create, init } from '../../../src/index';
 import vdom from '../../../src/api/vdom';
 
 describe('api/init', function () {
@@ -18,7 +18,7 @@ describe('api/init', function () {
 
   it('should accept a node', function () {
     const elem = helperFixture().querySelector(tagName.safe);
-    skate.init(elem);
+    init(elem);
     expect(elem.textContent).to.equal('test');
   });
 
@@ -33,7 +33,7 @@ describe('api/init', function () {
         }
       });
 
-      skate.init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
+      init(helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName));
       expect(initialised).to.equal(true);
     });
   });
@@ -49,9 +49,9 @@ describe('api/init', function () {
         }
       });
 
-      var el = skate.create(tagName);
+      var el = create(tagName);
       expect(calls).to.equal(1);
-      skate.init(el);
+      init(el);
       expect(calls).to.equal(1);
     });
   });
@@ -75,7 +75,7 @@ describe('api/init', function () {
       });
 
       const form = document.createElement('x-form');
-      skate.init(form);
+      init(form);
       expect(form.initialised).to.equal(true);
     });
   });

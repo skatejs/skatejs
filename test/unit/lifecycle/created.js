@@ -1,5 +1,5 @@
 import helperElement from '../../lib/element';
-import skate from '../../../src/index';
+import { emit } from '../../../src/index';
 
 function format (value, index) {
   return (index + 1) + '. ' + value + '\n';
@@ -12,7 +12,7 @@ describe('lifecycle/created', function () {
     function test (lifecycle) {
       return function (elem) {
         elem.test(lifecycle);
-        skate.emit(elem, 'someNonStandardEvent', { detail: lifecycle });
+        emit(elem, 'someNonStandardEvent', { detail: lifecycle });
         elem.someNonStandardProperty = lifecycle;
         order.push(`${lifecycle}.callback`);
       };

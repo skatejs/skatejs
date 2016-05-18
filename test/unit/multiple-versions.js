@@ -1,10 +1,13 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
 
-import skateMaster from '../../src/index';
+import skateMaster, { version } from '../../src/index';
 import '../skate/0.14.3.js';
 
 const { skate } = window;
+
+// We do this so the test can call the same skateAndCreate() function.
+skateMaster.version = version;
 
 describe('multiple-versions', function () {
   it('is possible to have multiple versions of skate on the page', function (done) {
@@ -25,7 +28,7 @@ describe('multiple-versions', function () {
     skateAndCreate(skate);
 
     setTimeout(function () {
-      expect(called.sort()).to.deep.equal([skateMaster.version, skate.version].sort());
+      expect(called.sort()).to.deep.equal([version, skate.version].sort());
       done();
     }, 1);
   });

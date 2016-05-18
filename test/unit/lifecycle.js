@@ -1,7 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import ready from '../../src/api/ready';
-import skate from '../../src/index';
+import skate, { init, ready } from '../../src/index';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -60,7 +59,7 @@ describe('lifecycle', function () {
   });
 
   it('should not call the attached() callback when the element is initialised', function () {
-    skate.init(myEl);
+    init(myEl);
     expect(created).to.equal(true);
     expect(attached).to.equal(false);
     expect(detached).to.equal(false);
@@ -77,7 +76,7 @@ describe('unresolved attribute', function () {
       }
     });
 
-    skate.init(helperFixture('<my-element unresolved></my-element>', tagName));
+    init(helperFixture('<my-element unresolved></my-element>', tagName));
   });
 
   it('should be considred "resolved" after the created lifecycle finishes', function () {
@@ -89,7 +88,7 @@ describe('unresolved attribute', function () {
     });
 
     var element = helperFixture(`<${tag}></${tag}>`).children[0];
-    skate.init(element);
+    init(element);
     expect(element.hasAttribute('defined')).to.equal(true, 'should have defined');
   });
 });
@@ -204,7 +203,7 @@ describe('lifecycle scenarios', function () {
       expect(detached).to.equal(false, 'Should not call detached');
 
       document.body.appendChild(element);
-      skate.init(element);
+      init(element);
       expect(attached).to.equal(true, 'Should call attached');
       expect(detached).to.equal(false, 'Should not call remove');
 
