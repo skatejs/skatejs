@@ -1562,7 +1562,7 @@ React has definitely had an influence on Skate. That said, they're completely di
 
 ## Native Custom Element Support
 
-If your component is not using custom types and your browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
+If the browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
 
 We strive to ensure Skate has as little base overhead as possible. What this means is that if you build a component with Skate vs with native it should not have a negative impact on performance. Of course, there will always be some overhead, but it should not be significant.
 
