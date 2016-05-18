@@ -1,27 +1,21 @@
+import assign from 'object-assign';
+
+// Public API
 import create from './api/create';
 import emit from './api/emit';
 import factory from './api/factory';
 import fragment from './api/fragment';
 import init from './api/init';
 import link from './api/link';
-import properties from './api/properties/index';
+import prop, * as properties from './api/prop';
 import ready from './api/ready';
 import skate from './api/skate';
 import state from './api/state';
-import vdom from './api/vdom';
+import vdom, * as vdomElements from './api/vdom';
 import version from './api/version';
 
-skate.create = create;
-skate.emit = emit;
-skate.factory = factory;
-skate.fragment = fragment;
-skate.init = init;
-skate.link = link;
-skate.properties = properties;
-skate.ready = ready;
-skate.state = state;
-skate.vdom = vdom;
-skate.version = version;
+assign(prop, properties);
+assign(vdom, vdomElements);
 
 export default skate;
 export {
@@ -31,8 +25,9 @@ export {
   fragment,
   init,
   link,
-  properties,
+  prop,
   ready,
+  skate,
   state,
   vdom,
   version

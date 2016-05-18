@@ -36,16 +36,16 @@ describe('exports', function () {
     expect(api.link).to.equal(skate.link);
   });
 
-  it('skate.properties', function () {
-    expect(skate.properties.array).to.be.a('function', 'array');
-    expect(skate.properties.boolean).to.be.a('function', 'boolean');
-    expect(skate.properties.number).to.be.a('function', 'number');
-    expect(skate.properties.string).to.be.a('function', 'string');
+  it('skate.prop', function () {
+    expect(skate.prop.array).to.be.a('function', 'array');
+    expect(skate.prop.boolean).to.be.a('function', 'boolean');
+    expect(skate.prop.number).to.be.a('function', 'number');
+    expect(skate.prop.string).to.be.a('function', 'string');
 
-    expect(api.properties.array).to.equal(skate.properties.array);
-    expect(api.properties.boolean).to.equal(skate.properties.boolean);
-    expect(api.properties.number).to.equal(skate.properties.number);
-    expect(api.properties.string).to.equal(skate.properties.string);
+    expect(api.prop.array).to.equal(skate.prop.array);
+    expect(api.prop.boolean).to.equal(skate.prop.boolean);
+    expect(api.prop.number).to.equal(skate.prop.number);
+    expect(api.prop.string).to.equal(skate.prop.string);
   });
 
   it('skate.ready', function () {

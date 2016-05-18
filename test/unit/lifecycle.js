@@ -1,6 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import ready from '../src/api/ready';
+import ready from '../../src/api/ready';
 import skate from '../../src/index';
 
 describe('lifecycle', function () {

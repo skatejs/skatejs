@@ -1,7 +1,7 @@
+import { emit, prop, vdom } from '../../../src/index';
 import component from '../../lib/component';
-import { boolean, number } from '../../../src/api/properties';
-import emit from '../../../src/api/emit';
-import vdom from '../../../src/api/vdom';
+
+const { boolean, number } = prop;
 
 describe('events (on*)', function () {
   it('should not duplicate listeners', function (done) {

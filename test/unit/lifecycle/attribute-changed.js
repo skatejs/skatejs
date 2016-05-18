@@ -1,7 +1,7 @@
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import ready from '../../src/api/ready';
-import skate from '../../src/index';
+import ready from '../../../src/api/ready';
+import skate from '../../../src/index';
 
 describe('lifecycle/attribute', function () {
   it('should be invoked for attributes that exist on the element when it is created', function (done) {

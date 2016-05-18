@@ -1,8 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.skate = factory());
-}(this, function () {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.skate = global.skate || {})));
+}(this, function (exports) {
 
 	var babelHelpers = {};
 	babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
@@ -10,14 +10,30 @@
 	} : function (obj) {
 	  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
 	};
+
+	babelHelpers.defineProperty = function (obj, key, value) {
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	};
+
 	babelHelpers;
 
 
 	function __commonjs(fn, module) { return module = { exports: {} }, fn(module, module.exports), module.exports; }
 
 	var index = __commonjs(function (module) {
-	/* eslint-disable no-unused-vars */
 	'use strict';
+	/* eslint-disable no-unused-vars */
 
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	var propIsEnumerable = Object.prototype.propertyIsEnumerable;
@@ -30,7 +46,50 @@
 		return Object(val);
 	}
 
-	module.exports = Object.assign || function (target, source) {
+	function shouldUseNative() {
+		try {
+			if (!Object.assign) {
+				return false;
+			}
+
+			// Detect buggy property enumeration order in older V8 versions.
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+			var test1 = new String('abc'); // eslint-disable-line
+			test1[5] = 'de';
+			if (Object.getOwnPropertyNames(test1)[0] === '5') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test2 = {};
+			for (var i = 0; i < 10; i++) {
+				test2['_' + String.fromCharCode(i)] = i;
+			}
+			var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+				return test2[n];
+			});
+			if (order2.join('') !== '0123456789') {
+				return false;
+			}
+
+			// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+			var test3 = {};
+			'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+				test3[letter] = letter;
+			});
+			if (Object.keys(Object.assign({}, test3)).join('') !== 'abcdefghijklmnopqrst') {
+				return false;
+			}
+
+			return true;
+		} catch (e) {
+			// We don't expect any of the above to throw, but better to be safe.
+			return false;
+		}
+	}
+
+	module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 		var from;
 		var to = toObject(target);
 		var symbols;
@@ -215,7 +274,7 @@
 	}
 
 	function create (name, props) {
-	  var elem = undefined;
+	  var elem = void 0;
 	  var Ctor = customElements.get(name);
 
 	  if (Ctor) {
@@ -291,7 +350,7 @@
 	}
 
 	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = undefined;
+	  var didPreventDefault = void 0;
 	  var currentElem = elem;
 	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
 	  Object.defineProperty(cEvent, 'target', { get: function get() {
@@ -350,22 +409,67 @@
 	  } : undefined;
 	}
 
-	function attribute (opts) {
-	  var attribute = opts.attribute;
+	var isCustomElementsV0 = support.v0;
+	var isCustomElementsV1 = support.v1;
+
+	function attribute (Ctor) {
+	  var attributeChanged = Ctor.attributeChanged;
+	  var observedAttributes = Ctor.observedAttributes;
+
 
 	  return function (name, oldValue, newValue) {
+	    var elemData = data(this);
+
+	    // Chrome legacy custom elements batch attribute changes in a microtask so
+	    // so we have to tell it to emulate v1 behaviour by setting a unique
+	    // unique attribute.
+	    if (isCustomElementsV0 && name === '____can_start_triggering_now') {
+	      elemData.canStartTriggeringNow = true;
+	      return;
+	    }
+
+	    // We prevent legacy Chrome from ever triggering a change unless it's been
+	    // flagged to do so using the unique attribute or explicitly told that it
+	    // can via the property data.
+	    if (isCustomElementsV0 && !elemData.canStartTriggeringNow) {
+	      return;
+	    }
+
+	    // If native support for custom elements v1 exists, then it will natively
+	    // do this check before calling the attributeChangedCallback.
+	    if (!isCustomElementsV1 && observedAttributes.indexOf(name) === -1) {
+	      return;
+	    }
+
 	    var propertyName = data(this, 'attributeLinks')[name];
 
 	    if (propertyName) {
-	      var propertyData = data(this, 'api/property/' + propertyName);
-	      if (!propertyData.settingProperty) {
+	      var propData = data(this, 'api/property/' + propertyName);
+
+	      // This ensures a property set doesn't cause the attribute changed
+	      // handler to run again once we set this flag. This only ever has a
+	      // chance to run when you set an attribute, it then sets a property and
+	      // then that causes the attribute to be set again.
+	      if (propData.settingAttribute) {
+	        return;
+	      }
+
+	      // Set this here so the next set to the attribute doesn't cause this
+	      // handler to run a gain.
+	      propData.settingAttribute = true;
+
+	      // Sync up the property.
+	      if (!propData.settingProperty) {
 	        var propOpts = this.constructor.properties[propertyName];
 	        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
 	      }
+
+	      // Allow this handler to run again.
+	      propData.settingAttribute = false;
 	    }
 
-	    if (attribute) {
-	      attribute(this, {
+	    if (attributeChanged) {
+	      attributeChanged(this, {
 	        name: name,
 	        newValue: newValue === null ? undefined : newValue,
 	        oldValue: oldValue === null ? undefined : oldValue
@@ -417,7 +521,7 @@
 	      if (matches(current, selector)) {
 	        readonly(e, 'currentTarget', current);
 	        readonly(e, 'delegateTarget', elem);
-	        return handler(e);
+	        return handler(elem, e);
 	      }
 	      current = current.parentNode;
 	    }
@@ -427,7 +531,7 @@
 	function makeNormalHandler(elem, handler) {
 	  return function (e) {
 	    readonly(e, 'delegateTarget', elem);
-	    handler(e);
+	    handler(elem, e);
 	  };
 	}
 
@@ -445,7 +549,7 @@
 	  var events = opts.events || {};
 	  return function (elem) {
 	    for (var name in events) {
-	      bindEvent(elem, name, events[name].bind(elem));
+	      bindEvent(elem, name, events[name]);
 	    }
 	  };
 	}
@@ -453,6 +557,7 @@
 	function patchAttributeMethods(elem) {
 	  var removeAttribute = elem.removeAttribute;
 	  var setAttribute = elem.setAttribute;
+
 
 	  elem.removeAttribute = function (name) {
 	    var oldValue = this.getAttribute(name);
@@ -469,13 +574,6 @@
 	      elem.attributeChangedCallback(name, oldValue, String(newValue));
 	    }
 	  };
-	}
-
-	function dashCase (str) {
-	  return str.split(/([A-Z])/).reduce(function (one, two, idx) {
-	    var dash = !one || idx % 2 === 0 ? '' : '-';
-	    return '' + one + dash + two.toLowerCase();
-	  });
 	}
 
 	var raf = requestAnimationFrame || setTimeout;
@@ -503,25 +601,15 @@
 	  return typeof val === 'undefined' || val === null;
 	}
 
-	function render (elem) {
-	  var component = findElementInRegistry(elem);
-	  if (component && component.render) {
-	    component.render(elem);
-	  }
-	}
-
-	var $debounce = Symbol();
+	// Symbol() wasn't transpiling properly.
+	var $debounce = '____debouncedRender';
 
 	function getDefaultValue(elem, name, opts) {
 	  return typeof opts.default === 'function' ? opts.default(elem, { name: name }) : opts.default;
 	}
 
 	function getInitialValue(elem, name, opts) {
-	  typeof opts.initial === 'function' ? opts.initial(elem, { name: name }) : opts.initial;
-	}
-
-	function getLinkedAttribute(name, attr) {
-	  return attr === true ? dashCase(name) : attr;
+	  return typeof opts.initial === 'function' ? opts.initial(elem, { name: name }) : opts.initial;
 	}
 
 	function syncAttribute(elem, propertyName, attributeName, newValue, opts) {
@@ -546,7 +634,7 @@
 
 	  prop.created = function (elem) {
 	    var propertyData = data(elem, 'api/property/' + name);
-	    var attributeName = getLinkedAttribute(name, opts.attribute);
+	    var attributeName = opts.attribute;
 	    var initialValue = elem[name];
 
 	    // Store property to attribute link information.
@@ -599,16 +687,17 @@
 	  }();
 
 	  prop.set = function (newValue) {
-	    var propertyData = data(this, 'api/property/' + name);
+	    var propData = data(this, 'api/property/' + name);
 
-	    if (propertyData.settingProperty) {
+	    if (propData.settingProperty) {
 	      return;
 	    }
 
 	    var attributeName = data(this, 'propertyLinks')[name];
-	    var oldValue = propertyData.oldValue;
+	    var oldValue = propData.oldValue;
 
-	    propertyData.settingProperty = true;
+
+	    propData.settingProperty = true;
 
 	    if (empty(newValue)) {
 	      newValue = getDefaultValue(this, name, opts);
@@ -627,12 +716,12 @@
 	      });
 
 	      if (cancelledEvents.length > 0) {
-	        propertyData.settingProperty = false;
+	        propData.settingProperty = false;
 	        return;
 	      }
 	    }
 
-	    propertyData.internalValue = newValue;
+	    propData.internalValue = newValue;
 	    syncAttribute(this, name, attributeName, newValue, opts);
 
 	    var changeData = { name: name, newValue: newValue, oldValue: oldValue };
@@ -643,12 +732,12 @@
 
 	    // Re-render on property updates if the should-update check passes.
 	    if (prop.render(this, changeData)) {
-	      var deb = this[$debounce] || (this[$debounce] = debounce(render, 1));
+	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.render));
 	      deb(this);
 	    }
 
-	    propertyData.settingProperty = false;
-	    propertyData.oldValue = newValue;
+	    propData.settingProperty = false;
+	    propData.oldValue = newValue;
 	  };
 
 	  return prop;
@@ -716,6 +805,10 @@
 	  };
 	}
 
+	var isPolyfilled = support.polyfilled;
+	var isCustomElementsV0$1 = support.v0;
+	var isCustomElementsV1$1 = support.v1;
+
 	function ensurePropertyFunctions(opts) {
 	  var properties = opts.properties;
 	  var names = Object.keys(properties || {});
@@ -735,7 +828,19 @@
 	  }, {});
 	}
 
-	function iniitaliseProperties(elem, propertyDefinitions) {
+	function callAttributeChangedForEachAttribute(elem, observedAttributes) {
+	  observedAttributes.forEach(function (name) {
+	    var attr = elem.attributes[name];
+
+	    // We don't call it for the defined attribute because that will have
+	    // already called the handler via setAttribute().
+	    if (attr) {
+	      elem.attributeChangedCallback(name, null, attr.value);
+	    }
+	  });
+	}
+
+	function initialiseProperties(elem, propertyDefinitions) {
 	  Object.keys(propertyDefinitions).forEach(function (name) {
 	    var prop = propertyDefinitions[name];
 	    prop.created(elem);
@@ -754,6 +859,7 @@
 	  var created = opts.created;
 	  var definedAttribute = opts.definedAttribute;
 	  var events$$ = opts.events;
+	  var observedAttributes = opts.observedAttributes;
 	  var properties = opts.properties;
 	  var prototype$$ = opts.prototype;
 	  var ready = opts.ready;
@@ -766,26 +872,23 @@
 
 	  // Performance critical code!
 	  return function () {
-	    var info = data(this);
+	    var elemData = data(this);
 	    var propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
-	    var readyCallbacks = info.readyCallbacks;
+	    var readyCallbacks = elemData.readyCallbacks;
 
-	    if (info.created) {
+	    if (elemData.created) {
 	      return;
 	    }
 
-	    info.created = true;
+	    elemData.created = true;
 
-	    if (support.polyfilled) {
-	      patchAttributeMethods(this);
-
-	      if (prototype$$) {
-	        applyPrototype(this);
-	      }
+	    if (isPolyfilled && prototype$$) {
+	      applyPrototype(this);
 	    }
 
+	    // Sets up properties, but does not invoke anything.
 	    if (propertyDefinitions) {
-	      iniitaliseProperties(this, propertyDefinitions);
+	      initialiseProperties(this, propertyDefinitions);
 	    }
 
 	    if (events$$) {
@@ -804,17 +907,62 @@
 	      ready(this);
 	    }
 
+	    // Defined attribute is last before notifying listeners.
+	    if (!this.hasAttribute(definedAttribute)) {
+	      this.setAttribute(definedAttribute, '');
+	    }
+
+	    // We trigger ready after we add the defined attribute.
 	    if (readyCallbacks) {
 	      readyCallbacks.forEach(function (cb) {
 	        return cb();
 	      });
-	      info.readyCallbacks = null;
+	      elemData.readyCallbacks = null;
 	    }
 
-	    if (!this.hasAttribute(definedAttribute)) {
-	      this.setAttribute(definedAttribute, '');
+	    // In the early versions of the spec ("v0", only implemented by Blink) all
+	    // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
+	    // However, no attributes that exist when the element is upgraded would queue
+	    // a task.
+	    //
+	    // In Custom Elements v1, nothing is queued until after the constructor
+	    // (createdCallback in v0) is invoked. After it is invoked, the
+	    // attributeChangedCallback() is executed for all existing attributes. All
+	    // subsequent calls behave as normal.
+	    //
+	    // Any attribute change before this point is a no-op. Anything after works
+	    // as normal.
+	    if (isCustomElementsV0$1) {
+	      this.setAttribute('____can_start_triggering_now', '');
+	      this.removeAttribute('____can_start_triggering_now');
+	    }
+
+	    // Make attribute sets synchronous for polyfill-land.
+	    if (isPolyfilled) {
+	      patchAttributeMethods(this);
+	    }
+
+	    // Emulate v1 attribute initialisation behaviour.
+	    if (!isCustomElementsV1$1) {
+	      // We force this flag to be true so that attributeChanged() actually gets
+	      // called in Chrome v0.
+	      elemData.canStartTriggeringNow = true;
+
+	      // Force the change.
+	      callAttributeChangedForEachAttribute(this, observedAttributes);
+
+	      // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
+	      // until *after* it receives the set for "____can_start_triggering_now".
+	      elemData.canStartTriggeringNow = false;
 	    }
 	  };
+	}
+
+	function dashCase (str) {
+	  return str.split(/([A-Z])/).reduce(function (one, two, idx) {
+	    var dash = !one || idx % 2 === 0 ? '' : '-';
+	    return '' + one + dash + two.toLowerCase();
+	  });
 	}
 
 	var internalData = {
@@ -913,6 +1061,7 @@
 
 	var _window = window;
 	var Element$1 = _window.Element;
+
 
 	function getClosestIgnoredElement (element) {
 	  var parent = element;
@@ -2183,21 +2332,55 @@
 	};
 	});
 
+	var incrementalDomCjs$1 = (incrementalDomCjs && typeof incrementalDomCjs === 'object' && 'default' in incrementalDomCjs ? incrementalDomCjs['default'] : incrementalDomCjs);
 	var text$1 = incrementalDomCjs.text;
+	var elementPlaceholder = incrementalDomCjs.elementPlaceholder;
+	var elementVoid = incrementalDomCjs.elementVoid;
 	var elementClose$1 = incrementalDomCjs.elementClose;
 	var elementOpenEnd$1 = incrementalDomCjs.elementOpenEnd;
 	var attr$1 = incrementalDomCjs.attr;
 	var elementOpenStart$1 = incrementalDomCjs.elementOpenStart;
 	var elementOpen$1 = incrementalDomCjs.elementOpen;
 	var skip$1 = incrementalDomCjs.skip;
+	var currentElement = incrementalDomCjs.currentElement;
 	var patch$1 = incrementalDomCjs.patch;
+	var attributes$1 = incrementalDomCjs.attributes;
+	var applyProp$1 = incrementalDomCjs.applyProp;
+	var applyAttr = incrementalDomCjs.applyAttr;
+	var symbols$1 = incrementalDomCjs.symbols;
+	var notifications = incrementalDomCjs.notifications;
 
+var IncrementalDOM = Object.freeze({
+	  default: incrementalDomCjs$1,
+	  text: text$1,
+	  elementPlaceholder: elementPlaceholder,
+	  elementVoid: elementVoid,
+	  elementClose: elementClose$1,
+	  elementOpenEnd: elementOpenEnd$1,
+	  attr: attr$1,
+	  elementOpenStart: elementOpenStart$1,
+	  elementOpen: elementOpen$1,
+	  skip: skip$1,
+	  currentElement: currentElement,
+	  patch: patch$1,
+	  attributes: attributes$1,
+	  applyProp: applyProp$1,
+	  applyAttr: applyAttr,
+	  symbols: symbols$1,
+	  notifications: notifications
+	});
+
+	// Could import these, but we have to import all of IncrementalDOM anyways so
+	// that we can export our configured IncrementalDOM.
+	var applyProp = applyProp$1;
 	var attr = attr$1;
+	var attributes = attributes$1;
 	var elementClose = elementClose$1;
 	var elementOpen = elementOpen$1;
 	var elementOpenEnd = elementOpenEnd$1;
 	var elementOpenStart = elementOpenStart$1;
 	var skip = skip$1;
+	var symbols = symbols$1;
 	var text = text$1;
 
 	// Specify an environment for iDOM in case we haven't yet.
@@ -2207,7 +2390,67 @@
 	  process = { env: { NODE_ENV: 'production' } };
 	}
 
+	var applyDefault = attributes[symbols.default];
 	var factories = {};
+
+	// Attributes that are not handled by Incremental DOM.
+	attributes.key = attributes.skip = attributes.statics = function () {};
+
+	// Attributes that *must* be set via a property on all elements.
+	attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
+
+	// Default attribute applicator.
+	attributes[symbols.default] = function (elem, name, value) {
+	  // Boolean false values should not set attributes at all.
+	  if (value === false) {
+	    return;
+	  }
+
+	  // Work with properties defined on the prototype chain. This includes event
+	  // handlers that can be bound via properties.
+	  if (name in elem) {
+	    return applyProp(elem, name, value);
+	  }
+
+	  // Handle custom events.
+	  if (name.indexOf('on') === 0) {
+	    return applyEvent(elem, name.substring(2), name, value);
+	  }
+
+	  // Custom element properties should be set as properties.
+	  var dataName = elem.tagName + '.' + name;
+	  if (internalData.applyProp[dataName]) {
+	    return applyProp(elem, name, value);
+	  }
+
+	  // Fallback to default IncrementalDOM behaviour.
+	  applyDefault(elem, name, value);
+	};
+
+	// Adds or removes an event listener for an element.
+	function applyEvent(elem, ename, name, value) {
+	  var events = elem.__events;
+
+	  if (!events) {
+	    events = elem.__events = {};
+	  }
+
+	  var eFunc = events[ename];
+
+	  // Remove old listener so they don't double up.
+	  if (eFunc) {
+	    elem.removeEventListener(ename, eFunc);
+	  }
+
+	  // Bind new listener.
+	  if (value) {
+	    elem.addEventListener(ename, events[ename] = function (e) {
+	      if (this === e.target) {
+	        value.call(this, e);
+	      }
+	    });
+	  }
+	}
 
 	// Creates a factory and returns it.
 	function bind(tname) {
@@ -2241,6 +2484,11 @@
 
 	    return elementClose(tname);
 	  };
+	}
+
+	// The default function requries a tag name.
+	function create$1(tname, attrs, chren) {
+	  return (factories[tname] || bind(tname))(attrs, chren);
 	}
 
 	// Create factories for all HTML elements except for ones that match keywords
@@ -2372,19 +2620,152 @@
 	var video = bind('video');
 	var wbr = bind('wbr');
 
+var vdomElements = Object.freeze({
+	  default: create$1,
+	  text: text,
+	  IncrementalDOM: IncrementalDOM,
+	  a: a,
+	  abbr: abbr,
+	  address: address,
+	  area: area,
+	  article: article,
+	  aside: aside,
+	  audio: audio,
+	  b: b,
+	  base: base,
+	  bdi: bdi,
+	  bdo: bdo,
+	  bgsound: bgsound,
+	  blockquote: blockquote,
+	  body: body$1,
+	  br: br,
+	  button: button,
+	  canvas: canvas,
+	  caption: caption,
+	  cite: cite,
+	  code: code,
+	  col: col,
+	  colgroup: colgroup,
+	  command: command,
+	  content: content,
+	  data: data$1,
+	  datalist: datalist,
+	  dd: dd,
+	  del: del,
+	  details: details,
+	  dfn: dfn,
+	  dialog: dialog,
+	  div: div,
+	  dl: dl,
+	  dt: dt,
+	  element: element,
+	  em: em,
+	  embed: embed,
+	  fieldset: fieldset,
+	  figcaption: figcaption,
+	  figure: figure,
+	  font: font,
+	  footer: footer,
+	  form: form,
+	  h1: h1,
+	  h2: h2,
+	  h3: h3,
+	  h4: h4,
+	  h5: h5,
+	  h6: h6,
+	  head: head$1,
+	  header: header,
+	  hgroup: hgroup,
+	  hr: hr,
+	  html: html,
+	  i: i,
+	  iframe: iframe,
+	  image: image,
+	  img: img,
+	  input: input,
+	  ins: ins,
+	  kbd: kbd,
+	  keygen: keygen,
+	  label: label,
+	  legend: legend,
+	  li: li,
+	  link: link,
+	  main: main,
+	  map: map,
+	  mark: mark,
+	  marquee: marquee,
+	  menu: menu,
+	  menuitem: menuitem,
+	  meta: meta,
+	  meter: meter,
+	  multicol: multicol,
+	  nav: nav,
+	  nobr: nobr,
+	  noembed: noembed,
+	  noframes: noframes,
+	  noscript: noscript,
+	  object: object,
+	  ol: ol,
+	  optgroup: optgroup,
+	  option: option,
+	  output: output,
+	  p: p,
+	  param: param,
+	  picture: picture,
+	  pre: pre,
+	  progress: progress,
+	  q: q,
+	  rp: rp,
+	  rt: rt,
+	  rtc: rtc,
+	  ruby: ruby,
+	  s: s,
+	  samp: samp,
+	  script: script,
+	  section: section,
+	  select: select,
+	  shadow: shadow,
+	  slot: slot,
+	  small: small,
+	  source: source,
+	  span: span,
+	  strong: strong,
+	  style: style,
+	  sub: sub,
+	  summary: summary,
+	  sup: sup,
+	  table: table,
+	  tbody: tbody,
+	  td: td,
+	  template: template,
+	  textarea: textarea,
+	  tfoot: tfoot,
+	  th: th,
+	  thead: thead,
+	  time: time,
+	  title: title,
+	  tr: tr,
+	  track: track,
+	  u: u,
+	  ul: ul,
+	  video: video,
+	  wbr: wbr
+	});
+
 	var patch = patch$1;
 
-	function render$1 (opts) {
+
+	function render (opts) {
 	  var internalRenderer = opts.render;
-
-	  if (!internalRenderer) {
-	    return;
-	  }
-
 	  return function (elem) {
+	    if (!internalRenderer) {
+	      return;
+	    }
+
 	    if (!elem.shadowRoot) {
 	      elem.attachShadow({ mode: 'open' });
 	    }
+
 	    patch(elem.shadowRoot, internalRenderer, elem);
 	  };
 	}
@@ -2462,21 +2843,52 @@
 	// you pass around data to components it's better to use properties because you
 	// can pass things other than strings. This tells incremental DOM to use props
 	// for all defined properties on components.
-	function ensureIncrementalDomKnowsToSetPropsForLinkedAtrs(name, opts) {
+	function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, opts) {
 	  Object.keys(opts).forEach(function (optKey) {
 	    var propKey = name + '.' + optKey;
 	    internalData.applyProp[propKey] = true;
 	  });
 	}
 
+	// Ensures linked properties that have linked attributes are pre-formatted to
+	// the attribute name in which they are linked.
+	function ensureLinkedAttributesAreFormatted(opts) {
+	  var observedAttributes = opts.observedAttributes;
+	  var properties = opts.properties;
+
+
+	  if (!properties) {
+	    return;
+	  }
+
+	  Object.keys(properties).forEach(function (name) {
+	    var prop = properties[name];
+	    var attr = prop.attribute;
+	    if (attr) {
+	      // Ensure the property is updated.
+	      var linkedAttr = prop.attribute = attr === true ? dashCase(name) : attr;
+
+	      // Automatically observe the attribute since they're linked from the
+	      // attributeChangedCallback.
+	      if (observedAttributes.indexOf(linkedAttr) === -1) {
+	        observedAttributes.push(linkedAttr);
+	      }
+	    }
+	  });
+	}
+
 	// The main skate() function.
 	function skate (name, opts) {
+	  // Ensure the observed attributes are initialised.
+	  opts.observedAttributes = opts.observedAttributes || [];
+
 	  // Ensure the render function render's using Incremental DOM.
-	  opts.render = render$1(opts);
+	  opts.render = render(opts);
 
 	  var Ctor = createConstructor(name, opts);
 	  addConstructorInformation(name, Ctor);
-	  ensureIncrementalDomKnowsToSetPropsForLinkedAtrs(name, opts);
+	  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, Ctor);
+	  ensureLinkedAttributesAreFormatted(Ctor);
 
 	  // If the options don't inherit a native element prototype, we ensure it does
 	  // because native requires you explicitly do this. Here we solve the common
@@ -2582,7 +2994,57 @@
 	  }, createDocumentFragment());
 	}
 
-	var array = {
+	function get(elem) {
+	  var props = elem.constructor.properties;
+	  var state = {};
+	  for (var key in props) {
+	    var val = elem[key];
+	    if (typeof val !== 'undefined') {
+	      state[key] = val;
+	    }
+	  }
+	  return state;
+	}
+
+	function set(elem, newState) {
+	  assign(elem, newState);
+	  elem.constructor.render(elem);
+	}
+
+	function state (elem, newState) {
+	  return typeof newState === 'undefined' ? get(elem) : set(elem, newState);
+	}
+
+	function getValue(elem) {
+	  var type = elem.type;
+	  if (type === 'checkbox' || type === 'radio') {
+	    return elem.checked ? elem.value || true : false;
+	  }
+	  return elem.value;
+	}
+
+	function link$1 (elem, target) {
+	  return function (e) {
+	    var value = getValue(e.target);
+	    var localTarget = target || e.target.name || 'value';
+
+	    if (localTarget.indexOf('.') > -1) {
+	      var parts = localTarget.split('.');
+	      var firstPart = parts[0];
+	      var propName = parts.pop();
+	      var obj = parts.reduce(function (prev, curr) {
+	        return prev && prev[curr];
+	      }, elem);
+
+	      obj[propName || e.target.name] = value;
+	      state(elem, babelHelpers.defineProperty({}, firstPart, elem[firstPart]));
+	    } else {
+	      state(elem, babelHelpers.defineProperty({}, localTarget, value));
+	    }
+	  };
+	}
+
+	var propArray = {
 	  coerce: function coerce(val) {
 	    return Array.isArray(val) ? val : [val];
 	  },
@@ -2593,7 +3055,7 @@
 	  serialize: JSON.stringify
 	};
 
-	var boolean = {
+	var propBoolean = {
 	  coerce: function coerce(value) {
 	    return !!value;
 	  },
@@ -2610,7 +3072,7 @@
 	  return empty(val) ? undefined : Number(val);
 	};
 
-	var number = {
+	var propNumber = {
 	  coerce: alwaysUndefinedIfEmpty,
 	  deserialize: alwaysUndefinedIfEmpty,
 	  serialize: alwaysUndefinedIfEmpty
@@ -2620,7 +3082,7 @@
 	  return empty(val) ? undefined : String(val);
 	};
 
-	var string = {
+	var propString = {
 	  coerce: alwaysUndefinedIfEmpty$1,
 	  deserialize: alwaysUndefinedIfEmpty$1,
 	  serialize: alwaysUndefinedIfEmpty$1
@@ -2637,12 +3099,18 @@
 	  };
 	}
 
-	var properties = {
-	  array: prop(array),
-	  boolean: prop(boolean),
-	  number: prop(number),
-	  string: prop(string)
-	};
+	var array = prop(propArray);
+	var boolean = prop(propBoolean);
+	var number = prop(propNumber);
+	var string = prop(propString);
+
+var properties = Object.freeze({
+	  default: prop,
+	  array: array,
+	  boolean: boolean,
+	  number: number,
+	  string: string
+	});
 
 	function ready(element) {
 	  var component = findElementInRegistry(element);
@@ -2679,43 +3147,29 @@
 
 	var version = '0.15.3';
 
-	skate.create = create;
-	skate.emit = emit;
-	skate.factory = factory;
-	skate.fragment = fragment;
-	skate.init = init;
-	skate.properties = properties;
-	skate.ready = ready$1;
-	skate.render = render;
-	skate.version = version;
-
-
-
-	var api = Object.freeze({
-		default: skate,
-		create: create,
-		emit: emit,
-		factory: factory,
-		fragment: fragment,
-		init: init,
-		properties: properties,
-		ready: ready$1,
-		render: render,
-		version: version
-	});
+	assign(prop, properties);
+	assign(create$1, vdomElements);
 
 	var previousGlobal = window.skate;
-	skate.noConflict = function noConflict() {
+	exports.noConflict = function () {
 	  window.skate = previousGlobal;
 	  return this;
 	};
-	window.skate = skate;
-	for (var name in api) {
-	  skate[name] = api[name];
-	}
-	skate.version = '0.15.3';
+	exports.version = '0.15.3';
 
-	return skate;
+	exports['default'] = skate;
+	exports.create = create;
+	exports.emit = emit;
+	exports.factory = factory;
+	exports.fragment = fragment;
+	exports.init = init;
+	exports.link = link$1;
+	exports.prop = prop;
+	exports.ready = ready$1;
+	exports.skate = skate;
+	exports.state = state;
+	exports.vdom = create$1;
+	exports.version = version;
 
 }));
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
 import assign from 'object-assign';
 import element from '../../lib/element';
-import properties from '../../../src/api/properties';
+import { prop } from '../../../src/index';
 
 function create (prop) {
   return element().skate({
@@ -11,7 +11,7 @@ function create (prop) {
 }
 
 function testTypeValues (type, values) {
-  const elem = create(properties[type]());
+  const elem = create(prop[type]());
   values.forEach(function (value) {
     elem.test = value[0];
     expect(elem.test).to.equal(value[1], 'property');
@@ -24,7 +24,7 @@ describe('api/properties', function () {
     let elem;
 
     beforeEach(function () {
-      elem = create(properties.array());
+      elem = create(prop.array());
     });
 
     it('default', function () {
@@ -66,7 +66,7 @@ describe('api/properties', function () {
 
   describe('boolean', function () {
     it('initial value', function () {
-      let elem = create(properties.boolean());
+      let elem = create(prop.boolean());
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
     });
@@ -74,13 +74,13 @@ describe('api/properties', function () {
     [undefined, null, false, 0, '', 'something'].forEach(function (value) {
       value = JSON.stringify(value);
       it('setting attribute to ' + value, function () {
-        let elem = create(properties.boolean());
+        let elem = create(prop.boolean());
         elem.setAttribute('test', value);
         expect(elem.test).to.equal(true, 'property');
         expect(elem.getAttribute('test')).to.equal('', 'attribute');
       });
       it('setting property to ' + value, function () {
-        let elem = create(properties.boolean());
+        let elem = create(prop.boolean());
         elem.test = value;
         expect(elem.test).to.equal(!!value, 'property');
         expect(elem.getAttribute('test')).to.equal(value ? '' : null, 'attribute');
@@ -88,7 +88,7 @@ describe('api/properties', function () {
     });
 
     it('removing attribute', function () {
-      let elem = create(properties.boolean());
+      let elem = create(prop.boolean());
 
       elem.setAttribute('test', '');
       expect(elem.test).to.equal(true);
@@ -102,7 +102,7 @@ describe('api/properties', function () {
 
   describe('number', function () {
     it('values', function () {
-      let elem = create(properties.number());
+      let elem = create(prop.number());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
@@ -117,7 +117,7 @@ describe('api/properties', function () {
 
   describe('string', function () {
     it('values', function () {
-      let elem = create(properties.string());
+      let elem = create(prop.string());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
@@ -132,21 +132,21 @@ describe('api/properties', function () {
 
   describe('overriding', function () {
     it('boolean', function () {
-      expect(properties.boolean({ default: true }).default).to.equal(true);
+      expect(prop.boolean({ default: true }).default).to.equal(true);
     });
 
     it('number', function () {
-      expect(properties.number({ default: 1 }).default).to.equal(1);
+      expect(prop.number({ default: 1 }).default).to.equal(1);
     });
 
     it('string', function () {
-      expect(properties.string({ default: 'test' }).default).to.equal('test');
+      expect(prop.string({ default: 'test' }).default).to.equal('test');
     });
   });
 
   describe('property change event', function () {
     it('is not triggered when `opts.event` is not set', function () {
-      let elem = create(properties.boolean());
+      let elem = create(prop.boolean());
       elem.test = false;
 
       let calls = 0;
@@ -157,7 +157,7 @@ describe('api/properties', function () {
     });
 
     it('the event name can be changed', function () {
-      let elem = create(assign({ event: 'foo' }, properties.boolean()));
+      let elem = create(assign({ event: 'foo' }, prop.boolean()));
       elem.test = false;
 
       let propertyChangeCalled = false;
@@ -171,7 +171,7 @@ describe('api/properties', function () {
     });
 
     it('is triggered only when properties change', function () {
-      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
 
       let calls = 0;
@@ -186,7 +186,7 @@ describe('api/properties', function () {
     });
 
     it('does not bubble', function () {
-      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
 
       let parent = document.createElement('div');
@@ -200,7 +200,7 @@ describe('api/properties', function () {
     });
 
     it('can be cancelled', function () {
-      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
       elem.addEventListener('propertychange', (e) => e.preventDefault());
       elem.test = true;
@@ -208,7 +208,7 @@ describe('api/properties', function () {
     });
 
     it('after cancelling events, subsequent sets pass through', function () {
-      const elem = create(assign({ event: 'propertychange' }, properties.boolean()));
+      const elem = create(assign({ event: 'propertychange' }, prop.boolean()));
 
       function preventOnce () {
         let alreadyPrevented = false;
@@ -230,7 +230,7 @@ describe('api/properties', function () {
     });
 
     it('contains property name, and change details', function () {
-      let elem = create(assign({ event: 'propertychange' }, properties.boolean()));
+      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       let event = null;
       elem.test = false;
 
