@@ -30,4 +30,5 @@ import './unit/util/walk-tree';
 import './unit/vdom/events';
 import './unit/vdom/incremental-dom';
 import './unit/vdom/properties';
+import './unit/vdom/shadow-dom';
 import './unit/version';
