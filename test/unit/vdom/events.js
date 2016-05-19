@@ -115,7 +115,7 @@ describe('events (on*)', function () {
 
       it('unbinding', function (done) {
         el.unbind = true;
-        requestAnimationFrame(function () {
+        setTimeout(function () {
           expect(div.onclick).to.equal(null);
           done();
         });
@@ -134,7 +134,7 @@ describe('events (on*)', function () {
 
       it('unbinding', function (done) {
         el.unbind = true;
-        requestAnimationFrame(function () {
+        setTimeout(function () {
           emit(div, 'test');
           expect(count).to.equal(0);
           done();
