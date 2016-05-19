@@ -4,7 +4,7 @@ import component from '../../lib/component';
 const { boolean, number } = prop;
 
 describe('events (on*)', function () {
-  it('should not duplicate listeners', function (done) {
+  it('should not duplicate listeners', function () {
     const myel = component({
       properties: {
         test: number({ default: 0 })
@@ -35,21 +35,15 @@ describe('events (on*)', function () {
     expect(el._test).to.equal(1);
 
     // Re-render.
-    el.test++;
+    state(el, { test: el.test + 1 });
+    expect(shadowDiv.textContent).to.equal('1');
+    emit(shadowDiv, 'event');
+    expect(el._test).to.equal(2);
 
-    setTimeout(function () {
-      expect(shadowDiv.textContent).to.equal('1');
-      emit(shadowDiv, 'event');
-      expect(el._test).to.equal(2);
-
-      el.test++;
-      setTimeout(function () {
-        expect(shadowDiv.textContent).to.equal('2');
-        emit(shadowDiv, 'event');
-        expect(el._test).to.equal(3);
-        done();
-      }, 100);
-    }, 100);
+    state(el, { test: el.test + 1 });
+    expect(shadowDiv.textContent).to.equal('2');
+    emit(shadowDiv, 'event');
+    expect(el._test).to.equal(3);
   });
 
   it('should not trigger events bubbled from descendants', function () {
