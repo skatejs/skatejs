@@ -1,4 +1,4 @@
-const raf = requestAnimationFrame || setTimeout;
+const raf = window.requestAnimationFrame || setTimeout;
 export default function (fn) {
   var called = false;
 
