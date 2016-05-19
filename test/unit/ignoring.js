@@ -1,11 +1,8 @@
-'use strict';
-
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import registerElement from '../../src/native/register-element';
 import skate from '../../src/index';
 
-const supportsCustomElements = !!registerElement;
+const supportsCustomElements = !!document.registerElement;
 
 describe('ignoring', function () {
   var created;
