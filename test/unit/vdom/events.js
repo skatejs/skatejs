@@ -54,8 +54,7 @@ describe('events (on*)', function () {
         vdom('div', { ontest: test }, vdom.bind(null, 'span'));
       }
     })();
-
-    emit(myel.querySelector('span'), 'test');
+    emit(myel.shadowRoot.querySelector('span'), 'test');
     expect(called).to.equal(false);
   });
 
