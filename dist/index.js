@@ -119,10 +119,6 @@
 
 	var assign = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
 
-	// This is to only support initial implementations for Blink.
-	var re = Document.prototype.registerElement;
-	var registerElement = re && re.bind(document);
-
 	var reservedNames = ['annotation-xml', 'color-profile', 'font-face', 'font-face-src', 'font-face-uri', 'font-face-format', 'font-face-name', 'missing-glyph'];
 	var customElementCriteria = ['contain at least one dash', 'not start with a dash', 'not be one of: ' + reservedNames.join(', ')];
 	var definitions = {};
@@ -141,7 +137,7 @@
 	    }
 
 	    // Support legacy Blink.
-	    if (registerElement) {
+	    if (document.registerElement) {
 	      // Blink is picky about options.
 	      var nativeDefinition = { prototype: Ctor.prototype };
 
@@ -151,7 +147,7 @@
 	        nativeDefinition.extends = Ctor.extends;
 	      }
 
-	      registerElement(name, nativeDefinition);
+	      document.registerElement(name, nativeDefinition);
 	    }
 
 	    // Actually register.
@@ -161,10 +157,6 @@
 	    return definitions[name];
 	  }
 	};
-
-	// Just in case native document.createElement() was overridden, we ensure we're
-	// using the native one so that we're not bogged down by any polyfills.
-	var createElement = Document.prototype.createElement.bind(document);
 
 	var _document = document;
 	var body = _document.body;
@@ -203,11 +195,19 @@
 	  }
 	}
 
-	var v0 = !!registerElement;
+	var v0 = !!document.registerElement;
 	var v1 = !!window.customElements;
 	var polyfilled = !v0 && !v1;
+	var shadowDomV0 = !!('createShadowRoot' in Element.prototype);
+	var shadowDomV1 = !!('attachShadow' in Element.prototype);
 
-	var support = { v0: v0, v1: v1, polyfilled: polyfilled };
+	var support = {
+	  v0: v0,
+	  v1: v1,
+	  polyfilled: polyfilled,
+	  shadowDomV0: shadowDomV0,
+	  shadowDomV1: shadowDomV1
+	};
 
 	function ignored (element) {
 	  var attrs = element.attributes;
@@ -279,26 +279,24 @@
 
 	  if (Ctor) {
 	    if (support.v1) {
-	      elem = createElement(name, { is: Ctor.extends || null });
+	      elem = document.createElement(name, { is: Ctor.extends || null });
 	    } else if (support.v0) {
-	      elem = Ctor.extends ? createElement(Ctor.extends, name) : createElement(name);
+	      elem = Ctor.extends ? document.createElement(Ctor.extends, name) : document.createElement(name);
 	    } else {
 	      if (Ctor.extends) {
-	        elem = createElement(Ctor.extends);
+	        elem = document.createElement(Ctor.extends);
 	        elem.setAttribute('is', name);
 	      } else {
-	        elem = createElement(name);
+	        elem = document.createElement(name);
 	      }
 	      init(elem);
 	    }
 	  } else {
-	    elem = createElement(name);
+	    elem = document.createElement(name);
 	  }
 
 	  return assign(elem, props);
 	}
-
-	var createEvent = Document.prototype.createEvent.bind(document);
 
 	var CustomEvent = function (CustomEvent) {
 	  if (CustomEvent) {
@@ -318,7 +316,7 @@
 	    return new CustomEvent(name, opts);
 	  }
 
-	  var e = createEvent('CustomEvent');
+	  var e = document.createEvent('CustomEvent');
 	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
 	  return e;
 	}
@@ -331,8 +329,8 @@
 	}
 
 	var hasBubbleOnDetachedElements = function () {
-	  var parent = createElement('div');
-	  var child = createElement('div');
+	  var parent = document.createElement('div');
+	  var child = document.createElement('div');
 	  var hasBubbleOnDetachedElements = false;
 	  parent.appendChild(child);
 	  parent.addEventListener('test', function () {
@@ -357,7 +355,12 @@
 	      return elem;
 	    } });
 	  while (currentElem && !cEvent.isPropagationStopped) {
-	    cEvent.currentTarget = currentElem;
+	    Object.defineProperty(cEvent, 'currentTarget', {
+	      configurable: true,
+	      get: function get() {
+	        return currentElem;
+	      }
+	    });
 	    if (dispatch(currentElem, cEvent) === false) {
 	      didPreventDefault = false;
 	    }
@@ -482,12 +485,12 @@
 	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
 
 	// Only IE9 has this msMatchesSelector bug, but best to detect it.
-	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(createElement('div'), 'div');
+	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
 
 	function matches (element, selector) {
 	  if (hasNativeMatchesSelectorDetattachedBug) {
 	    var clone = element.cloneNode();
-	    createElement('div').appendChild(clone);
+	    document.createElement('div').appendChild(clone);
 	    return nativeMatchesSelector.call(clone, selector);
 	  }
 	  return nativeMatchesSelector.call(element, selector);
@@ -576,7 +579,7 @@
 	  };
 	}
 
-	var raf = requestAnimationFrame || setTimeout;
+	var raf = window.requestAnimationFrame || setTimeout;
 	function debounce (fn) {
 	  var called = false;
 
@@ -775,13 +778,14 @@
 	function utilDefineProperties (obj, props) {
 	  Object.keys(props).forEach(function (name) {
 	    var prop = props[name];
-	    var descrptor = Object.getOwnPropertyDescriptor(obj, name);
+	    var descriptor = Object.getOwnPropertyDescriptor(obj, name);
 	    var isDinosaurBrowser = name !== 'arguments' && name !== 'caller' && 'value' in prop;
-	    var isConfigurable = !descrptor || descrptor.configurable;
+	    var isConfigurable = !descriptor || descriptor.configurable;
+	    var isWritable = !descriptor || descriptor.writable;
 
 	    if (isConfigurable) {
 	      Object.defineProperty(obj, name, prop);
-	    } else if (isDinosaurBrowser) {
+	    } else if (isDinosaurBrowser && isWritable) {
 	      obj[name] = prop.value;
 	    }
 	  });
@@ -1035,7 +1039,7 @@
 	    get: get,
 	    set: function set(html) {
 	      walkTree$1(this, function (node, parentNode) {
-	        var mutationEvent = createEvent('MutationEvent');
+	        var mutationEvent = document.createEvent('MutationEvent');
 	        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, parentNode, null, null, null, null);
 	        node.dispatchEvent(mutationEvent);
 	      });
@@ -2488,6 +2492,16 @@ var IncrementalDOM = Object.freeze({
 
 	// The default function requries a tag name.
 	function create$1(tname, attrs, chren) {
+	  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+	  if (tname === 'slot') {
+	    if (support.shadowDomV0) {
+	      if (attrs && attrs.slot) {
+	        attrs.select = '[slot="' + attrs.slot + '"]';
+	        delete attrs.slot;
+	      }
+	      tname = 'content';
+	    }
+	  }
 	  return (factories[tname] || bind(tname))(attrs, chren);
 	}
 
@@ -2754,6 +2768,7 @@ var vdomElements = Object.freeze({
 
 	var patch = patch$1;
 
+	var symbolShadowRoot = '____shadow_root';
 
 	function render (opts) {
 	  var internalRenderer = opts.render;
@@ -2762,11 +2777,18 @@ var vdomElements = Object.freeze({
 	      return;
 	    }
 
-	    if (!elem.shadowRoot) {
-	      elem.attachShadow({ mode: 'open' });
+	    var shadowRoot = void 0;
+
+	    if (!elem[symbolShadowRoot]) {
+	      if (elem.attachShadow) {
+	        shadowRoot = elem.attachShadow({ mode: 'open' });
+	      } else {
+	        shadowRoot = elem.createShadowRoot();
+	      }
+	      elem[symbolShadowRoot] = shadowRoot;
 	    }
 
-	    patch(elem.shadowRoot, internalRenderer, elem);
+	    patch(elem[symbolShadowRoot], internalRenderer, elem);
 	  };
 	}
 
@@ -2894,7 +2916,7 @@ var vdomElements = Object.freeze({
 	  // because native requires you explicitly do this. Here we solve the common
 	  // use case by defaulting to HTMLElement.prototype.
 	  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-	    var proto = (Ctor.extends ? createElement(Ctor.extends).constructor : HTMLElement).prototype;
+	    var proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
 	    Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
 	  }
 
@@ -2925,8 +2947,6 @@ var vdomElements = Object.freeze({
 	  };
 	}
 
-	var createDocumentFragment = Document.prototype.createDocumentFragment.bind(document);
-
 	var _window$1 = window;
 	var Node$1 = _window$1.Node;
 	var NodeList = _window$1.NodeList;
@@ -2944,7 +2964,7 @@ var vdomElements = Object.freeze({
 	};
 
 	function resolveParent(tag, html) {
-	  var container = createElement('div');
+	  var container = document.createElement('div');
 	  var levels = 0;
 	  var parentTag = specialMap[tag];
 
@@ -2991,7 +3011,7 @@ var vdomElements = Object.freeze({
 	    }
 
 	    return frag;
-	  }, createDocumentFragment());
+	  }, document.createDocumentFragment());
 	}
 
 	function get(elem) {
