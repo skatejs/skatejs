@@ -1,4 +1,4 @@
-import { emit, prop, vdom } from '../../../src/index';
+import { emit, prop, state, vdom } from '../../../src/index';
 import component from '../../lib/component';
 
 const { boolean, number } = prop;
@@ -113,12 +113,9 @@ describe('events (on*)', function () {
         expect(count).to.equal(1);
       });
 
-      it('unbinding', function (done) {
-        el.unbind = true;
-        setTimeout(function () {
-          expect(div.onclick).to.equal(null);
-          done();
-        });
+      it('unbinding', function () {
+        state(el, { unbind: true });
+        expect(div.onclick).to.equal(null);
       });
     });
 
@@ -132,13 +129,10 @@ describe('events (on*)', function () {
         expect(count).to.equal(1);
       });
 
-      it('unbinding', function (done) {
-        el.unbind = true;
-        setTimeout(function () {
-          emit(div, 'test');
-          expect(count).to.equal(0);
-          done();
-        });
+      it('unbinding', function () {
+        state(el, { unbind: true });
+        emit(div, 'test');
+        expect(count).to.equal(0);
       });
     });
   });
