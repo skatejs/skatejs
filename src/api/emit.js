@@ -53,7 +53,10 @@ function simulateBubbling (elem, cEvent) {
   cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
   Object.defineProperty(cEvent, 'target', { get: () => elem });
   while (currentElem && !cEvent.isPropagationStopped) {
-    cEvent.currentTarget = currentElem;
+    Object.defineProperty(cEvent, 'currentTarget', {
+      configurable: true,
+      get () { return currentElem; }
+    });
     if (dispatch(currentElem, cEvent) === false) {
       didPreventDefault = false;
     }
