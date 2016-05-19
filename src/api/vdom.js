@@ -1,5 +1,6 @@
 import * as IncrementalDOM from 'incremental-dom';
 import internalData from '../data';
+import support from '../native/support';
 
 // Could import these, but we have to import all of IncrementalDOM anyways so
 // that we can export our configured IncrementalDOM.
@@ -120,6 +121,16 @@ function bind (tname) {
 
 // The default function requries a tag name.
 export default function create (tname, attrs, chren) {
+  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+  if (tname === 'slot') {
+    if (support.shadowDomV0) {
+      if (attrs && attrs.slot) {
+        attrs.select = `[slot="${attrs.slot}"]`;
+        delete attrs.slot;
+      }
+      tname = 'content';
+    }
+  }
   return (factories[tname] || bind(tname))(attrs, chren);
 }
 

@@ -1,6 +1,7 @@
 import { IncrementalDOM } from '../api/vdom';
 
 const { patch } = IncrementalDOM;
+const symbolShadowRoot = '____shadow_root';
 
 export default function (opts) {
   const internalRenderer = opts.render;
@@ -9,10 +10,17 @@ export default function (opts) {
       return;
     }
 
-    if (!elem.shadowRoot) {
-      elem.attachShadow({ mode: 'open' });
+    let shadowRoot;
+
+    if (!elem[symbolShadowRoot]) {
+      if (elem.attachShadow) {
+        shadowRoot = elem.attachShadow({ mode: 'open' });
+      } else {
+        shadowRoot = elem.createShadowRoot();
+      }
+      elem[symbolShadowRoot] = shadowRoot;
     }
 
-    patch(elem.shadowRoot, internalRenderer, elem);
+    patch(elem[symbolShadowRoot], internalRenderer, elem);
   };
 }
