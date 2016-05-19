@@ -1,9 +1,5 @@
 const base = require('skatejs-build/karma.conf');
 module.exports = function (config) {
   base(config);
-  config.set({
-    files: [
-      'node_modules/webcomponentsjs/MutationObserver.js'
-    ]
-  });
+  config.files.push('node_modules/webcomponents.js/MutationObserver.js');
 };
