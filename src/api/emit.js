@@ -1,5 +1,3 @@
-import createElement from '../native/create-element';
-import createEvent from '../native/create-event';
 import utilElementContains from '../util/element-contains';
 
 const CustomEvent = (function (CustomEvent) {
@@ -18,7 +16,7 @@ function createCustomEvent (name, opts = {}) {
     return new CustomEvent(name, opts);
   }
 
-  var e = createEvent('CustomEvent');
+  var e = document.createEvent('CustomEvent');
   e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
   return e;
 }
@@ -31,8 +29,8 @@ function dispatch (elem, cEvent) {
 }
 
 const hasBubbleOnDetachedElements = (function () {
-  var parent = createElement('div');
-  var child = createElement('div');
+  var parent = document.createElement('div');
+  var child = document.createElement('div');
   var hasBubbleOnDetachedElements = false;
   parent.appendChild(child);
   parent.addEventListener('test', () => hasBubbleOnDetachedElements = true);

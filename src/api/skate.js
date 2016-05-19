@@ -3,7 +3,6 @@ import attached from '../lifecycle/attached';
 import attribute from '../lifecycle/attribute-changed';
 import create from './create';
 import created from '../lifecycle/created';
-import createElement from '../native/create-element';
 import customElements from '../native/custom-elements';
 import dashCase from '../util/dash-case';
 import data from '../data';
@@ -129,7 +128,7 @@ export default function (name, opts) {
   // because native requires you explicitly do this. Here we solve the common
   // use case by defaulting to HTMLElement.prototype.
   if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-    const proto = (Ctor.extends ? createElement(Ctor.extends).constructor : HTMLElement).prototype;
+    const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
     Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
   }
 

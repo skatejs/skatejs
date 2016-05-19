@@ -1,5 +1,3 @@
-import registerElement from './register-element';
-
 const reservedNames = [
   'annotation-xml',
   'color-profile',
@@ -29,7 +27,7 @@ export default window.customElements || {
     }
 
     // Support legacy Blink.
-    if (registerElement) {
+    if (document.registerElement) {
       // Blink is picky about options.
       const nativeDefinition = { prototype: Ctor.prototype };
 
@@ -39,7 +37,7 @@ export default window.customElements || {
         nativeDefinition.extends = Ctor.extends;
       }
 
-      registerElement(name, nativeDefinition);
+      document.registerElement(name, nativeDefinition);
     }
 
     // Actually register.
