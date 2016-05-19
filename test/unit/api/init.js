@@ -70,7 +70,7 @@ describe('api/init', function () {
           vdom('form');
         },
         ready (elem) {
-          elem.querySelector('form').initialised = true;
+          elem.shadowRoot.querySelector('form').initialised = true;
         }
       });
 
