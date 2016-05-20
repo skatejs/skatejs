@@ -734,8 +734,9 @@
 	    }
 
 	    // Re-render on property updates if the should-update check passes.
-	    if (prop.render(this, changeData)) {
-	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.render));
+	    var hasRenderFn = this.constructor.render;
+	    if (hasRenderFn && prop.render(this, changeData)) {
+	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.renderer));
 	      deb(this);
 	    }
 
@@ -867,7 +868,7 @@
 	  var properties = opts.properties;
 	  var prototype$$ = opts.prototype;
 	  var ready = opts.ready;
-	  var render = opts.render;
+	  var renderer = opts.renderer;
 	  var renderedAttribute = opts.renderedAttribute;
 
 	  var applyEvents = events(opts);
@@ -903,8 +904,8 @@
 	      created(this);
 	    }
 
-	    if (render && !this.hasAttribute(renderedAttribute)) {
-	      render(this);
+	    if (renderer && !this.hasAttribute(renderedAttribute)) {
+	      renderer(this);
 	    }
 
 	    if (ready) {
@@ -1158,6 +1159,17 @@
 	    return this;
 	  }
 	};
+
+	function getAllPropertyDescriptors (obj) {
+	  return protos(obj).reduce(function (result, proto) {
+	    var descriptors = getOwnPropertyDescriptors(proto);
+	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
+	      result[name] = descriptors[name];
+	      return result;
+	    }, result);
+	    return result;
+	  }, {});
+	}
 
 	var incrementalDomCjs = __commonjs(function (module, exports) {
 	/**
@@ -2766,9 +2778,14 @@ var vdomElements = Object.freeze({
 	  wbr: wbr
 	});
 
+	var shadowRoot = '____shadow_root';
+
+var symbols$2 = Object.freeze({
+		shadowRoot: shadowRoot
+	});
+
 	var patch = patch$1;
 
-	var symbolShadowRoot = '____shadow_root';
 
 	function render (opts) {
 	  var internalRenderer = opts.render;
@@ -2777,30 +2794,20 @@ var vdomElements = Object.freeze({
 	      return;
 	    }
 
-	    var shadowRoot = void 0;
-
-	    if (!elem[symbolShadowRoot]) {
+	    if (!elem[shadowRoot]) {
+	      var sr = void 0;
 	      if (elem.attachShadow) {
-	        shadowRoot = elem.attachShadow({ mode: 'open' });
+	        sr = elem.attachShadow({ mode: 'open' });
+	      } else if (elem.createShadowRoot) {
+	        sr = elem.createShadowRoot();
 	      } else {
-	        shadowRoot = elem.createShadowRoot();
+	        sr = elem;
 	      }
-	      elem[symbolShadowRoot] = shadowRoot;
+	      elem[shadowRoot] = sr;
 	    }
 
-	    patch(elem[symbolShadowRoot], internalRenderer, elem);
+	    patch(elem[shadowRoot], internalRenderer, elem);
 	  };
-	}
-
-	function utilGetAllPropertyDescriptors (obj) {
-	  return protos(obj).reduce(function (result, proto) {
-	    var descriptors = getOwnPropertyDescriptors(proto);
-	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
-	      result[name] = descriptors[name];
-	      return result;
-	    }, result);
-	    return result;
-	  }, {});
 	}
 
 	var HTMLElement = window.HTMLElement;
@@ -2843,7 +2850,7 @@ var vdomElements = Object.freeze({
 	  // Inherit all options. This takes into account object literals as well as
 	  // ES2015 classes that may have inherited static props which would not be
 	  // considered "own".
-	  utilDefineProperties(func, utilGetAllPropertyDescriptors(opts));
+	  utilDefineProperties(func, getAllPropertyDescriptors(opts));
 
 	  return func;
 	}
@@ -2905,7 +2912,7 @@ var vdomElements = Object.freeze({
 	  opts.observedAttributes = opts.observedAttributes || [];
 
 	  // Ensure the render function render's using Incremental DOM.
-	  opts.render = render(opts);
+	  opts.renderer = render(opts);
 
 	  var Ctor = createConstructor(name, opts);
 	  addConstructorInformation(name, Ctor);
@@ -3027,8 +3034,11 @@ var vdomElements = Object.freeze({
 	}
 
 	function set(elem, newState) {
+	  var renderer = elem.constructor.renderer;
 	  assign(elem, newState);
-	  elem.constructor.render(elem);
+	  if (renderer) {
+	    renderer(elem);
+	  }
 	}
 
 	function state (elem, newState) {
@@ -3188,6 +3198,7 @@ var properties = Object.freeze({
 	exports.ready = ready$1;
 	exports.skate = skate;
 	exports.state = state;
+	exports.symbols = symbols$2;
 	exports.vdom = create$1;
 	exports.version = version;
 
