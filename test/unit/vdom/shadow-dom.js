@@ -1,53 +1,61 @@
-// import skate from '../../../src/index';
+import { symbols } from '../../../src/index';
+import element from '../../lib/element';
 
-// describe('vdom/shadow-dom', function () {
-//   let div;
-//   let oldShadowDom;
+describe('vdom/shadow-dom', function () {
+  let shadowRoot;
 
-//   const elProto = Element.prototype;
-//   const htmlElProto = HTMLElement.prototype;
+  const oldShadowDom = {};
+  const elProto = Element.prototype;
+  const htmlElProto = HTMLElement.prototype;
 
-//   function remove (key) {
-//     oldShadowDom = elProto[key] || htmlElProto[key];
-//     Object.defineProperty(elProto, key, { value: undefined, writable: true });
-//     Object.defineProperty(htmlElProto, key, { value: undefined, writable: true });
-//   }
+  function mock (key) {
+    remove('attachShadow');
+    remove('createShadowRoot');
+    htmlElProto[key] = () => document.createElement('__mock_shadow_root__');
+  }
 
-//   function restore (key) {
-//     Object.defineProperty(elProto, key, { value: oldShadowDom, writable: true });
-//     Object.defineProperty(htmlElProto, key, { value: oldShadowDom, writable: true });
-//   }
+  function unmock () {
+    restore('attachShadow');
+    restore('createShadowRoot');
+  }
 
-//   beforeEach(function () {
-//     div = document.createElement('div');
-//   });
+  function remove (key) {
+    oldShadowDom[key] = elProto[key] || htmlElProto[key];
+    Object.defineProperty(elProto, key, { value: undefined, writable: true });
+    Object.defineProperty(htmlElProto, key, { value: undefined, writable: true });
+  }
 
-//   it('should work for attachShadow()', function () {
-//     remove('createShadowRoot');
+  function restore (key) {
+    Object.defineProperty(elProto, key, { value: oldShadowDom[key], writable: true });
+    Object.defineProperty(htmlElProto, key, { value: oldShadowDom[key], writable: true });
+  }
 
-//     expect(div.attachShadow).to.be.a('function');
-//     expect(div.createShadowRoot).to.equal(undefined);
+  it('should work for attachShadow()', function () {
+    mock('attachShadow');
+    const elem = element().skate({ render () {} })();
+    expect(elem.attachShadow).to.be.a('function');
+    expect(elem.createShadowRoot).to.equal(undefined);
+    expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
+    unmock('attachShadow');
+  });
 
-//     restore('createShadowRoot');
-//   });
+  it('should work with createShadowRoot()', function () {
+    mock('createShadowRoot');
+    const elem = element().skate({ render () {} })();
+    expect(elem.attachShadow).to.equal(undefined);
+    expect(elem.createShadowRoot).to.be.a('function');
+    expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
+    unmock('createShadowRoot');
+  });
 
-//   it('should work with createShadowRoot()', function () {
-//     remove('attachShadow');
-
-//     expect(div.attachShadow).to.equal(undefined);
-//     expect(div.createShadowRoot).to.be.a('function');
-
-//     restore('attachShadow');
-//   });
-
-//   it('should warn if no shadow root is available', function () {
-//     remove('attachShadow');
-//     remove('createShadowRoot');
-
-//     expect(div.attachShadow).to.equal(undefined);
-//     expect(div.createShadowRoot).to.equal(undefined);
-
-//     restore('createShadowRoot');
-//     restore('attachShadow');
-//   });
-// });
+  it('should set the shadowRoot to the element if Shadow DOM is not available', function () {
+    remove('attachShadow');
+    remove('createShadowRoot');
+    const elem = element().skate({ render () {} })();
+    expect(elem.attachShadow).to.equal(undefined);
+    expect(elem.createShadowRoot).to.equal(undefined);
+    expect(elem[symbols.shadowRoot]).to.equal(elem);
+    restore('createShadowRoot');
+    restore('attachShadow');
+  });
+});
