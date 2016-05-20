@@ -62,7 +62,7 @@ describe('api/init', function () {
         properties: {
           initialised: {
             get (elem) {
-              return elem.querySelector('form').initialised;
+              return elem.shadowRoot.querySelector('form').initialised;
             }
           }
         },
