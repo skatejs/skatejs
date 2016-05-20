@@ -1118,18 +1118,27 @@ const currentSkate = skate.noConflict();
 
 
 
-### `properties`
+### `prop`
 
 Skate has some built-in property definitions to help you with defining consistent property behaviour within your components. All built-in properties are functions that return a property definition.
 
 ```js
-skate.properties.boolean();
+skate.prop.boolean();
 ```
 
 You are able to pass options to these properties to override built-in behaviour, or to define extra options that would normally be supported by a Skate property definition.
 
+You can easily define a new property by calling `skate.prop()` as a function and passing it the default options for the property. All built-in properties are created using this method.
+
 ```js
-skate.properties.boolean({
+const myNewProp = skate.prop({ ... });
+myNewProp({ ... });
+```
+
+Built-in properties are accessed on the `skate.prop` namespace:
+
+```js
+skate.prop.boolean({
   coerce () {
     // coerce it differently than the default way
   },
@@ -1432,7 +1441,7 @@ Once that is set up, you may write a component using JSX. For example, a simple 
 ```js
 skate('my-element', {
   properties: {
-    title: skate.properties.string()
+    title: skate.prop.string()
   },
   render (elem) {
     <div>
