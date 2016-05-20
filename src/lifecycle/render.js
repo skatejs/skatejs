@@ -10,13 +10,14 @@ export default function (opts) {
       return;
     }
 
-    let shadowRoot;
-
     if (!elem[symbolShadowRoot]) {
+      let shadowRoot;
       if (elem.attachShadow) {
         shadowRoot = elem.attachShadow({ mode: 'open' });
-      } else {
+      } else if (elem.createShadowRoot) {
         shadowRoot = elem.createShadowRoot();
+      } else {
+        shadowRoot = elem.shadowRoot = elem;
       }
       elem[symbolShadowRoot] = shadowRoot;
     }
