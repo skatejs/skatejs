@@ -1,5 +1,5 @@
 import component from '../../lib/component';
-import vdom from '../../../src/api/vdom';
+import { symbols, vdom } from '../../../src/index';
 
 describe('properties', function () {
   it('class -> className', function () {
@@ -8,7 +8,7 @@ describe('properties', function () {
         vdom('div', { class: 'test' });
       }
     })();
-    expect(elem.shadowRoot.firstChild.className).to.equal('test');
+    expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test');
   });
 
   it('false should remove the attribute', function () {
@@ -17,6 +17,6 @@ describe('properties', function () {
         vdom('div', { test: false });
       }
     })();
-    expect(elem.shadowRoot.firstChild.hasAttribute('test')).to.equal(false);
+    expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
   });
 });

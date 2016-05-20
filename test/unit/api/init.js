@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { create, init } from '../../../src/index';
+import skate, { create, init, symbols } from '../../../src/index';
 import vdom from '../../../src/api/vdom';
 
 describe('api/init', function () {
@@ -62,7 +62,7 @@ describe('api/init', function () {
         properties: {
           initialised: {
             get (elem) {
-              return elem.shadowRoot.querySelector('form').initialised;
+              return elem[symbols.shadowRoot].querySelector('form').initialised;
             }
           }
         },
@@ -70,7 +70,7 @@ describe('api/init', function () {
           vdom('form');
         },
         ready (elem) {
-          elem.shadowRoot.querySelector('form').initialised = true;
+          elem[symbols.shadowRoot].querySelector('form').initialised = true;
         }
       });
 

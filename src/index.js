@@ -11,6 +11,7 @@ import prop, * as properties from './api/prop';
 import ready from './api/ready';
 import skate from './api/skate';
 import state from './api/state';
+import * as symbols from './api/symbols';
 import vdom, * as vdomElements from './api/vdom';
 import version from './api/version';
 
@@ -29,6 +30,7 @@ export {
   ready,
   skate,
   state,
+  symbols,
   vdom,
   version
 };

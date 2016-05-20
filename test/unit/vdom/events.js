@@ -1,4 +1,4 @@
-import { emit, prop, state, vdom } from '../../../src/index';
+import { emit, prop, state, symbols, vdom } from '../../../src/index';
 import component from '../../lib/component';
 
 const { boolean, number } = prop;
@@ -22,7 +22,7 @@ describe('events (on*)', function () {
     });
 
     const el = myel();
-    const shadowDiv = el.shadowRoot.children[0];
+    const shadowDiv = el[symbols.shadowRoot].children[0];
 
     // Ensures that it rendered.
     expect(shadowDiv.textContent).to.equal('0');
@@ -54,7 +54,7 @@ describe('events (on*)', function () {
         vdom('div', { ontest: test }, vdom.bind(null, 'span'));
       }
     })();
-    emit(myel.shadowRoot.querySelector('span'), 'test');
+    emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
     expect(called).to.equal(false);
   });
 
@@ -64,7 +64,7 @@ describe('events (on*)', function () {
         vdom('div', { ontest: null });
       }
     })();
-    emit(myel.shadowRoot.firstChild, 'test');
+    emit(myel[symbols.shadowRoot].firstChild, 'test');
   });
 
   describe('built-in / custom', function () {
@@ -88,7 +88,7 @@ describe('events (on*)', function () {
           }
         }
       })();
-      div = el.shadowRoot.firstChild;
+      div = el[symbols.shadowRoot].firstChild;
     });
 
     describe('built-in', function () {
