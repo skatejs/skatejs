@@ -27,6 +27,6 @@
     "webcomponents.js": "0.7.22"
   },
   "scripts": {
-    "test": "tests"
+    "test": "karma start --single-run"
   }
 }
