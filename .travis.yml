@@ -8,13 +8,9 @@ before_script:
 script:
 - bundle
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-  npm test -- --saucelabs;
-  npm test -- --saucelabs --named-slots
-  npm test -- --saucelabs --webcomponentsjs
+  npm test -- --saucelabs
   else
-  npm test -- --browsers Firefox;
-  npm test -- --browsers Firefox --named-slots;
-  npm test -- --browsers Firefox --webcomponentsjs;
+  npm test -- --browsers Firefox
   fi
 env:
   global:
