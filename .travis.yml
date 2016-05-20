@@ -8,9 +8,9 @@ before_script:
 script:
 - bundle
 - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-  npm test -- --saucelabs
+  npm test -- --saucelabs;
   else
-  npm test -- --browsers Firefox
+  npm test -- --browsers Firefox;
   fi
 env:
   global:
