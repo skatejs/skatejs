@@ -132,8 +132,9 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // Re-render on property updates if the should-update check passes.
-    if (prop.render(this, changeData)) {
-      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.render));
+    const hasRenderFn = this.constructor.render;
+    if (hasRenderFn && prop.render(this, changeData)) {
+      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.renderer));
       deb(this);
     }
 
