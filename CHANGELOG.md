@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#513](https://github.com/skatejs/skatejs/issues/513) - Property changes can now trigger a non-bubbling event.
 - [#516](https://github.com/skatejs/skatejs/issues/516) - Add support for native `window.customElements.get()`.
 - [#517](https://github.com/skatejs/skatejs/issues/517) - Add `skate.factory()`.
+- [#561](https://github.com/skatejs/skatejs/issues/561) - Add support for legacy v0 (Blink) Shadow DOM implementation.
+- [#562](https://github.com/skatejs/skatejs/issues/561) - Add ability to render to the host element if no Shadow DOM support is available.
 
 ### Changed
 
