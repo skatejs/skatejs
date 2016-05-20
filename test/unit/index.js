@@ -58,7 +58,9 @@ describe('exports', function () {
 
   it('skate.symbols', function () {
     expect(api.symbols).to.be.an('object');
+    expect(api.symbols.shadowRoot).to.be.a('string');
     expect(umd.symbols).to.be.an('object');
+    expect(umd.symbols.shadowRoot).to.be.a('string');
   });
 
   it('skate.state', function () {
