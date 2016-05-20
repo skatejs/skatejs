@@ -56,6 +56,11 @@ describe('exports', function () {
     expect(umd.ready).to.be.a('function');
   });
 
+  it('skate.symbols', function () {
+    expect(api.symbols).to.be.an('object');
+    expect(umd.symbols).to.be.an('object');
+  });
+
   it('skate.state', function () {
     expect(api.state).to.be.a('function');
     expect(umd.state).to.be.a('function');
