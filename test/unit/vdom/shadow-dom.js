@@ -2,8 +2,6 @@ import { symbols } from '../../../src/index';
 import element from '../../lib/element';
 
 describe('vdom/shadow-dom', function () {
-  let shadowRoot;
-
   const oldShadowDom = {};
   const elProto = Element.prototype;
   const htmlElProto = HTMLElement.prototype;
