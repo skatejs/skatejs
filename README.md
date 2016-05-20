@@ -1357,6 +1357,8 @@ The `vdom` API also exports a `slot()` function so that you can use [named slots
 skate.vdom.slot();
 ```
 
+If Shadow DOM v0 is detected, then Skate will output a `<content>` element instead of a `<slot>` that will look for nodes in the same way a `<slot>` would so you don't have to worry about which version of Shadow DOM is available.
+
 #### Special Attributes
 
 Kickflip adds some opinionated behaviour to Incremental DOM.
@@ -1554,7 +1556,7 @@ WebComponentsJS is a suite of polyfills. Skate can work along side these, but is
 - Skate does not override any native Custom Element methods.
 - Skate is only slightly larger than the Custom Element polyfill (28k vs 17k, min not gzipped).
 - You can have multiple versions of Skate on the page.
-- Skate can work with the WebComponentsJS polyfills on the page, but will ignore the Custom Element polyfill for v0 (it cannot ignore it for v1 yet, unfortunately).
+- If the WebComponentsJS polyfills are on the page, Skate will use those instead. Beware, though, using the WebComponentsJS Custom Element polyfill may degrade performance over just using Skate as is.
 
 
 
