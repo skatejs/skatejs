@@ -22,7 +22,7 @@
   "devDependencies": {
     "eslint": "2.10.2",
     "incremental-dom": "0.3.0",
-    "skatejs-build": "skatejs/build#3c58ad",
+    "skatejs-build": "skatejs/build#cdcbcfc",
     "skatejs-named-slots": "skatejs/named-slots#00daacd",
     "webcomponents.js": "0.7.22"
   },
