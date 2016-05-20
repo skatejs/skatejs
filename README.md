@@ -1294,6 +1294,19 @@ Symbols are exposed for you to access information that stored on objects that ar
 
 When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
+```js
+skate('my-component', {
+  render () {
+    skate.vdom.p('test');
+  },
+  ready (elem) {
+    // #shadow-root
+    //   <p>test</p>
+    elem[skate.symbols.shadowRoot];
+  }
+});
+```
+
 
 
 ### `vdom`
