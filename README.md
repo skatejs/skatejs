@@ -46,10 +46,22 @@ Whenever you change the `name` property - or attribute - the component will re-r
 
 ## Dependencies
 
-Skate requires [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support or a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively:
+Skate doesn't require you provide any external dependencies, but recommends you provide polyfills depending on what browsers you require support for.
+
+
+
+### Shadow DOM
+
+Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively:
 
 - https://github.com/skatejs/named-slots/
 - https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
+
+Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
+
+
+
+### Mutation Observer
 
 In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) polyfill:
 
@@ -1271,6 +1283,16 @@ skate.state(elem, {
 // { prop1: 'value 1' }
 skate.state(elem);
 ```
+
+
+
+### `symbols`
+
+Symbols are exposed for you to access information that stored on objects that are not otherwise accessible.
+
+#### `shadowRoot`
+
+When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
 
 
