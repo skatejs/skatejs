@@ -64,7 +64,7 @@ export default function (opts) {
     properties,
     prototype,
     ready,
-    render,
+    renderer,
     renderedAttribute
   } = opts;
   const applyEvents = eventsApplier(opts);
@@ -100,8 +100,8 @@ export default function (opts) {
       created(this);
     }
 
-    if (render && !this.hasAttribute(renderedAttribute)) {
-      render(this);
+    if (renderer && !this.hasAttribute(renderedAttribute)) {
+      renderer(this);
     }
 
     if (ready) {

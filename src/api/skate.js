@@ -6,22 +6,22 @@ import created from '../lifecycle/created';
 import customElements from '../native/custom-elements';
 import dashCase from '../util/dash-case';
 import data from '../data';
+import debounce from '../util/debounce';
 import defaults from '../defaults';
+import defineProperties from '../util/define-properties';
 import detached from '../lifecycle/detached';
 import documentObserver from '../native/document-observer';
+import getAllPropertyDescriptors from '../util/get-all-property-descriptors';
+import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import render from '../lifecycle/render';
 import support from '../native/support';
-import utilGetAllPropertyDescriptors from '../util/get-all-property-descriptors';
-import utilGetOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import utilDebounce from '../util/debounce';
-import utilDefineProperties from '../util/define-properties';
-import utilWalkTree from '../util/walk-tree';
+import walkTree from '../util/walk-tree';
 
 const HTMLElement = window.HTMLElement;
 
 // A function that initialises the document once in a given event loop.
-const initDocument = utilDebounce(function () {
-  utilWalkTree(document.documentElement.childNodes, function (element) {
+const initDocument = debounce(function () {
+  walkTree(document.documentElement.childNodes, function (element) {
     const component = customElements.get(element.tagName.toLowerCase());
 
     if (component) {
@@ -57,7 +57,7 @@ function createConstructor (name, opts) {
   // Inherit all options. This takes into account object literals as well as
   // ES2015 classes that may have inherited static props which would not be
   // considered "own".
-  utilDefineProperties(func, utilGetAllPropertyDescriptors(opts));
+  defineProperties(func, getAllPropertyDescriptors(opts));
 
   return func;
 }
@@ -117,7 +117,7 @@ export default function (name, opts) {
   opts.observedAttributes = opts.observedAttributes || [];
 
   // Ensure the render function render's using Incremental DOM.
-  opts.render = render(opts);
+  opts.renderer = render(opts);
 
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
@@ -129,7 +129,7 @@ export default function (name, opts) {
   // use case by defaulting to HTMLElement.prototype.
   if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
     const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
-    Ctor.prototype = Object.create(proto, utilGetOwnPropertyDescriptors(Ctor.prototype));
+    Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
   }
 
   // We assign native callbacks to handle the callbacks specified in the

@@ -13,8 +13,11 @@ function get (elem) {
 }
 
 function set (elem, newState) {
+  const renderer = elem.constructor.renderer;
   assign(elem, newState);
-  elem.constructor.render(elem);
+  if (renderer) {
+    renderer(elem);
+  }
 }
 
 export default function (elem, newState) {
