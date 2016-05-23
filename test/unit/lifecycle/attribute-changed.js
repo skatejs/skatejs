@@ -3,7 +3,7 @@ import fixture from '../../lib/fixture';
 import ready from '../../../src/api/ready';
 import skate from '../../../src/index';
 
-describe('lifecycle/attribute', function () {
+describe('lifecycle/attribute-changed', function () {
   it('should be invoked for attributes that exist on the element when it is created', function (done) {
     const tag = element();
     const elem = document.createElement(tag.safe);
