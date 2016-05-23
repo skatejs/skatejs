@@ -5,8 +5,6 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
-***The Sauce tests above may show the iPhone failing. This in fact does pass in the simulator, when run on Sauce from the CLI and on actual devices. It doesn't pass when run from TravisCI for some reason. We're investigating why now, but rest assured that it does pass.***
-
 Skate is a library built on top of the [W3C web component specs](https://github.com/w3c/webcomponents) that enables you to write functional and performant web components with a very small footprint.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
