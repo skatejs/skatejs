@@ -159,9 +159,9 @@ describe('lifecycle scenarios', function () {
             setTimeout(function () {
               expect(calls[num]).to.equal(val, num);
               done();
-            }, 10);
-          }, 10);
-        }, 10);
+            }, 1);
+          }, 1);
+        }, 1);
       });
     }
 
@@ -255,8 +255,8 @@ describe('lifecycle scenarios', function () {
         setTimeout(function () {
           expect(numDetached).to.equal(2, 'detached');
           done();
-        }, 10);
-      }, 10);
+        }, 1);
+      }, 1);
     });
   });
 });
