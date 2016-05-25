@@ -206,6 +206,37 @@ describe('Attribute listeners', function () {
         });
       }
 
+      function assertAttributeChangesForExistingAttr (element) {
+        helpers.afterMutations(function () {
+          element.setAttribute('test', 'updated');
+          helpers.afterMutations(function () {
+            element.removeAttribute('test');
+          });
+        });
+      }
+
+      function createAttributeDefinitionForExistingAttr (done) {
+        return {
+          test: {
+            created: function (element, data) {
+              console.log('created', JSON.stringify(data));
+              expect(data.oldValue).to.equal(null, 'oldValue should be null during create');
+              expect(data.newValue).to.equal('', 'newValue should be blank during create');
+            },
+            updated: function (element, data) {
+              console.log('updated', JSON.stringify(data));
+              expect(data.oldValue).to.equal('', 'oldValue should be blank during update');
+              expect(data.newValue).to.equal('updated', 'newValue should be "updated" during update');
+            },
+            removed: function (element, data) {
+              expect(data.oldValue).to.equal('updated', 'oldValue should be "updated" during remove');
+              expect(data.newValue).to.equal(null, 'newValue should be null during remove');
+              done();
+            }
+          }
+        };
+      }
+
       it('for native custom elements', function (done) {
         var Element = skate(helpers.safeTagName('my-el').safe, {
           attributes: createAttributeDefinition(done)
@@ -222,6 +253,16 @@ describe('Attribute listeners', function () {
         });
 
         assertAttributeChanges(helpers.fixture(`<${id}></${id}>`).querySelector(id));
+      });
+
+      it('for existing elements with existing attributes (via mutation observer)', function (done) {
+        var { safe: id } = helpers.safeTagName('element');
+
+        skate(id, {
+          attributes: createAttributeDefinitionForExistingAttr(done)
+        });
+
+        assertAttributeChangesForExistingAttr(helpers.fixture(`<${id} test></${id}>`).querySelector(id));
       });
 
       it('for attributes (via mutation observer)', function (done) {
