@@ -91,8 +91,21 @@ function bind (tname) {
     tname = tname.id || tname.name;
   }
 
+  const shouldBeContentTag = tname === 'slot' && support.shadowDomV0;
+
+  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+  if (shouldBeContentTag) {
+    tname = 'content';
+  }
+
   return factories[tname] = function (attrs, chren) {
     if (attrs && typeof attrs === 'object') {
+      // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+      if (shouldBeContentTag && attrs.name) {
+        attrs.select = `[slot="${attrs.name}"]`;
+        delete attrs.slot;
+      }
+
       elementOpenStart(tname, attrs.key, attrs.statics);
       for (let a in attrs) {
         attr(a, attrs[a]);
@@ -121,16 +134,6 @@ function bind (tname) {
 
 // The default function requries a tag name.
 export default function create (tname, attrs, chren) {
-  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
-  if (tname === 'slot') {
-    if (support.shadowDomV0) {
-      if (attrs && attrs.slot) {
-        attrs.select = `[slot="${attrs.slot}"]`;
-        delete attrs.slot;
-      }
-      tname = 'content';
-    }
-  }
   return (factories[tname] || bind(tname))(attrs, chren);
 }
 
