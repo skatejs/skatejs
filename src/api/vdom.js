@@ -38,15 +38,15 @@ attributes[symbols.default] = function (elem, name, value) {
     return;
   }
 
-  // Handle built-in and custom events.
-  if (name.indexOf('on') === 0) {
-    return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
-  }
-
   // Custom element properties should be set as properties.
   const props = elem.constructor.properties;
   if (props && name in props) {
     return applyProp(elem, name, value);
+  }
+
+  // Handle built-in and custom events.
+  if (name.indexOf('on') === 0) {
+    return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
   }
 
   // Fallback to default IncrementalDOM behaviour.
