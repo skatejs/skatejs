@@ -12,13 +12,13 @@ describe('IncrementalDOM', function () {
 describe('VdomIncrementalDOM', function () {
   describe('attributes (default)', function () {
     it('should not set properties on SVG elements', function () {
-      // This should throw but the error is different depending on the browser,
-      // so we don't expect any particular message.
-      element().skate({
-        render () {
-          vdom('svg', { height: 100 });
-        }
-      })();
+      expect(function () {
+        element().skate({
+          render () {
+            vdom('svg', { height: 100 });
+          }
+        })();
+      }).to.not.throw(Error);
     });
 
     it('should set built-in event handlers as properties', function () {
