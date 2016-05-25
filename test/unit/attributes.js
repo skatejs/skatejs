@@ -219,12 +219,10 @@ describe('Attribute listeners', function () {
         return {
           test: {
             created: function (element, data) {
-              console.log('created', JSON.stringify(data));
               expect(data.oldValue).to.equal(null, 'oldValue should be null during create');
               expect(data.newValue).to.equal('', 'newValue should be blank during create');
             },
             updated: function (element, data) {
-              console.log('updated', JSON.stringify(data));
               expect(data.oldValue).to.equal('', 'oldValue should be blank during update');
               expect(data.newValue).to.equal('updated', 'newValue should be "updated" during update');
             },
