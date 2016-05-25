@@ -1,5 +1,4 @@
 import * as IncrementalDOM from 'incremental-dom';
-import internalData from '../data';
 import support from '../native/support';
 
 // Could import these, but we have to import all of IncrementalDOM anyways so
@@ -45,8 +44,8 @@ attributes[symbols.default] = function (elem, name, value) {
   }
 
   // Custom element properties should be set as properties.
-  const dataName = elem.tagName + '.' + name;
-  if (internalData.applyProp[dataName]) {
+  const props = elem.constructor.properties;
+  if (props && name in props) {
     return applyProp(elem, name, value);
   }
 
