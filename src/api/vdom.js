@@ -39,15 +39,9 @@ attributes[symbols.default] = function (elem, name, value) {
     return;
   }
 
-  // Work with properties defined on the prototype chain. This includes event
-  // handlers that can be bound via properties.
-  if (name in elem) {
-    return applyProp(elem, name, value);
-  }
-
-  // Handle custom events.
+  // Handle built-in and custom events.
   if (name.indexOf('on') === 0) {
-    return applyEvent(elem, name.substring(2), name, value);
+    return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
   }
 
   // Custom element properties should be set as properties.
