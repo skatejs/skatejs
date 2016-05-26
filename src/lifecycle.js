@@ -199,16 +199,10 @@ function addAttributeListeners (target, component) {
       var name = mutation.attributeName;
       var attr = attrs[name];
 
-      // Edge doesn't pass the mutation.oldValue value when an attribute is
-      // removed for skated elements, which causes the attribute fallback
-      // handler to be called instead of the removed handler.
-      // The commented part of the next line seems to fix things in AUI (but not the failing test).
-      var oldValue = mutation.oldValue; //(mutation.oldValue === null && attr === undefined) ? '' : mutation.oldValue;
-
       triggerAttributeChanged(target, component, {
         name: name,
         newValue: attr && (attr.value || attr.nodeValue),
-        oldValue: oldValue
+        oldValue: mutation.oldValue
       });
     });
   });
