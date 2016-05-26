@@ -5,7 +5,6 @@ import create from './create';
 import created from '../lifecycle/created';
 import customElements from '../native/custom-elements';
 import dashCase from '../util/dash-case';
-import data from '../data';
 import debounce from '../util/debounce';
 import defaults from '../defaults';
 import defineProperties from '../util/define-properties';
@@ -75,17 +74,6 @@ function addConstructorInformation (name, Ctor) {
   }
 }
 
-// When passing props, Incremental DOM defaults to setting an attribute. When
-// you pass around data to components it's better to use properties because you
-// can pass things other than strings. This tells incremental DOM to use props
-// for all defined properties on components.
-function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs (name, opts) {
-  Object.keys(opts).forEach(function (optKey) {
-    const propKey = name + '.' + optKey;
-    data.applyProp[propKey] = true;
-  });
-}
-
 // Ensures linked properties that have linked attributes are pre-formatted to
 // the attribute name in which they are linked.
 function ensureLinkedAttributesAreFormatted (opts) {
@@ -121,7 +109,6 @@ export default function (name, opts) {
 
   const Ctor = createConstructor(name, opts);
   addConstructorInformation(name, Ctor);
-  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, Ctor);
   ensureLinkedAttributesAreFormatted(Ctor);
 
   // If the options don't inherit a native element prototype, we ensure it does
