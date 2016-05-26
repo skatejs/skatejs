@@ -91,7 +91,7 @@ function bind (tname) {
     tname = tname.id || tname.name;
   }
 
-  const shouldBeContentTag = tname === 'slot' && support.shadowDomV0;
+  const shouldBeContentTag = tname === 'slot' && !support.shadowDomV1 && support.shadowDomV0;
 
   // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
   if (shouldBeContentTag) {

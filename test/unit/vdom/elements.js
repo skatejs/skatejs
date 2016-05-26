@@ -1,7 +1,8 @@
 import element from '../../lib/element';
+import support from '../../../src/native/support';
 import { symbols, vdom } from '../../../src/index';
 
-const shadowDomV0 = !!document.createElement('div').createShadowRoot;
+const shadowDomV0 = !support.shadowDomV1 && support.shadowDomV0;
 
 describe('vdom/elements', function () {
   it('slot', function () {
