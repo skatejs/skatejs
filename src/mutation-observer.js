@@ -344,13 +344,8 @@ if (typeof WeakMap === "undefined") {
     }
   };
 
-  // Edge MutationObserver is polyfilled because Edge has a bug where the
-  // MutationRecord provided when removeAttribute is called has an incorrect
-  // oldValue of null rather than the previous attribute value. This Edge
-  // polyfill can be removed when http://jsbin.com/nirofo works.
-  const isEdge = /Edge/.test(navigator.userAgent);
   global.JsMutationObserver = JsMutationObserver;
-  if (!global.MutationObserver || isEdge) {
+  if (!global.MutationObserver) {
     global.MutationObserver = JsMutationObserver;
     JsMutationObserver._isPolyfilled = true;
   }

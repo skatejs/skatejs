@@ -34,6 +34,15 @@ var matchesSelector = function (element, selector) {
   return nativeMatchesSelector.call(element, selector);
 };
 
+// Edge MutationObserver is polyfilled because Edge has a bug where the
+// MutationRecord provided when removeAttribute is called has an incorrect
+// oldValue of null rather than the previous attribute value. This Edge
+// polyfill can be removed when http://jsbin.com/nirofo works.
+const isEdge = /Edge/.test(navigator.userAgent);
+if (isEdge && window.hasOwn('JsMutationObserver') && !JsMutationObserver._isPolyfilled) {
+  window.MutationObserver = window.JsMutationObserver;
+}
+
 /**
  * Parses an event definition and returns information about it.
  *
