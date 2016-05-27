@@ -37,7 +37,7 @@ var matchesSelector = function (element, selector) {
 // Edge has a bug where oldValue is sent as null instead of the true oldValue
 // when an element attribute is removed. Bug raised at
 // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7711883/
-const needsAttrCaching = /Edge/.test(navigator.userAgent);
+const needsAttributeOldValueCaching = /Edge/.test(navigator.userAgent);
 
 /**
  * Parses an event definition and returns information about it.
@@ -124,18 +124,19 @@ function addAttributeToPropertyLinks (target, component) {
   }
 }
 
-function triggerAttributeChanged(target, component, data) {
+function triggerAttributeChanged(target, component, mutationData) {
   var callback;
   var type;
-  var name = data.name;
-  var newValue = data.newValue;
+  var name = mutationData.name;
+  var newValue = mutationData.newValue;
+
+  var cachedAttributeOldValues;
+  if (needsAttributeOldValueCaching) {
+    cachedAttributeOldValues = data(target, 'cachedAttributeOldValues');
+  }
 
   // Read the old attribute value from cache if needed, otherwise use native oldValue
-  var cachedAttributes;
-  if (needsAttrCaching) {
-    cachedAttributes = hasOwn(target, '_cachedAttrs') && target._cachedAttrs;
-  }
-  var oldValue = needsAttrCaching && hasOwn(cachedAttributes, name) ? cachedAttributes[name] : data.oldValue;
+  var oldValue = needsAttributeOldValueCaching && hasOwn(cachedAttributeOldValues, name) ? cachedAttributeOldValues[name] : mutationData.oldValue;
 
   var newValueIsString = typeof newValue === 'string';
   var oldValueIsString = typeof oldValue === 'string';
@@ -150,11 +151,11 @@ function triggerAttributeChanged(target, component, data) {
     type = 'removed';
   }
 
-  if (needsAttrCaching) {
-    if (type === 'created' || type === 'updated') {
-      cachedAttributes[name] = newValue;
-    } else if (type === 'removed' && hasOwn(cachedAttributes, name)) {
-      delete cachedAttributes[name];
+  if (needsAttributeOldValueCaching) {
+    if (type === 'removed') {
+      delete cachedAttributeOldValues[name];
+    } else {
+      cachedAttributeOldValues[name] = newValue;
     }
   }
 
@@ -208,10 +209,6 @@ function triggerAttributesCreated (target, component) {
 }
 
 function addAttributeListeners (target, component) {
-  if (needsAttrCaching) {
-    target._cachedAttrs = {};
-  }
-
   var attrs = target.attributes;
 
   if (!component.attributes || registry.isNativeCustomElement(component.id)) {

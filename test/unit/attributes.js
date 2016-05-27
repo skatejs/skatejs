@@ -148,10 +148,12 @@ describe('Attribute listeners', function () {
 
     it('should call removed when the attribute is set to "undefined".', function (done) {
       myEl.testLifecycle = true;
-      myEl.testLifecycle = undefined;
       helpers.afterMutations(function () {
-        expect(removed).to.equal(true);
-        done();
+        myEl.testLifecycle = undefined;
+        helpers.afterMutations(function () {
+          expect(removed).to.equal(true);
+          done();
+        });
       });
     });
 
