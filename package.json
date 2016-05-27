@@ -20,7 +20,7 @@
     "object-assign": "^4.0.1"
   },
   "devDependencies": {
-    "eslint": "2.10.2",
+    "eslint": "2.11.0",
     "incremental-dom": "0.4.0",
     "skatejs-build": "skatejs/build#cdcbcfc",
     "skatejs-named-slots": "skatejs/named-slots#00daacd",
