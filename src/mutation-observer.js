@@ -343,7 +343,6 @@ if (typeof WeakMap === "undefined") {
       clearRecords();
     }
   };
-
   global.JsMutationObserver = JsMutationObserver;
   if (!global.MutationObserver) {
     global.MutationObserver = JsMutationObserver;
