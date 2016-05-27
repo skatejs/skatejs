@@ -34,14 +34,10 @@ var matchesSelector = function (element, selector) {
   return nativeMatchesSelector.call(element, selector);
 };
 
-// Edge MutationObserver is polyfilled because Edge has a bug where the
-// MutationRecord provided when removeAttribute is called has an incorrect
-// oldValue of null rather than the previous attribute value. This Edge
-// polyfill can be removed when http://jsbin.com/nirofo works.
-const isEdge = /Edge/.test(navigator.userAgent);
-if (isEdge && hasOwn(window, 'JsMutationObserver') && !window.JsMutationObserver._isPolyfilled) {
-  window.MutationObserver = window.JsMutationObserver;
-}
+// Edge has a bug where oldValue is sent as null instead of the true oldValue
+// when an element attribute is removed. Bug raised at
+// https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7711883/
+const needsAttrCaching = /Edge/.test(navigator.userAgent);
 
 /**
  * Parses an event definition and returns information about it.
@@ -133,7 +129,12 @@ function triggerAttributeChanged(target, component, data) {
   var type;
   var name = data.name;
   var newValue = data.newValue;
-  var oldValue = data.oldValue;
+
+  // Read the old attribute value from cache if needed, otherwise use native oldValue
+  var cachedAttributes;
+  if (needsAttrCaching) cachedAttributes = hasOwn(target, '_cachedAttrs') && target._cachedAttrs;
+  var oldValue = needsAttrCaching && hasOwn(cachedAttributes, name) ? cachedAttributes[name] : data.oldValue;
+
   var newValueIsString = typeof newValue === 'string';
   var oldValueIsString = typeof oldValue === 'string';
   var attrs = component.attributes;
@@ -145,6 +146,14 @@ function triggerAttributeChanged(target, component, data) {
     type = 'updated';
   } else if (oldValueIsString && !newValueIsString) {
     type = 'removed';
+  }
+
+  if (needsAttrCaching) {
+    if (type == 'created' || type == 'updated') {
+      cachedAttributes[name] = newValue;
+    } else if (type == 'removed' && hasOwn(cachedAttributes, name)) {
+      delete cachedAttributes[name]
+    }
   }
 
   if (specific && typeof specific[type] === 'function') {
@@ -197,6 +206,10 @@ function triggerAttributesCreated (target, component) {
 }
 
 function addAttributeListeners (target, component) {
+  if (needsAttrCaching) {
+    target._cachedAttrs = {};
+  }
+
   var attrs = target.attributes;
 
   if (!component.attributes || registry.isNativeCustomElement(component.id)) {
