@@ -132,7 +132,9 @@ function triggerAttributeChanged(target, component, data) {
 
   // Read the old attribute value from cache if needed, otherwise use native oldValue
   var cachedAttributes;
-  if (needsAttrCaching) cachedAttributes = hasOwn(target, '_cachedAttrs') && target._cachedAttrs;
+  if (needsAttrCaching) {
+    cachedAttributes = hasOwn(target, '_cachedAttrs') && target._cachedAttrs;
+  }
   var oldValue = needsAttrCaching && hasOwn(cachedAttributes, name) ? cachedAttributes[name] : data.oldValue;
 
   var newValueIsString = typeof newValue === 'string';
@@ -149,10 +151,10 @@ function triggerAttributeChanged(target, component, data) {
   }
 
   if (needsAttrCaching) {
-    if (type == 'created' || type == 'updated') {
+    if (type === 'created' || type === 'updated') {
       cachedAttributes[name] = newValue;
-    } else if (type == 'removed' && hasOwn(cachedAttributes, name)) {
-      delete cachedAttributes[name]
+    } else if (type === 'removed' && hasOwn(cachedAttributes, name)) {
+      delete cachedAttributes[name];
     }
   }
 
