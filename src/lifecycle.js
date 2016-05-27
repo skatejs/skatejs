@@ -39,7 +39,7 @@ var matchesSelector = function (element, selector) {
 // oldValue of null rather than the previous attribute value. This Edge
 // polyfill can be removed when http://jsbin.com/nirofo works.
 const isEdge = /Edge/.test(navigator.userAgent);
-if (isEdge && window.hasOwn('JsMutationObserver') && !JsMutationObserver._isPolyfilled) {
+if (isEdge && hasOwn(window, 'JsMutationObserver') && !JsMutationObserver._isPolyfilled) {
   window.MutationObserver = window.JsMutationObserver;
 }
 
