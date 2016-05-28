@@ -212,7 +212,7 @@ If you're still skating old school the `dist` directory contains the bundled ES5
 
 ## Resources
 
-- [Web Platform Podcast: [Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
+- [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
 
