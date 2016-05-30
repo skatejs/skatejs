@@ -125,7 +125,7 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
     - [`init (...elems)`](#init-elems)
     - [`link (elem, propSpec)`](#link-elem-propspec)
     - [`noConflict ()`](#noconflict-)
-    - [`properties`](#properties-1)
+    - [`prop`](#prop)
       - [`array`](#array)
       - [`boolean`](#boolean)
       - [`number`](#number)
