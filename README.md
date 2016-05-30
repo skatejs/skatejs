@@ -25,7 +25,7 @@ JavaScript
 
 ```js
 skate('x-hello', {
-  properties: {
+  props: {
     name { attribute: true }
   },
   render (elem) {
@@ -92,7 +92,7 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
       - [`events`](#events)
         - [Event Delegation](#event-delegation)
       - [`created`](#created)
-      - [`properties`](#properties)
+      - [`props`](#props)
         - [`attribute`](#attribute)
         - [`coerce`](#coerce)
         - [`default`](#default)
@@ -372,13 +372,13 @@ The only argument passed to `created` is component element. In this case that is
 
 
 
-#### `properties`
+#### `props`
 
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
 
 ```js
 skate('my-component', {
-  properties: { ...properties }
+  props: { ...props }
 });
 ```
 
@@ -396,7 +396,7 @@ Whether or not to link the property to an attribute. This can be either a `Boole
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       attribute: true
     }
@@ -414,7 +414,7 @@ A function that coerces the incoming property value and returns the coerced valu
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       coerce (value) {
         return value;
@@ -436,7 +436,7 @@ Specifies the default value of the property. If the property is ever set to `nul
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       default: 'default value'
     }
@@ -449,7 +449,7 @@ You may also specify a function that returns the default value. This is useful i
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       default (elem, data) {
         return [];
@@ -473,7 +473,7 @@ A function that coerces the property value to a `String` so that it can be set t
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       deserialize (value) {
         return value ? value.toString() : '';
@@ -495,7 +495,7 @@ An event name to trigger whenever the property changes. This event is cancelable
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       event: 'my-prop-changed'
     }
@@ -513,7 +513,7 @@ A function that is used to return the value of the property. If this is not spec
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       get (elem, data) {
         return `prefix_${data.internalValue}`;
@@ -538,7 +538,7 @@ The initial value the property should have. This is different from `default` in 
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       initial: 'initial value'
     }
@@ -550,7 +550,7 @@ It can also be a function that returns the initial value:
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       initial (elem, data) {
         return 'initial value';
@@ -574,7 +574,7 @@ A function that coerces the attribute value back to the property value, if it is
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       deserialize (value) {
         return value ? value.toString() : '';
@@ -594,7 +594,7 @@ The parameters passed to the function are:
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       render (elem, data) {
         return data.newValue !== data.oldValue;
@@ -619,7 +619,7 @@ A function that is called whenever the property is set. This is also called when
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     myProp: {
       set (elem, data) {
         // do something
@@ -706,7 +706,7 @@ The only argument passed to `detached` is component element. In this case that i
 
 #### `attributeChanged`
 
-Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` (both v0 and v1). Generally, you'll probably end up using `properties` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
+Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` (both v0 and v1). Generally, you'll probably end up using `props` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
 
 ```js
 skate('my-component', {
@@ -756,7 +756,7 @@ Could similarly be written as:
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     someAttribute: { attribute: true }
   }
 });
@@ -799,7 +799,7 @@ The following are all available on the `skate` object, or available for use from
 
 
 
-### `create (componentName, elementProperties = {})`
+### `create (name, props = {})`
 
 Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
 
@@ -1043,7 +1043,7 @@ The `link()` function returns a function that you can bind as an event listener.
 
 ```js
 skate('my-input', function () {
-  properties: {
+  props: {
     value: { attribute: true }
   },
   render (elem) {
@@ -1272,11 +1272,11 @@ This does not solve the situation where you want to be notified of future elemen
 
 The `state` function is a getter or setter depending on if you specify the second `state` argument. If you do not provide `state`, then the current state of the component is returned. If you pass `state`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
 
-Component state is derived from the declared properties. It will only ever return properties that are defined in the `properties` object. However, when you set state, whatever state you specify will be set even if they're not declared in `properties`.
+Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
 
 ```js
 const create = skate('my-element', {
-  properties: {
+  props: {
     prop1: null
   }
 });
@@ -1438,7 +1438,7 @@ Once that is set up, you may write a component using JSX. For example, a simple 
 
 ```js
 skate('my-element', {
-  properties: {
+  props: {
     title: skate.prop.string()
   },
   render (elem) {
@@ -1477,14 +1477,13 @@ The component lifecycle consists of several paths in the following order startin
 
 1. `prototype` is set up in non-native (already set up in native)
 2. `events` are set up
-3. `properties` are defined
+3. `props` are defined and set to initial values
 4. `created` is invoked
 5. `render` is invoked to render an HTML structure to the component
-6. `properties` are initialised
-7. `ready` is invoked
-8. `attached` is invoked when added to the document (or if already in the document)
-9. `detached` is invoked when removed from the document
-10. `attribute` is invoked whenever an attribute is updated
+6. `ready` is invoked
+7. `attached` is invoked when added to the document (or if already in the document)
+8. `detached` is invoked when removed from the document
+9. `attribute` is invoked whenever an attribute is updated
 
 
 
@@ -1732,7 +1731,7 @@ Properties and attributes should represent as much of your public API as possibl
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     // Links the `name` property to the `name` attribute.
     name: { attribute: true }
   }
@@ -1743,7 +1742,7 @@ Sometimes this may not be viable, for example when passing complex data types to
 
 ```js
 skate('my-component', {
-  properties: {
+  props: {
     values: {
       attribute: true,
       deserialize (val) {
