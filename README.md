@@ -212,7 +212,7 @@ If you're still skating old school the `dist` directory contains the bundled ES5
 
 ## Resources
 
-- [Web Platform Podcast: [Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
+- [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
 
@@ -229,12 +229,12 @@ If you have any questions about Skate you can use one of these:
 
 ## Terminology
 
-Wherever we refer to "v0" or "v1" we are referring to the Custom Element spec and can be categorised as:
+Let's define some terms used in these docs:
 
+- v0 - the original Blink implementation of web components - when the spec was still contentious.
+- v1 - the non-contentious - modern-day - specs.
 - polyfill, polyfilled, polyfill-land - not v0 or v1; no native custom element support at all.
 - upgrade, upgraded, upgrading - when an element is initialised as a custom element.
-- v0 - the original Blink implementation - when the spec was still contentious - that used the `document.registerElement()` method.
-- v1 - the non-contentious - modern-day - spec that uses the `window.customElements` namespace.
 
 
 
