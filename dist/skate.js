@@ -1,5 +1,5 @@
 // src/constants.js
-__724634c9149913f1fb43f8ebd813ad28 = (function () {
+__06aac4f5ae6e294bc3807a62ae4d596b = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -18,23 +18,23 @@ __724634c9149913f1fb43f8ebd813ad28 = (function () {
 }).call(this);
 
 // src/version.js
-__299ad4a84aec4d82016b954edf692edb = (function () {
+__4d6fc7c3e17956e2a4fe0c22918a1a98 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
-  module.exports = "0.13.16";
+  module.exports = "0.13.17";
   
   return module.exports
 }).call(this);
 
 // src/globals.js
-__3a98c4f9598cb5ea30ccb64feef9d3ef = (function () {
+__9d3aaf8d7841a04b04962986e12c1cbf = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var version = _interopRequire(__299ad4a84aec4d82016b954edf692edb);
+  var version = _interopRequire(__4d6fc7c3e17956e2a4fe0c22918a1a98);
   
   var VERSION = "__skate_" + version.replace(/[^\w]/g, "_");
   
@@ -51,7 +51,7 @@ __3a98c4f9598cb5ea30ccb64feef9d3ef = (function () {
 }).call(this);
 
 // src/data.js
-__354c5e8734c8b447da1d3e8399d816b2 = (function () {
+__465fbb4bf06c28cd2b41b6a9482f0a3a = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -66,7 +66,7 @@ __354c5e8734c8b447da1d3e8399d816b2 = (function () {
 }).call(this);
 
 // src/mutation-observer.js
-__a0dd52a9bf0c67f149b6843846f244ea = (function () {
+__035570bd33df0cdbc409de66aa6816f8 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -434,7 +434,7 @@ __a0dd52a9bf0c67f149b6843846f244ea = (function () {
 }).call(this);
 
 // src/utils.js
-__be20d0d72414feb56785eb40e436cbe2 = (function () {
+__08f9363dfef43792f0d5e37b5fc06500 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -513,7 +513,7 @@ __be20d0d72414feb56785eb40e436cbe2 = (function () {
   exports.isValidNativeCustomElementName = isValidNativeCustomElementName;
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __724634c9149913f1fb43f8ebd813ad28.ATTR_IGNORE;
+  });var ATTR_IGNORE = __06aac4f5ae6e294bc3807a62ae4d596b.ATTR_IGNORE;
   
   var elementPrototype = window.HTMLElement.prototype;
   exports.elementPrototype = elementPrototype;
@@ -606,21 +606,21 @@ __be20d0d72414feb56785eb40e436cbe2 = (function () {
 }).call(this);
 
 // src/registry.js
-__83e0987e30891762847ca873089362f3 = (function () {
+__f143193c7f123055dc012874ec74b675 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __724634c9149913f1fb43f8ebd813ad28;
+  var _constants = __06aac4f5ae6e294bc3807a62ae4d596b;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var globals = _interopRequire(__3a98c4f9598cb5ea30ccb64feef9d3ef);
+  var globals = _interopRequire(__9d3aaf8d7841a04b04962986e12c1cbf);
   
-  var _utils = __be20d0d72414feb56785eb40e436cbe2;
+  var _utils = __08f9363dfef43792f0d5e37b5fc06500;
   
   var hasOwn = _utils.hasOwn;
   var isValidNativeCustomElementName = _utils.isValidNativeCustomElementName;
@@ -738,7 +738,7 @@ __83e0987e30891762847ca873089362f3 = (function () {
 }).call(this);
 
 // src/lifecycle.js
-__e8f06267f4f16972372badf2e3d0aba5 = (function () {
+__0667da66740452e4bc474ae098e0d348 = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -746,15 +746,15 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
   
   Object.defineProperty(exports, "__esModule", {
     value: true
-  });var ATTR_IGNORE = __724634c9149913f1fb43f8ebd813ad28.ATTR_IGNORE;
+  });var ATTR_IGNORE = __06aac4f5ae6e294bc3807a62ae4d596b.ATTR_IGNORE;
   
-  var data = _interopRequire(__354c5e8734c8b447da1d3e8399d816b2);
+  var data = _interopRequire(__465fbb4bf06c28cd2b41b6a9482f0a3a);
   
-  __a0dd52a9bf0c67f149b6843846f244ea;
+  __035570bd33df0cdbc409de66aa6816f8;
   
-  var registry = _interopRequire(__83e0987e30891762847ca873089362f3);
+  var registry = _interopRequire(__f143193c7f123055dc012874ec74b675);
   
-  var _utils = __be20d0d72414feb56785eb40e436cbe2;
+  var _utils = __08f9363dfef43792f0d5e37b5fc06500;
   
   var camelCase = _utils.camelCase;
   var elementContains = _utils.elementContains;
@@ -775,6 +775,11 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
     }
     return nativeMatchesSelector.call(element, selector);
   };
+  
+  // Edge has a bug where oldValue is sent as null instead of the true oldValue
+  // when an element attribute is removed. Bug raised at
+  // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7711883/
+  var needsAttributeOldValueCaching = /Edge/.test(navigator.userAgent);
   
   /**
    * Parses an event definition and returns information about it.
@@ -861,12 +866,20 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
     }
   }
   
-  function triggerAttributeChanged(target, component, data) {
+  function triggerAttributeChanged(target, component, mutationData) {
     var callback;
     var type;
-    var name = data.name;
-    var newValue = data.newValue;
-    var oldValue = data.oldValue;
+    var name = mutationData.name;
+    var newValue = mutationData.newValue;
+  
+    var cachedAttributeOldValues;
+    if (needsAttributeOldValueCaching) {
+      cachedAttributeOldValues = data(target, "cachedAttributeOldValues");
+    }
+  
+    // Read the old attribute value from cache if needed, otherwise use native oldValue
+    var oldValue = needsAttributeOldValueCaching && hasOwn(cachedAttributeOldValues, name) ? cachedAttributeOldValues[name] : mutationData.oldValue;
+  
     var newValueIsString = typeof newValue === "string";
     var oldValueIsString = typeof oldValue === "string";
     var attrs = component.attributes;
@@ -878,6 +891,14 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
       type = "updated";
     } else if (oldValueIsString && !newValueIsString) {
       type = "removed";
+    }
+  
+    if (needsAttributeOldValueCaching) {
+      if (type === "removed") {
+        delete cachedAttributeOldValues[name];
+      } else {
+        cachedAttributeOldValues[name] = newValue;
+      }
     }
   
     if (specific && typeof specific[type] === "function") {
@@ -1178,7 +1199,7 @@ __e8f06267f4f16972372badf2e3d0aba5 = (function () {
 }).call(this);
 
 // src/fix-ie-innerhtml.js
-__25bbb45478bbbfb9b276939664d5dd0e = (function () {
+__60adf1c24651873685b81781c4f86e2a = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
@@ -1247,24 +1268,24 @@ __25bbb45478bbbfb9b276939664d5dd0e = (function () {
 }).call(this);
 
 // src/document-observer.js
-__ecf86e5efec0eb80abec667d595d90da = (function () {
+__19af9c714a0e37c9a9170784bce0a66e = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var globals = _interopRequire(__3a98c4f9598cb5ea30ccb64feef9d3ef);
+  var globals = _interopRequire(__9d3aaf8d7841a04b04962986e12c1cbf);
   
-  var _lifecycle = __e8f06267f4f16972372badf2e3d0aba5;
+  var _lifecycle = __0667da66740452e4bc474ae098e0d348;
   
   var initElements = _lifecycle.initElements;
   var removeElements = _lifecycle.removeElements;
   
-  __a0dd52a9bf0c67f149b6843846f244ea;
+  __035570bd33df0cdbc409de66aa6816f8;
   
-  __25bbb45478bbbfb9b276939664d5dd0e;
+  __60adf1c24651873685b81781c4f86e2a;
   
-  var getClosestIgnoredElement = __be20d0d72414feb56785eb40e436cbe2.getClosestIgnoredElement;
+  var getClosestIgnoredElement = __08f9363dfef43792f0d5e37b5fc06500.getClosestIgnoredElement;
   
   /**
    * The document observer handler.
@@ -1344,21 +1365,21 @@ __ecf86e5efec0eb80abec667d595d90da = (function () {
 }).call(this);
 
 // src/skate.js
-__de441a6b64570d579a941766dc14a048 = (function () {
+__4497f1fd1f1f74d45cce188ce896bd7e = (function () {
   var module = { exports: {} };
   var exports = module.exports;
   
   var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
   
-  var _constants = __724634c9149913f1fb43f8ebd813ad28;
+  var _constants = __06aac4f5ae6e294bc3807a62ae4d596b;
   
   var TYPE_ATTRIBUTE = _constants.TYPE_ATTRIBUTE;
   var TYPE_CLASSNAME = _constants.TYPE_CLASSNAME;
   var TYPE_ELEMENT = _constants.TYPE_ELEMENT;
   
-  var documentObserver = _interopRequire(__ecf86e5efec0eb80abec667d595d90da);
+  var documentObserver = _interopRequire(__19af9c714a0e37c9a9170784bce0a66e);
   
-  var _lifecycle = __e8f06267f4f16972372badf2e3d0aba5;
+  var _lifecycle = __0667da66740452e4bc474ae098e0d348;
   
   var triggerCreated = _lifecycle.triggerCreated;
   var triggerAttached = _lifecycle.triggerAttached;
@@ -1366,14 +1387,14 @@ __de441a6b64570d579a941766dc14a048 = (function () {
   var triggerAttributeChanged = _lifecycle.triggerAttributeChanged;
   var initElements = _lifecycle.initElements;
   
-  var registry = _interopRequire(__83e0987e30891762847ca873089362f3);
+  var registry = _interopRequire(__f143193c7f123055dc012874ec74b675);
   
-  var _utils = __be20d0d72414feb56785eb40e436cbe2;
+  var _utils = __08f9363dfef43792f0d5e37b5fc06500;
   
   var debounce = _utils.debounce;
   var inherit = _utils.inherit;
   
-  var version = _interopRequire(__299ad4a84aec4d82016b954edf692edb);
+  var version = _interopRequire(__4d6fc7c3e17956e2a4fe0c22918a1a98);
   
   var HTMLElement = window.HTMLElement; //jshint ignore:line
   
