@@ -30,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#543](https://github.com/skatejs/skatejs/pull/543) - Remove support for custom binding types. Only custom elements to the spec are supported now.
 - [#544](https://github.com/skatejs/skatejs/pull/544) - Remove support for custom renderers. Incremental DOM is now the defeacto renderer and all properties cause a re-render or have the option to specify when it does similar to `shouldComponentUpdate()` in React.
 - [#547](https://github.com/skatejs/skatejs/issues/547) - Remove `skate.render()` and synchronously render after calling `skate.state()`.
+- [#575](https://github.com/skatejs/skatejs/issues/575) - Rename `properties` option to `props` to be consistent with the `skate.prop` namespace.
 
 ### Removed
 
