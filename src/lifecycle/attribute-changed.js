@@ -50,7 +50,7 @@ export default function (Ctor) {
 
       // Sync up the property.
       if (!propData.settingProperty) {
-        const propOpts = this.constructor.properties[propertyName];
+        const propOpts = this.constructor.props[propertyName];
         this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
       }
 

@@ -9,7 +9,7 @@ export default {
   detached: nope,
   events: nope,
   extends: nope,
-  properties: nope,
+  props: nope,
   prototype: {},
   ready: nope,
   renderedAttribute: 'rendered'

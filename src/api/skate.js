@@ -77,14 +77,14 @@ function addConstructorInformation (name, Ctor) {
 // Ensures linked properties that have linked attributes are pre-formatted to
 // the attribute name in which they are linked.
 function ensureLinkedAttributesAreFormatted (opts) {
-  const { observedAttributes, properties } = opts;
+  const { observedAttributes, props } = opts;
 
-  if (!properties) {
+  if (!props) {
     return;
   }
 
-  Object.keys(properties).forEach(function (name) {
-    const prop = properties[name];
+  Object.keys(props).forEach(function (name) {
+    const prop = props[name];
     const attr = prop.attribute;
     if (attr) {
       // Ensure the property is updated.

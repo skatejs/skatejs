@@ -1,7 +1,7 @@
 import assign from 'object-assign';
 
 function get (elem) {
-  const props = elem.constructor.properties;
+  const props = elem.constructor.props;
   const state = {};
   for (let key in props) {
     const val = elem[key];

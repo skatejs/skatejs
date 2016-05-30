@@ -4,7 +4,7 @@ import { prop } from '../../../src/index';
 
 function create (prop) {
   return element().skate({
-    properties: {
+    props: {
       test: assign({ attribute: true }, prop)
     }
   })();
@@ -19,7 +19,7 @@ function testTypeValues (type, values) {
   });
 }
 
-describe('api/properties', function () {
+describe('api/prop', function () {
   describe('array', function () {
     let elem;
 

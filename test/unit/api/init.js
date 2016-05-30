@@ -59,7 +59,7 @@ describe('api/init', function () {
   describe('forms', function () {
     it('#110 - should initialise forms properly', function () {
       skate('x-form', {
-        properties: {
+        props: {
           initialised: {
             get (elem) {
               return elem[symbols.shadowRoot].querySelector('form').initialised;

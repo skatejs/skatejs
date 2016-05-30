@@ -6,7 +6,7 @@ const { boolean, number } = prop;
 describe('events (on*)', function () {
   it('should not duplicate listeners', function () {
     const myel = component({
-      properties: {
+      props: {
         test: number({ default: 0 })
       },
       created (elem) {
@@ -77,7 +77,7 @@ describe('events (on*)', function () {
     beforeEach(function () {
       count = 0;
       el = component({
-        properties: {
+        props: {
           unbind: boolean()
         },
         render (elem) {

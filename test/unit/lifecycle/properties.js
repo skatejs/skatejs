@@ -1,10 +1,10 @@
 import element from '../../lib/element';
-import propertiesInit from '../../../src/lifecycle/properties-init';
+import propsInit from '../../../src/lifecycle/props-init';
 
 describe('lifecycle/property', function () {
   function create (definition, name = 'testName', value) {
     const elem = element().skate({
-      properties: {
+      props: {
         [name]: definition
       }
     })();
@@ -15,16 +15,16 @@ describe('lifecycle/property', function () {
   }
 
   it('should accept zero arguments', function () {
-    propertiesInit();
+    propsInit();
   });
 
   it('should return an function', function () {
-    expect(propertiesInit()).to.be.a('function');
+    expect(propsInit()).to.be.a('function');
   });
 
   it('should not leak options to other definitions', function () {
     const elem = element().skate({
-      properties: {
+      props: {
         test1: {
           attribute: true,
           default: 'test1',
@@ -86,7 +86,7 @@ describe('lifecycle/property', function () {
 
   describe('property definition', function () {
     function create () {
-      return propertiesInit()();
+      return propsInit()();
     }
 
     describe('native', function () {

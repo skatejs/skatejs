@@ -1,7 +1,7 @@
 import data from '../util/data';
 import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
-import propertiesInit from './properties-init';
+import propsInit from './props-init';
 import prototypeApplier from './prototype';
 import support from '../native/support';
 
@@ -10,12 +10,12 @@ const isCustomElementsV0 = support.v0;
 const isCustomElementsV1 = support.v1;
 
 function ensurePropertyFunctions (opts) {
-  let properties = opts.properties;
-  let names = Object.keys(properties || {});
+  let props = opts.props;
+  let names = Object.keys(props || {});
   return names.reduce(function (descriptors, descriptorName) {
-    descriptors[descriptorName] = opts.properties[descriptorName];
+    descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = propertiesInit(descriptors[descriptorName]);
+      descriptors[descriptorName] = propsInit(descriptors[descriptorName]);
     }
     return descriptors;
   }, {});
@@ -40,7 +40,7 @@ function callAttributeChangedForEachAttribute (elem, observedAttributes) {
   });
 }
 
-function initialiseProperties (elem, propertyDefinitions) {
+function initialiseProps (elem, propertyDefinitions) {
   Object.keys(propertyDefinitions).forEach(function (name) {
     const prop = propertyDefinitions[name];
     prop.created(elem);
@@ -61,7 +61,7 @@ export default function (opts) {
     definedAttribute,
     events,
     observedAttributes,
-    properties,
+    props,
     prototype,
     ready,
     renderer,
@@ -74,7 +74,7 @@ export default function (opts) {
   // Performance critical code!
   return function () {
     const elemData = data(this);
-    const propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+    const propertyDefinitions = props ? ensurePropertyDefinitions(this, propertyFunctions) : null;
     const readyCallbacks = elemData.readyCallbacks;
 
     if (elemData.created) {
@@ -89,7 +89,7 @@ export default function (opts) {
 
     // Sets up properties, but does not invoke anything.
     if (propertyDefinitions) {
-      initialiseProperties(this, propertyDefinitions);
+      initialiseProps(this, propertyDefinitions);
     }
 
     if (events) {

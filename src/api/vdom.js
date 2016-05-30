@@ -39,7 +39,7 @@ attributes[symbols.default] = function (elem, name, value) {
   }
 
   // Custom element properties should be set as properties.
-  const props = elem.constructor.properties;
+  const props = elem.constructor.props;
   if (props && name in props) {
     return applyProp(elem, name, value);
   }

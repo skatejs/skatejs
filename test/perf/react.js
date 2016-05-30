@@ -1,7 +1,5 @@
 import bench from 'skatejs-build/bench';
-import { string } from '../src/properties';
-import create, { slot } from '../src/vdom';
-import kickflip from '../src/kickflip';
+import skate, { props, vdom } from '../../src/index';
 
 
 const { React, ReactDOM } = window;
@@ -9,31 +7,31 @@ const { React, ReactDOM } = window;
 
 // Skate components.
 
-kickflip('x-app', {
-  properties: {
-    title: string({ default: 0 })
+skate('x-app', {
+  props: {
+    title: props.string({ default: 0 })
   },
   render (elem) {
-    create('div', function () {
-      create('h1', elem.title);
-      create('x-list', function () {
+    vdom('div', function () {
+      vdom('h1', elem.title);
+      vdom('x-list', function () {
         for (let a = 0; a < 10; a++) {
-          create('x-item', `Item ${a}`);
+          vdom('x-item', `Item ${a}`);
         }
       });
     });
   }
 });
 
-kickflip('x-list', {
+skate('x-list', {
   render () {
-    slot({ name: '' });
+    vdom('slot', { name: '' });
   }
 });
 
-kickflip('x-item', {
+skate('x-item', {
   render () {
-    slot({ name: '' });
+    vdom('slot', { name: '' });
   }
 });
 
@@ -86,7 +84,7 @@ describe('', function () {
   });
 
   describe('initial render', function () {
-    bench('kickflip', function () {
+    bench('skate', function () {
       fixture.innerHTML = '<x-app></x-app>';
       fixture.innerHTML = '';
     });
@@ -112,7 +110,7 @@ describe('', function () {
         fixture.innerHTML = '';
       });
 
-      bench('kickflip', {
+      bench('skate', {
         args () {
           return component;
         },

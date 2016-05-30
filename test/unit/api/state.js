@@ -4,7 +4,7 @@ import { state } from '../../../src/index';
 describe('api/state', function () {
   function create () {
     return element().skate({
-      properties: {
+      props: {
         prop1: {
           initial: 'test1'
         },

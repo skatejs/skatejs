@@ -99,7 +99,7 @@ describe('lifecycle/attribute-changed', function () {
     it('should automatically observe linked attributes', function (done) {
       const calls = [];
       const elem = element().skate({
-        properties: {
+        props: {
           testProp: { attribute: true }
         },
         attributeChanged (elem, data) {
@@ -122,7 +122,7 @@ describe('lifecycle/attribute-changed', function () {
       const calls = [];
       const elem = element().skate({
         observedAttributes: ['test-attr'],
-        properties: {
+        props: {
           testProp: { attribute: true }
         },
         attributeChanged (elem, data) {
@@ -146,7 +146,7 @@ describe('lifecycle/attribute-changed', function () {
       const calls = [];
       const elem = element().skate({
         observedAttributes: ['test-attr'],
-        properties: {
+        props: {
           testAttr: { attribute: true }
         },
         attributeChanged (elem, data) {
