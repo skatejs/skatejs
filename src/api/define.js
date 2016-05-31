@@ -99,7 +99,6 @@ function ensureLinkedAttributesAreFormatted (opts) {
   });
 }
 
-// The main skate() function.
 export default function (name, opts) {
   // Ensure the observed attributes are initialised.
   opts.observedAttributes = opts.observedAttributes || [];
