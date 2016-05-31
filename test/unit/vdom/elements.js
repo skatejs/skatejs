@@ -36,4 +36,21 @@ describe('vdom/elements', function () {
       assertSlotElement();
     }
   });
+
+  it('passing a component constructor to the vdom() function', function () {
+    const elem1 = element().skate({
+      render () {
+        vdom.text('rendered');
+      }
+    });
+    const elem2 = element().skate({
+      render () {
+        vdom.div(function () {
+          vdom(elem1);
+        });
+      }
+    });
+
+    expect(elem2()[symbols.shadowRoot].firstChild.firstChild[symbols.shadowRoot].textContent).to.equal('rendered');
+  });
 });

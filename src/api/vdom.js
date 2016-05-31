@@ -80,10 +80,6 @@ function applyEvent (elem, ename, name, value) {
 
 // Creates a factory and returns it.
 function bind (tname) {
-  if (typeof tname === 'function') {
-    tname = tname.id || tname.name;
-  }
-
   const shouldBeContentTag = tname === 'slot' && !support.shadowDomV1 && support.shadowDomV0;
 
   // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
@@ -127,6 +123,11 @@ function bind (tname) {
 
 // The default function requries a tag name.
 export default function create (tname, attrs, chren) {
+  // Allow a component constructor to be passed in.
+  if (typeof tname === 'function') {
+    tname = tname.id || tname.name;
+  }
+  // Return the cached factory or create a new one and return it.
   return (factories[tname] || bind(tname))(attrs, chren);
 }
 
