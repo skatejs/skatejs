@@ -12,27 +12,15 @@ import detached from '../lifecycle/detached';
 import documentObserver from '../native/document-observer';
 import getAllPropertyDescriptors from '../util/get-all-property-descriptors';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import init from './init';
 import render from '../lifecycle/render';
 import support from '../native/support';
-import walkTree from '../util/walk-tree';
 
 const HTMLElement = window.HTMLElement;
 
 // A function that initialises the document once in a given event loop.
 const initDocument = debounce(function () {
-  walkTree(document.documentElement.childNodes, function (element) {
-    const component = customElements.get(element.tagName.toLowerCase());
-
-    if (component) {
-      if (component.prototype.createdCallback) {
-        component.prototype.createdCallback.call(element);
-      }
-
-      if (component.prototype.attachedCallback) {
-        component.prototype.attachedCallback.call(element);
-      }
-    }
-  });
+  init(document.documentElement, { checkIfIsInDom: false });
 });
 
 // Creates a configurable, non-writable, non-enumerable property.

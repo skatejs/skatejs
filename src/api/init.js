@@ -3,12 +3,12 @@ import findElementInRegistry from '../util/find-element-in-registry';
 import support from '../native/support';
 import walkTree from '../util/walk-tree';
 
-export default function (elem) {
+export default function (elem, { checkIfIsInDom } = { checkIfIsInDom: true }) {
   if (!support.polyfilled) {
     return;
   }
 
-  const isInDom = elementContains(document, elem);
+  const isInDom = !checkIfIsInDom || elementContains(document, elem);
 
   walkTree(elem, function (descendant) {
     const component = findElementInRegistry(descendant);
