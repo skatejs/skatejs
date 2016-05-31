@@ -57,7 +57,7 @@ describe('vdom/elements', function () {
 
     fixture(el2);
     ready(el1, function () {
-      expect(el1.textContent).to.equal('rendered');
+      expect(el1[symbols.shadowRoot].textContent).to.equal('rendered');
       done();
     });
   });
