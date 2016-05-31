@@ -463,7 +463,7 @@
 
 	      // Sync up the property.
 	      if (!propData.settingProperty) {
-	        var propOpts = this.constructor.properties[propertyName];
+	        var propOpts = this.constructor.props[propertyName];
 	        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
 	      }
 
@@ -747,7 +747,7 @@
 	  return prop;
 	}
 
-	function propertiesInit (opts) {
+	function propsInit (opts) {
 	  opts = opts || {};
 
 	  if (typeof opts === 'function') {
@@ -815,12 +815,12 @@
 	var isCustomElementsV1$1 = support.v1;
 
 	function ensurePropertyFunctions(opts) {
-	  var properties = opts.properties;
-	  var names = Object.keys(properties || {});
+	  var props = opts.props;
+	  var names = Object.keys(props || {});
 	  return names.reduce(function (descriptors, descriptorName) {
-	    descriptors[descriptorName] = opts.properties[descriptorName];
+	    descriptors[descriptorName] = props[descriptorName];
 	    if (typeof descriptors[descriptorName] !== 'function') {
-	      descriptors[descriptorName] = propertiesInit(descriptors[descriptorName]);
+	      descriptors[descriptorName] = propsInit(descriptors[descriptorName]);
 	    }
 	    return descriptors;
 	  }, {});
@@ -845,7 +845,7 @@
 	  });
 	}
 
-	function initialiseProperties(elem, propertyDefinitions) {
+	function initialiseProps(elem, propertyDefinitions) {
 	  Object.keys(propertyDefinitions).forEach(function (name) {
 	    var prop = propertyDefinitions[name];
 	    prop.created(elem);
@@ -865,7 +865,7 @@
 	  var definedAttribute = opts.definedAttribute;
 	  var events$$ = opts.events;
 	  var observedAttributes = opts.observedAttributes;
-	  var properties = opts.properties;
+	  var props = opts.props;
 	  var prototype$$ = opts.prototype;
 	  var ready = opts.ready;
 	  var renderer = opts.renderer;
@@ -878,7 +878,7 @@
 	  // Performance critical code!
 	  return function () {
 	    var elemData = data(this);
-	    var propertyDefinitions = properties ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+	    var propertyDefinitions = props ? ensurePropertyDefinitions(this, propertyFunctions) : null;
 	    var readyCallbacks = elemData.readyCallbacks;
 
 	    if (elemData.created) {
@@ -893,7 +893,7 @@
 
 	    // Sets up properties, but does not invoke anything.
 	    if (propertyDefinitions) {
-	      initialiseProperties(this, propertyDefinitions);
+	      initialiseProps(this, propertyDefinitions);
 	    }
 
 	    if (events$$) {
@@ -970,10 +970,6 @@
 	  });
 	}
 
-	var internalData = {
-	  applyProp: {}
-	};
-
 	var nope = null;
 
 	var defaults = {
@@ -985,7 +981,7 @@
 	  detached: nope,
 	  events: nope,
 	  extends: nope,
-	  properties: nope,
+	  props: nope,
 	  prototype: {},
 	  ready: nope,
 	  renderedAttribute: 'rendered'
@@ -2422,21 +2418,15 @@ var IncrementalDOM = Object.freeze({
 	    return;
 	  }
 
-	  // Work with properties defined on the prototype chain. This includes event
-	  // handlers that can be bound via properties.
-	  if (name in elem) {
-	    return applyProp(elem, name, value);
-	  }
-
-	  // Handle custom events.
-	  if (name.indexOf('on') === 0) {
-	    return applyEvent(elem, name.substring(2), name, value);
-	  }
-
 	  // Custom element properties should be set as properties.
-	  var dataName = elem.tagName + '.' + name;
-	  if (internalData.applyProp[dataName]) {
+	  var props = elem.constructor.props;
+	  if (props && name in props) {
 	    return applyProp(elem, name, value);
+	  }
+
+	  // Handle built-in and custom events.
+	  if (name.indexOf('on') === 0) {
+	    return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
 	  }
 
 	  // Fallback to default IncrementalDOM behaviour.
@@ -2470,12 +2460,21 @@ var IncrementalDOM = Object.freeze({
 
 	// Creates a factory and returns it.
 	function bind(tname) {
-	  if (typeof tname === 'function') {
-	    tname = tname.id || tname.name;
+	  var shouldBeContentTag = tname === 'slot' && !support.shadowDomV1 && support.shadowDomV0;
+
+	  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+	  if (shouldBeContentTag) {
+	    tname = 'content';
 	  }
 
 	  return factories[tname] = function (attrs, chren) {
 	    if (attrs && (typeof attrs === 'undefined' ? 'undefined' : babelHelpers.typeof(attrs)) === 'object') {
+	      // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
+	      if (shouldBeContentTag && attrs.name) {
+	        attrs.select = '[slot="' + attrs.name + '"]';
+	        delete attrs.slot;
+	      }
+
 	      elementOpenStart(tname, attrs.key, attrs.statics);
 	      for (var _a in attrs) {
 	        attr(_a, attrs[_a]);
@@ -2504,16 +2503,11 @@ var IncrementalDOM = Object.freeze({
 
 	// The default function requries a tag name.
 	function create$1(tname, attrs, chren) {
-	  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
-	  if (tname === 'slot') {
-	    if (support.shadowDomV0) {
-	      if (attrs && attrs.slot) {
-	        attrs.select = '[slot="' + attrs.slot + '"]';
-	        delete attrs.slot;
-	      }
-	      tname = 'content';
-	    }
+	  // Allow a component constructor to be passed in.
+	  if (typeof tname === 'function') {
+	    tname = tname.id || tname.name;
 	  }
+	  // Return the cached factory or create a new one and return it.
 	  return (factories[tname] || bind(tname))(attrs, chren);
 	}
 
@@ -2868,30 +2862,19 @@ var symbols$2 = Object.freeze({
 	  }
 	}
 
-	// When passing props, Incremental DOM defaults to setting an attribute. When
-	// you pass around data to components it's better to use properties because you
-	// can pass things other than strings. This tells incremental DOM to use props
-	// for all defined properties on components.
-	function ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, opts) {
-	  Object.keys(opts).forEach(function (optKey) {
-	    var propKey = name + '.' + optKey;
-	    internalData.applyProp[propKey] = true;
-	  });
-	}
-
 	// Ensures linked properties that have linked attributes are pre-formatted to
 	// the attribute name in which they are linked.
 	function ensureLinkedAttributesAreFormatted(opts) {
 	  var observedAttributes = opts.observedAttributes;
-	  var properties = opts.properties;
+	  var props = opts.props;
 
 
-	  if (!properties) {
+	  if (!props) {
 	    return;
 	  }
 
-	  Object.keys(properties).forEach(function (name) {
-	    var prop = properties[name];
+	  Object.keys(props).forEach(function (name) {
+	    var prop = props[name];
 	    var attr = prop.attribute;
 	    if (attr) {
 	      // Ensure the property is updated.
@@ -2916,7 +2899,6 @@ var symbols$2 = Object.freeze({
 
 	  var Ctor = createConstructor(name, opts);
 	  addConstructorInformation(name, Ctor);
-	  ensureIncrementalDomKnowsToSetPropsForLinkedAttrs(name, Ctor);
 	  ensureLinkedAttributesAreFormatted(Ctor);
 
 	  // If the options don't inherit a native element prototype, we ensure it does
@@ -3022,7 +3004,7 @@ var symbols$2 = Object.freeze({
 	}
 
 	function get(elem) {
-	  var props = elem.constructor.properties;
+	  var props = elem.constructor.props;
 	  var state = {};
 	  for (var key in props) {
 	    var val = elem[key];
@@ -3134,7 +3116,7 @@ var symbols$2 = Object.freeze({
 	var number = prop(propNumber);
 	var string = prop(propString);
 
-var properties = Object.freeze({
+var props = Object.freeze({
 	  default: prop,
 	  array: array,
 	  boolean: boolean,
@@ -3177,7 +3159,7 @@ var properties = Object.freeze({
 
 	var version = '0.15.3';
 
-	assign(prop, properties);
+	assign(prop, props);
 	assign(create$1, vdomElements);
 
 	var previousGlobal = window.skate;
