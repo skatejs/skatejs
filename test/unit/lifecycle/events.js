@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, fragment, init } from '../../../src/index';
+import skate, { emit, init, symbols, vdom } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -73,34 +73,36 @@ describe('lifecycle/events', function () {
   });
 
   it('should support delegate event selectors', function () {
-    skate(tag.safe, {
+    const elem = helperElement().skate({
       events: {
-        test (elem, e) {
+        test (el, e) {
           increment();
-          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test');
+          expect(elem.tagName).to.equal(el.tagName, 'test');
           expect(e.target.tagName).to.equal('SPAN', 'test');
-          expect(e.currentTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test');
+          expect(e.currentTarget.tagName).to.equal(el.tagName, 'test');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test');
         },
-        'test a' (elem, e) {
+        'test a' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
+          expect(elem.tagName).to.equal(el.tagName, 'test a');
           expect(e.target.tagName).to.equal('SPAN', 'test a');
           expect(e.currentTarget.tagName).to.equal('A', 'test a');
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test a');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test a');
         },
-        'test span' (elem, e) {
+        'test span' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
+          expect(elem.tagName).to.equal(el.tagName, 'test span');
           expect(e.target.tagName).to.equal('SPAN', 'test span');
           expect(e.currentTarget.tagName).to.equal('SPAN', 'test span');
-          expect(e.delegateTarget.tagName).to.equal(tag.safe.toUpperCase(), 'test span');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span');
         }
       }
-    });
+    })();
 
-    const frag = fragment(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
-    emit(frag.querySelector('span'), 'test');
+    elem.innerHTML = '<a><span></span></a>';
+    helperFixture(elem);
+    init(elem);
+    emit(elem.querySelector('span'), 'test');
     expect(numTriggered).to.equal(3);
   });
 
