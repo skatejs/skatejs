@@ -3162,6 +3162,25 @@ var props = Object.freeze({
 	assign(prop, props);
 	assign(create$1, vdomElements);
 
+	var mod = window['module'];
+	if (typeof mod !== 'undefined') {
+	  mod.exports = skate;
+	  assign(skate, {
+	    create: create,
+	    emit: emit,
+	    factory: factory,
+	    fragment: fragment,
+	    init: init,
+	    link: link$1,
+	    prop: prop,
+	    ready: ready$1,
+	    state: state,
+	    symbols: symbols$2,
+	    vdom: create$1,
+	    version: version
+	  });
+	}
+
 	var previousGlobal = window.skate;
 	exports.noConflict = function () {
 	  window.skate = previousGlobal;
@@ -3178,7 +3197,6 @@ var props = Object.freeze({
 	exports.link = link$1;
 	exports.prop = prop;
 	exports.ready = ready$1;
-	exports.skate = skate;
 	exports.state = state;
 	exports.symbols = symbols$2;
 	exports.vdom = create$1;

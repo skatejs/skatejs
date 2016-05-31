@@ -1,4 +1,4 @@
-import skate from '../../src/api/skate';
+import skate from '../../src/index';
 
 let componentCount = 0;
 
