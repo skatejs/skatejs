@@ -115,8 +115,8 @@ export default function (opts) {
 
     // We trigger ready after we add the defined attribute.
     if (readyCallbacks) {
-      readyCallbacks.forEach(cb => cb());
-      elemData.readyCallbacks = null;
+      readyCallbacks.forEach(cb => cb(this));
+      delete elemData.readyCallbacks;
     }
 
     // In the early versions of the spec ("v0", only implemented by Blink) all
