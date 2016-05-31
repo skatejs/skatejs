@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, fragment, init } from '../../../src/index';
+import skate, { emit, init } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -99,8 +99,8 @@ describe('lifecycle/events', function () {
       }
     });
 
-    const frag = fragment(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
-    emit(frag.querySelector('span'), 'test');
+    helperFixture(`<${tag.safe}><a><span></span></a></${tag.safe}>`);
+    emit(helperFixture().querySelector('span'), 'test');
     expect(numTriggered).to.equal(3);
   });
 

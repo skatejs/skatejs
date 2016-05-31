@@ -1,11 +1,11 @@
 import { emit, prop, state, symbols, vdom } from '../../../src/index';
-import component from '../../lib/component';
+import element from '../../lib/element';
 
 const { boolean, number } = prop;
 
-describe('events (on*)', function () {
+describe('vdom/events (on*)', function () {
   it('should not duplicate listeners', function () {
-    const myel = component({
+    const myel = element().skate({
       props: {
         test: number({ default: 0 })
       },
@@ -49,7 +49,7 @@ describe('events (on*)', function () {
   it('should not trigger events bubbled from descendants', function () {
     let called = false;
     const test = () => called = true;
-    const myel = component({
+    const myel = element().skate({
       render () {
         vdom('div', { ontest: test }, vdom.bind(null, 'span'));
       }
@@ -59,7 +59,7 @@ describe('events (on*)', function () {
   });
 
   it('should not fail for listeners that are not functions', function () {
-    const myel = component({
+    const myel = element().skate({
       render () {
         vdom('div', { ontest: null });
       }
@@ -76,7 +76,7 @@ describe('events (on*)', function () {
 
     beforeEach(function () {
       count = 0;
-      el = component({
+      el = element().skate({
         props: {
           unbind: boolean()
         },

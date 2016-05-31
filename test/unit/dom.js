@@ -1,6 +1,6 @@
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import skate, { init, fragment, ready } from '../../src/index';
+import skate, { init, ready } from '../../src/index';
 
 describe('dom', function () {
   describe('general', function () {
@@ -103,7 +103,7 @@ describe('dom', function () {
         prototype: Object.create(SVGElement.prototype)
       });
 
-      fragment(`
+      helperFixture(`
         <svg>
           <circle />
           <path is="${tag}" />

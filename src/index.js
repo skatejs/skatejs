@@ -4,7 +4,6 @@ import assign from 'object-assign';
 import create from './api/create';
 import emit from './api/emit';
 import factory from './api/factory';
-import fragment from './api/fragment';
 import init from './api/init';
 import link from './api/link';
 import prop, * as props from './api/prop';
@@ -23,7 +22,6 @@ export {
   create,
   emit,
   factory,
-  fragment,
   init,
   link,
   prop,
