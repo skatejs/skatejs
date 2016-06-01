@@ -116,7 +116,7 @@ export default function (Ctor) {
 
     // We trigger ready after we add the defined attribute.
     if (readyCallbacks) {
-      readyCallbacks.forEach(cb => cb(this));
+      readyCallbacks.forEach(cb => cb(elem));
       delete elemData.readyCallbacks;
     }
 
