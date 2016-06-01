@@ -1,9 +1,8 @@
-import assign from 'object-assign';
 import customElements from '../native/custom-elements';
 import init from './init';
 import support from '../native/support';
 
-export default function (name, props) {
+export default function (name) {
   let elem;
   const Ctor = customElements.get(name);
 
@@ -25,5 +24,5 @@ export default function (name, props) {
     elem = document.createElement(name);
   }
 
-  return assign(elem, props);
+  return elem;
 }

@@ -44,9 +44,4 @@ describe('constructor', function () {
     var ctor = skate(id, {});
     expect(resolved(ctor())).to.equal(true);
   });
-
-  it('with properties', function () {
-    var ctor = skate(id, {});
-    expect(ctor({ test: true }).test).to.equal(true);
-  });
 });
