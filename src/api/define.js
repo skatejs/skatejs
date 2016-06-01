@@ -58,20 +58,14 @@ function createConstructor (name, opts) {
   // considered "own".
   defineProperties(func, getAllPropertyDescriptors(opts));
 
+  // Ensure the render function render's using Incremental DOM.
+  func.renderer = render(func);
+
+  // Ensure a constructor is defined.
+  fixedProp(func.prototype, 'constructor', func);
+  fixedProp(func, 'id', name);
+
   return func;
-}
-
-function addConstructorInformation (name, Ctor) {
-  fixedProp(Ctor.prototype, 'constructor', Ctor);
-  fixedProp(Ctor, 'id', name);
-
-  // In native, the function name is the same as the custom element name, but
-  // WebKit prevents this from being defined. We do this where possible and
-  // still define `id` for cross-browser compatibility.
-  const nameProp = Object.getOwnPropertyDescriptor(Ctor, 'name');
-  if (nameProp && nameProp.configurable) {
-    fixedProp(Ctor, 'name', name);
-  }
 }
 
 // Ensures linked properties that have linked attributes are pre-formatted to
@@ -99,43 +93,44 @@ function ensureLinkedAttributesAreFormatted (opts) {
   });
 }
 
-// The main skate() function.
-export default function (name, opts) {
-  // Ensure the observed attributes are initialised.
-  opts.observedAttributes = opts.observedAttributes || [];
-
-  // Ensure the render function render's using Incremental DOM.
-  opts.renderer = render(opts);
-
-  const Ctor = createConstructor(name, opts);
-  addConstructorInformation(name, Ctor);
-  ensureLinkedAttributesAreFormatted(Ctor);
-
-  // If the options don't inherit a native element prototype, we ensure it does
-  // because native requires you explicitly do this. Here we solve the common
-  // use case by defaulting to HTMLElement.prototype.
+// If the options don't inherit a native element prototype, we ensure it does
+// because native requires you explicitly do this. Here we solve the common
+// use case by defaulting to HTMLElement.prototype.
+function ensureBasePrototype (Ctor) {
   if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
     const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
     Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
   }
+}
 
-  // We assign native callbacks to handle the callbacks specified in the
-  // Skate definition. This allows us to abstract away any changes that may
-  // occur in the spec.
+// We assign native callbacks to handle the callbacks specified in the
+// Skate definition. This allows us to abstract away any changes that may
+// occur in the spec.
+function ensureNativeCallbacks (Ctor) {
   assign(Ctor.prototype, {
     createdCallback: created(Ctor),
     attachedCallback: attached(Ctor),
     detachedCallback: detached(Ctor),
     attributeChangedCallback: attribute(Ctor)
   });
+}
 
-  // In polyfill land we must emulate what the browser would normally do in
-  // native.
+// Ensures that in polyfill-land, theres an observer registered to handle
+// incoming elements and that the current document is initialised.
+function ensurePolyfilledDocumentObserver () {
   if (support.polyfilled) {
     initDocument();
     documentObserver.register();
   }
+}
 
+// The main skate() function.
+export default function (name, Ctor) {
+  Ctor = createConstructor(name, Ctor);
+  ensureLinkedAttributesAreFormatted(Ctor);
+  ensureBasePrototype(Ctor);
+  ensureNativeCallbacks(Ctor);
+  ensurePolyfilledDocumentObserver();
   customElements.define(name, Ctor);
   return customElements.get(name);
 }

@@ -1,7 +1,7 @@
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import support from '../../../src/native/support';
-import { ready, symbols, vdom } from '../../../src/index';
+import { init, symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', function () {
   it('slot', function () {
@@ -38,7 +38,7 @@ describe('vdom/elements', function () {
     }
   });
 
-  it('passing a component constructor to the vdom() function', function (done) {
+  it('passing a component constructor to the vdom() function', function () {
     const elem1 = element().skate({
       render () {
         vdom.text('rendered');
@@ -54,11 +54,8 @@ describe('vdom/elements', function () {
 
     const el2 = elem2();
     const el1 = el2[symbols.shadowRoot].firstChild.firstChild;
-
     fixture(el2);
-    ready(el1, function () {
-      expect(el1[symbols.shadowRoot].textContent).to.equal('rendered');
-      done();
-    });
+    init(el1);
+    expect(el1[symbols.shadowRoot].textContent).to.equal('rendered');
   });
 });

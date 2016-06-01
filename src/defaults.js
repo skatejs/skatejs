@@ -9,8 +9,9 @@ export default {
   detached: nope,
   events: nope,
   extends: nope,
+  get observedAttributes () { return []; },
   props: nope,
-  prototype: {},
+  get prototype () { return {}; },
   ready: nope,
   renderedAttribute: 'rendered'
 };
