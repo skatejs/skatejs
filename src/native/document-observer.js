@@ -1,30 +1,15 @@
 import '../fix/ie/innerhtml';
 import findElementInRegistry from '../util/find-element-in-registry';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
+import init from '../api/init';
 import walkTree from '../util/walk-tree';
 
-function triggerAddedNodes (addedNodes) {
-  walkTree(addedNodes, function (element) {
-    const component = findElementInRegistry(element);
-
-    if (component) {
-      if (component.prototype.createdCallback) {
-        component.prototype.createdCallback.call(element);
-      }
-
-      if (component.prototype.attachedCallback) {
-        component.prototype.attachedCallback.call(element);
-      }
-    }
-  });
-}
-
-function triggerRemovedNodes (removedNodes) {
-  walkTree(removedNodes, function (element) {
-    const component = findElementInRegistry(element);
+function removeNode (node) {
+  walkTree(node, function (node) {
+    const component = findElementInRegistry(node);
 
     if (component && component.prototype.detachedCallback) {
-      component.prototype.detachedCallback.call(element);
+      component.prototype.detachedCallback.call(node);
     }
   });
 }
@@ -39,12 +24,18 @@ function documentObserverHandler (mutations) {
     // node to see if it is ignored. If it is then we don't process any added
     // nodes. This prevents having to check every node.
     if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-      triggerAddedNodes(addedNodes);
+      const nodesLen = addedNodes.length;
+      for (let a = 0; a < nodesLen; a++) {
+        init(addedNodes[a], { checkIfIsInDom: false });
+      }
     }
 
     // We can't check batched nodes here because they won't have a parent node.
     if (removedNodes && removedNodes.length) {
-      triggerRemovedNodes(removedNodes);
+      const nodesLen = removedNodes.length;
+      for (let a = 0; a < nodesLen; a++) {
+        removeNode(removedNodes[a]);
+      }
     }
   }
 }

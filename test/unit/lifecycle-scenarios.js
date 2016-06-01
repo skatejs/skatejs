@@ -6,7 +6,7 @@ import skate from '../../src/index';
 const supportsCustomElements = !!document.registerElement;
 
 describe('lifecycle-scenarios', function () {
-  it('definition is registered before the element is created', function (done) {
+  it('definition is registered before the element is created', function () {
     const el = helperElement();
     const elem = document.createElement(el.safe);
     let called = false;
@@ -17,17 +17,7 @@ describe('lifecycle-scenarios', function () {
       }
     });
     helperFixture(elem);
-
-    if (supportsCustomElements) {
-      expect(called).to.equal(true);
-      done();
-    } else {
-      expect(called).to.equal(false);
-      ready(elem, function () {
-        expect(called).to.equal(true);
-        done();
-      });
-    }
+    expect(called).to.equal(true);
   });
 
   it('definition is registered after the element is created', function (done) {

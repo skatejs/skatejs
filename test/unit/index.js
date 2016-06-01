@@ -13,6 +13,11 @@ describe('exports', function () {
     expect(umd.create).to.be.a('function');
   });
 
+  it('skate.define', function () {
+    expect(api.define).to.be.a('function');
+    expect(umd.define).to.be.a('function');
+  });
+
   it('skate.emit', function () {
     expect(api.emit).to.be.a('function');
     expect(umd.emit).to.be.a('function');
@@ -21,11 +26,6 @@ describe('exports', function () {
   it('skate.factory', function () {
     expect(api.factory).to.be.a('function');
     expect(umd.factory).to.be.a('function');
-  });
-
-  it('skate.fragment', function () {
-    expect(api.fragment).to.be.a('function');
-    expect(umd.fragment).to.be.a('function');
   });
 
   it('skate.init', function () {
