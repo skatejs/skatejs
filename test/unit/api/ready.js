@@ -43,14 +43,4 @@ describe('api/ready', function () {
     setup();
     initialise();
   });
-
-  it('should take an array of elements', function (done) {
-    const elements = [elem];
-    ready(elements, function (shouldBeElements) {
-      expect(shouldBeElements).to.equal(elements);
-      done();
-    });
-    setup();
-    initialise();
-  });
 });
