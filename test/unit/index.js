@@ -13,6 +13,11 @@ describe('exports', function () {
     expect(umd.create).to.be.a('function');
   });
 
+  it('skate.define', function () {
+    expect(api.define).to.be.a('function');
+    expect(umd.define).to.be.a('function');
+  });
+
   it('skate.emit', function () {
     expect(api.emit).to.be.a('function');
     expect(umd.emit).to.be.a('function');

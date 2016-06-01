@@ -17,8 +17,4 @@ describe('api/create', function () {
   it('should create an element if no component is found', function () {
     expect(resolved(create(tagName))).to.equal(false);
   });
-
-  it('should set properties on it', function () {
-    expect(create(tagName, { test: true }).test).to.equal(true);
-  });
 });

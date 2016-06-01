@@ -298,101 +298,6 @@
 	  return assign(elem, props);
 	}
 
-	var CustomEvent = function (CustomEvent) {
-	  if (CustomEvent) {
-	    try {
-	      new CustomEvent();
-	    } catch (e) {
-	      return undefined;
-	    }
-	  }
-	  return CustomEvent;
-	}(window.CustomEvent);
-
-	function createCustomEvent(name) {
-	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-	  if (CustomEvent) {
-	    return new CustomEvent(name, opts);
-	  }
-
-	  var e = document.createEvent('CustomEvent');
-	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-	  return e;
-	}
-
-	function dispatch(elem, cEvent) {
-	  if (!elem.disabled) {
-	    return elem.dispatchEvent(cEvent);
-	  }
-	  cEvent.isPropagationStopped = true;
-	}
-
-	var hasBubbleOnDetachedElements = function () {
-	  var parent = document.createElement('div');
-	  var child = document.createElement('div');
-	  var hasBubbleOnDetachedElements = false;
-	  parent.appendChild(child);
-	  parent.addEventListener('test', function () {
-	    return hasBubbleOnDetachedElements = true;
-	  });
-	  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-	  return hasBubbleOnDetachedElements;
-	}();
-
-	function createReadableStopPropagation(oldStopPropagation) {
-	  return function () {
-	    this.isPropagationStopped = true;
-	    oldStopPropagation.call(this);
-	  };
-	}
-
-	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = void 0;
-	  var currentElem = elem;
-	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-	  Object.defineProperty(cEvent, 'target', { get: function get() {
-	      return elem;
-	    } });
-	  while (currentElem && !cEvent.isPropagationStopped) {
-	    Object.defineProperty(cEvent, 'currentTarget', {
-	      configurable: true,
-	      get: function get() {
-	        return currentElem;
-	      }
-	    });
-	    if (dispatch(currentElem, cEvent) === false) {
-	      didPreventDefault = false;
-	    }
-	    currentElem = currentElem.parentNode;
-	  }
-	  return didPreventDefault;
-	}
-
-	function emitOne(elem, name, opts) {
-	  var cEvent, shouldSimulateBubbling;
-
-	  /* jshint expr: true */
-	  opts.bubbles === undefined && (opts.bubbles = true);
-	  opts.cancelable === undefined && (opts.cancelable = true);
-	  cEvent = createCustomEvent(name, opts);
-	  shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !utilElementContains(document, elem);
-
-	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
-	}
-
-	function emit (elem, name) {
-	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-	  var names = typeof name === 'string' ? name.split(' ') : name;
-	  return names.reduce(function (prev, curr) {
-	    if (emitOne(elem, curr, opts) === false) {
-	      prev.push(curr);
-	    }
-	    return prev;
-	  }, []);
-	}
-
 	function data (element) {
 	  var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
 
@@ -598,6 +503,101 @@
 	      });
 	    }
 	  };
+	}
+
+	var CustomEvent = function (CustomEvent) {
+	  if (CustomEvent) {
+	    try {
+	      new CustomEvent();
+	    } catch (e) {
+	      return undefined;
+	    }
+	  }
+	  return CustomEvent;
+	}(window.CustomEvent);
+
+	function createCustomEvent(name) {
+	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  if (CustomEvent) {
+	    return new CustomEvent(name, opts);
+	  }
+
+	  var e = document.createEvent('CustomEvent');
+	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+	  return e;
+	}
+
+	function dispatch(elem, cEvent) {
+	  if (!elem.disabled) {
+	    return elem.dispatchEvent(cEvent);
+	  }
+	  cEvent.isPropagationStopped = true;
+	}
+
+	var hasBubbleOnDetachedElements = function () {
+	  var parent = document.createElement('div');
+	  var child = document.createElement('div');
+	  var hasBubbleOnDetachedElements = false;
+	  parent.appendChild(child);
+	  parent.addEventListener('test', function () {
+	    return hasBubbleOnDetachedElements = true;
+	  });
+	  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
+	  return hasBubbleOnDetachedElements;
+	}();
+
+	function createReadableStopPropagation(oldStopPropagation) {
+	  return function () {
+	    this.isPropagationStopped = true;
+	    oldStopPropagation.call(this);
+	  };
+	}
+
+	function simulateBubbling(elem, cEvent) {
+	  var didPreventDefault = void 0;
+	  var currentElem = elem;
+	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
+	  Object.defineProperty(cEvent, 'target', { get: function get() {
+	      return elem;
+	    } });
+	  while (currentElem && !cEvent.isPropagationStopped) {
+	    Object.defineProperty(cEvent, 'currentTarget', {
+	      configurable: true,
+	      get: function get() {
+	        return currentElem;
+	      }
+	    });
+	    if (dispatch(currentElem, cEvent) === false) {
+	      didPreventDefault = false;
+	    }
+	    currentElem = currentElem.parentNode;
+	  }
+	  return didPreventDefault;
+	}
+
+	function emitOne(elem, name, opts) {
+	  var cEvent, shouldSimulateBubbling;
+
+	  /* jshint expr: true */
+	  opts.bubbles === undefined && (opts.bubbles = true);
+	  opts.cancelable === undefined && (opts.cancelable = true);
+	  cEvent = createCustomEvent(name, opts);
+	  shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !utilElementContains(document, elem);
+
+	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
+	}
+
+	function emit (elem, name) {
+	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	  var names = typeof name === 'string' ? name.split(' ') : name;
+	  return names.reduce(function (prev, curr) {
+	    if (emitOne(elem, curr, opts) === false) {
+	      prev.push(curr);
+	    }
+	    return prev;
+	  }, []);
 	}
 
 	function empty (val) {
@@ -2890,7 +2890,7 @@ var symbols$2 = Object.freeze({
 	}
 
 	// The main skate() function.
-	function skate (name, opts) {
+	function define (name, opts) {
 	  // Ensure the observed attributes are initialised.
 	  opts.observedAttributes = opts.observedAttributes || [];
 
@@ -2932,7 +2932,7 @@ var symbols$2 = Object.freeze({
 
 	function factory (opts) {
 	  return function (name) {
-	    return skate(name, opts);
+	    return define(name, opts);
 	  };
 	}
 
@@ -3169,8 +3169,9 @@ var props = Object.freeze({
 	};
 	exports.version = '0.15.3';
 
-	exports['default'] = skate;
+	exports['default'] = define;
 	exports.create = create;
+	exports.define = define;
 	exports.emit = emit;
 	exports.factory = factory;
 	exports.fragment = fragment;
@@ -3178,7 +3179,6 @@ var props = Object.freeze({
 	exports.link = link$1;
 	exports.prop = prop;
 	exports.ready = ready$1;
-	exports.skate = skate;
 	exports.state = state;
 	exports.symbols = symbols$2;
 	exports.vdom = create$1;

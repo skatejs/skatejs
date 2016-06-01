@@ -1,7 +1,7 @@
-import skate from './skate';
+import define from './define';
 
 export default function (opts) {
   return function (name) {
-    return skate(name, opts);
+    return define(name, opts);
   };
 }
