@@ -1,5 +1,5 @@
 import elem from '../../lib/element';
-import { fragment } from '../../../src/index';
+import fixture from '../../lib/fixture';
 
 describe('lifecycle/render', function () {
   it('should be called', function () {
@@ -40,7 +40,7 @@ describe('lifecycle/render', function () {
         called.push('elem2');
       }
     });
-    fragment(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
+    fixture(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
     expect(called[0]).to.equal('elem1');
     expect(called[1]).to.equal('elem2');
   });
@@ -63,7 +63,7 @@ describe('lifecycle/render', function () {
     let called = false;
     let el = elem();
     el.skate({ render: () => called = true });
-    fragment(`<${el.safe} rendered></${el.safe}>`);
+    fixture(`<${el.safe} rendered></${el.safe}>`);
     expect(called).to.equal(false);
   });
 });

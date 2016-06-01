@@ -111,13 +111,12 @@ function createNativePropertyDefinition (name, opts) {
 
     const propertyHasChanged = newValue !== oldValue;
     if (propertyHasChanged && opts.event) {
-      const cancelledEvents = emit(this, String(opts.event), {
+      const canceled = !emit(this, String(opts.event), {
         bubbles: false,
-        cancelable: true,
         detail: { name, oldValue, newValue }
       });
 
-      if (cancelledEvents.length > 0) {
+      if (canceled) {
         propData.settingProperty = false;
         return;
       }
