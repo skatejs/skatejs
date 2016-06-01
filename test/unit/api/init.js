@@ -9,7 +9,7 @@ describe('api/init', function () {
   beforeEach(function () {
     tagName = helperElement('my-el');
     skate(tagName.safe, {
-      created: function (elem) {
+      created (elem) {
         elem.textContent = 'test';
       }
     });
