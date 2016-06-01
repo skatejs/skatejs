@@ -3,26 +3,24 @@ import findElementInRegistry from '../util/find-element-in-registry';
 import support from '../native/support';
 import walkTree from '../util/walk-tree';
 
-export default function (...args) {
+export default function (elem, { checkIfIsInDom } = { checkIfIsInDom: true }) {
   if (!support.polyfilled) {
     return;
   }
 
-  args.forEach(function (arg) {
-    const isInDom = elementContains(document, arg);
+  const isInDom = !checkIfIsInDom || elementContains(document, elem);
 
-    walkTree(arg, function (descendant) {
-      const component = findElementInRegistry(descendant);
+  walkTree(elem, function (descendant) {
+    const component = findElementInRegistry(descendant);
 
-      if (component) {
-        if (component.prototype.createdCallback) {
-          component.prototype.createdCallback.call(descendant);
-        }
-
-        if (isInDom && component.prototype.attachedCallback) {
-          isInDom && component.prototype.attachedCallback.call(descendant);
-        }
+    if (component) {
+      if (component.prototype.createdCallback) {
+        component.prototype.createdCallback.call(descendant);
       }
-    });
+
+      if (isInDom && component.prototype.attachedCallback) {
+        isInDom && component.prototype.attachedCallback.call(descendant);
+      }
+    }
   });
 }

@@ -1,6 +1,6 @@
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, init, symbols, vdom } from '../../../src/index';
+import skate, { emit, init } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
