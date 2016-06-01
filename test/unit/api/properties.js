@@ -200,9 +200,9 @@ describe('api/prop', function () {
     });
 
     it('can be cancelled', function () {
-      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
+      const elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
-      elem.addEventListener('propertychange', (e) => e.preventDefault());
+      elem.addEventListener('propertychange', e => e.preventDefault());
       elem.test = true;
       expect(elem.test).to.equal(false);
     });
