@@ -3,8 +3,9 @@ import { shadowRoot } from '../api/symbols';
 
 const { patch } = IncrementalDOM;
 
-export default function (opts) {
-  const internalRenderer = opts.render;
+export default function (Ctor) {
+  const internalRenderer = Ctor.render;
+
   return function (elem) {
     if (!internalRenderer) {
       return;
@@ -12,6 +13,7 @@ export default function (opts) {
 
     if (!elem[shadowRoot]) {
       let sr;
+
       if (elem.attachShadow) {
         sr = elem.attachShadow({ mode: 'open' });
       } else if (elem.createShadowRoot) {
@@ -19,6 +21,7 @@ export default function (opts) {
       } else {
         sr = elem;
       }
+
       elem[shadowRoot] = sr;
     }
 

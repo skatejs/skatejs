@@ -14,9 +14,14 @@ const customElementCriteria = [
   `not be one of: ${reservedNames.join(', ')}`
 ];
 const definitions = {};
+const nativeCustomElements = window.customElements;
 
-export default window.customElements || {
+export default {
   define (name, Ctor) {
+    if (nativeCustomElements && nativeCustomElements.define) {
+      return nativeCustomElements.define(name, definitions[name] = Ctor);
+    }
+
     if (definitions[name]) {
       throw new Error(`A Skate component with the name of "${name}" already exists.`);
     }

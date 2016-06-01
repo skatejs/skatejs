@@ -1,3 +1,4 @@
+import { render } from '../api/symbols';
 import assign from 'object-assign';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -132,9 +133,9 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // Re-render on property updates if the should-update check passes.
-    const hasRenderFn = this.constructor.render;
-    if (hasRenderFn && prop.render(this, changeData)) {
-      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.renderer));
+    const hasRender = !!this.constructor.render;
+    if (hasRender && prop.render(this, changeData)) {
+      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor[render]));
       deb(this);
     }
 

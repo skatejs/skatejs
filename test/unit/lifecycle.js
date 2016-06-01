@@ -30,17 +30,17 @@ describe('lifecycle', function () {
   });
 
   it('should call the created() callback when the element is created', function () {
-    expect(created).to.equal(true);
-    expect(attached).to.equal(false);
-    expect(detached).to.equal(false);
+    expect(created).to.equal(true, 'created');
+    expect(attached).to.equal(false, 'attached');
+    expect(detached).to.equal(false, 'detached');
   });
 
   it('should call the attached() callback when the element is attached', function (done) {
     helperFixture().appendChild(myEl);
     setTimeout(function () {
-      expect(created).to.equal(true);
-      expect(attached).to.equal(true);
-      expect(detached).to.equal(false);
+      expect(created).to.equal(true, 'created');
+      expect(attached).to.equal(true, 'attached');
+      expect(detached).to.equal(false, 'detached');
       done();
     }, 1);
   });

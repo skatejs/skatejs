@@ -1,4 +1,5 @@
 import '../fix/ie/innerhtml';
+import { attached, created, detached } from '../api/symbols';
 import findElementInRegistry from '../util/find-element-in-registry';
 import getClosestIgnoredElement from '../util/get-closest-ignored-element';
 import walkTree from '../util/walk-tree';
@@ -6,15 +7,9 @@ import walkTree from '../util/walk-tree';
 function triggerAddedNodes (addedNodes) {
   walkTree(addedNodes, function (element) {
     const component = findElementInRegistry(element);
-
     if (component) {
-      if (component.prototype.createdCallback) {
-        component.prototype.createdCallback.call(element);
-      }
-
-      if (component.prototype.attachedCallback) {
-        component.prototype.attachedCallback.call(element);
-      }
+      component[created](element);
+      component[attached](element);
     }
   });
 }
@@ -23,8 +18,8 @@ function triggerRemovedNodes (removedNodes) {
   walkTree(removedNodes, function (element) {
     const component = findElementInRegistry(element);
 
-    if (component && component.prototype.detachedCallback) {
-      component.prototype.detachedCallback.call(element);
+    if (component) {
+      component[detached](element);
     }
   });
 }

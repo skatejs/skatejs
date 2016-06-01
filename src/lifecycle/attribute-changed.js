@@ -7,12 +7,12 @@ const isCustomElementsV1 = support.v1;
 export default function (Ctor) {
   const { attributeChanged, observedAttributes } = Ctor;
 
-  return function (name, oldValue, newValue) {
-    const elemData = data(this);
+  return function (elem, name, oldValue, newValue) {
+    const elemData = data(elem);
 
     // Chrome legacy custom elements batch attribute changes in a microtask so
     // so we have to tell it to emulate v1 behaviour by setting a unique
-    // unique attribute.
+    // attribute.
     if (isCustomElementsV0 && name === '____can_start_triggering_now') {
       elemData.canStartTriggeringNow = true;
       return;
@@ -31,10 +31,10 @@ export default function (Ctor) {
       return;
     }
 
-    const propertyName = data(this, 'attributeLinks')[name];
+    const propertyName = data(elem, 'attributeLinks')[name];
 
     if (propertyName) {
-      const propData = data(this, `api/property/${propertyName}`);
+      const propData = data(elem, `api/property/${propertyName}`);
 
       // This ensures a property set doesn't cause the attribute changed
       // handler to run again once we set this flag. This only ever has a
@@ -50,8 +50,8 @@ export default function (Ctor) {
 
       // Sync up the property.
       if (!propData.settingProperty) {
-        const propOpts = this.constructor.props[propertyName];
-        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+        const propOpts = elem.constructor.props[propertyName];
+        elem[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
       }
 
       // Allow this handler to run again.
@@ -59,7 +59,7 @@ export default function (Ctor) {
     }
 
     if (attributeChanged) {
-      attributeChanged(this, {
+      attributeChanged(elem, {
         name: name,
         newValue: newValue === null ? undefined : newValue,
         oldValue: oldValue === null ? undefined : oldValue

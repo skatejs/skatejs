@@ -1,3 +1,4 @@
+import { render } from '../api/symbols';
 import data from '../util/data';
 import eventsApplier from './events';
 import patchAttributeMethods from './patch-attribute-methods';
@@ -55,7 +56,7 @@ function initialiseProps (elem, propertyDefinitions) {
   });
 }
 
-export default function (opts) {
+export default function (Ctor) {
   const {
     created,
     definedAttribute,
@@ -64,17 +65,17 @@ export default function (opts) {
     props,
     prototype,
     ready,
-    renderer,
     renderedAttribute
-  } = opts;
-  const applyEvents = eventsApplier(opts);
-  const applyPrototype = prototypeApplier(opts);
-  const propertyFunctions = ensurePropertyFunctions(opts);
+  } = Ctor;
+  const applyEvents = eventsApplier(Ctor);
+  const applyPrototype = prototypeApplier(Ctor);
+  const propertyFunctions = ensurePropertyFunctions(Ctor);
+  const renderer = Ctor[render];
 
   // Performance critical code!
-  return function () {
-    const elemData = data(this);
-    const propertyDefinitions = props ? ensurePropertyDefinitions(this, propertyFunctions) : null;
+  return function (elem) {
+    const elemData = data(elem);
+    const propertyDefinitions = props ? ensurePropertyDefinitions(elem, propertyFunctions) : null;
     const readyCallbacks = elemData.readyCallbacks;
 
     if (elemData.created) {
@@ -84,33 +85,33 @@ export default function (opts) {
     elemData.created = true;
 
     if (isPolyfilled && prototype) {
-      applyPrototype(this);
+      applyPrototype(elem);
     }
 
     // Sets up properties, but does not invoke anything.
     if (propertyDefinitions) {
-      initialiseProps(this, propertyDefinitions);
+      initialiseProps(elem, propertyDefinitions);
     }
 
     if (events) {
-      applyEvents(this);
+      applyEvents(elem);
     }
 
     if (created) {
-      created(this);
+      created(elem);
     }
 
-    if (renderer && !this.hasAttribute(renderedAttribute)) {
-      renderer(this);
+    if (renderer && !elem.hasAttribute(renderedAttribute)) {
+      renderer(elem);
     }
 
     if (ready) {
-      ready(this);
+      ready(elem);
     }
 
     // Defined attribute is last before notifying listeners.
-    if (!this.hasAttribute(definedAttribute)) {
-      this.setAttribute(definedAttribute, '');
+    if (!elem.hasAttribute(definedAttribute)) {
+      elem.setAttribute(definedAttribute, '');
     }
 
     // We trigger ready after we add the defined attribute.
@@ -132,13 +133,13 @@ export default function (opts) {
     // Any attribute change before this point is a no-op. Anything after works
     // as normal.
     if (isCustomElementsV0) {
-      this.setAttribute('____can_start_triggering_now', '');
-      this.removeAttribute('____can_start_triggering_now');
+      elem.setAttribute('____can_start_triggering_now', '');
+      elem.removeAttribute('____can_start_triggering_now');
     }
 
     // Make attribute sets synchronous for polyfill-land.
     if (isPolyfilled) {
-      patchAttributeMethods(this);
+      patchAttributeMethods(elem);
     }
 
     // Emulate v1 attribute initialisation behaviour.
@@ -148,7 +149,7 @@ export default function (opts) {
       elemData.canStartTriggeringNow = true;
 
       // Force the change.
-      callAttributeChangedForEachAttribute(this, observedAttributes);
+      callAttributeChangedForEachAttribute(elem, observedAttributes);
 
       // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
       // until *after* it receives the set for "____can_start_triggering_now".

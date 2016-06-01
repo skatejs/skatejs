@@ -1,3 +1,4 @@
+import { render } from './symbols';
 import assign from 'object-assign';
 
 function get (elem) {
@@ -13,10 +14,9 @@ function get (elem) {
 }
 
 function set (elem, newState) {
-  const renderer = elem.constructor.renderer;
   assign(elem, newState);
-  if (renderer) {
-    renderer(elem);
+  if (elem.constructor.render) {
+    elem.constructor[render](elem);
   }
 }
 

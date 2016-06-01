@@ -1,3 +1,4 @@
+import { attached, created } from '../api/symbols';
 import elementContains from '../util/element-contains';
 import findElementInRegistry from '../util/find-element-in-registry';
 import support from '../native/support';
@@ -10,17 +11,12 @@ export default function (...args) {
 
   args.forEach(function (arg) {
     const isInDom = elementContains(document, arg);
-
     walkTree(arg, function (descendant) {
       const component = findElementInRegistry(descendant);
-
       if (component) {
-        if (component.prototype.createdCallback) {
-          component.prototype.createdCallback.call(descendant);
-        }
-
-        if (isInDom && component.prototype.attachedCallback) {
-          isInDom && component.prototype.attachedCallback.call(descendant);
+        component[created](descendant);
+        if (isInDom) {
+          component[attached](descendant);
         }
       }
     });
