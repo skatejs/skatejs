@@ -1,82 +1,69 @@
 import * as symbols from './symbols';
-import assign from 'object-assign';
-import attached from '../lifecycle/attached';
 import attributeChanged from '../lifecycle/attribute-changed';
-import created from '../lifecycle/created';
-import customElements from '../native/custom-elements';
+import Component from './component';
+import createInitEvents from '../lifecycle/events';
+import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
-import debounce from '../util/debounce';
-import defaults from '../defaults';
-import defineProperties from '../util/define-properties';
-import detached from '../lifecycle/detached';
-import documentObserver from '../native/document-observer';
 import getAllPropertyDescriptors from '../util/get-all-property-descriptors';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import init from './init';
-import render from '../lifecycle/render';
-import support from '../native/support';
+import initProps from '../lifecycle/props-init';
 
-const HTMLElement = window.HTMLElement;
+// Ensures that definitions passed as part of the constructor are functions
+// that return property definitions used on the element.
+function ensurePropertyFunctions (Ctor) {
+  let props = Ctor.props;
+  let names = Object.keys(props || {});
+  return names.reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = props[descriptorName];
+    if (typeof descriptors[descriptorName] !== 'function') {
+      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
+    }
+    return descriptors;
+  }, {});
+}
 
-// A function that initialises the document once in a given event loop.
-const initDocument = debounce(function () {
-  init(document.documentElement, { checkIfIsInDom: false });
-});
-
-// Creates a configurable, non-writable, non-enumerable property.
-function fixedProp (obj, name, value) {
-  Object.defineProperty(obj, name, {
-    configurable: true,
-    enumerable: false,
-    value,
-    writable: false
-  });
+// Ensures the property definitions are transformed to objects that can be used
+// to create properties on the element.
+function ensurePropertyDefinitions (Ctor) {
+  const props = ensurePropertyFunctions(Ctor);
+  return Object.keys(props).reduce(function (descriptors, descriptorName) {
+    descriptors[descriptorName] = props[descriptorName](descriptorName);
+    return descriptors;
+  }, {});
 }
 
 // Makes a function / constructor for the custom element that automates the
 // boilerplate of ensuring the parent constructor is called first and ensures
 // that the element is returned at the end.
-function createConstructor (name, opts) {
-  // The constructor / function should work in polyfill, v0 and v1. In v1 we
-  // pass the function by reference to the Reflect.construct() call so that it
-  // can be invoked like a function even in native.
-  function func () {
-    let elem;
-    if (support.v1) {
-      elem = Reflect.construct(HTMLElement, arguments, func);
-    } else if (support.v0) {
-      elem = func.extends ? document.createElement(func.extends, name) : document.createElement(name);
-    } else {
-      if (func.extends) {
-        elem = document.createElement(func.extends);
-        elem.setAttribute('is', name);
-      } else {
-        elem = document.createElement(name);
-      }
-      init(elem);
-    }
-    func[symbols.created](elem);
-    assign(elem, arguments[0]);
-    return elem;
+function createConstructor (name, Ctor) {
+  if (typeof Ctor === 'object') {
+    const opts = getAllPropertyDescriptors(Ctor);
+    const prot = getOwnPropertyDescriptors(Ctor.prototype);
+
+    // The prototype is non-configurable, so we remove it before it tries to
+    // define it.
+    delete opts.prototype;
+
+    Ctor = class extends Component {};
+
+    Object.defineProperties(Ctor, opts);
+    Object.defineProperties(Ctor.prototype, prot);
   }
 
-  // Assigning defaults gives a predictable definition and prevents us from
-  // having to do defaults checks everywhere.
-  assign(func, defaults);
+  Ctor.prototype.attributeChangedCallback = attributeChanged(Ctor);
+  Ctor.prototype.connectedCallback = function () { Ctor.attached && Ctor.attached(this); };
+  Ctor.prototype.disconnectedCallback = function () { Ctor.detached && Ctor.detached(this); };
 
-  // Inherit all options. This takes into account object literals as well as
-  // ES2015 classes that may have inherited static props which would not be
-  // considered "own".
-  defineProperties(func, getAllPropertyDescriptors(opts));
+  // WebKit currently doesn't allow you to overwrite "name" so we have to use
+  // "id" for cross-browser compat right now.
+  Object.defineProperty(Ctor, 'id', { value: name });
 
-  // Ensure the render function render's using Incremental DOM.
-  func[symbols.render] = render(func);
+  // We do set "name" in browsers that support it, though.
+  if (Object.getOwnPropertyDescriptor(Ctor, 'name').configurable) {
+    Object.defineProperty(Ctor, 'name', { value: name });
+  }
 
-  // Ensure a constructor is defined.
-  fixedProp(func.prototype, 'constructor', func);
-  fixedProp(func, 'id', name);
-
-  return func;
+  return Ctor;
 }
 
 // Ensures linked properties that have linked attributes are pre-formatted to
@@ -102,78 +89,39 @@ function formatLinkedAttributes (Ctor) {
       }
     }
   });
+
+  Ctor.observedAttributes = observedAttributes;
 }
 
-// If the options don't inherit a native element prototype, we ensure it does
-// because native requires you explicitly do this. Here we solve the common
-// use case by defaulting to HTMLElement.prototype.
-function extendBasePrototype (Ctor) {
-  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-    const proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
-    Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
-  }
-}
+function createInitProps (Ctor) {
+  const props = ensurePropertyDefinitions(Ctor);
 
-// Returns a function that invokes the specified lifecycle callback.
-function callLifecycle (lifecycle) {
-  return function () {
-    lifecycle(this);
-  };
-}
+  return function (elem) {
+    if (!props) {
+      return;
+    }
 
-// We assign native callbacks to handle the callbacks specified in the
-// Skate definition. This allows us to abstract away any changes that may
-// occur in the spec.
-function createNativeCallbacks (Ctor) {
-  const proto = Ctor.prototype;
-  const callAttached = callLifecycle(Ctor[symbols.attached]);
-  const callCreated = callLifecycle(Ctor[symbols.created]);
-  const callDetached = callLifecycle(Ctor[symbols.detached]);
+    Object.keys(props).forEach(function (name) {
+      const prop = props[name];
+      prop.created(elem);
 
-  // V0 and v1 have different callback names.
-  if (support.v1) {
-    assign(proto, {
-      connectedCallback: callAttached,
-      disconnectedCallback: callDetached
+      // https://bugs.webkit.org/show_bug.cgi?id=49739
+      //
+      // When Webkit fixes that bug so that native property accessors can be
+      // retrieved, we can move defining the property to the prototype and away
+      // from having to do if for every instance as all other browsers support
+      // this.
+      Object.defineProperty(elem, name, prop);
     });
-  } else if (support.v0) {
-    assign(proto, {
-      attachedCallback: callAttached,
-      createdCallback: callCreated,
-      detachedCallback: callDetached
-    });
-  }
-
-  // Both v0 and v1 have the same callback for attribute changes.
-  const attributeChanged = Ctor[symbols.attributeChanged];
-  proto.attributeChangedCallback = function (name, oldValue, newValue) {
-    attributeChanged(this, name, oldValue, newValue);
   };
-}
-
-function createCommonLifecycleCallbacks (Ctor) {
-  Ctor[symbols.created] = created(Ctor);
-  Ctor[symbols.attached] = attached(Ctor);
-  Ctor[symbols.detached] = detached(Ctor);
-  Ctor[symbols.attributeChanged] = attributeChanged(Ctor);
-}
-
-// Ensures that in polyfill-land, theres an observer registered to handle
-// incoming elements and that the current document is initialised.
-function polyfilledDocumentObserver () {
-  if (support.polyfilled) {
-    initDocument();
-    documentObserver.register();
-  }
 }
 
 export default function (name, Ctor) {
   Ctor = createConstructor(name, Ctor);
   formatLinkedAttributes(Ctor);
-  extendBasePrototype(Ctor);
-  createCommonLifecycleCallbacks(Ctor);
-  createNativeCallbacks(Ctor);
-  polyfilledDocumentObserver();
-  customElements.define(name, Ctor);
-  return customElements.get(name);
+  Ctor[symbols.events] = createInitEvents(Ctor);
+  Ctor[symbols.props] = createInitProps(Ctor);
+  Ctor[symbols.renderer] = createRenderer(Ctor);
+  window.customElements.define(name, Ctor);
+  return window.customElements.get(name);
 }

@@ -4,10 +4,10 @@ import { shadowRoot } from '../api/symbols';
 const { patch } = IncrementalDOM;
 
 export default function (Ctor) {
-  const internalRenderer = Ctor.render;
+  const { render } = Ctor;
 
   return function (elem) {
-    if (!internalRenderer) {
+    if (!render) {
       return;
     }
 
@@ -25,6 +25,6 @@ export default function (Ctor) {
       elem[shadowRoot] = sr;
     }
 
-    patch(elem[shadowRoot], internalRenderer, elem);
+    patch(elem[shadowRoot], render, elem);
   };
 }

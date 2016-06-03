@@ -1,4 +1,4 @@
-import { render } from './symbols';
+import { renderer } from './symbols';
 import assign from 'object-assign';
 
 function get (elem) {
@@ -16,7 +16,7 @@ function get (elem) {
 function set (elem, newState) {
   assign(elem, newState);
   if (elem.constructor.render) {
-    elem.constructor[render](elem);
+    elem.constructor[renderer](elem);
   }
 }
 

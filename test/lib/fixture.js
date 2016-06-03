@@ -1,5 +1,3 @@
-import { init } from '../../src/index';
-
 export default function (html, tagName) {
   var fixture = document.getElementById('fixture');
 
@@ -26,8 +24,6 @@ export default function (html, tagName) {
       fixture.appendChild(html);
     }
   }
-
-  init(fixture);
 
   return fixture;
 }

@@ -1,6 +1,7 @@
+import afterMutations from '../../lib/after-mutations';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, init } from '../../../src/index';
+import skate, { emit, ready } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -72,8 +73,8 @@ describe('lifecycle/events', function () {
     expect(numTriggered).to.equal(1);
   });
 
-  it('should support delegate event selectors', function () {
-    const elem = helperElement().skate({
+  it('should support delegate event selectors', function (done) {
+    const elem = new (helperElement().skate({
       events: {
         test (el, e) {
           increment();
@@ -97,13 +98,15 @@ describe('lifecycle/events', function () {
           expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span');
         }
       }
-    })();
+    }));
 
     elem.innerHTML = '<a><span></span></a>';
     helperFixture(elem);
-    init(elem);
-    emit(elem.querySelector('span'), 'test');
-    expect(numTriggered).to.equal(3);
+    afterMutations(
+      () => emit(elem.querySelector('span'), 'test'),
+      () => expect(numTriggered).to.equal(3),
+      done
+    );
   });
 
   it('should support delegate blur and focus events', function () {
@@ -130,12 +133,13 @@ describe('lifecycle/events', function () {
     });
 
     var inst = helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName);
-    init(inst);
 
-    inst.blur();
-    expect(blur).to.equal(true);
+    ready(inst, function () {
+      inst.blur();
+      expect(blur).to.equal(true);
 
-    inst.focus();
-    expect(focus).to.equal(true);
+      inst.focus();
+      expect(focus).to.equal(true);
+    });
   });
 });

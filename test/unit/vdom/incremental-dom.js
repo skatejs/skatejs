@@ -13,21 +13,21 @@ describe('VdomIncrementalDOM', function () {
   describe('attributes (default)', function () {
     it('should not set properties on SVG elements', function () {
       expect(function () {
-        element().skate({
+        new (element().skate({
           render () {
             vdom('svg', { height: 100 });
           }
-        })();
+        }));
       }).to.not.throw(Error);
     });
 
     it('should set built-in event handlers as properties', function () {
       const onclick = function () {};
-      const elem = element().skate({
+      const elem = new (element().skate({
         render () {
           vdom('div', { onclick });
         }
-      })();
+      }));
       expect(elem[symbols.shadowRoot].firstElementChild.onclick).to.equal(onclick);
     });
   });

@@ -36,6 +36,8 @@ describe('Returning a constructor', function () {
 
     var element = new Element();
 
+    expect(element).to.be.an.instanceof(HTMLElement);
+
     expect(element.func1).to.be.a('function');
     expect(element.func2).to.be.a('function');
 
@@ -101,28 +103,5 @@ describe('Returning a constructor', function () {
     var input = new Input();
     input.focus();
     expect(called).to.equal(true);
-  });
-
-  describe('when an extends option is specified', function () {
-    var Div;
-    var div;
-    var tagName;
-
-    beforeEach(function () {
-      tagName = helperElement('my-element');
-      Div = skate(tagName.safe, {
-        extends: 'div'
-      });
-
-      div = new Div();
-    });
-
-    it('should return an element whose tag name matches the extends option', function () {
-      expect(div.tagName).to.equal('DIV');
-    });
-
-    it('should return an element whose is attribute is equal to the component id', function () {
-      expect(div.getAttribute('is')).to.equal(tagName.safe);
-    });
   });
 });

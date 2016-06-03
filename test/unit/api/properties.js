@@ -1,13 +1,14 @@
+import afterMutations from '../../lib/after-mutations';
 import assign from 'object-assign';
 import element from '../../lib/element';
 import { prop } from '../../../src/index';
 
 function create (prop) {
-  return element().skate({
+  return new (element().skate({
     props: {
       test: assign({ attribute: true }, prop)
     }
-  })();
+  }));
 }
 
 function testTypeValues (type, values) {
@@ -30,8 +31,7 @@ describe('api/prop', function () {
     it('default', function () {
       expect(elem.test).to.be.an('array');
       expect(elem.test.length).to.equal(0);
-      expect(elem.getAttribute('test')).to.be.a('string');
-      expect(elem.getAttribute('test')).to.equal('[]');
+      expect(elem.getAttribute('test')).to.equal(null);
     });
 
     describe('coerce', function () {
@@ -49,12 +49,15 @@ describe('api/prop', function () {
       });
     });
 
-    it('deserialize', function () {
+    it('deserialize', function (done) {
       elem.setAttribute('test', '["val1","val2"]');
-      expect(elem.test).to.be.an('array');
-      expect(elem.test).to.be.length(2);
-      expect(elem.test[0]).to.equal('val1');
-      expect(elem.test[1]).to.equal('val2');
+      afterMutations(
+        () => expect(elem.test).to.be.an('array'),
+        () => expect(elem.test).to.be.length(2),
+        () => expect(elem.test[0]).to.equal('val1'),
+        () => expect(elem.test[1]).to.equal('val2'),
+        done
+      );
     });
 
     it('serialize', function () {
@@ -66,43 +69,47 @@ describe('api/prop', function () {
 
   describe('boolean', function () {
     it('initial value', function () {
-      let elem = create(prop.boolean());
+      const elem = create(prop.boolean());
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
     });
 
     [undefined, null, false, 0, '', 'something'].forEach(function (value) {
-      value = JSON.stringify(value);
-      it('setting attribute to ' + value, function () {
-        let elem = create(prop.boolean());
+      value = String(value);
+      it('setting attribute to ' + value, function (done) {
+        const elem = create(prop.boolean());
         elem.setAttribute('test', value);
-        expect(elem.test).to.equal(true, 'property');
-        expect(elem.getAttribute('test')).to.equal('', 'attribute');
+        afterMutations(
+          () => expect(elem.test).to.equal(true, 'property'),
+          () => expect(elem.getAttribute('test')).to.equal(value, 'attribute'),
+          done
+        );
       });
       it('setting property to ' + value, function () {
-        let elem = create(prop.boolean());
+        const elem = create(prop.boolean());
         elem.test = value;
         expect(elem.test).to.equal(!!value, 'property');
         expect(elem.getAttribute('test')).to.equal(value ? '' : null, 'attribute');
       });
     });
 
-    it('removing attribute', function () {
-      let elem = create(prop.boolean());
-
-      elem.setAttribute('test', '');
-      expect(elem.test).to.equal(true);
-      expect(elem.getAttribute('test')).to.equal('');
-
-      elem.removeAttribute('test');
-      expect(elem.test).to.equal(false);
-      expect(elem.getAttribute('test')).to.equal(null);
+    it('removing attribute', function (done) {
+      const elem = create(prop.boolean());
+      afterMutations(
+        () => elem.setAttribute('test', ''),
+        () => expect(elem.test).to.equal(true),
+        () => expect(elem.getAttribute('test')).to.equal(''),
+        () => elem.removeAttribute('test'),
+        () => expect(elem.test).to.equal(false),
+        () => expect(elem.getAttribute('test')).to.equal(null),
+        done
+      );
     });
   });
 
   describe('number', function () {
     it('values', function () {
-      let elem = create(prop.number());
+      const elem = create(prop.number());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
@@ -117,7 +124,7 @@ describe('api/prop', function () {
 
   describe('string', function () {
     it('values', function () {
-      let elem = create(prop.string());
+      const elem = create(prop.string());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
@@ -146,7 +153,7 @@ describe('api/prop', function () {
 
   describe('property change event', function () {
     it('is not triggered when `opts.event` is not set', function () {
-      let elem = create(prop.boolean());
+      const elem = create(prop.boolean());
       elem.test = false;
 
       let calls = 0;
@@ -157,7 +164,7 @@ describe('api/prop', function () {
     });
 
     it('the event name can be changed', function () {
-      let elem = create(assign({ event: 'foo' }, prop.boolean()));
+      const elem = create(assign({ event: 'foo' }, prop.boolean()));
       elem.test = false;
 
       let propertyChangeCalled = false;
@@ -171,7 +178,7 @@ describe('api/prop', function () {
     });
 
     it('is triggered only when properties change', function () {
-      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
+      const elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
 
       let calls = 0;
@@ -186,10 +193,10 @@ describe('api/prop', function () {
     });
 
     it('does not bubble', function () {
-      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
+      const elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       elem.test = false;
 
-      let parent = document.createElement('div');
+      const parent = document.createElement('div');
       parent.appendChild(elem);
 
       let calls = 0;
@@ -230,10 +237,10 @@ describe('api/prop', function () {
     });
 
     it('contains property name, and change details', function () {
-      let elem = create(assign({ event: 'propertychange' }, prop.boolean()));
+      const elem = create(assign({ event: 'propertychange' }, prop.boolean()));
       let event = null;
-      elem.test = false;
 
+      elem.test = false;
       elem.addEventListener('propertychange', (e) => event = e);
       elem.test = true;
 

@@ -1,6 +1,7 @@
+import afterMutations from '../lib/after-mutations';
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import skate, { init, ready } from '../../src/index';
+import skate, { ready } from '../../src/index';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -59,7 +60,6 @@ describe('lifecycle', function () {
   });
 
   it('should not call the attached() callback when the element is initialised', function () {
-    init(myEl);
     expect(created).to.equal(true);
     expect(attached).to.equal(false);
     expect(detached).to.equal(false);
@@ -67,29 +67,29 @@ describe('lifecycle', function () {
 });
 
 describe('unresolved attribute', function () {
-  it('should not be considred "resolved" until after ready() is called', function () {
-    var tagName = helperElement('my-element');
+  it('should not be considred "resolved" until after ready() is called', function (done) {
+    const tagName = helperElement('my-element');
     skate(tagName.safe, {
       ready: function (elem) {
-        expect(elem.hasAttribute('unresolved')).to.equal(true);
-        expect(elem.hasAttribute('resolved')).to.equal(false);
+        expect(elem.hasAttribute('defined')).to.equal(false);
+        done();
       }
     });
-
-    init(helperFixture('<my-element unresolved></my-element>', tagName));
+    helperFixture('<my-element></my-element>', tagName);
   });
 
-  it('should be considred "resolved" after the created lifecycle finishes', function () {
-    var tag = helperElement('my-element').safe;
+  it('should be considred "resolved" after the created lifecycle finishes', function (done) {
+    const tag = helperElement('my-element').safe;
     skate(tag, {
-      created: function (elem) {
+      created (elem) {
         expect(elem.hasAttribute('defined')).to.equal(false, 'should not have resolved');
+      },
+      attached (elem) {
+        expect(elem.hasAttribute('defined')).to.equal(true, 'should have defined');
+        done();
       }
     });
-
-    var element = helperFixture(`<${tag}></${tag}>`).children[0];
-    init(element);
-    expect(element.hasAttribute('defined')).to.equal(true, 'should have defined');
+    helperFixture(`<${tag}></${tag}>`);
   });
 });
 
@@ -203,16 +203,13 @@ describe('lifecycle scenarios', function () {
       expect(detached).to.equal(false, 'Should not call detached');
 
       document.body.appendChild(element);
-      init(element);
-      expect(attached).to.equal(true, 'Should call attached');
-      expect(detached).to.equal(false, 'Should not call remove');
-
-      element.parentNode.removeChild(element);
-
-      setTimeout(function () {
-        expect(detached).to.equal(true, 'Should call detached');
-        done();
-      }, 1);
+      afterMutations(
+        () => expect(attached).to.equal(true, 'Should call attached'),
+        () => expect(detached).to.equal(false, 'Should not call remove'),
+        () => element.parentNode.removeChild(element),
+        () => expect(detached).to.equal(true, 'Should call detached'),
+        done
+      );
     });
 
     it('should initialise multiple instances of the same type of element (possible bug).', function (done) {

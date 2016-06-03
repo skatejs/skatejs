@@ -30,7 +30,7 @@ describe('vdom/shadow-dom', function () {
 
   it('should work for attachShadow()', function () {
     mock('attachShadow');
-    const elem = element().skate({ render () {} })();
+    const elem = new (element().skate({ render () {} }));
     expect(elem.attachShadow).to.be.a('function');
     expect(elem.createShadowRoot).to.equal(undefined);
     expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
@@ -39,7 +39,7 @@ describe('vdom/shadow-dom', function () {
 
   it('should work with createShadowRoot()', function () {
     mock('createShadowRoot');
-    const elem = element().skate({ render () {} })();
+    const elem = new (element().skate({ render () {} }));
     expect(elem.attachShadow).to.equal(undefined);
     expect(elem.createShadowRoot).to.be.a('function');
     expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
@@ -49,7 +49,7 @@ describe('vdom/shadow-dom', function () {
   it('should set the shadowRoot to the element if Shadow DOM is not available', function () {
     remove('attachShadow');
     remove('createShadowRoot');
-    const elem = element().skate({ render () {} })();
+    const elem = new (element().skate({ render () {} }));
     expect(elem.attachShadow).to.equal(undefined);
     expect(elem.createShadowRoot).to.equal(undefined);
     expect(elem[symbols.shadowRoot]).to.equal(elem);

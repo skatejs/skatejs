@@ -5,7 +5,6 @@ import create from './api/create';
 import define from './api/define';
 import emit from './api/emit';
 import factory from './api/factory';
-import init from './api/init';
 import link from './api/link';
 import prop, * as props from './api/prop';
 import ready from './api/ready';
@@ -23,7 +22,6 @@ export {
   define,
   emit,
   factory,
-  init,
   link,
   prop,
   ready,

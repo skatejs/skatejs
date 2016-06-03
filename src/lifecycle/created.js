@@ -84,9 +84,9 @@ export default function (Ctor) {
 
     elemData.created = true;
 
-    if (isPolyfilled && prototype) {
-      applyPrototype(elem);
-    }
+    // if (isPolyfilled && prototype) {
+    //   applyPrototype(elem);
+    // }
 
     // Sets up properties, but does not invoke anything.
     if (propertyDefinitions) {
@@ -120,40 +120,40 @@ export default function (Ctor) {
       delete elemData.readyCallbacks;
     }
 
-    // In the early versions of the spec ("v0", only implemented by Blink) all
-    // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
-    // However, no attributes that exist when the element is upgraded would queue
-    // a task.
-    //
-    // In Custom Elements v1, nothing is queued until after the constructor
-    // (createdCallback in v0) is invoked. After it is invoked, the
-    // attributeChangedCallback() is executed for all existing attributes. All
-    // subsequent calls behave as normal.
-    //
-    // Any attribute change before this point is a no-op. Anything after works
-    // as normal.
-    if (isCustomElementsV0) {
-      elem.setAttribute('____can_start_triggering_now', '');
-      elem.removeAttribute('____can_start_triggering_now');
-    }
+    // // In the early versions of the spec ("v0", only implemented by Blink) all
+    // // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
+    // // However, no attributes that exist when the element is upgraded would queue
+    // // a task.
+    // //
+    // // In Custom Elements v1, nothing is queued until after the constructor
+    // // (createdCallback in v0) is invoked. After it is invoked, the
+    // // attributeChangedCallback() is executed for all existing attributes. All
+    // // subsequent calls behave as normal.
+    // //
+    // // Any attribute change before this point is a no-op. Anything after works
+    // // as normal.
+    // if (isCustomElementsV0) {
+    //   elem.setAttribute('____can_start_triggering_now', '');
+    //   elem.removeAttribute('____can_start_triggering_now');
+    // }
 
-    // Make attribute sets synchronous for polyfill-land.
-    if (isPolyfilled) {
-      patchAttributeMethods(elem);
-    }
+    // // Make attribute sets synchronous for polyfill-land.
+    // if (isPolyfilled) {
+    //   patchAttributeMethods(elem);
+    // }
 
-    // Emulate v1 attribute initialisation behaviour.
-    if (!isCustomElementsV1) {
-      // We force this flag to be true so that attributeChanged() actually gets
-      // called in Chrome v0.
-      elemData.canStartTriggeringNow = true;
+    // // Emulate v1 attribute initialisation behaviour.
+    // if (!isCustomElementsV1) {
+    //   // We force this flag to be true so that attributeChanged() actually gets
+    //   // called in Chrome v0.
+    //   elemData.canStartTriggeringNow = true;
 
-      // Force the change.
-      callAttributeChangedForEachAttribute(elem, observedAttributes);
+    //   // Force the change.
+    //   callAttributeChangedForEachAttribute(elem, observedAttributes);
 
-      // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
-      // until *after* it receives the set for "____can_start_triggering_now".
-      elemData.canStartTriggeringNow = false;
-    }
+    //   // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
+    //   // until *after* it receives the set for "____can_start_triggering_now".
+    //   elemData.canStartTriggeringNow = false;
+    // }
   };
 }

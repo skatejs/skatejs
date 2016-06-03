@@ -1,7 +1,6 @@
-import assign from 'object-assign';
 import customElements from '../native/custom-elements';
 
-export default function (name, props) {
+export default function (name) {
   const Ctor = customElements.get(name);
-  return Ctor ? Ctor(props) : assign(document.createElement(name), props);
+  return Ctor ? new Ctor() : document.createElement(name);
 }

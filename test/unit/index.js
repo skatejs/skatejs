@@ -28,11 +28,6 @@ describe('exports', function () {
     expect(umd.factory).to.be.a('function');
   });
 
-  it('skate.init', function () {
-    expect(api.init).to.be.a('function');
-    expect(umd.init).to.be.a('function');
-  });
-
   it('skate.link', function () {
     expect(api.link).to.be.a('function');
     expect(umd.link).to.be.a('function');

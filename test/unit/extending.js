@@ -1,5 +1,5 @@
 import helperElement from '../lib/element';
-import skate, { create } from '../../src/index';
+import skate, { create, symbols, vdom } from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;
@@ -14,8 +14,8 @@ describe('extending', function () {
     Ctor = skate(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created: function (elem) {
-        elem.textContent = 'test';
+      render () {
+        vdom.text('test');
       },
       attributeChanged () {},
       prototype: {
@@ -36,7 +36,7 @@ describe('extending', function () {
   });
 
   it('should copy all configuration options to the extended object', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = skate(tag, class extends Ctor {});
     if (canExtendStaticProperties) {
       expect(ExtendedCtor.extends).to.equal('div');
       expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
@@ -48,26 +48,25 @@ describe('extending', function () {
   });
 
   it('prototype members should be available', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = skate(tag, class extends Ctor {});
     expect(new ExtendedCtor().test).to.equal(true);
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
   canExtendStaticProperties && it('should not mess with callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
-    expect(new ExtendedCtor().textContent).to.equal('test');
+    const ExtendedCtor = skate(tag, class extends Ctor {});
+    expect(new ExtendedCtor()[symbols.shadowRoot].textContent).to.equal('test');
   });
 
   canResolveSuper && it('should allow overriding of callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {
-      static created (elem) {
-        super.created(elem);
-        elem.textContent += 'ing';
+    const ExtendedCtor = skate(tag, class extends Ctor {
+      static render (elem) {
+        super.render(elem);
+        vdom.text('ing');
       }
     });
-
     const elem = new ExtendedCtor();
-    expect(elem.textContent).to.equal('testing');
+    expect(elem[symbols.shadowRoot].textContent).to.equal('testing');
   });
 
   canExtendStaticProperties && it('constructor should be accessible', function () {

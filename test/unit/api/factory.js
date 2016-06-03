@@ -15,7 +15,7 @@ describe('api/factory', function () {
     }
 
     it('should register a constructor for the specified name', function () {
-      expect(register().id).to.equal('x-factory-test');
+      expect(register({}).id).to.equal('x-factory-test');
     });
   });
 });

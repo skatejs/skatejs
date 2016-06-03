@@ -1,7 +1,7 @@
 import data from '../util/data';
 
-export default function (opts) {
-  const { detached } = opts;
+export default function (Ctor) {
+  const { detached } = Ctor;
   return function (elem) {
     if (!detached) {
       return;

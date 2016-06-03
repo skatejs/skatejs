@@ -1,32 +1,33 @@
+import afterMutations from '../../lib/after-mutations';
 import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
 
 describe('lifecycle/render', function () {
   it('should be called', function () {
     let called = false;
-    elem().skate({
+    new (elem().skate({
       render () {
         called = true;
       }
-    })();
+    }));
     expect(called).to.equal(true);
   });
 
   it('should get called after created()', function () {
     let called = [];
-    elem().skate({
+    new (elem().skate({
       created () {
         called.push('created');
       },
       render () {
         called.push('render');
       }
-    })();
+    }));
     expect(called[0]).to.equal('created');
     expect(called[1]).to.equal('render');
   });
 
-  it('should get called before descendants are initialised', function () {
+  it('should get called before descendants are initialised', function (done) {
     let called = [];
     let elem1 = elem();
     let elem2 = elem();
@@ -41,20 +42,23 @@ describe('lifecycle/render', function () {
       }
     });
     fixture(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
-    expect(called[0]).to.equal('elem1');
-    expect(called[1]).to.equal('elem2');
+    afterMutations(
+      () => expect(called[0]).to.equal('elem1'),
+      () => expect(called[1]).to.equal('elem2'),
+      done
+    );
   });
 
   it('should get called before ready', function () {
     let called = [];
-    elem().skate({
+    new (elem().skate({
       render () {
         called.push('render');
       },
       ready () {
         called.push('ready');
       }
-    })();
+    }));
     expect(called[0]).to.equal('render');
     expect(called[1]).to.equal('ready');
   });

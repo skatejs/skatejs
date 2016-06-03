@@ -1,7 +1,7 @@
 import data from '../util/data';
 
-export default function (opts) {
-  const { attached } = opts;
+export default function (Ctor) {
+  const { attached } = Ctor;
   return function (elem) {
     if (!attached) {
       return;
