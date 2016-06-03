@@ -1,6 +1,6 @@
 export default function afterMutations (...fns) {
-  const fn = fns.shift();
   setTimeout(function () {
+    const fn = fns.shift();
     if (typeof fn === 'function') {
       fn();
     }

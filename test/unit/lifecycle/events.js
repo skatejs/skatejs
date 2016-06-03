@@ -1,7 +1,7 @@
 import afterMutations from '../../lib/after-mutations';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, ready } from '../../../src/index';
+import skate, { emit, ready, symbols, vdom } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -109,26 +109,26 @@ describe('lifecycle/events', function () {
     );
   });
 
-  it('should support delegate blur and focus events', function () {
+  it('should support delegate blur and focus events', function (done) {
     var blur = false;
     var focus = false;
     var { safe: tagName } = helperElement('my-component');
 
     skate(tagName, {
-      created: function (elem) {
-        elem.innerHTML = '<input>';
-      },
       events: {
         'blur input': () => blur = true,
         'focus input': () => focus = true
       },
       prototype: {
-        blur: function () {
-          emit(this.querySelector('input'), 'blur');
+        blur () {
+          emit(this[symbols.shadowRoot].querySelector('input'), 'blur');
         },
-        focus: function () {
-          emit(this.querySelector('input'), 'focus');
+        focus () {
+          emit(this[symbols.shadowRoot].querySelector('input'), 'focus');
         }
+      },
+      render () {
+        vdom.input();
       }
     });
 
@@ -140,6 +140,8 @@ describe('lifecycle/events', function () {
 
       inst.focus();
       expect(focus).to.equal(true);
+
+      done();
     });
   });
 });

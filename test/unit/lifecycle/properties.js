@@ -227,6 +227,7 @@ describe('lifecycle/property', function () {
       });
     });
 
+
     describe('default', function () {
       it('null by default', function () {
         const elem = create();
