@@ -26,7 +26,7 @@ JavaScript
 ```js
 skate('x-hello', {
   props: {
-    name { attribute: true }
+    name: { attribute: true }
   },
   render (elem) {
     skate.vdom.text(`Hello, ${elem.name}`);
