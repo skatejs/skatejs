@@ -42,22 +42,24 @@ describe('vdom/elements', function () {
   it('passing a component constructor to the vdom() function', function (done) {
     const Elem1 = element().skate({
       render () {
-        vdom.text('rendered');
+        vdom.div(function () {
+          vdom(Elem2);
+        });
       }
     });
     const Elem2 = element().skate({
       render () {
-        vdom.div(function () {
-          vdom(Elem1);
-        });
+        vdom.text('rendered');
       }
     });
 
-    const el2 = new Elem2();
-    const el1 = el2[symbols.shadowRoot].firstChild.firstChild;
-    fixture(el2);
+    const elem1 = new Elem1();
+    const elem2 = new Elem2();
+
+    fixture().appendChild(elem1);
+    elem1.appendChild(elem2);
     afterMutations(
-      () => expect(el1[symbols.shadowRoot].textContent).to.equal('rendered'),
+      () => expect(elem2[symbols.shadowRoot].textContent).to.equal('rendered'),
       done
     );
   });

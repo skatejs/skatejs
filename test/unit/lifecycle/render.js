@@ -28,11 +28,12 @@ describe('lifecycle/render', function () {
   });
 
   it('should get called before descendants are initialised', function (done) {
-    let called = [];
-    let elem1 = elem();
-    let elem2 = elem();
+    const called = [];
+    const elem1 = elem();
+    const elem2 = elem();
+
     elem1.skate({
-      render () {
+      created () {
         called.push('elem1');
       }
     });
@@ -41,6 +42,7 @@ describe('lifecycle/render', function () {
         called.push('elem2');
       }
     });
+
     fixture(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
     afterMutations(
       () => expect(called[0]).to.equal('elem1'),

@@ -46,13 +46,6 @@ export default class Component extends HTMLElement {
       delete elemData.readyCallbacks;
     }
   }
-
-  static attached () {}
-  static attributeChanged () {}
-  static created () {}
-  static detached () {}
-  static ready () {}
-  static render () {}
 }
 
 Component.definedAttribute = 'defined';

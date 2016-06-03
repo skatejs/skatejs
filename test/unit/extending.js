@@ -14,6 +14,7 @@ describe('extending', function () {
     Ctor = skate(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
+      created () {},
       render () {
         vdom.text('test');
       },
