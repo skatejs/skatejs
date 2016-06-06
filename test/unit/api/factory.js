@@ -1,4 +1,4 @@
-import factory from '../../../src/api/factory';
+import { factory, symbols } from '../../../src/index';
 
 describe('api/factory', function () {
   it('should return a function', function () {
@@ -15,7 +15,7 @@ describe('api/factory', function () {
     }
 
     it('should register a constructor for the specified name', function () {
-      expect(register({}).id).to.equal('x-factory-test');
+      expect(register({})[symbols.name]).to.equal('x-factory-test');
     });
   });
 });

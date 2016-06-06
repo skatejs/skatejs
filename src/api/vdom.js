@@ -125,7 +125,7 @@ function bind (tname) {
 export function create (tname, attrs, chren) {
   // Allow a component constructor to be passed in.
   if (typeof tname === 'function') {
-    tname = tname.id || tname.name;
+    tname = tname[symbols.name];
   }
   // Return the cached factory or create a new one and return it.
   return (factories[tname] || bind(tname))(attrs, chren);

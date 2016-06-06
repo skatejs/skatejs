@@ -5,8 +5,6 @@ import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
-import getAllPropertyDescriptors from '../util/get-all-property-descriptors';
-import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import initProps from '../lifecycle/props-init';
 
 // Ensures that definitions passed as part of the constructor are functions
@@ -38,32 +36,16 @@ function ensurePropertyDefinitions (Ctor) {
 // that the element is returned at the end.
 function createConstructor (name, Ctor) {
   if (typeof Ctor === 'object') {
-    const opts = getAllPropertyDescriptors(Ctor);
-    const prot = getOwnPropertyDescriptors(Ctor.prototype);
-
-    // The prototype is non-configurable, so we remove it before it tries to
-    // define it.
-    delete opts.prototype;
-
-    Ctor = class extends Component {};
-
-    Object.defineProperties(Ctor, opts);
-    Object.defineProperties(Ctor.prototype, prot);
+    Ctor = Component.create(Ctor);
   }
 
+  // Map callbacks.
   Ctor.prototype.attributeChangedCallback = attributeChanged(Ctor);
   Ctor.prototype.connectedCallback = function () { Ctor.attached && Ctor.attached(this); };
   Ctor.prototype.disconnectedCallback = function () { Ctor.detached && Ctor.detached(this); };
 
-  // WebKit currently doesn't allow you to overwrite "name" so we have to use
-  // "id" for cross-browser compat right now.
-  Object.defineProperty(Ctor, 'id', { value: name });
-
-  // We do set "name" in browsers that support it, though.
-  const nameDesc = Object.getOwnPropertyDescriptor(Ctor, 'name');
-  if (nameDesc && nameDesc.configurable) {
-    Object.defineProperty(Ctor, 'name', { value: name });
-  }
+  // Internal data.
+  Ctor[symbols.name] = name;
 
   return Ctor;
 }
@@ -92,7 +74,12 @@ function formatLinkedAttributes (Ctor) {
     }
   });
 
-  Ctor.observedAttributes = observedAttributes;
+  // Merge observed attributes.
+  Object.defineProperty(Ctor, 'observedAttributes', {
+    get () {
+      return observedAttributes;
+    }
+  });
 }
 
 function createInitProps (Ctor) {
@@ -128,6 +115,6 @@ export default function (name, Ctor) {
     window.customElements.define(name, Ctor);
     return window.customElements.get(name);
   } else {
-    throw new Error('Skate requires custom element v1 support. Please include a polyfill for this browser.');
+    throw new Error('Skate requires Custom Elements V1 support. Please include a polyfill for this browser.');
   }
 }
