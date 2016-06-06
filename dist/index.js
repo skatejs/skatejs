@@ -161,6 +161,10 @@ var symbols = Object.freeze({
 		shadowRoot: shadowRoot
 	});
 
+	var customElementsV1 = 'customElements' in window;
+	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
+	var shadowDomV1 = 'attachShadow' in Element.prototype;
+
 	function data (element) {
 	  var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
 
@@ -1613,9 +1617,6 @@ var symbols = Object.freeze({
 		notifications: notifications
 	});
 
-	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
-	var shadowDomV1 = 'attachShadow' in Element.prototype;
-
 	// Could import these, but we have to import all of IncrementalDOM anyways so
 	// that we can export our configured IncrementalDOM.
 	var applyProp = applyProp$1;
@@ -2413,8 +2414,12 @@ var vdomElements = Object.freeze({
 	  Ctor[events] = events$1(Ctor);
 	  Ctor[props] = createInitProps(Ctor);
 	  Ctor[renderer] = createRenderer(Ctor);
-	  window.customElements.define(name, Ctor);
-	  return window.customElements.get(name);
+	  if (customElementsV1) {
+	    window.customElements.define(name, Ctor);
+	    return window.customElements.get(name);
+	  } else {
+	    throw new Error('Skate requires custom element v1 support. Please include a polyfill for this browser.');
+	  }
 	}
 
 	function factory (opts) {
