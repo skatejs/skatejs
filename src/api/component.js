@@ -2,6 +2,7 @@ import * as symbols from './symbols';
 import assign from 'object-assign';
 import data from '../util/data';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import { classes } from '../util/support';
 
 function init (elem) {
   const elemData = data(elem);
@@ -9,6 +10,12 @@ function init (elem) {
   const Ctor = elem.constructor;
   const { definedAttribute, events, created, props, ready, renderedAttribute } = Ctor;
   const renderer = Ctor[symbols.renderer];
+
+  // TODO: This prevents an element from being initialised multiple times. For
+  // some reason this is happening with the V1 polyfill. We should try and
+  // figure out why.
+  if (elem.____created) return;
+  elem.____created = true;
 
   if (props) {
     Ctor[symbols.props](elem);
@@ -92,7 +99,7 @@ export default class Component extends HTMLElement {
     // set the prototype. This may not be necessary if attributeChangedCallback
     // is fired for existing attributes in a micro / macro task instead of
     // synchronously as it is now.
-    if (!Ctor.setPrototypeOf) {
+    if (!classes) {
       Object.defineProperty(Element.prototype, '__proto__', {
         configurable: true,
         enumerable: false,
