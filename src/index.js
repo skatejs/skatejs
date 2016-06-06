@@ -1,7 +1,6 @@
 import assign from 'object-assign';
 
 // Public API
-import create from './api/create';
 import define from './api/define';
 import emit from './api/emit';
 import factory from './api/factory';
@@ -18,7 +17,6 @@ assign(vdom, vdomElements);
 
 export default define;
 export {
-  create,
   define,
   emit,
   factory,

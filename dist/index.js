@@ -11,6 +11,12 @@
 	  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
 	};
 
+	babelHelpers.classCallCheck = function (instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	};
+
 	babelHelpers.defineProperty = function (obj, key, value) {
 	  if (key in obj) {
 	    Object.defineProperty(obj, key, {
@@ -24,6 +30,30 @@
 	  }
 
 	  return obj;
+	};
+
+	babelHelpers.inherits = function (subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }
+
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      enumerable: false,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	};
+
+	babelHelpers.possibleConstructorReturn = function (self, call) {
+	  if (!self) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+
+	  return call && (typeof call === "object" || typeof call === "function") ? call : self;
 	};
 
 	babelHelpers;
@@ -119,184 +149,24 @@
 
 	var assign = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
 
-	var reservedNames = ['annotation-xml', 'color-profile', 'font-face', 'font-face-src', 'font-face-uri', 'font-face-format', 'font-face-name', 'missing-glyph'];
-	var customElementCriteria = ['contain at least one dash', 'not start with a dash', 'not be one of: ' + reservedNames.join(', ')];
-	var definitions = {};
+	var customElements = window.customElements;
 
-	var customElements = window.customElements || {
-	  define: function define(name, Ctor) {
-	    if (definitions[name]) {
-	      throw new Error('A Skate component with the name of "' + name + '" already exists.');
-	    }
-
-	    // Screen non-native names and try and be more helpful than native.
-	    if (name.indexOf('-') < 1 || reservedNames.indexOf(name) > -1) {
-	      throw new Error(name + ' is not a valid custom element name. A custom element name must: ' + customElementCriteria.map(function (a) {
-	        return '\n- ' + a;
-	      }).join(''));
-	    }
-
-	    // Support legacy Blink.
-	    if (document.registerElement) {
-	      // Blink is picky about options.
-	      var nativeDefinition = { prototype: Ctor.prototype };
-
-	      // Only set extends if the user specified it otherwise Blink complains
-	      // even if it's null.
-	      if (Ctor.extends) {
-	        nativeDefinition.extends = Ctor.extends;
-	      }
-
-	      document.registerElement(name, nativeDefinition);
-	    }
-
-	    // Actually register.
-	    definitions[name] = Ctor;
-	  },
-	  get: function get(name) {
-	    return definitions[name];
-	  }
-	};
-
-	var _document = document;
-	var body = _document.body;
-	var head = _document.head;
-
-	var elementPrototype = window.HTMLElement.prototype;
-	var elementPrototypeContains = elementPrototype.contains;
-
-	function utilElementContains (source, target) {
-	  // The document element does not have the contains method in IE.
-	  if (source === document && !source.contains) {
-	    return head.contains(target) || body.contains(target);
-	  }
-	  return source.contains ? source.contains(target) : elementPrototypeContains.call(source, target);
-	}
-
-	function findElementInRegistry (elem) {
-	  var tagName = elem.tagName;
-
-	  if (!tagName) {
-	    return;
-	  }
-
-	  var tagNameLc = tagName.toLowerCase();
-	  var tagNameDefinition = customElements.get(tagNameLc);
-
-	  if (tagNameDefinition) {
-	    return tagNameDefinition;
-	  }
-
-	  var isAttribute = elem.getAttribute('is');
-	  var isAttributeDefinition = customElements.get(isAttribute);
-
-	  if (isAttributeDefinition && isAttributeDefinition.extends === tagNameLc) {
-	    return isAttributeDefinition;
-	  }
-	}
-
-	var v0 = !!document.registerElement;
-	var v1 = !!window.customElements;
-	var polyfilled = !v0 && !v1;
-	var shadowDomV0 = !!('createShadowRoot' in Element.prototype);
-	var shadowDomV1 = !!('attachShadow' in Element.prototype);
-
-	var support = {
-	  v0: v0,
-	  v1: v1,
-	  polyfilled: polyfilled,
-	  shadowDomV0: shadowDomV0,
-	  shadowDomV1: shadowDomV1
-	};
-
-	function ignored (element) {
-	  var attrs = element.attributes;
-	  return attrs && !!attrs['data-skate-ignore'];
-	}
-
-	var Node = window.Node;
-
-	function walk(elem, fn) {
-	  if (elem.nodeType !== Node.ELEMENT_NODE || ignored(elem)) {
-	    return;
-	  }
-
-	  var chren = elem.childNodes;
-	  var child = chren && chren[0];
-
-	  fn(elem);
-	  while (child) {
-	    walk(child, fn);
-	    child = child.nextSibling;
-	  }
-	}
-
-	function walkTree (elems, fn) {
-	  if (!elems) {
-	    return;
-	  }
-
-	  if (elems instanceof Node) {
-	    elems = [elems];
-	  }
-
-	  for (var a = 0; a < elems.length; a++) {
-	    walk(elems[a], fn);
-	  }
-	}
-
-	function init () {
-	  if (!support.polyfilled) {
-	    return;
-	  }
-
-	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	    args[_key] = arguments[_key];
-	  }
-
-	  args.forEach(function (arg) {
-	    var isInDom = utilElementContains(document, arg);
-
-	    walkTree(arg, function (descendant) {
-	      var component = findElementInRegistry(descendant);
-
-	      if (component) {
-	        if (component.prototype.createdCallback) {
-	          component.prototype.createdCallback.call(descendant);
-	        }
-
-	        if (isInDom && component.prototype.attachedCallback) {
-	          isInDom && component.prototype.attachedCallback.call(descendant);
-	        }
-	      }
-	    });
-	  });
-	}
-
-	function create (name, props) {
-	  var elem = void 0;
+	function create (name) {
 	  var Ctor = customElements.get(name);
-
-	  if (Ctor) {
-	    if (support.v1) {
-	      elem = document.createElement(name, { is: Ctor.extends || null });
-	    } else if (support.v0) {
-	      elem = Ctor.extends ? document.createElement(Ctor.extends, name) : document.createElement(name);
-	    } else {
-	      if (Ctor.extends) {
-	        elem = document.createElement(Ctor.extends);
-	        elem.setAttribute('is', name);
-	      } else {
-	        elem = document.createElement(name);
-	      }
-	      init(elem);
-	    }
-	  } else {
-	    elem = document.createElement(name);
-	  }
-
-	  return assign(elem, props);
+	  return Ctor ? new Ctor() : document.createElement(name);
 	}
+
+	var events = '____events';
+	var props = '____props';
+	var renderer = '____renderer';
+	var shadowRoot = '____shadowRoot';
+
+var symbols = Object.freeze({
+		events: events,
+		props: props,
+		renderer: renderer,
+		shadowRoot: shadowRoot
+	});
 
 	function data (element) {
 	  var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
@@ -305,50 +175,11 @@
 	  return namespace && (data[namespace] || (data[namespace] = {})) || data;
 	}
 
-	function attached (opts) {
-	  var attached = opts.attached;
-
-	  return attached ? function () {
-	    var info = data(this);
-	    if (info.attached) return;
-	    info.attached = true;
-	    info.detached = false;
-	    attached(this);
-	  } : undefined;
-	}
-
-	var isCustomElementsV0 = support.v0;
-	var isCustomElementsV1 = support.v1;
-
-	function attribute (Ctor) {
+	function attributeChanged (Ctor) {
 	  var attributeChanged = Ctor.attributeChanged;
-	  var observedAttributes = Ctor.observedAttributes;
 
 
 	  return function (name, oldValue, newValue) {
-	    var elemData = data(this);
-
-	    // Chrome legacy custom elements batch attribute changes in a microtask so
-	    // so we have to tell it to emulate v1 behaviour by setting a unique
-	    // unique attribute.
-	    if (isCustomElementsV0 && name === '____can_start_triggering_now') {
-	      elemData.canStartTriggeringNow = true;
-	      return;
-	    }
-
-	    // We prevent legacy Chrome from ever triggering a change unless it's been
-	    // flagged to do so using the unique attribute or explicitly told that it
-	    // can via the property data.
-	    if (isCustomElementsV0 && !elemData.canStartTriggeringNow) {
-	      return;
-	    }
-
-	    // If native support for custom elements v1 exists, then it will natively
-	    // do this check before calling the attributeChangedCallback.
-	    if (!isCustomElementsV1 && observedAttributes.indexOf(name) === -1) {
-	      return;
-	    }
-
 	    var propertyName = data(this, 'attributeLinks')[name];
 
 	    if (propertyName) {
@@ -358,33 +189,92 @@
 	      // handler to run again once we set this flag. This only ever has a
 	      // chance to run when you set an attribute, it then sets a property and
 	      // then that causes the attribute to be set again.
-	      if (propData.settingAttribute) {
+	      if (propData.syncingAttribute) {
+	        propData.syncingAttribute = false;
 	        return;
 	      }
 
-	      // Set this here so the next set to the attribute doesn't cause this
-	      // handler to run a gain.
-	      propData.settingAttribute = true;
-
 	      // Sync up the property.
-	      if (!propData.settingProperty) {
-	        var propOpts = this.constructor.props[propertyName];
-	        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
-	      }
-
-	      // Allow this handler to run again.
-	      propData.settingAttribute = false;
+	      var propOpts = this.constructor.props[propertyName];
+	      propData.settingAttribute = true;
+	      this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
 	    }
 
 	    if (attributeChanged) {
-	      attributeChanged(this, {
-	        name: name,
-	        newValue: newValue === null ? undefined : newValue,
-	        oldValue: oldValue === null ? undefined : oldValue
-	      });
+	      attributeChanged(this, { name: name, newValue: newValue, oldValue: oldValue });
 	    }
 	  };
 	}
+
+	var Component = function (_HTMLElement) {
+	  babelHelpers.inherits(Component, _HTMLElement);
+
+	  function Component() {
+	    babelHelpers.classCallCheck(this, Component);
+
+	    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this));
+
+	    var elemData = data(_this);
+	    var readyCallbacks = elemData.readyCallbacks;
+	    var Ctor = _this.constructor;
+	    var _this$constructor = _this.constructor;
+	    var definedAttribute = _this$constructor.definedAttribute;
+	    var events$$ = _this$constructor.events;
+	    var created = _this$constructor.created;
+	    var props$$ = _this$constructor.props;
+	    var ready = _this$constructor.ready;
+	    var renderedAttribute = _this$constructor.renderedAttribute;
+
+	    var renderer$$ = Ctor[renderer];
+
+	    if (elemData.created) {
+	      return babelHelpers.possibleConstructorReturn(_this);
+	    }
+
+	    elemData.created = true;
+
+	    if (props$$) {
+	      Ctor[props](_this);
+	    }
+
+	    if (events$$) {
+	      Ctor[events](_this);
+	    }
+
+	    if (created) {
+	      created(_this);
+	    }
+
+	    if (renderer$$ && !_this.hasAttribute(renderedAttribute)) {
+	      renderer$$(_this);
+	    }
+
+	    if (ready) {
+	      ready(_this);
+	    }
+
+	    if (!_this.hasAttribute(definedAttribute)) {
+	      _this.setAttribute(definedAttribute, '');
+	    }
+
+	    if (readyCallbacks) {
+	      readyCallbacks.forEach(function (cb) {
+	        return cb(_this);
+	      });
+	      delete elemData.readyCallbacks;
+	    }
+	    return _this;
+	  }
+
+	  return Component;
+	}(HTMLElement);
+
+	Component.definedAttribute = 'defined';
+	Component.events = {};
+	Component.extends = null;
+	Component.observedAttributes = [];
+	Component.props = {};
+	Component.renderedAttribute = 'rendered';
 
 	var elProto = window.HTMLElement.prototype;
 	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
@@ -423,7 +313,7 @@
 
 	function makeDelegateHandler(elem, handler, parsed) {
 	  return function (e) {
-	    var current = e.target;
+	    var current = e.path ? e.path[0] : e.target;
 	    var selector = parsed.selector;
 	    while (current && current !== elem.parentNode) {
 	      if (matches(current, selector)) {
@@ -453,7 +343,7 @@
 	  elem.addEventListener(name, handler, capture);
 	}
 
-	function events(opts) {
+	function events$1(opts) {
 	  var events = opts.events || {};
 	  return function (elem) {
 	    for (var name in events) {
@@ -461,981 +351,6 @@
 	    }
 	  };
 	}
-
-	function patchAttributeMethods(elem) {
-	  var removeAttribute = elem.removeAttribute;
-	  var setAttribute = elem.setAttribute;
-
-
-	  elem.removeAttribute = function (name) {
-	    var oldValue = this.getAttribute(name);
-	    removeAttribute.call(elem, name);
-	    if (elem.attributeChangedCallback) {
-	      elem.attributeChangedCallback(name, oldValue, null);
-	    }
-	  };
-
-	  elem.setAttribute = function (name, newValue) {
-	    var oldValue = this.getAttribute(name);
-	    setAttribute.call(elem, name, newValue);
-	    if (elem.attributeChangedCallback) {
-	      elem.attributeChangedCallback(name, oldValue, String(newValue));
-	    }
-	  };
-	}
-
-	var raf = window.requestAnimationFrame || setTimeout;
-	function debounce (fn) {
-	  var called = false;
-
-	  return function () {
-	    var _this = this;
-
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-
-	    if (!called) {
-	      called = true;
-	      raf(function () {
-	        called = false;
-	        fn.apply(_this, args);
-	      });
-	    }
-	  };
-	}
-
-	var CustomEvent = function (CustomEvent) {
-	  if (CustomEvent) {
-	    try {
-	      new CustomEvent();
-	    } catch (e) {
-	      return undefined;
-	    }
-	  }
-	  return CustomEvent;
-	}(window.CustomEvent);
-
-	function createCustomEvent(name) {
-	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-	  if (CustomEvent) {
-	    return new CustomEvent(name, opts);
-	  }
-
-	  var e = document.createEvent('CustomEvent');
-	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-	  return e;
-	}
-
-	function dispatch(elem, cEvent) {
-	  if (!elem.disabled) {
-	    return elem.dispatchEvent(cEvent);
-	  }
-	  cEvent.isPropagationStopped = true;
-	}
-
-	var hasBubbleOnDetachedElements = function () {
-	  var parent = document.createElement('div');
-	  var child = document.createElement('div');
-	  var hasBubbleOnDetachedElements = false;
-	  parent.appendChild(child);
-	  parent.addEventListener('test', function () {
-	    return hasBubbleOnDetachedElements = true;
-	  });
-	  child.dispatchEvent(createCustomEvent('test', { bubbles: true }));
-	  return hasBubbleOnDetachedElements;
-	}();
-
-	function createReadableStopPropagation(oldStopPropagation) {
-	  return function () {
-	    this.isPropagationStopped = true;
-	    oldStopPropagation.call(this);
-	  };
-	}
-
-	function simulateBubbling(elem, cEvent) {
-	  var didPreventDefault = void 0;
-	  var currentElem = elem;
-	  cEvent.stopPropagation = createReadableStopPropagation(cEvent.stopPropagation);
-	  Object.defineProperty(cEvent, 'target', { get: function get() {
-	      return elem;
-	    } });
-	  while (currentElem && !cEvent.isPropagationStopped) {
-	    Object.defineProperty(cEvent, 'currentTarget', {
-	      configurable: true,
-	      get: function get() {
-	        return currentElem;
-	      }
-	    });
-	    if (dispatch(currentElem, cEvent) === false) {
-	      didPreventDefault = false;
-	    }
-	    currentElem = currentElem.parentNode;
-	  }
-	  return didPreventDefault;
-	}
-
-	function emitOne(elem, name, opts) {
-	  var cEvent, shouldSimulateBubbling;
-
-	  /* jshint expr: true */
-	  opts.bubbles === undefined && (opts.bubbles = true);
-	  opts.cancelable === undefined && (opts.cancelable = true);
-	  cEvent = createCustomEvent(name, opts);
-	  shouldSimulateBubbling = opts.bubbles && !hasBubbleOnDetachedElements && !utilElementContains(document, elem);
-
-	  return shouldSimulateBubbling ? simulateBubbling(elem, cEvent) : dispatch(elem, cEvent);
-	}
-
-	function emit (elem, name) {
-	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-
-	  var names = typeof name === 'string' ? name.split(' ') : name;
-	  return names.reduce(function (prev, curr) {
-	    if (emitOne(elem, curr, opts) === false) {
-	      prev.push(curr);
-	    }
-	    return prev;
-	  }, []);
-	}
-
-	function empty (val) {
-	  return typeof val === 'undefined' || val === null;
-	}
-
-	// Symbol() wasn't transpiling properly.
-	var $debounce = '____debouncedRender';
-
-	function getDefaultValue(elem, name, opts) {
-	  return typeof opts.default === 'function' ? opts.default(elem, { name: name }) : opts.default;
-	}
-
-	function getInitialValue(elem, name, opts) {
-	  return typeof opts.initial === 'function' ? opts.initial(elem, { name: name }) : opts.initial;
-	}
-
-	function syncAttribute(elem, propertyName, attributeName, newValue, opts) {
-	  if (!attributeName) {
-	    return;
-	  }
-
-	  var serializedValue = opts.serialize(newValue);
-
-	  if (empty(serializedValue)) {
-	    elem.removeAttribute(attributeName);
-	  } else {
-	    elem.setAttribute(attributeName, serializedValue);
-	  }
-	}
-
-	function createNativePropertyDefinition(name, opts) {
-	  var prop = {
-	    configurable: true,
-	    enumerable: true
-	  };
-
-	  prop.created = function (elem) {
-	    var propertyData = data(elem, 'api/property/' + name);
-	    var attributeName = opts.attribute;
-	    var initialValue = elem[name];
-
-	    // Store property to attribute link information.
-	    data(elem, 'attributeLinks')[attributeName] = name;
-	    data(elem, 'propertyLinks')[name] = attributeName;
-
-	    // Set up initial value if it wasn't specified.
-	    if (empty(initialValue)) {
-	      if (attributeName && elem.hasAttribute(attributeName)) {
-	        initialValue = opts.deserialize(elem.getAttribute(attributeName));
-	      } else if ('initial' in opts) {
-	        initialValue = getInitialValue(elem, name, opts);
-	      } else if ('default' in opts) {
-	        initialValue = getDefaultValue(elem, name, opts);
-	      }
-	    }
-
-	    // We must coerce the initial value just in case it wasn't already.
-	    var internalValue = propertyData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
-
-	    // Since the attribute handler sets the property if the property setting
-	    // didn't invoke the attribute handler, we must ensure the property
-	    // setter can't be invoked by the setting of the attribute here.
-	    syncAttribute(elem, name, attributeName, internalValue, opts);
-	  };
-
-	  prop.get = function () {
-	    var propertyData = data(this, 'api/property/' + name);
-	    var internalValue = propertyData.internalValue;
-
-	    if (typeof opts.get === 'function') {
-	      return opts.get(this, { name: name, internalValue: internalValue });
-	    }
-	    return internalValue;
-	  };
-
-	  prop.render = function () {
-	    var shouldUpdate = opts.render;
-	    if (typeof shouldUpdate === 'undefined') {
-	      return function (elem, data) {
-	        return data.newValue !== data.oldValue;
-	      };
-	    }
-	    if (typeof shouldUpdate === 'function') {
-	      return shouldUpdate;
-	    }
-	    return function () {
-	      return !!shouldUpdate;
-	    };
-	  }();
-
-	  prop.set = function (newValue) {
-	    var propData = data(this, 'api/property/' + name);
-
-	    if (propData.settingProperty) {
-	      return;
-	    }
-
-	    var attributeName = data(this, 'propertyLinks')[name];
-	    var oldValue = propData.oldValue;
-
-
-	    propData.settingProperty = true;
-
-	    if (empty(newValue)) {
-	      newValue = getDefaultValue(this, name, opts);
-	    }
-
-	    if (typeof opts.coerce === 'function') {
-	      newValue = opts.coerce(newValue);
-	    }
-
-	    var propertyHasChanged = newValue !== oldValue;
-	    if (propertyHasChanged && opts.event) {
-	      var cancelledEvents = emit(this, String(opts.event), {
-	        bubbles: false,
-	        cancelable: true,
-	        detail: { name: name, oldValue: oldValue, newValue: newValue }
-	      });
-
-	      if (cancelledEvents.length > 0) {
-	        propData.settingProperty = false;
-	        return;
-	      }
-	    }
-
-	    propData.internalValue = newValue;
-	    syncAttribute(this, name, attributeName, newValue, opts);
-
-	    var changeData = { name: name, newValue: newValue, oldValue: oldValue };
-
-	    if (typeof opts.set === 'function') {
-	      opts.set(this, changeData);
-	    }
-
-	    // Re-render on property updates if the should-update check passes.
-	    var hasRenderFn = this.constructor.render;
-	    if (hasRenderFn && prop.render(this, changeData)) {
-	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.renderer));
-	      deb(this);
-	    }
-
-	    propData.settingProperty = false;
-	    propData.oldValue = newValue;
-	  };
-
-	  return prop;
-	}
-
-	function propsInit (opts) {
-	  opts = opts || {};
-
-	  if (typeof opts === 'function') {
-	    opts = { coerce: opts };
-	  }
-
-	  return function (name) {
-	    return createNativePropertyDefinition(name, assign({
-	      deserialize: function deserialize(value) {
-	        return value;
-	      },
-	      serialize: function serialize(value) {
-	        return value;
-	      }
-	    }, opts));
-	  };
-	}
-
-	function protos (proto) {
-	  var chains = [];
-	  while (proto) {
-	    chains.push(proto);
-	    proto = Object.getPrototypeOf(proto);
-	  }
-	  chains.reverse();
-	  return chains;
-	}
-
-	function utilDefineProperties (obj, props) {
-	  Object.keys(props).forEach(function (name) {
-	    var prop = props[name];
-	    var descriptor = Object.getOwnPropertyDescriptor(obj, name);
-	    var isDinosaurBrowser = name !== 'arguments' && name !== 'caller' && 'value' in prop;
-	    var isConfigurable = !descriptor || descriptor.configurable;
-	    var isWritable = !descriptor || descriptor.writable;
-
-	    if (isConfigurable) {
-	      Object.defineProperty(obj, name, prop);
-	    } else if (isDinosaurBrowser && isWritable) {
-	      obj[name] = prop.value;
-	    }
-	  });
-	}
-
-	function getOwnPropertyDescriptors (obj) {
-	  return Object.getOwnPropertyNames(obj).reduce(function (prev, curr) {
-	    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
-	    return prev;
-	  }, {});
-	}
-
-	function prototype(opts) {
-	  var prototypes = protos(opts.prototype);
-	  return function (elem) {
-	    prototypes.forEach(function (proto) {
-	      if (!proto.isPrototypeOf(elem)) {
-	        utilDefineProperties(elem, getOwnPropertyDescriptors(proto));
-	      }
-	    });
-	  };
-	}
-
-	var isPolyfilled = support.polyfilled;
-	var isCustomElementsV0$1 = support.v0;
-	var isCustomElementsV1$1 = support.v1;
-
-	function ensurePropertyFunctions(opts) {
-	  var props = opts.props;
-	  var names = Object.keys(props || {});
-	  return names.reduce(function (descriptors, descriptorName) {
-	    descriptors[descriptorName] = props[descriptorName];
-	    if (typeof descriptors[descriptorName] !== 'function') {
-	      descriptors[descriptorName] = propsInit(descriptors[descriptorName]);
-	    }
-	    return descriptors;
-	  }, {});
-	}
-
-	function ensurePropertyDefinitions(elem, propertyFunctions) {
-	  return Object.keys(propertyFunctions || {}).reduce(function (descriptors, descriptorName) {
-	    descriptors[descriptorName] = propertyFunctions[descriptorName](descriptorName);
-	    return descriptors;
-	  }, {});
-	}
-
-	function callAttributeChangedForEachAttribute(elem, observedAttributes) {
-	  observedAttributes.forEach(function (name) {
-	    var attr = elem.attributes[name];
-
-	    // We don't call it for the defined attribute because that will have
-	    // already called the handler via setAttribute().
-	    if (attr) {
-	      elem.attributeChangedCallback(name, null, attr.value);
-	    }
-	  });
-	}
-
-	function initialiseProps(elem, propertyDefinitions) {
-	  Object.keys(propertyDefinitions).forEach(function (name) {
-	    var prop = propertyDefinitions[name];
-	    prop.created(elem);
-
-	    // https://bugs.webkit.org/show_bug.cgi?id=49739
-	    //
-	    // When Webkit fixes that bug so that native property accessors can be
-	    // retrieved, we can move defining the property to the prototype and away
-	    // from having to do if for every instance as all other browsers support
-	    // this.
-	    Object.defineProperty(elem, name, prop);
-	  });
-	}
-
-	function created (opts) {
-	  var created = opts.created;
-	  var definedAttribute = opts.definedAttribute;
-	  var events$$ = opts.events;
-	  var observedAttributes = opts.observedAttributes;
-	  var props = opts.props;
-	  var prototype$$ = opts.prototype;
-	  var ready = opts.ready;
-	  var renderer = opts.renderer;
-	  var renderedAttribute = opts.renderedAttribute;
-
-	  var applyEvents = events(opts);
-	  var applyPrototype = prototype(opts);
-	  var propertyFunctions = ensurePropertyFunctions(opts);
-
-	  // Performance critical code!
-	  return function () {
-	    var elemData = data(this);
-	    var propertyDefinitions = props ? ensurePropertyDefinitions(this, propertyFunctions) : null;
-	    var readyCallbacks = elemData.readyCallbacks;
-
-	    if (elemData.created) {
-	      return;
-	    }
-
-	    elemData.created = true;
-
-	    if (isPolyfilled && prototype$$) {
-	      applyPrototype(this);
-	    }
-
-	    // Sets up properties, but does not invoke anything.
-	    if (propertyDefinitions) {
-	      initialiseProps(this, propertyDefinitions);
-	    }
-
-	    if (events$$) {
-	      applyEvents(this);
-	    }
-
-	    if (created) {
-	      created(this);
-	    }
-
-	    if (renderer && !this.hasAttribute(renderedAttribute)) {
-	      renderer(this);
-	    }
-
-	    if (ready) {
-	      ready(this);
-	    }
-
-	    // Defined attribute is last before notifying listeners.
-	    if (!this.hasAttribute(definedAttribute)) {
-	      this.setAttribute(definedAttribute, '');
-	    }
-
-	    // We trigger ready after we add the defined attribute.
-	    if (readyCallbacks) {
-	      readyCallbacks.forEach(function (cb) {
-	        return cb();
-	      });
-	      elemData.readyCallbacks = null;
-	    }
-
-	    // In the early versions of the spec ("v0", only implemented by Blink) all
-	    // calls to setAttribute() would queue a task to execute the attributeChangedCallback.
-	    // However, no attributes that exist when the element is upgraded would queue
-	    // a task.
-	    //
-	    // In Custom Elements v1, nothing is queued until after the constructor
-	    // (createdCallback in v0) is invoked. After it is invoked, the
-	    // attributeChangedCallback() is executed for all existing attributes. All
-	    // subsequent calls behave as normal.
-	    //
-	    // Any attribute change before this point is a no-op. Anything after works
-	    // as normal.
-	    if (isCustomElementsV0$1) {
-	      this.setAttribute('____can_start_triggering_now', '');
-	      this.removeAttribute('____can_start_triggering_now');
-	    }
-
-	    // Make attribute sets synchronous for polyfill-land.
-	    if (isPolyfilled) {
-	      patchAttributeMethods(this);
-	    }
-
-	    // Emulate v1 attribute initialisation behaviour.
-	    if (!isCustomElementsV1$1) {
-	      // We force this flag to be true so that attributeChanged() actually gets
-	      // called in Chrome v0.
-	      elemData.canStartTriggeringNow = true;
-
-	      // Force the change.
-	      callAttributeChangedForEachAttribute(this, observedAttributes);
-
-	      // Now we turn it off so that Chrome v0 doesn't trigger attributeChanged()
-	      // until *after* it receives the set for "____can_start_triggering_now".
-	      elemData.canStartTriggeringNow = false;
-	    }
-	  };
-	}
-
-	function dashCase (str) {
-	  return str.split(/([A-Z])/).reduce(function (one, two, idx) {
-	    var dash = !one || idx % 2 === 0 ? '' : '-';
-	    return '' + one + dash + two.toLowerCase();
-	  });
-	}
-
-	var nope = null;
-
-	var defaults = {
-	  attached: nope,
-	  attribute: nope,
-	  created: nope,
-	  definedAttribute: 'defined',
-	  render: nope,
-	  detached: nope,
-	  events: nope,
-	  extends: nope,
-	  props: nope,
-	  prototype: {},
-	  ready: nope,
-	  renderedAttribute: 'rendered'
-	};
-
-	function detached (opts) {
-	  var detached = opts.detached;
-
-	  return detached ? function () {
-	    var info = data(this);
-	    if (info.detached) return;
-	    info.detached = true;
-	    info.attached = false;
-	    detached(this);
-	  } : undefined;
-	}
-
-	var isIeUntil10 = /MSIE/.test(navigator.userAgent);
-	var isIe11 = /Trident/.test(navigator.userAgent);
-	var isIe = isIeUntil10 || isIe11;
-	var elementPrototype$1 = window.HTMLElement.prototype;
-
-	// ! This walkTree method differs from the implementation in ../../utils/walk-tree
-	// It invokes the callback only for the children, not the passed node and the second parameter to the callback is the parent node
-	function walkTree$1(node, cb) {
-	  var childNodes = node.childNodes;
-
-	  if (!childNodes) {
-	    return;
-	  }
-
-	  var childNodesLen = childNodes.length;
-
-	  for (var a = 0; a < childNodesLen; a++) {
-	    var childNode = childNodes[a];
-	    cb(childNode, node);
-	    walkTree$1(childNode, cb);
-	  }
-	}
-
-	function fixInnerHTML() {
-	  var originalInnerHTML = Object.getOwnPropertyDescriptor(elementPrototype$1, 'innerHTML');
-
-	  var get = function get() {
-	    return originalInnerHTML.get.call(this);
-	  };
-	  get._hasBeenEnhanced = true;
-
-	  // This redefines the innerHTML property so that we can ensure that events
-	  // are properly triggered.
-	  Object.defineProperty(elementPrototype$1, 'innerHTML', {
-	    get: get,
-	    set: function set(html) {
-	      walkTree$1(this, function (node, parentNode) {
-	        var mutationEvent = document.createEvent('MutationEvent');
-	        mutationEvent.initMutationEvent('DOMNodeRemoved', true, false, parentNode, null, null, null, null);
-	        node.dispatchEvent(mutationEvent);
-	      });
-	      originalInnerHTML.set.call(this, html);
-	    }
-	  });
-	}
-
-	if (isIe) {
-	  // IE 9-11
-	  var propertyDescriptor = Object.getOwnPropertyDescriptor(elementPrototype$1, 'innerHTML');
-	  var hasBeenEnhanced = !!propertyDescriptor && propertyDescriptor.get._hasBeenEnhanced;
-
-	  if (!hasBeenEnhanced) {
-	    if (isIe11) {
-	      // IE11's native MutationObserver needs some help as well :()
-	      window.MutationObserver = window.JsMutationObserver || window.MutationObserver;
-	    }
-
-	    fixInnerHTML();
-	  }
-	}
-
-	var _window = window;
-	var Element$1 = _window.Element;
-
-
-	function getClosestIgnoredElement (element) {
-	  var parent = element;
-	  while (parent instanceof Element$1) {
-	    if (ignored(parent)) {
-	      return parent;
-	    }
-	    parent = parent.parentNode;
-	  }
-	}
-
-	function triggerAddedNodes(addedNodes) {
-	  walkTree(addedNodes, function (element) {
-	    var component = findElementInRegistry(element);
-
-	    if (component) {
-	      if (component.prototype.createdCallback) {
-	        component.prototype.createdCallback.call(element);
-	      }
-
-	      if (component.prototype.attachedCallback) {
-	        component.prototype.attachedCallback.call(element);
-	      }
-	    }
-	  });
-	}
-
-	function triggerRemovedNodes(removedNodes) {
-	  walkTree(removedNodes, function (element) {
-	    var component = findElementInRegistry(element);
-
-	    if (component && component.prototype.detachedCallback) {
-	      component.prototype.detachedCallback.call(element);
-	    }
-	  });
-	}
-
-	function documentObserverHandler(mutations) {
-	  var mutationsLength = mutations.length;
-	  for (var a = 0; a < mutationsLength; a++) {
-	    var addedNodes = mutations[a].addedNodes;
-	    var removedNodes = mutations[a].removedNodes;
-
-	    // Since siblings are batched together, we check the first node's parent
-	    // node to see if it is ignored. If it is then we don't process any added
-	    // nodes. This prevents having to check every node.
-	    if (addedNodes && addedNodes.length && !getClosestIgnoredElement(addedNodes[0].parentNode)) {
-	      triggerAddedNodes(addedNodes);
-	    }
-
-	    // We can't check batched nodes here because they won't have a parent node.
-	    if (removedNodes && removedNodes.length) {
-	      triggerRemovedNodes(removedNodes);
-	    }
-	  }
-	}
-
-	function createMutationObserver() {
-	  var _window = window;
-	  var MutationObserver = _window.MutationObserver;
-
-	  if (!MutationObserver) {
-	    throw new Error('Mutation Observers are not supported by this browser. Skate requires them in order to polyfill the behaviour of Custom Elements. If you want to support this browser you should include a Mutation Observer polyfill before Skate.');
-	  }
-	  return new MutationObserver(documentObserverHandler);
-	}
-
-	function createDocumentObserver() {
-	  var observer = createMutationObserver();
-	  observer.observe(document, {
-	    childList: true,
-	    subtree: true
-	  });
-	  return observer;
-	}
-
-	var documentObserver = {
-	  observer: undefined,
-	  register: function register() {
-	    if (!this.observer) {
-	      this.observer = createDocumentObserver();
-	    }
-	    return this;
-	  },
-	  unregister: function unregister() {
-	    if (this.observer) {
-	      this.observer.disconnect();
-	      this.observer = undefined;
-	    }
-	    return this;
-	  }
-	};
-
-	function getAllPropertyDescriptors (obj) {
-	  return protos(obj).reduce(function (result, proto) {
-	    var descriptors = getOwnPropertyDescriptors(proto);
-	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
-	      result[name] = descriptors[name];
-	      return result;
-	    }, result);
-	    return result;
-	  }, {});
-	}
-
-	var incrementalDomCjs = __commonjs(function (module, exports) {
-	/**
-	 * @license
-	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *      http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS-IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-	'use strict';
-
-	/**
-	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *      http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS-IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-	/**
-	  * Keeps track whether or not we are in an attributes declaration (after
-	  * elementOpenStart, but before elementOpenEnd).
-	  * @type {boolean}
-	  */
-
-	var inAttributes = false;
-
-	/**
-	  * Keeps track whether or not we are in an element that should not have its
-	  * children cleared.
-	  * @type {boolean}
-	  */
-	var inSkip = false;
-
-	/**
-	 * Makes sure that there is a current patch context.
-	 * @param {*} context
-	 */
-	var assertInPatch = function assertInPatch(context) {
-	  if (!context) {
-	    throw new Error('Cannot call currentElement() unless in patch');
-	  }
-	};
-
-	/**
-	* Makes sure that keyed Element matches the tag name provided.
-	* @param {!string} nodeName The nodeName of the node that is being matched.
-	* @param {string=} tag The tag name of the Element.
-	* @param {?string=} key The key of the Element.
-	*/
-	var assertKeyedTagMatches = function assertKeyedTagMatches(nodeName, tag, key) {
-	  if (nodeName !== tag) {
-	    throw new Error('Was expecting node with key "' + key + '" to be a ' + tag + ', not a ' + nodeName + '.');
-	  }
-	};
-
-	/**
-	 * Makes sure that a patch closes every node that it opened.
-	 * @param {?Node} openElement
-	 * @param {!Node|!DocumentFragment} root
-	 */
-	var assertNoUnclosedTags = function assertNoUnclosedTags(openElement, root) {
-	  if (openElement === root) {
-	    return;
-	  }
-
-	  var currentElement = openElement;
-	  var openTags = [];
-	  while (currentElement && currentElement !== root) {
-	    openTags.push(currentElement.nodeName.toLowerCase());
-	    currentElement = currentElement.parentNode;
-	  }
-
-	  throw new Error('One or more tags were not closed:\n' + openTags.join('\n'));
-	};
-
-	/**
-	 * Makes sure that the caller is not where attributes are expected.
-	 * @param {string} functionName
-	 */
-	var assertNotInAttributes = function assertNotInAttributes(functionName) {
-	  if (inAttributes) {
-	    throw new Error(functionName + '() may not be called between ' + 'elementOpenStart() and elementOpenEnd().');
-	  }
-	};
-
-	/**
-	 * Makes sure that the caller is not inside an element that has declared skip.
-	 * @param {string} functionName
-	 */
-	var assertNotInSkip = function assertNotInSkip(functionName) {
-	  if (inSkip) {
-	    throw new Error(functionName + '() may not be called inside an element ' + 'that has called skip().');
-	  }
-	};
-
-	/**
-	 * Makes sure that the caller is where attributes are expected.
-	 * @param {string} functionName
-	 */
-	var assertInAttributes = function assertInAttributes(functionName) {
-	  if (!inAttributes) {
-	    throw new Error(functionName + '() must be called after ' + 'elementOpenStart().');
-	  }
-	};
-
-	/**
-	 * Makes sure the patch closes virtual attributes call
-	 */
-	var assertVirtualAttributesClosed = function assertVirtualAttributesClosed() {
-	  if (inAttributes) {
-	    throw new Error('elementOpenEnd() must be called after calling ' + 'elementOpenStart().');
-	  }
-	};
-
-	/**
-	  * Makes sure that placeholders have a key specified. Otherwise, conditional
-	  * placeholders and conditional elements next to placeholders will cause
-	  * placeholder elements to be re-used as non-placeholders and vice versa.
-	  * @param {string} key
-	  */
-	var assertPlaceholderKeySpecified = function assertPlaceholderKeySpecified(key) {
-	  if (!key) {
-	    throw new Error('Placeholder elements must have a key specified.');
-	  }
-	};
-
-	/**
-	  * Makes sure that tags are correctly nested.
-	  * @param {string} nodeName
-	  * @param {string} tag
-	  */
-	var assertCloseMatchesOpenTag = function assertCloseMatchesOpenTag(nodeName, tag) {
-	  if (nodeName !== tag) {
-	    throw new Error('Received a call to close ' + tag + ' but ' + nodeName + ' was open.');
-	  }
-	};
-
-	/**
-	 * Makes sure that no children elements have been declared yet in the current
-	 * element.
-	 * @param {string} functionName
-	 * @param {?Node} previousNode
-	 */
-	var assertNoChildrenDeclaredYet = function assertNoChildrenDeclaredYet(functionName, previousNode) {
-	  if (previousNode !== null) {
-	    throw new Error(functionName + '() must come before any child ' + 'declarations inside the current element.');
-	  }
-	};
-
-	/**
-	 * Updates the state of being in an attribute declaration.
-	 * @param {boolean} value
-	 * @return {boolean} the previous value.
-	 */
-	var setInAttributes = function setInAttributes(value) {
-	  var previous = inAttributes;
-	  inAttributes = value;
-	  return previous;
-	};
-
-	/**
-	 * Updates the state of being in a skip element.
-	 * @param {boolean} value
-	 * @return {boolean} the previous value.
-	 */
-	var setInSkip = function setInSkip(value) {
-	  var previous = inSkip;
-	  inSkip = value;
-	  return previous;
-	};
-
-	/**
-	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *      http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS-IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-
-	/** */
-	exports.notifications = {
-	  /**
-	   * Called after patch has compleated with any Nodes that have been created
-	   * and added to the DOM.
-	   * @type {?function(Array<!Node>)}
-	   */
-	  nodesCreated: null,
-
-	  /**
-	   * Called after patch has compleated with any Nodes that have been removed
-	   * from the DOM.
-	   * Note it's an applications responsibility to handle any childNodes.
-	   * @type {?function(Array<!Node>)}
-	   */
-	  nodesDeleted: null
-	};
-
-	/**
-	 * Keeps track of the state of a patch.
-	 * @constructor
-	 */
-	function Context() {
-	  /**
-	   * @type {(Array<!Node>|undefined)}
-	   */
-	  this.created = exports.notifications.nodesCreated && [];
-
-	  /**
-	   * @type {(Array<!Node>|undefined)}
-	   */
-	  this.deleted = exports.notifications.nodesDeleted && [];
-	}
-
-	/**
-	 * @param {!Node} node
-	 */
-	Context.prototype.markCreated = function (node) {
-	  if (this.created) {
-	    this.created.push(node);
-	  }
-	};
-
-	/**
-	 * @param {!Node} node
-	 */
-	Context.prototype.markDeleted = function (node) {
-	  if (this.deleted) {
-	    this.deleted.push(node);
-	  }
-	};
-
-	/**
-	 * Notifies about nodes that were created during the patch opearation.
-	 */
-	Context.prototype.notifyChanges = function () {
-	  if (this.created && this.created.length > 0) {
-	    exports.notifications.nodesCreated(this.created);
-	  }
-
-	  if (this.deleted && this.deleted.length > 0) {
-	    exports.notifications.nodesDeleted(this.deleted);
-	  }
-	};
 
 	/**
 	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
@@ -1461,7 +376,7 @@
 	/**
 	 * A cached reference to the create function.
 	 */
-	var create = Object.create;
+	var create$2 = Object.create;
 
 	/**
 	 * Used to prevent property collisions between our "map" and its prototype.
@@ -1478,7 +393,7 @@
 	 * @return {!Object}
 	 */
 	var createMap = function createMap() {
-	  return create(null);
+	  return create$2(null);
 	};
 
 	/**
@@ -1592,10 +507,25 @@
 	 * limitations under the License.
 	 */
 
-	exports.symbols = {
+	/** @const */
+	var symbols$2 = {
 	  default: '__default',
 
 	  placeholder: '__placeholder'
+	};
+
+	/**
+	 * @param {string} name
+	 * @return {string|undefined} The namespace to use for the attribute.
+	 */
+	var getNamespace = function getNamespace(name) {
+	  if (name.lastIndexOf('xml:', 0) === 0) {
+	    return 'http://www.w3.org/XML/1998/namespace';
+	  }
+
+	  if (name.lastIndexOf('xlink:', 0) === 0) {
+	    return 'http://www.w3.org/1999/xlink';
+	  }
 	};
 
 	/**
@@ -1606,11 +536,16 @@
 	 * @param {string} name The attribute's name.
 	 * @param {?(boolean|number|string)=} value The attribute's value.
 	 */
-	exports.applyAttr = function (el, name, value) {
+	var applyAttr = function applyAttr(el, name, value) {
 	  if (value == null) {
 	    el.removeAttribute(name);
 	  } else {
-	    el.setAttribute(name, value);
+	    var attrNS = getNamespace(name);
+	    if (attrNS) {
+	      el.setAttributeNS(attrNS, name, value);
+	    } else {
+	      el.setAttribute(name, value);
+	    }
 	  }
 	};
 
@@ -1620,7 +555,7 @@
 	 * @param {string} name The property's name.
 	 * @param {*} value The property's value.
 	 */
-	exports.applyProp = function (el, name, value) {
+	var applyProp$1 = function applyProp(el, name, value) {
 	  el[name] = value;
 	};
 
@@ -1660,9 +595,9 @@
 	  var type = typeof value === 'undefined' ? 'undefined' : babelHelpers.typeof(value);
 
 	  if (type === 'object' || type === 'function') {
-	    exports.applyProp(el, name, value);
+	    applyProp$1(el, name, value);
 	  } else {
-	    exports.applyAttr(el, name, /** @type {?(boolean|number|string)} */value);
+	    applyAttr(el, name, /** @type {?(boolean|number|string)} */value);
 	  }
 	};
 
@@ -1680,7 +615,7 @@
 	    return;
 	  }
 
-	  var mutator = exports.attributes[name] || exports.attributes[exports.symbols.default];
+	  var mutator = attributes$1[name] || attributes$1[symbols$2.default];
 	  mutator(el, name, value);
 
 	  attrs[name] = value;
@@ -1690,15 +625,15 @@
 	 * A publicly mutable object to provide custom mutators for attributes.
 	 * @const {!Object<string, function(!Element, string, *)>}
 	 */
-	exports.attributes = createMap();
+	var attributes$1 = createMap();
 
 	// Special generic mutator that's called for any attribute that does not
 	// have a specific mutator.
-	exports.attributes[exports.symbols.default] = applyAttributeTyped;
+	attributes$1[symbols$2.default] = applyAttributeTyped;
 
-	exports.attributes[exports.symbols.placeholder] = function () {};
+	attributes$1[symbols$2.placeholder] = function () {};
 
-	exports.attributes['style'] = applyStyle;
+	attributes$1['style'] = applyStyle;
 
 	/**
 	 * Gets the namespace to create an element (of a given tag) in.
@@ -1730,7 +665,7 @@
 	 */
 	var createElement = function createElement(doc, parent, tag, key, statics) {
 	  var namespace = getNamespaceForTag(tag, parent);
-	  var el;
+	  var el = void 0;
 
 	  if (namespace) {
 	    el = doc.createElementNS(namespace, tag);
@@ -1768,16 +703,16 @@
 	 */
 	var createKeyMap = function createKeyMap(el) {
 	  var map = createMap();
-	  var children = el.children;
-	  var count = children.length;
+	  var child = el.firstElementChild;
 
-	  for (var i = 0; i < count; i += 1) {
-	    var child = children[i];
+	  while (child) {
 	    var key = getData(child).key;
 
 	    if (key) {
 	      map[key] = child;
 	    }
+
+	    child = child.nextElementSibling;
 	  }
 
 	  return map;
@@ -1821,63 +756,323 @@
 	  getKeyMap(parent)[key] = child;
 	};
 
+	/**
+	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS-IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	/** @const */
+	var notifications = {
+	  /**
+	   * Called after patch has compleated with any Nodes that have been created
+	   * and added to the DOM.
+	   * @type {?function(Array<!Node>)}
+	   */
+	  nodesCreated: null,
+
+	  /**
+	   * Called after patch has compleated with any Nodes that have been removed
+	   * from the DOM.
+	   * Note it's an applications responsibility to handle any childNodes.
+	   * @type {?function(Array<!Node>)}
+	   */
+	  nodesDeleted: null
+	};
+
+	/**
+	 * Keeps track of the state of a patch.
+	 * @constructor
+	 */
+	function Context() {
+	  /**
+	   * @type {(Array<!Node>|undefined)}
+	   */
+	  this.created = notifications.nodesCreated && [];
+
+	  /**
+	   * @type {(Array<!Node>|undefined)}
+	   */
+	  this.deleted = notifications.nodesDeleted && [];
+	}
+
+	/**
+	 * @param {!Node} node
+	 */
+	Context.prototype.markCreated = function (node) {
+	  if (this.created) {
+	    this.created.push(node);
+	  }
+	};
+
+	/**
+	 * @param {!Node} node
+	 */
+	Context.prototype.markDeleted = function (node) {
+	  if (this.deleted) {
+	    this.deleted.push(node);
+	  }
+	};
+
+	/**
+	 * Notifies about nodes that were created during the patch opearation.
+	 */
+	Context.prototype.notifyChanges = function () {
+	  if (this.created && this.created.length > 0) {
+	    notifications.nodesCreated(this.created);
+	  }
+
+	  if (this.deleted && this.deleted.length > 0) {
+	    notifications.nodesDeleted(this.deleted);
+	  }
+	};
+
+	/**
+	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *      http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS-IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	/**
+	  * Keeps track whether or not we are in an attributes declaration (after
+	  * elementOpenStart, but before elementOpenEnd).
+	  * @type {boolean}
+	  */
+	var inAttributes = false;
+
+	/**
+	  * Keeps track whether or not we are in an element that should not have its
+	  * children cleared.
+	  * @type {boolean}
+	  */
+	var inSkip = false;
+
+	/**
+	 * Makes sure that there is a current patch context.
+	 * @param {*} context
+	 */
+	var assertInPatch = function assertInPatch(context) {
+	  if (!context) {
+	    throw new Error('Cannot call currentElement() unless in patch.');
+	  }
+	};
+
+	/**
+	* Makes sure that keyed Element matches the tag name provided.
+	* @param {!string} nodeName The nodeName of the node that is being matched.
+	* @param {string=} tag The tag name of the Element.
+	* @param {?string=} key The key of the Element.
+	*/
+	var assertKeyedTagMatches = function assertKeyedTagMatches(nodeName, tag, key) {
+	  if (nodeName !== tag) {
+	    throw new Error('Was expecting node with key "' + key + '" to be a ' + tag + ', not a ' + nodeName + '.');
+	  }
+	};
+
+	/**
+	 * Makes sure that a patch closes every node that it opened.
+	 * @param {?Node} openElement
+	 * @param {!Node|!DocumentFragment} root
+	 */
+	var assertNoUnclosedTags = function assertNoUnclosedTags(openElement, root) {
+	  if (openElement === root) {
+	    return;
+	  }
+
+	  var currentElement = openElement;
+	  var openTags = [];
+	  while (currentElement && currentElement !== root) {
+	    openTags.push(currentElement.nodeName.toLowerCase());
+	    currentElement = currentElement.parentNode;
+	  }
+
+	  throw new Error('One or more tags were not closed:\n' + openTags.join('\n'));
+	};
+
+	/**
+	 * Makes sure that the caller is not where attributes are expected.
+	 * @param {string} functionName
+	 */
+	var assertNotInAttributes = function assertNotInAttributes(functionName) {
+	  if (inAttributes) {
+	    throw new Error(functionName + '() can not be called between ' + 'elementOpenStart() and elementOpenEnd().');
+	  }
+	};
+
+	/**
+	 * Makes sure that the caller is not inside an element that has declared skip.
+	 * @param {string} functionName
+	 */
+	var assertNotInSkip = function assertNotInSkip(functionName) {
+	  if (inSkip) {
+	    throw new Error(functionName + '() may not be called inside an element ' + 'that has called skip().');
+	  }
+	};
+
+	/**
+	 * Makes sure that the caller is where attributes are expected.
+	 * @param {string} functionName
+	 */
+	var assertInAttributes = function assertInAttributes(functionName) {
+	  if (!inAttributes) {
+	    throw new Error(functionName + '() can only be called after calling ' + 'elementOpenStart().');
+	  }
+	};
+
+	/**
+	 * Makes sure the patch closes virtual attributes call
+	 */
+	var assertVirtualAttributesClosed = function assertVirtualAttributesClosed() {
+	  if (inAttributes) {
+	    throw new Error('elementOpenEnd() must be called after calling ' + 'elementOpenStart().');
+	  }
+	};
+
+	/**
+	  * Makes sure that placeholders have a key specified. Otherwise, conditional
+	  * placeholders and conditional elements next to placeholders will cause
+	  * placeholder elements to be re-used as non-placeholders and vice versa.
+	  * @param {string} key
+	  */
+	var assertPlaceholderKeySpecified = function assertPlaceholderKeySpecified(key) {
+	  if (!key) {
+	    throw new Error('elementPlaceholder() requires a key.');
+	  }
+	};
+
+	/**
+	  * Makes sure that tags are correctly nested.
+	  * @param {string} nodeName
+	  * @param {string} tag
+	  */
+	var assertCloseMatchesOpenTag = function assertCloseMatchesOpenTag(nodeName, tag) {
+	  if (nodeName !== tag) {
+	    throw new Error('Received a call to close "' + tag + '" but "' + nodeName + '" was open.');
+	  }
+	};
+
+	/**
+	 * Makes sure that no children elements have been declared yet in the current
+	 * element.
+	 * @param {string} functionName
+	 * @param {?Node} previousNode
+	 */
+	var assertNoChildrenDeclaredYet = function assertNoChildrenDeclaredYet(functionName, previousNode) {
+	  if (previousNode !== null) {
+	    throw new Error(functionName + '() must come before any child ' + 'declarations inside the current element.');
+	  }
+	};
+
+	/**
+	 * Checks that a call to patchOuter actually patched the element.
+	 * @param {?Node} node The node requested to be patched.
+	 * @param {?Node} currentNode The currentNode after the patch.
+	 */
+	var assertPatchElementNotEmpty = function assertPatchElementNotEmpty(node, currentNode) {
+	  if (node === currentNode) {
+	    throw new Error('There must be exactly one top level call corresponding ' + 'to the patched element.');
+	  }
+	};
+
+	/**
+	 * Checks that a call to patchOuter actually patched the element.
+	 * @param {?Node} node The node requested to be patched.
+	 * @param {?Node} previousNode The previousNode after the patch.
+	 */
+	var assertPatchElementNoExtras = function assertPatchElementNoExtras(node, previousNode) {
+	  if (node !== previousNode) {
+	    throw new Error('There must be exactly one top level call corresponding ' + 'to the patched element.');
+	  }
+	};
+
+	/**
+	 * Updates the state of being in an attribute declaration.
+	 * @param {boolean} value
+	 * @return {boolean} the previous value.
+	 */
+	var setInAttributes = function setInAttributes(value) {
+	  var previous = inAttributes;
+	  inAttributes = value;
+	  return previous;
+	};
+
+	/**
+	 * Updates the state of being in a skip element.
+	 * @param {boolean} value
+	 * @return {boolean} the previous value.
+	 */
+	var setInSkip = function setInSkip(value) {
+	  var previous = inSkip;
+	  inSkip = value;
+	  return previous;
+	};
+
 	/** @type {?Context} */
 	var context = null;
 
 	/** @type {?Node} */
-	var currentNode;
+	var currentNode = void 0;
 
 	/** @type {?Node} */
-	var currentParent;
-
-	/** @type {?Node} */
-	var previousNode;
+	var currentParent = void 0;
 
 	/** @type {?Element|?DocumentFragment} */
-	var root;
+	var root = void 0;
 
 	/** @type {?Document} */
-	var doc;
+	var doc = void 0;
 
 	/**
-	 * Patches the document starting at el with the provided function. This function
-	 * may be called during an existing patch operation.
+	 * Sets up and restores a patch context, running the patch function with the
+	 * provided data.
 	 * @param {!Element|!DocumentFragment} node The Element or Document
-	 *     to patch.
-	 * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
-	 *     calls that describe the DOM.
-	 * @param {T=} data An argument passed to fn to represent DOM state.
+	 *     where the patch should start.
+	 * @param {!function(T)} fn The patching function.
+	 * @param {T=} data An argument passed to fn.
 	 * @template T
 	 */
-	exports.patch = function (node, fn, data) {
+	var runPatch = function runPatch(node, fn, data) {
 	  var prevContext = context;
 	  var prevRoot = root;
 	  var prevDoc = doc;
 	  var prevCurrentNode = currentNode;
 	  var prevCurrentParent = currentParent;
-	  var prevPreviousNode = previousNode;
 	  var previousInAttributes = false;
 	  var previousInSkip = false;
 
 	  context = new Context();
 	  root = node;
 	  doc = node.ownerDocument;
-	  currentNode = node;
-	  currentParent = null;
-	  previousNode = null;
 
 	  if (process.env.NODE_ENV !== 'production') {
 	    previousInAttributes = setInAttributes(false);
 	    previousInSkip = setInSkip(false);
 	  }
 
-	  enterNode();
 	  fn(data);
-	  exitNode();
 
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertVirtualAttributesClosed();
-	    assertNoUnclosedTags(previousNode, node);
 	    setInAttributes(previousInAttributes);
 	    setInSkip(previousInSkip);
 	  }
@@ -1889,7 +1084,55 @@
 	  doc = prevDoc;
 	  currentNode = prevCurrentNode;
 	  currentParent = prevCurrentParent;
-	  previousNode = prevPreviousNode;
+	};
+
+	/**
+	 * Patches the document starting at node with the provided function. This
+	 * function may be called during an existing patch operation.
+	 * @param {!Element|!DocumentFragment} node The Element or Document
+	 *     to patch.
+	 * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
+	 *     calls that describe the DOM.
+	 * @param {T=} data An argument passed to fn to represent DOM state.
+	 * @template T
+	 */
+	var patchInner = function patchInner(node, fn, data) {
+	  runPatch(node, function (data) {
+	    currentNode = node;
+	    currentParent = node.parentNode;
+
+	    enterNode();
+	    fn(data);
+	    exitNode();
+
+	    if (process.env.NODE_ENV !== 'production') {
+	      assertNoUnclosedTags(currentNode, node);
+	    }
+	  }, data);
+	};
+
+	/**
+	 * Patches an Element with the the provided function. Exactly one top level
+	 * element call should be made corresponding to `node`.
+	 * @param {!Element} node The Element where the patch should start.
+	 * @param {!function(T)} fn A function containing elementOpen/elementClose/etc.
+	 *     calls that describe the DOM. This should have at most one top level
+	 *     element call.
+	 * @param {T=} data An argument passed to fn to represent DOM state.
+	 * @template T
+	 */
+	var patchOuter = function patchOuter(node, fn, data) {
+	  runPatch(node, function (data) {
+	    currentNode = /** @type {!Element} */{ nextSibling: node };
+	    currentParent = node.parentNode;
+
+	    fn(data);
+
+	    if (process.env.NODE_ENV !== 'production') {
+	      assertPatchElementNotEmpty(node, currentNode.nextSibling);
+	      assertPatchElementNoExtras(node, currentNode);
+	    }
+	  }, data);
 	};
 
 	/**
@@ -1900,7 +1143,7 @@
 	 * @param {?string=} key An optional key that identifies a node.
 	 * @return {boolean} True if the node matches, false otherwise.
 	 */
-	var matches = function matches(nodeName, key) {
+	var matches$1 = function matches(nodeName, key) {
 	  var data = getData(currentNode);
 
 	  // Key check is done using double equals as we want to treat a null key the
@@ -1919,11 +1162,11 @@
 	 *     name-value pairs.
 	 */
 	var alignWithDOM = function alignWithDOM(nodeName, key, statics) {
-	  if (currentNode && matches(nodeName, key)) {
+	  if (currentNode && matches$1(nodeName, key)) {
 	    return;
 	  }
 
-	  var node;
+	  var node = void 0;
 
 	  // Check to see if the node has moved within the parent.
 	  if (key) {
@@ -1972,17 +1215,20 @@
 	  var keyMap = data.keyMap;
 	  var keyMapValid = data.keyMapValid;
 	  var child = node.lastChild;
-	  var key;
+	  var key = void 0;
 
-	  if (child === previousNode && keyMapValid) {
+	  if (child === currentNode && keyMapValid) {
 	    return;
 	  }
 
-	  if (data.attrs[exports.symbols.placeholder] && node !== root) {
+	  if (data.attrs[symbols$2.placeholder] && node !== root) {
+	    if (process.env.NODE_ENV !== 'production') {
+	      console.warn('symbols.placeholder will be removed in Incremental DOM' + ' 0.5 use skip() instead');
+	    }
 	    return;
 	  }
 
-	  while (child !== previousNode) {
+	  while (child !== currentNode) {
 	    node.removeChild(child);
 	    context.markDeleted( /** @type {!Node}*/child);
 
@@ -2012,16 +1258,18 @@
 	 */
 	var enterNode = function enterNode() {
 	  currentParent = currentNode;
-	  currentNode = currentNode.firstChild;
-	  previousNode = null;
+	  currentNode = null;
 	};
 
 	/**
 	 * Changes to the next sibling of the current node.
 	 */
 	var nextNode = function nextNode() {
-	  previousNode = currentNode;
-	  currentNode = currentNode.nextSibling;
+	  if (currentNode) {
+	    currentNode = currentNode.nextSibling;
+	  } else {
+	    currentNode = currentParent.firstChild;
+	  }
 	};
 
 	/**
@@ -2030,8 +1278,7 @@
 	var exitNode = function exitNode() {
 	  clearUnvisitedDOM();
 
-	  previousNode = currentParent;
-	  currentNode = currentParent.nextSibling;
+	  currentNode = currentParent;
 	  currentParent = currentParent.parentNode;
 	};
 
@@ -2048,7 +1295,8 @@
 	 *     Element is created.
 	 * @return {!Element} The corresponding Element.
 	 */
-	var _elementOpen = function _elementOpen(tag, key, statics) {
+	var coreElementOpen = function elementOpen(tag, key, statics) {
+	  nextNode();
 	  alignWithDOM(tag, key, statics);
 	  enterNode();
 	  return (/** @type {!Element} */currentParent
@@ -2061,13 +1309,13 @@
 	 *
 	 * @return {!Element} The corresponding Element.
 	 */
-	var _elementClose = function _elementClose() {
+	var coreElementClose = function elementClose() {
 	  if (process.env.NODE_ENV !== 'production') {
 	    setInSkip(false);
 	  }
 
 	  exitNode();
-	  return (/** @type {!Element} */previousNode
+	  return (/** @type {!Element} */currentNode
 	  );
 	};
 
@@ -2077,10 +1325,10 @@
 	 *
 	 * @return {!Text} The corresponding Text Node.
 	 */
-	var _text = function _text() {
-	  alignWithDOM('#text', null, null);
+	var coreText = function text() {
 	  nextNode();
-	  return (/** @type {!Text} */previousNode
+	  alignWithDOM('#text', null, null);
+	  return (/** @type {!Text} */currentNode
 	  );
 	};
 
@@ -2088,7 +1336,7 @@
 	 * Gets the current Element being patched.
 	 * @return {!Element}
 	 */
-	exports.currentElement = function () {
+	var currentElement = function currentElement() {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertInPatch(context);
 	    assertNotInAttributes('currentElement');
@@ -2101,12 +1349,12 @@
 	 * Skips the children in a subtree, allowing an Element to be closed without
 	 * clearing out the children.
 	 */
-	exports.skip = function () {
+	var skip$1 = function skip() {
 	  if (process.env.NODE_ENV !== 'production') {
-	    assertNoChildrenDeclaredYet('skip', previousNode);
+	    assertNoChildrenDeclaredYet('skip', currentNode);
 	    setInSkip(true);
 	  }
-	  previousNode = currentParent.lastChild;
+	  currentNode = currentParent.lastChild;
 	};
 
 	/**
@@ -2131,17 +1379,17 @@
 	 * @param {?Array<*>=} statics An array of attribute name/value pairs of the
 	 *     static attributes for the Element. These will only be set once when the
 	 *     Element is created.
-	 * @param {...*} var_args Attribute name/value pairs of the dynamic attributes
+	 * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
 	 *     for the Element.
 	 * @return {!Element} The corresponding Element.
 	 */
-	exports.elementOpen = function (tag, key, statics, var_args) {
+	var elementOpen$1 = function elementOpen(tag, key, statics, const_args) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertNotInAttributes('elementOpen');
 	    assertNotInSkip('elementOpen');
 	  }
 
-	  var node = _elementOpen(tag, key, statics);
+	  var node = coreElementOpen(tag, key, statics);
 	  var data = getData(node);
 
 	  /*
@@ -2180,9 +1428,9 @@
 	      newAttrs[arguments[i]] = arguments[i + 1];
 	    }
 
-	    for (var attr in newAttrs) {
-	      updateAttribute(node, attr, newAttrs[attr]);
-	      newAttrs[attr] = undefined;
+	    for (var _attr in newAttrs) {
+	      updateAttribute(node, _attr, newAttrs[_attr]);
+	      newAttrs[_attr] = undefined;
 	    }
 	  }
 
@@ -2203,7 +1451,7 @@
 	 *     static attributes for the Element. These will only be set once when the
 	 *     Element is created.
 	 */
-	exports.elementOpenStart = function (tag, key, statics) {
+	var elementOpenStart$1 = function elementOpenStart(tag, key, statics) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertNotInAttributes('elementOpenStart');
 	    setInAttributes(true);
@@ -2221,7 +1469,7 @@
 	 * @param {string} name
 	 * @param {*} value
 	 */
-	exports.attr = function (name, value) {
+	var attr$1 = function attr(name, value) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertInAttributes('attr');
 	  }
@@ -2233,13 +1481,13 @@
 	 * Closes an open tag started with elementOpenStart.
 	 * @return {!Element} The corresponding Element.
 	 */
-	exports.elementOpenEnd = function () {
+	var elementOpenEnd$1 = function elementOpenEnd() {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertInAttributes('elementOpenEnd');
 	    setInAttributes(false);
 	  }
 
-	  var node = exports.elementOpen.apply(null, argsBuilder);
+	  var node = elementOpen$1.apply(null, argsBuilder);
 	  argsBuilder.length = 0;
 	  return node;
 	};
@@ -2250,12 +1498,12 @@
 	 * @param {string} tag The element's tag.
 	 * @return {!Element} The corresponding Element.
 	 */
-	exports.elementClose = function (tag) {
+	var elementClose$1 = function elementClose(tag) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertNotInAttributes('elementClose');
 	  }
 
-	  var node = _elementClose();
+	  var node = coreElementClose();
 
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertCloseMatchesOpenTag(getData(node).nodeName, tag);
@@ -2274,13 +1522,13 @@
 	 * @param {?Array<*>=} statics An array of attribute name/value pairs of the
 	 *     static attributes for the Element. These will only be set once when the
 	 *     Element is created.
-	 * @param {...*} var_args Attribute name/value pairs of the dynamic attributes
+	 * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
 	 *     for the Element.
 	 * @return {!Element} The corresponding Element.
 	 */
-	exports.elementVoid = function (tag, key, statics, var_args) {
-	  var node = exports.elementOpen.apply(null, arguments);
-	  exports.elementClose.apply(null, arguments);
+	var elementVoid = function elementVoid(tag, key, statics, const_args) {
+	  var node = elementOpen$1.apply(null, arguments);
+	  elementClose$1.apply(null, arguments);
 	  return node;
 	};
 
@@ -2297,36 +1545,37 @@
 	 * @param {?Array<*>=} statics An array of attribute name/value pairs of the
 	 *     static attributes for the Element. These will only be set once when the
 	 *     Element is created.
-	 * @param {...*} var_args Attribute name/value pairs of the dynamic attributes
+	 * @param {...*} const_args Attribute name/value pairs of the dynamic attributes
 	 *     for the Element.
 	 * @return {!Element} The corresponding Element.
 	 */
-	exports.elementPlaceholder = function (tag, key, statics, var_args) {
+	var elementPlaceholder = function elementPlaceholder(tag, key, statics, const_args) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertPlaceholderKeySpecified(key);
+	    console.warn('elementPlaceholder will be removed in Incremental DOM 0.5' + ' use skip() instead');
 	  }
 
-	  exports.elementOpen.apply(null, arguments);
-	  exports.skip();
-	  return exports.elementClose.apply(null, arguments);
+	  elementOpen$1.apply(null, arguments);
+	  skip$1();
+	  return elementClose$1.apply(null, arguments);
 	};
 
 	/**
 	 * Declares a virtual Text at this point in the document.
 	 *
 	 * @param {string|number|boolean} value The value of the Text.
-	 * @param {...(function((string|number|boolean)):string)} var_args
+	 * @param {...(function((string|number|boolean)):string)} const_args
 	 *     Functions to format the value which are called only when the value has
 	 *     changed.
 	 * @return {!Text} The corresponding text node.
 	 */
-	exports.text = function (value, var_args) {
+	var text$1 = function text(value, const_args) {
 	  if (process.env.NODE_ENV !== 'production') {
 	    assertNotInAttributes('text');
 	    assertNotInSkip('text');
 	  }
 
-	  var node = _text();
+	  var node = coreText();
 	  var data = getData(node);
 
 	  if (data.text !== value) {
@@ -2334,7 +1583,12 @@
 
 	    var formatted = value;
 	    for (var i = 1; i < arguments.length; i += 1) {
-	      formatted = arguments[i](formatted);
+	      /*
+	       * Call the formatter function directly to prevent leaking arguments.
+	       * https://github.com/google/incremental-dom/pull/204#issuecomment-178223574
+	       */
+	      var fn = arguments[i];
+	      formatted = fn(formatted);
 	    }
 
 	    node.data = formatted;
@@ -2342,45 +1596,43 @@
 
 	  return node;
 	};
+
+
+
+	var IncrementalDOM = Object.freeze({
+		patch: patchInner,
+		patchInner: patchInner,
+		patchOuter: patchOuter,
+		currentElement: currentElement,
+		skip: skip$1,
+		elementVoid: elementVoid,
+		elementOpenStart: elementOpenStart$1,
+		elementOpenEnd: elementOpenEnd$1,
+		elementOpen: elementOpen$1,
+		elementClose: elementClose$1,
+		elementPlaceholder: elementPlaceholder,
+		text: text$1,
+		attr: attr$1,
+		symbols: symbols$2,
+		attributes: attributes$1,
+		applyAttr: applyAttr,
+		applyProp: applyProp$1,
+		notifications: notifications
 	});
 
-	var incrementalDomCjs$1 = (incrementalDomCjs && typeof incrementalDomCjs === 'object' && 'default' in incrementalDomCjs ? incrementalDomCjs['default'] : incrementalDomCjs);
-	var text$1 = incrementalDomCjs.text;
-	var elementPlaceholder = incrementalDomCjs.elementPlaceholder;
-	var elementVoid = incrementalDomCjs.elementVoid;
-	var elementClose$1 = incrementalDomCjs.elementClose;
-	var elementOpenEnd$1 = incrementalDomCjs.elementOpenEnd;
-	var attr$1 = incrementalDomCjs.attr;
-	var elementOpenStart$1 = incrementalDomCjs.elementOpenStart;
-	var elementOpen$1 = incrementalDomCjs.elementOpen;
-	var skip$1 = incrementalDomCjs.skip;
-	var currentElement = incrementalDomCjs.currentElement;
-	var patch$1 = incrementalDomCjs.patch;
-	var attributes$1 = incrementalDomCjs.attributes;
-	var applyProp$1 = incrementalDomCjs.applyProp;
-	var applyAttr = incrementalDomCjs.applyAttr;
-	var symbols$1 = incrementalDomCjs.symbols;
-	var notifications = incrementalDomCjs.notifications;
+	var v0 = !!document.registerElement;
+	var v1 = !!window.customElements;
+	var polyfilled = !v0 && !v1;
+	var shadowDomV0 = !!('createShadowRoot' in Element.prototype);
+	var shadowDomV1 = !!('attachShadow' in Element.prototype);
 
-var IncrementalDOM = Object.freeze({
-	  default: incrementalDomCjs$1,
-	  text: text$1,
-	  elementPlaceholder: elementPlaceholder,
-	  elementVoid: elementVoid,
-	  elementClose: elementClose$1,
-	  elementOpenEnd: elementOpenEnd$1,
-	  attr: attr$1,
-	  elementOpenStart: elementOpenStart$1,
-	  elementOpen: elementOpen$1,
-	  skip: skip$1,
-	  currentElement: currentElement,
-	  patch: patch$1,
-	  attributes: attributes$1,
-	  applyProp: applyProp$1,
-	  applyAttr: applyAttr,
-	  symbols: symbols$1,
-	  notifications: notifications
-	});
+	var support = {
+	  v0: v0,
+	  v1: v1,
+	  polyfilled: polyfilled,
+	  shadowDomV0: shadowDomV0,
+	  shadowDomV1: shadowDomV1
+	};
 
 	// Could import these, but we have to import all of IncrementalDOM anyways so
 	// that we can export our configured IncrementalDOM.
@@ -2392,7 +1644,7 @@ var IncrementalDOM = Object.freeze({
 	var elementOpenEnd = elementOpenEnd$1;
 	var elementOpenStart = elementOpenStart$1;
 	var skip = skip$1;
-	var symbols = symbols$1;
+	var symbols$1 = symbols$2;
 	var text = text$1;
 
 	// Specify an environment for iDOM in case we haven't yet.
@@ -2402,7 +1654,7 @@ var IncrementalDOM = Object.freeze({
 	  process = { env: { NODE_ENV: 'production' } };
 	}
 
-	var applyDefault = attributes[symbols.default];
+	var applyDefault = attributes[symbols$1.default];
 	var factories = {};
 
 	// Attributes that are not handled by Incremental DOM.
@@ -2412,7 +1664,7 @@ var IncrementalDOM = Object.freeze({
 	attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
 
 	// Default attribute applicator.
-	attributes[symbols.default] = function (elem, name, value) {
+	attributes[symbols$1.default] = function (elem, name, value) {
 	  // Boolean false values should not set attributes at all.
 	  if (value === false) {
 	    return;
@@ -2526,7 +1778,7 @@ var IncrementalDOM = Object.freeze({
 	var bdo = bind('bdo');
 	var bgsound = bind('bgsound');
 	var blockquote = bind('blockquote');
-	var body$1 = bind('body');
+	var body = bind('body');
 	var br = bind('br');
 	var button = bind('button');
 	var canvas = bind('canvas');
@@ -2562,7 +1814,7 @@ var IncrementalDOM = Object.freeze({
 	var h4 = bind('h4');
 	var h5 = bind('h5');
 	var h6 = bind('h6');
-	var head$1 = bind('head');
+	var head = bind('head');
 	var header = bind('header');
 	var hgroup = bind('hgroup');
 	var hr = bind('hr');
@@ -2657,7 +1909,7 @@ var vdomElements = Object.freeze({
 	  bdo: bdo,
 	  bgsound: bgsound,
 	  blockquote: blockquote,
-	  body: body$1,
+	  body: body,
 	  br: br,
 	  button: button,
 	  canvas: canvas,
@@ -2693,7 +1945,7 @@ var vdomElements = Object.freeze({
 	  h4: h4,
 	  h5: h5,
 	  h6: h6,
-	  head: head$1,
+	  head: head,
 	  header: header,
 	  hgroup: hgroup,
 	  hr: hr,
@@ -2772,24 +2024,21 @@ var vdomElements = Object.freeze({
 	  wbr: wbr
 	});
 
-	var shadowRoot = '____shadow_root';
-
-var symbols$2 = Object.freeze({
-		shadowRoot: shadowRoot
-	});
-
-	var patch = patch$1;
+	var patch = patchInner;
 
 
-	function render (opts) {
-	  var internalRenderer = opts.render;
+	function createRenderer (Ctor) {
+	  var render = Ctor.render;
+
+
 	  return function (elem) {
-	    if (!internalRenderer) {
+	    if (!render) {
 	      return;
 	    }
 
 	    if (!elem[shadowRoot]) {
 	      var sr = void 0;
+
 	      if (elem.attachShadow) {
 	        sr = elem.attachShadow({ mode: 'open' });
 	      } else if (elem.createShadowRoot) {
@@ -2797,76 +2046,338 @@ var symbols$2 = Object.freeze({
 	      } else {
 	        sr = elem;
 	      }
+
 	      elem[shadowRoot] = sr;
 	    }
 
-	    patch(elem[shadowRoot], internalRenderer, elem);
+	    patch(elem[shadowRoot], render, elem);
 	  };
 	}
 
-	var HTMLElement = window.HTMLElement;
+	function dashCase (str) {
+	  return str.split(/([A-Z])/).reduce(function (one, two, idx) {
+	    var dash = !one || idx % 2 === 0 ? '' : '-';
+	    return '' + one + dash + two.toLowerCase();
+	  });
+	}
 
-	// A function that initialises the document once in a given event loop.
-	var initDocument = debounce(function () {
-	  walkTree(document.documentElement.childNodes, function (element) {
-	    var component = customElements.get(element.tagName.toLowerCase());
+	function getOwnPropertyDescriptors (obj) {
+	  return Object.getOwnPropertyNames(obj || {}).reduce(function (prev, curr) {
+	    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
+	    return prev;
+	  }, {});
+	}
 
-	    if (component) {
-	      if (component.prototype.createdCallback) {
-	        component.prototype.createdCallback.call(element);
-	      }
+	function protos (proto) {
+	  var chains = [];
+	  while (proto) {
+	    chains.push(proto);
+	    proto = Object.getPrototypeOf(proto);
+	  }
+	  chains.reverse();
+	  return chains;
+	}
 
-	      if (component.prototype.attachedCallback) {
-	        component.prototype.attachedCallback.call(element);
+	function getAllPropertyDescriptors (obj) {
+	  return protos(obj || {}).reduce(function (result, proto) {
+	    var descriptors = getOwnPropertyDescriptors(proto);
+	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
+	      result[name] = descriptors[name];
+	      return result;
+	    }, result);
+	    return result;
+	  }, {});
+	}
+
+	var raf = window.requestAnimationFrame || setTimeout;
+	function debounce (fn) {
+	  var called = false;
+
+	  return function () {
+	    var _this = this;
+
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    if (!called) {
+	      called = true;
+	      raf(function () {
+	        called = false;
+	        fn.apply(_this, args);
+	      });
+	    }
+	  };
+	}
+
+	var CustomEvent = function (CustomEvent) {
+	  if (CustomEvent) {
+	    try {
+	      new CustomEvent();
+	    } catch (e) {
+	      return undefined;
+	    }
+	  }
+	  return CustomEvent;
+	}(window.CustomEvent);
+
+	function createCustomEvent(name) {
+	  var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	  if (CustomEvent) {
+	    return new CustomEvent(name, opts);
+	  }
+	  var e = document.createEvent('CustomEvent');
+	  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+	  return e;
+	}
+
+	function emit (elem, name) {
+	  var opts = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
+	  /* jshint expr: true */
+	  opts.bubbles === undefined && (opts.bubbles = true);
+	  opts.cancelable === undefined && (opts.cancelable = true);
+	  return elem.disabled ? true : elem.dispatchEvent(createCustomEvent(name, opts));
+	}
+
+	function empty (val) {
+	  return typeof val === 'undefined' || val === null;
+	}
+
+	// Symbol() wasn't transpiling properly.
+	var $debounce = '____debouncedRender';
+
+	function getDefaultValue(elem, name, opts) {
+	  return typeof opts.default === 'function' ? opts.default(elem, { name: name }) : opts.default;
+	}
+
+	function getInitialValue(elem, name, opts) {
+	  return typeof opts.initial === 'function' ? opts.initial(elem, { name: name }) : opts.initial;
+	}
+
+	function createNativePropertyDefinition(name, opts) {
+	  var prop = {
+	    configurable: true,
+	    enumerable: true
+	  };
+
+	  prop.created = function (elem) {
+	    var propData = data(elem, 'api/property/' + name);
+	    var attributeName = opts.attribute;
+	    var initialValue = elem[name];
+	    var shouldSyncAttribute = false;
+
+	    // Store property to attribute link information.
+	    data(elem, 'attributeLinks')[attributeName] = name;
+	    data(elem, 'propertyLinks')[name] = attributeName;
+
+	    // Set up initial value if it wasn't specified.
+	    if (empty(initialValue)) {
+	      if (attributeName && elem.hasAttribute(attributeName)) {
+	        initialValue = opts.deserialize(elem.getAttribute(attributeName));
+	      } else if ('initial' in opts) {
+	        initialValue = getInitialValue(elem, name, opts);
+	        shouldSyncAttribute = true;
+	      } else if ('default' in opts) {
+	        initialValue = getDefaultValue(elem, name, opts);
 	      }
 	    }
-	  });
-	});
 
-	// Creates a configurable, non-writable, non-enumerable property.
-	function fixedProp(obj, name, value) {
-	  Object.defineProperty(obj, name, {
-	    configurable: true,
-	    enumerable: false,
-	    value: value,
-	    writable: false
-	  });
+	    if (shouldSyncAttribute) {
+	      prop.set.call(elem, initialValue);
+	    } else {
+	      propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+	    }
+	  };
+
+	  prop.get = function () {
+	    var propData = data(this, 'api/property/' + name);
+	    var internalValue = propData.internalValue;
+
+	    if (typeof opts.get === 'function') {
+	      return opts.get(this, { name: name, internalValue: internalValue });
+	    }
+	    return internalValue;
+	  };
+
+	  prop.render = function () {
+	    var shouldUpdate = opts.render;
+	    if (typeof shouldUpdate === 'undefined') {
+	      return function (elem, data) {
+	        return data.newValue !== data.oldValue;
+	      };
+	    }
+	    if (typeof shouldUpdate === 'function') {
+	      return shouldUpdate;
+	    }
+	    return function () {
+	      return !!shouldUpdate;
+	    };
+	  }();
+
+	  prop.set = function (newValue) {
+	    var propData = data(this, 'api/property/' + name);
+	    var oldValue = propData.oldValue;
+
+	    var shouldRemoveAttribute = false;
+
+	    if (empty(oldValue)) {
+	      oldValue = null;
+	    }
+
+	    if (empty(newValue)) {
+	      newValue = getDefaultValue(this, name, opts);
+	      shouldRemoveAttribute = true;
+	    }
+
+	    if (typeof opts.coerce === 'function') {
+	      newValue = opts.coerce(newValue);
+	    }
+
+	    var propertyHasChanged = newValue !== oldValue;
+	    if (propertyHasChanged && opts.event) {
+	      var canceled = !emit(this, String(opts.event), {
+	        bubbles: false,
+	        detail: { name: name, oldValue: oldValue, newValue: newValue }
+	      });
+
+	      if (canceled) {
+	        return;
+	      }
+	    }
+
+	    propData.internalValue = newValue;
+
+	    var changeData = { name: name, newValue: newValue, oldValue: oldValue };
+
+	    if (typeof opts.set === 'function') {
+	      opts.set(this, changeData);
+	    }
+
+	    // Re-render on property updates if the should-update check passes.
+	    if (prop.render(this, changeData)) {
+	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor[renderer]));
+	      deb(this);
+	    }
+
+	    propData.oldValue = newValue;
+
+	    // Link up the attribute.
+	    var attributeName = data(this, 'propertyLinks')[name];
+	    if (attributeName && !propData.settingAttribute) {
+	      var serializedValue = opts.serialize(newValue);
+	      propData.syncingAttribute = true;
+	      if (shouldRemoveAttribute || empty(serializedValue)) {
+	        this.removeAttribute(attributeName);
+	      } else {
+	        this.setAttribute(attributeName, serializedValue);
+	      }
+	    }
+
+	    // Allow the attribute to be linked again.
+	    propData.settingAttribute = false;
+	  };
+
+	  return prop;
 	}
 
-	// Makes a function / constructor that can be called as either.
-	function createConstructor(name, opts) {
-	  var func = create.bind(null, name);
+	function initProps (opts) {
+	  opts = opts || {};
 
-	  // Assigning defaults gives a predictable definition and prevents us from
-	  // having to do defaults checks everywhere.
-	  assign(func, defaults);
-
-	  // Inherit all options. This takes into account object literals as well as
-	  // ES2015 classes that may have inherited static props which would not be
-	  // considered "own".
-	  utilDefineProperties(func, getAllPropertyDescriptors(opts));
-
-	  return func;
-	}
-
-	function addConstructorInformation(name, Ctor) {
-	  fixedProp(Ctor.prototype, 'constructor', Ctor);
-	  fixedProp(Ctor, 'id', name);
-
-	  // In native, the function name is the same as the custom element name, but
-	  // WebKit prevents this from being defined. We do this where possible and
-	  // still define `id` for cross-browser compatibility.
-	  var nameProp = Object.getOwnPropertyDescriptor(Ctor, 'name');
-	  if (nameProp && nameProp.configurable) {
-	    fixedProp(Ctor, 'name', name);
+	  if (typeof opts === 'function') {
+	    opts = { coerce: opts };
 	  }
+
+	  return function (name) {
+	    return createNativePropertyDefinition(name, assign({
+	      default: null,
+	      deserialize: function deserialize(value) {
+	        return value;
+	      },
+	      serialize: function serialize(value) {
+	        return value;
+	      }
+	    }, opts));
+	  };
+	}
+
+	// Ensures that definitions passed as part of the constructor are functions
+	// that return property definitions used on the element.
+	function ensurePropertyFunctions(Ctor) {
+	  var props = Ctor.props;
+	  var names = Object.keys(props || {});
+	  return names.reduce(function (descriptors, descriptorName) {
+	    descriptors[descriptorName] = props[descriptorName];
+	    if (typeof descriptors[descriptorName] !== 'function') {
+	      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
+	    }
+	    return descriptors;
+	  }, {});
+	}
+
+	// Ensures the property definitions are transformed to objects that can be used
+	// to create properties on the element.
+	function ensurePropertyDefinitions(Ctor) {
+	  var props = ensurePropertyFunctions(Ctor);
+	  return Object.keys(props).reduce(function (descriptors, descriptorName) {
+	    descriptors[descriptorName] = props[descriptorName](descriptorName);
+	    return descriptors;
+	  }, {});
+	}
+
+	// Makes a function / constructor for the custom element that automates the
+	// boilerplate of ensuring the parent constructor is called first and ensures
+	// that the element is returned at the end.
+	function createConstructor(name, Ctor) {
+	  if ((typeof Ctor === 'undefined' ? 'undefined' : babelHelpers.typeof(Ctor)) === 'object') {
+	    var opts = getAllPropertyDescriptors(Ctor);
+	    var prot = getOwnPropertyDescriptors(Ctor.prototype);
+
+	    // The prototype is non-configurable, so we remove it before it tries to
+	    // define it.
+	    delete opts.prototype;
+
+	    Ctor = function (_Component) {
+	      babelHelpers.inherits(Ctor, _Component);
+
+	      function Ctor() {
+	        babelHelpers.classCallCheck(this, Ctor);
+	        return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Ctor).apply(this, arguments));
+	      }
+
+	      return Ctor;
+	    }(Component);
+
+	    Object.defineProperties(Ctor, opts);
+	    Object.defineProperties(Ctor.prototype, prot);
+	  }
+
+	  Ctor.prototype.attributeChangedCallback = attributeChanged(Ctor);
+	  Ctor.prototype.connectedCallback = function () {
+	    Ctor.attached && Ctor.attached(this);
+	  };
+	  Ctor.prototype.disconnectedCallback = function () {
+	    Ctor.detached && Ctor.detached(this);
+	  };
+
+	  // WebKit currently doesn't allow you to overwrite "name" so we have to use
+	  // "id" for cross-browser compat right now.
+	  Object.defineProperty(Ctor, 'id', { value: name });
+
+	  // We do set "name" in browsers that support it, though.
+	  if (Object.getOwnPropertyDescriptor(Ctor, 'name').configurable) {
+	    Object.defineProperty(Ctor, 'name', { value: name });
+	  }
+
+	  return Ctor;
 	}
 
 	// Ensures linked properties that have linked attributes are pre-formatted to
 	// the attribute name in which they are linked.
-	function ensureLinkedAttributesAreFormatted(opts) {
-	  var observedAttributes = opts.observedAttributes;
-	  var props = opts.props;
+	function formatLinkedAttributes(Ctor) {
+	  var observedAttributes = Ctor.observedAttributes;
+	  var props = Ctor.props;
 
 
 	  if (!props) {
@@ -2887,120 +2398,47 @@ var symbols$2 = Object.freeze({
 	      }
 	    }
 	  });
+
+	  Ctor.observedAttributes = observedAttributes;
 	}
 
-	// The main skate() function.
-	function define (name, opts) {
-	  // Ensure the observed attributes are initialised.
-	  opts.observedAttributes = opts.observedAttributes || [];
+	function createInitProps(Ctor) {
+	  var props = ensurePropertyDefinitions(Ctor);
 
-	  // Ensure the render function render's using Incremental DOM.
-	  opts.renderer = render(opts);
+	  return function (elem) {
+	    if (!props) {
+	      return;
+	    }
 
-	  var Ctor = createConstructor(name, opts);
-	  addConstructorInformation(name, Ctor);
-	  ensureLinkedAttributesAreFormatted(Ctor);
+	    Object.keys(props).forEach(function (name) {
+	      var prop = props[name];
+	      prop.created(elem);
 
-	  // If the options don't inherit a native element prototype, we ensure it does
-	  // because native requires you explicitly do this. Here we solve the common
-	  // use case by defaulting to HTMLElement.prototype.
-	  if (!HTMLElement.prototype.isPrototypeOf(Ctor.prototype) && !SVGElement.prototype.isPrototypeOf(Ctor.prototype)) {
-	    var proto = (Ctor.extends ? document.createElement(Ctor.extends).constructor : HTMLElement).prototype;
-	    Ctor.prototype = Object.create(proto, getOwnPropertyDescriptors(Ctor.prototype));
-	  }
+	      // https://bugs.webkit.org/show_bug.cgi?id=49739
+	      //
+	      // When Webkit fixes that bug so that native property accessors can be
+	      // retrieved, we can move defining the property to the prototype and away
+	      // from having to do if for every instance as all other browsers support
+	      // this.
+	      Object.defineProperty(elem, name, prop);
+	    });
+	  };
+	}
 
-	  // We assign native callbacks to handle the callbacks specified in the
-	  // Skate definition. This allows us to abstract away any changes that may
-	  // occur in the spec.
-	  assign(Ctor.prototype, {
-	    createdCallback: created(Ctor),
-	    attachedCallback: attached(Ctor),
-	    detachedCallback: detached(Ctor),
-	    attributeChangedCallback: attribute(Ctor)
-	  });
-
-	  // In polyfill land we must emulate what the browser would normally do in
-	  // native.
-	  if (support.polyfilled) {
-	    initDocument();
-	    documentObserver.register();
-	  }
-
-	  customElements.define(name, Ctor);
-	  return customElements.get(name);
+	function define (name, Ctor) {
+	  Ctor = createConstructor(name, Ctor);
+	  formatLinkedAttributes(Ctor);
+	  Ctor[events] = events$1(Ctor);
+	  Ctor[props] = createInitProps(Ctor);
+	  Ctor[renderer] = createRenderer(Ctor);
+	  window.customElements.define(name, Ctor);
+	  return window.customElements.get(name);
 	}
 
 	function factory (opts) {
 	  return function (name) {
 	    return define(name, opts);
 	  };
-	}
-
-	var _window$1 = window;
-	var Node$1 = _window$1.Node;
-	var NodeList = _window$1.NodeList;
-
-	var slice = Array.prototype.slice;
-	var specialMap = {
-	  caption: 'table',
-	  dd: 'dl',
-	  dt: 'dl',
-	  li: 'ul',
-	  tbody: 'table',
-	  td: 'tr',
-	  thead: 'table',
-	  tr: 'tbody'
-	};
-
-	function resolveParent(tag, html) {
-	  var container = document.createElement('div');
-	  var levels = 0;
-	  var parentTag = specialMap[tag];
-
-	  while (parentTag) {
-	    html = '<' + parentTag + '>' + html + '</' + parentTag + '>';
-	    ++levels;
-	    parentTag = specialMap[parentTag];
-	  }
-
-	  container.innerHTML = html;
-
-	  var parent = container;
-	  for (var a = 0; a < levels; a++) {
-	    parent = parent.firstElementChild;
-	  }
-	  return parent;
-	}
-
-	function resolveTag(html) {
-	  var tag = html.match(/^<([^\s>]+)/);
-	  return tag && tag[1];
-	}
-
-	function resolveHtml(html) {
-	  return resolveParent(resolveTag(html), html);
-	}
-
-	function fragment() {
-	  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	    args[_key] = arguments[_key];
-	  }
-
-	  return args.reduce(function (frag, node) {
-	    if (typeof node === 'string') {
-	      node = fragment.apply(null, slice.call(resolveHtml(node).childNodes));
-	    } else if (node instanceof NodeList || Array.isArray(node)) {
-	      node = fragment.apply(null, slice.call(node));
-	    } else if (node instanceof Node$1) {
-	      init(node);
-	    }
-
-	    if (node) {
-	      frag.appendChild(node);
-	    }
-
-	    return frag;
-	  }, document.createDocumentFragment());
 	}
 
 	function get(elem) {
@@ -3016,10 +2454,9 @@ var symbols$2 = Object.freeze({
 	}
 
 	function set(elem, newState) {
-	  var renderer = elem.constructor.renderer;
 	  assign(elem, newState);
-	  if (renderer) {
-	    renderer(elem);
+	  if (elem.constructor.render) {
+	    elem.constructor[renderer](elem);
 	  }
 	}
 
@@ -3116,7 +2553,7 @@ var symbols$2 = Object.freeze({
 	var number = prop(propNumber);
 	var string = prop(propString);
 
-var props = Object.freeze({
+var props$1 = Object.freeze({
 	  default: prop,
 	  array: array,
 	  boolean: boolean,
@@ -3124,42 +2561,20 @@ var props = Object.freeze({
 	  string: string
 	});
 
-	function ready(element) {
-	  var component = findElementInRegistry(element);
-	  return component && data(element).created;
-	}
-
-	function ready$1 (elements, callback) {
-	  var collection = elements.length === undefined ? [elements] : elements;
-	  var collectionLength = collection.length;
-	  var readyCount = 0;
-
-	  function callbackIfReady() {
-	    ++readyCount;
-	    if (readyCount === collectionLength) {
-	      callback(elements);
-	    }
-	  }
-
-	  for (var a = 0; a < collectionLength; a++) {
-	    var elem = collection[a];
-
-	    if (ready(elem)) {
-	      callbackIfReady();
-	    } else {
-	      var info = data(elem);
-	      if (info.readyCallbacks) {
-	        info.readyCallbacks.push(callbackIfReady);
-	      } else {
-	        info.readyCallbacks = [callbackIfReady];
-	      }
-	    }
+	function ready (elem, done) {
+	  var info = data(elem);
+	  if (info.created) {
+	    done(elem);
+	  } else if (info.readyCallbacks) {
+	    info.readyCallbacks.push(done);
+	  } else {
+	    info.readyCallbacks = [done];
 	  }
 	}
 
 	var version = '0.15.3';
 
-	assign(prop, props);
+	assign(prop, props$1);
 	assign(create$1, vdomElements);
 
 	var previousGlobal = window.skate;
@@ -3174,13 +2589,11 @@ var props = Object.freeze({
 	exports.define = define;
 	exports.emit = emit;
 	exports.factory = factory;
-	exports.fragment = fragment;
-	exports.init = init;
 	exports.link = link$1;
 	exports.prop = prop;
-	exports.ready = ready$1;
+	exports.ready = ready;
 	exports.state = state;
-	exports.symbols = symbols$2;
+	exports.symbols = symbols;
 	exports.vdom = create$1;
 	exports.version = version;
 

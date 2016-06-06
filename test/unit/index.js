@@ -8,11 +8,6 @@ describe('exports', function () {
     expect(umd).to.be.an('object');
   });
 
-  it('skate.create', function () {
-    expect(api.create).to.be.a('function');
-    expect(umd.create).to.be.a('function');
-  });
-
   it('skate.define', function () {
     expect(api.define).to.be.a('function');
     expect(umd.define).to.be.a('function');
