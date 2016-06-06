@@ -153,8 +153,11 @@
 	  return typeof val === 'undefined' || val === null;
 	}
 
-	var alwaysUndefinedIfEmpty = function alwaysUndefinedIfEmpty(val) {
+	var alwaysUndefinedIfEmptyOrNumber = function alwaysUndefinedIfEmptyOrNumber(val) {
 	  return empty(val) ? undefined : Number(val);
+	};
+	var alwaysUndefinedIfEmptyOrString = function alwaysUndefinedIfEmptyOrString(val) {
+	  return empty(val) ? undefined : String(val);
 	};
 
 	function create(def) {
@@ -193,15 +196,15 @@
 	});
 
 	var number = create({
-	  coerce: alwaysUndefinedIfEmpty,
-	  deserialize: alwaysUndefinedIfEmpty,
-	  serialize: alwaysUndefinedIfEmpty
+	  coerce: alwaysUndefinedIfEmptyOrNumber,
+	  deserialize: alwaysUndefinedIfEmptyOrNumber,
+	  serialize: alwaysUndefinedIfEmptyOrNumber
 	});
 
 	var string = create({
-	  coerce: alwaysUndefinedIfEmpty,
-	  deserialize: alwaysUndefinedIfEmpty,
-	  serialize: alwaysUndefinedIfEmpty
+	  coerce: alwaysUndefinedIfEmptyOrString,
+	  deserialize: alwaysUndefinedIfEmptyOrString,
+	  serialize: alwaysUndefinedIfEmptyOrString
 	});
 
 var prop = Object.freeze({
