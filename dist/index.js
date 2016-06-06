@@ -17,6 +17,24 @@
 	  }
 	};
 
+	babelHelpers.createClass = function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];
+	      descriptor.enumerable = descriptor.enumerable || false;
+	      descriptor.configurable = true;
+	      if ("value" in descriptor) descriptor.writable = true;
+	      Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }
+
+	  return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+	    if (staticProps) defineProperties(Constructor, staticProps);
+	    return Constructor;
+	  };
+	}();
+
 	babelHelpers.defineProperty = function (obj, key, value) {
 	  if (key in obj) {
 	    Object.defineProperty(obj, key, {
@@ -216,12 +234,14 @@ var prop = Object.freeze({
 	});
 
 	var events = '____events';
+	var name = '____name';
 	var props = '____props';
 	var renderer = '____renderer';
 	var shadowRoot = '____shadowRoot';
 
 var symbols = Object.freeze({
 		events: events,
+		name: name,
 		props: props,
 		renderer: renderer,
 		shadowRoot: shadowRoot
@@ -1622,7 +1642,7 @@ var symbols = Object.freeze({
 	function create$1(tname, attrs, chren) {
 	  // Allow a component constructor to be passed in.
 	  if (typeof tname === 'function') {
-	    tname = tname.id || tname.name;
+	    tname = tname[symbols$1.name];
 	  }
 	  // Return the cached factory or create a new one and return it.
 	  return (factories[tname] || bind(tname))(attrs, chren);
@@ -1927,6 +1947,58 @@ var vdom = Object.freeze({
 	  };
 	}
 
+	function getOwnPropertyDescriptors (obj) {
+	  return Object.getOwnPropertyNames(obj || {}).reduce(function (prev, curr) {
+	    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
+	    return prev;
+	  }, {});
+	}
+
+	function init(elem) {
+	  var elemData = data$1(elem);
+	  var readyCallbacks = elemData.readyCallbacks;
+	  var Ctor = elem.constructor;
+	  var definedAttribute = Ctor.definedAttribute;
+	  var events$$ = Ctor.events;
+	  var created = Ctor.created;
+	  var props$$ = Ctor.props;
+	  var ready = Ctor.ready;
+	  var renderedAttribute = Ctor.renderedAttribute;
+
+	  var renderer$$ = Ctor[renderer];
+
+	  if (props$$) {
+	    Ctor[props](elem);
+	  }
+
+	  if (events$$) {
+	    Ctor[events](elem);
+	  }
+
+	  if (created) {
+	    created(elem);
+	  }
+
+	  if (renderer$$ && !elem.hasAttribute(renderedAttribute)) {
+	    renderer$$(elem);
+	  }
+
+	  if (ready) {
+	    ready(elem);
+	  }
+
+	  if (!elem.hasAttribute(definedAttribute)) {
+	    elem.setAttribute(definedAttribute, '');
+	  }
+
+	  if (readyCallbacks) {
+	    readyCallbacks.forEach(function (cb) {
+	      return cb(elem);
+	    });
+	    delete elemData.readyCallbacks;
+	  }
+	}
+
 	var Component = function (_HTMLElement) {
 	  babelHelpers.inherits(Component, _HTMLElement);
 
@@ -1935,67 +2007,86 @@ var vdom = Object.freeze({
 
 	    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this));
 
-	    var elemData = data$1(_this);
-	    var readyCallbacks = elemData.readyCallbacks;
-	    var Ctor = _this.constructor;
-	    var _this$constructor = _this.constructor;
-	    var definedAttribute = _this$constructor.definedAttribute;
-	    var events$$ = _this$constructor.events;
-	    var created = _this$constructor.created;
-	    var props$$ = _this$constructor.props;
-	    var ready = _this$constructor.ready;
-	    var renderedAttribute = _this$constructor.renderedAttribute;
-
-	    var renderer$$ = Ctor[renderer];
-
-	    if (elemData.created) {
-	      return babelHelpers.possibleConstructorReturn(_this);
-	    }
-
-	    elemData.created = true;
-
-	    if (props$$) {
-	      Ctor[props](_this);
-	    }
-
-	    if (events$$) {
-	      Ctor[events](_this);
-	    }
-
-	    if (created) {
-	      created(_this);
-	    }
-
-	    if (renderer$$ && !_this.hasAttribute(renderedAttribute)) {
-	      renderer$$(_this);
-	    }
-
-	    if (ready) {
-	      ready(_this);
-	    }
-
-	    if (!_this.hasAttribute(definedAttribute)) {
-	      _this.setAttribute(definedAttribute, '');
-	    }
-
-	    if (readyCallbacks) {
-	      readyCallbacks.forEach(function (cb) {
-	        return cb(_this);
-	      });
-	      delete elemData.readyCallbacks;
-	    }
+	    init(_this);
 	    return _this;
 	  }
 
+	  babelHelpers.createClass(Component, null, [{
+	    key: 'create',
+	    value: function create() {
+	      var definition = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+	      function Ctor() {
+	        var elem = HTMLElement.call(this);
+	        init(elem);
+	        return elem;
+	      }
+
+	      // Merge both the static options from Component and override with user-defined ones.
+	      var opts = assign(getOwnPropertyDescriptors(this), getOwnPropertyDescriptors(definition));
+
+	      // Merge both the user-defined prototype but ensure "constructor" is correctly set to Ctor.
+	      var prot = assign(getOwnPropertyDescriptors(definition.prototype), getOwnPropertyDescriptors(Ctor.prototype));
+
+	      // Prototype is non configurable (but is writable).
+	      delete opts.prototype;
+
+	      // Pass on static members.
+	      Object.defineProperties(Ctor, opts);
+
+	      // Setup with the correct prototype.
+	      Ctor.prototype = Object.create(HTMLElement.prototype, prot);
+
+	      // Provide a setter for __proto__ as this is what the v1 polyfill uses to
+	      // set the prototype. This may not be necessary if attributeChangedCallback
+	      // is fired for existing attributes in a micro / macro task instead of
+	      // synchronously as it is now.
+	      if (!Ctor.setPrototypeOf) {
+	        Object.defineProperty(Element.prototype, '__proto__', {
+	          configurable: true,
+	          enumerable: false,
+	          get: function get() {
+	            return this.constructor.prototype;
+	          },
+	          set: function set(prototype) {
+	            var prot = getOwnPropertyDescriptors(prototype);
+	            for (var name in prot) {
+	              Object.defineProperty(this, name, prot[name]);
+	            }
+	          }
+	        });
+	      }
+
+	      return Ctor;
+	    }
+	  }, {
+	    key: 'definedAttribute',
+	    get: function get() {
+	      return 'defined';
+	    }
+	  }, {
+	    key: 'events',
+	    get: function get() {
+	      return {};
+	    }
+	  }, {
+	    key: 'observedAttributes',
+	    get: function get() {
+	      return [];
+	    }
+	  }, {
+	    key: 'props',
+	    get: function get() {
+	      return {};
+	    }
+	  }, {
+	    key: 'renderedAttribute',
+	    get: function get() {
+	      return 'rendered';
+	    }
+	  }]);
 	  return Component;
 	}(HTMLElement);
-
-	Component.definedAttribute = 'defined';
-	Component.events = {};
-	Component.extends = null;
-	Component.observedAttributes = [];
-	Component.props = {};
-	Component.renderedAttribute = 'rendered';
 
 	var elProto = window.HTMLElement.prototype;
 	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
@@ -2108,34 +2199,6 @@ var vdom = Object.freeze({
 	    var dash = !one || idx % 2 === 0 ? '' : '-';
 	    return '' + one + dash + two.toLowerCase();
 	  });
-	}
-
-	function getOwnPropertyDescriptors (obj) {
-	  return Object.getOwnPropertyNames(obj || {}).reduce(function (prev, curr) {
-	    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
-	    return prev;
-	  }, {});
-	}
-
-	function protos (proto) {
-	  var chains = [];
-	  while (proto) {
-	    chains.push(proto);
-	    proto = Object.getPrototypeOf(proto);
-	  }
-	  chains.reverse();
-	  return chains;
-	}
-
-	function getAllPropertyDescriptors (obj) {
-	  return protos(obj || {}).reduce(function (result, proto) {
-	    var descriptors = getOwnPropertyDescriptors(proto);
-	    Object.getOwnPropertyNames(descriptors).reduce(function (result, name) {
-	      result[name] = descriptors[name];
-	      return result;
-	    }, result);
-	    return result;
-	  }, {});
 	}
 
 	var raf = window.requestAnimationFrame || setTimeout;
@@ -2374,30 +2437,12 @@ var vdom = Object.freeze({
 	// Makes a function / constructor for the custom element that automates the
 	// boilerplate of ensuring the parent constructor is called first and ensures
 	// that the element is returned at the end.
-	function createConstructor(name, Ctor) {
+	function createConstructor(name$$, Ctor) {
 	  if ((typeof Ctor === 'undefined' ? 'undefined' : babelHelpers.typeof(Ctor)) === 'object') {
-	    var opts = getAllPropertyDescriptors(Ctor);
-	    var prot = getOwnPropertyDescriptors(Ctor.prototype);
-
-	    // The prototype is non-configurable, so we remove it before it tries to
-	    // define it.
-	    delete opts.prototype;
-
-	    Ctor = function (_Component) {
-	      babelHelpers.inherits(Ctor, _Component);
-
-	      function Ctor() {
-	        babelHelpers.classCallCheck(this, Ctor);
-	        return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Ctor).apply(this, arguments));
-	      }
-
-	      return Ctor;
-	    }(Component);
-
-	    Object.defineProperties(Ctor, opts);
-	    Object.defineProperties(Ctor.prototype, prot);
+	    Ctor = Component.create(Ctor);
 	  }
 
+	  // Map callbacks.
 	  Ctor.prototype.attributeChangedCallback = attributeChanged(Ctor);
 	  Ctor.prototype.connectedCallback = function () {
 	    Ctor.attached && Ctor.attached(this);
@@ -2406,15 +2451,8 @@ var vdom = Object.freeze({
 	    Ctor.detached && Ctor.detached(this);
 	  };
 
-	  // WebKit currently doesn't allow you to overwrite "name" so we have to use
-	  // "id" for cross-browser compat right now.
-	  Object.defineProperty(Ctor, 'id', { value: name });
-
-	  // We do set "name" in browsers that support it, though.
-	  var nameDesc = Object.getOwnPropertyDescriptor(Ctor, 'name');
-	  if (nameDesc && nameDesc.configurable) {
-	    Object.defineProperty(Ctor, 'name', { value: name });
-	  }
+	  // Internal data.
+	  Ctor[name] = name$$;
 
 	  return Ctor;
 	}
@@ -2445,7 +2483,12 @@ var vdom = Object.freeze({
 	    }
 	  });
 
-	  Ctor.observedAttributes = observedAttributes;
+	  // Merge observed attributes.
+	  Object.defineProperty(Ctor, 'observedAttributes', {
+	    get: function get() {
+	      return observedAttributes;
+	    }
+	  });
 	}
 
 	function createInitProps(Ctor) {
@@ -2481,7 +2524,7 @@ var vdom = Object.freeze({
 	    window.customElements.define(name, Ctor);
 	    return window.customElements.get(name);
 	  } else {
-	    throw new Error('Skate requires custom element v1 support. Please include a polyfill for this browser.');
+	    throw new Error('Skate requires Custom Elements V1 support. Please include a polyfill for this browser.');
 	  }
 	}
 
