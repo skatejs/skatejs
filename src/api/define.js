@@ -1,5 +1,5 @@
 import * as symbols from './symbols';
-import { customElementsV0, customElementsV1 } from '../util/support';
+import { customElementsV1 } from '../util/support';
 import attributeChanged from '../lifecycle/attribute-changed';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
@@ -60,7 +60,8 @@ function createConstructor (name, Ctor) {
   Object.defineProperty(Ctor, 'id', { value: name });
 
   // We do set "name" in browsers that support it, though.
-  if (Object.getOwnPropertyDescriptor(Ctor, 'name').configurable) {
+  const nameDesc = Object.getOwnPropertyDescriptor(Ctor, 'name');
+  if (nameDesc && nameDesc.configurable) {
     Object.defineProperty(Ctor, 'name', { value: name });
   }
 
