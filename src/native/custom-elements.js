@@ -249,8 +249,7 @@ var CustomElementDefinition;
           attributeFilter: definition.observedAttributes,
         });
 
-        // Trigger for initial values.
-
+        // Trigger attributeChangedCallback for existing attributes.
         definition.observedAttributes.forEach(function (name) {
           if (element.hasAttribute(name)) {
             element.attributeChangedCallback(name, null, element.getAttribute(name));
@@ -311,19 +310,9 @@ var CustomElementDefinition;
     var customElements = win['customElements'];
     var element = rawCreateElement(tagName);
     var definition = customElements._definitions.get(tagName.toLowerCase());
-
     if (definition) {
       customElements._upgradeElement(element, definition, callConstructor);
-    } else {
-      const patchedConstructor = win[element.constructor.name];
-      if (patchedConstructor) {
-        Object.defineProperty(element, 'constructor', {
-          enumerable: false,
-          value: patchedConstructor
-        });
-      }
     }
-
     return element;
   };
   doc.createElement = function(tagName) {
@@ -345,5 +334,6 @@ var CustomElementDefinition;
   /** @type {CustomElementsRegistry} */
   window['customElements'] = new CustomElementsRegistry();
 })();
+
 
 export default window.customElements;
