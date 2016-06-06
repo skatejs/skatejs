@@ -24,7 +24,7 @@
     "incremental-dom": "0.4.0",
     "skatejs-build": "skatejs/build#cdcbcfc",
     "skatejs-named-slots": "skatejs/named-slots#00daacd",
-    "webcomponents.js": "0.7.22"
+    "webcomponents.js": "skatejs/webcomponentsjs#f2ad8be"
   },
   "scripts": {
     "test": "karma start --single-run"
