@@ -1,4 +1,5 @@
 // TODO Move this to the Karma config once it's consumable from the dist.
+import 'es6-map/polyfill';
 import 'webcomponents.js/src/CustomElements/v1/CustomElements';
 
 import helperFixture from './lib/fixture';
