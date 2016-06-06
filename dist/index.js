@@ -2411,7 +2411,8 @@ var vdom = Object.freeze({
 	  Object.defineProperty(Ctor, 'id', { value: name });
 
 	  // We do set "name" in browsers that support it, though.
-	  if (Object.getOwnPropertyDescriptor(Ctor, 'name').configurable) {
+	  var nameDesc = Object.getOwnPropertyDescriptor(Ctor, 'name');
+	  if (nameDesc && nameDesc.configurable) {
 	    Object.defineProperty(Ctor, 'name', { value: name });
 	  }
 
