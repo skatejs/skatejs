@@ -90,7 +90,15 @@ export default class Component extends HTMLElement {
     delete opts.prototype;
 
     // Pass on static members.
-    Object.defineProperties(Ctor, opts);
+    // We can't just call Object.defineProperties() because WebKit has a lot of
+    // non-configurable properties which we must filter out. These won't be any
+    // we need anyways.
+    for (let name in opts) {
+      const prop = opts[name];
+      if (prop.configurable) {
+        Object.defineProperty(Ctor, name, opts[name]);
+      }
+    }
 
     // Setup with the correct prototype.
     Ctor.prototype = Object.create(HTMLElement.prototype, prot);
