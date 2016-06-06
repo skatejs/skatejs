@@ -1,13 +1,4 @@
-const v0 = !!document.registerElement;
-const v1 = !!window.customElements;
-const polyfilled = !v0 && !v1;
-const shadowDomV0 = !!('createShadowRoot' in Element.prototype);
-const shadowDomV1 = !!('attachShadow' in Element.prototype);
-
-export default {
-  v0,
-  v1,
-  polyfilled ,
-  shadowDomV0,
-  shadowDomV1
-};
+export const customElementsV0 = 'registerElement' in document;
+export const customElementsV1 = 'customElements' in window;
+export const shadowDomV0 = 'createShadowRoot' in Element.prototype;
+export const shadowDomV1 = 'attachShadow' in Element.prototype;

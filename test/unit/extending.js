@@ -1,5 +1,5 @@
 import helperElement from '../lib/element';
-import skate, { create, symbols, vdom } from '../../src/index';
+import skate, { symbols, vdom } from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;
@@ -72,7 +72,7 @@ describe('extending', function () {
 
   canExtendStaticProperties && it('constructor should be accessible', function () {
     skate(tag, class extends Ctor {});
-    const el = create(tag);
+    const el = document.createElement(tag);
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });

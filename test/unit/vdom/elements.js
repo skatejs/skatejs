@@ -1,7 +1,7 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import support from '../../../src/native/support';
+import { shadowDomV0, shadowDomV1 } from '../../../src/native/support';
 import { symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', function () {
@@ -27,9 +27,9 @@ describe('vdom/elements', function () {
     const ch1 = elem1[symbols.shadowRoot].firstElementChild;
     const ch2 = elem2[symbols.shadowRoot].firstElementChild;
 
-    if (support.shadowDomV1) {
+    if (shadowDomV1) {
       assertSlotElement();
-    } else if (support.shadowDomV0) {
+    } else if (shadowDomV0) {
       expect(ch1.tagName).to.equal('CONTENT', 'vdom');
       expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
       expect(ch2.tagName).to.equal('CONTENT', 'vdom(slot)');

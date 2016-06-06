@@ -1,5 +1,5 @@
 import * as IncrementalDOM from 'incremental-dom';
-import support from '../native/support';
+import { shadowDomV0, shadowDomV1 } from '../native/support';
 
 // Could import these, but we have to import all of IncrementalDOM anyways so
 // that we can export our configured IncrementalDOM.
@@ -80,7 +80,7 @@ function applyEvent (elem, ename, name, value) {
 
 // Creates a factory and returns it.
 function bind (tname) {
-  const shouldBeContentTag = tname === 'slot' && !support.shadowDomV1 && support.shadowDomV0;
+  const shouldBeContentTag = tname === 'slot' && !shadowDomV1 && shadowDomV0;
 
   // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
   if (shouldBeContentTag) {
