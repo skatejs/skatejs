@@ -1,7 +1,7 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { shadowDomV0, shadowDomV1 } from '../../../src/native/support';
+import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
 import { symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', function () {

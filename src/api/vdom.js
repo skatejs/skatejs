@@ -1,5 +1,5 @@
 import * as IncrementalDOM from 'incremental-dom';
-import { shadowDomV0, shadowDomV1 } from '../native/support';
+import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 // Could import these, but we have to import all of IncrementalDOM anyways so
 // that we can export our configured IncrementalDOM.

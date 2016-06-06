@@ -1,4 +1,5 @@
 import * as symbols from './symbols';
+import { customElementsV0, customElementsV1 } from '../util/support';
 import attributeChanged from '../lifecycle/attribute-changed';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
@@ -122,6 +123,10 @@ export default function (name, Ctor) {
   Ctor[symbols.events] = createInitEvents(Ctor);
   Ctor[symbols.props] = createInitProps(Ctor);
   Ctor[symbols.renderer] = createRenderer(Ctor);
-  window.customElements.define(name, Ctor);
-  return window.customElements.get(name);
+  if (customElementsV1) {
+    window.customElements.define(name, Ctor);
+    return window.customElements.get(name);
+  } else {
+    throw new Error('Skate requires custom element v1 support. Please include a polyfill for this browser.');
+  }
 }
