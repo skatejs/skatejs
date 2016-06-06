@@ -1,12 +1,12 @@
+import { define } from '../../../src/index';
 import helperElement from '../../lib/element';
-import skate from '../../../src/index';
 
 describe('lifecycle/ready', function () {
   let tag;
 
   beforeEach(function () {
     tag = helperElement();
-    skate(tag.safe, {
+    define(tag.safe, {
       ready: function (elem) {
         elem.innerHTML = 'templated';
       }
@@ -20,7 +20,7 @@ describe('lifecycle/ready', function () {
 
   it('should be called after created is called', function () {
     const { safe: tagName } = helperElement('my-el');
-    const MyEl = skate(tagName, {
+    const MyEl = define(tagName, {
       created (elem) {
         elem.created = true;
       },
@@ -34,7 +34,7 @@ describe('lifecycle/ready', function () {
 
   it('should have access to the extended prototype', function () {
     const { safe: tagName } = helperElement('my-el');
-    const MyEl = skate(tagName, {
+    const MyEl = define(tagName, {
       prototype: {
         myfunc () {}
       },

@@ -1,16 +1,14 @@
-'use strict';
-
+import { define } from '../../src/index';
 import helperElement from '../lib/element';
-import skate from '../../src/index';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
     var multiple = false;
     var tag = helperElement('my-el');
-    skate(tag.safe, {});
+    define(tag.safe, {});
 
     try {
-      skate(tag.safe, {});
+      define(tag.safe, {});
       multiple = true;
     } catch (e) {
       // Do nothing
@@ -23,7 +21,7 @@ describe('Registration', function () {
 describe('Returning a constructor', function () {
   it('should return a constructor that extends a native element.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: {
         func1: function () {}
       }
@@ -47,7 +45,7 @@ describe('Returning a constructor', function () {
 
   it('should not allow the constructor property to be enumerated.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {});
+    var Element = define(tag.safe, {});
 
     for (var prop in Element.prototype) {
       if (prop === 'constructor') {
@@ -58,7 +56,7 @@ describe('Returning a constructor', function () {
 
   it('should affect the element prototype even if it was not constructed using the constructor.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: {
         func1: function () {}
       }
@@ -74,7 +72,7 @@ describe('Returning a constructor', function () {
 
   it('should allow getters and setters on the prototype', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: Object.create({}, {
         test: {
           get: function () {
@@ -91,7 +89,7 @@ describe('Returning a constructor', function () {
   it('should overwrite prototype members', function () {
     var called = false;
     var { safe: tagName } = helperElement('super-input');
-    var Input = skate(tagName, {
+    var Input = define(tagName, {
       extends: 'input',
       prototype: {
         focus: function () {

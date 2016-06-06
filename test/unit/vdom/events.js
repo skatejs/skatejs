@@ -13,7 +13,7 @@ describe('vdom/events (on*)', function () {
         elem._test = 0;
       },
       render (elem) {
-        vdom('div', {
+        vdom.create('div', {
           onevent () {
             elem._test++;
           }
@@ -51,7 +51,7 @@ describe('vdom/events (on*)', function () {
     const test = () => called = true;
     const myel = new (element().skate({
       render () {
-        vdom('div', { ontest: test }, vdom.bind(null, 'span'));
+        vdom.create('div', { ontest: test }, vdom.create.bind(null, 'span'));
       }
     }));
     emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
@@ -61,7 +61,7 @@ describe('vdom/events (on*)', function () {
   it('should not fail for listeners that are not functions', function () {
     const myel = new (element().skate({
       render () {
-        vdom('div', { ontest: null });
+        vdom.create('div', { ontest: null });
       }
     }));
     emit(myel[symbols.shadowRoot].firstChild, 'test');
@@ -82,9 +82,9 @@ describe('vdom/events (on*)', function () {
         },
         render (elem) {
           if (elem.unbind) {
-            vdom('div');
+            vdom.create('div');
           } else {
-            vdom('div', { onclick: inc, ontest: inc });
+            vdom.create('div', { onclick: inc, ontest: inc });
           }
         }
       }));

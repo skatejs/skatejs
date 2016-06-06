@@ -1,6 +1,6 @@
+import { define } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import ready from '../../../src/api/ready';
-import skate from '../../../src/index';
 import unique from '../../lib/element';
 
 describe('api/ready', function () {
@@ -8,7 +8,7 @@ describe('api/ready', function () {
   let tag;
 
   function setup () {
-    skate(tag, {});
+    define(tag, {});
   }
 
   beforeEach(function () {

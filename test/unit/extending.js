@@ -1,5 +1,5 @@
 import helperElement from '../lib/element';
-import skate, { symbols, vdom } from '../../src/index';
+import { define, symbols, vdom } from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;
@@ -11,7 +11,7 @@ describe('extending', function () {
   var canResolveSuper = !!Object.setPrototypeOf;
 
   beforeEach(function () {
-    Ctor = skate(helperElement().safe, {
+    Ctor = define(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
       created () {},
@@ -37,7 +37,7 @@ describe('extending', function () {
   });
 
   it('should copy all configuration options to the extended object', function () {
-    const ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, class extends Ctor {});
     if (canExtendStaticProperties) {
       expect(ExtendedCtor.extends).to.equal('div');
       expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
@@ -49,18 +49,18 @@ describe('extending', function () {
   });
 
   it('prototype members should be available', function () {
-    const ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, class extends Ctor {});
     expect(new ExtendedCtor().test).to.equal(true);
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
   canExtendStaticProperties && it('should not mess with callbacks', function () {
-    const ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, class extends Ctor {});
     expect(new ExtendedCtor()[symbols.shadowRoot].textContent).to.equal('test');
   });
 
   canResolveSuper && it('should allow overriding of callbacks', function () {
-    const ExtendedCtor = skate(tag, class extends Ctor {
+    const ExtendedCtor = define(tag, class extends Ctor {
       static render (elem) {
         super.render(elem);
         vdom.text('ing');
@@ -71,7 +71,7 @@ describe('extending', function () {
   });
 
   canExtendStaticProperties && it('constructor should be accessible', function () {
-    skate(tag, class extends Ctor {});
+    define(tag, class extends Ctor {});
     const el = document.createElement(tag);
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');

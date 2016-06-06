@@ -122,7 +122,7 @@ function bind (tname) {
 }
 
 // The default function requries a tag name.
-export default function create (tname, attrs, chren) {
+export function create (tname, attrs, chren) {
   // Allow a component constructor to be passed in.
   if (typeof tname === 'function') {
     tname = tname.id || tname.name;

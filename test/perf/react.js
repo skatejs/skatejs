@@ -1,5 +1,5 @@
 import bench from 'skatejs-build/bench';
-import skate, { props, vdom } from '../../src/index';
+import { define, props, vdom } from '../../src/index';
 
 
 const { React, ReactDOM } = window;
@@ -7,31 +7,31 @@ const { React, ReactDOM } = window;
 
 // Skate components.
 
-skate('x-app', {
+define('x-app', {
   props: {
     title: props.string({ default: 0 })
   },
   render (elem) {
-    vdom('div', function () {
-      vdom('h1', elem.title);
-      vdom('x-list', function () {
+    vdom.create('div', function () {
+      vdom.create('h1', elem.title);
+      vdom.create('x-list', function () {
         for (let a = 0; a < 10; a++) {
-          vdom('x-item', `Item ${a}`);
+          vdom.create('x-item', `Item ${a}`);
         }
       });
     });
   }
 });
 
-skate('x-list', {
+define('x-list', {
   render () {
-    vdom('slot', { name: '' });
+    vdom.create('slot', { name: '' });
   }
 });
 
-skate('x-item', {
+define('x-item', {
   render () {
-    vdom('slot', { name: '' });
+    vdom.create('slot', { name: '' });
   }
 });
 

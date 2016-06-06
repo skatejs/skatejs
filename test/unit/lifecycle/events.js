@@ -1,7 +1,7 @@
 import afterMutations from '../../lib/after-mutations';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, ready, symbols, vdom } from '../../../src/index';
+import { define, emit, ready, symbols, vdom } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -17,7 +17,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on own element', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -29,7 +29,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on child elements', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -43,7 +43,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on descendant elements', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -57,7 +57,7 @@ describe('lifecycle/events', function () {
   });
 
   it('should allow you to re-add the element back into the DOM', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -113,7 +113,7 @@ describe('lifecycle/events', function () {
     var focus = false;
     var { safe: tagName } = helperElement('my-component');
 
-    skate(tagName, {
+    define(tagName, {
       events: {
         'blur input': () => blur = true,
         'focus input': () => focus = true

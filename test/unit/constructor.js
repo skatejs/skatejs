@@ -1,6 +1,6 @@
+import { define } from '../../src/index';
 import helperElement from '../lib/element';
 import resolved from '../lib/resolved';
-import skate from '../../src/index';
 
 describe('constructor', function () {
   var id;
@@ -10,7 +10,7 @@ describe('constructor', function () {
   });
 
   it('custom elements', function () {
-    var Ctor = skate(id, {});
+    var Ctor = define(id, {});
     var ctor = new Ctor();
     expect(resolved(ctor)).to.equal(true);
     expect(ctor.tagName.toLowerCase()).to.equal(id);

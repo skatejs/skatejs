@@ -1,4 +1,4 @@
-import skate from '../../src/index';
+import { define } from '../../src/index';
 
 let counter = 1;
 
@@ -10,6 +10,6 @@ export default function (unsafe) {
     unsafe: unsafe,
     safe: safe,
     create () { return document.createElement(this.safe); },
-    skate: skate.bind(null, safe)
+    skate: define.bind(null, safe)
   };
 }

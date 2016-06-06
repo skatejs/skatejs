@@ -15,7 +15,7 @@ describe('VdomIncrementalDOM', function () {
       expect(function () {
         new (element().skate({
           render () {
-            vdom('svg', { height: 100 });
+            vdom.create('svg', { height: 100 });
           }
         }));
       }).to.not.throw(Error);
@@ -25,7 +25,7 @@ describe('VdomIncrementalDOM', function () {
       const onclick = function () {};
       const elem = new (element().skate({
         render () {
-          vdom('div', { onclick });
+          vdom.create('div', { onclick });
         }
       }));
       expect(elem[symbols.shadowRoot].firstElementChild.onclick).to.equal(onclick);

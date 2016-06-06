@@ -1,9 +1,8 @@
-import skate, * as api from '../../src/index';
-import umd from '../../dist/index';
+import * as api from '../../src/index';
+import * as umd from '../../dist/index';
 
 describe('exports', function () {
   it('skate', function () {
-    expect(skate).to.be.a('function');
     expect(api).to.be.an('object');
     expect(umd).to.be.an('object');
   });
@@ -29,16 +28,18 @@ describe('exports', function () {
   });
 
   it('skate.prop', function () {
-    expect(api.prop).to.be.an('function');
-    expect(api.prop.array).to.be.a('function', 'api array');
-    expect(api.prop.boolean).to.be.a('function', 'api boolean');
-    expect(api.prop.number).to.be.a('function', 'api number');
-    expect(api.prop.string).to.be.a('function', 'api string');
-    expect(umd.prop).to.be.an('function');
-    expect(umd.prop.array).to.be.a('function', 'umd array');
-    expect(umd.prop.boolean).to.be.a('function', 'umd boolean');
-    expect(umd.prop.number).to.be.a('function', 'umd number');
-    expect(umd.prop.string).to.be.a('function', 'umd string');
+    expect(api.prop).to.be.an('object');
+    expect(api.prop.array).to.be.a('function', 'array');
+    expect(api.prop.boolean).to.be.a('function', 'boolean');
+    expect(api.prop.create).to.be.an('function', 'create');
+    expect(api.prop.number).to.be.a('function', 'number');
+    expect(api.prop.string).to.be.a('function', 'string');
+    expect(umd.prop).to.be.an('object');
+    expect(umd.prop.array).to.be.a('function', 'array');
+    expect(umd.prop.boolean).to.be.a('function', 'boolean');
+    expect(umd.prop.create).to.be.an('function', 'create');
+    expect(umd.prop.number).to.be.a('function', 'number');
+    expect(umd.prop.string).to.be.a('function', 'string');
   });
 
   it('skate.ready', function () {
@@ -59,8 +60,8 @@ describe('exports', function () {
   });
 
   it('vdom', function () {
-    expect(api.vdom).to.be.a('function');
-    expect(umd.vdom).to.be.a('function');
+    expect(api.vdom).to.be.an('object');
+    expect(umd.vdom).to.be.an('object');
   });
 
   it('skate.version', function () {

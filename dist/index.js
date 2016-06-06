@@ -149,6 +149,69 @@
 
 	var assign = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
 
+	function empty (val) {
+	  return typeof val === 'undefined' || val === null;
+	}
+
+	var alwaysUndefinedIfEmpty = function alwaysUndefinedIfEmpty(val) {
+	  return empty(val) ? undefined : Number(val);
+	};
+
+	function create(def) {
+	  return function () {
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    args.unshift({}, def);
+	    return assign.apply(null, args);
+	  };
+	}
+
+	var array = create({
+	  coerce: function coerce(val) {
+	    return Array.isArray(val) ? val : [val];
+	  },
+	  default: function _default() {
+	    return [];
+	  },
+	  deserialize: JSON.parse,
+	  serialize: JSON.stringify
+	});
+
+	var boolean = create({
+	  coerce: function coerce(value) {
+	    return !!value;
+	  },
+	  default: false,
+	  deserialize: function deserialize(value) {
+	    return !(value === null);
+	  },
+	  serialize: function serialize(value) {
+	    return value ? '' : undefined;
+	  }
+	});
+
+	var number = create({
+	  coerce: alwaysUndefinedIfEmpty,
+	  deserialize: alwaysUndefinedIfEmpty,
+	  serialize: alwaysUndefinedIfEmpty
+	});
+
+	var string = create({
+	  coerce: alwaysUndefinedIfEmpty,
+	  deserialize: alwaysUndefinedIfEmpty,
+	  serialize: alwaysUndefinedIfEmpty
+	});
+
+var prop = Object.freeze({
+	  create: create,
+	  array: array,
+	  boolean: boolean,
+	  number: number,
+	  string: string
+	});
+
 	var events = '____events';
 	var props = '____props';
 	var renderer = '____renderer';
@@ -160,194 +223,6 @@ var symbols = Object.freeze({
 		renderer: renderer,
 		shadowRoot: shadowRoot
 	});
-
-	var customElementsV1 = 'customElements' in window;
-	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
-	var shadowDomV1 = 'attachShadow' in Element.prototype;
-
-	function data (element) {
-	  var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-
-	  var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
-	  return namespace && (data[namespace] || (data[namespace] = {})) || data;
-	}
-
-	function attributeChanged (Ctor) {
-	  var attributeChanged = Ctor.attributeChanged;
-
-
-	  return function (name, oldValue, newValue) {
-	    var propertyName = data(this, 'attributeLinks')[name];
-
-	    if (propertyName) {
-	      var propData = data(this, 'api/property/' + propertyName);
-
-	      // This ensures a property set doesn't cause the attribute changed
-	      // handler to run again once we set this flag. This only ever has a
-	      // chance to run when you set an attribute, it then sets a property and
-	      // then that causes the attribute to be set again.
-	      if (propData.syncingAttribute) {
-	        propData.syncingAttribute = false;
-	        return;
-	      }
-
-	      // Sync up the property.
-	      var propOpts = this.constructor.props[propertyName];
-	      propData.settingAttribute = true;
-	      this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
-	    }
-
-	    if (attributeChanged) {
-	      attributeChanged(this, { name: name, newValue: newValue, oldValue: oldValue });
-	    }
-	  };
-	}
-
-	var Component = function (_HTMLElement) {
-	  babelHelpers.inherits(Component, _HTMLElement);
-
-	  function Component() {
-	    babelHelpers.classCallCheck(this, Component);
-
-	    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this));
-
-	    var elemData = data(_this);
-	    var readyCallbacks = elemData.readyCallbacks;
-	    var Ctor = _this.constructor;
-	    var _this$constructor = _this.constructor;
-	    var definedAttribute = _this$constructor.definedAttribute;
-	    var events$$ = _this$constructor.events;
-	    var created = _this$constructor.created;
-	    var props$$ = _this$constructor.props;
-	    var ready = _this$constructor.ready;
-	    var renderedAttribute = _this$constructor.renderedAttribute;
-
-	    var renderer$$ = Ctor[renderer];
-
-	    if (elemData.created) {
-	      return babelHelpers.possibleConstructorReturn(_this);
-	    }
-
-	    elemData.created = true;
-
-	    if (props$$) {
-	      Ctor[props](_this);
-	    }
-
-	    if (events$$) {
-	      Ctor[events](_this);
-	    }
-
-	    if (created) {
-	      created(_this);
-	    }
-
-	    if (renderer$$ && !_this.hasAttribute(renderedAttribute)) {
-	      renderer$$(_this);
-	    }
-
-	    if (ready) {
-	      ready(_this);
-	    }
-
-	    if (!_this.hasAttribute(definedAttribute)) {
-	      _this.setAttribute(definedAttribute, '');
-	    }
-
-	    if (readyCallbacks) {
-	      readyCallbacks.forEach(function (cb) {
-	        return cb(_this);
-	      });
-	      delete elemData.readyCallbacks;
-	    }
-	    return _this;
-	  }
-
-	  return Component;
-	}(HTMLElement);
-
-	Component.definedAttribute = 'defined';
-	Component.events = {};
-	Component.extends = null;
-	Component.observedAttributes = [];
-	Component.props = {};
-	Component.renderedAttribute = 'rendered';
-
-	var elProto = window.HTMLElement.prototype;
-	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
-
-	// Only IE9 has this msMatchesSelector bug, but best to detect it.
-	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
-
-	function matches (element, selector) {
-	  if (hasNativeMatchesSelectorDetattachedBug) {
-	    var clone = element.cloneNode();
-	    document.createElement('div').appendChild(clone);
-	    return nativeMatchesSelector.call(clone, selector);
-	  }
-	  return nativeMatchesSelector.call(element, selector);
-	}
-
-	function readonly(obj, prop, val) {
-	  Object.defineProperty(obj, prop, {
-	    configurable: true,
-	    get: function get() {
-	      return val;
-	    }
-	  });
-	}
-
-	function parseEvent(e) {
-	  var indexOfSpace = e.indexOf(' ');
-	  var hasSpace = indexOfSpace > 0;
-	  var name = hasSpace ? e.substring(0, indexOfSpace) : e;
-	  var selector = hasSpace ? e.substring(indexOfSpace + 1) : '';
-	  return {
-	    name: name,
-	    selector: selector
-	  };
-	}
-
-	function makeDelegateHandler(elem, handler, parsed) {
-	  return function (e) {
-	    var current = e.path ? e.path[0] : e.target;
-	    var selector = parsed.selector;
-	    while (current && current !== elem.parentNode) {
-	      if (matches(current, selector)) {
-	        readonly(e, 'currentTarget', current);
-	        readonly(e, 'delegateTarget', elem);
-	        return handler(elem, e);
-	      }
-	      current = current.parentNode;
-	    }
-	  };
-	}
-
-	function makeNormalHandler(elem, handler) {
-	  return function (e) {
-	    readonly(e, 'delegateTarget', elem);
-	    handler(elem, e);
-	  };
-	}
-
-	function bindEvent(elem, event, handler) {
-	  var parsed = parseEvent(event);
-	  var name = parsed.name;
-	  var selector = parsed.selector;
-
-	  var capture = selector && (name === 'blur' || name === 'focus');
-	  handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
-	  elem.addEventListener(name, handler, capture);
-	}
-
-	function events$1(opts) {
-	  var events = opts.events || {};
-	  return function (elem) {
-	    for (var name in events) {
-	      bindEvent(elem, name, events[name]);
-	    }
-	  };
-	}
 
 	/**
 	 * Copyright 2015 The Incremental DOM Authors. All Rights Reserved.
@@ -373,7 +248,7 @@ var symbols = Object.freeze({
 	/**
 	 * A cached reference to the create function.
 	 */
-	var create$1 = Object.create;
+	var create$2 = Object.create;
 
 	/**
 	 * Used to prevent property collisions between our "map" and its prototype.
@@ -390,7 +265,7 @@ var symbols = Object.freeze({
 	 * @return {!Object}
 	 */
 	var createMap = function createMap() {
-	  return create$1(null);
+	  return create$2(null);
 	};
 
 	/**
@@ -1093,7 +968,7 @@ var symbols = Object.freeze({
 	 * @param {T=} data An argument passed to fn to represent DOM state.
 	 * @template T
 	 */
-	var patchInner = function patchInner(node, fn, data) {
+	var patch = function patchInner(node, fn, data) {
 	  runPatch(node, function (data) {
 	    currentNode = node;
 	    currentParent = node.parentNode;
@@ -1140,7 +1015,7 @@ var symbols = Object.freeze({
 	 * @param {?string=} key An optional key that identifies a node.
 	 * @return {boolean} True if the node matches, false otherwise.
 	 */
-	var matches$1 = function matches(nodeName, key) {
+	var matches = function matches(nodeName, key) {
 	  var data = getData(currentNode);
 
 	  // Key check is done using double equals as we want to treat a null key the
@@ -1159,7 +1034,7 @@ var symbols = Object.freeze({
 	 *     name-value pairs.
 	 */
 	var alignWithDOM = function alignWithDOM(nodeName, key, statics) {
-	  if (currentNode && matches$1(nodeName, key)) {
+	  if (currentNode && matches(nodeName, key)) {
 	    return;
 	  }
 
@@ -1597,8 +1472,8 @@ var symbols = Object.freeze({
 
 
 	var IncrementalDOM = Object.freeze({
-		patch: patchInner,
-		patchInner: patchInner,
+		patch: patch,
+		patchInner: patch,
 		patchOuter: patchOuter,
 		currentElement: currentElement,
 		skip: skip$1,
@@ -1616,6 +1491,10 @@ var symbols = Object.freeze({
 		applyProp: applyProp$1,
 		notifications: notifications
 	});
+
+	var customElementsV1 = 'customElements' in window;
+	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
+	var shadowDomV1 = 'attachShadow' in Element.prototype;
 
 	// Could import these, but we have to import all of IncrementalDOM anyways so
 	// that we can export our configured IncrementalDOM.
@@ -1737,7 +1616,7 @@ var symbols = Object.freeze({
 	}
 
 	// The default function requries a tag name.
-	function create(tname, attrs, chren) {
+	function create$1(tname, attrs, chren) {
 	  // Allow a component constructor to be passed in.
 	  if (typeof tname === 'function') {
 	    tname = tname.id || tname.name;
@@ -1772,7 +1651,7 @@ var symbols = Object.freeze({
 	var colgroup = bind('colgroup');
 	var command = bind('command');
 	var content = bind('content');
-	var data$1 = bind('data');
+	var data = bind('data');
 	var datalist = bind('datalist');
 	var dd = bind('dd');
 	var del = bind('del');
@@ -1875,8 +1754,8 @@ var symbols = Object.freeze({
 	var video = bind('video');
 	var wbr = bind('wbr');
 
-var vdomElements = Object.freeze({
-	  default: create,
+var vdom = Object.freeze({
+	  create: create$1,
 	  text: text,
 	  IncrementalDOM: IncrementalDOM,
 	  a: a,
@@ -1903,7 +1782,7 @@ var vdomElements = Object.freeze({
 	  colgroup: colgroup,
 	  command: command,
 	  content: content,
-	  data: data$1,
+	  data: data,
 	  datalist: datalist,
 	  dd: dd,
 	  del: del,
@@ -2007,7 +1886,191 @@ var vdomElements = Object.freeze({
 	  wbr: wbr
 	});
 
-	var patch = patchInner;
+	function data$1 (element) {
+	  var namespace = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+
+	  var data = element.__SKATE_DATA || (element.__SKATE_DATA = {});
+	  return namespace && (data[namespace] || (data[namespace] = {})) || data;
+	}
+
+	function attributeChanged (Ctor) {
+	  var attributeChanged = Ctor.attributeChanged;
+
+
+	  return function (name, oldValue, newValue) {
+	    var propertyName = data$1(this, 'attributeLinks')[name];
+
+	    if (propertyName) {
+	      var propData = data$1(this, 'api/property/' + propertyName);
+
+	      // This ensures a property set doesn't cause the attribute changed
+	      // handler to run again once we set this flag. This only ever has a
+	      // chance to run when you set an attribute, it then sets a property and
+	      // then that causes the attribute to be set again.
+	      if (propData.syncingAttribute) {
+	        propData.syncingAttribute = false;
+	        return;
+	      }
+
+	      // Sync up the property.
+	      var propOpts = this.constructor.props[propertyName];
+	      propData.settingAttribute = true;
+	      this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+	    }
+
+	    if (attributeChanged) {
+	      attributeChanged(this, { name: name, newValue: newValue, oldValue: oldValue });
+	    }
+	  };
+	}
+
+	var Component = function (_HTMLElement) {
+	  babelHelpers.inherits(Component, _HTMLElement);
+
+	  function Component() {
+	    babelHelpers.classCallCheck(this, Component);
+
+	    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this));
+
+	    var elemData = data$1(_this);
+	    var readyCallbacks = elemData.readyCallbacks;
+	    var Ctor = _this.constructor;
+	    var _this$constructor = _this.constructor;
+	    var definedAttribute = _this$constructor.definedAttribute;
+	    var events$$ = _this$constructor.events;
+	    var created = _this$constructor.created;
+	    var props$$ = _this$constructor.props;
+	    var ready = _this$constructor.ready;
+	    var renderedAttribute = _this$constructor.renderedAttribute;
+
+	    var renderer$$ = Ctor[renderer];
+
+	    if (elemData.created) {
+	      return babelHelpers.possibleConstructorReturn(_this);
+	    }
+
+	    elemData.created = true;
+
+	    if (props$$) {
+	      Ctor[props](_this);
+	    }
+
+	    if (events$$) {
+	      Ctor[events](_this);
+	    }
+
+	    if (created) {
+	      created(_this);
+	    }
+
+	    if (renderer$$ && !_this.hasAttribute(renderedAttribute)) {
+	      renderer$$(_this);
+	    }
+
+	    if (ready) {
+	      ready(_this);
+	    }
+
+	    if (!_this.hasAttribute(definedAttribute)) {
+	      _this.setAttribute(definedAttribute, '');
+	    }
+
+	    if (readyCallbacks) {
+	      readyCallbacks.forEach(function (cb) {
+	        return cb(_this);
+	      });
+	      delete elemData.readyCallbacks;
+	    }
+	    return _this;
+	  }
+
+	  return Component;
+	}(HTMLElement);
+
+	Component.definedAttribute = 'defined';
+	Component.events = {};
+	Component.extends = null;
+	Component.observedAttributes = [];
+	Component.props = {};
+	Component.renderedAttribute = 'rendered';
+
+	var elProto = window.HTMLElement.prototype;
+	var nativeMatchesSelector = elProto.matches || elProto.msMatchesSelector || elProto.webkitMatchesSelector || elProto.mozMatchesSelector || elProto.oMatchesSelector;
+
+	// Only IE9 has this msMatchesSelector bug, but best to detect it.
+	var hasNativeMatchesSelectorDetattachedBug = !nativeMatchesSelector.call(document.createElement('div'), 'div');
+
+	function matches$1 (element, selector) {
+	  if (hasNativeMatchesSelectorDetattachedBug) {
+	    var clone = element.cloneNode();
+	    document.createElement('div').appendChild(clone);
+	    return nativeMatchesSelector.call(clone, selector);
+	  }
+	  return nativeMatchesSelector.call(element, selector);
+	}
+
+	function readonly(obj, prop, val) {
+	  Object.defineProperty(obj, prop, {
+	    configurable: true,
+	    get: function get() {
+	      return val;
+	    }
+	  });
+	}
+
+	function parseEvent(e) {
+	  var indexOfSpace = e.indexOf(' ');
+	  var hasSpace = indexOfSpace > 0;
+	  var name = hasSpace ? e.substring(0, indexOfSpace) : e;
+	  var selector = hasSpace ? e.substring(indexOfSpace + 1) : '';
+	  return {
+	    name: name,
+	    selector: selector
+	  };
+	}
+
+	function makeDelegateHandler(elem, handler, parsed) {
+	  return function (e) {
+	    var current = e.path ? e.path[0] : e.target;
+	    var selector = parsed.selector;
+	    while (current && current !== elem.parentNode) {
+	      if (matches$1(current, selector)) {
+	        readonly(e, 'currentTarget', current);
+	        readonly(e, 'delegateTarget', elem);
+	        return handler(elem, e);
+	      }
+	      current = current.parentNode;
+	    }
+	  };
+	}
+
+	function makeNormalHandler(elem, handler) {
+	  return function (e) {
+	    readonly(e, 'delegateTarget', elem);
+	    handler(elem, e);
+	  };
+	}
+
+	function bindEvent(elem, event, handler) {
+	  var parsed = parseEvent(event);
+	  var name = parsed.name;
+	  var selector = parsed.selector;
+
+	  var capture = selector && (name === 'blur' || name === 'focus');
+	  handler = selector ? makeDelegateHandler(elem, handler, parsed) : makeNormalHandler(elem, handler);
+	  elem.addEventListener(name, handler, capture);
+	}
+
+	function events$1(opts) {
+	  var events = opts.events || {};
+	  return function (elem) {
+	    for (var name in events) {
+	      bindEvent(elem, name, events[name]);
+	    }
+	  };
+	}
+
+	var patch$1 = patch;
 
 
 	function createRenderer (Ctor) {
@@ -2033,7 +2096,7 @@ var vdomElements = Object.freeze({
 	      elem[shadowRoot] = sr;
 	    }
 
-	    patch(elem[shadowRoot], render, elem);
+	    patch$1(elem[shadowRoot], render, elem);
 	  };
 	}
 
@@ -2124,10 +2187,6 @@ var vdomElements = Object.freeze({
 	  return elem.disabled ? true : elem.dispatchEvent(createCustomEvent(name, opts));
 	}
 
-	function empty (val) {
-	  return typeof val === 'undefined' || val === null;
-	}
-
 	// Symbol() wasn't transpiling properly.
 	var $debounce = '____debouncedRender';
 
@@ -2146,14 +2205,14 @@ var vdomElements = Object.freeze({
 	  };
 
 	  prop.created = function (elem) {
-	    var propData = data(elem, 'api/property/' + name);
+	    var propData = data$1(elem, 'api/property/' + name);
 	    var attributeName = opts.attribute;
 	    var initialValue = elem[name];
 	    var shouldSyncAttribute = false;
 
 	    // Store property to attribute link information.
-	    data(elem, 'attributeLinks')[attributeName] = name;
-	    data(elem, 'propertyLinks')[name] = attributeName;
+	    data$1(elem, 'attributeLinks')[attributeName] = name;
+	    data$1(elem, 'propertyLinks')[name] = attributeName;
 
 	    // Set up initial value if it wasn't specified.
 	    if (empty(initialValue)) {
@@ -2175,7 +2234,7 @@ var vdomElements = Object.freeze({
 	  };
 
 	  prop.get = function () {
-	    var propData = data(this, 'api/property/' + name);
+	    var propData = data$1(this, 'api/property/' + name);
 	    var internalValue = propData.internalValue;
 
 	    if (typeof opts.get === 'function') {
@@ -2200,7 +2259,7 @@ var vdomElements = Object.freeze({
 	  }();
 
 	  prop.set = function (newValue) {
-	    var propData = data(this, 'api/property/' + name);
+	    var propData = data$1(this, 'api/property/' + name);
 	    var oldValue = propData.oldValue;
 
 	    var shouldRemoveAttribute = false;
@@ -2247,7 +2306,7 @@ var vdomElements = Object.freeze({
 	    propData.oldValue = newValue;
 
 	    // Link up the attribute.
-	    var attributeName = data(this, 'propertyLinks')[name];
+	    var attributeName = data$1(this, 'propertyLinks')[name];
 	    if (attributeName && !propData.settingAttribute) {
 	      var serializedValue = opts.serialize(newValue);
 	      propData.syncingAttribute = true;
@@ -2480,76 +2539,8 @@ var vdomElements = Object.freeze({
 	  };
 	}
 
-	var propArray = {
-	  coerce: function coerce(val) {
-	    return Array.isArray(val) ? val : [val];
-	  },
-	  default: function _default() {
-	    return [];
-	  },
-	  deserialize: JSON.parse,
-	  serialize: JSON.stringify
-	};
-
-	var propBoolean = {
-	  coerce: function coerce(value) {
-	    return !!value;
-	  },
-	  default: false,
-	  deserialize: function deserialize(value) {
-	    return !(value === null);
-	  },
-	  serialize: function serialize(value) {
-	    return value ? '' : undefined;
-	  }
-	};
-
-	var alwaysUndefinedIfEmpty = function alwaysUndefinedIfEmpty(val) {
-	  return empty(val) ? undefined : Number(val);
-	};
-
-	var propNumber = {
-	  coerce: alwaysUndefinedIfEmpty,
-	  deserialize: alwaysUndefinedIfEmpty,
-	  serialize: alwaysUndefinedIfEmpty
-	};
-
-	var alwaysUndefinedIfEmpty$1 = function alwaysUndefinedIfEmpty(val) {
-	  return empty(val) ? undefined : String(val);
-	};
-
-	var propString = {
-	  coerce: alwaysUndefinedIfEmpty$1,
-	  deserialize: alwaysUndefinedIfEmpty$1,
-	  serialize: alwaysUndefinedIfEmpty$1
-	};
-
-	function prop(def) {
-	  return function () {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-
-	    args.unshift({}, def);
-	    return assign.apply(null, args);
-	  };
-	}
-
-	var array = prop(propArray);
-	var boolean = prop(propBoolean);
-	var number = prop(propNumber);
-	var string = prop(propString);
-
-var props$1 = Object.freeze({
-	  default: prop,
-	  array: array,
-	  boolean: boolean,
-	  number: number,
-	  string: string
-	});
-
 	function ready (elem, done) {
-	  var info = data(elem);
+	  var info = data$1(elem);
 	  if (info.created) {
 	    done(elem);
 	  } else if (info.readyCallbacks) {
@@ -2561,9 +2552,6 @@ var props$1 = Object.freeze({
 
 	var version = '0.15.3';
 
-	assign(prop, props$1);
-	assign(create, vdomElements);
-
 	var previousGlobal = window.skate;
 	exports.noConflict = function () {
 	  window.skate = previousGlobal;
@@ -2571,7 +2559,6 @@ var props$1 = Object.freeze({
 	};
 	exports.version = '0.15.3';
 
-	exports['default'] = define;
 	exports.define = define;
 	exports.emit = emit;
 	exports.factory = factory;
@@ -2580,8 +2567,10 @@ var props$1 = Object.freeze({
 	exports.ready = ready;
 	exports.state = state;
 	exports.symbols = symbols;
-	exports.vdom = create;
+	exports.vdom = vdom;
 	exports.version = version;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
 //# sourceMappingURL=index.js.map

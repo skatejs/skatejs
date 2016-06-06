@@ -1,7 +1,7 @@
 import afterMutations from '../lib/after-mutations';
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import skate, { ready } from '../../src/index';
+import { define, ready } from '../../src/index';
 
 describe('lifecycle', function () {
   var MyEl;
@@ -16,7 +16,7 @@ describe('lifecycle', function () {
     created = false;
     attached = false;
     detached = false;
-    MyEl = skate(tagName.safe, {
+    MyEl = define(tagName.safe, {
       created: function () {
         created = true;
       },
@@ -63,7 +63,7 @@ describe('lifecycle', function () {
 describe('defined attribute', function () {
   it('should not be considered "defined" until after ready() is called', function (done) {
     const tagName = helperElement('my-element');
-    skate(tagName.safe, {
+    define(tagName.safe, {
       ready (elem) {
         expect(elem.hasAttribute('defined')).to.equal(false);
         done();
@@ -74,7 +74,7 @@ describe('defined attribute', function () {
 
   it('should be considred "defined" after the created lifecycle finishes', function (done) {
     const tag = helperElement('my-element').safe;
-    skate(tag, {
+    define(tag, {
       created (elem) {
         expect(elem.hasAttribute('defined')).to.equal(false, 'should not have resolved');
       },
