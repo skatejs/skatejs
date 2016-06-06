@@ -1,14 +1,7 @@
 import { render } from '../api/symbols';
 import data from '../util/data';
 import eventsApplier from './events';
-import patchAttributeMethods from './patch-attribute-methods';
 import propsInit from './props-init';
-import prototypeApplier from './prototype';
-import support from '../native/support';
-
-const isPolyfilled = support.polyfilled;
-const isCustomElementsV0 = support.v0;
-const isCustomElementsV1 = support.v1;
 
 function ensurePropertyFunctions (opts) {
   let props = opts.props;
@@ -27,18 +20,6 @@ function ensurePropertyDefinitions (elem, propertyFunctions) {
     descriptors[descriptorName] = propertyFunctions[descriptorName](descriptorName);
     return descriptors;
   }, {});
-}
-
-function callAttributeChangedForEachAttribute (elem, observedAttributes) {
-  observedAttributes.forEach(function (name) {
-    const attr = elem.attributes[name];
-
-    // We don't call it for the defined attribute because that will have
-    // already called the handler via setAttribute().
-    if (attr) {
-      elem.attributeChangedCallback(name, null, attr.value);
-    }
-  });
 }
 
 function initialiseProps (elem, propertyDefinitions) {
@@ -61,14 +42,11 @@ export default function (Ctor) {
     created,
     definedAttribute,
     events,
-    observedAttributes,
     props,
-    prototype,
     ready,
     renderedAttribute
   } = Ctor;
   const applyEvents = eventsApplier(Ctor);
-  const applyPrototype = prototypeApplier(Ctor);
   const propertyFunctions = ensurePropertyFunctions(Ctor);
   const renderer = Ctor[render];
 
@@ -93,16 +71,16 @@ export default function (Ctor) {
       initialiseProps(elem, propertyDefinitions);
     }
 
-    if (events) {
-      applyEvents(elem);
-    }
-
     if (created) {
       created(elem);
     }
 
     if (renderer && !elem.hasAttribute(renderedAttribute)) {
       renderer(elem);
+    }
+
+    if (events) {
+      applyEvents(elem);
     }
 
     if (ready) {

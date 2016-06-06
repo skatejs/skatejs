@@ -78,32 +78,31 @@ describe('lifecycle/events', function () {
       events: {
         test (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test');
-          expect(e.target.tagName).to.equal('SPAN', 'test');
-          expect(e.currentTarget.tagName).to.equal(el.tagName, 'test');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test');
+          expect(elem.tagName).to.equal(el.tagName, 'test -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal(el.tagName, 'test -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test -> e.delegateTarget');
         },
         'test a' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test a');
-          expect(e.target.tagName).to.equal('SPAN', 'test a');
-          expect(e.currentTarget.tagName).to.equal('A', 'test a');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test a');
+          expect(elem.tagName).to.equal(el.tagName, 'test a -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal('A', 'test a -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test a -> e.delegateTarget');
         },
         'test span' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test span');
-          expect(e.target.tagName).to.equal('SPAN', 'test span');
-          expect(e.currentTarget.tagName).to.equal('SPAN', 'test span');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span');
+          expect(elem.tagName).to.equal(el.tagName, 'test span -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal('SPAN', 'test span -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span -> e.delegateTarget');
         }
+      },
+      render () {
+        vdom.a(vdom.span.bind());
       }
     }));
 
-    elem.innerHTML = '<a><span></span></a>';
     helperFixture(elem);
     afterMutations(
-      () => emit(elem.querySelector('span'), 'test'),
+      () => emit(elem[symbols.shadowRoot].querySelector('span'), 'test'),
       () => expect(numTriggered).to.equal(3),
       done
     );
@@ -136,10 +135,10 @@ describe('lifecycle/events', function () {
 
     ready(inst, function () {
       inst.blur();
-      expect(blur).to.equal(true);
+      expect(blur).to.equal(true, 'blur');
 
       inst.focus();
-      expect(focus).to.equal(true);
+      expect(focus).to.equal(true, 'focus');
 
       done();
     });
