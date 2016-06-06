@@ -149,13 +149,6 @@
 
 	var assign = (index && typeof index === 'object' && 'default' in index ? index['default'] : index);
 
-	var customElements = window.customElements;
-
-	function create (name) {
-	  var Ctor = customElements.get(name);
-	  return Ctor ? new Ctor() : document.createElement(name);
-	}
-
 	var events = '____events';
 	var props = '____props';
 	var renderer = '____renderer';
@@ -376,7 +369,7 @@ var symbols = Object.freeze({
 	/**
 	 * A cached reference to the create function.
 	 */
-	var create$2 = Object.create;
+	var create$1 = Object.create;
 
 	/**
 	 * Used to prevent property collisions between our "map" and its prototype.
@@ -393,7 +386,7 @@ var symbols = Object.freeze({
 	 * @return {!Object}
 	 */
 	var createMap = function createMap() {
-	  return create$2(null);
+	  return create$1(null);
 	};
 
 	/**
@@ -1620,19 +1613,8 @@ var symbols = Object.freeze({
 		notifications: notifications
 	});
 
-	var v0 = !!document.registerElement;
-	var v1 = !!window.customElements;
-	var polyfilled = !v0 && !v1;
-	var shadowDomV0 = !!('createShadowRoot' in Element.prototype);
-	var shadowDomV1 = !!('attachShadow' in Element.prototype);
-
-	var support = {
-	  v0: v0,
-	  v1: v1,
-	  polyfilled: polyfilled,
-	  shadowDomV0: shadowDomV0,
-	  shadowDomV1: shadowDomV1
-	};
+	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
+	var shadowDomV1 = 'attachShadow' in Element.prototype;
 
 	// Could import these, but we have to import all of IncrementalDOM anyways so
 	// that we can export our configured IncrementalDOM.
@@ -1712,7 +1694,7 @@ var symbols = Object.freeze({
 
 	// Creates a factory and returns it.
 	function bind(tname) {
-	  var shouldBeContentTag = tname === 'slot' && !support.shadowDomV1 && support.shadowDomV0;
+	  var shouldBeContentTag = tname === 'slot' && !shadowDomV1 && shadowDomV0;
 
 	  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
 	  if (shouldBeContentTag) {
@@ -1754,7 +1736,7 @@ var symbols = Object.freeze({
 	}
 
 	// The default function requries a tag name.
-	function create$1(tname, attrs, chren) {
+	function create(tname, attrs, chren) {
 	  // Allow a component constructor to be passed in.
 	  if (typeof tname === 'function') {
 	    tname = tname.id || tname.name;
@@ -1893,7 +1875,7 @@ var symbols = Object.freeze({
 	var wbr = bind('wbr');
 
 var vdomElements = Object.freeze({
-	  default: create$1,
+	  default: create,
 	  text: text,
 	  IncrementalDOM: IncrementalDOM,
 	  a: a,
@@ -2575,7 +2557,7 @@ var props$1 = Object.freeze({
 	var version = '0.15.3';
 
 	assign(prop, props$1);
-	assign(create$1, vdomElements);
+	assign(create, vdomElements);
 
 	var previousGlobal = window.skate;
 	exports.noConflict = function () {
@@ -2585,7 +2567,6 @@ var props$1 = Object.freeze({
 	exports.version = '0.15.3';
 
 	exports['default'] = define;
-	exports.create = create;
 	exports.define = define;
 	exports.emit = emit;
 	exports.factory = factory;
@@ -2594,7 +2575,7 @@ var props$1 = Object.freeze({
 	exports.ready = ready;
 	exports.state = state;
 	exports.symbols = symbols;
-	exports.vdom = create$1;
+	exports.vdom = create;
 	exports.version = version;
 
 }));
