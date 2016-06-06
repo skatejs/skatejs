@@ -1515,6 +1515,7 @@ var symbols = Object.freeze({
 		notifications: notifications
 	});
 
+	var classes = !!Object.setPrototypeOf;
 	var customElementsV1 = 'customElements' in window;
 	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
 	var shadowDomV1 = 'attachShadow' in Element.prototype;
@@ -1642,7 +1643,7 @@ var symbols = Object.freeze({
 	function create$1(tname, attrs, chren) {
 	  // Allow a component constructor to be passed in.
 	  if (typeof tname === 'function') {
-	    tname = tname[symbols$1.name];
+	    tname = tname[name];
 	  }
 	  // Return the cached factory or create a new one and return it.
 	  return (factories[tname] || bind(tname))(attrs, chren);
@@ -1967,6 +1968,12 @@ var vdom = Object.freeze({
 
 	  var renderer$$ = Ctor[renderer];
 
+	  // TODO: This prevents an element from being initialised multiple times. For
+	  // some reason this is happening with the V1 polyfill. We should try and
+	  // figure out why.
+	  if (elem.____created) return;
+	  elem.____created = true;
+
 	  if (props$$) {
 	    Ctor[props](elem);
 	  }
@@ -2032,7 +2039,15 @@ var vdom = Object.freeze({
 	      delete opts.prototype;
 
 	      // Pass on static members.
-	      Object.defineProperties(Ctor, opts);
+	      // We can't just call Object.defineProperties() because WebKit has a lot of
+	      // non-configurable properties which we must filter out. These won't be any
+	      // we need anyways.
+	      for (var name in opts) {
+	        var prop = opts[name];
+	        if (prop.configurable) {
+	          Object.defineProperty(Ctor, name, opts[name]);
+	        }
+	      }
 
 	      // Setup with the correct prototype.
 	      Ctor.prototype = Object.create(HTMLElement.prototype, prot);
@@ -2041,7 +2056,7 @@ var vdom = Object.freeze({
 	      // set the prototype. This may not be necessary if attributeChangedCallback
 	      // is fired for existing attributes in a micro / macro task instead of
 	      // synchronously as it is now.
-	      if (!Ctor.setPrototypeOf) {
+	      if (!classes) {
 	        Object.defineProperty(Element.prototype, '__proto__', {
 	          configurable: true,
 	          enumerable: false,
@@ -2050,8 +2065,8 @@ var vdom = Object.freeze({
 	          },
 	          set: function set(prototype) {
 	            var prot = getOwnPropertyDescriptors(prototype);
-	            for (var name in prot) {
-	              Object.defineProperty(this, name, prot[name]);
+	            for (var _name in prot) {
+	              Object.defineProperty(this, _name, prot[_name]);
 	            }
 	          }
 	        });
@@ -2588,7 +2603,7 @@ var vdom = Object.freeze({
 
 	function ready (elem, done) {
 	  var info = data$1(elem);
-	  if (info.created) {
+	  if (elem.hasAttribute(elem.constructor.definedAttribute)) {
 	    done(elem);
 	  } else if (info.readyCallbacks) {
 	    info.readyCallbacks.push(done);
