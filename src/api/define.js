@@ -115,7 +115,7 @@ export default function (name, Ctor) {
 
   if (customElementsV1) {
     window.customElements.define(name, Ctor);
-    return window.customElements.get(name);
+    return Ctor;
   } else {
     throw new Error('Skate requires Custom Elements V1 support. Please include a polyfill for this browser.');
   }
