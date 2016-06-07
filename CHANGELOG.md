@@ -46,6 +46,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `skate.create()`; use `document.createElement()` or the element constructor instead.
 - `skate.fragment()`; use standard DOM methods and `skate.ready()` instead.
 - `skate.init()`; use `skate.ready()` instead.
+- `skate.noConflict()`; use a module format instead of the global.
+- `skate.version`; check the version in the package manifest instead.
 
 ## 0.15.3
 

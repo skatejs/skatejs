@@ -81,10 +81,9 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
   - [Examples](#examples)
   - [Resources](#resources)
   - [Questions?](#questions)
-  - [`skate (componentName, componentDefinition)` API](#skate-componentname-componentdefinition-api)
-    - [Return Value](#return-value)
-    - [`componentName`](#componentname)
-    - [`componentDefinition`](#componentdefinition)
+  - [Terminology](#terminology)
+  - [API](#api)
+    - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
       - [`events`](#events)
         - [Event Delegation](#event-delegation)
@@ -104,35 +103,27 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`ready`](#ready)
       - [`attached`](#attached)
       - [`detached`](#detached)
-      - [`attribute`](#attribute-1)
-      - [`extends`](#extends)
+      - [`attributeChanged`](#attributechanged)
+      - [`observedAttributes`](#observedattributes)
       - [`definedAttribute`](#definedattribute)
-  - [`skate.*` API](#skate-api)
-    - [`create (componentName, elementProperties = {})`](#create-componentname-elementproperties--)
-      - [Alternatives](#alternatives)
-      - [Setting Properties](#setting-properties)
-      - [Why not just patch `document.createElement()`?](#why-not-just-patch-documentcreateelement)
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
-      - [Emitting Several Events at Once](#emitting-several-events-at-once)
-      - [Return Value](#return-value-1)
       - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
       - [Passing Data](#passing-data)
     - [`factory (componentDefinition)`](#factory-componentdefinition)
-    - [`fragment (...almostAnything)`](#fragment-almostanything)
-    - [`init (...elems)`](#init-elems)
     - [`link (elem, propSpec)`](#link-elem-propspec)
-    - [`noConflict ()`](#noconflict-)
     - [`prop`](#prop)
       - [`array`](#array)
       - [`boolean`](#boolean)
       - [`number`](#number)
       - [`string`](#string)
-    - [`ready (elementOrElements, callback)`](#ready-elementorelements-callback)
+    - [`ready (element, callback)`](#ready-element-callback)
       - [Background](#background)
       - [The problem](#the-problem)
       - [The solution](#the-solution)
       - [Drawbacks](#drawbacks)
     - [`state (elem[, state])`](#state-elem-state)
+    - [`symbols`](#symbols)
+      - [`shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom (elementName, attributesOrChildren, children)`](#vdom-elementname-attributesorchildren-children)
       - [Elements as Functions](#elements-as-functions)
@@ -145,17 +136,15 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [`attrs.statics`](#attrsstatics)
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
-    - [`version`](#version)
   - [Component Lifecycle](#component-lifecycle)
   - [Extending Elements](#extending-elements)
   - [Asynchrony](#asynchrony)
-  - [Web Component Differences](#web-component-differences)
-  - [VS WebComponentsJS](#vs-webcomponentsjs)
-  - [VS Polymer](#vs-polymer)
-  - [VS X-Tags](#vs-x-tags)
-  - [VS React](#vs-react)
-  - [Native Custom Element Support](#native-custom-element-support)
-  - [SVG](#svg)
+  - [Customised built-in elements](#customised-built-in-elements)
+  - [VS other libraries](#vs-other-libraries)
+    - [VS WebComponentsJS](#vs-webcomponentsjs)
+    - [VS Polymer](#vs-polymer)
+    - [VS X-Tags](#vs-x-tags)
+    - [VS React](#vs-react)
   - [Preventing FOUC](#preventing-fouc)
   - [Designing Web Components](#designing-web-components)
     - [Imperative](#imperative)
@@ -929,18 +918,6 @@ The above linkage would set:
 
 
 
-### `noConflict ()`
-
-Same as what you'd come to expect from most libraries that offer a global namespace. It will restore the value of `window.skate` to the previous value and return the current `skate` object.
-
-```js
-const currentSkate = skate.noConflict();
-```
-
-*No conflict mode is only available from the version in `dist/` since that's the only version that exports a global.*
-
-
-
 ### `prop`
 
 Skate has some built-in property definitions to help you with defining consistent property behaviour within your components. All built-in properties are functions that return a property definition.
@@ -1293,12 +1270,6 @@ And it could be used like:
   <p>Main paragraph 2.</p>
 </my-element>
 ```
-
-
-
-### `version`
-
-Returns the current version of Skate.
 
 
 
