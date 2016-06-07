@@ -24,7 +24,7 @@ HTML
 JavaScript
 
 ```js
-skate('x-hello', {
+skate.define('x-hello', {
   props: {
     name: { attribute: true }
   },
@@ -50,24 +50,20 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 
 
+### Custom Elements
+
+Skate requires Custom Elements V1 support. In [browsers that don't support this](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate with native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/native-shim.js).
+
+
+
 ### Shadow DOM
 
-Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively:
+Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with one so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively.
 
 - https://github.com/skatejs/named-slots/
 - https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
 
 Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
-
-
-
-### Mutation Observer
-
-In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://developer.mozilla.org/en/docs/Web/API/MutationObserver) polyfill:
-
-- https://github.com/webcomponents/webcomponentsjs (requires WeakMap polyfill)
-- https://github.com/megawac/MutationObserver.js
-- https://github.com/bitovi/mutationobserver
 
 
 
@@ -176,9 +172,11 @@ In IE9 and IE10, Skate requires that you BYO a [Mutation Observer](https://devel
 
 Using package managers:
 
-    bower install skatejs
-    jspm install npm:skatejs
-    npm install skatejs
+```sh
+bower install skatejs
+jspm install npm:skatejs
+npm install skatejs
+```
 
 Or you can DIY by downloading the zip and consuming it via one of the following ways.
 
@@ -238,54 +236,86 @@ Let's define some terms used in these docs:
 
 
 
-## `skate (componentName, componentDefinition)` API
+## API
 
-The main `skate()` function is the entry-point to the API and is what defines your custom element.
+The following API can be consumed in the following ways:
 
-
-
-### Return Value
-
-The `skate()` function returns you a function / constructor that you can use to create an instance of your component.
+Global:
 
 ```js
-const MyComponent = skate('my-component', {
-  render () {
-    skate.vdom.div();
-  }
-});
+window.skate;
 ```
 
-Can be created in both of the following ways:
+AMD:
 
 ```js
-MyComponent();
-new MyComponent();
+require(['skatejs'], function (skate) {});
 ```
 
-The returned function also contains the information specified in your definition:
+CommonJS
 
 ```js
-// function (elem) {}
-MyComponent.render;
+const skate = require('skatejs');
 ```
 
-It also contains extra information about the component:
+ES2015:
 
-- `id` The id / name of the component. In this case it would be `my-component`.
-- `name` Same as `id`, but the name of the function / constructor is reflected properly when debugging. This doesn't work in WebKit because it's non-configurable.
+```js
+import * as skate from 'skatejs';
+```
+
+Each API point is accessible on the main `skate` object, or can be imported by name in ES2015:
+
+```js
+import { define, vdom } from 'skatejs';
+```
 
 
 
-### `componentName`
+### `define(name, definition)`
 
-The `componentName` is a string that is the tag name of the custom element that you are creating. It must be a "valid custom element name" as specified [in the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-core-concepts).
+The `name` is a string that is the tag name of the custom element that you are creating. It must be a "valid custom element name" as specified [in the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-core-concepts). For example, `my-component`, is a valid custom element name.
 
+The `definition` argument is a class / constructor or object literal of component definition to use for your custom element. The recommended way is to use ES2015 classes:
 
+```js
+import { Component, define } from 'skatejs';
 
-### `componentDefinition`
+const MyComponent = define('my-component', class extends Component {});
+```
 
-The `componentDefinition` argument is an object literal or constructor / function / class that houses your component definition. The following options are supported and are chronologically ordered in terms of where they get used in the component's lifecycle.
+A simpler way, especially for ES5 users, would be to just pass an object literal.
+
+```js
+import { define } from 'skatejs';
+
+const MyComponent = define('my-component', {});
+```
+
+Using this method will automatically extend the base `Component` for you.
+
+This is exactly the same thing as doing:
+
+```js
+import { Component, define } from 'skatejs';
+
+const MyComponent = define('my-component', Component.extend({}));
+```
+
+You can also use `createComponent` to eliminate the boilerplate of extending base classes in ES5:
+
+```js
+import { Component, define } from 'skatejs';
+
+const MyComponent1 = define('my-component-1', {});
+const MyComponent2 = define('my-component-2', MyComponent1.extend({});
+```
+
+Whichever method you use, `define()` will return you a constructor you can use to create a new instance of your element:
+
+```js
+const myElement = new MyComponent();
+```
 
 
 
@@ -302,24 +332,6 @@ skate('my-component', {
   }
 });
 ```
-
-In native custom elements, you must provide the entire prototype for your custom element. This means that even if you're creating a new custom element, you must be explicit about it:
-
-```js
-document.registerElement('my-component', {
-  prototype: Object.create(HTMLElement.prototype, {
-    someProperty: {
-      get () {},
-      set () {}
-    },
-    someMethod: {
-      value () {}
-    }
-  })
-});
-```
-
-In Skate, however, if your `prototype` doesn't inherit from the base `HTMLElement`, Skate will automatically do this for you, so you don't have to worry about it.
 
 
 
@@ -355,6 +367,8 @@ skate('my-component', {
 ```
 
 Instead of firing for every click on the component element - or that bubbles to the component element - it will only fire if a descendant `<button>` was clicked.
+
+Event delegation works with or without a shadow root as it will inspect the event `path` if it exists.
 
 
 
@@ -593,6 +607,8 @@ The parameters passed to the function are:
 ##### `render`
 
 ```js
+import { vdom } from 'skatejs';
+
 skate('my-component', {
   props: {
     myProp: {
@@ -602,7 +618,7 @@ skate('my-component', {
     }
   },
   render (elem) {
-    skate.vdom.div(elem.myProp);
+    vdom.div(elem.myProp);
   }
 });
 ```
@@ -768,21 +784,6 @@ The differences being that as a result of defining it as a property, it is now l
 
 
 
-#### `extends`
-
-The built-in element to extend. This is how you create a "customised built-in element" as outlined in [the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-customized-builtin-example). This used to be known as "type extensions" and *was* contentious, but no longer is.
-
-```js
-skate('my-component', {
-  extends: 'input'
-});
-```
-
-Skate will automatically detect the native prototype for the element that you are extending and ensure that your `prototype` extends it, rather than you having to do this manually. This is also explained in the `prototype` option.
-
-
-
-
 #### `definedAttribute`
 
 The name of the attribute that is added to the element after it has been upgraded.
@@ -790,112 +791,6 @@ The name of the attribute that is added to the element after it has been upgrade
 ```html
 <my-component defined />
 ```
-
-
-
-## `skate.*` API
-
-The following are all available on the `skate` object, or available for use from the `src/api` or `lib/api` folders.
-
-
-
-### `create (name, props = {})`
-
-Creates an element for the specified component `name`, ensures that it's synchronously initialized and assigns all `props` to it. On the surface, this doesn't appear much different than `document.createElement()` in browsers that support custom elements, however, there's several benefits that it gives you on top of being a single, consistent and convenient way to do things in any browser and environment.
-
-For example, this can be called in any browser and it will behave consistently:
-
-```js
-skate.create('my-element');
-```
-
-In browsers that support custom elements, it is equivalent to:
-
-```js
-document.createElement('my-element');
-```
-
-In browsers that do not support custom elements, you would have to manually ensure that the element is initialised synchronously:
-
-```js
-const elem = document.createElement('my-element');
-skate.init(elem);
-```
-
-To take this example further, if we've extended an element:
-
-```js
-skate('my-element', {
-  extends: 'div'
-});
-```
-
-How we call this function does not change:
-
-```js
-skate.create('my-element');
-```
-
-However, in native land this does change:
-
-```js
-// custom elements v0
-document.createElement('div', 'my-element');
-
-// custom elements v1
-document.createElement('div', { is: 'my-element' });
-```
-
-And in polyfill land, it's much different:
-
-```js
-const elem = document.createElement('div');
-elem.setAttribute('is', 'my-element');
-skate.init(elem);
-```
-
-Both the native and polyfilled examples above expose too many implementation details. It's much better to have one simple and consistent way to create an element.
-
-
-
-#### Alternatives
-
-If you have access to the function / constructor returned from the `skate()` call, invoking that does the same exact thing as `skate.create()`:
-
-```js
-let myElement;
-const MyElement = skate('my-element', {});
-
-// Same thing:
-myElement = skate.create('my-element');
-myElement = MyElement();
-myElement = new MyElement();
-```
-
-
-
-#### Setting Properties
-
-All methods of constructing an element support passing properties.
-
-```js
-myElement = skate.create('my-element', { prop: 'value' });
-myElement = MyElement({ prop: 'value' });
-myElement = new MyElement({ prop: 'value' });
-```
-
-Passing properties automatically assigns them to the element:
-
-```js
-// 'value'
-console.log(myElement.prop);
-```
-
-
-
-#### Why not just patch `document.createElement()`?
-
-Skate is designed to work with multiple versions of itself on the same page. If one version patches `document.createElement()` differently than another, then you have problems. Even if we did do this, how `document.createElement()` is called still depends on how the corresponding component has been registered, which is bad, especially when we can infer that information from the component definition.
 
 
 
@@ -923,22 +818,7 @@ It's preferrable not to reach up the DOM hierarchy because that couples your log
 
 *Note that events cannot be triggered with `skate.emit()` on disabled elements. Events also can't bubble through disabled elements.*
 
-
-
-#### Emitting Several Events at Once
-
-You can emit more than one event at once by passing a space-separated string or an array as the `eventName` parameter:
-
-```js
-skate.emit(elem, 'event1 event2');
-skate.emit(elem, [ 'event1', 'event2' ]);
-```
-
-
-
-#### Return Value
-
-The native `Element.dispatchEvent()` method returns `false` if the event was cancelled. Since `skate.emit()` can trigger more then one event, a `Boolean` return value is ambiguous. Instead it returns an `Array` of the event names that were canceled.
+The return value of `emit()` is the same as [`dispatchEvent()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent).
 
 
 
@@ -975,65 +855,9 @@ The `factory()` function gives you a way to define a custom element without defi
 
 ```js
 const myComponentFactory = skate.factory({ ... });
-const createMyComponent = myComponentFactory('my-component');
-const myElementInstance = createMyComponent();
+const ComponentConstructor = myComponentFactory('my-component');
+const myElementInstance = new ComponentConstructor();
 ```
-
-
-
-### `fragment (...almostAnything)`
-
-Creates a document fragment from the specified node or HTML string and ensures any components within the fragment are synchronously initialised.
-
-You can pass a DOM node:
-
-```js
-skate.fragment(document.createElement('my-element'));
-```
-
-A string:
-
-```js
-skate.fragment('<my-element></my-element>');
-```
-
-Any traversible item:
-
-```js
-skate.fragment([document.createElement('my-element'), '<my-element></my-element>']);
-```
-
-Or a combination of those:
-
-```js
-skate.fragment(
-  document.createElement('my-element'),
-  '<my-element></my-element>',
-  [document.createElement('my-element'), '<my-element></my-element>']
-);
-```
-
-You are returned a document fragment that contains synchronously initialised components (if you added any components). It's just a normal `DocumentFragment` so you can do anything you would normally be able to do. However, it should be noted that the methods aren't decorated to sync init components that you add after calling `skate.fragment()`.
-
-If you want to add components that are synchronously initialised, you can just chain `skate.fragment()` calls:
-
-```js
-skate
-  .fragment('<my-element></my-element>')
-  .appendChild(skate.fragment('<my-other-element></my-other-element>'));
-```
-
-
-
-### `init (...elems)`
-
-It's encouraged that you use `skate.create()` and `skate.fragment()` for creating elements and ensuring that they're synchronously initialised, however, there are edge-cases where synchronously initialising an existing element `skate.init()` may be necessary.
-
-```js
-skate.init(element1, element2);
-```
-
-*You shouldn't use skate.init() in native to ensure descendant DOM is initialised as there's stuff native does that we don't emulate with it. See the docs on `skate.ready()` for how you can interact with descendant components after they've been upgraded.*
 
 
 
@@ -1178,7 +1002,7 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 
 
-### `ready (elemOrElems, callback)`
+### `ready (element, callback)`
 
 The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
 
@@ -1235,7 +1059,9 @@ The problem here is that your consumer is now concerned with implementation deta
 If you need to interact with components that may not be initialised yet (at any level), you can use `skate.ready()`. It works for both native and polyfill no matter when the element is upgraded.
 
 ```js
-skate('component-a', {
+import { define, ready } from 'skatejs';
+
+define('component-a', {
   ready (elem) {
     const b = elem.querySelector('component-b');
 
@@ -1243,7 +1069,7 @@ skate('component-a', {
     b.initialised;
 
     // Your selected elements are passed to the callback as the first argument.
-    skate.ready(b, function (b) {
+    ready(b, function (b) {
       // Will now be `true`, for sure.
       b.initialised;
     });
@@ -1253,7 +1079,7 @@ skate('component-a', {
   }
 });
 
-skate('component-b', {
+define('component-b', {
   created (elem) {
     elem.initialised = true;
   }
@@ -1275,22 +1101,24 @@ The `state` function is a getter or setter depending on if you specify the secon
 Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
 
 ```js
-const create = skate('my-element', {
+import { define, state } from 'skatejs';
+
+const Elem = define('my-element', {
   props: {
     prop1: null
   }
 });
-const elem = create();
+const elem = new Elem();
 
 // Set any property you want.
-skate.state(elem, {
+state(elem, {
   prop1: 'value 1',
   prop2: 'value 2'
 });
 
 // Only returns props you've defined on your component.
 // { prop1: 'value 1' }
-skate.state(elem);
+state(elem);
 ```
 
 
@@ -1304,14 +1132,16 @@ Symbols are exposed for you to access information that stored on objects that ar
 When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
 ```js
-skate('my-component', {
+import { define, symbols, vdom } from 'skatejs';
+
+define('my-component', {
   render () {
-    skate.vdom.p('test');
+    vdom.p('test');
   },
   ready (elem) {
     // #shadow-root
     //   <p>test</p>
-    elem[skate.symbols.shadowRoot];
+    elem[symbols.shadowRoot];
   }
 });
 ```
@@ -1320,7 +1150,7 @@ skate('my-component', {
 
 ### `vdom`
 
-Kickflip includes several helpers for creating virtual elements with Incremental DOM.
+Skate includes several helpers for creating virtual elements with Incremental DOM.
 
 #### `vdom (elementName, attributesOrChildren, children)`
 
@@ -1370,7 +1200,7 @@ If Shadow DOM v0 is detected, then Skate will output a `<content>` element inste
 
 #### Special Attributes
 
-Kickflip adds some opinionated behaviour to Incremental DOM.
+Skate adds some opinionated behaviour to Incremental DOM.
 
 ##### `attrs.class`
 
@@ -1437,7 +1267,7 @@ If you wanted to use JSX, for example, you'd have to add support for compiling J
 Once that is set up, you may write a component using JSX. For example, a simple blog element may look something like:
 
 ```js
-skate('my-element', {
+skate.define('my-element', {
   props: {
     title: skate.prop.string()
   },
@@ -1492,7 +1322,7 @@ The component lifecycle consists of several paths in the following order startin
 You may extend components using ES6 classes or your favorite ES5 library.
 
 ```js
-const XParent = skate('x-parent', {
+const XParent = skate.define('x-parent', {
   static created () {
 
   }
@@ -1533,18 +1363,13 @@ document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
 document.getElementById('my-component-id').someCustomMethod();
 ```
 
-This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you'll need to use one of the following depending on your use case:
-
-- `skate.create()` or the element constructor
-- `skate.fragment()`
-- `skate.init()`
-- `skate.ready()`
+This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you should use `skate.ready()`.
 
 
 
-## Web Component Differences
+## Customised built-in elements
 
-Skate implements the [Custom Element spec](http://w3c.github.io/webcomponents/spec/custom/) with a custom API but it does not polyfill the native methods. This allows it to minimise code overhead and optimise performance. Because of this, Skate is around the same size as the custom element polyfill, performs better and can have multiple versions of itself on the page if need be. However, you cannot abstract the Shadow DOM in the same way, which is why we've opted to have the user provide their own Shadow DOM polyfill instead of bundling it.
+The spec [mentions](http://w3c.github.io/webcomponents/spec/custom/#customized-built-in-element) this as a way to extend built-in elements. Currently, how this is exposed to the user is still [under contention](https://github.com/w3c/webcomponents/issues/509#issuecomment-222860736). Skate doesn't need do anything to support this underneath the hood, but be aware of this when building components.
 
 
 
@@ -1558,14 +1383,7 @@ We hold no ill thoughts against other libraries and we are just trying to articu
 
 [webcomponentsjs](https://github.com/webcomponents/webcomponentsjs)
 
-WebComponentsJS is a suite of polyfills. Skate can work along side these, but is a superset of these so it provides you with an opinionated layer on top of them. There are a few things to note:
-
-- Skate's Custom Element implementation is faster than the WebComponentsJS polyfill.
-- Skate does not override any native Custom Element methods.
-- Skate is only slightly larger than the Custom Element polyfill (28k vs 17k, min not gzipped).
-- You can have multiple versions of Skate on the page.
-- If the WebComponentsJS polyfills are on the page, Skate will use those instead. Beware, though, using the WebComponentsJS Custom Element polyfill may degrade performance over just using Skate as is.
-
+WebComponentsJS is a suite of polyfills. If there is native browser support, they're not needed. Skate is a superset of these specifications, thus is a value-add on top of them, if they're needed.
 
 
 ### VS Polymer
@@ -1573,11 +1391,10 @@ WebComponentsJS is a suite of polyfills. Skate can work along side these, but is
 Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundametally, Skate and Polymer are very different.
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
-- Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions. All versions listed below for Polymer don't include the size of the Custom Element polyfill (17k):
-  - `polymer-micro.html` 17k vs 28k
-  - `polymer-mini.html` 54k vs 28k
-  - `polymer.html` 124k vs 28k
-- Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since Polymer uses the WebComponentsJS polyfill.
+- Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
+  - `polymer-micro.html` 17k vs 23k
+  - `polymer-mini.html` 54k vs 23k
+  - `polymer.html` 124k vs 23k
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, Bower, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
@@ -1588,8 +1405,8 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 Skate is very close to X-Tags in terms of API shape, however, it is very different in the way it is applied and shares a lot of the same differences with X-Tags as it does with Polymer.
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
-- Skate is larger than X-Tags without the Custom Element polyfill, but is smaller than X-Tags after you include the Custom Element polyfill. This is due to the fact that Skate provides the Custom Element implementation internally.
-- Due to the fact that Skate internally polyfills Custom Elements, it is faster at initialising components since X-Tags uses the WebComponentsJS polyfill.
+- Skate's property API is thorough and extensible. We provide implementationsf or commonly used property patterns and give you an API to easily write your own reusable properties.
+- Skate is only slightly larger and gives you everything you need to build complex components.
 - There's no mutating your component's DOM from property accessors which can become unweidly.
 
 
@@ -1598,44 +1415,10 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
-- React is massive: a whopping 145k minified vs 28k.
+- React is massive: a whopping 145k minified vs 23k.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
 - **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.
-
-
-
-## Native Custom Element Support
-
-If the browser supports custom elements then Skate will use the native DOM implementation instead of using Mutation Observers which will have added performance benefits. This all happens underneath the hood and the API does not change.
-
-We strive to ensure Skate has as little base overhead as possible. What this means is that if you build a component with Skate vs with native it should not have a negative impact on performance. Of course, there will always be some overhead, but it should not be significant.
-
-
-
-## SVG
-
-When using custom elements in SVG, you need to explicitly extend the `SVGElement.prototype` as well as set the `extends` option to a valid `SVGElement` name:
-
-```js
-skate('my-path', {
-  extends: 'path',
-  prototype: Object.create(SVGElement.prototype)
-});
-```
-
-Then you may write the following:
-
-```html
-<svg xmlns="http://www.w3.org/2000/svg">
-  <circle />
-  <path is="my-path" />
-</svg>
-```
-
-The [custom element spec](http://w3c.github.io/webcomponents/spec/custom/#registering-custom-elements) is very vague on SVG and it would seem that it implies you don't need to specify `extends`. However, this is not the case in Chrome under native support it would seem. This is not an implementation detail of Skate, but the spec and the browser implementations.
-
-Theoretically, Skate could automatically detect this and extend `path` by default (as it is the most generic SVG element), but then it would be ambiguous when reading your custom element definition as to what - and if - it is extending. For that reason, we leave this up to you.
 
 
 
