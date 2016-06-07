@@ -5,9 +5,6 @@ import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
 
-// Symbol() wasn't transpiling properly.
-const $debounce = '____debouncedRender';
-
 function getDefaultValue (elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
 }
@@ -115,7 +112,7 @@ function createNativePropertyDefinition (name, opts) {
 
     // Re-render on property updates if the should-update check passes.
     if (prop.render(this, changeData)) {
-      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor[symbols.renderer]));
+      const deb = this[symbols.rendererDebounced] || (this[symbols.rendererDebounced] = debounce(this.constructor[symbols.renderer]));
       deb(this);
     }
 
