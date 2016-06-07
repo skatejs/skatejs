@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#517](https://github.com/skatejs/skatejs/issues/517) - Add `skate.factory()`.
 - [#561](https://github.com/skatejs/skatejs/issues/561) - Add support for legacy v0 (Blink) Shadow DOM implementation.
 - [#562](https://github.com/skatejs/skatejs/issues/561) - Add ability to render to the host element if no Shadow DOM support is available.
+- Add `skate.Component` that you can extend as a base class. You can also use `skate.Component.extend()` in ES5.
 
 ### Changed
 
@@ -31,12 +32,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#544](https://github.com/skatejs/skatejs/pull/544) - Remove support for custom renderers. Incremental DOM is now the defeacto renderer and all properties cause a re-render or have the option to specify when it does similar to `shouldComponentUpdate()` in React.
 - [#547](https://github.com/skatejs/skatejs/issues/547) - Remove `skate.render()` and synchronously render after calling `skate.state()`.
 - [#575](https://github.com/skatejs/skatejs/issues/575) - Rename `properties` option to `props` to be consistent with the `skate.prop` namespace.
+- `skate()` is no longer called as a function. You now call `skate.define()`.
+- IE 9 and 10 are no longer officially supported
+- Custom elements are no longer internally polyfilled. Use the WebComponentsJS V1 polyfill instead. Details in README.
+- `dist` is no longer committed to the repo. It is still published.
+- UMD sources are published as a single file in `dist/index.js` or `dist/index.min.js`.
 
 ### Removed
 
 - [#471](https://github.com/skatejs/skatejs/issues/471) - Remove `skate.render.html()`.
 - [#473](https://github.com/skatejs/skatejs/issues/473) - Remove support for components in polyfill-land that have an invalid name in native-land.
 - [#475](https://github.com/skatejs/skatejs/issues/475) - No more binding multiple components to a single element. Removes ambiguity.
+- `skate.create()`; use `document.createElement()` or the element constructor instead.
+- `skate.fragment()`; use standard DOM methods and `skate.ready()` instead.
+- `skate.init()`; use `skate.ready()` instead.
 
 ## 0.15.3
 
