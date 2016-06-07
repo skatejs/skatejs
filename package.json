@@ -16,6 +16,10 @@
     "web",
     "web-components"
   ],
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
     "incremental-dom": "0.4.0",
     "object-assign": "4.1.0"
@@ -23,10 +27,16 @@
   "devDependencies": {
     "es6-shim": "0.35.1",
     "eslint": "2.11.1",
-    "skatejs-build": "1.1.1",
+    "skatejs-build": "2.1.0",
     "webcomponents.js": "skatejs/webcomponentsjs#b123ff8"
   },
   "scripts": {
+    "prepublish": "sk-bundle",
     "test": "karma start --single-run"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
