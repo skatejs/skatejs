@@ -6,7 +6,7 @@ module.exports = function (config) {
   config.browsers = config.browsers.filter(name => !/^internet_explorer/.test(name));
 
   // Only test IE latest.
-  config.browsers.push('internet_explorer_latest');
+  config.browsers.push('internet_explorer_11');
 
   // Shims for testing.
   config.files = [
