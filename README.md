@@ -172,21 +172,15 @@ Or you can DIY by downloading the zip and consuming it via one of the following 
 
 
 
-### UMD (AMD / CommonJS)
+### E2015 Modules
 
-UMD files are located in `lib/`. Simply `require` the `lib/index.js` file by whatever means you have and use it in accordance with whatever loader you've chosen.
-
-
-
-### ES6 Modules
-
-The Skate source is written using [ES2015 modules](http://www.2ality.com/2014/09/es6-modules-final.html). If you're using a transpilation method, then you can `import skate from 'skatejs';` and use it in your projects as you would any ES6 module.
+Consuming Skate the Skate source is the recommended way to use it. There is a `jsnext:main` field that [Rollup](https://github.com/rollup/rollup) can use. Otherwise you can `import { ... } from 'skatejs/src';`.
 
 
 
-### Global
+### UMD (AMD / CommonJS / Global)
 
-If you're still skating old school the `dist` directory contains the bundled ES5 source and contains both a UMD definition and a global `skate` variable.
+When you install Skate, the UMD source files are located in `dist/`. You can use the standard or minified version. Both contain the UMD definitions. The `main` field points to `dist/index.js`.
 
 
 
