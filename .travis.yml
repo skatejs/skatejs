@@ -1,17 +1,28 @@
 sudo: false
 language: node_js
 node_js: stable
+cache:
+  directories:
+    - node_modules
+notifications:
+  email: false
 before_script:
+  - npm prune
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - npm install
 script:
-  - bundle
+  - sk-bundle
   - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
     npm test -- --saucelabs;
     else
     npm test -- --browsers Firefox;
     fi
+after_success:
+  - sk-release
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
 env:
   global:
     - secure: k00BVlgfFnvYE/wikDY9c8HhPR/hgeB1U9cIs8rV3SNGVau1VtYsvYLAiLatO7VqE6HmITr5VxQMoOgkAeO/ATS7tXIJydlq0GMTwjtx38Vtc3/HqfuXKVVpZBahIHyNraodiGs5gl0aHZUH8pExNJl3i19aOHZXIXj6NUXNlOA=
