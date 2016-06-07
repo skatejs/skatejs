@@ -2019,10 +2019,10 @@ var vdom = Object.freeze({
 	  }
 
 	  babelHelpers.createClass(Component, null, [{
-	    key: 'create',
-	    value: function create() {
+	    key: 'extend',
+	    value: function extend() {
 	      var definition = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-	      var Base = arguments.length <= 1 || arguments[1] === undefined ? Component : arguments[1];
+	      var Base = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 
 	      // Create class for the user.
 
@@ -2429,7 +2429,7 @@ var vdom = Object.freeze({
 	// that the element is returned at the end.
 	function createConstructor(name$$, Ctor) {
 	  if ((typeof Ctor === 'undefined' ? 'undefined' : babelHelpers.typeof(Ctor)) === 'object') {
-	    Ctor = Component.create(Ctor);
+	    Ctor = Component.extend(Ctor);
 	  }
 
 	  // Map callbacks.
