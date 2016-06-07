@@ -1,12 +1,12 @@
+import { define } from '../../src/index';
 import bench from '../lib/bench';
 import fixture from '../lib/fixture';
-import skate from '../../src/index';
 
 document.registerElement('x-native', {
   prototype: Object.create(HTMLElement.prototype, {})
 });
 
-skate('x-skate', {});
+define('x-skate', {});
 
 describe('upgrading components', function () {
   var args;

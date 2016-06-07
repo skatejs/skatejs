@@ -1,6 +1,6 @@
-import init from '../../../src/api/init';
+import { define } from '../../../src/index';
+import fixture from '../../lib/fixture';
 import ready from '../../../src/api/ready';
-import skate from '../../../src/index';
 import unique from '../../lib/element';
 
 describe('api/ready', function () {
@@ -8,27 +8,16 @@ describe('api/ready', function () {
   let tag;
 
   function setup () {
-    skate(tag, {});
-  }
-
-  function initialise () {
-    init(elem);
+    define(tag, {});
   }
 
   beforeEach(function () {
     tag = unique().safe;
-    elem = document.createElement(tag);
+    elem = fixture().appendChild(document.createElement(tag));
   });
 
   it('should fire for an element when it is already ready', function (done) {
-    let called = false;
-
     setup();
-    initialise();
-
-    ready(elem, () => called = true);
-    expect(called).to.equal(true);
-
     ready(elem, function (shouldBeElem) {
       expect(shouldBeElem).to.equal(elem);
       done();
@@ -41,6 +30,5 @@ describe('api/ready', function () {
       done();
     });
     setup();
-    initialise();
   });
 });

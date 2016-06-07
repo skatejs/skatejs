@@ -5,7 +5,10 @@
   "version": "0.15.3",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "repository": "git@github.com:skatejs/skatejs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skatejs/skatejs"
+  },
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
   "keywords": [
@@ -16,17 +19,27 @@
     "web",
     "web-components"
   ],
+  "files": [
+    "dist",
+    "src"
+  ],
   "dependencies": {
-    "object-assign": "^4.0.1"
+    "incremental-dom": "0.4.0",
+    "object-assign": "4.1.0"
   },
   "devDependencies": {
+    "es6-shim": "0.35.1",
     "eslint": "2.11.1",
-    "incremental-dom": "0.4.0",
-    "skatejs-build": "skatejs/build#cdcbcfc",
-    "skatejs-named-slots": "skatejs/named-slots#00daacd",
-    "webcomponents.js": "0.7.22"
+    "skatejs-build": "2.1.0",
+    "webcomponents.js": "skatejs/webcomponentsjs#b123ff8"
   },
   "scripts": {
+    "prepublish": "sk-bundle",
     "test": "karma start --single-run"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

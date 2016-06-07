@@ -1,11 +1,9 @@
+import * as symbols from '../api/symbols';
 import assign from 'object-assign';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
-
-// Symbol() wasn't transpiling properly.
-const $debounce = '____debouncedRender';
 
 function getDefaultValue (elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
@@ -15,20 +13,6 @@ function getInitialValue (elem, name, opts) {
   return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
 }
 
-function syncAttribute (elem, propertyName, attributeName, newValue, opts) {
-  if (!attributeName) {
-    return;
-  }
-
-  const serializedValue = opts.serialize(newValue);
-
-  if (empty(serializedValue)) {
-    elem.removeAttribute(attributeName);
-  } else {
-    elem.setAttribute(attributeName, serializedValue);
-  }
-}
-
 function createNativePropertyDefinition (name, opts) {
   const prop = {
     configurable: true,
@@ -36,9 +20,10 @@ function createNativePropertyDefinition (name, opts) {
   };
 
   prop.created = function (elem) {
-    const propertyData = data(elem, `api/property/${name}`);
+    const propData = data(elem, `api/property/${name}`);
     const attributeName = opts.attribute;
     let initialValue = elem[name];
+    let shouldSyncAttribute = false;
 
     // Store property to attribute link information.
     data(elem, 'attributeLinks')[attributeName] = name;
@@ -50,23 +35,22 @@ function createNativePropertyDefinition (name, opts) {
         initialValue = opts.deserialize(elem.getAttribute(attributeName));
       } else if ('initial' in opts) {
         initialValue = getInitialValue(elem, name, opts);
+        shouldSyncAttribute = true;
       } else if ('default' in opts) {
         initialValue = getDefaultValue(elem, name, opts);
       }
     }
 
-    // We must coerce the initial value just in case it wasn't already.
-    const internalValue = propertyData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
-
-    // Since the attribute handler sets the property if the property setting
-    // didn't invoke the attribute handler, we must ensure the property
-    // setter can't be invoked by the setting of the attribute here.
-    syncAttribute(elem, name, attributeName, internalValue, opts);
+    if (shouldSyncAttribute) {
+      prop.set.call(elem, initialValue);
+    } else {
+      propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+    }
   };
 
   prop.get = function () {
-    const propertyData = data(this, `api/property/${name}`);
-    const { internalValue } = propertyData;
+    const propData = data(this, `api/property/${name}`);
+    const { internalValue } = propData;
     if (typeof opts.get === 'function') {
       return opts.get(this, { name, internalValue });
     }
@@ -90,18 +74,16 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.set = function (newValue) {
     const propData = data(this, `api/property/${name}`);
+    let { oldValue } = propData;
+    let shouldRemoveAttribute = false;
 
-    if (propData.settingProperty) {
-      return;
+    if (empty(oldValue)) {
+      oldValue = null;
     }
-
-    const attributeName = data(this, 'propertyLinks')[name];
-    const { oldValue } = propData;
-
-    propData.settingProperty = true;
 
     if (empty(newValue)) {
       newValue = getDefaultValue(this, name, opts);
+      shouldRemoveAttribute = true;
     }
 
     if (typeof opts.coerce === 'function') {
@@ -116,13 +98,11 @@ function createNativePropertyDefinition (name, opts) {
       });
 
       if (canceled) {
-        propData.settingProperty = false;
         return;
       }
     }
 
     propData.internalValue = newValue;
-    syncAttribute(this, name, attributeName, newValue, opts);
 
     const changeData = { name, newValue, oldValue };
 
@@ -131,14 +111,27 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // Re-render on property updates if the should-update check passes.
-    const hasRenderFn = this.constructor.render;
-    if (hasRenderFn && prop.render(this, changeData)) {
-      const deb = this[$debounce] || (this[$debounce] = debounce(this.constructor.renderer));
+    if (prop.render(this, changeData)) {
+      const deb = this[symbols.rendererDebounced] || (this[symbols.rendererDebounced] = debounce(this.constructor[symbols.renderer]));
       deb(this);
     }
 
-    propData.settingProperty = false;
     propData.oldValue = newValue;
+
+    // Link up the attribute.
+    const attributeName = data(this, 'propertyLinks')[name];
+    if (attributeName && !propData.settingAttribute) {
+      const serializedValue = opts.serialize(newValue);
+      propData.syncingAttribute = true;
+      if (shouldRemoveAttribute || empty(serializedValue)) {
+        this.removeAttribute(attributeName);
+      } else {
+        this.setAttribute(attributeName, serializedValue);
+      }
+    }
+
+    // Allow the attribute to be linked again.
+    propData.settingAttribute = false;
   };
 
   return prop;
@@ -153,6 +146,7 @@ export default function (opts) {
 
   return function (name) {
     return createNativePropertyDefinition(name, assign({
+      default: null,
       deserialize: value => value,
       serialize: value => value
     }, opts));

@@ -1,20 +1,12 @@
 import data from '../util/data';
-import findElementInRegistry from '../util/find-element-in-registry';
-
-function ready (element) {
-  const component = findElementInRegistry(element);
-  return component && data(element).created;
-}
 
 export default function (elem, done) {
-  if (ready(elem)) {
+  const info = data(elem);
+  if (elem.hasAttribute(elem.constructor.definedAttribute)) {
     done(elem);
+  } else if (info.readyCallbacks) {
+    info.readyCallbacks.push(done);
   } else {
-    const info = data(elem);
-    if (info.readyCallbacks) {
-      info.readyCallbacks.push(done);
-    } else {
-      info.readyCallbacks = [done];
-    }
+    info.readyCallbacks = [done];
   }
 }

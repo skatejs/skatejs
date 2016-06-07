@@ -1,7 +1,6 @@
-import create from '../../src/api/create';
-import skate from '../../src/index';
+import { define } from '../../src/index';
 
-var counter = 1;
+let counter = 1;
 
 export default function (unsafe) {
   var safe;
@@ -10,7 +9,7 @@ export default function (unsafe) {
   return {
     unsafe: unsafe,
     safe: safe,
-    create: create.bind(null, safe),
-    skate: skate.bind(null, safe)
+    create () { return document.createElement(this.safe); },
+    skate: define.bind(null, safe)
   };
 }

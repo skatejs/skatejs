@@ -5,7 +5,7 @@ const { boolean, number } = prop;
 
 describe('vdom/events (on*)', function () {
   it('should not duplicate listeners', function () {
-    const myel = element().skate({
+    const MyEl = element().skate({
       props: {
         test: number({ default: 0 })
       },
@@ -13,7 +13,7 @@ describe('vdom/events (on*)', function () {
         elem._test = 0;
       },
       render (elem) {
-        vdom('div', {
+        vdom.create('div', {
           onevent () {
             elem._test++;
           }
@@ -21,7 +21,7 @@ describe('vdom/events (on*)', function () {
       }
     });
 
-    const el = myel();
+    const el = new MyEl();
     const shadowDiv = el[symbols.shadowRoot].children[0];
 
     // Ensures that it rendered.
@@ -49,21 +49,21 @@ describe('vdom/events (on*)', function () {
   it('should not trigger events bubbled from descendants', function () {
     let called = false;
     const test = () => called = true;
-    const myel = element().skate({
+    const myel = new (element().skate({
       render () {
-        vdom('div', { ontest: test }, vdom.bind(null, 'span'));
+        vdom.create('div', { ontest: test }, vdom.create.bind(null, 'span'));
       }
-    })();
+    }));
     emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
     expect(called).to.equal(false);
   });
 
   it('should not fail for listeners that are not functions', function () {
-    const myel = element().skate({
+    const myel = new (element().skate({
       render () {
-        vdom('div', { ontest: null });
+        vdom.create('div', { ontest: null });
       }
-    })();
+    }));
     emit(myel[symbols.shadowRoot].firstChild, 'test');
   });
 
@@ -76,18 +76,18 @@ describe('vdom/events (on*)', function () {
 
     beforeEach(function () {
       count = 0;
-      el = element().skate({
+      el = new (element().skate({
         props: {
           unbind: boolean()
         },
         render (elem) {
           if (elem.unbind) {
-            vdom('div');
+            vdom.create('div');
           } else {
-            vdom('div', { onclick: inc, ontest: inc });
+            vdom.create('div', { onclick: inc, ontest: inc });
           }
         }
-      })();
+      }));
       div = el[symbols.shadowRoot].firstChild;
     });
 

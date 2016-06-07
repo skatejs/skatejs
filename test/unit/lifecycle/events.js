@@ -1,6 +1,7 @@
+import afterMutations from '../../lib/after-mutations';
 import helperElement from '../../lib/element';
 import helperFixture from '../../lib/fixture';
-import skate, { emit, init } from '../../../src/index';
+import { define, emit, ready, symbols, vdom } from '../../../src/index';
 
 describe('lifecycle/events', function () {
   var numTriggered;
@@ -16,7 +17,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on own element', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -28,7 +29,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on child elements', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -42,7 +43,7 @@ describe('lifecycle/events', function () {
   });
 
   it('events on descendant elements', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -56,7 +57,7 @@ describe('lifecycle/events', function () {
   });
 
   it('should allow you to re-add the element back into the DOM', function () {
-    skate(tag.safe, {
+    define(tag.safe, {
       events: {
         test: increment
       }
@@ -72,70 +73,74 @@ describe('lifecycle/events', function () {
     expect(numTriggered).to.equal(1);
   });
 
-  it('should support delegate event selectors', function () {
-    const elem = helperElement().skate({
+  it('should support delegate event selectors', function (done) {
+    const elem = new (helperElement().skate({
       events: {
         test (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test');
-          expect(e.target.tagName).to.equal('SPAN', 'test');
-          expect(e.currentTarget.tagName).to.equal(el.tagName, 'test');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test');
+          expect(elem.tagName).to.equal(el.tagName, 'test -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal(el.tagName, 'test -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test -> e.delegateTarget');
         },
         'test a' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test a');
-          expect(e.target.tagName).to.equal('SPAN', 'test a');
-          expect(e.currentTarget.tagName).to.equal('A', 'test a');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test a');
+          expect(elem.tagName).to.equal(el.tagName, 'test a -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal('A', 'test a -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test a -> e.delegateTarget');
         },
         'test span' (el, e) {
           increment();
-          expect(elem.tagName).to.equal(el.tagName, 'test span');
-          expect(e.target.tagName).to.equal('SPAN', 'test span');
-          expect(e.currentTarget.tagName).to.equal('SPAN', 'test span');
-          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span');
+          expect(elem.tagName).to.equal(el.tagName, 'test span -> elem.tagName');
+          expect(e.currentTarget.tagName).to.equal('SPAN', 'test span -> e.currentTarget');
+          expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span -> e.delegateTarget');
         }
+      },
+      render () {
+        vdom.a(vdom.span.bind());
       }
-    })();
+    }));
 
-    elem.innerHTML = '<a><span></span></a>';
     helperFixture(elem);
-    init(elem);
-    emit(elem.querySelector('span'), 'test');
-    expect(numTriggered).to.equal(3);
+    afterMutations(
+      () => emit(elem[symbols.shadowRoot].querySelector('span'), 'test'),
+      () => expect(numTriggered).to.equal(3),
+      done
+    );
   });
 
-  it('should support delegate blur and focus events', function () {
+  it('should support delegate blur and focus events', function (done) {
     var blur = false;
     var focus = false;
     var { safe: tagName } = helperElement('my-component');
 
-    skate(tagName, {
-      created: function (elem) {
-        elem.innerHTML = '<input>';
-      },
+    define(tagName, {
       events: {
         'blur input': () => blur = true,
         'focus input': () => focus = true
       },
       prototype: {
-        blur: function () {
-          emit(this.querySelector('input'), 'blur');
+        blur () {
+          emit(this[symbols.shadowRoot].querySelector('input'), 'blur');
         },
-        focus: function () {
-          emit(this.querySelector('input'), 'focus');
+        focus () {
+          emit(this[symbols.shadowRoot].querySelector('input'), 'focus');
         }
+      },
+      render () {
+        vdom.input();
       }
     });
 
     var inst = helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName);
-    init(inst);
 
-    inst.blur();
-    expect(blur).to.equal(true);
+    ready(inst, function () {
+      inst.blur();
+      expect(blur).to.equal(true, 'blur');
 
-    inst.focus();
-    expect(focus).to.equal(true);
+      inst.focus();
+      expect(focus).to.equal(true, 'focus');
+
+      done();
+    });
   });
 });

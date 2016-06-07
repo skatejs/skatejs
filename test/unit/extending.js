@@ -1,21 +1,16 @@
 import helperElement from '../lib/element';
-import skate, { create } from '../../src/index';
+import { define, Component, symbols, vdom } from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;
 
-  // IE <= 10 can't inherit static properties via __proto__ (https://babeljs.io/docs/advanced/caveats/).
-  var canExtendStaticProperties = !!Object.setPrototypeOf;
-
-  // IE <= 10 can't resolve super (https://babeljs.io/docs/advanced/caveats/).
-  var canResolveSuper = !!Object.setPrototypeOf;
-
   beforeEach(function () {
-    Ctor = skate(helperElement().safe, {
+    Ctor = define(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created: function (elem) {
-        elem.textContent = 'test';
+      created () {},
+      render () {
+        vdom.text('test');
       },
       attributeChanged () {},
       prototype: {
@@ -36,44 +31,52 @@ describe('extending', function () {
   });
 
   it('should copy all configuration options to the extended object', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
-    if (canExtendStaticProperties) {
-      expect(ExtendedCtor.extends).to.equal('div');
-      expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
-      expect(ExtendedCtor.created).to.be.a('function');
-      expect(ExtendedCtor.attributeChanged).to.be.a('function');
-    }
+    const ExtendedCtor = define(tag, class extends Ctor {});
+    expect(ExtendedCtor.extends).to.equal('div');
+    expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
+    expect(ExtendedCtor.created).to.be.a('function');
+    expect(ExtendedCtor.attributeChanged).to.be.a('function');
     expect(ExtendedCtor.prototype.test).to.equal(true);
     expect(ExtendedCtor.prototype.someFunction).to.be.a('function');
   });
 
   it('prototype members should be available', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, class extends Ctor {});
     expect(new ExtendedCtor().test).to.equal(true);
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
-  canExtendStaticProperties && it('should not mess with callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {});
-    expect(new ExtendedCtor().textContent).to.equal('test');
+  it('should not mess with callbacks', function () {
+    const ExtendedCtor = define(tag, class extends Ctor {});
+    expect(new ExtendedCtor()[symbols.shadowRoot].textContent).to.equal('test');
   });
 
-  canResolveSuper && it('should allow overriding of callbacks', function () {
-    var ExtendedCtor = skate(tag, class extends Ctor {
-      static created (elem) {
-        super.created(elem);
-        elem.textContent += 'ing';
+  it('should allow overriding of callbacks', function () {
+    const ExtendedCtor = define(tag, class extends Ctor {
+      static render (elem) {
+        super.render(elem);
+        vdom.text('ing');
       }
     });
-
     const elem = new ExtendedCtor();
-    expect(elem.textContent).to.equal('testing');
+    expect(elem[symbols.shadowRoot].textContent).to.equal('testing');
   });
 
-  canExtendStaticProperties && it('constructor should be accessible', function () {
-    skate(tag, class extends Ctor {});
-    const el = create(tag);
+  it('constructor should be accessible', function () {
+    define(tag, class extends Ctor {});
+    const el = document.createElement(tag);
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
+  });
+
+  it('extends()', function () {
+    const Comp1 = define(`${tag}-1`, {});
+    const Comp2 = define(`${tag}-2`, Comp1.extend({}));
+    const elem1 = new Comp1();
+    const elem2 = new Comp2();
+    expect(elem1).to.be.an.instanceof(Comp1);
+    expect(elem1).to.not.be.an.instanceof(Comp2);
+    expect(elem2).to.be.an.instanceof(Comp1);
+    expect(elem2).to.be.an.instanceof(Comp2);
   });
 });

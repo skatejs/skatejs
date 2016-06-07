@@ -1,16 +1,14 @@
-'use strict';
-
+import { define } from '../../src/index';
 import helperElement from '../lib/element';
-import skate from '../../src/index';
 
 describe('Registration', function () {
   it('should not allow you to register the same component more than once.', function () {
     var multiple = false;
     var tag = helperElement('my-el');
-    skate(tag.safe, {});
+    define(tag.safe, {});
 
     try {
-      skate(tag.safe, {});
+      define(tag.safe, {});
       multiple = true;
     } catch (e) {
       // Do nothing
@@ -23,7 +21,7 @@ describe('Registration', function () {
 describe('Returning a constructor', function () {
   it('should return a constructor that extends a native element.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: {
         func1: function () {}
       }
@@ -36,6 +34,8 @@ describe('Returning a constructor', function () {
 
     var element = new Element();
 
+    expect(element).to.be.an.instanceof(HTMLElement);
+
     expect(element.func1).to.be.a('function');
     expect(element.func2).to.be.a('function');
 
@@ -45,7 +45,7 @@ describe('Returning a constructor', function () {
 
   it('should not allow the constructor property to be enumerated.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {});
+    var Element = define(tag.safe, {});
 
     for (var prop in Element.prototype) {
       if (prop === 'constructor') {
@@ -56,7 +56,7 @@ describe('Returning a constructor', function () {
 
   it('should affect the element prototype even if it was not constructed using the constructor.', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: {
         func1: function () {}
       }
@@ -72,7 +72,7 @@ describe('Returning a constructor', function () {
 
   it('should allow getters and setters on the prototype', function () {
     var tag = helperElement('my-el');
-    var Element = skate(tag.safe, {
+    var Element = define(tag.safe, {
       prototype: Object.create({}, {
         test: {
           get: function () {
@@ -89,7 +89,7 @@ describe('Returning a constructor', function () {
   it('should overwrite prototype members', function () {
     var called = false;
     var { safe: tagName } = helperElement('super-input');
-    var Input = skate(tagName, {
+    var Input = define(tagName, {
       extends: 'input',
       prototype: {
         focus: function () {
@@ -101,28 +101,5 @@ describe('Returning a constructor', function () {
     var input = new Input();
     input.focus();
     expect(called).to.equal(true);
-  });
-
-  describe('when an extends option is specified', function () {
-    var Div;
-    var div;
-    var tagName;
-
-    beforeEach(function () {
-      tagName = helperElement('my-element');
-      Div = skate(tagName.safe, {
-        extends: 'div'
-      });
-
-      div = new Div();
-    });
-
-    it('should return an element whose tag name matches the extends option', function () {
-      expect(div.tagName).to.equal('DIV');
-    });
-
-    it('should return an element whose is attribute is equal to the component id', function () {
-      expect(div.getAttribute('is')).to.equal(tagName.safe);
-    });
   });
 });

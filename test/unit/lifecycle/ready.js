@@ -1,12 +1,12 @@
+import { define } from '../../../src/index';
 import helperElement from '../../lib/element';
-import skate from '../../../src/index';
 
 describe('lifecycle/ready', function () {
-  var tag;
+  let tag;
 
   beforeEach(function () {
     tag = helperElement();
-    skate(tag.safe, {
+    define(tag.safe, {
       ready: function (elem) {
         elem.innerHTML = 'templated';
       }
@@ -14,18 +14,18 @@ describe('lifecycle/ready', function () {
   });
 
   it('should be called', function () {
-    var el = tag.create();
+    const el = tag.create();
     expect(el.textContent).to.equal('templated');
   });
 
   it('should be called after created is called', function () {
-    var { safe: tagName } = helperElement('my-el');
-    var MyEl = skate(tagName, {
-      created: function (elem) {
-        elem.textContent = 'test';
+    const { safe: tagName } = helperElement('my-el');
+    const MyEl = define(tagName, {
+      created (elem) {
+        elem.created = true;
       },
-      ready: function (elem) {
-        expect(elem.textContent).to.equal('test');
+      ready (elem) {
+        expect(elem.created).to.equal(true);
       }
     });
 
@@ -33,12 +33,12 @@ describe('lifecycle/ready', function () {
   });
 
   it('should have access to the extended prototype', function () {
-    var { safe: tagName } = helperElement('my-el');
-    var MyEl = skate(tagName, {
+    const { safe: tagName } = helperElement('my-el');
+    const MyEl = define(tagName, {
       prototype: {
-        myfunc: function () {}
+        myfunc () {}
       },
-      ready: function (elem) {
+      ready (elem) {
         expect(elem.myfunc).to.be.a('function');
       }
     });

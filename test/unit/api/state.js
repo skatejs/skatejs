@@ -3,7 +3,7 @@ import { state } from '../../../src/index';
 
 describe('api/state', function () {
   function create () {
-    return element().skate({
+    return new (element().skate({
       props: {
         prop1: {
           initial: 'test1'
@@ -18,7 +18,7 @@ describe('api/state', function () {
       render (elem) {
         elem.rendered++;
       }
-    })();
+    }));
   }
 
   it('should return only defined properties', function () {

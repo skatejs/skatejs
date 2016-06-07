@@ -1,13 +1,14 @@
+import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import propsInit from '../../../src/lifecycle/props-init';
 
 describe('lifecycle/property', function () {
-  function create (definition, name = 'testName', value) {
-    const elem = element().skate({
+  function create (definition = {}, name = 'testName', value) {
+    const elem = new (element().skate({
       props: {
         [name]: definition
       }
-    })();
+    }));
     if (arguments.length === 3) {
       elem[name] = value;
     }
@@ -23,7 +24,7 @@ describe('lifecycle/property', function () {
   });
 
   it('should not leak options to other definitions', function () {
-    const elem = element().skate({
+    const elem = new (element().skate({
       props: {
         test1: {
           attribute: true,
@@ -38,19 +39,19 @@ describe('lifecycle/property', function () {
           serialize: () => 'test2'
         }
       }
-    })();
+    }));
 
     expect(elem.test1).to.equal('test1');
     expect(elem.test2).to.equal('test2');
 
-    elem.test1 = undefined;
-    elem.test2 = undefined;
+    elem.test1 = null;
+    elem.test2 = null;
 
     expect(elem.test1).to.equal('test1');
     expect(elem.test2).to.equal('test2');
 
-    expect(elem.getAttribute('test1')).to.equal('test1');
-    expect(elem.getAttribute('test2')).to.equal('test2');
+    expect(elem.getAttribute('test1')).to.equal(null);
+    expect(elem.getAttribute('test2')).to.equal(null);
 
     elem.removeAttribute('test1');
     elem.removeAttribute('test2');
@@ -58,30 +59,8 @@ describe('lifecycle/property', function () {
     expect(elem.test1).to.equal('test1');
     expect(elem.test2).to.equal('test2');
 
-    expect(elem.getAttribute('test1')).to.equal('test1');
-    expect(elem.getAttribute('test2')).to.equal('test2');
-  });
-
-  it('should not set a linked attribute to "undefined" if the prop is set to undefined', function () {
-    const elem = create({ attribute: true });
-
-    expect(elem.test).to.equal(undefined);
-    expect(elem.getAttribute('test')).to.equal(null);
-
-    elem.test = undefined;
-    expect(elem.test).to.equal(undefined);
-    expect(elem.getAttribute('test')).to.equal(null);
-  });
-
-  it('should not set a linked attribute to "undefined" if the attribute is removed', function () {
-    const elem = create({ attribute: true });
-
-    expect(elem.test).to.equal(undefined);
-    expect(elem.getAttribute('test')).to.equal(null);
-
-    elem.removeAttribute('test');
-    expect(elem.test).to.equal(undefined);
-    expect(elem.getAttribute('test')).to.equal(null);
+    expect(elem.getAttribute('test1')).to.equal(null);
+    expect(elem.getAttribute('test2')).to.equal(null);
   });
 
   describe('property definition', function () {
@@ -144,18 +123,24 @@ describe('lifecycle/property', function () {
           expect(elem.hasAttribute('test')).to.equal(false);
         });
 
-        it('when an attribute is set to a string, the property should be set to an empty string', function () {
+        it('when an attribute is set to a string, the property should be set to an empty string', function (done) {
           let elem = create({ attribute: true });
           elem.setAttribute('test-name', '');
-          expect(elem.testName).to.equal('');
+          afterMutations(
+            () => expect(elem.testName).to.equal(''),
+            done
+          );
         });
 
-        it('when an attribute is removed, the property should be set to undefined', function () {
+        it('when an attribute is removed, the property should be set to undefined', function (done) {
           let elem = create({ attribute: true });
           elem.setAttribute('test-name', 'test');
-          expect(elem.testName).to.equal('test');
-          elem.removeAttribute('test-name');
-          expect(elem.testName).to.equal(undefined);
+          afterMutations(
+            () => expect(elem.testName).to.equal('test'),
+            () => elem.removeAttribute('test-name'),
+            () => expect(elem.testName).to.equal(null),
+            done
+          );
         });
       });
 
@@ -167,30 +152,36 @@ describe('lifecycle/property', function () {
           expect(called).to.equal(false);
         });
 
-        it('coerces the value from the attribute to the property', function () {
+        it('coerces the value from the attribute to the property', function (done) {
           let elem = create({
             attribute: true,
             deserialize: value => value.split(':').map(Number)
           });
           elem.setAttribute('test-name', '1:2:3');
-          expect(elem.testName).to.be.an('array');
-          expect(elem.testName).to.have.length(3);
-          expect(elem.testName[0]).to.equal(1);
-          expect(elem.testName[1]).to.equal(2);
-          expect(elem.testName[2]).to.equal(3);
+          afterMutations(
+            () => expect(elem.testName).to.be.an('array'),
+            () => expect(elem.testName).to.have.length(3),
+            () => expect(elem.testName[0]).to.equal(1),
+            () => expect(elem.testName[1]).to.equal(2),
+            () => expect(elem.testName[2]).to.equal(3),
+            done
+          );
         });
 
-        it('coerces the initial value if serialized from an attribute', function () {
+        it('coerces the initial value if serialized from an attribute', function (done) {
           let elem = create({
             attribute: true,
             deserialize: value => value.split(':').map(Number)
           });
           elem.setAttribute('test-name', '1:2:3');
-          expect(elem.testName).to.be.an('array');
-          expect(elem.testName).to.have.length(3);
-          expect(elem.testName[0]).to.equal(1);
-          expect(elem.testName[1]).to.equal(2);
-          expect(elem.testName[2]).to.equal(3);
+          afterMutations(
+            () => expect(elem.testName).to.be.an('array'),
+            () => expect(elem.testName).to.have.length(3),
+            () => expect(elem.testName[0]).to.equal(1),
+            () => expect(elem.testName[1]).to.equal(2),
+            () => expect(elem.testName[2]).to.equal(3),
+            done
+          );
         });
       });
 
@@ -212,6 +203,17 @@ describe('lifecycle/property', function () {
           expect(elem.getAttribute('test-name')).to.equal('1:2:3');
         });
 
+        it('removes the attribute if null is returned', function () {
+          let elem = create({
+            attribute: true,
+            serialize: value => value ? '' : null
+          });
+          elem.testName = true;
+          expect(elem.getAttribute('test-name')).to.equal('');
+          elem.testName = false;
+          expect(elem.getAttribute('test-name')).to.equal(null);
+        });
+
         it('removes the attribute if undefined is returned', function () {
           let elem = create({
             attribute: true,
@@ -225,76 +227,59 @@ describe('lifecycle/property', function () {
       });
     });
 
+
     describe('default', function () {
-      describe('when a function', function () {
-        it('returns the default value that the property should be initialised with', function () {
-          let elem = create({ default: () => 'something' });
-          expect(elem.testName).to.equal('something');
-        });
-
-        it('is returned by get() when the property is undefined', function () {
-          let elem = create({ default: () => 'something' });
-          elem.testName = 'something else';
-          expect(elem.testName).to.equal('something else');
-          elem.testName = undefined;
-          expect(elem.testName).to.equal('something');
-        });
-
-        it('is returned by get() when the property is null', function () {
-          let elem = create({ default: () => 'something' });
-          elem.testName = 'something else';
-          expect(elem.testName).to.equal('something else');
-          elem.testName = null;
-          expect(elem.testName).to.equal('something');
-        });
-
-        it('is normalized to undefined if null is passed', function () {
-          let elem = create({ default: null });
-          expect(elem.test).to.equal(undefined);
-        });
-
-        it('should return the default value if a linked attribute is removed', function () {
-          const elem = create({ attribute: true, default: 'something' });
-
-          // Ensure defaults are there.
-          expect(elem.testName).to.equal('something');
-          expect(elem.getAttribute('test-name')).to.equal('something');
-
-          // Remove.
-          elem.removeAttribute('test-name');
-
-          // Should be in the same state because the default is "something".
-          expect(elem.testName).to.equal('something');
-          expect(elem.getAttribute('test-name')).to.equal('something');
-        });
-
-        it('context and arguments', function (done) {
-          let opts = {
-            default (elem, data) {
-              expect(this.default).to.equal(opts.default);
-              expect(arguments.length).to.equal(2);
-              expect(elem.nodeType).to.equal(1);
-              expect(data.name).to.equal('testName');
-              done();
-            }
-          };
-          create(opts);
-        });
+      it('null by default', function () {
+        const elem = create();
+        expect(elem.testName).to.equal(null);
       });
 
-      describe('when not a function', function () {
-        it('it is the default value that the property should be initialised with', function () {
-          let elem = create({ default: 'something' });
-          expect(elem.testName).to.equal('something');
-        });
+      it('should accept a function', function () {
+        const opts = {
+          default (elem, data) {
+            expect(this.default).to.equal(opts.default);
+            expect(arguments.length).to.equal(2);
+            expect(elem.nodeType).to.equal(1);
+            expect(data.name).to.equal('testName');
+            return 'testValue';
+          }
+        };
+        const elem = create(opts);
+        expect(elem.testName).to.equal('testValue');
+      });
 
-        it('is returned by get() when the property is not defined', function () {
-          let elem = create({ default: 'something' });
-          elem.testName = 'something else';
-          expect(elem.testName).to.equal('something else');
-          elem.testName = undefined;
-          expect(elem.testName).to.equal('something');
-        });
+      it('should accept a non-function', function () {
+        const elem = create({ default: 'testValue' });
+        expect(elem.testName).to.equal('testValue');
+      });
+
+      it('should be the property value if property is set to null', function () {
+        const elem = create({ default: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.testName).to.equal('updatedValue');
+        elem.testName = null;
+        expect(elem.testName).to.equal('testValue');
+      });
+
+      it('should be the property value if property is set to undefined', function () {
+        const elem = create({ default: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.testName).to.equal('updatedValue');
+        elem.testName = undefined;
+        expect(elem.testName).to.equal('testValue');
+      });
+
+      it('should not set the attribute on init', function () {
+        const elem = create({ attribute: true, default: 'testValue' });
+        expect(elem.getAttribute('test-name')).to.equal(null);
+      });
+
+      it('should not set the attribute on update', function () {
+        const elem = create({ attribute: true, default: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+        elem.testName = null;
+        expect(elem.getAttribute('test-name')).to.equal(null);
       });
     });
 
@@ -347,7 +332,7 @@ describe('lifecycle/property', function () {
           attribute: true,
           set (elem, data) {
             expect(data.newValue).to.equal('something');
-            expect(data.oldValue).to.equal(undefined);
+            expect(data.oldValue).to.equal(null);
             ++calls;
           }
         }, 'testName', 'something');
@@ -377,8 +362,8 @@ describe('lifecycle/property', function () {
             expect(elem.nodeType).to.equal(1);
             expect(data).to.contain({
               name: 'testName',
-              newValue: undefined,
-              oldValue: undefined
+              newValue: null,
+              oldValue: null
             });
             done();
           }
@@ -431,49 +416,52 @@ describe('lifecycle/property', function () {
     });
 
     describe('initial', function () {
-      it('is called once', function () {
-        let called = 0;
-        const elem = create({
-          initial: () => ++called
-        });
-        elem.testName = 'something else';
-        expect(called).to.equal(1);
-      });
-
-      it('a value that is not a function becomes the initial value', function () {
-        const elem = create({
-          initial: 'test'
-        });
-        expect(elem.testName).to.equal('test');
-      });
-
-      it('a function should return the initial value', function () {
-        const elem = create({
-          initial: () => 'test'
-        });
-        expect(elem.testName).to.equal('test');
-      });
-
-      it('does not get used as the default value', function () {
-        const elem = create({
-          initial: 'test'
-        });
-        elem.testName = undefined;
-        expect(elem.testName).to.equal(undefined);
-      });
-
-      it('context and arguments', function (done) {
+      it('should accept a function', function () {
         const opts = {
           initial (elem, data) {
             expect(this.initial).to.equal(opts.initial);
             expect(arguments.length).to.equal(2);
             expect(elem.nodeType).to.equal(1);
             expect(data.name).to.equal('testName');
-            expect(data.internalValue).to.equal(undefined);
-            done();
+            return 'testValue';
           }
         };
-        create(opts);
+        const elem = create(opts);
+        expect(elem.testName).to.equal('testValue');
+      });
+
+      it('should accept a non-function', function () {
+        const elem = create({ initial: 'testValue' });
+        expect(elem.testName).to.equal('testValue');
+      });
+
+      it('should not be the property value if property is set to null', function () {
+        const elem = create({ initial: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.testName).to.equal('updatedValue');
+        elem.testName = null;
+        expect(elem.testName).to.equal(null);
+      });
+
+      it('should not be the property value if property is set to undefined', function () {
+        const elem = create({ initial: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.testName).to.equal('updatedValue');
+        elem.testName = undefined;
+        expect(elem.testName).to.equal(null);
+      });
+
+      it('should set the attribute on init', function () {
+        const elem = create({ attribute: true, initial: 'testValue' });
+        expect(elem.getAttribute('test-name')).to.equal('testValue');
+      });
+
+      it('should set the attribute on update', function () {
+        const elem = create({ attribute: true, initial: 'testValue' });
+        elem.testName = 'updatedValue';
+        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+        elem.testName = null;
+        expect(elem.getAttribute('test-name')).to.equal(null);
       });
     });
   });
