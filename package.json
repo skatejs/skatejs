@@ -17,14 +17,13 @@
     "web-components"
   ],
   "dependencies": {
-    "object-assign": "^4.0.1"
+    "incremental-dom": "0.4.0",
+    "object-assign": "4.1.0"
   },
   "devDependencies": {
-    "es6-shim": "^0.35.1",
+    "es6-shim": "0.35.1",
     "eslint": "2.11.1",
-    "incremental-dom": "0.4.0",
-    "skatejs-build": "skatejs/build#cdcbcfc",
-    "skatejs-named-slots": "skatejs/named-slots#00daacd",
+    "skatejs-build": "1.1.1",
     "webcomponents.js": "skatejs/webcomponentsjs#b123ff8"
   },
   "scripts": {
