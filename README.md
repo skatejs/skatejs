@@ -53,13 +53,13 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 ### Custom Elements
 
-Skate requires Custom Elements V1 support. In [browsers that don't support this](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate with native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/native-shim.js).
+Skate requires Custom Elements V1 support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate in browsers that have native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/native-shim.js).
 
 
 
 ### Shadow DOM
 
-Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with one so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively.
+Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively.
 
 - https://github.com/skatejs/named-slots/
 - https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
@@ -174,13 +174,24 @@ Or you can DIY by downloading the zip and consuming it via one of the following 
 
 ### E2015 Modules
 
-Consuming Skate the Skate source is the recommended way to use it. There is a `jsnext:main` field that [Rollup](https://github.com/rollup/rollup) can use. Otherwise you can `import { ... } from 'skatejs/src';`.
+Consuming the Skate source is the recommended way to use it, if you can. There is a `jsnext:main` field that [Rollup](https://github.com/rollup/rollup) can use. Otherwise you can `import { ... } from 'skatejs/src';`.
 
 
 
 ### UMD (AMD / CommonJS / Global)
 
-When you install Skate, the UMD source files are located in `dist/`. You can use the standard or minified version. Both contain the UMD definitions. The `main` field points to `dist/index.js`.
+When you install Skate, the UMD source files are located in `dist/`. You can use the standard or minified version. Both contain the UMD definitions. The `main` field points to `dist/index.js`. You can require it in the following ways:
+
+```js
+// CommonJS
+require('skatejs');
+
+// AMD
+require(['skatejs'], function (skate) {});
+
+// Global
+window.skate;
+```
 
 
 
