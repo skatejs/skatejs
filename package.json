@@ -5,7 +5,10 @@
   "version": "0.15.3",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "repository": "git@github.com:skatejs/skatejs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skatejs/skatejs"
+  },
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
   "keywords": [
