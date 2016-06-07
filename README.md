@@ -286,7 +286,7 @@ import { Component, define } from 'skatejs';
 const MyComponent = define('my-component', Component.extend({}));
 ```
 
-You can also use `createComponent` to eliminate the boilerplate of extending base classes in ES5:
+You can also use `Component.extend()` to eliminate the boilerplate of extending base classes in ES5:
 
 ```js
 import { Component, define } from 'skatejs';
