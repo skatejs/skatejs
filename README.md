@@ -195,14 +195,6 @@ window.skate;
 
 
 
-## Examples
-
-- [SkateJS website (WIP)](https://github.com/skatejs/skatejs.github.io/tree/future)
-- [TodoMVC, classic DOM](https://github.com/skatejs/todomvc/tree/skatejs/examples/skatejs)
-- [AUI](https://bitbucket.org/atlassian/aui) (only some components)
-
-
-
 ## Resources
 
 - [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
