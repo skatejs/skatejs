@@ -30,13 +30,11 @@
     "es6-shim": "0.35.1",
     "eslint": "2.11.1",
     "skatejs-build": "2.1.1",
-    "webcomponents.js": "skatejs/webcomponentsjs#b123ff8",
-    "semantic-release": "^4.3.5"
+    "webcomponents.js": "skatejs/webcomponentsjs#b123ff8"
   },
   "scripts": {
     "prepublish": "sk-bundle",
-    "test": "karma start --single-run",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "test": "karma start --single-run"
   },
   "config": {
     "commitizen": {
