@@ -1,7 +1,7 @@
 import * as symbols from './symbols';
-import { create } from './component';
 import { customElementsV1 } from '../util/support';
 import attributeChanged from '../lifecycle/attribute-changed';
+import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
@@ -36,7 +36,7 @@ function ensurePropertyDefinitions (Ctor) {
 // that the element is returned at the end.
 function createConstructor (name, Ctor) {
   if (typeof Ctor === 'object') {
-    Ctor = create(Ctor);
+    Ctor = Component.create(Ctor);
   }
 
   // Map callbacks.

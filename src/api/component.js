@@ -2,7 +2,7 @@ import * as symbols from './symbols';
 import data from '../util/data';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
-export class Component extends HTMLElement {
+export default class Component extends HTMLElement {
   constructor () {
     super();
 
@@ -68,22 +68,22 @@ export class Component extends HTMLElement {
   static get renderedAttribute () {
     return 'rendered';
   }
-}
 
-export function create (definition = {}, Base = Component) {
-  // Create class for the user.
-  class Ctor extends Base {}
+  static create (definition = {}, Base = Component) {
+    // Create class for the user.
+    class Ctor extends Base {}
 
-  // For inheriting from the object literal.
-  const opts = getOwnPropertyDescriptors(definition);
-  const prot = getOwnPropertyDescriptors(definition.prototype);
+    // For inheriting from the object literal.
+    const opts = getOwnPropertyDescriptors(definition);
+    const prot = getOwnPropertyDescriptors(definition.prototype);
 
-  // Prototype is non configurable (but is writable) s
-  delete opts.prototype;
+    // Prototype is non configurable (but is writable) s
+    delete opts.prototype;
 
-  // Pass on static and instance members from the definition.
-  Object.defineProperties(Ctor, opts);
-  Object.defineProperties(Ctor.prototype, prot);
+    // Pass on static and instance members from the definition.
+    Object.defineProperties(Ctor, opts);
+    Object.defineProperties(Ctor.prototype, prot);
 
-  return Ctor;
+    return Ctor;
+  }
 }

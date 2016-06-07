@@ -233,17 +233,21 @@ var prop = Object.freeze({
 	  string: string
 	});
 
+	var created = '____created';
 	var events = '____events';
 	var name = '____name';
 	var props = '____props';
 	var renderer = '____renderer';
+	var rendererDebounced = '____rendererDebounced';
 	var shadowRoot = '____shadowRoot';
 
 var symbols = Object.freeze({
+		created: created,
 		events: events,
 		name: name,
 		props: props,
 		renderer: renderer,
+		rendererDebounced: rendererDebounced,
 		shadowRoot: shadowRoot
 	});
 
@@ -1515,7 +1519,6 @@ var symbols = Object.freeze({
 		notifications: notifications
 	});
 
-	var classes = !!Object.setPrototypeOf;
 	var customElementsV1 = 'customElements' in window;
 	var shadowDomV0 = 'createShadowRoot' in Element.prototype;
 	var shadowDomV1 = 'attachShadow' in Element.prototype;
@@ -1955,57 +1958,6 @@ var vdom = Object.freeze({
 	  }, {});
 	}
 
-	function init(elem) {
-	  var elemData = data$1(elem);
-	  var readyCallbacks = elemData.readyCallbacks;
-	  var Ctor = elem.constructor;
-	  var definedAttribute = Ctor.definedAttribute;
-	  var events$$ = Ctor.events;
-	  var created = Ctor.created;
-	  var props$$ = Ctor.props;
-	  var ready = Ctor.ready;
-	  var renderedAttribute = Ctor.renderedAttribute;
-
-	  var renderer$$ = Ctor[renderer];
-
-	  // TODO: This prevents an element from being initialised multiple times. For
-	  // some reason this is happening with the V1 polyfill. We should try and
-	  // figure out why.
-	  if (elem.____created) return;
-	  elem.____created = true;
-
-	  if (props$$) {
-	    Ctor[props](elem);
-	  }
-
-	  if (events$$) {
-	    Ctor[events](elem);
-	  }
-
-	  if (created) {
-	    created(elem);
-	  }
-
-	  if (renderer$$ && !elem.hasAttribute(renderedAttribute)) {
-	    renderer$$(elem);
-	  }
-
-	  if (ready) {
-	    ready(elem);
-	  }
-
-	  if (!elem.hasAttribute(definedAttribute)) {
-	    elem.setAttribute(definedAttribute, '');
-	  }
-
-	  if (readyCallbacks) {
-	    readyCallbacks.forEach(function (cb) {
-	      return cb(elem);
-	    });
-	    delete elemData.readyCallbacks;
-	  }
-	}
-
 	var Component = function (_HTMLElement) {
 	  babelHelpers.inherits(Component, _HTMLElement);
 
@@ -2014,7 +1966,55 @@ var vdom = Object.freeze({
 
 	    var _this = babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Component).call(this));
 
-	    init(_this);
+	    var elemData = data$1(_this);
+	    var readyCallbacks = elemData.readyCallbacks;
+	    var Ctor = _this.constructor;
+	    var definedAttribute = Ctor.definedAttribute;
+	    var events$$ = Ctor.events;
+	    var created$$ = Ctor.created;
+	    var props$$ = Ctor.props;
+	    var ready = Ctor.ready;
+	    var renderedAttribute = Ctor.renderedAttribute;
+
+	    var renderer$$ = Ctor[renderer];
+
+	    // TODO: This prevents an element from being initialised multiple times. For
+	    // some reason this is happening in the event tests. It's possibly creating
+	    // elements in a way that the causes the custom element v1 polyfill to call
+	    // the constructor twice.
+	    if (_this[created]) return babelHelpers.possibleConstructorReturn(_this);
+	    _this[created] = true;
+
+	    if (props$$) {
+	      Ctor[props](_this);
+	    }
+
+	    if (events$$) {
+	      Ctor[events](_this);
+	    }
+
+	    if (created$$) {
+	      created$$(_this);
+	    }
+
+	    if (renderer$$ && !_this.hasAttribute(renderedAttribute)) {
+	      renderer$$(_this);
+	    }
+
+	    if (ready) {
+	      ready(_this);
+	    }
+
+	    if (!_this.hasAttribute(definedAttribute)) {
+	      _this.setAttribute(definedAttribute, '');
+	    }
+
+	    if (readyCallbacks) {
+	      readyCallbacks.forEach(function (cb) {
+	        return cb(_this);
+	      });
+	      delete elemData.readyCallbacks;
+	    }
 	    return _this;
 	  }
 
@@ -2022,55 +2022,33 @@ var vdom = Object.freeze({
 	    key: 'create',
 	    value: function create() {
 	      var definition = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	      var Base = arguments.length <= 1 || arguments[1] === undefined ? Component : arguments[1];
 
-	      function Ctor() {
-	        var elem = HTMLElement.call(this);
-	        init(elem);
-	        return elem;
-	      }
+	      // Create class for the user.
 
-	      // Merge both the static options from Component and override with user-defined ones.
-	      var opts = assign(getOwnPropertyDescriptors(this), getOwnPropertyDescriptors(definition));
+	      var Ctor = function (_Base) {
+	        babelHelpers.inherits(Ctor, _Base);
 
-	      // Merge both the user-defined prototype but ensure "constructor" is correctly set to Ctor.
-	      var prot = assign(getOwnPropertyDescriptors(definition.prototype), getOwnPropertyDescriptors(Ctor.prototype));
+	        function Ctor() {
+	          babelHelpers.classCallCheck(this, Ctor);
+	          return babelHelpers.possibleConstructorReturn(this, Object.getPrototypeOf(Ctor).apply(this, arguments));
+	        }
 
-	      // Prototype is non configurable (but is writable).
+	        return Ctor;
+	      }(Base);
+
+	      // For inheriting from the object literal.
+
+
+	      var opts = getOwnPropertyDescriptors(definition);
+	      var prot = getOwnPropertyDescriptors(definition.prototype);
+
+	      // Prototype is non configurable (but is writable) s
 	      delete opts.prototype;
 
-	      // Pass on static members.
-	      // We can't just call Object.defineProperties() because WebKit has a lot of
-	      // non-configurable properties which we must filter out. These won't be any
-	      // we need anyways.
-	      for (var name in opts) {
-	        var prop = opts[name];
-	        if (prop.configurable) {
-	          Object.defineProperty(Ctor, name, opts[name]);
-	        }
-	      }
-
-	      // Setup with the correct prototype.
-	      Ctor.prototype = Object.create(HTMLElement.prototype, prot);
-
-	      // Provide a setter for __proto__ as this is what the v1 polyfill uses to
-	      // set the prototype. This may not be necessary if attributeChangedCallback
-	      // is fired for existing attributes in a micro / macro task instead of
-	      // synchronously as it is now.
-	      if (!classes) {
-	        Object.defineProperty(Element.prototype, '__proto__', {
-	          configurable: true,
-	          enumerable: false,
-	          get: function get() {
-	            return this.constructor.prototype;
-	          },
-	          set: function set(prototype) {
-	            var prot = getOwnPropertyDescriptors(prototype);
-	            for (var _name in prot) {
-	              Object.defineProperty(this, _name, prot[_name]);
-	            }
-	          }
-	        });
-	      }
+	      // Pass on static and instance members from the definition.
+	      Object.defineProperties(Ctor, opts);
+	      Object.defineProperties(Ctor.prototype, prot);
 
 	      return Ctor;
 	    }
@@ -2268,9 +2246,6 @@ var vdom = Object.freeze({
 	  return elem.disabled ? true : elem.dispatchEvent(createCustomEvent(name, opts));
 	}
 
-	// Symbol() wasn't transpiling properly.
-	var $debounce = '____debouncedRender';
-
 	function getDefaultValue(elem, name, opts) {
 	  return typeof opts.default === 'function' ? opts.default(elem, { name: name }) : opts.default;
 	}
@@ -2380,7 +2355,7 @@ var vdom = Object.freeze({
 
 	    // Re-render on property updates if the should-update check passes.
 	    if (prop.render(this, changeData)) {
-	      var deb = this[$debounce] || (this[$debounce] = debounce(this.constructor[renderer]));
+	      var deb = this[rendererDebounced] || (this[rendererDebounced] = debounce(this.constructor[renderer]));
 	      deb(this);
 	    }
 
@@ -2532,9 +2507,11 @@ var vdom = Object.freeze({
 	function define (name, Ctor) {
 	  Ctor = createConstructor(name, Ctor);
 	  formatLinkedAttributes(Ctor);
+
 	  Ctor[events] = events$1(Ctor);
 	  Ctor[props] = createInitProps(Ctor);
 	  Ctor[renderer] = createRenderer(Ctor);
+
 	  if (customElementsV1) {
 	    window.customElements.define(name, Ctor);
 	    return window.customElements.get(name);
