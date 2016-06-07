@@ -36,7 +36,7 @@ function ensurePropertyDefinitions (Ctor) {
 // that the element is returned at the end.
 function createConstructor (name, Ctor) {
   if (typeof Ctor === 'object') {
-    Ctor = Component.create(Ctor);
+    Ctor = Component.extend(Ctor);
   }
 
   // Map callbacks.

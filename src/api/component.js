@@ -69,7 +69,7 @@ export default class Component extends HTMLElement {
     return 'rendered';
   }
 
-  static create (definition = {}, Base = Component) {
+  static extend (definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
 
