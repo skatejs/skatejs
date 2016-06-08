@@ -311,7 +311,7 @@ const myElement = new MyComponent();
 The element's prototype. This is the first thing that happens in the element's lifecycle.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   prototype: {
     get someProperty () {},
     set someProperty () {},
@@ -327,7 +327,7 @@ skate('my-component', {
 Event listeners to add to the custom element. These get bound after the `prototype` is set up and before `created` is called.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   events: {
     click (elem, eventObject) {}
   }
@@ -346,7 +346,7 @@ The arguments passed to the handler are:
 Event descriptors can use selectors to target descendants using event delegation.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   events: {
     'click button' (elem, eventObject) {}
   }
@@ -364,7 +364,7 @@ Event delegation works with or without a shadow root as it will inspect the even
 Function that is called when the element is created. This corresponds to the native `createdCallback` (v0) or `constructor` (v1). We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   created (elem) {}
 });
 ```
@@ -378,7 +378,7 @@ The only argument passed to `created` is component element. In this case that is
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: { ...props }
 });
 ```
@@ -396,7 +396,7 @@ Whether or not to link the property to an attribute. This can be either a `Boole
 - If it's a `String`, the value is used as the attribute name it should be linked to.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       attribute: true
@@ -414,7 +414,7 @@ skate('my-component', {
 A function that coerces the incoming property value and returns the coerced value. This value is used as the internal value of the property.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       coerce (value) {
@@ -436,7 +436,7 @@ The parameters passed to the function are:
 Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being empty, the `default` value will be used instead.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       default: 'default value'
@@ -449,7 +449,7 @@ You may also specify a function that returns the default value. This is useful i
 
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       default (elem, data) {
@@ -473,7 +473,7 @@ The parameters passed to the function are:
 A function that coerces the property value to a `String` so that it can be set to the linked attribute, if it is linked.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       deserialize (value) {
@@ -495,7 +495,7 @@ The parameters passed to the function are:
 An event name to trigger whenever the property changes. This event is cancelable, and does not bubble.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       event: 'my-prop-changed'
@@ -513,7 +513,7 @@ By default, no events are triggered.
 A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       get (elem, data) {
@@ -538,7 +538,7 @@ The parameters passed to the function are:
 The initial value the property should have. This is different from `default` in the sense that it is only ever invoked once to set the initial value. If this is not specified, then `default` is used in its place.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       initial: 'initial value'
@@ -550,7 +550,7 @@ skate('my-component', {
 It can also be a function that returns the initial value:
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       initial (elem, data) {
@@ -574,7 +574,7 @@ The parameters passed to the function are:
 A function that coerces the attribute value back to the property value, if it is linked.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       deserialize (value) {
@@ -596,7 +596,7 @@ The parameters passed to the function are:
 ```js
 import { vdom } from 'skatejs';
 
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       render (elem, data) {
@@ -621,7 +621,7 @@ If you do not specify a component `render()` function, then this option is ignor
 A function that is called whenever the property is set. This is also called when the property is first initialised.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     myProp: {
       set (elem, data) {
@@ -652,7 +652,7 @@ When the property is initialised, `oldValue` will always be `undefined` and `new
 Function that is called to render the element. This is called when the element is first created and on subsequent property updates if the property `render()` function returns true.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   render (elem) {
     skate.vdom.p(`My name is ${elem.tagName}.`);
   }
@@ -670,7 +670,7 @@ The only argument passed to `render` is the component element. In this case that
 Function that is called after the element has been rendered for the first time (see `render`).
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   ready (elem) {}
 });
 ```
@@ -684,7 +684,7 @@ The only argument passed to `ready` is component element. In this case that is `
 Function that is called after the element has been inserted to the document. This corredsponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   attached (elem) {}
 });
 ```
@@ -698,7 +698,7 @@ The only argument passed to `attached` is component element. In this case that i
 Function that is called after the element has been removed from the document. This corredsponds to the native `detachedCallback`. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   detached (elem) {}
 });
 ```
@@ -712,7 +712,7 @@ The only argument passed to `detached` is component element. In this case that i
 Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` (both v0 and v1). Generally, you'll probably end up using `props` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   attributeChanged (elem, data) {
     if (data.oldValue === undefined) {
       // created
@@ -749,7 +749,7 @@ This behaves exactly like described in the [v1 spec](http://w3c.github.io/webcom
 For example, the following:
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   observedAttributes: ['some-attribute'],
   attributeChanged () {}
 });
@@ -758,7 +758,7 @@ skate('my-component', {
 Could similarly be written as:
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     someAttribute: { attribute: true }
   }
@@ -786,13 +786,13 @@ The name of the attribute that is added to the element after it has been upgrade
 Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
-skate('x-tabs', {
+skate.define('x-tabs', {
   events: {
     selected: hideAllAndShowSelected
   }
 });
 
-skate('x-tab', {
+skate.define('x-tab', {
   events: {
     click () {
       skate.emit(this, 'selected');
@@ -853,7 +853,7 @@ const myElementInstance = new ComponentConstructor();
 The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the ``. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
 
 ```js
-skate('my-input', function () {
+skate.define('my-input', function () {
   props: {
     value: { attribute: true }
   },
@@ -1302,7 +1302,7 @@ const XParent = skate.define('x-parent', {
   }
 });
 
-const XChild = skate('x-child', class extends XParent {
+const XChild = skate.define('x-child', class extends XParent {
   static created () {
     super.created();
   }
@@ -1420,7 +1420,7 @@ A web component's public API should be available both imperatively (via JavaScri
 You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
 
 ```js
-export default skate('my-component', {});
+export default skate.define('my-component', {});
 ```
 
 
@@ -1430,7 +1430,7 @@ export default skate('my-component', {});
 By declaring a Skate component, you are automatically making your element available to be used as HTML. For example, if you were to create a custom element for a video player:
 
 ```js
-skate('x-video', {});
+skate.define('x-video', {});
 ```
 
 You could now just write:
@@ -1459,7 +1459,7 @@ The nice part about thinking this way is that you get both a declarative and imp
 
 ### Naming Collisions
 
-You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can use `skate.factory()` to export a function that will allow your consumers to define a name for your component while preventing them from having to use `skate()` (or even know about it).
+You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can use `skate.factory()` to export a function that will allow your consumers to define a name for your component while preventing them from having to use `skate.define()` (or even know about it).
 
 ```js
 export default skate.factory({
@@ -1482,7 +1482,7 @@ Skate is designed so that you can have multiple versions of it on the same page.
 Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, its API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     // Links the `name` property to the `name` attribute.
     name: { attribute: true }
@@ -1493,7 +1493,7 @@ skate('my-component', {
 Sometimes this may not be viable, for example when passing complex data types to attributes. In this scenario, you can try and serialize / deserialize to / from attributes. For example, if you wanted to take a comma-separated list in an attribute and have the property take an array, but still have them linked, you could do something like:
 
 ```js
-skate('my-component', {
+skate.define('my-component', {
   props: {
     values: {
       attribute: true,
