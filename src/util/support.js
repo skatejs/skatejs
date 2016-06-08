@@ -1,4 +1,5 @@
-export const customElementsV0 = 'registerElement' in document;
-export const customElementsV1 = 'customElements' in window;
-export const shadowDomV0 = 'createShadowRoot' in Element.prototype;
-export const shadowDomV1 = 'attachShadow' in Element.prototype;
+const div = document.createElement('div');
+export const customElementsV0 = !!document.registerElement;
+export const customElementsV1 = !!window.customElements;
+export const shadowDomV0 = !!div.createShadowRoot;
+export const shadowDomV1 = !!div.attachShadow;
