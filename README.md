@@ -1034,9 +1034,7 @@ The problem here is that your consumer is now concerned with implementation deta
 If you need to interact with components that may not be initialised yet (at any level), you can use `skate.ready()`. It works for both native and polyfill no matter when the element is upgraded.
 
 ```js
-import { define, ready } from 'skatejs';
-
-define('component-a', {
+skate.define('component-a', {
   ready (elem) {
     const b = elem.querySelector('component-b');
 
@@ -1044,7 +1042,7 @@ define('component-a', {
     b.initialised;
 
     // Your selected elements are passed to the callback as the first argument.
-    ready(b, function (b) {
+    skate.ready(b, function (b) {
       // Will now be `true`, for sure.
       b.initialised;
     });
@@ -1054,7 +1052,7 @@ define('component-a', {
   }
 });
 
-define('component-b', {
+skate.define('component-b', {
   created (elem) {
     elem.initialised = true;
   }
