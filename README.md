@@ -1050,7 +1050,7 @@ define('component-a', {
     });
   },
   render (elem) {
-    skate.vdom('component-b');
+    skate.vdom.create('component-b');
   }
 });
 
@@ -1136,8 +1136,8 @@ The `attributesOrChildren` argument is either an `object`, a `function` that wil
 The `children` argument is a `function` that will render the children of this element or a `string` if you are only rendering text.
 
 ```js
-skate.vdom('select', { name: 'my-select' }, function () {
-  skate.vdom('option', { value: 'myval' }, 'My Value');
+skate.vdom.create('select', { name: 'my-select' }, function () {
+  skate.vdom.create('option', { value: 'myval' }, 'My Value');
 });
 ```
 
@@ -1203,7 +1203,7 @@ skate.vdom.button({ onclick: e => console.log(e) }, 'Click me!');
 You can also bind to custom events:
 
 ```js
-skate.vdom('my-element', { onsomecustomevent: e => console.log(e) });
+skate.vdom.create('my-element', { onsomecustomevent: e => console.log(e) });
 ```
 
 Events are added / removed using `addEventListener()` / `removeEventListener()` so they will fire for bubbling events.
