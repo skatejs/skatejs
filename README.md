@@ -850,7 +850,7 @@ const myElementInstance = new ComponentConstructor();
 
 ### `link (elem, propSpec)`
 
-The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the ``. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
+The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the host element. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
 
 ```js
 skate.define('my-input', function () {
@@ -925,10 +925,10 @@ skate.prop.boolean();
 
 You are able to pass options to these properties to override built-in behaviour, or to define extra options that would normally be supported by a Skate property definition.
 
-You can easily define a new property by calling `skate.prop()` as a function and passing it the default options for the property. All built-in properties are created using this method.
+You can easily define a new property by calling `skate.prop.create()` as a function and passing it the default options for the property. All built-in properties are created using this method.
 
 ```js
-const myNewProp = skate.prop({ ... });
+const myNewProp = skate.prop.create({ ... });
 myNewProp({ ... });
 ```
 
@@ -1272,15 +1272,14 @@ And it could be used like:
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-1. `prototype` is set up in non-native (already set up in native)
-2. `events` are set up
-3. `props` are defined and set to initial values
-4. `created` is invoked
-5. `render` is invoked to render an HTML structure to the component
-6. `ready` is invoked
-7. `attached` is invoked when added to the document (or if already in the document)
-8. `detached` is invoked when removed from the document
-9. `attribute` is invoked whenever an attribute is updated
+1. `events` are set up
+2. `props` are defined and set to initial values
+3. `created` is invoked
+4. `render` is invoked to render an HTML structure to the component
+5. `ready` is invoked
+6. `attached` is invoked when added to the document (or if already in the document)
+7. `detached` is invoked when removed from the document
+8. `attribute` is invoked whenever an attribute is updated
 
 
 
