@@ -53,7 +53,7 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 ### Custom Elements
 
-Skate requires Custom Elements V1 support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate in browsers that have native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/v1/src/CustomElements/v1/native-shim.js).
+Skate requires Custom Elements V1 support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/skate-v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate in browsers that have native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/skate-v1/src/CustomElements/v1/native-shim.js).
 
 
 
