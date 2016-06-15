@@ -163,7 +163,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 Using package managers:
 
 ```sh
-bower install skatejs
 jspm install npm:skatejs
 npm install skatejs
 ```
@@ -1362,7 +1361,7 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
   - `polymer-mini.html` 54k vs 23k
   - `polymer.html` 124k vs 23k
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
-- Skate supports JSPM, Bower, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
+- Skate supports JSPM, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
 
 
