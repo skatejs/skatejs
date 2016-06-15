@@ -163,7 +163,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 Using package managers:
 
 ```sh
-bower install skatejs
 jspm install npm:skatejs
 npm install skatejs
 ```
