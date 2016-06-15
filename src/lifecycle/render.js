@@ -1,5 +1,6 @@
 import { IncrementalDOM } from '../api/vdom';
 import { shadowRoot } from '../api/symbols';
+import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const { patch } = IncrementalDOM;
 
@@ -14,9 +15,9 @@ export default function (Ctor) {
     if (!elem[shadowRoot]) {
       let sr;
 
-      if (elem.attachShadow) {
+      if (shadowDomV1) {
         sr = elem.attachShadow({ mode: 'open' });
-      } else if (elem.createShadowRoot) {
+      } else if (shadowDomV0) {
         sr = elem.createShadowRoot();
       } else {
         sr = elem;

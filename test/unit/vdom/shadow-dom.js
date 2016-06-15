@@ -1,3 +1,4 @@
+import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
 import { symbols } from '../../../src/index';
 import element from '../../lib/element';
 
@@ -28,32 +29,24 @@ describe('vdom/shadow-dom', function () {
     Object.defineProperty(htmlElProto, key, { value: oldShadowDom[key], writable: true });
   }
 
-  it('should work for attachShadow()', function () {
-    mock('attachShadow');
-    const elem = new (element().skate({ render () {} }));
-    expect(elem.attachShadow).to.be.a('function');
-    expect(elem.createShadowRoot).to.equal(undefined);
-    expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
-    unmock('attachShadow');
+  let Elem;
+
+  beforeEach(function () {
+    Elem = element().skate({ render () {} });
   });
 
-  it('should work with createShadowRoot()', function () {
-    mock('createShadowRoot');
-    const elem = new (element().skate({ render () {} }));
-    expect(elem.attachShadow).to.equal(undefined);
-    expect(elem.createShadowRoot).to.be.a('function');
-    expect(elem[symbols.shadowRoot].tagName).to.equal('__MOCK_SHADOW_ROOT__');
-    unmock('createShadowRoot');
+  shadowDomV0 && it('should work for createShadowRoot()', function () {
+    const elem = new Elem();
+    expect(elem[symbols.shadowRoot]).not.to.equal(elem);
   });
 
-  it('should set the shadowRoot to the element if Shadow DOM is not available', function () {
-    remove('attachShadow');
-    remove('createShadowRoot');
-    const elem = new (element().skate({ render () {} }));
-    expect(elem.attachShadow).to.equal(undefined);
-    expect(elem.createShadowRoot).to.equal(undefined);
+  shadowDomV1 && it('should work for attachShadow()', function () {
+    const elem = new Elem();
+    expect(elem[symbols.shadowRoot]).not.to.equal(elem);
+  });
+
+  shadowDomV0 || shadowDomV1 || it('should set the shadowRoot to the element if Shadow DOM is not available', function () {
+    const elem = new Elem();
     expect(elem[symbols.shadowRoot]).to.equal(elem);
-    restore('createShadowRoot');
-    restore('attachShadow');
   });
 });

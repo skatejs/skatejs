@@ -1279,7 +1279,7 @@ The component lifecycle consists of several paths in the following order startin
 5. `ready` is invoked
 6. `attached` is invoked when added to the document (or if already in the document)
 7. `detached` is invoked when removed from the document
-8. `attribute` is invoked whenever an attribute is updated
+8. `attributeChanged` is invoked whenever an attribute is changed
 
 
 
