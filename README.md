@@ -743,7 +743,7 @@ In v1:
 
 #### `observedAttributes`
 
-This behaves exactly like described in the [v1 spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example). The only things we do here are to make it behave consistently in both polyfill-land and in v0, and automatically add attributes that are linked to properties to it so that you don't have to duplicate any code between the two.
+This behaves exactly like described in the [v1 spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
 
 For example, the following:
 
