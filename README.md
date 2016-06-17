@@ -1203,8 +1203,6 @@ You can also bind to custom events:
 skate.vdom.create('my-element', { onsomecustomevent: e => console.log(e) });
 ```
 
-Events are added / removed using `addEventListener()` / `removeEventListener()` so they will fire for bubbling events.
-
 ##### `attrs.skip`
 
 This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
