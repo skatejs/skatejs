@@ -17,12 +17,6 @@ const {
   text
 } = IncrementalDOM;
 
-// Specify an environment for iDOM in case we haven't yet.
-if (typeof process === 'undefined') {
-  /* eslint no-undef: 0 */
-  process = { env: { NODE_ENV: 'production' } };
-}
-
 const applyDefault = attributes[symbols.default];
 const factories = {};
 
