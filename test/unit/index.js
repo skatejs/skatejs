@@ -13,10 +13,6 @@ describe('exports', function () {
     expect(api.emit).to.be.a('function');
   });
 
-  it('skate.factory', function () {
-    expect(api.factory).to.be.a('function');
-  });
-
   it('skate.link', function () {
     expect(api.link).to.be.a('function');
   });
