@@ -46,8 +46,4 @@ describe('exports', function () {
   it('vdom', function () {
     expect(api.vdom).to.be.an('object');
   });
-
-  it('skate.version', function () {
-    expect(api.version).to.be.a('string');
-  });
 });
