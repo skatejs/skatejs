@@ -1,6 +1,7 @@
 import * as prop from './api/prop';
 import * as symbols from './api/symbols';
 import * as vdom from './api/vdom';
+import Component from './api/component';
 import define from './api/define';
 import emit from './api/emit';
 import factory from './api/factory';
@@ -10,6 +11,7 @@ import state from './api/state';
 import version from './api/version';
 
 export {
+  Component,
   define,
   emit,
   factory,

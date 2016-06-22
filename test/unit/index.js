@@ -5,6 +5,10 @@ describe('exports', function () {
     expect(api).to.be.an('object');
   });
 
+  it('skate.Component', function () {
+    expect(api.Component).to.be.a('function');
+  });
+
   it('skate.define', function () {
     expect(api.define).to.be.a('function');
   });
