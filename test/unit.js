@@ -1,7 +1,6 @@
 import './boot';
 import './unit/index';
 import './unit/api/emit';
-import './unit/api/factory';
 import './unit/api/properties';
 import './unit/api/ready';
 import './unit/api/state';
