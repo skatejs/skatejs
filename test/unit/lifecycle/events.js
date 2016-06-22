@@ -96,7 +96,7 @@ describe('lifecycle/events', function () {
         }
       },
       render () {
-        vdom.a(vdom.span.bind());
+        vdom.element('a', vdom.element.bind(null, 'span'));
       }
     }));
 
@@ -127,7 +127,7 @@ describe('lifecycle/events', function () {
         }
       },
       render () {
-        vdom.input();
+        vdom.element('input');
       }
     });
 

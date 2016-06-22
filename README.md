@@ -10,7 +10,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's only 8k min+gz and it will only get smaller as more browsers start supporting web components natively.
+- It's only 7k min+gz and it will only get smaller as more browsers start supporting web components natively.
 - It's very fast.
 - It works with multiple versions of itself on the page, if need be.
 
@@ -126,7 +126,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom (elementName, attributesOrChildren, children)`](#vdom-elementname-attributesorchildren-children)
-      - [Elements as Functions](#elements-as-functions)
       - [Named Slots](#named-slots)
       - [Special Attributes](#special-attributes)
         - [`attrs.class`](#attrsclass)
@@ -593,8 +592,6 @@ The parameters passed to the function are:
 ##### `render`
 
 ```js
-import { vdom } from 'skatejs';
-
 skate.define('my-component', {
   props: {
     myProp: {
@@ -604,7 +601,7 @@ skate.define('my-component', {
     }
   },
   render (elem) {
-    vdom.div(elem.myProp);
+    skate.vdom.element('div', elem.myProp);
   }
 });
 ```
@@ -653,7 +650,7 @@ Function that is called to render the element. This is called when the element i
 ```js
 skate.define('my-component', {
   render (elem) {
-    skate.vdom.p(`My name is ${elem.tagName}.`);
+    skate.vdom.element('p', `My name is ${elem.tagName}.`);
   }
 });
 ```
@@ -857,7 +854,7 @@ skate.define('my-input', function () {
     value: { attribute: true }
   },
   render (elem) {
-    skate.vdom.input({ onchange: skate.link(elem), type: 'text' });
+    skate.vdom.element('input', { onchange: skate.link(elem), type: 'text' });
   }
 });
 ```
@@ -865,7 +862,7 @@ skate.define('my-input', function () {
 By default the `propSpec` defaults to `e.currentTarget.getAttribute('name')` or `"value"` which is why it wasn't specified in the example above. In the example above, it would set `value` on the component. If you were to give your input a name, it would use the name from the event `currentTarget` as the name that should be set. For example if you changed your input to read:
 
 ```js
-skate.vdom.input({ name: 'someValue', onchange: skate.link(elem), type: 'text' });
+skate.vdom.element('input', { name: 'someValue', onchange: skate.link(elem), type: 'text' });
 ```
 
 Then instead of setting `value` on the component, it would set `someValue`.
@@ -889,19 +886,19 @@ In the above example, the `obj` property would trigger an update even though onl
 You can even take this a step further and specify a sub-object to modify using the name of the `currentTarget` (or `value`, of course) if `propSpec` ends with a `.`. For example:
 
 ```js
-skate.vdom.input({ name: 'someValue', onchange: skate.link(elem, 'obj.'), type: 'text' });
+skate.vdom.element('input', { name: 'someValue', onchange: skate.link(elem, 'obj.'), type: 'text' });
 ```
 
 The above example would set `obj.someValue` because the name of the input was `someValue`. This doesn't look much different from the previous example, but this allows you to create a single link handler for use with multiple inputs:
 
 ```js
 const linkage = skate.link(elem, 'obj.');
-skate.vdom.input({ name: 'someValue1', onchange: linkage, type: 'text' });
-skate.vdom.input({ name: 'someValue2', onchange: linkage, type: 'checkbox' });
-skate.vdom.input({ name: 'someValue3', onchange: linkage, type: 'radio' });
-skate.vdom.select({ name: 'someValue4', onchange: linkage }, function () {
-  skate.vdom.option({ value: 1 }, 'Option 1');
-  skate.vdom.option({ value: 2 }, 'Option 2');
+skate.vdom.element('input', { name: 'someValue1', onchange: linkage, type: 'text' });
+skate.vdom.element('input', { name: 'someValue2', onchange: linkage, type: 'checkbox' });
+skate.vdom.element('input', { name: 'someValue3', onchange: linkage, type: 'radio' });
+skate.vdom.element('select', { name: 'someValue4', onchange: linkage }, function () {
+  skate.vdom.element('option', { value: 2 }, 'Option 2');
+  skate.vdom.element('option', { value: 1 }, 'Option 1');
 });
 ```
 
@@ -1047,7 +1044,7 @@ skate.define('component-a', {
     });
   },
   render (elem) {
-    skate.vdom.create('component-b');
+    skate.vdom.element('component-b');
   }
 });
 
@@ -1108,7 +1105,7 @@ import { define, symbols, vdom } from 'skatejs';
 
 define('my-component', {
   render () {
-    vdom.p('test');
+    vdom.element('p', 'test');
   },
   ready (elem) {
     // #shadow-root
@@ -1133,42 +1130,24 @@ The `attributesOrChildren` argument is either an `object`, a `function` that wil
 The `children` argument is a `function` that will render the children of this element or a `string` if you are only rendering text.
 
 ```js
-skate.vdom.create('select', { name: 'my-select' }, function () {
-  skate.vdom.create('option', { value: 'myval' }, 'My Value');
+skate.vdom.element('select', { name: 'my-select' }, function () {
+  skate.vdom.element('option', { value: 'myval' }, 'My Value');
 });
 ```
 
-#### Elements as Functions
+#### Text Nodes
 
-The `vdom` API also exports functions for every HTML5 element. You could rewrite the above example using those instead:
-
-```js
-skate.vdom.select({ name: 'my-select' }, function () {
-  skate.vdom.option({ value: 'myval' }, 'My Value');
-});
-```
-
-The `text()` function is also exported directly from Incremental DOM and you could use that if you wanted to instead of specifying as string:
+The `text()` function is exported directly from Incremental DOM and you could use that if you wanted to instead of specifying text as a string to a parent node:
 
 ```js
-skate.vdom.select({ name: 'my-select' }, function () {
-  skate.vdom.option({ value: 'myval' }, function () {
+skate.vdom.element('option', { name: 'my-select' }, function () {
+  skate.vdom.element('option', { value: 'myval' }, function () {
     skate.vdom.text('My Value');
   });
 });
 ```
 
-This is very useful if you need to render text with other elements as siblings, or do complex conditional rendering.
-
-#### Named Slots
-
-The `vdom` API also exports a `slot()` function so that you can use [named slots](https://github.com/skatejs/named-slots/).
-
-```js
-skate.vdom.slot();
-```
-
-If Shadow DOM v0 is detected, then Skate will output a `<content>` element instead of a `<slot>` that will look for nodes in the same way a `<slot>` would so you don't have to worry about which version of Shadow DOM is available.
+This is very useful if you need to render text with other elements as siblings, or do complex conditional rendering. It's also useful when your custom element may only need to render text nodes to its shadow root.
 
 #### Special Attributes
 
@@ -1183,9 +1162,9 @@ We ensure that if you pass the `class` attribute, that it sets that via the `cla
 This gives the virtual element a [`key`](http://google.github.io/incremental-dom/#conditional-rendering/array-of-items) that Incremental DOM uses to keep track of it for more efficient patches when dealing with arrays of items.
 
 ```js
-skate.vdom.ul(function () {
-  skate.vdom.li({ key: 0 });
-  skate.vdom.li({ key: 1 });
+skate.vdom.element('ul', function () {
+  skate.vdom.element('li', { key: 0 });
+  skate.vdom.element('li', { key: 1 });
 });
 ```
 
@@ -1194,13 +1173,13 @@ skate.vdom.ul(function () {
 Any attribute beginning with `on` will be bound to the event matching the part found after `on`. For example, if you specify `onclick`, the value will be bound to the `click` event of the element.
 
 ```js
-skate.vdom.button({ onclick: e => console.log(e) }, 'Click me!');
+skate.vdom.element('button', { onclick: e => console.log(e) }, 'Click me!');
 ```
 
 You can also bind to custom events:
 
 ```js
-skate.vdom.create('my-element', { onsomecustomevent: e => console.log(e) });
+skate.vdom.element('my-element', { onsomecustomevent: e => console.log(e) });
 ```
 
 ##### `attrs.skip`
@@ -1210,7 +1189,7 @@ This tells Incremental DOM to skip the element that has this attribute. This is 
 This is also helpful when integrating with 3rd-party libraries that may mutate the DOM.
 
 ```js
-skate.vdom.div({ skip: true });
+skate.vdom.element('div', { skip: true });
 ```
 
 ##### `attrs.statics`
@@ -1218,7 +1197,7 @@ skate.vdom.div({ skip: true });
 This is an array that tells Incremental DOM which attributes should be considered [static](http://google.github.io/incremental-dom/#rendering-dom/statics-array).
 
 ```js
-skate.vdom.div({ statics: ['attr1', 'prop2'] });
+skate.vdom.element('div', { statics: ['attr1', 'prop2'] });
 ```
 
 ##### Boolean Attributes
@@ -1355,9 +1334,9 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
-  - `polymer-micro.html` 17k vs 23k
-  - `polymer-mini.html` 54k vs 23k
-  - `polymer.html` 124k vs 23k
+  - `polymer-micro.html` 17k vs 20k
+  - `polymer-mini.html` 54k vs 20k
+  - `polymer.html` 124k vs 20k
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
@@ -1378,7 +1357,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
-- React is massive: a whopping 145k minified vs 23k.
+- React is massive: a whopping 145k minified vs 20k.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
 - **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.
