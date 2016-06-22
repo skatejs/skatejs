@@ -1,5 +1,5 @@
 import helperElement from '../lib/element';
-import { define, Component, symbols, vdom } from '../../src/index';
+import { define, symbols, vdom } from '../../src/index';
 
 describe('extending', function () {
   var Ctor, tag;
@@ -63,8 +63,8 @@ describe('extending', function () {
   });
 
   it('constructor should be accessible', function () {
-    define(tag, class extends Ctor {});
-    const el = document.createElement(tag);
+    const El = define(tag, class extends Ctor {});
+    const el = new El();
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
