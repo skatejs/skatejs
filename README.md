@@ -10,7 +10,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's only 8k min+gz and it will only get smaller as more browsers start supporting web components natively.
+- It's only 7k min+gz and it will only get smaller as more browsers start supporting web components natively.
 - It's very fast.
 - It works with multiple versions of itself on the page, if need be.
 
