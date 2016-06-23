@@ -17,10 +17,6 @@ describe('exports', function () {
     expect(api.emit).to.be.a('function');
   });
 
-  it('skate.factory', function () {
-    expect(api.factory).to.be.a('function');
-  });
-
   it('skate.link', function () {
     expect(api.link).to.be.a('function');
   });
@@ -49,9 +45,5 @@ describe('exports', function () {
 
   it('vdom', function () {
     expect(api.vdom).to.be.an('object');
-  });
-
-  it('skate.version', function () {
-    expect(api.version).to.be.a('string');
   });
 });

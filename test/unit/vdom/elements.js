@@ -8,20 +8,20 @@ describe('vdom/elements', function () {
   it('slot', function () {
     const elem1 = new (element().skate({
       render () {
-        vdom.create('slot', { name: 'test' });
+        vdom.element('slot', { name: 'test' });
       }
     }));
     const elem2 = new (element().skate({
       render () {
-        vdom.slot({ name: 'test' });
+        vdom.element('slot', { name: 'test' });
       }
     }));
 
     function assertSlotElement () {
       expect(ch1.tagName).to.equal('SLOT', 'vdom');
       expect(ch1.getAttribute('name')).to.equal('test', 'vdom');
-      expect(ch2.tagName).to.equal('SLOT', 'vdom.create(slot)');
-      expect(ch2.getAttribute('name')).to.equal('test', 'vdom.create(slot)');
+      expect(ch2.tagName).to.equal('SLOT', 'vdom.element(slot)');
+      expect(ch2.getAttribute('name')).to.equal('test', 'vdom.element(slot)');
     }
 
     const ch1 = elem1[symbols.shadowRoot].firstElementChild;
@@ -32,18 +32,18 @@ describe('vdom/elements', function () {
     } else if (shadowDomV0) {
       expect(ch1.tagName).to.equal('CONTENT', 'vdom');
       expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
-      expect(ch2.tagName).to.equal('CONTENT', 'vdom.create(slot)');
-      expect(ch2.getAttribute('select')).to.equal('[slot="test"]', 'vdom.create(slot)');
+      expect(ch2.tagName).to.equal('CONTENT', 'vdom.element(slot)');
+      expect(ch2.getAttribute('select')).to.equal('[slot="test"]', 'vdom.element(slot)');
     } else {
       assertSlotElement();
     }
   });
 
-  it('passing a component constructor to the vdom.create() function', function (done) {
+  it('passing a component constructor to the vdom.element() function', function (done) {
     const Elem1 = element().skate({
       render () {
-        vdom.div(function () {
-          vdom.create(Elem2);
+        vdom.element('div', function () {
+          vdom.element(Elem2);
         });
       }
     });
