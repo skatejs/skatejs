@@ -4,7 +4,6 @@ import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
-import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import initProps from '../lifecycle/props-init';
 
 // Ensures that definitions passed as part of the constructor are functions
@@ -108,11 +107,11 @@ export default function (name, Ctor) {
   Ctor[symbols.props] = createInitProps(Ctor);
   Ctor[symbols.renderer] = createRenderer(Ctor);
 
-  if (customElementsV1) {
+  if (customElementsV0) {
+    return document.registerElement(name, Ctor);
+  } else if (customElementsV1) {
     window.customElements.define(name, Ctor, { extends: Ctor.extends });
     return Ctor;
-  } else if (customElementsV0) {
-    return document.registerElement(name, Ctor);
   } else {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }

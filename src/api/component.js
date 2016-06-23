@@ -1,7 +1,7 @@
 import * as symbols from './symbols';
 import data from '../util/data';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import { customElementsV1 } from '../util/support';
+import { customElementsV0 } from '../util/support';
 
 export default class Component extends HTMLElement {
   constructor () {
@@ -23,7 +23,8 @@ export default class Component extends HTMLElement {
     const { attributeChanged, observedAttributes } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
-    if (!customElementsV1 && observedAttributes.indexOf(name) === -1) {
+    // In V0 we have to ensure the attribute is being observed.
+    if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
       return;
     }
 
@@ -54,7 +55,7 @@ export default class Component extends HTMLElement {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
-    const { definedAttribute, events, created, props, ready, renderedAttribute } = Ctor;
+    const { definedAttribute, events, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
     const renderer = Ctor[symbols.renderer];
 
     // TODO: This prevents an element from being initialised multiple times. For
@@ -93,13 +94,15 @@ export default class Component extends HTMLElement {
       delete elemData.readyCallbacks;
     }
 
-    // In v0 we must initialise all existing observed attributes.
-    if (!customElementsV1) {
-      (this.constructor.observedAttributes || []).forEach(name => this.attributeChangedCallback(name, null, this.getAttribute(name)));
-      Object.defineProperty(this, 'constructor', {
-        get() {
-          return Ctor;
-        },
+    // In v0 we must ensure the attributeChangedCallback is called for attrs
+    // that aren't linked to props so that the callback behaves the same no
+    // matter if v0 or v1 is being used.
+    if (customElementsV0) {
+      observedAttributes.forEach(name => {
+        const propertyName = data(this, 'attributeLinks')[name];
+        if (!propertyName) {
+          this.attributeChangedCallback(name, null, this.getAttribute(name));
+        }
       });
     }
   }
