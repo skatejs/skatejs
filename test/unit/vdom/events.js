@@ -1,5 +1,6 @@
 import { emit, prop, state, symbols, vdom } from '../../../src/index';
 import element from '../../lib/element';
+import fixture from '../../lib/fixture';
 
 const { boolean, number } = prop;
 
@@ -46,7 +47,7 @@ describe('vdom/events (on*)', function () {
     expect(el._test).to.equal(3);
   });
 
-  it('should not trigger events bubbled from descendants', function () {
+  it('should trigger events bubbled from descendants', function () {
     let called = false;
     const test = () => called = true;
     const myel = new (element().skate({
@@ -54,8 +55,9 @@ describe('vdom/events (on*)', function () {
         vdom.element('div', { ontest: test }, vdom.element.bind(null, 'span'));
       }
     }));
+    fixture().appendChild(myel);
     emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
-    expect(called).to.equal(false);
+    expect(called).to.equal(true);
   });
 
   it('should not fail for listeners that are not functions', function () {
