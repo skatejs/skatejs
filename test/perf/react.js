@@ -12,11 +12,11 @@ define('x-app', {
     title: props.string({ default: 0 })
   },
   render (elem) {
-    vdom.create('div', function () {
-      vdom.create('h1', elem.title);
-      vdom.create('x-list', function () {
+    vdom.element('div', function () {
+      vdom.element('h1', elem.title);
+      vdom.element('x-list', function () {
         for (let a = 0; a < 10; a++) {
-          vdom.create('x-item', `Item ${a}`);
+          vdom.element('x-item', `Item ${a}`);
         }
       });
     });
@@ -25,13 +25,13 @@ define('x-app', {
 
 define('x-list', {
   render () {
-    vdom.create('slot', { name: '' });
+    vdom.element('slot', { name: '' });
   }
 });
 
 define('x-item', {
   render () {
-    vdom.create('slot', { name: '' });
+    vdom.element('slot', { name: '' });
   }
 });
 

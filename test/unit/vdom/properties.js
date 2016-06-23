@@ -5,7 +5,7 @@ describe('properties', function () {
   it('class -> className', function () {
     const elem = new (element().skate({
       render () {
-        vdom.create('div', { class: 'test' });
+        vdom.element('div', { class: 'test' });
       }
     }));
     expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test');
@@ -14,7 +14,7 @@ describe('properties', function () {
   it('false should remove the attribute', function () {
     const elem = new (element().skate({
       render () {
-        vdom.create('div', { test: false });
+        vdom.element('div', { test: false });
       }
     }));
     expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
