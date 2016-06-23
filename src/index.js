@@ -7,7 +7,6 @@ import factory from './api/factory';
 import link from './api/link';
 import ready from './api/ready';
 import state from './api/state';
-import version from './api/version';
 
 export {
   define,
@@ -19,5 +18,4 @@ export {
   state,
   symbols,
   vdom,
-  version
 };
