@@ -53,16 +53,19 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 ### Custom Elements
 
-Skate requires Custom Elements V1 support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include the [WebComponentsJS polyfill](https://github.com/skatejs/webcomponentsjs/blob/skate-v1/src/CustomElements/v1/CustomElements.js). If you plan on using the ES5 version of Skate in browsers that have native Custom Elements V1 support, then you will need [this shim](https://github.com/skatejs/webcomponentsjs/blob/skate-v1/src/CustomElements/v1/native-shim.js).
+Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements and normalises necessary behaviour between both.
 
+- v0: https://github.com/webcomponents/webcomponentsjs
+- v1 (work in progress in src/CustomElements/v1): https://github.com/webcomponents/webcomponentsjs/tree/v1
 
+Skate prefers v0 support if it detects both as that yields the best performance in browsers that support it natively. If you supply only a v1 polyfill, it will use v0 where supported by native and v1 in other browsers.
 
 ### Shadow DOM
 
-Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively.
+Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively. Skate supports both v0 and v1 shadow DOM APIs.
 
-- https://github.com/skatejs/named-slots/
-- https://github.com/WebComponents/webcomponentsjs (does *not* support named slots yet)
+- v0 (slow, but complete): https://github.com/WebComponents/webcomponentsjs
+- v1 (partial support, built for speed and virtual DOM integration, see README: https://github.com/skatejs/named-slots/
 
 Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
 

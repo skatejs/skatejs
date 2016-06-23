@@ -1,15 +1,61 @@
 import * as symbols from './symbols';
 import data from '../util/data';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import { customElementsV0 } from '../util/support';
 
 export default class Component extends HTMLElement {
   constructor () {
     super();
+    this.createdCallback();
+  }
 
+  connectedCallback () {
+    const cb = this.constructor.attached;
+    cb && cb(this);
+  }
+
+  disconnectedCallback () {
+    const cb = this.constructor.detached;
+    cb && cb(this);
+  }
+
+  attributeChangedCallback (name, oldValue, newValue) {
+    const { attributeChanged, observedAttributes } = this.constructor;
+    const propertyName = data(this, 'attributeLinks')[name];
+
+    // In V0 we have to ensure the attribute is being observed.
+    if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
+      return;
+    }
+
+    if (propertyName) {
+      const propData = data(this, `api/property/${propertyName}`);
+
+      // This ensures a property set doesn't cause the attribute changed
+      // handler to run again once we set this flag. This only ever has a
+      // chance to run when you set an attribute, it then sets a property and
+      // then that causes the attribute to be set again.
+      if (propData.syncingAttribute) {
+        propData.syncingAttribute = false;
+        return;
+      }
+
+      // Sync up the property.
+      const propOpts = this.constructor.props[propertyName];
+      propData.settingAttribute = true;
+      this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+    }
+
+    if (attributeChanged) {
+      attributeChanged(this, { name, newValue, oldValue });
+    }
+  }
+
+  createdCallback () {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
-    const { definedAttribute, events, created, props, ready, renderedAttribute } = Ctor;
+    const { definedAttribute, events, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
     const renderer = Ctor[symbols.renderer];
 
     // TODO: This prevents an element from being initialised multiple times. For
@@ -47,6 +93,26 @@ export default class Component extends HTMLElement {
       readyCallbacks.forEach(cb => cb(this));
       delete elemData.readyCallbacks;
     }
+
+    // In v0 we must ensure the attributeChangedCallback is called for attrs
+    // that aren't linked to props so that the callback behaves the same no
+    // matter if v0 or v1 is being used.
+    if (customElementsV0) {
+      observedAttributes.forEach(name => {
+        const propertyName = data(this, 'attributeLinks')[name];
+        if (!propertyName) {
+          this.attributeChangedCallback(name, null, this.getAttribute(name));
+        }
+      });
+    }
+  }
+
+  attachedCallback () {
+    this.connectedCallback();
+  }
+
+  detachedCallback () {
+    this.disconnectedCallback();
   }
 
   static get definedAttribute () {
