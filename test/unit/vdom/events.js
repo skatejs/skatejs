@@ -46,7 +46,7 @@ describe('vdom/events (on*)', function () {
     expect(el._test).to.equal(3);
   });
 
-  it('should not trigger events bubbled from descendants', function () {
+  it('should trigger events bubbled from descendants', function () {
     let called = false;
     const test = () => called = true;
     const myel = new (element().skate({
@@ -55,7 +55,7 @@ describe('vdom/events (on*)', function () {
       }
     }));
     emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
-    expect(called).to.equal(false);
+    expect(called).to.equal(true);
   });
 
   it('should not fail for listeners that are not functions', function () {

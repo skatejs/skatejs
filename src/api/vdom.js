@@ -64,11 +64,7 @@ function applyEvent (elem, ename, name, value) {
 
   // Bind new listener.
   if (value) {
-    elem.addEventListener(ename, events[ename] = function (e) {
-      if (this === e.target) {
-        value.call(this, e);
-      }
-    });
+    elem.addEventListener(ename, events[ename] = value);
   }
 }
 
