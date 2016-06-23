@@ -1,5 +1,6 @@
 import { emit, prop, state, symbols, vdom } from '../../../src/index';
 import element from '../../lib/element';
+import fixture from '../../lib/fixture';
 
 const { boolean, number } = prop;
 
@@ -54,6 +55,7 @@ describe('vdom/events (on*)', function () {
         vdom.element('div', { ontest: test }, vdom.element.bind(null, 'span'));
       }
     }));
+    fixture().appendChild(myel);
     emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
     expect(called).to.equal(true);
   });
