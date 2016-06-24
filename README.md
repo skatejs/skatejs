@@ -79,14 +79,11 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-  - [Installing](#installing)
-    - [UMD (AMD / CommonJS)](#umd-amd--commonjs)
-    - [ES6 Modules](#es6-modules)
-    - [Global](#global)
-  - [Examples](#examples)
   - [Resources](#resources)
   - [Questions?](#questions)
   - [Terminology](#terminology)
+  - [Installing](#installing)
+  - [Consuming](#consuming)
   - [API](#api)
     - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
@@ -131,7 +128,7 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom (elementName, attributesOrChildren, children)`](#vdom-elementname-attributesorchildren-children)
-      - [Named Slots](#named-slots)
+      - [Text Nodes](#text-nodes)
       - [Special Attributes](#special-attributes)
         - [`attrs.class`](#attrsclass)
         - [`attrs.key`](#attrskey)
