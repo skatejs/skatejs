@@ -127,8 +127,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [`symbols`](#symbols)
       - [`shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
-      - [`vdom (elementName, attributesOrChildren, children)`](#vdom-elementname-attributesorchildren-children)
-      - [Text Nodes](#text-nodes)
+      - [`vdom.element (elementName, attributesOrChildren, children)`](#vdomelement-elementname-attributesorchildren-children)
+      - [`vdom.text (text)`](#vdomtext-text)
       - [Special Attributes](#special-attributes)
         - [`attrs.class`](#attrsclass)
         - [`attrs.key`](#attrskey)
@@ -1104,7 +1104,7 @@ define('my-component', {
 
 Skate includes several helpers for creating virtual elements with Incremental DOM.
 
-#### `vdom (elementName, attributesOrChildren, children)`
+#### `vdom.element (elementName, attributesOrChildren, children)`
 
 The `elementName` argument is the name of the element you want to create. This can be a string or function that has the `id` or `name` property set, which makes it compatible with any function as well as Skate component constructors (that use `id` because WebKit doesn't let you re-define `name`).
 
@@ -1118,7 +1118,7 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
 });
 ```
 
-#### Text Nodes
+#### `vdom.text (text)`
 
 The `text()` function is exported directly from Incremental DOM and you could use that if you wanted to instead of specifying text as a string to a parent node:
 
