@@ -160,42 +160,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 
 
 
-## Installing
-
-Using package managers:
-
-```sh
-jspm install npm:skatejs
-npm install skatejs
-```
-
-Or you can DIY by downloading the zip and consuming it via one of the following ways.
-
-
-
-### E2015 Modules
-
-Consuming the Skate source is the recommended way to use it, if you can. There is a `jsnext:main` field that [Rollup](https://github.com/rollup/rollup) can use. Otherwise you can `import { ... } from 'skatejs/src';`.
-
-
-
-### UMD (AMD / CommonJS / Global)
-
-When you install Skate, the UMD source files are located in `dist/`. You can use the standard or minified version. Both contain the UMD definitions. The `main` field points to `dist/index.js`. You can require it in the following ways:
-
-```js
-// CommonJS
-require('skatejs');
-
-// AMD
-require(['skatejs'], function (skate) {});
-
-// Global
-window.skate;
-```
-
-
-
 ## Resources
 
 - [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
@@ -224,9 +188,22 @@ Let's define some terms used in these docs:
 
 
 
-## API
+## Installing
 
-The following API can be consumed in the following ways:
+Using package managers:
+
+```sh
+jspm install npm:skatejs
+npm install skatejs
+```
+
+Or you can DIY by downloading the zip.
+
+
+
+## Consuming
+
+Skate can be consumed in the following ways:
 
 Global:
 
@@ -257,6 +234,10 @@ Each API point is accessible on the main `skate` object, or can be imported by n
 ```js
 import { define, vdom } from 'skatejs';
 ```
+
+
+
+## API
 
 
 
