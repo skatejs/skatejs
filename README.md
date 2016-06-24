@@ -60,6 +60,8 @@ Skate requires Custom Element support. In [browsers that don't support it](http:
 
 Skate prefers v0 support if it detects both as that yields the best performance in browsers that support it natively. If you supply only a v1 polyfill, it will use v0 where supported by native and v1 in other browsers.
 
+
+
 ### Shadow DOM
 
 Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively. Skate supports both v0 and v1 shadow DOM APIs.
