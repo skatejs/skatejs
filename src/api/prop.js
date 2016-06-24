@@ -1,7 +1,7 @@
 import assign from 'object-assign';
 import empty from '../util/empty';
 
-const alwaysUndefinedIfEmptyOrNumber = val => empty(val) ? undefined : Number(val);
+const alwaysZeroIfNotANumberOrNumber = val => isNaN(val) ? 0 : Number(val);
 const alwaysUndefinedIfEmptyOrString = val => empty(val) ? undefined : String(val);
 
 export function create (def) {
@@ -26,9 +26,10 @@ export const boolean = create({
 });
 
 export const number = create({
-  coerce: alwaysUndefinedIfEmptyOrNumber,
-  deserialize: alwaysUndefinedIfEmptyOrNumber,
-  serialize: alwaysUndefinedIfEmptyOrNumber
+  default: 0,
+  coerce: alwaysZeroIfNotANumberOrNumber,
+  deserialize: alwaysZeroIfNotANumberOrNumber,
+  serialize: alwaysZeroIfNotANumberOrNumber
 });
 
 export const string = create({

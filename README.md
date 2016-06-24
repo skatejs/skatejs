@@ -946,7 +946,7 @@ The `boolean` property allows you to define a property that should *always* have
 
 #### `number`
 
-Ensures the value is always a `Number` and is correctly linked to an attribute. Empty values are not coerced to Numbers. If a value cannot be coerced then it is `NaN`.
+Ensures the value is always a `Number` and is correctly linked to an attribute. The value will default to `0` if an empty or non-numeric value is passed.
 
 
 
