@@ -2,6 +2,12 @@ import * as IncrementalDOM from 'incremental-dom';
 import * as skateSymbols from './symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
+// Incremental DOM doesn't check to see if process is defined so we ensure it
+// is here.
+if (typeof process === 'undefined') {
+  process = { env: { NODE_ENV: 'production' } };
+}
+
 // Could import these, but we have to import all of IncrementalDOM anyways so
 // that we can export our configured IncrementalDOM.
 const {
