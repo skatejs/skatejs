@@ -29,7 +29,7 @@
   "devDependencies": {
     "es6-shim": "0.35.1",
     "eslint": "2.13.1",
-    "skatejs-build": "4.2.3",
+    "skatejs-build": "4.3.0",
     "webcomponents.js": "webcomponents/webcomponentsjs#fb43208"
   },
   "scripts": {
