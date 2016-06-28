@@ -1,4 +1,4 @@
-import assign from 'object-assign';
+import assign from '../util/assign';
 import empty from '../util/empty';
 
 const alwaysUndefinedIfEmptyOrNumber = val => empty(val) ? undefined : Number(val);
