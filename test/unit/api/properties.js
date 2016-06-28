@@ -129,7 +129,7 @@ describe('api/prop', function () {
         [null, 0, null],
         [undefined, 0, null],
         [0.1, 0.1, '0.1'],
-        ['test', 0, '0'],
+        ['test', undefined, null],
         ['', 0, '0']
       ]);
     });
