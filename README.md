@@ -122,7 +122,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [Background](#background)
       - [The problem](#the-problem)
       - [The solution](#the-solution)
-      - [Drawbacks](#drawbacks)
     - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
       - [`shadowRoot`](#shadowroot)
@@ -995,7 +994,7 @@ However, if you put your component definitions at the bottom of the page, it get
 <script src="component-b.js"></script>
 ```
 
-In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `document.registerElement()`, it will look for elements to upgrade *immediately*.
+In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `window.customElements.define()`, it will look for elements to upgrade *immediately*.
 
 
 
@@ -1039,12 +1038,6 @@ skate.define('component-b', {
   }
 });
 ```
-
-
-
-#### Drawbacks
-
-This does not solve the situation where you want to be notified of future elements that may be added somewhere in your descendant DOM. That is more a concern of what API you choose to expose to your consumers, the rendering path you choose and the problem you're trying to solve. This only concerns itself with the descendant nodes that you *know* exist. Most of the time this will come from the `render` lifecycle callback.
 
 
 
