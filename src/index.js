@@ -17,5 +17,5 @@ export {
   ready,
   state,
   symbols,
-  vdom,
+  vdom
 };
