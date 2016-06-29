@@ -10,7 +10,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- Skate itself is only 4k min+gz.
+- Skate itself is only 4k min+gz (11k minfied, 28k unminified).
 - It's very fast.
 - It works with multiple versions of itself on the page, if need be.
 
@@ -196,11 +196,11 @@ jspm install npm:skatejs
 npm install skatejs
 ```
 
-Or you can DIY by downloading the zip. There's three files in `dist/` and each has a corresponding sourcemap file:
+Or you can DIY by downloading the zip. There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
 
-1. `index.js` - This is the `main` entry point in the `package.json` used for UMD builds.
-2. `index-with-deps.js` - Unminified Skate with dependencies.
-3. `index-with-deps.min.js` - Minified Skate with dependencies.
+1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
+2. `index-with-deps.js` - Unminified with dependencies.
+3. `index-with-deps.min.js` - Minified with dependencies.
 
 
 
@@ -1321,9 +1321,9 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
-  - `polymer-micro.html` 17k vs 20k
-  - `polymer-mini.html` 54k vs 20k
-  - `polymer.html` 124k vs 20k
+  - `polymer-micro.html` 17k vs 11k
+  - `polymer-mini.html` 54k vs 11k
+  - `polymer.html` 124k vs 11k
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
@@ -1335,7 +1335,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
 - Skate's property API is thorough and extensible. We provide implementationsf or commonly used property patterns and give you an API to easily write your own reusable properties.
-- Skate is only slightly larger and gives you everything you need to build complex components.
+- Skate is about the same size and scales well for building large, complex user interfaces.
 - There's no mutating your component's DOM from property accessors which can become unweidly.
 
 
@@ -1344,7 +1344,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
-- React is massive: a whopping 145k minified vs 20k.
+- React is 10x the size of Skate.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
 - **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.
