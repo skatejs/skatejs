@@ -138,7 +138,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
-  - [Asynchrony](#asynchrony)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
@@ -1242,19 +1241,6 @@ The component lifecycle consists of several paths in the following order startin
 6. `attached` is invoked when added to the document (or if already in the document)
 7. `detached` is invoked when removed from the document
 8. `attributeChanged` is invoked whenever an attribute is changed
-
-
-
-## Asynchrony
-
-When native support for custom elements aren't supported, Skate uses Mutation Observers and elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
-
-```js
-document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
-document.getElementById('my-component-id').someCustomMethod();
-```
-
-This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you should use `skate.ready()`.
 
 
 
