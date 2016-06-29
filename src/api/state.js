@@ -1,5 +1,5 @@
 import { renderer } from './symbols';
-import assign from 'object-assign';
+import assign from '../util/assign';
 
 function get (elem) {
   const props = elem.constructor.props;

@@ -10,7 +10,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's only 7k min+gz and it will only get smaller as more browsers start supporting web components natively.
+- Skate itself is only 4k min+gz (11k minfied, 28k unminified).
 - It's very fast.
 - It works with multiple versions of itself on the page, if need be.
 
@@ -120,9 +120,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`string`](#string)
     - [`ready (element, callback)`](#ready-element-callback)
       - [Background](#background)
-      - [The problem](#the-problem)
-      - [The solution](#the-solution)
-      - [Drawbacks](#drawbacks)
     - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
       - [`shadowRoot`](#shadowroot)
@@ -138,8 +135,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
-  - [Extending Elements](#extending-elements)
-  - [Asynchrony](#asynchrony)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
@@ -196,7 +191,11 @@ jspm install npm:skatejs
 npm install skatejs
 ```
 
-Or you can DIY by downloading the zip.
+Or you can DIY by downloading the zip. There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
+
+1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
+2. `index-with-deps.js` - Unminified with dependencies.
+3. `index-with-deps.min.js` - Minified with dependencies.
 
 
 
@@ -946,7 +945,7 @@ The `boolean` property allows you to define a property that should *always* have
 
 #### `number`
 
-Ensures the value is always a `Number` and is correctly linked to an attribute. Empty values are not coerced to Numbers. If a value cannot be coerced then it is `NaN`.
+Ensures the value is a `Number` and is correctly linked to an attribute. Numeric string values such as `'10'` will be converted to a `Number`. Non-numeric string values will be converted to `undefined`. The value will default to `0` if an empty value is passed.
 
 
 
@@ -958,13 +957,11 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 ### `ready (element, callback)`
 
-The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
+The `skate.ready()` function allows you to define a `callback` that is fired when the specified `element` is has been upgraded. This is useful when you want to ensure an element has been upgraded before doing anything with it. For more information regarding why an element may not be upgraded right away, read the following section.
 
 
 
 #### Background
-
-You maybe thinking "that sucks, why wouldn't they have been initialised?" That's a very good question. In order to realise the problem, we must first know how native custom elements behave.
 
 If you put your component definitions before your components in the DOM loading `component-a` before `component-b`:
 
@@ -993,56 +990,7 @@ However, if you put your component definitions at the bottom of the page, it get
 <script src="component-b.js"></script>
 ```
 
-In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `document.registerElement()`, it will look for elements to upgrade *immediately*.
-
-
-
-#### The problem
-
-If you want `component-a` to be able to rely on `component-b` being initialised, you'd have to put some constraints on your consumers:
-
-- If you're running native, you must load your definitions at the bottom of the page. You must also ensure that you're loading `component-b` before `component-a`. You could use a module loader to ensure `component-b` is imported by `component-a`, but you still have the constraint of making the consumer load the definitions at the bottom of the page.
-- If you're running in polyfill land, just make sure that you load `component-b` before `component-a`. As above, you could just use a module loader for this.
-
-The problem here is that your consumer is now concerned with implementation details and have constraints placed on them that they shouldn't have to worry about.
-
-
-
-#### The solution
-
-If you need to interact with components that may not be initialised yet (at any level), you can use `skate.ready()`. It works for both native and polyfill no matter when the element is upgraded.
-
-```js
-skate.define('component-a', {
-  ready (elem) {
-    const b = elem.querySelector('component-b');
-
-    // Would be `undefined` because it's not defined yet.
-    b.initialised;
-
-    // Your selected elements are passed to the callback as the first argument.
-    skate.ready(b, function (b) {
-      // Will now be `true`, for sure.
-      b.initialised;
-    });
-  },
-  render (elem) {
-    skate.vdom.element('component-b');
-  }
-});
-
-skate.define('component-b', {
-  created (elem) {
-    elem.initialised = true;
-  }
-});
-```
-
-
-
-#### Drawbacks
-
-This does not solve the situation where you want to be notified of future elements that may be added somewhere in your descendant DOM. That is more a concern of what API you choose to expose to your consumers, the rendering path you choose and the problem you're trying to solve. This only concerns itself with the descendant nodes that you *know* exist. Most of the time this will come from the `render` lifecycle callback.
+In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `window.customElements.define()`, it will look for elements to upgrade *immediately*.
 
 
 
@@ -1242,56 +1190,6 @@ The component lifecycle consists of several paths in the following order startin
 
 
 
-## Extending Elements
-
-You may extend components using ES6 classes or your favorite ES5 library.
-
-```js
-const XParent = skate.define('x-parent', {
-  static created () {
-
-  }
-  static get events {
-    return {
-      event1 () {}
-    }
-  }
-});
-
-const XChild = skate.define('x-child', class extends XParent {
-  static created () {
-    super.created();
-  }
-  static get events {
-    return class extends super.events {
-      event1 (e) {
-        super.event1(e);
-      }
-      event2 () {
-
-      }
-    };
-  }
-});
-```
-
-Due to the semantics of ES6 classes, you must specify any non-prototype members as static. ES6 classes also do not support the object literal syntax. In order to specify properties, just use the getter syntax like we did with `events` above.
-
-
-
-## Asynchrony
-
-When native support for custom elements aren't supported, Skate uses Mutation Observers and elements are processed asynchronously. This means that if you insert an element into the DOM, custom methods and properties on that element will not be available right away. This will not work:
-
-```js
-document.body.innerHTML = '<my-component id="my-component-id"></my-component>';
-document.getElementById('my-component-id').someCustomMethod();
-```
-
-This is because Mutation Observers queue a [microtask](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/). In order to get around this behaviour, you should use `skate.ready()`.
-
-
-
 ## Customised built-in elements
 
 The spec [mentions](http://w3c.github.io/webcomponents/spec/custom/#customized-built-in-element) this as a way to extend built-in elements. Currently, how this is exposed to the user is still [under contention](https://github.com/w3c/webcomponents/issues/509#issuecomment-222860736). Skate doesn't need do anything to support this underneath the hood, but be aware of this when building components.
@@ -1317,9 +1215,9 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
-  - `polymer-micro.html` 17k vs 20k
-  - `polymer-mini.html` 54k vs 20k
-  - `polymer.html` 124k vs 20k
+  - `polymer-micro.html` 17k vs 11k
+  - `polymer-mini.html` 54k vs 11k
+  - `polymer.html` 124k vs 11k
 - Polymer uses HTML Imports to build their codebase. This can be obtuse if you're used to using JavaScript module formats, especially since HTML Imports are currently very contentious and Google are the only ones who are pushing for it.
 - Skate supports JSPM, NPM and more. Polymer currently [only supports Bower](https://github.com/Polymer/polymer/issues/2578).
 
@@ -1331,7 +1229,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
 - Skate's property API is thorough and extensible. We provide implementationsf or commonly used property patterns and give you an API to easily write your own reusable properties.
-- Skate is only slightly larger and gives you everything you need to build complex components.
+- Skate is about the same size and scales well for building large, complex user interfaces.
 - There's no mutating your component's DOM from property accessors which can become unweidly.
 
 
@@ -1340,7 +1238,7 @@ Skate is very close to X-Tags in terms of API shape, however, it is very differe
 
 React has definitely had an influence on Skate. That said, they're completely different beasts, only sharing a functional rendering pipeline and some aspects of the API.
 
-- React is massive: a whopping 145k minified vs 20k.
+- React is 10x the size of Skate.
 - In the performance tests you can see a Skate component is several times faster than a similarly written React component.
 - **Skate is written on top of W3C standards.** The React authors have been [very vocal](https://github.com/facebook/react/issues/5052) about this. However, the response to that issue is incorrect. Web Components by nature are declarative: it's just HTML. Web Components also completely solve the integration problems between libraries and frameworks due to the nature of how Custom Elements and Shadow DOM work: Custom Elements provide a declarative API, Shadow DOM hides the implementation details. When integrating with frameworks, you're just writing HTML. In terms of the problems with imperative APIs, it's not the fault of Web Components that force a user to call a method, it's the fault of the design of the Web Component. There's nothing stopping a Web Component from being completely declarative, especially if it's written in Skate. More information about [web component design](#declarative).
 - We have plans to support server-side rendering.

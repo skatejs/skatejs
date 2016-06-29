@@ -1,7 +1,7 @@
-import afterMutations from '../../lib/after-mutations';
-import assign from 'object-assign';
-import element from '../../lib/element';
 import { prop } from '../../../src/index';
+import afterMutations from '../../lib/after-mutations';
+import assign from '../../../src/util/assign';
+import element from '../../lib/element';
 
 function create (prop) {
   return new (element().skate({
@@ -108,17 +108,42 @@ describe('api/prop', function () {
   });
 
   describe('number', function () {
+    let elem;
+
+    beforeEach(function () {
+      elem = create(prop.number());
+    });
+
+    it('default', function () {
+      expect(elem.test).to.be.a('number');
+      expect(elem.test).to.equal(0);
+      expect(elem.getAttribute('test')).to.equal(null);
+    });
+
     it('values', function () {
-      const elem = create(prop.number());
-      expect(elem.test).to.equal(undefined);
+      expect(elem.test).to.equal(0);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
         [false, 0, '0'],
-        [null, undefined, null],
-        [undefined, undefined, null],
+        [true, 1, '1'],
+        [null, 0, null],
+        [undefined, 0, null],
         [0.1, 0.1, '0.1'],
+        ['test', undefined, null],
         ['', 0, '0']
       ]);
+    });
+
+    it('removing attribute', function (done) {
+      afterMutations(
+        () => elem.setAttribute('test', ''),
+        () => expect(elem.test).to.equal(0),
+        () => expect(elem.getAttribute('test')).to.equal(''),
+        () => elem.removeAttribute('test'),
+        () => expect(elem.test).to.equal(0),
+        () => expect(elem.getAttribute('test')).to.equal(null),
+        done
+      );
     });
   });
 
