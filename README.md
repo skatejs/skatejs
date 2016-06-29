@@ -138,7 +138,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
-  - [Extending Elements](#extending-elements)
   - [Asynchrony](#asynchrony)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
@@ -1243,43 +1242,6 @@ The component lifecycle consists of several paths in the following order startin
 6. `attached` is invoked when added to the document (or if already in the document)
 7. `detached` is invoked when removed from the document
 8. `attributeChanged` is invoked whenever an attribute is changed
-
-
-
-## Extending Elements
-
-You may extend components using ES6 classes or your favorite ES5 library.
-
-```js
-const XParent = skate.define('x-parent', {
-  static created () {
-
-  }
-  static get events {
-    return {
-      event1 () {}
-    }
-  }
-});
-
-const XChild = skate.define('x-child', class extends XParent {
-  static created () {
-    super.created();
-  }
-  static get events {
-    return class extends super.events {
-      event1 (e) {
-        super.event1(e);
-      }
-      event2 () {
-
-      }
-    };
-  }
-});
-```
-
-Due to the semantics of ES6 classes, you must specify any non-prototype members as static. ES6 classes also do not support the object literal syntax. In order to specify properties, just use the getter syntax like we did with `events` above.
 
 
 
