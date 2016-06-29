@@ -1,9 +1,6 @@
 sudo: false
 language: node_js
 node_js: stable
-cache:
-  directories:
-    - node_modules
 notifications:
   email: false
 before_script:
