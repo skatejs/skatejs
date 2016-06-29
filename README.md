@@ -120,8 +120,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`string`](#string)
     - [`ready (element, callback)`](#ready-element-callback)
       - [Background](#background)
-      - [The problem](#the-problem)
-      - [The solution](#the-solution)
     - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
       - [`shadowRoot`](#shadowroot)
@@ -959,13 +957,11 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 ### `ready (element, callback)`
 
-The `skate.ready()` function should not be confused with the `ready` lifecycle callback. The lifecycle callback is called when the component element is ready to be worked with. It means that it's been templated out and all properties have been set up completely. It does not mean, however, that descendant components have been initialised.
+The `skate.ready()` function allows you to define a `callback` that is fired when the specified `element` is has been upgraded. This is useful when you want to ensure an element has been upgraded before doing anything with it. For more information regarding why an element may not be upgraded right away, read the following section.
 
 
 
 #### Background
-
-You maybe thinking "that sucks, why wouldn't they have been initialised?" That's a very good question. In order to realise the problem, we must first know how native custom elements behave.
 
 If you put your component definitions before your components in the DOM loading `component-a` before `component-b`:
 
@@ -995,49 +991,6 @@ However, if you put your component definitions at the bottom of the page, it get
 ```
 
 In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `window.customElements.define()`, it will look for elements to upgrade *immediately*.
-
-
-
-#### The problem
-
-If you want `component-a` to be able to rely on `component-b` being initialised, you'd have to put some constraints on your consumers:
-
-- If you're running native, you must load your definitions at the bottom of the page. You must also ensure that you're loading `component-b` before `component-a`. You could use a module loader to ensure `component-b` is imported by `component-a`, but you still have the constraint of making the consumer load the definitions at the bottom of the page.
-- If you're running in polyfill land, just make sure that you load `component-b` before `component-a`. As above, you could just use a module loader for this.
-
-The problem here is that your consumer is now concerned with implementation details and have constraints placed on them that they shouldn't have to worry about.
-
-
-
-#### The solution
-
-If you need to interact with components that may not be initialised yet (at any level), you can use `skate.ready()`. It works for both native and polyfill no matter when the element is upgraded.
-
-```js
-skate.define('component-a', {
-  ready (elem) {
-    const b = elem.querySelector('component-b');
-
-    // Would be `undefined` because it's not defined yet.
-    b.initialised;
-
-    // Your selected elements are passed to the callback as the first argument.
-    skate.ready(b, function (b) {
-      // Will now be `true`, for sure.
-      b.initialised;
-    });
-  },
-  render (elem) {
-    skate.vdom.element('component-b');
-  }
-});
-
-skate.define('component-b', {
-  created (elem) {
-    elem.initialised = true;
-  }
-});
-```
 
 
 
