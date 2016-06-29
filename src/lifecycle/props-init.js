@@ -1,5 +1,5 @@
 import * as symbols from '../api/symbols';
-import assign from 'object-assign';
+import assign from '../util/assign';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import emit from '../api/emit';

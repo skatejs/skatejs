@@ -1,7 +1,7 @@
-import afterMutations from '../../lib/after-mutations';
-import assign from 'object-assign';
-import element from '../../lib/element';
 import { prop } from '../../../src/index';
+import afterMutations from '../../lib/after-mutations';
+import assign from '../../../src/util/assign';
+import element from '../../lib/element';
 
 function create (prop) {
   return new (element().skate({

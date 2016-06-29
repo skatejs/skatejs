@@ -10,7 +10,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's only 7k min+gz and it will only get smaller as more browsers start supporting web components natively.
+- Skate itself is only 4k min+gz.
 - It's very fast.
 - It works with multiple versions of itself on the page, if need be.
 
@@ -196,7 +196,11 @@ jspm install npm:skatejs
 npm install skatejs
 ```
 
-Or you can DIY by downloading the zip.
+Or you can DIY by downloading the zip. There's three files in `dist/` and each has a corresponding sourcemap file:
+
+1. `index.js` - This is the `main` entry point in the `package.json` used for UMD builds.
+2. `index-with-deps.js` - Unminified Skate with dependencies.
+3. `index-with-deps.min.js` - Minified Skate with dependencies.
 
 
 

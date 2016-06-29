@@ -1,4 +1,4 @@
-import assign from 'object-assign';
+import assign from '../util/assign';
 import empty from '../util/empty';
 
 const alwaysUndefinedIfNotANumberOrNumber = val => isNaN(val) ? undefined : Number(val);

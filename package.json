@@ -23,8 +23,7 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "0.4.0",
-    "object-assign": "4.1.0"
+    "incremental-dom": "0.4.1"
   },
   "devDependencies": {
     "es6-shim": "0.35.1",
@@ -33,7 +32,7 @@
     "webcomponents.js": "webcomponents/webcomponentsjs#fb43208"
   },
   "scripts": {
-    "prepublish": "sk-bundle",
+    "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
     "test": "karma start --single-run"
   },
   "config": {
@@ -41,5 +40,5 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "version": "1.0.0-beta.3"
+  "version": "1.0.0-beta.6"
 }
