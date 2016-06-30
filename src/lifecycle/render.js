@@ -2,7 +2,7 @@ import { IncrementalDOM } from '../api/vdom';
 import { shadowRoot } from '../api/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
-const { patch } = IncrementalDOM;
+const { patchInner } = IncrementalDOM;
 
 export default function (Ctor) {
   const { render } = Ctor;
@@ -26,6 +26,6 @@ export default function (Ctor) {
       elem[shadowRoot] = sr;
     }
 
-    patch(elem[shadowRoot], render, elem);
+    patchInner(elem[shadowRoot], render, elem);
   };
 }
