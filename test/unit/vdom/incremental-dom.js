@@ -5,7 +5,23 @@ import { symbols, vdom } from '../../../src/index';
 
 describe('IncrementalDOM', function () {
   it('should export all the same members as the incremental-dom we consume', function () {
-    expect(VdomIncrementalDOM).to.contain(IncrementalDOM);
+    // We override these, so obviously they won't be the same.
+    const { attributes, elementOpen, elementOpenStart, elementVoid } = VdomIncrementalDOM;
+
+    // Delete so they don't get compared.
+    delete VdomIncrementalDOM.attributes;
+    delete VdomIncrementalDOM.elementOpen;
+    delete VdomIncrementalDOM.elementOpenStart;
+    delete VdomIncrementalDOM.elementVoid;
+
+    // Check same API points.
+    expect(IncrementalDOM).to.contain(VdomIncrementalDOM);
+
+    // Ensure overrides are different.
+    expect(attributes).not.to.equal(IncrementalDOM.attributes);
+    expect(elementOpen).not.to.equal(IncrementalDOM.elementOpen);
+    expect(elementOpenStart).not.to.equal(IncrementalDOM.elementOpenStart);
+    expect(elementVoid).not.to.equal(IncrementalDOM.elementVoid);
   });
 });
 

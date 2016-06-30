@@ -1,22 +1,23 @@
 import * as IncrementalDOM from 'incremental-dom';
 import * as skateSymbols from './symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
+import assign from '../util/assign';
 
-// Could import these, but we have to import all of IncrementalDOM anyways so
-// that we can export our configured IncrementalDOM.
 const {
-  applyProp,
   attr,
+  applyProp,
   attributes,
   elementClose,
   elementOpen,
   elementOpenEnd,
   elementOpenStart,
+  elementVoid,
   skip,
   symbols,
-  text
+  text,
 } = IncrementalDOM;
 
+const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const applyDefault = attributes[symbols.default];
 
 // Attributes that are not handled by Incremental DOM.
@@ -32,6 +33,11 @@ attributes[symbols.default] = function (elem, name, value) {
     return;
   }
 
+  // If the skip attribute was specified, skip
+  if (name === 'skip' && value) {
+    return skip();
+  }
+
   // Custom element properties should be set as properties.
   const props = elem.constructor.props;
   if (props && name in props) {
@@ -41,6 +47,13 @@ attributes[symbols.default] = function (elem, name, value) {
   // Handle built-in and custom events.
   if (name.indexOf('on') === 0) {
     return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
+  }
+
+  // Set the select attribute instead of name if it was a <slot> translated to 
+  // a <content> for v0.
+  if (name === 'name' && elem.tagName === 'CONTENT') {
+    name = 'select';
+    value = `[slot="${value}"]`;
   }
 
   // Fallback to default IncrementalDOM behaviour.
@@ -68,56 +81,85 @@ function applyEvent (elem, ename, name, value) {
   }
 }
 
+// Returns the tag name of the element if a custom element constructor was
+// provided instead of a string.
+function decideIfConstructorOrNot (tname) {
+  return typeof tname === 'function' ? tname[skateSymbols.name] : tname;
+}
+
+// Returns the correct tag name so we can use <content> instead of <slot> if we
+// need to use Shadow DOM V0.
+function decideIfContentTagOrNot (tname) {
+  return tname === 'slot' && fallbackToV0 ? 'content' : tname;
+}
+
+// Patch elementOpen() so that anything that compiles down to Incremental DOM
+// gets the special behaviour.
+function newElementOpen (...args) {
+  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
+  return elementOpen.apply(null, args);
+}
+
+// Patch elementOpenStart() for the same reason we patched elementOpen().
+function newElementOpenStart (...args) {
+  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
+  return elementOpenStart.apply(null, args);
+}
+
+// Patch elementVoid() for the same reason we patched elementOpen().
+function newElementVoid (...args) {
+  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
+  return elementVoid.apply(null, args);
+}
+
+// Override Incremental DOM exports.
+const newIncrementalDom = assign({}, IncrementalDOM);
+Object.defineProperties(newIncrementalDom, {
+  attributes,
+  elementOpen: { value: newElementOpen },
+  elementOpenStart: { value: newElementOpenStart },
+  elementVoid: { value: newElementVoid },
+});
+
+// Convenience function for declaring an Incremental DOM element using
+// hyperscript-style syntax.
 export function element (tname, attrs, chren) {
-  // Allow a component constructor to be passed in.
-  if (typeof tname === 'function') {
-    tname = tname[skateSymbols.name];
-  }
+  const atype = typeof attrs;
 
-  const shouldBeContentTag = tname === 'slot' && !shadowDomV1 && shadowDomV0;
-
-  // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
-  if (shouldBeContentTag) {
-    tname = 'content';
-  }
-
-  if (attrs && typeof attrs === 'object') {
-    // Abstract Shadow DOM V0 <content> behind Shadow DOM V1 <slot>.
-    if (shouldBeContentTag && attrs.name) {
-      attrs.select = `[slot="${attrs.name}"]`;
-      delete attrs.slot;
-    }
-
-    elementOpenStart(tname, attrs.key, attrs.statics);
-    for (let a in attrs) {
-      attr(a, attrs[a]);
-    }
-    elementOpenEnd();
-  } else {
-    elementOpen(tname);
+  if (atype === 'function') {
     chren = attrs;
+  }
+  
+  if (atype !== 'object') {
     attrs = {};
   }
 
-  if (attrs.skip) {
-    skip();
-  } else {
-    const chrenType = typeof chren;
-    if (chrenType === 'function') {
-      chren();
-    } else if (chrenType === 'string' || chrenType === 'number') {
-      text(chren);
-    }
+  // We open the element so we can set attrs after.
+  newElementOpenStart(tname, attrs.key, attrs.statics);
+
+  // Delete so special attrs don't actually get set.
+  delete attrs.key;
+  delete attrs.statics;
+
+  // Set attributes.
+  Object.keys(attrs).forEach(name => attr(name, attrs[name]));
+
+  // Close before we render the descendant tree.
+  elementOpenEnd();
+  
+  const ctype = typeof chren;
+  if (ctype === 'function') {
+    chren();
+  } else if (ctype === 'string' || ctype === 'number') {
+    text(chren);
   }
 
   return elementClose(tname);
 }
 
-// Export the Incremental DOM text() function directly as we don't need to do
-// any special processing for it.
+// We don't have to do anything special for the text funciton; it's just a 
+// straight export from Incremental DOM.
 export { text };
 
-// We export IncrementalDOM in its entirety because we want the user to be able
-// to user our configured version while still being able to use various other
-// templating languages and techniques that compile down to it.
-export { IncrementalDOM };
+// Re-export Incremental DOM's overridden public API. 
+export { newIncrementalDom as IncrementalDOM };
