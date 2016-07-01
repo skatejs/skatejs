@@ -450,14 +450,14 @@ The parameters passed to the function are:
 
 ##### `deserialize`
 
-A function that coerces the property value to a `String` so that it can be set to the linked attribute, if it is linked.
+A function that converts the linked attribute value to the linked property value.
 
 ```js
 skate.define('my-component', {
   props: {
     myProp: {
       deserialize (value) {
-        return value ? value.toString() : '';
+        return value.split(',');
       }
     }
   }
@@ -551,14 +551,14 @@ The parameters passed to the function are:
 
 ##### `serialize`
 
-A function that coerces the attribute value back to the property value, if it is linked.
+A function that converts the linked property value to the linked attribute value.
 
 ```js
 skate.define('my-component', {
   props: {
     myProp: {
-      deserialize (value) {
-        return value ? value.toString() : '';
+      serialize (value) {
+        return value.join(',');
       }
     }
   }
