@@ -1,11 +1,6 @@
-import * as IncrementalDOM from 'incremental-dom';
-import * as skateSymbols from './symbols';
-import { shadowDomV0, shadowDomV1 } from '../util/support';
-import assign from '../util/assign';
-
-const {
-  attr,
+import {
   applyProp,
+  attr,
   attributes,
   elementClose,
   elementOpen,
@@ -15,7 +10,9 @@ const {
   skip,
   symbols,
   text,
-} = IncrementalDOM;
+} from 'incremental-dom';
+import * as skateSymbols from './symbols';
+import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const applyDefault = attributes[symbols.default];
@@ -112,15 +109,6 @@ function newElementVoid (...args) {
   return elementVoid.apply(null, args);
 }
 
-// Override Incremental DOM exports.
-const newIncrementalDom = assign({}, IncrementalDOM);
-Object.defineProperties(newIncrementalDom, {
-  attributes,
-  elementOpen: { value: newElementOpen },
-  elementOpenStart: { value: newElementOpenStart },
-  elementVoid: { value: newElementVoid },
-});
-
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
 export function element (tname, attrs, chren) {
@@ -159,7 +147,12 @@ export function element (tname, attrs, chren) {
 
 // We don't have to do anything special for the text funciton; it's just a 
 // straight export from Incremental DOM.
-export { text };
-
-// Re-export Incremental DOM's overridden public API. 
-export { newIncrementalDom as IncrementalDOM };
+export {
+  attr,
+  elementClose,
+  elementOpenEnd,
+  newElementOpen as elementOpen,
+  newElementOpenStart as elementOpenStart,
+  newElementVoid as elementVoid, 
+  text,
+};

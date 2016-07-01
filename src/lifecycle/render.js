@@ -1,8 +1,6 @@
-import { IncrementalDOM } from '../api/vdom';
+import { patchInner } from 'incremental-dom';
 import { shadowRoot } from '../api/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
-
-const { patchInner } = IncrementalDOM;
 
 export default function (Ctor) {
   const { render } = Ctor;
