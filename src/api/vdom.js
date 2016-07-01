@@ -145,7 +145,7 @@ export function element (tname, attrs, chren) {
   return elementClose(tname);
 }
 
-// We don't have to do anything special for the text funciton; it's just a 
+// We don't have to do anything special for the text function; it's just a 
 // straight export from Incremental DOM.
 export {
   attr,
