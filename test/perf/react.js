@@ -1,15 +1,20 @@
-import bench from 'skatejs-build/bench';
-import { define, props, vdom } from '../../src/index';
+import { define, prop, vdom } from '../../src/index';
+import Benchmark from 'benchmark';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
+const fixture = document.createElement('div');
+document.body.appendChild(fixture);
 
-const { React, ReactDOM } = window;
+const render = new Benchmark.Suite();
+const update = new Benchmark.Suite();
 
 
 // Skate components.
 
 define('x-app', {
   props: {
-    title: props.string({ default: 0 })
+    title: prop.number(),
   },
   render (elem) {
     vdom.element('div', function () {
@@ -20,28 +25,28 @@ define('x-app', {
         }
       });
     });
-  }
+  },
 });
 
 define('x-list', {
   render () {
-    vdom.element('slot', { name: '' });
-  }
+    vdom.element('slot');
+  },
 });
 
 define('x-item', {
   render () {
-    vdom.element('slot', { name: '' });
-  }
+    vdom.element('slot');
+  },
 });
 
 
 // React components.
 
-const Xapp = React.createClass({
+const Xapp = class extends React.Component {
   getInitialState () {
     return { title: 0 };
-  },
+  }
   render () {
     const items = [];
     for (let a = 0; a < 10; a++) {
@@ -56,91 +61,52 @@ const Xapp = React.createClass({
       )
     );
   }
+};
+
+const Xlist = props => React.createElement('div', null, props.children);
+const Xitem = props => React.createElement('div', null, props.children);
+
+render.add('skate', function () {
+  fixture.innerHTML = '<x-app></x-app>';
+  fixture.innerHTML = '';
+}, { teardown() { fixture.innerHTML = ''; } });
+
+render.add('react', function () {
+  ReactDOM.render(React.createElement(Xapp), fixture);
+  ReactDOM.unmountComponentAtNode(fixture);
+}, { teardown() { fixture.innerHTML = ''; } });
+
+update.add('skate', function () {
+  component.title = `Test ${this.count}`;
+}, {
+  setup() {
+    fixture.innerHTML = '<x-app></x-app>';
+    const component = fixture.firstChild;
+  },
+  teardown() {
+    fixture.innerHTML = '';
+  },
 });
 
-const Xlist = React.createClass({
-  render () {
-    return React.createElement('div', null, this.props.children);
-  }
+update.add('react', function () {
+  component.setState({
+    title: `Test ${this.count}`,
+  });
+}, {
+  setup() {
+    const component = ReactDOM.render(React.createElement(Xapp), fixture);
+  },
+  teardown() {
+    ReactDOM.unmountComponentAtNode(fixture);
+  },
 });
 
-const Xitem = React.createClass({
-  render () {
-    return React.createElement('div', null, this.props.children);
-  }
+render.on('cycle', function(event) {
+  console.log(String(event.target));
 });
 
-
-describe('', function () {
-  let fixture;
-
-  beforeEach(function () {
-    fixture = document.createElement('div');
-    document.body.appendChild(fixture);
-  });
-
-  afterEach(function () {
-    document.body.removeChild(fixture);
-  });
-
-  describe('initial render', function () {
-    bench('skate', function () {
-      fixture.innerHTML = '<x-app></x-app>';
-      fixture.innerHTML = '';
-    });
-
-    bench('react', function (d) {
-      ReactDOM.render(React.createElement(Xapp), fixture, function () {
-        ReactDOM.unmountComponentAtNode(fixture);
-        d.resolve();
-      });
-    });
-  });
-
-  describe('re-render after initial render', function () {
-    describe('', function () {
-      let component;
-
-      beforeEach(function () {
-        fixture.innerHTML = '<x-app></x-app>';
-        component = fixture.firstChild;
-      });
-
-      afterEach(function () {
-        fixture.innerHTML = '';
-      });
-
-      bench('skate', {
-        args () {
-          return component;
-        },
-        fn () {
-          this.args().title = `Test ${this.count}`;
-        }
-      });
-    });
-
-    describe('', function () {
-      let component;
-
-      beforeEach(function () {
-        component = ReactDOM.render(React.createElement(Xapp), fixture);
-      });
-
-      afterEach(function () {
-        ReactDOM.unmountComponentAtNode(fixture);
-      });
-
-      bench('react', {
-        args () {
-          return component;
-        },
-        fn () {
-          this.args().setState({
-            title: `Test ${this.count}`
-          });
-        }
-      });
-    });
-  });
+render.on('complete', function() {
+  console.log('Fastest is ' + this.filter('fastest').map('name'));
 });
+
+render.run();
