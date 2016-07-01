@@ -1139,26 +1139,40 @@ If you specify `false` as any attribute value, the attribute will not be added, 
 
 The `vdom` module is provided for a simple way to write virtual DOM using only functions. If you don't want to do that, you can use any templating language that compiles down to Incremental DOM calls.
 
-If you wanted to use JSX, for example, you'd have to add support for compiling JSX down to Incremental DOM calls. This can be done using the following modules:
+To enable JSX you can use one of the following:
 
-- https://github.com/thejameskyle/incremental-dom-react-helper
-- https://github.com/jridgewell/babel-plugin-incremental-dom
+- https://github.com/thejameskyle/incremental-dom-react-helper - Allows `React.createElement()` calls to translate to Incremental DOM calls.
+- https://github.com/jridgewell/babel-plugin-incremental-dom - Babel plugin for transpiling JSX to Incremental DOM calls.
 
-Once that is set up, you may write a component using JSX. For example, a simple blog element may look something like:
+Use one or the other. The helper is a quicker way to get started. However, since it must translate `React.createElement()` calls into Incremental DOM function calls, every `React.createElement()` call returns a closure that gets executed later. This can potentially negate the benefits of Incremental DOM's garbage collection-friendly nature since it creates a function for every single element. The plugin will transpile JSX directly to Incremental DOM function calls that preserves the "incremental" nature.
+
+If you're using the helper, you'll need to make sure `IncrementalDOM` is available globally. Since provide functionality on top of Incremental DOM, you'll need to make sure it uses our virtual element functions instead:
+
+If you're using the plugin, you'll need to configure it to use `skate.vdom` (or just `vdom` if you `import` it) as the `prefix`.
 
 ```js
+// For the helper:
+IncrementalDOM = skate.vdom;
+
+// For the plugin you need to configure the `prefix` option to 
+// point to Skate's vdom or you'll need to do something like this
+// so the functions are in scope.
+const { elementOpen, elementOpenStart, elementVoid } = skate.vdom;
+
 skate.define('my-element', {
   props: {
     title: skate.prop.string()
   },
   render (elem) {
-    <div>
-      <h1>{elem.title}</h1>
-      <slot name="description" />
-      <article>
-        <slot />
-      </article>
-    </div>
+    return (
+      <div>
+        <h1>{elem.title}</h1>
+        <slot name="description" />
+        <article>
+          <slot />
+        </article>
+      </div>
+    );
   }
 });
 ```
