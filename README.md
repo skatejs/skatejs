@@ -1146,7 +1146,7 @@ To enable JSX you can use one of the following:
 
 Use one or the other. The helper is a quicker way to get started. However, since it must translate `React.createElement()` calls into Incremental DOM function calls, every `React.createElement()` call returns a closure that gets executed later. This can potentially negate the benefits of Incremental DOM's garbage collection-friendly nature since it creates a function for every single element. The plugin will transpile JSX directly to Incremental DOM function calls that preserves the "incremental" nature.
 
-If you're using the helper, you'll need to make sure `IncrementalDOM` is available globally. Since provide functionality on top of Incremental DOM, you'll need to make sure it uses our virtual element functions instead:
+If you're using the helper, you'll need to make sure `IncrementalDOM` is available globally. Since we provide functionality on top of Incremental DOM, you'll need to make sure it uses our virtual element functions instead:
 
 If you're using the plugin, you'll need to configure it to use `skate.vdom` (or just `vdom` if you `import` it) as the `prefix`.
 
