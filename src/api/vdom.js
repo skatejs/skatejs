@@ -80,33 +80,89 @@ function applyEvent (elem, ename, name, value) {
 
 // Returns the tag name of the element if a custom element constructor was
 // provided instead of a string.
-function decideIfConstructorOrNot (tname) {
-  return typeof tname === 'function' ? tname[skateSymbols.name] : tname;
+function resolveTagName (tname) {
+  if (typeof tname === 'function') {
+    return tname[skateSymbols.name] || tname;
+  }
+  if (tname === 'slot' && fallbackToV0) {
+    return 'content';
+  }
+  return tname;
 }
 
-// Returns the correct tag name so we can use <content> instead of <slot> if we
-// need to use Shadow DOM V0.
-function decideIfContentTagOrNot (tname) {
-  return tname === 'slot' && fallbackToV0 ? 'content' : tname;
+let buildQueueChren;
+let buildQueueProps;
+
+function buildQueueEmpty () {
+  buildQueueChren = null;
+  buildQueueProps = null;
 }
 
-// Patch elementOpen() so that anything that compiles down to Incremental DOM
-// gets the special behaviour.
-function newElementOpen (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementOpen.apply(null, args);
+function buildQueueInit () {
+  buildQueueChren = [];
+  buildQueueProps = {};
 }
 
-// Patch elementOpenStart() for the same reason we patched elementOpen().
-function newElementOpenStart (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementOpenStart.apply(null, args);
+function buildQueueRender (chren) {
+  chren.forEach(item => item[0].apply(null, item[1]));
 }
 
-// Patch elementVoid() for the same reason we patched elementOpen().
-function newElementVoid (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementVoid.apply(null, args);
+// Wraps an Incremental DOM function with one wrapped with Skate's opinionated
+// functionality.
+function wrapIdomFunc (func) {
+  return function (...args) {
+    const tname = args[0] = resolveTagName(args[0]);
+    if (typeof tname === 'function') {
+      buildQueueInit();
+    } else if (buildQueueChren) {
+      buildQueueChren.push([func, args]);
+    } else {
+      return func.apply(null, args);
+    }
+  };
+}
+
+function newAttr (key, val) {
+  if (buildQueueChren) {
+    buildQueueProps[key] = val;
+  } else {
+    return attr(key, val);
+  }
+}
+
+// Patch element factories.
+const newElementOpen = wrapIdomFunc(elementOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart);
+const newElementVoid = wrapIdomFunc(elementVoid);
+
+// Patch elementClose() to only execute if a string is passed.
+function newElementClose (...args) {
+  const tname = args[0] = resolveTagName(args[0]);
+  if (typeof tname === 'function') {
+    // Reference queues so we can clear before executing tname()
+    const chren = buildQueueChren;
+    const props = buildQueueProps;
+
+    // Clear the build queue so when we execute tname() the children get
+    // executed rather than appended to the queue.
+    buildQueueEmpty();
+
+    // Execute after clearing passing in the references.
+    tname(props, buildQueueRender(chren));
+  } else if (buildQueueChren) {
+    buildQueueChren.push([elementClose, args]);
+  } else {
+    return elementClose.apply(null, args);
+  }
+}
+
+function newText (textContent) {
+  if (buildQueueChren) {
+    buildQueueChren.push([text, [textContent]]);
+  } else {
+    text(textContent);
+  }
 }
 
 // Convenience function for declaring an Incremental DOM element using
@@ -114,10 +170,12 @@ function newElementVoid (...args) {
 export function element (tname, attrs, chren) {
   const atype = typeof attrs;
 
+  // If attributes are a function, then they should be treated as children.
   if (atype === 'function') {
     chren = attrs;
   }
   
+  // Ensure the attributes are an object.
   if (atype !== 'object') {
     attrs = {};
   }
@@ -130,29 +188,29 @@ export function element (tname, attrs, chren) {
   delete attrs.statics;
 
   // Set attributes.
-  Object.keys(attrs).forEach(name => attr(name, attrs[name]));
+  Object.keys(attrs).forEach(name => newAttr(name, attrs[name]));
 
   // Close before we render the descendant tree.
-  elementOpenEnd();
+  newElementOpenEnd(tname);
   
   const ctype = typeof chren;
   if (ctype === 'function') {
     chren();
   } else if (ctype === 'string' || ctype === 'number') {
-    text(chren);
+    newText(chren);
   }
 
-  return elementClose(tname);
+  return newElementClose(tname);
 }
 
 // We don't have to do anything special for the text function; it's just a 
 // straight export from Incremental DOM.
 export {
-  attr,
-  elementClose,
-  elementOpenEnd,
+  newAttr as attr,
+  newElementClose as elementClose,
   newElementOpen as elementOpen,
+  newElementOpenEnd as elementOpenEnd,
   newElementOpenStart as elementOpenStart,
-  newElementVoid as elementVoid, 
-  text,
+  newElementVoid as elementVoid,
+  newText as text,
 };

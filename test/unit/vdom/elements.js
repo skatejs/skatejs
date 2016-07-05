@@ -42,9 +42,7 @@ describe('vdom/elements', function () {
   it('passing a component constructor to the vdom.element() function', function (done) {
     const Elem1 = element().skate({
       render () {
-        vdom.element('div', function () {
-          vdom.element(Elem2);
-        });
+        vdom.element(Elem2);
       }
     });
     const Elem2 = element().skate({
@@ -57,9 +55,25 @@ describe('vdom/elements', function () {
     const elem2 = new Elem2();
 
     fixture().appendChild(elem1);
-    elem1.appendChild(elem2);
     afterMutations(
       () => expect(elem2[symbols.shadowRoot].textContent).to.equal('rendered'),
+      done
+    );
+  });
+
+  it('passing a function to the vdom.element() function', function (done) {
+    const Elem = element().skate({
+      render () {
+        vdom.element(Func);
+      }
+    });
+
+    const Func = () => vdom.text('rendered');
+    const elem = new Elem();
+
+    fixture().appendChild(elem);
+    afterMutations(
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('rendered'),
       done
     );
   });
