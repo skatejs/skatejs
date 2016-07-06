@@ -1,22 +1,37 @@
 import * as IncrementalDOM from 'incremental-dom';
 import { vdom } from '../../../src/index';
 
-describe('IncrementalDOM', function () {
-  it('should export all the same members as the incremental-dom we consume', function () {
-    // Ensure we export the element functions.
-    expect(vdom.attr).to.be.a('function');
-    expect(vdom.elementClose).to.be.a('function');
-    expect(vdom.elementOpenEnd).to.be.a('function');
-    expect(vdom.elementOpenStart).to.be.a('function');
-    expect(vdom.elementVoid).to.be.a('function');
-    expect(vdom.text).to.be.a('function');
+function testBasicApi (name) {
+  it('should be a function', () => expect(vdom[name]).to.be.a('function'));
+  it('should not be the same one as in Incremental DOM', () => expect(vdom[name]).not.to.equal(IncrementalDOM[name]));
+}
 
-    // Ensure they're not the same as Incremental DOM's implementation.
-    expect(vdom.attr).not.to.equal(IncrementalDOM.attr);
-    expect(vdom.elementClose).not.to.equal(IncrementalDOM.elementClose);
-    expect(vdom.elementOpenEnd).not.to.equal(IncrementalDOM.elementOpenEnd);
-    expect(vdom.elementOpenStart).not.to.equal(IncrementalDOM.elementOpenStart);
-    expect(vdom.elementVoid).not.to.equal(IncrementalDOM.elementVoid);
-    expect(vdom.text).not.to.equal(IncrementalDOM.text);
+describe('IncrementalDOM', function () {
+  describe('attr', () => {
+    testBasicApi('attr');
+  });
+
+  describe('elementClose', () => {
+    testBasicApi('elementClose');
+  });
+
+  describe('elementOpen', () => {
+    testBasicApi('elementOpen');
+  });
+
+  describe('elementOpenEnd', () => {
+    testBasicApi('elementOpenEnd');
+  });
+
+  describe('elementOpenStart', () => {
+    testBasicApi('elementOpenStart');
+  });
+
+  describe('elementVoid', () => {
+    testBasicApi('elementVoid');
+  });
+
+  describe('text', () => {
+    testBasicApi('text');
   });
 });
