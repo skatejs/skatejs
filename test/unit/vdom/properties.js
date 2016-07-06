@@ -19,4 +19,14 @@ describe('properties', function () {
     }));
     expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
   });
+
+  it('should not set properties on SVG elements', function () {
+    expect(function () {
+      new (element().skate({
+        render () {
+          vdom.element('svg', { height: 100 });
+        },
+      }));
+    }).to.not.throw(Error);
+  });
 });
