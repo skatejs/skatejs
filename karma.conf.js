@@ -13,7 +13,7 @@ module.exports = function (config) {
 
   // Shims for testing.
   config.files = [
-    'node_modules/es6-shim/es6-shim.js',
+    'https://npmcdn.com/webcomponents.js/CustomElements.js'
   ].concat(config.files);
 
   // Ensure mobile browsers have enough time to run.

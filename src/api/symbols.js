@@ -1,4 +1,5 @@
 export const created = '____created';
+export const ctor = '____constructor';
 export const events = '____events';
 export const name = '____name';
 export const props = '____props';

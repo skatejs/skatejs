@@ -1,5 +1,5 @@
 import * as symbols from './symbols';
-import { customElementsV0, customElementsV1 } from '../util/support';
+import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
@@ -108,7 +108,13 @@ export default function (name, Ctor) {
   Ctor[symbols.renderer] = createRenderer(Ctor);
 
   if (customElementsV0) {
-    return document.registerElement(name, Ctor);
+    // These properties are necessary for the Custom Element v0 polyfill so
+    // that we can fix it not working with extending the built-in HTMLElement.
+    Ctor.prototype[symbols.ctor] = Ctor;
+    Ctor.prototype[symbols.name] = name;
+    const NewCtor = document.registerElement(name, Ctor);
+    Object.defineProperty(NewCtor.prototype, 'constructor', { enumerable: false, value: Ctor });
+    return customElementsV0Polyfill ? Ctor : NewCtor;
   } else if (customElementsV1) {
     window.customElements.define(name, Ctor, { extends: Ctor.extends });
     return Ctor;
