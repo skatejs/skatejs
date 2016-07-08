@@ -1,3 +1,4 @@
+import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import { prop, symbols, vdom } from '../../../src/index';
 
@@ -48,14 +49,16 @@ describe('properties', function () {
       return elem[symbols.shadowRoot].firstChild[symbols.shadowRoot].textContent;
     }
 
-    it('boolean: false -> true', () => {
+    it('boolean: false -> true -> false', done => {
       const elem = new Elem1();
-      expect(text(elem)).to.equal('open');
-    });
-
-    it('boolean: true -> false', () => {
-      const elem = new Elem1();
-      expect(text(elem)).to.equal('closed');
+      afterMutations(
+        () => expect(text(elem)).to.equal('closed', 'init'),
+        () => elem.open = true,
+        () => expect(text(elem)).to.equal('open', 'false -> true'),
+        () => elem.open = false,
+        () => expect(text(elem)).to.equal('closed', 'true -> false'),
+        done
+      );
     });
   });
 });
