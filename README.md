@@ -111,7 +111,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
       - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
       - [Passing Data](#passing-data)
-    - [`factory (componentDefinition)`](#factory-componentdefinition)
     - [`link (elem, propSpec)`](#link-elem-propspec)
     - [`prop`](#prop)
       - [`array`](#array)
@@ -810,18 +809,6 @@ skate.emit(elem, 'event', {
     data: 'my-data'
   }
 });
-```
-
-
-
-### `factory (componentDefinition)`
-
-The `factory()` function gives you a way to define a custom element without defining its name. This is useful because it allows your consumers to decide which name your component should have. This is also effective in maintaining UI components that may have breaking changes made to them as you don't have to change their global name in order to have multiple versions of them on the same page. It can be up to your consumers to decide how they want to do that based on how they're using them.
-
-```js
-const myComponentFactory = skate.factory({ ... });
-const ComponentConstructor = myComponentFactory('my-component');
-const myElementInstance = new ComponentConstructor();
 ```
 
 
