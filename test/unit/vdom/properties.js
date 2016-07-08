@@ -1,6 +1,6 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
-import { prop, symbols, vdom } from '../../../src/index';
+import { prop, state, symbols, vdom } from '../../../src/index';
 
 describe('properties', function () {
   it('class -> className', function () {
@@ -30,9 +30,7 @@ describe('properties', function () {
           open: prop.boolean()
         },
         render (elem) {
-          vdom.element(Elem2, { open: elem.open }, () => {
-            vdom.element('slot');
-          });
+          vdom.element(Elem2, { open: elem.open });
         },
       });
       Elem2 = element().skate({
@@ -51,11 +49,13 @@ describe('properties', function () {
 
     it('boolean: false -> true -> false', done => {
       const elem = new Elem1();
+      
       afterMutations(
+        () => console.log(elem),
         () => expect(text(elem)).to.equal('closed', 'init'),
-        () => elem.open = true,
+        () => state(elem, { open: true }),
         () => expect(text(elem)).to.equal('open', 'false -> true'),
-        () => elem.open = false,
+        () => state(elem, { open: false }),
         () => expect(text(elem)).to.equal('closed', 'true -> false'),
         done
       );

@@ -1,7 +1,11 @@
 // TODO Move this to the Karma config once it's consumable from the dist.
+
+// You must load the named-slot polyfill before the custom element polyfill.
+import 'skatejs-named-slots';
 import 'webcomponents.js/src/WeakMap/WeakMap';
 import 'webcomponents.js/src/MutationObserver/MutationObserver';
 import 'webcomponents.js/src/CustomElements/v1/CustomElements';
+
 
 import helperFixture from './lib/fixture';
 
