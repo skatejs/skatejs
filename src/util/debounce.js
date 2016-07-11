@@ -1,11 +1,9 @@
-const raf = window.requestAnimationFrame || setTimeout;
 export default function (fn) {
-  var called = false;
-
+  let called = false;
   return function (...args) {
     if (!called) {
       called = true;
-      raf(() => {
+      setTimeout(() => {
         called = false;
         fn.apply(this, args);
       });
