@@ -21,7 +21,7 @@ describe('properties', function () {
     expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
   });
 
-  describe.only('re-rendering', () => {
+  describe('re-rendering', () => {
     let Elem1, Elem2;
 
     beforeEach(() => {
@@ -51,7 +51,6 @@ describe('properties', function () {
       const elem = new Elem1();
       
       afterMutations(
-        () => console.log(elem),
         () => expect(text(elem)).to.equal('closed', 'init'),
         () => state(elem, { open: true }),
         () => expect(text(elem)).to.equal('open', 'false -> true'),
