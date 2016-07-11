@@ -11,11 +11,6 @@ module.exports = function (config) {
     config.browsers.push('internet_explorer_11');
   }
 
-  // Shims for testing.
-  config.files = [
-    'https://npmcdn.com/webcomponents.js/CustomElements.js'
-  ].concat(config.files);
-
   // Ensure mobile browsers have enough time to run.
   config.browserNoActivityTimeout = 60000;
 };

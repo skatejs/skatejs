@@ -1,4 +1,4 @@
-import * as symbols from '../api/symbols';
+import { renderer as $renderer, rendererDebounced as $rendererDebounced } from '../api/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -112,7 +112,7 @@ function createNativePropertyDefinition (name, opts) {
 
     // Re-render on property updates if the should-update check passes.
     if (prop.render(this, changeData)) {
-      const deb = this[symbols.rendererDebounced] || (this[symbols.rendererDebounced] = debounce(this.constructor[symbols.renderer]));
+      const deb = this[$rendererDebounced] || (this[$rendererDebounced] = debounce(this.constructor[$renderer]));
       deb(this);
     }
 

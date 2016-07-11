@@ -25,11 +25,6 @@ attributes.checked = attributes.className = attributes.disabled = attributes.val
 
 // Default attribute applicator.
 attributes[symbols.default] = function (elem, name, value) {
-  // Boolean false values should not set attributes at all.
-  if (value === false) {
-    return;
-  }
-
   // If the skip attribute was specified, skip
   if (name === 'skip' && value) {
     return skip();
@@ -39,6 +34,11 @@ attributes[symbols.default] = function (elem, name, value) {
   const props = elem.constructor.props;
   if (props && name in props) {
     return applyProp(elem, name, value);
+  }
+
+  // Boolean false values should not set attributes at all.
+  if (value === false) {
+    return;
   }
 
   // Handle built-in and custom events.
@@ -114,7 +114,7 @@ function newElementVoid (...args) {
 export function element (tname, attrs, chren) {
   const atype = typeof attrs;
 
-  if (atype === 'function') {
+  if (atype === 'function' || atype === 'string') {
     chren = attrs;
   }
   
