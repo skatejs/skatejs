@@ -25,6 +25,9 @@ function makeDelegateHandler (elem, handler, parsed) {
     let current = e.path ? e.path[0] : e.target;
     const selector = parsed.selector;
     while (current && current !== elem.parentNode) {
+      if (current.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        break;
+      }
       if (matches(current, selector)) {
         readonly(e, 'currentTarget', current);
         readonly(e, 'delegateTarget', elem);
