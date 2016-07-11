@@ -93,6 +93,9 @@ describe('lifecycle/events', function () {
           expect(elem.tagName).to.equal(el.tagName, 'test span -> elem.tagName');
           expect(e.currentTarget.tagName).to.equal('SPAN', 'test span -> e.currentTarget');
           expect(e.delegateTarget.tagName).to.equal(el.tagName, 'test span -> e.delegateTarget');
+        },
+        'test .should-not-trigger' () {
+          increment();
         }
       },
       render () {

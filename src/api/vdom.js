@@ -114,7 +114,7 @@ function newElementVoid (...args) {
 export function element (tname, attrs, chren) {
   const atype = typeof attrs;
 
-  if (atype === 'function') {
+  if (atype === 'function' || atype === 'string') {
     chren = attrs;
   }
   
