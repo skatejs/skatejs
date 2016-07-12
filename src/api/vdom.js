@@ -90,80 +90,55 @@ function resolveTagName (tname) {
   return tname;
 }
 
-let buildQueueChren;
-let buildQueueProps;
+const stackChren = [];
+const stackProps = [];
 
-function buildQueueEmpty () {
-  buildQueueChren = null;
-  buildQueueProps = null;
-}
-
-function buildQueueInit () {
-  buildQueueChren = [];
-  buildQueueProps = {};
-}
-
-function buildQueueRender (chren) {
-  chren.forEach(item => item[0].apply(null, item[1]));
-}
-
-// Wraps an Incremental DOM function with one wrapped with Skate's opinionated
-// functionality.
-function wrapIdomFunc (func) {
-  return function (...args) {
+function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
+  return function wrap (...args) {
     const tname = args[0] = resolveTagName(args[0]);
     if (typeof tname === 'function') {
-      buildQueueInit();
-    } else if (buildQueueChren) {
-      buildQueueChren.push([func, args]);
+      // If we've encountered a function, handle it according to the type of
+      // function that is being wrapped.
+      tnameFuncHandler(tname);
+    } else if (stackChren.length) {
+      // We pass the wrap() function in here so that when it's called as
+      // children, it will queue up for the next stack, if there is one.
+      stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      return func.apply(null, args);
+      // If there is no stack left, we call Incremental DOM directly.
+      return func(...args);
     }
   };
 }
 
 function newAttr (key, val) {
-  if (buildQueueChren) {
-    buildQueueProps[key] = val;
+  if (stackProps.length) {
+    stackProps[stackProps.length - 1][key] = val;
   } else {
     return attr(key, val);
   }
 }
 
+function queueOpen () {
+  stackChren.push([]);
+  stackProps.push({});
+}
+
+function queueClose (tname) {
+  const chren = stackChren.pop();
+  const props = stackProps.pop();
+  tname(props, () => chren.forEach(args => args[0](...args[1])));
+}
+
 // Patch element factories.
-const newElementOpen = wrapIdomFunc(elementOpen);
+const newElementClose = wrapIdomFunc(elementClose, queueClose);
+const newElementOpen = wrapIdomFunc(elementOpen, queueOpen);
 const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
-const newElementOpenStart = wrapIdomFunc(elementOpenStart);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, queueOpen);
 const newElementVoid = wrapIdomFunc(elementVoid);
+const newText = wrapIdomFunc(text);
 
-// Patch elementClose() to only execute if a string is passed.
-function newElementClose (...args) {
-  const tname = args[0] = resolveTagName(args[0]);
-  if (typeof tname === 'function') {
-    // Reference queues so we can clear before executing tname()
-    const chren = buildQueueChren;
-    const props = buildQueueProps;
 
-    // Clear the build queue so when we execute tname() the children get
-    // executed rather than appended to the queue.
-    buildQueueEmpty();
-
-    // Execute after clearing passing in the references.
-    tname(props, buildQueueRender(chren));
-  } else if (buildQueueChren) {
-    buildQueueChren.push([elementClose, args]);
-  } else {
-    return elementClose.apply(null, args);
-  }
-}
-
-function newText (textContent) {
-  if (buildQueueChren) {
-    buildQueueChren.push([text, [textContent]]);
-  } else {
-    text(textContent);
-  }
-}
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
