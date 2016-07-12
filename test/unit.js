@@ -14,6 +14,7 @@ import './unit/lifecycle/ready';
 import './unit/lifecycle/render';
 import './unit/registration';
 import './unit/util/dash-case';
+import './unit/util/support';
 import './unit/vdom/elements';
 import './unit/vdom/events';
 import './unit/vdom/incremental-dom';
