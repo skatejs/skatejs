@@ -14,8 +14,10 @@ import {
 import * as skateSymbols from './symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
-const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const applyDefault = attributes[symbols.default];
+const fallbackToV0 = !shadowDomV1 && shadowDomV0;
+const stackChren = [];
+const stackProps = [];
 
 // Attributes that are not handled by Incremental DOM.
 attributes.key = attributes.skip = attributes.statics = function () {};
@@ -90,9 +92,6 @@ function resolveTagName (tname) {
   return tname;
 }
 
-const stackChren = [];
-const stackProps = [];
-
 function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
   return function wrap (...args) {
     const tname = args[0] = resolveTagName(args[0]);
@@ -129,16 +128,6 @@ function queueClose (tname) {
   const props = stackProps.pop();
   tname(props, () => chren.forEach(args => args[0](...args[1])));
 }
-
-// Patch element factories.
-const newElementClose = wrapIdomFunc(elementClose, queueClose);
-const newElementOpen = wrapIdomFunc(elementOpen, queueOpen);
-const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
-const newElementOpenStart = wrapIdomFunc(elementOpenStart, queueOpen);
-const newElementVoid = wrapIdomFunc(elementVoid);
-const newText = wrapIdomFunc(text);
-
-
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
@@ -177,6 +166,14 @@ export function element (tname, attrs, chren) {
 
   return newElementClose(tname);
 }
+
+// Patch element factories.
+const newElementClose = wrapIdomFunc(elementClose, queueClose);
+const newElementOpen = wrapIdomFunc(elementOpen, queueOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, queueOpen);
+const newElementVoid = wrapIdomFunc(elementVoid);
+const newText = wrapIdomFunc(text);
 
 // We don't have to do anything special for the text function; it's just a 
 // straight export from Incremental DOM.
