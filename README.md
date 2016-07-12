@@ -60,6 +60,7 @@ Skate requires Custom Element support. In [browsers that don't support it](http:
 
 Skate prefers v0 support if it detects both as that yields the best performance in browsers that support it natively. If you supply only a v1 polyfill, it will use v0 where supported by native and v1 in other browsers.
 
+Skate will always prefer a native implementation to a polyfill as they provide the best performance. Fo example, if you had native v0 support and v1 support through a polyfill, Skate will use v0. Likewise, if native support was detected for both, Skate would use v1.
 
 
 ### Shadow DOM
@@ -69,8 +70,9 @@ Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec
 - v0 (slow, but complete): https://github.com/WebComponents/webcomponentsjs
 - v1 (partial support, built for speed and virtual DOM integration, see README: https://github.com/skatejs/named-slots/
 
-Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
+As with the Custom Elements polyfills, Skate will always prefer a native implementation over a polyfill. If native v0 support was detected with v1 support through a polyfill, Skate will use v0. If v0 and v1 are supported natively Skate will use v1.
 
+Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
 
 
 ## Documentation
