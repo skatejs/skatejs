@@ -123,7 +123,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [Background](#background)
     - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
-      - [`shadowRoot`](#shadowroot)
+      - [`$name`](#name)
+      - [`$shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom.element (elementName, attributesOrChildren, children)`](#vdomelement-elementname-attributesorchildren-children)
       - [`vdom.text (text)`](#vdomtext-text)
@@ -150,6 +151,7 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Compatible with multiple versions of itself](#compatible-with-multiple-versions-of-itself)
     - [Properties and Attributes](#properties-and-attributes)
   - [React Integration](#react-integration)
+  - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1016,7 +1018,15 @@ state(elem);
 
 Symbols are exposed for you to access information that stored on objects that are not otherwise accessible.
 
-#### `shadowRoot`
+
+
+#### `$name`
+
+The `$name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
+
+
+
+#### `$shadowRoot`
 
 When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
@@ -1372,3 +1382,16 @@ skate.define('my-component', {
 ## React Integration
 
 We provide an [integration layer](https://github.com/skatejs/react-integration) for React that transforms your web components into React components so that they can be used as first-class citizens within React.
+
+
+
+## Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)
+
+Skate is designed to work with hot-modoule reloading out of the box:
+
+- It will always use the canonical name on the initial registration
+- Subsequent registrations will register using the canonical name with a number suffix to identify how many times it's been registered
+
+*Skate cannot refresh the component definition as there is no way to reregister a component using the web component APIs.*
+
+While this makes the name non-deterministic, you can still get the name from the constructor if you need to using the [`$name` symbol](#name).
