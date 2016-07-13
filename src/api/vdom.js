@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import { $name } from './symbols';
+import { $name } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const fallbackToV0 = !shadowDomV1 && shadowDomV0;

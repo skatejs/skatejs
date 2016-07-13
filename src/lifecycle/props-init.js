@@ -1,4 +1,4 @@
-import { $renderer, $rendererDebounced } from '../api/symbols';
+import { $renderer, $rendererDebounced } from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
 import debounce from '../util/debounce';

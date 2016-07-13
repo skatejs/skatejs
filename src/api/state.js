@@ -1,4 +1,4 @@
-import { $renderer } from './symbols';
+import { $renderer } from '../util/symbols';
 import assign from '../util/assign';
 
 function get (elem) {

@@ -1,4 +1,4 @@
-import { $created, $ctor, $events, $name, $props, $renderer } from './symbols';
+import { $created, $ctor, $events, $name, $props, $renderer } from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill } from '../util/support';
 import data from '../util/data';
 import definePropertyConstructor from '../util/define-property-constructor';

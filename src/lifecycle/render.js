@@ -1,5 +1,5 @@
 import { patchInner } from 'incremental-dom';
-import { $shadowRoot } from '../api/symbols';
+import { $shadowRoot } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 export default function (Ctor) {
