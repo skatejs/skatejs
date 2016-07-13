@@ -2,9 +2,9 @@ import { shouldUseShadowDomV0, shouldUseShadowDomV1, v0ShadowDOMProperty, v1Shad
 
 describe('util/support', () => {
   describe('shadowDOM', () => {
-    /* We take a copy of a known native property so that we can mock how our code will behave when
-       it finds a native implementation of a function. The polyfilled property just needs to match
-       what a non-native property looks like on an element (must have a `value` function) */
+    // We take a copy of a known native property so that we can mock how our code will behave when
+    // it finds a native implementation of a function. The polyfilled property just needs to match
+    // what a non-native property looks like on an element (must have a `value` function)
     const nativeProperty = Object.getOwnPropertyDescriptor(Element.prototype, 'getAttribute');
     const polyfilledProperty = { value: () => {}};
 
