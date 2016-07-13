@@ -4,6 +4,7 @@ import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
+import definePropertyConstructor from '../util/define-property-constructor';
 import initProps from '../lifecycle/props-init';
 
 // Ensures that definitions passed as part of the constructor are functions
@@ -113,7 +114,7 @@ export default function (name, Ctor) {
     Ctor.prototype[symbols.ctor] = Ctor;
     Ctor.prototype[symbols.name] = name;
     const NewCtor = document.registerElement(name, Ctor);
-    Object.defineProperty(NewCtor.prototype, 'constructor', { enumerable: false, value: Ctor });
+    definePropertyConstructor(NewCtor.prototype, Ctor);
     return customElementsV0Polyfill ? Ctor : NewCtor;
   } else if (customElementsV1) {
     window.customElements.define(name, Ctor, { extends: Ctor.extends });

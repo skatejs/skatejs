@@ -1,6 +1,14 @@
-import * as symbols from './symbols';
+import {
+  created as $created,
+  ctor as $ctor,
+  events as $events, 
+  name as $name,
+  props as $props,
+  renderer as $renderer,
+} from './symbols';
 import { customElementsV0, customElementsV0Polyfill } from '../util/support';
 import data from '../util/data';
+import definePropertyConstructor from '../util/define-property-constructor';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 // In native Custom Elements v0, you can extend HTMLElement. In the polyfill
@@ -8,13 +16,13 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 if (customElementsV0Polyfill) {
   const proto = HTMLElement.prototype;
   window.HTMLElement = function () {
-    const ctor = this[symbols.ctor];
-    const name = this[symbols.name];
+    const ctor = this[$ctor];
+    const name = this[$name];
     const type = ctor.extends;
     return document.createElement(type || name, type ? name : null); 
   };
   HTMLElement.prototype = Object.create(proto);
-  Object.defineProperty(HTMLElement.prototype, 'constructor', { enumerable: false, value: HTMLElement });
+  definePropertyConstructor(HTMLElement.prototype, HTMLElement);
 }
 
 export default class Component extends HTMLElement {
@@ -75,28 +83,28 @@ export default class Component extends HTMLElement {
     // In native v0 this behaves normally, so we only need to worry about the
     // polyfill here.
     if (customElementsV0Polyfill) {
-      Object.defineProperty(this, 'constructor', { enumerable: false, value: this[symbols.ctor] });
+      definePropertyConstructor(this, this[$ctor]);
     }
 
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
     const { definedAttribute, events, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
-    const renderer = Ctor[symbols.renderer];
+    const renderer = Ctor[$renderer];
 
     // TODO: This prevents an element from being initialised multiple times. For
     // some reason this is happening in the event tests. It's possibly creating
     // elements in a way that the causes the custom element v1 polyfill to call
     // the constructor twice.
-    if (this[symbols.created]) return;
-    this[symbols.created] = true;
+    if (this[$created]) return;
+    this[$created] = true;
 
     if (props) {
-      Ctor[symbols.props](this);
+      Ctor[$props](this);
     }
 
     if (events) {
-      Ctor[symbols.events](this);
+      Ctor[$events](this);
     }
 
     if (created) {
