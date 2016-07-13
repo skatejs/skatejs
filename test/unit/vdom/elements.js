@@ -156,7 +156,7 @@ describe('vdom/elements', () => {
 
       fixture().appendChild(elem);
       afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
+        () => expect(elem[symbols.$shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
         done
       );
     });
@@ -174,7 +174,7 @@ describe('vdom/elements', () => {
 
       fixture().appendChild(elem);
       afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
+        () => expect(elem[symbols.$shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
         done
       );
     });
@@ -192,7 +192,7 @@ describe('vdom/elements', () => {
 
       fixture().appendChild(elem);
       afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
+        () => expect(elem[symbols.$shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
         done
       );
     });
@@ -210,7 +210,7 @@ describe('vdom/elements', () => {
 
       fixture().appendChild(elem);
       afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
+        () => expect(elem[symbols.$shadowRoot].innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
         done
       );
     });
