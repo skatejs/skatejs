@@ -7,6 +7,8 @@ import dashCase from '../util/dash-case';
 import definePropertyConstructor from '../util/define-property-constructor';
 import initProps from '../lifecycle/props-init';
 
+const registry = {};
+
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions (Ctor) {
@@ -29,20 +31,6 @@ function ensurePropertyDefinitions (Ctor) {
     descriptors[descriptorName] = props[descriptorName](descriptorName);
     return descriptors;
   }, {});
-}
-
-// Makes a function / constructor for the custom element that automates the
-// boilerplate of ensuring the parent constructor is called first and ensures
-// that the element is returned at the end.
-function createConstructor (name, Ctor) {
-  if (typeof Ctor === 'object') {
-    Ctor = Component.extend(Ctor);
-  }
-
-  // Internal data.
-  Ctor[$name] = name;
-
-  return Ctor;
 }
 
 // Ensures linked properties that have linked attributes are pre-formatted to
@@ -71,6 +59,8 @@ function formatLinkedAttributes (Ctor) {
 
   // Merge observed attributes.
   Object.defineProperty(Ctor, 'observedAttributes', {
+    configurable: true,
+    enumerable: true,
     get () {
       return observedAttributes;
     }
@@ -100,11 +90,24 @@ function createInitProps (Ctor) {
   };
 }
 
-export default function (name, Ctor) {
-  Ctor = createConstructor(name, Ctor);
+function generateUniqueName(name) {
+  const registered = registry[name];
+  return registered ? `${name}-${registered}` : name;
+}
+
+function registerUniqueName(name) {
+  registry[name] = registry[name] ? registry[name] + 1 : 1;
+}
+
+export default function (name, opts) {
+  const uniqueName = generateUniqueName(name);
+  const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
+
+  registerUniqueName(name);
   formatLinkedAttributes(Ctor);
 
   Ctor[$events] = createInitEvents(Ctor);
+  Ctor[$name] = uniqueName;
   Ctor[$props] = createInitProps(Ctor);
   Ctor[$renderer] = createRenderer(Ctor);
 
@@ -112,14 +115,15 @@ export default function (name, Ctor) {
     // These properties are necessary for the Custom Element v0 polyfill so
     // that we can fix it not working with extending the built-in HTMLElement.
     Ctor.prototype[$ctor] = Ctor;
-    Ctor.prototype[$name] = name;
-    const NewCtor = document.registerElement(name, Ctor);
+    Ctor.prototype[$name] = uniqueName;
+    const NewCtor = document.registerElement(uniqueName, Ctor);
     definePropertyConstructor(NewCtor.prototype, Ctor);
     return customElementsV0Polyfill ? Ctor : NewCtor;
   } else if (customElementsV1) {
-    window.customElements.define(name, Ctor, { extends: Ctor.extends });
-    return Ctor;
+    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
   } else {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
+
+  return Ctor;
 }
