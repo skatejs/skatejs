@@ -1,9 +1,11 @@
 import isNativeRegex from 'regex-native-function'; // checks if a function is native using regex
-import { v0ShadowDOMProperty, v1ShadowDOMProperty } from '../api/symbols';
 
 const div = document.createElement('div');
 const isNative = (elem, prop) => isNativeRegex.test(elem[prop]);
 const isPolyfill = (elem, prop) => !!elem[prop] && !isNative(elem, prop);
+
+export const v0ShadowDOMProperty = 'createShadowRoot'; // property used to check for shadowDOMv0 support
+export const v1ShadowDOMProperty = 'attachShadow'; // property used to check for shadowDOMv1 support
 
 export function shouldUseShadowDomV0(elem) {
   if (isNative(elem, v1ShadowDOMProperty)) {
