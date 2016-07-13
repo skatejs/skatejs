@@ -74,7 +74,7 @@ export default class Component extends HTMLElement {
     //
     // In native v0 this behaves normally, so we only need to worry about the
     // polyfill here.
-    if (customElementsV0Polyfill && this[symbols.ctor]) {
+    if (customElementsV0Polyfill) {
       Object.defineProperty(this, 'constructor', { enumerable: false, value: this[symbols.ctor] });
     }
 
