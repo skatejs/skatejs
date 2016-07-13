@@ -1,9 +1,10 @@
-import * as symbols from './symbols';
-import { customElementsV0, customElementsV1 } from '../util/support';
+import { $ctor, $events, $name, $props, $renderer } from '../util/symbols';
+import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
+import definePropertyConstructor from '../util/define-property-constructor';
 import initProps from '../lifecycle/props-init';
 
 // Ensures that definitions passed as part of the constructor are functions
@@ -39,7 +40,7 @@ function createConstructor (name, Ctor) {
   }
 
   // Internal data.
-  Ctor[symbols.name] = name;
+  Ctor[$name] = name;
 
   return Ctor;
 }
@@ -103,12 +104,18 @@ export default function (name, Ctor) {
   Ctor = createConstructor(name, Ctor);
   formatLinkedAttributes(Ctor);
 
-  Ctor[symbols.events] = createInitEvents(Ctor);
-  Ctor[symbols.props] = createInitProps(Ctor);
-  Ctor[symbols.renderer] = createRenderer(Ctor);
+  Ctor[$events] = createInitEvents(Ctor);
+  Ctor[$props] = createInitProps(Ctor);
+  Ctor[$renderer] = createRenderer(Ctor);
 
   if (customElementsV0) {
-    return document.registerElement(name, Ctor);
+    // These properties are necessary for the Custom Element v0 polyfill so
+    // that we can fix it not working with extending the built-in HTMLElement.
+    Ctor.prototype[$ctor] = Ctor;
+    Ctor.prototype[$name] = name;
+    const NewCtor = document.registerElement(name, Ctor);
+    definePropertyConstructor(NewCtor.prototype, Ctor);
+    return customElementsV0Polyfill ? Ctor : NewCtor;
   } else if (customElementsV1) {
     window.customElements.define(name, Ctor, { extends: Ctor.extends });
     return Ctor;

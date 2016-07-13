@@ -27,11 +27,10 @@
     "regex-native-function": "^1.0.0"
   },
   "devDependencies": {
-    "es6-shim": "0.35.1",
-    "eslint": "3.0.1",
-    "skatejs-build": "5.0.1",
+    "eslint": "^3.0.1",
+    "skatejs-build": "^5.0.1",
     "skatejs-named-slots": "^0.2.10",
-    "webcomponents.js": "webcomponents/webcomponentsjs#fb43208"
+    "webcomponents.js": "^0.7.22"
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",

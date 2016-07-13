@@ -42,7 +42,7 @@ describe('VdomIncrementalDOM', function () {
           vdom.element('div', { onclick });
         },
       }));
-      expect(elem[symbols.shadowRoot].firstElementChild.onclick).to.equal(onclick);
+      expect(elem[symbols.$shadowRoot].firstElementChild.onclick).to.equal(onclick);
     });
   });
 });

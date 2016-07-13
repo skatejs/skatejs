@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import * as skateSymbols from './symbols';
+import { $name } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const fallbackToV0 = !shadowDomV1 && shadowDomV0;
@@ -81,7 +81,7 @@ function applyEvent (elem, ename, name, value) {
 // Returns the tag name of the element if a custom element constructor was
 // provided instead of a string.
 function decideIfConstructorOrNot (tname) {
-  return typeof tname === 'function' ? tname[skateSymbols.name] : tname;
+  return typeof tname === 'function' ? tname[$name] : tname;
 }
 
 // Returns the correct tag name so we can use <content> instead of <slot> if we
