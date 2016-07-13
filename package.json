@@ -23,7 +23,8 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "^0.4.1"
+    "incremental-dom": "0.4.1",
+    "regex-native-function": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^3.0.1",
@@ -40,5 +41,5 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "version": "1.0.0-beta.7"
+  "version": "1.0.0-beta.8"
 }
