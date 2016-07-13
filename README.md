@@ -60,7 +60,7 @@ Skate requires Custom Element support. In [browsers that don't support it](http:
 
 Skate prefers v0 support if it detects both as that yields the best performance in browsers that support it natively. If you supply only a v1 polyfill, it will use v0 where supported by native and v1 in other browsers.
 
-Skate will always prefer a native implementation to a polyfill as they provide the best performance. Fo example, if you had native v0 support and v1 support through a polyfill, Skate will use v0. Likewise, if native support was detected for both, Skate would use v1.
+Skate will always prefer a native implementation to a polyfill as they provide the best performance. For example, if you had native v0 support and v1 support through a polyfill, Skate will use v0. Likewise, if native support was detected for both, Skate would use v1.
 
 
 ### Shadow DOM
