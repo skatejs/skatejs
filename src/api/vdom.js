@@ -80,15 +80,24 @@ function applyEvent (elem, ename, name, value) {
   }
 }
 
-// Returns the tag name of the element if a custom element constructor was
-// provided instead of a string.
+
 function resolveTagName (tname) {
+  // If the tag name is a function, a Skate constructor or a standard function
+  // is supported.
+  //
+  // - If a Skate constructor, the tag name is extracted from that.
+  // - If a standard function, it is used as a helper.
   if (typeof tname === 'function') {
     return tname[skateSymbols.name] || tname;
   }
+
+  // Skate allows the consumer to use <slot /> and it will translate it to
+  // <content /> if Shadow DOM V0 is preferred.
   if (tname === 'slot' && fallbackToV0) {
     return 'content';
   }
+
+  // All other tag names are just passed through.
   return tname;
 }
 
