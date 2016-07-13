@@ -127,6 +127,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [`$shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom.element (elementName, attributesOrChildren, children)`](#vdomelement-elementname-attributesorchildren-children)
+        - [Component constructor](#component-constructor)
+        - [Function helper](#function-helper)
       - [`vdom.text (text)`](#vdomtext-text)
       - [Special Attributes](#special-attributes)
         - [`attrs.class`](#attrsclass)
@@ -1051,9 +1053,11 @@ define('my-component', {
 
 Skate includes several helpers for creating virtual elements with Incremental DOM.
 
+
+
 #### `vdom.element (elementName, attributesOrChildren, children)`
 
-The `elementName` argument is the name of the element you want to create. This can be a string or function that has the `id` or `name` property set, which makes it compatible with any function as well as Skate component constructors (that use `id` because WebKit doesn't let you re-define `name`).
+The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
 
 The `attributesOrChildren` argument is either an `object`, a `function` that will render the children for this element or a `string` if you only want to render a text node as the children.
 
@@ -1064,6 +1068,79 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
   skate.vdom.element('option', { value: 'myval' }, 'My Value');
 });
 ```
+
+
+
+##### Component constructor
+
+If you pass a component constructor instead of an string for the `elementName`, the name of the copmonent will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
+
+```js
+const MyElement = skate('my-element');
+
+// Renders <my-element />
+skate.vdom.element(MyElement);
+```
+
+This is provided at the Incremental DOM level of Skate, so you can also do:
+
+```js
+skate.vdom.elementOpen(MyElement);
+```
+
+This is very helpful in JSX:
+
+```js
+<MyElement />
+```
+
+However, since this is provided in the Incremental DOM functions that Skate exports, it means that you can do this in any templating language that supports it.
+
+
+
+##### Function helper
+
+Function helpers are passed in the same way as a component constructor but are handled differently. They provide a way for you to write pure, stateless, functions that will render virtual elements in place of the element that you've passed the function to. Essentially they're stateless, private web components.
+
+```js
+const MyElement = () => vdom.element('div', 'Hello, World!');
+
+// Renders <div>Hello, World!</div>
+vdom.element(MyElement);
+```
+
+You can customise the output using properties:
+
+```js
+const MyElement = props => vdom.element('div', `Hello, ${props.name}!`);
+
+// Renders <div>Hello, Bob!</div>
+vdom.element(MyElement, { name: 'Bob' });
+```
+
+Or you could use children:
+
+```js
+const MyElement = (props, chren) => vdom.element('div', () => {
+  vdom.text('Hello, ');
+  chren();
+  vdom.text('!');
+});
+
+// Renders <div>Hello, Mary!</div>
+vdom.element(MyElement, 'Mary');
+```
+
+As with the component constructor, you can also use this in JSX or any other templating language that supports passing functions as tag names:
+
+```js
+const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
+
+// Renders <div>Hello, Mary!</div>
+vdom.element(MyElement, 'Mary');
+```
+
+
 
 #### `vdom.text (text)`
 
@@ -1079,13 +1156,19 @@ skate.vdom.element('option', { name: 'my-select' }, function () {
 
 This is very useful if you need to render text with other elements as siblings, or do complex conditional rendering. It's also useful when your custom element may only need to render text nodes to its shadow root.
 
+
+
 #### Special Attributes
 
 Skate adds some opinionated behaviour to Incremental DOM.
 
+
+
 ##### `attrs.class`
 
 We ensure that if you pass the `class` attribute, that it sets that via the `className` property.
+
+
 
 ##### `attrs.key`
 
@@ -1097,6 +1180,8 @@ skate.vdom.element('ul', function () {
   skate.vdom.element('li', { key: 1 });
 });
 ```
+
+
 
 ##### `attrs.on*`
 
@@ -1112,6 +1197,8 @@ You can also bind to custom events:
 skate.vdom.element('my-element', { onsomecustomevent: e => console.log(e) });
 ```
 
+
+
 ##### `attrs.skip`
 
 This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
@@ -1122,6 +1209,8 @@ This is also helpful when integrating with 3rd-party libraries that may mutate t
 skate.vdom.element('div', { skip: true });
 ```
 
+
+
 ##### `attrs.statics`
 
 This is an array that tells Incremental DOM which attributes should be considered [static](http://google.github.io/incremental-dom/#rendering-dom/statics-array).
@@ -1130,9 +1219,13 @@ This is an array that tells Incremental DOM which attributes should be considere
 skate.vdom.element('div', { statics: ['attr1', 'prop2'] });
 ```
 
+
+
 ##### Boolean Attributes
 
 If you specify `false` as any attribute value, the attribute will not be added, it will simply be ignored.
+
+
 
 #### Using JSX and other templating languages
 
