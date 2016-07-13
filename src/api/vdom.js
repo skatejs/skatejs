@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import { $name } from '../util/symbols';
+import { $name, $ref } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const applyDefault = attributes[symbols.default];
@@ -30,6 +30,12 @@ attributes[symbols.default] = function (elem, name, value) {
   // If the skip attribute was specified, skip
   if (name === 'skip' && value) {
     return skip();
+  }
+
+  // Add the ref to the element so it can be called when it's closed.
+  if (name === 'ref') {
+    elem[$ref] = value;
+    return;
   }
 
   // Custom element properties should be set as properties.
@@ -113,7 +119,17 @@ function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
       // If there is no stack left, we call Incremental DOM directly.
-      return func(...args);
+      const elem = func(...args);
+
+      // If we're in elementClose, try calling the ref.
+      if (func.name === 'elementClose') {
+        const eref = elem[$ref];
+        if (typeof eref === 'function') {
+          eref(elem);
+        }
+      }
+
+      return elem;
     }
   };
 }
