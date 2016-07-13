@@ -11,8 +11,10 @@ before_script:
 script:
   - sk-bundle
   - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
+    npm test --v0 -- --saucelabs;
     npm test -- --saucelabs;
     else
+    npm test --v0 -- --browsers Firefox;
     npm test -- --browsers Firefox;
     fi
 after_success:
