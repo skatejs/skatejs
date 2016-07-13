@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import * as skateSymbols from './symbols';
+import { $name } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const applyDefault = attributes[symbols.default];
@@ -80,7 +80,6 @@ function applyEvent (elem, ename, name, value) {
   }
 }
 
-
 function resolveTagName (tname) {
   // If the tag name is a function, a Skate constructor or a standard function
   // is supported.
@@ -88,7 +87,7 @@ function resolveTagName (tname) {
   // - If a Skate constructor, the tag name is extracted from that.
   // - If a standard function, it is used as a helper.
   if (typeof tname === 'function') {
-    return tname[skateSymbols.name] || tname;
+    return tname[$name] || tname;
   }
 
   // Skate allows the consumer to use <slot /> and it will translate it to

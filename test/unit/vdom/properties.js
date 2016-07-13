@@ -9,7 +9,7 @@ describe('properties', function () {
         vdom.element('div', { class: 'test' });
       }
     }));
-    expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test');
+    expect(elem[symbols.$shadowRoot].firstChild.className).to.equal('test');
   });
 
   it('false should remove the attribute', function () {
@@ -18,7 +18,7 @@ describe('properties', function () {
         vdom.element('div', { test: false });
       }
     }));
-    expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
+    expect(elem[symbols.$shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
   });
 
   it('should not set properties on SVG elements', function () {
@@ -54,7 +54,7 @@ describe('properties', function () {
     });
 
     function text(elem) {
-      return elem[symbols.shadowRoot].firstChild[symbols.shadowRoot].textContent;
+      return elem[symbols.$shadowRoot].firstChild[symbols.$shadowRoot].textContent;
     }
 
     it('boolean: false -> true -> false', done => {

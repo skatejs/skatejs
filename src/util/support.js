@@ -35,6 +35,7 @@ export function shouldUseShadowDomV1(elem) {
 }
 
 export const customElementsV0 = !!document.registerElement;
+export const customElementsV0Polyfill = customElementsV0 && !Document.prototype.registerElement;
 export const customElementsV1 = !!window.customElements;
 
 export const shadowDomV0 = shouldUseShadowDomV0(div);

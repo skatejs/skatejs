@@ -1,5 +1,6 @@
 import './boot';
 import './unit/index';
+import './unit/api/define';
 import './unit/api/emit';
 import './unit/api/properties';
 import './unit/api/ready';
@@ -14,6 +15,7 @@ import './unit/lifecycle/ready';
 import './unit/lifecycle/render';
 import './unit/registration';
 import './unit/util/dash-case';
+import './unit/util/define-property-constructor';
 import './unit/util/support';
 import './unit/vdom/elements';
 import './unit/vdom/events';

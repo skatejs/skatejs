@@ -1,23 +1,6 @@
 import { define } from '../../src/index';
 import helperElement from '../lib/element';
 
-describe('Registration', function () {
-  it('should not allow you to register the same component more than once.', function () {
-    var multiple = false;
-    var tag = helperElement('my-el');
-    define(tag.safe, {});
-
-    try {
-      define(tag.safe, {});
-      multiple = true;
-    } catch (e) {
-      // Do nothing
-    }
-
-    assert(!multiple);
-  });
-});
-
 describe('Returning a constructor', function () {
   it('should return a constructor that extends a native element.', function () {
     var tag = helperElement('my-el');
