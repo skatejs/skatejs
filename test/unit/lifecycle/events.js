@@ -105,7 +105,7 @@ describe('lifecycle/events', function () {
 
     helperFixture(elem);
     afterMutations(
-      () => emit(elem[symbols.shadowRoot].querySelector('span'), 'test'),
+      () => emit(elem[symbols.$shadowRoot].querySelector('span'), 'test'),
       () => expect(numTriggered).to.equal(3),
       done
     );
@@ -123,10 +123,10 @@ describe('lifecycle/events', function () {
       },
       prototype: {
         blur () {
-          emit(this[symbols.shadowRoot].querySelector('input'), 'blur');
+          emit(this[symbols.$shadowRoot].querySelector('input'), 'blur');
         },
         focus () {
-          emit(this[symbols.shadowRoot].querySelector('input'), 'focus');
+          emit(this[symbols.$shadowRoot].querySelector('input'), 'focus');
         }
       },
       render () {

@@ -1,10 +1,12 @@
 import { Component, define, symbols } from '../../../src/index';
 
+const { $name } = symbols;
+
 describe('api/define', () => {
   it('should register components with unique names', () => {
-    expect(define('x-test-api-define', {})[symbols.name]).to.equal('x-test-api-define');
-    expect(define('x-test-api-define', {})[symbols.name]).to.equal('x-test-api-define-1');
-    expect(define('x-test-api-define', {})[symbols.name]).to.equal('x-test-api-define-2');
+    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define');
+    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define-1');
+    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define-2');
   });
 
   it('should take an object and extend Component', () => {

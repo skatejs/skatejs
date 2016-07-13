@@ -37,16 +37,16 @@ describe('vdom/shadow-dom', function () {
 
   shadowDomV0 && it('should work for createShadowRoot()', function () {
     const elem = new Elem();
-    expect(elem[symbols.shadowRoot]).not.to.equal(elem);
+    expect(elem[symbols.$shadowRoot]).not.to.equal(elem);
   });
 
   shadowDomV1 && it('should work for attachShadow()', function () {
     const elem = new Elem();
-    expect(elem[symbols.shadowRoot]).not.to.equal(elem);
+    expect(elem[symbols.$shadowRoot]).not.to.equal(elem);
   });
 
   shadowDomV0 || shadowDomV1 || it('should set the shadowRoot to the element if Shadow DOM is not available', function () {
     const elem = new Elem();
-    expect(elem[symbols.shadowRoot]).to.equal(elem);
+    expect(elem[symbols.$shadowRoot]).to.equal(elem);
   });
 });

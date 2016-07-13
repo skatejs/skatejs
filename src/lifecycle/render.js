@@ -1,5 +1,5 @@
 import { patchInner } from 'incremental-dom';
-import { shadowRoot } from '../api/symbols';
+import { $shadowRoot } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 export default function (Ctor) {
@@ -10,7 +10,7 @@ export default function (Ctor) {
       return;
     }
 
-    if (!elem[shadowRoot]) {
+    if (!elem[$shadowRoot]) {
       let sr;
 
       if (shadowDomV1) {
@@ -21,9 +21,9 @@ export default function (Ctor) {
         sr = elem;
       }
 
-      elem[shadowRoot] = sr;
+      elem[$shadowRoot] = sr;
     }
 
-    patchInner(elem[shadowRoot], render, elem);
+    patchInner(elem[$shadowRoot], render, elem);
   };
 }

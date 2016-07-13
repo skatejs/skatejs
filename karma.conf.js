@@ -11,11 +11,6 @@ module.exports = function (config) {
     config.browsers.push('internet_explorer_11');
   }
 
-  // Shims for testing.
-  config.files = [
-    'node_modules/es6-shim/es6-shim.js',
-  ].concat(config.files);
-
   // Ensure mobile browsers have enough time to run.
   config.browserNoActivityTimeout = 60000;
 };
