@@ -118,12 +118,12 @@ function newAttr (key, val) {
   }
 }
 
-function queueOpen () {
+function stackOpen () {
   stackChren.push([]);
   stackProps.push({});
 }
 
-function queueClose (tname) {
+function stackClose (tname) {
   const chren = stackChren.pop();
   const props = stackProps.pop();
   tname(props, () => chren.forEach(args => args[0](...args[1])));
@@ -168,10 +168,10 @@ export function element (tname, attrs, chren) {
 }
 
 // Patch element factories.
-const newElementClose = wrapIdomFunc(elementClose, queueClose);
-const newElementOpen = wrapIdomFunc(elementOpen, queueOpen);
+const newElementClose = wrapIdomFunc(elementClose, stackClose);
+const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
-const newElementOpenStart = wrapIdomFunc(elementOpenStart, queueOpen);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
 const newElementVoid = wrapIdomFunc(elementVoid);
 const newText = wrapIdomFunc(text);
 
