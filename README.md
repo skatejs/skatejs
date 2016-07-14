@@ -1029,10 +1029,16 @@ The `$name` symbol can be used to retrieve the tag name of the component from th
 ```js
 import { define, symbols } from 'skatejs';
 
-const MyComponent = define('my-component', {});
+const MyComponent1 = define('my-component', {});
 
 // my-component
-console.log(MyComponent[symbols.$name]);
+console.log(MyComponent1[symbols.$name]);
+
+// If re-registering in HMR...
+const MyComponent2 = define('my-component', {});
+
+// my-component-1
+console.log(MyComponent2[symbols.$name]);
 ```
 
 
