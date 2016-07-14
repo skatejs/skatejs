@@ -1,4 +1,5 @@
 import * as api from '../../src/index';
+import * as symbols from '../../src/util/symbols';
 
 describe('exports', function () {
   it('skate', function () {
@@ -36,7 +37,8 @@ describe('exports', function () {
 
   it('skate.symbols', function () {
     expect(api.symbols).to.be.an('object');
-    expect(api.symbols.shadowRoot).to.be.a('string');
+    expect(api.symbols.$name).to.equal(symbols.$name);
+    expect(api.symbols.$shadowRoot).to.equal(symbols.$shadowRoot);
   });
 
   it('skate.state', function () {
