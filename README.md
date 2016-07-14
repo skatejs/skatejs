@@ -1026,6 +1026,21 @@ Symbols are exposed for you to access information that stored on objects that ar
 
 The `$name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
 
+```js
+import { define, symbols } from 'skatejs';
+
+const MyComponent1 = define('my-component', {});
+
+// my-component
+console.log(MyComponent1[symbols.$name]);
+
+// If re-registering in HMR...
+const MyComponent2 = define('my-component', {});
+
+// my-component-1
+console.log(MyComponent2[symbols.$name]);
+```
+
 
 
 #### `$shadowRoot`
@@ -1042,7 +1057,7 @@ define('my-component', {
   ready (elem) {
     // #shadow-root
     //   <p>test</p>
-    elem[symbols.shadowRoot];
+    elem[symbols.$shadowRoot];
   }
 });
 ```
@@ -1474,13 +1489,13 @@ skate.define('my-component', {
 
 ## React Integration
 
-We provide an [integration layer](https://github.com/skatejs/react-integration) for React that transforms your web components into React components so that they can be used as first-class citizens within React.
+There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components - written with any *true* web component library - and convert them to react components using a single function. Once converted, it can be used in React just like you would use a normal React component.
 
 
 
 ## Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)
 
-Skate is designed to work with hot-modoule reloading out of the box:
+Skate is designed to work with hot-module reloading out of the box:
 
 - It will always use the canonical name on the initial registration
 - Subsequent registrations will register using the canonical name with a number suffix to identify how many times it's been registered
