@@ -1495,7 +1495,7 @@ We provide an [integration layer](https://github.com/skatejs/react-integration) 
 
 ## Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)
 
-Skate is designed to work with hot-modoule reloading out of the box:
+Skate is designed to work with hot-module reloading out of the box:
 
 - It will always use the canonical name on the initial registration
 - Subsequent registrations will register using the canonical name with a number suffix to identify how many times it's been registered
