@@ -1489,7 +1489,7 @@ skate.define('my-component', {
 
 ## React Integration
 
-We provide an [integration layer](https://github.com/skatejs/react-integration) for React that transforms your web components into React components so that they can be used as first-class citizens within React.
+There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components and convert them to react components using a single function. It allows you to use web components (written with any library) to be used as React components inside of React.
 
 
 
