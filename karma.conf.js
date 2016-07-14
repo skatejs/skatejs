@@ -2,8 +2,6 @@ const base = require('skatejs-build/karma.conf');
 
 module.exports = function (config) {
   base(config);
-  const polyfillV0 = process.argv.indexOf('--v0') !== -1;
-
   // Setup IE if testing in SauceLabs.
   if (config.sauceLabs) {
     // Remove all explicit IE definitions.
@@ -12,20 +10,28 @@ module.exports = function (config) {
     // Only test IE latest.
     config.browsers.push('internet_explorer_11');
   }
+  var polyOptions = process.argv.filter((val) => {
+    return val.search('--polyfills=') == 0;
+  });
 
-  config.preprocessors['test/polyfill.v1.js'] = [ 'webpack' ];
-  config.preprocessors['test/polyfill.v0.js'] = [ 'webpack' ];
+  polyOptions = polyOptions[0].replace('--polyfills=', '');
+  polyOptions = polyOptions.split(',');
 
-  // Shims for testing.
-  const additionalFiles = ['node_modules/es6-shim/es6-shim.js'];
+  const polyFiles = [];
 
-  if (polyfillV0) {
-    additionalFiles.push('test/polyfill.v0.js');
+  if (polyOptions.indexOf('dom1') >- 1) {
+    polyFiles.push(require.resolve('skatejs-named-slots'));
   } else {
-    additionalFiles.push('test/polyfill.v1.js');
+    polyFiles.push(require.resolve('webcomponents.js/ShadowDOM'));
   }
 
-  config.files = additionalFiles.concat(config.files);
+  if (polyOptions.indexOf('elem1') > -1) {
+    polyFiles.push('https://npmcdn.com/webcomponents.js@0.7.22#fb43208/src/CustomElements/CustomElements.js');
+  } else {
+    polyFiles.push(require.resolve('webcomponents.js/CustomElements'));
+  }
+
+  config.files = polyFiles.concat(config.files);
 
   // Ensure mobile browsers have enough time to run.
   config.browserNoActivityTimeout = 60000;
