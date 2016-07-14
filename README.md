@@ -1026,6 +1026,15 @@ Symbols are exposed for you to access information that stored on objects that ar
 
 The `$name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
 
+```js
+import { define, symbols } from 'skatejs';
+
+const MyComponent = define('my-component', {});
+
+// my-component
+console.log(MyComponent[symbols.$name]);
+```
+
 
 
 #### `$shadowRoot`
@@ -1042,7 +1051,7 @@ define('my-component', {
   ready (elem) {
     // #shadow-root
     //   <p>test</p>
-    elem[symbols.shadowRoot];
+    elem[symbols.$shadowRoot];
   }
 });
 ```
