@@ -34,7 +34,7 @@
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
-    "test": "karma start --single-run --polyfills=dom1,elem0"
+    "test": "karma start --single-run"
   },
   "config": {
     "commitizen": {

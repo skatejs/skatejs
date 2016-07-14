@@ -14,15 +14,17 @@ module.exports = function (config) {
     return val.search('--polyfills=') == 0;
   });
 
-  polyOptions = polyOptions[0].replace('--polyfills=', '');
-  polyOptions = polyOptions.split(',');
+  if (polyOptions && polyOptions.length) {
+    polyOptions = polyOptions[0].replace('--polyfills=', '');
+    polyOptions = polyOptions.split(',');
+  }
 
   const polyFiles = [];
 
-  if (polyOptions.indexOf('dom1') >- 1) {
-    polyFiles.push(require.resolve('skatejs-named-slots'));
-  } else {
+  if (polyOptions.indexOf('dom0') >- 1) {
     polyFiles.push(require.resolve('webcomponents.js/ShadowDOM'));
+  } else {
+    polyFiles.push(require.resolve('skatejs-named-slots'));
   }
 
   if (polyOptions.indexOf('elem1') > -1) {
