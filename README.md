@@ -1487,6 +1487,64 @@ skate.define('my-component', {
 
 
 
+### Private Members
+
+Skate doesn't have any opinions on how you store or use provate methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
+
+```js
+function scoped(elem) {}
+
+skate.define('x-element', {
+  created(elem) {
+    scoped(elem);
+    elem._privateButNotReally();  
+  },
+  prototype: {
+    _privateButNotReally() {}
+  }
+});
+```
+
+However, if you're using ES2015 you can use symbols. Using this pattern, your members are completely private and only available if you have access to the symbol:
+
+```js
+const sym = Symbol();
+
+skate.define('x-element', {
+  created(elem) {
+    elem[sym]();
+  },
+  prototype: {
+    [sym]() {}
+  }
+});
+```
+
+
+### Private Data
+
+A slightly different use-case than using private members would be storing private data. As with members, you can use scoped variables or underscores. However, scoped variables generally aren't specific to an element instance and underscores are only a privacy guideline; anyone can still access the data.
+
+The best way to do this depends on your needs. Generally a `WeakMap` is a good choice as it will hold weak references to the key:
+
+```js
+const map = new WeakMap();
+
+skate.define('x-element', {
+  created(elem) {
+    map.set(elem, 'some data');
+  },
+  render(elem) {
+    // Renders: "some data"
+    skate.vdom.text(map.get(elem));
+  }
+});
+```
+
+You can also use symbols on your element just like we did above with standard methods and properties, if that suits your workflow better.
+
+
+
 ## React Integration
 
 There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components - written with any *true* web component library - and convert them to react components using a single function. Once converted, it can be used in React just like you would use a normal React component.
