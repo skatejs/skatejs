@@ -1,4 +1,10 @@
-import { $ctor, $events, $name, $props, $renderer } from '../util/symbols';
+import { 
+  ctor as $ctor, 
+  events as $events, 
+  name as $name, 
+  props as $props, 
+  renderer as $renderer 
+} from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
