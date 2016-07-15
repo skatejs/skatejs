@@ -1491,7 +1491,7 @@ skate.define('my-component', {
 
 ### Private Members
 
-Skate doesn't have any opinions on how you store or use provate methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
+Skate doesn't have any opinions on how you store or use private methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
 
 ```js
 function scoped(elem) {}
