@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "eslint": "^3.0.1",
-    "skatejs-build": "^5.0.1",
+    "skatejs-build": "^6.0.0",
     "skatejs-named-slots": "^0.2.10",
     "webcomponents.js": "^0.7.22"
   },
