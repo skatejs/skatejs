@@ -152,6 +152,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Naming Collisions](#naming-collisions)
     - [Compatible with multiple versions of itself](#compatible-with-multiple-versions-of-itself)
     - [Properties and Attributes](#properties-and-attributes)
+    - [Private Members](#private-members)
+    - [Private Data](#private-data)
   - [React Integration](#react-integration)
   - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
 
@@ -1484,6 +1486,64 @@ skate.define('my-component', {
   }
 });
 ```
+
+
+
+### Private Members
+
+Skate doesn't have any opinions on how you store or use private methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
+
+```js
+function scoped(elem) {}
+
+skate.define('x-element', {
+  created(elem) {
+    scoped(elem);
+    elem._privateButNotReally();  
+  },
+  prototype: {
+    _privateButNotReally() {}
+  }
+});
+```
+
+However, if you're using ES2015 you can use symbols. Using this pattern, your members are completely private and only available if you have access to the symbol:
+
+```js
+const sym = Symbol();
+
+skate.define('x-element', {
+  created(elem) {
+    elem[sym]();
+  },
+  prototype: {
+    [sym]() {}
+  }
+});
+```
+
+
+### Private Data
+
+A slightly different use-case than using private members would be storing private data. As with members, you can use scoped variables or underscores. However, scoped variables generally aren't specific to an element instance and underscores are only a privacy guideline; anyone can still access the data.
+
+The best way to do this depends on your needs. Generally a `WeakMap` is a good choice as it will hold weak references to the key:
+
+```js
+const map = new WeakMap();
+
+skate.define('x-element', {
+  created(elem) {
+    map.set(elem, 'some data');
+  },
+  render(elem) {
+    // Renders: "some data"
+    skate.vdom.text(map.get(elem));
+  }
+});
+```
+
+You can also use symbols on your element just like we did above with standard methods and properties, if that suits your workflow better.
 
 
 
