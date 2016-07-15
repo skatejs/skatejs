@@ -152,6 +152,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Naming Collisions](#naming-collisions)
     - [Compatible with multiple versions of itself](#compatible-with-multiple-versions-of-itself)
     - [Properties and Attributes](#properties-and-attributes)
+    - [Private Members](#private-members)
+    - [Private Data](#private-data)
   - [React Integration](#react-integration)
   - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
 
