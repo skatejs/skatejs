@@ -23,7 +23,7 @@ describe('vdom/events (on*)', function () {
     });
 
     const el = new MyEl();
-    const shadowDiv = el[symbols.$shadowRoot].children[0];
+    const shadowDiv = el[symbols.shadowRoot].children[0];
 
     // Ensures that it rendered.
     expect(shadowDiv.textContent).to.equal('0');
@@ -56,7 +56,7 @@ describe('vdom/events (on*)', function () {
       }
     }));
     fixture().appendChild(myel);
-    emit(myel[symbols.$shadowRoot].querySelector('span'), 'test');
+    emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
     expect(called).to.equal(true);
   });
 
@@ -66,7 +66,7 @@ describe('vdom/events (on*)', function () {
         vdom.element('div', { ontest: null });
       }
     }));
-    emit(myel[symbols.$shadowRoot].firstChild, 'test');
+    emit(myel[symbols.shadowRoot].firstChild, 'test');
   });
 
   describe('built-in / custom', function () {
@@ -90,7 +90,7 @@ describe('vdom/events (on*)', function () {
           }
         }
       }));
-      div = el[symbols.$shadowRoot].firstChild;
+      div = el[symbols.shadowRoot].firstChild;
     });
 
     describe('built-in', function () {

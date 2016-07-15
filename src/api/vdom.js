@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import { $name } from '../util/symbols';
+import { name as $name } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const applyDefault = attributes[symbols.default];
