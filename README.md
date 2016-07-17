@@ -1448,6 +1448,8 @@ export default function (name) {
 }
 ```
 
+*If you define the same component more than once, Skate will choose a unique name for subsequent registrations after the first. This generally is something you'd want to avoid, but it is very helpful during development. For more information see the [HMR docs](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr).
+
 
 
 ### Compatible with multiple versions of itself
