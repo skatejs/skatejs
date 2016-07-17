@@ -12,9 +12,7 @@ script:
   - sk-bundle
   - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
     npm test -- --saucelabs --polyfills=dom0,elem0;
-    npm test -- --saucelabs --polyfills=dom0,elem1;
     npm test -- --saucelabs --polyfills=dom1,elem0;
-    npm test -- --saucelabs --polyfills=dom1,elem1;
     else
     npm test -- --browsers Firefox;
     fi

@@ -27,11 +27,8 @@ module.exports = function (config) {
     polyFiles.push(require.resolve('skatejs-named-slots'));
   }
 
-  if (polyOptions.indexOf('elem1') > -1) {
-    polyFiles.push('https://npmcdn.com/webcomponents.js@0.7.22#fb43208/src/CustomElements/CustomElements.js');
-  } else {
-    polyFiles.push(require.resolve('webcomponents.js/CustomElements'));
-  }
+  // There is no option for the v1 Custom Element polyfill, since it's unstable
+  polyFiles.push(require.resolve('webcomponents.js/CustomElements'));
 
   config.files = polyFiles.concat(config.files);
 
