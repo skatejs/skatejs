@@ -1093,7 +1093,7 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
 If you pass a component constructor instead of an string for the `elementName`, the name of the copmonent will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
 
 ```js
-const MyElement = skate('my-element');
+const MyElement = skate.define('my-element');
 
 // Renders <my-element />
 skate.vdom.element(MyElement);
