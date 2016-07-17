@@ -1154,7 +1154,7 @@ As with the component constructor, you can also use this in JSX or any other tem
 const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
 
 // Renders <div>Hello, Mary!</div>
-vdom.element(MyElement, 'Mary');
+<MyElement>Mary</MyElement>
 ```
 
 
