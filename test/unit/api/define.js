@@ -1,6 +1,6 @@
 import { Component, define, symbols } from '../../../src/index';
 
-const { $name } = symbols;
+const { name: $name } = symbols;
 
 describe('api/define', () => {
   it('should register components with unique names', () => {
