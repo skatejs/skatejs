@@ -13,24 +13,22 @@ export const v1ShadowDOMProperty = 'attachShadow';
 export function shouldUseShadowDomV0(elem) {
   if (isNative(elem, v1ShadowDOMProperty)) {
     return false;
-  } else if (isPolyfill(elem, v1ShadowDOMProperty) && isNative(elem, v0ShadowDOMProperty)) {
+  } else if (isNative(elem, v0ShadowDOMProperty)) {
     return true;
-  } else if (!isPolyfill(elem, v1ShadowDOMProperty) && isNative(elem, v0ShadowDOMProperty)) {
-    return true;
-  } else {
+  } else if (isPolyfill(elem, v1ShadowDOMProperty)) {
     return false;
+  } else {
+    return isPolyfill(elem, v0ShadowDOMProperty);
   }
 }
 
 export function shouldUseShadowDomV1(elem) {
   if (isNative(elem, v1ShadowDOMProperty)) {
     return true;
-  } else if (isPolyfill(elem, v1ShadowDOMProperty) && isNative(elem, v0ShadowDOMProperty)) {
+  } else if (isNative(elem, v0ShadowDOMProperty)) {
     return false;
-  } else if (isPolyfill(elem, v1ShadowDOMProperty)) {
-    return true;
   } else {
-    return false;
+    return isPolyfill(elem, v1ShadowDOMProperty);
   }
 }
 
