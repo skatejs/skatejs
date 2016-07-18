@@ -112,7 +112,7 @@ function registerUniqueName(name) {
 
 export default function (name, opts) {
   if (opts === undefined) {
-    throw new Error('You have to define options to register a component');
+    throw new Error('You have to define options to register a component ' + name);
   }
 
   const uniqueName = generateUniqueName(name);
