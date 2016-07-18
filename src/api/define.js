@@ -102,10 +102,19 @@ function generateUniqueName(name) {
 }
 
 function registerUniqueName(name) {
-  registry[name] = registry[name] ? registry[name] + 1 : 1;
+  if (registry[name]) {
+    registerUniqueName(name + '-'+ registry[name]);
+    registry[name] += 1;
+  } else {
+    registry[name] = 1;
+  }
 }
 
 export default function (name, opts) {
+  if (opts === undefined) {
+    throw new Error('You have to define options to register a component');
+  }
+
   const uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
 
