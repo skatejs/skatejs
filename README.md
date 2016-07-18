@@ -1093,7 +1093,7 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
 If you pass a component constructor instead of an string for the `elementName`, the name of the copmonent will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
 
 ```js
-const MyElement = skate('my-element');
+const MyElement = skate.define('my-element');
 
 // Renders <my-element />
 skate.vdom.element(MyElement);
@@ -1154,7 +1154,7 @@ As with the component constructor, you can also use this in JSX or any other tem
 const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
 
 // Renders <div>Hello, Mary!</div>
-vdom.element(MyElement, 'Mary');
+<MyElement>Mary</MyElement>
 ```
 
 
@@ -1447,6 +1447,8 @@ export default function (name) {
   });
 }
 ```
+
+*If you define the same component more than once, Skate will choose a unique name for subsequent registrations after the first. This generally is something you'd want to avoid, but it is very helpful during development. For more information see the [HMR docs](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr).*
 
 
 
