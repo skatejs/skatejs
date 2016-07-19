@@ -1,7 +1,6 @@
 import {
   created as $created,
   ctor as $ctor,
-  events as $events, 
   name as $name,
   props as $props,
   renderer as $renderer,
@@ -89,7 +88,7 @@ export default class Component extends HTMLElement {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
-    const { definedAttribute, events, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
+    const { definedAttribute, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
     const renderer = Ctor[$renderer];
 
     // TODO: This prevents an element from being initialised multiple times. For
@@ -101,10 +100,6 @@ export default class Component extends HTMLElement {
 
     if (props) {
       Ctor[$props](this);
-    }
-
-    if (events) {
-      Ctor[$events](this);
     }
 
     if (created) {
@@ -151,10 +146,6 @@ export default class Component extends HTMLElement {
 
   static get definedAttribute () {
     return 'defined';
-  }
-
-  static get events () {
-    return {};
   }
 
   static get observedAttributes () {
