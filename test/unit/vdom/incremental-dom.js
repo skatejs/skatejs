@@ -21,9 +21,9 @@ describe('IncrementalDOM', function () {
     let fixture;
     beforeEach(() => fixture = document.createElement('div'));
 
-    function patchAssert(elem, { checkChildren = true }) {
+    function patchAssert(elem, { checkChildren = true } = {}) {
       expect(fixture.firstChild).to.equal(elem);
-      expect(fixture.innerHTML).to.equal(`<div id="test">${ checkChildren ? '<span>test</span>' : '</div>'}`);
+      expect(fixture.innerHTML).to.equal(`<div id="test">${ checkChildren ? '<span>test</span>' : ''}</div>`);
     }
 
     function patchIt(desc, func) {
@@ -37,8 +37,7 @@ describe('IncrementalDOM', function () {
     }
 
     const Elem = (props, chren) => {
-      const elem = vdom.elementOpen('div', null, null);
-      Object.keys(props).forEach(prop => vdom.attr(prop, props[prop]));
+      const elem = vdom.elementOpen('div', null, null, 'id', props.id);
       chren();
       vdom.elementClose('div');
       return elem;
