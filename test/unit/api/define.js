@@ -9,12 +9,6 @@ describe('api/define', () => {
     }).to.throw(Error);
   });
 
-  it('should not register a component without a dash in the name', () => {
-    expect(() => {
-      define('test');
-    }).to.throw(Error);
-  });
-
   it('should register components with unique names', () => {
     expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define');
     expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define-1');
