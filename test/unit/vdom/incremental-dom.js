@@ -16,4 +16,39 @@ describe('IncrementalDOM', function () {
   testBasicApi('elementOpenStart');
   testBasicApi('elementVoid');
   testBasicApi('text');
+
+  describe('passing a function helper', () => {
+    let fixture;
+    beforeEach(() => fixture = document.createElement('div'));
+
+    function patchAssert(elem) {
+      expect(fixture.firstChild).to.equal(elem);
+      expect(fixture.innerHTML).to.equal('<div id="test"></div>');
+    }
+
+    function patchIt(desc, func) {
+      it(desc, () => IncrementalDOM.patch(fixture, func));
+    }
+
+    const Elem = () => {
+      const elem = vdom.elementOpen('div', null, null, 'id', 'test');
+      vdom.elementClose('div');
+      return elem;
+    };
+
+    patchIt('elementOpen, elementClose', () => {
+      vdom.elementOpen(Elem);
+      patchAssert(vdom.elementClose(Elem));
+    });
+
+    patchIt('elementOpenStart, elementOpenEnd, elementClose', () => {
+      vdom.elementOpenStart(Elem);
+      vdom.elementOpenEnd(Elem);
+      patchAssert(vdom.elementClose(Elem));
+    });
+    
+    patchIt('elementVoid', () => {
+      patchAssert(vdom.elementVoid(Elem));
+    });
+  });
 });
