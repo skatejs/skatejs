@@ -106,7 +106,7 @@ function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
     if (typeof tname === 'function') {
       // If we've encountered a function, handle it according to the type of
       // function that is being wrapped.
-      tnameFuncHandler(tname);
+      return tnameFuncHandler(tname);
     } else if (stackChren.length) {
       // We pass the wrap() function in here so that when it's called as
       // children, it will queue up for the next stack, if there is one.
@@ -134,7 +134,12 @@ function stackOpen () {
 function stackClose (tname) {
   const chren = stackChren.pop();
   const props = stackProps.pop();
-  tname(props, () => chren.forEach(args => args[0](...args[1])));
+  return tname(props, () => chren.forEach(args => args[0](...args[1])));
+}
+
+function stackVoid (tname) {
+  stackOpen();
+  return stackClose(tname);
 }
 
 // Convenience function for declaring an Incremental DOM element using
@@ -180,7 +185,7 @@ const newElementClose = wrapIdomFunc(elementClose, stackClose);
 const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
-const newElementVoid = wrapIdomFunc(elementVoid);
+const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
 const newText = wrapIdomFunc(text);
 
 // We don't have to do anything special for the text function; it's just a 
