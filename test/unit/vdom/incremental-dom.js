@@ -17,7 +17,7 @@ describe('IncrementalDOM', function () {
   testBasicApi('elementVoid');
   testBasicApi('text');
 
-  describe.only('passing a function helper', () => {
+  describe('passing a function helper', () => {
     let fixture;
     beforeEach(() => fixture = document.createElement('div'));
 
