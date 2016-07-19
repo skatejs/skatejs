@@ -10,17 +10,17 @@ describe('api/define', () => {
   });
 
   it('should register components with unique names', () => {
-    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define');
-    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define-1');
-    expect(define('x-test-api-define', {})[$name]).to.equal('x-test-api-define-2');
+    const elem1 = define('x-test-api-define', {});
+    const elem2 = define('x-test-api-define', {});
+    const elem3 = define('x-test-api-define', {});
 
-    expect(define('x-test-api-define-1', {})[$name]).to.equal('x-test-api-define-1-1');
-    expect(define('x-test-api-define-1', {})[$name]).to.equal('x-test-api-define-1-2');
-    expect(define('x-test-api-define-1', {})[$name]).to.equal('x-test-api-define-1-3');
-
-    expect(define('x-test-api-define-1-3', {})[$name]).to.equal('x-test-api-define-1-3-1');
-    expect(define('x-test-api-define-1-3', {})[$name]).to.equal('x-test-api-define-1-3-2');
-    expect(define('x-test-api-define-1-3', {})[$name]).to.equal('x-test-api-define-1-3-3');
+    // the first one is registered by its own name
+    // the rest is registered by the name plus random string
+    expect(elem1[$name]).to.equal('x-test-api-define');
+    expect(elem2[$name]).not.to.equal('x-test-api-define');
+    expect(elem2[$name].indexOf('x-test-api-define') === 0).to.equal(true);
+    expect(elem3[$name]).not.to.equal('x-test-api-define');
+    expect(elem3[$name].indexOf('x-test-api-define') === 0).to.equal(true);
   });
 
   it('should take an object and extend Component', () => {

@@ -97,17 +97,18 @@ function createInitProps (Ctor) {
 }
 
 function generateUniqueName(name) {
-  const registered = registry[name];
-  return registered ? `${name}-${registered}` : name;
-}
-
-function registerUniqueName(name) {
-  if (registry[name]) {
-    registerUniqueName(name + '-'+ registry[name]);
-    registry[name] += 1;
-  } else {
-    registry[name] = 1;
+  // we don't need to generate a unique name if it's the first time
+  if (!registry[name]) {
+    registry[name] = true;
+    return name;
   }
+  // copy-pasted from here, looks like a good solution : http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
+  const rand = 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+
+  return `${name}-${rand}`;
 }
 
 export default function (name, opts) {
@@ -118,7 +119,6 @@ export default function (name, opts) {
   const uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
 
-  registerUniqueName(name);
   formatLinkedAttributes(Ctor);
 
   Ctor[$events] = createInitEvents(Ctor);
