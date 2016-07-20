@@ -25,7 +25,7 @@ describe('IncrementalDOM', function () {
       it(desc, () => IncrementalDOM.patch(fixture, func));
     }
 
-    describe.only('passing a component constructor', () => {
+    describe('passing a component constructor', () => {
       const Elem = define('x-test', {});
 
       patchIt('elementOpen, elementClose', () => {
