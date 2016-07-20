@@ -1,5 +1,5 @@
 import * as IncrementalDOM from 'incremental-dom';
-import { vdom } from '../../../src/index';
+import { define, vdom } from '../../../src/index';
 
 function testBasicApi (name) {
   describe(name, () => {
@@ -17,48 +17,69 @@ describe('IncrementalDOM', function () {
   testBasicApi('elementVoid');
   testBasicApi('text');
 
-  describe('passing a function helper', () => {
+  describe('function tag names', () => {
     let fixture;
     beforeEach(() => fixture = document.createElement('div'));
-
-    function patchAssert(elem, { checkChildren = true } = {}) {
-      expect(fixture.firstChild).to.equal(elem);
-      expect(fixture.innerHTML).to.equal(`<div id="test">${ checkChildren ? '<span>test</span>' : ''}</div>`);
-    }
 
     function patchIt(desc, func) {
       it(desc, () => IncrementalDOM.patch(fixture, func));
     }
 
-    function renderChildren() {
-      vdom.elementOpen('span');
-      vdom.text('test');
-      vdom.elementClose('span');
-    }
+    describe.only('passing a component constructor', () => {
+      const Elem = define('x-test', {});
 
-    const Elem = (props, chren) => {
-      const elem = vdom.elementOpen('div', null, null, 'id', props.id);
-      chren();
-      vdom.elementClose('div');
-      return elem;
-    };
+      patchIt('elementOpen, elementClose', () => {
+        vdom.elementOpen(Elem);
+        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+      });
 
-    patchIt('elementOpen, elementClose', () => {
-      vdom.elementOpen(Elem, null, null, 'id', 'test');
-      renderChildren();
-      patchAssert(vdom.elementClose(Elem));
+      patchIt('elementOpenStart, elementOpenEnd, elementClose', () => {
+        vdom.elementOpenStart(Elem);
+        vdom.elementOpenEnd(Elem);
+        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+      });
+      
+      patchIt('elementVoid', () => {
+        expect(vdom.elementVoid(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+      });
     });
 
-    patchIt('elementOpenStart, attr, elementOpenEnd, elementClose', () => {
-      vdom.elementOpenStart(Elem, null, null);
-      vdom.attr('id', 'test');
-      vdom.elementOpenEnd(Elem);
-      renderChildren();
-      patchAssert(vdom.elementClose(Elem));
-    });
-    
-    patchIt('elementVoid', () => {
-      patchAssert(vdom.elementVoid(Elem, null, null, 'id', 'test'), { checkChildren: false });
+    describe('passing a function helper', () => {
+      function patchAssert(elem, { checkChildren = true } = {}) {
+        expect(fixture.firstChild).to.equal(elem);
+        expect(fixture.innerHTML).to.equal(`<div id="test">${ checkChildren ? '<span>test</span>' : ''}</div>`);
+      }
+
+      function renderChildren() {
+        vdom.elementOpen('span');
+        vdom.text('test');
+        vdom.elementClose('span');
+      }
+
+      const Elem = (props, chren) => {
+        const elem = vdom.elementOpen('div', null, null, 'id', props.id);
+        chren();
+        vdom.elementClose('div');
+        return elem;
+      };
+
+      patchIt('elementOpen, elementClose', () => {
+        vdom.elementOpen(Elem, null, null, 'id', 'test');
+        renderChildren();
+        patchAssert(vdom.elementClose(Elem));
+      });
+
+      patchIt('elementOpenStart, attr, elementOpenEnd, elementClose', () => {
+        vdom.elementOpenStart(Elem, null, null);
+        vdom.attr('id', 'test');
+        vdom.elementOpenEnd(Elem);
+        renderChildren();
+        patchAssert(vdom.elementClose(Elem));
+      });
+      
+      patchIt('elementVoid', () => {
+        patchAssert(vdom.elementVoid(Elem, null, null, 'id', 'test'), { checkChildren: false });
+      });
     });
   });
 });
