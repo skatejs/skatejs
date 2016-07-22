@@ -1306,10 +1306,10 @@ For instances where you need to bind listeners directly to your host element, yo
 ```js
 skate.define('x-element', {
   created(elem) {
-    elem.addEventListener('click', elem.handleClick);
+    elem.addEventListener('change', elem.handleChange);
   },
   prototype: {
-    handleClick(e) {
+    handleChange(e) {
       // `this` is the element.
       // The event is passed as the only argument.
     }
