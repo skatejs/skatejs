@@ -122,7 +122,7 @@ function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
       const elem = func(...args);
 
       // If we're in elementClose, try calling the ref.
-      if (func.name === 'elementClose') {
+      if (func === elementClose) {
         const eref = elem[$ref];
         if (typeof eref === 'function') {
           eref(elem);
