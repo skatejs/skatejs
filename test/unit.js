@@ -20,4 +20,5 @@ import './unit/vdom/elements';
 import './unit/vdom/events';
 import './unit/vdom/incremental-dom';
 import './unit/vdom/properties';
+import './unit/vdom/ref';
 import './unit/vdom/shadow-dom';
