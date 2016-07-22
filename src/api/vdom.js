@@ -102,11 +102,11 @@ function resolveTagName (tname) {
 
 function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
   return function wrap (...args) {
-    const tname = args[0] = resolveTagName(args[0]);
-    if (typeof tname === 'function') {
+    args[0] = resolveTagName(args[0]);
+    if (typeof args[0] === 'function') {
       // If we've encountered a function, handle it according to the type of
       // function that is being wrapped.
-      return tnameFuncHandler(tname);
+      return tnameFuncHandler(...args);
     } else if (stackChren.length) {
       // We pass the wrap() function in here so that when it's called as
       // children, it will queue up for the next stack, if there is one.
@@ -126,9 +126,13 @@ function newAttr (key, val) {
   }
 }
 
-function stackOpen () {
+function stackOpen (tname, key, statics, ...attrs) {
+  const props = {};
+  for (let a = 0; a < attrs.length; a += 2) {
+    props[attrs[a]] = attrs[a + 1];
+  }
   stackChren.push([]);
-  stackProps.push({});
+  stackProps.push(props);
 }
 
 function stackClose (tname) {
@@ -137,9 +141,9 @@ function stackClose (tname) {
   return tname(props, () => chren.forEach(args => args[0](...args[1])));
 }
 
-function stackVoid (tname) {
-  stackOpen();
-  return stackClose(tname);
+function stackVoid (...args) {
+  stackOpen(...args);
+  return stackClose(args[0]);
 }
 
 // Convenience function for declaring an Incremental DOM element using
