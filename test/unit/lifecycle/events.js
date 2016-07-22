@@ -135,15 +135,12 @@ describe('lifecycle/events', function () {
     });
 
     var inst = helperFixture(`<${tagName}></${tagName}>`).querySelector(tagName);
-
-    ready(inst, function () {
-      inst.blur();
-      expect(blur).to.equal(true, 'blur');
-
-      inst.focus();
-      expect(focus).to.equal(true, 'focus');
-
-      done();
-    });
+    afterMutations(
+      () => inst.blur(),
+      () => expect(blur).to.equal(true, 'blur'),
+      () => inst.focus(),
+      () => expect(focus).to.equal(true, 'focus'),
+      done
+    );
   });
 });

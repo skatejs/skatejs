@@ -1,4 +1,5 @@
 import {
+  connected as $connected,
   created as $created,
   ctor as $ctor,
   events as $events, 
@@ -32,12 +33,17 @@ export default class Component extends HTMLElement {
   }
 
   connectedCallback () {
-    const cb = this.constructor.attached;
+    const ctor = this.constructor;
+    const cb = ctor.attached;
+    const render = ctor[$renderer];
+    this[$connected] = true;
+    render && render(this);
     cb && cb(this);
   }
 
   disconnectedCallback () {
     const cb = this.constructor.detached;
+    this[$connected] = false;
     cb && cb(this);
   }
 
@@ -89,8 +95,7 @@ export default class Component extends HTMLElement {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
-    const { definedAttribute, events, created, observedAttributes, props, ready, renderedAttribute } = Ctor;
-    const renderer = Ctor[$renderer];
+    const { definedAttribute, events, created, observedAttributes, props, ready } = Ctor;
 
     // TODO: This prevents an element from being initialised multiple times. For
     // some reason this is happening in the event tests. It's possibly creating
@@ -109,10 +114,6 @@ export default class Component extends HTMLElement {
 
     if (created) {
       created(this);
-    }
-
-    if (renderer && !this.hasAttribute(renderedAttribute)) {
-      renderer(this);
     }
 
     if (ready) {
@@ -165,10 +166,6 @@ export default class Component extends HTMLElement {
     return {};
   }
 
-  static get renderedAttribute () {
-    return 'rendered';
-  }
-
   static extend (definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
@@ -185,5 +182,13 @@ export default class Component extends HTMLElement {
     Object.defineProperties(Ctor.prototype, prot);
 
     return Ctor;
+  }
+
+  static shouldRender (elem, prev, curr) {
+    for (let name in prev) {
+      if (prev[name] !== curr[name]) {
+        return true;
+      }
+    }
   }
 }

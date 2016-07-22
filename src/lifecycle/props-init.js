@@ -60,21 +60,6 @@ function createNativePropertyDefinition (name, opts) {
     return internalValue;
   };
 
-  prop.render = (function () {
-    const shouldUpdate = opts.render;
-    if (typeof shouldUpdate === 'undefined') {
-      return function (elem, data) {
-        return data.newValue !== data.oldValue;
-      };
-    }
-    if (typeof shouldUpdate === 'function') {
-      return shouldUpdate;
-    }
-    return function () {
-      return !!shouldUpdate;
-    };
-  }());
-
   prop.set = function (newValue) {
     const propData = data(this, `api/property/${name}`);
     let { oldValue } = propData;
@@ -113,11 +98,9 @@ function createNativePropertyDefinition (name, opts) {
       opts.set(this, changeData);
     }
 
-    // Re-render on property updates if the should-update check passes.
-    if (prop.render(this, changeData)) {
-      const deb = this[$rendererDebounced] || (this[$rendererDebounced] = debounce(this.constructor[$renderer]));
-      deb(this);
-    }
+    // Queue a re-render.
+    const deb = this[$rendererDebounced] || (this[$rendererDebounced] = debounce(this.constructor[$renderer]));
+    deb(this);
 
     propData.oldValue = newValue;
 
