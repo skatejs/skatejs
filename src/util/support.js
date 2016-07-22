@@ -1,4 +1,4 @@
-import isNativeRegex from 'regex-native-function'; // checks if a function is native using regex
+import isNativeRegex from 'regex-native-function';
 
 const div = document.createElement('div');
 const isNative = (elem, prop) => isNativeRegex.test(elem[prop]);
