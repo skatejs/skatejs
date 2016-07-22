@@ -1271,6 +1271,40 @@ The component lifecycle consists of several paths in the following order startin
 
 
 
+## Binding Events
+
+Generally, binding events to elements are done using the `vdom` [on* syntax](https://github.com/skatejs/skatejs#attrson):
+
+```js
+skate.define('x-element', {
+  render(elem) {
+    skate.vdom.element('div', { onclick: elem.handleClck });
+  },
+  prototype: {
+    handleClick() {
+
+    }
+  }
+});
+```
+
+For instances where you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
+
+```js
+skate.define('x-element', {
+  created(elem) {
+    elem.addEventListener('click', elem.handleClick);
+  },
+  prototype: {
+    handleClick() {
+      
+    }
+  }
+});
+```
+
+
+
 ## Customised built-in elements
 
 The spec [mentions](http://w3c.github.io/webcomponents/spec/custom/#customized-built-in-element) this as a way to extend built-in elements. Currently, how this is exposed to the user is still [under contention](https://github.com/w3c/webcomponents/issues/509#issuecomment-222860736). Skate doesn't need do anything to support this underneath the hood, but be aware of this when building components.
