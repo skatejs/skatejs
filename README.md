@@ -1176,6 +1176,17 @@ skate.vdom.element('my-element', { onsomecustomevent: e => console.log(e) });
 
 
 
+##### `attrs.ref`
+
+A callback that is called when the attribute is set on the corresponding element. The only argument is the element that `ref` is bound to.
+
+```js
+const ref = button => button.addEventListener('click', console.log);
+skate.vdom.element('button', { ref });
+```
+
+
+
 ##### `attrs.skip`
 
 This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
