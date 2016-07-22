@@ -11,7 +11,7 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import { name as $name } from '../util/symbols';
+import { name as $name, ref as $ref } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const applyDefault = attributes[symbols.default];
@@ -30,6 +30,12 @@ attributes[symbols.default] = function (elem, name, value) {
   // If the skip attribute was specified, skip
   if (name === 'skip' && value) {
     return skip();
+  }
+
+  // Add the ref to the element so it can be called when it's closed.
+  if (name === 'ref') {
+    elem[$ref] = value;
+    return;
   }
 
   // Custom element properties should be set as properties.
@@ -102,18 +108,28 @@ function resolveTagName (tname) {
 
 function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
   return function wrap (...args) {
-    const tname = args[0] = resolveTagName(args[0]);
-    if (typeof tname === 'function') {
+    args[0] = resolveTagName(args[0]);
+    if (typeof args[0] === 'function') {
       // If we've encountered a function, handle it according to the type of
       // function that is being wrapped.
-      tnameFuncHandler(tname);
+      return tnameFuncHandler(...args);
     } else if (stackChren.length) {
       // We pass the wrap() function in here so that when it's called as
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
       // If there is no stack left, we call Incremental DOM directly.
-      return func(...args);
+      const elem = func(...args);
+
+      // If we're in elementClose, try calling the ref.
+      if (func === elementClose) {
+        const eref = elem[$ref];
+        if (typeof eref === 'function') {
+          eref(elem);
+        }
+      }
+
+      return elem;
     }
   };
 }
@@ -126,15 +142,24 @@ function newAttr (key, val) {
   }
 }
 
-function stackOpen () {
+function stackOpen (tname, key, statics, ...attrs) {
+  const props = {};
+  for (let a = 0; a < attrs.length; a += 2) {
+    props[attrs[a]] = attrs[a + 1];
+  }
   stackChren.push([]);
-  stackProps.push({});
+  stackProps.push(props);
 }
 
 function stackClose (tname) {
   const chren = stackChren.pop();
   const props = stackProps.pop();
-  tname(props, () => chren.forEach(args => args[0](...args[1])));
+  return tname(props, () => chren.forEach(args => args[0](...args[1])));
+}
+
+function stackVoid (...args) {
+  stackOpen(...args);
+  return stackClose(args[0]);
 }
 
 // Convenience function for declaring an Incremental DOM element using
@@ -180,7 +205,7 @@ const newElementClose = wrapIdomFunc(elementClose, stackClose);
 const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
-const newElementVoid = wrapIdomFunc(elementVoid);
+const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
 const newText = wrapIdomFunc(text);
 
 // We don't have to do anything special for the text function; it's just a 
