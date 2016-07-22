@@ -48,7 +48,7 @@ describe('extending', function () {
 
   it('should not mess with callbacks', function () {
     const ExtendedCtor = define(tag, class extends Ctor {});
-    expect(new ExtendedCtor()[symbols.$shadowRoot].textContent).to.equal('test');
+    expect(new ExtendedCtor()[symbols.shadowRoot].textContent).to.equal('test');
   });
 
   it('should allow overriding of callbacks', function () {
@@ -59,7 +59,7 @@ describe('extending', function () {
       }
     });
     const elem = new ExtendedCtor();
-    expect(elem[symbols.$shadowRoot].textContent).to.equal('testing');
+    expect(elem[symbols.shadowRoot].textContent).to.equal('testing');
   });
 
   it('constructor should be accessible', function () {

@@ -5,7 +5,7 @@ describe('util/support', () => {
     // We take a copy of a known native property so that we can mock how our code will behave when
     // it finds a native implementation of a function. The polyfilled property just needs to match
     // what a non-native property looks like on an element (must have a `value` function)
-    const nativeProperty = Object.getOwnPropertyDescriptor(Element.prototype, 'getAttribute');
+    const nativeProperty = Object.getOwnPropertyDescriptor(Function.prototype, 'toString');
     const polyfilledProperty = { value: () => {}};
 
     let obj;
@@ -44,6 +44,6 @@ describe('util/support', () => {
       expect(shouldUseShadowDomV0(obj)).to.equal(false);
       expect(shouldUseShadowDomV1(obj)).to.equal(true);
     });
-  });  
+  });
 });
 

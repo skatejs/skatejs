@@ -123,8 +123,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
       - [Background](#background)
     - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
-      - [`$name`](#name)
-      - [`$shadowRoot`](#shadowroot)
+      - [`name`](#name)
+      - [`shadowRoot`](#shadowroot)
     - [`vdom`](#vdom)
       - [`vdom.element (elementName, attributesOrChildren, children)`](#vdomelement-elementname-attributesorchildren-children)
         - [Component constructor](#component-constructor)
@@ -152,6 +152,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Naming Collisions](#naming-collisions)
     - [Compatible with multiple versions of itself](#compatible-with-multiple-versions-of-itself)
     - [Properties and Attributes](#properties-and-attributes)
+    - [Private Members](#private-members)
+    - [Private Data](#private-data)
   - [React Integration](#react-integration)
   - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
 
@@ -1022,9 +1024,9 @@ Symbols are exposed for you to access information that stored on objects that ar
 
 
 
-#### `$name`
+#### `name`
 
-The `$name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
+The `name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
 
 ```js
 import { define, symbols } from 'skatejs';
@@ -1032,18 +1034,18 @@ import { define, symbols } from 'skatejs';
 const MyComponent1 = define('my-component', {});
 
 // my-component
-console.log(MyComponent1[symbols.$name]);
+console.log(MyComponent1[symbols.name]);
 
 // If re-registering in HMR...
 const MyComponent2 = define('my-component', {});
 
 // my-component-1
-console.log(MyComponent2[symbols.$name]);
+console.log(MyComponent2[symbols.name]);
 ```
 
 
 
-#### `$shadowRoot`
+#### `shadowRoot`
 
 When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
@@ -1057,7 +1059,7 @@ define('my-component', {
   ready (elem) {
     // #shadow-root
     //   <p>test</p>
-    elem[symbols.$shadowRoot];
+    elem[symbols.shadowRoot];
   }
 });
 ```
@@ -1091,7 +1093,7 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
 If you pass a component constructor instead of an string for the `elementName`, the name of the copmonent will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
 
 ```js
-const MyElement = skate('my-element');
+const MyElement = skate.define('my-element');
 
 // Renders <my-element />
 skate.vdom.element(MyElement);
@@ -1152,7 +1154,7 @@ As with the component constructor, you can also use this in JSX or any other tem
 const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
 
 // Renders <div>Hello, Mary!</div>
-vdom.element(MyElement, 'Mary');
+<MyElement>Mary</MyElement>
 ```
 
 
@@ -1457,6 +1459,8 @@ export default function (name) {
 }
 ```
 
+*If you define the same component more than once, Skate will choose a unique name for subsequent registrations after the first. This generally is something you'd want to avoid, but it is very helpful during development. For more information see the [HMR docs](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr).*
+
 
 
 ### Compatible with multiple versions of itself
@@ -1498,6 +1502,64 @@ skate.define('my-component', {
 
 
 
+### Private Members
+
+Skate doesn't have any opinions on how you store or use private methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
+
+```js
+function scoped(elem) {}
+
+skate.define('x-element', {
+  created(elem) {
+    scoped(elem);
+    elem._privateButNotReally();  
+  },
+  prototype: {
+    _privateButNotReally() {}
+  }
+});
+```
+
+However, if you're using ES2015 you can use symbols. Using this pattern, your members are completely private and only available if you have access to the symbol:
+
+```js
+const sym = Symbol();
+
+skate.define('x-element', {
+  created(elem) {
+    elem[sym]();
+  },
+  prototype: {
+    [sym]() {}
+  }
+});
+```
+
+
+### Private Data
+
+A slightly different use-case than using private members would be storing private data. As with members, you can use scoped variables or underscores. However, scoped variables generally aren't specific to an element instance and underscores are only a privacy guideline; anyone can still access the data.
+
+The best way to do this depends on your needs. Generally a `WeakMap` is a good choice as it will hold weak references to the key:
+
+```js
+const map = new WeakMap();
+
+skate.define('x-element', {
+  created(elem) {
+    map.set(elem, 'some data');
+  },
+  render(elem) {
+    // Renders: "some data"
+    skate.vdom.text(map.get(elem));
+  }
+});
+```
+
+You can also use symbols on your element just like we did above with standard methods and properties, if that suits your workflow better.
+
+
+
 ## React Integration
 
 There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components - written with any *true* web component library - and convert them to react components using a single function. Once converted, it can be used in React just like you would use a normal React component.
@@ -1513,4 +1575,4 @@ Skate is designed to work with hot-module reloading out of the box:
 
 *Skate cannot refresh the component definition as there is no way to reregister a component using the web component APIs.*
 
-While this makes the name non-deterministic, you can still get the name from the constructor if you need to using the [`$name` symbol](#name).
+While this makes the name non-deterministic, you can still get the name from the constructor if you need to using the [`name` symbol](#name).

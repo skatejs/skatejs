@@ -1,4 +1,10 @@
-import { $ctor, $events, $name, $props, $renderer } from '../util/symbols';
+import { 
+  ctor as $ctor, 
+  events as $events, 
+  name as $name, 
+  props as $props, 
+  renderer as $renderer 
+} from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
 import Component from './component';
 import createInitEvents from '../lifecycle/events';
@@ -91,19 +97,28 @@ function createInitProps (Ctor) {
 }
 
 function generateUniqueName(name) {
-  const registered = registry[name];
-  return registered ? `${name}-${registered}` : name;
-}
+  // we don't need to generate a unique name if it's the first time
+  if (!registry[name]) {
+    registry[name] = true;
+    return name;
+  }
+  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
+  const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
 
-function registerUniqueName(name) {
-  registry[name] = registry[name] ? registry[name] + 1 : 1;
+  return `${name}-${rand}`;
 }
 
 export default function (name, opts) {
+  if (opts === undefined) {
+    throw new Error('You have to define options to register a component ' + name);
+  }
+
   const uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
 
-  registerUniqueName(name);
   formatLinkedAttributes(Ctor);
 
   Ctor[$events] = createInitEvents(Ctor);
