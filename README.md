@@ -137,6 +137,7 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
+  - [Binding Events](#binding-events)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
