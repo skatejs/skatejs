@@ -34,17 +34,23 @@ export default class Component extends HTMLElement {
 
   connectedCallback () {
     const ctor = this.constructor;
-    const cb = ctor.attached;
+    const { attached } = ctor;
     const render = ctor[$renderer];
     this[$connected] = true;
-    render && render(this);
-    cb && cb(this);
+    if (typeof render === 'function') {
+      render(this);
+    }
+    if (typeof attached === 'function') {
+      attached(this);
+    }
   }
 
   disconnectedCallback () {
-    const cb = this.constructor.detached;
+    const { detached } = this.constructor;
     this[$connected] = false;
-    cb && cb(this);
+    if (typeof detached === 'function') {
+      detached(this);
+    }
   }
 
   attributeChangedCallback (name, oldValue, newValue) {
