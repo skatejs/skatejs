@@ -1,10 +1,6 @@
-import { 
-  renderer as $renderer, 
-  rendererDebounced as $rendererDebounced 
-} from '../util/symbols';
+import { rendererDebounced as $rendererDebounced } from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
-import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
 
@@ -99,8 +95,7 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     // Queue a re-render.
-    const deb = this[$rendererDebounced] || (this[$rendererDebounced] = debounce(this.constructor[$renderer]));
-    deb(this);
+    this[$rendererDebounced](this);
 
     propData.oldValue = newValue;
 

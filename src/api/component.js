@@ -6,9 +6,11 @@ import {
   name as $name,
   props as $props,
   renderer as $renderer,
+  rendererDebounced as $rendererDebounced
 } from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill } from '../util/support';
 import data from '../util/data';
+import debounce from '../util/debounce';
 import definePropertyConstructor from '../util/define-property-constructor';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
@@ -109,6 +111,9 @@ export default class Component extends HTMLElement {
     // the constructor twice.
     if (this[$created]) return;
     this[$created] = true;
+
+    // Set up a renderer that is debounced for property sets to call directly.
+    this[$rendererDebounced] = debounce(Ctor[$renderer]);
 
     if (props) {
       Ctor[$props](this);
