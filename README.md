@@ -89,8 +89,6 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
   - [API](#api)
     - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
-      - [`events`](#events)
-        - [Event Delegation](#event-delegation)
       - [`created`](#created)
       - [`props`](#props)
         - [`attribute`](#attribute)
@@ -139,6 +137,7 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
+  - [Binding Events](#binding-events)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
@@ -306,43 +305,6 @@ skate.define('my-component', {
   }
 });
 ```
-
-
-
-#### `events`
-
-Event listeners to add to the custom element. These get bound after the `prototype` is set up and before `created` is called.
-
-```js
-skate.define('my-component', {
-  events: {
-    click (elem, eventObject) {}
-  }
-});
-```
-
-The arguments passed to the handler are:
-
-- `elem` is the DOM element
-- `eventObject` is the native event object that was dispatched on the DOM element
-
-
-
-##### Event Delegation
-
-Event descriptors can use selectors to target descendants using event delegation.
-
-```js
-skate.define('my-component', {
-  events: {
-    'click button' (elem, eventObject) {}
-  }
-});
-```
-
-Instead of firing for every click on the component element - or that bubbles to the component element - it will only fire if a descendant `<button>` was clicked.
-
-Event delegation works with or without a shadow root as it will inspect the event `path` if it exists.
 
 
 
@@ -772,16 +734,14 @@ Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. T
 
 ```js
 skate.define('x-tabs', {
-  events: {
-    selected: hideAllAndShowSelected
+  render(elem) {
+    skate.vdom.element('x-tab', { onselect: () => {} });
   }
 });
 
 skate.define('x-tab', {
-  events: {
-    click () {
-      skate.emit(this, 'selected');
-    }
+  render(elem) {
+    skate.vdom.element('a', { onclick: () => emit(elem, 'select') });
   }
 });
 ```
@@ -1313,14 +1273,49 @@ And it could be used like:
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-1. `events` are set up
-2. `props` are defined and set to initial values
-3. `created` is invoked
-4. `render` is invoked to render an HTML structure to the component
-5. `ready` is invoked
-6. `attached` is invoked when added to the document (or if already in the document)
-7. `detached` is invoked when removed from the document
-8. `attributeChanged` is invoked whenever an attribute is changed
+1. `props` are defined and set to initial values
+2. `created` is invoked
+3. `render` is invoked to render an HTML structure to the component
+4. `ready` is invoked
+5. `attached` is invoked when added to the document (or if already in the document)
+6. `detached` is invoked when removed from the document
+7. `attributeChanged` is invoked whenever an attribute is changed
+
+
+
+## Binding Events
+
+Generally, binding events to elements are done using the `vdom` [on* syntax](https://github.com/skatejs/skatejs#attrson):
+
+```js
+skate.define('x-element', {
+  render(elem) {
+    skate.vdom.element('div', { onclick: elem.handleClick });
+  },
+  prototype: {
+    handleClick(e) {
+      // `this` is the element.
+      // The event is passed as the only argument.
+    }
+  }
+});
+```
+
+For instances where you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
+
+```js
+skate.define('x-element', {
+  created(elem) {
+    elem.addEventListener('change', elem.handleChange);
+  },
+  prototype: {
+    handleChange(e) {
+      // `this` is the element.
+      // The event is passed as the only argument.
+    }
+  }
+});
+```
 
 
 
