@@ -132,6 +132,7 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [`attrs.class`](#attrsclass)
         - [`attrs.key`](#attrskey)
         - [`attrs.on*`](#attrson)
+        - [`attrs.ref`](#attrsref)
         - [`attrs.skip`](#attrsskip)
         - [`attrs.statics`](#attrsstatics)
         - [Boolean Attributes](#boolean-attributes)
@@ -155,6 +156,9 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Private Data](#private-data)
   - [React Integration](#react-integration)
   - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
+  - [Form Behaviour and the Shadow DOM](#form-behaviour-and-the-shadow-dom)
+    - [Submission](#submission)
+    - [Form Data](#form-data)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
