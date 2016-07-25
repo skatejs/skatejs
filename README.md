@@ -86,6 +86,8 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
   - [Terminology](#terminology)
   - [Installing](#installing)
   - [Consuming](#consuming)
+  - [Examples](#examples)
+    - [Counter](#counter)
   - [API](#api)
     - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
