@@ -262,8 +262,8 @@ const sym = Symbol();
 
 skate.define('x-counter', {
   props: {
-    // By declaring the property an attribute, we can now pass a the initial
-    // value for the count as part of the HTML.
+    // By declaring the property an attribute, we can now pass an initial value
+    // for the count as part of the HTML.
     count: skate.prop.number({ attribute: true })
   },
   attached(elem) {
