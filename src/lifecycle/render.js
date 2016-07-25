@@ -1,18 +1,39 @@
 import { patchInner } from 'incremental-dom';
-import { shadowRoot as $shadowRoot } from '../util/symbols';
+import { connected as $connected, shadowRoot as $shadowRoot, state as $state } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
+import state from '../api/state';
 
 export default function (Ctor) {
-  const { render } = Ctor;
+  const { render, shouldRender } = Ctor;
 
   return function (elem) {
-    if (!render) {
+    // We don't render at all if the user hasn't specified a render function or
+    // if the element hasn't been connected yet. This saves us from doing
+    // unnecessary renders.
+    if (!render || !elem[$connected]) {
       return;
     }
 
-    if (!elem[$shadowRoot]) {
-      let sr;
+    let sr = elem[$shadowRoot];
 
+    if (shouldRender) {
+      const prevState = elem[$state];
+      const currState = state(elem);
+
+      // Update the previous state no matter what so it can be compared on the
+      // next render, even if the component doesn't render this time around.
+      elem[$state] = currState;
+
+      // We always do the initial render, therefore we only check if we should
+      // render if there is a shadow root. If there is no shadow root, then we
+      // are in the initial render.
+      if (sr && !shouldRender(elem, prevState, currState)) {
+        return;
+      }
+    }
+
+    // Setup the shadow root if it hasn't been setup yet.
+    if (!sr) {
       if (shadowDomV1) {
         sr = elem.attachShadow({ mode: 'open' });
       } else if (shadowDomV0) {
@@ -24,6 +45,6 @@ export default function (Ctor) {
       elem[$shadowRoot] = sr;
     }
 
-    patchInner(elem[$shadowRoot], render, elem);
+    patchInner(sr, render, elem);
   };
 }

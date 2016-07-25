@@ -10,7 +10,6 @@ import './unit/extending';
 import './unit/lifecycle';
 import './unit/lifecycle/attribute-changed';
 import './unit/lifecycle/properties';
-import './unit/lifecycle/ready';
 import './unit/lifecycle/render';
 import './unit/registration';
 import './unit/util/dash-case';

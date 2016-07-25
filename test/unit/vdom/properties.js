@@ -1,33 +1,44 @@
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
-import { prop, state, symbols, vdom } from '../../../src/index';
+import fixture from '../../lib/fixture';
+import { define, prop, state, symbols, vdom } from '../../../src/index';
 
-describe('properties', function () {
-  it('class -> className', function () {
-    const elem = new (element().skate({
+describe('vdom/properties', function () {
+  it('class -> className', done => {
+    const elem = new (define('x-test', {
       render () {
         vdom.element('div', { class: 'test' });
       }
     }));
-    expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test');
+    fixture(elem);
+    afterMutations(
+      () => expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test'),
+      done
+    );
   });
 
-  it('false should remove the attribute', function () {
-    const elem = new (element().skate({
+  it('false should remove the attribute', done => {
+    const elem = new (define('x-test', {
       render () {
         vdom.element('div', { test: false });
       }
     }));
-    expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false);
+    fixture(elem);
+    afterMutations(
+      () => expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false),
+      done
+    );
   });
 
-  it('should not set properties on SVG elements', function () {
+  it('should not set properties on SVG elements', done => {
     expect(function () {
-      new (element().skate({
+      new (define('x-test', {
         render () {
           vdom.element('svg', { height: 100 });
         },
       }));
+      afterMutations(
+        done
+      );
     }).to.not.throw(Error);
   });
 
@@ -35,7 +46,7 @@ describe('properties', function () {
     let Elem1, Elem2;
 
     beforeEach(() => {
-      Elem1 = element().skate({
+      Elem1 = define('x-test', {
         props: {
           open: prop.boolean()
         },
@@ -43,7 +54,7 @@ describe('properties', function () {
           vdom.element(Elem2, { open: elem.open });
         },
       });
-      Elem2 = element().skate({
+      Elem2 = define('x-test', {
         props: {
           open: prop.boolean()
         },
@@ -59,7 +70,7 @@ describe('properties', function () {
 
     it('boolean: false -> true -> false', done => {
       const elem = new Elem1();
-      
+      fixture(elem);
       afterMutations(
         () => expect(text(elem)).to.equal('closed', 'init'),
         () => state(elem, { open: true }),
