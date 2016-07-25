@@ -1,13 +1,11 @@
-import { 
-  ctor as $ctor, 
-  events as $events, 
-  name as $name, 
-  props as $props, 
-  renderer as $renderer 
+import {
+  ctor as $ctor,
+  name as $name,
+  props as $props,
+  renderer as $renderer
 } from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
 import Component from './component';
-import createInitEvents from '../lifecycle/events';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
 import definePropertyConstructor from '../util/define-property-constructor';
@@ -121,7 +119,6 @@ export default function (name, opts) {
 
   formatLinkedAttributes(Ctor);
 
-  Ctor[$events] = createInitEvents(Ctor);
   Ctor[$name] = uniqueName;
   Ctor[$props] = createInitProps(Ctor);
   Ctor[$renderer] = createRenderer(Ctor);

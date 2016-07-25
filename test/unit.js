@@ -9,7 +9,6 @@ import './unit/constructor';
 import './unit/extending';
 import './unit/lifecycle';
 import './unit/lifecycle/attribute-changed';
-import './unit/lifecycle/events';
 import './unit/lifecycle/properties';
 import './unit/lifecycle/render';
 import './unit/registration';
