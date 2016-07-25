@@ -245,6 +245,52 @@ import { define, vdom } from 'skatejs';
 
 
 
+## Examples
+
+The following are some simple examples to get you started with Skate.
+
+
+
+### Counter
+
+The following is a simple counter that increments the count for every second that passes.
+
+```js
+const sym = Symbol();
+
+skate.define('x-counter', {
+  props: {
+    // By declaring the property an attribute, we can now pass a the initial
+    // value for the count as part of the HTML.
+    count: skate.prop.number({ attribute: true })
+  },
+  attached(elem) {
+    // We use a symbol so we don't pollute the element's namespace.
+    elem[sym] = setInterval(() => ++elem.count, 1000);
+  },
+  detached(elem) {
+    // If we didn't clean up after ourselves, we'd continue to render
+    // unnecessarily.
+    clearInterval(elem[sym]);
+  },
+  render(elem) {
+    // This first call to text() will not re-render because it does not change.
+    skate.vdom.text('Count: ');
+
+    // This will re-render when the count changes.
+    skate.vdom.text(elem.count);
+  }
+});
+```
+
+To use this, all you'd need to do in your HTML somewhere is:
+
+```html
+<x-counter count="1"></x-counter>
+```
+
+
+
 ## API
 
 
