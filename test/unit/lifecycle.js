@@ -61,18 +61,7 @@ describe('lifecycle', function () {
 });
 
 describe('defined attribute', function () {
-  it('should not be considered "defined" until after ready() is called', function (done) {
-    const tagName = helperElement('my-element');
-    define(tagName.safe, {
-      ready (elem) {
-        expect(elem.hasAttribute('defined')).to.equal(false);
-        done();
-      }
-    });
-    helperFixture('<my-element></my-element>', tagName);
-  });
-
-  it('should be considred "defined" after the created lifecycle finishes', function (done) {
+  it('should be considered "defined" after the created lifecycle finishes', function (done) {
     const tag = helperElement('my-element').safe;
     define(tag, {
       created (elem) {

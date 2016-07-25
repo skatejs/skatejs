@@ -8,7 +8,9 @@ describe('vdom/elements', () => {
   describe('element()', () => {
     describe('arguments', () => {
       function create(render) {
-        return new (element().skate({ render }))();
+        const elem = new (element().skate({ render }))();
+        fixture(elem);
+        return elem;
       }
 
       function ctor(name) {
@@ -17,76 +19,106 @@ describe('vdom/elements', () => {
         return Ctor;
       }
 
-      it('(tagName)', () => {
+      it('(tagName)', done => {
         const elem = create(() => vdom.element('div'));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          done
+        );
       });
 
-      it('(Constructor)', () => {
+      it('(Constructor)', done => {
         const Ctor = ctor('div'); 
         const elem = create(() => vdom.element(Ctor));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          done
+        );
       });
 
-      it('(tagName, textContent)', () => {
+      it('(tagName, textContent)', done => {
         const elem = create(() => vdom.element('div', 'text'));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('(tagName, childrenFunction)', () => {
+      it('(tagName, childrenFunction)', done => {
         const elem = create(() => vdom.element('div', vdom.text.bind(null, 'text')));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('(Contructor, textContent)', () => {
+      it('(Contructor, textContent)', done => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, 'text'));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('(Contructor, childrenFunction)', () => {
+      it('(Contructor, childrenFunction)', done => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, vdom.text.bind(null, 'text')));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('tagName, attrsObject, textContent', () => {
+      it('tagName, attrsObject, textContent', done => {
         const elem = create(() => vdom.element('div', { id: 'test' }, 'text'));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('tagName, attrsObject, childrenFunction', () => {
+      it('tagName, attrsObject, childrenFunction', done => {
         const elem = create(() => vdom.element('div', { id: 'test' }, vdom.text.bind(null, 'text')));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('Constructor, attrsObject, textContent', () => {
+      it('Constructor, attrsObject, textContent', done => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, 'text'));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
 
-      it('Constructor, attrsObject, childrenFunction', () => {
+      it('Constructor, attrsObject, childrenFunction', done => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, vdom.text.bind(null, 'text')));
-        expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV');
-        expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test');
-        expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text');
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
+          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          done
+        );
       });
     });
   });
 
-  it('slot', function () {
+  it('slot', done => {
     const elem1 = new (element().skate({
       render () {
         vdom.element('slot', { name: 'test' });
@@ -98,26 +130,33 @@ describe('vdom/elements', () => {
       }
     }));
 
-    function assertSlotElement () {
-      expect(ch1.tagName).to.equal('SLOT', 'vdom');
-      expect(ch1.getAttribute('name')).to.equal('test', 'vdom');
-      expect(ch2.tagName).to.equal('SLOT', 'vdom.element(slot)');
-      expect(ch2.getAttribute('name')).to.equal('test', 'vdom.element(slot)');
-    }
+    fixture().appendChild(elem1);
+    fixture().appendChild(elem2);
 
-    const ch1 = elem1[symbols.shadowRoot].firstElementChild;
-    const ch2 = elem2[symbols.shadowRoot].firstElementChild;
+    afterMutations(() => {
+      const ch1 = elem1[symbols.shadowRoot].firstElementChild;
+      const ch2 = elem2[symbols.shadowRoot].firstElementChild;
 
-    if (shadowDomV1) {
-      assertSlotElement();
-    } else if (shadowDomV0) {
-      expect(ch1.tagName).to.equal('CONTENT', 'vdom');
-      expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
-      expect(ch2.tagName).to.equal('CONTENT', 'vdom.element(slot)');
-      expect(ch2.getAttribute('select')).to.equal('[slot="test"]', 'vdom.element(slot)');
-    } else {
-      assertSlotElement();
-    }
+      function assertSlotElement () {
+        expect(ch1.tagName).to.equal('SLOT', 'vdom');
+        expect(ch1.getAttribute('name')).to.equal('test', 'vdom');
+        expect(ch2.tagName).to.equal('SLOT', 'vdom.element(slot)');
+        expect(ch2.getAttribute('name')).to.equal('test', 'vdom.element(slot)');
+      }
+
+      if (shadowDomV1) {
+        assertSlotElement();
+      } else if (shadowDomV0) {
+        expect(ch1.tagName).to.equal('CONTENT', 'vdom');
+        expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
+        expect(ch2.tagName).to.equal('CONTENT', 'vdom.element(slot)');
+        expect(ch2.getAttribute('select')).to.equal('[slot="test"]', 'vdom.element(slot)');
+      } else {
+        assertSlotElement();
+      }
+
+      done();
+    });
   });
 
   it('passing a component constructor to the vdom.element() function', done => {
@@ -134,6 +173,9 @@ describe('vdom/elements', () => {
 
     const elem1 = new Elem1();
     const elem2 = new Elem2();
+
+    fixture(elem1);
+    fixture(elem2);
 
     fixture().appendChild(elem1);
     afterMutations(

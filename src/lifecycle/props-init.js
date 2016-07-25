@@ -1,10 +1,6 @@
-import { 
-  renderer as $renderer, 
-  rendererDebounced as $rendererDebounced 
-} from '../util/symbols';
+import { rendererDebounced as $rendererDebounced } from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
-import debounce from '../util/debounce';
 import emit from '../api/emit';
 import empty from '../util/empty';
 
@@ -60,21 +56,6 @@ function createNativePropertyDefinition (name, opts) {
     return internalValue;
   };
 
-  prop.render = (function () {
-    const shouldUpdate = opts.render;
-    if (typeof shouldUpdate === 'undefined') {
-      return function (elem, data) {
-        return data.newValue !== data.oldValue;
-      };
-    }
-    if (typeof shouldUpdate === 'function') {
-      return shouldUpdate;
-    }
-    return function () {
-      return !!shouldUpdate;
-    };
-  }());
-
   prop.set = function (newValue) {
     const propData = data(this, `api/property/${name}`);
     let { oldValue } = propData;
@@ -113,11 +94,8 @@ function createNativePropertyDefinition (name, opts) {
       opts.set(this, changeData);
     }
 
-    // Re-render on property updates if the should-update check passes.
-    if (prop.render(this, changeData)) {
-      const deb = this[$rendererDebounced] || (this[$rendererDebounced] = debounce(this.constructor[$renderer]));
-      deb(this);
-    }
+    // Queue a re-render.
+    this[$rendererDebounced](this);
 
     propData.oldValue = newValue;
 

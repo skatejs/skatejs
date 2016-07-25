@@ -86,11 +86,11 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
   - [Terminology](#terminology)
   - [Installing](#installing)
   - [Consuming](#consuming)
+  - [Examples](#examples)
+    - [Counter](#counter)
   - [API](#api)
     - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
-      - [`events`](#events)
-        - [Event Delegation](#event-delegation)
       - [`created`](#created)
       - [`props`](#props)
         - [`attribute`](#attribute)
@@ -134,11 +134,13 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
         - [`attrs.class`](#attrsclass)
         - [`attrs.key`](#attrskey)
         - [`attrs.on*`](#attrson)
+        - [`attrs.ref`](#attrsref)
         - [`attrs.skip`](#attrsskip)
         - [`attrs.statics`](#attrsstatics)
         - [Boolean Attributes](#boolean-attributes)
       - [Using JSX and other templating languages](#using-jsx-and-other-templating-languages)
   - [Component Lifecycle](#component-lifecycle)
+  - [Binding Events](#binding-events)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
@@ -156,6 +158,9 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
     - [Private Data](#private-data)
   - [React Integration](#react-integration)
   - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
+  - [Form Behaviour and the Shadow DOM](#form-behaviour-and-the-shadow-dom)
+    - [Submission](#submission)
+    - [Form Data](#form-data)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -242,6 +247,52 @@ import { define, vdom } from 'skatejs';
 
 
 
+## Examples
+
+The following are some simple examples to get you started with Skate.
+
+
+
+### Counter
+
+The following is a simple counter that increments the count for every second that passes.
+
+```js
+const sym = Symbol();
+
+skate.define('x-counter', {
+  props: {
+    // By declaring the property an attribute, we can now pass an initial value
+    // for the count as part of the HTML.
+    count: skate.prop.number({ attribute: true })
+  },
+  attached(elem) {
+    // We use a symbol so we don't pollute the element's namespace.
+    elem[sym] = setInterval(() => ++elem.count, 1000);
+  },
+  detached(elem) {
+    // If we didn't clean up after ourselves, we'd continue to render
+    // unnecessarily.
+    clearInterval(elem[sym]);
+  },
+  render(elem) {
+    // This first call to text() will not re-render because it does not change.
+    skate.vdom.text('Count: ');
+
+    // This will re-render when the count changes.
+    skate.vdom.text(elem.count);
+  }
+});
+```
+
+To use this, all you'd need to do in your HTML somewhere is:
+
+```html
+<x-counter count="1"></x-counter>
+```
+
+
+
 ## API
 
 
@@ -306,43 +357,6 @@ skate.define('my-component', {
   }
 });
 ```
-
-
-
-#### `events`
-
-Event listeners to add to the custom element. These get bound after the `prototype` is set up and before `created` is called.
-
-```js
-skate.define('my-component', {
-  events: {
-    click (elem, eventObject) {}
-  }
-});
-```
-
-The arguments passed to the handler are:
-
-- `elem` is the DOM element
-- `eventObject` is the native event object that was dispatched on the DOM element
-
-
-
-##### Event Delegation
-
-Event descriptors can use selectors to target descendants using event delegation.
-
-```js
-skate.define('my-component', {
-  events: {
-    'click button' (elem, eventObject) {}
-  }
-});
-```
-
-Instead of firing for every click on the component element - or that bubbles to the component element - it will only fire if a descendant `<button>` was clicked.
-
-Event delegation works with or without a shadow root as it will inspect the event `path` if it exists.
 
 
 
@@ -772,16 +786,14 @@ Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. T
 
 ```js
 skate.define('x-tabs', {
-  events: {
-    selected: hideAllAndShowSelected
+  render(elem) {
+    skate.vdom.element('x-tab', { onselect: () => {} });
   }
 });
 
 skate.define('x-tab', {
-  events: {
-    click () {
-      skate.emit(this, 'selected');
-    }
+  render(elem) {
+    skate.vdom.element('a', { onclick: () => emit(elem, 'select') });
   }
 });
 ```
@@ -1216,6 +1228,17 @@ skate.vdom.element('my-element', { onsomecustomevent: e => console.log(e) });
 
 
 
+##### `attrs.ref`
+
+A callback that is called when the attribute is set on the corresponding element. The only argument is the element that `ref` is bound to.
+
+```js
+const ref = button => button.addEventListener('click', console.log);
+skate.vdom.element('button', { ref });
+```
+
+
+
 ##### `attrs.skip`
 
 This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
@@ -1302,14 +1325,49 @@ And it could be used like:
 
 The component lifecycle consists of several paths in the following order starting from when the element is first created.
 
-1. `events` are set up
-2. `props` are defined and set to initial values
-3. `created` is invoked
-4. `render` is invoked to render an HTML structure to the component
-5. `ready` is invoked
-6. `attached` is invoked when added to the document (or if already in the document)
-7. `detached` is invoked when removed from the document
-8. `attributeChanged` is invoked whenever an attribute is changed
+1. `props` are defined and set to initial values
+2. `created` is invoked
+3. `render` is invoked to render an HTML structure to the component
+4. `ready` is invoked
+5. `attached` is invoked when added to the document (or if already in the document)
+6. `detached` is invoked when removed from the document
+7. `attributeChanged` is invoked whenever an attribute is changed
+
+
+
+## Binding Events
+
+Generally, binding events to elements are done using the `vdom` [on* syntax](https://github.com/skatejs/skatejs#attrson):
+
+```js
+skate.define('x-element', {
+  render(elem) {
+    skate.vdom.element('div', { onclick: elem.handleClick });
+  },
+  prototype: {
+    handleClick(e) {
+      // `this` is the element.
+      // The event is passed as the only argument.
+    }
+  }
+});
+```
+
+For instances where you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
+
+```js
+skate.define('x-element', {
+  created(elem) {
+    elem.addEventListener('change', elem.handleChange);
+  },
+  prototype: {
+    handleChange(e) {
+      // `this` is the element.
+      // The event is passed as the only argument.
+    }
+  }
+});
+```
 
 
 
@@ -1565,3 +1623,113 @@ Skate is designed to work with hot-module reloading out of the box:
 *Skate cannot refresh the component definition as there is no way to reregister a component using the web component APIs.*
 
 While this makes the name non-deterministic, you can still get the name from the constructor if you need to using the [`name` symbol](#name).
+
+
+
+## Form Behaviour and the Shadow DOM
+
+
+
+### Submission
+
+When you encapsulate a form, button or both inside a shadow root, forms will *not* be submitted when the submit button is clicked. This is because the shadow boundary prevents each shadow root from communicating with each other. Fortunately this isn't very difficult to wire up.
+
+Let's say we have a custom form and custom button (to reproduce, only one of them would need to be contained in a shadow root):
+
+```js
+<x-form>
+  <x-button type="submit">Submit</x-button>
+</x-form>
+```
+
+The definitions look like the following:
+
+```js
+skate.define('x-form', {
+  render() {
+    return (
+      <form>
+        <slot />
+      </form>
+    );
+  }
+});
+
+skate.define('x-button', {
+  render() {
+    return (
+      <button>
+        <slot />
+      </button>
+    );
+  }
+});
+```
+
+To wire this up we listen for clicks coming from something that has a `type` of `"submit"`. You can also check for type, but for the sake of simplicity, we'll just check for `type`:
+
+```js
+function onclick (e) {
+  if (e.target.getAttribute('type') === 'submit') {
+    // do something submitty
+  }
+}
+```
+
+Now all you need to do is put that on the `<form>` inside of `<x-form>`:
+
+```js
+<form { onclick }>
+```
+
+You cane take this a step further and emit a `submit` event on the form and call `submit()` on it if the event wasn't canceled:
+
+```js
+function onclick (e) {
+  if (e.target.getAttribute('type') === 'submit') {
+    if (skate.emit(e.currentTarget, 'submit')) {
+      e.currentTarget.submit();
+    }
+  }
+}
+```
+
+The full example looks like:
+
+```js
+function onclick (e) {
+  if (e.target.getAttribute('type') === 'submit') {
+    if (skate.emit(e.currentTarget, 'submit')) {
+      e.currentTarget.submit();
+    }
+  }
+}
+
+skate.define('x-form', {
+  render() {
+    return (
+      <form>
+        <slot />
+      </form>
+    );
+  }
+});
+
+skate.define('x-button', {
+  render() {
+    return (
+      <button>
+        <slot />
+      </button>
+    );
+  }
+});
+```
+
+
+
+### Form Data
+
+The idea that built-in form elements don't publish their form-data when inside a shadow root is [being discussed](https://github.com/w3c/webcomponents/issues/187).
+
+In order to handle this, your custom form would need to gather all the form data associated with it and submit it along with its request.
