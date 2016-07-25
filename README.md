@@ -1676,8 +1676,8 @@ skate.define('x-button', {
 
 
 
-
-
 ### Form Data
 
 The idea that built-in form elements don't publish their form-data when inside a shadow root is [being discussed](https://github.com/w3c/webcomponents/issues/187).
+
+In order to handle this, your custom form would need to gather all the form data associated with it and submit it along with its request.
