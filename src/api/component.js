@@ -102,7 +102,7 @@ export default class Component extends HTMLElement {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
-    const { definedAttribute, created, observedAttributes, props } = Ctor;
+    const { created, observedAttributes, props } = Ctor;
 
     // TODO: This prevents an element from being initialised multiple times. For
     // some reason this is happening in the event tests. It's possibly creating
@@ -120,10 +120,6 @@ export default class Component extends HTMLElement {
 
     if (created) {
       created(this);
-    }
-
-    if (!this.hasAttribute(definedAttribute)) {
-      this.setAttribute(definedAttribute, '');
     }
 
     if (readyCallbacks) {
@@ -150,10 +146,6 @@ export default class Component extends HTMLElement {
 
   detachedCallback () {
     this.disconnectedCallback();
-  }
-
-  static get definedAttribute () {
-    return 'defined';
   }
 
   static get observedAttributes () {
