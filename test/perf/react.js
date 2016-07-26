@@ -1,21 +1,21 @@
 import { define, prop, state, vdom } from '../../src/index';
 import bp from 'birdpoo';
 
-const { element } = vdom;
 
 // Skate components.
-const wclist = (props, chren) => element('ul', props, chren);
-const wcitem = (props, chren) => element('li', props, chren);
+const [ div, h1, li, ul, item, list ] = ['div', 'h1', 'li', 'ul', WcXitem, WcXlist].map(t => vdom.element.bind(null, t));
+const WcXlist = (props, chren) => ul(props, chren);
+const WcXitem = (props, chren) => li(props, chren);
 define('x-app', {
   props: {
     title: prop.string({ default: 'initial' }),
   },
   render (elem) {
-    element('div', function () {
-      element('h1', elem.title);
-      element(wclist, function () {
-        for (let key = 0; key < 100; key++) {
-          element(wcitem, { key }, `Item ${key}`);
+    div(function () {
+      h1(elem.title);
+      list(function () {
+        for (let key = 0; key < 1000; key++) {
+          item(`Item ${key}`);
         }
       });
     });
@@ -36,8 +36,8 @@ const Xapp = class extends React.Component {
       React.createElement('h1', null, this.state.title),
       React.createElement(Xlist, null, (function () {
         const items = [];
-        for (let key = 0; key < 100; key++) {
-          items.push(React.createElement(Xitem, { key }, `Item ${key}`));
+        for (let key = 0; key < 1000; key++) {
+          items.push(React.createElement(Xitem, `Item ${key}`));
         }
         return items;
       }()))
