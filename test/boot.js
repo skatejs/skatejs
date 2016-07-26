@@ -1,5 +1,5 @@
-import 'skatejs-named-slots';
-import 'webcomponents.js/CustomElements';
+//import 'skatejs-named-slots';
+//import 'webcomponents.js/CustomElements';
 import helperFixture from './lib/fixture';
 
 mocha.setup({ timeout: 10000 });

@@ -1,112 +1,77 @@
-import { define, prop, vdom } from '../../src/index';
-import Benchmark from 'benchmark';
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { define, prop, state, vdom } from '../../src/index';
+import bp from 'birdpoo';
 
-const fixture = document.createElement('div');
-document.body.appendChild(fixture);
-
-const render = new Benchmark.Suite();
-const update = new Benchmark.Suite();
-
+const { element } = vdom;
 
 // Skate components.
-
+const wclist = (props, chren) => element('ul', props, chren);
+const wcitem = (props, chren) => element('li', props, chren);
 define('x-app', {
   props: {
-    title: prop.number(),
+    title: prop.string({ default: 'initial' }),
   },
   render (elem) {
-    vdom.element('div', function () {
-      vdom.element('h1', elem.title);
-      vdom.element('x-list', function () {
-        for (let a = 0; a < 10; a++) {
-          vdom.element('x-item', `Item ${a}`);
+    element('div', function () {
+      element('h1', elem.title);
+      element(wclist, function () {
+        for (let key = 0; key < 100; key++) {
+          element(wcitem, { key }, `Item ${key}`);
         }
       });
     });
   },
 });
 
-define('x-list', {
-  render () {
-    vdom.element('slot');
-  },
-});
-
-define('x-item', {
-  render () {
-    vdom.element('slot');
-  },
-});
-
 
 // React components.
-
+const Xlist = props => React.createElement('div', null, props.children);
+const Xitem = props => React.createElement('div', null, props.children);
 const Xapp = class extends React.Component {
-  getInitialState () {
-    return { title: 0 };
+  constructor() {
+    super();
+    this.state = { title: 'initial' };
   }
   render () {
-    const items = [];
-    for (let a = 0; a < 10; a++) {
-      items.push(a);
-    }
     return React.createElement('div', null,
-      React.createElement('h1', this.state.title),
-      React.createElement(Xlist, null,
-        items.map(function (key) {
-          return React.createElement(Xitem, { key }, `Item ${key}`);
-        })
-      )
+      React.createElement('h1', null, this.state.title),
+      React.createElement(Xlist, null, (function () {
+        const items = [];
+        for (let key = 0; key < 100; key++) {
+          items.push(React.createElement(Xitem, { key }, `Item ${key}`));
+        }
+        return items;
+      }()))
     );
   }
 };
 
-const Xlist = props => React.createElement('div', null, props.children);
-const Xitem = props => React.createElement('div', null, props.children);
 
-render.add('skate', function () {
-  fixture.innerHTML = '<x-app></x-app>';
-  fixture.innerHTML = '';
-}, { teardown() { fixture.innerHTML = ''; } });
+// Fixture
 
-render.add('react', function () {
-  ReactDOM.render(React.createElement(Xapp), fixture);
-  ReactDOM.unmountComponentAtNode(fixture);
-}, { teardown() { fixture.innerHTML = ''; } });
+const fixture = document.createElement('div');
+document.body.appendChild(fixture);
 
-update.add('skate', function () {
-  component.title = `Test ${this.count}`;
-}, {
-  setup() {
-    fixture.innerHTML = '<x-app></x-app>';
-    const component = fixture.firstChild;
-  },
-  teardown() {
-    fixture.innerHTML = '';
-  },
-});
 
-update.add('react', function () {
-  component.setState({
-    title: `Test ${this.count}`,
-  });
-}, {
-  setup() {
-    const component = ReactDOM.render(React.createElement(Xapp), fixture);
-  },
-  teardown() {
-    ReactDOM.unmountComponentAtNode(fixture);
-  },
-});
+// Initial render
 
-render.on('cycle', function(event) {
-  console.log(String(event.target));
-});
+bp(() => fixture.innerHTML = '<x-app></x-app>', {
+  after: () => fixture.innerHTML = ''
+}).then(opts => console.log(`Skate (render): ${opts} / sec`));
 
-render.on('complete', function() {
-  console.log('Fastest is ' + this.filter('fastest').map('name'));
-});
+bp(() => ReactDOM.render(React.createElement(Xapp), fixture), {
+  after: () => ReactDOM.unmountComponentAtNode(fixture)
+}).then(opts => console.log(`React (render): ${opts} / sec`));
 
-render.run();
+
+// Subsequent renders (actual updates)
+
+let comp;
+let count = 0;
+
+comp = (fixture.innerHTML = '<x-app></x-app>') && fixture.firstElementChild;
+bp(() => state(comp, { title: ++count })).then(opts => console.log(`Skate (update): ${opts} / sec`));
+fixture.innerHTML = '';
+
+comp = ReactDOM.render(React.createElement(Xapp), fixture);
+bp(() => comp.setState({ title: ++count })).then(opts => console.log(`React (update): ${opts} / sec`));
+ReactDOM.unmountComponentAtNode(fixture);
