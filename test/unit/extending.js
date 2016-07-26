@@ -8,9 +8,8 @@ describe('extending', function () {
     Ctor = define(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created () {},
-      render () {
-        vdom.text('test');
+      created (elem) {
+        elem.__test = 'test';
       },
       attributeChanged () {},
       prototype: {
@@ -48,18 +47,18 @@ describe('extending', function () {
 
   it('should not mess with callbacks', function () {
     const ExtendedCtor = define(tag, class extends Ctor {});
-    expect(new ExtendedCtor()[symbols.shadowRoot].textContent).to.equal('test');
+    expect(new ExtendedCtor().__test).to.equal('test');
   });
 
   it('should allow overriding of callbacks', function () {
     const ExtendedCtor = define(tag, class extends Ctor {
-      static render (elem) {
-        super.render(elem);
-        vdom.text('ing');
+      static created (elem) {
+        super.created(elem);
+        elem.__test += 'ing';
       }
     });
     const elem = new ExtendedCtor();
-    expect(elem[symbols.shadowRoot].textContent).to.equal('testing');
+    expect(elem.__test).to.equal('testing');
   });
 
   it('constructor should be accessible', function () {

@@ -11,11 +11,13 @@ import {
   symbols,
   text,
 } from 'incremental-dom';
-import * as skateSymbols from './symbols';
+import { name as $name, ref as $ref } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 
-const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const applyDefault = attributes[symbols.default];
+const fallbackToV0 = !shadowDomV1 && shadowDomV0;
+const stackChren = [];
+const stackProps = [];
 
 // Attributes that are not handled by Incremental DOM.
 attributes.key = attributes.skip = attributes.statics = function () {};
@@ -25,20 +27,26 @@ attributes.checked = attributes.className = attributes.disabled = attributes.val
 
 // Default attribute applicator.
 attributes[symbols.default] = function (elem, name, value) {
-  // Boolean false values should not set attributes at all.
-  if (value === false) {
-    return;
-  }
-
   // If the skip attribute was specified, skip
   if (name === 'skip' && value) {
     return skip();
+  }
+
+  // Add the ref to the element so it can be called when it's closed.
+  if (name === 'ref') {
+    elem[$ref] = value;
+    return;
   }
 
   // Custom element properties should be set as properties.
   const props = elem.constructor.props;
   if (props && name in props) {
     return applyProp(elem, name, value);
+  }
+
+  // Boolean false values should not set attributes at all.
+  if (value === false) {
+    return;
   }
 
   // Handle built-in and custom events.
@@ -78,35 +86,80 @@ function applyEvent (elem, ename, name, value) {
   }
 }
 
-// Returns the tag name of the element if a custom element constructor was
-// provided instead of a string.
-function decideIfConstructorOrNot (tname) {
-  return typeof tname === 'function' ? tname[skateSymbols.name] : tname;
+function resolveTagName (tname) {
+  // If the tag name is a function, a Skate constructor or a standard function
+  // is supported.
+  //
+  // - If a Skate constructor, the tag name is extracted from that.
+  // - If a standard function, it is used as a helper.
+  if (typeof tname === 'function') {
+    return tname[$name] || tname;
+  }
+
+  // Skate allows the consumer to use <slot /> and it will translate it to
+  // <content /> if Shadow DOM V0 is preferred.
+  if (tname === 'slot' && fallbackToV0) {
+    return 'content';
+  }
+
+  // All other tag names are just passed through.
+  return tname;
 }
 
-// Returns the correct tag name so we can use <content> instead of <slot> if we
-// need to use Shadow DOM V0.
-function decideIfContentTagOrNot (tname) {
-  return tname === 'slot' && fallbackToV0 ? 'content' : tname;
+function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
+  return function wrap (...args) {
+    args[0] = resolveTagName(args[0]);
+    if (typeof args[0] === 'function') {
+      // If we've encountered a function, handle it according to the type of
+      // function that is being wrapped.
+      return tnameFuncHandler(...args);
+    } else if (stackChren.length) {
+      // We pass the wrap() function in here so that when it's called as
+      // children, it will queue up for the next stack, if there is one.
+      stackChren[stackChren.length - 1].push([wrap, args]);
+    } else {
+      // If there is no stack left, we call Incremental DOM directly.
+      const elem = func(...args);
+
+      // If we're in elementClose, try calling the ref.
+      if (func === elementClose) {
+        const eref = elem[$ref];
+        if (typeof eref === 'function') {
+          eref(elem);
+        }
+      }
+
+      return elem;
+    }
+  };
 }
 
-// Patch elementOpen() so that anything that compiles down to Incremental DOM
-// gets the special behaviour.
-function newElementOpen (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementOpen.apply(null, args);
+function newAttr (key, val) {
+  if (stackProps.length) {
+    stackProps[stackProps.length - 1][key] = val;
+  } else {
+    return attr(key, val);
+  }
 }
 
-// Patch elementOpenStart() for the same reason we patched elementOpen().
-function newElementOpenStart (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementOpenStart.apply(null, args);
+function stackOpen (tname, key, statics, ...attrs) {
+  const props = {};
+  for (let a = 0; a < attrs.length; a += 2) {
+    props[attrs[a]] = attrs[a + 1];
+  }
+  stackChren.push([]);
+  stackProps.push(props);
 }
 
-// Patch elementVoid() for the same reason we patched elementOpen().
-function newElementVoid (...args) {
-  args[0] = decideIfConstructorOrNot(decideIfContentTagOrNot(args[0]));
-  return elementVoid.apply(null, args);
+function stackClose (tname) {
+  const chren = stackChren.pop();
+  const props = stackProps.pop();
+  return tname(props, () => chren.forEach(args => args[0](...args[1])));
+}
+
+function stackVoid (...args) {
+  stackOpen(...args);
+  return stackClose(args[0]);
 }
 
 // Convenience function for declaring an Incremental DOM element using
@@ -114,10 +167,12 @@ function newElementVoid (...args) {
 export function element (tname, attrs, chren) {
   const atype = typeof attrs;
 
-  if (atype === 'function') {
+  // If attributes are a function, then they should be treated as children.
+  if (atype === 'function' || atype === 'string') {
     chren = attrs;
   }
   
+  // Ensure the attributes are an object.
   if (atype !== 'object') {
     attrs = {};
   }
@@ -130,29 +185,37 @@ export function element (tname, attrs, chren) {
   delete attrs.statics;
 
   // Set attributes.
-  Object.keys(attrs).forEach(name => attr(name, attrs[name]));
+  Object.keys(attrs).forEach(name => newAttr(name, attrs[name]));
 
   // Close before we render the descendant tree.
-  elementOpenEnd();
+  newElementOpenEnd(tname);
   
   const ctype = typeof chren;
   if (ctype === 'function') {
     chren();
   } else if (ctype === 'string' || ctype === 'number') {
-    text(chren);
+    newText(chren);
   }
 
-  return elementClose(tname);
+  return newElementClose(tname);
 }
+
+// Patch element factories.
+const newElementClose = wrapIdomFunc(elementClose, stackClose);
+const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
+const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
+const newText = wrapIdomFunc(text);
 
 // We don't have to do anything special for the text function; it's just a 
 // straight export from Incremental DOM.
 export {
-  attr,
-  elementClose,
-  elementOpenEnd,
+  newAttr as attr,
+  newElementClose as elementClose,
   newElementOpen as elementOpen,
+  newElementOpenEnd as elementOpenEnd,
   newElementOpenStart as elementOpenStart,
-  newElementVoid as elementVoid, 
-  text,
+  newElementVoid as elementVoid,
+  newText as text,
 };
