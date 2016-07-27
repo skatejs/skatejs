@@ -30,17 +30,17 @@ describe('IncrementalDOM', function () {
 
       patchIt('elementOpen, elementClose', () => {
         vdom.elementOpen(Elem);
-        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test></x-test>');
       });
 
       patchIt('elementOpenStart, elementOpenEnd, elementClose', () => {
         vdom.elementOpenStart(Elem);
         vdom.elementOpenEnd(Elem);
-        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+        expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test></x-test>');
       });
       
       patchIt('elementVoid', () => {
-        expect(vdom.elementVoid(Elem).outerHTML).to.equal('<x-test defined></x-test>');
+        expect(vdom.elementVoid(Elem).outerHTML).to.equal('<x-test></x-test>');
       });
     });
 

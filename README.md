@@ -770,16 +770,6 @@ The differences being that as a result of defining it as a property, it is now l
 
 
 
-#### `definedAttribute`
-
-The name of the attribute that is added to the element after it has been upgraded.
-
-```html
-<my-component defined />
-```
-
-
-
 ### `emit (elem, eventName, eventOptions = {})`
 
 Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
@@ -1428,18 +1418,23 @@ React has definitely had an influence on Skate. That said, they're completely di
 
 ## Preventing FOUC
 
-An element may not be initialised right away. In order to prevent jank or FOUC, you can use the `defined` attribute to style your components accordingly.
+An element may not be initialised right away if your definitions are loaded after the document is parsed. In order to prevent FOUC or jank, we recommend that you add something to your element that you can hook into in your CSS. For example, you can add a `defined` attribute in `created()` and then do something like:
 
 ```css
-my-element:not([defined]) {
-  opacity: 0;
-}
-
-my-element[defined] {
+my-element,
+my-element {
   opacity: 1;
   transition: opacity .3s ease;
 }
+my-element:not([defined]),
+my-element:not(:defined) {
+  opacity: 0;
+}
 ```
+
+In native you can use `:defined`, but in polyfill-land, it's unfortunately up to the consumer.
+
+The reason we don't do this automatically is because it would be mutating the element. If the element is rendered by a virtual DOM layer, then it won't know about the mutation. When it's re-rendered (if it is) it's likely that it would remove the attribute because its representation of what the DOM should look like doesn't involve that attribute. If the mutation is undone, then the undefined styles apply.
 
 
 
