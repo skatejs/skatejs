@@ -2,13 +2,9 @@ import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
 
 function get (elem) {
-  const props = elem.constructor.props;
   const state = {};
-  for (let key in props) {
-    const val = elem[key];
-    if (typeof val !== 'undefined') {
-      state[key] = val;
-    }
+  for (let key in elem.constructor.props) {
+    state[key] = elem[key];
   }
   return state;
 }

@@ -14,6 +14,9 @@ describe('api/state', function () {
         },
         prop2: {
           initial: 'test2'
+        },
+        prop3: {
+          default: undefined
         }
       },
       created(elem) {
@@ -27,11 +30,12 @@ describe('api/state', function () {
     afterMutations(done);
   });
 
-  it('getting', () => {
-    it('should return only defined properties', function () {
+  describe('getting', () => {
+    it('should return only properties defined as props', function () {
       const curr = state(elem);
       expect(curr.prop1).to.equal('test1');
       expect(curr.prop2).to.equal('test2');
+      expect('prop3' in curr).to.equal(true);
       expect(curr.undeclaredProp).to.equal(undefined);
     });
   });
