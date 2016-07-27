@@ -27,7 +27,10 @@
     "regex-native-function": "^1.0.0"
   },
   "devDependencies": {
+    "birdpoo": "0.0.2",
     "eslint": "^3.0.1",
+    "react": "^15.1.0",
+    "react-dom": "^15.1.0",
     "skatejs-build": "^6.0.0",
     "skatejs-named-slots": "^0.2.10",
     "webcomponents.js": "^0.7.22"
