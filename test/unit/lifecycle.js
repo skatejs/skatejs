@@ -59,19 +59,3 @@ describe('lifecycle', function () {
     });
   });
 });
-
-describe('defined attribute', function () {
-  it('should be considered "defined" after the created lifecycle finishes', function (done) {
-    const tag = helperElement('my-element').safe;
-    define(tag, {
-      created (elem) {
-        expect(elem.hasAttribute('defined')).to.equal(false, 'should not have resolved');
-      },
-      attached (elem) {
-        expect(elem.hasAttribute('defined')).to.equal(true, 'should have defined');
-        done();
-      }
-    });
-    helperFixture(`<${tag}></${tag}>`);
-  });
-});

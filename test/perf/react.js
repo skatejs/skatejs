@@ -1,146 +1,126 @@
-import bench from 'skatejs-build/bench';
-import { define, props, vdom } from '../../src/index';
-
+import { define, prop, ready, state, vdom } from '../../src/index';
+import bp from 'birdpoo';
 
 const { React, ReactDOM } = window;
 
 
 // Skate components.
-
+const wclist = (props, chren) => ul(props, chren);
+const wcitem = (props, chren) => li(props, chren);
+const [ div, h1, li, ul, item, list ] = ['div', 'h1', 'li', 'ul', wclist, wcitem].map(t => vdom.element.bind(null, t));
 define('x-app', {
   props: {
-    title: props.string({ default: 0 })
+    title: prop.string({ default: 'initial' }),
   },
   render (elem) {
-    vdom.element('div', function () {
-      vdom.element('h1', elem.title);
-      vdom.element('x-list', function () {
-        for (let a = 0; a < 10; a++) {
-          vdom.element('x-item', `Item ${a}`);
+    div(function () {
+      h1(elem.title);
+      list(function () {
+        for (let key = 0; key < 1000; key++) {
+          item(`Item ${key}`);
         }
       });
     });
-  }
-});
-
-define('x-list', {
-  render () {
-    vdom.element('slot', { name: '' });
-  }
-});
-
-define('x-item', {
-  render () {
-    vdom.element('slot', { name: '' });
-  }
+  },
 });
 
 
 // React components.
-
-const Xapp = React.createClass({
-  getInitialState () {
-    return { title: 0 };
-  },
+const Xlist = props => React.createElement('div', null, props.children);
+const Xitem = props => React.createElement('div', null, props.children);
+const Xapp = class extends React.Component {
+  constructor() {
+    super();
+    this.state = { title: 'initial' };
+  }
   render () {
-    const items = [];
-    for (let a = 0; a < 10; a++) {
-      items.push(a);
-    }
     return React.createElement('div', null,
-      React.createElement('h1', this.state.title),
-      React.createElement(Xlist, null,
-        items.map(function (key) {
-          return React.createElement(Xitem, { key }, `Item ${key}`);
-        })
-      )
+      React.createElement('h1', null, this.state.title),
+      React.createElement(Xlist, null, (function () {
+        const items = [];
+        for (let key = 0; key < 1000; key++) {
+          items.push(React.createElement(Xitem, `Item ${key}`));
+        }
+        return items;
+      }()))
     );
   }
-});
-
-const Xlist = React.createClass({
-  render () {
-    return React.createElement('div', null, this.props.children);
-  }
-});
-
-const Xitem = React.createClass({
-  render () {
-    return React.createElement('div', null, this.props.children);
-  }
-});
+};
 
 
-describe('', function () {
-  let fixture;
+// Fixture
 
-  beforeEach(function () {
-    fixture = document.createElement('div');
-    document.body.appendChild(fixture);
-  });
+const fixture = document.createElement('div');
+document.body.appendChild(fixture);
 
-  afterEach(function () {
-    document.body.removeChild(fixture);
-  });
 
-  describe('initial render', function () {
-    bench('skate', function () {
+// Initial render
+const afterMutations = cb => isNative ? cb() : setTimeout(cb);
+const isNative = !!Document.prototype.registerElement;
+describe('render', () => {
+  it('skate', done => {
+    bp(next => {
       fixture.innerHTML = '<x-app></x-app>';
-      fixture.innerHTML = '';
-    });
+      next();
+      afterMutations(next);
+    }, {
+      after: next => {
+        fixture.innerHTML = '';
+        afterMutations(next);
+      }
+    })
+      .then(ops => console.log(`Skate (render): ${ops} / sec`))
+      .then(done.bind(null, null))
+      .catch(done);
+  });
 
-    bench('react', function (d) {
-      ReactDOM.render(React.createElement(Xapp), fixture, function () {
+  it('react', done => {
+    bp(next => {
+      ReactDOM.render(React.createElement(Xapp), fixture);
+      next();
+    }, {
+      after: next => {
         ReactDOM.unmountComponentAtNode(fixture);
-        d.resolve();
-      });
+        next();
+      }
+    })
+      .then(ops => console.log(`React (render): ${ops} / sec`))
+      .then(done.bind(null, null))
+      .catch(done);
+  });
+});
+
+describe('update', () => {
+  it('skate', done => {
+    fixture.innerHTML = '<x-app></x-app>';
+
+    let comp = fixture.firstElementChild;
+    ready(comp, () => {
+      bp(function (next) {
+        state(this.comp, { title: ++this.count });
+        next();
+      }, {
+        comp,
+        count: 0
+      })
+        .then(ops => console.log(`Skate (update): ${ops} / sec`))
+        .then(() => fixture.innerHTML = '')
+        .then(done.bind(null, null))
+        .catch(done);
     });
   });
 
-  describe('re-render after initial render', function () {
-    describe('', function () {
-      let component;
-
-      beforeEach(function () {
-        fixture.innerHTML = '<x-app></x-app>';
-        component = fixture.firstChild;
-      });
-
-      afterEach(function () {
-        fixture.innerHTML = '';
-      });
-
-      bench('skate', {
-        args () {
-          return component;
-        },
-        fn () {
-          this.args().title = `Test ${this.count}`;
-        }
-      });
-    });
-
-    describe('', function () {
-      let component;
-
-      beforeEach(function () {
-        component = ReactDOM.render(React.createElement(Xapp), fixture);
-      });
-
-      afterEach(function () {
-        ReactDOM.unmountComponentAtNode(fixture);
-      });
-
-      bench('react', {
-        args () {
-          return component;
-        },
-        fn () {
-          this.args().setState({
-            title: `Test ${this.count}`
-          });
-        }
-      });
-    });
+  it('react', done => {
+    bp(function (next) {
+      this.comp.setState({ title: ++this.count });
+      next();
+    }, {
+      comp: ReactDOM.render(React.createElement(Xapp), fixture),
+      count: 0
+    })
+      .then(ops => console.log(`React (update): ${ops} / sec`))
+      .then(() => ReactDOM.unmountComponentAtNode(fixture))
+      .then(done.bind(null, null))
+      .catch(done);
   });
 });
