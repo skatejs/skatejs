@@ -27,7 +27,7 @@
     "regex-native-function": "^1.0.0"
   },
   "devDependencies": {
-    "birdpoo": "0.0.2",
+    "birdpoo": "^0.2.2",
     "eslint": "^3.0.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",

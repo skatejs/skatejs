@@ -1,4 +1,3 @@
-import 'skatejs-named-slots';
 import 'webcomponents.js/CustomElements';
 import helperFixture from './lib/fixture';
 

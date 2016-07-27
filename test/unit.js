@@ -1,3 +1,4 @@
+import 'skatejs-named-slots';
 import './boot';
 import './unit/index';
 import './unit/api/define';
