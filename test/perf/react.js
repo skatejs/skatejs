@@ -1,6 +1,8 @@
 import { define, prop, ready, state, vdom } from '../../src/index';
 import bp from 'birdpoo';
 
+const { React, ReactDOM } = window;
+
 
 // Skate components.
 const wclist = (props, chren) => ul(props, chren);
@@ -53,15 +55,18 @@ document.body.appendChild(fixture);
 
 
 // Initial render
+const afterMutations = cb => isNative ? cb() : setTimeout(cb);
+const isNative = !!Document.prototype.registerElement;
 describe('render', () => {
   it('skate', done => {
     bp(next => {
       fixture.innerHTML = '<x-app></x-app>';
-      ready(fixture.firstElementChild, next);
+      next();
+      afterMutations(next);
     }, {
       after: next => {
         fixture.innerHTML = '';
-        next();
+        afterMutations(next);
       }
     })
       .then(ops => console.log(`Skate (render): ${ops} / sec`))
