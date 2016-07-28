@@ -59,7 +59,7 @@ describe('lifecycle/render', () => {
   });
 
   describe('updated()', () => {
-    it.only('should be called even if there is no render function', done => {
+    it('should be called even if there is no render function', done => {
       let called = 0;
       const Elem = define('x-test', {
         props: {
