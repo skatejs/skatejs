@@ -177,7 +177,7 @@ export default class Component extends HTMLElement {
   // This is a default implementation that does strict equality copmarison on
   // prevoius props and next props. It synchronously renders on the first prop
   // that is different and returns immediately.
-  static beforeRender (elem, prev, next) {
+  static updated (elem, prev, next) {
     if (!prev) {
       return true;
     }

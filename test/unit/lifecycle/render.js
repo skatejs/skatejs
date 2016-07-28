@@ -58,31 +58,28 @@ describe('lifecycle/render', () => {
     );
   });
 
-  describe('beforeRender()', () => {
-    it('should be passed the element, preveious props and current props', done => {
+  describe('updated()', () => {
+    it('should be called even if there is no render function', done => {
       const Elem = define('x-test', {
         props: {
           test: prop.number()
         },
-        beforeRender(el, prev, next) {
+        updated(el, prev, next) {
           expect(el).to.equal(elem);
           expect(prev).to.equal(undefined);
           expect(next.test).to.equal(0);
           done();
         },
-        render() {
-          // beforeRender() is only called if there is a render()
-        }
       });
       const elem = new Elem();
       fixture(elem);
     });
 
     it('should prevent rendering if it returns falsy', done => {
-      let calledBeforeRender, calledRender = false;
+      let calledUpdated, calledRender = false;
       const Elem = define('x-test', {
-        beforeRender() {
-          calledBeforeRender = true;
+        updated() {
+          calledUpdated = true;
         },
         render() {
           calledRender = true;
@@ -91,17 +88,17 @@ describe('lifecycle/render', () => {
       const elem = new Elem();
       fixture(elem);
       afterMutations(() => {
-        expect(calledBeforeRender).to.equal(true);
+        expect(calledUpdated).to.equal(true);
         expect(calledRender).to.equal(false);
         done();
       });
     });
 
     it('should allow rendering', done => {
-      let calledBeforeRender, calledRender = false;
+      let calledUpdated, calledRender = false;
       const Elem = define('x-test', {
-        beforeRender() {
-          calledBeforeRender = true;
+        updated() {
+          calledUpdated = true;
           return true;
         },
         render() {
@@ -111,21 +108,21 @@ describe('lifecycle/render', () => {
       const elem = new Elem();
       fixture(elem);
       afterMutations(() => {
-        expect(calledBeforeRender).to.equal(true);
+        expect(calledUpdated).to.equal(true);
         expect(calledRender).to.equal(true);
         done();
       });
     });
 
     it('should allow props to be set within it and not be called again as a result', done => {
-      let calledBeforeRender = 0;
+      let calledUpdated = 0;
       let calledRender = 0;
       const Elem = define('x-test', {
         props: {
           test: {}
         },
-        beforeRender(elem) {
-          ++calledBeforeRender;
+        updated(elem) {
+          ++calledUpdated;
 
           // Sync render.
           props(elem, { test: 'updated 1' });
@@ -145,35 +142,50 @@ describe('lifecycle/render', () => {
       const elem = new Elem();
       fixture(elem);
       afterMutations(() => {
-        expect(calledBeforeRender).to.equal(1, 'before');
+        expect(calledUpdated).to.equal(1, 'before');
         expect(calledRender).to.equal(1, 'render');
         done();
       });
     });
   });
 
-  describe('afterRender()', () => {
+  describe('rendered()', () => {
     it('should be called after rendering', done => {
       const order = [];
       const Elem = define('x-test', {
-        beforeRender() {
-          order.push('beforeRender');
+        updated() {
+          order.push('updated');
           return true;
         },
         render() {
           order.push('render');
         },
-        afterRender(el) {
-          order.push('afterRender');
+        rendered(el) {
+          order.push('rendered');
           expect(el).to.equal(elem);
         }
       });
       const elem = new Elem();
       fixture(elem);
       afterMutations(() => {
-        expect(order[0]).to.equal('beforeRender');
+        expect(order[0]).to.equal('updated');
         expect(order[1]).to.equal('render');
-        expect(order[2]).to.equal('afterRender');
+        expect(order[2]).to.equal('rendered');
+        done();
+      });
+    });
+
+    it('should not be called if render() is not defined', done => {
+      let afterCalled = false;
+      const Elem = define('x-test', {
+        rendered() {
+          afterCalled = true;
+        }
+      });
+      const elem = new Elem();
+      fixture(elem);
+      afterMutations(() => {
+        expect(afterCalled).to.equal(false);
         done();
       });
     });
@@ -181,13 +193,13 @@ describe('lifecycle/render', () => {
     it('should not be called if rendering is prevented', done => {
       let afterCalled = false;
       const Elem = define('x-test', {
-        beforeRender() {
+        updated() {
           
         },
         render() {
           
         },
-        afterRender() {
+        rendered() {
           afterCalled = true;
         }
       });

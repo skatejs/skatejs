@@ -4,20 +4,31 @@ import { shadowDomV0, shadowDomV1 } from '../util/support';
 import props from '../api/props';
 
 export default function (Ctor) {
-  const { afterRender, beforeRender, render } = Ctor;
+  const { render, rendered, updated } = Ctor;
 
   return function (elem) {
-    // We don't render if:
-    // - There is no render()
-    // - We are currently in the process of rendering
-    // - The element is not in the DOM yet
-    if (!render || elem[$rendering] || !elem[$connected]) {
+    if (elem[$rendering] || !elem[$connected]) {
       return;
     }
 
     // Flag as rendering. This prevents anything from trying to render - or
     // queueing a render - while there is a pending render.
     elem[$rendering] = true;
+
+    // Call the updated() callback to see if we should render.
+    let shouldRender = true;
+    if (updated) {
+      const prev = elem[$props];
+      const next = props(elem);
+      elem[$props] = next;
+      shouldRender = updated(elem, prev, next);
+    }
+
+    // Even though this would ideally be checked in the updated() callback,
+    // it may not be, so we ensure that there is a point in proceeding.
+    if (!render) {
+      return;
+    }
 
     // Try and get the current shadow root (will be setup if not).
     let sr = elem[$shadowRoot];
@@ -35,18 +46,10 @@ export default function (Ctor) {
       elem[$shadowRoot] = sr;
     }
 
-    let shouldRender = true;
-    if (beforeRender) {
-      const prev = elem[$props];
-      const next = props(elem);
-      elem[$props] = next;
-      shouldRender = beforeRender(elem, prev, next);
-    }
-
     if (shouldRender) {
       patchInner(sr, render, elem);
-      if (afterRender) {
-        afterRender(elem);
+      if (rendered) {
+        rendered(elem);
       }
     }
 
