@@ -161,7 +161,7 @@ function newAttr (key, val) {
 }
 
 function stackOpen (tname, key, statics, ...attrs) {
-  const props = {};
+  const props = { key, statics };
   for (let a = 0; a < attrs.length; a += 2) {
     props[attrs[a]] = attrs[a + 1];
   }
