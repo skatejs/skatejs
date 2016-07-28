@@ -256,5 +256,29 @@ describe('vdom/elements', () => {
         done
       );
     });
+
+    it('should pass through special attrs', done => {
+      const key = 'my-key';
+      const ref = () => {};
+      const statics = [];
+      const El = props => {
+        expect(props.key).to.equal(key, 'key');
+        expect(props.ref).to.equal(ref, 'ref');
+        expect(props.statics).to.equal(statics, 'statics');
+        vdom.element('div', { key, ref, statics });
+      };
+      const Elem = element().skate({
+        render () {
+          vdom.element(El, { key, ref, statics });
+        }
+      });
+      const elem = new Elem();
+
+      fixture().appendChild(elem);
+      afterMutations(
+        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div></div>'),
+        done
+      );
+    });
   });
 });
