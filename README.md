@@ -651,7 +651,7 @@ skate.define('x-component', {
 The default implementation does what is described in the example above:
 
 - If it is the initial update, always call `render()`
-- If any of the properties have changed according to a strict equality comparisin, always call `render()`
+- If any of the properties have changed according to a strict equality comparison, always call `render()`
 - In any other scenario, don't render
 
 This generally convers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
