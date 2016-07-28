@@ -631,16 +631,16 @@ The only argument passed to `created` is component element. In this case that is
 Called before `render()` after `props` are updated. If it returns falsy, `render()` is not called. If it returns truthy, `render()` is called.
 
 ```js
-skate.define('my-component', {
-  updated(elem, prevProps, nextProps) {
+skate.define('x-component', {
+  updated(elem, prevProps) {
     // The previous props will not be defined if it is the initial render.
     if (!prevProps) {
       return true;
     }
 
-    // The previous and next props will always have the same keys.
-    for (let a in prevProps) {
-      if (prevProps[a] !== nextProps[a]) {
+    // The previous props will always contain all of the keys.
+    for (let name in prevProps) {
+      if (prevProps[name] !== elem[name]) {
         return true;
       }
     }
@@ -654,9 +654,36 @@ The default implementation does what is described in the example above:
 - If any of the properties have changed according to a strict equality comparisin, always call `render()`
 - In any other scenario, don't render
 
+This generally convers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
+
+```js
+const Elem = skate.define('x-component', {
+  props: {
+    str: skate.prop.string(),
+    arr: skate.prop.array(),
+  },
+  render() {
+
+  },
+});
+
+const elem = new Elem();
+
+// Re-renders:
+elem.str = 'updated';
+
+// Will not re-render:
+elem.arr.push('something');
+
+// Will re-render:
+elem.arr = elem.arr.concat('something');
+```
+
 *It is not called if the element is not in the document for the same reasons as `render()`.*
 
 *If you set properties within `updated()`, they will not cause it to be called more than once.*
+
+*The code you write in here is peformance critical.*
 
 
 
@@ -666,10 +693,10 @@ Generally you'll probably supply a `render()` function for most of your componen
 
 ```js
 skate.define('my-component', class extends skate.Component {
-  static updated(elem, prev, next) {
+  static updated(elem, prev) {
     // You can reuse the original check if you want as part of your new check.
     // You could also call it directly if not extending: skate.Component().
-    return super.updated(elem, prev, next) && myCustomCheck(prev, next);
+    return super.updated(elem, prev) && myCustomCheck(elem, prev);
   }
 });
 ```
@@ -681,9 +708,9 @@ skate.define('my-component', {
   props: {
     name: skate.prop.string()
   },
-  updated(elem, prev, next) {
+  updated(elem, prev) {
     if (prev.name !== next.name) {
-      skate.emit(elem, 'name-changed', { detail: { prev, next } });
+      skate.emit(elem, 'name-changed', { detail: prev });
     }
   }
 });
@@ -1774,21 +1801,19 @@ However, there is one way where you can write a smart component and it can be ma
 
 ```js
 skate.define('x-component', {
-  updated(elem, prev, next) {
+  updated(elem, prev) {
     // Notify any listeners that the component updated. At this point the
     // listener can update the component's props without fear that this will
     // cause recursion - because it's prevented internally - and it will
     // proceed past this point with the updated props.
-    const canRender = skate.emit(elem, 'updated', {
-      detail: { prev, next }
-    });
+    const canRender = skate.emit(elem, 'updated', { detail: prev });
 
     // This can be custom, or just reuse the default implementation. Since we
     // emitted the event and listeners had a chance to update the component,
     // this will get called with the updated state.
     //
     // We call skate.props() here just in case the component was updated.
-    return canRender && skate.Component.updated(elem, prev, skate.props(elem));
+    return canRender && skate.Component.updated(elem, prev);
   }
 });
 ```

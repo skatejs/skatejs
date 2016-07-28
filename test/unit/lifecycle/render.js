@@ -64,10 +64,10 @@ describe('lifecycle/render', () => {
         props: {
           test: prop.number()
         },
-        updated(el, prev, next) {
+        updated(el, prev) {
           expect(el).to.equal(elem);
+          expect(elem.test).to.equal(0);
           expect(prev).to.equal(undefined);
-          expect(next.test).to.equal(0);
           done();
         },
       });
