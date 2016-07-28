@@ -56,4 +56,36 @@ describe('lifecycle/render', () => {
       done
     );
   });
+
+  describe('beforeRender()', () => {
+    it('should be passed the element, preveious state, current state and a render callback', () => {
+
+    });
+
+    it('should prevent rendering', () => {
+
+    });
+
+    it('should allow rendering', () => {
+
+    });
+
+    it('should allow async rendering', () => {
+
+    });
+
+    it('should allow props to be set within it and not be called again as a result', () => {
+
+    });
+  });
+
+  describe('afterRender()', () => {
+    it('should be called after rendering', () => {
+
+    });
+
+    it('should not be called if rendering is prevented', () => {
+      
+    });
+  });
 });

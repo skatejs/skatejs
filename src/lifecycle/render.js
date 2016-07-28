@@ -4,7 +4,7 @@ import { shadowDomV0, shadowDomV1 } from '../util/support';
 import state from '../api/state';
 
 export default function (Ctor) {
-  const { render, shouldRender } = Ctor;
+  const { beforeRender, render } = Ctor;
 
   return function (elem) {
     // We don't render at all if the user hasn't specified a render function or
@@ -16,7 +16,7 @@ export default function (Ctor) {
 
     let sr = elem[$shadowRoot];
 
-    if (shouldRender) {
+    if (beforeRender) {
       const prevState = elem[$state];
       const currState = state(elem);
 
@@ -27,7 +27,8 @@ export default function (Ctor) {
       // We always do the initial render, therefore we only check if we should
       // render if there is a shadow root. If there is no shadow root, then we
       // are in the initial render.
-      if (sr && !shouldRender(elem, prevState, currState)) {
+      if (sr) {
+        beforeRender(elem, prevState, currState, patchInner.bind(null, sr, render, elem));
         return;
       }
     }

@@ -174,10 +174,14 @@ export default class Component extends HTMLElement {
     return Ctor;
   }
 
-  static shouldRender (elem, prev, curr) {
+  // This is a default implementation that does strict equality copmarison on
+  // prevoius state props and next state props. It synchronously renders on the
+  // first prop that is different and returns immediately.
+  static beforeRender (elem, prev, curr, next) {
     for (let name in prev) {
       if (prev[name] !== curr[name]) {
-        return true;
+        next();
+        return;
       }
     }
   }
