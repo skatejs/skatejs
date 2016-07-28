@@ -1811,8 +1811,6 @@ skate.define('x-component', {
     // This can be custom, or just reuse the default implementation. Since we
     // emitted the event and listeners had a chance to update the component,
     // this will get called with the updated state.
-    //
-    // We call skate.props() here just in case the component was updated.
     return canRender && skate.Component.updated(elem, prev);
   }
 });
