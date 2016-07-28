@@ -257,7 +257,7 @@ describe('vdom/elements', () => {
       );
     });
 
-    it('should pass through special attrs', done => {
+    it('should pass through special attrs and not set them as attrs or props', done => {
       const key = 'my-key';
       const ref = () => {};
       const statics = [];
@@ -277,6 +277,12 @@ describe('vdom/elements', () => {
       fixture().appendChild(elem);
       afterMutations(
         () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div></div>'),
+        () => {
+          const div = elem[symbols.shadowRoot];
+          expect(div.key).to.equal(undefined);
+          expect(div.ref).to.equal(undefined);
+          expect(div.statics).to.equal(undefined);
+        },
         done
       );
     });
