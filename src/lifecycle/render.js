@@ -1,37 +1,26 @@
 import { patchInner } from 'incremental-dom';
-import { connected as $connected, shadowRoot as $shadowRoot, state as $state } from '../util/symbols';
+import { connected as $connected, rendering as $rendering, shadowRoot as $shadowRoot, state as $state } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 import state from '../api/state';
 
 export default function (Ctor) {
-  const { beforeRender, render } = Ctor;
+  const { afterRender, beforeRender, render } = Ctor;
 
   return function (elem) {
-    // We don't render at all if the user hasn't specified a render function or
-    // if the element hasn't been connected yet. This saves us from doing
-    // unnecessary renders.
-    if (!render || !elem[$connected]) {
+    // We don't render if:
+    // - There is no render()
+    // - We are currently in the process of rendering
+    // - The element is not in the DOM yet
+    if (!render || elem[$rendering] || !elem[$connected]) {
       return;
     }
 
+    // Flag as rendering. This prevents anything from trying to render - or
+    // queueing a render - while there is a pending render.
+    elem[$rendering] = true;
+
+    // Try and get the current shadow root (will be setup if not).
     let sr = elem[$shadowRoot];
-
-    if (beforeRender) {
-      const prevState = elem[$state];
-      const currState = state(elem);
-
-      // Update the previous state no matter what so it can be compared on the
-      // next render, even if the component doesn't render this time around.
-      elem[$state] = currState;
-
-      // We always do the initial render, therefore we only check if we should
-      // render if there is a shadow root. If there is no shadow root, then we
-      // are in the initial render.
-      if (sr) {
-        beforeRender(elem, prevState, currState, patchInner.bind(null, sr, render, elem));
-        return;
-      }
-    }
 
     // Setup the shadow root if it hasn't been setup yet.
     if (!sr) {
@@ -46,6 +35,21 @@ export default function (Ctor) {
       elem[$shadowRoot] = sr;
     }
 
-    patchInner(sr, render, elem);
+    let shouldRender = true;
+    if (beforeRender) {
+      const prevState = elem[$state];
+      const nextState = state(elem);
+      elem[$state] = nextState;
+      shouldRender = beforeRender(elem, prevState, nextState);
+    }
+
+    if (shouldRender) {
+      patchInner(sr, render, elem);
+      if (afterRender) {
+        afterRender(elem);
+      }
+    }
+
+    elem[$rendering] = false;
   };
 }
