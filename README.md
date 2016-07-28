@@ -178,6 +178,8 @@ Skate will always use a native implementation if it exists. This means if you pr
   - [Form Behaviour and the Shadow DOM](#form-behaviour-and-the-shadow-dom)
     - [Submission](#submission)
     - [Form Data](#form-data)
+  - [Stateless Components](#stateless-components)
+  - [Styling Components](#styling-components)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
