@@ -732,6 +732,8 @@ skate.define('my-component', {
 
 *It is not called if the element is not in the document. It will be called just before `attached` so that it renders as early as possible, but only if necessary.*
 
+*Updating props from within `render()`, while discouraged, will not trigger another render.*
+
 
 
 #### `rendered`

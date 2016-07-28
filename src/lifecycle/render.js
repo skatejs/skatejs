@@ -26,6 +26,7 @@ export default function (Ctor) {
     // Even though this would ideally be checked in the updated() callback,
     // it may not be, so we ensure that there is a point in proceeding.
     if (!render) {
+      elem[$rendering] = false;
       return;
     }
 
