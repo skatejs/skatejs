@@ -91,25 +91,24 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
   - [API](#api)
     - [`define(name, definition)`](#definename-definition)
       - [`prototype`](#prototype)
-      - [`created`](#created)
       - [`props`](#props)
         - [`attribute`](#attribute)
         - [`coerce`](#coerce)
         - [`default`](#default)
         - [`deserialize`](#deserialize)
-        - [`event`](#event)
         - [`get`](#get)
         - [`initial`](#initial)
         - [`serialize`](#serialize)
-        - [`render`](#render)
         - [`set`](#set)
-      - [`render`](#render-1)
-      - [`ready`](#ready)
+      - [`created`](#created)
+      - [`updated`](#updated)
+        - [Other use-cases](#other-use-cases)
+      - [`render`](#render)
+      - [`rendered`](#rendered)
       - [`attached`](#attached)
       - [`detached`](#detached)
       - [`attributeChanged`](#attributechanged)
       - [`observedAttributes`](#observedattributes)
-      - [`definedAttribute`](#definedattribute)
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
       - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
       - [Passing Data](#passing-data)
@@ -360,20 +359,6 @@ skate.define('my-component', {
 
 
 
-#### `created`
-
-Function that is called when the element is created. This corresponds to the native `createdCallback` (v0) or `constructor` (v1). We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
-
-```js
-skate.define('my-component', {
-  created (elem) {}
-});
-```
-
-The only argument passed to `created` is component element. In this case that is `<my-component>`.
-
-
-
 #### `props`
 
 Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
@@ -383,6 +368,8 @@ skate.define('my-component', {
   props: { ...props }
 });
 ```
+
+Custom properties, when set, queue a `render()`. This happens after a `setTimeout()` so that you only trigger a single render for a series of property sets.
 
 The custom property definition accepts the following options.
 
@@ -491,24 +478,6 @@ The parameters passed to the function are:
 
 
 
-##### `event`
-
-An event name to trigger whenever the property changes. This event is cancelable, and does not bubble.
-
-```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      event: 'my-prop-changed'
-    }
-  }
-});
-```
-
-By default, no events are triggered.
-
-
-
 ##### `get`
 
 A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
@@ -592,29 +561,6 @@ The parameters passed to the function are:
 
 
 
-##### `render`
-
-```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      render (elem, data) {
-        return data.newValue !== data.oldValue;
-      }
-    }
-  },
-  render (elem) {
-    skate.vdom.element('div', elem.myProp);
-  }
-});
-```
-
-The property `render()` function is called before re-rendering the component. If must return `true` in order for a re-render to occur. If you specify a `boolean` instead of a function for this option, then `true` will always re-render and `false` will never re-render. This option defaults to a `function` that returns true if `oldValue` is `!==` to `newValue` and `false` otherwise.
-
-If you do not specify a component `render()` function, then this option is ignored.
-
-
-
 ##### `set`
 
 A function that is called whenever the property is set. This is also called when the property is first initialised.
@@ -645,6 +591,84 @@ When the property is initialised, `oldValue` will always be `undefined` and `new
 
 
 
+#### `created`
+
+Function that is called when the element is created. This corresponds to the native `createdCallback` (v0) or `constructor` (v1). We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+
+```js
+skate.define('my-component', {
+  created (elem) {}
+});
+```
+
+The only argument passed to `created` is component element. In this case that is `<my-component>`.
+
+
+
+#### `updated`
+
+Called before `render()` after `props` are updated. If it returns falsy, `render()` is not called. If it returns truthy, `render()` is called.
+
+```js
+skate.define('my-component', {
+  updated(elem, prevProps, nextProps) {
+    // The previous props will not be defined if it is the initial render.
+    if (!prevProps) {
+      return true;
+    }
+
+    // The previous and next props will always have the same keys.
+    for (let a in prevProps) {
+      if (prevProps[a] !== nextProps[a]) {
+        return true;
+      }
+    }
+  }
+});
+```
+
+The default implementation does what is described in the example above:
+
+- If it is the initial update, always call `render()`
+- If any of the properties have changed according to a strict equality comparisin, always call `render()`
+- In any other scenario, don't render
+
+*It is not called if the element is not in the document for the same reasons as `render()`.*
+
+*If you set properties within `updated()`, they will not cause it to be called more than once.*
+
+
+
+##### Other use-cases
+
+Generally you'll probably supply a `render()` function for most of your components. If you require special checks for your props, you can override it:
+
+```js
+skate.define('my-component', class extends skate.Component {
+  static updated(elem, prev, next) {
+    // You can reuse the original check if you want as part of your new check.
+    // You could also call it directly if not extending: skate.Component().
+    return super.updated(elem, prev, next) && myCustomCheck(prev, next);
+  }
+});
+```
+
+If you don't have a `render()` function, sometimes it's still useful to respond to property updates:
+
+```js
+skate.define('my-component', {
+  props: {
+    name: skate.prop.string()
+  },
+  updated(elem, prev, next) {
+    if (prev.name !== next.name) {
+      skate.emit(elem, 'name-changed', { detail: { prev, next } });
+    }
+  }
+});
+```
+
+
 
 #### `render`
 
@@ -658,23 +682,13 @@ skate.define('my-component', {
 });
 ```
 
-The only argument passed to `render` is the component element. In this case that is `<my-component>`.
-
-*On initial creation, `render()` is called synchronously. However, when you set a property it is rendered asynchronously so that multiple property sets only cause a single render to occur.*
+*It is not called if the element is not in the document. It will be called just before `attached` so that it renders as early as possible, but only if necessary.*
 
 
 
-#### `ready`
+#### `rendered`
 
-Function that is called after the element has been rendered for the first time (see `render`).
-
-```js
-skate.define('my-component', {
-  ready (elem) {}
-});
-```
-
-The only argument passed to `ready` is component element. In this case that is `<my-component>`.
+Called after the component has rendered (i.e. called `render()`). If you need to do any DOM manipulation that can't be done in refs, you can do it here. This is not called if `updated()` prevents rendering, or `render()` is not defined.
 
 
 
