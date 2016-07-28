@@ -16,7 +16,7 @@ describe('vdom/events (on*)', function () {
       },
       render (elem) {
         vdom.element('div', {
-          onevent () {
+          'on-event' () {
             elem._test++;
           }
         }, elem.test);
@@ -59,7 +59,7 @@ describe('vdom/events (on*)', function () {
     const test = () => called = true;
     const myel = new (element().skate({
       render () {
-        vdom.element('div', { ontest: test }, vdom.element.bind(null, 'span'));
+        vdom.element('div', { 'on-test': test }, vdom.element.bind(null, 'span'));
       }
     }));
     fixture().appendChild(myel);
@@ -101,7 +101,7 @@ describe('vdom/events (on*)', function () {
           if (elem.unbind) {
             vdom.element('div');
           } else {
-            vdom.element('div', { onclick: inc, ontest: inc });
+            vdom.element('div', { onclick: inc, onTest: inc, 'on-test': inc });
           }
         }
       }));
@@ -135,16 +135,19 @@ describe('vdom/events (on*)', function () {
 
     describe('custom', function () {
       it('binding', function () {
-        expect(div.ontest).to.equal(undefined);
+        expect(div.onTest).to.equal(undefined);
+        expect(div['on-test']).to.equal(undefined);
       });
 
       it('triggering via dispatchEvent()', function () {
+        emit(div, 'Test');
         emit(div, 'test');
-        expect(count).to.equal(1);
+        expect(count).to.equal(2);
       });
 
       it('unbinding', function () {
         state(el, { unbind: true });
+        emit(div, 'Test');
         emit(div, 'test');
         expect(count).to.equal(0);
       });
