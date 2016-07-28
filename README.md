@@ -1765,9 +1765,9 @@ In order to handle this, your custom form would need to gather all the form data
 
 ## Stateless Components
 
-If you write a component that manages its props internally, this is called a "smart component" very much the same as in React. There's many ways you can write components and separate them out in to smart / dumb components. You can then compose the dumb one into the smart one, reusing code while separating concerns.
+If you write a component that manages its props internally, this is called a "smart component"; very much the same as in React. There's many ways you can write components and separate them out in to smart / dumb components. You can then compose the dumb one in the smart one, reusing code while separating concerns.
 
-However, there is one way where you can write a smart component and it can be made "dumb" as part of its API by emitting an event that allows any listeners to optionally prevent it from updating or to pass props back down.
+However, there is one way where you can write a smart component and it can be made "dumb" as part of its API by emitting an event that allows any listeners to optionally prevent it from updating, or to simply update it with new props that it should render with.
 
 ```js
 skate.define('x-component', {
@@ -1783,9 +1783,13 @@ skate.define('x-component', {
     // This can be custom, or just reuse the default implementation. Since we
     // emitted the event and listeners had a chance to update the component,
     // this will get called with the updated state.
-    return canRender && skate.Component(elem, prev, next);
+    //
+    // We call skate.props() here just in case the component was updated.
+    return canRender && skate.Component.updated(elem, prev, skate.props(elem));
   }
 });
 ```
 
-The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component doesn ot render. If it is not canceled, the component will update. If the listening component updates the emitters props in response to the event, it will render with the props it was updated with, without calling `updated()` again. 
+The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updated()` check.
+
+*Note, that in order for the default `updated()` check to get the new props, you must explicitly get and pass the new props into it.*
