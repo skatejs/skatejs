@@ -1760,3 +1760,32 @@ skate.define('x-button', {
 The idea that built-in form elements don't publish their form-data when inside a shadow root is [being discussed](https://github.com/w3c/webcomponents/issues/187).
 
 In order to handle this, your custom form would need to gather all the form data associated with it and submit it along with its request.
+
+
+
+## Stateless Components
+
+If you write a component that manages its props internally, this is called a "smart component" very much the same as in React. There's many ways you can write components and separate them out in to smart / dumb components. You can then compose the dumb one into the smart one, reusing code while separating concerns.
+
+However, there is one way where you can write a smart component and it can be made "dumb" as part of its API by emitting an event that allows any listeners to optionally prevent it from updating or to pass props back down.
+
+```js
+skate.define('x-component', {
+  updated(elem, prev, next) {
+    // Notify any listeners that the component updated. At this point the
+    // listener can update the component's props without fear that this will
+    // cause recursion - because it's prevented internally - and it will
+    // proceed past this point with the updated props.
+    const canRender = skate.emit(elem, 'updated', {
+      detail: { prev, next }
+    });
+
+    // This can be custom, or just reuse the default implementation. Since we
+    // emitted the event and listeners had a chance to update the component,
+    // this will get called with the updated state.
+    return canRender && skate.Component(elem, prev, next);
+  }
+});
+```
+
+The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component doesn ot render. If it is not canceled, the component will update. If the listening component updates the emitters props in response to the event, it will render with the props it was updated with, without calling `updated()` again. 
