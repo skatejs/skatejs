@@ -14,8 +14,8 @@ export {
   emit,
   link,
   prop,
-  ready,
   props,
+  ready,
   symbols,
   vdom
 };
