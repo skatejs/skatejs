@@ -53,26 +53,44 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 ### Custom Elements
 
-Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements and normalises necessary behaviour between both.
+Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements internally and normalises how `observedAttributes` and the `attributeChangedCallback` behave.
 
+- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1
 - v0: https://github.com/webcomponents/webcomponentsjs
-- v1 (work in progress in src/CustomElements/v1): https://github.com/webcomponents/webcomponentsjs/tree/v1
 
-Skate prefers v0 support if it detects both as that yields the best performance in browsers that support it natively. If you supply only a v1 polyfill, it will use v0 where supported by native and v1 in other browsers.
-
-Skate will always prefer a native implementation to a polyfill as they provide the best performance. For example, if you had native v0 support and v1 support through a polyfill, Skate will use v0. Likewise, if native support was detected for both, Skate would use v1.
 
 
 ### Shadow DOM
 
-Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively. Skate supports both v0 and v1 shadow DOM APIs.
+Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively. Skate supports both v0 and v1 Shadow DOM APIs internally.
 
-- v0 (slow, but complete): https://github.com/WebComponents/webcomponentsjs
-- v1 (partial support, built for speed and virtual DOM integration, see README: https://github.com/skatejs/named-slots/
-
-As with the Custom Elements polyfills, Skate will always prefer a native implementation over a polyfill. If native v0 support was detected with v1 support through a polyfill, Skate will use v0. If v0 and v1 are supported natively Skate will use v1.
+- v1: https://github.com/skatejs/named-slots/
+- v0: https://github.com/WebComponents/webcomponentsjs
 
 Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
+
+
+
+### Known Issues with Polyfills
+
+Custom Elements:
+
+- v1: No known issues. This is the recommended polyfill to use, but it hasn't been officially released yet.
+- v0: No known issues. We have corrected broken, or inconsistent behaviour where we use it internally.
+
+Shadow DOM:
+
+- v1: No known issues. We recommend using our polyfill for performance reasons but it doesn't polyfill everything. See its README for details.
+- v0: Known issues with constructors. Using this polyfill is not recommended due to the issue with constructors, but it's also really, really slow.
+
+
+
+### Polyfill / Native Preference
+
+Skate will always use a native implementation if it exists. This means if you provide a v1 polyfill, but v1 native does not exist, but v0 does, it will prefer v0 native. This is because it yields the best performance and stability. If both v0 and v1 are natively supported (i.e. Chrome), Skate will prefer v1. Once all the browsers you care about support v1, you can simply remove the polyfills.
+
+*Once the v1 polyfills are officially released and Chrome supports v1, we'll release a 2.0 that drops support for v0.*
+
 
 
 ## Documentation
