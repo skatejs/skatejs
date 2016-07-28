@@ -1,4 +1,4 @@
-import { define, prop, state } from '../../../src/index';
+import { define, prop, props } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -59,15 +59,15 @@ describe('lifecycle/render', () => {
   });
 
   describe('beforeRender()', () => {
-    it('should be passed the element, preveious state and current state', done => {
+    it('should be passed the element, preveious props and current props', done => {
       const Elem = define('x-test', {
         props: {
           test: prop.number()
         },
-        beforeRender(el, prevState, currState) {
+        beforeRender(el, prev, next) {
           expect(el).to.equal(elem);
-          expect(prevState).to.equal(undefined);
-          expect(currState.test).to.equal(0);
+          expect(prev).to.equal(undefined);
+          expect(next.test).to.equal(0);
           done();
         },
         render() {
@@ -128,7 +128,7 @@ describe('lifecycle/render', () => {
           ++calledBeforeRender;
 
           // Sync render.
-          state(elem, { test: 'updated 1' });
+          props(elem, { test: 'updated 1' });
 
           // This will queue a render, but we should only queue if it's not in
           // the process of rendering.

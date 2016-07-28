@@ -31,6 +31,10 @@ describe('exports', function () {
     expect(api.prop.string).to.be.a('function', 'string');
   });
 
+  it('skate.props', function () {
+    expect(api.props).to.be.a('function');
+  });
+
   it('skate.ready', function () {
     expect(api.ready).to.be.a('function');
   });
@@ -39,10 +43,6 @@ describe('exports', function () {
     expect(api.symbols).to.be.an('object');
     expect(api.symbols.name).to.equal(symbols.name);
     expect(api.symbols.shadowRoot).to.equal(symbols.shadowRoot);
-  });
-
-  it('skate.state', function () {
-    expect(api.state).to.be.a('function');
   });
 
   it('vdom', function () {

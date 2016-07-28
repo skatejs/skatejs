@@ -1,6 +1,6 @@
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { define, prop, state, vdom } from '../../../src/index';
+import { define, prop, props, vdom } from '../../../src/index';
 
 describe('vdom/ref', () => {
   function create(ref) {
@@ -45,9 +45,9 @@ describe('vdom/ref', () => {
     const elem = create(() => ++num);
     afterMutations(() => {
       expect(num).to.equal(1);
-      state(elem, { num: num + 1 });
+      props(elem, { num: num + 1 });
       expect(num).to.equal(2);
-      state(elem, { num: num + 1 });
+      props(elem, { num: num + 1 });
       expect(num).to.equal(3);
       done();
     });
@@ -59,7 +59,7 @@ describe('vdom/ref', () => {
     afterMutations(() => {
       expect(ref1).to.equal(true);
       expect(ref2).to.equal(undefined);
-      state(elem, { ref: () => ref2 = true });
+      props(elem, { ref: () => ref2 = true });
       expect(ref1).to.equal(true);
       expect(ref2).to.equal(true);
       done();
@@ -71,7 +71,7 @@ describe('vdom/ref', () => {
     const elem = create(() => ++num);
     afterMutations(() => {
       expect(num).to.equal(1);
-      state(elem, { ref: null });
+      props(elem, { ref: null });
       expect(num).to.equal(1);
       done();
     });
