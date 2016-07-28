@@ -1,7 +1,9 @@
-import { rendererDebounced as $rendererDebounced } from '../util/symbols';
+import { 
+  rendererDebounced as $rendererDebounced,
+  rendering as $rendering,
+} from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
-import emit from '../api/emit';
 import empty from '../util/empty';
 
 function getDefaultValue (elem, name, opts) {
@@ -74,18 +76,6 @@ function createNativePropertyDefinition (name, opts) {
       newValue = opts.coerce(newValue);
     }
 
-    const propertyHasChanged = newValue !== oldValue;
-    if (propertyHasChanged && opts.event) {
-      const canceled = !emit(this, String(opts.event), {
-        bubbles: false,
-        detail: { name, oldValue, newValue }
-      });
-
-      if (canceled) {
-        return;
-      }
-    }
-
     propData.internalValue = newValue;
 
     const changeData = { name, newValue, oldValue };
@@ -94,8 +84,10 @@ function createNativePropertyDefinition (name, opts) {
       opts.set(this, changeData);
     }
 
-    // Queue a re-render.
-    this[$rendererDebounced](this);
+    // Queue a re-render only if it's not currently rendering.
+    if (!this[$rendering]) {
+      this[$rendererDebounced](this);
+    }
 
     propData.oldValue = newValue;
 
