@@ -187,6 +187,7 @@ Skate will always use a native implementation if it exists. This means if you pr
 
 ## Resources
 
+- [SkateJS Website](https://github.com/skatejs/skatejs.github.io)
 - [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
