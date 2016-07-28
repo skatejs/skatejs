@@ -1016,6 +1016,35 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 
 
+### `props (elem[, props])`
+
+The `props` function is a getter or setter depending on if you specify the second argument. If you do not provide `props`, then the current state of the component is returned. If you pass `props`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
+
+Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
+
+```js
+import { define, props } from 'skatejs';
+
+const Elem = define('my-element', {
+  props: {
+    prop1: null
+  }
+});
+const elem = new Elem();
+
+// Set any property you want.
+props(elem, {
+  prop1: 'value 1',
+  prop2: 'value 2'
+});
+
+// Only returns props you've defined on your component.
+// { prop1: 'value 1' }
+props(elem);
+```
+
+
+
 ### `ready (element, callback)`
 
 The `skate.ready()` function allows you to define a `callback` that is fired when the specified `element` is has been upgraded. This is useful when you want to ensure an element has been upgraded before doing anything with it. For more information regarding why an element may not be upgraded right away, read the following section.
@@ -1052,35 +1081,6 @@ However, if you put your component definitions at the bottom of the page, it get
 ```
 
 In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `window.customElements.define()`, it will look for elements to upgrade *immediately*.
-
-
-
-### `state (elem[, state])`
-
-The `state` function is a getter or setter depending on if you specify the second `state` argument. If you do not provide `state`, then the current state of the component is returned. If you pass `state`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
-
-Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
-
-```js
-import { define, state } from 'skatejs';
-
-const Elem = define('my-element', {
-  props: {
-    prop1: null
-  }
-});
-const elem = new Elem();
-
-// Set any property you want.
-state(elem, {
-  prop1: 'value 1',
-  prop2: 'value 2'
-});
-
-// Only returns props you've defined on your component.
-// { prop1: 'value 1' }
-state(elem);
-```
 
 
 
