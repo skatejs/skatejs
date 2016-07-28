@@ -51,7 +51,19 @@ attributes[symbols.default] = function (elem, name, value) {
 
   // Handle built-in and custom events.
   if (name.indexOf('on') === 0) {
-    return name in elem ? applyProp(elem, name, value) : applyEvent(elem, name.substring(2), name, value);
+    const firstChar = name[2];
+    let eventName;
+
+    if (firstChar === '-') {
+      eventName = name.substring(3);
+    } else if (firstChar === firstChar.toUpperCase()) {
+      eventName = name.substring(2);
+    }
+
+    if (eventName) {
+      applyEvent(elem, eventName, value);
+      return;
+    }
   }
 
   // Set the select attribute instead of name if it was a <slot> translated to 
@@ -61,28 +73,34 @@ attributes[symbols.default] = function (elem, name, value) {
     value = `[slot="${value}"]`;
   }
 
+  // Set defined props on the element directly.
+  if (name in elem) {
+    applyProp(elem, name, value);
+    return;
+  }
+
   // Fallback to default IncrementalDOM behaviour.
   applyDefault(elem, name, value);
 };
 
 // Adds or removes an event listener for an element.
-function applyEvent (elem, ename, name, value) {
+function applyEvent (elem, ename, newFunc) {
   let events = elem.__events;
 
   if (!events) {
     events = elem.__events = {};
   }
 
-  const eFunc = events[ename];
+  const oldFunc = events[ename];
 
   // Remove old listener so they don't double up.
-  if (eFunc) {
-    elem.removeEventListener(ename, eFunc);
+  if (oldFunc) {
+    elem.removeEventListener(ename, oldFunc);
   }
 
   // Bind new listener.
-  if (value) {
-    elem.addEventListener(ename, events[ename] = value);
+  if (newFunc) {
+    elem.addEventListener(ename, events[ename] = newFunc);
   }
 }
 
@@ -143,7 +161,7 @@ function newAttr (key, val) {
 }
 
 function stackOpen (tname, key, statics, ...attrs) {
-  const props = {};
+  const props = { key, statics };
   for (let a = 0; a < attrs.length; a += 2) {
     props[attrs[a]] = attrs[a + 1];
   }
