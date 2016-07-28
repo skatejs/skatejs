@@ -1793,3 +1793,20 @@ skate.define('x-component', {
 The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updated()` check.
 
 *Note, that in order for the default `updated()` check to get the new props, you must explicitly get and pass the new props into it.*
+
+
+
+## Styling Components
+
+In order to style your components, you should assume Shadow DOM encapsulation. The best-practice here is to simply put styles into a `<style>` block:
+
+```js
+skate.define('x-component', {
+  render() {
+    skate.vdom.element('style', '.my-class { display: block; }');
+    skate.vdom.element('div', { class: 'my-class' });
+  }
+});
+```
+
+If you want to ensure your styles are encapsulated even if using a polyfill, use [CSS Modules](https://github.com/css-modules/css-modules), they are absolutely amazing!
