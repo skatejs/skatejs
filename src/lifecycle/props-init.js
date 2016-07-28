@@ -4,7 +4,6 @@ import {
 } from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
-import emit from '../api/emit';
 import empty from '../util/empty';
 
 function getDefaultValue (elem, name, opts) {
@@ -75,18 +74,6 @@ function createNativePropertyDefinition (name, opts) {
 
     if (typeof opts.coerce === 'function') {
       newValue = opts.coerce(newValue);
-    }
-
-    const propertyHasChanged = newValue !== oldValue;
-    if (propertyHasChanged && opts.event) {
-      const canceled = !emit(this, String(opts.event), {
-        bubbles: false,
-        detail: { name, oldValue, newValue }
-      });
-
-      if (canceled) {
-        return;
-      }
     }
 
     propData.internalValue = newValue;
