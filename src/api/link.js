@@ -1,4 +1,4 @@
-import state from './state';
+import props from './props';
 
 function getValue (elem) {
   const type = elem.type;
@@ -22,11 +22,11 @@ export default function (elem, target) {
       }, elem);
 
       obj[propName || e.target.name] = value;
-      state(elem, {
+      props(elem, {
         [firstPart]: elem[firstPart]
       });
     } else {
-      state(elem, {
+      props(elem, {
         [localTarget]: value
       });
     }

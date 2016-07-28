@@ -1,6 +1,6 @@
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { define, prop, state, symbols, vdom } from '../../../src/index';
+import { define, prop, props, symbols, vdom } from '../../../src/index';
 
 describe('vdom/properties', function () {
   it('class -> className', done => {
@@ -73,9 +73,9 @@ describe('vdom/properties', function () {
       fixture(elem);
       afterMutations(
         () => expect(text(elem)).to.equal('closed', 'init'),
-        () => state(elem, { open: true }),
+        () => props(elem, { open: true }),
         () => expect(text(elem)).to.equal('open', 'false -> true'),
-        () => state(elem, { open: false }),
+        () => props(elem, { open: false }),
         () => expect(text(elem)).to.equal('closed', 'true -> false'),
         done
       );

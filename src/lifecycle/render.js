@@ -1,7 +1,7 @@
 import { patchInner } from 'incremental-dom';
-import { connected as $connected, rendering as $rendering, shadowRoot as $shadowRoot, state as $state } from '../util/symbols';
+import { connected as $connected, props as $props, rendering as $rendering, shadowRoot as $shadowRoot } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
-import state from '../api/state';
+import props from '../api/props';
 
 export default function (Ctor) {
   const { afterRender, beforeRender, render } = Ctor;
@@ -37,10 +37,10 @@ export default function (Ctor) {
 
     let shouldRender = true;
     if (beforeRender) {
-      const prevState = elem[$state];
-      const nextState = state(elem);
-      elem[$state] = nextState;
-      shouldRender = beforeRender(elem, prevState, nextState);
+      const prev = elem[$props];
+      const next = props(elem);
+      elem[$props] = next;
+      shouldRender = beforeRender(elem, prev, next);
     }
 
     if (shouldRender) {

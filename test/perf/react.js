@@ -1,4 +1,4 @@
-import { define, prop, ready, state, vdom } from '../../src/index';
+import { define, prop, props, ready, vdom } from '../../src/index';
 import bp from 'birdpoo';
 
 const { React, ReactDOM } = window;
@@ -97,7 +97,7 @@ describe('update', () => {
     let comp = fixture.firstElementChild;
     ready(comp, () => {
       bp(function (next) {
-        state(this.comp, { title: ++this.count });
+        props(this.comp, { title: ++this.count });
         next();
       }, {
         comp,

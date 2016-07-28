@@ -1,4 +1,4 @@
-import { emit, prop, state, symbols, vdom } from '../../../src/index';
+import { emit, prop, props, symbols, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -40,12 +40,12 @@ describe('vdom/events (on*)', function () {
       expect(el._test).to.equal(1);
 
       // Re-render.
-      state(el, { test: el.test + 1 });
+      props(el, { test: el.test + 1 });
       expect(shadowDiv.textContent).to.equal('1');
       emit(shadowDiv, 'event');
       expect(el._test).to.equal(2);
 
-      state(el, { test: el.test + 1 });
+      props(el, { test: el.test + 1 });
       expect(shadowDiv.textContent).to.equal('2');
       emit(shadowDiv, 'event');
       expect(el._test).to.equal(3);
@@ -128,7 +128,7 @@ describe('vdom/events (on*)', function () {
       });
 
       it('unbinding', function () {
-        state(el, { unbind: true });
+        props(el, { unbind: true });
         expect(div.onclick).to.equal(null);
       });
     });
@@ -146,7 +146,7 @@ describe('vdom/events (on*)', function () {
       });
 
       it('unbinding', function () {
-        state(el, { unbind: true });
+        props(el, { unbind: true });
         emit(div, 'Test');
         emit(div, 'test');
         expect(count).to.equal(0);
