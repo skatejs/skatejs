@@ -1,13 +1,13 @@
 import emit from '../../../src/api/emit';
 import fixture from '../../lib/fixture';
 
-describe('api/emit', function () {
-  var child;
-  var parent;
-  var disabled;
-  var triggered;
+describe('api/emit', () => {
+  let child;
+  let parent;
+  let disabled;
+  let triggered;
 
-  beforeEach(function () {
+  beforeEach(() => {
     child = document.createElement('child');
 
     disabled = document.createElement('button');
@@ -32,36 +32,36 @@ describe('api/emit', function () {
     fixture(parent);
   });
 
-  it('string eventName', function () {
+  it('string eventName', () => {
     emit(parent, 'test');
     expect(triggered).to.equal(1);
   });
 
-  it('disabled element', function () {
+  it('disabled element', () => {
     const canceled = !emit(disabled, 'test');
     expect(triggered).to.equal(0);
     expect(canceled).to.equal(false);
   });
 
-  it('undefined eventOptions', function () {
+  it('undefined eventOptions', () => {
     const canceled = !emit(child, 'test');
     expect(triggered).to.equal(2);
     expect(canceled).to.equal(true);
   });
 
-  it('{ bubbles: false } eventOptions', function () {
+  it('{ bubbles: false } eventOptions', () => {
     const canceled = !emit(child, 'test', { bubbles: false });
     expect(triggered).to.equal(1);
     expect(canceled).to.equal(true);
   });
 
-  it('{ cancelable: false } eventOptions', function () {
+  it('{ cancelable: false } eventOptions', () => {
     const canceled = !emit(child, 'test', { cancelable: false });
     expect(triggered).to.equal(2);
     expect(canceled).to.equal(false);
   });
 
-  it('stopPropagation()', function () {
+  it('stopPropagation()', () => {
     child.addEventListener('test', e => e.stopPropagation());
     parent.addEventListener('test', () => assert(false, 'propagation should have been stopped'));
     const canceled = !emit(child, 'test');

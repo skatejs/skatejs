@@ -3,45 +3,45 @@ import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
 import element from '../../lib/element';
 
-function create (prop) {
+function create(propLocal) {
   return new (element().skate({
     props: {
-      test: assign({ attribute: true }, prop)
-    }
+      test: assign({ attribute: true }, propLocal),
+    },
   }));
 }
 
-function testTypeValues (type, values) {
+function testTypeValues(type, values) {
   const elem = create(prop[type]());
-  values.forEach(function (value) {
+  values.forEach((value) => {
     elem.test = value[0];
     expect(elem.test).to.equal(value[1], 'property');
     expect(elem.getAttribute('test')).to.equal(value[2], 'attribute');
   });
 }
 
-describe('api/prop', function () {
-  describe('array', function () {
+describe('api/prop', () => {
+  describe('array', () => {
     let elem;
 
-    beforeEach(function () {
+    beforeEach(() => {
       elem = create(prop.array());
     });
 
-    it('default', function () {
+    it('default', () => {
       expect(elem.test).to.be.an('array');
       expect(elem.test.length).to.equal(0);
       expect(elem.getAttribute('test')).to.equal(null);
     });
 
-    describe('coerce', function () {
-      it('set array', function () {
+    describe('coerce', () => {
+      it('set array', () => {
         const arr = ['something'];
         elem.test = arr;
         expect(elem.test).to.equal(arr);
       });
 
-      it('set non-array', function () {
+      it('set non-array', () => {
         elem.test = 'something';
         expect(elem.test).to.be.an('array');
         expect(elem.test.length).to.equal(1);
@@ -49,7 +49,7 @@ describe('api/prop', function () {
       });
     });
 
-    it('deserialize', function (done) {
+    it('deserialize', (done) => {
       elem.setAttribute('test', '["val1","val2"]');
       afterMutations(
         () => expect(elem.test).to.be.an('array'),
@@ -60,23 +60,23 @@ describe('api/prop', function () {
       );
     });
 
-    it('serialize', function () {
+    it('serialize', () => {
       elem.test = ['val1', 'val2'];
       expect(elem.getAttribute('test')).to.be.a('string');
       expect(elem.getAttribute('test')).to.equal('["val1","val2"]');
     });
   });
 
-  describe('boolean', function () {
-    it('initial value', function () {
+  describe('boolean', () => {
+    it('initial value', () => {
       const elem = create(prop.boolean());
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
     });
 
-    [undefined, null, false, 0, '', 'something'].forEach(function (value) {
+    [undefined, null, false, 0, '', 'something'].forEach((value) => {
       value = String(value);
-      it('setting attribute to ' + value, function (done) {
+      it(`setting attribute to ${value}`, (done) => {
         const elem = create(prop.boolean());
         elem.setAttribute('test', value);
         afterMutations(
@@ -85,7 +85,7 @@ describe('api/prop', function () {
           done
         );
       });
-      it('setting property to ' + value, function () {
+      it(`setting property to ${value}`, () => {
         const elem = create(prop.boolean());
         elem.test = value;
         expect(elem.test).to.equal(!!value, 'property');
@@ -93,7 +93,7 @@ describe('api/prop', function () {
       });
     });
 
-    it('removing attribute', function (done) {
+    it('removing attribute', (done) => {
       const elem = create(prop.boolean());
       afterMutations(
         () => elem.setAttribute('test', ''),
@@ -107,20 +107,20 @@ describe('api/prop', function () {
     });
   });
 
-  describe('number', function () {
+  describe('number', () => {
     let elem;
 
-    beforeEach(function () {
+    beforeEach(() => {
       elem = create(prop.number());
     });
 
-    it('default', function () {
+    it('default', () => {
       expect(elem.test).to.be.a('number');
       expect(elem.test).to.equal(0);
       expect(elem.getAttribute('test')).to.equal(null);
     });
 
-    it('values', function () {
+    it('values', () => {
       expect(elem.test).to.equal(0);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
@@ -130,11 +130,11 @@ describe('api/prop', function () {
         [undefined, 0, null],
         [0.1, 0.1, '0.1'],
         ['test', undefined, null],
-        ['', 0, '0']
+        ['', 0, '0'],
       ]);
     });
 
-    it('removing attribute', function (done) {
+    it('removing attribute', (done) => {
       afterMutations(
         () => elem.setAttribute('test', ''),
         () => expect(elem.test).to.equal(0),
@@ -147,8 +147,8 @@ describe('api/prop', function () {
     });
   });
 
-  describe('string', function () {
-    it('values', function () {
+  describe('string', () => {
+    it('values', () => {
       const elem = create(prop.string());
       expect(elem.test).to.equal(undefined);
       expect(elem.getAttribute('test')).to.equal(null);
@@ -157,21 +157,21 @@ describe('api/prop', function () {
         [null, undefined, null],
         [undefined, undefined, null],
         [0, '0', '0'],
-        ['', '', '']
+        ['', '', ''],
       ]);
     });
   });
 
-  describe('overriding', function () {
-    it('boolean', function () {
+  describe('overriding', () => {
+    it('boolean', () => {
       expect(prop.boolean({ default: true }).default).to.equal(true);
     });
 
-    it('number', function () {
+    it('number', () => {
       expect(prop.number({ default: 1 }).default).to.equal(1);
     });
 
-    it('string', function () {
+    it('string', () => {
       expect(prop.string({ default: 'test' }).default).to.equal('test');
     });
   });

@@ -6,7 +6,7 @@ import props from '../api/props';
 export default function (Ctor) {
   const { render, rendered, updated } = Ctor;
 
-  return function (elem) {
+  return (elem) => {
     if (elem[$rendering] || !elem[$connected]) {
       return;
     }

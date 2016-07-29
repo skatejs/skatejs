@@ -3,29 +3,29 @@ import fixture from '../../lib/fixture';
 import ready from '../../../src/api/ready';
 import unique from '../../lib/element';
 
-describe('api/ready', function () {
+describe('api/ready', () => {
   let elem;
   let tag;
 
-  function setup () {
+  function setup() {
     define(tag, {});
   }
 
-  beforeEach(function () {
+  beforeEach(() => {
     tag = unique().safe;
     elem = fixture().appendChild(document.createElement(tag));
   });
 
-  it('should fire for an element when it is already ready', function (done) {
+  it('should fire for an element when it is already ready', (done) => {
     setup();
-    ready(elem, function (shouldBeElem) {
+    ready(elem, (shouldBeElem) => {
       expect(shouldBeElem).to.equal(elem);
       done();
     });
   });
 
-  it('should fire for an element when it is eventually ready', function (done) {
-    ready(elem, function (shouldBeElem) {
+  it('should fire for an element when it is eventually ready', (done) => {
+    ready(elem, (shouldBeElem) => {
       expect(shouldBeElem).to.equal(elem);
       done();
     });

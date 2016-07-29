@@ -5,17 +5,17 @@ const { React, ReactDOM } = window;
 
 
 // Skate components.
-const wclist = (props, chren) => ul(props, chren);
-const wcitem = (props, chren) => li(props, chren);
-const [ div, h1, li, ul, item, list ] = ['div', 'h1', 'li', 'ul', wclist, wcitem].map(t => vdom.element.bind(null, t));
+const wclist = (ps, chren) => ul(ps, chren); // eslint-disable-line no-use-before-define
+const wcitem = (ps, chren) => li(ps, chren); // eslint-disable-line no-use-before-define
+const [div, h1, li, ul, item, list] = ['div', 'h1', 'li', 'ul', wclist, wcitem].map(t => vdom.element.bind(null, t));
 define('x-app', {
   props: {
     title: prop.string({ default: 'initial' }),
   },
-  render (elem) {
-    div(function () {
+  render(elem) {
+    div(() => {
       h1(elem.title);
-      list(function () {
+      list(() => {
         for (let key = 0; key < 1000; key++) {
           item(`Item ${key}`);
         }
@@ -26,23 +26,23 @@ define('x-app', {
 
 
 // React components.
-const Xlist = props => React.createElement('div', null, props.children);
-const Xitem = props => React.createElement('div', null, props.children);
+const Xlist = ps => React.createElement('div', null, ps.children);  // eslint-disable-line react/prop-types
+const Xitem = ps => React.createElement('div', null, ps.children);  // eslint-disable-line react/prop-types
 const Xapp = class extends React.Component {
   constructor() {
     super();
     this.state = { title: 'initial' };
   }
-  render () {
+  render() {
     return React.createElement('div', null,
       React.createElement('h1', null, this.state.title),
-      React.createElement(Xlist, null, (function () {
+      React.createElement(Xlist, null, (() => {
         const items = [];
         for (let key = 0; key < 1000; key++) {
           items.push(React.createElement(Xitem, `Item ${key}`));
         }
         return items;
-      }()))
+      })())
     );
   }
 };
@@ -55,8 +55,9 @@ document.body.appendChild(fixture);
 
 
 // Initial render
-const afterMutations = cb => isNative ? cb() : setTimeout(cb);
 const isNative = !!Document.prototype.registerElement;
+const afterMutations = cb => (isNative ? cb() : setTimeout(cb));
+
 describe('render', () => {
   it('skate', done => {
     bp(next => {
@@ -67,9 +68,9 @@ describe('render', () => {
       after: next => {
         fixture.innerHTML = '';
         afterMutations(next);
-      }
+      },
     })
-      .then(ops => console.log(`Skate (render): ${ops} / sec`))
+      .then(ops => console.log(`Skate (render): ${ops} / sec`)) // eslint-disable-line no-console
       .then(done.bind(null, null))
       .catch(done);
   });
@@ -82,9 +83,9 @@ describe('render', () => {
       after: next => {
         ReactDOM.unmountComponentAtNode(fixture);
         next();
-      }
+      },
     })
-      .then(ops => console.log(`React (render): ${ops} / sec`))
+      .then(ops => console.log(`React (render): ${ops} / sec`)) // eslint-disable-line no-console
       .then(done.bind(null, null))
       .catch(done);
   });
@@ -94,31 +95,33 @@ describe('update', () => {
   it('skate', done => {
     fixture.innerHTML = '<x-app></x-app>';
 
-    let comp = fixture.firstElementChild;
+    const comp = fixture.firstElementChild;
     ready(comp, () => {
-      bp(function (next) {
+      bp(function (next) { // eslint-disable-line func-names
         props(this.comp, { title: ++this.count });
         next();
       }, {
         comp,
-        count: 0
+        count: 0,
       })
-        .then(ops => console.log(`Skate (update): ${ops} / sec`))
-        .then(() => fixture.innerHTML = '')
+        .then(ops => console.log(`Skate (update): ${ops} / sec`)) // eslint-disable-line no-console
+        .then(() => {
+          fixture.innerHTML = '';
+        })
         .then(done.bind(null, null))
         .catch(done);
     });
   });
 
   it('react', done => {
-    bp(function (next) {
+    bp(function (next) { // eslint-disable-line func-names
       this.comp.setState({ title: ++this.count });
       next();
     }, {
       comp: ReactDOM.render(React.createElement(Xapp), fixture),
-      count: 0
+      count: 0,
     })
-      .then(ops => console.log(`React (update): ${ops} / sec`))
+      .then(ops => console.log(`React (update): ${ops} / sec`)) // eslint-disable-line no-console
       .then(() => ReactDOM.unmountComponentAtNode(fixture))
       .then(done.bind(null, null))
       .catch(done);
