@@ -55,7 +55,7 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements internally and normalises how `observedAttributes` and the `attributeChangedCallback` behave.
 
-- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1
+- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1/src/CustomElements/v1
 - v0: https://github.com/webcomponents/webcomponentsjs
 
 
@@ -73,10 +73,12 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 
 ### Known Issues with Polyfills
 
+The following are issues with polyfills - not native - implementations.
+
 Custom Elements:
 
 - v1: No known issues. This is the recommended polyfill to use, but it hasn't been officially released yet.
-- v0: No known issues. We have corrected broken, or inconsistent behaviour where we use it internally.
+- v0: Does not work with native Shadow DOM v1. We have corrected broken, or inconsistent behaviour, when compared to native v0.
 
 Shadow DOM:
 
