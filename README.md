@@ -1398,13 +1398,19 @@ Generally, binding events to elements are done using the `vdom` [on* syntax](htt
 ```js
 skate.define('x-element', {
   render(elem) {
-    skate.vdom.element('div', { onclick: elem.handleClick });
-  },
-  prototype: {
-    handleClick(e) {
-      // `this` is the element.
-      // The event is passed as the only argument.
-    }
+    skate.vdom.element('div', {
+      // Adds listener as property because onclick is a native property 
+      onclick() {},
+
+      // Adds "testIng" listener using addEventListener.
+      onTestIng() {},
+
+      // Adds "testIng" listener using addEventListener.
+      'on-testIng'() {},
+
+      // Adds "test-ing" listener using addEventListener.
+      'on-test-ing'() {}
+    });
   }
 });
 ```
