@@ -1383,11 +1383,12 @@ The component lifecycle consists of several paths in the following order startin
 
 1. `props` are defined and set to initial values
 2. `created` is invoked
-3. `render` is invoked to render an HTML structure to the component
-4. `ready` is invoked
-5. `attached` is invoked when added to the document (or if already in the document)
-6. `detached` is invoked when removed from the document
-7. `attributeChanged` is invoked whenever an attribute is changed
+3. `attached` is invoked when added to the document (or if already in the document)
+4. `updated` is always invoked before `render()` when properties have changed
+5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
+6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
+7. `detached` is invoked when removed from the document
+8. `attributeChanged` is invoked whenever an attribute is changed
 
 
 
