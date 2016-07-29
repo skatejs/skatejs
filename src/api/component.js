@@ -72,13 +72,12 @@ export default class Component extends HTMLElement {
       // then that causes the attribute to be set again.
       if (propData.syncingAttribute) {
         propData.syncingAttribute = false;
-        return;
+      } else {
+        // Sync up the property.
+        const propOpts = this.constructor.props[propertyName];
+        propData.settingAttribute = true;
+        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
       }
-
-      // Sync up the property.
-      const propOpts = this.constructor.props[propertyName];
-      propData.settingAttribute = true;
-      this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
     }
 
     if (attributeChanged) {
