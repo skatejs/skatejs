@@ -1,18 +1,17 @@
 # Skate
 
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
+[![Size](https://img.shields.io/badge/gzip%20size-4.64%20kB-brightgreen.svg)](https://npmcdn.com/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
 Skate is a library built on top of the [W3C web component specs](https://github.com/w3c/webcomponents) that enables you to write functional and performant web components with a very small footprint.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- Skate itself is only 4k min+gz (11k minfied, 28k unminified).
+- Skate itself is only 4k min+gz.
 - It's very fast.
-- It works with multiple versions of itself on the page, if need be.
+- It works with multiple versions of itself on the page.
 
 
 
@@ -1333,7 +1332,7 @@ If you're using the plugin, you'll need to configure it to use `skate.vdom` (or 
 // For the helper:
 IncrementalDOM = skate.vdom;
 
-// For the plugin you need to configure the `prefix` option to 
+// For the plugin you need to configure the `prefix` option to
 // point to Skate's vdom or you'll need to do something like this
 // so the functions are in scope.
 const { elementOpen, elementOpenStart, elementVoid } = skate.vdom;
@@ -1391,7 +1390,7 @@ Generally, binding events to elements are done using the `vdom` [on* syntax](htt
 skate.define('x-element', {
   render(elem) {
     skate.vdom.element('div', {
-      // Adds listener as property because onclick is a native property 
+      // Adds listener as property because onclick is a native property
       onclick() {},
 
       // Adds "testIng" listener using addEventListener.
