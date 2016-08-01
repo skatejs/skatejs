@@ -75,9 +75,9 @@ describe('vdom/events (on*)', () => {
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render() {
-        vdom.element('div', { ontest: null });
-      },
+      render () {
+        vdom.element('div', { 'on-test': null });
+      }
     }));
     fixture(myel);
     afterMutations(() => {
@@ -105,7 +105,7 @@ describe('vdom/events (on*)', () => {
           if (elem.unbind) {
             vdom.element('div');
           } else {
-            vdom.element('div', { onclick: inc, onTest: inc, 'on-test': inc });
+            vdom.element('div', { onclick: inc, onTest1: inc, 'on-test2': inc });
           }
         },
       }));
@@ -145,16 +145,16 @@ describe('vdom/events (on*)', () => {
         expect(div['on-test']).to.equal(undefined);
       });
 
-      it('triggering via dispatchEvent()', () => {
-        emit(div, 'Test');
-        emit(div, 'test');
+      it('triggering via dispatchEvent()', function () {
+        emit(div, 'test1');
+        emit(div, 'test2');
         expect(count).to.equal(2);
       });
 
       it('unbinding', () => {
         props(el, { unbind: true });
-        emit(div, 'Test');
-        emit(div, 'test');
+        emit(div, 'test1');
+        emit(div, 'test2');
         expect(count).to.equal(0);
       });
     });

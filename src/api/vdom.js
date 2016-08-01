@@ -19,6 +19,70 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const stackChren = [];
 const stackProps = [];
 
+// Attributes that are not handled by Incremental DOM.
+attributes.key = attributes.skip = attributes.statics = function () {};
+
+// Attributes that *must* be set via a property on all elements.
+attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
+
+// Default attribute applicator.
+attributes[symbols.default] = function (elem, name, value) {
+  // If the skip attribute was specified, skip
+  if (name === 'skip' && value) {
+    return skip();
+  }
+
+  // Add the ref to the element so it can be called when it's closed.
+  if (name === 'ref') {
+    elem[$ref] = value;
+    return;
+  }
+
+  // Custom element properties should be set as properties.
+  const props = elem.constructor.props;
+  if (props && name in props) {
+    return applyProp(elem, name, value);
+  }
+
+  // Boolean false values should not set attributes at all.
+  if (value === false) {
+    return;
+  }
+
+  // Handle built-in and custom events.
+  if (name.indexOf('on') === 0) {
+    const firstChar = name[2];
+    let eventName;
+
+    if (firstChar === '-') {
+      eventName = name.substring(3);
+    } else if (firstChar === firstChar.toUpperCase()) {
+      eventName = firstChar.toLowerCase() + name.substring(3);
+    }
+
+    if (eventName) {
+      applyEvent(elem, eventName, value);
+      return;
+    }
+  }
+
+  // Set the select attribute instead of name if it was a <slot> translated to 
+  // a <content> for v0.
+  if (name === 'name' && elem.tagName === 'CONTENT') {
+    name = 'select';
+    value = `[slot="${value}"]`;
+  }
+
+  // Set defined props on the element directly.
+  if (name in elem) {
+    applyProp(elem, name, value);
+    return;
+  }
+
+  // Fallback to default IncrementalDOM behaviour.
+  applyDefault(elem, name, value);
+};
+
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
   let events = elem.__events;

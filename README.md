@@ -55,7 +55,7 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements internally and normalises how `observedAttributes` and the `attributeChangedCallback` behave.
 
-- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1
+- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1/src/CustomElements/v1
 - v0: https://github.com/webcomponents/webcomponentsjs
 
 
@@ -73,10 +73,12 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 
 ### Known Issues with Polyfills
 
+The following are issues with polyfills - not native - implementations.
+
 Custom Elements:
 
 - v1: No known issues. This is the recommended polyfill to use, but it hasn't been officially released yet.
-- v0: No known issues. We have corrected broken, or inconsistent behaviour where we use it internally.
+- v0: Does not work with native Shadow DOM v1. We have corrected broken, or inconsistent behaviour, when compared to native v0.
 
 Shadow DOM:
 
@@ -1381,11 +1383,12 @@ The component lifecycle consists of several paths in the following order startin
 
 1. `props` are defined and set to initial values
 2. `created` is invoked
-3. `render` is invoked to render an HTML structure to the component
-4. `ready` is invoked
-5. `attached` is invoked when added to the document (or if already in the document)
-6. `detached` is invoked when removed from the document
-7. `attributeChanged` is invoked whenever an attribute is changed
+3. `attached` is invoked when added to the document (or if already in the document)
+4. `updated` is always invoked before `render()` when properties have changed
+5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
+6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
+7. `detached` is invoked when removed from the document
+8. `attributeChanged` is invoked whenever an attribute is changed
 
 
 
@@ -1396,13 +1399,19 @@ Generally, binding events to elements are done using the `vdom` [on* syntax](htt
 ```js
 skate.define('x-element', {
   render(elem) {
-    skate.vdom.element('div', { onclick: elem.handleClick });
-  },
-  prototype: {
-    handleClick(e) {
-      // `this` is the element.
-      // The event is passed as the only argument.
-    }
+    skate.vdom.element('div', {
+      // Adds listener as property because onclick is a native property 
+      onclick() {},
+
+      // Adds "testIng" listener using addEventListener.
+      onTestIng() {},
+
+      // Adds "testIng" listener using addEventListener.
+      'on-testIng'() {},
+
+      // Adds "test-ing" listener using addEventListener.
+      'on-test-ing'() {}
+    });
   }
 });
 ```
