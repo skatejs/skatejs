@@ -55,7 +55,7 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 
 Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill. Skate supports both v0 and v1 custom elements internally and normalises how `observedAttributes` and the `attributeChangedCallback` behave.
 
-- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1
+- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1/src/CustomElements/v1
 - v0: https://github.com/webcomponents/webcomponentsjs
 
 
@@ -73,10 +73,12 @@ Without native support and if you do not supply a Shadow DOM polyfill, any compo
 
 ### Known Issues with Polyfills
 
+The following are issues with polyfills - not native - implementations.
+
 Custom Elements:
 
 - v1: No known issues. This is the recommended polyfill to use, but it hasn't been officially released yet.
-- v0: No known issues. We have corrected broken, or inconsistent behaviour where we use it internally.
+- v0: Does not work with native Shadow DOM v1. We have corrected broken, or inconsistent behaviour, when compared to native v0.
 
 Shadow DOM:
 
@@ -136,9 +138,9 @@ Skate will always use a native implementation if it exists. This means if you pr
       - [`boolean`](#boolean)
       - [`number`](#number)
       - [`string`](#string)
+    - [`props (elem[, props])`](#props-elem-props)
     - [`ready (element, callback)`](#ready-element-callback)
       - [Background](#background)
-    - [`state (elem[, state])`](#state-elem-state)
     - [`symbols`](#symbols)
       - [`name`](#name)
       - [`shadowRoot`](#shadowroot)
@@ -187,6 +189,7 @@ Skate will always use a native implementation if it exists. This means if you pr
 
 ## Resources
 
+- [SkateJS Website](https://github.com/skatejs/skatejs.github.io)
 - [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
 - [SydJS: Still got your Skate on](http://slides.com/treshugart/still-got-your-skate-on#/)
@@ -630,16 +633,16 @@ The only argument passed to `created` is component element. In this case that is
 Called before `render()` after `props` are updated. If it returns falsy, `render()` is not called. If it returns truthy, `render()` is called.
 
 ```js
-skate.define('my-component', {
-  updated(elem, prevProps, nextProps) {
+skate.define('x-component', {
+  updated(elem, prevProps) {
     // The previous props will not be defined if it is the initial render.
     if (!prevProps) {
       return true;
     }
 
-    // The previous and next props will always have the same keys.
-    for (let a in prevProps) {
-      if (prevProps[a] !== nextProps[a]) {
+    // The previous props will always contain all of the keys.
+    for (let name in prevProps) {
+      if (prevProps[name] !== elem[name]) {
         return true;
       }
     }
@@ -650,12 +653,39 @@ skate.define('my-component', {
 The default implementation does what is described in the example above:
 
 - If it is the initial update, always call `render()`
-- If any of the properties have changed according to a strict equality comparisin, always call `render()`
+- If any of the properties have changed according to a strict equality comparison, always call `render()`
 - In any other scenario, don't render
+
+This generally convers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
+
+```js
+const Elem = skate.define('x-component', {
+  props: {
+    str: skate.prop.string(),
+    arr: skate.prop.array(),
+  },
+  render() {
+
+  },
+});
+
+const elem = new Elem();
+
+// Re-renders:
+elem.str = 'updated';
+
+// Will not re-render:
+elem.arr.push('something');
+
+// Will re-render:
+elem.arr = elem.arr.concat('something');
+```
 
 *It is not called if the element is not in the document for the same reasons as `render()`.*
 
 *If you set properties within `updated()`, they will not cause it to be called more than once.*
+
+*The code you write in here is peformance critical.*
 
 
 
@@ -665,10 +695,10 @@ Generally you'll probably supply a `render()` function for most of your componen
 
 ```js
 skate.define('my-component', class extends skate.Component {
-  static updated(elem, prev, next) {
+  static updated(elem, prev) {
     // You can reuse the original check if you want as part of your new check.
     // You could also call it directly if not extending: skate.Component().
-    return super.updated(elem, prev, next) && myCustomCheck(prev, next);
+    return super.updated(elem, prev) && myCustomCheck(elem, prev);
   }
 });
 ```
@@ -680,9 +710,9 @@ skate.define('my-component', {
   props: {
     name: skate.prop.string()
   },
-  updated(elem, prev, next) {
+  updated(elem, prev) {
     if (prev.name !== next.name) {
-      skate.emit(elem, 'name-changed', { detail: { prev, next } });
+      skate.emit(elem, 'name-changed', { detail: prev });
     }
   }
 });
@@ -703,6 +733,8 @@ skate.define('my-component', {
 ```
 
 *It is not called if the element is not in the document. It will be called just before `attached` so that it renders as early as possible, but only if necessary.*
+
+*Updating props from within `render()`, while discouraged, will not trigger another render.*
 
 
 
@@ -986,6 +1018,35 @@ Ensures the value is always a `String` and is correctly linked to an attribute. 
 
 
 
+### `props (elem[, props])`
+
+The `props` function is a getter or setter depending on if you specify the second argument. If you do not provide `props`, then the current state of the component is returned. If you pass `props`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
+
+Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
+
+```js
+import { define, props } from 'skatejs';
+
+const Elem = define('my-element', {
+  props: {
+    prop1: null
+  }
+});
+const elem = new Elem();
+
+// Set any property you want.
+props(elem, {
+  prop1: 'value 1',
+  prop2: 'value 2'
+});
+
+// Only returns props you've defined on your component.
+// { prop1: 'value 1' }
+props(elem);
+```
+
+
+
 ### `ready (element, callback)`
 
 The `skate.ready()` function allows you to define a `callback` that is fired when the specified `element` is has been upgraded. This is useful when you want to ensure an element has been upgraded before doing anything with it. For more information regarding why an element may not be upgraded right away, read the following section.
@@ -1022,35 +1083,6 @@ However, if you put your component definitions at the bottom of the page, it get
 ```
 
 In this example, we are loading `component-a` before `component-b` and the same order will apply. *However*, if you flip that around so that `component-b` is loaded before `component-a`, then `component-b` will be initialised first. This is because when a definition is registered via `window.customElements.define()`, it will look for elements to upgrade *immediately*.
-
-
-
-### `state (elem[, state])`
-
-The `state` function is a getter or setter depending on if you specify the second `state` argument. If you do not provide `state`, then the current state of the component is returned. If you pass `state`, then the current state of the component is set. When you set state, the component will re-render synchronously only if it needs to be re-rendered.
-
-Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
-
-```js
-import { define, state } from 'skatejs';
-
-const Elem = define('my-element', {
-  props: {
-    prop1: null
-  }
-});
-const elem = new Elem();
-
-// Set any property you want.
-state(elem, {
-  prop1: 'value 1',
-  prop2: 'value 2'
-});
-
-// Only returns props you've defined on your component.
-// { prop1: 'value 1' }
-state(elem);
-```
 
 
 
@@ -1351,11 +1383,12 @@ The component lifecycle consists of several paths in the following order startin
 
 1. `props` are defined and set to initial values
 2. `created` is invoked
-3. `render` is invoked to render an HTML structure to the component
-4. `ready` is invoked
-5. `attached` is invoked when added to the document (or if already in the document)
-6. `detached` is invoked when removed from the document
-7. `attributeChanged` is invoked whenever an attribute is changed
+3. `attached` is invoked when added to the document (or if already in the document)
+4. `updated` is always invoked before `render()` when properties have changed
+5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
+6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
+7. `detached` is invoked when removed from the document
+8. `attributeChanged` is invoked whenever an attribute is changed
 
 
 
@@ -1366,13 +1399,19 @@ Generally, binding events to elements are done using the `vdom` [on* syntax](htt
 ```js
 skate.define('x-element', {
   render(elem) {
-    skate.vdom.element('div', { onclick: elem.handleClick });
-  },
-  prototype: {
-    handleClick(e) {
-      // `this` is the element.
-      // The event is passed as the only argument.
-    }
+    skate.vdom.element('div', {
+      // Adds listener as property because onclick is a native property 
+      onclick() {},
+
+      // Adds "testIng" listener using addEventListener.
+      onTestIng() {},
+
+      // Adds "testIng" listener using addEventListener.
+      'on-testIng'() {},
+
+      // Adds "test-ing" listener using addEventListener.
+      'on-test-ing'() {}
+    });
   }
 });
 ```
@@ -1773,28 +1812,22 @@ However, there is one way where you can write a smart component and it can be ma
 
 ```js
 skate.define('x-component', {
-  updated(elem, prev, next) {
+  updated(elem, prev) {
     // Notify any listeners that the component updated. At this point the
     // listener can update the component's props without fear that this will
     // cause recursion - because it's prevented internally - and it will
     // proceed past this point with the updated props.
-    const canRender = skate.emit(elem, 'updated', {
-      detail: { prev, next }
-    });
+    const canRender = skate.emit(elem, 'updated', { detail: prev });
 
     // This can be custom, or just reuse the default implementation. Since we
     // emitted the event and listeners had a chance to update the component,
     // this will get called with the updated state.
-    //
-    // We call skate.props() here just in case the component was updated.
-    return canRender && skate.Component.updated(elem, prev, skate.props(elem));
+    return canRender && skate.Component.updated(elem, prev);
   }
 });
 ```
 
 The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updated()` check.
-
-*Note, that in order for the default `updated()` check to get the new props, you must explicitly get and pass the new props into it.*
 
 
 

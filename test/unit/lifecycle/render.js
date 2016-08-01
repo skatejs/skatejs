@@ -60,19 +60,38 @@ describe('lifecycle/render', () => {
 
   describe('updated()', () => {
     it('should be called even if there is no render function', done => {
+      let called = 0;
       const Elem = define('x-test', {
         props: {
           test: prop.number()
         },
-        updated(el, prev, next) {
-          expect(el).to.equal(elem);
-          expect(prev).to.equal(undefined);
-          expect(next.test).to.equal(0);
-          done();
+        updated(el, prev) {
+          if (elem.test === 0) {
+            expect(el).to.equal(elem);
+            expect(prev).to.equal(undefined);
+          } else if (elem.test === 1) {
+            expect(el).to.equal(elem);
+            expect(prev.test).to.equal(0);
+          } else if (elem.test === 2) {
+            expect(el).to.equal(elem);
+            expect(prev.test).to.equal(1);
+          }
+          ++called;
         },
       });
       const elem = new Elem();
       fixture(elem);
+      afterMutations(
+        () => expect(called).to.equal(1),
+        () => expect(elem.test).to.equal(0),
+        () => elem.test = 1,
+        () => expect(called).to.equal(2),
+        () => expect(elem.test).to.equal(1),
+        () => elem.test = 2,
+        () => expect(called).to.equal(3),
+        () => expect(elem.test).to.equal(2),
+        done
+      );
     });
 
     it('should prevent rendering if it returns falsy', done => {

@@ -19,14 +19,14 @@ export default function (Ctor) {
     let shouldRender = true;
     if (updated) {
       const prev = elem[$props];
-      const next = props(elem);
-      elem[$props] = next;
-      shouldRender = updated(elem, prev, next);
+      elem[$props] = props(elem);
+      shouldRender = updated(elem, prev);
     }
 
     // Even though this would ideally be checked in the updated() callback,
     // it may not be, so we ensure that there is a point in proceeding.
     if (!render) {
+      elem[$rendering] = false;
       return;
     }
 

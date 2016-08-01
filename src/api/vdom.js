@@ -57,7 +57,7 @@ attributes[symbols.default] = function (elem, name, value) {
     if (firstChar === '-') {
       eventName = name.substring(3);
     } else if (firstChar === firstChar.toUpperCase()) {
-      eventName = name.substring(2);
+      eventName = firstChar.toLowerCase() + name.substring(3);
     }
 
     if (eventName) {
