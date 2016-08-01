@@ -1,24 +1,16 @@
-import 'skatejs-named-slots';
-import './boot';
-import './unit/index';
-import './unit/api/define';
-import './unit/api/emit';
-import './unit/api/properties';
-import './unit/api/props';
-import './unit/api/ready';
-import './unit/constructor';
-import './unit/extending';
-import './unit/lifecycle';
-import './unit/lifecycle/attribute-changed';
-import './unit/lifecycle/properties';
-import './unit/lifecycle/render';
-import './unit/registration';
-import './unit/util/dash-case';
-import './unit/util/define-property-constructor';
-import './unit/util/support';
-import './unit/vdom/elements';
-import './unit/vdom/events';
-import './unit/vdom/incremental-dom';
-import './unit/vdom/properties';
-import './unit/vdom/ref';
-import './unit/vdom/shadow-dom';
+const div = document.createElement('div');
+const reqCustomElements = require.context('../node_modules/webcomponents.js/src/CustomElements/v1', true, /^.*\.js$/);
+const reqNamedSlots = require.context('../node_modules/skatejs-named-slots/dist', true, /^.*\.js$/);
+const reqTests = require.context('./unit', true, /^.*\.js$/);
+
+if (!document.registerElement && !window.customElements) {
+  reqCustomElements('./CustomElements.js');
+}
+
+if (!div.createShadowRoot && !div.attachShadow) {
+  reqNamedSlots('./index.js');
+}
+
+require('./boot');
+reqTests.keys().map(reqTests);
+

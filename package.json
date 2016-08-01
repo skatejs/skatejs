@@ -23,8 +23,7 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "0.4.1",
-    "regex-native-function": "^1.0.0"
+    "incremental-dom": "0.4.1"
   },
   "devDependencies": {
     "birdpoo": "^0.2.2",
@@ -33,7 +32,7 @@
     "react-dom": "^15.3.0",
     "skatejs-build": "^6.0.3",
     "skatejs-named-slots": "^0.3.1",
-    "webcomponents.js": "^0.7.22"
+    "webcomponents.js": "webcomponents/webcomponentsjs#b77ca74"
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
@@ -44,5 +43,5 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "version": "1.0.0-beta.19"
+  "version": "1.0.0-beta.20"
 }

@@ -1,15 +1,15 @@
-const CustomEvent = (function (CustomEvent) {
-  if (CustomEvent) {
+const CustomEvent = ((Event) => {
+  if (Event) {
     try {
-      new CustomEvent();
+      new Event(); // eslint-disable-line no-new
     } catch (e) {
       return undefined;
     }
   }
-  return CustomEvent;
-}(window.CustomEvent));
+  return Event;
+})(window.CustomEvent);
 
-function createCustomEvent (name, opts = {}) {
+function createCustomEvent(name, opts = {}) {
   if (CustomEvent) {
     return new CustomEvent(name, opts);
   }
@@ -19,8 +19,11 @@ function createCustomEvent (name, opts = {}) {
 }
 
 export default function (elem, name, opts = {}) {
-  /* jshint expr: true */
-  opts.bubbles === undefined && (opts.bubbles = true);
-  opts.cancelable === undefined && (opts.cancelable = true);
+  if (opts.bubbles === undefined) {
+    opts.bubbles = true;
+  }
+  if (opts.cancelable === undefined) {
+    opts.cancelable = true;
+  }
   return elem.disabled ? true : elem.dispatchEvent(createCustomEvent(name, opts));
 }
