@@ -1,5 +1,6 @@
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
+import afterMutations from '../../lib/after-mutations';
 
 describe('lifecycle/attribute-changed', () => {
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
@@ -17,5 +18,27 @@ describe('lifecycle/attribute-changed', () => {
         done();
       },
     });
+  });
+
+  it('attributes that are defined as properties should call attributeChanged callback', (done) => {
+    let counter = 0;
+    const elem = new (element().skate({
+      attributeChanged () {
+        counter++;
+      },
+      props: {
+        test: {
+          attribute: true
+        },
+      },
+    }));
+    afterMutations(
+      () => expect(counter).to.equal(0),
+      () => (elem.test = true),
+      () => expect(counter).to.equal(1),
+      () => (elem.test = false),
+      () => expect(counter).to.equal(2),
+      done
+    );
   });
 });
