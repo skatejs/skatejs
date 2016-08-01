@@ -17,7 +17,7 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 // you cannot, so we ensure the polyfill has a patched HTMLElement constructor.
 if (customElementsV0Polyfill) {
   const proto = HTMLElement.prototype;
-  window.HTMLElement = () => {
+  window.HTMLElement = function () { // eslint-disable-line func-names
     const ctor = this[$ctor];
     const name = this[$name];
     const type = ctor.extends;
