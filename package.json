@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "birdpoo": "^0.2.2",
+    "es6-shim": "^0.35.1",
     "eslint": "^3.2.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
