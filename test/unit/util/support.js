@@ -6,11 +6,11 @@ describe('util/support', () => {
     // it finds a native implementation of a function. The polyfilled property just needs to match
     // what a non-native property looks like on an element (must have a `value` function)
     const nativeProperty = Object.getOwnPropertyDescriptor(Function.prototype, 'toString');
-    const polyfilledProperty = { value: () => {}};
+    const polyfilledProperty = { value: () => {} };
 
     let obj;
 
-    expect(nativeProperty).to.be.defined;
+    expect(nativeProperty).to.be.defined;  // eslint-disable-line no-unused-expressions
 
     beforeEach(() => {
       obj = {};

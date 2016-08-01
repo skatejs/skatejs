@@ -3,35 +3,35 @@ import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import { props } from '../../../src/index';
 
-describe('api/props', function () {
+describe('api/props', () => {
   let elem;
 
   beforeEach(done => {
     elem = new (element().skate({
       props: {
         prop1: {
-          initial: 'test1'
+          initial: 'test1',
         },
         prop2: {
-          initial: 'test2'
+          initial: 'test2',
         },
         prop3: {
-          default: undefined
-        }
+          default: undefined,
+        },
       },
-      created(elem) {
-        elem._rendered = 0;
+      created(el) {
+        el._rendered = 0;
       },
-      render(elem) {
-        elem._rendered++;
-      }
+      render(el) {
+        el._rendered++;
+      },
     }));
     fixture(elem);
     afterMutations(done);
   });
 
   describe('getting', () => {
-    it('should return only properties defined as props', function () {
+    it('should return only properties defined as props', () => {
       const curr = props(elem);
       expect(curr.prop1).to.equal('test1');
       expect(curr.prop2).to.equal('test2');
@@ -41,11 +41,11 @@ describe('api/props', function () {
   });
 
   describe('setting', () => {
-    it('should set all properties', function () {
+    it('should set all properties', () => {
       props(elem, {
         prop1: 'updated1',
         prop2: 'updated2',
-        undeclaredProp: 'updated3'
+        undeclaredProp: 'updated3',
       });
       expect(elem.prop1).to.equal('updated1');
       expect(elem.prop2).to.equal('updated2');

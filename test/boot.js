@@ -1,10 +1,10 @@
 import 'webcomponents.js/CustomElements';
 import helperFixture from './lib/fixture';
 
-mocha.setup({ timeout: 10000 });
+mocha.setup({ timeout: 10000 }); // eslint-disable-line no-undef
 
-afterEach(function () {
+afterEach(() => {
   // Ensure perf tests have enough time to cleanup after themselves.
-  this.timeout(120000);
+  mocha.timeout(120000); // eslint-disable-line no-undef
   helperFixture('');
 });

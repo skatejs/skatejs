@@ -1,7 +1,8 @@
 import definePropertyConstructor from '../../../src/util/define-property-constructor';
 
 describe('util/define-property-constructor', () => {
-  let ctor, obj;
+  let ctor;
+  let obj;
 
   beforeEach(() => {
     ctor = () => {};

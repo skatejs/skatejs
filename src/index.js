@@ -17,5 +17,5 @@ export {
   props,
   ready,
   symbols,
-  vdom
+  vdom,
 };

@@ -17,9 +17,8 @@ export function shouldUseShadowDomV0(elem) {
     return true;
   } else if (isPolyfill(elem, v1ShadowDOMProperty)) {
     return false;
-  } else {
-    return isPolyfill(elem, v0ShadowDOMProperty);
   }
+  return isPolyfill(elem, v0ShadowDOMProperty);
 }
 
 export function shouldUseShadowDomV1(elem) {
@@ -27,9 +26,8 @@ export function shouldUseShadowDomV1(elem) {
     return true;
   } else if (isNative(elem, v0ShadowDOMProperty)) {
     return false;
-  } else {
-    return isPolyfill(elem, v1ShadowDOMProperty);
   }
+  return isPolyfill(elem, v1ShadowDOMProperty);
 }
 
 export const customElementsV0 = !!document.registerElement;

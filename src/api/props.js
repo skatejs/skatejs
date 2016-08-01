@@ -1,15 +1,16 @@
 import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
 
-function get (elem) {
+function get(elem) {
   const props = {};
-  for (let key in elem.constructor.props) {
+  Object.keys(elem.constructor.props).forEach((key) => {
     props[key] = elem[key];
-  }
+  });
+
   return props;
 }
 
-function set (elem, newProps) {
+function set(elem, newProps) {
   assign(elem, newProps);
   if (elem.constructor.render) {
     elem.constructor[$renderer](elem);

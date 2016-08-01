@@ -5,7 +5,7 @@ import {
   name as $name,
   props as $props,
   renderer as $renderer,
-  rendererDebounced as $rendererDebounced
+  rendererDebounced as $rendererDebounced,
 } from '../util/symbols';
 import { customElementsV0, customElementsV0Polyfill } from '../util/support';
 import data from '../util/data';
@@ -17,23 +17,23 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 // you cannot, so we ensure the polyfill has a patched HTMLElement constructor.
 if (customElementsV0Polyfill) {
   const proto = HTMLElement.prototype;
-  window.HTMLElement = function () {
+  window.HTMLElement = function () { // eslint-disable-line func-names
     const ctor = this[$ctor];
     const name = this[$name];
     const type = ctor.extends;
-    return document.createElement(type || name, type ? name : null); 
+    return document.createElement(type || name, type ? name : null);
   };
   HTMLElement.prototype = Object.create(proto);
   definePropertyConstructor(HTMLElement.prototype, HTMLElement);
 }
 
 export default class Component extends HTMLElement {
-  constructor () {
+  constructor() {
     super();
     this.createdCallback();
   }
 
-  connectedCallback () {
+  connectedCallback() {
     const ctor = this.constructor;
     const { attached } = ctor;
     const render = ctor[$renderer];
@@ -46,7 +46,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  disconnectedCallback () {
+  disconnectedCallback() {
     const { detached } = this.constructor;
     this[$connected] = false;
     if (typeof detached === 'function') {
@@ -54,7 +54,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  attributeChangedCallback (name, oldValue, newValue) {
+  attributeChangedCallback(name, oldValue, newValue) {
     const { attributeChanged, observedAttributes } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
@@ -85,7 +85,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  createdCallback () {
+  createdCallback() {
     // In the polyfill, if you define a custom element after it has been
     // created the polyfill will call the constructor it has on record thus
     // ignoring the one the user has defined for the element. We ensure the
@@ -139,23 +139,23 @@ export default class Component extends HTMLElement {
     }
   }
 
-  attachedCallback () {
+  attachedCallback() {
     this.connectedCallback();
   }
 
-  detachedCallback () {
+  detachedCallback() {
     this.disconnectedCallback();
   }
 
-  static get observedAttributes () {
+  static get observedAttributes() {
     return [];
   }
 
-  static get props () {
+  static get props() {
     return {};
   }
 
-  static extend (definition = {}, Base = this) {
+  static extend(definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
 
@@ -176,11 +176,12 @@ export default class Component extends HTMLElement {
   // This is a default implementation that does strict equality copmarison on
   // prevoius props and next props. It synchronously renders on the first prop
   // that is different and returns immediately.
-  static updated (elem, prev) {
+  static updated(elem, prev) {
     if (!prev) {
       return true;
     }
-    for (let name in prev) {
+
+    for (const name in prev) { // eslint-disable-line no-restricted-syntax
       if (prev[name] !== elem[name]) {
         return true;
       }
