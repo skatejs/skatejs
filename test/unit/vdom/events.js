@@ -5,22 +5,22 @@ import fixture from '../../lib/fixture';
 
 const { boolean, number } = prop;
 
-describe('vdom/events (on*)', function () {
+describe('vdom/events (on*)', () => {
   it('should not duplicate listeners', done => {
     const MyEl = element().skate({
       props: {
-        test: number({ default: 0 })
+        test: number({ default: 0 }),
       },
-      created (elem) {
+      created(elem) {
         elem._test = 0;
       },
-      render (elem) {
+      render(elem) {
         vdom.element('div', {
-          'on-event' () {
+          'on-event'() {
             elem._test++;
-          }
+          },
         }, elem.test);
-      }
+      },
     });
 
     const el = new MyEl();
@@ -56,11 +56,13 @@ describe('vdom/events (on*)', function () {
 
   it('should trigger events bubbled from descendants', done => {
     let called = false;
-    const test = () => called = true;
+    const test = () => {
+      called = true;
+    };
     const myel = new (element().skate({
-      render () {
+      render() {
         vdom.element('div', { 'on-test': test }, vdom.element.bind(null, 'span'));
-      }
+      },
     }));
     fixture().appendChild(myel);
 
@@ -73,9 +75,9 @@ describe('vdom/events (on*)', function () {
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render () {
+      render() {
         vdom.element('div', { 'on-test': null });
-      }
+      },
     }));
     fixture(myel);
     afterMutations(() => {
@@ -85,9 +87,11 @@ describe('vdom/events (on*)', function () {
   });
 
   describe('built-in / custom', () => {
-    let count, div, el;
+    let count;
+    let div;
+    let el;
 
-    function inc () {
+    function inc() {
       ++count;
     }
 
@@ -95,57 +99,59 @@ describe('vdom/events (on*)', function () {
       count = 0;
       el = new (element().skate({
         props: {
-          unbind: boolean()
+          unbind: boolean(),
         },
-        render (elem) {
+        render(elem) {
           if (elem.unbind) {
             vdom.element('div');
           } else {
             vdom.element('div', { onclick: inc, onTest1: inc, 'on-test2': inc });
           }
-        }
+        },
       }));
       fixture(el);
       afterMutations(
-        () => div = el[symbols.shadowRoot].firstChild,
+        () => {
+          div = el[symbols.shadowRoot].firstChild;
+        },
         done
       );
     });
 
-    describe('built-in', function () {
-      it('binding', function () {
+    describe('built-in', () => {
+      it('binding', () => {
         expect(div.onclick).to.be.a('function');
       });
 
-      it('triggering via function', function () {
+      it('triggering via function', () => {
         div.onclick();
         expect(count).to.equal(1);
       });
 
-      it('triggering via dispatchEvent()', function () {
+      it('triggering via dispatchEvent()', () => {
         emit(div, 'click');
         expect(count).to.equal(1);
       });
 
-      it('unbinding', function () {
+      it('unbinding', () => {
         props(el, { unbind: true });
         expect(div.onclick).to.equal(null);
       });
     });
 
-    describe('custom', function () {
-      it('binding', function () {
+    describe('custom', () => {
+      it('binding', () => {
         expect(div.onTest).to.equal(undefined);
         expect(div['on-test']).to.equal(undefined);
       });
 
-      it('triggering via dispatchEvent()', function () {
+      it('triggering via dispatchEvent()', () => {
         emit(div, 'test1');
         emit(div, 'test2');
         expect(count).to.equal(2);
       });
 
-      it('unbinding', function () {
+      it('unbinding', () => {
         props(el, { unbind: true });
         emit(div, 'test1');
         emit(div, 'test2');

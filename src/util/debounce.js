@@ -1,6 +1,6 @@
 export default function (fn) {
   let called = false;
-  return function (...args) {
+  return (...args) => {
     if (!called) {
       called = true;
       setTimeout(() => {

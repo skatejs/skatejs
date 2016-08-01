@@ -1,4 +1,4 @@
-import { 
+import {
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
 } from '../util/symbols';
@@ -6,21 +6,21 @@ import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
 
-function getDefaultValue (elem, name, opts) {
+function getDefaultValue(elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
 }
 
-function getInitialValue (elem, name, opts) {
+function getInitialValue(elem, name, opts) {
   return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
 }
 
-function createNativePropertyDefinition (name, opts) {
+function createNativePropertyDefinition(name, opts) {
   const prop = {
     configurable: true,
-    enumerable: true
+    enumerable: true,
   };
 
-  prop.created = function (elem) {
+  prop.created = function (elem) { // eslint-disable-line func-names
     const propData = data(elem, `api/property/${name}`);
     const attributeName = opts.attribute;
     let initialValue = elem[name];
@@ -49,7 +49,7 @@ function createNativePropertyDefinition (name, opts) {
     }
   };
 
-  prop.get = function () {
+  prop.get = function () { // eslint-disable-line func-names
     const propData = data(this, `api/property/${name}`);
     const { internalValue } = propData;
     if (typeof opts.get === 'function') {
@@ -58,7 +58,7 @@ function createNativePropertyDefinition (name, opts) {
     return internalValue;
   };
 
-  prop.set = function (newValue) {
+  prop.set = function (newValue) { // eslint-disable-line func-names
     const propData = data(this, `api/property/${name}`);
     let { oldValue } = propData;
     let shouldRemoveAttribute = false;
@@ -117,11 +117,9 @@ export default function (opts) {
     opts = { coerce: opts };
   }
 
-  return function (name) {
-    return createNativePropertyDefinition(name, assign({
-      default: null,
-      deserialize: value => value,
-      serialize: value => value
-    }, opts));
-  };
+  return (name) => createNativePropertyDefinition(name, assign({
+    default: null,
+    deserialize: value => value,
+    serialize: value => value,
+  }, opts));
 }
