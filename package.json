@@ -31,7 +31,7 @@
     "eslint": "^3.0.1",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "skatejs-build": "^6.0.0",
+    "skatejs-build": "^6.0.2",
     "skatejs-named-slots": "^0.3.1",
     "webcomponents.js": "^0.7.22"
   },
