@@ -16,4 +16,3 @@ if (!div.createShadowRoot && !div.attachShadow) {
 
 require('./boot');
 reqTests.keys().map(reqTests);
-
