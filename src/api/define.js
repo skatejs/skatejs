@@ -1,10 +1,9 @@
 import {
-  ctor as $ctor,
   name as $name,
   props as $props,
   renderer as $renderer
 } from '../util/symbols';
-import { customElementsV0, customElementsV0Polyfill, customElementsV1 } from '../util/support';
+import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
@@ -123,16 +122,12 @@ export default function (name, opts) {
   Ctor[$props] = createInitProps(Ctor);
   Ctor[$renderer] = createRenderer(Ctor);
 
-  if (customElementsV0) {
-    // These properties are necessary for the Custom Element v0 polyfill so
-    // that we can fix it not working with extending the built-in HTMLElement.
-    Ctor.prototype[$ctor] = Ctor;
-    Ctor.prototype[$name] = uniqueName;
+  if (customElementsV1) {
+    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+  } else if (customElementsV0) {
     const NewCtor = document.registerElement(uniqueName, Ctor);
     definePropertyConstructor(NewCtor.prototype, Ctor);
-    return customElementsV0Polyfill ? Ctor : NewCtor;
-  } else if (customElementsV1) {
-    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+    return NewCtor;
   } else {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }

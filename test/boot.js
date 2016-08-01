@@ -1,4 +1,3 @@
-import 'webcomponents.js/CustomElements';
 import helperFixture from './lib/fixture';
 
 mocha.setup({ timeout: 10000 });
