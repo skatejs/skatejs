@@ -32,11 +32,13 @@ describe('lifecycle/attribute-changed', function () {
         },
       },
     }));
-    afterMutations(done);
-    expect(counter).to.equal(0);
-    elem.test = true;
-    expect(counter).to.equal(1);
-    elem.test = false;
-    expect(counter).to.equal(2);
+    afterMutations(
+      () => expect(counter).to.equal(0),
+      () => (elem.test = true),
+      () => expect(counter).to.equal(1),
+      () => (elem.test = false),
+      () => expect(counter).to.equal(2),
+      done
+    );
   });
 });
