@@ -1,7 +1,7 @@
 const base = require('skatejs-build/karma.conf');
+
 module.exports = function (config) {
   base(config);
-
   // Setup IE if testing in SauceLabs.
   if (config.sauceLabs) {
     // Remove all explicit IE definitions.
@@ -10,6 +10,27 @@ module.exports = function (config) {
     // Only test IE latest.
     config.browsers.push('internet_explorer_11');
   }
+  var polyOptions = process.argv.filter((val) => {
+    return val.search('--polyfills=') == 0;
+  });
+
+  if (polyOptions && polyOptions.length) {
+    polyOptions = polyOptions[0].replace('--polyfills=', '');
+    polyOptions = polyOptions.split(',');
+  }
+
+  const polyFiles = [];
+
+  if (polyOptions.indexOf('dom0') >- 1) {
+    polyFiles.push(require.resolve('webcomponents.js/ShadowDOM'));
+  } else {
+    polyFiles.push(require.resolve('skatejs-named-slots'));
+  }
+
+  // There is no option for the v1 Custom Element polyfill, since it's unstable
+  polyFiles.push(require.resolve('webcomponents.js/CustomElements'));
+
+  config.files = polyFiles.concat(config.files);
 
   config.files = [
     // React
