@@ -10,7 +10,7 @@ describe('vdom/ref', () => {
         ref: { initial: () => ref },
       },
       render(elem) {
-        vdom.element('div', { ref: elem.ref, id: 'div' }, () => 
+        vdom.element('div', { ref: elem.ref, id: 'div' }, () =>
           vdom.element('span', { id: 'span' }, 'test')
         );
       },
@@ -54,12 +54,17 @@ describe('vdom/ref', () => {
   });
 
   it('should call a different ref if changed', done => {
-    let ref1, ref2;
-    const elem = create(() => ref1 = true);
+    let ref1;
+    let ref2;
+    const elem = create(() => {
+      ref1 = true;
+    });
     afterMutations(() => {
       expect(ref1).to.equal(true);
       expect(ref2).to.equal(undefined);
-      props(elem, { ref: () => ref2 = true });
+      props(elem, { ref: () => {
+        ref2 = true;
+      } });
       expect(ref1).to.equal(true);
       expect(ref2).to.equal(true);
       done();

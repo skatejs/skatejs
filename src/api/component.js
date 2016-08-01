@@ -3,21 +3,20 @@ import {
   created as $created,
   props as $props,
   renderer as $renderer,
-  rendererDebounced as $rendererDebounced
+  rendererDebounced as $rendererDebounced,
 } from '../util/symbols';
 import { customElementsV0 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
-import definePropertyConstructor from '../util/define-property-constructor';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 export default class Component extends HTMLElement {
-  constructor () {
+  constructor() {
     super();
     this.createdCallback();
   }
 
-  connectedCallback () {
+  connectedCallback() {
     const ctor = this.constructor;
     const { attached } = ctor;
     const render = ctor[$renderer];
@@ -30,7 +29,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  disconnectedCallback () {
+  disconnectedCallback() {
     const { detached } = this.constructor;
     this[$connected] = false;
     if (typeof detached === 'function') {
@@ -38,7 +37,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  attributeChangedCallback (name, oldValue, newValue) {
+  attributeChangedCallback(name, oldValue, newValue) {
     const { attributeChanged, observedAttributes } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
@@ -69,7 +68,7 @@ export default class Component extends HTMLElement {
     }
   }
 
-  createdCallback () {
+  createdCallback() {
     const elemData = data(this);
     const readyCallbacks = elemData.readyCallbacks;
     const Ctor = this.constructor;
@@ -108,23 +107,23 @@ export default class Component extends HTMLElement {
     }
   }
 
-  attachedCallback () {
+  attachedCallback() {
     this.connectedCallback();
   }
 
-  detachedCallback () {
+  detachedCallback() {
     this.disconnectedCallback();
   }
 
-  static get observedAttributes () {
+  static get observedAttributes() {
     return [];
   }
 
-  static get props () {
+  static get props() {
     return {};
   }
 
-  static extend (definition = {}, Base = this) {
+  static extend(definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
 
@@ -145,11 +144,12 @@ export default class Component extends HTMLElement {
   // This is a default implementation that does strict equality copmarison on
   // prevoius props and next props. It synchronously renders on the first prop
   // that is different and returns immediately.
-  static updated (elem, prev) {
+  static updated(elem, prev) {
     if (!prev) {
       return true;
     }
-    for (let name in prev) {
+
+    for (const name in prev) { // eslint-disable-line no-restricted-syntax
       if (prev[name] !== elem[name]) {
         return true;
       }

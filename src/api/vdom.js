@@ -19,6 +19,27 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 const stackChren = [];
 const stackProps = [];
 
+// Adds or removes an event listener for an element.
+function applyEvent(elem, ename, newFunc) {
+  let events = elem.__events;
+
+  if (!events) {
+    events = elem.__events = {};
+  }
+
+  const oldFunc = events[ename];
+
+  // Remove old listener so they don't double up.
+  if (oldFunc) {
+    elem.removeEventListener(ename, oldFunc);
+  }
+
+  // Bind new listener.
+  if (newFunc) {
+    elem.addEventListener(ename, events[ename] = newFunc);
+  }
+}
+
 // Attributes that are not handled by Incremental DOM.
 attributes.key = attributes.skip = attributes.statics = function () {};
 
@@ -66,7 +87,7 @@ attributes[symbols.default] = function (elem, name, value) {
     }
   }
 
-  // Set the select attribute instead of name if it was a <slot> translated to 
+  // Set the select attribute instead of name if it was a <slot> translated to
   // a <content> for v0.
   if (name === 'name' && elem.tagName === 'CONTENT') {
     name = 'select';
@@ -83,28 +104,8 @@ attributes[symbols.default] = function (elem, name, value) {
   applyDefault(elem, name, value);
 };
 
-// Adds or removes an event listener for an element.
-function applyEvent (elem, ename, newFunc) {
-  let events = elem.__events;
 
-  if (!events) {
-    events = elem.__events = {};
-  }
-
-  const oldFunc = events[ename];
-
-  // Remove old listener so they don't double up.
-  if (oldFunc) {
-    elem.removeEventListener(ename, oldFunc);
-  }
-
-  // Bind new listener.
-  if (newFunc) {
-    elem.addEventListener(ename, events[ename] = newFunc);
-  }
-}
-
-function resolveTagName (tname) {
+function resolveTagName(tname) {
   // If the tag name is a function, a Skate constructor or a standard function
   // is supported.
   //
@@ -124,8 +125,8 @@ function resolveTagName (tname) {
   return tname;
 }
 
-function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
-  return function wrap (...args) {
+function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
+  return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
     if (typeof args[0] === 'function') {
       // If we've encountered a function, handle it according to the type of
@@ -152,7 +153,7 @@ function wrapIdomFunc (func, tnameFuncHandler = () => {}) {
   };
 }
 
-function newAttr (key, val) {
+function newAttr(key, val) {
   if (stackProps.length) {
     stackProps[stackProps.length - 1][key] = val;
   } else {
@@ -160,7 +161,7 @@ function newAttr (key, val) {
   }
 }
 
-function stackOpen (tname, key, statics, ...attrs) {
+function stackOpen(tname, key, statics, ...attrs) {
   const props = { key, statics };
   for (let a = 0; a < attrs.length; a += 2) {
     props[attrs[a]] = attrs[a + 1];
@@ -169,27 +170,35 @@ function stackOpen (tname, key, statics, ...attrs) {
   stackProps.push(props);
 }
 
-function stackClose (tname) {
+function stackClose(tname) {
   const chren = stackChren.pop();
   const props = stackProps.pop();
   return tname(props, () => chren.forEach(args => args[0](...args[1])));
 }
 
-function stackVoid (...args) {
+function stackVoid(...args) {
   stackOpen(...args);
   return stackClose(args[0]);
 }
 
+// Patch element factories.
+const newElementClose = wrapIdomFunc(elementClose, stackClose);
+const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
+const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
+const newText = wrapIdomFunc(text);
+
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
-export function element (tname, attrs, chren) {
+export function element(tname, attrs, chren) {
   const atype = typeof attrs;
 
   // If attributes are a function, then they should be treated as children.
   if (atype === 'function' || atype === 'string') {
     chren = attrs;
   }
-  
+
   // Ensure the attributes are an object.
   if (atype !== 'object') {
     attrs = {};
@@ -207,7 +216,7 @@ export function element (tname, attrs, chren) {
 
   // Close before we render the descendant tree.
   newElementOpenEnd(tname);
-  
+
   const ctype = typeof chren;
   if (ctype === 'function') {
     chren();
@@ -218,15 +227,7 @@ export function element (tname, attrs, chren) {
   return newElementClose(tname);
 }
 
-// Patch element factories.
-const newElementClose = wrapIdomFunc(elementClose, stackClose);
-const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
-const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
-const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
-const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
-const newText = wrapIdomFunc(text);
-
-// We don't have to do anything special for the text function; it's just a 
+// We don't have to do anything special for the text function; it's just a
 // straight export from Incremental DOM.
 export {
   newAttr as attr,

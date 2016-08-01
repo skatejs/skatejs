@@ -1,39 +1,39 @@
 import assign from '../util/assign';
 import empty from '../util/empty';
 
-const alwaysUndefinedIfNotANumberOrNumber = val => isNaN(val) ? undefined : Number(val);
-const alwaysUndefinedIfEmptyOrString = val => empty(val) ? undefined : String(val);
+const alwaysUndefinedIfNotANumberOrNumber = (val) => (isNaN(val) ? undefined : Number(val));
+const alwaysUndefinedIfEmptyOrString = (val) => (empty(val) ? undefined : String(val));
 
-export function create (def) {
-  return function (...args) {
+export function create(def) {
+  return (...args) => {
     args.unshift({}, def);
     return assign.apply(null, args);
   };
 }
 
 export const array = create({
-  coerce: val => Array.isArray(val) ? val : [val],
+  coerce: (val) => (Array.isArray(val) ? val : [val]),
   default: () => [],
   deserialize: JSON.parse,
-  serialize: JSON.stringify
+  serialize: JSON.stringify,
 });
 
 export const boolean = create({
   coerce: value => !!value,
   default: false,
   deserialize: value => !(value === null),
-  serialize: value => value ? '' : undefined
+  serialize: value => (value ? '' : undefined),
 });
 
 export const number = create({
   default: 0,
   coerce: alwaysUndefinedIfNotANumberOrNumber,
   deserialize: alwaysUndefinedIfNotANumberOrNumber,
-  serialize: alwaysUndefinedIfNotANumberOrNumber
+  serialize: alwaysUndefinedIfNotANumberOrNumber,
 });
 
 export const string = create({
   coerce: alwaysUndefinedIfEmptyOrString,
   deserialize: alwaysUndefinedIfEmptyOrString,
-  serialize: alwaysUndefinedIfEmptyOrString
+  serialize: alwaysUndefinedIfEmptyOrString,
 });

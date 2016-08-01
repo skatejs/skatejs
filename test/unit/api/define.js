@@ -32,6 +32,6 @@ describe('api/define', () => {
   });
 
   it('should take a constructor that extends Component', () => {
-    expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+    expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component); // eslint-disable-line react/prefer-stateless-function, max-len
   });
 });

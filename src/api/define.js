@@ -1,23 +1,22 @@
 import {
   name as $name,
   props as $props,
-  renderer as $renderer
+  renderer as $renderer,
 } from '../util/symbols';
 import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
-import definePropertyConstructor from '../util/define-property-constructor';
 import initProps from '../lifecycle/props-init';
 
 const registry = {};
 
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  let props = Ctor.props;
-  let names = Object.keys(props || {});
-  return names.reduce(function (descriptors, descriptorName) {
+function ensurePropertyFunctions(Ctor) {
+  const props = Ctor.props;
+  const names = Object.keys(props || {});
+  return names.reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
       descriptors[descriptorName] = initProps(descriptors[descriptorName]);
@@ -28,9 +27,9 @@ function ensurePropertyFunctions (Ctor) {
 
 // Ensures the property definitions are transformed to objects that can be used
 // to create properties on the element.
-function ensurePropertyDefinitions (Ctor) {
+function ensurePropertyDefinitions(Ctor) {
   const props = ensurePropertyFunctions(Ctor);
-  return Object.keys(props).reduce(function (descriptors, descriptorName) {
+  return Object.keys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName](descriptorName);
     return descriptors;
   }, {});
@@ -38,14 +37,14 @@ function ensurePropertyDefinitions (Ctor) {
 
 // Ensures linked properties that have linked attributes are pre-formatted to
 // the attribute name in which they are linked.
-function formatLinkedAttributes (Ctor) {
+function formatLinkedAttributes(Ctor) {
   const { observedAttributes, props } = Ctor;
 
   if (!props) {
     return;
   }
 
-  Object.keys(props).forEach(function (name) {
+  Object.keys(props).forEach((name) => {
     const prop = props[name];
     const attr = prop.attribute;
     if (attr) {
@@ -64,21 +63,21 @@ function formatLinkedAttributes (Ctor) {
   Object.defineProperty(Ctor, 'observedAttributes', {
     configurable: true,
     enumerable: true,
-    get () {
+    get() {
       return observedAttributes;
-    }
+    },
   });
 }
 
-function createInitProps (Ctor) {
+function createInitProps(Ctor) {
   const props = ensurePropertyDefinitions(Ctor);
 
-  return function (elem) {
+  return (elem) => {
     if (!props) {
       return;
     }
 
-    Object.keys(props).forEach(function (name) {
+    Object.keys(props).forEach((name) => {
       const prop = props[name];
       prop.created(elem);
 
@@ -101,7 +100,8 @@ function generateUniqueName(name) {
   }
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
 
@@ -110,7 +110,7 @@ function generateUniqueName(name) {
 
 export default function (name, opts) {
   if (opts === undefined) {
-    throw new Error('You have to define options to register a component ' + name);
+    throw new Error(`You have to define options to register a component ${name}`);
   }
 
   const uniqueName = generateUniqueName(name);
@@ -125,9 +125,7 @@ export default function (name, opts) {
   if (customElementsV1) {
     window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
   } else if (customElementsV0) {
-    const NewCtor = document.registerElement(uniqueName, Ctor);
-    definePropertyConstructor(NewCtor.prototype, Ctor);
-    return NewCtor;
+    return document.registerElement(uniqueName, Ctor);
   } else {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }

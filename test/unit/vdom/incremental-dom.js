@@ -1,14 +1,14 @@
 import * as IncrementalDOM from 'incremental-dom';
 import { define, vdom } from '../../../src/index';
 
-function testBasicApi (name) {
+function testBasicApi(name) {
   describe(name, () => {
     it('should be a function', () => expect(vdom[name]).to.be.a('function'));
     it('should not be the same one as in Incremental DOM', () => expect(vdom[name]).not.to.equal(IncrementalDOM[name]));
   });
 }
 
-describe('IncrementalDOM', function () {
+describe('IncrementalDOM', () => {
   testBasicApi('attr');
   testBasicApi('elementClose');
   testBasicApi('elementOpen');
@@ -19,7 +19,9 @@ describe('IncrementalDOM', function () {
 
   describe('function tag names', () => {
     let fixture;
-    beforeEach(() => fixture = document.createElement('div'));
+    beforeEach(() => {
+      fixture = document.createElement('div');
+    });
 
     function patchIt(desc, func) {
       it(desc, () => IncrementalDOM.patch(fixture, func));
@@ -38,7 +40,7 @@ describe('IncrementalDOM', function () {
         vdom.elementOpenEnd(Elem);
         expect(vdom.elementClose(Elem).outerHTML).to.equal('<x-test></x-test>');
       });
-      
+
       patchIt('elementVoid', () => {
         expect(vdom.elementVoid(Elem).outerHTML).to.equal('<x-test></x-test>');
       });
@@ -47,7 +49,7 @@ describe('IncrementalDOM', function () {
     describe('passing a function helper', () => {
       function patchAssert(elem, { checkChildren = true } = {}) {
         expect(fixture.firstChild).to.equal(elem);
-        expect(fixture.innerHTML).to.equal(`<div id="test">${ checkChildren ? '<span>test</span>' : ''}</div>`);
+        expect(fixture.innerHTML).to.equal(`<div id="test">${checkChildren ? '<span>test</span>' : ''}</div>`);
       }
 
       function renderChildren() {
@@ -76,7 +78,7 @@ describe('IncrementalDOM', function () {
         renderChildren();
         patchAssert(vdom.elementClose(Elem));
       });
-      
+
       patchIt('elementVoid', () => {
         patchAssert(vdom.elementVoid(Elem, null, null, 'id', 'test'), { checkChildren: false });
       });

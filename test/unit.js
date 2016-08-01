@@ -15,7 +15,6 @@ import './unit/lifecycle/properties';
 import './unit/lifecycle/render';
 import './unit/registration';
 import './unit/util/dash-case';
-import './unit/util/define-property-constructor';
 import './unit/vdom/elements';
 import './unit/vdom/events';
 import './unit/vdom/incremental-dom';

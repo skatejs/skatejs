@@ -2,12 +2,12 @@ import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 import { define, prop, props, symbols, vdom } from '../../../src/index';
 
-describe('vdom/properties', function () {
+describe('vdom/properties', () => {
   it('class -> className', done => {
     const elem = new (define('x-test', {
-      render () {
+      render() {
         vdom.element('div', { class: 'test' });
-      }
+      },
     }));
     fixture(elem);
     afterMutations(
@@ -18,9 +18,9 @@ describe('vdom/properties', function () {
 
   it('false should remove the attribute', done => {
     const elem = new (define('x-test', {
-      render () {
+      render() {
         vdom.element('div', { test: false });
-      }
+      },
     }));
     fixture(elem);
     afterMutations(
@@ -30,9 +30,9 @@ describe('vdom/properties', function () {
   });
 
   it('should not set properties on SVG elements', done => {
-    expect(function () {
-      new (define('x-test', {
-        render () {
+    expect(() => {
+      new (define('x-test', { // eslint-disable-line no-new
+        render() {
           vdom.element('svg', { height: 100 });
         },
       }));
@@ -43,22 +43,23 @@ describe('vdom/properties', function () {
   });
 
   describe('re-rendering', () => {
-    let Elem1, Elem2;
+    let Elem1;
+    let Elem2;
 
     beforeEach(() => {
       Elem1 = define('x-test', {
         props: {
-          open: prop.boolean()
+          open: prop.boolean(),
         },
-        render (elem) {
+        render(elem) {
           vdom.element(Elem2, { open: elem.open });
         },
       });
       Elem2 = define('x-test', {
         props: {
-          open: prop.boolean()
+          open: prop.boolean(),
         },
-        render (elem) {
+        render(elem) {
           vdom.text(elem.open ? 'open' : 'closed');
         },
       });
