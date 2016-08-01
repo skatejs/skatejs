@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "birdpoo": "^0.2.2",
-    "eslint": "^3.0.1",
+    "eslint": "^3.2.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
     "skatejs-build": "^6.0.0",
