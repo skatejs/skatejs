@@ -20,9 +20,9 @@ describe('lifecycle/attribute-changed', function () {
     });
   });
 
-  it('attributes that are defined as properties should call attributeChanged callback', function (done) {
+  it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
-    let elem = new (element().skate({
+    const elem = new (element().skate({
       attributeChanged () {
         counter++;
       },
