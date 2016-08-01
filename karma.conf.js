@@ -2,15 +2,6 @@ const base = require('skatejs-build/karma.conf');
 module.exports = function (config) {
   base(config);
 
-  // Setup IE if testing in Browserstack.
-  if (config.browserstack) {
-    // Remove all explicit IE definitions.
-    // config.browsers = config.browsers.filter(name => !/^internet_explorer/.test(name));
-
-    // Only test IE latest.
-    // config.browsers.push('internet_explorer_11');
-  }
-
   config.files = [
     // React
     'https://scontent.xx.fbcdn.net/t39.3284-6/13591530_1796350410598576_924751100_n.js',
