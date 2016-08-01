@@ -11,7 +11,7 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
 - Skate itself is only 4k min+gz.
 - It's very fast.
-- It works with multiple versions of itself on the page, if need be.
+- It works with multiple versions of itself on the page.
 
 
 
