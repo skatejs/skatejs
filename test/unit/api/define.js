@@ -4,10 +4,6 @@ const { name: $name } = symbols;
 
 describe('api/define', () => {
   it('should not register without any properties', () => {
-
-    // just trying to trigger a failure to make sure we get a red build
-    expect(1).to.equal(2);
-
     expect(() => {
       define('x-test');
     }).to.throw(Error);
