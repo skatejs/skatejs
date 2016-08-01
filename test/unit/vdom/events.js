@@ -75,9 +75,9 @@ describe('vdom/events (on*)', () => {
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render () {
+      render() {
         vdom.element('div', { 'on-test': null });
-      }
+      },
     }));
     fixture(myel);
     afterMutations(() => {
@@ -145,7 +145,7 @@ describe('vdom/events (on*)', () => {
         expect(div['on-test']).to.equal(undefined);
       });
 
-      it('triggering via dispatchEvent()', function () {
+      it('triggering via dispatchEvent()', () => {
         emit(div, 'test1');
         emit(div, 'test2');
         expect(count).to.equal(2);

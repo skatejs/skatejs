@@ -22,7 +22,7 @@ export const boolean = create({
   coerce: value => !!value,
   default: false,
   deserialize: value => !(value === null),
-  serialize: (value) => (value ? '' : undefined),
+  serialize: value => (value ? '' : undefined),
 });
 
 export const number = create({
