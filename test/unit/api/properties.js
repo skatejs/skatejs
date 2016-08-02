@@ -150,12 +150,12 @@ describe('api/prop', () => {
   describe('string', () => {
     it('values', () => {
       const elem = create(prop.string());
-      expect(elem.test).to.equal(undefined);
+      expect(elem.test).to.equal('');
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('string', [
         [false, 'false', 'false'],
-        [null, undefined, null],
-        [undefined, undefined, null],
+        [null, '', null],
+        [undefined, '', null],
         [0, '0', '0'],
         ['', '', ''],
       ]);

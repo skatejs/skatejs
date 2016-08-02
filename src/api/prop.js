@@ -33,6 +33,7 @@ export const number = create({
 });
 
 export const string = create({
+  default: '',
   coerce: alwaysUndefinedIfEmptyOrString,
   deserialize: alwaysUndefinedIfEmptyOrString,
   serialize: alwaysUndefinedIfEmptyOrString,
