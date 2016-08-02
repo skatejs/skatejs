@@ -1,3 +1,18 @@
+<a name="1.0.1"></a>
+## [1.0.1](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.20...v1.0.1) (2016-08-02)
+
+
+### Features
+
+* Update string prop so that it defaults to an empty string. ([1c70077](https://github.com/skatejs/skatejs/commit/1c70077))
+
+
+### BREAKING CHANGES
+
+* string prop now defaults to an empty string
+
+
+
 <a name="1.0.0-beta.20"></a>
 # [1.0.0-beta.20](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2016-08-01)
 
