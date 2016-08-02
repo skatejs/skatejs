@@ -1,279 +1,561 @@
-# Change Log
+<a name="1.0.0-beta.20"></a>
+# [1.0.0-beta.20](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2016-08-01)
 
-All notable changes to this project will be documented in this file.
 
-This project adheres to [Semantic Versioning](http://semver.org/).
+### Bug Fixes
 
-## 1.0.0 (Unreleased)
+* **events:** Fix events so onTest binds test instead of Test. ([6ab7bbf](https://github.com/skatejs/skatejs/commit/6ab7bbf))
+* attributeChanged fixed ([c86657a](https://github.com/skatejs/skatejs/commit/c86657a))
+* fix after merge ([fa4be45](https://github.com/skatejs/skatejs/commit/fa4be45))
+* HTMLElement change to normal function instead of arrow ([6174eae](https://github.com/skatejs/skatejs/commit/6174eae))
 
-### Fixed
 
-### Added
+### Code Refactoring
 
-- [#419](https://github.com/skatejs/skatejs/issues/491) - Add an `array()` property type.
-- [#478](https://github.com/skatejs/skatejs/issues/478) - Improve overall performance.
-- [#479](https://github.com/skatejs/skatejs/issues/479) - Fix performance issues with `skate.ready()`.
-- [#484](https://github.com/skatejs/skatejs/issues/484) - Add support for native `window.customElements.define()`.
-- [#513](https://github.com/skatejs/skatejs/issues/513) - Property changes can now trigger a non-bubbling event.
-- [#516](https://github.com/skatejs/skatejs/issues/516) - Add support for native `window.customElements.get()`.
-- [#517](https://github.com/skatejs/skatejs/issues/517) - Add `skate.factory()`.
-- [#561](https://github.com/skatejs/skatejs/issues/561) - Add support for legacy v0 (Blink) Shadow DOM implementation.
-- [#562](https://github.com/skatejs/skatejs/issues/561) - Add ability to render to the host element if no Shadow DOM support is available.
-- Add `skate.Component` that you can extend as a base class. You can also use `skate.Component.extend()` in ES5.
+* Remove support for v0 custom element polyfill and only do simple checks for polyfills as t ([d23b0d9](https://github.com/skatejs/skatejs/commit/d23b0d9))
 
-### Changed
 
-- [#477](https://github.com/skatejs/skatejs/issues/477) - Make event handler function signatures consistent with lifecycle callbacks.
-- [#483](https://github.com/skatejs/skatejs/issues/483) - `attribute` is now called for properties that exist on the element when it is upgraded.
-- [#501](https://github.com/skatejs/skatejs/issues/501) - Shared document observer and registry is *not* shared anymore. This means that if you have two versions of Skate on the page that there will be two mutation observers for the two separate versions on the document. The maintenance overhead of sharing outweights the performance hit in older browsers for the edge-case of sharing versions.
-- [#508](https://github.com/skatejs/skatejs/issues/508) - All instances of `resolved` were changed to be `defined`.
-- [#542](https://github.com/skatejs/skatejs/pull/542) - Remove support for `created` and `ready` property options as they're not needed anymore. Add in functionality to support the Incremental DOM rendering API.
-- [#543](https://github.com/skatejs/skatejs/pull/543) - Remove support for custom binding types. Only custom elements to the spec are supported now.
-- [#544](https://github.com/skatejs/skatejs/pull/544) - Remove support for custom renderers. Incremental DOM is now the defeacto renderer and all properties cause a re-render or have the option to specify when it does similar to `shouldComponentUpdate()` in React.
-- [#547](https://github.com/skatejs/skatejs/issues/547) - Remove `skate.render()` and synchronously render after calling `skate.state()`.
-- [#575](https://github.com/skatejs/skatejs/issues/575) - Rename `properties` option to `props` to be consistent with the `skate.prop` namespace.
-- `skate()` is no longer called as a function. You now call `skate.define()`.
-- IE 9 and 10 are no longer officially supported
-- Custom elements are no longer internally polyfilled. Use the WebComponentsJS V1 polyfill instead. Details in README.
-- `dist` is no longer committed to the repo. It is still published.
-- UMD sources are published as a single file in `dist/index.js` or `dist/index.min.js`.
+### BREAKING CHANGES
 
-### Removed
+* removed temporary support for the v0 custom element polyfill.
 
-- [#471](https://github.com/skatejs/skatejs/issues/471) - Remove `skate.render.html()`.
-- [#473](https://github.com/skatejs/skatejs/issues/473) - Remove support for components in polyfill-land that have an invalid name in native-land.
-- [#475](https://github.com/skatejs/skatejs/issues/475) - No more binding multiple components to a single element. Removes ambiguity.
-- `skate.create()`; use `document.createElement()` or the element constructor instead.
-- `skate.fragment()`; use standard DOM methods and `skate.ready()` instead.
-- `skate.init()`; use `skate.ready()` instead.
-- `skate.noConflict()`; use a module format instead of the global.
-- `skate.version`; check the version in the package manifest instead.
 
-## 0.15.3
 
-### Fixed
+<a name="1.0.0-beta.19"></a>
+# [1.0.0-beta.19](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.18...v1.0.0-beta.19) (2016-07-28)
 
-- [#463](https://github.com/skatejs/skatejs/issues/463) - `skate.emit()` events no longer fire on disabled elements.
 
-## 0.15.2
+### Bug Fixes
 
-### Fixed
+* **render:** Fix issue causing updated() to not be called on subsequent updates because the renderin ([5fc6abc](https://github.com/skatejs/skatejs/commit/5fc6abc))
 
-- [#374](https://github.com/skatejs/skatejs/issues/374) - Fix innerHTML being empty in `skate.render.html()` when it's not overridden.
 
-## 0.15.1
 
-### Fixed
+<a name="1.0.0-beta.18"></a>
+# [1.0.0-beta.18](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.17...v1.0.0-beta.18) (2016-07-28)
 
-- [#114](https://github.com/skatejs/skatejs/issues/114) - TodoMVC style example. Documented in `README`.
-- [#450](https://github.com/skatejs/skatejs/issues/450) - Missing default of `render`.
 
-## 0.15.0
+### Code Refactoring
 
-### Fixed
+* No need to pass the nextProps when calling updated() because you can get that from the ele ([d79e1a0](https://github.com/skatejs/skatejs/commit/d79e1a0))
+* Rename beforeRender() to updated(), call it even if render() isn't defined and rename afte ([e344e6c](https://github.com/skatejs/skatejs/commit/e344e6c))
 
-- [#445](https://github.com/skatejs/skatejs/issues/445) - Add a created callback to the property definition.
 
-## 0.14.3
+### BREAKING CHANGES
 
-### Fixed
+* remove nextProps argument to updated(). Just use the element instead.
+* always call updated(). beforeRender() -> updated(). afterRender() -> rendered().
 
-- [#441](https://github.com/skatejs/skatejs/issues/441) - Throw error if Mutation Observer is not found and it is required.
 
-## 0.14.2
 
-### Fixed
+<a name="1.0.0-beta.17"></a>
+# [1.0.0-beta.17](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2016-07-28)
 
-- [#440](https://github.com/skatejs/skatejs/issues/440) - Ensure docs for ready lifecycle callback and ready function are in sync.
 
-## 0.14.1
+### Code Refactoring
 
-### Fixed
+* Remove property events. ([10b46ed](https://github.com/skatejs/skatejs/commit/10b46ed))
+* Rename state() to props() to be consistent with what it's operating on. ([2f0e379](https://github.com/skatejs/skatejs/commit/2f0e379))
+* Stub out tests for beforeRender() and change existing behaviour so that tests pass. ([9f6cf08](https://github.com/skatejs/skatejs/commit/9f6cf08))
 
-- [#436](https://github.com/skatejs/skatejs/issues/436) - Fix issue where property definition objects were being mutated and shared.
-
-## 0.14.0
-
-### Added
-
-- [#162](https://github.com/skatejs/skatejs/issues/162) - Using ES6 classes to extend component definitions / constructors.
-- [#173](https://github.com/skatejs/skatejs/issues/173) - The presence of the `resolved` attribute skips the `render` callback.
-- [#177](https://github.com/skatejs/skatejs/issues/177) - `skate.create()` as an alternative to `document.createElement()` and `skate.init()`.
-- [#187](https://github.com/skatejs/skatejs/issues/187) - `attribute` handlers are now synchronous.
-- [#200](https://github.com/skatejs/skatejs/issues/200) - Support for a `properties` definition that defines instance properties and their behaviour.
-- [#206](https://github.com/skatejs/skatejs/issues/206) - Element constructors can be called like a function, or instantiated like a constructor.
-- [#206](https://github.com/skatejs/skatejs/issues/248) - `skate.fragment()` as a way to create a document fragment from almost any type of argument list.
-- [#270](https://github.com/skatejs/skatejs/issues/270) - Retain existing property value if a defined property overrides it.
-- [#275](https://github.com/skatejs/skatejs/issues/275) - Allow an object of properties to be passed to element constructors / functions and `skate.create()`.
-- [#276](https://github.com/skatejs/skatejs/issues/276) - `skate.emit()` triggers events and simulates bubbling for detached elements in browsers that don't support it.
-- [#354](https://github.com/skatejs/skatejs/issues/354) - `skate.render()` re-invokes the `render` lifecycle on the specified element for all of its matching components.
-- [#413](https://github.com/skatejs/skatejs/issues/413) - Added the `name` property on the function returned from `skate()` to polyfill native behaviour where it is possible.
-
-### Changed
-
-- [#200](#user-content-200) - The attribute lifecycle callbacks have been implemented in a different API under `properties`.
-- [#208](#user-content-208) - `attributes` is not just a single callback called `attribute`.
-- [#209](#user-content-209) - Renamed `attributes` to `attribute` because now it's just a single callback.
-- [#210](#user-content-210) - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`.
-- [#225](#user-content-225) - Moved attribute and class binding types to separate repositories.
-- [#295](#user-content-295), [#377](#user-content-377) - (Re-)moved `MutationObserver` polyfill.
-- [#337](#user-content-337) - Streamlined, consistent and predictable lifecycle.
-- [#359](#user-content-359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
-
-### Fixed
-
-- [#141](https://github.com/skatejs/skatejs/issues/141) - Lifecycle callbacks called separately. First `created` is called on all elements then `attached` is called on all elements. Before, `created` and `attached` would be invoked on an element before moving on to the next.
-- [#174](https://github.com/skatejs/skatejs/issues/174) - Polyfilled custom element prototype members not inherited.
-- [#292](https://github.com/skatejs/skatejs/pull/292) - Fix race condition with component initialisation.
-
-### Removed
-
-- [#184](https://github.com/skatejs/skatejs/issues/184) - The `skate.defaults` property is no longer public and has been removed. No alternative will be provided.
-- [#187](https://github.com/skatejs/skatejs/issues/187) - Modifying `element.attributes` directly no longer triggers the `attribute` callback.
-- [#289](https://github.com/skatejs/skatejs/issues/289) - the `skate` global is no longer set when importing `src/index.js`, and the `skate.noConflict()` method is not present when consuming skate in this way.
-
-### Upgrading
-
-#### [#200](https://github.com/skatejs/skatejs/issues/200)<a name="200"></a> - Attribute lifecycle moved into `properties`
-
-The old way of specifying behaviour within properties:
-
-```js
-attributes: {
-  myAttribute1: function (element, changes) {},
-  myAttribute2: {
-    value: 'initial value'
-  },
-  myAttribute3: {
-    value: function () {
-      return 'initial value';
-    }
-  },
-  myAttribute4: {
-    created: function (element, changes) {},
-    updated: function (element, changes) {},
-    removed: function (element, changes) {},
-  }
-}
-```
 
-In the example above, each attribute would automatically create a property link. All behaviour would be handled by the attribute and there was no disctinction between a property value and an attribute value. This is a little backward, though, since not all API points need, or should, have linkage between properties and attributes. Now, everything gets defined as properties and has an option to be linked to an attribute. To translate the above variations to the new `properties` option, you would do the following:
+### Features
 
-```js
-properties: {
-  myAttribute1: {
-    attribute: true,
-    set: function (elem, data) {
+* **events:** Support onTest and on-test. ([031c860](https://github.com/skatejs/skatejs/commit/031c860))
+* beforeRender() now uses a return value instead of a callback. ([60d0648](https://github.com/skatejs/skatejs/commit/60d0648))
+* Pass special props through to function helpers and ensure they don't appear as attrs on the el ([5b9a03a](https://github.com/skatejs/skatejs/commit/5b9a03a))
 
-    }
-  },
-  myAttribute2: {
-    attribute: true,
-    default: 'initial value',
-    set: function (elem, data) {
 
-    }
-  },
-  myAttribute3: {
-    attribute: true,
-    default: function () {
-      return 'initial value';
-    }
-  },
-  myAttribute4: {
-    attribute: true,
-    set: function (elem, data) {
-      if (data.oldValue === undefined) {
-        // created
-      } else if (data.newValue === undefined) {
-        // removed
-      } else {
-        // updated
-      }
-    }
-  }
-}
-```
+### BREAKING CHANGES
 
-When `set` is called, `newValue` and `oldValue` have the same meaning as when used inside the `attribute` callback.
+* rename state() to props(). Closes #677.
+* remove property events.
+* Return value from beforeRender() is now used instead of a callback. It is also
+called on the initial render now, too.
+* shouldRender() changed to beforeRender() and now uses a callback instead of a
+return value to re-render.
+* events: ontest no longer works. Implements #694.
 
-#### [#208](https://github.com/skatejs/skatejs/issues/208)<a name="208"></a> - `attributes` is not just a single callback called `attribute`
 
-This callback has been simplified since in most cases the `properties` will be used for specifying side-effects.
 
-```js
-attribute: function (elem, data) {
+<a name="1.0.0-beta.16"></a>
+# [1.0.0-beta.16](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2016-07-27)
 
-}
-```
 
-- `elem` is the element which the attribute change was triggered on.
-- `data` is the information about the change that occurred.
-  - `data.name` the name of the attribute that changed.
-  - `data.newValue` the value that the attribute changed to, or `undefined` if attribute was removed.
-  - `data.oldValue` the value that the attribute changed from, or `undefined` if the attribute was added.
+### Bug Fixes
 
-#### [#209](https://github.com/skatejs/skatejs/issues/209)<a name="209"></a> - Renamed `attributes` to `attribute` because now it's just a single callback
+* **state:** Fix issue causing props who have a value of undefiend not to be returned in the state. ([b996b73](https://github.com/skatejs/skatejs/commit/b996b73)), closes [#693](https://github.com/skatejs/skatejs/issues/693)
 
-Wherever you're specifying the `attributes` option, just rename it to `attribute` (singular).
 
-#### [#210](https://github.com/skatejs/skatejs/issues/210)<a name="210"></a> - Renamed `lib/skate.js` and `src/skate.js` to `lib/index.js` and `src/index.js`
 
-If you're using the ES6 or UMD versions of Skate (`lib` and `src` folders), rename the reference to the `skate` file to `index`.
+<a name="1.0.0-beta.15"></a>
+# [1.0.0-beta.15](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2016-07-27)
 
-#### [#225](https://github.com/skatejs/skatejs/issues/225)<a name="225"></a> - Moved attribute and class binding types to separate repositories
 
-The attribute and class bindings have been moved out of core:
 
-- https://github.com/skatejs/type-attribute
-- https://github.com/skatejs/type-class
+<a name="1.0.0-beta.14"></a>
+# [1.0.0-beta.14](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2016-07-27)
 
-The issue contains details as to why this has been done.
 
-#### [#295](https://github.com/skatejs/skatejs/issues/295) <a name="295"></a>, [#377](https://github.com/skatejs/skatejs/pull/377) <a name="377"></a> - Removed `MutationObserver` polyfill (moved to https://github.com/skatejs/polyfill-mutation-observer and marked as unmaintained)
+### Performance Improvements
 
-Since it's up to you to include your own `MutationObserver` polyfill, this means you can use whichever polyfill you want. That said, if you are concerned about performance in IE, it's recommended that you use ours as it's been specifically designed to be performant over other offerings.
+* Ensure perf tests work with polyfills. ([6599fea](https://github.com/skatejs/skatejs/commit/6599fea))
 
-Ensure you include the polyfill before any Skate definitions have been defined.
 
-A polyfill that generally seems to work well is the one from [webcomponents/webcomponentsjs](https://github.com/webcomponents/webcomponentsjs/blob/v0.7.15/MutationObserver.js).
 
-#### [#337](https://github.com/skatejs/skatejs/issues/337)<a name="277"></a> - Streamlined, consistent and predictable lifecycle
+<a name="1.0.0-beta.13"></a>
+# [1.0.0-beta.13](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2016-07-27)
 
-In native web components, the behaviour around when components are initialised is really inconsistent. The Skate lifecycle has been streamlined to make this consistent especially when building compound components. See the issue for more details.
 
-#### [#337](https://github.com/skatejs/skatejs/issues/337)<a name="277"></a> - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
+### Bug Fixes
 
-`skate.init()` only supports DOM elements as arguments. This means that you cannot pass a selector or DOMNodeList as an argument. If you do want to pass multiple nodes at once, you can use the ES6 spread operator:
+* **ready:** Ready wasn't removed in the last commit. ([59b1eba](https://github.com/skatejs/skatejs/commit/59b1eba))
+* **vdom:** Fix refs in IE11. Function.name isn't reliable in IE11. ([49c6c4a](https://github.com/skatejs/skatejs/commit/49c6c4a))
 
-```js
-skate.init(...document.querySelectorAll('some-elements'));
-```
 
-Or you can convert it to an array if you can't use ES6:
+### Code Refactoring
 
-```js
-skate.init.apply(null, [].slice.call(document.querySelectorAll('some-elements')));
-```
+* Remove automatic adding of definedAttribute. ([151543e](https://github.com/skatejs/skatejs/commit/151543e))
 
-#### [#359](https://github.com/skatejs/skatejs/issues/359) - `skate.init()` only supports DOM elements but you can pass multiple ones as an argument list.
 
-Before you could specify a selector or pass an traversable list:
+### Features
 
-```js
-skate.init(document.querySelectorAll('.items'));
-```
+* Move rendering into the connectedCallback() so that no unnecessary renders occur. ([3c0fe15](https://github.com/skatejs/skatejs/commit/3c0fe15))
 
-This was changed to support only a single element for simplicity:
 
-```js
-skate.init(element);
-```
+### Performance Improvements
 
-But since ES6 supports the spread (`...`) operator, we've expanded this to take multiple arguments so that you can:
+* Get perf tests running. Ensure we're using the production version of React (still using dev ve ([c4cc5cd](https://github.com/skatejs/skatejs/commit/c4cc5cd))
+* Make perf tests async for Firefox, but Firefox is still not running the Skate tests (possibly ([06096db](https://github.com/skatejs/skatejs/commit/06096db))
+* Update perf tests to not use keys to see the difference (this might be the more common use cas ([683b2df](https://github.com/skatejs/skatejs/commit/683b2df))
 
-```js
-skate.init(...document.querySelector('.items'));
-```
 
-This was also done to follow the same convention that `skate.fragment()` does when accepting arguments.
+### BREAKING CHANGES
+
+* #688 removed definedAttribute
+* ready: ready() callback was removed.
+* removed ready() callback. BREAKING CHANGE: removed the render() option from props
+in favour of the shouldRender() main callback on the constructor.
+
+
+
+<a name="1.0.0-beta.12"></a>
+# [1.0.0-beta.12](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2016-07-20)
+
+
+### Bug Fixes
+
+* **vdom:** Refine function helper tests and fix code to fix tests (fucntion helpers calling IDOM dir ([5090056](https://github.com/skatejs/skatejs/commit/5090056))
+
+
+### Features
+
+* change generating unique name ([bb93d02](https://github.com/skatejs/skatejs/commit/bb93d02))
+
+
+
+<a name="1.0.0-beta.11"></a>
+# [1.0.0-beta.11](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2016-07-19)
+
+
+### Bug Fixes
+
+* fixed native polyfill detection ([68cef01](https://github.com/skatejs/skatejs/commit/68cef01))
+* fixed registerUniqueName and added a few tests ([b1072eb](https://github.com/skatejs/skatejs/commit/b1072eb))
+* **vdom:** Fix issue causing elementVoid() to fail when passed a function helper as a tag name. ([8d92f11](https://github.com/skatejs/skatejs/commit/8d92f11))
+
+
+### Code Refactoring
+
+* **events:** Remove events functionality in favour of just using the on* syntax in render(). ([910a7ad](https://github.com/skatejs/skatejs/commit/910a7ad))
+
+
+### BREAKING CHANGES
+
+* events: Remove events spec in favour of on* attributes in render(). Implements #675.
+
+
+
+<a name="1.0.0-beta.10"></a>
+# [1.0.0-beta.10](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2016-07-15)
+
+
+### Bug Fixes
+
+* **symbols:** Revert breaking symbol prefix ($). ([226fb58](https://github.com/skatejs/skatejs/commit/226fb58))
+
+
+
+<a name="1.0.0-beta.9"></a>
+# [1.0.0-beta.9](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2016-07-14)
+
+
+### Features
+
+* **define:** Allow registering of multiple components with the same name. ([9830bc8](https://github.com/skatejs/skatejs/commit/9830bc8))
+* **vdom:** Add support for a ref() callback as a prop on any node. ([5911d3b](https://github.com/skatejs/skatejs/commit/5911d3b))
+
+
+
+<a name="1.0.0-beta.8"></a>
+# [1.0.0-beta.8](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2016-07-13)
+
+
+### Bug Fixes
+
+* **event:** Fix issue causing event-delgation matching to fail because we were trying to match again ([0c32662](https://github.com/skatejs/skatejs/commit/0c32662))
+* **support:** Fix issue causing the v0 custom element HTMLElement override to be used even in v1 env ([5a52fa0](https://github.com/skatejs/skatejs/commit/5a52fa0))
+* **vdom:** Add tests for every argument permutation to vdom.element() and fix the textContent issue. ([c321c1a](https://github.com/skatejs/skatejs/commit/c321c1a))
+* **vdom:** Move the return if the value is false to below the props setting for components so that i ([8d98af0](https://github.com/skatejs/skatejs/commit/8d98af0))
+* Fixes issue with polyfills overriding native shadowDOM functions ([924d7f7](https://github.com/skatejs/skatejs/commit/924d7f7))
+* Test with the stable v0 custom element polyfill and fix tests in it. ([fff7c20](https://github.com/skatejs/skatejs/commit/fff7c20))
+
+
+### Features
+
+* **vdom:** Add tests for different levels of elements and passing children at each level, and add o ([baee545](https://github.com/skatejs/skatejs/commit/baee545))
+* **vdom:** Implement ability to pass functions as tag names to all vdom functions. ([086f6d9](https://github.com/skatejs/skatejs/commit/086f6d9))
+
+
+
+<a name="1.0.0-beta.7"></a>
+# [1.0.0-beta.7](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2016-07-01)
+
+
+### Code Refactoring
+
+* Export only the virtual element functions in Incremental DOM from our vdom module. Test to ([c576183](https://github.com/skatejs/skatejs/commit/c576183))
+
+
+### BREAKING CHANGES
+
+* export Incremental DOM virtual element functions directly instead of the whole
+IncrementalDOM namespace. This removes non-virtual element functions.
+
+
+
+<a name="1.0.0-beta.6"></a>
+# [1.0.0-beta.6](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2016-06-28)
+
+
+### Bug Fixes
+
+* **dist:** Fix webpacked dist so that it exports skate not skatejs to the global. ([3c9fd3a](https://github.com/skatejs/skatejs/commit/3c9fd3a))
+
+
+
+<a name="1.0.0-beta.5"></a>
+# [1.0.0-beta.5](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2016-06-28)
+
+
+
+<a name="1.0.0-beta.4"></a>
+# [1.0.0-beta.4](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2016-06-27)
+
+
+### Bug Fixes
+
+* **vdom:** Ensure process is defined so incremental-dom doesn't throw errors. ([895ecdb](https://github.com/skatejs/skatejs/commit/895ecdb))
+
+
+
+<a name="1.0.0-beta.3"></a>
+# [1.0.0-beta.3](https://github.com/skatejs/skatejs/compare/1.0.0-beta.2...v1.0.0-beta.3) (2016-06-27)
+
+
+### Bug Fixes
+
+* **events:** Events bound via the on* syntax should catch bubbled events. ([a658dcc](https://github.com/skatejs/skatejs/commit/a658dcc))
+* **test:** Fix test that was breaking because element was not in the dom. ([0eef0a4](https://github.com/skatejs/skatejs/commit/0eef0a4))
+
+
+### Code Refactoring
+
+* **factory:** Remove factory() as it doesn't add much benefit. ([b0cb3ca](https://github.com/skatejs/skatejs/commit/b0cb3ca))
+* **vdom:** Removed vdom.* functions and renamed vdom.create() to vdom.element(). ([a45c34b](https://github.com/skatejs/skatejs/commit/a45c34b))
+* **version:** Remove version module and tests. ([cc626f9](https://github.com/skatejs/skatejs/commit/cc626f9))
+
+
+### Features
+
+* **custom elements:** Make compat with v0 API that's native in Chrome and Opera. ([9dc841e](https://github.com/skatejs/skatejs/commit/9dc841e))
+* **custom elements:** Prefer custom elements v0. Enable v1 polyfill so tests run in v0 Blink and v1 ([0a956fa](https://github.com/skatejs/skatejs/commit/0a956fa))
+* number prop now defaults to zero ([2dda59e](https://github.com/skatejs/skatejs/commit/2dda59e))
+
+
+### BREAKING CHANGES
+
+* factory: remove factory() #622
+* version: remove version module #619
+* vdom: #617 - remove vdom.* functions and rename vdom.create() to vdom.element().
+
+
+
+<a name="1.0.0-beta.2"></a>
+# [1.0.0-beta.2](https://github.com/skatejs/skatejs/compare/v1.0.0-beta.1...1.0.0-beta.2) (2016-06-20)
+
+
+### Bug Fixes
+
+* **vdom:** Remove node env setting for incremental DOM. This shouldn't be necessary anyomre and some ([05ef1fa](https://github.com/skatejs/skatejs/commit/05ef1fa))
+
+
+
+<a name="1.0.0-beta.1"></a>
+# [1.0.0-beta.1](https://github.com/skatejs/skatejs/compare/1.0.0-beta.0...v1.0.0-beta.1) (2016-06-15)
+
+
+### Bug Fixes
+
+* **vdom:** Fix issue causing content elements to be output even when a v1 polyfill was on the page. ([6962420](https://github.com/skatejs/skatejs/commit/6962420))
+
+
+
+<a name="1.0.0-beta.0"></a>
+# [1.0.0-beta.0](https://github.com/skatejs/skatejs/compare/0.15.3...1.0.0-beta.0) (2016-06-07)
+
+
+### Bug Fixes
+
+* make sure CustomEvent is properly functional ([fc983ec](https://github.com/skatejs/skatejs/commit/fc983ec))
+* Safari 7 does not like defineProperty on Events ([20c7b7d](https://github.com/skatejs/skatejs/commit/20c7b7d))
+* use saucelabs latest ([bcc89aa](https://github.com/skatejs/skatejs/commit/bcc89aa))
+* **416:** add test for skate 0.14 ([43c7b60](https://github.com/skatejs/skatejs/commit/43c7b60))
+
+
+### Chores
+
+* **build:** Added dist/ to .gitignore. ([dc042b4](https://github.com/skatejs/skatejs/commit/dc042b4))
+* **build:** Remove dist from committed resources. ([ce11571](https://github.com/skatejs/skatejs/commit/ce11571))
+
+
+### BREAKING CHANGES
+
+* build: Added dist/ to .gitignore.
+* build: Removed dist/ from committed files.
+
+
+
+<a name="0.15.3"></a>
+## [0.15.3](https://github.com/skatejs/skatejs/compare/0.15.2...0.15.3) (2016-03-02)
+
+
+### Bug Fixes
+
+* build & add to CI run ([300bf45](https://github.com/skatejs/skatejs/commit/300bf45))
+* make skate work with multiple versions on one page ([7014aa5](https://github.com/skatejs/skatejs/commit/7014aa5))
+
+
+
+<a name="0.15.2"></a>
+## [0.15.2](https://github.com/skatejs/skatejs/compare/0.15.1...0.15.2) (2015-12-22)
+
+
+
+<a name="0.15.1"></a>
+## [0.15.1](https://github.com/skatejs/skatejs/compare/0.15.0...0.15.1) (2015-12-22)
+
+
+
+<a name="0.15.0"></a>
+# [0.15.0](https://github.com/skatejs/skatejs/compare/0.14.3...0.15.0) (2015-12-04)
+
+
+
+<a name="0.14.3"></a>
+## [0.14.3](https://github.com/skatejs/skatejs/compare/0.14.2...0.14.3) (2015-12-01)
+
+
+
+<a name="0.14.2"></a>
+## [0.14.2](https://github.com/skatejs/skatejs/compare/0.14.1...0.14.2) (2015-11-27)
+
+
+
+<a name="0.14.1"></a>
+## [0.14.1](https://github.com/skatejs/skatejs/compare/0.14.0...0.14.1) (2015-11-15)
+
+
+
+<a name="0.14.0"></a>
+# [0.14.0](https://github.com/skatejs/skatejs/compare/0.13.2...0.14.0) (2015-11-07)
+
+
+### Bug Fixes
+
+* "unresolved" callback might never be called, remove that test ([d848b03](https://github.com/skatejs/skatejs/commit/d848b03))
+* **test:** properly serialize value for it being used in a .setAttribute call ([4856656](https://github.com/skatejs/skatejs/commit/4856656))
+* call build-test directly ([4042de0](https://github.com/skatejs/skatejs/commit/4042de0))
+* camelCase property ([881f209](https://github.com/skatejs/skatejs/commit/881f209))
+* do not use callback directly ([f6b1ef5](https://github.com/skatejs/skatejs/commit/f6b1ef5))
+* do not use short or ([4a81a7f](https://github.com/skatejs/skatejs/commit/4a81a7f))
+* MutationObserver for IE11 and innerHTML fixes ([bbca83e](https://github.com/skatejs/skatejs/commit/bbca83e))
+* perf build ([ff5df90](https://github.com/skatejs/skatejs/commit/ff5df90))
+* **test:** make sure our content document is available ([3df044f](https://github.com/skatejs/skatejs/commit/3df044f))
+* used wrong slug for encryption ([d243912](https://github.com/skatejs/skatejs/commit/d243912))
+* **IE:** on Internet Explorer, getOwnPropertyDescriptor always returns an object, so we need to set a flag ([d4e5f02](https://github.com/skatejs/skatejs/commit/d4e5f02))
+* watching ([b362e53](https://github.com/skatejs/skatejs/commit/b362e53))
+* **IE innerHTML:** only enhance once ([a8ed5cf](https://github.com/skatejs/skatejs/commit/a8ed5cf))
+* **safari 8:** property would not be defined in Safari; do not read PropertyDescriptor if not needed ([67c1974](https://github.com/skatejs/skatejs/commit/67c1974))
+* **saucelabs:** credentials & debugging ([2ddc774](https://github.com/skatejs/skatejs/commit/2ddc774))
+* **test:** always exit gulp task ([021f370](https://github.com/skatejs/skatejs/commit/021f370))
+* **test:** perf tests ([a581d9a](https://github.com/skatejs/skatejs/commit/a581d9a))
+* **tests:** specialties with Saucelabs tests & watching ([946502a](https://github.com/skatejs/skatejs/commit/946502a))
+
+
+### Performance Improvements
+
+* early exit in case we did not get a callback ([8544df2](https://github.com/skatejs/skatejs/commit/8544df2))
+
+
+
+<a name="0.13.2"></a>
+## [0.13.2](https://github.com/skatejs/skatejs/compare/0.13.1...0.13.2) (2015-03-18)
+
+
+
+<a name="0.13.1"></a>
+## [0.13.1](https://github.com/skatejs/skatejs/compare/0.13.0...0.13.1) (2015-03-18)
+
+
+
+<a name="0.13.0"></a>
+# [0.13.0](https://github.com/skatejs/skatejs/compare/0.12.0...0.13.0) (2015-03-18)
+
+
+
+<a name="0.12.0"></a>
+# [0.12.0](https://github.com/skatejs/skatejs/compare/0.11.1...0.12.0) (2014-11-19)
+
+
+
+<a name="0.11.1"></a>
+## [0.11.1](https://github.com/skatejs/skatejs/compare/0.11.0...0.11.1) (2014-10-22)
+
+
+
+<a name="0.11.0"></a>
+# [0.11.0](https://github.com/skatejs/skatejs/compare/0.10.2...0.11.0) (2014-10-20)
+
+
+
+<a name="0.10.2"></a>
+## [0.10.2](https://github.com/skatejs/skatejs/compare/0.10.1...0.10.2) (2014-10-14)
+
+
+
+<a name="0.10.1"></a>
+## [0.10.1](https://github.com/skatejs/skatejs/compare/0.10.0...0.10.1) (2014-10-07)
+
+
+
+<a name="0.10.0"></a>
+# [0.10.0](https://github.com/skatejs/skatejs/compare/0.9.3...0.10.0) (2014-09-29)
+
+
+
+<a name="0.9.3"></a>
+## [0.9.3](https://github.com/skatejs/skatejs/compare/0.9.2...0.9.3) (2014-09-11)
+
+
+
+<a name="0.9.2"></a>
+## [0.9.2](https://github.com/skatejs/skatejs/compare/0.9.0...0.9.2) (2014-08-31)
+
+
+
+<a name="0.9.0"></a>
+# [0.9.0](https://github.com/skatejs/skatejs/compare/0.8.4...0.9.0) (2014-08-06)
+
+
+
+<a name="0.8.4"></a>
+## [0.8.4](https://github.com/skatejs/skatejs/compare/0.8.3...0.8.4) (2014-07-10)
+
+
+
+<a name="0.8.3"></a>
+## [0.8.3](https://github.com/skatejs/skatejs/compare/0.8.2...0.8.3) (2014-07-08)
+
+
+
+<a name="0.8.2"></a>
+## [0.8.2](https://github.com/skatejs/skatejs/compare/0.8.1...0.8.2) (2014-07-06)
+
+
+
+<a name="0.8.1"></a>
+## [0.8.1](https://github.com/skatejs/skatejs/compare/0.8.0...0.8.1) (2014-07-04)
+
+
+
+<a name="0.8.0"></a>
+# [0.8.0](https://github.com/skatejs/skatejs/compare/0.6.3...0.8.0) (2014-07-04)
+
+
+
+<a name="0.6.3"></a>
+## [0.6.3](https://github.com/skatejs/skatejs/compare/0.6.2...0.6.3) (2014-07-01)
+
+
+
+<a name="0.6.2"></a>
+## [0.6.2](https://github.com/skatejs/skatejs/compare/0.6.1...0.6.2) (2014-06-30)
+
+
+
+<a name="0.6.1"></a>
+## [0.6.1](https://github.com/skatejs/skatejs/compare/0.6.0...0.6.1) (2014-06-24)
+
+
+
+<a name="0.6.0"></a>
+# [0.6.0](https://github.com/skatejs/skatejs/compare/0.4.4...0.6.0) (2014-06-24)
+
+
+
+<a name="0.4.4"></a>
+## [0.4.4](https://github.com/skatejs/skatejs/compare/0.4.3...0.4.4) (2014-05-05)
+
+
+
+<a name="0.4.3"></a>
+## [0.4.3](https://github.com/skatejs/skatejs/compare/0.4.2...0.4.3) (2014-05-01)
+
+
+
+<a name="0.4.2"></a>
+## [0.4.2](https://github.com/skatejs/skatejs/compare/0.4.1...0.4.2) (2014-05-01)
+
+
+
+<a name="0.4.1"></a>
+## [0.4.1](https://github.com/skatejs/skatejs/compare/0.4.0...0.4.1) (2014-05-01)
+
+
+
+<a name="0.4.0"></a>
+# [0.4.0](https://github.com/skatejs/skatejs/compare/0.3.0...0.4.0) (2014-05-01)
+
+
+
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/skatejs/skatejs/compare/0.2.0...0.3.0) (2014-03-26)
+
+
+
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/skatejs/skatejs/compare/0.1.0...0.2.0) (2014-03-19)
+
+
+
+<a name="0.1.0"></a>
+# [0.1.0](https://github.com/skatejs/skatejs/compare/0.0.0...0.1.0) (2014-02-07)
+
+
+
+<a name="0.0.0"></a>
+# 0.0.0 (2014-02-01)
+
+
+
