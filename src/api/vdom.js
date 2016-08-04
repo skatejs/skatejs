@@ -94,8 +94,13 @@ attributes[symbols.default] = function (elem, name, value) {
     value = `[slot="${value}"]`;
   }
 
-  // Set defined props on the element directly.
-  if (name in elem) {
+  // Set defined props on the element directly. This ensures properties like
+  // "value" on <input> elements get set correctly. Setting those as attributes
+  // doesn't always work and setting props is faster than attributes.
+  //
+  // However, certain props on SVG elements are readonly and error when you try
+  // to set them.
+  if (name in elem && !('ownerSVGElement' in elem)) {
     applyProp(elem, name, value);
     return;
   }
