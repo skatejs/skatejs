@@ -31,14 +31,13 @@ describe('vdom/properties', () => {
 
   it('should not set properties on SVG elements', done => {
     expect(() => {
-      new (define('x-test', { // eslint-disable-line no-new
+      const Test = define('x-test', {
         render() {
-          vdom.element('svg', { height: 100 });
+          vdom.element('svg', { width: 100 });
         },
-      }));
-      afterMutations(
-        done
-      );
+      });
+      fixture(new Test());
+      afterMutations(done);
     }).to.not.throw(Error);
   });
 
