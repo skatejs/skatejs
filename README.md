@@ -1242,7 +1242,7 @@ Skate adds some opinionated behaviour to Incremental DOM.
 
 ##### `attrs.class`
 
-We ensure that if you pass the `class` attribute, that it sets that via the `className` property.
+The recommended way to specify a list of classes on an element is by simply specifying the `class` attribute as you'd normally do in HTML. It's not necessary to specify `className`, though you can if you really want to.
 
 
 
