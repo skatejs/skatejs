@@ -18,8 +18,7 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 // executed.
 const stackChren = [];
 
-// Symbol for storing whether or not an element should be skipped.
-const $shouldSkip = '__shouldSkip';
+const $currentEventHandlers = '__events';
 
 // Symbol for the props for the current function helper in the stack.
 const $stackCurrentHelperProps = '__props';
@@ -33,10 +32,10 @@ let overrideArgs;
 
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
-  let events = elem.__events;
+  let events = elem[$currentEventHandlers];
 
   if (!events) {
-    events = elem.__events = {};
+    events = elem[$currentEventHandlers] = {};
   }
 
   const oldFunc = events[ename];
@@ -53,24 +52,32 @@ function applyEvent(elem, ename, newFunc) {
 }
 
 // Attributes that are not handled by Incremental DOM.
-attributes.key = attributes.skip = attributes.statics = function () {};
+attributes.key = attributes.statics = function () {};
 
 // Attributes that *must* be set via a property on all elements.
 attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
 
+// V0 Shadow DOM to V1 normalisation.
+attributes.name = function (elem, name, value) {
+  if (elem.tagName === 'CONTENT') {
+    applyDefault(elem, 'select', `[slot="${value}"]`);
+  }
+};
+
+// Ref handler.
+attributes.ref = function (elem, name, value) {
+  elem[$ref] = value;
+};
+
+// Skip handler.
+attributes.skip = function (elem, name, value) {
+  if (value) {
+    skip();
+  }
+};
+
 // Default attribute applicator.
 attributes[symbols.default] = function (elem, name, value) {
-  // If the skip attribute was specified, skip
-  if (name === 'skip' && value) {
-    return skip();
-  }
-
-  // Add the ref to the element so it can be called when it's closed.
-  if (name === 'ref') {
-    elem[$ref] = value;
-    return;
-  }
-
   // Custom element properties should be set as properties.
   const props = elem.constructor.props;
   if (props && name in props) {
@@ -97,13 +104,6 @@ attributes[symbols.default] = function (elem, name, value) {
       applyEvent(elem, eventName, value);
       return;
     }
-  }
-
-  // Set the select attribute instead of name if it was a <slot> translated to
-  // a <content> for v0.
-  if (name === 'name' && elem.tagName === 'CONTENT') {
-    name = 'select';
-    value = `[slot="${value}"]`;
   }
 
   // Set defined props on the element directly. This ensures properties like
@@ -155,17 +155,14 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      // If there is no stack left, we call Incremental DOM directly.
       const elem = func(...args);
-
-      // If we're in elementClose, try calling the ref.
       if (func === elementClose) {
         const eref = elem[$ref];
+        delete elem[$ref];
         if (typeof eref === 'function') {
           eref(elem);
         }
       }
-
       return elem;
     }
   };
