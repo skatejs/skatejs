@@ -1,9 +1,11 @@
 import {
   applyProp,
   attributes,
+  currentElement,
   elementClose,
   elementOpen,
   elementVoid,
+  skip,
   symbols,
   text,
 } from 'incremental-dom';
@@ -75,7 +77,10 @@ attributes.ref = function (elem, name, value) {
 // Skip handler.
 attributes.skip = function (elem, name, value) {
   if (value) {
+    skip();
     elem[$skipCurrentElement] = true;
+  } else {
+    delete elem[$skipCurrentElement];
   }
 };
 
@@ -161,7 +166,9 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       const isElementClosing = func === elementClose;
       const isElementOpening = func === elementOpen;
 
-      if (skipCurrentTree && !isElementClosing) {
+      // If we're skipping the tree, we must skip everything except for the
+      // closing of the element that originally started the skipping.
+      if (skipCurrentTree && !isElementClosing && !currentElement()[$skipCurrentElement]) {
         return;
       }
 
