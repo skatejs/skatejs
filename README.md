@@ -49,40 +49,9 @@ Whenever you change the `name` property - or attribute - the component will re-r
 
 Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for.
 
+To get up and running quickly with the most common configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is load it before Skate.
 
-
-### Custom Elements
-
-Skate requires Custom Element support. In [browsers that don't support it](http://caniuse.com/#search=custom%20elements), you'll need to include a polyfill.
-
-- v1: https://github.com/webcomponents/webcomponentsjs/tree/v1/src/CustomElements/v1 (recommended)
-- v0: https://github.com/webcomponents/webcomponentsjs (known issues)
-
-
-
-### Shadow DOM
-
-Skate works with or without [Shadow DOM](http://w3c.github.io/webcomponents/spec/shadow/) support. However, it works best with it so it's recommended you use a polyfill for [browsers](http://caniuse.com/#search=shadow%20dom) that don't support it natively.
-
-- v1: https://github.com/skatejs/named-slots/ (recommended)
-- v0: https://github.com/WebComponents/webcomponentsjs (known issues)
-
-Without native support and if you do not supply a Shadow DOM polyfill, any components that have a `render()` function may cause issues integrating with React and other virtual DOM-based libraries (such as Skate itself) because the shadow DOM hides changes that are made to the components during `render()`. If no Shadow DOM support is available, your component renders directly to the host element rather than to the shadow root. This means your component will work fine on its own, but may fail when composed into other libraries.
-
-
-
-### Known Issues with Polyfills
-
-The following are issues with polyfills - not native - implementations.
-
-Custom Elements V0:
-
-- Does not work with native Shadow DOM (only noticable with V1 as V0 Custom Elements and Shadow DOM shipped at the same time in Blink)
-- Static constructor properties / methods ignored (https://github.com/webcomponents/webcomponentsjs/issues/563)
-
-Shadow DOM V0:
-
-- Cannot use component constructors
+If you don't want to use that, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
 
 
 
