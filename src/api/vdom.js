@@ -158,7 +158,6 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       const elem = func(...args);
       if (func === elementClose) {
         const eref = elem[$ref];
-        delete elem[$ref];
         if (typeof eref === 'function') {
           eref(elem);
         }

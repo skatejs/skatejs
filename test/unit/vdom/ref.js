@@ -41,35 +41,18 @@ function test(name, el) {
       });
     });
 
-    it('should be called on every re-render', done => {
+    it('should only call a ref if it changes', done => {
       let num = 0;
-      const elem = create(() => ++num);
-      afterMutations(() => {
-        expect(num).to.equal(1);
-        props(elem, { num: num + 1 });
-        expect(num).to.equal(2);
-        props(elem, { num: num + 1 });
-        expect(num).to.equal(3);
-        done();
-      });
-    });
-
-    it('should call a different ref if changed', done => {
-      let ref1;
-      let ref2;
-      const elem = create(() => {
-        ref1 = true;
-      });
-      afterMutations(() => {
-        expect(ref1).to.equal(true);
-        expect(ref2).to.equal(undefined);
-        props(elem, { ref: () => {
-          ref2 = true;
-        } });
-        expect(ref1).to.equal(true);
-        expect(ref2).to.equal(true);
-        done();
-      });
+      const ref = () => ++num;
+      const elem = create(ref);
+      afterMutations(
+        () => expect(num).to.equal(1),
+        () => props(elem, { ref }),
+        () => expect(num).to.equal(1),
+        () => props(elem, { ref: () => ++num }),
+        () => expect(num).to.equal(2),
+        done
+      );
     });
 
     it('should not call a removed ref', done => {
