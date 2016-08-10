@@ -18,9 +18,8 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 // executed.
 const stackChren = [];
 
+const $skipCurrentElement = '__skip';
 const $currentEventHandlers = '__events';
-
-// Symbol for the props for the current function helper in the stack.
 const $stackCurrentHelperProps = '__props';
 
 // The current function helper in the stack.
@@ -29,6 +28,9 @@ let stackCurrentHelper;
 // This is used for the Incremental DOM overrides to keep track of what args
 // to pass the main elementOpen() function.
 let overrideArgs;
+
+// Whether or not to skip the current rendering tree.
+let skipCurrentTree = false;
 
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
@@ -72,7 +74,7 @@ attributes.ref = function (elem, name, value) {
 // Skip handler.
 attributes.skip = function (elem, name, value) {
   if (value) {
-    skip();
+    elem[$skipCurrentElement] = true;
   }
 };
 
@@ -155,18 +157,36 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
+      const isElementClosing = func === elementClose;
+      const isElementOpening = func === elementOpen;
+
+      if (skipCurrentTree && !isElementClosing) {
+        return;
+      }
+
       const elem = func(...args);
-      if (func === elementClose) {
+
+      if (isElementOpening && elem[$skipCurrentElement]) {
+        skipCurrentTree = true;
+      } else if (isElementClosing) {
         const eref = elem[$ref];
 
         // We delete so that it isn't called again for the same element. If the
         // ref changes, or the element changes, this will be defined again.
         delete elem[$ref];
-        
+
+        // Execute the saved ref after esuring we've cleand up after it.
         if (typeof eref === 'function') {
           eref(elem);
         }
+
+        // If this element was skipped, we should stop skipping the tree since
+        // the element is now closing.
+        if (elem[$skipCurrentElement]) {
+          skipCurrentTree = false;
+        }
       }
+
       return elem;
     }
   };
