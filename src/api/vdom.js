@@ -4,7 +4,6 @@ import {
   elementClose,
   elementOpen,
   elementVoid,
-  skip,
   symbols,
   text,
 } from 'incremental-dom';
