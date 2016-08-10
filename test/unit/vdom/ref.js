@@ -45,11 +45,14 @@ function test(name, el) {
       let num = 0;
       const ref = () => ++num;
       const elem = create(ref);
+
+      // We change elem.num here so that we can see what happens when we
+      // re-render without changing the ref.
       afterMutations(
         () => expect(num).to.equal(1),
-        () => props(elem, { ref }),
+        () => props(elem, { num: elem.num + 1 }),
         () => expect(num).to.equal(1),
-        () => props(elem, { ref: () => ++num }),
+        () => props(elem, { num: elem.num + 2, ref: () => ++num }),
         () => expect(num).to.equal(2),
         done
       );

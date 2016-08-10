@@ -158,6 +158,11 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       const elem = func(...args);
       if (func === elementClose) {
         const eref = elem[$ref];
+
+        // We delete so that it isn't called again for the same element. If the
+        // ref changes, or the element changes, this will be defined again.
+        delete elem[$ref];
+        
         if (typeof eref === 'function') {
           eref(elem);
         }
