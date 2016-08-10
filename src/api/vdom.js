@@ -62,8 +62,10 @@ attributes.checked = attributes.className = attributes.disabled = attributes.val
 // V0 Shadow DOM to V1 normalisation.
 attributes.name = function (elem, name, value) {
   if (elem.tagName === 'CONTENT') {
-    applyDefault(elem, 'select', `[slot="${value}"]`);
+    name = 'select';
+    value = `[slot="${value}"]`;
   }
+  applyDefault(elem, 'name', value);
 };
 
 // Ref handler.
