@@ -65,7 +65,7 @@ attributes.name = function (elem, name, value) {
     name = 'select';
     value = `[slot="${value}"]`;
   }
-  applyDefault(elem, 'name', value);
+  applyDefault(elem, name, value);
 };
 
 // Ref handler.
