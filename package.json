@@ -26,14 +26,12 @@
     "incremental-dom": "0.4.1"
   },
   "devDependencies": {
-    "birdpoo": "^0.2.2",
-    "es6-shim": "^0.35.1",
-    "eslint": "^3.2.0",
-    "react": "^15.3.0",
-    "react-dom": "^15.3.0",
-    "skatejs-build": "^7.0.1",
-    "skatejs-named-slots": "^1.0.0",
-    "webcomponents.js": "webcomponents/webcomponentsjs#b77ca74"
+    "birdpoo": "0.x",
+    "eslint": "3.x",
+    "react": "15.x",
+    "react-dom": "15.x",
+    "skatejs-build": "7.x",
+    "skatejs-web-components": "*"
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
@@ -43,6 +41,5 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "version": "1.0.1"
+  }
 }

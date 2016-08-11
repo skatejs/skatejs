@@ -1,11 +1,9 @@
 import {
   applyProp,
-  attr,
   attributes,
+  currentElement,
   elementClose,
   elementOpen,
-  elementOpenEnd,
-  elementOpenStart,
   elementVoid,
   skip,
   symbols,
@@ -16,15 +14,31 @@ import { shadowDomV0, shadowDomV1 } from '../util/support';
 
 const applyDefault = attributes[symbols.default];
 const fallbackToV0 = !shadowDomV1 && shadowDomV0;
+
+// A stack of children that corresponds to the current function helper being
+// executed.
 const stackChren = [];
-const stackProps = [];
+
+const $skipCurrentElement = '__skip';
+const $currentEventHandlers = '__events';
+const $stackCurrentHelperProps = '__props';
+
+// The current function helper in the stack.
+let stackCurrentHelper;
+
+// This is used for the Incremental DOM overrides to keep track of what args
+// to pass the main elementOpen() function.
+let overrideArgs;
+
+// Whether or not to skip the current rendering tree.
+let skipCurrentTree = false;
 
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
-  let events = elem.__events;
+  let events = elem[$currentEventHandlers];
 
   if (!events) {
-    events = elem.__events = {};
+    events = elem[$currentEventHandlers] = {};
   }
 
   const oldFunc = events[ename];
@@ -41,24 +55,37 @@ function applyEvent(elem, ename, newFunc) {
 }
 
 // Attributes that are not handled by Incremental DOM.
-attributes.key = attributes.skip = attributes.statics = function () {};
+attributes.key = attributes.statics = function () {};
 
 // Attributes that *must* be set via a property on all elements.
 attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
 
+// V0 Shadow DOM to V1 normalisation.
+attributes.name = function (elem, name, value) {
+  if (elem.tagName === 'CONTENT') {
+    name = 'select';
+    value = `[slot="${value}"]`;
+  }
+  applyDefault(elem, name, value);
+};
+
+// Ref handler.
+attributes.ref = function (elem, name, value) {
+  elem[$ref] = value;
+};
+
+// Skip handler.
+attributes.skip = function (elem, name, value) {
+  if (value) {
+    skip();
+    elem[$skipCurrentElement] = true;
+  } else {
+    delete elem[$skipCurrentElement];
+  }
+};
+
 // Default attribute applicator.
 attributes[symbols.default] = function (elem, name, value) {
-  // If the skip attribute was specified, skip
-  if (name === 'skip' && value) {
-    return skip();
-  }
-
-  // Add the ref to the element so it can be called when it's closed.
-  if (name === 'ref') {
-    elem[$ref] = value;
-    return;
-  }
-
   // Custom element properties should be set as properties.
   const props = elem.constructor.props;
   if (props && name in props) {
@@ -87,13 +114,6 @@ attributes[symbols.default] = function (elem, name, value) {
     }
   }
 
-  // Set the select attribute instead of name if it was a <slot> translated to
-  // a <content> for v0.
-  if (name === 'name' && elem.tagName === 'CONTENT') {
-    name = 'select';
-    value = `[slot="${value}"]`;
-  }
-
   // Set defined props on the element directly. This ensures properties like
   // "value" on <input> elements get set correctly. Setting those as attributes
   // doesn't always work and setting props is faster than attributes.
@@ -108,7 +128,6 @@ attributes[symbols.default] = function (elem, name, value) {
   // Fallback to default IncrementalDOM behaviour.
   applyDefault(elem, name, value);
 };
-
 
 function resolveTagName(tname) {
   // If the tag name is a function, a Skate constructor or a standard function
@@ -133,23 +152,46 @@ function resolveTagName(tname) {
 function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
   return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
+    stackCurrentHelper = null;
     if (typeof args[0] === 'function') {
       // If we've encountered a function, handle it according to the type of
       // function that is being wrapped.
+      stackCurrentHelper = args[0];
       return tnameFuncHandler(...args);
     } else if (stackChren.length) {
       // We pass the wrap() function in here so that when it's called as
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      // If there is no stack left, we call Incremental DOM directly.
+      const isElementClosing = func === elementClose;
+      const isElementOpening = func === elementOpen;
+
+      // If we're skipping the tree, we must skip everything except for the
+      // closing of the element that originally started the skipping.
+      if (skipCurrentTree && !isElementClosing && !currentElement()[$skipCurrentElement]) {
+        return;
+      }
+
       const elem = func(...args);
 
-      // If we're in elementClose, try calling the ref.
-      if (func === elementClose) {
-        const eref = elem[$ref];
-        if (typeof eref === 'function') {
-          eref(elem);
+      if (isElementOpening && elem[$skipCurrentElement]) {
+        skipCurrentTree = true;
+      } else if (isElementClosing) {
+        const ref = elem[$ref];
+
+        // We delete so that it isn't called again for the same element. If the
+        // ref changes, or the element changes, this will be defined again.
+        delete elem[$ref];
+
+        // Execute the saved ref after esuring we've cleand up after it.
+        if (typeof ref === 'function') {
+          ref(elem);
+        }
+
+        // If this element was skipped, we should stop skipping the tree since
+        // the element is now closing.
+        if (elem[$skipCurrentElement]) {
+          skipCurrentTree = false;
         }
       }
 
@@ -158,11 +200,14 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
   };
 }
 
-function newAttr(key, val) {
-  if (stackProps.length) {
-    stackProps[stackProps.length - 1][key] = val;
+function newAttr(...args) {
+  if (stackCurrentHelper) {
+    stackCurrentHelper[$stackCurrentHelperProps][args[0]] = args[1];
+  } else if (stackChren.length) {
+    stackChren[stackChren.length - 1].push([newAttr, args]);
   } else {
-    return attr(key, val);
+    overrideArgs.push(args[0]);
+    overrideArgs.push(args[1]);
   }
 }
 
@@ -171,13 +216,14 @@ function stackOpen(tname, key, statics, ...attrs) {
   for (let a = 0; a < attrs.length; a += 2) {
     props[attrs[a]] = attrs[a + 1];
   }
+  tname[$stackCurrentHelperProps] = props;
   stackChren.push([]);
-  stackProps.push(props);
 }
 
 function stackClose(tname) {
   const chren = stackChren.pop();
-  const props = stackProps.pop();
+  const props = tname[$stackCurrentHelperProps];
+  delete tname[$stackCurrentHelperProps];
   return tname(props, () => chren.forEach(args => args[0](...args[1])));
 }
 
@@ -186,13 +232,36 @@ function stackVoid(...args) {
   return stackClose(args[0]);
 }
 
-// Patch element factories.
-const newElementClose = wrapIdomFunc(elementClose, stackClose);
+
+
+// Incremental DOM overrides
+// -------------------------
+
+// We must override internal functions that call internal Incremental DOM
+// functions because we can't override the internal references. This means
+// we must roughly re-implement their behaviour. Luckily, they're fairly
+// simple.
+const newElementOpenEnd = wrapIdomFunc(() => {
+  const node = newElementOpen(...overrideArgs);
+  overrideArgs = null;
+  return node;
+});
+const newElementOpenStart = wrapIdomFunc((...args) => {
+  overrideArgs = args;
+}, stackOpen);
+
+// Standard open / closed overrides don't need to reproduce internal behaviour
+// because they are the ones referenced from *End and *Start.
 const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
-const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
-const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
+const newElementClose = wrapIdomFunc(elementClose, stackClose);
+
+// Ensure we call our overridden functions instead of the internal ones.
 const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
+
+// Text override ensures their calls can queue if using function helpers.
 const newText = wrapIdomFunc(text);
+
+
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
