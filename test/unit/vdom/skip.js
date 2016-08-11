@@ -32,7 +32,7 @@ describe('vdom/skip', () => {
     }
     const Elem = define('x-test', {
       props: {
-        num: prop.number()
+        num: prop.number({ default: 2 })
       },
       render(elem) {
         vdom.element('div', { skip: !isEven(elem.num) }, () => {
@@ -45,15 +45,15 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('0'),
-      () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('0'),
-      () => props(elem, { num: elem.num + 1 }),
       () => expect(elem[symbols.shadowRoot].textContent).to.equal('2'),
       () => props(elem, { num: elem.num + 1 }),
       () => expect(elem[symbols.shadowRoot].textContent).to.equal('2'),
       () => props(elem, { num: elem.num + 1 }),
       () => expect(elem[symbols.shadowRoot].textContent).to.equal('4'),
+      () => props(elem, { num: elem.num + 1 }),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('4'),
+      () => props(elem, { num: elem.num + 1 }),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('6'),
       done
     );
   });
