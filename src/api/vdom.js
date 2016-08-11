@@ -177,15 +177,15 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       if (isElementOpening && elem[$skipCurrentElement]) {
         skipCurrentTree = true;
       } else if (isElementClosing) {
-        const eref = elem[$ref];
+        const ref = elem[$ref];
 
         // We delete so that it isn't called again for the same element. If the
         // ref changes, or the element changes, this will be defined again.
         delete elem[$ref];
 
         // Execute the saved ref after esuring we've cleand up after it.
-        if (typeof eref === 'function') {
-          eref(elem);
+        if (typeof ref === 'function') {
+          ref(elem);
         }
 
         // If this element was skipped, we should stop skipping the tree since
