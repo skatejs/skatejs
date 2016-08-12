@@ -25,5 +25,5 @@ export default function (elem, name, opts = {}) {
   if (opts.cancelable === undefined) {
     opts.cancelable = true;
   }
-  return elem.disabled ? true : elem.dispatchEvent(createCustomEvent(name, opts));
+  return elem.dispatchEvent(createCustomEvent(name, opts));
 }
