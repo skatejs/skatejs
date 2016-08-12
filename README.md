@@ -51,11 +51,13 @@ Whenever you change the `name` property - or attribute - the component will re-r
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+  - [Installing](#installing)
+    - [NPM](#npm)
+    - [Script Tag](#script-tag)
+  - [Dependencies](#dependencies)
   - [Resources](#resources)
   - [Questions?](#questions)
   - [Terminology](#terminology)
-  - [Installing](#installing)
-  - [Consuming](#consuming)
   - [Examples](#examples)
     - [Counter](#counter)
   - [API](#api)
