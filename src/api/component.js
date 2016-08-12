@@ -89,6 +89,8 @@ export default class Component extends HTMLElement {
       created(this);
     }
 
+    this.setAttribute('defined', '');
+
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb(this));
       delete elemData.readyCallbacks;
