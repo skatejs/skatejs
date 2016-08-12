@@ -45,16 +45,6 @@ Whenever you change the `name` property - or attribute - the component will re-r
 
 
 
-## Dependencies
-
-Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for.
-
-To get up and running quickly with the most common configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is load it before Skate.
-
-If you don't want to use that, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
-
-
-
 ## Documentation
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -147,6 +137,78 @@ If you don't want to use that, you'll have to BYO Custom Element and Shadow DOM 
 
 
 
+## Installing
+
+There's a couple ways to consume Skate.
+
+
+
+### NPM
+
+```sh
+npm install skatejs
+```
+
+Skate exports a UMD definition so you can:
+
+```js
+import * as skate from 'skatejs';
+const skate = require('skatejs');
+require(['skatejs'], function (skate) {});
+```
+
+There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
+
+1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
+2. `index-with-deps.js` - Unminified with dependencies.
+3. `index-with-deps.min.js` - Minified with dependencies.
+
+
+
+### Script Tag
+
+```html
+<script src="https://npmcdn.com/skatejs/dist/index-with-deps.min.js"></script>
+```
+
+Since Skate exports a UMD definition, you can then access it via the global:
+
+```js
+const skate = window.skate;
+```
+
+
+
+## Dependencies
+
+Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for.
+
+To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is load it before Skate.
+
+```sh
+npm install skatejs skatejs-web-components
+```
+
+And then you can import it:
+
+```js
+import 'skatejs-web-components';
+import { define, vdom } from 'skatejs';
+```
+
+Or you can use script tags:
+
+```html
+<script src="https://npmcdn.com/skatejs-web-components/dist/index.min.js"></script>
+<script src="https://npmcdn.com/skatejs/dist/index-with-deps.min.js"></script>
+```
+
+If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
+
+**Skate works with the native V0 APIs, however, the V0 polyfills have several bugs that are inconsistent with the native APIs, so it's not recommended you try and use the V0 polyfills.** 
+
+
+
 ## Resources
 
 - [SkateJS Website](https://github.com/skatejs/skatejs.github.io)
@@ -173,59 +235,6 @@ Let's define some terms used in these docs:
 - v1 - the non-contentious - modern-day - specs.
 - polyfill, polyfilled, polyfill-land - not v0 or v1; no native custom element support at all.
 - upgrade, upgraded, upgrading - when an element is initialised as a custom element.
-
-
-
-## Installing
-
-Using package managers:
-
-```sh
-jspm install npm:skatejs
-npm install skatejs
-```
-
-Or you can DIY by downloading the zip. There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
-
-1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
-2. `index-with-deps.js` - Unminified with dependencies.
-3. `index-with-deps.min.js` - Minified with dependencies.
-
-
-
-## Consuming
-
-Skate can be consumed in the following ways:
-
-Global:
-
-```js
-window.skate;
-```
-
-AMD:
-
-```js
-require(['skatejs'], function (skate) {});
-```
-
-CommonJS
-
-```js
-const skate = require('skatejs');
-```
-
-ES2015:
-
-```js
-import * as skate from 'skatejs';
-```
-
-Each API point is accessible on the main `skate` object, or can be imported by name in ES2015:
-
-```js
-import { define, vdom } from 'skatejs';
-```
 
 
 
@@ -276,6 +285,18 @@ To use this, all you'd need to do in your HTML somewhere is:
 
 
 ## API
+
+Each API point is accessible on the main `skate` object:
+
+```js
+const { define, vdom } = skate;
+```
+
+Or can be imported by name in ES2015:
+
+```js
+import { define, vdom } from 'skatejs';
+```
 
 
 
