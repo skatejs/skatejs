@@ -108,12 +108,23 @@ function generateUniqueName(name) {
   return `${name}-${rand}`;
 }
 
+function registerElement(uniqueName, Ctor) {
+  if (customElementsV1) {
+    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+    return Ctor;
+  } else if (customElementsV0) {
+    return document.registerElement(uniqueName, Ctor);
+  } else {
+    throw new Error('Skate requires native custom element support or a polyfill.');
+  }
+}
+
 export default function (name, opts) {
   if (opts === undefined) {
     throw new Error(`You have to define options to register a component ${name}`);
   }
 
-  const uniqueName = generateUniqueName(name);
+  let uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
 
   formatLinkedAttributes(Ctor);
@@ -122,13 +133,16 @@ export default function (name, opts) {
   Ctor[$props] = createInitProps(Ctor);
   Ctor[$renderer] = createRenderer(Ctor);
 
-  if (customElementsV1) {
-    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
-  } else if (customElementsV0) {
-    return document.registerElement(uniqueName, Ctor);
-  } else {
-    throw new Error('Skate requires native custom element support or a polyfill.');
+  let res;
+  try {
+    res = registerElement(uniqueName, Ctor);
+  } catch(e) {
+    uniqueName = generateUniqueName(name);
+    Ctor[$name] = uniqueName;
+    Ctor[$props] = createInitProps(Ctor);
+    Ctor[$renderer] = createRenderer(Ctor);
+    res = registerElement(uniqueName, Ctor);
   }
 
-  return Ctor;
+  return res;
 }
