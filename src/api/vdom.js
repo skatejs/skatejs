@@ -166,17 +166,25 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       const isElementClosing = func === elementClose;
       const isElementOpening = func === elementOpen;
 
-      // If we're skipping the tree, we must skip everything except for the
-      // closing of the element that originally started the skipping.
-      if (skipCurrentTree && !isElementClosing && !currentElement()[$skipCurrentElement]) {
-        return;
+      if (isElementOpening) {
+        if (skipCurrentTree) {
+          return;
+        } else {
+          const elem = func(...args);
+          skipCurrentTree = !!elem[$skipCurrentElement];
+          return elem;
+        }
       }
+      
+      if (isElementClosing) {
+        let elem = currentElement();
 
-      const elem = func(...args);
+        if (elem[$skipCurrentElement]) {
+          skipCurrentTree = false;
+        } else {
+          elem = func(...args);
+        }
 
-      if (isElementOpening && elem[$skipCurrentElement]) {
-        skipCurrentTree = true;
-      } else if (isElementClosing) {
         const ref = elem[$ref];
 
         // We delete so that it isn't called again for the same element. If the
@@ -188,14 +196,10 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
           ref(elem);
         }
 
-        // If this element was skipped, we should stop skipping the tree since
-        // the element is now closing.
-        if (elem[$skipCurrentElement]) {
-          skipCurrentTree = false;
-        }
+        return elem;
+      } else if (!skipCurrentTree) {
+        return func(...args);
       }
-
-      return elem;
     }
   };
 }
