@@ -108,40 +108,49 @@ function generateUniqueName(name) {
   return `${name}-${rand}`;
 }
 
-function registerElement(uniqueName, Ctor) {
-  if (customElementsV1) {
-    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
-    return Ctor;
-  } else if (customElementsV0) {
-    return document.registerElement(uniqueName, Ctor);
-  } else {
-    throw new Error('Skate requires native custom element support or a polyfill.');
-  }
+function registerV0Element(uniqueName, Ctor) {
+  return document.registerElement(uniqueName, Ctor);
+}
+
+function registerV1Element(uniqueName, Ctor) {
+  window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+  return Ctor;
+}
+
+function prepareForRegistration(uniqueName, Ctor) {
+  Ctor[$name] = uniqueName;
+  Ctor[$props] = createInitProps(Ctor);
+  Ctor[$renderer] = createRenderer(Ctor);
 }
 
 export default function (name, opts) {
   if (opts === undefined) {
     throw new Error(`You have to define options to register a component ${name}`);
   }
-
-  let uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
-
   formatLinkedAttributes(Ctor);
 
-  Ctor[$name] = uniqueName;
-  Ctor[$props] = createInitProps(Ctor);
-  Ctor[$renderer] = createRenderer(Ctor);
-
+  let uniqueName = generateUniqueName(name);
   let res;
-  try {
-    res = registerElement(uniqueName, Ctor);
-  } catch(e) {
-    uniqueName = generateUniqueName(name);
-    Ctor[$name] = uniqueName;
-    Ctor[$props] = createInitProps(Ctor);
-    Ctor[$renderer] = createRenderer(Ctor);
-    res = registerElement(uniqueName, Ctor);
+
+  prepareForRegistration(uniqueName, Ctor);
+
+  if (customElementsV1) {
+    if (window.customElements.get(uniqueName)) {
+      uniqueName = generateUniqueName(name);
+      prepareForRegistration(uniqueName, Ctor);
+    }
+    res = registerV1Element(uniqueName, Ctor);
+  } else if (customElementsV0) {
+    try {
+      res = registerV0Element(uniqueName, Ctor);
+    } catch (e) {
+      uniqueName = generateUniqueName(name);
+      prepareForRegistration(uniqueName, Ctor);
+      res = registerV0Element(uniqueName, Ctor);
+    }
+  } else {
+    throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
   return res;
