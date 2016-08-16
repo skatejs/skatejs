@@ -1,6 +1,15 @@
 import { Component, define, symbols } from '../../../src/index';
+import { customElementsV0, customElementsV1 } from '../../../src/util/support';
 
 const { name: $name } = symbols;
+
+function mockDefine(name) {
+  if (customElementsV1) {
+    window.customElements.define(name, function() {});
+  } else if (customElementsV0) {
+    document.registerElement(name, function() {});
+  }
+}
 
 describe('api/define', () => {
   it('should not register without any properties', () => {
@@ -21,6 +30,13 @@ describe('api/define', () => {
     expect(elem2[$name].indexOf('x-test-api-define') === 0).to.equal(true);
     expect(elem3[$name]).not.to.equal('x-test-api-define');
     expect(elem3[$name].indexOf('x-test-api-define') === 0).to.equal(true);
+  });
+
+  it('should register components with unique names with multiple versions of skate', () => {
+    mockDefine('x-test-api-define-multi');
+    expect(() => {
+      define('x-test-api-define-multi', {});
+    }).to.not.throw();
   });
 
   it('should take an object and extend Component', () => {
