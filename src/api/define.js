@@ -9,8 +9,6 @@ import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
 
-const registry = {};
-
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions(Ctor) {
@@ -93,11 +91,6 @@ function createInitProps(Ctor) {
 }
 
 function generateUniqueName(name) {
-  // we don't need to generate a unique name if it's the first time
-  if (!registry[name]) {
-    registry[name] = true;
-    return name;
-  }
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
@@ -108,27 +101,48 @@ function generateUniqueName(name) {
   return `${name}-${rand}`;
 }
 
+function prepareForRegistration(name, Ctor) {
+  Ctor[$name] = name;
+  Ctor[$props] = createInitProps(Ctor);
+  Ctor[$renderer] = createRenderer(Ctor);
+}
+
+function registerV0Element(name, Ctor) {
+  let res;
+  let uniqueName;
+  try {
+    prepareForRegistration(name, Ctor);
+    res = document.registerElement(name, Ctor);
+  } catch (e) {
+    uniqueName = generateUniqueName(name);
+    prepareForRegistration(uniqueName, Ctor);
+    res = document.registerElement(uniqueName, Ctor);
+  }
+  return res;
+}
+
+function registerV1Element(name, Ctor) {
+  let uniqueName = name;
+  if (window.customElements.get(name)) {
+    uniqueName = generateUniqueName(name);
+  }
+  prepareForRegistration(uniqueName, Ctor);
+  window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+  return Ctor;
+}
+
 export default function (name, opts) {
   if (opts === undefined) {
     throw new Error(`You have to define options to register a component ${name}`);
   }
-
-  const uniqueName = generateUniqueName(name);
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
-
   formatLinkedAttributes(Ctor);
 
-  Ctor[$name] = uniqueName;
-  Ctor[$props] = createInitProps(Ctor);
-  Ctor[$renderer] = createRenderer(Ctor);
-
   if (customElementsV1) {
-    window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+    return registerV1Element(name, Ctor);
   } else if (customElementsV0) {
-    return document.registerElement(uniqueName, Ctor);
-  } else {
-    throw new Error('Skate requires native custom element support or a polyfill.');
+    return registerV0Element(name, Ctor);
   }
 
-  return Ctor;
+  throw new Error('Skate requires native custom element support or a polyfill.');
 }
