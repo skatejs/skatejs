@@ -79,6 +79,7 @@ function createNativePropertyDefinition(name, opts) {
     propData.internalValue = newValue;
 
     const changeData = { name, newValue, oldValue };
+    const valueHasChanged = newValue !== oldValue;
 
     if (typeof opts.set === 'function') {
       opts.set(this, changeData);
@@ -93,7 +94,7 @@ function createNativePropertyDefinition(name, opts) {
 
     // Link up the attribute.
     const attributeName = data(this, 'propertyLinks')[name];
-    if (attributeName && !propData.settingAttribute) {
+    if (attributeName && !propData.settingAttribute && valueHasChanged) {
       const serializedValue = opts.serialize(newValue);
       propData.syncingAttribute = true;
       if (shouldRemoveAttribute || empty(serializedValue)) {
