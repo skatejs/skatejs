@@ -19,7 +19,6 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 // executed.
 const stackChren = [];
 
-const $skipCurrentElement = '__skip';
 const $currentEventHandlers = '__events';
 const $stackCurrentHelperProps = '__props';
 
@@ -30,8 +29,8 @@ let stackCurrentHelper;
 // to pass the main elementOpen() function.
 let overrideArgs;
 
-// Whether or not to skip the current rendering tree.
-let skipCurrentTree = false;
+// The number of levels deep after skipping a tree.
+let skips = 0;
 
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
@@ -78,9 +77,9 @@ attributes.ref = function (elem, name, value) {
 attributes.skip = function (elem, name, value) {
   if (value) {
     skip();
-    elem[$skipCurrentElement] = true;
+    elem.__skip = true;
   } else {
-    delete elem[$skipCurrentElement];
+    delete elem.__skip;
   }
 };
 
@@ -149,6 +148,16 @@ function resolveTagName(tname) {
   return tname;
 }
 
+function elementOpenStart(...args) {
+  overrideArgs = args;
+}
+
+function elementOpenEnd() {
+  const node = newElementOpen(...overrideArgs);
+  overrideArgs = null;
+  return node;
+}
+
 function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
   return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
@@ -163,28 +172,21 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      const isElementClosing = func === elementClose;
-      const isElementOpening = func === elementOpen;
-
-      if (isElementOpening) {
-        if (skipCurrentTree) {
-          return;
-        } else {
-          const elem = func(...args);
-          skipCurrentTree = !!elem[$skipCurrentElement];
-          return elem;
-        }
+      // Stat skipping if the element has been flagged as skipped.
+      if (!skips && currentElement().__skip) {
+        ++skips;
       }
-      
-      if (isElementClosing) {
-        let elem = currentElement();
 
-        if (elem[$skipCurrentElement]) {
-          skipCurrentTree = false;
-        } else {
-          elem = func(...args);
+      if (func === elementOpen) {
+        return skips ? ++skips : func(...args);
+      }
+
+      if (func === elementClose) {
+        if (skips) {
+          return --skips;
         }
 
+        const elem = func(...args);
         const ref = elem[$ref];
 
         // We delete so that it isn't called again for the same element. If the
@@ -197,7 +199,11 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
         }
 
         return elem;
-      } else if (!skipCurrentTree) {
+      }
+
+      // We must call elementOpenStart and elementOpenEnd even if we are
+      // skipping because they queue up attributes and then call elementClose.
+      if (!skips || (func === elementOpenStart || func === elementOpenEnd)) {
         return func(...args);
       }
     }
@@ -245,14 +251,8 @@ function stackVoid(...args) {
 // functions because we can't override the internal references. This means
 // we must roughly re-implement their behaviour. Luckily, they're fairly
 // simple.
-const newElementOpenEnd = wrapIdomFunc(() => {
-  const node = newElementOpen(...overrideArgs);
-  overrideArgs = null;
-  return node;
-});
-const newElementOpenStart = wrapIdomFunc((...args) => {
-  overrideArgs = args;
-}, stackOpen);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 
 // Standard open / closed overrides don't need to reproduce internal behaviour
 // because they are the ones referenced from *End and *Start.

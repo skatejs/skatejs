@@ -10,9 +10,14 @@ describe('vdom/skip', () => {
       },
       render() {
         vdom.element('div', { skip: true }, () => {
-          vdom.text('text');
+          vdom.text('1');
           vdom.element('span', () => {
-            vdom.text('text');
+            vdom.text('2');
+          });
+          vdom.element('div', () => {
+            vdom.element('span', () => {
+              vdom.text('3');
+            });
           });
         });
       },
@@ -39,21 +44,24 @@ describe('vdom/skip', () => {
         vdom.element('div', { skip: !isEven(elem.num) }, () => {
           vdom.text(elem.num);
           vdom.element('span', elem.num.toString());
+          vdom.element('div', () => {
+            vdom.element('span', elem.num.toString());
+          });
         });
       },
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('22'),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('22'),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('44'),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('44'),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('66'),
+      () => expect(elem[symbols.shadowRoot].textContent).to.equal('666'),
       done
     );
   });
