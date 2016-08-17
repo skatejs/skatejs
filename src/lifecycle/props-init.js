@@ -94,13 +94,16 @@ function createNativePropertyDefinition(name, opts) {
 
     // Link up the attribute.
     const attributeName = data(this, 'propertyLinks')[name];
-    if (attributeName && !propData.settingAttribute && valueHasChanged) {
+    if (attributeName && !propData.settingAttribute) {
       const serializedValue = opts.serialize(newValue);
       propData.syncingAttribute = true;
       if (shouldRemoveAttribute || empty(serializedValue)) {
         this.removeAttribute(attributeName);
       } else {
         this.setAttribute(attributeName, serializedValue);
+      }
+      if (!valueHasChanged && propData.syncingAttribute) {
+        propData.syncingAttribute = false;
       }
     }
 
