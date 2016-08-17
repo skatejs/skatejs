@@ -120,10 +120,6 @@ describe('lifecycle/property', () => {
 
       it('setting the property to the existing value, then setting the attribute updates the property', done => {
         const elem = create({ attribute: true }, 'testName', 'something');
-
-        expect(elem.testName).to.equal('something');
-        expect(elem.getAttribute('test-name')).to.equal('something');
-
         elem.testName = 'something';
 
         expect(elem.testName).to.equal('something');
@@ -136,6 +132,19 @@ describe('lifecycle/property', () => {
           done();
         });
       });
+
+      it('setting the property to null twice, and then setting the attribute updates the property', done => {
+        const elem = create({ attribute: true });
+        elem.testName = null;
+
+        elem.setAttribute('test-name', 'something');
+        afterMutations(() => {
+          expect(elem.testName).to.equal('something');
+          expect(elem.getAttribute('test-name')).to.equal('something');
+          done();
+        });
+      });
+
 
       describe('undefined and null', () => {
         it('when a string, the value is used as the attribute name', () => {
