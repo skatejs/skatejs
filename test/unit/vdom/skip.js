@@ -2,32 +2,69 @@ import { define, prop, props, symbols, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
+const { text, elementOpen, elementClose, elementOpenStart, elementOpenEnd, elementVoid } = vdom;
+const sr = el => el[symbols.shadowRoot];
+
 describe('vdom/skip', () => {
   it('should skip the element children', done => {
     const Elem = define('x-test', {
-      props: {
-        num: prop.number()
+      props: { 
+        num: prop.number() 
       },
+      /* eslint indent: 0 */
       render() {
-        vdom.element('div', { skip: true }, () => {
-          vdom.text('1');
-          vdom.element('span', () => {
-            vdom.text('2');
-          });
-          vdom.element('div', () => {
-            vdom.element('span', () => {
-              vdom.text('3');
-            });
-          });
-        });
+        text('1 ');
+        elementOpen('div');
+          text('2 ');
+          elementVoid('void');
+          elementOpenStart('span'); elementOpenEnd();
+            text('3 ');
+          elementClose('span');
+          elementOpen('div');
+            text('4 ');
+            elementOpen('span');
+              text('5 ');
+            elementClose('div');
+          elementClose('div');
+        elementClose('div');
+        text('6 ');
+        elementOpen('div', null, null, 'skip', true);
+          text('7 ');
+          elementVoid('void');
+          elementOpenStart('span'); elementOpenEnd();
+            text('8 ');
+          elementClose('span');
+          elementOpen('div');
+            text('9 ');
+            elementOpen('span');
+              text('10 ');
+            elementClose('span');
+          elementClose('div');
+        elementClose('div');
+        text('11 ');
+        elementOpen('div');
+          text('12 ');
+          elementVoid('void');
+          elementOpenStart('span'); elementOpenEnd();
+            text('13 ');
+          elementClose('span');
+          elementOpen('div');
+            text('14 ');
+            elementOpen('span');
+              text('15');
+            elementClose('span');
+          elementClose('div');
+        elementClose('div');
       },
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal(''),
+      () => expect(sr(elem).textContent).to.equal('1 2 3 4 5 6 11 12 13 14 15'),
+      () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal(''),
+      () => expect(sr(elem).textContent).to.equal('1 2 3 4 5 6 11 12 13 14 15'),
+      () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       done
     );
   });
@@ -41,13 +78,17 @@ describe('vdom/skip', () => {
         num: prop.number({ default: 2 })
       },
       render(elem) {
-        vdom.element('div', { skip: !isEven(elem.num) }, () => {
-          vdom.text(elem.num);
-          vdom.element('span', elem.num.toString());
-          vdom.element('div', () => {
-            vdom.element('span', elem.num.toString());
-          });
-        });
+        elementOpen('div', null, null, 'skip', !isEven(elem.num));
+          text(elem.num);
+          elementOpen('span');
+            text(elem.num.toString());
+          elementClose('span');
+          elementOpen('div');
+            elementOpen('span');
+              text(elem.num.toString());
+            elementClose('span');
+          elementClose('div');
+        elementClose('div');
       },
     });
     const elem = new Elem();

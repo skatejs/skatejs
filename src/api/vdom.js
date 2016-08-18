@@ -172,13 +172,18 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      // Stat skipping if the element has been flagged as skipped.
-      if (!skips && currentElement().__skip) {
-        ++skips;
-      }
-
       if (func === elementOpen) {
-        return skips ? ++skips : func(...args);
+        if (skips) {
+          return ++skips;
+        }
+
+        const elem = func(...args);
+
+        if (elem.__skip) {
+          ++skips;
+        }
+
+        return elem;
       }
 
       if (func === elementClose) {
