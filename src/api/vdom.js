@@ -19,7 +19,7 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 // executed.
 const stackChren = [];
 
-const $skipCurrentElement = '__skip';
+const $skip = '__skip';
 const $currentEventHandlers = '__events';
 const $stackCurrentHelperProps = '__props';
 
@@ -30,8 +30,8 @@ let stackCurrentHelper;
 // to pass the main elementOpen() function.
 let overrideArgs;
 
-// Whether or not to skip the current rendering tree.
-let skipCurrentTree = false;
+// The number of levels deep after skipping a tree.
+let skips = 0;
 
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
@@ -77,10 +77,9 @@ attributes.ref = function (elem, name, value) {
 // Skip handler.
 attributes.skip = function (elem, name, value) {
   if (value) {
-    skip();
-    elem[$skipCurrentElement] = true;
+    elem[$skip] = true;
   } else {
-    delete elem[$skipCurrentElement];
+    delete elem[$skip];
   }
 };
 
@@ -149,6 +148,16 @@ function resolveTagName(tname) {
   return tname;
 }
 
+function elementOpenStart(...args) {
+  overrideArgs = args;
+}
+
+function elementOpenEnd() {
+  const node = newElementOpen(...overrideArgs);
+  overrideArgs = null;
+  return node;
+}
+
 function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
   return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
@@ -163,20 +172,32 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       // children, it will queue up for the next stack, if there is one.
       stackChren[stackChren.length - 1].push([wrap, args]);
     } else {
-      const isElementClosing = func === elementClose;
-      const isElementOpening = func === elementOpen;
+      if (func === elementOpen) {
+        if (skips) {
+          return ++skips;
+        }
 
-      // If we're skipping the tree, we must skip everything except for the
-      // closing of the element that originally started the skipping.
-      if (skipCurrentTree && !isElementClosing && !currentElement()[$skipCurrentElement]) {
-        return;
+        const elem = func(...args);
+
+        if (elem.__skip) {
+          ++skips;
+        }
+
+        return elem;
       }
 
-      const elem = func(...args);
+      if (func === elementClose) {
+        if (skips === 1) {
+          skip();
+        }
 
-      if (isElementOpening && elem[$skipCurrentElement]) {
-        skipCurrentTree = true;
-      } else if (isElementClosing) {
+        // We only want to skip closing if it's not the last closing tag in the
+        // skipped tree because we keep the element that initiated the skpping.
+        if (skips && --skips) {
+          return;
+        }
+
+        const elem = func(...args);
         const ref = elem[$ref];
 
         // We delete so that it isn't called again for the same element. If the
@@ -188,14 +209,14 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
           ref(elem);
         }
 
-        // If this element was skipped, we should stop skipping the tree since
-        // the element is now closing.
-        if (elem[$skipCurrentElement]) {
-          skipCurrentTree = false;
-        }
+        return elem;
       }
 
-      return elem;
+      // We must call elementOpenStart and elementOpenEnd even if we are
+      // skipping because they queue up attributes and then call elementClose.
+      if (!skips || (func === elementOpenStart || func === elementOpenEnd)) {
+        return func(...args);
+      }
     }
   };
 }
@@ -241,14 +262,8 @@ function stackVoid(...args) {
 // functions because we can't override the internal references. This means
 // we must roughly re-implement their behaviour. Luckily, they're fairly
 // simple.
-const newElementOpenEnd = wrapIdomFunc(() => {
-  const node = newElementOpen(...overrideArgs);
-  overrideArgs = null;
-  return node;
-});
-const newElementOpenStart = wrapIdomFunc((...args) => {
-  overrideArgs = args;
-}, stackOpen);
+const newElementOpenStart = wrapIdomFunc(elementOpenStart, stackOpen);
+const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 
 // Standard open / closed overrides don't need to reproduce internal behaviour
 // because they are the ones referenced from *End and *Start.
