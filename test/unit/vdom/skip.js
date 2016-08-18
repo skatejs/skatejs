@@ -107,4 +107,24 @@ describe('vdom/skip', () => {
       done
     );
   });
+
+  it('re-rendering an empty, skipped element should keep the mutated content', done => {
+    const Elem = define('x-test', {
+      props: {
+        test: {}
+      },
+      render() {
+        elementOpen('div', null, null, 'skip', true);
+        elementClose('div');
+      }
+    });
+    const elem = new Elem();
+    fixture(elem);
+    afterMutations(
+      () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
+      () => props(elem, { test: 0 }),
+      () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
+      done
+    );
+  });
 });

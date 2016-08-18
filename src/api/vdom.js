@@ -19,6 +19,7 @@ const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 // executed.
 const stackChren = [];
 
+const $skip = '__skip';
 const $currentEventHandlers = '__events';
 const $stackCurrentHelperProps = '__props';
 
@@ -76,10 +77,9 @@ attributes.ref = function (elem, name, value) {
 // Skip handler.
 attributes.skip = function (elem, name, value) {
   if (value) {
-    skip();
-    elem.__skip = true;
+    elem[$skip] = true;
   } else {
-    delete elem.__skip;
+    delete elem[$skip];
   }
 };
 
@@ -187,6 +187,10 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       }
 
       if (func === elementClose) {
+        if (skips === 1) {
+          skip();
+        }
+
         // We only want to skip closing if it's not the last closing tag in the
         // skipped tree because we keep the element that initiated the skpping.
         if (skips && --skips) {
