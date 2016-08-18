@@ -79,6 +79,7 @@ function createNativePropertyDefinition(name, opts) {
     propData.internalValue = newValue;
 
     const changeData = { name, newValue, oldValue };
+    const valueHasChanged = newValue !== oldValue;
 
     if (typeof opts.set === 'function') {
       opts.set(this, changeData);
@@ -100,6 +101,9 @@ function createNativePropertyDefinition(name, opts) {
         this.removeAttribute(attributeName);
       } else {
         this.setAttribute(attributeName, serializedValue);
+      }
+      if (!valueHasChanged && propData.syncingAttribute) {
+        propData.syncingAttribute = false;
       }
     }
 
