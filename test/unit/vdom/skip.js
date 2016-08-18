@@ -58,12 +58,13 @@ describe('vdom/skip', () => {
       },
     });
     const elem = new Elem();
+    const html = '1 <div>2 <void></void><span>3 </span><div>4 <span>5 </span></div></div>6 <div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
     fixture(elem);
     afterMutations(
-      () => expect(sr(elem).textContent).to.equal('1 2 3 4 5 6 11 12 13 14 15'),
+      () => expect(sr(elem).innerHTML).to.equal(html),
       () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(sr(elem).textContent).to.equal('1 2 3 4 5 6 11 12 13 14 15'),
+      () => expect(sr(elem).innerHTML).to.equal(html),
       () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       done
     );

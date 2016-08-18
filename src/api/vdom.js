@@ -187,8 +187,10 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
       }
 
       if (func === elementClose) {
-        if (skips) {
-          return --skips;
+        // We only want to skip closing if it's not the last closing tag in the
+        // skipped tree because we keep the element that initiated the skpping.
+        if (skips && --skips) {
+          return;
         }
 
         const elem = func(...args);
