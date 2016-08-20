@@ -28,6 +28,8 @@
   "devDependencies": {
     "birdpoo": "0.x",
     "eslint": "3.x",
+    "eslint-friendly-formatter": "^2.0.6",
+    "precommit-hook": "^3.0.0",
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "7.x",
@@ -35,11 +37,16 @@
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
-    "test": "karma start --single-run"
+    "test": "karma start --single-run",
+    "lint": "eslint -c node_modules/skatejs-build/.eslintrc src, test --ext .js,.jsx --format 'node_modules/eslint-friendly-formatter'",
+    "commit": "npm run lint && git cz"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  }
+  },
+  "pre-commit": [
+    "lint"
+  ]
 }

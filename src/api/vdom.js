@@ -1,7 +1,6 @@
 import {
   applyProp,
   attributes,
-  currentElement,
   elementClose,
   elementOpen,
   elementVoid,
@@ -55,13 +54,13 @@ function applyEvent(elem, ename, newFunc) {
 }
 
 // Attributes that are not handled by Incremental DOM.
-attributes.key = attributes.statics = function () {};
+attributes.key = attributes.statics = () => {};
 
 // Attributes that *must* be set via a property on all elements.
 attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
 
 // V0 Shadow DOM to V1 normalisation.
-attributes.name = function (elem, name, value) {
+attributes.name = (elem, name, value) => {
   if (elem.tagName === 'CONTENT') {
     name = 'select';
     value = `[slot="${value}"]`;
@@ -70,12 +69,12 @@ attributes.name = function (elem, name, value) {
 };
 
 // Ref handler.
-attributes.ref = function (elem, name, value) {
+attributes.ref = (elem, name, value) => {
   elem[$ref] = value;
 };
 
 // Skip handler.
-attributes.skip = function (elem, name, value) {
+attributes.skip = (elem, name, value) => {
   if (value) {
     elem[$skip] = true;
   } else {
@@ -84,7 +83,7 @@ attributes.skip = function (elem, name, value) {
 };
 
 // Default attribute applicator.
-attributes[symbols.default] = function (elem, name, value) {
+attributes[symbols.default] = (elem, name, value) => {
   // Custom element properties should be set as properties.
   const props = elem.constructor.props;
   if (props && name in props) {
@@ -153,7 +152,7 @@ function elementOpenStart(...args) {
 }
 
 function elementOpenEnd() {
-  const node = newElementOpen(...overrideArgs);
+  const node = newElementOpen(...overrideArgs); // eslint-disable-line no-use-before-define
   overrideArgs = null;
   return node;
 }
@@ -253,8 +252,6 @@ function stackVoid(...args) {
   return stackClose(args[0]);
 }
 
-
-
 // Incremental DOM overrides
 // -------------------------
 
@@ -275,8 +272,6 @@ const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
 
 // Text override ensures their calls can queue if using function helpers.
 const newText = wrapIdomFunc(text);
-
-
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.

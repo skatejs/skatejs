@@ -1,5 +1,5 @@
 const base = require('skatejs-build/karma.conf');
-module.exports = function (config) {
+module.exports = (config) => {
   base(config);
 
   config.files = [

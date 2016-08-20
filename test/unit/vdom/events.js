@@ -16,7 +16,7 @@ describe('vdom/events (on*)', () => {
       },
       render(elem) {
         vdom.element('div', {
-          'on-event'() {
+          'on-event': () => {
             elem._test++;
           },
         }, elem.test);
