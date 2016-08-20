@@ -8,8 +8,8 @@ const sr = el => el[symbols.shadowRoot];
 describe('vdom/skip', () => {
   it('should skip the element children', done => {
     const Elem = define('x-test', {
-      props: { 
-        num: prop.number() 
+      props: {
+        num: prop.number(),
       },
       /* eslint indent: 0 */
       render() {
@@ -58,7 +58,9 @@ describe('vdom/skip', () => {
       },
     });
     const elem = new Elem();
-    const html = '1 <div>2 <void></void><span>3 </span><div>4 <span>5 </span></div></div>6 <div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
+    const html = '1 <div>2 <void></void><span>3 </span>' +
+      '<div>4 <span>5 </span></div></div>6 ' +
+      '<div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
     fixture(elem);
     afterMutations(
       () => expect(sr(elem).innerHTML).to.equal(html),
@@ -76,7 +78,7 @@ describe('vdom/skip', () => {
     }
     const Elem = define('x-test', {
       props: {
-        num: prop.number({ default: 2 })
+        num: prop.number({ default: 2 }),
       },
       render(elem) {
         elementOpen('div', null, null, 'skip', !isEven(elem.num));
@@ -111,12 +113,12 @@ describe('vdom/skip', () => {
   it('re-rendering an empty, skipped element should keep the mutated content', done => {
     const Elem = define('x-test', {
       props: {
-        test: {}
+        test: {},
       },
       render() {
         elementOpen('div', null, null, 'skip', true);
         elementClose('div');
-      }
+      },
     });
     const elem = new Elem();
     fixture(elem);
