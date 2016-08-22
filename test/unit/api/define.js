@@ -5,9 +5,9 @@ const { name: $name } = symbols;
 
 function mockDefine(name) {
   if (customElementsV1) {
-    window.customElements.define(name, function() {});
+    window.customElements.define(name, () => {});
   } else if (customElementsV0) {
-    document.registerElement(name, function() {});
+    document.registerElement(name, () => {});
   }
 }
 

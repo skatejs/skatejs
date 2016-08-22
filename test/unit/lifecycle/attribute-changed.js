@@ -23,12 +23,12 @@ describe('lifecycle/attribute-changed', () => {
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
     const elem = new (element().skate({
-      attributeChanged () {
+      attributeChanged() {
         counter++;
       },
       props: {
         test: {
-          attribute: true
+          attribute: true,
         },
       },
     }));

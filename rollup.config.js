@@ -1,5 +1,5 @@
 module.exports = require('skatejs-build/rollup.config');
-module.exports.globals = { 
+module.exports.globals = {
   'incremental-dom': 'IncrementalDOM',
   'regex-native-function': 'isNativeRegex',
 };

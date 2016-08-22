@@ -76,9 +76,9 @@ describe('vdom/ref', () => {
   test('custom elements', define('x-test', {
     render() {
       vdom.element('slot');
-    }
+    },
   }));
-  test('function helpers', (props, chren) => {
-    vdom.element('div', props, chren);
+  test('function helpers', (lprops, chren) => {
+    vdom.element('div', lprops, chren);
   });
 });
