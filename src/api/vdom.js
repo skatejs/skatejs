@@ -279,7 +279,7 @@ export function element(tname, attrs, chren) {
   const atype = typeof attrs;
 
   // If attributes are a function, then they should be treated as children.
-  if (atype === 'function' || atype === 'string') {
+  if (atype === 'function' || atype === 'string' || atype === 'number') {
     chren = attrs;
   }
 

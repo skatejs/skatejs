@@ -184,58 +184,62 @@ describe('vdom/elements', () => {
     );
   });
 
-  describe('passing a function to the vdom.element() function (*part* notes where text was passed as children)', () => {
-    it('*div* > span > text', done => {
-      const Span = (props, chren) => vdom.element('span', chren);
-      const Div = (props, chren) => vdom.element('div', () => vdom.element(Span, chren));
-      const Elem = element().skate({
-        render() {
-          vdom.element(Div, 'text');
-        },
+  describe('passing a function to the vdom.element() function (*part* notes where text or number was passed as children)', () => {
+    function testHelper(ch) {
+      it(`*div* > span > ${ch}`, done => {
+        const Span = (props, chren) => vdom.element('span', chren);
+        const Div = (props, chren) => vdom.element('div', () => vdom.element(Span, chren));
+        const Elem = element().skate({
+          render() {
+            vdom.element(Div, ch);
+          },
+        });
+
+        const elem = new Elem();
+
+        fixture().appendChild(elem);
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          done
+        );
       });
 
-      const elem = new Elem();
+      it(`div > *span* > ${ch}`, done => {
+        const Span = (props, chren) => vdom.element('span', chren);
+        const Div = () => vdom.element('div', () => vdom.element(Span, ch));
+        const Elem = element().skate({
+          render() {
+            vdom.element(Div);
+          },
+        });
+        const elem = new Elem();
 
-      fixture().appendChild(elem);
-      afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
-        done
-      );
-    });
-
-    it('div > *span* > text', done => {
-      const Span = (props, chren) => vdom.element('span', chren);
-      const Div = () => vdom.element('div', () => vdom.element(Span, 'text'));
-      const Elem = element().skate({
-        render() {
-          vdom.element(Div);
-        },
+        fixture().appendChild(elem);
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          done
+        );
       });
-      const elem = new Elem();
 
-      fixture().appendChild(elem);
-      afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
-        done
-      );
-    });
+      it(`div > span > *${ch}*`, done => {
+        const Span = () => vdom.element('span', ch);
+        const Div = () => vdom.element('div', () => vdom.element(Span));
+        const Elem = element().skate({
+          render() {
+            vdom.element(Div);
+          },
+        });
+        const elem = new Elem();
 
-    it('div > span > *text*', done => {
-      const Span = () => vdom.element('span', 'text');
-      const Div = () => vdom.element('div', () => vdom.element(Span));
-      const Elem = element().skate({
-        render() {
-          vdom.element(Div);
-        },
+        fixture().appendChild(elem);
+        afterMutations(
+          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          done
+        );
       });
-      const elem = new Elem();
+    }
 
-      fixture().appendChild(elem);
-      afterMutations(
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div><span>text</span></div>'),
-        done
-      );
-    });
+    ['text', 1].forEach(testHelper);
 
     it('*ul* (items) > li > a > text', done => {
       const Li = (props, chren) => vdom.element('li', () => vdom.element('a', chren));
