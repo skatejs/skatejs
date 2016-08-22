@@ -38,7 +38,7 @@
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
     "test": "karma start --single-run",
-    "lint": "eslint -c node_modules/skatejs-build/.eslintrc src, test --ext .js,.jsx --format 'node_modules/eslint-friendly-formatter'",
+    "lint": "eslint . --ext .js,.jsx --format 'node_modules/eslint-friendly-formatter'",
     "commit": "npm run lint && git cz"
   },
   "config": {

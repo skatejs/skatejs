@@ -94,7 +94,7 @@ function generateUniqueName(name) {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const v = c === 'x' ? r : (r & 0x3 | 0x8); // eslint-disable-line no-mixed-operators
     return v.toString(16);
   });
 
