@@ -1,7 +1,6 @@
 lib/
 dist/
 .tmp/
-node_modules/
 karma.conf.js
 rollup.config.js
 webpack.config.js
