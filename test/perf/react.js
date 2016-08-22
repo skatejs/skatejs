@@ -1,5 +1,5 @@
+import bp from 'birdpoo'; // eslint-disable-line import/no-extraneous-dependencies
 import { define, prop, props, ready, vdom } from '../../src/index';
-import bp from 'birdpoo';
 
 const { React, ReactDOM } = window;
 
@@ -118,7 +118,7 @@ describe('update', () => {
       this.comp.setState({ title: ++this.count });
       next();
     }, {
-      comp: ReactDOM.render(React.createElement(Xapp), fixture),
+      comp: ReactDOM.render(React.createElement(Xapp), fixture), // eslint-disable-line react/no-render-return-value
       count: 0,
     })
       .then(ops => console.log(`React (update): ${ops} / sec`)) // eslint-disable-line no-console

@@ -5,9 +5,9 @@ const { name: $name } = symbols;
 
 function mockDefine(name) {
   if (customElementsV1) {
-    window.customElements.define(name, () => {});
+    window.customElements.define(name, function customElemMock() {}); // eslint-disable-line prefer-arrow-callback
   } else if (customElementsV0) {
-    document.registerElement(name, () => {});
+    document.registerElement(name, function customElemMock() {}); // eslint-disable-line prefer-arrow-callback
   }
 }
 
