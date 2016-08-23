@@ -96,10 +96,11 @@ function createNativePropertyDefinition(name, opts) {
     if (attributeName && !propData.settingAttribute) {
       const serializedValue = opts.serialize(newValue);
       const currentAttrValue = this.getAttribute(attributeName);
-      const attributeChanged = !((empty(serializedValue) && empty(currentAttrValue)) ||
-                                (serializedValue === currentAttrValue));
+      const serializedIsEmpty = empty(serializedValue);
+      const attributeChanged = !((serializedIsEmpty && empty(currentAttrValue)) ||
+                                 serializedValue === currentAttrValue);
       propData.syncingAttribute = true;
-      if (shouldRemoveAttribute || empty(serializedValue)) {
+      if (shouldRemoveAttribute || serializedIsEmpty) {
         this.removeAttribute(attributeName);
       } else {
         this.setAttribute(attributeName, serializedValue);
