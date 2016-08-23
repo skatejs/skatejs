@@ -147,8 +147,8 @@ function resolveTagName(tname) {
   return tname;
 }
 
-function elementOpenStart(...args) {
-  overrideArgs = args;
+function elementOpenStart(tag, key = null, statics = null) {
+  overrideArgs = [tag, key, statics];
 }
 
 function elementOpenEnd() {

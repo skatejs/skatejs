@@ -27,6 +27,16 @@ describe('IncrementalDOM', () => {
       it(desc, () => IncrementalDOM.patch(fixture, func));
     }
 
+    describe('passing element name', () => {
+      patchIt('elementOpenStart, attr, elementOpenEnd, elementClose', () => {
+        vdom.elementOpenStart('div');
+        vdom.attr('id', 'test');
+        vdom.elementOpenEnd('div');
+        vdom.elementClose('div');
+        expect(fixture.innerHTML).to.equal('<div id="test"></div>');
+      });
+    });
+
     describe('passing a component constructor', () => {
       const Elem = define('x-test', {});
 
@@ -39,6 +49,15 @@ describe('IncrementalDOM', () => {
         vdom.elementOpenStart(Elem);
         vdom.elementOpenEnd(Elem);
         expect(vdom.elementClose(Elem).tagName).to.equal('X-TEST');
+      });
+
+      patchIt('elementOpenStart (single parameter), attr, elementOpenEnd, elementClose', () => {
+        vdom.elementOpenStart(Elem);
+        vdom.attr('id', 'test');
+        vdom.elementOpenEnd(Elem);
+        const elem = vdom.elementClose(Elem);
+        expect(elem.tagName).to.equal('X-TEST');
+        expect(elem.getAttribute('id')).to.equal('test');
       });
 
       patchIt('elementVoid', () => {
@@ -73,6 +92,14 @@ describe('IncrementalDOM', () => {
 
       patchIt('elementOpenStart, attr, elementOpenEnd, elementClose', () => {
         vdom.elementOpenStart(Elem, null, null);
+        vdom.attr('id', 'test');
+        vdom.elementOpenEnd(Elem);
+        renderChildren();
+        patchAssert(vdom.elementClose(Elem));
+      });
+
+      patchIt('elementOpenStart (single parameter), attr, elementOpenEnd, elementClose', () => {
+        vdom.elementOpenStart(Elem);
         vdom.attr('id', 'test');
         vdom.elementOpenEnd(Elem);
         renderChildren();
