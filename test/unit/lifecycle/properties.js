@@ -118,34 +118,6 @@ describe('lifecycle/property', () => {
         });
       });
 
-      it('setting the property to the existing value, then setting the attribute updates the property', done => {
-        const elem = create({ attribute: true }, 'testName', 'something');
-        elem.testName = 'something';
-
-        expect(elem.testName).to.equal('something');
-        expect(elem.getAttribute('test-name')).to.equal('something');
-
-        elem.setAttribute('test-name', 'something else');
-        afterMutations(() => {
-          expect(elem.testName).to.equal('something else');
-          expect(elem.getAttribute('test-name')).to.equal('something else');
-          done();
-        });
-      });
-
-      it('setting the property to null twice, and then setting the attribute updates the property', done => {
-        const elem = create({ attribute: true });
-        elem.testName = null;
-
-        elem.setAttribute('test-name', 'something');
-        afterMutations(() => {
-          expect(elem.testName).to.equal('something');
-          expect(elem.getAttribute('test-name')).to.equal('something');
-          done();
-        });
-      });
-
-
       describe('undefined and null', () => {
         it('when a string, the value is used as the attribute name', () => {
           const elem = create({ attribute: 'test-name' });
@@ -515,7 +487,7 @@ describe('lifecycle/property', () => {
   });
 
   describe('patterns', () => {
-    it('should allow you to do something with a set value but return a compconstely different value', () => {
+    it('should allow you to do something with a set value but return a completely different value', () => {
       let set;
       const elem2 = create({
         attribute: true,
@@ -530,6 +502,54 @@ describe('lifecycle/property', () => {
       elem2.testName = 'set';
       expect(set).to.equal('set');
       expect(elem2.testName).to.equal('get');
+    });
+
+    describe('setting the attribute updates the property correctly after the property is set', () => {
+      it('to an existing value', (done) => {
+        const elem = create({ attribute: true }, 'testName', 'something');
+        elem.testName = 'something';
+
+        expect(elem.testName).to.equal('something');
+        expect(elem.getAttribute('test-name')).to.equal('something');
+
+        elem.setAttribute('test-name', 'something else');
+        afterMutations(() => {
+          expect(elem.testName).to.equal('something else');
+          expect(elem.getAttribute('test-name')).to.equal('something else');
+          done();
+        });
+      });
+
+      it('to an existing null value', (done) => {
+        const elem = create({ attribute: true });
+        elem.testName = null;
+
+        elem.setAttribute('test-name', 'something');
+        afterMutations(() => {
+          expect(elem.testName).to.equal('something');
+          expect(elem.getAttribute('test-name')).to.equal('something');
+          done();
+        });
+      });
+
+      it('to an existing serialized value', (done) => {
+        const elem = create(({
+          attribute: true,
+          serialize: value => (value ? '' : undefined),
+          deserialize: value => (value !== null),
+        }));
+
+        elem.testName = false;
+        expect(elem.testName).to.equal(false);
+        expect(elem.getAttribute('test-name')).to.equal(null);
+
+        elem.setAttribute('test-name', '');
+        afterMutations(() => {
+          expect(elem.testName).to.equal(true);
+          expect(elem.getAttribute('test-name')).to.equal('');
+          done();
+        });
+      });
     });
   });
 });

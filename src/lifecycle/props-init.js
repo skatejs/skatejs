@@ -79,7 +79,6 @@ function createNativePropertyDefinition(name, opts) {
     propData.internalValue = newValue;
 
     const changeData = { name, newValue, oldValue };
-    const valueHasChanged = newValue !== oldValue;
 
     if (typeof opts.set === 'function') {
       opts.set(this, changeData);
@@ -96,13 +95,16 @@ function createNativePropertyDefinition(name, opts) {
     const attributeName = data(this, 'propertyLinks')[name];
     if (attributeName && !propData.settingAttribute) {
       const serializedValue = opts.serialize(newValue);
+      const currentAttrValue = this.getAttribute(attributeName);
+      const attributeChanged = !((empty(serializedValue) && empty(currentAttrValue)) ||
+                                (serializedValue === currentAttrValue));
       propData.syncingAttribute = true;
       if (shouldRemoveAttribute || empty(serializedValue)) {
         this.removeAttribute(attributeName);
       } else {
         this.setAttribute(attributeName, serializedValue);
       }
-      if (!valueHasChanged && propData.syncingAttribute) {
+      if (!attributeChanged && propData.syncingAttribute) {
         propData.syncingAttribute = false;
       }
     }
