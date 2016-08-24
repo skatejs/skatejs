@@ -3,7 +3,6 @@ import {
   attributes,
   elementClose,
   elementOpen,
-  elementVoid,
   skip,
   symbols,
   text,
@@ -247,11 +246,6 @@ function stackClose(tname) {
   return tname(props, () => chren.forEach(args => args[0](...args[1])));
 }
 
-function stackVoid(...args) {
-  stackOpen(...args);
-  return stackClose(args[0]);
-}
-
 // Incremental DOM overrides
 // -------------------------
 
@@ -268,7 +262,10 @@ const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementClose = wrapIdomFunc(elementClose, stackClose);
 
 // Ensure we call our overridden functions instead of the internal ones.
-const newElementVoid = wrapIdomFunc(elementVoid, stackVoid);
+function newElementVoid(tag, ...args) {
+  newElementOpen(tag, ...args);
+  return newElementClose(tag);
+}
 
 // Text override ensures their calls can queue if using function helpers.
 const newText = wrapIdomFunc(text);
