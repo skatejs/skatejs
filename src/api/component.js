@@ -74,8 +74,8 @@ function callDisconnected(elem) {
 
 export default class Component extends HTMLElement {
   // v1
-  constructor() {
-    const elem = super();
+  constructor(self) {
+    const elem = super(self);
     callConstructor(elem);
     return elem;
   }
@@ -120,6 +120,11 @@ export default class Component extends HTMLElement {
     if (attributeChanged) {
       attributeChanged(this, { name, newValue, oldValue });
     }
+  }
+
+  // v0
+  createdCallback() {
+    callConstructor(this);
   }
 
   // v0
