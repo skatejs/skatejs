@@ -10,33 +10,87 @@ import data from '../util/data';
 import debounce from '../util/debounce';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
+function callConstructor(elem) {
+  const elemData = data(elem);
+  const readyCallbacks = elemData.readyCallbacks;
+  const Ctor = elem.constructor;
+  const { created, observedAttributes, props } = Ctor;
+
+  // Ensures that this can never be called twice.
+  if (elem[$created]) return;
+  elem[$created] = elem;
+
+  // Set up a renderer that is debounced for property sets to call directly.
+  elem[$rendererDebounced] = debounce(Ctor[$renderer]);
+
+  if (props) {
+    Ctor[$props](elem);
+  }
+
+  if (created) {
+    created(elem);
+  }
+
+  elem.setAttribute('defined', '');
+
+  if (readyCallbacks) {
+    readyCallbacks.forEach(cb => cb(elem));
+    delete elemData.readyCallbacks;
+  }
+
+  // In v0 we must ensure the attributeChangedCallback is called for attrs
+  // that aren't linked to props so that the callback behaves the same no
+  // matter if v0 or v1 is being used.
+  if (customElementsV0) {
+    observedAttributes.forEach(name => {
+      const propertyName = data(elem, 'attributeLinks')[name];
+      if (!propertyName) {
+        elem.attributeChangedCallback(name, null, elem.getAttribute(name));
+      }
+    });
+  }
+}
+
+function callConnected(elem) {
+  const ctor = elem.constructor;
+  const { attached } = ctor;
+  const render = ctor[$renderer];
+  elem[$connected] = true;
+  if (typeof render === 'function') {
+    render(elem);
+  }
+  if (typeof attached === 'function') {
+    attached(elem);
+  }
+}
+
+function callDisconnected(elem) {
+  const { detached } = elem.constructor;
+  elem[$connected] = false;
+  if (typeof detached === 'function') {
+    detached(elem);
+  }
+}
+
 export default class Component extends HTMLElement {
+  // v1
   constructor() {
-    super();
-    this.createdCallback();
+    const elem = super();
+    callConstructor(elem);
+    return elem;
   }
 
+  // v1
   connectedCallback() {
-    const ctor = this.constructor;
-    const { attached } = ctor;
-    const render = ctor[$renderer];
-    this[$connected] = true;
-    if (typeof render === 'function') {
-      render(this);
-    }
-    if (typeof attached === 'function') {
-      attached(this);
-    }
+    callConnected(this);
   }
 
+  // v1
   disconnectedCallback() {
-    const { detached } = this.constructor;
-    this[$connected] = false;
-    if (typeof detached === 'function') {
-      detached(this);
-    }
+    callDisconnected(this);
   }
 
+  // v0 and v1
   attributeChangedCallback(name, oldValue, newValue) {
     const { attributeChanged, observedAttributes } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
@@ -68,63 +122,27 @@ export default class Component extends HTMLElement {
     }
   }
 
-  createdCallback() {
-    const elemData = data(this);
-    const readyCallbacks = elemData.readyCallbacks;
-    const Ctor = this.constructor;
-    const { created, observedAttributes, props } = Ctor;
-
-    // Ensures that this can never be called twice.
-    if (this[$created]) return;
-    this[$created] = true;
-
-    // Set up a renderer that is debounced for property sets to call directly.
-    this[$rendererDebounced] = debounce(Ctor[$renderer]);
-
-    if (props) {
-      Ctor[$props](this);
-    }
-
-    if (created) {
-      created(this);
-    }
-
-    this.setAttribute('defined', '');
-
-    if (readyCallbacks) {
-      readyCallbacks.forEach(cb => cb(this));
-      delete elemData.readyCallbacks;
-    }
-
-    // In v0 we must ensure the attributeChangedCallback is called for attrs
-    // that aren't linked to props so that the callback behaves the same no
-    // matter if v0 or v1 is being used.
-    if (customElementsV0) {
-      observedAttributes.forEach(name => {
-        const propertyName = data(this, 'attributeLinks')[name];
-        if (!propertyName) {
-          this.attributeChangedCallback(name, null, this.getAttribute(name));
-        }
-      });
-    }
-  }
-
+  // v0
   attachedCallback() {
-    this.connectedCallback();
+    callConnected(this);
   }
 
+  // v0
   detachedCallback() {
-    this.disconnectedCallback();
+    callDisconnected(this);
   }
 
+  // v1
   static get observedAttributes() {
     return [];
   }
 
+  // Skate
   static get props() {
     return {};
   }
 
+  // Skate
   static extend(definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
@@ -143,6 +161,8 @@ export default class Component extends HTMLElement {
     return Ctor;
   }
 
+  // Skate
+  //
   // This is a default implementation that does strict equality copmarison on
   // prevoius props and next props. It synchronously renders on the first prop
   // that is different and returns immediately.
@@ -151,7 +171,8 @@ export default class Component extends HTMLElement {
       return true;
     }
 
-    for (const name in prev) { // eslint-disable-line no-restricted-syntax
+    // eslint-disable-next-line no-restricted-syntax
+    for (const name in prev) {
       if (prev[name] !== elem[name]) {
         return true;
       }
