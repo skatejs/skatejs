@@ -73,12 +73,24 @@ function test(name, el) {
 
 describe('vdom/ref', () => {
   test('normal elements', 'div');
+
   test('custom elements', define('x-test', {
     render() {
       vdom.element('slot');
     },
   }));
+
   test('function helpers', (lprops, chren) => {
     vdom.element('div', lprops, chren);
+  });
+
+  it('void elements', done => {
+    const Elem = define('x-test', {
+      render() {
+        vdom.elementVoid('div', null, null, 'ref', () => done());
+      },
+    });
+    const elem = new Elem();
+    fixture(elem);
   });
 });
