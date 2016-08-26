@@ -9,6 +9,7 @@ import {
 } from 'incremental-dom';
 import { name as $name, ref as $ref } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
+import propContext from '../util/prop-context';
 
 const applyDefault = attributes[symbols.default];
 const fallbackToV0 = !shadowDomV1 && shadowDomV0;
@@ -31,6 +32,8 @@ let overrideArgs;
 // The number of levels deep after skipping a tree.
 let skips = 0;
 
+const noop = () => {};
+
 // Adds or removes an event listener for an element.
 function applyEvent(elem, ename, newFunc) {
   let events = elem[$currentEventHandlers];
@@ -52,79 +55,85 @@ function applyEvent(elem, ename, newFunc) {
   }
 }
 
-// Attributes that are not handled by Incremental DOM.
-attributes.key = attributes.statics = () => {};
+const attributesContext = propContext(attributes, {
+  // Attributes that shouldn't be applied to the DOM.
+  key: noop,
+  statics: noop,
 
-// Attributes that *must* be set via a property on all elements.
-attributes.checked = attributes.className = attributes.disabled = attributes.value = applyProp;
+  // Attributes that *must* be set via a property on all elements.
+  checked: applyProp,
+  className: applyProp,
+  disabled: applyProp,
+  value: applyProp,
 
-// V0 Shadow DOM to V1 normalisation.
-attributes.name = (elem, name, value) => {
-  if (elem.tagName === 'CONTENT') {
-    name = 'select';
-    value = `[slot="${value}"]`;
-  }
-  applyDefault(elem, name, value);
-};
+  // V0 Shadow DOM to V1 normalisation.
+  name(elem, name, value) {
+    if (elem.tagName === 'CONTENT') {
+      name = 'select';
+      value = `[slot="${value}"]`;
+    }
+    applyDefault(elem, name, value);
+  },
 
-// Ref handler.
-attributes.ref = (elem, name, value) => {
-  elem[$ref] = value;
-};
+  // Ref handler.
+  ref(elem, name, value) {
+    elem[$ref] = value;
+  },
 
-// Skip handler.
-attributes.skip = (elem, name, value) => {
-  if (value) {
-    elem[$skip] = true;
-  } else {
-    delete elem[$skip];
-  }
-};
+  // Skip handler.
+  skip(elem, name, value) {
+    if (value) {
+      elem[$skip] = true;
+    } else {
+      delete elem[$skip];
+    }
+  },
 
-// Default attribute applicator.
-attributes[symbols.default] = (elem, name, value) => {
-  // Custom element properties should be set as properties.
-  const props = elem.constructor.props;
-  if (props && name in props) {
-    return applyProp(elem, name, value);
-  }
-
-  // Boolean false values should not set attributes at all.
-  if (value === false) {
-    return;
-  }
-
-  // Handle built-in and custom events.
-  if (name.indexOf('on') === 0) {
-    const firstChar = name[2];
-    let eventName;
-
-    if (firstChar === '-') {
-      eventName = name.substring(3);
-    } else if (firstChar === firstChar.toUpperCase()) {
-      eventName = firstChar.toLowerCase() + name.substring(3);
+  // Default attribute applicator.
+  [symbols.default](elem, name, value) {
+    // Custom element properties should be set as properties.
+    const props = elem.constructor.props;
+    if (props && name in props) {
+      return applyProp(elem, name, value);
     }
 
-    if (eventName) {
-      applyEvent(elem, eventName, value);
+    // Boolean false values should not set attributes at all.
+    if (value === false) {
       return;
     }
-  }
 
-  // Set defined props on the element directly. This ensures properties like
-  // "value" on <input> elements get set correctly. Setting those as attributes
-  // doesn't always work and setting props is faster than attributes.
-  //
-  // However, certain props on SVG elements are readonly and error when you try
-  // to set them.
-  if (name in elem && !('ownerSVGElement' in elem)) {
-    applyProp(elem, name, value);
-    return;
-  }
+    // Handle built-in and custom events.
+    if (name.indexOf('on') === 0) {
+      const firstChar = name[2];
+      let eventName;
 
-  // Fallback to default IncrementalDOM behaviour.
-  applyDefault(elem, name, value);
-};
+      if (firstChar === '-') {
+        eventName = name.substring(3);
+      } else if (firstChar === firstChar.toUpperCase()) {
+        eventName = firstChar.toLowerCase() + name.substring(3);
+      }
+
+      if (eventName) {
+        applyEvent(elem, eventName, value);
+        return;
+      }
+    }
+
+    // Set defined props on the element directly. This ensures properties like
+    // "value" on <input> elements get set correctly. Setting those as attributes
+    // doesn't always work and setting props is faster than attributes.
+    //
+    // However, certain props on SVG elements are readonly and error when you try
+    // to set them.
+    if (name in elem && !('ownerSVGElement' in elem)) {
+      applyProp(elem, name, value);
+      return;
+    }
+
+    // Fallback to default IncrementalDOM behaviour.
+    applyDefault(elem, name, value);
+  },
+});
 
 function resolveTagName(tname) {
   // If the tag name is a function, a Skate constructor or a standard function
@@ -156,7 +165,7 @@ function elementOpenEnd() {
   return node;
 }
 
-function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
+function wrapIdomFunc(func, tnameFuncHandler = noop) {
   return function wrap(...args) {
     args[0] = resolveTagName(args[0]);
     stackCurrentHelper = null;
@@ -177,7 +186,7 @@ function wrapIdomFunc(func, tnameFuncHandler = () => {}) {
 
         const elem = func(...args);
 
-        if (elem.__skip) {
+        if (elem[$skip]) {
           ++skips;
         }
 
@@ -258,7 +267,7 @@ const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 
 // Standard open / closed overrides don't need to reproduce internal behaviour
 // because they are the ones referenced from *End and *Start.
-const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
+const newElementOpen = attributesContext(wrapIdomFunc(elementOpen, stackOpen));
 const newElementClose = wrapIdomFunc(elementClose, stackClose);
 
 // Ensure we call our overridden functions instead of the internal ones.
