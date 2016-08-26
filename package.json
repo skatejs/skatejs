@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
-    "eslint": "3.x",
+    "eslint": "3.4.0",
     "eslint-friendly-formatter": "^2.0.6",
     "precommit-hook": "^3.0.0",
     "react": "15.x",
