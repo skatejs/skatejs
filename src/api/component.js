@@ -72,115 +72,151 @@ function callDisconnected(elem) {
   }
 }
 
-export default class Component extends HTMLElement {
+// v1
+function Component(self) {
+  const elem = HTMLElement.call(this, self);
+  callConstructor(elem);
+  return elem;
+}
+
+Object.defineProperties(Component, {
   // v1
-  constructor(self) {
-    const elem = super(self);
-    callConstructor(elem);
-    return elem;
-  }
-
-  // v1
-  connectedCallback() {
-    callConnected(this);
-  }
-
-  // v1
-  disconnectedCallback() {
-    callDisconnected(this);
-  }
-
-  // v0 and v1
-  attributeChangedCallback(name, oldValue, newValue) {
-    const { attributeChanged, observedAttributes } = this.constructor;
-    const propertyName = data(this, 'attributeLinks')[name];
-
-    // In V0 we have to ensure the attribute is being observed.
-    if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
-      return;
-    }
-
-    if (propertyName) {
-      const propData = data(this, `api/property/${propertyName}`);
-
-      // This ensures a property set doesn't cause the attribute changed
-      // handler to run again once we set this flag. This only ever has a
-      // chance to run when you set an attribute, it then sets a property and
-      // then that causes the attribute to be set again.
-      if (propData.syncingAttribute) {
-        propData.syncingAttribute = false;
-      } else {
-        // Sync up the property.
-        const propOpts = this.constructor.props[propertyName];
-        propData.settingAttribute = true;
-        this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
-      }
-    }
-
-    if (attributeChanged) {
-      attributeChanged(this, { name, newValue, oldValue });
-    }
-  }
-
-  // v0
-  createdCallback() {
-    callConstructor(this);
-  }
-
-  // v0
-  attachedCallback() {
-    callConnected(this);
-  }
-
-  // v0
-  detachedCallback() {
-    callDisconnected(this);
-  }
-
-  // v1
-  static get observedAttributes() {
-    return [];
-  }
+  observedAttributes: {
+    configurable: true,
+    get() {
+      return [];
+    },
+  },
 
   // Skate
-  static get props() {
-    return {};
+  props: {
+    configurable: true,
+    get() {
+      return {};
+    },
+  },
+});
+
+// Skate
+Component.extend = function extend(definition = {}, Base = this) {
+  // Create class for the user.
+  class Ctor extends Base {}
+
+  // Pass on statics from the Base if not supported (IE 9 and 10).
+  if (!Ctor.observedAttributes) {
+    const staticOpts = getOwnPropertyDescriptors(Base);
+    delete staticOpts.length;
+    delete staticOpts.prototype;
+    Object.defineProperties(Ctor, staticOpts);
   }
 
-  // Skate
-  static extend(definition = {}, Base = this) {
-    // Create class for the user.
-    class Ctor extends Base {}
+  // For inheriting from the object literal.
+  const opts = getOwnPropertyDescriptors(definition);
+  const prot = getOwnPropertyDescriptors(definition.prototype);
 
-    // For inheriting from the object literal.
-    const opts = getOwnPropertyDescriptors(definition);
-    const prot = getOwnPropertyDescriptors(definition.prototype);
+  // Prototype is non configurable (but is writable).
+  delete opts.prototype;
 
-    // Prototype is non configurable (but is writable) s
-    delete opts.prototype;
+  // Pass on static and instance members from the definition.
+  Object.defineProperties(Ctor, opts);
+  Object.defineProperties(Ctor.prototype, prot);
 
-    // Pass on static and instance members from the definition.
-    Object.defineProperties(Ctor, opts);
-    Object.defineProperties(Ctor.prototype, prot);
+  return Ctor;
+};
 
-    return Ctor;
+// Skate
+//
+// This is a default implementation that does strict equality copmarison on
+// prevoius props and next props. It synchronously renders on the first prop
+// that is different and returns immediately.
+Component.updated = function updated(elem, prev) {
+  if (!prev) {
+    return true;
   }
 
-  // Skate
-  //
-  // This is a default implementation that does strict equality copmarison on
-  // prevoius props and next props. It synchronously renders on the first prop
-  // that is different and returns immediately.
-  static updated(elem, prev) {
-    if (!prev) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const name in prev) {
+    if (prev[name] !== elem[name]) {
       return true;
     }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const name in prev) {
-      if (prev[name] !== elem[name]) {
-        return true;
-      }
-    }
   }
-}
+};
+
+Component.prototype = Object.create(HTMLElement.prototype, {
+  // v1
+  connectedCallback: {
+    configurable: true,
+    value() {
+      callConnected(this);
+    },
+  },
+
+  // v1
+  disconnectedCallback: {
+    configurable: true,
+    value() {
+      callDisconnected(this);
+    },
+  },
+
+  // v0 and v1
+  attributeChangedCallback: {
+    configurable: true,
+    value(name, oldValue, newValue) {
+      const { attributeChanged, observedAttributes } = this.constructor;
+      const propertyName = data(this, 'attributeLinks')[name];
+
+      // In V0 we have to ensure the attribute is being observed.
+      if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
+        return;
+      }
+
+      if (propertyName) {
+        const propData = data(this, `api/property/${propertyName}`);
+
+        // This ensures a property set doesn't cause the attribute changed
+        // handler to run again once we set this flag. This only ever has a
+        // chance to run when you set an attribute, it then sets a property and
+        // then that causes the attribute to be set again.
+        if (propData.syncingAttribute) {
+          propData.syncingAttribute = false;
+        } else {
+          // Sync up the property.
+          const propOpts = this.constructor.props[propertyName];
+          propData.settingAttribute = true;
+          this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+        }
+      }
+
+      if (attributeChanged) {
+        attributeChanged(this, { name, newValue, oldValue });
+      }
+    },
+  },
+
+  // v0
+  createdCallback: {
+    configurable: true,
+    value() {
+      callConstructor(this);
+    },
+  },
+
+  // v0
+  attachedCallback: {
+    configurable: true,
+    value() {
+      callConnected(this);
+    },
+  },
+
+  // v0
+  detachedCallback: {
+    configurable: true,
+    value() {
+      callDisconnected(this);
+    },
+  },
+});
+
+export default Component;

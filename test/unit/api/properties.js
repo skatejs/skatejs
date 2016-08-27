@@ -76,7 +76,7 @@ describe('api/prop', () => {
 
     [undefined, null, false, 0, '', 'something'].forEach((value) => {
       value = String(value);
-      it(`setting attribute to ${value}`, (done) => {
+      it(`setting attribute to ${JSON.stringify(value)}`, (done) => {
         const elem = create(prop.boolean());
         elem.setAttribute('test', value);
         afterMutations(
@@ -85,7 +85,7 @@ describe('api/prop', () => {
           done
         );
       });
-      it(`setting property to ${value}`, () => {
+      it(`setting property to "${JSON.stringify(value)}"`, () => {
         const elem = create(prop.boolean());
         elem.test = value;
         expect(elem.test).to.equal(!!value, 'property');

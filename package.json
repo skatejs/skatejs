@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
+    "document-register-element": "^1.0.7",
     "eslint": "3.4.0",
     "eslint-friendly-formatter": "^2.0.6",
     "precommit-hook": "^3.0.0",
@@ -39,7 +40,8 @@
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
     "test": "karma start --single-run",
     "lint": "eslint . --ext .js,.jsx --format 'node_modules/eslint-friendly-formatter'",
-    "commit": "npm run lint && git cz"
+    "commit": "npm run lint && git cz",
+    "validate": "npm ls"
   },
   "config": {
     "commitizen": {
@@ -47,6 +49,8 @@
     }
   },
   "pre-commit": [
-    "lint"
+    "lint",
+    "validate",
+    "test"
   ]
 }
