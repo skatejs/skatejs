@@ -18,7 +18,7 @@ function callConstructor(elem) {
 
   // Ensures that this can never be called twice.
   if (elem[$created]) return;
-  elem[$created] = elem;
+  elem[$created] = true;
 
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$rendererDebounced] = debounce(Ctor[$renderer]);
