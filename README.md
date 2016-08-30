@@ -839,8 +839,6 @@ skate.define('x-tab', {
 
 It's preferable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
 
-*Note that events cannot be triggered with `skate.emit()` on disabled elements. Events also can't bubble through disabled elements.*
-
 The return value of `emit()` is the same as [`dispatchEvent()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent).
 
 
@@ -874,7 +872,7 @@ skate.emit(elem, 'event', {
 
 ### `link (elem, propSpec)`
 
-The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
+The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding, but is safer as the propagation of the user input value back to the component element will trigger a re-render, ensuring all dependent UI is up to date.
 
 ```js
 skate.define('my-input', function () {
