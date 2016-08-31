@@ -2,7 +2,7 @@ import {
   applyProp,
   attributes,
   elementClose,
-  elementOpen,
+  elementOpen as idomElementOpen,
   skip,
   symbols,
   text,
@@ -155,6 +155,10 @@ function resolveTagName(tname) {
   return tname;
 }
 
+// Incremental DOM's elementOpen is where the hooks in `attributes` are applied,
+// so it's the only function we need to execute in the context of our attributes.
+const elementOpen = attributesContext(idomElementOpen);
+
 function elementOpenStart(tag, key = null, statics = null) {
   overrideArgs = [tag, key, statics];
 }
@@ -267,7 +271,7 @@ const newElementOpenEnd = wrapIdomFunc(elementOpenEnd);
 
 // Standard open / closed overrides don't need to reproduce internal behaviour
 // because they are the ones referenced from *End and *Start.
-const newElementOpen = attributesContext(wrapIdomFunc(elementOpen, stackOpen));
+const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementClose = wrapIdomFunc(elementClose, stackClose);
 
 // Ensure we call our overridden functions instead of the internal ones.
