@@ -35,7 +35,7 @@
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "7.x",
-    "skatejs-web-components": "*"
+    "skatejs-web-components": "1.x"
   },
   "scripts": {
     "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
