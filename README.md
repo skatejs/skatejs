@@ -55,6 +55,7 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [NPM](#npm)
     - [Script Tag](#script-tag)
   - [Dependencies](#dependencies)
+  - [Browser Support](#browser-support)
   - [Resources](#resources)
   - [Questions?](#questions)
   - [Terminology](#terminology)
@@ -207,7 +208,16 @@ Or you can use script tags:
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
 
-**Skate works with the native V0 APIs, however, the V0 polyfills have several bugs that are inconsistent with the native APIs, so it's not recommended you try and use the V0 polyfills.** 
+**Skate works with the native V0 APIs, however, the V0 polyfills have several bugs that are inconsistent with the native APIs, so it's not recommended you try and use the V0 polyfills.**
+
+
+
+## Browser Support
+
+Skate supports all major browsers and some older versions of IE. IE support depends on which polyfills you include:
+
+- IE9+ [`skatejs-web-components`](https://github.com/skatejs/web-components) or [`document-register-element`](https://github.com/WebReflection/document-register-element) - *recommended*
+- IE11+ [`webcomponents.js`](https://github.com/webcomponents/webcomponentsjs) - only the v1 polyfill is supported
 
 
 
