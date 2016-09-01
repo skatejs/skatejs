@@ -639,7 +639,7 @@ The default implementation does what is described in the example above:
 - If any of the properties have changed according to a strict equality comparison, always call `render()`
 - In any other scenario, don't render
 
-This generally convers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
+This generally covers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
 
 ```js
 const Elem = skate.define('x-component', {
@@ -668,7 +668,7 @@ elem.arr = elem.arr.concat('something');
 
 *If you set properties within `updated()`, they will not cause it to be called more than once.*
 
-*The code you write in here is peformance critical.*
+*The code you write in here is performance critical.*
 
 
 
@@ -729,7 +729,7 @@ Called after the component has rendered (i.e. called `render()`). If you need to
 
 #### `attached`
 
-Function that is called after the element has been inserted to the document. This corredsponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
+Function that is called after the element has been inserted to the document. This corresponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
 
 ```js
 skate.define('my-component', {
@@ -743,7 +743,7 @@ The only argument passed to `attached` is component element. In this case that i
 
 #### `detached`
 
-Function that is called after the element has been removed from the document. This corredsponds to the native `detachedCallback`. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
+Function that is called after the element has been removed from the document. This corresponds to the native `detachedCallback`. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
 
 ```js
 skate.define('my-component', {
@@ -837,9 +837,7 @@ skate.define('x-tab', {
 });
 ```
 
-It's preferrable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
-
-*Note that events cannot be triggered with `skate.emit()` on disabled elements. Events also can't bubble through disabled elements.*
+It's preferable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
 
 The return value of `emit()` is the same as [`dispatchEvent()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent).
 
@@ -874,7 +872,7 @@ skate.emit(elem, 'event', {
 
 ### `link (elem, propSpec)`
 
-The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagte the changes back to the host element. This essentially allows for 2-way data-binding but is safer as the propagation of the user input value back to the component element will trigger a re-render ensuring all dependent UI is up to date.
+The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding, but is safer as the propagation of the user input value back to the component element will trigger a re-render, ensuring all dependent UI is up to date.
 
 ```js
 skate.define('my-input', function () {
@@ -1071,13 +1069,11 @@ In this example, we are loading `component-a` before `component-b` and the same 
 
 ### `symbols`
 
-Symbols are exposed for you to access information that stored on objects that are not otherwise accessible.
-
-
+Symbols allow you to access object information which would be otherwise inaccessible.
 
 #### `name`
 
-The `name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registerd with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
+The `name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registered with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
 
 ```js
 import { define, symbols } from 'skatejs';
@@ -1141,7 +1137,7 @@ skate.vdom.element('select', { name: 'my-select' }, function () {
 
 ##### Component constructor
 
-If you pass a component constructor instead of an string for the `elementName`, the name of the copmonent will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
+If you pass a component constructor instead of an string for the `elementName`, the name of the component will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
 
 ```js
 const MyElement = skate.define('my-element');
@@ -1438,7 +1434,7 @@ WebComponentsJS is a suite of polyfills. If there is native browser support, the
 
 ### VS Polymer
 
-Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundametally, Skate and Polymer are very different.
+Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundamentally, Skate and Polymer are very different.
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
@@ -1455,9 +1451,9 @@ Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high
 Skate is very close to X-Tags in terms of API shape, however, it is very different in the way it is applied and shares a lot of the same differences with X-Tags as it does with Polymer.
 
 - Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. X-Tags is not very opinionated about rendering or templating. You define a string of HTML and it will use that as the component's content.
-- Skate's property API is thorough and extensible. We provide implementationsf or commonly used property patterns and give you an API to easily write your own reusable properties.
+- Skate's property API is thorough and extensible. We provide implementations or commonly used property patterns and give you an API to easily write your own reusable properties.
 - Skate is about the same size and scales well for building large, complex user interfaces.
-- There's no mutating your component's DOM from property accessors which can become unweidly.
+- There's no mutating your component's DOM from property accessors which can become unwieldy.
 
 
 
@@ -1519,7 +1515,7 @@ You could now just write:
 <x-video></x-video>
 ```
 
-Instead of providing just imperative methods - such as `play()` for the natve `<video>` element - you should try to provide attributes that offer the same functionality. For example, if you had a player component, you could offer a `playing` boolean attribute, so that it starts playing when it's put on the page.
+Instead of providing just imperative methods - such as `play()` for the native `<video>` element - you should try to provide attributes that offer the same functionality. For example, if you had a player component, you could offer a `playing` boolean attribute, so that it starts playing when it's put on the page.
 
 ```html
 <x-video playing></x-video>
