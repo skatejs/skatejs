@@ -1,7 +1,9 @@
 import helperElement from '../lib/element';
 import { define } from '../../src/index';
 
-describe.only('extending', () => {
+const canSetProto = '__proto__' in document.createElement('div');
+
+describe('extending', () => {
   let Ctor;
   let tag;
 
@@ -69,14 +71,16 @@ describe.only('extending', () => {
     expect(el.constructor.extends).to.equal('div');
   });
 
-  it('extend()', () => {
-    const Comp1 = define(`${tag}-1`, {});
-    const Comp2 = define(`${tag}-2`, Comp1.extend({}));
-    const elem1 = new Comp1();
-    const elem2 = new Comp2();
-    expect(elem1).to.be.an.instanceof(Comp1);
-    expect(elem1).to.not.be.an.instanceof(Comp2);
-    expect(elem2).to.be.an.instanceof(Comp1);
-    expect(elem2).to.be.an.instanceof(Comp2);
-  });
+  if (canSetProto) {
+    it('extend()', () => {
+      const Comp1 = define(`${tag}-1`, {});
+      const Comp2 = define(`${tag}-2`, Comp1.extend({}));
+      const elem1 = new Comp1();
+      const elem2 = new Comp2();
+      expect(elem1).to.be.an.instanceof(Comp1);
+      expect(elem1).to.not.be.an.instanceof(Comp2);
+      expect(elem2).to.be.an.instanceof(Comp1);
+      expect(elem2).to.be.an.instanceof(Comp2);
+    });
+  }
 });
