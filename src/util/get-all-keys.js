@@ -1,7 +1,10 @@
 
-export default function (obj, enumerable = false) {
-  return [
+export default function keys(obj, enumerable = false) {
+  let listOfKeys = [
     ...Object[enumerable ? 'getOwnPropertyNames' : 'keys'](obj),
-    ...Object.getOwnPropertySymbols(obj),
   ];
+  if (typeof Object.getOwnPropertySymbols === 'function') {
+    listOfKeys = listOfKeys.concat(Object.getOwnPropertySymbols(obj));
+  }
+  return listOfKeys;
 }

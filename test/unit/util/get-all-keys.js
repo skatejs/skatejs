@@ -8,7 +8,7 @@ describe('utils/get-:', () => {
   );
 
   it('should return symbol keys from an object', () => {
-    const secret = Symbol();
+    const secret = typeof Symbol === 'function' ? Symbol('secret') : 'secret';
     expect(keys({ foo: 1, [secret]: 2 }))
       .to.have.lengthOf(2)
       .and.to.deep.equal(['foo', secret]);

@@ -5,7 +5,7 @@ import { props } from '../../../src/index';
 
 describe('api/props', () => {
   let elem;
-  const secret = Symbol();
+  const secret = typeof Symbol === 'function' ? Symbol('secret') : 'secret';
 
   beforeEach(done => {
     elem = new (element().skate({
