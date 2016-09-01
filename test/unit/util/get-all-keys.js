@@ -25,12 +25,14 @@ describe('utils/get-:', () => {
 
     describe('to false', () => {
       it('should not return enumerable keys', () =>
-        expect(keys(obj, false)).to.have.lengthOf(1).and.to.deep.equal(['foo'])
+        expect(keys(obj)).to.have.lengthOf(1)
+          .and.to.deep.equal(['foo'])
       );
     });
     describe('to true', () => {
       it('should return enumerable keys', () =>
-        expect(keys(obj, true)).to.have.lengthOf(2).and.to.deep.equal(['foo', 'bar'])
+        expect(keys(obj, { enumerable: true })).to.have.lengthOf(2)
+          .and.to.deep.equal(['foo', 'bar'])
       );
     });
   });
