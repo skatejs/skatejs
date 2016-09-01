@@ -1,7 +1,7 @@
 import helperElement from '../lib/element';
 import { define } from '../../src/index';
 
-describe('extending', () => {
+describe.only('extending', () => {
   let Ctor;
   let tag;
 
@@ -31,7 +31,7 @@ describe('extending', () => {
   });
 
   it('should copy all configuration options to the extended object', () => {
-    const ExtendedCtor = define(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, Ctor.extend());
     expect(ExtendedCtor.extends).to.equal('div');
     expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
     expect(ExtendedCtor.created).to.be.a('function');
@@ -41,35 +41,35 @@ describe('extending', () => {
   });
 
   it('prototype members should be available', () => {
-    const ExtendedCtor = define(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, Ctor.extend());
     expect(new ExtendedCtor().test).to.equal(true);
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
   it('should not mess with callbacks', () => {
-    const ExtendedCtor = define(tag, class extends Ctor {});
+    const ExtendedCtor = define(tag, Ctor.extend());
     expect(new ExtendedCtor().__test).to.equal('test');
   });
 
   it('should allow overriding of callbacks', () => {
-    const ExtendedCtor = define(tag, class extends Ctor {
-      static created(elem) {
-        super.created(elem);
+    const ExtendedCtor = define(tag, Ctor.extend({
+      created(elem) {
+        Ctor.created(elem);
         elem.__test += 'ing';
-      }
-    });
+      },
+    }));
     const elem = new ExtendedCtor();
     expect(elem.__test).to.equal('testing');
   });
 
   it('constructor should be accessible', () => {
-    const El = define(tag, class extends Ctor {});
+    const El = define(tag, Ctor.extend());
     const el = new El();
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
 
-  it('extends()', () => {
+  it('extend()', () => {
     const Comp1 = define(`${tag}-1`, {});
     const Comp2 = define(`${tag}-2`, Comp1.extend({}));
     const elem1 = new Comp1();
