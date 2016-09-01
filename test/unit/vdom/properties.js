@@ -16,6 +16,26 @@ describe('vdom/properties', () => {
     );
   });
 
+  it('applies custom semantics to the className attribute when used in a stack context', done => {
+    const helper = (_, children) => children();
+
+    const elem = new (define('x-test', {
+      render() {
+        vdom.elementOpen(helper);
+        vdom.elementOpen('div', null, null, 'className', 'inner');
+        vdom.elementClose('div');
+        vdom.elementClose(helper);
+      },
+    }));
+
+    fixture(elem);
+
+    afterMutations(
+      () => expect(elem[symbols.shadowRoot].firstChild.getAttribute('class')).to.equal('inner'),
+      done
+    );
+  });
+
   it('false should remove the attribute', done => {
     const elem = new (define('x-test', {
       render() {
