@@ -1,7 +1,7 @@
 import keys from '../../../src/util/get-all-keys';
-import createSymbol from '../../../src/util/createSymbol';
+import createSymbol from '../../../src/util/create-symbol';
 
-describe('utils/get-:', () => {
+describe('utils/get-all-keys:', () => {
   it('should return normal keys from an object', () =>
     expect(keys({ foo: 1, bar: 2 }))
       .to.have.lengthOf(2)

@@ -1,4 +1,4 @@
-import createSymbol from './createSymbol';
+import createSymbol from './create-symbol';
 
 export const connected = createSymbol('____skate_connected');
 export const created = createSymbol('____skate_created');

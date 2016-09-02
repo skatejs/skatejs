@@ -1,5 +1,5 @@
 import afterMutations from '../../lib/after-mutations';
-import createSymbol from '../../../src/util/createSymbol';
+import createSymbol from '../../../src/util/create-symbol';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import { props } from '../../../src/index';
