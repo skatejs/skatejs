@@ -7,7 +7,7 @@ const alwaysUndefinedIfEmptyOrString = (val) => (empty(val) ? undefined : String
 export function create(def) {
   return (...args) => {
     args.unshift({}, def);
-    return assign.apply(null, args); // eslint-disable-line prefer-spread
+    return assign(...args);
   };
 }
 
