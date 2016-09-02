@@ -14,8 +14,9 @@ function getInitialValue(elem, name, opts) {
   return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
 }
 
-function getPropNamespace(name) {
-  return `api/property/${typeof name === 'symbol' ? String(name) : name}`;
+function getNamespacedPropData(elem, name) {
+  const namespace = `api/property/${typeof name === 'symbol' ? String(name) : name}`;
+  return data(elem, namespace);
 }
 
 function createNativePropertyDefinition(name, opts) {
@@ -25,7 +26,7 @@ function createNativePropertyDefinition(name, opts) {
   };
 
   prop.created = function (elem) { // eslint-disable-line func-names
-    const propData = data(elem, getPropNamespace(name));
+    const propData = getNamespacedPropData(elem, name);
     const attributeName = opts.attribute;
     let initialValue = elem[name];
     let shouldSyncAttribute = false;
@@ -54,7 +55,7 @@ function createNativePropertyDefinition(name, opts) {
   };
 
   prop.get = function () { // eslint-disable-line func-names
-    const propData = data(this, getPropNamespace(name));
+    const propData = getNamespacedPropData(this, name);
     const { internalValue } = propData;
     if (typeof opts.get === 'function') {
       return opts.get(this, { name, internalValue });
@@ -63,7 +64,7 @@ function createNativePropertyDefinition(name, opts) {
   };
 
   prop.set = function (newValue) { // eslint-disable-line func-names
-    const propData = data(this, getPropNamespace(name));
+    const propData = getNamespacedPropData(this, name);
     let { oldValue } = propData;
     let shouldRemoveAttribute = false;
 
