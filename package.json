@@ -31,7 +31,7 @@
     "precommit-hook": "^3.0.0",
     "react": "15.x",
     "react-dom": "15.x",
-    "skatejs-build": "^7.3.0",
+    "skatejs-build": "^7.4.0",
     "skatejs-web-components": "*"
   },
   "scripts": {
