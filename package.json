@@ -38,20 +38,14 @@
     "skatejs-web-components": "1.x"
   },
   "scripts": {
-    "prepublish": "rollup --config rollup.config.js && webpack --config webpack.config.js",
-    "test": "karma start --single-run",
-    "lint": "eslint . --ext .js,.jsx --format 'node_modules/eslint-friendly-formatter'",
-    "commit": "npm run lint && git cz",
-    "validate": "npm ls"
+    "test": "sk-tests",
+    "precommit": "sk-lint && npm ls && npm test",
+    "prepublish": "sk-bundle"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
-  "pre-commit": [
-    "lint",
-    "validate",
-    "test"
-  ]
+  "pre-commit": ["precommit"]
 }
