@@ -1,6 +1,4 @@
-function createSymbol(name) {
-  return typeof Symbol === 'function' ? Symbol(name) : name;
-}
+import createSymbol from './createSymbol';
 
 export const connected = createSymbol('____skate_connected');
 export const created = createSymbol('____skate_created');

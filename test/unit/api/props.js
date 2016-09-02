@@ -1,11 +1,12 @@
 import afterMutations from '../../lib/after-mutations';
+import createSymbol from '../../../src/util/createSymbol';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import { props } from '../../../src/index';
 
 describe('api/props', () => {
   let elem;
-  const secret = typeof Symbol === 'function' ? Symbol('secret') : 'secret';
+  const secret = createSymbol('secret');
 
   beforeEach(done => {
     elem = new (element().skate({

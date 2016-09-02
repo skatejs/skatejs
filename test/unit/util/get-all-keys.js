@@ -1,4 +1,5 @@
 import keys from '../../../src/util/get-all-keys';
+import createSymbol from '../../../src/util/createSymbol';
 
 describe('utils/get-:', () => {
   it('should return normal keys from an object', () =>
@@ -8,7 +9,7 @@ describe('utils/get-:', () => {
   );
 
   it('should return symbol keys from an object', () => {
-    const secret = typeof Symbol === 'function' ? Symbol('secret') : 'secret';
+    const secret = createSymbol('secret');
     expect(keys({ foo: 1, [secret]: 2 }))
       .to.have.lengthOf(2)
       .and.to.deep.equal(['foo', secret]);
