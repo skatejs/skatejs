@@ -13,7 +13,7 @@ function createCustomEvent(name, opts = {}) {
   let e;
   if (Event) {
     e = new Event(name, opts);
-    if (opts.detail) {
+    if ('detail' in opts) {
       Object.defineProperty(e, 'detail', { value: opts.detail });
     }
   } else {
