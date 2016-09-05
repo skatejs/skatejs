@@ -73,6 +73,26 @@ describe('vdom/events (on*)', () => {
     });
   });
 
+  it('should events bubble from shadow dom', done => {
+    let called = false;
+    const test = () => {
+      called = true;
+    };
+    const myel = new (element().skate({
+      render() {
+        vdom.element('div', {}, vdom.element.bind(null, 'span'));
+      },
+    }));
+    myel.addEventListener('test', test);
+    fixture().appendChild(myel);
+
+    afterMutations(() => {
+      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { compose: true });
+      expect(called).to.equal(true);
+      done();
+    });
+  });
+
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
       render() {
