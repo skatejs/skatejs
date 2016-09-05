@@ -73,10 +73,12 @@ describe('vdom/events (on*)', () => {
     });
   });
 
-  it('should events bubble from shadow dom', done => {
+  it('should emit events from shadow dom', done => {
     let called = false;
-    const test = () => {
+    let detail = null;
+    const test = (e) => {
       called = true;
+      detail = e.detail;
     };
     const myel = new (element().skate({
       render() {
@@ -87,8 +89,9 @@ describe('vdom/events (on*)', () => {
     fixture().appendChild(myel);
 
     afterMutations(() => {
-      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { compose: true });
+      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
       expect(called).to.equal(true);
+      expect(detail).to.equal('detail');
       done();
     });
   });

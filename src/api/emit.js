@@ -10,11 +10,16 @@ const CustomEvent = ((Event) => {
 })(window.CustomEvent);
 
 function createCustomEvent(name, opts = {}) {
-  if (CustomEvent) {
-    return new CustomEvent(name, opts);
+  let e;
+  if (Event) {
+    e = new Event(name, opts);
+    if (opts.detail) {
+      Object.defineProperty(e, 'detail', { value: opts.detail });
+    }
+  } else {
+    e = document.createEvent('CustomEvent');
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
   }
-  const e = document.createEvent('CustomEvent');
-  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
   return e;
 }
 
@@ -24,6 +29,9 @@ export default function (elem, name, opts = {}) {
   }
   if (opts.cancelable === undefined) {
     opts.cancelable = true;
+  }
+  if (opts.composed === undefined) {
+    opts.composed = true;
   }
   return elem.dispatchEvent(createCustomEvent(name, opts));
 }
