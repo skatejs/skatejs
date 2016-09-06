@@ -10,15 +10,18 @@ const CustomEvent = ((Event) => {
 })(window.CustomEvent);
 
 function createCustomEvent(name, opts = {}) {
+  const { detail } = opts;
+  delete opts.detail;
+
   let e;
   if (Event) {
     e = new Event(name, opts);
-    if ('detail' in opts) {
-      Object.defineProperty(e, 'detail', { value: opts.detail });
+    if (typeof detail !== 'undefined') {
+      Object.defineProperty(e, 'detail', { value: detail });
     }
   } else {
     e = document.createEvent('CustomEvent');
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    e.initCustomEvent(name, opts.bubbles, opts.cancelable, detail);
   }
   return e;
 }
