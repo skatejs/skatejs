@@ -15,25 +15,26 @@ describe('utils/get-all-keys:', () => {
       .and.to.deep.equal(['foo', secret]);
   });
 
-  describe('when enumerable option is set', () => {
-    const obj = {};
-    beforeEach(() =>
+  describe('when enumOnly option is set', () => {
+    let obj;
+    beforeEach(() => {
+      obj = {};
       Object.defineProperties(obj, {
         foo: { enumerable: true, value: 1 },
         bar: { enumerable: false, value: 2 },
-      })
-    );
+      });
+    });
 
-    describe('to false', () => {
-      it('should not return enumerable keys', () =>
-        expect(keys(obj)).to.have.lengthOf(1)
-          .and.to.deep.equal(['foo'])
+    describe('to false (default)', () => {
+      it('should return all keys', () =>
+        expect(keys(obj, { enumOnly: false })).to.have.lengthOf(2)
+          .and.to.deep.equal(['foo', 'bar'])
       );
     });
     describe('to true', () => {
-      it('should return enumerable keys', () =>
-        expect(keys(obj, { enumerable: true })).to.have.lengthOf(2)
-          .and.to.deep.equal(['foo', 'bar'])
+      it('should return enumerable keys only', () =>
+        expect(keys(obj, { enumOnly: true })).to.have.lengthOf(1)
+          .and.to.deep.equal(['foo'])
       );
     });
   });
