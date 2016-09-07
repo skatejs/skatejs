@@ -1,7 +1,7 @@
 # Skate
 
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
-[![Size](https://img.shields.io/badge/min+gz-4.64%20kB-blue.svg)](https://npmcdn.com/skatejs)
+[![Size](https://img.shields.io/badge/min+gz-4.64%20kB-blue.svg)](https://unpkg.com/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
@@ -171,7 +171,7 @@ There's three files in `dist/`. Each has a UMD definition and a corresponding so
 ### Script Tag
 
 ```html
-<script src="https://npmcdn.com/skatejs/dist/index-with-deps.min.js"></script>
+<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
 ```
 
 Since Skate exports a UMD definition, you can then access it via the global:
@@ -202,8 +202,8 @@ import { define, vdom } from 'skatejs';
 Or you can use script tags:
 
 ```html
-<script src="https://npmcdn.com/skatejs-web-components/dist/index.min.js"></script>
-<script src="https://npmcdn.com/skatejs/dist/index-with-deps.min.js"></script>
+<script src="https://unpkg.com/skatejs-web-components/dist/index.min.js"></script>
+<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
 ```
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
