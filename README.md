@@ -1828,3 +1828,47 @@ skate.define('x-component', {
 ```
 
 If you want to ensure your styles are encapsulated even if using a polyfill, use [CSS Modules](https://github.com/css-modules/css-modules), they are absolutely amazing!
+
+## Using ES2015 classes
+
+When using ES2015 classes, there are slight differences to how you'd specify things when using an object literal. For example, lifecycle callbacks become `static`:
+
+```js
+skate.define('x-component', class extends skate.Component {
+  static created(elem) {}
+  static attached(elem) {}
+  static detached(elem) {}
+});
+```
+
+This also means properties like `props` must be specified as a getter:
+
+```js
+skate.define('x-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: { attribute: true }
+    };
+  }
+});
+```
+
+Or a class property:
+
+```js
+skate.define('x-component', class extends skate.Component {
+  static props = {
+    myProp: { attribute: true }
+  }
+});
+```
+
+Adding instance methods to the element prototype is done by simply specifying them as non-static items:
+
+```js
+skate.define('x-component', class extends skate.Component {
+  myProp1 = 'some value'
+  get myProp2 () { return 'another value'; }
+  myMethod() {}
+});
+```

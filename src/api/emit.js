@@ -1,4 +1,4 @@
-const CustomEvent = ((Event) => {
+((Event) => {
   if (Event) {
     try {
       new Event(); // eslint-disable-line no-new
