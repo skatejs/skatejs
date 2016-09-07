@@ -831,7 +831,7 @@ The differences being that as a result of defining it as a property, it is now l
 
 ### `emit (elem, eventName, eventOptions = {})`
 
-Emits a `CustomEvent` on `elem` that `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits a `CustomEvent` on `elem` that `composed`, `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
 skate.define('x-tabs', {
@@ -859,6 +859,7 @@ If you don't want the event to bubble, or you don't want it to be cancelable, th
 
 ```js
 skate.emit(elem, 'event', {
+  composed: false,
   bubbles: false,
   cancelable: false
 });
@@ -1480,7 +1481,7 @@ React has definitely had an influence on Skate. That said, they're completely di
 
 ## Preventing FOUC
 
-An element may not be initialised right away if your definitions are loaded after the document is parsed. In native custom elements, you can use the `:defined` pseudo-class to select all elements that have been upgraded, thus allowing you to do `:not(:defined)` to invert that. Since that only works in native, Skate adds a `defined` attribute so that you have a cross-browser way of dealing with FOUC and jank. 
+An element may not be initialised right away if your definitions are loaded after the document is parsed. In native custom elements, you can use the `:defined` pseudo-class to select all elements that have been upgraded, thus allowing you to do `:not(:defined)` to invert that. Since that only works in native, Skate adds a `defined` attribute so that you have a cross-browser way of dealing with FOUC and jank.
 
 ```css
 my-element {
