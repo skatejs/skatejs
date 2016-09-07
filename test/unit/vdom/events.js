@@ -73,6 +73,29 @@ describe('vdom/events (on*)', () => {
     });
   });
 
+  it('should emit events from shadow dom', done => {
+    let called = false;
+    let detail = null;
+    const test = (e) => {
+      called = true;
+      detail = e.detail;
+    };
+    const myel = new (element().skate({
+      render() {
+        vdom.element('div', {}, vdom.element.bind(null, 'span'));
+      },
+    }));
+    myel.addEventListener('test', test);
+    fixture().appendChild(myel);
+
+    afterMutations(() => {
+      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
+      expect(called).to.equal(true);
+      expect(detail).to.equal('detail');
+      done();
+    });
+  });
+
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
       render() {
