@@ -1,13 +1,13 @@
-const CustomEvent = ((Event) => {
-  if (Event) {
+const Event = ((TheEvent) => {
+  if (TheEvent) {
     try {
-      new Event(); // eslint-disable-line no-new
+      new TheEvent('emit-init'); // eslint-disable-line no-new
     } catch (e) {
       return undefined;
     }
   }
-  return Event;
-})(window.CustomEvent);
+  return TheEvent;
+})(window.Event);
 
 function createCustomEvent(name, opts = {}) {
   const { detail } = opts;
