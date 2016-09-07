@@ -831,7 +831,7 @@ The differences being that as a result of defining it as a property, it is now l
 
 ### `emit (elem, eventName, eventOptions = {})`
 
-Emits a `CustomEvent` on `elem` that `composed`, `bubbles` and is `cancelable` by default. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits an `Event` on `elem` that `composed`, `bubbles` and is `cancelable` by default, or a 'CustomEvent' in older browsers such as IE. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
 skate.define('x-tabs', {
