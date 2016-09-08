@@ -294,7 +294,7 @@ export function element(tname, attrs, chren) {
   }
 
   // Ensure the attributes are an object.
-  if (atype !== 'object') {
+  if (!attrs || atype !== 'object') {
     attrs = {};
   }
 
