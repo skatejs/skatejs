@@ -28,7 +28,7 @@
   "devDependencies": {
     "birdpoo": "0.x",
     "document-register-element": "^1.0.7",
-    "eslint": "3.4.0",
+    "eslint": "3.5.0",
     "eslint-friendly-formatter": "^2.0.6",
     "eslint-plugin-import": "^1.14.0",
     "precommit-hook": "^3.0.0",
