@@ -5,6 +5,7 @@ import {
 import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
+import dashCase from '../util/dash-case';
 
 function getDefaultValue(elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
@@ -22,7 +23,7 @@ function createNativePropertyDefinition(name, opts) {
 
   prop.created = function (elem) { // eslint-disable-line func-names
     const propData = data(elem, `api/property/${name}`);
-    const attributeName = opts.attribute;
+    const attributeName = opts.attribute === true ? dashCase(name) : opts.attribute;
     let initialValue = elem[name];
     let shouldSyncAttribute = false;
 
