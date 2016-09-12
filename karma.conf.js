@@ -11,5 +11,5 @@ module.exports = (config) => {
   ].concat(config.files);
 
   // Ensure mobile browsers have enough time to run.
-  config.browserNoActivityTimeout = 60000;
+  config.browserNoActivityTimeout = 120000;
 };
