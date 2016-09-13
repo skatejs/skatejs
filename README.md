@@ -1243,15 +1243,10 @@ Both of the above would produce:
 Since this is just syntactic sugar around `skate.vdom.element()`, you can create functions for anything that it accepts as its first argument. This means you can also create functions that wrap stateless functions (function helpers) or even web component constructors:
 
 ```js
-const [ div, myFunc, myComponent, slot ] = skate.vdom.elements(
+const [ div, myFunc, myComponent ] = skate.vdom.elements(
   'div',
-  'slot',
   (props, chren) => skate.vdom.element('p', props, chren),
-  define('my-component', {
-    render() {
-      slot();
-    }
-  })
+  define('my-component', {})
 );
 div(() => {
   myFunc(() => {
