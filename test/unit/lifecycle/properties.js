@@ -28,7 +28,7 @@ describe('lifecycle/property', () => {
   describe('props declared as attributes with ES2015 classes are linked', () => {
     const skip = !classStaticsInheritance();
 
-    it('uses the same attribute and property name for lower-case names', (done) => {
+    it('uses the same attribute and property name for lower-case names', function(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
@@ -44,7 +44,7 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses the same attribute and property name for dashed-names names', (done) => {
+    it('uses the same attribute and property name for dashed-names names', function(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
@@ -60,7 +60,7 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses a dash-cased attribute name for camel-case property names', (done) => {
+    it('uses a dash-cased attribute name for camel-case property names', function(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
