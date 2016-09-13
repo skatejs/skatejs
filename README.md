@@ -1217,6 +1217,61 @@ const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
 
 
 
+#### `vdom.elements (...elements)`
+
+Returns an array of functions that create elements.
+
+```js
+const [ div, p ] = skate.vdom.elements('div', 'p');
+div(p.bind('test'));
+```
+
+Which is the same thing as:
+
+```js
+skate.vdom.element('div', skate.vdom.element.bind(null, 'p', 'test'));
+```
+
+Both of the above would produce:
+
+```html
+<div>
+  <p>test</p>
+</div>
+```
+
+Since this is just syntactic sugar around `skate.vdom.element()`, you can create functions for anything that it accepts as its first argument. This means you can also create functions that wrap stateless functions (function helpers) or even web component constructors:
+
+```js
+const [ div, myFunc, myComponent, slot ] = skate.vdom.elements(
+  'div',
+  'slot',
+  (props, chren) => skate.vdom.element('p', props, chren),
+  define('my-component', {
+    render() {
+      slot();
+    }
+  })
+);
+div(() => {
+  myFunc(() => {
+    xTest('test');
+  });
+});
+```
+
+Which would render:
+
+```html
+<div>
+  <p>
+    <my-component>test</my-component>
+  </p>
+</div>
+```
+
+
+
 #### `vdom.text (text)`
 
 The `text()` function is exported directly from Incremental DOM and you could use that if you wanted to instead of specifying text as a string to a parent node:
