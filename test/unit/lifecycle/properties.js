@@ -24,49 +24,51 @@ describe('lifecycle/property', () => {
     expect(propsInit()).to.be.a('function');
   });
 
-  describe('props declared as attributes with ES2015 classes are linked', () => {
-    it('uses the same attribute and property name for lower-case names', (done) => {
-      const elem = new (element().skate(class extends Component {
-        static get props() {
-          return { testprop: { attribute: true } };
-        }
-      }));
+  if (Object.setPrototypeOf) {
+    describe('props declared as attributes with ES2015 classes are linked', () => {
+      it('uses the same attribute and property name for lower-case names', (done) => {
+        const elem = new (element().skate(class extends Component {
+          static get props() {
+            return { testprop: { attribute: true } };
+          }
+        }));
 
-      afterMutations(
-        () => elem.setAttribute('testprop', 'foo'),
-        () => expect(elem.testprop).to.equal('foo'),
-        done,
-      );
+        afterMutations(
+          () => elem.setAttribute('testprop', 'foo'),
+          () => expect(elem.testprop).to.equal('foo'),
+          done,
+        );
+      });
+
+      it('uses the same attribute and property name for dashed-names names', (done) => {
+        const elem = new (element().skate(class extends Component {
+          static get props() {
+            return { ['test-prop']: { attribute: true } };
+          }
+        }));
+
+        afterMutations(
+          () => elem.setAttribute('test-prop', 'foo'),
+          () => expect(elem['test-prop']).to.equal('foo'),
+          done,
+        );
+      });
+
+      it('uses a dash-cased attribute name for camel-case property names', (done) => {
+        const elem = new (element().skate(class extends Component {
+          static get props() {
+            return { testProp: { attribute: true } };
+          }
+        }));
+
+        afterMutations(
+          () => elem.setAttribute('test-prop', 'foo'),
+          () => expect(elem.testProp).to.equal('foo'),
+          done,
+        );
+      });
     });
-
-    it('uses the same attribute and property name for dashed-names names', (done) => {
-      const elem = new (element().skate(class extends Component {
-        static get props() {
-          return { ['test-prop']: { attribute: true } };
-        }
-      }));
-
-      afterMutations(
-        () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem['test-prop']).to.equal('foo'),
-        done,
-      );
-    });
-
-    it('uses a dash-cased attribute name for camel-case property names', (done) => {
-      const elem = new (element().skate(class extends Component {
-        static get props() {
-          return { testProp: { attribute: true } };
-        }
-      }));
-
-      afterMutations(
-        () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem.testProp).to.equal('foo'),
-        done,
-      );
-    });
-  });
+  }
 
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {

@@ -1,6 +1,10 @@
 import { Component } from '../../../src';
 
 describe('api/Component', () => {
+  if (!Object.setPrototypeOf) {
+    return;
+  }
+
   describe('property getters', () => {
     it('observedAttributes', () => {
       class Test extends Component {
