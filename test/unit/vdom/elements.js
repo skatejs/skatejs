@@ -2,7 +2,7 @@ import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
-import { symbols, vdom } from '../../../src/index';
+import { define, symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', () => {
   describe('element()', () => {
@@ -286,6 +286,63 @@ describe('vdom/elements', () => {
         },
         done
       );
+    });
+  });
+
+  describe.only('elements()', () => {
+    const { elements } = vdom;
+
+    it('there should be one array item for each argument passed in', () => {
+      expect(elements()).to.have.length(0);
+      expect(elements('a')).to.have.length(1);
+      expect(elements('a', 'b')).to.have.length(2);
+      expect(elements('a', 'b', 'c')).to.have.length(3);
+    });
+
+    it('should return an array of functions that create corresponding elements', done => {
+      const [a, b, c] = elements('a', 'b', 'c');
+      fixture(new (define('x-test', {
+        render() {
+          a();
+          b();
+          c();
+        },
+        rendered({ shadowRoot }) {
+          const [elA, elB, elC] = shadowRoot.children;
+          expect(elA.tagName).to.equal('A');
+          expect(elB.tagName).to.equal('B');
+          expect(elC.tagName).to.equal('C');
+          done();
+        },
+      })));
+    });
+
+    it('should work with stateless functions', done => {
+      const [e] = elements(() => vdom.element('a'));
+      fixture(new (define('x-test', {
+        render() {
+          e();
+        },
+        rendered({ shadowRoot }) {
+          const [elE] = shadowRoot.children;
+          expect(elE.tagName).to.equal('A');
+          done();
+        },
+      })));
+    });
+
+    it('should work with web component constructors', done => {
+      const [xTest] = elements(define('x-test', {}));
+      fixture(new (define('x-test', {
+        render() {
+          xTest();
+        },
+        rendered({ shadowRoot }) {
+          const [elXTest] = shadowRoot.children;
+          expect(elXTest.tagName).to.match(/^X-TEST/);
+          done();
+        },
+      })));
     });
   });
 });
