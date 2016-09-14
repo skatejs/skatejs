@@ -1,6 +1,7 @@
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 import { define, prop, props, symbols, vdom } from '../../../src/index';
+import * as IncrementalDOM from 'incremental-dom';
 
 describe('vdom/properties', () => {
   it('class -> className', done => {
@@ -59,6 +60,22 @@ describe('vdom/properties', () => {
       fixture(new Test());
       afterMutations(done);
     }).to.not.throw(Error);
+  });
+
+  it('should set props as properties instead of attributes on ctor references', () => {
+    let fixture = document.createElement('div');
+    const Elem = define('x-test', {
+      props: {
+        foo: {},
+      },
+    });
+
+    IncrementalDOM.patch(fixture, () => {
+      vdom.element(Elem, { foo: 'bar' });
+      const elem = fixture.firstChild;
+      expect(elem.foo).to.equal('bar');
+      expect(elem.getAttribute('foo')).to.be.null;
+    });
   });
 
   describe('re-rendering', () => {

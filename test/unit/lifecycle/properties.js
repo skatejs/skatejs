@@ -1,5 +1,6 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
+import fixture from '../../lib/fixture';
 import { classStaticsInheritance } from '../../lib/support';
 import propsInit from '../../../src/lifecycle/props-init';
 import { Component } from '../../../src';
@@ -419,6 +420,58 @@ describe('lifecycle/property', () => {
     });
 
     describe('set()', () => {
+      describe('for elements initialised from the DOM', () => {
+        it('is called for an attribute prop when initialised from the DOM', (done) => {
+          const { skate, safe } = element();
+          let calls = 0;
+
+          skate({
+            props: {
+              foo: {
+                attribute: true,
+                set(elem, data) {
+                  expect(data.newValue).to.equal('bar');
+                  expect(data.oldValue).to.equal(null);
+                  ++calls;
+                }
+              },
+            },
+          });
+
+          afterMutations(
+            () => fixture(`<${safe} foo="bar"/>`),
+            () => expect(calls).to.equal(1),
+            done,
+          );
+        });
+
+        it('is called for a non-attribute prop when a property is synchronously set', (done) => {
+          let calls = 0;
+          const { skate, safe } = element();
+
+          skate({
+            props: {
+              foo: {
+                set(elem, data) {
+                  expect(data.newValue).to.equal('bar');
+                  expect(data.oldValue).to.equal(null);
+                  ++calls;
+                }
+              },
+            },
+          });
+
+          afterMutations(
+            () => {
+              const elem = fixture(`<${safe} foo="bar"/>`).firstChild;
+              elem.foo = 'bar';
+            },
+            () => expect(calls).to.equal(1),
+            done,
+          );
+        });
+      });
+
       it('is not called if no value is on the element when it is initialised', () => {
         let calls = 0;
         create({
