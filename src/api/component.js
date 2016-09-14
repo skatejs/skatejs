@@ -79,6 +79,9 @@ function Component(self) {
   return elem;
 }
 
+// Skate
+Component.id = Component.uniqueId = null;
+
 Object.defineProperties(Component, {
   // v1
   observedAttributes: {
