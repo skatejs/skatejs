@@ -1,5 +1,6 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
+import { classStaticsInheritance } from '../../lib/support';
 import propsInit from '../../../src/lifecycle/props-init';
 import { Component } from '../../../src';
 
@@ -25,7 +26,11 @@ describe('lifecycle/property', () => {
   });
 
   describe('props declared as attributes with ES2015 classes are linked', () => {
-    it('uses the same attribute and property name for lower-case names', (done) => {
+    const skip = !classStaticsInheritance();
+
+    it('uses the same attribute and property name for lower-case names', function(done) {
+      if (skip) this.skip();
+
       const elem = new (element().skate(class extends Component {
         static get props() {
           return { testprop: { attribute: true } };
@@ -39,7 +44,9 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses the same attribute and property name for dashed-names names', (done) => {
+    it('uses the same attribute and property name for dashed-names names', function(done) {
+      if (skip) this.skip();
+
       const elem = new (element().skate(class extends Component {
         static get props() {
           return { ['test-prop']: { attribute: true } };
@@ -53,7 +60,9 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses a dash-cased attribute name for camel-case property names', (done) => {
+    it('uses a dash-cased attribute name for camel-case property names', function(done) {
+      if (skip) this.skip();
+
       const elem = new (element().skate(class extends Component {
         static get props() {
           return { testProp: { attribute: true } };
