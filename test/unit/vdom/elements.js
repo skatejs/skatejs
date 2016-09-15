@@ -289,7 +289,7 @@ describe('vdom/elements', () => {
     });
   });
 
-  describe.only('elements()', () => {
+  describe('elements()', () => {
     const { elements } = vdom;
 
     it('there should be one array item for each argument passed in', () => {
@@ -308,13 +308,13 @@ describe('vdom/elements', () => {
           c();
         },
         rendered({ shadowRoot }) {
-          const [elA, elB, elC] = shadowRoot.children;
+          const [elA, elB, elC] = [].slice.call(shadowRoot.children);
           expect(elA.tagName).to.equal('A');
           expect(elB.tagName).to.equal('B');
           expect(elC.tagName).to.equal('C');
           done();
         },
-      })));
+      }))());
     });
 
     it('should work with stateless functions', done => {
@@ -324,11 +324,11 @@ describe('vdom/elements', () => {
           e();
         },
         rendered({ shadowRoot }) {
-          const [elE] = shadowRoot.children;
+          const [elE] = [].slice.call(shadowRoot.children);
           expect(elE.tagName).to.equal('A');
           done();
         },
-      })));
+      }))());
     });
 
     it('should work with web component constructors', done => {
@@ -338,11 +338,11 @@ describe('vdom/elements', () => {
           xTest();
         },
         rendered({ shadowRoot }) {
-          const [elXTest] = shadowRoot.children;
+          const [elXTest] = [].slice.call(shadowRoot.children);
           expect(elXTest.tagName).to.match(/^X-TEST/);
           done();
         },
-      })));
+      }))());
     });
   });
 });
