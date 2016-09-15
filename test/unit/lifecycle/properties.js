@@ -28,7 +28,7 @@ describe('lifecycle/property', () => {
   describe('props declared as attributes with ES2015 classes are linked', () => {
     const skip = !classStaticsInheritance();
 
-    it('uses the same attribute and property name for lower-case names', function(done) {
+    it('uses the same attribute and property name for lower-case names', function test(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
@@ -44,12 +44,12 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses the same attribute and property name for dashed-names names', function(done) {
+    it('uses the same attribute and property name for dashed-names names', function test(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
         static get props() {
-          return { ['test-prop']: { attribute: true } };
+          return { 'test-prop': { attribute: true } };
         }
       }));
 
@@ -60,7 +60,7 @@ describe('lifecycle/property', () => {
       );
     });
 
-    it('uses a dash-cased attribute name for camel-case property names', function(done) {
+    it('uses a dash-cased attribute name for camel-case property names', function test(done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
@@ -69,12 +69,11 @@ describe('lifecycle/property', () => {
         }
       }));
 
-        afterMutations(
-          () => elem.setAttribute('test-prop', 'foo'),
-          () => expect(elem.testProp).to.equal('foo'),
-          done
-        );
-      });
+      afterMutations(
+        () => elem.setAttribute('test-prop', 'foo'),
+        () => expect(elem.testProp).to.equal('foo'),
+        done
+      );
     });
   });
 
@@ -89,21 +88,19 @@ describe('lifecycle/property', () => {
       afterMutations(
         () => elem.setAttribute('testprop', 'foo'),
         () => expect(elem.testprop).to.equal('foo'),
-        done,
+        done
       );
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
       const elem = new (element().skate({
-        props: {
-          ['test-prop']: { attribute: true },
-        },
+        props: { 'test-prop': { attribute: true } },
       }));
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem['test-prop']).to.equal('foo'),
-        done,
+        done
       );
     });
 
@@ -117,7 +114,7 @@ describe('lifecycle/property', () => {
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem.testProp).to.equal('foo'),
-        done,
+        done
       );
     });
   });
