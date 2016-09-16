@@ -116,21 +116,9 @@ describe('vdom/elements', () => {
         );
       });
 
-      describe('attrsObject should be able to be falsy', () => {
+      describe('attrsObject should accept null and not throw', () => {
         it('null', () => {
           expect(() => create(() => vdom.element('div', null))).to.not.throw();
-        });
-
-        it('false', () => {
-          expect(() => create(() => vdom.element('div', false))).to.not.throw();
-        });
-
-        it('0', () => {
-          expect(() => create(() => vdom.element('div', 0))).to.not.throw();
-        });
-
-        it('""', () => {
-          expect(() => create(() => vdom.element('div', ''))).to.not.throw();
         });
       });
     });
