@@ -1,10 +1,9 @@
 import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
-import keys from '../util/get-all-keys';
 
 function get(elem) {
   const props = {};
-  keys(elem.constructor.props).forEach((key) => {
+  Object.keys(elem.constructor.props).forEach((key) => {
     props[key] = elem[key];
   });
 
