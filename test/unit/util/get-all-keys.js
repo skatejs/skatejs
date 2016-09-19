@@ -3,16 +3,12 @@ import createSymbol from '../../../src/util/create-symbol';
 
 describe('utils/get-all-keys:', () => {
   it('should return normal keys from an object', () =>
-    expect(keys({ foo: 1, bar: 2 }))
-      .to.have.lengthOf(2)
-      .and.to.deep.equal(['foo', 'bar'])
+    expect(keys({ foo: 1, bar: 2 })).to.deep.equal(['foo', 'bar'])
   );
 
   it('should return symbol keys from an object', () => {
     const secret = createSymbol('secret');
-    expect(keys({ foo: 1, [secret]: 2 }))
-      .to.have.lengthOf(2)
-      .and.to.deep.equal(['foo', secret]);
+    expect(keys({ foo: 1, [secret]: 2 })).to.deep.equal(['foo', secret]);
   });
 
   describe('when enumOnly option is set', () => {
@@ -27,14 +23,12 @@ describe('utils/get-all-keys:', () => {
 
     describe('to false (default)', () => {
       it('should return all keys', () =>
-        expect(keys(obj, { enumOnly: false })).to.have.lengthOf(2)
-          .and.to.deep.equal(['foo', 'bar'])
+        expect(keys(obj, { enumOnly: false })).to.deep.equal(['foo', 'bar'])
       );
     });
     describe('to true', () => {
       it('should return enumerable keys only', () =>
-        expect(keys(obj, { enumOnly: true })).to.have.lengthOf(1)
-          .and.to.deep.equal(['foo'])
+        expect(keys(obj, { enumOnly: true })).to.deep.equal(['foo'])
       );
     });
   });
