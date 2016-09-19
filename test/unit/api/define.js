@@ -18,6 +18,11 @@ describe('api/define', () => {
     }).to.throw(Error);
   });
 
+  it('should add ____skate_name to the constructor to allow itself (and other versions of skate) to identify it as a component', () => {
+    const elem = define('x-test-skate-name', {});
+    expect(elem.____skate_name).to.equal('x-test-skate-name');
+  });
+
   it('should register components with unique names', () => {
     const elem1 = define('x-test-api-define', {});
     const elem2 = define('x-test-api-define', {});

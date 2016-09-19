@@ -21,7 +21,7 @@ describe('lifecycle/property', () => {
     propsInit();
   });
 
-  it('should return a function', () => {
+  it('should return an function', () => {
     expect(propsInit()).to.be.a('function');
   });
 
@@ -139,15 +139,26 @@ describe('lifecycle/property', () => {
       },
     }));
 
-    ['test1', 'test2'].forEach(value => {
-      expect(elem[value]).to.equal(value);
-      elem[value] = null;
-      expect(elem[value]).to.equal(value);
-      expect(elem.getAttribute(value)).to.equal(null);
-      elem.removeAttribute(value);
-      expect(elem[value]).to.equal(value);
-      expect(elem.getAttribute(value)).to.equal(null);
-    });
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
+
+    elem.test1 = null;
+    elem.test2 = null;
+
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
+
+    expect(elem.getAttribute('test1')).to.equal(null);
+    expect(elem.getAttribute('test2')).to.equal(null);
+
+    elem.removeAttribute('test1');
+    elem.removeAttribute('test2');
+
+    expect(elem.test1).to.equal('test1');
+    expect(elem.test2).to.equal('test2');
+
+    expect(elem.getAttribute('test1')).to.equal(null);
+    expect(elem.getAttribute('test2')).to.equal(null);
   });
 
   describe('property definition', () => {
