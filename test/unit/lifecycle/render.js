@@ -6,11 +6,12 @@ import fixture from '../../lib/fixture';
 describe('lifecycle/render', () => {
   it('should be called', done => {
     let called = false;
-    fixture(new (elem().skate({
+    const Elem = define('x-test', {
       render() {
         called = true;
       },
-    })));
+    });
+    fixture(new Elem());
     afterMutations(
       () => expect(called).to.equal(true),
       done
@@ -19,14 +20,15 @@ describe('lifecycle/render', () => {
 
   it('should get called after created()', done => {
     const called = [];
-    fixture(new (elem().skate({
+    const Elem = define('x-test', {
       created() {
         called.push('created');
       },
       render() {
         called.push('render');
       },
-    })));
+    });
+    fixture(new Elem());
     afterMutations(
       () => expect(called[0]).to.equal('created'),
       () => expect(called[1]).to.equal('render'),
