@@ -47,7 +47,15 @@ export default function (Ctor) {
     }
 
     if (shouldRender) {
-      patchInner(sr, render, elem);
+      patchInner(sr, () => {
+        const possibleFn = render(elem);
+        if (typeof possibleFn === 'function') {
+          possibleFn(elem);
+        } else if (Array.isArray(possibleFn)) {
+          possibleFn.forEach(fn => fn());
+        }
+      });
+
       if (rendered) {
         rendered(elem);
       }

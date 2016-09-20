@@ -289,60 +289,65 @@ describe('vdom/elements', () => {
     });
   });
 
-  describe('elements()', () => {
-    const { elements } = vdom;
+  describe('create()', () => {
+    const { create } = vdom;
 
-    it('there should be one array item for each argument passed in', () => {
-      expect(elements()).to.have.length(0);
-      expect(elements('a')).to.have.length(1);
-      expect(elements('a', 'b')).to.have.length(2);
-      expect(elements('a', 'b', 'c')).to.have.length(3);
+    describe('no arguments', () => {
+      it('should return a function', () => {
+        expect(create()).to.be.a('function');
+      });
     });
 
-    it('should return an array of functions that create corresponding elements', done => {
-      const [a, b, c] = elements('a', 'b', 'c');
-      fixture(new (define('x-test', {
-        render() {
-          a();
-          b();
-          c();
-        },
-        rendered({ shadowRoot }) {
-          const [elA, elB, elC] = [].slice.call(shadowRoot.children);
-          expect(elA.tagName).to.equal('A');
-          expect(elB.tagName).to.equal('B');
-          expect(elC.tagName).to.equal('C');
-          done();
-        },
-      }))());
-    });
+    describe('more than one argument', () => {
+      it('there should be one array item for each argument passed in', () => {
+        expect(create('a')).to.have.length(1);
+        expect(create('a', 'b')).to.have.length(2);
+        expect(create('a', 'b', 'c')).to.have.length(3);
+      });
 
-    it('should work with stateless functions', done => {
-      const [e] = elements(() => vdom.element('a'));
-      fixture(new (define('x-test', {
-        render() {
-          e();
-        },
-        rendered({ shadowRoot }) {
-          const [elE] = [].slice.call(shadowRoot.children);
-          expect(elE.tagName).to.equal('A');
-          done();
-        },
-      }))());
-    });
+      it('should return an array of functions that create corresponding elements', done => {
+        const [a, b, c] = create('a', 'b', 'c');
+        fixture(new (define('x-test', {
+          render() {
+            return [a(), b(), c()];
+          },
+          rendered({ shadowRoot }) {
+            const [elA, elB, elC] = [].slice.call(shadowRoot.children);
+            expect(elA.tagName).to.equal('A');
+            expect(elB.tagName).to.equal('B');
+            expect(elC.tagName).to.equal('C');
+            done();
+          },
+        }))());
+      });
 
-    it('should work with web component constructors', done => {
-      const [xTest] = elements(define('x-test', {}));
-      fixture(new (define('x-test', {
-        render() {
-          xTest();
-        },
-        rendered({ shadowRoot }) {
-          const [elXTest] = [].slice.call(shadowRoot.children);
-          expect(elXTest.tagName).to.match(/^X-TEST/);
-          done();
-        },
-      }))());
+      it('should work with stateless functions', done => {
+        const [e] = create(() => vdom.element('a'));
+        fixture(new (define('x-test', {
+          render() {
+            return e();
+          },
+          rendered({ shadowRoot }) {
+            const [elE] = [].slice.call(shadowRoot.children);
+            expect(elE.tagName).to.equal('A');
+            done();
+          },
+        }))());
+      });
+
+      it('should work with web component constructors', done => {
+        const [xTest] = create(define('x-test', {}));
+        fixture(new (define('x-test', {
+          render() {
+            return xTest();
+          },
+          rendered({ shadowRoot }) {
+            const [elXTest] = [].slice.call(shadowRoot.children);
+            expect(elXTest.tagName).to.match(/^X-TEST/);
+            done();
+          },
+        }))());
+      });
     });
   });
 });

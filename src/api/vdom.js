@@ -321,7 +321,15 @@ export function element(tname, attrs, chren) {
   return newElementClose(tname);
 }
 
-export const elements = (...args) => args.map(e => element.bind(null, e));
+export function create(...tags) {
+  if (tags.length === 0) {
+    return (...args) => element.bind(null, ...args);
+  }
+  return tags.map(tag =>
+    (...args) =>
+      element.bind(null, tag, ...args)
+  );
+}
 
 // We don't have to do anything special for the text function; it's just a
 // straight export from Incremental DOM.
