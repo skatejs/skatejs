@@ -285,12 +285,12 @@ const newText = wrapIdomFunc(text);
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
-export function element(tname, attrs, chren) {
+export function element(tname, attrs, ...chren) {
   const atype = typeof attrs;
 
   // If attributes are a function, then they should be treated as children.
   if (atype === 'function' || atype === 'string' || atype === 'number') {
-    chren = attrs;
+    chren = [attrs];
   }
 
   // Ensure the attributes are an object.
@@ -311,16 +311,19 @@ export function element(tname, attrs, chren) {
   // Close before we render the descendant tree.
   newElementOpenEnd(tname);
 
-  const ctype = typeof chren;
-  if (ctype === 'function') {
-    chren();
-  } else if (ctype === 'string' || ctype === 'number') {
-    newText(chren);
-  }
+  chren.forEach(ch => {
+    const ctype = typeof ch;
+    if (ctype === 'function') {
+      ch();
+    } else if (ctype === 'string' || ctype === 'number') {
+      newText(ch);
+    }
+  });
 
   return newElementClose(tname);
 }
 
+// Even further convenience for creating a DSL out of JavaScript functions.
 export function create(...tags) {
   if (tags.length === 0) {
     return (...args) => element.bind(null, ...args);

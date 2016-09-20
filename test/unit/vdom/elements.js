@@ -309,13 +309,24 @@ describe('vdom/elements', () => {
         const [a, b, c] = create('a', 'b', 'c');
         fixture(new (define('x-test', {
           render() {
-            return [a(), b(), c()];
+            return [
+              a(),
+              b(),
+              c(),
+              a({ a: 'a' },
+                b({ b: 'b' },
+                  c({ c: 'c' }),
+                  c({ d: 'd' })
+                )
+              ),
+            ];
           },
           rendered({ shadowRoot }) {
-            const [elA, elB, elC] = [].slice.call(shadowRoot.children);
+            const [elA, elB, elC, elD] = [].slice.call(shadowRoot.children);
             expect(elA.tagName).to.equal('A');
             expect(elB.tagName).to.equal('B');
             expect(elC.tagName).to.equal('C');
+            expect(elD.outerHTML).to.equal('<a a="a"><b b="b"><c c="c"></c><c d="d"></c></b></a>');
             done();
           },
         }))());
