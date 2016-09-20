@@ -60,6 +60,38 @@ describe('lifecycle/render', () => {
     );
   });
 
+  describe('returning value', () => {
+    let spy;
+
+    beforeEach(() => (spy = sinon.spy()));
+
+    it('function', done => {
+      const Elem = define('x-test', {
+        render() {
+          return spy;
+        },
+      });
+      fixture(new Elem());
+      afterMutations(
+        () => expect(spy.callCount).to.equal(1),
+        done
+      );
+    });
+
+    it('array of functions', done => {
+      const Elem = define('x-test', {
+        render() {
+          return [spy, spy, spy];
+        },
+      });
+      fixture(new Elem());
+      afterMutations(
+        () => expect(spy.callCount).to.equal(3),
+        done
+      );
+    });
+  });
+
   describe('updated()', () => {
     it('should be called even if there is no render function', done => {
       let called = 0;
