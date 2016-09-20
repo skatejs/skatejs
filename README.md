@@ -1130,13 +1130,101 @@ Skate includes several helpers for creating virtual elements with Incremental DO
 
 
 
-#### `vdom.element (elementName, attributesOrChildren, children)`
+#### `vdom.create ()`
+
+Calling `vdom.create()` without any arguments returns a function that you can call in `render()` to create elements:
+
+```js
+const h = vdom.create();
+define('my-component', {
+  render() {
+    return h('div', { id: 'test', }, h('p', 'test'));
+  }
+});
+```
+
+It's very similar to the Hyperscript style syntax, however, it currently doesn't support selectors as part of the node-name argument to set id / classes.
+
+The benefit of being able to do do this is that you can use JSX out of the box by doing something like:
+
+```js
+// Using the default React.createElement() pragma.
+const React = { createElement: skate.vdom.create() };
+
+// Using the Hypserscript "h" pragma.
+const h = skate.vdom.create();
+```
+
+
+
+#### `vdom.create (...elements)`
+
+When `vdom.create()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
+
+```js
+const [ div, p ] = skate.vdom.create('div', 'p');
+define('my-component', {
+  render() {
+    return div({ id: 'mydiv' }, p('test'));
+  }
+});
+```
+
+This is syntactic sugar around the lower-level `vdom.element()`, which could do the same thing, just much more verbose:
+
+```js
+define('my-component', {
+  render() {
+    skate.vdom.element('div', { id: 'mydiv' }, () => {
+      skate.vdom.element('p', 'test');
+    });
+  }
+});
+```
+
+Both of the above would produce:
+
+```html
+<div id="mydiv">
+  <p>test</p>
+</div>
+```
+
+You can also pass in functions and component constructors - as opposed to just strings - and you call them the same way as if you would have passed strings:
+
+```js
+const [ div, myFunc, myComponent, p ] = skate.vdom.create(
+  'div',
+  (props, chren) => p(props, chren),
+  define('my-component', {}),
+  'p'
+);
+define('my-component', {
+  render() {
+    return div(myFunc(myComponent('test')));
+  }
+});
+```
+
+Which would render:
+
+```html
+<div>
+  <p>
+    <my-component>test</my-component>
+  </p>
+</div>
+```
+
+
+
+#### `vdom.element (elementName, attributesOrChildren, ...children)`
 
 The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
 
 The `attributesOrChildren` argument is either an `object`, a `function` that will render the children for this element or a `string` if you only want to render a text node as the children.
 
-The `children` argument is a `function` that will render the children of this element or a `string` if you are only rendering text.
+The rest of the arguemnts are functions that render out `children`.
 
 ```js
 skate.vdom.element('select', { name: 'my-select' }, function () {
@@ -1213,56 +1301,6 @@ const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
 
 // Renders <div>Hello, Mary!</div>
 <MyElement>Mary</MyElement>
-```
-
-
-
-#### `vdom.elements (...elements)`
-
-Returns an array of functions that create elements.
-
-```js
-const [ div, p ] = skate.vdom.elements('div', 'p');
-div(p.bind('test'));
-```
-
-Which is the same thing as:
-
-```js
-skate.vdom.element('div', skate.vdom.element.bind(null, 'p', 'test'));
-```
-
-Both of the above would produce:
-
-```html
-<div>
-  <p>test</p>
-</div>
-```
-
-Since this is just syntactic sugar around `skate.vdom.element()`, you can create functions for anything that it accepts as its first argument. This means you can also create functions that wrap stateless functions (function helpers) or even web component constructors:
-
-```js
-const [ div, myFunc, myComponent ] = skate.vdom.elements(
-  'div',
-  (props, chren) => skate.vdom.element('p', props, chren),
-  define('my-component', {})
-);
-div(() => {
-  myFunc(() => {
-    xTest('test');
-  });
-});
-```
-
-Which would render:
-
-```html
-<div>
-  <p>
-    <my-component>test</my-component>
-  </p>
-</div>
 ```
 
 
@@ -1367,23 +1405,31 @@ If you specify `false` as any attribute value, the attribute will not be added, 
 
 The `vdom` module is provided for a simple way to write virtual DOM using only functions. If you don't want to do that, you can use any templating language that compiles down to Incremental DOM calls.
 
-To enable JSX you can use one of the following:
+The simplest way to use JSX with Skate is to call `skate.vdom.create()` that returns a function which can be used as your JSX `pragma`:
+
+```js
+// Using the default React.createElement() pragma.
+const React = { createElement: skate.vdom.create() };
+
+// Using the Hypserscript "h" pragma.
+const h = skate.vdom.create();
+```
+
+
+
+##### Other ways to use JSX
+
+You can also enable JSX support in a couple of other ways, though they require slightly more work:
 
 - https://github.com/thejameskyle/incremental-dom-react-helper - Allows `React.createElement()` calls to translate to Incremental DOM calls.
 - https://github.com/jridgewell/babel-plugin-incremental-dom - Babel plugin for transpiling JSX to Incremental DOM calls.
 
-Use one or the other. The helper is a quicker way to get started. However, since it must translate `React.createElement()` calls into Incremental DOM function calls, every `React.createElement()` call returns a closure that gets executed later. This can potentially negate the benefits of Incremental DOM's garbage collection-friendly nature since it creates a function for every single element. The plugin will transpile JSX directly to Incremental DOM function calls that preserves the "incremental" nature.
-
-If you're using the helper, you'll need to make sure `IncrementalDOM` is available globally. Since we provide functionality on top of Incremental DOM, you'll need to make sure it uses our virtual element functions instead:
-
-If you're using the plugin, you'll need to configure it to use `skate.vdom` (or just `vdom` if you `import` it) as the `prefix`.
-
 ```js
-// For the helper:
+// Incremental DOM needs to be available globally, so you'll have to do:
 IncrementalDOM = skate.vdom;
 
 // For the plugin you need to configure the `prefix` option to
-// point to Skate's vdom or you'll need to do something like this
+// point to Skate's `vdom` or you'll need to do something like this
 // so the functions are in scope.
 const { elementOpen, elementOpenStart, elementVoid } = skate.vdom;
 
@@ -1403,16 +1449,6 @@ skate.define('my-element', {
     );
   }
 });
-```
-
-And it could be used like:
-
-```html
-<my-element title="Eggs">
-  <p slot="description">Article description.</p>
-  <p>Main paragraph 1.</p>
-  <p>Main paragraph 2.</p>
-</my-element>
 ```
 
 
