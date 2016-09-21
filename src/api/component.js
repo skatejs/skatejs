@@ -42,7 +42,7 @@ function callConstructor(elem) {
   // that aren't linked to props so that the callback behaves the same no
   // matter if v0 or v1 is being used.
   if (customElementsV0) {
-    observedAttributes.forEach(name => {
+    observedAttributes.forEach((name) => {
       const propertyName = data(elem, 'attributeLinks')[name];
       if (!propertyName) {
         elem.attributeChangedCallback(name, null, elem.getAttribute(name));
