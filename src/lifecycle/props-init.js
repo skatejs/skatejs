@@ -125,7 +125,7 @@ export default function (opts) {
     opts = { coerce: opts };
   }
 
-  return (name) => createNativePropertyDefinition(name, assign({
+  return name => createNativePropertyDefinition(name, assign({
     default: null,
     deserialize: value => value,
     serialize: value => value,
