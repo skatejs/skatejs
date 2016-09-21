@@ -1,7 +1,6 @@
 import helperElement from '../lib/element';
 import { define } from '../../src/index';
-
-const canSetProto = '__proto__' in document.createElement('div');
+import { classStaticsInheritance } from '../lib/support';
 
 describe('extending', () => {
   let Ctor;
@@ -71,7 +70,7 @@ describe('extending', () => {
     expect(el.constructor.extends).to.equal('div');
   });
 
-  if (canSetProto) {
+  if (classStaticsInheritance()) {
     it('extend()', () => {
       const Comp1 = define(`${tag}-1`, {});
       const Comp2 = define(`${tag}-2`, Comp1.extend({}));
