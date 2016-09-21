@@ -1,7 +1,7 @@
 import { Component } from '../../../src';
 
 describe('api/Component', () => {
-  if (!Object.setPrototypeOf) {
+  if (!classStaticsInheritance()) {
     return;
   }
 

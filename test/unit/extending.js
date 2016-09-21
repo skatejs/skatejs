@@ -1,5 +1,6 @@
 import helperElement from '../lib/element';
 import { define } from '../../src/index';
+import { classStaticsInheritance } from '../lib/support';
 
 describe('extending', () => {
   let Ctor;
@@ -69,7 +70,7 @@ describe('extending', () => {
     expect(el.constructor.extends).to.equal('div');
   });
 
-  if (Object.setPrototypeOf) {
+  if (classStaticsInheritance()) {
     it('extend()', () => {
       const Comp1 = define(`${tag}-1`, {});
       const Comp2 = define(`${tag}-2`, Comp1.extend({}));
