@@ -1,3 +1,5 @@
+/* eslint no-plusplus: 0 */
+
 import {
   applyProp,
   attributes,
