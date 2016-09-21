@@ -2,7 +2,7 @@ import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
-import { define, symbols, vdom } from '../../../src/index';
+import { symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', () => {
   describe('element()', () => {
@@ -19,7 +19,7 @@ describe('vdom/elements', () => {
         return Ctor;
       }
 
-      it('(tagName)', done => {
+      it('(tagName)', (done) => {
         const elem = create(() => vdom.element('div'));
         afterMutations(
           () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
@@ -27,7 +27,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('(Constructor)', done => {
+      it('(Constructor)', (done) => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor));
         afterMutations(
@@ -36,7 +36,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('(tagName, textContent)', done => {
+      it('(tagName, textContent)', (done) => {
         const elem = create(() => vdom.element('div', 'text'));
         afterMutations(
           () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
@@ -45,7 +45,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('(tagName, childrenFunction)', done => {
+      it('(tagName, childrenFunction)', (done) => {
         const elem = create(() => vdom.element('div', vdom.text.bind(null, 'text')));
         afterMutations(
           () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
@@ -54,7 +54,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('(Contructor, textContent)', done => {
+      it('(Contructor, textContent)', (done) => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, 'text'));
         afterMutations(
@@ -64,7 +64,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('(Contructor, childrenFunction)', done => {
+      it('(Contructor, childrenFunction)', (done) => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, vdom.text.bind(null, 'text')));
         afterMutations(
@@ -74,7 +74,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('tagName, attrsObject, textContent', done => {
+      it('tagName, attrsObject, textContent', (done) => {
         const elem = create(() => vdom.element('div', { id: 'test' }, 'text'));
         afterMutations(
           () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
@@ -84,7 +84,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('tagName, attrsObject, childrenFunction', done => {
+      it('tagName, attrsObject, childrenFunction', (done) => {
         const elem = create(() => vdom.element('div', { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
           () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
@@ -94,7 +94,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('Constructor, attrsObject, textContent', done => {
+      it('Constructor, attrsObject, textContent', (done) => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, 'text'));
         afterMutations(
@@ -105,7 +105,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it('Constructor, attrsObject, childrenFunction', done => {
+      it('Constructor, attrsObject, childrenFunction', (done) => {
         const Ctor = ctor('div');
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
@@ -118,17 +118,17 @@ describe('vdom/elements', () => {
     });
   });
 
-  it('slot', done => {
+  it('slot', (done) => {
     const elem1 = new (element().skate({
       render() {
         vdom.element('slot', { name: 'test' });
       },
-    }));
+    }))();
     const elem2 = new (element().skate({
       render() {
         vdom.element('slot', { name: 'test' });
       },
-    }));
+    }))();
 
     fixture().appendChild(elem1);
     fixture().appendChild(elem2);
@@ -159,7 +159,7 @@ describe('vdom/elements', () => {
     });
   });
 
-  it('passing a component constructor to the vdom.element() function', done => {
+  it('passing a component constructor to the vdom.element() function', (done) => {
     const Elem2 = element().skate({
       render() {
         vdom.text('rendered');
@@ -186,7 +186,7 @@ describe('vdom/elements', () => {
 
   describe('passing a function to the vdom.element() function (*part* notes where text or number was passed as children)', () => {
     function testHelper(ch) {
-      it(`*div* > span > ${ch}`, done => {
+      it(`*div* > span > ${ch}`, (done) => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = (props, chren) => vdom.element('div', () => vdom.element(Span, chren));
         const Elem = element().skate({
@@ -204,7 +204,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it(`div > *span* > ${ch}`, done => {
+      it(`div > *span* > ${ch}`, (done) => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = () => vdom.element('div', () => vdom.element(Span, ch));
         const Elem = element().skate({
@@ -221,7 +221,7 @@ describe('vdom/elements', () => {
         );
       });
 
-      it(`div > span > *${ch}*`, done => {
+      it(`div > span > *${ch}*`, (done) => {
         const Span = () => vdom.element('span', ch);
         const Div = () => vdom.element('div', () => vdom.element(Span));
         const Elem = element().skate({
@@ -241,7 +241,7 @@ describe('vdom/elements', () => {
 
     ['text', 1].forEach(testHelper);
 
-    it('*ul* (items) > li > a > text', done => {
+    it('*ul* (items) > li > a > text', (done) => {
       const Li = (props, chren) => vdom.element('li', () => vdom.element('a', chren));
       const Ul = props => vdom.element('ul', () => props.items.map(item => vdom.element(Li, item)));
       const Elem = element().skate({
@@ -258,11 +258,11 @@ describe('vdom/elements', () => {
       );
     });
 
-    it('should pass through special attrs and not set them as attrs or props', done => {
+    it('should pass through special attrs and not set them as attrs or props', (done) => {
       const key = 'my-key';
       const ref = () => {};
       const statics = [];
-      const El = props => {
+      const El = (props) => {
         expect(props.key).to.equal(key, 'key');
         expect(props.ref).to.equal(ref, 'ref');
         expect(props.statics).to.equal(statics, 'statics');
@@ -286,79 +286,6 @@ describe('vdom/elements', () => {
         },
         done
       );
-    });
-  });
-
-  describe('create()', () => {
-    const { create } = vdom;
-
-    describe('no arguments', () => {
-      it('should return a function', () => {
-        expect(create()).to.be.a('function');
-      });
-    });
-
-    describe('more than one argument', () => {
-      it('there should be one array item for each argument passed in', () => {
-        expect(create('a')).to.have.length(1);
-        expect(create('a', 'b')).to.have.length(2);
-        expect(create('a', 'b', 'c')).to.have.length(3);
-      });
-
-      it('should return an array of functions that create corresponding elements', done => {
-        const [a, b, c] = create('a', 'b', 'c');
-        fixture(new (define('x-test', {
-          render() {
-            return [
-              a(),
-              b(),
-              c(),
-              a({ a: 'a' },
-                b({ b: 'b' },
-                  c({ c: 'c' }),
-                  c({ d: 'd' })
-                )
-              ),
-            ];
-          },
-          rendered({ shadowRoot }) {
-            const [elA, elB, elC, elD] = [].slice.call(shadowRoot.children);
-            expect(elA.tagName).to.equal('A');
-            expect(elB.tagName).to.equal('B');
-            expect(elC.tagName).to.equal('C');
-            expect(elD.outerHTML).to.equal('<a a="a"><b b="b"><c c="c"></c><c d="d"></c></b></a>');
-            done();
-          },
-        }))());
-      });
-
-      it('should work with stateless functions', done => {
-        const [e] = create(() => vdom.element('a'));
-        fixture(new (define('x-test', {
-          render() {
-            return e();
-          },
-          rendered({ shadowRoot }) {
-            const [elE] = [].slice.call(shadowRoot.children);
-            expect(elE.tagName).to.equal('A');
-            done();
-          },
-        }))());
-      });
-
-      it('should work with web component constructors', done => {
-        const [xTest] = create(define('x-test', {}));
-        fixture(new (define('x-test', {
-          render() {
-            return xTest();
-          },
-          rendered({ shadowRoot }) {
-            const [elXTest] = [].slice.call(shadowRoot.children);
-            expect(elXTest.tagName).to.match(/^X-TEST/);
-            done();
-          },
-        }))());
-      });
     });
   });
 });

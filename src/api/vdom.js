@@ -323,8 +323,9 @@ export function element(tname, attrs, ...chren) {
   return newElementClose(tname);
 }
 
-// Even further convenience for creating a DSL out of JavaScript functions.
-export function create(...tags) {
+// Even further convenience for building a DSL out of JavaScript functions or hooking into standard
+// transpiles for JSX (React.createElement() / h).
+export function builder(...tags) {
   if (tags.length === 0) {
     return (...args) => element.bind(null, ...args);
   }
