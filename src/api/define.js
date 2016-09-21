@@ -1,3 +1,5 @@
+/* eslint no-bitwise: 0 */
+
 import {
   name as $name,
   props as $props,
