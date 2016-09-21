@@ -1130,12 +1130,12 @@ Skate includes several helpers for creating virtual elements with Incremental DO
 
 
 
-#### `vdom.create ()`
+#### `vdom.builder ()`
 
 Calling `vdom.create()` without any arguments returns a function that you can call in `render()` to create elements:
 
 ```js
-const h = vdom.create();
+const h = vdom.builder();
 define('my-component', {
   render() {
     return h('div', { id: 'test', }, h('p', 'test'));
@@ -1149,20 +1149,20 @@ The benefit of being able to do do this is that you can use JSX out of the box b
 
 ```js
 // Using the default React.createElement() pragma.
-const React = { createElement: skate.vdom.create() };
+const React = { createElement: skate.vdom.builder() };
 
 // Using the Hypserscript "h" pragma.
-const h = skate.vdom.create();
+const h = skate.vdom.builder();
 ```
 
 
 
-#### `vdom.create (...elements)`
+#### `vdom.builder (...elements)`
 
-When `vdom.create()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
+When `vdom.builder()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
 
 ```js
-const [ div, p ] = skate.vdom.create('div', 'p');
+const [ div, p ] = skate.vdom.builder('div', 'p');
 define('my-component', {
   render() {
     return div({ id: 'mydiv' }, p('test'));
@@ -1193,7 +1193,7 @@ Both of the above would produce:
 You can also pass in functions and component constructors - as opposed to just strings - and you call them the same way as if you would have passed strings:
 
 ```js
-const [ div, myFunc, myComponent, p ] = skate.vdom.create(
+const [ div, myFunc, myComponent, p ] = skate.vdom.builder(
   'div',
   (props, chren) => p(props, chren),
   define('my-component', {}),
