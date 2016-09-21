@@ -311,7 +311,7 @@ export function element(tname, attrs, ...chren) {
   // Close before we render the descendant tree.
   newElementOpenEnd(tname);
 
-  chren.forEach(ch => {
+  chren.forEach((ch) => {
     const ctype = typeof ch;
     if (ctype === 'function') {
       ch();
