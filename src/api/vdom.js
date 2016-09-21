@@ -1,9 +1,11 @@
+/* eslint no-plusplus: 0 */
+
 import {
   applyProp,
   attributes,
   elementClose,
   elementOpen as idomElementOpen,
-  skip,
+  skip as idomSkip,
   symbols,
   text,
 } from 'incremental-dom';
@@ -199,7 +201,7 @@ function wrapIdomFunc(func, tnameFuncHandler = noop) {
 
       if (func === elementClose) {
         if (skips === 1) {
-          skip();
+          idomSkip();
         }
 
         // We only want to skip closing if it's not the last closing tag in the
