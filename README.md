@@ -6,6 +6,8 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
 
+[![Sauce Test Status](https://saucelabs.com/buildstatus/skatejs)](https://saucelabs.com/u/skatejs)
+
 Skate is a library built on top of the [W3C web component specs](https://github.com/w3c/webcomponents) that enables you to write functional and performant web components with a very small footprint.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
