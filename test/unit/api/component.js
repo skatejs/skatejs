@@ -1,4 +1,5 @@
 import { Component } from '../../../src';
+import { classStaticsInheritance } from '../lib/support';
 
 describe('api/Component', () => {
   if (!classStaticsInheritance()) {
