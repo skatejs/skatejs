@@ -8,10 +8,13 @@ import link from './api/link';
 import props from './api/props';
 import ready from './api/ready';
 
+const h = vdom.builder();
+
 export {
   Component,
   define,
   emit,
+  h,
   link,
   prop,
   props,

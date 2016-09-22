@@ -45,7 +45,11 @@ describe('exports', () => {
     expect(api.symbols.shadowRoot).to.equal(symbols.shadowRoot);
   });
 
-  it('vdom', () => {
+  it('skate.h', () => {
+    expect(api.h).to.be.a('function');
+  });
+
+  it('skate.vdom', () => {
     expect(api.vdom).to.be.an('object');
   });
 });
