@@ -45,14 +45,22 @@ describe('create()', () => {
     });
 
     it('should work with stateless functions', (done) => {
-      const [e] = builder(() => vdom.element('a'));
+      const [e1, e2] = builder(
+        (props, chren) => vdom.element('a', props, chren),
+        (props, chren) => builder('a')[0](props, chren)
+      );
       fixture(new (define('x-test', {
         render() {
-          return e();
+          return [
+            e1({ a1: 'a1' }, 'a1'),
+            e2({ a2: 'a2' }, 'a2'),
+          ];
         },
         rendered({ shadowRoot }) {
-          const [elE] = [].slice.call(shadowRoot.children);
-          expect(elE.tagName).to.equal('A');
+          const [el1, el2] = [].slice.call(shadowRoot.children);
+          expect(shadowRoot.children.length).to.equal(2);
+          expect(el1.outerHTML).to.equal('<a a1="a1">a1</a>');
+          expect(el2.outerHTML).to.equal('<a a2="a2">a2</a>');
           done();
         },
       }))());
