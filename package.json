@@ -26,6 +26,7 @@
     "incremental-dom": "0.4.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.11.5",
     "birdpoo": "0.x",
     "document-register-element": "^1.1.1",
     "eslint": "3.5.0",
@@ -48,5 +49,7 @@
       "path": "cz-conventional-changelog"
     }
   },
-  "pre-commit": ["precommit"]
+  "pre-commit": [
+    "precommit"
+  ]
 }

@@ -115,6 +115,12 @@ describe('vdom/elements', () => {
           done
         );
       });
+
+      describe('attrsObject should accept null and not throw', () => {
+        it('null', () => {
+          expect(() => create(() => vdom.element('div', null))).to.not.throw();
+        });
+      });
     });
   });
 

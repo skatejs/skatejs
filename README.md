@@ -16,8 +16,6 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 - It's very fast.
 - It works with multiple versions of itself on the page.
 
-
-
 HTML
 
 ```html

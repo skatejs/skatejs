@@ -79,23 +79,11 @@ function Component(self) {
   return elem;
 }
 
-Object.defineProperties(Component, {
-  // v1
-  observedAttributes: {
-    configurable: true,
-    get() {
-      return [];
-    },
-  },
+// v1
+Component.observedAttributes = [];
 
-  // Skate
-  props: {
-    configurable: true,
-    get() {
-      return {};
-    },
-  },
-});
+// Skate
+Component.props = {};
 
 // Skate
 Component.extend = function extend(definition = {}, Base = this) {

@@ -295,8 +295,9 @@ export function element(tname, attrs, ...chren) {
     chren = [attrs];
   }
 
-  // Ensure the attributes are an object.
-  if (atype !== 'object') {
+  // Ensure the attributes are an object. Null is considered an object so we
+  // have to test for this explicitly.
+  if (attrs === null || atype !== 'object') {
     attrs = {};
   }
 

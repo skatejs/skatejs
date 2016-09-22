@@ -10,13 +10,14 @@ import Component from './component';
 import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
+import keys from '../util/get-all-keys';
 
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions(Ctor) {
   const props = Ctor.props;
-  const names = Object.keys(props || {});
-  return names.reduce((descriptors, descriptorName) => {
+
+  return keys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
       descriptors[descriptorName] = initProps(descriptors[descriptorName]);
@@ -29,7 +30,7 @@ function ensurePropertyFunctions(Ctor) {
 // to create properties on the element.
 function ensurePropertyDefinitions(Ctor) {
   const props = ensurePropertyFunctions(Ctor);
-  return Object.keys(props).reduce((descriptors, descriptorName) => {
+  return keys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName](descriptorName);
     return descriptors;
   }, {});
@@ -44,7 +45,7 @@ function formatLinkedAttributes(Ctor) {
     return;
   }
 
-  Object.keys(props).forEach((name) => {
+  keys(props).forEach((name) => {
     const prop = props[name];
     const attr = prop.attribute;
     if (attr) {
@@ -77,7 +78,7 @@ function createInitProps(Ctor) {
       return;
     }
 
-    Object.keys(props).forEach((name) => {
+    keys(props).forEach((name) => {
       const prop = props[name];
       prop.created(elem);
 
