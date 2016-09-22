@@ -4,7 +4,7 @@ import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
 
 describe('lifecycle/render', () => {
-  it('should be called', done => {
+  it('should be called', (done) => {
     let called = false;
     const Elem = define('x-test', {
       render() {
@@ -18,7 +18,7 @@ describe('lifecycle/render', () => {
     );
   });
 
-  it('should get called after created()', done => {
+  it('should get called after created()', (done) => {
     const called = [];
     const Elem = define('x-test', {
       created() {
@@ -36,7 +36,7 @@ describe('lifecycle/render', () => {
     );
   });
 
-  it('should get called before descendants are initialised', done => {
+  it('should get called before descendants are initialised', (done) => {
     const called = [];
     const elem1 = elem();
     const elem2 = elem();
@@ -65,7 +65,7 @@ describe('lifecycle/render', () => {
 
     beforeEach(() => (spy = sinon.spy()));
 
-    it('function', done => {
+    it('function', (done) => {
       const Elem = define('x-test', {
         render() {
           return spy;
@@ -78,22 +78,22 @@ describe('lifecycle/render', () => {
       );
     });
 
-    it('array of functions', done => {
+    it('array of functions', (done) => {
       const Elem = define('x-test', {
         render() {
-          return [spy, spy, spy];
+          return [spy, null, spy];
         },
       });
       fixture(new Elem());
       afterMutations(
-        () => expect(spy.callCount).to.equal(3),
+        () => expect(spy.callCount).to.equal(2),
         done
       );
     });
   });
 
   describe('updated()', () => {
-    it('should be called even if there is no render function', done => {
+    it('should be called even if there is no render function', (done) => {
       let called = 0;
       const Elem = define('x-test', {
         props: {
@@ -134,7 +134,7 @@ describe('lifecycle/render', () => {
       );
     });
 
-    it('should prevent rendering if it returns falsy', done => {
+    it('should prevent rendering if it returns falsy', (done) => {
       let calledUpdated;
       let calledRender = false;
       const Elem = define('x-test', {
@@ -154,7 +154,7 @@ describe('lifecycle/render', () => {
       });
     });
 
-    it('should allow rendering', done => {
+    it('should allow rendering', (done) => {
       let calledUpdated;
       let calledRender = false;
       const Elem = define('x-test', {
@@ -175,7 +175,7 @@ describe('lifecycle/render', () => {
       });
     });
 
-    it('should allow props to be set within it and not be called again as a result', done => {
+    it('should allow props to be set within it and not be called again as a result', (done) => {
       let calledUpdated = 0;
       let calledRender = 0;
       const Elem = define('x-test', {
@@ -197,6 +197,7 @@ describe('lifecycle/render', () => {
           return true;
         },
         render() {
+          /* eslint no-plusplus: 0 */
           ++calledRender;
         },
       });
@@ -211,7 +212,7 @@ describe('lifecycle/render', () => {
   });
 
   describe('rendered()', () => {
-    it('should be called after rendering', done => {
+    it('should be called after rendering', (done) => {
       const order = [];
       const Elem = define('x-test', {
         updated() {
@@ -236,7 +237,7 @@ describe('lifecycle/render', () => {
       });
     });
 
-    it('should not be called if render() is not defined', done => {
+    it('should not be called if render() is not defined', (done) => {
       let afterCalled = false;
       const Elem = define('x-test', {
         rendered() {
@@ -251,7 +252,7 @@ describe('lifecycle/render', () => {
       });
     });
 
-    it('should not be called if rendering is prevented', done => {
+    it('should not be called if rendering is prevented', (done) => {
       let afterCalled = false;
       const Elem = define('x-test', {
         updated() {

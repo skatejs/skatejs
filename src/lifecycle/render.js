@@ -50,9 +50,13 @@ export default function (Ctor) {
       patchInner(sr, () => {
         const possibleFn = render(elem);
         if (typeof possibleFn === 'function') {
-          possibleFn(elem);
+          possibleFn();
         } else if (Array.isArray(possibleFn)) {
-          possibleFn.forEach(fn => fn());
+          possibleFn.forEach((fn) => {
+            if (typeof fn === 'function') {
+              fn();
+            }
+          });
         }
       });
 
