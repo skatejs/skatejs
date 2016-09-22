@@ -258,7 +258,8 @@ function stackClose(tname) {
   const chren = stackChren.pop();
   const props = tname[$stackCurrentHelperProps];
   delete tname[$stackCurrentHelperProps];
-  return tname(props, () => chren.forEach(args => args[0](...args[1])));
+  const elemOrFn = tname(props, () => chren.forEach(args => args[0](...args[1])));
+  return typeof elemOrFn === 'function' ? elemOrFn() : elemOrFn;
 }
 
 // Incremental DOM overrides
