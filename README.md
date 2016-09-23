@@ -722,19 +722,36 @@ skate.define('my-component', {
 
 #### `render`
 
-Function that is called to render the element. This is called when the element is first created and on subsequent property updates if the property `render()` function returns true.
+Function that is called to render the element. This is called when the element is first created and on subsequent prop updates if the property `updated()` callback returns `true`.
 
 ```js
 skate.define('my-component', {
-  render (elem) {
-    skate.h('p', `My name is ${elem.tagName}.`);
+  render(elem) {
+    return skate.h('p', `My name is ${elem.tagName}.`);
   }
 });
 ```
 
+You may also return an array which negates the need to put a wrapper around several elements:
+
+```js
+skate.define('my-component', {
+  render(elem) {
+    return [
+      skate.h('paragraph 1'),
+      skate.h('paragraph 2'),
+    ];
+  }
+});
+```
+
+The above isn't restricted to the `vdom.builder()` API, either; it works with all forms of declaring your virtual DOM.
+
 *It is not called if the element is not in the document. It will be called just before `attached` so that it renders as early as possible, but only if necessary.*
 
 *Updating props from within `render()`, while discouraged, will not trigger another render.*
+
+*Returning the result of your `vdom` calls is only required when you're using `vdom.builder()` or `h`. It is not required when using the (now deprecated) `vdom.element()` and `vdom.text()` calls, or if you're using Incremental DOM directly.*
 
 
 
