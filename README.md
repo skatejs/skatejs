@@ -1478,12 +1478,10 @@ skate.define('my-element', {
 
 ###### `skip`
 
-This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
-
-This is also helpful when integrating with 3rd-party libraries that may mutate the DOM.
+This is helpful when integrating with 3rd-party libraries that may mutate the DOM.
 
 ```js
-skate.h('div', { skip: true });
+skate.h('div', { ref: e => (e.innerHTML = '<p>oh no you didn\'t</p>'), skip: true });
 ```
 
 
