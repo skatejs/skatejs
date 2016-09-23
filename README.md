@@ -860,13 +860,13 @@ Emits an `Event` on `elem` that `composed`, `bubbles` and is `cancelable` by def
 ```js
 skate.define('x-tabs', {
   render(elem) {
-    skate.h('x-tab', { onSelect: () => {} });
+    return skate.h('x-tab', { onSelect: () => {} });
   }
 });
 
 skate.define('x-tab', {
   render(elem) {
-    skate.h('a', { onClick: () => emit(elem, 'select') });
+    return skate.h('a', { onClick: () => emit(elem, 'select') });
   }
 });
 ```
@@ -915,7 +915,7 @@ skate.define('my-input', function () {
     value: { attribute: true }
   },
   render (elem) {
-    skate.h('input', { onChange: skate.link(elem), type: 'text' });
+    return skate.h('input', { onChange: skate.link(elem), type: 'text' });
   }
 });
 ```
@@ -1132,7 +1132,7 @@ When a component renders for the first time, it creates a new shadow root - if i
 ```js
 skate.define('my-component', {
   render() {
-    skate.h('p', 'test');
+    return skate.h('p', 'test');
   },
   ready(elem) {
     // #shadow-root
@@ -1362,28 +1362,28 @@ However, since this is provided in the Incremental DOM functions that Skate expo
 Function helpers are passed in the same way as a component constructor but are handled differently. They provide a way for you to write pure, stateless, functions that will render virtual elements in place of the element that you've passed the function to. Essentially they're stateless, private web components.
 
 ```js
-const MyElement = () => vdom.h('div', 'Hello, World!');
+const MyElement = () => skate.h('div', 'Hello, World!');
 
 // Renders <div>Hello, World!</div>
-vdom.h(MyElement);
+skate.h(MyElement);
 ```
 
 You can customise the output using properties:
 
 ```js
-const MyElement = props => vdom.h('div', `Hello, ${props.name}!`);
+const MyElement = props => skate.h('div', `Hello, ${props.name}!`);
 
 // Renders <div>Hello, Bob!</div>
-vdom.h(MyElement, { name: 'Bob' });
+skate.h(MyElement, { name: 'Bob' });
 ```
 
 Or you could use children:
 
 ```js
-const MyElement = (props, chren) => vdom.h('div', 'Hello, ', chren, '!');
+const MyElement = (props, chren) => skate.h('div', 'Hello, ', chren, '!');
 
 // Renders <div>Hello, Mary!</div>
-vdom.h(MyElement, 'Mary');
+skate.h(MyElement, 'Mary');
 ```
 
 As with the component constructor, you can also use this in JSX or any other templating language that supports passing functions as tag names:
@@ -1473,7 +1473,7 @@ For example, if you define a function outside of `render()`, it will only be cal
 const ref = console.log;
 skate.define('my-element', {
   render() {
-    skate.h('div', { ref });
+    return skate.h('div', { ref });
   }
 });
 ```
@@ -1484,7 +1484,7 @@ However, if you define the `ref` function within `render()`, it will be a new re
 skate.define('my-element', {
   render() {
     const ref = console.log;
-    skate.h('div', { ref });
+    return skate.h('div', { ref });
   }
 });
 ```
@@ -1662,7 +1662,7 @@ You may write a component that you change in a backward incompatible way. In ord
 export default function (name) {
   return skate.define(name, {
     render (elem) {
-      skate.h('div', `This element has been called: ${elem.tagName}.`);
+      return skate.h('div', `This element has been called: ${elem.tagName}.`);
     }
   });
 }
@@ -1760,7 +1760,7 @@ skate.define('x-element', {
   },
   render(elem) {
     // Renders: "<div>some data</div>"
-    skate.h('div', map.get(elem));
+    return skate.h('div', map.get(elem));
   }
 });
 ```
@@ -1932,8 +1932,10 @@ In order to style your components, you should assume Shadow DOM encapsulation. T
 ```js
 skate.define('x-component', {
   render() {
-    skate.h('style', '.my-class { display: block; }');
-    skate.h('div', { class: 'my-class' });
+    return [
+      skate.h('style', '.my-class { display: block; }'),
+      skate.h('div', { class: 'my-class' }),
+    ];
   }
 });
 ```
