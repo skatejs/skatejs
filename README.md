@@ -30,7 +30,7 @@ skate.define('x-hello', {
     name: { attribute: true }
   },
   render (elem) {
-    skate.vdom.text(`Hello, ${elem.name}`);
+    skate.h('div', `Hello, ${elem.name}`);
   }
 });
 ```
@@ -279,11 +279,10 @@ skate.define('x-counter', {
     clearInterval(elem[sym]);
   },
   render(elem) {
-    // This first call to text() will not re-render because it does not change.
-    skate.vdom.text('Count: ');
-
-    // This will re-render when the count changes.
-    skate.vdom.text(elem.count);
+    // By separating the strings (and not using template literals or string 
+    // concatenation) it ensures the strings are diffed indepenedently. If
+    // you select "Count" with your mouse, it will not deselect whenr endered.
+    return skate.h('div', 'Count ', elem.count);
   }
 });
 ```
@@ -720,7 +719,7 @@ Function that is called to render the element. This is called when the element i
 ```js
 skate.define('my-component', {
   render (elem) {
-    skate.vdom.element('p', `My name is ${elem.tagName}.`);
+    skate.h('p', `My name is ${elem.tagName}.`);
   }
 });
 ```
@@ -836,13 +835,13 @@ Emits an `Event` on `elem` that `composed`, `bubbles` and is `cancelable` by def
 ```js
 skate.define('x-tabs', {
   render(elem) {
-    skate.vdom.element('x-tab', { onselect: () => {} });
+    skate.h('x-tab', { onSelect: () => {} });
   }
 });
 
 skate.define('x-tab', {
   render(elem) {
-    skate.vdom.element('a', { onclick: () => emit(elem, 'select') });
+    skate.h('a', { onClick: () => emit(elem, 'select') });
   }
 });
 ```
@@ -891,7 +890,7 @@ skate.define('my-input', function () {
     value: { attribute: true }
   },
   render (elem) {
-    skate.vdom.element('input', { onchange: skate.link(elem), type: 'text' });
+    skate.h('input', { onChange: skate.link(elem), type: 'text' });
   }
 });
 ```
@@ -899,7 +898,7 @@ skate.define('my-input', function () {
 By default the `propSpec` defaults to `e.currentTarget.getAttribute('name')` or `"value"` which is why it wasn't specified in the example above. In the example above, it would set `value` on the component. If you were to give your input a name, it would use the name from the event `currentTarget` as the name that should be set. For example if you changed your input to read:
 
 ```js
-skate.vdom.element('input', { name: 'someValue', onchange: skate.link(elem), type: 'text' });
+skate.h('input', { name: 'someValue', onChange: skate.link(elem), type: 'text' });
 ```
 
 Then instead of setting `value` on the component, it would set `someValue`.
@@ -923,20 +922,20 @@ In the above example, the `obj` property would trigger an update even though onl
 You can even take this a step further and specify a sub-object to modify using the name of the `currentTarget` (or `value`, of course) if `propSpec` ends with a `.`. For example:
 
 ```js
-skate.vdom.element('input', { name: 'someValue', onchange: skate.link(elem, 'obj.'), type: 'text' });
+skate.h('input', { name: 'someValue', onChange: skate.link(elem, 'obj.'), type: 'text' });
 ```
 
 The above example would set `obj.someValue` because the name of the input was `someValue`. This doesn't look much different from the previous example, but this allows you to create a single link handler for use with multiple inputs:
 
 ```js
 const linkage = skate.link(elem, 'obj.');
-skate.vdom.element('input', { name: 'someValue1', onchange: linkage, type: 'text' });
-skate.vdom.element('input', { name: 'someValue2', onchange: linkage, type: 'checkbox' });
-skate.vdom.element('input', { name: 'someValue3', onchange: linkage, type: 'radio' });
-skate.vdom.element('select', { name: 'someValue4', onchange: linkage }, function () {
-  skate.vdom.element('option', { value: 2 }, 'Option 2');
-  skate.vdom.element('option', { value: 1 }, 'Option 1');
-});
+skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
+skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
+skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
+skate.h('select', { name: 'someValue4', onChange: linkage },
+  skate.h('option', { value: 2 }, 'Option 2');
+  skate.h('option', { value: 1 }, 'Option 1');
+);
 ```
 
 The above linkage would set:
@@ -1087,18 +1086,16 @@ Symbols allow you to access object information which would be otherwise inaccess
 The `name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registered with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
 
 ```js
-import { define, symbols } from 'skatejs';
-
-const MyComponent1 = define('my-component', {});
+const MyComponent1 = skate.define('my-component', {});
 
 // my-component
-console.log(MyComponent1[symbols.name]);
+console.log(MyComponent1[skate.symbols.name]);
 
 // If re-registering in HMR...
-const MyComponent2 = define('my-component', {});
+const MyComponent2 = skate.define('my-component', {});
 
 // my-component-1
-console.log(MyComponent2[symbols.name]);
+console.log(MyComponent2[skate.symbols.name]);
 ```
 
 
@@ -1108,311 +1105,83 @@ console.log(MyComponent2[symbols.name]);
 When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
 
 ```js
-import { define, symbols, vdom } from 'skatejs';
-
-define('my-component', {
-  render () {
-    vdom.element('p', 'test');
+skate.define('my-component', {
+  render() {
+    skate.h('p', 'test');
   },
-  ready (elem) {
+  ready(elem) {
     // #shadow-root
     //   <p>test</p>
-    elem[symbols.shadowRoot];
+    elem[skate.symbols.shadowRoot];
   }
 });
 ```
 
 
 
-### `vdom`
+### `h`
 
-Skate includes several helpers for creating virtual elements with Incremental DOM.
+The `h` export is the result of a call to `vdom.builder()` that allows you to write [Hyperscript](https://github.com/dominictarr/hyperscript). This also adds first-class JSX support so you can just set the JSX `pragma` to `h` and carry on building stuff.
 
+#### `Hyperscript`
 
-
-#### `vdom.builder ()`
-
-Calling `vdom.create()` without any arguments returns a function that you can call in `render()` to create elements:
+You can use the `h` export to write Hyperscript:
 
 ```js
-const h = vdom.builder();
+skate.define('my-component', {
+  render() {
+    return skate.h('p', { style: { fontWeight: 'bold' } }, 'Hello!');
+  }
+});
+```
+
+*Currently id / class selectors are not supported, but [will be soon](https://github.com/skatejs/skatejs/issues/807).*
+
+
+
+#### `JSX`
+
+The `h` export also allows you to write JSX out of the box. All you have to do is include the [standard babel transform](https://babeljs.io/docs/plugins/transform-react-jsx/).
+
+
+
+##### Setting `pragma`
+
+It's preferred that you set the JSX `pragma` to `h` (or `skate.h` if you're using globals), if possible, so that you don't confuse anyone by using the default `React.createElement()` in a non-React app.
+
+```js
+// .babe.rc
+{
+  "plugins": [
+    ["transform-react-jsx", {
+      "pragma": "h"
+    }]
+  ]
+}
+
+// my-component.js
+import { define, h } from 'skatejs';
 define('my-component', {
   render() {
-    return h('div', { id: 'test', }, h('p', 'test'));
+    return <p>Hello!</p>;
   }
 });
 ```
 
-It's very similar to the Hyperscript style syntax, however, it currently doesn't support selectors as part of the node-name argument to set id / classes.
-
-The benefit of being able to do do this is that you can use JSX out of the box by doing something like:
-
-```js
-// Using the default React.createElement() pragma.
-const React = { createElement: skate.vdom.builder() };
-
-// Using the Hypserscript "h" pragma.
-const h = skate.vdom.builder();
-```
 
 
+##### Default `React.createElement()`
 
-#### `vdom.builder (...elements)`
-
-When `vdom.builder()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
+If you don't have control over the `pragma`, you can get around it by defining the `React.createElement()` interface with the `h` export.
 
 ```js
-const [ div, p ] = skate.vdom.builder('div', 'p');
+import { define, h } from 'skatejs';
+const React = { createElement: h };
 define('my-component', {
   render() {
-    return div({ id: 'mydiv' }, p('test'));
+    return <p>Hello!</p>;
   }
 });
-```
-
-This is syntactic sugar around the lower-level `vdom.element()`, which could do the same thing, just much more verbose:
-
-```js
-define('my-component', {
-  render() {
-    skate.vdom.element('div', { id: 'mydiv' }, () => {
-      skate.vdom.element('p', 'test');
-    });
-  }
-});
-```
-
-Both of the above would produce:
-
-```html
-<div id="mydiv">
-  <p>test</p>
-</div>
-```
-
-You can also pass in functions and component constructors - as opposed to just strings - and you call them the same way as if you would have passed strings:
-
-```js
-const [ div, myFunc, myComponent, p ] = skate.vdom.builder(
-  'div',
-  (props, chren) => p(props, chren),
-  define('my-component', {}),
-  'p'
-);
-define('my-component', {
-  render() {
-    return div(myFunc(myComponent('test')));
-  }
-});
-```
-
-Which would render:
-
-```html
-<div>
-  <p>
-    <my-component>test</my-component>
-  </p>
-</div>
-```
-
-
-
-#### `vdom.element (elementName, attributesOrChildren, ...children)`
-
-The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
-
-The `attributesOrChildren` argument is either an `object`, a `function` that will render the children for this element or a `string` if you only want to render a text node as the children.
-
-The rest of the arguemnts are functions that render out `children`.
-
-```js
-skate.vdom.element('select', { name: 'my-select' }, function () {
-  skate.vdom.element('option', { value: 'myval' }, 'My Value');
-});
-```
-
-
-
-##### Component constructor
-
-If you pass a component constructor instead of an string for the `elementName`, the name of the component will be used as the `elementName`. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
-
-```js
-const MyElement = skate.define('my-element');
-
-// Renders <my-element />
-skate.vdom.element(MyElement);
-```
-
-This is provided at the Incremental DOM level of Skate, so you can also do:
-
-```js
-skate.vdom.elementOpen(MyElement);
-```
-
-This is very helpful in JSX:
-
-```js
-<MyElement />
-```
-
-However, since this is provided in the Incremental DOM functions that Skate exports, it means that you can do this in any templating language that supports it.
-
-
-
-##### Function helper
-
-Function helpers are passed in the same way as a component constructor but are handled differently. They provide a way for you to write pure, stateless, functions that will render virtual elements in place of the element that you've passed the function to. Essentially they're stateless, private web components.
-
-```js
-const MyElement = () => vdom.element('div', 'Hello, World!');
-
-// Renders <div>Hello, World!</div>
-vdom.element(MyElement);
-```
-
-You can customise the output using properties:
-
-```js
-const MyElement = props => vdom.element('div', `Hello, ${props.name}!`);
-
-// Renders <div>Hello, Bob!</div>
-vdom.element(MyElement, { name: 'Bob' });
-```
-
-Or you could use children:
-
-```js
-const MyElement = (props, chren) => vdom.element('div', () => {
-  vdom.text('Hello, ');
-  chren();
-  vdom.text('!');
-});
-
-// Renders <div>Hello, Mary!</div>
-vdom.element(MyElement, 'Mary');
-```
-
-As with the component constructor, you can also use this in JSX or any other templating language that supports passing functions as tag names:
-
-```js
-const MyElement = (props, chren) => <div>Hello, {chren()}!</div>;
-
-// Renders <div>Hello, Mary!</div>
-<MyElement>Mary</MyElement>
-```
-
-
-
-#### `vdom.text (text)`
-
-The `text()` function is exported directly from Incremental DOM and you could use that if you wanted to instead of specifying text as a string to a parent node:
-
-```js
-skate.vdom.element('option', { name: 'my-select' }, function () {
-  skate.vdom.element('option', { value: 'myval' }, function () {
-    skate.vdom.text('My Value');
-  });
-});
-```
-
-This is very useful if you need to render text with other elements as siblings, or do complex conditional rendering. It's also useful when your custom element may only need to render text nodes to its shadow root.
-
-
-
-#### Special Attributes
-
-Skate adds some opinionated behaviour to Incremental DOM.
-
-
-
-##### `attrs.class`
-
-The recommended way to specify a list of classes on an element is by simply specifying the `class` attribute as you'd normally do in HTML. It's not necessary to specify `className`, though you can if you really want to.
-
-
-
-##### `attrs.key`
-
-This gives the virtual element a [`key`](http://google.github.io/incremental-dom/#conditional-rendering/array-of-items) that Incremental DOM uses to keep track of it for more efficient patches when dealing with arrays of items.
-
-```js
-skate.vdom.element('ul', function () {
-  skate.vdom.element('li', { key: 0 });
-  skate.vdom.element('li', { key: 1 });
-});
-```
-
-
-
-##### `attrs.on*`
-
-Any attribute beginning with `on` will be bound to the event matching the part found after `on`. For example, if you specify `onclick`, the value will be bound to the `click` event of the element.
-
-```js
-skate.vdom.element('button', { onclick: e => console.log(e) }, 'Click me!');
-```
-
-You can also bind to custom events:
-
-```js
-skate.vdom.element('my-element', { onsomecustomevent: e => console.log(e) });
-```
-
-
-
-##### `attrs.ref`
-
-A callback that is called when the attribute is set on the corresponding element. The only argument is the element that `ref` is bound to.
-
-```js
-const ref = button => button.addEventListener('click', console.log);
-skate.vdom.element('button', { ref });
-```
-
-
-
-##### `attrs.skip`
-
-This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
-
-This is also helpful when integrating with 3rd-party libraries that may mutate the DOM.
-
-```js
-skate.vdom.element('div', { skip: true });
-```
-
-
-
-##### `attrs.statics`
-
-This is an array that tells Incremental DOM which attributes should be considered [static](http://google.github.io/incremental-dom/#rendering-dom/statics-array).
-
-```js
-skate.vdom.element('div', { statics: ['attr1', 'prop2'] });
-```
-
-
-
-##### Boolean Attributes
-
-If you specify `false` as any attribute value, the attribute will not be added, it will simply be ignored.
-
-
-
-#### Using JSX and other templating languages
-
-The `vdom` module is provided for a simple way to write virtual DOM using only functions. If you don't want to do that, you can use any templating language that compiles down to Incremental DOM calls.
-
-The simplest way to use JSX with Skate is to call `skate.vdom.create()` that returns a function which can be used as your JSX `pragma`:
-
-```js
-// Using the default React.createElement() pragma.
-const React = { createElement: skate.vdom.create() };
-
-// Using the Hypserscript "h" pragma.
-const h = skate.vdom.create();
 ```
 
 
@@ -1453,46 +1222,198 @@ skate.define('my-element', {
 
 
 
-## Component Lifecycle
+### `vdom`
 
-The component lifecycle consists of several paths in the following order starting from when the element is first created.
-
-1. `props` are defined and set to initial values
-2. `created` is invoked
-3. `attached` is invoked when added to the document (or if already in the document)
-4. `updated` is always invoked before `render()` when properties have changed
-5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
-6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
-7. `detached` is invoked when removed from the document
-8. `attributeChanged` is invoked whenever an attribute is changed
+Skate includes several helpers for creating virtual elements with Incremental DOM.
 
 
 
-## Binding Events
+#### `vdom.builder ()`
 
-Generally, binding events to elements are done using the `vdom` [on* syntax](https://github.com/skatejs/skatejs#attrson):
+Calling `vdom.builder()` without any arguments returns a function that you can call in `render()` to create elements. This is how the `h` export is created.
 
 ```js
-skate.define('x-element', {
-  render(elem) {
-    skate.vdom.element('div', {
-      // Adds listener as property because onclick is a native property
-      onclick() {},
-
-      // Adds "testIng" listener using addEventListener.
-      onTestIng() {},
-
-      // Adds "testIng" listener using addEventListener.
-      'on-testIng'() {},
-
-      // Adds "test-ing" listener using addEventListener.
-      'on-test-ing'() {}
-    });
+const h = vdom.builder();
+define('my-component', {
+  render() {
+    return h('div', { id: 'test', }, h('p', 'test'));
   }
 });
 ```
 
-For instances where you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
+
+
+#### `vdom.builder (...elements)`
+
+When `vdom.builder()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
+
+```js
+const [ div, p ] = skate.vdom.builder('div', 'p');
+define('my-component', {
+  render() {
+    return div({ id: 'mydiv' }, p('test'));
+  }
+});
+```
+
+
+#### [DEPRECATED] `vdom.element (elementName, attributesOrChildren, ...children)`
+
+*This has been deprecated in favour of using the `vdom.builder()` API, or the `h` export directly.
+
+The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
+
+The `attributesOrChildren` argument is either an `object`, a `function` that will render the children for this element or a `string` if you only want to render a text node as the children.
+
+The rest of the arguemnts are functions that render out `children`.
+
+```js
+skate.vdom.element('select', { name: 'my-select' }, function () {
+  skate.vdom.element('option', { value: 'myval' }, 'My Value');
+});
+```
+
+
+
+#### [DEPRECATED] `vdom.text (text)`
+
+*This has been deprecated in favour of just passing text to an element.*
+
+The `text()` function is exported directly from Incremental DOM and you could use that if you wanted to instead of specifying text as a string to a parent node:
+
+```js
+skate.vdom.element('option', { name: 'my-select' }, function () {
+  skate.vdom.element('option', { value: 'myval' }, function () {
+    skate.vdom.text('My Value');
+  });
+});
+```
+
+This is very useful if you need to render text with other elements as siblings, or do complex conditional rendering. It's also useful when your custom element may only need to render text nodes to its shadow root.
+
+
+
+#### Incremental DOM
+
+Skate uses Incremental DOM underneath the hood because not only is it performant and memory-efficient, it also acts as a backend to any templating language that can compile down to it. It's less limiting as a transpile target than other virtual DOM implementations so you can use languages other than JSX with it.
+
+We wrap Incremental DOM to add functionality on top of it that we feel is essential to productively building web components:
+
+- We set properties instead of attributes wherever possible
+- You can pass component constructors and stateless functions as element names directly to the Incremental DOM functions, just like you can in JSX
+- We handle special properties such as `class`, `key`, `ref`, `skip` and `statics`
+
+
+
+##### Component constructor
+
+If you pass a component constructor instead of an string as the element name, the name of the component will be used. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
+
+```js
+const MyElement = skate.define('my-element');
+
+// Renders <my-element />
+skate.h(MyElement);
+```
+
+This is provided at the Incremental DOM level of Skate, so you can also do:
+
+```js
+skate.vdom.elementOpen(MyElement);
+```
+
+This is very helpful in JSX:
+
+```js
+<MyElement />
+```
+
+However, since this is provided in the Incremental DOM functions that Skate exports, it means that you can do this in any templating language that supports it.
+
+
+
+##### Function helper
+
+Function helpers are passed in the same way as a component constructor but are handled differently. They provide a way for you to write pure, stateless, functions that will render virtual elements in place of the element that you've passed the function to. Essentially they're stateless, private web components.
+
+```js
+const MyElement = () => vdom.h('div', 'Hello, World!');
+
+// Renders <div>Hello, World!</div>
+vdom.h(MyElement);
+```
+
+You can customise the output using properties:
+
+```js
+const MyElement = props => vdom.h('div', `Hello, ${props.name}!`);
+
+// Renders <div>Hello, Bob!</div>
+vdom.h(MyElement, { name: 'Bob' });
+```
+
+Or you could use children:
+
+```js
+const MyElement = (props, chren) => vdom.h('div', 'Hello, ', chren, '!');
+
+// Renders <div>Hello, Mary!</div>
+vdom.h(MyElement, 'Mary');
+```
+
+As with the component constructor, you can also use this in JSX or any other templating language that supports passing functions as tag names:
+
+```js
+const MyElement = (props, chren) => <div>Hello, {chren}!</div>;
+
+// Renders <div>Hello, Mary!</div>
+<MyElement>Mary</MyElement>
+```
+
+
+
+##### Special Attributes
+
+Skate adds some opinionated behaviour to Incremental DOM.
+
+
+
+###### `class`
+
+The recommended way to specify a list of classes on an element is by simply specifying the `class` attribute as you'd normally do in HTML. It's not necessary to specify `className`, though you can if you really want to.
+
+
+
+###### `key`
+
+This gives the virtual element a [`key`](http://google.github.io/incremental-dom/#conditional-rendering/array-of-items) that Incremental DOM uses to keep track of it for more efficient patches when dealing with arrays of items.
+
+```js
+skate.h('ul',
+  skate.h('li', { key: 0 });
+  skate.h('li', { key: 1 });
+);
+```
+
+
+
+###### `on*`
+
+Any attribute beginning with `on` followed by an uppercase character or dash, will be bound to the event matching the part found after `on`.
+
+```js
+const onClick = console.log;
+skate.h('button', { onClick });
+skate.h('button', { 'on-click': onClick });
+```
+
+Additionally, events that exist as properties on DOM elements can also be used:
+
+```js
+skate.h('button', { onclick: onClick });
+```
+
+if you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
 
 ```js
 skate.define('x-element', {
@@ -1507,6 +1428,86 @@ skate.define('x-element', {
   }
 });
 ```
+
+
+
+###### `ref`
+
+A callback that is called when the attribute is set on the corresponding element. The only argument is the element that `ref` is bound to.
+
+```js
+const ref = button => button.addEventListener('click', console.log);
+skate.h('button', { ref });
+```
+
+Refs are only called on the element when the value of `ref` changes. This means they get called on the initial set, and subsequent sets if the reference to the value changes.
+
+For example, if you define a function outside of `render()`, it will only be called when the element is rendered for the first time:
+
+```js
+const ref = console.log;
+skate.define('my-element', {
+  render() {
+    skate.h('div', { ref });
+  }
+});
+```
+
+However, if you define the `ref` function within `render()`, it will be a new reference every time, and thus be called every time:
+
+```js
+skate.define('my-element', {
+  render() {
+    const ref = console.log;
+    skate.h('div', { ref });
+  }
+});
+```
+
+*It's important to understand that this only gets called on the element when either the ref is set up or changed, not when the element is removed from the tree. This is because we discourage saving the value of `ref`. If you need it to only be called when the element is set up, put the `ref` outside of `render()`. If you absolutely need to save the value, try using a `WeakMap`.*
+
+
+
+###### `skip`
+
+This tells Incremental DOM to skip the element that has this attribute. This is automatically applied when `slot()` is called as the slotted elements will be managed by the parent component, not by the current diff tree. Elements that have this attribute cannot have children.
+
+This is also helpful when integrating with 3rd-party libraries that may mutate the DOM.
+
+```js
+skate.h('div', { skip: true });
+```
+
+
+
+###### `statics`
+
+This is an array that tells Incremental DOM which attributes should be considered [static](http://google.github.io/incremental-dom/#rendering-dom/statics-array).
+
+```js
+skate.h('div', { statics: ['attr1', 'prop2'] });
+```
+
+
+
+###### Boolean Attributes
+
+If you specify `false` as any attribute value, the attribute will not be added, it will simply be ignored.
+
+
+
+## Component Lifecycle
+
+The component lifecycle consists of several paths in the following order starting from when the element is first created.
+
+1. `props` are defined and set to initial values
+2. `created` is invoked
+3. `attached` is invoked when added to the document (or if already in the document)
+4. `updated` is always invoked before `render()` when properties have changed
+5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
+6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
+7. `detached` is invoked when removed from the document
+8. `attributeChanged` is invoked whenever an attribute is changed
 
 
 
@@ -1638,7 +1639,7 @@ You may write a component that you change in a backward incompatible way. In ord
 export default function (name) {
   return skate.define(name, {
     render (elem) {
-      skate.vdom.text(`This element has been called: ${elem.tagName}.`);
+      skate.h('div', `This element has been called: ${elem.tagName}.`);
     }
   });
 }
@@ -1735,8 +1736,8 @@ skate.define('x-element', {
     map.set(elem, 'some data');
   },
   render(elem) {
-    // Renders: "some data"
-    skate.vdom.text(map.get(elem));
+    // Renders: "<div>some data</div>"
+    skate.h('div', map.get(elem));
   }
 });
 ```
@@ -1908,8 +1909,8 @@ In order to style your components, you should assume Shadow DOM encapsulation. T
 ```js
 skate.define('x-component', {
   render() {
-    skate.vdom.element('style', '.my-class { display: block; }');
-    skate.vdom.element('div', { class: 'my-class' });
+    skate.h('style', '.my-class { display: block; }');
+    skate.h('div', { class: 'my-class' });
   }
 });
 ```
