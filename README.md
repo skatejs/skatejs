@@ -1267,7 +1267,7 @@ define('my-component', {
 
 #### [DEPRECATED] `vdom.element (elementName, attributesOrChildren, ...children)`
 
-*This has been deprecated in favour of using the `vdom.builder()` API, or the `h` export directly.
+*This has been deprecated in favour of using the `vdom.builder()` API, or the `h` export directly.*
 
 The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
 
