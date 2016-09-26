@@ -1175,7 +1175,7 @@ The `h` export also allows you to write JSX out of the box. All you have to do i
 It's preferred that you set the JSX `pragma` to `h` (or `skate.h` if you're using globals), if possible, so that you don't confuse anyone by using the default `React.createElement()` in a non-React app.
 
 ```js
-// .babe.rc
+// .babelrc
 {
   "plugins": [
     ["transform-react-jsx", {
