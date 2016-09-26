@@ -73,10 +73,8 @@ function callDisconnected(elem) {
 }
 
 // v1
-function Component(self) {
-  const elem = HTMLElement.call(this, self);
-  callConstructor(elem);
-  return elem;
+function Component(...args) {
+  return Reflect.construct(HTMLElement, args, this.constructor);
 }
 
 // v1
@@ -135,6 +133,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   connectedCallback: {
     configurable: true,
     value() {
+      callConstructor(this);
       callConnected(this);
     },
   },
