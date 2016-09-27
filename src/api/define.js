@@ -11,6 +11,9 @@ import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
 import keys from '../util/get-all-keys';
+import rand from '../util/rand';
+
+const { customElements } = window;
 
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
@@ -93,44 +96,26 @@ function createInitProps(Ctor) {
   };
 }
 
-function generateUniqueName(name) {
-  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
-  const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8); // eslint-disable-line no-mixed-operators
-    return v.toString(16);
-  });
-
-  return `${name}-${rand}`;
-}
-
-function prepareForRegistration(name, Ctor) {
-  Ctor[$name] = name;
+function prepareForRegistration(name, Ctor, { unique } = {}) {
   Ctor[$props] = createInitProps(Ctor);
   Ctor[$renderer] = createRenderer(Ctor);
+  Ctor.id = name;
+  Ctor.uniqueId = Ctor[$name] = unique ? `${name}-${rand()}` : name;
 }
 
 function registerV0Element(name, Ctor) {
-  let res;
-  let uniqueName;
   try {
     prepareForRegistration(name, Ctor);
-    res = document.registerElement(name, Ctor);
+    return document.registerElement(Ctor.uniqueId, Ctor);
   } catch (e) {
-    uniqueName = generateUniqueName(name);
-    prepareForRegistration(uniqueName, Ctor);
-    res = document.registerElement(uniqueName, Ctor);
+    prepareForRegistration(name, Ctor, { unique: true });
+    return document.registerElement(Ctor.uniqueId, Ctor);
   }
-  return res;
 }
 
 function registerV1Element(name, Ctor) {
-  let uniqueName = name;
-  if (window.customElements.get(name)) {
-    uniqueName = generateUniqueName(name);
-  }
-  prepareForRegistration(uniqueName, Ctor);
-  window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+  prepareForRegistration(name, Ctor, { unique: customElements.get(name) });
+  customElements.define(Ctor.uniqueId, Ctor, { extends: Ctor.extends });
   return Ctor;
 }
 
@@ -138,6 +123,7 @@ export default function (name, opts) {
   if (opts === undefined) {
     throw new Error(`You have to define options to register a component ${name}`);
   }
+
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
   formatLinkedAttributes(Ctor);
 
