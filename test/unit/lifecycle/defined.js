@@ -5,12 +5,16 @@ describe('lifecycle/defined', () => {
     expect(document.createElement('some-undefined-element').hasAttribute('defined')).to.equal(false);
   });
 
-  it('should add the [defined] attribute when the element is upgraded', () => {
+  it('should add the [defined] attribute when the element is upgraded', done => {
     const Elem = define('x-test', {});
     const elem = new Elem();
 
     document.body.appendChild(elem);
-    expect(elem.hasAttribute('defined')).to.equal(true);
-    elem.remove();
+
+    setTimeout(() => {
+      expect(elem.hasAttribute('defined')).to.equal(true);
+      elem.remove();
+      done();
+    }, 0);
   });
 });
