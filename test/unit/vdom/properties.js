@@ -38,13 +38,21 @@ describe('vdom/properties', () => {
 
   it('false should remove the attribute', done => {
     const elem = new (define('x-test', {
-      render() {
-        vdom.element('div', { test: false });
+      props: {
+        test: prop.boolean(),
+      },
+      render(e) {
+        vdom.element('div', { test: e.test });
       },
     }));
     fixture(elem);
+    let div;
     afterMutations(
-      () => expect(elem[symbols.shadowRoot].firstChild.hasAttribute('test')).to.equal(false),
+      () => (div = elem[symbols.shadowRoot].firstChild),
+      () => (elem.test = true),
+      () => expect(div.hasAttribute('test')).to.equal(true),
+      () => (elem.test = false),
+      () => expect(div.hasAttribute('test')).to.equal(false),
       done
     );
   });
