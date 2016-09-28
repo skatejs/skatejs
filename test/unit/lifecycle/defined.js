@@ -8,6 +8,9 @@ describe('lifecycle/defined', () => {
   it('should add the [defined] attribute when the element is upgraded', () => {
     const Elem = define('x-test', {});
     const elem = new Elem();
+
+    document.body.appendChild(elem);
     expect(elem.hasAttribute('defined')).to.equal(true);
+    elem.remove();
   });
 });

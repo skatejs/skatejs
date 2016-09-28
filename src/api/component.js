@@ -10,6 +10,8 @@ import data from '../util/data';
 import debounce from '../util/debounce';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
+const setElementAsDefined = elem => elem.setAttribute('defined', '');
+
 function callConstructor(elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
@@ -30,8 +32,6 @@ function callConstructor(elem) {
   if (created) {
     created(elem);
   }
-
-  elem.setAttribute('defined', '');
 
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
@@ -74,7 +74,9 @@ function callDisconnected(elem) {
 
 // v1
 function Component(...args) {
-  return Reflect.construct(HTMLElement, args, this.constructor);
+  const elm = Reflect.construct(HTMLElement, args, this.constructor);
+  callConstructor(elm);
+  return elm;
 }
 
 // v1
@@ -133,7 +135,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   connectedCallback: {
     configurable: true,
     value() {
-      callConstructor(this);
+      setElementAsDefined(this);
       callConnected(this);
     },
   },
@@ -185,6 +187,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   createdCallback: {
     configurable: true,
     value() {
+      setElementAsDefined(this);
       callConstructor(this);
     },
   },
