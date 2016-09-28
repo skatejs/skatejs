@@ -8,6 +8,7 @@ import {
 import { customElementsV0 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
+import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 function callConstructor(elem) {
@@ -115,19 +116,23 @@ Component.extend = function extend(definition = {}, Base = this) {
 // Skate
 //
 // This is a default implementation that does strict equality copmarison on
-// prevoius props and next props. It synchronously renders on the first prop
+// previous props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
 Component.updated = function updated(elem, prev) {
   if (!prev) {
     return true;
   }
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const name in prev) {
-    if (prev[name] !== elem[name]) {
-      return true;
+  let wasUpdated = false;
+  // use get all keys so that we check Symbols as well as regular props
+  // using a for loop so we can break early
+  const allKeys = getAllKeys(prev);
+  for (let i = 0; i < allKeys.length; i += 1) {
+    if (prev[allKeys[i]] !== elem[allKeys[i]]) {
+      wasUpdated = true;
+      break;
     }
   }
+  return wasUpdated;
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
