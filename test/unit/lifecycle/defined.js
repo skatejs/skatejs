@@ -13,7 +13,7 @@ describe('lifecycle/defined', () => {
 
     setTimeout(() => {
       expect(elem.hasAttribute('defined')).to.equal(true);
-      elem.remove();
+      document.body.removeChild(elem);
       done();
     }, 0);
   });

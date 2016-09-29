@@ -31,7 +31,7 @@ describe('api/prop', () => {
       elem = create(prop.array());
     });
 
-    afterEach(() => elem.remove());
+    afterEach(() => document.body.removeChild(elem));
 
     it('default', () => {
       expect(elem.test).to.be.an('array');
