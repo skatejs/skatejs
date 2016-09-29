@@ -12,7 +12,7 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 const setElementAsDefined = elem => elem.setAttribute('defined', '');
-const hasReflect = Reflect in window;
+const hasReflect = 'Reflect' in window;
 
 function callConstructor(elem) {
   const elemData = data(elem);
