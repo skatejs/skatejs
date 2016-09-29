@@ -23,7 +23,7 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "0.4.1"
+    "incremental-dom": "0.5.1"
   },
   "devDependencies": {
     "babel-plugin-transform-class-properties": "^6.11.5",
