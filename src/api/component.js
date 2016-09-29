@@ -75,7 +75,8 @@ function callDisconnected(elem) {
 
 // v1
 function Component(...args) {
-  const elm = Reflect.construct(HTMLElement, args, this.constructor);
+  const hasReflect = window.hasOwnProperty('Reflect'); // eslint-disable-line no-prototype-builtins
+  const elm = (hasReflect && Reflect.construct(HTMLElement, args, this.constructor)) || HTMLElement.call(this, args[0]);
   callConstructor(elm);
   return elm;
 }
