@@ -106,7 +106,9 @@ function generateUniqueName(name) {
 
 function prepareForRegistration(name, Ctor) {
   Ctor[$name] = name;
-  Ctor[$props] = createInitProps(Ctor);
+  if (!customElementsV1) {
+    Ctor[$props] = createInitProps(Ctor);
+  }
   Ctor[$renderer] = createRenderer(Ctor);
 }
 

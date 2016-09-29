@@ -27,7 +27,7 @@ function callConstructor(elem) {
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$rendererDebounced] = debounce(Ctor[$renderer]);
 
-  if (props) {
+  if (props && Ctor[$props]) {
     Ctor[$props](elem);
   }
 
@@ -139,6 +139,9 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   connectedCallback: {
     configurable: true,
     value() {
+      // will eventually need to callsomething like this here:
+      // Ctor[$props](elem);
+      console.log('connectedCallback')
       setElementAsDefined(this);
       callConnected(this);
     },

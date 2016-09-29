@@ -52,7 +52,7 @@ describe('api/Component', () => {
   });
 
   describe('updated function', () => {
-    it('should return true if a prop changes', () => {
+    it.only('should return true if a prop changes', () => {
       const initialValue = 'hello world!'
       class Test extends Component {
         static props = {
