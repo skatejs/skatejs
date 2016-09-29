@@ -5,7 +5,7 @@ describe('lifecycle/defined', () => {
     expect(document.createElement('some-undefined-element').hasAttribute('defined')).to.equal(false);
   });
 
-  it('should add the [defined] attribute when the element is upgraded', done => {
+  it('should add the [defined] attribute when the element is upgraded', (done) => {
     const Elem = define('x-test', {});
     const elem = new Elem();
 
@@ -15,6 +15,6 @@ describe('lifecycle/defined', () => {
       expect(elem.hasAttribute('defined')).to.equal(true);
       document.body.removeChild(elem);
       done();
-    }, 0);
+    }, 1);
   });
 });

@@ -131,6 +131,7 @@ Component.updated = function updated(elem, prev) {
       return true;
     }
   }
+  return false;
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
