@@ -8,8 +8,9 @@ import {
 import { customElementsV0 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
-import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+
+const setElementAsDefined = elem => elem.setAttribute('defined', '');
 
 function callConstructor(elem) {
   const elemData = data(elem);
@@ -31,8 +32,6 @@ function callConstructor(elem) {
   if (created) {
     created(elem);
   }
-
-  elem.setAttribute('defined', '');
 
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
@@ -74,10 +73,10 @@ function callDisconnected(elem) {
 }
 
 // v1
-function Component(self) {
-  const elem = HTMLElement.call(this, self);
-  callConstructor(elem);
-  return elem;
+function Component(...args) {
+  const elm = Reflect.construct(HTMLElement, args, this.constructor);
+  callConstructor(elm);
+  return elm;
 }
 
 // v1
@@ -116,21 +115,19 @@ Component.extend = function extend(definition = {}, Base = this) {
 // Skate
 //
 // This is a default implementation that does strict equality copmarison on
-// previous props and next props. It synchronously renders on the first prop
+// prevoius props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
 Component.updated = function updated(elem, prev) {
   if (!prev) {
     return true;
   }
-  // use get all keys so that we check Symbols as well as regular props
-  // using a for loop so we can break early
-  const allKeys = getAllKeys(prev);
-  for (let i = 0; i < allKeys.length; i += 1) {
-    if (prev[allKeys[i]] !== elem[allKeys[i]]) {
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const name in prev) {
+    if (prev[name] !== elem[name]) {
       return true;
     }
   }
-  return false;
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
@@ -138,6 +135,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   connectedCallback: {
     configurable: true,
     value() {
+      setElementAsDefined(this);
       callConnected(this);
     },
   },
@@ -189,6 +187,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   createdCallback: {
     configurable: true,
     value() {
+      setElementAsDefined(this);
       callConstructor(this);
     },
   },

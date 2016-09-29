@@ -4,11 +4,14 @@ import assign from '../../../src/util/assign';
 import element from '../../lib/element';
 
 function create(propLocal) {
-  return new (element().skate({
+  const el = new (element().skate({
     props: {
       test: assign({ attribute: true }, propLocal),
     },
   }));
+
+  document.body.appendChild(el);
+  return el;
 }
 
 function testTypeValues(type, values) {
@@ -27,6 +30,8 @@ describe('api/prop', () => {
     beforeEach(() => {
       elem = create(prop.array());
     });
+
+    afterEach(() => elem.remove());
 
     it('default', () => {
       expect(elem.test).to.be.an('array');
