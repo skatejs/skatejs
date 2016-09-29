@@ -12,6 +12,7 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 const setElementAsDefined = elem => elem.setAttribute('defined', '');
+const hasReflect = Reflect in window;
 
 function callConstructor(elem) {
   const elemData = data(elem);
@@ -75,7 +76,6 @@ function callDisconnected(elem) {
 
 // v1
 function Component(...args) {
-  const hasReflect = window.hasOwnProperty('Reflect'); // eslint-disable-line no-prototype-builtins
   const elm = (hasReflect && Reflect.construct(HTMLElement, args, this.constructor)) || HTMLElement.call(this, args[0]);
   callConstructor(elm);
   return elm;
