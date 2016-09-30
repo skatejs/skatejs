@@ -293,7 +293,7 @@ export function element(tname, attrs, ...chren) {
 
   // If attributes are a function, then they should be treated as children.
   if (atype === 'function' || atype === 'string' || atype === 'number') {
-    chren = [attrs];
+    chren.unshift(attrs);
   }
 
   // Ensure the attributes are an object. Null is considered an object so we
@@ -321,6 +321,8 @@ export function element(tname, attrs, ...chren) {
       ch();
     } else if (ctype === 'string' || ctype === 'number') {
       newText(ch);
+    } else if (ctype === 'object') {
+      ch.forEach(sch => sch());
     }
   });
 

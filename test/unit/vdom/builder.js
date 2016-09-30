@@ -1,4 +1,4 @@
-import { define, vdom } from '../../../src';
+import { define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
 describe('create()', () => {
@@ -75,6 +75,24 @@ describe('create()', () => {
         rendered({ shadowRoot }) {
           const [elXTest] = [].slice.call(shadowRoot.children);
           expect(elXTest.tagName).to.match(/^X-TEST/);
+          done();
+        },
+      }))());
+    });
+
+    it('should allow arrays as children', (done) => {
+      fixture(new (define('x-test', {
+        render() {
+          return (
+            h('div',
+              h('span'),
+              [h('span'), h('span')],
+              [h('span'), h('span'), h('span')]
+            )
+          );
+        },
+        rendered({ shadowRoot }) {
+          expect(shadowRoot.innerHTML).to.equal('<div><span></span><span></span><span></span><span></span><span></span><span></span></div>');
           done();
         },
       }))());
