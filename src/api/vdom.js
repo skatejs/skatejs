@@ -101,7 +101,7 @@ const attributesContext = propContext(attributes, {
 
     // Boolean false values should not set attributes at all.
     if (value === false) {
-      return;
+      return applyDefault(elem, name);
     }
 
     // Handle built-in and custom events.
