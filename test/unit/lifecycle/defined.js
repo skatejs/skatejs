@@ -1,4 +1,5 @@
 import { define } from '../../../src/index';
+import afterMutations from '../../lib/after-mutations';
 
 describe('lifecycle/defined', () => {
   it('should not already have the defined attribute on undefined elements', () => {
@@ -9,9 +10,11 @@ describe('lifecycle/defined', () => {
     const Elem = define('x-test', {});
     const elem = new Elem();
 
-    document.body.appendChild(elem);
+    // Sanity check for non-native (native would throw).
+    expect(elem.hasAttribute('defined')).to.equal(false);
 
-    setTimeout(() => {
+    document.body.appendChild(elem);
+    afterMutations(() => {
       expect(elem.hasAttribute('defined')).to.equal(true);
       document.body.removeChild(elem);
       done();
