@@ -76,9 +76,11 @@ function callDisconnected(elem) {
 
 // v1
 function Component(...args) {
-  const elm = (hasReflect && Reflect.construct(HTMLElement, args, this.constructor)) || HTMLElement.call(this, args[0]);
-  callConstructor(elm);
-  return elm;
+  const elem = hasReflect ?
+    Reflect.construct(HTMLElement, args, this.constructor) :
+    HTMLElement.call(this, args[0]);
+  callConstructor(elem);
+  return elem;
 }
 
 // v1
