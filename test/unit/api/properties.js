@@ -1,15 +1,13 @@
-import { prop } from '../../../src/index';
+import { define, prop } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
-import element from '../../lib/element';
 
 function create(propLocal) {
-  const el = new (element().skate({
+  const el = new (define('x-test', {
     props: {
       test: assign({ attribute: true }, propLocal),
     },
-  }));
-
+  }))();
   document.body.appendChild(el);
   return el;
 }
