@@ -5,3 +5,4 @@ export const customElementsV0 = !!doc.registerElement;
 export const customElementsV1 = !!win.customElements;
 export const shadowDomV0 = !!div.createShadowRoot;
 export const shadowDomV1 = !!div.attachShadow;
+export const reflect = 'Reflect' in window;

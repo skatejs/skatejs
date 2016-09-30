@@ -5,14 +5,13 @@ import {
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
 } from '../util/symbols';
-import { customElementsV0 } from '../util/support';
+import { customElementsV0, reflect } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
 const setElementAsDefined = elem => elem.setAttribute('defined', '');
-const hasReflect = 'Reflect' in window;
 
 function callConstructor(elem) {
   const elemData = data(elem);
@@ -76,7 +75,7 @@ function callDisconnected(elem) {
 
 // v1
 function Component(...args) {
-  const elem = hasReflect ?
+  const elem = reflect ?
     Reflect.construct(HTMLElement, args, this.constructor) :
     HTMLElement.call(this, args[0]);
   callConstructor(elem);
