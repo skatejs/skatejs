@@ -20,20 +20,26 @@ function callConstructor(elem) {
   const { created, observedAttributes, props } = Ctor;
 
   // Ensures that this can never be called twice.
-  if (elem[$created]) return;
+  if (elem[$created]) {
+    return;
+  }
+
   elem[$created] = true;
 
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$rendererDebounced] = debounce(Ctor[$renderer]);
 
+  // Set up property lifecycle.
   if (props && Ctor[$props]) {
     Ctor[$props](elem);
   }
 
+  // Props should be set up before calling this.
   if (created) {
     created(elem);
   }
 
+  // Created should be set before invoking the ready listeners.
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
     delete elemData.readyCallbacks;
@@ -53,13 +59,16 @@ function callConstructor(elem) {
 }
 
 function callConnected(elem) {
-  const ctor = elem.constructor;
-  const { attached } = ctor;
-  const render = ctor[$renderer];
+  const Ctor = elem.constructor;
+  const { attached } = Ctor;
+  const render = Ctor[$renderer];
+
   elem[$connected] = true;
+
   if (typeof render === 'function') {
     render(elem);
   }
+
   if (typeof attached === 'function') {
     attached(elem);
   }
@@ -67,7 +76,9 @@ function callConnected(elem) {
 
 function callDisconnected(elem) {
   const { detached } = elem.constructor;
+
   elem[$connected] = false;
+
   if (typeof detached === 'function') {
     detached(elem);
   }
@@ -140,9 +151,6 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   connectedCallback: {
     configurable: true,
     value() {
-      // will eventually need to callsomething like this here:
-      // Ctor[$props](elem);
-      console.log('connectedCallback')
       setElementAsDefined(this);
       callConnected(this);
     },
