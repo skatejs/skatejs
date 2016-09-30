@@ -29,7 +29,7 @@
     "babel-plugin-transform-class-properties": "^6.11.5",
     "birdpoo": "0.x",
     "document-register-element": "^1.2.0",
-    "eslint": "3.6.1",
+    "eslint": "3.7.0",
     "eslint-friendly-formatter": "^2.0.6",
     "eslint-plugin-import": "^1.14.0",
     "precommit-hook": "^3.0.0",
