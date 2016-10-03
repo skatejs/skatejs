@@ -1,8 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import bp from 'birdpoo'; // eslint-disable-line import/no-extraneous-dependencies
 import { define, prop, props, ready, vdom } from '../../src/index';
-
-const { React, ReactDOM } = window;
-
 
 // Skate components.
 const wclist = (ps, chren) => ul(ps, chren); // eslint-disable-line no-use-before-define
