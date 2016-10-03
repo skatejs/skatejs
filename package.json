@@ -41,6 +41,7 @@
   "scripts": {
     "test": "sk-tests",
     "test-watch": "sk-tests-watch",
+    "test-perf": "sk-tests-perf",
     "precommit": "sk-lint && npm ls && npm test",
     "prepublish": "sk-bundle"
   },
