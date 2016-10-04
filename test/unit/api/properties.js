@@ -27,6 +27,7 @@ describe('api/prop', () => {
 
     beforeEach(() => {
       elem = create(prop.array());
+      // setTimeout(done, 1);
     });
 
     afterEach(() => document.body.removeChild(elem));

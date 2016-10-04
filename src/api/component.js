@@ -8,6 +8,7 @@ import {
 import { customElementsV0, reflect } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
+import empty from '../util/empty';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 
@@ -146,13 +147,53 @@ Component.updated = function updated(elem, prev) {
   return false;
 };
 
+function getPropData(elem, name) {
+  const namespace = `api/property/${typeof name === 'symbol' ? String(name) : name}`;
+  return data(elem, namespace);
+}
+
+// taken from props-init.js TODO split into helper
+function getInitialValue(elem, name, opts) {
+  return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
+}
+
+function syncPropsToAttrs(elem) {
+  const props = elem.constructor.props;
+  Object.keys(props).forEach((propName) => {
+    const attributeName = data(elem, 'propertyLinks')[propName];
+    if (!attributeName) return false;
+
+    // let shouldRemoveAttribute = false;
+    const propData = getPropData(elem, propName);
+    const prop = props[propName];
+    // console.log(prop, prop.internalValue);
+    let syncAttrValue = propData.lastAssignedValue;
+    // console.log('a:', syncAttrValue);
+    if (empty(syncAttrValue) && prop.initial) {
+      syncAttrValue = getInitialValue(elem, propName, prop);
+    }
+    if (!empty(syncAttrValue) && prop.serialize) {
+      syncAttrValue = prop.serialize(syncAttrValue);
+    }
+    // console.log('b:', syncAttrValue);
+    if (!empty(syncAttrValue)) {
+      // console.log(`Setting ${propName} attr to ${syncAttrValue}`);
+      propData.syncingAttribute = true;
+      // propData.settingAttribute = false;
+      elem.setAttribute(attributeName, syncAttrValue);
+    }
+  });
+}
+
 Component.prototype = Object.create(HTMLElement.prototype, {
   // v1
   connectedCallback: {
     configurable: true,
     value() {
-      setElementAsDefined(this);
+      // console.log('connectedCallback', window.navigator.userAgent);
+      syncPropsToAttrs(this);
       callConnected(this);
+      setElementAsDefined(this);
     },
   },
 
@@ -168,8 +209,10 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   attributeChangedCallback: {
     configurable: true,
     value(name, oldValue, newValue) {
+      // console.log('attributeChangedCallback', name, oldValue, newValue);
       const { attributeChanged, observedAttributes } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
+      // console.log('propertyName', propertyName);
 
       // In V0 we have to ensure the attribute is being observed.
       if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
@@ -184,10 +227,12 @@ Component.prototype = Object.create(HTMLElement.prototype, {
         // chance to run when you set an attribute, it then sets a property and
         // then that causes the attribute to be set again.
         if (propData.syncingAttribute) {
+          // console.log('syncingAttribute');
           propData.syncingAttribute = false;
         } else {
           // Sync up the property.
           const propOpts = this.constructor.props[propertyName];
+          // console.log(propOpts);
           propData.settingAttribute = true;
           this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
         }
@@ -203,7 +248,6 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   createdCallback: {
     configurable: true,
     value() {
-      setElementAsDefined(this);
       callConstructor(this);
     },
   },
@@ -212,7 +256,13 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   attachedCallback: {
     configurable: true,
     value() {
+      // console.log('attachedCallback', window.navigator.userAgent);
+
+      syncPropsToAttrs(this);
+
       callConnected(this);
+
+      setElementAsDefined(this);
     },
   },
 

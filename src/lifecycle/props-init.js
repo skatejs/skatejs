@@ -56,7 +56,9 @@ function createNativePropertyDefinition(name, opts) {
   };
 
   prop.set = function set(newValue) {
+    // console.log('prop:set', JSON.stringify(newValue), typeof newValue);
     const propData = getPropData(this, name);
+    propData.lastAssignedValue = newValue;
     let { oldValue } = propData;
     let shouldRemoveAttribute = false;
 
@@ -65,6 +67,7 @@ function createNativePropertyDefinition(name, opts) {
     }
 
     if (empty(newValue)) {
+      // console.log('Getting default value');
       newValue = getDefaultValue(this, name, opts);
       shouldRemoveAttribute = true;
     }
@@ -84,14 +87,21 @@ function createNativePropertyDefinition(name, opts) {
 
     // Update prop data so we can use it next time.
     propData.internalValue = propData.oldValue = newValue;
+    // console.log('Setting', propData.lastAssignedValue, typeof propData.lastAssignedValue);
 
     // Link up the attribute.
     if (this[$connected]) {
+      // console.log('connected');
+      // console.log('set:connected');
       const attributeName = data(this, 'propertyLinks')[name];
 
       // We only link if there's an attribute and the setting of it didn't trigger this.
+      // console.log('LETMEIN', attributeName && !propData.settingAttribute);
+      // console.log('shouldRemoveAttribute', shouldRemoveAttribute);
       if (attributeName && !propData.settingAttribute) {
+        // console.log(opts.serialize);
         const serializedValue = opts.serialize(newValue);
+        // console.log('serializedValue', JSON.stringify(newValue), typeof newValue)
         const currentAttrValue = this.getAttribute(attributeName);
         const serializedIsEmpty = empty(serializedValue);
         const attributeChanged = !(
@@ -100,6 +110,7 @@ function createNativePropertyDefinition(name, opts) {
 
         propData.syncingAttribute = true;
 
+        // console.log(attributeName, shouldRemoveAttribute || serializedIsEmpty);
         if (shouldRemoveAttribute || serializedIsEmpty) {
           this.removeAttribute(attributeName);
         } else {
