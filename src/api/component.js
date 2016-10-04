@@ -232,8 +232,9 @@ Component.prototype = Object.create(HTMLElement.prototype, {
         } else {
           // Sync up the property.
           const propOpts = this.constructor.props[propertyName];
-          // console.log(propOpts);
+          // console.log('propOpts', propOpts);
           propData.settingAttribute = true;
+          // console.log('setting prop to ', (newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue));
           this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
         }
       }
@@ -248,6 +249,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   createdCallback: {
     configurable: true,
     value() {
+      // console.log('createdCallback');
       callConstructor(this);
     },
   },

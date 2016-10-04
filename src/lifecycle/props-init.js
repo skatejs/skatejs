@@ -91,11 +91,11 @@ function createNativePropertyDefinition(name, opts) {
 
     // Link up the attribute.
     if (this[$connected]) {
-      // console.log('connected');
       // console.log('set:connected');
       const attributeName = data(this, 'propertyLinks')[name];
 
       // We only link if there's an attribute and the setting of it didn't trigger this.
+      // console.log('propData.settingAttribute', propData.settingAttribute);
       // console.log('LETMEIN', attributeName && !propData.settingAttribute);
       // console.log('shouldRemoveAttribute', shouldRemoveAttribute);
       if (attributeName && !propData.settingAttribute) {

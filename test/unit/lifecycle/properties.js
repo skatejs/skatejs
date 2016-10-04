@@ -138,7 +138,7 @@ describe('lifecycle/property', () => {
       },
     }));
 
-    ['test1', 'test2'].forEach(value => {
+    ['test1', 'test2'].forEach((value) => {
       expect(elem[value]).to.equal(value);
       elem[value] = null;
       expect(elem[value]).to.equal(value);
@@ -183,27 +183,31 @@ describe('lifecycle/property', () => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName');
         fixtureArea.appendChild(elem);
-
-        elem.testName = 'something';
-        expect(elem.getAttribute('test-name')).to.equal('something', 'attr val');
-
-        elem.setAttribute('test-name', 'something else');
         afterMutations(() => {
-          expect(elem.testName).to.equal('something else');
-          expect(elem.getAttribute('test-name')).to.equal('something else');
-          fixtureArea.removeChild(elem);
-          done();
+          elem.testName = 'something';
+          expect(elem.getAttribute('test-name')).to.equal('something', 'attr val');
+
+          elem.setAttribute('test-name', 'something else');
+          afterMutations(() => {
+            expect(elem.testName).to.equal('something else');
+            expect(elem.getAttribute('test-name')).to.equal('something else');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
       });
 
       describe('undefined and null', () => {
-        it('when a string, the value is used as the attribute name', () => {
+        it('when a string, the value is used as the attribute name', (done) => {
           const fixtureArea = fixture();
           const elem = create({ attribute: 'test-name' });
           fixtureArea.appendChild(elem);
-          elem.testName = 'something';
-          expect(elem.getAttribute('test-name')).to.equal('something');
-          fixtureArea.removeChild(elem);
+          afterMutations(() => {
+            elem.testName = 'something';
+            expect(elem.getAttribute('test-name')).to.equal('something');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
 
         it('when a property is set to undefined, the attribute should not be set', () => {
@@ -219,23 +223,31 @@ describe('lifecycle/property', () => {
         });
 
         it('when an attribute is set to a string, the property should be set to an empty string', (done) => {
+          const fixtureArea = fixture();
           const elem = create({ attribute: true });
+          fixtureArea.appendChild(elem);
           elem.setAttribute('test-name', '');
           afterMutations(
             () => expect(elem.testName).to.equal(''),
+            () => fixtureArea.removeChild(elem),
             done
           );
         });
 
         it('when an attribute is removed, the property should be set to undefined', (done) => {
+          const fixtureArea = fixture();
           const elem = create({ attribute: true });
+          fixtureArea.appendChild(elem);
           elem.setAttribute('test-name', 'test');
-          afterMutations(
-            () => expect(elem.testName).to.equal('test'),
-            () => elem.removeAttribute('test-name'),
-            () => expect(elem.testName).to.equal(null),
-            done
-          );
+          afterMutations(() => {
+            expect(elem.testName).to.equal('test');
+            elem.removeAttribute('test-name');
+            afterMutations(() => {
+              expect(elem.testName).to.equal(null);
+              fixtureArea.removeChild(elem);
+              done();
+            });
+          });
         });
       });
 
@@ -309,7 +321,7 @@ describe('lifecycle/property', () => {
           }, 1);
         });
 
-        it('removes the attribute if null is returned', () => {
+        it('removes the attribute if null is returned', (done) => {
           const fixtureArea = fixture();
           const elem = create({
             attribute: true,
@@ -317,13 +329,16 @@ describe('lifecycle/property', () => {
           });
           elem.testName = true;
           fixtureArea.appendChild(elem);
-          expect(elem.getAttribute('test-name')).to.equal('');
-          elem.testName = false;
-          expect(elem.getAttribute('test-name')).to.equal(null);
-          fixtureArea.removeChild(elem);
+          afterMutations(() => {
+            expect(elem.getAttribute('test-name')).to.equal('');
+            elem.testName = false;
+            expect(elem.getAttribute('test-name')).to.equal(null);
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
 
-        it('removes the attribute if undefined is returned', () => {
+        it('removes the attribute if undefined is returned', (done) => {
           const fixtureArea = fixture();
           const elem = create({
             attribute: true,
@@ -331,10 +346,15 @@ describe('lifecycle/property', () => {
           });
           elem.testName = true;
           fixtureArea.appendChild(elem);
-          expect(elem.getAttribute('test-name')).to.equal('');
-          elem.testName = false;
-          expect(elem.getAttribute('test-name')).to.equal(null);
-          fixtureArea.removeChild(elem);
+          afterMutations(() => {
+            expect(elem.getAttribute('test-name')).to.equal('');
+            elem.testName = false;
+            afterMutations(() => {
+              expect(elem.getAttribute('test-name')).to.equal(null);
+              fixtureArea.removeChild(elem);
+              done();
+            });
+          });
         });
       });
     });
@@ -386,15 +406,18 @@ describe('lifecycle/property', () => {
         expect(elem.getAttribute('test-name')).to.equal(null);
       });
 
-      it('should not set the attribute on update', () => {
+      it('should not set the attribute on update', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true, default: 'testValue' });
         fixtureArea.appendChild(elem);
-        elem.testName = 'updatedValue';
-        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
-        elem.testName = null;
-        expect(elem.getAttribute('test-name')).to.equal(null);
-        fixtureArea.removeChild(elem);
+        afterMutations(() => {
+          elem.testName = 'updatedValue';
+          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          elem.testName = null;
+          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
     });
 
@@ -568,23 +591,29 @@ describe('lifecycle/property', () => {
         expect(elem.testName).to.equal(null);
       });
 
-      it('should set the attribute on init', () => {
+      it('should set the attribute on init', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true, initial: 'testValue' });
         fixtureArea.appendChild(elem);
-        expect(elem.getAttribute('test-name')).to.equal('testValue');
-        fixtureArea.removeChild(elem);
+        afterMutations(() => {
+          expect(elem.getAttribute('test-name')).to.equal('testValue');
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
 
-      it('should set the attribute on update', () => {
+      it('should set the attribute on update', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true, initial: 'testValue' });
         fixtureArea.appendChild(elem);
-        elem.testName = 'updatedValue';
-        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
-        elem.testName = null;
-        expect(elem.getAttribute('test-name')).to.equal(null);
-        fixtureArea.removeChild(elem);
+        afterMutations(() => {
+          elem.testName = 'updatedValue';
+          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          elem.testName = null;
+          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
     });
   });
@@ -612,18 +641,18 @@ describe('lifecycle/property', () => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName', 'something');
         elem.testName = 'something';
-
         expect(elem.testName).to.equal('something');
-
         fixtureArea.appendChild(elem);
-        expect(elem.getAttribute('test-name')).to.equal('something');
-
-        elem.setAttribute('test-name', 'something else');
         afterMutations(() => {
-          expect(elem.testName).to.equal('something else');
-          expect(elem.getAttribute('test-name')).to.equal('something else');
-          fixtureArea.removeChild(elem);
-          done();
+          expect(elem.getAttribute('test-name')).to.equal('something');
+
+          elem.setAttribute('test-name', 'something else');
+          afterMutations(() => {
+            expect(elem.testName).to.equal('something else');
+            expect(elem.getAttribute('test-name')).to.equal('something else');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
       });
 

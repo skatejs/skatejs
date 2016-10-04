@@ -12,12 +12,15 @@ function create(propLocal) {
   return el;
 }
 
-function testTypeValues(type, values) {
+function testTypeValues(type, values, done) {
   const elem = create(prop[type]());
-  values.forEach((value) => {
-    elem.test = value[0];
-    expect(elem.test).to.equal(value[1], 'property');
-    expect(elem.getAttribute('test')).to.equal(value[2], 'attribute');
+  afterMutations(() => {
+    values.forEach((value) => {
+      elem.test = value[0];
+      expect(elem.test).to.equal(value[1], 'property');
+      expect(elem.getAttribute('test')).to.equal(value[2], 'attribute');
+    });
+    done();
   });
 }
 
@@ -25,9 +28,9 @@ describe('api/prop', () => {
   describe('array', () => {
     let elem;
 
-    beforeEach(() => {
+    beforeEach((done) => {
       elem = create(prop.array());
-      // setTimeout(done, 1);
+      afterMutations(done, 1);
     });
 
     afterEach(() => document.body.removeChild(elem));
@@ -89,11 +92,14 @@ describe('api/prop', () => {
           done
         );
       });
-      it(`setting property to "${JSON.stringify(value)}"`, () => {
+      it(`setting property to "${JSON.stringify(value)}"`, (done) => {
         const elem = create(prop.boolean());
-        elem.test = value;
-        expect(elem.test).to.equal(!!value, 'property');
-        expect(elem.getAttribute('test')).to.equal(value ? '' : null, 'attribute');
+        afterMutations(() => {
+          elem.test = value;
+          expect(elem.test).to.equal(!!value, 'property');
+          expect(elem.getAttribute('test')).to.equal(value ? '' : null, 'attribute');
+          done();
+        });
       });
     });
 
@@ -124,7 +130,7 @@ describe('api/prop', () => {
       expect(elem.getAttribute('test')).to.equal(null);
     });
 
-    it('values', () => {
+    it('values', (done) => {
       expect(elem.test).to.equal(0);
       expect(elem.getAttribute('test')).to.equal(null);
       testTypeValues('number', [
@@ -135,7 +141,7 @@ describe('api/prop', () => {
         [0.1, 0.1, '0.1'],
         ['test', undefined, null],
         ['', 0, '0'],
-      ]);
+      ], done);
     });
 
     it('removing attribute', (done) => {
@@ -152,7 +158,7 @@ describe('api/prop', () => {
   });
 
   describe('string', () => {
-    it('values', () => {
+    it('values', (done) => {
       const elem = create(prop.string());
       expect(elem.test).to.equal('');
       expect(elem.getAttribute('test')).to.equal(null);
@@ -162,7 +168,7 @@ describe('api/prop', () => {
         [undefined, '', null],
         [0, '0', '0'],
         ['', '', ''],
-      ]);
+      ], done);
     });
   });
 
