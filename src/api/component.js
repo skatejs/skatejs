@@ -163,7 +163,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       }
 
       if (propertyName) {
-        const propData = data(this, `api/property/${propertyName}`);
+        const propData = data(this, 'props')[propertyName];
 
         // This ensures a property set doesn't cause the attribute changed
         // handler to run again once we set this flag. This only ever has a

@@ -16,8 +16,8 @@ function getInitialValue(elem, name, opts) {
 }
 
 function getPropData(elem, name) {
-  const namespace = typeof name === 'symbol' ? name : `api/property/${name}`;
-  return data(elem, namespace);
+  const elemData = data(elem, 'props');
+  return elemData[name] || (elemData[name] = {});
 }
 
 function createNativePropertyDefinition(name, opts) {
