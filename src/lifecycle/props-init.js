@@ -16,7 +16,7 @@ function getInitialValue(elem, name, opts) {
 }
 
 function getPropData(elem, name) {
-  const namespace = `api/property/${typeof name === 'symbol' ? String(name) : name}`;
+  const namespace = typeof name === 'symbol' ? name : `api/property/${name}`;
   return data(elem, namespace);
 }
 
