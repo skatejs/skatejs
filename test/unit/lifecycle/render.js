@@ -2,6 +2,7 @@ import { define, prop, props } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
+import { customElementsV0 } from '../../../src/util/support';
 
 describe('lifecycle/render', () => {
   it('should be called', (done) => {
@@ -205,9 +206,11 @@ describe('lifecycle/render', () => {
       fixture(elemLocal);
       afterMutations(() => {
         // TODO confirm if we are ok with this being 2...
-        // Chrome seems to want 2, FF wants 1....
-        expect(calledUpdated).to.equal(1, 'before');
-        expect(calledRender).to.equal(1, 'render');
+        // Polyfilled seems to want 2, native wants 1....
+        const isNative = !!Document.prototype.registerElement;
+        const expectedCallCount = isNative ? 2 : 1;
+        expect(calledUpdated).to.equal(expectedCallCount, 'before');
+        expect(calledRender).to.equal(expectedCallCount, 'render');
         done();
       });
     });

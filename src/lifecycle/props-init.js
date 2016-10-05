@@ -6,13 +6,11 @@ import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
 import dashCase from '../util/dash-case';
+import getInitialValue from '../util/get-initial-value';
+import syncPropToAttr from '../util/sync-prop-to-attr';
 
 function getDefaultValue(elem, name, opts) {
   return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
-}
-
-function getInitialValue(elem, name, opts) {
-  return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
 }
 
 function getPropData(elem, name) {
@@ -56,20 +54,16 @@ function createNativePropertyDefinition(name, opts) {
   };
 
   prop.set = function set(newValue) {
-    // console.log('prop:set', JSON.stringify(newValue), typeof newValue);
     const propData = getPropData(this, name);
     propData.lastAssignedValue = newValue;
     let { oldValue } = propData;
-    let shouldRemoveAttribute = false;
 
     if (empty(oldValue)) {
       oldValue = null;
     }
 
     if (empty(newValue)) {
-      // console.log('Getting default value');
       newValue = getDefaultValue(this, name, opts);
-      shouldRemoveAttribute = true;
     }
 
     if (typeof opts.coerce === 'function') {
@@ -87,43 +81,10 @@ function createNativePropertyDefinition(name, opts) {
 
     // Update prop data so we can use it next time.
     propData.internalValue = propData.oldValue = newValue;
-    // console.log('Setting', propData.lastAssignedValue, typeof propData.lastAssignedValue);
 
     // Link up the attribute.
     if (this[$connected]) {
-      // console.log('set:connected');
-      const attributeName = data(this, 'propertyLinks')[name];
-
-      // We only link if there's an attribute and the setting of it didn't trigger this.
-      // console.log('propData.settingAttribute', propData.settingAttribute);
-      // console.log('LETMEIN', attributeName && !propData.settingAttribute);
-      // console.log('shouldRemoveAttribute', shouldRemoveAttribute);
-      if (attributeName && !propData.settingAttribute) {
-        // console.log(opts.serialize);
-        const serializedValue = opts.serialize(newValue);
-        // console.log('serializedValue', JSON.stringify(newValue), typeof newValue)
-        const currentAttrValue = this.getAttribute(attributeName);
-        const serializedIsEmpty = empty(serializedValue);
-        const attributeChanged = !(
-          (serializedIsEmpty && empty(currentAttrValue)) || serializedValue === currentAttrValue
-        );
-
-        propData.syncingAttribute = true;
-
-        // console.log(attributeName, shouldRemoveAttribute || serializedIsEmpty);
-        if (shouldRemoveAttribute || serializedIsEmpty) {
-          this.removeAttribute(attributeName);
-        } else {
-          this.setAttribute(attributeName, serializedValue);
-        }
-
-        if (!attributeChanged && propData.syncingAttribute) {
-          propData.syncingAttribute = false;
-        }
-      }
-
-      // Allow the attribute to be linked again.
-      propData.settingAttribute = false;
+      syncPropToAttr(this, opts, name, false);
     }
   };
 

@@ -17,8 +17,8 @@ function testTypeValues(type, values, done) {
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
-      expect(elem.test).to.equal(value[1], 'property');
-      expect(elem.getAttribute('test')).to.equal(value[2], 'attribute');
+      expect(elem.test).to.equal(value[1], 'prop value after prop set');
+      expect(elem.getAttribute('test')).to.equal(value[2], 'attr value after prop set');
     });
     done();
   });
