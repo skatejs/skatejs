@@ -240,13 +240,15 @@ describe('lifecycle/property', () => {
           fixtureArea.appendChild(elem);
           afterMutations(() => {
             elem.setAttribute('test-name', 'test');
-            expect(elem.testName).to.equal('test');
-            elem.removeAttribute('test-name');
             afterMutations(() => {
-              expect(elem.testName).to.equal(null);
-              fixtureArea.removeChild(elem);
-              done();
-            }, 1);
+              expect(elem.testName).to.equal('test');
+              elem.removeAttribute('test-name');
+              afterMutations(() => {
+                expect(elem.testName).to.equal(null);
+                fixtureArea.removeChild(elem);
+                done();
+              }, 1);
+            });
           });
         });
       });
