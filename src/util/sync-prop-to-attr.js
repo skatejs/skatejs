@@ -9,6 +9,7 @@ function getPropData(elem, name) {
 
 function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
   let syncAttrValue = propData.lastAssignedValue;
+  // console.log('sync.lastAssignedValue', syncAttrValue)
   if (empty(syncAttrValue) && prop.initial) {
     syncAttrValue = getInitialValue(elem, propName, prop);
   }
@@ -16,6 +17,7 @@ function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
     syncAttrValue = prop.serialize(syncAttrValue);
   }
   if (!empty(syncAttrValue)) {
+    // console.log('initial set syncingAttribute to true');
     propData.syncingAttribute = true;
     elem.setAttribute(attributeName, syncAttrValue);
   }

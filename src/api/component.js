@@ -12,8 +12,6 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-const setElementAsDefined = elem => elem.setAttribute('defined', '');
-
 function callConstructor(elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
@@ -59,7 +57,17 @@ function callConstructor(elem) {
   }
 }
 
+function syncPropsToAttrs(elem) {
+  const props = elem.constructor.props;
+  Object.keys(props).forEach((propName) => {
+    const prop = props[propName];
+    // console.log(`Sync ${propName}`);
+    syncPropToAttr(elem, prop, propName, true);
+  });
+}
+
 function callConnected(elem) {
+  syncPropsToAttrs(elem);
   const Ctor = elem.constructor;
   const { attached } = Ctor;
   const render = Ctor[$renderer];
@@ -73,6 +81,8 @@ function callConnected(elem) {
   if (typeof attached === 'function') {
     attached(elem);
   }
+
+  elem.setAttribute('defined', '');
 }
 
 function callDisconnected(elem) {
@@ -147,22 +157,13 @@ Component.updated = function updated(elem, prev) {
   return false;
 };
 
-function syncPropsToAttrs(elem) {
-  const props = elem.constructor.props;
-  Object.keys(props).forEach((propName) => {
-    const prop = props[propName];
-    syncPropToAttr(elem, prop, propName, true);
-  });
-}
-
 Component.prototype = Object.create(HTMLElement.prototype, {
   // v1
   connectedCallback: {
     configurable: true,
     value() {
-      syncPropsToAttrs(this);
+      // console.log('connectedCallback', window.navigator.userAgent);
       callConnected(this);
-      setElementAsDefined(this);
     },
   },
 
@@ -178,14 +179,17 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   attributeChangedCallback: {
     configurable: true,
     value(name, oldValue, newValue) {
+      // console.log(`attrChanged name = '${name}' newValue = ${JSON.stringify(newValue)}`);
       const { attributeChanged, observedAttributes } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
       // In V0 we have to ensure the attribute is being observed.
       if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
+        // console.log('exiting !v0');
         return;
       }
 
+      // console.log('propertyName', propertyName);
       if (propertyName) {
         const propData = data(this, `api/property/${propertyName}`);
 
@@ -193,13 +197,24 @@ Component.prototype = Object.create(HTMLElement.prototype, {
         // handler to run again once we set this flag. This only ever has a
         // chance to run when you set an attribute, it then sets a property and
         // then that causes the attribute to be set again.
+        // console.log('propData.syncingAttribute', propData.syncingAttribute);
         if (propData.syncingAttribute) {
+          // console.log('syncingAttribute');
           propData.syncingAttribute = false;
         } else {
+          // console.log('!syncingAttribute');
           // Sync up the property.
           const propOpts = this.constructor.props[propertyName];
+          // console.log('!sync -> b');
           propData.settingAttribute = true;
-          this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+          // console.log('!sync -> c');
+          // console.log('newValue', newValue);
+          // console.log('propOpts', propOpts);
+          const newPropVal = newValue !== null && propOpts.deserialize
+            ? propOpts.deserialize(newValue)
+            : newValue;
+          // console.log(`setting prop ${propertyName} to ${JSON.stringify(newPropVal)}`);
+          this[propertyName] = newPropVal;
         }
       }
 
@@ -213,6 +228,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   createdCallback: {
     configurable: true,
     value() {
+      // console.log('createdCallback', window.navigator.userAgent);
       callConstructor(this);
     },
   },
@@ -221,12 +237,8 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   attachedCallback: {
     configurable: true,
     value() {
-
-      syncPropsToAttrs(this);
-
+      // console.log('attachedCallback', window.navigator.userAgent);
       callConnected(this);
-
-      setElementAsDefined(this);
     },
   },
 

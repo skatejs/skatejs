@@ -238,15 +238,15 @@ describe('lifecycle/property', () => {
           const fixtureArea = fixture();
           const elem = create({ attribute: true });
           fixtureArea.appendChild(elem);
-          elem.setAttribute('test-name', 'test');
           afterMutations(() => {
+            elem.setAttribute('test-name', 'test');
             expect(elem.testName).to.equal('test');
             elem.removeAttribute('test-name');
             afterMutations(() => {
               expect(elem.testName).to.equal(null);
               fixtureArea.removeChild(elem);
               done();
-            });
+            }, 1);
           });
         });
       });

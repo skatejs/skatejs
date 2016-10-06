@@ -85,14 +85,16 @@ describe('api/prop', () => {
       value = String(value);
       it(`setting attribute to ${JSON.stringify(value)}`, (done) => {
         const elem = create(prop.boolean());
-        elem.setAttribute('test', value);
-        afterMutations(
-          () => expect(elem.test).to.equal(true, 'property'),
-          () => expect(elem.getAttribute('test')).to.equal(value, 'attribute'),
-          done
-        );
+        afterMutations(() => {
+          elem.setAttribute('test', value);
+          afterMutations(() => {
+            expect(elem.test).to.equal(true, 'property');
+            expect(elem.getAttribute('test')).to.equal(value, 'attribute');
+            done();
+          }, 1);
+        });
       });
-      it(`setting property to "${JSON.stringify(value)}"`, (done) => {
+      it(`setting property to ${JSON.stringify(value)}`, (done) => {
         const elem = create(prop.boolean());
         afterMutations(() => {
           elem.test = value;
