@@ -5,11 +5,12 @@ import {
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
 } from '../util/symbols';
-import { customElementsV0 } from '../util/support';
+import { customElementsV0, reflect } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import syncPropToAttr from '../util/sync-prop-to-attr';
 
 function callConstructor(elem) {
   const elemData = data(elem);
@@ -18,22 +19,26 @@ function callConstructor(elem) {
   const { created, observedAttributes, props } = Ctor;
 
   // Ensures that this can never be called twice.
-  if (elem[$created]) return;
+  if (elem[$created]) {
+    return;
+  }
+
   elem[$created] = true;
 
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$rendererDebounced] = debounce(Ctor[$renderer]);
 
-  if (props) {
+  // Set up property lifecycle.
+  if (props && Ctor[$props]) {
     Ctor[$props](elem);
   }
 
+  // Props should be set up before calling this.
   if (created) {
     created(elem);
   }
 
-  elem.setAttribute('defined', '');
-
+  // Created should be set before invoking the ready listeners.
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
     delete elemData.readyCallbacks;
@@ -52,30 +57,49 @@ function callConstructor(elem) {
   }
 }
 
+function syncPropsToAttrs(elem) {
+  const props = elem.constructor.props;
+  Object.keys(props).forEach((propName) => {
+    const prop = props[propName];
+    syncPropToAttr(elem, prop, propName, true);
+  });
+}
+
 function callConnected(elem) {
-  const ctor = elem.constructor;
-  const { attached } = ctor;
-  const render = ctor[$renderer];
+  const Ctor = elem.constructor;
+  const { attached } = Ctor;
+  const render = Ctor[$renderer];
+
+  syncPropsToAttrs(elem);
+
   elem[$connected] = true;
+
   if (typeof render === 'function') {
     render(elem);
   }
+
   if (typeof attached === 'function') {
     attached(elem);
   }
+
+  elem.setAttribute('defined', '');
 }
 
 function callDisconnected(elem) {
   const { detached } = elem.constructor;
+
   elem[$connected] = false;
+
   if (typeof detached === 'function') {
     detached(elem);
   }
 }
 
 // v1
-function Component(self) {
-  const elem = HTMLElement.call(this, self);
+function Component(...args) {
+  const elem = reflect ?
+    Reflect.construct(HTMLElement, args, this.constructor) :
+    HTMLElement.call(this, args[0]);
   callConstructor(elem);
   return elem;
 }
@@ -175,7 +199,10 @@ Component.prototype = Object.create(HTMLElement.prototype, {
           // Sync up the property.
           const propOpts = this.constructor.props[propertyName];
           propData.settingAttribute = true;
-          this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+          const newPropVal = newValue !== null && propOpts.deserialize
+            ? propOpts.deserialize(newValue)
+            : newValue;
+          this[propertyName] = newPropVal;
         }
       }
 

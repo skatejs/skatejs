@@ -2,6 +2,7 @@ import { define, prop, props } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
+import { isPolyfilled } from '../../../src/util/support';
 
 describe('lifecycle/render', () => {
   it('should be called', (done) => {
@@ -204,8 +205,9 @@ describe('lifecycle/render', () => {
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(() => {
-        expect(calledUpdated).to.equal(1, 'before');
-        expect(calledRender).to.equal(1, 'render');
+        const expectedCallCount = isPolyfilled ? 2 : 1;
+        expect(calledUpdated).to.equal(expectedCallCount, 'before');
+        expect(calledRender).to.equal(expectedCallCount, 'render');
         done();
       });
     });
