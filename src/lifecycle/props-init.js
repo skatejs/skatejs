@@ -6,12 +6,9 @@ import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
 import dashCase from '../util/dash-case';
+import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import syncPropToAttr from '../util/sync-prop-to-attr';
-
-function getDefaultValue(elem, name, opts) {
-  return typeof opts.default === 'function' ? opts.default(elem, { name }) : opts.default;
-}
 
 function getPropData(elem, name) {
   const namespace = `api/property/${typeof name === 'symbol' ? String(name) : name}`;

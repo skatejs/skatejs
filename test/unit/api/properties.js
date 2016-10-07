@@ -21,7 +21,7 @@ function testTypeValues(type, values, done) {
       expect(elem.getAttribute('test')).to.equal(value[2], 'attr value after prop set');
     });
     done();
-  });
+  }, 1);
 }
 
 describe('api/prop', () => {
@@ -38,7 +38,7 @@ describe('api/prop', () => {
     it('default', () => {
       expect(elem.test).to.be.an('array');
       expect(elem.test.length).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal(null);
+      expect(elem.getAttribute('test')).to.equal('[]');
     });
 
     describe('coerce', () => {
@@ -122,19 +122,20 @@ describe('api/prop', () => {
   describe('number', () => {
     let elem;
 
-    beforeEach(() => {
+    beforeEach((done) => {
       elem = create(prop.number());
+      afterMutations(done, 1);
     });
 
     it('default', () => {
       expect(elem.test).to.be.a('number');
       expect(elem.test).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal(null);
+      expect(elem.getAttribute('test')).to.equal('0');
     });
 
     it('values', (done) => {
       expect(elem.test).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal(null);
+      expect(elem.getAttribute('test')).to.equal('0');
       testTypeValues('number', [
         [false, 0, '0'],
         [true, 1, '1'],
@@ -162,15 +163,17 @@ describe('api/prop', () => {
   describe('string', () => {
     it('values', (done) => {
       const elem = create(prop.string());
-      expect(elem.test).to.equal('');
-      expect(elem.getAttribute('test')).to.equal(null);
-      testTypeValues('string', [
-        [false, 'false', 'false'],
-        [null, '', null],
-        [undefined, '', null],
-        [0, '0', '0'],
-        ['', '', ''],
-      ], done);
+      afterMutations(() => {
+        expect(elem.test).to.equal('');
+        expect(elem.getAttribute('test')).to.equal('');
+        testTypeValues('string', [
+          [false, 'false', 'false'],
+          [null, '', null],
+          [undefined, '', null],
+          [0, '0', '0'],
+          ['', '', ''],
+        ], done);
+      });
     });
   });
 

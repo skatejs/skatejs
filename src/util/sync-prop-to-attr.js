@@ -1,5 +1,6 @@
 import data from './data';
 import empty from './empty';
+import getDefaultValue from '../util/get-default-value';
 import getInitialValue from './get-initial-value';
 
 function getPropData(elem, name) {
@@ -9,15 +10,17 @@ function getPropData(elem, name) {
 
 function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
   let syncAttrValue = propData.lastAssignedValue;
-  // console.log('sync.lastAssignedValue', syncAttrValue)
-  if (empty(syncAttrValue) && prop.initial) {
-    syncAttrValue = getInitialValue(elem, propName, prop);
+  if (empty(syncAttrValue)) {
+    if ('initial' in prop) {
+      syncAttrValue = getInitialValue(elem, propName, prop);
+    } else if ('default' in prop) {
+      syncAttrValue = getDefaultValue(elem, propName, prop);
+    }
   }
   if (!empty(syncAttrValue) && prop.serialize) {
     syncAttrValue = prop.serialize(syncAttrValue);
   }
   if (!empty(syncAttrValue)) {
-    // console.log('initial set syncingAttribute to true');
     propData.syncingAttribute = true;
     elem.setAttribute(attributeName, syncAttrValue);
   }
@@ -55,9 +58,11 @@ export default function syncPropToAttr(elem, prop, propName, isFirstSync) {
   const attributeName = data(elem, 'propertyLinks')[propName];
   const propData = getPropData(elem, propName);
 
-  if (isFirstSync && attributeName) {
-    syncFirstTimeProp(elem, prop, propName, attributeName, propData);
-  } else if (!isFirstSync) {
-    syncExistingProp(elem, prop, propName, attributeName, propData);
+  if (attributeName) {
+    if (isFirstSync) {
+      syncFirstTimeProp(elem, prop, propName, attributeName, propData);
+    } else {
+      syncExistingProp(elem, prop, propName, attributeName, propData);
+    }
   }
 }
