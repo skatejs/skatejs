@@ -287,7 +287,7 @@ skate.define('x-counter', {
     clearInterval(elem[sym]);
   },
   render(elem) {
-    // By separating the strings (and not using template literals or string 
+    // By separating the strings (and not using template literals or string
     // concatenation) it ensures the strings are diffed indepenedently. If
     // you select "Count" with your mouse, it will not deselect whenr endered.
     return skate.h('div', 'Count ', elem.count);
@@ -405,6 +405,8 @@ Whether or not to link the property to an attribute. This can be either a `Boole
 - If it's `false`, it's not linked to an attribute. This is the default.
 - If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
 - If it's a `String`, the value is used as the attribute name it should be linked to.
+
+Attributes are set from props on your element once it is inserted into the DOM.
 
 ```js
 skate.define('my-component', {
