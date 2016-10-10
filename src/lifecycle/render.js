@@ -1,5 +1,10 @@
 import { patchInner } from 'incremental-dom';
-import { connected as $connected, props as $props, rendering as $rendering, shadowRoot as $shadowRoot } from '../util/symbols';
+import {
+  connected as $connected,
+  props as $props,
+  rendering as $rendering,
+  shadowRoot as $shadowRoot,
+} from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 import props from '../api/props';
 

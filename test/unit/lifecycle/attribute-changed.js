@@ -3,11 +3,21 @@ import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
 describe('lifecycle/attribute-changed', () => {
+  let fixtureArea;
+
+  beforeEach(() => {
+    fixtureArea = fixture();
+  });
+
+  afterEach(() => {
+    fixtureArea.innerHTML = '';
+  });
+
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
     const tag = element();
     const div = document.createElement(tag.safe);
     div.setAttribute('test', 'ing');
-    fixture().appendChild(div);
+    fixtureArea.appendChild(div);
     tag.skate({
       observedAttributes: ['test'],
       attributeChanged(elem, data) {
@@ -22,9 +32,9 @@ describe('lifecycle/attribute-changed', () => {
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
-    const elem = new (element().skate({
+    const elem = new (element().skate({ // eslint-disable-line new-parens
       attributeChanged() {
-        counter++;
+        counter += 1;
       },
       props: {
         test: {
@@ -32,6 +42,7 @@ describe('lifecycle/attribute-changed', () => {
         },
       },
     }));
+    fixtureArea.appendChild(elem);
     afterMutations(
       () => expect(counter).to.equal(0),
       () => (elem.test = true),

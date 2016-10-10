@@ -36,11 +36,12 @@
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "8.1.0",
-    "skatejs-web-components": "1.1.5"
+    "skatejs-web-components": "1.2.1"
   },
   "scripts": {
     "test": "sk-tests",
     "test-watch": "sk-tests-watch",
+    "test-perf": "sk-tests-perf",
     "precommit": "sk-lint && npm ls && npm test",
     "prepublish": "sk-bundle"
   },
