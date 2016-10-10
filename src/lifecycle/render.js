@@ -1,13 +1,17 @@
-import { patchInner } from 'incremental-dom';
-import { connected as $connected, props as $props, rendering as $rendering, shadowRoot as $shadowRoot } from '../util/symbols';
+import {
+  connected as $connected,
+  props as $props,
+  rendering as $rendering,
+  shadowRoot as $shadowRoot,
+} from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
 import props from '../api/props';
 
 export default function (Ctor) {
-  const { render, rendered, updated } = Ctor;
+  const { render, rendered, renderer, updated } = Ctor;
 
   return (elem) => {
-    if (elem[$rendering] || !elem[$connected]) {
+    if (!renderer || elem[$rendering] || !elem[$connected]) {
       return;
     }
 
@@ -47,21 +51,14 @@ export default function (Ctor) {
     }
 
     if (shouldRender) {
-      patchInner(sr, () => {
-        const possibleFn = render(elem);
-        if (typeof possibleFn === 'function') {
-          possibleFn();
-        } else if (Array.isArray(possibleFn)) {
-          possibleFn.forEach((fn) => {
-            if (typeof fn === 'function') {
-              fn();
-            }
-          });
-        }
-      });
+      const result = renderer(elem, render);
 
       if (rendered) {
-        rendered(elem);
+        if (result && result.then) {
+          result.then(rendered.bind(null, elem));
+        } else {
+          rendered(elem);
+        }
       }
     }
 
