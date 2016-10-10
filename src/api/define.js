@@ -130,7 +130,7 @@ function registerV1Element(name, Ctor) {
     uniqueName = generateUniqueName(name);
   }
   prepareForRegistration(uniqueName, Ctor);
-  window.customElements.define(uniqueName, Ctor, { extends: Ctor.extends });
+  window.customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
   return Ctor;
 }
 

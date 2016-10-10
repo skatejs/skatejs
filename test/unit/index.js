@@ -1,3 +1,4 @@
+import 'skatejs-web-components'; // eslint-disable-line import/no-extraneous-dependencies
 import * as api from '../../src/index';
 import * as symbols from '../../src/util/symbols';
 
