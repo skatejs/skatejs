@@ -34,7 +34,7 @@
     "eslint-plugin-import": "^1.14.0",
     "precommit-hook": "^3.0.0",
     "react": "15.x",
-    "react-dom": "15.x",
+    "react-dom": "15.3.2",
     "skatejs-build": "8.1.2",
     "skatejs-web-components": "1.2.1"
   },
