@@ -2,11 +2,7 @@ import data from './data';
 import empty from './empty';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from './get-initial-value';
-
-function getPropData(elem, name) {
-  const namespace = `api/property/${typeof name === 'symbol' ? String(name) : name}`;
-  return data(elem, namespace);
-}
+import getPropData from './get-prop-data';
 
 function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
   let syncAttrValue = propData.lastAssignedValue;

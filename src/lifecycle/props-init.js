@@ -8,12 +8,8 @@ import empty from '../util/empty';
 import dashCase from '../util/dash-case';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
+import getPropData from '../util/get-prop-data';
 import syncPropToAttr from '../util/sync-prop-to-attr';
-
-function getPropData(elem, name) {
-  const elemData = data(elem, 'props');
-  return elemData[name] || (elemData[name] = {});
-}
 
 function createNativePropertyDefinition(name, opts) {
   const prop = {
