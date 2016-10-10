@@ -321,7 +321,7 @@ export function element(tname, attrs, ...chren) {
       ch();
     } else if (ctype === 'string' || ctype === 'number') {
       newText(ch);
-    } else if (ctype === 'object') {
+    } else if (Array.isArray(ch)) {
       ch.forEach(sch => sch());
     }
   });
