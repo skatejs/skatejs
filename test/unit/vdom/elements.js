@@ -150,9 +150,7 @@ describe('vdom/elements', () => {
         expect(ch2.getAttribute('name')).to.equal('test', 'vdom.element(slot)');
       }
 
-      if (shadowDomV1) {
-        assertSlotElement();
-      } else if (shadowDomV0) {
+      if (shadowDomV0) {
         expect(ch1.tagName).to.equal('CONTENT', 'vdom');
         expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
         expect(ch2.tagName).to.equal('CONTENT', 'vdom.element(slot)');
