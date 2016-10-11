@@ -13,7 +13,9 @@ function get(elem) {
 
 function set(elem, newProps) {
   assign(elem, newProps);
-  elem.constructor[$renderer](elem);
+  if (elem.constructor.render) {
+    elem.constructor[$renderer](elem);
+  }
 }
 
 export default function (elem, newProps) {
