@@ -184,17 +184,18 @@ describe('lifecycle/render', () => {
           test: {},
         },
         updated(el) {
+          // In this test case `updated()` is *only called once* during a debounced
+          // rendering of the element (triggered when it was connected to the DOM).
+
           ++calledUpdated;
 
-          // Sync render.
+          // An internal guard should prevent this from re-rendering.
           props(el, { test: 'updated 1' });
 
-          // This will queue a render, but we should only queue if it's not in
-          // the process of rendering.
+          // An internal guard should prevent this from re-rendering.
           el.test = 'updated 2';
 
-          // Finally render. We do this sync here to make sure any prop sets
-          // don't call the debounced render.
+          // Allow the render to actually proceed.
           return true;
         },
         render() {
@@ -205,9 +206,8 @@ describe('lifecycle/render', () => {
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(() => {
-        const expectedCallCount = isPolyfilled ? 2 : 1;
-        expect(calledUpdated).to.equal(expectedCallCount, 'before');
-        expect(calledRender).to.equal(expectedCallCount, 'render');
+        expect(calledUpdated).to.equal(1, 'before');
+        expect(calledRender).to.equal(1, 'render');
         done();
       });
     });

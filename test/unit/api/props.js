@@ -59,10 +59,25 @@ describe('api/props', () => {
       expect(elem._rendered).to.equal(2);
     });
 
+    it('should synchronously render once when multiple props are set', () => {
+      expect(elem._rendered).to.equal(1);
+      props(elem, {
+        prop1: 'updated1',
+        prop2: 'updated2'
+      });
+      expect(elem._rendered).to.equal(2);
+    });
+
     it('should not render if undeclared properties are set', () => {
       expect(elem._rendered).to.equal(1);
       props(elem, { undeclaredProp: 'updated3' });
       expect(elem._rendered).to.equal(1);
     });
+
+    it('should succeed on an uninitialised element', () => {
+      const elem = element().create();
+      props(elem, { undeclaredProp: 'foo' });
+      expect(elem).property('undeclaredProp', 'foo');
+    })
   });
 });

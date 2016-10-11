@@ -68,7 +68,7 @@ function syncPropsToAttrs(elem) {
 function callConnected(elem) {
   const Ctor = elem.constructor;
   const { attached } = Ctor;
-  const render = Ctor[$renderer];
+  const render = elem[$rendererDebounced];
 
   syncPropsToAttrs(elem);
 

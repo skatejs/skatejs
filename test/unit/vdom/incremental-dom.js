@@ -1,5 +1,8 @@
 import * as IncrementalDOM from 'incremental-dom';
 import { define, vdom } from '../../../src/index';
+import afterMutations from '../../lib/after-mutations';
+import element from '../../lib/element';
+import fixture from '../../lib/fixture';
 
 function testBasicApi(name) {
   describe(name, () => {
@@ -18,14 +21,66 @@ describe('IncrementalDOM', () => {
   testBasicApi('text');
 
   describe('function tag names', () => {
-    let fixture;
-    beforeEach(() => {
-      fixture = document.createElement('div');
-    });
-
     function patchIt(desc, func) {
-      it(desc, () => IncrementalDOM.patch(fixture, func));
+      it(desc, () => IncrementalDOM.patch(fixture(), func));
     }
+
+    describe('efficient rendering', () => {
+      function renderCounter() {
+        const { safe, skate } = element();
+        let renderCount = 0;
+
+        skate({
+          render() {
+            renderCount++;
+          },
+          props: {
+            foo: { attribute: true },
+            bar: { attribute: true }
+          }
+        });
+
+        return {
+          tag: safe,
+          renderCount: () => renderCount
+        };
+      }
+
+      it('causes only one render for new elements with no attributes before the next tick', (done) => {
+        const { tag, renderCount } = renderCounter();
+
+        // Schedule the assertions prior to using incremental dom, to verify
+        // the implementation isn't doing naive `setTimeout()` scheduling.
+        setTimeout(() => {
+          expect(renderCount()).to.equal(1);
+          done();
+        }, 0);
+
+        IncrementalDOM.patch(fixture(), () => {
+          vdom.elementOpen(tag);
+          vdom.elementClose(tag);
+        });
+      });
+
+      it('causes only one render for new elements with multiple attributes before the next tick', (done) => {
+        const { tag, renderCount } = renderCounter();
+
+        // Schedule the assertions prior to using incremental dom, to verify
+        // the implementation isn't doing naive `setTimeout()` scheduling.
+        setTimeout(() => {
+          const elem = fixture().querySelector(tag);
+          expect(elem.foo).to.equal('value')
+          expect(elem.bar).to.equal('value');
+          expect(renderCount()).to.equal(1);
+          done();
+        }, 0);
+
+        IncrementalDOM.patch(fixture(), () => {
+          vdom.elementOpen(tag, null, null, 'foo', 'value', 'bar', 'value');
+          vdom.elementClose(tag);
+        });
+      });
+    });
 
     describe('passing element name', () => {
       patchIt('elementOpenStart, attr, elementOpenEnd, elementClose', () => {
@@ -33,7 +88,7 @@ describe('IncrementalDOM', () => {
         vdom.attr('id', 'test');
         vdom.elementOpenEnd('div');
         vdom.elementClose('div');
-        expect(fixture.innerHTML).to.equal('<div id="test"></div>');
+        expect(fixture().innerHTML).to.equal('<div id="test"></div>');
       });
     });
 
@@ -67,8 +122,8 @@ describe('IncrementalDOM', () => {
 
     describe('passing a function helper', () => {
       function patchAssert(elem, { checkChildren = true } = {}) {
-        expect(fixture.firstChild).to.equal(elem);
-        expect(fixture.innerHTML).to.equal(`<div id="test">${checkChildren ? '<span>test</span>' : ''}</div>`);
+        expect(fixture().firstChild).to.equal(elem);
+        expect(fixture().innerHTML).to.equal(`<div id="test">${checkChildren ? '<span>test</span>' : ''}</div>`);
       }
 
       function renderChildren() {
