@@ -63,6 +63,7 @@ describe('vdom/skip', () => {
       '<div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(sr(elem).innerHTML).to.equal(html),
       () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       () => props(elem, { num: elem.num + 1 }),
@@ -97,6 +98,7 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
       () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
@@ -123,6 +125,7 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
       () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
@@ -142,6 +145,7 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
       () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),

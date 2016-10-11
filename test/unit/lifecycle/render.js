@@ -14,6 +14,7 @@ describe('lifecycle/render', () => {
     });
     fixture(new Elem());
     afterMutations(
+      () => {}, // .render()
       () => expect(called).to.equal(true),
       done
     );
@@ -74,6 +75,7 @@ describe('lifecycle/render', () => {
       });
       fixture(new Elem());
       afterMutations(
+        () => {}, // .render()
         () => expect(spy.callCount).to.equal(1),
         done
       );
@@ -87,6 +89,7 @@ describe('lifecycle/render', () => {
       });
       fixture(new Elem());
       afterMutations(
+        () => {}, // .render()
         () => expect(spy.callCount).to.equal(2),
         done
       );
@@ -119,6 +122,7 @@ describe('lifecycle/render', () => {
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
+        () => {}, // .render()
         () => expect(called).to.equal(1),
         () => expect(elemLocal.test).to.equal(0),
         () => {
@@ -148,11 +152,14 @@ describe('lifecycle/render', () => {
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
-      afterMutations(() => {
-        expect(calledUpdated).to.equal(true);
-        expect(calledRender).to.equal(false);
-        done();
-      });
+      afterMutations(
+        () => {}, // .render()
+        () => {
+          expect(calledUpdated).to.equal(true);
+          expect(calledRender).to.equal(false);
+        },
+        done
+      );
     });
 
     it('should allow rendering', (done) => {
@@ -169,11 +176,14 @@ describe('lifecycle/render', () => {
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
-      afterMutations(() => {
-        expect(calledUpdated).to.equal(true);
-        expect(calledRender).to.equal(true);
-        done();
-      });
+      afterMutations(
+        () => {}, // .render()
+        () => {
+          expect(calledUpdated).to.equal(true);
+          expect(calledRender).to.equal(true);
+        },
+        done
+      );
     });
 
     it('should allow props to be set within it and not be called again as a result', (done) => {
@@ -184,17 +194,18 @@ describe('lifecycle/render', () => {
           test: {},
         },
         updated(el) {
+          // In this test case `updated()` is *only called once* during a debounced
+          // rendering of the element (triggered when it was connected to the DOM).
+
           ++calledUpdated;
 
-          // Sync render.
+          // An internal guard should prevent this from re-rendering.
           props(el, { test: 'updated 1' });
 
-          // This will queue a render, but we should only queue if it's not in
-          // the process of rendering.
+          // An internal guard should prevent this from re-rendering.
           el.test = 'updated 2';
 
-          // Finally render. We do this sync here to make sure any prop sets
-          // don't call the debounced render.
+          // Allow the render to actually proceed.
           return true;
         },
         render() {
@@ -204,12 +215,14 @@ describe('lifecycle/render', () => {
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
-      afterMutations(() => {
-        const expectedCallCount = isPolyfilled ? 2 : 1;
-        expect(calledUpdated).to.equal(expectedCallCount, 'before');
-        expect(calledRender).to.equal(expectedCallCount, 'render');
-        done();
-      });
+      afterMutations(
+        () => {}, // .render()
+        () => {
+          expect(calledUpdated).to.equal(1, 'before');
+          expect(calledRender).to.equal(1, 'render');
+        },
+        done
+      );
     });
   });
 
@@ -231,12 +244,15 @@ describe('lifecycle/render', () => {
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
-      afterMutations(() => {
-        expect(order[0]).to.equal('updated');
-        expect(order[1]).to.equal('render');
-        expect(order[2]).to.equal('rendered');
-        done();
-      });
+      afterMutations(
+        () => {}, // .render()
+        () => {
+          expect(order[0]).to.equal('updated');
+          expect(order[1]).to.equal('render');
+          expect(order[2]).to.equal('rendered');
+        },
+        done
+      );
     });
 
     it('should not be called if render() is not defined', (done) => {
