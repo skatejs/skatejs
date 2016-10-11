@@ -1,21 +1,20 @@
-const longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
-let timeoutDuration = 0;
-for (let i = 0; i < longerTimeoutBrowsers.length; i += 1) {
-  if (navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
-    timeoutDuration = 1;
-    break;
-  }
-}
-
-export default function (fn) {
+export default function debounce(cbFunc) {
   let called = false;
-  return (...args) => {
+  let cbArgs = [];
+  const txt = document.createElement('span');
+  const mut = new MutationObserver(() => {
+    cbFunc(...cbArgs);
+    cbArgs = [];
+    called = false;
+  });
+
+  mut.observe(txt, { childList: true });
+
+  return function debounced(...args) {
+    cbArgs = args;
     if (!called) {
       called = true;
-      setTimeout(() => {
-        called = false;
-        fn.apply(this, args);
-      }, timeoutDuration);
+      txt.textContent = txt.textContent === '0' ? '1' : '0';
     }
   };
 }
