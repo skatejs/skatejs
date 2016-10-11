@@ -1,22 +1,47 @@
+import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
   props as $props,
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
+  rendering as $rendering,
+  shadowRoot as $shadowRoot,
+  updated as $updated,
 } from '../util/symbols';
-import { customElementsV0, reflect } from '../util/support';
+import {
+  customElementsV0,
+  reflect,
+  shadowDomV0,
+  shadowDomV1,
+} from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import getSetProps from './props';
 import syncPropToAttr from '../util/sync-prop-to-attr';
+
+// Abstracts shadow root across v1, v0 and no support.
+// Once v1 is supported everywhere, we can call elem.attachShadow() directly
+// and remove this function.
+function attachShadow(elem) {
+  if (shadowDomV1) {
+    return elem.attachShadow({ mode: 'open' });
+  } else if (shadowDomV0) {
+    return elem.createShadowRoot();
+  }
+  return elem;
+}
+
+function getOrAttachShadow(elem) {
+  return elem[$shadowRoot] || (elem[$shadowRoot] = attachShadow(elem));
+}
 
 function callConstructor(elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
-  const Ctor = elem.constructor;
-  const { created, observedAttributes, props } = Ctor;
+  const { constructor } = elem;
 
   // Ensures that this can never be called twice.
   if (elem[$created]) {
@@ -26,16 +51,16 @@ function callConstructor(elem) {
   elem[$created] = true;
 
   // Set up a renderer that is debounced for property sets to call directly.
-  elem[$rendererDebounced] = debounce(Ctor[$renderer]);
+  elem[$rendererDebounced] = debounce(constructor[$renderer].bind(constructor));
 
   // Set up property lifecycle.
-  if (props && Ctor[$props]) {
-    Ctor[$props](elem);
+  if (constructor.props && constructor[$props]) {
+    constructor[$props](elem);
   }
 
   // Props should be set up before calling this.
-  if (created) {
-    created(elem);
+  if (typeof constructor.created === 'function') {
+    constructor.created(elem);
   }
 
   // Created should be set before invoking the ready listeners.
@@ -48,7 +73,7 @@ function callConstructor(elem) {
   // that aren't linked to props so that the callback behaves the same no
   // matter if v0 or v1 is being used.
   if (customElementsV0) {
-    observedAttributes.forEach((name) => {
+    constructor.observedAttributes.forEach((name) => {
       const propertyName = data(elem, 'attributeLinks')[name];
       if (!propertyName) {
         elem.attributeChangedCallback(name, null, elem.getAttribute(name));
@@ -66,32 +91,27 @@ function syncPropsToAttrs(elem) {
 }
 
 function callConnected(elem) {
-  const Ctor = elem.constructor;
-  const { attached } = Ctor;
-  const render = Ctor[$renderer];
+  const { constructor } = elem;
 
   syncPropsToAttrs(elem);
 
   elem[$connected] = true;
+  constructor[$renderer](elem);
 
-  if (typeof render === 'function') {
-    render(elem);
-  }
-
-  if (typeof attached === 'function') {
-    attached(elem);
+  if (typeof constructor.attached === 'function') {
+    constructor.attached(elem);
   }
 
   elem.setAttribute('defined', '');
 }
 
 function callDisconnected(elem) {
-  const { detached } = elem.constructor;
+  const { constructor } = elem;
 
   elem[$connected] = false;
 
-  if (typeof detached === 'function') {
-    detached(elem);
+  if (typeof constructor.detached === 'function') {
+    constructor.detached(elem);
   }
 }
 
@@ -139,6 +159,24 @@ Component.extend = function extend(definition = {}, Base = this) {
 
 // Skate
 //
+// Incremental DOM renderer.
+Component.renderer = function renderer({ elem, render, shadowRoot }) {
+  patchInner(shadowRoot, () => {
+    const possibleFn = render(elem);
+    if (typeof possibleFn === 'function') {
+      possibleFn();
+    } else if (Array.isArray(possibleFn)) {
+      possibleFn.forEach((fn) => {
+        if (typeof fn === 'function') {
+          fn();
+        }
+      });
+    }
+  });
+};
+
+// Skate
+//
 // This is a default implementation that does strict equality copmarison on
 // previous props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
@@ -155,6 +193,49 @@ Component.updated = function updated(elem, prev) {
     }
   }
   return false;
+};
+
+// Skate
+//
+// Calls the user-defined updated() lifecycle callback.
+Component[$updated] = function _updated(elem) {
+  if (typeof this.updated === 'function') {
+    const prev = elem[$props];
+    elem[$props] = getSetProps(elem);
+    return this.updated(elem, prev);
+  }
+  return true;
+};
+
+// Skate
+//
+// Goes through the user-defined render lifecycle.
+Component[$renderer] = function _renderer(elem) {
+  if (elem[$rendering] || !elem[$connected]) {
+    return;
+  }
+
+  // Flag as rendering. This prevents anything from trying to render - or
+  // queueing a render - while there is a pending render.
+  elem[$rendering] = true;
+
+  const shouldRender = this[$updated](elem);
+
+  // Even though this would ideally be checked in the updated() callback,
+  // it may not be, so we ensure that there is a point in proceeding.
+  if (!this.render || !this.renderer) {
+    elem[$rendering] = false;
+    return;
+  }
+
+  if (shouldRender) {
+    this.renderer({ elem, render: this.render, shadowRoot: getOrAttachShadow(elem) });
+    if (typeof this.rendered === 'function') {
+      this.rendered(elem);
+    }
+  }
+
+  elem[$rendering] = false;
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
