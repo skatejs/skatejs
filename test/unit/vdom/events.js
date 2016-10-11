@@ -26,32 +26,34 @@ describe('vdom/events (on*)', () => {
     const el = new MyEl();
     fixture(el);
 
-    afterMutations(() => {
-      const shadowDiv = el[symbols.shadowRoot].children[0];
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        const shadowDiv = el[symbols.shadowRoot].children[0];
 
-      // Ensures that it rendered.
-      expect(shadowDiv.textContent).to.equal('0');
-      expect(el._test).to.equal(0);
+        // Ensures that it rendered.
+        expect(shadowDiv.textContent).to.equal('0');
+        expect(el._test).to.equal(0);
 
-      // Trigger the handler.
-      emit(shadowDiv, 'event');
+        // Trigger the handler.
+        emit(shadowDiv, 'event');
 
-      // Ensure the event fired.
-      expect(el._test).to.equal(1);
+        // Ensure the event fired.
+        expect(el._test).to.equal(1);
 
-      // Re-render.
-      props(el, { test: el.test + 1 });
-      expect(shadowDiv.textContent).to.equal('1');
-      emit(shadowDiv, 'event');
-      expect(el._test).to.equal(2);
+        // Re-render.
+        props(el, { test: el.test + 1 });
+        expect(shadowDiv.textContent).to.equal('1');
+        emit(shadowDiv, 'event');
+        expect(el._test).to.equal(2);
 
-      props(el, { test: el.test + 1 });
-      expect(shadowDiv.textContent).to.equal('2');
-      emit(shadowDiv, 'event');
-      expect(el._test).to.equal(3);
-
-      done();
-    });
+        props(el, { test: el.test + 1 });
+        expect(shadowDiv.textContent).to.equal('2');
+        emit(shadowDiv, 'event');
+        expect(el._test).to.equal(3);
+      },
+      done
+    );
   });
 
   it('should trigger events bubbled from descendants', done => {
@@ -66,11 +68,14 @@ describe('vdom/events (on*)', () => {
     }));
     fixture().appendChild(myel);
 
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
-      expect(called).to.equal(true);
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
+        expect(called).to.equal(true);
+      },
+      done
+    );
   });
 
   it('should emit events from shadow dom', done => {
@@ -88,12 +93,15 @@ describe('vdom/events (on*)', () => {
     myel.addEventListener('test', test);
     fixture().appendChild(myel);
 
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
-      expect(called).to.equal(true);
-      expect(detail).to.equal('detail');
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
+        expect(called).to.equal(true);
+        expect(detail).to.equal('detail');
+      },
+      done
+    );
   });
 
   it('should not fail for listeners that are not functions', done => {
@@ -103,10 +111,13 @@ describe('vdom/events (on*)', () => {
       },
     }));
     fixture(myel);
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].firstChild, 'test');
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].firstChild, 'test');
+      },
+      done
+    );
   });
 
   describe('built-in / custom', () => {
@@ -134,6 +145,7 @@ describe('vdom/events (on*)', () => {
       }));
       fixture(el);
       afterMutations(
+        () => {}, // .render()
         () => {
           div = el[symbols.shadowRoot].firstChild;
         },

@@ -13,7 +13,7 @@ function get(elem) {
 
 function set(elem, newProps) {
   assign(elem, newProps);
-  if (elem.constructor.render) {
+  if (elem.constructor[$renderer]) {
     elem.constructor[$renderer](elem);
   }
 }
