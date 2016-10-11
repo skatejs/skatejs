@@ -94,23 +94,4 @@ describe('api/Component', () => {
       expect(hasChange).to.be.true;
     });
   });
-
-  describe('renderer()', (done) => {
-    // it('overriding', () => {
-    //   const Elem = define('x-test', {
-    //     renderer({ elem, render, shadowRoot }) {
-    //       expect(elem.tagName).to.startWith('x-test');
-    //       expect(render).to.be.a('function');
-    //       expect(shadowRoot).to.equal(elem.shadowRoot);
-    //       elem.innerHTML = 'test';
-    //     }
-    //   });
-    //   const elem = new Elem();
-    //   fixture(elem);
-    //   afterMutations(
-    //     () => expect(elem.innerHTML).to.equal('test'),
-    //     done
-    //   );
-    // });
-  });
 });
