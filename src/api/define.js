@@ -3,7 +3,6 @@
 import {
   name as $name,
   props as $props,
-  renderer as $renderer,
 } from '../util/symbols';
 import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
