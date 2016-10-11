@@ -49,6 +49,7 @@ function test(name, el) {
       // We change elem.num here so that we can see what happens when we
       // re-render without changing the ref.
       afterMutations(
+        () => {}, // x-test.render()
         () => expect(num).to.equal(1),
         () => props(elem, { num: elem.num + 1 }),
         () => expect(num).to.equal(1),
@@ -61,12 +62,15 @@ function test(name, el) {
     it('should not call a removed ref', done => {
       let num = 0;
       const elem = create(() => ++num);
-      afterMutations(() => {
-        expect(num).to.equal(1);
-        props(elem, { ref: null });
-        expect(num).to.equal(1);
-        done();
-      });
+      afterMutations(
+        () => {}, // x-test.render()
+        () => {
+          expect(num).to.equal(1);
+          props(elem, { ref: null });
+          expect(num).to.equal(1);
+          done();
+        }
+      );
     });
   });
 }

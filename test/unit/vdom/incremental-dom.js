@@ -26,6 +26,8 @@ describe('IncrementalDOM', () => {
     }
 
     describe('efficient rendering', () => {
+      const skip = !window.MutationObserver;
+
       function renderCounter() {
         const { safe, skate } = element();
         let renderCount = 0;
@@ -46,7 +48,9 @@ describe('IncrementalDOM', () => {
         };
       }
 
-      it('causes only one render for new elements with no attributes before the next tick', (done) => {
+      it('causes only one render for new elements with no attributes before the next tick', function (done) {
+        if (skip) this.skip();
+
         const { tag, renderCount } = renderCounter();
 
         // Schedule the assertions prior to using incremental dom, to verify
@@ -62,7 +66,9 @@ describe('IncrementalDOM', () => {
         });
       });
 
-      it('causes only one render for new elements with multiple attributes before the next tick', (done) => {
+      it('causes only one render for new elements with multiple attributes before the next tick', function (done) {
+        if (skip) this.skip();
+
         const { tag, renderCount } = renderCounter();
 
         // Schedule the assertions prior to using incremental dom, to verify

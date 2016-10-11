@@ -43,4 +43,4 @@ function taskDebounce(fn) {
   };
 }
 
-export default MutationObserver ? microTaskDebounce : taskDebounce;
+export default window.MutationObserver ? microTaskDebounce : taskDebounce;

@@ -27,7 +27,10 @@ describe('api/props', () => {
       },
     }));
     fixture(elem);
-    afterMutations(done);
+    afterMutations(
+      () => {}, // .render()
+      done
+    );
   });
 
   describe('getting', () => {

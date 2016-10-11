@@ -11,6 +11,7 @@ describe('vdom/properties', () => {
     }));
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test'),
       done
     );
@@ -31,6 +32,7 @@ describe('vdom/properties', () => {
     fixture(elem);
 
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(elem[symbols.shadowRoot].firstChild.getAttribute('class')).to.equal('inner'),
       done
     );
@@ -48,6 +50,7 @@ describe('vdom/properties', () => {
     fixture(elem);
     let div;
     afterMutations(
+      () => {}, // x-test.render()
       () => (div = elem[symbols.shadowRoot].firstChild),
       () => (elem.test = true),
       () => expect(div.hasAttribute('test')).to.equal(true),
@@ -100,6 +103,9 @@ describe('vdom/properties', () => {
       const elem = new Elem1();
       fixture(elem);
       afterMutations(
+        () => {}, // Elem1.render()
+        () => {}, // Elem2.render()
+        () => {}, // ...
         () => expect(text(elem)).to.equal('closed', 'init'),
         () => props(elem, { open: true }),
         () => expect(text(elem)).to.equal('open', 'false -> true'),
