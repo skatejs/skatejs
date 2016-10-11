@@ -722,6 +722,22 @@ skate.define('my-component', {
 
 
 
+#### `renderer`
+
+Function that is responsible for doing the rendering. For example you could create a base class for rendering stuff with Preact:
+
+```js
+import { render as preactRender } from 'preact';
+
+class BaseComponent extends skate.Component {
+  static renderer({ elem, render, shadowRoot }) {
+    preactRender(render(elem), shadowRoot);
+  }
+}
+```
+
+
+
 #### `render`
 
 Function that is called to render the element. This is called when the element is first created and on subsequent prop updates if the property `updated()` callback returns `true`.
