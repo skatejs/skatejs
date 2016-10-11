@@ -724,7 +724,7 @@ skate.define('my-component', {
 
 #### `renderer`
 
-Function that is responsible for doing the rendering. For example you could create a base class for rendering stuff with Preact:
+Function that is responsible for doing the rendering. For example you could create a base class for rendering stuff with [Preact](https://github.com/developit/preact):
 
 ```js
 import { render as preactRender } from 'preact';
