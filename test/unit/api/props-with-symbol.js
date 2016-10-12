@@ -1,5 +1,7 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
-import hasSymbol from '../../lib/after-mutations';
+import hasSymbol from '../../lib/has-symbol';
 import createSymbol from '../../../src/util/create-symbol';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -18,19 +20,19 @@ describe('api/props-with-symbol', () => {
     elem = new (element().skate({
       props: {
         [secret]: {
-          initial: 'secretKey',
+          initial: 'secretKey'
         },
         [secret2]: {
-          initial: 'secretKey2',
-        },
+          initial: 'secretKey2'
+        }
       },
-      created(el) {
+      created (el) {
         el._rendered = 0;
       },
-      render(el) {
+      render (el) {
         el._rendered++;
-      },
-    }));
+      }
+    }))();
     fixture(elem);
     afterMutations(done);
   });
@@ -52,7 +54,7 @@ describe('api/props-with-symbol', () => {
     it('should set all properties', () => {
       props(elem, {
         [secret]: 'newSecretKey',
-        [secret2]: 'newSecretKey2',
+        [secret2]: 'newSecretKey2'
       });
       expect(elem[secret]).to.equal('newSecretKey');
       expect(elem[secret2]).to.equal('newSecretKey2');

@@ -1,6 +1,6 @@
 import props from './props';
 
-function getValue(elem) {
+function getValue (elem) {
   const type = elem.type;
   if (type === 'checkbox' || type === 'radio') {
     return elem.checked ? elem.value || true : false;
@@ -21,11 +21,11 @@ export default function (elem, target) {
 
       obj[propName || e.target.name] = value;
       props(elem, {
-        [firstPart]: elem[firstPart],
+        [firstPart]: elem[firstPart]
       });
     } else {
       props(elem, {
-        [localTarget]: value,
+        [localTarget]: value
       });
     }
   };

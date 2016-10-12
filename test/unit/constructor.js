@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { define } from '../../src/index';
 import helperElement from '../lib/element';
 import resolved from '../lib/resolved';

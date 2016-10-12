@@ -1,13 +1,15 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 
 describe('lifecycle/attributes', () => {
-  function create(definition = {}, name = 'testName', value) {
+  function create (definition = {}, name = 'testName', value) {
     const elem = new (element().skate({
       props: {
-        [name]: definition,
-      },
+        [name]: definition
+      }
     }))();
     if (arguments.length === 3) { // eslint-disable-line prefer-rest-params
       elem[name] = value;

@@ -1,6 +1,6 @@
 import {
   connected as $connected,
-  rendererDebounced as $rendererDebounced,
+  rendererDebounced as $rendererDebounced
 } from '../util/symbols';
 import assign from '../util/assign';
 import data from '../util/data';
@@ -11,13 +11,13 @@ import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function createNativePropertyDefinition(name, opts) {
+function createNativePropertyDefinition (name, opts) {
   const prop = {
     configurable: true,
-    enumerable: true,
+    enumerable: true
   };
 
-  prop.created = function created(elem) {
+  prop.created = function created (elem) {
     const propData = getPropData(elem, name);
     const attributeName = opts.attribute === true ? dashCase(name) : opts.attribute;
     let initialValue = elem[name];
@@ -40,13 +40,13 @@ function createNativePropertyDefinition(name, opts) {
     propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
   };
 
-  prop.get = function get() {
+  prop.get = function get () {
     const propData = getPropData(this, name);
     const { internalValue } = propData;
     return typeof opts.get === 'function' ? opts.get(this, { name, internalValue }) : internalValue;
   };
 
-  prop.set = function set(newValue) {
+  prop.set = function set (newValue) {
     const propData = getPropData(this, name);
     propData.lastAssignedValue = newValue;
     let { oldValue } = propData;
@@ -94,6 +94,6 @@ export default function (opts) {
   return name => createNativePropertyDefinition(name, assign({
     default: null,
     deserialize: value => value,
-    serialize: value => value,
+    serialize: value => value
   }, opts));
 }

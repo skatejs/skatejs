@@ -7,7 +7,7 @@ import {
   elementOpen as idomElementOpen,
   skip as idomSkip,
   symbols,
-  text,
+  text
 } from 'incremental-dom';
 import { name as $name, ref as $ref } from '../util/symbols';
 import { shadowDomV0, shadowDomV1 } from '../util/support';
@@ -37,7 +37,7 @@ let skips = 0;
 const noop = () => {};
 
 // Adds or removes an event listener for an element.
-function applyEvent(elem, ename, newFunc) {
+function applyEvent (elem, ename, newFunc) {
   let events = elem[$currentEventHandlers];
 
   if (!events) {
@@ -69,7 +69,7 @@ const attributesContext = propContext(attributes, {
   value: applyProp,
 
   // V0 Shadow DOM to V1 normalisation.
-  name(elem, name, value) {
+  name (elem, name, value) {
     if (elem.tagName === 'CONTENT') {
       name = 'select';
       value = `[slot="${value}"]`;
@@ -78,12 +78,12 @@ const attributesContext = propContext(attributes, {
   },
 
   // Ref handler.
-  ref(elem, name, value) {
+  ref (elem, name, value) {
     elem[$ref] = value;
   },
 
   // Skip handler.
-  skip(elem, name, value) {
+  skip (elem, name, value) {
     if (value) {
       elem[$skip] = true;
     } else {
@@ -92,7 +92,7 @@ const attributesContext = propContext(attributes, {
   },
 
   // Default attribute applicator.
-  [symbols.default](elem, name, value) {
+  [symbols.default] (elem, name, value) {
     // Custom element properties should be set as properties.
     const props = elem.constructor.props;
     if (props && name in props) {
@@ -134,10 +134,10 @@ const attributesContext = propContext(attributes, {
 
     // Fallback to default IncrementalDOM behaviour.
     applyDefault(elem, name, value);
-  },
+  }
 });
 
-function resolveTagName(tname) {
+function resolveTagName (tname) {
   // If the tag name is a function, a Skate constructor or a standard function
   // is supported.
   //
@@ -161,18 +161,18 @@ function resolveTagName(tname) {
 // so it's the only function we need to execute in the context of our attributes.
 const elementOpen = attributesContext(idomElementOpen);
 
-function elementOpenStart(tag, key = null, statics = null) {
+function elementOpenStart (tag, key = null, statics = null) {
   overrideArgs = [tag, key, statics];
 }
 
-function elementOpenEnd() {
+function elementOpenEnd () {
   const node = newElementOpen(...overrideArgs); // eslint-disable-line no-use-before-define
   overrideArgs = null;
   return node;
 }
 
-function wrapIdomFunc(func, tnameFuncHandler = noop) {
-  return function wrap(...args) {
+function wrapIdomFunc (func, tnameFuncHandler = noop) {
+  return function wrap (...args) {
     args[0] = resolveTagName(args[0]);
     stackCurrentHelper = null;
     if (typeof args[0] === 'function') {
@@ -234,7 +234,7 @@ function wrapIdomFunc(func, tnameFuncHandler = noop) {
   };
 }
 
-function newAttr(...args) {
+function newAttr (...args) {
   if (stackCurrentHelper) {
     stackCurrentHelper[$stackCurrentHelperProps][args[0]] = args[1];
   } else if (stackChren.length) {
@@ -245,7 +245,7 @@ function newAttr(...args) {
   }
 }
 
-function stackOpen(tname, key, statics, ...attrs) {
+function stackOpen (tname, key, statics, ...attrs) {
   const props = { key, statics };
   for (let a = 0; a < attrs.length; a += 2) {
     props[attrs[a]] = attrs[a + 1];
@@ -254,7 +254,7 @@ function stackOpen(tname, key, statics, ...attrs) {
   stackChren.push([]);
 }
 
-function stackClose(tname) {
+function stackClose (tname) {
   const chren = stackChren.pop();
   const props = tname[$stackCurrentHelperProps];
   delete tname[$stackCurrentHelperProps];
@@ -278,7 +278,7 @@ const newElementOpen = wrapIdomFunc(elementOpen, stackOpen);
 const newElementClose = wrapIdomFunc(elementClose, stackClose);
 
 // Ensure we call our overridden functions instead of the internal ones.
-function newElementVoid(tag, ...args) {
+function newElementVoid (tag, ...args) {
   newElementOpen(tag, ...args);
   return newElementClose(tag);
 }
@@ -288,7 +288,7 @@ const newText = wrapIdomFunc(text);
 
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
-export function element(tname, attrs, ...chren) {
+export function element (tname, attrs, ...chren) {
   const atype = typeof attrs;
 
   // If attributes are a function, then they should be treated as children.
@@ -331,7 +331,7 @@ export function element(tname, attrs, ...chren) {
 
 // Even further convenience for building a DSL out of JavaScript functions or hooking into standard
 // transpiles for JSX (React.createElement() / h).
-export function builder(...tags) {
+export function builder (...tags) {
   if (tags.length === 0) {
     return (...args) => element.bind(null, ...args);
   }
@@ -350,5 +350,5 @@ export {
   newElementOpenEnd as elementOpenEnd,
   newElementOpenStart as elementOpenStart,
   newElementVoid as elementVoid,
-  newText as text,
+  newText as text
 };

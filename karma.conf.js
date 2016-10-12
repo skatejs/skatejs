@@ -8,6 +8,6 @@ module.exports = (config) => {
 
   // Since we override the Webpack config, we must make sure Karma gets it.
   config.webpack = Object.assign({}, config.webpack, webpackConfig, {
-    entry: undefined,
+    entry: undefined
   });
 };

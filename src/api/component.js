@@ -3,7 +3,7 @@ import {
   created as $created,
   props as $props,
   renderer as $renderer,
-  rendererDebounced as $rendererDebounced,
+  rendererDebounced as $rendererDebounced
 } from '../util/symbols';
 import { customElementsV0, reflect } from '../util/support';
 import data from '../util/data';
@@ -12,7 +12,9 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function callConstructor(elem) {
+const { HTMLElement } = window;
+
+function callConstructor (elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
   const Ctor = elem.constructor;
@@ -57,7 +59,7 @@ function callConstructor(elem) {
   }
 }
 
-function syncPropsToAttrs(elem) {
+function syncPropsToAttrs (elem) {
   const props = elem.constructor.props;
   Object.keys(props).forEach((propName) => {
     const prop = props[propName];
@@ -65,7 +67,7 @@ function syncPropsToAttrs(elem) {
   });
 }
 
-function callConnected(elem) {
+function callConnected (elem) {
   const Ctor = elem.constructor;
   const { attached } = Ctor;
   const render = elem[$rendererDebounced];
@@ -85,7 +87,7 @@ function callConnected(elem) {
   elem.setAttribute('defined', '');
 }
 
-function callDisconnected(elem) {
+function callDisconnected (elem) {
   const { detached } = elem.constructor;
 
   elem[$connected] = false;
@@ -96,10 +98,10 @@ function callDisconnected(elem) {
 }
 
 // v1
-function Component(...args) {
-  const elem = reflect ?
-    Reflect.construct(HTMLElement, args, this.constructor) :
-    HTMLElement.call(this, args[0]);
+function Component (...args) {
+  const elem = reflect
+    ? Reflect.construct(HTMLElement, args, this.constructor)
+    : HTMLElement.call(this, args[0]);
   callConstructor(elem);
   return elem;
 }
@@ -111,7 +113,7 @@ Component.observedAttributes = [];
 Component.props = {};
 
 // Skate
-Component.extend = function extend(definition = {}, Base = this) {
+Component.extend = function extend (definition = {}, Base = this) {
   // Create class for the user.
   class Ctor extends Base {}
 
@@ -142,7 +144,7 @@ Component.extend = function extend(definition = {}, Base = this) {
 // This is a default implementation that does strict equality copmarison on
 // previous props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
-Component.updated = function updated(elem, prev) {
+Component.updated = function updated (elem, prev) {
   if (!prev) {
     return true;
   }
@@ -161,23 +163,23 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   // v1
   connectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callConnected(this);
-    },
+    }
   },
 
   // v1
   disconnectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callDisconnected(this);
-    },
+    }
   },
 
   // v0 and v1
   attributeChangedCallback: {
     configurable: true,
-    value(name, oldValue, newValue) {
+    value (name, oldValue, newValue) {
       const { attributeChanged, observedAttributes } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
@@ -209,32 +211,32 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       if (attributeChanged) {
         attributeChanged(this, { name, newValue, oldValue });
       }
-    },
+    }
   },
 
   // v0
   createdCallback: {
     configurable: true,
-    value() {
+    value () {
       callConstructor(this);
-    },
+    }
   },
 
   // v0
   attachedCallback: {
     configurable: true,
-    value() {
+    value () {
       callConnected(this);
-    },
+    }
   },
 
   // v0
   detachedCallback: {
     configurable: true,
-    value() {
+    value () {
       callDisconnected(this);
-    },
-  },
+    }
+  }
 });
 
 export default Component;

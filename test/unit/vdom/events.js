@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { emit, prop, props, symbols, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
@@ -9,18 +11,18 @@ describe('vdom/events (on*)', () => {
   it('should not duplicate listeners', done => {
     const MyEl = element().skate({
       props: {
-        test: number({ default: 0 }),
+        test: number({ default: 0 })
       },
-      created(elem) {
+      created (elem) {
         elem._test = 0;
       },
-      render(elem) {
+      render (elem) {
         vdom.element('div', {
           'on-event': () => {
             elem._test++;
-          },
+          }
         }, elem.test);
-      },
+      }
     });
 
     const el = new MyEl();
@@ -62,10 +64,10 @@ describe('vdom/events (on*)', () => {
       called = true;
     };
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', { 'on-test': test }, vdom.element.bind(null, 'span'));
-      },
-    }));
+      }
+    }))();
     fixture().appendChild(myel);
 
     afterMutations(
@@ -86,10 +88,10 @@ describe('vdom/events (on*)', () => {
       detail = e.detail;
     };
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', {}, vdom.element.bind(null, 'span'));
-      },
-    }));
+      }
+    }))();
     myel.addEventListener('test', test);
     fixture().appendChild(myel);
 
@@ -106,10 +108,10 @@ describe('vdom/events (on*)', () => {
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', { 'on-test': null });
-      },
-    }));
+      }
+    }))();
     fixture(myel);
     afterMutations(
       () => {}, // .render()
@@ -125,7 +127,7 @@ describe('vdom/events (on*)', () => {
     let div;
     let el;
 
-    function inc() {
+    function inc () {
       ++count;
     }
 
@@ -133,16 +135,16 @@ describe('vdom/events (on*)', () => {
       count = 0;
       el = new (element().skate({
         props: {
-          unbind: boolean(),
+          unbind: boolean()
         },
-        render(elem) {
+        render (elem) {
           if (elem.unbind) {
             vdom.element('div');
           } else {
             vdom.element('div', { onclick: inc, onTest1: inc, 'on-test2': inc });
           }
-        },
-      }));
+        }
+      }))();
       fixture(el);
       afterMutations(
         () => {}, // .render()
