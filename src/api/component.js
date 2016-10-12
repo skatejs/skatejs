@@ -7,13 +7,13 @@ import {
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
   shadowRoot as $shadowRoot,
-  updated as $updated,
+  updated as $updated
 } from '../util/symbols';
 import {
   customElementsV0,
   reflect,
   shadowDomV0,
-  shadowDomV1,
+  shadowDomV1
 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -22,10 +22,12 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getSetProps from './props';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
+const { HTMLElement } = window;
+
 // Abstracts shadow root across v1, v0 and no support.
 // Once v1 is supported everywhere, we can call elem.attachShadow() directly
 // and remove this function.
-function attachShadow(elem) {
+function attachShadow (elem) {
   if (shadowDomV1) {
     return elem.attachShadow({ mode: 'open' });
   } else if (shadowDomV0) {
@@ -34,11 +36,11 @@ function attachShadow(elem) {
   return elem;
 }
 
-function getOrAttachShadow(elem) {
+function getOrAttachShadow (elem) {
   return elem[$shadowRoot] || (elem[$shadowRoot] = attachShadow(elem));
 }
 
-function callConstructor(elem) {
+function callConstructor (elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
   const { constructor } = elem;
@@ -82,7 +84,7 @@ function callConstructor(elem) {
   }
 }
 
-function syncPropsToAttrs(elem) {
+function syncPropsToAttrs (elem) {
   const props = elem.constructor.props;
   Object.keys(props).forEach((propName) => {
     const prop = props[propName];
@@ -90,7 +92,7 @@ function syncPropsToAttrs(elem) {
   });
 }
 
-function callConnected(elem) {
+function callConnected (elem) {
   const { constructor } = elem;
 
   syncPropsToAttrs(elem);
@@ -105,7 +107,7 @@ function callConnected(elem) {
   elem.setAttribute('defined', '');
 }
 
-function callDisconnected(elem) {
+function callDisconnected (elem) {
   const { constructor } = elem;
 
   elem[$connected] = false;
@@ -116,10 +118,10 @@ function callDisconnected(elem) {
 }
 
 // v1
-function Component(...args) {
-  const elem = reflect ?
-    Reflect.construct(HTMLElement, args, this.constructor) :
-    HTMLElement.call(this, args[0]);
+function Component (...args) {
+  const elem = reflect
+    ? Reflect.construct(HTMLElement, args, this.constructor)
+    : HTMLElement.call(this, args[0]);
   callConstructor(elem);
   return elem;
 }
@@ -131,7 +133,7 @@ Component.observedAttributes = [];
 Component.props = {};
 
 // Skate
-Component.extend = function extend(definition = {}, Base = this) {
+Component.extend = function extend (definition = {}, Base = this) {
   // Create class for the user.
   class Ctor extends Base {}
 
@@ -160,7 +162,7 @@ Component.extend = function extend(definition = {}, Base = this) {
 // Skate
 //
 // Incremental DOM renderer.
-Component.renderer = function renderer({ elem, render, shadowRoot }) {
+Component.renderer = function renderer ({ elem, render, shadowRoot }) {
   patchInner(shadowRoot, () => {
     const possibleFn = render(elem);
     if (typeof possibleFn === 'function') {
@@ -180,7 +182,7 @@ Component.renderer = function renderer({ elem, render, shadowRoot }) {
 // This is a default implementation that does strict equality copmarison on
 // previous props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
-Component.updated = function updated(elem, prev) {
+Component.updated = function updated (elem, prev) {
   if (!prev) {
     return true;
   }
@@ -198,7 +200,7 @@ Component.updated = function updated(elem, prev) {
 // Skate
 //
 // Calls the user-defined updated() lifecycle callback.
-Component[$updated] = function _updated(elem) {
+Component[$updated] = function _updated (elem) {
   if (typeof this.updated === 'function') {
     const prev = elem[$props];
     elem[$props] = getSetProps(elem);
@@ -210,7 +212,7 @@ Component[$updated] = function _updated(elem) {
 // Skate
 //
 // Goes through the user-defined render lifecycle.
-Component[$renderer] = function _renderer(elem) {
+Component[$renderer] = function _renderer (elem) {
   if (elem[$rendering] || !elem[$connected]) {
     return;
   }
@@ -242,23 +244,23 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   // v1
   connectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callConnected(this);
-    },
+    }
   },
 
   // v1
   disconnectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callDisconnected(this);
-    },
+    }
   },
 
   // v0 and v1
   attributeChangedCallback: {
     configurable: true,
-    value(name, oldValue, newValue) {
+    value (name, oldValue, newValue) {
       const { attributeChanged, observedAttributes } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
@@ -290,32 +292,32 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       if (attributeChanged) {
         attributeChanged(this, { name, newValue, oldValue });
       }
-    },
+    }
   },
 
   // v0
   createdCallback: {
     configurable: true,
-    value() {
+    value () {
       callConstructor(this);
-    },
+    }
   },
 
   // v0
   attachedCallback: {
     configurable: true,
-    value() {
+    value () {
       callConnected(this);
-    },
+    }
   },
 
   // v0
   detachedCallback: {
     configurable: true,
-    value() {
+    value () {
       callDisconnected(this);
-    },
-  },
+    }
+  }
 });
 
 export default Component;

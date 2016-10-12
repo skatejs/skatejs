@@ -1,3 +1,4 @@
+const { Document } = window;
 const doc = document;
 const win = window;
 const div = doc.createElement('div');

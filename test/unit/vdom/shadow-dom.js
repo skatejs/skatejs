@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
 import { symbols } from '../../../src/index';
 import element from '../../lib/element';
@@ -6,7 +8,7 @@ describe('vdom/shadow-dom', () => {
   let Elem;
 
   beforeEach(() => {
-    Elem = element().skate({ render() {} });
+    Elem = element().skate({ render () {} });
   });
 
   if (shadowDomV0) {

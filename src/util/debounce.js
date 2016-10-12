@@ -1,3 +1,5 @@
+const { MutationObserver } = window;
+
 const longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
 let timeoutDuration = 0;
 for (let i = 0; i < longerTimeoutBrowsers.length; i += 1) {
@@ -7,7 +9,7 @@ for (let i = 0; i < longerTimeoutBrowsers.length; i += 1) {
   }
 }
 
-function microTaskDebounce(cbFunc) {
+function microTaskDebounce (cbFunc) {
   let called = false;
   let i = 0;
   let cbArgs = [];
@@ -30,7 +32,7 @@ function microTaskDebounce(cbFunc) {
   };
 }
 
-function taskDebounce(fn) {
+function taskDebounce (fn) {
   let called = false;
   return (...args) => {
     if (!called) {

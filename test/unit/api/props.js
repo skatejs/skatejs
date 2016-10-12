@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -10,22 +12,22 @@ describe('api/props', () => {
     elem = new (element().skate({
       props: {
         prop1: {
-          initial: 'test1',
+          initial: 'test1'
         },
         prop2: {
-          initial: 'test2',
+          initial: 'test2'
         },
         prop3: {
-          default: undefined,
-        },
+          default: undefined
+        }
       },
-      created(el) {
+      created (el) {
         el._rendered = 0;
       },
-      render(el) {
+      render (el) {
         el._rendered++;
-      },
-    }));
+      }
+    }))();
     fixture(elem);
     afterMutations(
       () => {}, // .render()
@@ -49,7 +51,7 @@ describe('api/props', () => {
       props(elem, {
         prop1: 'updated1',
         prop2: 'updated2',
-        undeclaredProp: 'updated3',
+        undeclaredProp: 'updated3'
       });
       expect(elem.prop1).to.equal('updated1');
       expect(elem.prop2).to.equal('updated2');
@@ -81,6 +83,6 @@ describe('api/props', () => {
       const elem = element().create();
       props(elem, { undeclaredProp: 'foo' });
       expect(elem).property('undeclaredProp', 'foo');
-    })
+    });
   });
 });

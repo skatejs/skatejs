@@ -4,7 +4,7 @@ import getDefaultValue from '../util/get-default-value';
 import getInitialValue from './get-initial-value';
 import getPropData from './get-prop-data';
 
-function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
+function syncFirstTimeProp (elem, prop, propName, attributeName, propData) {
   let syncAttrValue = propData.lastAssignedValue;
   if (empty(syncAttrValue)) {
     if ('initial' in prop) {
@@ -22,7 +22,7 @@ function syncFirstTimeProp(elem, prop, propName, attributeName, propData) {
   }
 }
 
-function syncExistingProp(elem, prop, propName, attributeName, propData) {
+function syncExistingProp (elem, prop, propName, attributeName, propData) {
   if (attributeName && !propData.settingAttribute) {
     const { internalValue } = propData;
     const serializedValue = prop.serialize(internalValue);
@@ -50,7 +50,7 @@ function syncExistingProp(elem, prop, propName, attributeName, propData) {
   propData.settingAttribute = false;
 }
 
-export default function syncPropToAttr(elem, prop, propName, isFirstSync) {
+export default function syncPropToAttr (elem, prop, propName, isFirstSync) {
   const attributeName = data(elem, 'propertyLinks')[propName];
   const propData = getPropData(elem, propName);
 

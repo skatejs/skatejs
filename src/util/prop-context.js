@@ -1,6 +1,6 @@
 import assign from './assign';
 
-function enter(object, props) {
+function enter (object, props) {
   const saved = {};
   Object.keys(props).forEach((key) => {
     saved[key] = object[key];
@@ -9,7 +9,7 @@ function enter(object, props) {
   return saved;
 }
 
-function exit(object, saved) {
+function exit (object, saved) {
   assign(object, saved);
 }
 

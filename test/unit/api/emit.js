@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import emit from '../../../src/api/emit';
 import fixture from '../../lib/fixture';
 
@@ -50,7 +52,7 @@ describe('api/emit', () => {
 
   it('stopPropagation()', () => {
     child.addEventListener('test', e => e.stopPropagation());
-    parent.addEventListener('test', () => assert(false, 'propagation should have been stopped'));
+    parent.addEventListener('test', () => { throw new Error('propagation should have been stopped'); });
     const canceled = !emit(child, 'test');
     expect(canceled).to.equal(true);
   });

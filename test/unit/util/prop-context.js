@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import propContext from '../../../src/util/prop-context';
 
 describe('utils/prop-context:', () => {

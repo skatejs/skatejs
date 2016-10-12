@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import keys from '../../../src/util/get-all-keys';
 import createSymbol from '../../../src/util/create-symbol';
 
@@ -17,7 +19,7 @@ describe('utils/get-all-keys:', () => {
       obj = {};
       Object.defineProperties(obj, {
         foo: { enumerable: true, value: 1 },
-        bar: { enumerable: false, value: 2 },
+        bar: { enumerable: false, value: 2 }
       });
     });
 

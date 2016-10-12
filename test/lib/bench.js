@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 const TIMEOUT = 1000000;
 
 export default function (name, options) {

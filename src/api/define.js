@@ -2,7 +2,7 @@
 
 import {
   name as $name,
-  props as $props,
+  props as $props
 } from '../util/symbols';
 import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
@@ -12,7 +12,7 @@ import keys from '../util/get-all-keys';
 
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
-function ensurePropertyFunctions(Ctor) {
+function ensurePropertyFunctions (Ctor) {
   const props = Ctor.props;
 
   return keys(props).reduce((descriptors, descriptorName) => {
@@ -26,7 +26,7 @@ function ensurePropertyFunctions(Ctor) {
 
 // Ensures the property definitions are transformed to objects that can be used
 // to create properties on the element.
-function ensurePropertyDefinitions(Ctor) {
+function ensurePropertyDefinitions (Ctor) {
   const props = ensurePropertyFunctions(Ctor);
   return keys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName](descriptorName);
@@ -36,7 +36,7 @@ function ensurePropertyDefinitions(Ctor) {
 
 // Ensures linked properties that have linked attributes are pre-formatted to
 // the attribute name in which they are linked.
-function formatLinkedAttributes(Ctor) {
+function formatLinkedAttributes (Ctor) {
   const { observedAttributes, props } = Ctor;
 
   if (!props) {
@@ -62,13 +62,13 @@ function formatLinkedAttributes(Ctor) {
   Object.defineProperty(Ctor, 'observedAttributes', {
     configurable: true,
     enumerable: true,
-    get() {
+    get () {
       return observedAttributes;
-    },
+    }
   });
 }
 
-function createInitProps(Ctor) {
+function createInitProps (Ctor) {
   const props = ensurePropertyDefinitions(Ctor);
 
   return (elem) => {
@@ -91,7 +91,7 @@ function createInitProps(Ctor) {
   };
 }
 
-function generateUniqueName(name) {
+function generateUniqueName (name) {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
@@ -102,12 +102,12 @@ function generateUniqueName(name) {
   return `${name}-${rand}`;
 }
 
-function prepareForRegistration(name, Ctor) {
+function prepareForRegistration (name, Ctor) {
   Ctor[$name] = name;
   Ctor[$props] = createInitProps(Ctor);
 }
 
-function registerV0Element(name, Ctor) {
+function registerV0Element (name, Ctor) {
   let res;
   let uniqueName;
   try {
@@ -121,7 +121,7 @@ function registerV0Element(name, Ctor) {
   return res;
 }
 
-function registerV1Element(name, Ctor) {
+function registerV1Element (name, Ctor) {
   let uniqueName = name;
   if (window.customElements.get(name)) {
     uniqueName = generateUniqueName(name);
