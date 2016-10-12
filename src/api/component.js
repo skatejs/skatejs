@@ -96,7 +96,7 @@ function callConnected(elem) {
   syncPropsToAttrs(elem);
 
   elem[$connected] = true;
-  constructor[$rendererDebounced](elem);
+  elem[$rendererDebounced](elem);
 
   if (typeof constructor.attached === 'function') {
     constructor.attached(elem);
