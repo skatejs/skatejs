@@ -26,12 +26,8 @@
     "incremental-dom": "0.4.1"
   },
   "devDependencies": {
-    "babel-plugin-transform-class-properties": "^6.11.5",
     "birdpoo": "0.x",
     "document-register-element": "^1.2.0",
-    "eslint": "3.6.1",
-    "eslint-friendly-formatter": "^2.0.6",
-    "eslint-plugin-import": "^2.0.1",
     "precommit-hook": "^3.0.0",
     "react": "15.x",
     "react-dom": "15.3.2",

@@ -1,6 +1,0 @@
-lib/
-dist/
-.tmp/
-karma.conf.js
-rollup.config.js
-webpack.config.js

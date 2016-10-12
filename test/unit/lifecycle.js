@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../lib/after-mutations';
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
@@ -25,7 +27,7 @@ describe('lifecycle', () => {
       },
       detached: () => {
         detached = true;
-      },
+      }
     });
     myEl = new MyEl();
   });

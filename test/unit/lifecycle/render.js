@@ -1,16 +1,19 @@
+/* eslint-env jasmine, mocha */
+
 import { define, prop, props } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { isPolyfilled } from '../../../src/util/support';
+
+const { sinon } = window;
 
 describe('lifecycle/render', () => {
   it('should be called', (done) => {
     let called = false;
     const Elem = define('x-test', {
-      render() {
+      render () {
         called = true;
-      },
+      }
     });
     fixture(new Elem());
     afterMutations(
@@ -23,12 +26,12 @@ describe('lifecycle/render', () => {
   it('should get called after created()', (done) => {
     const called = [];
     const Elem = define('x-test', {
-      created() {
+      created () {
         called.push('created');
       },
-      render() {
+      render () {
         called.push('render');
-      },
+      }
     });
     fixture(new Elem());
     afterMutations(
@@ -44,14 +47,14 @@ describe('lifecycle/render', () => {
     const elem2 = elem();
 
     elem1.skate({
-      created() {
+      created () {
         called.push('elem1');
-      },
+      }
     });
     elem2.skate({
-      created() {
+      created () {
         called.push('elem2');
-      },
+      }
     });
 
     fixture(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
@@ -69,9 +72,9 @@ describe('lifecycle/render', () => {
 
     it('function', (done) => {
       const Elem = define('x-test', {
-        render() {
+        render () {
           return spy;
-        },
+        }
       });
       fixture(new Elem());
       afterMutations(
@@ -83,9 +86,9 @@ describe('lifecycle/render', () => {
 
     it('array of functions', (done) => {
       const Elem = define('x-test', {
-        render() {
+        render () {
           return [spy, null, spy];
-        },
+        }
       });
       fixture(new Elem());
       afterMutations(
@@ -101,10 +104,10 @@ describe('lifecycle/render', () => {
       let called = 0;
       const Elem = define('x-test', {
         props: {
-          test: prop.number(),
+          test: prop.number()
         },
         /* eslint-disable no-use-before-define */
-        updated(el, prev) {
+        updated (el, prev) {
           if (elemLocal.test === 0) {
             expect(el).to.equal(elemLocal);
             expect(prev).to.equal(undefined);
@@ -116,7 +119,7 @@ describe('lifecycle/render', () => {
             expect(prev.test).to.equal(1);
           }
           ++called;
-        },
+        }
         /* eslint-enable no-use-before-define */
       });
       const elemLocal = new Elem();
@@ -143,12 +146,12 @@ describe('lifecycle/render', () => {
       let calledUpdated;
       let calledRender = false;
       const Elem = define('x-test', {
-        updated() {
+        updated () {
           calledUpdated = true;
         },
-        render() {
+        render () {
           calledRender = true;
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
@@ -166,13 +169,13 @@ describe('lifecycle/render', () => {
       let calledUpdated;
       let calledRender = false;
       const Elem = define('x-test', {
-        updated() {
+        updated () {
           calledUpdated = true;
           return true;
         },
-        render() {
+        render () {
           calledRender = true;
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
@@ -191,9 +194,9 @@ describe('lifecycle/render', () => {
       let calledRender = 0;
       const Elem = define('x-test', {
         props: {
-          test: {},
+          test: {}
         },
-        updated(el) {
+        updated (el) {
           // In this test case `updated()` is *only called once* during a debounced
           // rendering of the element (triggered when it was connected to the DOM).
 
@@ -208,10 +211,10 @@ describe('lifecycle/render', () => {
           // Allow the render to actually proceed.
           return true;
         },
-        render() {
+        render () {
           /* eslint no-plusplus: 0 */
           ++calledRender;
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
@@ -230,17 +233,17 @@ describe('lifecycle/render', () => {
     it('should be called after rendering', (done) => {
       const order = [];
       const Elem = define('x-test', {
-        updated() {
+        updated () {
           order.push('updated');
           return true;
         },
-        render() {
+        render () {
           order.push('render');
         },
-        rendered(el) {
+        rendered (el) {
           order.push('rendered');
           expect(el).to.equal(elemLocal); // eslint-disable-line no-use-before-define
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
@@ -258,9 +261,9 @@ describe('lifecycle/render', () => {
     it('should not be called if render() is not defined', (done) => {
       let afterCalled = false;
       const Elem = define('x-test', {
-        rendered() {
+        rendered () {
           afterCalled = true;
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
@@ -273,15 +276,15 @@ describe('lifecycle/render', () => {
     it('should not be called if rendering is prevented', (done) => {
       let afterCalled = false;
       const Elem = define('x-test', {
-        updated() {
+        updated () {
 
         },
-        render() {
+        render () {
 
         },
-        rendered() {
+        rendered () {
           afterCalled = true;
-        },
+        }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);

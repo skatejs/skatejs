@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import dashCase from '../../../src/util/dash-case';
 
 describe('utils/dash-case:', () => {

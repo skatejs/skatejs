@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import helperFixture from './lib/fixture';
 
 mocha.setup({ timeout: 10000 }); // eslint-disable-line no-undef

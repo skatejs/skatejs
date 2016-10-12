@@ -1,10 +1,11 @@
+/* eslint-env jasmine, mocha */
+
 import * as IncrementalDOM from 'incremental-dom';
 import { define, vdom } from '../../../src/index';
-import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 
-function testBasicApi(name) {
+function testBasicApi (name) {
   describe(name, () => {
     it('should be a function', () => expect(vdom[name]).to.be.a('function'));
     it('should not be the same one as in Incremental DOM', () => expect(vdom[name]).not.to.equal(IncrementalDOM[name]));
@@ -21,19 +22,19 @@ describe('IncrementalDOM', () => {
   testBasicApi('text');
 
   describe('function tag names', () => {
-    function patchIt(desc, func) {
+    function patchIt (desc, func) {
       it(desc, () => IncrementalDOM.patch(fixture(), func));
     }
 
     describe('efficient rendering', () => {
       const skip = !window.MutationObserver;
 
-      function renderCounter() {
+      function renderCounter () {
         const { safe, skate } = element();
         let renderCount = 0;
 
         skate({
-          render() {
+          render () {
             renderCount++;
           },
           props: {
@@ -75,7 +76,7 @@ describe('IncrementalDOM', () => {
         // the implementation isn't doing naive `setTimeout()` scheduling.
         setTimeout(() => {
           const elem = fixture().querySelector(tag);
-          expect(elem.foo).to.equal('value')
+          expect(elem.foo).to.equal('value');
           expect(elem.bar).to.equal('value');
           expect(renderCount()).to.equal(1);
           done();
@@ -127,12 +128,12 @@ describe('IncrementalDOM', () => {
     });
 
     describe('passing a function helper', () => {
-      function patchAssert(elem, { checkChildren = true } = {}) {
+      function patchAssert (elem, { checkChildren = true } = {}) {
         expect(fixture().firstChild).to.equal(elem);
         expect(fixture().innerHTML).to.equal(`<div id="test">${checkChildren ? '<span>test</span>' : ''}</div>`);
       }
 
-      function renderChildren() {
+      function renderChildren () {
         vdom.elementOpen('span');
         vdom.text('test');
         vdom.elementClose('span');

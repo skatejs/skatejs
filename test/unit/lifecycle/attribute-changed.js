@@ -1,3 +1,6 @@
+/* eslint-env jasmine, mocha */
+
+import { define } from '../../../src';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
@@ -14,33 +17,32 @@ describe('lifecycle/attribute-changed', () => {
   });
 
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
-    const tag = element();
-    const div = document.createElement(tag.safe);
-    div.setAttribute('test', 'ing');
-    fixtureArea.appendChild(div);
-    tag.skate({
+    const Elem = define('x-test', {
       observedAttributes: ['test'],
-      attributeChanged(elem, data) {
-        expect(elem.tagName).to.equal(tag.safe.toUpperCase());
+      attributeChanged (e, data) {
+        expect(e).to.equal(elem);
         expect(data.name).to.equal('test');
         expect(data.oldValue).to.equal(null);
         expect(data.newValue).to.equal('ing');
         done();
-      },
+      }
     });
+    const elem = new Elem();
+    fixture(elem);
+    elem.setAttribute('test', 'ing');
   });
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
     const elem = new (element().skate({ // eslint-disable-line new-parens
-      attributeChanged() {
+      attributeChanged () {
         counter += 1;
       },
       props: {
         test: {
-          attribute: true,
-        },
-      },
+          attribute: true
+        }
+      }
     }));
     fixtureArea.appendChild(elem);
     afterMutations(

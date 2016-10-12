@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
@@ -20,7 +22,7 @@ describe('create()', () => {
     it('should return an array of functions that create corresponding elements', (done) => {
       const [a, b, c] = builder('a', 'b', 'c');
       fixture(new (define('x-test', {
-        render() {
+        render () {
           return [
             a(),
             b(),
@@ -30,17 +32,17 @@ describe('create()', () => {
                 c({ c: 'c' }),
                 c({ d: 'd' })
               )
-            ),
+            )
           ];
         },
-        rendered({ shadowRoot }) {
+        rendered ({ shadowRoot }) {
           const [elA, elB, elC, elD] = [].slice.call(shadowRoot.children);
           expect(elA.tagName).to.equal('A');
           expect(elB.tagName).to.equal('B');
           expect(elC.tagName).to.equal('C');
           expect(elD.outerHTML).to.equal('<a a="a"><b b="b"><c c="c"></c><c d="d"></c></b></a>');
           done();
-        },
+        }
       }))());
     });
 
@@ -50,39 +52,39 @@ describe('create()', () => {
         (props, chren) => builder('a')[0](props, chren)
       );
       fixture(new (define('x-test', {
-        render() {
+        render () {
           return [
             e1({ a1: 'a1' }, 'a1'),
-            e2({ a2: 'a2' }, 'a2'),
+            e2({ a2: 'a2' }, 'a2')
           ];
         },
-        rendered({ shadowRoot }) {
+        rendered ({ shadowRoot }) {
           const [el1, el2] = [].slice.call(shadowRoot.children);
           expect(shadowRoot.children.length).to.equal(2);
           expect(el1.outerHTML).to.equal('<a a1="a1">a1</a>');
           expect(el2.outerHTML).to.equal('<a a2="a2">a2</a>');
           done();
-        },
+        }
       }))());
     });
 
     it('should work with web component constructors', (done) => {
       const [xTest] = builder(define('x-test', {}));
       fixture(new (define('x-test', {
-        render() {
+        render () {
           return xTest();
         },
-        rendered({ shadowRoot }) {
+        rendered ({ shadowRoot }) {
           const [elXTest] = [].slice.call(shadowRoot.children);
           expect(elXTest.tagName).to.match(/^X-TEST/);
           done();
-        },
+        }
       }))());
     });
 
     it('should allow arrays as children', (done) => {
       fixture(new (define('x-test', {
-        render() {
+        render () {
           return (
             h('div',
               h('span', { id: 1 }),
@@ -91,7 +93,7 @@ describe('create()', () => {
             )
           );
         },
-        rendered({ shadowRoot }) {
+        rendered ({ shadowRoot }) {
           expect(shadowRoot.innerHTML).to.equal(
             '<div>' +
               '<span id="1"></span>' +
@@ -103,7 +105,7 @@ describe('create()', () => {
             '</div>'
           );
           done();
-        },
+        }
       }))());
     });
   });

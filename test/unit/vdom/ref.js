@@ -1,19 +1,21 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 import { define, prop, props, vdom } from '../../../src/index';
 
-function test(name, el) {
-  function create(ref) {
+function test (name, el) {
+  function create (ref) {
     const Elem = define('x-test', {
       props: {
         num: prop.number(),
-        ref: { initial: () => ref },
+        ref: { initial: () => ref }
       },
-      render(elem) {
+      render (elem) {
         vdom.element(el, { ref: elem.ref, id: 'div' }, () =>
           vdom.element('span', { id: 'span' }, 'test')
         );
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
@@ -79,9 +81,9 @@ describe('vdom/ref', () => {
   test('normal elements', 'div');
 
   test('custom elements', define('x-test', {
-    render() {
+    render () {
       vdom.element('slot');
-    },
+    }
   }));
 
   test('function helpers', (lprops, chren) => {
@@ -90,9 +92,9 @@ describe('vdom/ref', () => {
 
   it('void elements', done => {
     const Elem = define('x-test', {
-      render() {
+      render () {
         vdom.elementVoid('div', null, null, 'ref', () => done());
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);

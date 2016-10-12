@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { define } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';

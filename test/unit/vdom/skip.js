@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha, chai */
+
 import { define, prop, props, symbols, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
@@ -9,10 +11,10 @@ describe('vdom/skip', () => {
   it('should skip the element children', done => {
     const Elem = define('x-test', {
       props: {
-        num: prop.number(),
+        num: prop.number()
       },
       /* eslint indent: 0 */
-      render() {
+      render () {
         text('1 ');
         elementOpen('div');
           text('2 ');
@@ -55,7 +57,7 @@ describe('vdom/skip', () => {
             elementClose('span');
           elementClose('div');
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     const html = '1 <div>2 <void></void><span>3 </span>' +
@@ -74,14 +76,14 @@ describe('vdom/skip', () => {
   });
 
   it('should allow conditional rendering', done => {
-    function isEven(num) {
+    function isEven (num) {
       return num % 2 === 0;
     }
     const Elem = define('x-test', {
       props: {
-        num: prop.number({ default: 2 }),
+        num: prop.number({ default: 2 })
       },
-      render(elem) {
+      render (elem) {
         elementOpen('div', null, null, 'skip', !isEven(elem.num));
           text(elem.num);
           elementOpen('span');
@@ -93,7 +95,7 @@ describe('vdom/skip', () => {
             elementClose('span');
           elementClose('div');
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
@@ -115,12 +117,12 @@ describe('vdom/skip', () => {
   it('re-rendering an empty, skipped element should keep the mutated content', done => {
     const Elem = define('x-test', {
       props: {
-        test: {},
+        test: {}
       },
-      render() {
+      render () {
         elementOpen('div', null, null, 'skip', true);
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
@@ -136,11 +138,11 @@ describe('vdom/skip', () => {
   it('re-rendering an void, skipped element should keep the mutated content', done => {
     const Elem = define('x-test', {
       props: {
-        test: {},
+        test: {}
       },
-      render() {
+      render () {
         elementVoid('div', null, null, 'skip', true);
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);

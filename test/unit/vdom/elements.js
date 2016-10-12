@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -7,13 +9,13 @@ import { symbols, vdom } from '../../../src/index';
 describe('vdom/elements', () => {
   describe('element()', () => {
     describe('arguments', () => {
-      function create(render) {
+      function create (render) {
         const elem = new (element().skate({ render }))();
         fixture(elem);
         return elem;
       }
 
-      function ctor(name) {
+      function ctor (name) {
         const Ctor = () => {};
         Ctor[symbols.name] = name;
         return Ctor;
@@ -136,14 +138,14 @@ describe('vdom/elements', () => {
 
   it('slot', (done) => {
     const elem1 = new (element().skate({
-      render() {
+      render () {
         vdom.element('slot', { name: 'test' });
-      },
+      }
     }))();
     const elem2 = new (element().skate({
-      render() {
+      render () {
         vdom.element('slot', { name: 'test' });
-      },
+      }
     }))();
 
     fixture().appendChild(elem1);
@@ -155,7 +157,7 @@ describe('vdom/elements', () => {
         const ch1 = elem1[symbols.shadowRoot].firstElementChild;
         const ch2 = elem2[symbols.shadowRoot].firstElementChild;
 
-        function assertSlotElement() {
+        function assertSlotElement () {
           expect(ch1.tagName).to.equal('SLOT', 'vdom');
           expect(ch1.getAttribute('name')).to.equal('test', 'vdom');
           expect(ch2.tagName).to.equal('SLOT', 'vdom.element(slot)');
@@ -179,14 +181,14 @@ describe('vdom/elements', () => {
 
   it('passing a component constructor to the vdom.element() function', (done) => {
     const Elem2 = element().skate({
-      render() {
+      render () {
         vdom.text('rendered');
-      },
+      }
     });
     const Elem1 = element().skate({
-      render() {
+      render () {
         vdom.element(Elem2);
-      },
+      }
     });
 
     const elem1 = new Elem1();
@@ -204,14 +206,14 @@ describe('vdom/elements', () => {
   });
 
   describe('passing a function to the vdom.element() function (*part* notes where text or number was passed as children)', () => {
-    function testHelper(ch) {
+    function testHelper (ch) {
       it(`*div* > span > ${ch}`, (done) => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = (props, chren) => vdom.element('div', () => vdom.element(Span, chren));
         const Elem = element().skate({
-          render() {
+          render () {
             vdom.element(Div, ch);
-          },
+          }
         });
 
         const elem = new Elem();
@@ -228,9 +230,9 @@ describe('vdom/elements', () => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = () => vdom.element('div', () => vdom.element(Span, ch));
         const Elem = element().skate({
-          render() {
+          render () {
             vdom.element(Div);
-          },
+          }
         });
         const elem = new Elem();
 
@@ -246,9 +248,9 @@ describe('vdom/elements', () => {
         const Span = () => vdom.element('span', ch);
         const Div = () => vdom.element('div', () => vdom.element(Span));
         const Elem = element().skate({
-          render() {
+          render () {
             vdom.element(Div);
-          },
+          }
         });
         const elem = new Elem();
 
@@ -267,9 +269,9 @@ describe('vdom/elements', () => {
       const Li = (props, chren) => vdom.element('li', () => vdom.element('a', chren));
       const Ul = props => vdom.element('ul', () => props.items.map(item => vdom.element(Li, item)));
       const Elem = element().skate({
-        render() {
+        render () {
           vdom.element(Ul, { items: ['Item 1', 'Item 2'] });
-        },
+        }
       });
       const elem = new Elem();
 
@@ -292,9 +294,9 @@ describe('vdom/elements', () => {
         vdom.element('div', { key, ref, statics });
       };
       const Elem = element().skate({
-        render() {
+        render () {
           vdom.element(El, { key, ref, statics });
-        },
+        }
       });
       const elem = new Elem();
 

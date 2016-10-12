@@ -1,18 +1,20 @@
+/* eslint-env jasmine, mocha */
+
 import { define, prop } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
 
-function create(propLocal) {
+function create (propLocal) {
   const el = new (define('x-test', {
     props: {
-      test: assign({ attribute: true }, propLocal),
-    },
+      test: assign({ attribute: true }, propLocal)
+    }
   }))();
   document.body.appendChild(el);
   return el;
 }
 
-function testTypeValues(type, values, done) {
+function testTypeValues (type, values, done) {
   const elem = create(prop[type]());
   afterMutations(() => {
     values.forEach((value) => {
@@ -143,7 +145,7 @@ describe('api/prop', () => {
         [undefined, 0, null],
         [0.1, 0.1, '0.1'],
         ['test', undefined, null],
-        ['', 0, '0'],
+        ['', 0, '0']
       ], done);
     });
 
@@ -171,7 +173,7 @@ describe('api/prop', () => {
           [null, '', null],
           [undefined, '', null],
           [0, '0', '0'],
-          ['', '', ''],
+          ['', '', '']
         ], done);
       });
     });
