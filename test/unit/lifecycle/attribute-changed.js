@@ -36,7 +36,7 @@ describe('lifecycle/attribute-changed', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => test = true,
+      () => (test = true),
       () => elem.setAttribute('test', 'ing')
     );
   });
