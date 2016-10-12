@@ -2,12 +2,10 @@
 
 import {
   name as $name,
-  props as $props,
-  renderer as $renderer
+  props as $props
 } from '../util/symbols';
 import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
-import createRenderer from '../lifecycle/render';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
 import keys from '../util/get-all-keys';
@@ -107,7 +105,6 @@ function generateUniqueName (name) {
 function prepareForRegistration (name, Ctor) {
   Ctor[$name] = name;
   Ctor[$props] = createInitProps(Ctor);
-  Ctor[$renderer] = createRenderer(Ctor);
 }
 
 function registerV0Element (name, Ctor) {
