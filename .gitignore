@@ -31,4 +31,3 @@ node_modules
 .idea
 .tmp
 dist
-yarn.lock
