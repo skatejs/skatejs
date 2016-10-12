@@ -320,4 +320,8 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   }
 });
 
+export const component = (superClass = HTMLElement) => {
+  return Component.extend({}, superClass);
+};
+
 export default Component;
