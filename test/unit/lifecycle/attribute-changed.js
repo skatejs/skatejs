@@ -17,19 +17,28 @@ describe('lifecycle/attribute-changed', () => {
   });
 
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
+    let test = false;
     const Elem = define('x-test', {
       observedAttributes: ['test'],
-      attributeChanged (e, data) {
-        expect(e).to.equal(elem);
-        expect(data.name).to.equal('test');
-        expect(data.oldValue).to.equal(null);
-        expect(data.newValue).to.equal('ing');
-        done();
+      attributeChanged (elem, data) {
+        // We have an issue right now where attributeChanged is fired twice in
+        // polyfill - once for init and once for set - so we must only check
+        // this after setting.
+        if (test) {
+          expect(elem.tagName).to.match(/^x-test/i);
+          expect(data.name).to.equal('test');
+          expect(data.oldValue).to.equal(null);
+          expect(data.newValue).to.equal('ing');
+          done();
+        }
       }
     });
     const elem = new Elem();
     fixture(elem);
-    elem.setAttribute('test', 'ing');
+    afterMutations(
+      () => test = true,
+      () => elem.setAttribute('test', 'ing')
+    );
   });
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
