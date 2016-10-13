@@ -1,8 +1,8 @@
 /* eslint-env jasmine, mocha */
 
-import propContext from '../../../src/util/prop-context';
+import propContext from '../../../src/renderer/idom-prop-context';
 
-describe('utils/prop-context:', () => {
+describe('renderer/idom-prop-context:', () => {
   it('should return a function', () => {
     expect(propContext({}, {})).is.a('function');
   });
