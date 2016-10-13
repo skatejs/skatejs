@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import createSymbol from '../../../src/util/create-symbol';
 
 describe('utils/create-symbol:', () => {

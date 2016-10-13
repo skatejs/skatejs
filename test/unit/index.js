@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import * as api from '../../src/index';
 import * as symbols from '../../src/util/symbols';
 

@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { emit, prop, props, symbols, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
@@ -9,49 +11,51 @@ describe('vdom/events (on*)', () => {
   it('should not duplicate listeners', done => {
     const MyEl = element().skate({
       props: {
-        test: number({ default: 0 }),
+        test: number({ default: 0 })
       },
-      created(elem) {
+      created (elem) {
         elem._test = 0;
       },
-      render(elem) {
+      render (elem) {
         vdom.element('div', {
           'on-event': () => {
             elem._test++;
-          },
+          }
         }, elem.test);
-      },
+      }
     });
 
     const el = new MyEl();
     fixture(el);
 
-    afterMutations(() => {
-      const shadowDiv = el[symbols.shadowRoot].children[0];
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        const shadowDiv = el[symbols.shadowRoot].children[0];
 
-      // Ensures that it rendered.
-      expect(shadowDiv.textContent).to.equal('0');
-      expect(el._test).to.equal(0);
+        // Ensures that it rendered.
+        expect(shadowDiv.textContent).to.equal('0');
+        expect(el._test).to.equal(0);
 
-      // Trigger the handler.
-      emit(shadowDiv, 'event');
+        // Trigger the handler.
+        emit(shadowDiv, 'event');
 
-      // Ensure the event fired.
-      expect(el._test).to.equal(1);
+        // Ensure the event fired.
+        expect(el._test).to.equal(1);
 
-      // Re-render.
-      props(el, { test: el.test + 1 });
-      expect(shadowDiv.textContent).to.equal('1');
-      emit(shadowDiv, 'event');
-      expect(el._test).to.equal(2);
+        // Re-render.
+        props(el, { test: el.test + 1 });
+        expect(shadowDiv.textContent).to.equal('1');
+        emit(shadowDiv, 'event');
+        expect(el._test).to.equal(2);
 
-      props(el, { test: el.test + 1 });
-      expect(shadowDiv.textContent).to.equal('2');
-      emit(shadowDiv, 'event');
-      expect(el._test).to.equal(3);
-
-      done();
-    });
+        props(el, { test: el.test + 1 });
+        expect(shadowDiv.textContent).to.equal('2');
+        emit(shadowDiv, 'event');
+        expect(el._test).to.equal(3);
+      },
+      done
+    );
   });
 
   it('should trigger events bubbled from descendants', done => {
@@ -60,17 +64,20 @@ describe('vdom/events (on*)', () => {
       called = true;
     };
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', { 'on-test': test }, vdom.element.bind(null, 'span'));
-      },
-    }));
+      }
+    }))();
     fixture().appendChild(myel);
 
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
-      expect(called).to.equal(true);
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
+        expect(called).to.equal(true);
+      },
+      done
+    );
   });
 
   it('should emit events from shadow dom', done => {
@@ -81,32 +88,38 @@ describe('vdom/events (on*)', () => {
       detail = e.detail;
     };
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', {}, vdom.element.bind(null, 'span'));
-      },
-    }));
+      }
+    }))();
     myel.addEventListener('test', test);
     fixture().appendChild(myel);
 
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
-      expect(called).to.equal(true);
-      expect(detail).to.equal('detail');
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
+        expect(called).to.equal(true);
+        expect(detail).to.equal('detail');
+      },
+      done
+    );
   });
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render() {
+      render () {
         vdom.element('div', { 'on-test': null });
-      },
-    }));
+      }
+    }))();
     fixture(myel);
-    afterMutations(() => {
-      emit(myel[symbols.shadowRoot].firstChild, 'test');
-      done();
-    });
+    afterMutations(
+      () => {}, // .render()
+      () => {
+        emit(myel[symbols.shadowRoot].firstChild, 'test');
+      },
+      done
+    );
   });
 
   describe('built-in / custom', () => {
@@ -114,7 +127,7 @@ describe('vdom/events (on*)', () => {
     let div;
     let el;
 
-    function inc() {
+    function inc () {
       ++count;
     }
 
@@ -122,18 +135,19 @@ describe('vdom/events (on*)', () => {
       count = 0;
       el = new (element().skate({
         props: {
-          unbind: boolean(),
+          unbind: boolean()
         },
-        render(elem) {
+        render (elem) {
           if (elem.unbind) {
             vdom.element('div');
           } else {
             vdom.element('div', { onclick: inc, onTest1: inc, 'on-test2': inc });
           }
-        },
-      }));
+        }
+      }))();
       fixture(el);
       afterMutations(
+        () => {}, // .render()
         () => {
           div = el[symbols.shadowRoot].firstChild;
         },

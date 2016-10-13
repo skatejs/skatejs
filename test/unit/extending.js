@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import helperElement from '../lib/element';
 import { define } from '../../src/index';
 import { classStaticsInheritance } from '../lib/support';
@@ -10,14 +12,14 @@ describe('extending', () => {
     Ctor = define(helperElement().safe, {
       extends: 'div',
       someNonStandardProperty: true,
-      created(elem) {
+      created (elem) {
         elem.__test = 'test';
       },
-      attributeChanged() {},
+      attributeChanged () {},
       prototype: {
         test: true,
-        someFunction: () => {},
-      },
+        someFunction: () => {}
+      }
     });
     tag = helperElement().safe;
   });
@@ -54,10 +56,10 @@ describe('extending', () => {
 
   it('should allow overriding of callbacks', () => {
     const ExtendedCtor = define(tag, Ctor.extend({
-      created(elem) {
+      created (elem) {
         Ctor.created(elem);
         elem.__test += 'ing';
-      },
+      }
     }));
     const elem = new ExtendedCtor();
     expect(elem.__test).to.equal('testing');

@@ -1,13 +1,17 @@
+/* eslint-env jasmine, mocha */
+
 import { define } from '../../src/index';
 import helperElement from '../lib/element';
+
+const { HTMLElement } = window;
 
 describe('Returning a constructor', () => {
   it('should return a constructor that extends a native element.', () => {
     const tag = helperElement('my-el');
     const Element = define(tag.safe, {
       prototype: {
-        func1: () => {},
-      },
+        func1: () => {}
+      }
     });
 
     Element.prototype.func2 = () => {};
@@ -41,8 +45,8 @@ describe('Returning a constructor', () => {
     const tag = helperElement('my-el');
     const Element = define(tag.safe, {
       prototype: {
-        func1: () => {},
-      },
+        func1: () => {}
+      }
     });
 
     Element.prototype.func2 = () => {};
@@ -58,9 +62,9 @@ describe('Returning a constructor', () => {
     const Element = define(tag.safe, {
       prototype: Object.create({}, {
         test: {
-          get: () => true,
-        },
-      }),
+          get: () => true
+        }
+      })
     });
 
     const element = new Element();
@@ -75,8 +79,8 @@ describe('Returning a constructor', () => {
       prototype: {
         focus: () => {
           called = true;
-        },
-      },
+        }
+      }
     });
 
     const input = new Input();

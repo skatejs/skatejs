@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 import { define, prop, props, symbols, vdom } from '../../../src/index';
@@ -5,12 +7,13 @@ import { define, prop, props, symbols, vdom } from '../../../src/index';
 describe('vdom/properties', () => {
   it('class -> className', done => {
     const elem = new (define('x-test', {
-      render() {
+      render () {
         vdom.element('div', { class: 'test' });
-      },
-    }));
+      }
+    }))();
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test'),
       done
     );
@@ -20,17 +23,18 @@ describe('vdom/properties', () => {
     const helper = (_, children) => children();
 
     const elem = new (define('x-test', {
-      render() {
+      render () {
         vdom.elementOpen(helper);
         vdom.elementOpen('div', null, null, 'className', 'inner');
         vdom.elementClose('div');
         vdom.elementClose(helper);
-      },
-    }));
+      }
+    }))();
 
     fixture(elem);
 
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(elem[symbols.shadowRoot].firstChild.getAttribute('class')).to.equal('inner'),
       done
     );
@@ -39,15 +43,16 @@ describe('vdom/properties', () => {
   it('false should remove the attribute', done => {
     const elem = new (define('x-test', {
       props: {
-        test: prop.boolean(),
+        test: prop.boolean()
       },
-      render(e) {
+      render (e) {
         vdom.element('div', { test: e.test });
-      },
-    }));
+      }
+    }))();
     fixture(elem);
     let div;
     afterMutations(
+      () => {}, // x-test.render()
       () => (div = elem[symbols.shadowRoot].firstChild),
       () => (elem.test = true),
       () => expect(div.hasAttribute('test')).to.equal(true),
@@ -60,9 +65,9 @@ describe('vdom/properties', () => {
   it('should not set properties on SVG elements', done => {
     expect(() => {
       const Test = define('x-test', {
-        render() {
+        render () {
           vdom.element('svg', { width: 100 });
-        },
+        }
       });
       fixture(new Test());
       afterMutations(done);
@@ -76,23 +81,23 @@ describe('vdom/properties', () => {
     beforeEach(() => {
       Elem1 = define('x-test', {
         props: {
-          open: prop.boolean(),
+          open: prop.boolean()
         },
-        render(elem) {
+        render (elem) {
           vdom.element(Elem2, { open: elem.open });
-        },
+        }
       });
       Elem2 = define('x-test', {
         props: {
-          open: prop.boolean(),
+          open: prop.boolean()
         },
-        render(elem) {
+        render (elem) {
           vdom.text(elem.open ? 'open' : 'closed');
-        },
+        }
       });
     });
 
-    function text(elem) {
+    function text (elem) {
       return elem[symbols.shadowRoot].firstChild[symbols.shadowRoot].textContent;
     }
 
@@ -100,6 +105,9 @@ describe('vdom/properties', () => {
       const elem = new Elem1();
       fixture(elem);
       afterMutations(
+        () => {}, // Elem1.render()
+        () => {}, // Elem2.render()
+        () => {}, // ...
         () => expect(text(elem)).to.equal('closed', 'init'),
         () => props(elem, { open: true }),
         () => expect(text(elem)).to.equal('open', 'false -> true'),

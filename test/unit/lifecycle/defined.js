@@ -1,4 +1,7 @@
+/* eslint-env jasmine, mocha */
+
 import { define } from '../../../src/index';
+import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
 describe('lifecycle/defined', () => {
@@ -11,12 +14,14 @@ describe('lifecycle/defined', () => {
     const elem = new Elem();
 
     // Sanity check for non-native (native would throw).
-    expect(elem.hasAttribute('defined')).to.equal(false);
+    expect(elem.hasAttribute('defined')).to.equal(false, 'should not have defined before attached');
 
-    document.body.appendChild(elem);
+    const fixtureArea = fixture();
+
+    fixtureArea.appendChild(elem);
     afterMutations(() => {
       expect(elem.hasAttribute('defined')).to.equal(true);
-      document.body.removeChild(elem);
+      fixtureArea.removeChild(elem);
       done();
     }, 1);
   });
