@@ -11,6 +11,7 @@ import {
 import propContext from './idom-prop-context';
 import vdom from '../api/vdom';
 
+const { HTMLElement } = window;
 const $name = '____skate_name';
 const $ref = '___skate_ref';
 const applyDefault = attributes[symbols.default];
