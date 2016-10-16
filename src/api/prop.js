@@ -1,4 +1,5 @@
 import assign from '../util/assign';
+import createSymbol from '../util/create-symbol';
 import empty from '../util/empty';
 
 const alwaysUndefinedIfNotANumberOrNumber = val => (isNaN(val) ? undefined : Number(val));
@@ -50,11 +51,11 @@ export const number = create({
 
 const { MutationObserver } = window;
 const attrSlot = 'slot';
-const symCache = Symbol();
-const symDefault = Symbol();
-const symMap = Symbol();
-const symMo = Symbol();
-const symProps = Symbol();
+const symCache = createSymbol();
+const symDefault = createSymbol();
+const symMap = createSymbol();
+const symMo = createSymbol();
+const symProps = createSymbol();
 
 function distribute (cache, child) {
   const slot = child.getAttribute(attrSlot) || symDefault;
