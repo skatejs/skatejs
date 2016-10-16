@@ -2,7 +2,7 @@
 
 import helperFixture from './lib/fixture';
 
-if (!document.registerElement && !window.customElements) {
+if (!window.customElements) {
   require('skatejs-web-components');
 }
 
