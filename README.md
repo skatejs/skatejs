@@ -30,7 +30,7 @@ skate.define('x-hello', {
     name: { attribute: true }
   },
   render (elem) {
-    skate.h('div', `Hello, ${elem.name}`);
+    return skate.h('div', `Hello, ${elem.name}`);
   }
 });
 ```
