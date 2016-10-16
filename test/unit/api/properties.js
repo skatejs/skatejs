@@ -3,6 +3,7 @@
 import { define, prop } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
+import fixture from '../../lib/fixture';
 
 function create (propLocal) {
   const el = new (define('x-test', {
@@ -157,6 +158,55 @@ describe('api/prop', () => {
         () => elem.removeAttribute('test'),
         () => expect(elem.test).to.equal(0),
         () => expect(elem.getAttribute('test')).to.equal(null),
+        done
+      );
+    });
+  });
+
+  describe('slot', () => {
+    let div1, div2, elem;
+
+    beforeEach(() => {
+      elem = new (define('x-test', {
+        props: {
+          test1: prop.slot(),
+          test2: prop.slot({ slot: 'test' })
+        }
+      }))();
+      div1 = document.createElement('div');
+      div2 = document.createElement('div');
+      div2.setAttribute('slot', 'test');
+    });
+
+    it('no children', done => {
+      fixture(elem);
+      afterMutations(
+        () => expect(elem.test1).to.deep.equal([]),
+        () => expect(elem.test2).to.deep.equal([]),
+        done
+      );
+    });
+
+    it('existing children', done => {
+      fixture(elem);
+      elem.appendChild(div1);
+      elem.appendChild(div2);
+      afterMutations(
+        () => expect(elem.test1).to.deep.equal([div1]),
+        () => expect(elem.test2).to.deep.equal([div2]),
+        done
+      );
+    });
+
+    it('new children', done => {
+      fixture(elem);
+      afterMutations(
+        () => expect(elem.test1).to.deep.equal([]),
+        () => expect(elem.test2).to.deep.equal([]),
+        () => elem.appendChild(div1),
+        () => elem.appendChild(div2),
+        () => expect(elem.test1).to.deep.equal([div1]),
+        () => expect(elem.test2).to.deep.equal([div2]),
         done
       );
     });
