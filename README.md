@@ -479,6 +479,8 @@ The parameters passed to the function are:
 - `data` - an object containing information about the property
   - `name` - the property name
 
+*If specified, `default` will set the property value but will **not** be reflected back to the attribute, if linked. If at any point the property is set back to the `default`, the attribute will be removed, if linked.*
+
 
 
 ##### `deserialize`
@@ -561,6 +563,8 @@ The parameters passed to the function are:
 - `elem` - the component element
 - `data` - an object containing information about the property
   - `name` - the property name
+
+*Unlike `default`, `initial` will be refleted back to the attribute if linked.*
 
 
 
