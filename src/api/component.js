@@ -21,9 +21,8 @@ import syncPropToAttr from '../util/sync-prop-to-attr';
 
 const { HTMLElement } = window;
 
-// Abstracts shadow root across v1, v0 and no support.
-// Once v1 is supported everywhere, we can call elem.attachShadow() directly
-// and remove this function.
+// Uses Shadow DOM only if it's available. Once all browsers support it
+// natively then we can remove this function and call it directly.
 function attachShadow (elem) {
   return elem.attachShadow ? elem.attachShadow({ mode: 'open' }) : elem;
 }

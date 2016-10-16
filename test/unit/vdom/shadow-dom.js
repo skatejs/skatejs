@@ -1,8 +1,9 @@
 /* eslint-env jasmine, mocha */
 
-import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
 import { symbols } from '../../../src/index';
 import element from '../../lib/element';
+
+const { ShadowRoot } = window;
 
 describe('vdom/shadow-dom', () => {
   let Elem;
@@ -11,24 +12,12 @@ describe('vdom/shadow-dom', () => {
     Elem = element().skate({ render () {} });
   });
 
-  if (shadowDomV0) {
-    it('should work for createShadowRoot()', () => {
-      const elem = new Elem();
+  it('should work for attachShadow()', () => {
+    const elem = new Elem();
+    if (elem.attachShadow) {
       expect(elem[symbols.shadowRoot]).not.to.equal(elem);
-    });
-  }
-
-  if (shadowDomV1) {
-    it('should work for attachShadow()', () => {
-      const elem = new Elem();
-      expect(elem[symbols.shadowRoot]).not.to.equal(elem);
-    });
-  }
-
-  if (!(shadowDomV0 || shadowDomV1)) {
-    it('should set the shadowRoot to the element if Shadow DOM is not available', () => {
-      const elem = new Elem();
+    } else {
       expect(elem[symbols.shadowRoot]).to.equal(elem);
-    });
-  }
+    }
+  });
 });
