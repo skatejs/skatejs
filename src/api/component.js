@@ -10,10 +10,7 @@ import {
   updated as $updated
 } from '../util/symbols';
 import {
-  customElementsV0,
-  reflect,
-  shadowDomV0,
-  shadowDomV1
+  reflect
 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -28,12 +25,7 @@ const { HTMLElement } = window;
 // Once v1 is supported everywhere, we can call elem.attachShadow() directly
 // and remove this function.
 function attachShadow (elem) {
-  if (shadowDomV1) {
-    return elem.attachShadow({ mode: 'open' });
-  } else if (shadowDomV0) {
-    return elem.createShadowRoot();
-  }
-  return elem;
+  return elem.attachShadow ? elem.attachShadow({ mode: 'open' }) : elem;
 }
 
 function getOrAttachShadow (elem) {
@@ -69,18 +61,6 @@ function callConstructor (elem) {
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
     delete elemData.readyCallbacks;
-  }
-
-  // In v0 we must ensure the attributeChangedCallback is called for attrs
-  // that aren't linked to props so that the callback behaves the same no
-  // matter if v0 or v1 is being used.
-  if (customElementsV0) {
-    constructor.observedAttributes.forEach((name) => {
-      const propertyName = data(elem, 'attributeLinks')[name];
-      if (!propertyName) {
-        elem.attributeChangedCallback(name, null, elem.getAttribute(name));
-      }
-    });
   }
 }
 
@@ -263,11 +243,6 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     value (name, oldValue, newValue) {
       const { attributeChanged, observedAttributes } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
-
-      // In V0 we have to ensure the attribute is being observed.
-      if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
-        return;
-      }
 
       if (propertyName) {
         const propData = data(this, 'props')[propertyName];
