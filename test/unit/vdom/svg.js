@@ -7,11 +7,11 @@ import fixture from '../../lib/fixture';
 const [svg] = vdom.builder('svg');
 
 describe('vdom/svg', () => {
-  it.only('#825 - should not error if window.SVGElement is undefined', done => {
+  it('#825 - should not error if window.SVGElement is undefined', done => {
     const oldSVGElement = window.SVGElement;
     window.SVGElement = undefined;
     const Elem = define('x-test', {
-      render() {
+      render () {
         return svg({ width: '100px' });
       }
     });
