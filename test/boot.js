@@ -2,6 +2,10 @@
 
 import helperFixture from './lib/fixture';
 
+if (!window.MutationObserver) {
+  require('webcomponents.js/MutationObserver');
+}
+
 if (!document.registerElement && !window.customElements) {
   require('skatejs-web-components');
 }
