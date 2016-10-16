@@ -214,9 +214,9 @@ Or you can use script tags:
 <script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
 ```
 
-If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM V1 polyfills. Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.
+If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.
 
-**Skate works with the native V0 APIs, however, the V0 polyfills have several bugs that are inconsistent with the native APIs, so it's not recommended you try and use the V0 polyfills.**
+*Skate will work without Shadow DOM support, but you won't be able to compose components together due to the lack of DOM encapsulation that Shadow DOM gives you.*
 
 
 
@@ -251,9 +251,7 @@ If you have any questions about Skate you can use one of these:
 
 Let's define some terms used in these docs:
 
-- v0 - the original Blink implementation of web components - when the spec was still contentious.
-- v1 - the non-contentious - modern-day - specs.
-- polyfill, polyfilled, polyfill-land - not v0 or v1; no native custom element support at all.
+- polyfill, polyfilled, polyfill-land - no native web component support.
 - upgrade, upgraded, upgrading - when an element is initialised as a custom element.
 
 
@@ -622,7 +620,7 @@ When the property is initialised, `oldValue` will always be `undefined` and `new
 
 #### `created`
 
-Function that is called when the element is created. This corresponds to the native `createdCallback` (v0) or `constructor` (v1). We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+Function that is called when the element is created. This gets called during element construction. We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
 
 ```js
 skate.define('my-component', {
@@ -797,7 +795,7 @@ The only argument passed to `detached` is component element. In this case that i
 
 #### `attributeChanged`
 
-Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback` (both v0 and v1). Generally, you'll probably end up using `props` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
+Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback`. Generally, you'll probably end up using `props` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
 
 ```js
 skate.define('my-component', {
@@ -818,21 +816,11 @@ The arguments passed to the `attributeChanged()` callback differ from the native
 - `elem` is the component element
 - `data` is an object containing attribute `name`, `newValue` and `oldValue`. If `newValue` and `oldValue` are empty, the values are `undefined`.
 
-There are differences between v0 and v1 that Skate normalises to behave like v1. In v0:
-
-1. The `attributeChangedCallback()` is *not* invoked for every attribute that exists on the element at the time of upgrading.
-2. You can call `setAttribute()` at any point in the element lifecycle and it will queue a call to it.
-
-In v1:
-
-1. The `attributeChangedCallback()` *is* invoked for every attribute that exists on the element at the time of creation.
-2. Only once the constructor has been called and `attributeChangedCallback()` invoked for each existing attribute, can calls to `setAttribute()` begin to queue calls to `attributeChangedCallback()`.
-
 
 
 #### `observedAttributes`
 
-This behaves exactly like described in the [v1 spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
+This behaves exactly like described in the [spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
 
 For example, the following:
 
