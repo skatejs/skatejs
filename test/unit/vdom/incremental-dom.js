@@ -4,6 +4,9 @@ import * as IncrementalDOM from 'incremental-dom';
 import { define, vdom } from '../../../src/index';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
+import native from '../../../src/util/native';
+
+const { MutationObserver } = window;
 
 function testBasicApi (name) {
   describe(name, () => {
@@ -27,7 +30,7 @@ describe('IncrementalDOM', () => {
     }
 
     describe('efficient rendering', () => {
-      const skip = !window.MutationObserver;
+      const skip = !native(MutationObserver);
 
       function renderCounter () {
         const { safe, skate } = element();
