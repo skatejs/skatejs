@@ -170,7 +170,7 @@ describe('api/prop', () => {
       elem = new (define('x-test', {
         props: {
           test1: prop.slot(),
-          test2: prop.slot({ slot: 'test' })
+          test2: prop.slot({ name: 'test' })
         }
       }))();
       div1 = document.createElement('div');

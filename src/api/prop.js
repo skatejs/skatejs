@@ -82,7 +82,7 @@ function updateProps ({ target: elem }) {
 }
 
 export const slot = create({
-  slot: null,
+  name: null,
   get (elem, { name }) {
     if (!elem[symCache]) {
       const mo = new MutationObserver(muts => muts.forEach(updateProps));
@@ -92,7 +92,7 @@ export const slot = create({
       elem[symMap] = {};
       elem[symProps] = [];
     }
-    elem[symMap][name] = this.slot;
+    elem[symMap][name] = this.name;
     elem[symProps].push(name);
     return elem[symCache][slotMap(elem, name)] || [];
   },
