@@ -31,7 +31,8 @@
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "9.x",
-    "skatejs-web-components": "1.x"
+    "skatejs-web-components": "1.x",
+    "webcomponents.js": "^0.7.22"
   },
   "scripts": {
     "test": "sk-tests",
