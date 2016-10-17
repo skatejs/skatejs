@@ -32,13 +32,15 @@ function microtaskDebounce (cbFunc) {
 // The soonest we can set the timeout for in IE is 1 as they have issues when
 // setting to 0.
 function taskDebounce (cbFunc) {
-  let called = false;
+  let scheduled = false;
+  let cbArgs = [];
   return (...args) => {
-    if (!called) {
-      called = true;
+    cbArgs = args;
+    if (!scheduled) {
+      scheduled = true;
       setTimeout(() => {
-        called = false;
-        cbFunc(...args);
+        scheduled = false;
+        cbFunc(...cbArgs);
       }, 1);
     }
   };
