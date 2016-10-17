@@ -16,8 +16,8 @@ function microtaskDebounce (cbFunc) {
   observer.observe(elem, { childList: true });
 
   return (...args) => {
+    cbArgs = args;
     if (!called) {
-      cbArgs = args;
       called = true;
       elem.textContent = `${i}`;
       i += 1;
@@ -43,5 +43,4 @@ function taskDebounce (cbFunc) {
     }
   };
 }
-
 export default native(MutationObserver) ? microtaskDebounce : taskDebounce;
