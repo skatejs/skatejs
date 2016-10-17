@@ -3,22 +3,22 @@ import native from './native';
 const { MutationObserver } = window;
 
 function microtaskDebounce (cbFunc) {
-  let called = false;
+  let scheduled = false;
   let i = 0;
   let cbArgs = [];
   const elem = document.createElement('span');
   const observer = new MutationObserver(() => {
     cbFunc(...cbArgs);
-    called = false;
+    scheduled = false;
     cbArgs = null;
   });
 
   observer.observe(elem, { childList: true });
 
   return (...args) => {
-    if (!called) {
-      cbArgs = args;
-      called = true;
+    cbArgs = args;
+    if (!scheduled) {
+      scheduled = true;
       elem.textContent = `${i}`;
       i += 1;
     }
@@ -32,16 +32,17 @@ function microtaskDebounce (cbFunc) {
 // The soonest we can set the timeout for in IE is 1 as they have issues when
 // setting to 0.
 function taskDebounce (cbFunc) {
-  let called = false;
+  let scheduled = false;
+  let cbArgs = [];
   return (...args) => {
-    if (!called) {
-      called = true;
+    cbArgs = args;
+    if (!scheduled) {
+      scheduled = true;
       setTimeout(() => {
-        called = false;
-        cbFunc(...args);
+        scheduled = false;
+        cbFunc(...cbArgs);
       }, 1);
     }
   };
 }
-
 export default native(MutationObserver) ? microtaskDebounce : taskDebounce;
