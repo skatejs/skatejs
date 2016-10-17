@@ -3,13 +3,13 @@ import native from './native';
 const { MutationObserver } = window;
 
 function microtaskDebounce (cbFunc) {
-  let called = false;
+  let scheduled = false;
   let i = 0;
   let cbArgs = [];
   const elem = document.createElement('span');
   const observer = new MutationObserver(() => {
     cbFunc(...cbArgs);
-    called = false;
+    scheduled = false;
     cbArgs = null;
   });
 
@@ -17,8 +17,8 @@ function microtaskDebounce (cbFunc) {
 
   return (...args) => {
     cbArgs = args;
-    if (!called) {
-      called = true;
+    if (!scheduled) {
+      scheduled = true;
       elem.textContent = `${i}`;
       i += 1;
     }
