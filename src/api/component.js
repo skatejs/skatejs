@@ -1,4 +1,3 @@
-import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
@@ -9,6 +8,9 @@ import {
   shadowRoot as $shadowRoot,
   updated as $updated
 } from '../util/symbols';
+import {
+  renderer as idomRenderer
+} from '../renderer/idom';
 import {
   customElementsV0,
   reflect,
@@ -162,20 +164,7 @@ Component.extend = function extend (definition = {}, Base = this) {
 // Skate
 //
 // Incremental DOM renderer.
-Component.renderer = function renderer ({ elem, render, shadowRoot }) {
-  patchInner(shadowRoot, () => {
-    const possibleFn = render(elem);
-    if (typeof possibleFn === 'function') {
-      possibleFn();
-    } else if (Array.isArray(possibleFn)) {
-      possibleFn.forEach((fn) => {
-        if (typeof fn === 'function') {
-          fn();
-        }
-      });
-    }
-  });
-};
+Component.renderer = idomRenderer;
 
 // Skate
 //
@@ -231,9 +220,13 @@ Component[$renderer] = function _renderer (elem) {
   }
 
   if (shouldRender) {
-    this.renderer({ elem, render: this.render, shadowRoot: getOrAttachShadow(elem) });
+    const result = this.renderer({ elem, render: this.render, shadowRoot: getOrAttachShadow(elem) });
     if (typeof this.rendered === 'function') {
-      this.rendered(elem);
+      if (result && typeof result.then === 'function') {
+        result.then(this.rendered.bind(null, elem));
+      } else {
+        this.rendered(elem);
+      }
     }
   }
 
