@@ -236,7 +236,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   },
 
-  // v0 and v1
+  // v1
   attributeChangedCallback: {
     configurable: true,
     value (name, oldValue, newValue) {
@@ -266,30 +266,6 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       if (attributeChanged) {
         attributeChanged(this, { name, newValue, oldValue });
       }
-    }
-  },
-
-  // v0
-  createdCallback: {
-    configurable: true,
-    value () {
-      callConstructor(this);
-    }
-  },
-
-  // v0
-  attachedCallback: {
-    configurable: true,
-    value () {
-      callConnected(this);
-    }
-  },
-
-  // v0
-  detachedCallback: {
-    configurable: true,
-    value () {
-      callDisconnected(this);
     }
   }
 });
