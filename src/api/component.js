@@ -219,7 +219,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
 
   // Skate
   //
-  // This is a default implementation that does strict equality copmarison on
+  // This is a default implementation that does strict equality comparison on
   // previous props and next props. It synchronously renders on the first prop
   // that is different and returns immediately.
   updatedCallback: prop({
