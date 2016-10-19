@@ -36,7 +36,6 @@ function syncPropsToAttrs (elem) {
   });
 }
 
-// v1
 function Component (...args) {
   const elem = reflect
     ? Reflect.construct(HTMLElement, args, this.constructor)
@@ -80,7 +79,6 @@ function Component (...args) {
   return elem;
 }
 
-// v1
 Component.observedAttributes = [];
 
 // Skate
