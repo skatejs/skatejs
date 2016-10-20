@@ -30,6 +30,7 @@ describe('exports', () => {
     expect(api.prop.boolean).to.be.a('function', 'boolean');
     expect(api.prop.create).to.be.an('function', 'create');
     expect(api.prop.number).to.be.a('function', 'number');
+    expect(api.prop.slot).to.be.a('function', 'slot');
     expect(api.prop.string).to.be.a('function', 'string');
   });
 

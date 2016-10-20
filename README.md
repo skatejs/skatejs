@@ -1010,6 +1010,17 @@ skate.prop.boolean({
 
 Generally built-in properties will only return a definition containing `coerce`, `deserialize` and `serialize` options. They may also define a `deafult`, such as with the `boolean` property.
 
+Be aware that if you pass options into a property that you might be overriding default behaviour. With this in mind, it is up to you to make sure you callback or properly set anything that you override:
+
+```js
+const slot = skate.prop.slot();
+const prop = Object.assign(slot, {
+  set(...args) {
+    slot.set.apply(this, args);
+  }
+});
+``` 
+
 *Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `undefined`.
 
 *Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
