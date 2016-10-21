@@ -12,6 +12,7 @@ import {
 import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
 
+const { HTMLElement } = window;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being
@@ -127,17 +128,18 @@ const attributesContext = propContext(attributes, {
 });
 
 function resolveTagName (tname) {
-  // If the tag name is a function, a Skate constructor or a standard function
-  // is supported.
-  //
-  // - If a Skate constructor, the tag name is extracted from that.
-  // - If a standard function, it is used as a helper.
-  if (typeof tname === 'function') {
-    return tname[$name] || tname;
+  if (!tname) {
+    return tname;
   }
-
-  // All other tag names are just passed through.
-  return tname;
+  // If the tag name passed is a custom element, get it's tag name. We try the
+  // optimistic path of trying to get it by the $name symbol (same versions) or
+  // falling back to getting it from an actual instance and caching it using
+  // the same symbol.
+  if (!tname[$name] && tname.prototype instanceof HTMLElement) {
+    const elem = new tname();
+    tname[$name] = elem.tagName.toLowerCase();
+  }
+  return tname[$name] || tname;
 }
 
 // Incremental DOM's elementOpen is where the hooks in `attributes` are applied,

@@ -3,7 +3,7 @@
 import { define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
-describe('create()', () => {
+describe('builder()', () => {
   const { builder } = vdom;
 
   describe('no arguments', () => {

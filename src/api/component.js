@@ -13,11 +13,13 @@ import {
   reflect
 } from '../util/support';
 import data from '../util/data';
+import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getSetProps from './props';
-import overridePropertyGetter from '../util/override-property-getter';
+import initProps from '../lifecycle/props-init';
+import keys from '../util/get-all-keys';
 import prop from '../util/prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import uniqueId from '../util/unique-id';
@@ -36,6 +38,53 @@ function syncPropsToAttrs (elem) {
   });
 }
 
+// Ensures that definitions passed as part of the constructor are functions
+// that return property definitions used on the element.
+function ensurePropertyFunctions (Ctor) {
+  const props = Ctor.props;
+
+  return keys(props).reduce((descriptors, descriptorName) => {
+    descriptors[descriptorName] = props[descriptorName];
+    if (typeof descriptors[descriptorName] !== 'function') {
+      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
+    }
+    return descriptors;
+  }, {});
+}
+
+// Ensures the property definitions are transformed to objects that can be used
+// to create properties on the element.
+function ensurePropertyDefinitions (Ctor) {
+  const props = ensurePropertyFunctions(Ctor);
+  return keys(props).reduce((descriptors, descriptorName) => {
+    descriptors[descriptorName] = props[descriptorName](descriptorName);
+    return descriptors;
+  }, {});
+}
+
+function createInitProps (Ctor) {
+  const props = ensurePropertyDefinitions(Ctor);
+
+  return (elem) => {
+    if (!props) {
+      return;
+    }
+
+    keys(props).forEach((name) => {
+      const prop = props[name];
+      prop.created(elem);
+
+      // https://bugs.webkit.org/show_bug.cgi?id=49739
+      //
+      // When Webkit fixes that bug so that native property accessors can be
+      // retrieved, we can move defining the property to the prototype and away
+      // from having to do if for every instance as all other browsers support
+      // this.
+      Object.defineProperty(elem, name, prop);
+    });
+  };
+}
+
 function Component (...args) {
   const elem = reflect
     ? Reflect.construct(HTMLElement, args, this.constructor)
@@ -51,6 +100,10 @@ function Component (...args) {
   }
 
   elem[$created] = true;
+
+  if (!constructor[$props]) {
+    constructor[$props] = createInitProps(constructor);
+  }
 
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$renderDebounced] = debounce(elem[$render].bind(elem));
@@ -79,16 +132,25 @@ function Component (...args) {
   return elem;
 }
 
-Component.observedAttributes = [];
+Object.defineProperties(Component, {
+  // Skate
+  id: prop({ value: null }),
 
-// Skate
-Component.props = {};
+  // Spec
+  observedAttributes: prop({
+    get () {
+      const { props } = this;
+      return Object.keys(props).map(key => {
+        const { attribute } = props[key];
+        return attribute === true ? dashCase(key) : attribute;
+      }).filter(Boolean);
+    },
+    override: 'observedAttributes'
+  }),
 
-// Skate
-Object.defineProperty(Component, 'id', prop({
-  get: uniqueId,
-  set: overridePropertyGetter
-}));
+  // Skate
+  props: prop({ value: {} })
+});
 
 // Skate
 Component.extend = function extend (definition = {}, Base = this) {
