@@ -6,7 +6,6 @@ import {
   renderer as $render,
   rendererDebounced as $renderDebounced,
   rendering as $rendering,
-  shadowRoot as $shadowRoot,
   updated as $updated
 } from '../util/symbols';
 import {
@@ -25,10 +24,6 @@ import syncPropToAttr from '../util/sync-prop-to-attr';
 import uniqueId from '../util/unique-id';
 
 const { HTMLElement } = window;
-
-function attachShadow (elem) {
-  return elem[$shadowRoot] = elem[$shadowRoot] || (elem.attachShadow ? elem.attachShadow({ mode: 'open' }) : elem);
-}
 
 function syncPropsToAttrs (elem) {
   const props = elem.constructor.props;
@@ -89,7 +84,7 @@ function Component (...args) {
   const elem = reflect
     ? Reflect.construct(HTMLElement, args, this.constructor)
     : HTMLElement.call(this, args[0]);
-  
+
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
   const { constructor } = elem;
@@ -330,7 +325,9 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       this[$rendering] = true;
 
       if (this[$updated]() && typeof this.renderCallback === 'function') {
-        attachShadow(this);
+        if (!this.shadowRoot) {
+          this.attachShadow({ mode: 'open' });
+        }
         this.rendererCallback();
         this.renderedCallback();
       }

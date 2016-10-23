@@ -1,11 +1,11 @@
 /* eslint-env jasmine, mocha, chai */
 
-import { define, prop, props, symbols, vdom } from '../../../src/index';
+import { define, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
 const { text, elementOpen, elementClose, elementOpenStart, elementOpenEnd, elementVoid } = vdom;
-const sr = el => el[symbols.shadowRoot];
+const sr = el => el.shadowRoot;
 
 describe('vdom/skip', () => {
   it('should skip the element children', done => {
@@ -101,15 +101,15 @@ describe('vdom/skip', () => {
     fixture(elem);
     afterMutations(
       () => {}, // x-test.render()
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
+      () => expect(elem.shadowRoot.textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
+      () => expect(elem.shadowRoot.textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
+      () => expect(elem.shadowRoot.textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
+      () => expect(elem.shadowRoot.textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('666'),
+      () => expect(elem.shadowRoot.textContent).to.equal('666'),
       done
     );
   });
@@ -128,9 +128,9 @@ describe('vdom/skip', () => {
     fixture(elem);
     afterMutations(
       () => {}, // x-test.render()
-      () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
+      () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
-      () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
+      () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),
       done
     );
   });
@@ -148,9 +148,9 @@ describe('vdom/skip', () => {
     fixture(elem);
     afterMutations(
       () => {}, // x-test.render()
-      () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
+      () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
-      () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
+      () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),
       done
     );
   });
