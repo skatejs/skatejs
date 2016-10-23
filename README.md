@@ -1,5 +1,6 @@
 # Skate
 
+[![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 [![Size](https://img.shields.io/badge/min+gz-4.64%20kB-blue.svg)](https://unpkg.com/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -1727,7 +1728,7 @@ function scoped(elem) {}
 skate.define('x-element', {
   created(elem) {
     scoped(elem);
-    elem._privateButNotReally();  
+    elem._privateButNotReally();
   },
   prototype: {
     _privateButNotReally() {}
