@@ -6,7 +6,6 @@ import {
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
-  shadowRoot as $shadowRoot,
   updated as $updated
 } from '../util/symbols';
 import {
@@ -20,16 +19,6 @@ import getSetProps from './props';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
 const { HTMLElement } = window;
-
-// Uses Shadow DOM only if it's available. Once all browsers support it
-// natively then we can remove this function and call it directly.
-function attachShadow (elem) {
-  return elem.attachShadow ? elem.attachShadow({ mode: 'open' }) : elem;
-}
-
-function getOrAttachShadow (elem) {
-  return elem[$shadowRoot] || (elem[$shadowRoot] = attachShadow(elem));
-}
 
 function callConstructor (elem) {
   const elemData = data(elem);
@@ -210,7 +199,16 @@ Component[$renderer] = function _renderer (elem) {
   }
 
   if (shouldRender) {
-    this.renderer({ elem, render: this.render, shadowRoot: getOrAttachShadow(elem) });
+    if (!elem.shadowRoot) {
+      elem.attachShadow({ mode: 'open' });
+    }
+
+    this.renderer({
+      elem,
+      render: this.render,
+      shadowRoot: elem.shadowRoot
+    });
+
     if (typeof this.rendered === 'function') {
       this.rendered(elem);
     }

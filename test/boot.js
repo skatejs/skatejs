@@ -2,9 +2,7 @@
 
 import helperFixture from './lib/fixture';
 
-if (!window.customElements) {
-  require('skatejs-web-components');
-}
+require('skatejs-web-components');
 
 mocha.setup({ timeout: 10000 }); // eslint-disable-line no-undef
 

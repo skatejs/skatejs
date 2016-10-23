@@ -24,7 +24,7 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           done
         );
       });
@@ -34,7 +34,7 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           done
         );
       });
@@ -43,8 +43,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -53,8 +53,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -64,8 +64,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -75,8 +75,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -85,9 +85,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', { id: 'test' }, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -96,9 +96,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -108,9 +108,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -120,9 +120,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -156,7 +156,7 @@ describe('vdom/elements', () => {
     fixture().appendChild(elem1);
     afterMutations(
       () => {}, // .render()
-      () => expect(elem2[symbols.shadowRoot].textContent).to.equal('rendered'),
+      () => expect(elem2.shadowRoot.textContent).to.equal('rendered'),
       done
     );
   });
@@ -177,7 +177,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -195,7 +195,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -213,7 +213,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -234,7 +234,7 @@ describe('vdom/elements', () => {
       fixture().appendChild(elem);
       afterMutations(
         () => {}, // .render()
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
+        () => expect(elem.shadowRoot.innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
         done
       );
     });
@@ -259,9 +259,9 @@ describe('vdom/elements', () => {
       fixture().appendChild(elem);
       afterMutations(
         () => {}, // .render()
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div></div>'),
+        () => expect(elem.shadowRoot.innerHTML).to.equal('<div></div>'),
         () => {
-          const div = elem[symbols.shadowRoot];
+          const div = elem.shadowRoot;
           expect(div.key).to.equal(undefined);
           expect(div.ref).to.equal(undefined);
           expect(div.statics).to.equal(undefined);
