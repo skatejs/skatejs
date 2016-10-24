@@ -2,7 +2,7 @@
 
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { define, prop, props, vdom } from '../../../src/index';
+import { Component, define, h, prop, props, vdom } from '../../../src/index';
 
 describe('vdom/properties', () => {
   it('class -> className', done => {
@@ -116,5 +116,24 @@ describe('vdom/properties', () => {
         done
       );
     });
+  });
+
+  it('#876 - Apply prop attributes as properties in a polyfill environment', (done) => {
+    const Elem1 = define('x-test', {
+      render (elem) {
+        return h(Elem2, { fooBar: true });
+      }
+    });
+    const Elem2 = define('x-test', {
+      props: {
+        fooBar: {}
+      },
+      render(elem) {
+        expect(elem.fooBar).to.be.equal(true);
+        done();
+      }
+    });
+    const elem = new Elem1();
+    fixture(elem);
   });
 });

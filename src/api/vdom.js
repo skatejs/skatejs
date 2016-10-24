@@ -12,6 +12,7 @@ import {
 import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
 
+const { customElements } = window;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being
@@ -82,17 +83,6 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
-    // Custom element properties should be set as properties.
-    const props = elem.constructor.props;
-    if (props && name in props) {
-      return applyProp(elem, name, value);
-    }
-
-    // Boolean false values should not set attributes at all.
-    if (value === false) {
-      return applyDefault(elem, name);
-    }
-
     // Handle built-in and custom events.
     if (name.indexOf('on') === 0) {
       const firstChar = name[2];
@@ -116,13 +106,17 @@ const attributesContext = propContext(attributes, {
     //
     // However, certain props on SVG elements are readonly and error when you try
     // to set them.
-    if (name in elem && !('ownerSVGElement' in elem)) {
+    if ((name in elem || elem.tagName.indexOf('-') > -1) && !('ownerSVGElement' in elem)) {
       applyProp(elem, name, value);
       return;
     }
 
     // Fallback to default IncrementalDOM behaviour.
-    applyDefault(elem, name, value);
+    if (value === false) {
+      applyDefault(elem, name);
+    } else {
+      applyDefault(elem, name, value);
+    }
   }
 });
 
