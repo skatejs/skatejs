@@ -82,7 +82,7 @@ function callDisconnected (elem) {
   }
 }
 
-// v1
+// Custom Elements v1
 function Component (...args) {
   const elem = typeof Reflect === 'object'
     ? Reflect.construct(HTMLElement, args, this.constructor)
@@ -91,7 +91,7 @@ function Component (...args) {
   return elem;
 }
 
-// v1
+// Custom Elements v1
 Component.observedAttributes = [];
 
 // Skate
@@ -215,7 +215,7 @@ Component[$renderer] = function _renderer (elem) {
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
-  // v1
+  // Custom Elements v1
   connectedCallback: {
     configurable: true,
     value () {
@@ -223,7 +223,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   },
 
-  // v1
+  // Custom Elements v1
   disconnectedCallback: {
     configurable: true,
     value () {
@@ -231,7 +231,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   },
 
-  // v1
+  // Custom Elements v1
   attributeChangedCallback: {
     configurable: true,
     value (name, oldValue, newValue) {
