@@ -238,7 +238,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
   attributeChangedCallback: {
     configurable: true,
     value (name, oldValue, newValue) {
-      const { attributeChanged, observedAttributes } = this.constructor;
+      const { attributeChanged } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
       if (propertyName) {
