@@ -4,7 +4,6 @@ import {
   name as $name,
   props as $props
 } from '../util/symbols';
-import { customElementsV0, customElementsV1 } from '../util/support';
 import Component from './component';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
@@ -107,30 +106,6 @@ function prepareForRegistration (name, Ctor) {
   Ctor[$props] = createInitProps(Ctor);
 }
 
-function registerV0Element (name, Ctor) {
-  let res;
-  let uniqueName;
-  try {
-    prepareForRegistration(name, Ctor);
-    res = document.registerElement(name, Ctor);
-  } catch (e) {
-    uniqueName = generateUniqueName(name);
-    prepareForRegistration(uniqueName, Ctor);
-    res = document.registerElement(uniqueName, Ctor);
-  }
-  return res;
-}
-
-function registerV1Element (name, Ctor) {
-  let uniqueName = name;
-  if (window.customElements.get(name)) {
-    uniqueName = generateUniqueName(name);
-  }
-  prepareForRegistration(uniqueName, Ctor);
-  window.customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
-  return Ctor;
-}
-
 export default function (name, opts) {
   if (opts === undefined) {
     throw new Error(`You have to define options to register a component ${name}`);
@@ -138,11 +113,15 @@ export default function (name, opts) {
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
   formatLinkedAttributes(Ctor);
 
-  if (customElementsV1) {
-    return registerV1Element(name, Ctor);
-  } else if (customElementsV0) {
-    return registerV0Element(name, Ctor);
+  if (!window.customElements) {
+    throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
-  throw new Error('Skate requires native custom element support or a polyfill.');
+  let uniqueName = name;
+  if (window.customElements.get(name)) {
+    uniqueName = generateUniqueName(name);
+  }
+  prepareForRegistration(uniqueName, Ctor);
+  window.customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
+  return Ctor;
 }

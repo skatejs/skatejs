@@ -2,7 +2,7 @@
 
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { define, prop, props, symbols, vdom } from '../../../src/index';
+import { define, prop, props, vdom } from '../../../src/index';
 
 describe('vdom/properties', () => {
   it('class -> className', done => {
@@ -14,7 +14,7 @@ describe('vdom/properties', () => {
     fixture(elem);
     afterMutations(
       () => {}, // x-test.render()
-      () => expect(elem[symbols.shadowRoot].firstChild.className).to.equal('test'),
+      () => expect(elem.shadowRoot.firstChild.className).to.equal('test'),
       done
     );
   });
@@ -35,7 +35,7 @@ describe('vdom/properties', () => {
 
     afterMutations(
       () => {}, // x-test.render()
-      () => expect(elem[symbols.shadowRoot].firstChild.getAttribute('class')).to.equal('inner'),
+      () => expect(elem.shadowRoot.firstChild.getAttribute('class')).to.equal('inner'),
       done
     );
   });
@@ -53,7 +53,7 @@ describe('vdom/properties', () => {
     let div;
     afterMutations(
       () => {}, // x-test.render()
-      () => (div = elem[symbols.shadowRoot].firstChild),
+      () => (div = elem.shadowRoot.firstChild),
       () => (elem.test = true),
       () => expect(div.hasAttribute('test')).to.equal(true),
       () => (elem.test = false),
@@ -98,7 +98,7 @@ describe('vdom/properties', () => {
     });
 
     function text (elem) {
-      return elem[symbols.shadowRoot].firstChild[symbols.shadowRoot].textContent;
+      return elem.shadowRoot.firstChild.shadowRoot.textContent;
     }
 
     it('boolean: false -> true -> false', done => {

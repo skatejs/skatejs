@@ -6,15 +6,8 @@ import {
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
-  shadowRoot as $shadowRoot,
   updated as $updated
 } from '../util/symbols';
-import {
-  customElementsV0,
-  reflect,
-  shadowDomV0,
-  shadowDomV1
-} from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
@@ -23,22 +16,6 @@ import getSetProps from './props';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
 const { HTMLElement } = window;
-
-// Abstracts shadow root across v1, v0 and no support.
-// Once v1 is supported everywhere, we can call elem.attachShadow() directly
-// and remove this function.
-function attachShadow (elem) {
-  if (shadowDomV1) {
-    return elem.attachShadow({ mode: 'open' });
-  } else if (shadowDomV0) {
-    return elem.createShadowRoot();
-  }
-  return elem;
-}
-
-function getOrAttachShadow (elem) {
-  return elem[$shadowRoot] || (elem[$shadowRoot] = attachShadow(elem));
-}
 
 function callConstructor (elem) {
   const elemData = data(elem);
@@ -69,18 +46,6 @@ function callConstructor (elem) {
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
     delete elemData.readyCallbacks;
-  }
-
-  // In v0 we must ensure the attributeChangedCallback is called for attrs
-  // that aren't linked to props so that the callback behaves the same no
-  // matter if v0 or v1 is being used.
-  if (customElementsV0) {
-    constructor.observedAttributes.forEach((name) => {
-      const propertyName = data(elem, 'attributeLinks')[name];
-      if (!propertyName) {
-        elem.attributeChangedCallback(name, null, elem.getAttribute(name));
-      }
-    });
   }
 }
 
@@ -117,16 +82,16 @@ function callDisconnected (elem) {
   }
 }
 
-// v1
+// Custom Elements v1
 function Component (...args) {
-  const elem = reflect
+  const elem = typeof Reflect === 'object'
     ? Reflect.construct(HTMLElement, args, this.constructor)
     : HTMLElement.call(this, args[0]);
   callConstructor(elem);
   return elem;
 }
 
-// v1
+// Custom Elements v1
 Component.observedAttributes = [];
 
 // Skate
@@ -231,7 +196,16 @@ Component[$renderer] = function _renderer (elem) {
   }
 
   if (shouldRender) {
-    this.renderer({ elem, render: this.render, shadowRoot: getOrAttachShadow(elem) });
+    if (!elem.shadowRoot) {
+      elem.attachShadow({ mode: 'open' });
+    }
+
+    this.renderer({
+      elem,
+      render: this.render,
+      shadowRoot: elem.shadowRoot
+    });
+
     if (typeof this.rendered === 'function') {
       this.rendered(elem);
     }
@@ -241,7 +215,7 @@ Component[$renderer] = function _renderer (elem) {
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
-  // v1
+  // Custom Elements v1
   connectedCallback: {
     configurable: true,
     value () {
@@ -249,7 +223,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   },
 
-  // v1
+  // Custom Elements v1
   disconnectedCallback: {
     configurable: true,
     value () {
@@ -257,17 +231,12 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   },
 
-  // v0 and v1
+  // Custom Elements v1
   attributeChangedCallback: {
     configurable: true,
     value (name, oldValue, newValue) {
-      const { attributeChanged, observedAttributes } = this.constructor;
+      const { attributeChanged } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
-
-      // In V0 we have to ensure the attribute is being observed.
-      if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
-        return;
-      }
 
       if (propertyName) {
         const propData = data(this, 'props')[propertyName];
@@ -292,30 +261,6 @@ Component.prototype = Object.create(HTMLElement.prototype, {
       if (attributeChanged) {
         attributeChanged(this, { name, newValue, oldValue });
       }
-    }
-  },
-
-  // v0
-  createdCallback: {
-    configurable: true,
-    value () {
-      callConstructor(this);
-    }
-  },
-
-  // v0
-  attachedCallback: {
-    configurable: true,
-    value () {
-      callConnected(this);
-    }
-  },
-
-  // v0
-  detachedCallback: {
-    configurable: true,
-    value () {
-      callDisconnected(this);
     }
   }
 });

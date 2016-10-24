@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { emit, prop, props, symbols, vdom } from '../../../src/index';
+import { emit, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -31,7 +31,7 @@ describe('vdom/events (on*)', () => {
     afterMutations(
       () => {}, // .render()
       () => {
-        const shadowDiv = el[symbols.shadowRoot].children[0];
+        const shadowDiv = el.shadowRoot.children[0];
 
         // Ensures that it rendered.
         expect(shadowDiv.textContent).to.equal('0');
@@ -73,7 +73,7 @@ describe('vdom/events (on*)', () => {
     afterMutations(
       () => {}, // .render()
       () => {
-        emit(myel[symbols.shadowRoot].querySelector('span'), 'test');
+        emit(myel.shadowRoot.querySelector('span'), 'test');
         expect(called).to.equal(true);
       },
       done
@@ -98,7 +98,7 @@ describe('vdom/events (on*)', () => {
     afterMutations(
       () => {}, // .render()
       () => {
-        emit(myel[symbols.shadowRoot].querySelector('span'), 'test', { detail: 'detail' });
+        emit(myel.shadowRoot.querySelector('span'), 'test', { detail: 'detail' });
         expect(called).to.equal(true);
         expect(detail).to.equal('detail');
       },
@@ -116,7 +116,7 @@ describe('vdom/events (on*)', () => {
     afterMutations(
       () => {}, // .render()
       () => {
-        emit(myel[symbols.shadowRoot].firstChild, 'test');
+        emit(myel.shadowRoot.firstChild, 'test');
       },
       done
     );
@@ -149,7 +149,7 @@ describe('vdom/events (on*)', () => {
       afterMutations(
         () => {}, // .render()
         () => {
-          div = el[symbols.shadowRoot].firstChild;
+          div = el.shadowRoot.firstChild;
         },
         done
       );

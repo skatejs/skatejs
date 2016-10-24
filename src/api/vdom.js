@@ -10,11 +10,9 @@ import {
   text
 } from 'incremental-dom';
 import { name as $name, ref as $ref } from '../util/symbols';
-import { shadowDomV0, shadowDomV1 } from '../util/support';
 import propContext from '../util/prop-context';
 
 const applyDefault = attributes[symbols.default];
-const fallbackToV0 = !shadowDomV1 && shadowDomV0;
 
 // A stack of children that corresponds to the current function helper being
 // executed.
@@ -67,15 +65,6 @@ const attributesContext = propContext(attributes, {
   className: applyProp,
   disabled: applyProp,
   value: applyProp,
-
-  // V0 Shadow DOM to V1 normalisation.
-  name (elem, name, value) {
-    if (elem.tagName === 'CONTENT') {
-      name = 'select';
-      value = `[slot="${value}"]`;
-    }
-    applyDefault(elem, name, value);
-  },
 
   // Ref handler.
   ref (elem, name, value) {
@@ -145,12 +134,6 @@ function resolveTagName (tname) {
   // - If a standard function, it is used as a helper.
   if (typeof tname === 'function') {
     return tname[$name] || tname;
-  }
-
-  // Skate allows the consumer to use <slot /> and it will translate it to
-  // <content /> if Shadow DOM V0 is preferred.
-  if (tname === 'slot' && fallbackToV0) {
-    return 'content';
   }
 
   // All other tag names are just passed through.

@@ -3,7 +3,6 @@
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { shadowDomV0, shadowDomV1 } from '../../../src/util/support';
 import { symbols, vdom } from '../../../src/index';
 
 describe('vdom/elements', () => {
@@ -25,7 +24,7 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           done
         );
       });
@@ -35,7 +34,7 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           done
         );
       });
@@ -44,8 +43,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -54,8 +53,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -65,8 +64,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -76,8 +75,8 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -86,9 +85,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', { id: 'test' }, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -97,9 +96,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element('div', { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -109,9 +108,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, 'text'));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -121,9 +120,9 @@ describe('vdom/elements', () => {
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].firstChild.tagName).to.equal('DIV'),
-          () => expect(elem[symbols.shadowRoot].firstChild.id).to.equal('test'),
-          () => expect(elem[symbols.shadowRoot].firstChild.textContent).to.equal('text'),
+          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
+          () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
@@ -134,49 +133,6 @@ describe('vdom/elements', () => {
         });
       });
     });
-  });
-
-  it('slot', (done) => {
-    const elem1 = new (element().skate({
-      render () {
-        vdom.element('slot', { name: 'test' });
-      }
-    }))();
-    const elem2 = new (element().skate({
-      render () {
-        vdom.element('slot', { name: 'test' });
-      }
-    }))();
-
-    fixture().appendChild(elem1);
-    fixture().appendChild(elem2);
-
-    afterMutations(
-      () => {}, // .render()
-      () => {
-        const ch1 = elem1[symbols.shadowRoot].firstElementChild;
-        const ch2 = elem2[symbols.shadowRoot].firstElementChild;
-
-        function assertSlotElement () {
-          expect(ch1.tagName).to.equal('SLOT', 'vdom');
-          expect(ch1.getAttribute('name')).to.equal('test', 'vdom');
-          expect(ch2.tagName).to.equal('SLOT', 'vdom.element(slot)');
-          expect(ch2.getAttribute('name')).to.equal('test', 'vdom.element(slot)');
-        }
-
-        if (shadowDomV1) {
-          assertSlotElement();
-        } else if (shadowDomV0) {
-          expect(ch1.tagName).to.equal('CONTENT', 'vdom');
-          expect(ch1.getAttribute('select')).to.equal('[slot="test"]', 'vdom');
-          expect(ch2.tagName).to.equal('CONTENT', 'vdom.element(slot)');
-          expect(ch2.getAttribute('select')).to.equal('[slot="test"]', 'vdom.element(slot)');
-        } else {
-          assertSlotElement();
-        }
-      },
-      done
-    );
   });
 
   it('passing a component constructor to the vdom.element() function', (done) => {
@@ -200,7 +156,7 @@ describe('vdom/elements', () => {
     fixture().appendChild(elem1);
     afterMutations(
       () => {}, // .render()
-      () => expect(elem2[symbols.shadowRoot].textContent).to.equal('rendered'),
+      () => expect(elem2.shadowRoot.textContent).to.equal('rendered'),
       done
     );
   });
@@ -221,7 +177,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -239,7 +195,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -257,7 +213,7 @@ describe('vdom/elements', () => {
         fixture().appendChild(elem);
         afterMutations(
           () => {}, // .render()
-          () => expect(elem[symbols.shadowRoot].innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
       });
@@ -278,7 +234,7 @@ describe('vdom/elements', () => {
       fixture().appendChild(elem);
       afterMutations(
         () => {}, // .render()
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
+        () => expect(elem.shadowRoot.innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
         done
       );
     });
@@ -303,9 +259,9 @@ describe('vdom/elements', () => {
       fixture().appendChild(elem);
       afterMutations(
         () => {}, // .render()
-        () => expect(elem[symbols.shadowRoot].innerHTML).to.equal('<div></div>'),
+        () => expect(elem.shadowRoot.innerHTML).to.equal('<div></div>'),
         () => {
-          const div = elem[symbols.shadowRoot];
+          const div = elem.shadowRoot;
           expect(div.key).to.equal(undefined);
           expect(div.ref).to.equal(undefined);
           expect(div.statics).to.equal(undefined);

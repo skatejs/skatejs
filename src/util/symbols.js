@@ -6,5 +6,4 @@ export const ref = '____skate_ref';
 export const renderer = '____skate_renderer';
 export const rendering = '____skate_rendering';
 export const rendererDebounced = '____skate_rendererDebounced';
-export const shadowRoot = '____skate_shadowRoot';
 export const updated = '____skate_updated';

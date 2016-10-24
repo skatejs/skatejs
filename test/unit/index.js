@@ -44,7 +44,6 @@ describe('exports', () => {
   it('skate.symbols', () => {
     expect(api.symbols).to.be.an('object');
     expect(api.symbols.name).to.equal(symbols.name);
-    expect(api.symbols.shadowRoot).to.equal(symbols.shadowRoot);
   });
 
   it('skate.h', () => {

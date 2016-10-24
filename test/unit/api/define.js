@@ -1,16 +1,11 @@
 /* eslint-env jasmine, mocha */
 
 import { Component, define, symbols } from '../../../src/index';
-import { customElementsV0, customElementsV1 } from '../../../src/util/support';
 
 const { name: $name } = symbols;
 
 function mockDefine (name) {
-  if (customElementsV1) {
-    window.customElements.define(name, function customElemMock () {}); // eslint-disable-line prefer-arrow-callback
-  } else if (customElementsV0) {
-    document.registerElement(name, function customElemMock () {}); // eslint-disable-line prefer-arrow-callback
-  }
+  window.customElements.define(name, function customElemMock () {});
 }
 
 describe('api/define', () => {
