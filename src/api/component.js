@@ -126,7 +126,7 @@ Object.defineProperties(Component, {
   // Skate
   id: prop({ value: null }),
 
-  // Spec
+  // Custom Elements v1
   observedAttributes: prop({
     get () {
       const { props } = this;
@@ -169,7 +169,9 @@ Component.extend = function extend (definition = {}, Base = this) {
   return Ctor;
 };
 
-// DEPRECATED static updated()
+// Skate
+//
+// DEPRECATED
 Component.updated = function _updated (elem, prev) {
   if (!prev) {
     return true;
@@ -187,9 +189,13 @@ Component.updated = function _updated (elem, prev) {
   return false;
 };
 
+// Skate
+//
 // DEPRECATED
 Component.rendered = function _rendered () {};
 
+// Skate
+//
 // DEPRECATED
 Component.renderer = function _renderer (elem) {
   patchInner(elem.shadowRoot, () => {
@@ -207,6 +213,7 @@ Component.renderer = function _renderer (elem) {
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
+  // Custom Elements v1
   connectedCallback: prop({
     value () {
       const { constructor } = this;
@@ -225,6 +232,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   }),
 
+  // Custom Elements v1
   disconnectedCallback: prop({
     value () {
       const { constructor } = this;
@@ -238,6 +246,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
     }
   }),
 
+  // Custom Elements v1
   attributeChangedCallback: prop({
     value (name, oldValue, newValue) {
       const { attributeChanged } = this.constructor;
