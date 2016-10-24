@@ -135,7 +135,8 @@ function resolveTagName (tname) {
   // optimistic path of trying to get it by the $name symbol (same versions) or
   // falling back to getting it from an actual instance and caching it using
   // the same symbol.
-  if (!tname[$name] && tname.prototype instanceof HTMLElement) {
+  if (tname.prototype instanceof HTMLElement) {
+    // eslint-disable-next-line
     const elem = new tname();
     tname[$name] = elem.tagName.toLowerCase();
   }

@@ -15,7 +15,7 @@ export default opts => {
         value,
         writable: true
       });
-    }
+    };
   }
   return opts;
 };

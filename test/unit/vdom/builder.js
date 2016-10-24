@@ -3,6 +3,8 @@
 import { define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
+const { customElements, HTMLElement } = window;
+
 describe('builder()', () => {
   const { builder } = vdom;
 
@@ -68,8 +70,10 @@ describe('builder()', () => {
       }))());
     });
 
-    it('should work with web component constructors', (done) => {
-      const [xTest] = builder(define('x-test', {}));
+    it('should work with all web component constructors', (done) => {
+      class RawWc extends HTMLElement {}
+      customElements.define('x-test-raw-wc', RawWc);
+      const [xTest] = builder(RawWc);
       fixture(new (define('x-test', {
         render () {
           return xTest();

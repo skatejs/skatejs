@@ -15,10 +15,8 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
-import keys from '../util/get-all-keys';
 import prop from '../util/prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
-import uniqueId from '../util/unique-id';
 
 const { HTMLElement } = window;
 
@@ -35,7 +33,7 @@ function syncPropsToAttrs (elem) {
 function ensurePropertyFunctions (Ctor) {
   const props = Ctor.props;
 
-  return keys(props).reduce((descriptors, descriptorName) => {
+  return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
       descriptors[descriptorName] = initProps(descriptors[descriptorName]);
@@ -48,7 +46,7 @@ function ensurePropertyFunctions (Ctor) {
 // to create properties on the element.
 function ensurePropertyDefinitions (Ctor) {
   const props = ensurePropertyFunctions(Ctor);
-  return keys(props).reduce((descriptors, descriptorName) => {
+  return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName](descriptorName);
     return descriptors;
   }, {});
@@ -62,7 +60,7 @@ function createInitProps (Ctor) {
       return;
     }
 
-    keys(props).forEach((name) => {
+    getAllKeys(props).forEach((name) => {
       const prop = props[name];
       prop.created(elem);
 
@@ -194,7 +192,7 @@ Component.rendered = function _rendered () {};
 
 // DEPRECATED
 Component.renderer = function _renderer (elem) {
-  patchInner(elem[$shadowRoot], () => {
+  patchInner(elem.shadowRoot, () => {
     const possibleFn = elem.renderCallback();
     if (typeof possibleFn === 'function') {
       possibleFn();
