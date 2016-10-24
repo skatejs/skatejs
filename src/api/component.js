@@ -8,9 +8,6 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
-import {
-  reflect
-} from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
@@ -87,7 +84,7 @@ function callDisconnected (elem) {
 
 // v1
 function Component (...args) {
-  const elem = reflect
+  const elem = typeof Reflect === 'object'
     ? Reflect.construct(HTMLElement, args, this.constructor)
     : HTMLElement.call(this, args[0]);
   callConstructor(elem);
