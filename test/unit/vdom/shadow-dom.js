@@ -2,8 +2,6 @@
 
 import element from '../../lib/element';
 
-const { ShadowRoot } = window;
-
 describe('vdom/shadow-dom', () => {
   let Elem;
 
@@ -13,10 +11,6 @@ describe('vdom/shadow-dom', () => {
 
   it('should work for attachShadow()', () => {
     const elem = new Elem();
-    if (elem.attachShadow) {
-      expect(elem.shadowRoot).not.to.equal(elem);
-    } else {
-      expect(elem.shadowRoot).to.equal(elem);
-    }
+    expect(elem.shadowRoot).not.to.equal(elem);
   });
 });

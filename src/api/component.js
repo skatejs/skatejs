@@ -8,9 +8,6 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
-import {
-  reflect
-} from '../util/support';
 import data from '../util/data';
 import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
@@ -81,7 +78,7 @@ function createInitProps (Ctor) {
 }
 
 function Component (...args) {
-  const elem = reflect
+  const elem = typeof Reflect === 'object'
     ? Reflect.construct(HTMLElement, args, this.constructor)
     : HTMLElement.call(this, args[0]);
 
@@ -245,7 +242,7 @@ Component.prototype = Object.create(HTMLElement.prototype, {
 
   attributeChangedCallback: prop({
     value (name, oldValue, newValue) {
-      const { attributeChanged, observedAttributes } = this.constructor;
+      const { attributeChanged } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
       if (propertyName) {

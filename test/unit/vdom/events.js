@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { emit, prop, props, symbols, vdom } from '../../../src/index';
+import { emit, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
