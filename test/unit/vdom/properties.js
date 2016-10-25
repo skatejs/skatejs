@@ -121,7 +121,7 @@ describe('vdom/properties', () => {
   it('#876 - Apply properties and attributes in a polyfill environment', (done) => {
     const Elem1 = define('x-test', {
       render (elem) {
-        return h(Elem2, { foo: true, bar: true });
+        return h(Elem2, { foo: true, bar: true, baz: true });
       }
     });
     const Elem2 = define('x-test', {
@@ -131,9 +131,20 @@ describe('vdom/properties', () => {
       render(elem) {
         expect(elem.foo).to.be.equal(true);
         expect(elem.bar).to.be.equal(undefined);
+        expect(elem.baz).to.equal(true);
+        expect(elem.hasAttribute('foo')).to.equal(false);
         expect(elem.getAttribute('bar')).to.equal('true');
+        expect(elem.hasAttribute('baz')).to.equal(false);
         done();
-      }
+      },
+      prototype: {
+        get baz () {
+          return this._baz;
+        },
+        set baz (val) {
+          this._baz = val;
+        }
+      },
     });
     const elem = new Elem1();
     fixture(elem);

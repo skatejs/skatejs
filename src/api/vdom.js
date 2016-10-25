@@ -91,6 +91,13 @@ const attributesContext = propContext(attributes, {
     // TODO when refactoring properties to not have to workaround the old
     // WebKit bug we can remove the "name in props" check below.
     //
+    // NOTE: That the "name in elem" check won't work for polyfilled custom
+    // elements that set a property that isn't explicitly specified in "props"
+    // or "prototype" unless it is added to the element explicitly as a
+    // property prior to passing the prop to the vdom function. For example, if
+    // it were added in a lifecycle callback because it wouldn't have been
+    // upgraded yet.
+    //
     // We prefer setting props, so we do this if there's a property matching
     // name that was passed. However, certain props on SVG elements are
     // readonly and error when you try to set them.
