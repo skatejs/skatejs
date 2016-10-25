@@ -83,6 +83,26 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
+    const Ctor = customElements.get(elem.tagName);
+    const { observedAttributes } = Ctor || { observedAttributes: null };
+
+    // Set defined props on the element directly. This ensures properties like
+    // "value" on <input> elements get set correctly. Setting those as attributes
+    // doesn't always work and setting props is faster than attributes.
+    //
+    // However, certain props on SVG elements are readonly and error when you try
+    // to set them.
+    if ((name in elem && !('ownerSVGElement' in elem)) || Ctor && (!observedAttributes || observedAttributes.indexOf(name) === -1)) {
+      applyProp(elem, name, value);
+      return;
+    }
+
+    // Explicit false removes the attribute.
+    if (value === false) {
+      applyDefault(elem, name);
+      return;
+    }
+
     // Handle built-in and custom events.
     if (name.indexOf('on') === 0) {
       const firstChar = name[2];
@@ -100,23 +120,7 @@ const attributesContext = propContext(attributes, {
       }
     }
 
-    // Set defined props on the element directly. This ensures properties like
-    // "value" on <input> elements get set correctly. Setting those as attributes
-    // doesn't always work and setting props is faster than attributes.
-    //
-    // However, certain props on SVG elements are readonly and error when you try
-    // to set them.
-    if ((name in elem || elem.tagName.indexOf('-') > -1) && !('ownerSVGElement' in elem)) {
-      applyProp(elem, name, value);
-      return;
-    }
-
-    // Fallback to default IncrementalDOM behaviour.
-    if (value === false) {
-      applyDefault(elem, name);
-    } else {
-      applyDefault(elem, name, value);
-    }
+    applyDefault(elem, name, value);
   }
 });
 
