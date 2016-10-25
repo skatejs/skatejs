@@ -118,62 +118,24 @@ describe('vdom/properties', () => {
     });
   });
 
-  describe('#876 - Apply properties and attributes in a polyfill environment', () => {
-    it('setting properties (original issue)', (done) => {
-      const Elem1 = define('x-test', {
-        render (elem) {
-          return h(Elem2, { fooBar: true });
-        }
-      });
-      const Elem2 = define('x-test', {
-        props: {
-          fooBar: {}
-        },
-        render(elem) {
-          expect(elem.fooBar).to.be.equal(true);
-          done();
-        }
-      });
-      const elem = new Elem1();
-      fixture(elem);
+  it('#876 - Apply properties and attributes in a polyfill environment', (done) => {
+    const Elem1 = define('x-test', {
+      render (elem) {
+        return h(Elem2, { foo: true, bar: true });
+      }
     });
-
-    describe('setting attributes', () => {
-      it(`observedAttributes: ['fooBar']`, (done) => {
-        const Elem1 = define('x-test', {
-          render (elem) {
-            return h(Elem2, { fooBar: true });
-          }
-        });
-        const Elem2 = define('x-test', {
-          observedAttributes: ['fooBar'],
-          render(elem) {
-            expect(elem.fooBar).to.be.equal(undefined);
-            expect(elem.getAttribute('foobar')).to.equal('true');
-            done();
-          }
-        });
-        const elem = new Elem1();
-        fixture(elem);
-      });
-
-      it('observedAttributes: []', () => {
-        const Elem1 = define('x-test', {
-          render (elem) {
-            return h(Elem2, { fooBar: true });
-          }
-        });
-        const Elem2 = define('x-test', {
-          observedAttributes: [],
-          render(elem) {
-            expect(elem.fooBar).to.be.equal(true);
-            expect(elem.hasAttribute('foobar')).to.equal(false);
-            done();
-          }
-        });
-        const elem = new Elem1();
-        fixture(elem);
-      });
+    const Elem2 = define('x-test', {
+      props: {
+        foo: {}
+      },
+      render(elem) {
+        expect(elem.foo).to.be.equal(true);
+        expect(elem.bar).to.be.equal(undefined);
+        expect(elem.getAttribute('bar')).to.equal('true');
+        done();
+      }
     });
+    const elem = new Elem1();
+    fixture(elem);
   });
 });

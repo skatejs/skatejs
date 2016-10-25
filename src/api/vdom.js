@@ -83,16 +83,18 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
-    const Ctor = customElements.get(elem.tagName);
-    const { observedAttributes } = Ctor || { observedAttributes: null };
+    const { props, prototype } = customElements.get(elem.tagName) || {
+      props: {},
+      prototype: {}
+    };
 
-    // Set defined props on the element directly. This ensures properties like
-    // "value" on <input> elements get set correctly. Setting those as attributes
-    // doesn't always work and setting props is faster than attributes.
+    // TODO when refactoring properties to not have to workaround the old
+    // WebKit bug we can remove the "name in props" check below.
     //
-    // However, certain props on SVG elements are readonly and error when you try
-    // to set them.
-    if ((name in elem && !('ownerSVGElement' in elem)) || Ctor && (!observedAttributes || observedAttributes.indexOf(name) === -1)) {
+    // We prefer setting props, so we do this if there's a property matching
+    // name that was passed. However, certain props on SVG elements are
+    // readonly and error when you try to set them.
+    if ((name in props || name in elem || name in prototype) && !('ownerSVGElement' in elem)) {
       applyProp(elem, name, value);
       return;
     }
