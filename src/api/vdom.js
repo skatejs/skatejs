@@ -12,6 +12,7 @@ import {
 import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
 
+const { customElements } = window;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being
@@ -82,15 +83,33 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
-    // Custom element properties should be set as properties.
-    const props = elem.constructor.props;
-    if (props && name in props) {
-      return applyProp(elem, name, value);
+    const { props, prototype } = customElements.get(elem.tagName) || {
+      props: {},
+      prototype: {}
+    };
+
+    // TODO when refactoring properties to not have to workaround the old
+    // WebKit bug we can remove the "name in props" check below.
+    //
+    // NOTE: That the "name in elem" check won't work for polyfilled custom
+    // elements that set a property that isn't explicitly specified in "props"
+    // or "prototype" unless it is added to the element explicitly as a
+    // property prior to passing the prop to the vdom function. For example, if
+    // it were added in a lifecycle callback because it wouldn't have been
+    // upgraded yet.
+    //
+    // We prefer setting props, so we do this if there's a property matching
+    // name that was passed. However, certain props on SVG elements are
+    // readonly and error when you try to set them.
+    if ((name in props || name in elem || name in prototype) && !('ownerSVGElement' in elem)) {
+      applyProp(elem, name, value);
+      return;
     }
 
-    // Boolean false values should not set attributes at all.
+    // Explicit false removes the attribute.
     if (value === false) {
-      return applyDefault(elem, name);
+      applyDefault(elem, name);
+      return;
     }
 
     // Handle built-in and custom events.
@@ -110,18 +129,6 @@ const attributesContext = propContext(attributes, {
       }
     }
 
-    // Set defined props on the element directly. This ensures properties like
-    // "value" on <input> elements get set correctly. Setting those as attributes
-    // doesn't always work and setting props is faster than attributes.
-    //
-    // However, certain props on SVG elements are readonly and error when you try
-    // to set them.
-    if (name in elem && !('ownerSVGElement' in elem)) {
-      applyProp(elem, name, value);
-      return;
-    }
-
-    // Fallback to default IncrementalDOM behaviour.
     applyDefault(elem, name, value);
   }
 });
