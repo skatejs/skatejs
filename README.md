@@ -424,7 +424,7 @@ customElements.define('my-component', class extends skate.Component {
 });
 ```
 
-Custom properties, when set, queue a `renderCallback()`. Property sets queue a render, so if you are setting multiple properties, only a single render will happen.
+Declare properties that (when mutated) cause the component re-render.
 
 The custom property definition accepts the following options.
 
