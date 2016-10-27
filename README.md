@@ -67,10 +67,10 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [Counter](#counter)
   - [API](#api)
     - [Using the Platform](#using-the-platform)
-    - [`constructor` - supercededs `static created()`](#constructor---supercededs-static-created)
-    - [`connectedCallback` - supercededs `static attached()`](#connectedcallback---supercededs-static-attached)
-    - [`disconnectedCallback` - supercededs `static detached()`](#disconnectedcallback---supercededs-static-detached)
-    - [`attributeChangedCallback` - supercededs `static attributeChanged()`](#attributechangedcallback---supercededs-static-attributechanged)
+    - [`constructor` - supersedes `static created()`](#constructor---supersedes-static-created)
+    - [`connectedCallback` - supersedes `static attached()`](#connectedcallback---supersedes-static-attached)
+    - [`disconnectedCallback` - supersedes `static detached()`](#disconnectedcallback---supersedes-static-detached)
+    - [`attributeChangedCallback` - supersedes `static attributeChanged()`](#attributechangedcallback---supersedes-static-attributechanged)
     - [`static observedAttributes`](#static-observedattributes)
     - [`static props`](#static-props)
       - [`attribute`](#attribute)
@@ -82,11 +82,11 @@ Whenever you change the `name` property - or attribute - the component will re-r
       - [`serialize`](#serialize)
       - [`set`](#set)
     - [`prototype`](#prototype)
-      - [`updatedCallback` - supercededs `static updated()`](#updatedcallback---supercededs-static-updated)
+      - [`updatedCallback` - supersedes `static updated()`](#updatedcallback---supersedes-static-updated)
         - [Other use-cases](#other-use-cases)
-      - [`renderCallback` - supercededs `static render()`](#rendercallback---supercededs-static-render)
+      - [`renderCallback` - supersedes `static render()`](#rendercallback---supersedes-static-render)
         - [Return Value](#return-value)
-      - [`renderedCallback` - supercededs `static rendered()`](#renderedcallback---supercededs-static-rendered)
+      - [`renderedCallback` - supersedes `static rendered()`](#renderedcallback---supersedes-static-rendered)
     - [`define (nameOrConstructor, Constructor)`](#define-nameorconstructor-constructor)
       - [WebPack Hot-Module Reloading](#webpack-hot-module-reloading)
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
@@ -351,7 +351,7 @@ Most of the old API were static methods, or specified as options not on the `pro
 
 
 
-### `constructor` - supercededs `static created()`
+### `constructor` - supersedes `static created()`
 
 Override `constructor` to do any setup of the custom element. You're subject to the [requirements for custom element constructors as defined in the spec](https://www.w3.org/TR/custom-elements/#custom-element-conformance).
 
@@ -365,7 +365,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-### `connectedCallback` - supercededs `static attached()`
+### `connectedCallback` - supersedes `static attached()`
 
 Function that is called after the element has been inserted to the document.
 
@@ -381,7 +381,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-### `disconnectedCallback` - supercededs `static detached()`
+### `disconnectedCallback` - supersedes `static detached()`
 
 Function that is called after the element has been removed from the document.
 
@@ -395,7 +395,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-### `attributeChangedCallback` - supercededs `static attributeChanged()`
+### `attributeChangedCallback` - supersedes `static attributeChanged()`
 
 Function that is called when an attribute changes value (added, updated or removed).
 
@@ -701,7 +701,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `updatedCallback` - supercededs `static updated()`
+#### `updatedCallback` - supersedes `static updated()`
 
 Called before `renderCallback()` after `props` are updated. If it returns falsy, `renderCallback()` is not called. If it returns truthy, `renderCallback()` is called.
 
@@ -799,7 +799,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `renderCallback` - supercededs `static render()`
+#### `renderCallback` - supersedes `static render()`
 
 Function that is called to render the element.
 
@@ -838,12 +838,12 @@ The return value of `renderCallback()` should be either the result of a `skate.h
 
 See also:
 
-- [`updatedCallback()`](#updatedcallback---supercededs-static-updated)
-- [`renderedCallback()`](#renderedcallback---supercededs-static-rendered)
+- [`updatedCallback()`](#updatedcallback---supersedes-static-updated)
+- [`renderedCallback()`](#renderedcallback---supersedes-static-rendered)
 
 
 
-#### `renderedCallback` - supercededs `static rendered()`
+#### `renderedCallback` - supersedes `static rendered()`
 
 Called after the component has rendered (i.e. called `renderCallback()`). If you need to do any DOM manipulation that can't be done in a `ref`, you can do it here. This is not called if `updatedCallback()` prevents rendering, or `renderCallback()` is not defined.
 
