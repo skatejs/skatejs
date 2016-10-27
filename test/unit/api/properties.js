@@ -1,13 +1,15 @@
 /* eslint-env jasmine, mocha */
 
-import { define, prop } from '../../../src/index';
+import { Component, define, prop } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
 
 function create (propLocal) {
-  const el = new (define('x-test', {
-    props: {
-      test: assign({ attribute: true }, propLocal)
+  const el = new (define('x-test', class extends Component {
+    static get props () {
+      return {
+        test: assign({ attribute: true }, propLocal)
+      };
     }
   }))();
   document.body.appendChild(el);
