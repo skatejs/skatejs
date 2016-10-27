@@ -334,9 +334,21 @@ const MyComponent1 = skate.Component.extend();
 const MyComponent2 = MyComponent1.extend();
 ```
 
+Recently, we've deprecated several old methods in favour of aligning closer to the native APIs. These methods still work but will be removed in a future version. Not all methods / properties are listed here, only the ones that have been deprecated and what they're superceded by.
+
+- `static created()` -> `constructor()`
+- `static attached()` -> `connectedCallback()`
+- `static detached()` -> `disconnectedCallback()`
+- `static attributeChanged` -> `attributeChangedCallback()`
+- `static updated()` -> `updatedCallback()`
+- `static render()` -> `renderCallback()`
+- `static rendered()` -> `renderedCallback()`
+
+Most of the old API were static methods, or specified as options not on the `prototype`. The new APIs are mostly specified on the custom element's `prototype` unless it makes sense to be a `static`, such as `props` as they loosely correspond to `observedAttributes`. 
 
 
-#### `constructor`
+
+### `constructor` - supercededs `static created()`
 
 Override `constructor` to do any setup of the custom element. You're subject to the [requirements for custom element constructors as defined in the spec](https://www.w3.org/TR/custom-elements/#custom-element-conformance).
 
@@ -350,7 +362,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `connectedCallback`
+### `connectedCallback` - supercededs `static attached()`
 
 Function that is called after the element has been inserted to the document.
 
@@ -366,7 +378,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `disconnectedCallback`
+### `disconnectedCallback` - supercededs `static detached()`
 
 Function that is called after the element has been removed from the document.
 
@@ -380,7 +392,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `attributeChangedCallback`
+### `attributeChangedCallback` - supercededs `static attributeChanged()`
 
 Function that is called when an attribute changes value (added, updated or removed).
 
@@ -396,7 +408,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `observedAttributes` (static)
+### `static observedAttributes`
 
 The attributes that trigger `attributeChangedCallback` [as per the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
 
@@ -412,7 +424,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-### `props` (static)
+### `static props`
 
 Custom properties that should be defined on the element. These are set up in the `constructor`.
 
@@ -686,7 +698,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `updatedCallback`
+#### `updatedCallback` - supercededs `static updated()`
 
 Called before `renderCallback()` after `props` are updated. If it returns falsy, `renderCallback()` is not called. If it returns truthy, `renderCallback()` is called.
 
@@ -757,7 +769,7 @@ Generally you'll probably supply a `renderCallback()` function for most of your 
 
 ```js
 customElements.define('my-component', class extends skate.Component {
-  updated (prev) {
+  updatedCallback (prev) {
     // You can reuse the original check if you want as part of your new check.
     // You could also call it directly if not extending: skate.Component().
     return super.updated(prev) && myCustomCheck(this, prev);
@@ -784,7 +796,7 @@ customElements.define('my-component', class extends skate.Component {
 
 
 
-#### `renderCallback`
+#### `renderCallback` - supercededs `static render()`
 
 Function that is called to render the element. This is called when the element is first created and on subsequent prop updates if `updatedCallback()` callback returns `true`.
 
@@ -809,17 +821,18 @@ customElements.define('my-component', class extends skate.Component {
 });
 ```
 
-The above isn't restricted to the `skate.h` API, either; it works with all forms of declaring your virtual DOM.
+
+##### Return Value
+
+The return value of `renderCallback()` should be either the result of a `skate.h` call, or an array of `skate.h` calls. Calling the deprecated `vdom.element()` and `vdom.text()` calls are not supported here (though they may still work). They are only supported in the deprecated `static reander()` callback.
 
 *It is not called if the element is not in the document. It will be called in `connectedCallback()` so that it renders as early as possible, but only if necessary.*
 
 *Updating props from within `renderCallback()`, while discouraged, will not trigger another render.*
 
-*Returning the result of your `vdom` calls is only required when you're using `vdom.builder()` or `h`. It is not required when using the (now deprecated) `vdom.element()` and `vdom.text()` calls, or if you're using Incremental DOM directly.*
 
 
-
-#### `renderedCallback`
+#### `renderedCallback` - supercededs `static rendered()`
 
 Called after the component has rendered (i.e. called `renderCallback()`). If you need to do any DOM manipulation that can't be done in a `ref`, you can do it here. This is not called if `updatedCallback()` prevents rendering, or `renderCallback()` is not defined.
 
