@@ -337,7 +337,7 @@ const MyComponent1 = skate.Component.extend();
 const MyComponent2 = MyComponent1.extend();
 ```
 
-Recently, we've deprecated several old methods in favour of aligning closer to the native APIs. These methods still work but will be removed in a future version. Not all methods / properties are listed here, only the ones that have been deprecated and what they're superceded by.
+Recently, we've deprecated several old methods in favour of aligning closer to the native APIs. These methods still work but will be removed in a future version. Not all methods / properties are listed here, only the ones that have been deprecated and what they're superseded by.
 
 - `static created()` -> `constructor()`
 - `static attached()` -> `connectedCallback()`
