@@ -5630,20 +5630,20 @@ skatejs-build@9.x:
     webpack "1.13.2"
     webpack-dev-server "1.16.2"
 
-skatejs-named-slots@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/skatejs-named-slots/-/skatejs-named-slots-1.3.0.tgz#c9ddafa0d7acf8c60e22d3e8e71e77931997b9d9"
+skatejs-named-slots@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/skatejs-named-slots/-/skatejs-named-slots-2.0.1.tgz#dadb6c6bfab3ff99c32506398860988ddae3f0d7"
   dependencies:
     custom-event-polyfill "^0.3.0"
     debounce "^1.0.0"
     weakmap "0.0.6"
 
-skatejs-web-components@1.x:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-1.2.1.tgz#dbf8145a26acf57fecba78d5d27479172ffc326e"
+skatejs-web-components@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-2.0.0.tgz#01c769e7556c8be7de35538facef4770d9292fd6"
   dependencies:
     document-register-element "1.2.0"
-    skatejs-named-slots "^1.3.0"
+    skatejs-named-slots "2.0.1"
 
 slash@^1.0.0:
   version "1.0.0"
