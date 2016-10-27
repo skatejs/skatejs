@@ -9,7 +9,7 @@ const Event = ((TheEvent) => {
   return TheEvent;
 })(window.Event);
 
-function createCustomEvent(name, opts = {}) {
+function createCustomEvent (name, opts = {}) {
   const { detail } = opts;
   delete opts.detail;
 

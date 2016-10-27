@@ -1,17 +1,19 @@
+/* eslint-env jasmine, mocha */
+
+import { classStaticsInheritance } from '../../lib/support';
+import { Component } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { classStaticsInheritance } from '../../lib/support';
 import propsInit from '../../../src/lifecycle/props-init';
-import { Component } from '../../../src';
 
 describe('lifecycle/property', () => {
-  function create(definition = {}, name = 'testName', value) {
+  function create (definition = {}, name = 'testName', value) {
     const elem = new (element().skate({
       props: {
-        [name]: definition,
-      },
-    }));
+        [name]: definition
+      }
+    }))();
     if (arguments.length === 3) { // eslint-disable-line prefer-rest-params
       elem[name] = value;
     }
@@ -22,58 +24,58 @@ describe('lifecycle/property', () => {
     propsInit();
   });
 
-  it('should return an function', () => {
+  it('should return a function', () => {
     expect(propsInit()).to.be.a('function');
   });
 
   describe('props declared as attributes with ES2015 classes are linked', () => {
     const skip = !classStaticsInheritance();
 
-    it('uses the same attribute and property name for lower-case names', function(done) {
+    it('uses the same attribute and property name for lower-case names', function test (done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
-        static get props() {
+        static get props () {
           return { testprop: { attribute: true } };
         }
-      }));
+      }))();
 
       afterMutations(
         () => elem.setAttribute('testprop', 'foo'),
         () => expect(elem.testprop).to.equal('foo'),
-        done,
+        done
       );
     });
 
-    it('uses the same attribute and property name for dashed-names names', function(done) {
+    it('uses the same attribute and property name for dashed-names names', function test (done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
-        static get props() {
-          return { ['test-prop']: { attribute: true } };
+        static get props () {
+          return { 'test-prop': { attribute: true } };
         }
-      }));
+      }))();
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem['test-prop']).to.equal('foo'),
-        done,
+        done
       );
     });
 
-    it('uses a dash-cased attribute name for camel-case property names', function(done) {
+    it('uses a dash-cased attribute name for camel-case property names', function test (done) {
       if (skip) this.skip();
 
       const elem = new (element().skate(class extends Component {
-        static get props() {
+        static get props () {
           return { testProp: { attribute: true } };
         }
-      }));
+      }))();
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem.testProp).to.equal('foo'),
-        done,
+        done
       );
     });
   });
@@ -82,42 +84,40 @@ describe('lifecycle/property', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
       const elem = new (element().skate({
         props: {
-          testprop: { attribute: true },
-        },
-      }));
+          testprop: { attribute: true }
+        }
+      }))();
 
       afterMutations(
         () => elem.setAttribute('testprop', 'foo'),
         () => expect(elem.testprop).to.equal('foo'),
-        done,
+        done
       );
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
       const elem = new (element().skate({
-        props: {
-          ['test-prop']: { attribute: true },
-        },
-      }));
+        props: { 'test-prop': { attribute: true } }
+      }))();
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem['test-prop']).to.equal('foo'),
-        done,
+        done
       );
     });
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
       const elem = new (element().skate({
         props: {
-          testProp: { attribute: true },
-        },
-      }));
+          testProp: { attribute: true }
+        }
+      }))();
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
         () => expect(elem.testProp).to.equal('foo'),
-        done,
+        done
       );
     });
   });
@@ -129,41 +129,30 @@ describe('lifecycle/property', () => {
           attribute: true,
           default: 'test1',
           deserialize: () => 'test1',
-          serialize: () => 'test1',
+          serialize: () => 'test1'
         },
         test2: {
           attribute: true,
           default: 'test2',
           deserialize: () => 'test2',
-          serialize: () => 'test2',
-        },
-      },
-    }));
+          serialize: () => 'test2'
+        }
+      }
+    }))();
 
-    expect(elem.test1).to.equal('test1');
-    expect(elem.test2).to.equal('test2');
-
-    elem.test1 = null;
-    elem.test2 = null;
-
-    expect(elem.test1).to.equal('test1');
-    expect(elem.test2).to.equal('test2');
-
-    expect(elem.getAttribute('test1')).to.equal(null);
-    expect(elem.getAttribute('test2')).to.equal(null);
-
-    elem.removeAttribute('test1');
-    elem.removeAttribute('test2');
-
-    expect(elem.test1).to.equal('test1');
-    expect(elem.test2).to.equal('test2');
-
-    expect(elem.getAttribute('test1')).to.equal(null);
-    expect(elem.getAttribute('test2')).to.equal(null);
+    ['test1', 'test2'].forEach((value) => {
+      expect(elem[value]).to.equal(value);
+      elem[value] = null;
+      expect(elem[value]).to.equal(value);
+      expect(elem.getAttribute(value)).to.equal(null);
+      elem.removeAttribute(value);
+      expect(elem[value]).to.equal(value);
+      expect(elem.getAttribute(value)).to.equal(null);
+    });
   });
 
   describe('property definition', () => {
-    function create2() {
+    function create2 () {
       return propsInit()();
     }
 
@@ -192,25 +181,35 @@ describe('lifecycle/property', () => {
 
   describe('api', () => {
     describe('attribute', () => {
-      it('setting the attribute updates the property value', done => {
-        const elem = create({ attribute: true }, 'testName', 'something');
-
-        expect(elem.testName).to.equal('something');
-        expect(elem.getAttribute('test-name')).to.equal('something');
-
-        elem.setAttribute('test-name', 'something else');
+      it('setting the attribute updates the property value', (done) => {
+        const fixtureArea = fixture();
+        const elem = create({ attribute: true }, 'testName');
+        fixtureArea.appendChild(elem);
         afterMutations(() => {
-          expect(elem.testName).to.equal('something else');
-          expect(elem.getAttribute('test-name')).to.equal('something else');
-          done();
+          elem.testName = 'something';
+          expect(elem.getAttribute('test-name')).to.equal('something', 'attr val');
+
+          elem.setAttribute('test-name', 'something else');
+          afterMutations(() => {
+            expect(elem.testName).to.equal('something else');
+            expect(elem.getAttribute('test-name')).to.equal('something else');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
       });
 
       describe('undefined and null', () => {
-        it('when a string, the value is used as the attribute name', () => {
+        it('when a string, the value is used as the attribute name', (done) => {
+          const fixtureArea = fixture();
           const elem = create({ attribute: 'test-name' });
-          elem.testName = 'something';
-          expect(elem.getAttribute('test-name')).to.equal('something');
+          fixtureArea.appendChild(elem);
+          afterMutations(() => {
+            elem.testName = 'something';
+            expect(elem.getAttribute('test-name')).to.equal('something');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
 
         it('when a property is set to undefined, the attribute should not be set', () => {
@@ -226,23 +225,33 @@ describe('lifecycle/property', () => {
         });
 
         it('when an attribute is set to a string, the property should be set to an empty string', (done) => {
+          const fixtureArea = fixture();
           const elem = create({ attribute: true });
+          fixtureArea.appendChild(elem);
           elem.setAttribute('test-name', '');
           afterMutations(
             () => expect(elem.testName).to.equal(''),
+            () => fixtureArea.removeChild(elem),
             done
           );
         });
 
         it('when an attribute is removed, the property should be set to undefined', (done) => {
+          const fixtureArea = fixture();
           const elem = create({ attribute: true });
-          elem.setAttribute('test-name', 'test');
-          afterMutations(
-            () => expect(elem.testName).to.equal('test'),
-            () => elem.removeAttribute('test-name'),
-            () => expect(elem.testName).to.equal(null),
-            done
-          );
+          fixtureArea.appendChild(elem);
+          afterMutations(() => {
+            elem.setAttribute('test-name', 'test');
+            afterMutations(() => {
+              expect(elem.testName).to.equal('test');
+              elem.removeAttribute('test-name');
+              afterMutations(() => {
+                expect(elem.testName).to.equal(null);
+                fixtureArea.removeChild(elem);
+                done();
+              }, 1);
+            });
+          });
         });
       });
 
@@ -259,7 +268,7 @@ describe('lifecycle/property', () => {
         it('coerces the value from the attribute to the property', (done) => {
           const elem = create({
             attribute: true,
-            deserialize: value => value.split(':').map(Number),
+            deserialize: value => value.split(':').map(Number)
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
@@ -275,7 +284,7 @@ describe('lifecycle/property', () => {
         it('coerces the initial value if serialized from an attribute', (done) => {
           const elem = create({
             attribute: true,
-            deserialize: value => value.split(':').map(Number),
+            deserialize: value => value.split(':').map(Number)
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
@@ -299,40 +308,60 @@ describe('lifecycle/property', () => {
           expect(called).to.equal(false);
         });
 
-        it('coerces the value from the property to the attribute', () => {
+        it('coerces the value from the property to the attribute', (done) => {
+          const fixtureArea = fixture();
           const elem = create({
             attribute: true,
-            default() { return []; },
+            default () { return []; },
             deserialize: value => value.split(':'),
-            serialize: value => value.join(':'),
-          }, 'testName', [1, 2, 3]);
-          expect(elem.getAttribute('test-name')).to.equal('1:2:3');
+            serialize: value => value.join(':')
+          }, 'testName');
+          elem.testName = [1, 2, 3];
+          fixtureArea.appendChild(elem);
+          afterMutations(() => {
+            expect(elem.getAttribute('test-name')).to.equal('1:2:3');
+            fixtureArea.removeChild(elem);
+            done();
+          }, 1);
         });
 
-        it('removes the attribute if null is returned', () => {
+        it('removes the attribute if null is returned', (done) => {
+          const fixtureArea = fixture();
           const elem = create({
             attribute: true,
-            serialize: value => (value ? '' : null),
+            serialize: value => (value ? '' : null)
           });
           elem.testName = true;
-          expect(elem.getAttribute('test-name')).to.equal('');
-          elem.testName = false;
-          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.appendChild(elem);
+          afterMutations(() => {
+            expect(elem.getAttribute('test-name')).to.equal('');
+            elem.testName = false;
+            expect(elem.getAttribute('test-name')).to.equal(null);
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
 
-        it('removes the attribute if undefined is returned', () => {
+        it('removes the attribute if undefined is returned', (done) => {
+          const fixtureArea = fixture();
           const elem = create({
             attribute: true,
-            serialize: value => (value ? '' : undefined),
+            serialize: value => (value ? '' : undefined)
           });
           elem.testName = true;
-          expect(elem.getAttribute('test-name')).to.equal('');
-          elem.testName = false;
-          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.appendChild(elem);
+          afterMutations(() => {
+            expect(elem.getAttribute('test-name')).to.equal('');
+            elem.testName = false;
+            afterMutations(() => {
+              expect(elem.getAttribute('test-name')).to.equal(null);
+              fixtureArea.removeChild(elem);
+              done();
+            });
+          });
         });
       });
     });
-
 
     describe('default', () => {
       it('null by default', () => {
@@ -342,13 +371,13 @@ describe('lifecycle/property', () => {
 
       it('should accept a function', () => {
         const opts = {
-          default(elem, data) {
+          default (elem, data) {
             expect(this.default).to.equal(opts.default);
             expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
             expect(elem.nodeType).to.equal(1);
             expect(data.name).to.equal('testName');
             return 'testValue';
-          },
+          }
         };
         const elem = create(opts);
         expect(elem.testName).to.equal('testValue');
@@ -380,12 +409,18 @@ describe('lifecycle/property', () => {
         expect(elem.getAttribute('test-name')).to.equal(null);
       });
 
-      it('should not set the attribute on update', () => {
+      it('should not set the attribute on update', (done) => {
+        const fixtureArea = fixture();
         const elem = create({ attribute: true, default: 'testValue' });
-        elem.testName = 'updatedValue';
-        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
-        elem.testName = null;
-        expect(elem.getAttribute('test-name')).to.equal(null);
+        fixtureArea.appendChild(elem);
+        afterMutations(() => {
+          elem.testName = 'updatedValue';
+          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          elem.testName = null;
+          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
     });
 
@@ -398,16 +433,16 @@ describe('lifecycle/property', () => {
       it('context and arguments', (done) => {
         const opts = {
           attribute: true,
-          get(elem, data) {
+          get (elem, data) {
             expect(this.get).to.equal(opts.get);
             expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
             expect(elem.nodeType).to.equal(1);
             expect(data).to.contain({
               name: 'testName',
-              internalValue: 'initial',
+              internalValue: 'initial'
             });
             done();
-          },
+          }
         };
 
         // We create from HTML so that we can set the initial value and see if
@@ -429,13 +464,13 @@ describe('lifecycle/property', () => {
             props: {
               foo: {
                 attribute: true,
-                set(elem, data) {
+                set (elem, data) {
                   expect(data.newValue).to.equal('bar');
                   expect(data.oldValue).to.equal(null);
                   ++calls;
                 }
-              },
-            },
+              }
+            }
           });
 
           afterMutations(
@@ -452,13 +487,13 @@ describe('lifecycle/property', () => {
           skate({
             props: {
               foo: {
-                set(elem, data) {
+                set (elem, data) {
                   expect(data.newValue).to.equal('bar');
                   expect(data.oldValue).to.equal(null);
                   ++calls;
                 }
-              },
-            },
+              }
+            }
           });
 
           afterMutations(
@@ -475,11 +510,11 @@ describe('lifecycle/property', () => {
       it('is not called if no value is on the element when it is initialised', () => {
         let calls = 0;
         create({
-          set(elem, data) {
+          set (elem, data) {
             expect(data.newValue).to.equal(undefined);
             expect(data.oldValue).to.equal(undefined);
             ++calls;
-          },
+          }
         });
         expect(calls).to.equal(0);
       });
@@ -488,11 +523,11 @@ describe('lifecycle/property', () => {
         let calls = 0;
         create({
           attribute: true,
-          set(elem, data) {
+          set (elem, data) {
             expect(data.newValue).to.equal('something');
             expect(data.oldValue).to.equal(null);
             ++calls;
-          },
+          }
         }, 'testName', 'something');
         expect(calls).to.equal(1);
       });
@@ -514,17 +549,17 @@ describe('lifecycle/property', () => {
 
       it('context and arguments', (done) => {
         const opts = {
-          set(elem, data) {
+          set (elem, data) {
             expect(this.set).to.equal(opts.set);
             expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
             expect(elem.nodeType).to.equal(1);
             expect(data).to.contain({
               name: 'testName',
               newValue: null,
-              oldValue: null,
+              oldValue: null
             });
             done();
-          },
+          }
         };
         create(opts, 'testName', undefined);
       });
@@ -536,7 +571,7 @@ describe('lifecycle/property', () => {
         const elem = create({
           coerce: () => {
             called = true;
-          },
+          }
         });
         elem.testName = 'something';
         expect(called).to.equal(true);
@@ -546,7 +581,7 @@ describe('lifecycle/property', () => {
         const order = [];
         const elem = create({
           coerce: () => order.push('coerce'),
-          set: () => order.push('set'),
+          set: () => order.push('set')
         });
 
         elem.testName = 'something';
@@ -563,13 +598,13 @@ describe('lifecycle/property', () => {
 
       it('context and arguments', (done) => {
         const opts = {
-          coerce(value) {
+          coerce (value) {
             expect(this.type).to.equal(opts.type);
             expect(arguments.length).to.equal(1); // eslint-disable-line prefer-rest-params
             expect(value).to.equal('something');
             done();
           },
-          default: 'something',
+          default: 'something'
         };
         create(opts);
       });
@@ -578,13 +613,13 @@ describe('lifecycle/property', () => {
     describe('initial', () => {
       it('should accept a function', () => {
         const opts = {
-          initial(elem, data) {
+          initial (elem, data) {
             expect(this.initial).to.equal(opts.initial);
             expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
             expect(elem.nodeType).to.equal(1);
             expect(data.name).to.equal('testName');
             return 'testValue';
-          },
+          }
         };
         const elem = create(opts);
         expect(elem.testName).to.equal('testValue');
@@ -611,17 +646,29 @@ describe('lifecycle/property', () => {
         expect(elem.testName).to.equal(null);
       });
 
-      it('should set the attribute on init', () => {
+      it('should set the attribute on init', (done) => {
+        const fixtureArea = fixture();
         const elem = create({ attribute: true, initial: 'testValue' });
-        expect(elem.getAttribute('test-name')).to.equal('testValue');
+        fixtureArea.appendChild(elem);
+        afterMutations(() => {
+          expect(elem.getAttribute('test-name')).to.equal('testValue');
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
 
-      it('should set the attribute on update', () => {
+      it('should set the attribute on update', (done) => {
+        const fixtureArea = fixture();
         const elem = create({ attribute: true, initial: 'testValue' });
-        elem.testName = 'updatedValue';
-        expect(elem.getAttribute('test-name')).to.equal('updatedValue');
-        elem.testName = null;
-        expect(elem.getAttribute('test-name')).to.equal(null);
+        fixtureArea.appendChild(elem);
+        afterMutations(() => {
+          elem.testName = 'updatedValue';
+          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          elem.testName = null;
+          expect(elem.getAttribute('test-name')).to.equal(null);
+          fixtureArea.removeChild(elem);
+          done();
+        });
       });
     });
   });
@@ -634,7 +681,7 @@ describe('lifecycle/property', () => {
         set: (elem, data) => {
           set = data.newValue;
         },
-        get: () => 'get',
+        get: () => 'get'
       }, 'testName', 'initial');
 
       expect(set).to.equal('initial');
@@ -646,17 +693,21 @@ describe('lifecycle/property', () => {
 
     describe('setting the attribute updates the property correctly after the property is set', () => {
       it('to an existing value', (done) => {
+        const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName', 'something');
         elem.testName = 'something';
-
         expect(elem.testName).to.equal('something');
-        expect(elem.getAttribute('test-name')).to.equal('something');
-
-        elem.setAttribute('test-name', 'something else');
+        fixtureArea.appendChild(elem);
         afterMutations(() => {
-          expect(elem.testName).to.equal('something else');
-          expect(elem.getAttribute('test-name')).to.equal('something else');
-          done();
+          expect(elem.getAttribute('test-name')).to.equal('something');
+
+          elem.setAttribute('test-name', 'something else');
+          afterMutations(() => {
+            expect(elem.testName).to.equal('something else');
+            expect(elem.getAttribute('test-name')).to.equal('something else');
+            fixtureArea.removeChild(elem);
+            done();
+          });
         });
       });
 
@@ -676,7 +727,7 @@ describe('lifecycle/property', () => {
         const elem = create(({
           attribute: true,
           serialize: value => (value ? '' : undefined),
-          deserialize: value => (value !== null),
+          deserialize: value => (value !== null)
         }));
 
         elem.testName = false;

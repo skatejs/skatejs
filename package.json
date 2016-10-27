@@ -27,26 +27,19 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
-    "document-register-element": "^1.0.7",
-    "eslint": "3.4.0",
-    "eslint-friendly-formatter": "^2.0.6",
-    "eslint-plugin-import": "^1.14.0",
-    "precommit-hook": "^3.0.0",
+    "document-register-element": "1.x",
     "react": "15.x",
     "react-dom": "15.x",
-    "skatejs-build": "7.x",
-    "skatejs-web-components": "1.x"
+    "skatejs-build": "9.x",
+    "skatejs-web-components": "2.0.0"
   },
   "scripts": {
     "test": "sk-tests",
-    "test-watch": "sk-tests-watch",
-    "precommit": "sk-lint && npm ls && npm test",
     "prepublish": "sk-bundle"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "pre-commit": ["precommit"]
+  }
 }

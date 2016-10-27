@@ -1,3 +1,5 @@
+/* eslint-env jasmine, mocha */
+
 import { define } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import ready from '../../../src/api/ready';
@@ -7,7 +9,7 @@ describe('api/ready', () => {
   let elem;
   let tag;
 
-  function setup() {
+  function setup () {
     define(tag, {});
   }
 

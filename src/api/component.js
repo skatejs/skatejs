@@ -1,104 +1,104 @@
+import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
   props as $props,
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
+  rendering as $rendering,
+  updated as $updated
 } from '../util/symbols';
-import { customElementsV0 } from '../util/support';
 import data from '../util/data';
 import debounce from '../util/debounce';
+import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import getSetProps from './props';
+import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function callConstructor(elem) {
+const { HTMLElement } = window;
+
+function callConstructor (elem) {
   const elemData = data(elem);
   const readyCallbacks = elemData.readyCallbacks;
-  const Ctor = elem.constructor;
-  const { created, observedAttributes, props } = Ctor;
+  const { constructor } = elem;
 
   // Ensures that this can never be called twice.
-  if (elem[$created]) return;
+  if (elem[$created]) {
+    return;
+  }
+
   elem[$created] = true;
 
   // Set up a renderer that is debounced for property sets to call directly.
-  elem[$rendererDebounced] = debounce(Ctor[$renderer]);
+  elem[$rendererDebounced] = debounce(constructor[$renderer].bind(constructor));
 
-  if (props) {
-    Ctor[$props](elem);
+  // Set up property lifecycle.
+  if (constructor.props && constructor[$props]) {
+    constructor[$props](elem);
   }
 
-  if (created) {
-    created(elem);
+  // Props should be set up before calling this.
+  if (typeof constructor.created === 'function') {
+    constructor.created(elem);
   }
 
-  elem.setAttribute('defined', '');
-
+  // Created should be set before invoking the ready listeners.
   if (readyCallbacks) {
     readyCallbacks.forEach(cb => cb(elem));
     delete elemData.readyCallbacks;
   }
-
-  // In v0 we must ensure the attributeChangedCallback is called for attrs
-  // that aren't linked to props so that the callback behaves the same no
-  // matter if v0 or v1 is being used.
-  if (customElementsV0) {
-    observedAttributes.forEach(name => {
-      const propertyName = data(elem, 'attributeLinks')[name];
-      if (!propertyName) {
-        elem.attributeChangedCallback(name, null, elem.getAttribute(name));
-      }
-    });
-  }
 }
 
-function callConnected(elem) {
-  const ctor = elem.constructor;
-  const { attached } = ctor;
-  const render = ctor[$renderer];
+function syncPropsToAttrs (elem) {
+  const props = elem.constructor.props;
+  Object.keys(props).forEach((propName) => {
+    const prop = props[propName];
+    syncPropToAttr(elem, prop, propName, true);
+  });
+}
+
+function callConnected (elem) {
+  const { constructor } = elem;
+
+  syncPropsToAttrs(elem);
+
   elem[$connected] = true;
-  if (typeof render === 'function') {
-    render(elem);
+  elem[$rendererDebounced](elem);
+
+  if (typeof constructor.attached === 'function') {
+    constructor.attached(elem);
   }
-  if (typeof attached === 'function') {
-    attached(elem);
-  }
+
+  elem.setAttribute('defined', '');
 }
 
-function callDisconnected(elem) {
-  const { detached } = elem.constructor;
+function callDisconnected (elem) {
+  const { constructor } = elem;
+
   elem[$connected] = false;
-  if (typeof detached === 'function') {
-    detached(elem);
+
+  if (typeof constructor.detached === 'function') {
+    constructor.detached(elem);
   }
 }
 
-// v1
-function Component(self) {
-  const elem = HTMLElement.call(this, self);
+// Custom Elements v1
+function Component (...args) {
+  const elem = typeof Reflect === 'object'
+    ? Reflect.construct(HTMLElement, args, this.constructor)
+    : HTMLElement.call(this, args[0]);
   callConstructor(elem);
   return elem;
 }
 
-Object.defineProperties(Component, {
-  // v1
-  observedAttributes: {
-    configurable: true,
-    get() {
-      return [];
-    },
-  },
-
-  // Skate
-  props: {
-    configurable: true,
-    get() {
-      return {};
-    },
-  },
-});
+// Custom Elements v1
+Component.observedAttributes = [];
 
 // Skate
-Component.extend = function extend(definition = {}, Base = this) {
+Component.props = {};
+
+// Skate
+Component.extend = function extend (definition = {}, Base = this) {
   // Create class for the user.
   class Ctor extends Base {}
 
@@ -126,53 +126,120 @@ Component.extend = function extend(definition = {}, Base = this) {
 
 // Skate
 //
+// Incremental DOM renderer.
+Component.renderer = function renderer ({ elem, render, shadowRoot }) {
+  patchInner(shadowRoot, () => {
+    const possibleFn = render(elem);
+    if (typeof possibleFn === 'function') {
+      possibleFn();
+    } else if (Array.isArray(possibleFn)) {
+      possibleFn.forEach((fn) => {
+        if (typeof fn === 'function') {
+          fn();
+        }
+      });
+    }
+  });
+};
+
+// Skate
+//
 // This is a default implementation that does strict equality copmarison on
-// prevoius props and next props. It synchronously renders on the first prop
+// previous props and next props. It synchronously renders on the first prop
 // that is different and returns immediately.
-Component.updated = function updated(elem, prev) {
+Component.updated = function updated (elem, prev) {
   if (!prev) {
     return true;
   }
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const name in prev) {
-    if (prev[name] !== elem[name]) {
+  // use get all keys so that we check Symbols as well as regular props
+  // using a for loop so we can break early
+  const allKeys = getAllKeys(prev);
+  for (let i = 0; i < allKeys.length; i += 1) {
+    if (prev[allKeys[i]] !== elem[allKeys[i]]) {
       return true;
     }
   }
+  return false;
+};
+
+// Skate
+//
+// Calls the user-defined updated() lifecycle callback.
+Component[$updated] = function _updated (elem) {
+  if (typeof this.updated === 'function') {
+    const prev = elem[$props];
+    elem[$props] = getSetProps(elem);
+    return this.updated(elem, prev);
+  }
+  return true;
+};
+
+// Skate
+//
+// Goes through the user-defined render lifecycle.
+Component[$renderer] = function _renderer (elem) {
+  if (elem[$rendering] || !elem[$connected]) {
+    return;
+  }
+
+  // Flag as rendering. This prevents anything from trying to render - or
+  // queueing a render - while there is a pending render.
+  elem[$rendering] = true;
+
+  const shouldRender = this[$updated](elem);
+
+  // Even though this would ideally be checked in the updated() callback,
+  // it may not be, so we ensure that there is a point in proceeding.
+  if (!this.render || !this.renderer) {
+    elem[$rendering] = false;
+    return;
+  }
+
+  if (shouldRender) {
+    if (!elem.shadowRoot) {
+      elem.attachShadow({ mode: 'open' });
+    }
+
+    this.renderer({
+      elem,
+      render: this.render,
+      shadowRoot: elem.shadowRoot
+    });
+
+    if (typeof this.rendered === 'function') {
+      this.rendered(elem);
+    }
+  }
+
+  elem[$rendering] = false;
 };
 
 Component.prototype = Object.create(HTMLElement.prototype, {
-  // v1
+  // Custom Elements v1
   connectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callConnected(this);
-    },
+    }
   },
 
-  // v1
+  // Custom Elements v1
   disconnectedCallback: {
     configurable: true,
-    value() {
+    value () {
       callDisconnected(this);
-    },
+    }
   },
 
-  // v0 and v1
+  // Custom Elements v1
   attributeChangedCallback: {
     configurable: true,
-    value(name, oldValue, newValue) {
-      const { attributeChanged, observedAttributes } = this.constructor;
+    value (name, oldValue, newValue) {
+      const { attributeChanged } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
-      // In V0 we have to ensure the attribute is being observed.
-      if (customElementsV0 && observedAttributes.indexOf(name) === -1) {
-        return;
-      }
-
       if (propertyName) {
-        const propData = data(this, `api/property/${propertyName}`);
+        const propData = data(this, 'props')[propertyName];
 
         // This ensures a property set doesn't cause the attribute changed
         // handler to run again once we set this flag. This only ever has a
@@ -184,39 +251,18 @@ Component.prototype = Object.create(HTMLElement.prototype, {
           // Sync up the property.
           const propOpts = this.constructor.props[propertyName];
           propData.settingAttribute = true;
-          this[propertyName] = newValue !== null && propOpts.deserialize ? propOpts.deserialize(newValue) : newValue;
+          const newPropVal = newValue !== null && propOpts.deserialize
+            ? propOpts.deserialize(newValue)
+            : newValue;
+          this[propertyName] = newPropVal;
         }
       }
 
       if (attributeChanged) {
         attributeChanged(this, { name, newValue, oldValue });
       }
-    },
-  },
-
-  // v0
-  createdCallback: {
-    configurable: true,
-    value() {
-      callConstructor(this);
-    },
-  },
-
-  // v0
-  attachedCallback: {
-    configurable: true,
-    value() {
-      callConnected(this);
-    },
-  },
-
-  // v0
-  detachedCallback: {
-    configurable: true,
-    value() {
-      callDisconnected(this);
-    },
-  },
+    }
+  }
 });
 
 export default Component;

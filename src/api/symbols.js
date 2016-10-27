@@ -1,1 +1,1 @@
-export { name, shadowRoot } from '../util/symbols';
+export { name } from '../util/symbols';

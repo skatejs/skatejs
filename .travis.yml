@@ -11,7 +11,7 @@ before_script:
 script:
   - sk-bundle
   - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-    npm test -- --browserstack;
+    npm test -- --all;
     else
     npm test -- --browsers Firefox;
     fi

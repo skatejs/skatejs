@@ -1,14 +1,11 @@
+/* eslint-env jasmine, mocha */
+
 import { Component, define, symbols } from '../../../src/index';
-import { customElementsV0, customElementsV1 } from '../../../src/util/support';
 
 const { name: $name } = symbols;
 
-function mockDefine(name) {
-  if (customElementsV1) {
-    window.customElements.define(name, function customElemMock() {}); // eslint-disable-line prefer-arrow-callback
-  } else if (customElementsV0) {
-    document.registerElement(name, function customElemMock() {}); // eslint-disable-line prefer-arrow-callback
-  }
+function mockDefine (name) {
+  window.customElements.define(name, function customElemMock () {});
 }
 
 describe('api/define', () => {
@@ -16,6 +13,11 @@ describe('api/define', () => {
     expect(() => {
       define('x-test');
     }).to.throw(Error);
+  });
+
+  it('should add ____skate_name to the constructor to allow itself (and other versions of skate) to identify it as a component', () => {
+    const elem = define('x-test-skate-name', {});
+    expect(elem.____skate_name).to.equal('x-test-skate-name');
   });
 
   it('should register components with unique names', () => {

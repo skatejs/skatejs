@@ -1,18 +1,20 @@
-import { define, prop, props, symbols, vdom } from '../../../src/index';
+/* eslint-env jasmine, mocha, chai */
+
+import { define, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
 const { text, elementOpen, elementClose, elementOpenStart, elementOpenEnd, elementVoid } = vdom;
-const sr = el => el[symbols.shadowRoot];
+const sr = el => el.shadowRoot;
 
 describe('vdom/skip', () => {
   it('should skip the element children', done => {
     const Elem = define('x-test', {
       props: {
-        num: prop.number(),
+        num: prop.number()
       },
       /* eslint indent: 0 */
-      render() {
+      render () {
         text('1 ');
         elementOpen('div');
           text('2 ');
@@ -55,7 +57,7 @@ describe('vdom/skip', () => {
             elementClose('span');
           elementClose('div');
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     const html = '1 <div>2 <void></void><span>3 </span>' +
@@ -63,6 +65,7 @@ describe('vdom/skip', () => {
       '<div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
     fixture(elem);
     afterMutations(
+      () => {}, // x-test.render()
       () => expect(sr(elem).innerHTML).to.equal(html),
       () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       () => props(elem, { num: elem.num + 1 }),
@@ -73,14 +76,14 @@ describe('vdom/skip', () => {
   });
 
   it('should allow conditional rendering', done => {
-    function isEven(num) {
+    function isEven (num) {
       return num % 2 === 0;
     }
     const Elem = define('x-test', {
       props: {
-        num: prop.number({ default: 2 }),
+        num: prop.number({ default: 2 })
       },
-      render(elem) {
+      render (elem) {
         elementOpen('div', null, null, 'skip', !isEven(elem.num));
           text(elem.num);
           elementOpen('span');
@@ -92,20 +95,21 @@ describe('vdom/skip', () => {
             elementClose('span');
           elementClose('div');
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
+      () => {}, // x-test.render()
+      () => expect(elem.shadowRoot.textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('222'),
+      () => expect(elem.shadowRoot.textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
+      () => expect(elem.shadowRoot.textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('444'),
+      () => expect(elem.shadowRoot.textContent).to.equal('444'),
       () => props(elem, { num: elem.num + 1 }),
-      () => expect(elem[symbols.shadowRoot].textContent).to.equal('666'),
+      () => expect(elem.shadowRoot.textContent).to.equal('666'),
       done
     );
   });
@@ -113,19 +117,20 @@ describe('vdom/skip', () => {
   it('re-rendering an empty, skipped element should keep the mutated content', done => {
     const Elem = define('x-test', {
       props: {
-        test: {},
+        test: {}
       },
-      render() {
+      render () {
         elementOpen('div', null, null, 'skip', true);
         elementClose('div');
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
+      () => {}, // x-test.render()
+      () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
-      () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
+      () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),
       done
     );
   });
@@ -133,18 +138,19 @@ describe('vdom/skip', () => {
   it('re-rendering an void, skipped element should keep the mutated content', done => {
     const Elem = define('x-test', {
       props: {
-        test: {},
+        test: {}
       },
-      render() {
+      render () {
         elementVoid('div', null, null, 'skip', true);
-      },
+      }
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => (elem[symbols.shadowRoot].firstElementChild.textContent = 'testing'),
+      () => {}, // x-test.render()
+      () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
-      () => expect(elem[symbols.shadowRoot].firstElementChild.textContent).to.equal('testing'),
+      () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),
       done
     );
   });

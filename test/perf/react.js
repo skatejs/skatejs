@@ -1,8 +1,11 @@
+/* eslint-env jasmine, mocha */
+
+import React from 'react';
+import ReactDOM from 'react-dom';
 import bp from 'birdpoo'; // eslint-disable-line import/no-extraneous-dependencies
 import { define, prop, props, ready, vdom } from '../../src/index';
 
-const { React, ReactDOM } = window;
-
+const { Document } = window;
 
 // Skate components.
 const wclist = (ps, chren) => ul(ps, chren); // eslint-disable-line no-use-before-define
@@ -10,9 +13,9 @@ const wcitem = (ps, chren) => li(ps, chren); // eslint-disable-line no-use-befor
 const [div, h1, li, ul, item, list] = ['div', 'h1', 'li', 'ul', wclist, wcitem].map(t => vdom.element.bind(null, t));
 define('x-app', {
   props: {
-    title: prop.string({ default: 'initial' }),
+    title: prop.string({ default: 'initial' })
   },
-  render(elem) {
+  render (elem) {
     div(() => {
       h1(elem.title);
       list(() => {
@@ -21,19 +24,18 @@ define('x-app', {
         }
       });
     });
-  },
+  }
 });
-
 
 // React components.
 const Xlist = ps => React.createElement('div', null, ps.children);  // eslint-disable-line react/prop-types
 const Xitem = ps => React.createElement('div', null, ps.children);  // eslint-disable-line react/prop-types
 const Xapp = class extends React.Component {
-  constructor() {
+  constructor () {
     super();
     this.state = { title: 'initial' };
   }
-  render() {
+  render () {
     return React.createElement('div', null,
       React.createElement('h1', null, this.state.title),
       React.createElement(Xlist, null, (() => {
@@ -47,12 +49,10 @@ const Xapp = class extends React.Component {
   }
 };
 
-
 // Fixture
 
 const fixture = document.createElement('div');
 document.body.appendChild(fixture);
-
 
 // Initial render
 const isNative = !!Document.prototype.registerElement;
@@ -68,7 +68,7 @@ describe('render', () => {
       after: next => {
         fixture.innerHTML = '';
         afterMutations(next);
-      },
+      }
     })
       .then(ops => console.log(`Skate (render): ${ops} / sec`)) // eslint-disable-line no-console
       .then(done.bind(null, null))
@@ -83,7 +83,7 @@ describe('render', () => {
       after: next => {
         ReactDOM.unmountComponentAtNode(fixture);
         next();
-      },
+      }
     })
       .then(ops => console.log(`React (render): ${ops} / sec`)) // eslint-disable-line no-console
       .then(done.bind(null, null))
@@ -102,7 +102,7 @@ describe('update', () => {
         next();
       }, {
         comp,
-        count: 0,
+        count: 0
       })
         .then(ops => console.log(`Skate (update): ${ops} / sec`)) // eslint-disable-line no-console
         .then(() => {
@@ -119,7 +119,7 @@ describe('update', () => {
       next();
     }, {
       comp: ReactDOM.render(React.createElement(Xapp), fixture), // eslint-disable-line react/no-render-return-value
-      count: 0,
+      count: 0
     })
       .then(ops => console.log(`React (update): ${ops} / sec`)) // eslint-disable-line no-console
       .then(() => ReactDOM.unmountComponentAtNode(fixture))
