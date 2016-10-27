@@ -1282,7 +1282,7 @@ When `vdom.builder()` is called with arguments, it returns an array of functions
 ```js
 const [ div, p ] = skate.vdom.builder('div', 'p');
 customElements.define('my-component', class extends skate.Component {
-  render() {
+  renderCallback() {
     return div({ id: 'mydiv' }, p('test'));
   }
 });
@@ -1550,7 +1550,7 @@ WebComponentsJS is a suite of polyfills. If there is native browser support, the
 
 Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundamentally, Skate and Polymer are very different.
 
-- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
+- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `renderCallback()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
   - `polymer-micro.html` 17k vs 11k
   - `polymer-mini.html` 54k vs 11k
