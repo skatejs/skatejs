@@ -65,12 +65,12 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [Counter](#counter)
   - [API](#api)
     - [Using the Platform](#using-the-platform)
-      - [`constructor`](#constructor)
-      - [`connectedCallback`](#connectedcallback)
-      - [`disconnectedCallback`](#disconnectedcallback)
-      - [`attributeChangedCallback`](#attributechangedcallback)
-      - [`observedAttributes` (static)](#observedattributes-static)
-    - [`props` (static)](#props-static)
+    - [`constructor` - supercededs `static created()`](#constructor---supercededs-static-created)
+    - [`connectedCallback` - supercededs `static attached()`](#connectedcallback---supercededs-static-attached)
+    - [`disconnectedCallback` - supercededs `static detached()`](#disconnectedcallback---supercededs-static-detached)
+    - [`attributeChangedCallback` - supercededs `static attributeChanged()`](#attributechangedcallback---supercededs-static-attributechanged)
+    - [`static observedAttributes`](#static-observedattributes)
+    - [`static props`](#static-props)
       - [`attribute`](#attribute)
       - [`coerce`](#coerce)
       - [`default`](#default)
@@ -80,10 +80,11 @@ Whenever you change the `name` property - or attribute - the component will re-r
       - [`serialize`](#serialize)
       - [`set`](#set)
     - [`prototype`](#prototype)
-      - [`updatedCallback`](#updatedcallback)
+      - [`updatedCallback` - supercededs `static updated()`](#updatedcallback---supercededs-static-updated)
         - [Other use-cases](#other-use-cases)
-      - [`renderCallback`](#rendercallback)
-      - [`renderedCallback`](#renderedcallback)
+      - [`renderCallback` - supercededs `static render()`](#rendercallback---supercededs-static-render)
+        - [Return Value](#return-value)
+      - [`renderedCallback` - supercededs `static rendered()`](#renderedcallback---supercededs-static-rendered)
     - [`define (nameOrConstructor, Constructor)`](#define-nameorconstructor-constructor)
       - [WebPack Hot-Module Reloading](#webpack-hot-module-reloading)
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
@@ -798,7 +799,7 @@ customElements.define('my-component', class extends skate.Component {
 
 #### `renderCallback` - supercededs `static render()`
 
-Function that is called to render the element. This is called when the element is first created and on subsequent prop updates if `updatedCallback()` callback returns `true`.
+Function that is called to render the element.
 
 ```js
 customElements.define('my-component', class extends skate.Component {
@@ -822,6 +823,7 @@ customElements.define('my-component', class extends skate.Component {
 ```
 
 
+
 ##### Return Value
 
 The return value of `renderCallback()` should be either the result of a `skate.h` call, or an array of `skate.h` calls. Calling the deprecated `vdom.element()` and `vdom.text()` calls are not supported here (though they may still work). They are only supported in the deprecated `static reander()` callback.
@@ -829,6 +831,13 @@ The return value of `renderCallback()` should be either the result of a `skate.h
 *It is not called if the element is not in the document. It will be called in `connectedCallback()` so that it renders as early as possible, but only if necessary.*
 
 *Updating props from within `renderCallback()`, while discouraged, will not trigger another render.*
+
+
+
+See also:
+
+- [`updatedCallback()`](#updatedcallback---supercededs-static-updated)
+- [`renderedCallback()`](#renderedcallback---supercededs-static-rendered)
 
 
 
