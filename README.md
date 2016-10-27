@@ -1,10 +1,12 @@
 # Skate
 
+[![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 [![Size](https://img.shields.io/badge/min+gz-4.64%20kB-blue.svg)](https://unpkg.com/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
+[![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
@@ -32,7 +34,7 @@ customElements.define('x-hello', class extends skate.Component {
     };
   }
   renderCallback () {
-    skate.h('div', `Hello, ${this.name}`);
+    return skate.h('div', `Hello, ${this.name}`);
   }
 });
 ```
@@ -1717,9 +1719,7 @@ customElements.define('my-component', class extends skate.Component {
     scoped(this);
     this._privateButNotReally();  
   }
-  _privateButNotReally() {
-
-  }
+  _privateButNotReally() {}
 });
 ```
 

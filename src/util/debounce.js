@@ -1,22 +1,15 @@
+import native from './native';
+
 const { MutationObserver } = window;
 
-const longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
-let timeoutDuration = 0;
-for (let i = 0; i < longerTimeoutBrowsers.length; i += 1) {
-  if (navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
-    timeoutDuration = 1;
-    break;
-  }
-}
-
-function microTaskDebounce (cbFunc) {
-  let called = false;
+function microtaskDebounce (cbFunc) {
+  let scheduled = false;
   let i = 0;
   let cbArgs = [];
   const elem = document.createElement('span');
   const observer = new MutationObserver(() => {
     cbFunc(...cbArgs);
-    called = false;
+    scheduled = false;
     cbArgs = null;
   });
 
@@ -24,25 +17,32 @@ function microTaskDebounce (cbFunc) {
 
   return (...args) => {
     cbArgs = args;
-    if (!called) {
-      called = true;
+    if (!scheduled) {
+      scheduled = true;
       elem.textContent = `${i}`;
       i += 1;
     }
   };
 }
 
-function taskDebounce (fn) {
-  let called = false;
+// We have to use setTimeout() for IE9 and 10 because the Mutation Observer
+// polyfill requires that the element be in the document to trigger Mutation
+// Events. Mutation Events are also synchronous and thus wouldn't debounce.
+//
+// The soonest we can set the timeout for in IE is 1 as they have issues when
+// setting to 0.
+function taskDebounce (cbFunc) {
+  let scheduled = false;
+  let cbArgs = [];
   return (...args) => {
-    if (!called) {
-      called = true;
+    cbArgs = args;
+    if (!scheduled) {
+      scheduled = true;
       setTimeout(() => {
-        called = false;
-        fn(...args);
-      }, timeoutDuration);
+        scheduled = false;
+        cbFunc(...cbArgs);
+      }, 1);
     }
   };
 }
-
-export default window.MutationObserver ? microTaskDebounce : taskDebounce;
+export default native(MutationObserver) ? microtaskDebounce : taskDebounce;
