@@ -2,7 +2,7 @@
 
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { Component, define, h, prop, props, vdom } from '../../../src/index';
+import { define, h, prop, props, vdom } from '../../../src/index';
 
 describe('vdom/properties', () => {
   it('class -> className', done => {
@@ -128,7 +128,7 @@ describe('vdom/properties', () => {
       props: {
         foo: {}
       },
-      render(elem) {
+      render (elem) {
         expect(elem.foo).to.be.equal(true);
         expect(elem.bar).to.be.equal(undefined);
         expect(elem.baz).to.equal(true);
@@ -144,7 +144,7 @@ describe('vdom/properties', () => {
         set baz (val) {
           this._baz = val;
         }
-      },
+      }
     });
     const elem = new Elem1();
     fixture(elem);

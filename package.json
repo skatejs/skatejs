@@ -23,7 +23,8 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "0.4.1"
+    "incremental-dom": "0.4.1",
+    "skatejs-build": "9.x"
   },
   "devDependencies": {
     "birdpoo": "0.x",
