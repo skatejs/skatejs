@@ -9,20 +9,11 @@ export default function (name, opts) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
-  // DEPRECATED
-  //
-  // The recommended way now is to pass a class that defines the "id" prop.
-  if (typeof name === 'string') {
-    opts.id = name;
+  // Unique IDs.
+  if (!name || customElements.get(name)) {
+    name = uniqueId(name);
   }
 
-  // Once we remove the passing of a name we can remove the check for it here.
-  if (!opts.id || customElements.get(opts.id)) {
-    opts.id = uniqueId(opts.id);
-  }
-
-  // DEPRECATED
-  //
   // Object literals.
   if (typeof opts === 'object') {
     opts = Component.extend(opts);
@@ -31,8 +22,8 @@ export default function (name, opts) {
   // This allows us to check this before instantiating the custom element to
   // find its name from the constructor in the vdom module, thus improving
   // performance but still falling back to a robust method.
-  opts[$name] = opts.id;
+  opts[$name] = name;
 
-  customElements.define(opts.id, opts, opts.extends ? { extends: opts.extends } : null);
+  customElements.define(name, opts, opts.extends ? { extends: opts.extends } : null);
   return opts;
 }
