@@ -32,7 +32,7 @@
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "9.x",
-    "skatejs-web-components": "2.0.0"
+    "skatejs-web-components": "2.0.1"
   },
   "scripts": {
     "test": "sk-tests",
