@@ -84,10 +84,12 @@ describe('vdom/properties', () => {
     });
 
     IncrementalDOM.patch(fixture, () => {
-      vdom.element(Elem, { foo: 'bar' });
+      vdom.element(Elem, { foo: 'bar', bar: 'baz' });
       const elem = fixture.firstChild;
       expect(elem.foo).to.equal('bar');
+      expect(elem.bar).to.equal(undefined);
       expect(elem.getAttribute('foo')).to.be.null;
+      expect(elem.getAttribute('bar')).to.equal('baz');
     });
   });
 
