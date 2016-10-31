@@ -81,11 +81,11 @@ function createInitProps (Ctor) {
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
-      const hasProp = name in elem;
+      const hasPropBeforeUpgrading = name in elem;
 
       // This is saved prior to defining so that we can set it after it it was
       // defined prior to upgrading.
-      const newValue = elem[name];
+      const valueBeforeUpgrading = elem[name];
 
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -99,8 +99,8 @@ function createInitProps (Ctor) {
       // need to ensure set() is triggered both in polyfilled environments and
       // in native where the definition may be registerd after elements it
       // represents have already been created.
-      if (hasProp) {
-        elem[name] = newValue;
+      if (hasPropBeforeUpgrading) {
+        elem[name] = valueBeforeUpgrading;
       }
     });
   };
