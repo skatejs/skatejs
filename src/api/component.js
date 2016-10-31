@@ -14,8 +14,10 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getSetProps from './props';
 import syncPropToAttr from '../util/sync-prop-to-attr';
+import root from 'window-or-global';
 
-const { HTMLElement } = window;
+const { HTMLElement } = root;
+const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
 
 function callConstructor (elem) {
   const elemData = data(elem);
@@ -214,7 +216,7 @@ Component[$renderer] = function _renderer (elem) {
   elem[$rendering] = false;
 };
 
-Component.prototype = Object.create(HTMLElement.prototype, {
+Component.prototype = Object.create(htmlElementPrototype, {
   // Custom Elements v1
   connectedCallback: {
     configurable: true,
