@@ -79,6 +79,14 @@ function createInitProps (Ctor) {
       const prop = props[name];
       prop.created(elem);
 
+      // We check here before defining to see if the prop was specified prior
+      // to upgrading.
+      const hasProp = name in elem;
+
+      // This is saved prior to defining so that we can set it after it it was
+      // defined prior to upgrading.
+      const newValue = elem[name];
+
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
       // When Webkit fixes that bug so that native property accessors can be
@@ -86,6 +94,14 @@ function createInitProps (Ctor) {
       // from having to do if for every instance as all other browsers support
       // this.
       Object.defineProperty(elem, name, prop);
+
+      // We re-set the prop if it was specified prior to upgrading because we
+      // need to ensure set() is triggered both in polyfilled environments and
+      // in native where the definition may be registerd after elements it
+      // represents have already been created.
+      if (hasProp) {
+        elem[name] = newValue;
+      }
     });
   };
 }
