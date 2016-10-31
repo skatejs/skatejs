@@ -1,11 +1,11 @@
 /* eslint-env jasmine, mocha */
 
+import { classStaticsInheritance } from '../../lib/support';
+import { Component } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
-import { classStaticsInheritance } from '../../lib/support';
 import fixture from '../../lib/fixture';
 import propsInit from '../../../src/lifecycle/props-init';
-import { Component } from '../../../src';
 
 describe('lifecycle/property', () => {
   function create (definition = {}, name = 'testName', value) {
@@ -455,6 +455,80 @@ describe('lifecycle/property', () => {
     });
 
     describe('set()', () => {
+      describe('for elements initialised from the DOM', () => {
+        it('is called for an attribute prop when initialised as an attribute', (done) => {
+          const { skate, safe } = element();
+          let calls = 0;
+
+          skate({
+            props: {
+              foo: {
+                attribute: true,
+                set (elem, data) {
+                  expect(data.newValue).to.equal('bar');
+                  expect(data.oldValue).to.equal(null);
+                  ++calls;
+                }
+              }
+            }
+          });
+
+          afterMutations(
+            () => fixture(`<${safe} foo="bar" />`),
+            () => expect(calls).to.equal(1),
+            done,
+          );
+        });
+
+        it('is called for a non-attribute prop when set as a property before it upgrades (polyfill)', (done) => {
+          let calls = 0;
+          const { skate, safe } = element();
+
+          skate({
+            props: {
+              foo: {
+                set (elem, data) {
+                  expect(data.newValue).to.equal('bar');
+                  expect(data.oldValue).to.equal(null);
+                  ++calls;
+                }
+              }
+            }
+          });
+
+          const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+          afterMutations(
+            () => (elem.foo = 'bar'),
+            () => expect(calls).to.equal(1),
+            done,
+          );
+        });
+
+        it('is called for a non-attribute prop when set as a property before it upgrades (native)', (done) => {
+          let calls = 0;
+          const { skate, safe } = element();
+          const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+          elem.foo = 'bar';
+
+          skate({
+            props: {
+              foo: {
+                set (elem, data) {
+                  expect(data.newValue).to.equal('bar');
+                  expect(data.oldValue).to.equal(null);
+                  ++calls;
+                }
+              }
+            }
+          });
+
+          afterMutations(
+            () => expect(calls).to.equal(1),
+            done,
+          );
+        });
+      });
+
       it('is not called if no value is on the element when it is initialised', () => {
         let calls = 0;
         create({
