@@ -1,3 +1,5 @@
+import root from 'window-or-global';
+
 const Event = ((TheEvent) => {
   if (TheEvent) {
     try {
@@ -7,7 +9,7 @@ const Event = ((TheEvent) => {
     }
   }
   return TheEvent;
-})(window.Event);
+})(root.Event);
 
 function createCustomEvent (name, opts = {}) {
   const { detail } = opts;

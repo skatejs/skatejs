@@ -24,7 +24,8 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
-    "skatejs-build": "9.x"
+    "skatejs-build": "9.x",
+    "window-or-global": "^1.0.1"
   },
   "devDependencies": {
     "birdpoo": "0.x",
@@ -35,7 +36,7 @@
     "skatejs-web-components": "2.0.1"
   },
   "scripts": {
-    "test": "sk-tests",
+    "test": "node dist/ && sk-tests",
     "prepublish": "sk-bundle"
   },
   "config": {

@@ -1,6 +1,7 @@
 import native from './native';
+import root from 'window-or-global';
 
-const { MutationObserver } = window;
+const { MutationObserver } = root;
 
 function microtaskDebounce (cbFunc) {
   let scheduled = false;
