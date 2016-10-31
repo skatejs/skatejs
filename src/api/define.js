@@ -84,8 +84,9 @@ function createInitProps (Ctor) {
       const hasPropBeforeUpgrading = name in elem;
 
       // This is saved prior to defining so that we can set it after it it was
-      // defined prior to upgrading.
-      const valueBeforeUpgrading = elem[name];
+      // defined prior to upgrading. We don't want to invoke the getter if we
+      // don't need to, so we only get the value if we need to re-sync.
+      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[name];
 
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
