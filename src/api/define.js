@@ -8,6 +8,7 @@ import Component from './component';
 import dashCase from '../util/dash-case';
 import initProps from '../lifecycle/props-init';
 import keys from '../util/get-all-keys';
+import root from 'window-or-global';
 
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
@@ -128,17 +129,18 @@ export default function (name, opts) {
     throw new Error(`You have to define options to register a component ${name}`);
   }
   const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
+  const { customElements } = root;
   formatLinkedAttributes(Ctor);
 
-  if (!window.customElements) {
+  if (!customElements) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
   let uniqueName = name;
-  if (window.customElements.get(name)) {
+  if (customElements.get(name)) {
     uniqueName = generateUniqueName(name);
   }
   prepareForRegistration(uniqueName, Ctor);
-  window.customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
+  customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
   return Ctor;
 }

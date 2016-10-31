@@ -11,8 +11,9 @@ import {
 } from 'incremental-dom';
 import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
+import root from 'window-or-global';
 
-const { customElements } = window;
+const { customElements } = root;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being

@@ -5630,20 +5630,20 @@ skatejs-build@9.x:
     webpack "1.13.2"
     webpack-dev-server "1.16.2"
 
-skatejs-named-slots@2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/skatejs-named-slots/-/skatejs-named-slots-2.0.1.tgz#dadb6c6bfab3ff99c32506398860988ddae3f0d7"
+skatejs-named-slots@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/skatejs-named-slots/-/skatejs-named-slots-2.0.2.tgz#8a081001531447437ad08f003a28ee61273c2c12"
   dependencies:
     custom-event-polyfill "^0.3.0"
     debounce "^1.0.0"
-    weakmap "0.0.6"
+    weak-map "^1.0.5"
 
-skatejs-web-components@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-2.0.0.tgz#01c769e7556c8be7de35538facef4770d9292fd6"
+skatejs-web-components@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-2.0.1.tgz#8788d184b707bb6d65f5463cab6a9b156d5cf7da"
   dependencies:
     document-register-element "1.2.0"
-    skatejs-named-slots "2.0.1"
+    skatejs-named-slots "2.0.2"
 
 slash@^1.0.0:
   version "1.0.0"
@@ -6318,9 +6318,9 @@ wd@^0.3.12, wd@^0.3.4:
     underscore.string "~3.0.3"
     vargs "~0.1.0"
 
-weakmap@0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/weakmap/-/weakmap-0.0.6.tgz#0c4fbde02e3b371f9222013fc6632a5c45419b29"
+weak-map@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/weak-map/-/weak-map-1.0.5.tgz#79691584d98607f5070bd3b70a40e6bb22e401eb"
 
 webpack-core@~0.6.0:
   version "0.6.8"
@@ -6405,6 +6405,10 @@ wide-align@^1.1.0:
   resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.0.tgz#40edde802a71fea1f070da3e62dcda2e7add96ad"
   dependencies:
     string-width "^1.0.1"
+
+window-or-global:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/window-or-global/-/window-or-global-1.0.1.tgz#dbe45ba2a291aabc56d62cf66c45b7fa322946de"
 
 window-size@0.1.0:
   version "0.1.0"
