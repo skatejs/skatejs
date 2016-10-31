@@ -9,7 +9,7 @@ describe('api/props', () => {
   let elem;
 
   beforeEach(done => {
-    elem = new (element().skate( class extends Component {
+    elem = new (element().skate(class extends Component {
       static get props () {
         return {
           prop1: {

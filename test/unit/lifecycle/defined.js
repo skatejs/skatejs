@@ -4,6 +4,7 @@ import { define } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
+// TODO this should actually go in to a constructor() lifecycle test.
 describe('lifecycle/defined', () => {
   it('should not already have the defined attribute on undefined elements', () => {
     expect(document.createElement('some-undefined-element').hasAttribute('defined')).to.equal(false);
