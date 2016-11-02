@@ -24,7 +24,6 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
-    "skatejs-build": "9.x",
     "window-or-global": "^1.0.1"
   },
   "devDependencies": {
