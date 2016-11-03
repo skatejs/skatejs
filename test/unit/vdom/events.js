@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { emit, prop, props, vdom } from '../../../src/index';
+import { emit, h, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import element from '../../lib/element';
 import fixture from '../../lib/fixture';
@@ -85,16 +85,33 @@ describe('vdom/events (on*)', () => {
 
   it('should not fail for listeners that are not functions', done => {
     const myel = new (element().skate({
-      render () {
-        vdom.element('div', { 'on-test': null });
+      props: {
+        handler: {}
+      },
+      render (elem) {
+        return h('div', { onTest: elem.handler });
       }
     }))();
     fixture(myel);
+    let div
     afterMutations(
-      () => {}, // .render()
-      () => {
-        emit(myel.shadowRoot.firstChild, 'test');
-      },
+      () => (div = myel.shadowRoot.firstChild),
+      () => (myel.handler = undefined),
+      () => emit(div, 'test'),
+      () => (myel.handler = null),
+      () => emit(div, 'test'),
+      () => (myel.handler = false),
+      () => emit(div, 'test'),
+      () => (myel.handler = 0),
+      () => emit(div, 'test'),
+      () => (myel.handler = true),
+      () => emit(div, 'test'),
+      () => (myel.handler = 1),
+      () => emit(div, 'test'),
+      () => (myel.handler = ''),
+      () => emit(div, 'test'),
+      () => (myel.handler = 'something'),
+      () => emit(div, 'test'),
       done
     );
   });

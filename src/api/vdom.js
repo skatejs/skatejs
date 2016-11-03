@@ -59,7 +59,7 @@ function applyEvent (elem, ename, newFunc) {
   }
 
   // Not undefined indicates that we have set a listener, so default to null.
-  events[ename] = newFunc || null;
+  events[ename] = typeof newFunc === 'function' ? newFunc : null;
 }
 
 const attributesContext = propContext(attributes, {
