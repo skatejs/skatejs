@@ -45,7 +45,7 @@ function applyEvent (elem, ename, newFunc) {
   }
 
   // Undefined indicates that there is no listener yet.
-  if (events[ename] === undefined) {
+  if (typeof events[ename] === 'undefined') {
     // We only add a single listener once. Originally this was a workaround for
     // the Webcomponents ShadyDOM polyfill not removing listeners, but it's
     // also a simpler model for binding / unbinding events because you only
