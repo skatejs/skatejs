@@ -13,13 +13,10 @@ describe('vdom/events (on*)', () => {
       props: {
         test: number({ default: 0 })
       },
-      created (elem) {
-        elem._test = 0;
-      },
       render (elem) {
         vdom.element('div', {
           'on-event': () => {
-            elem._test++;
+            elem.test++;
           }
         }, elem.test);
       }
@@ -29,31 +26,11 @@ describe('vdom/events (on*)', () => {
     fixture(el);
 
     afterMutations(
-      () => {}, // .render()
-      () => {
-        const shadowDiv = el.shadowRoot.children[0];
-
-        // Ensures that it rendered.
-        expect(shadowDiv.textContent).to.equal('0');
-        expect(el._test).to.equal(0);
-
-        // Trigger the handler.
-        emit(shadowDiv, 'event');
-
-        // Ensure the event fired.
-        expect(el._test).to.equal(1);
-
-        // Re-render.
-        props(el, { test: el.test + 1 });
-        expect(shadowDiv.textContent).to.equal('1');
-        emit(shadowDiv, 'event');
-        expect(el._test).to.equal(2);
-
-        props(el, { test: el.test + 1 });
-        expect(shadowDiv.textContent).to.equal('2');
-        emit(shadowDiv, 'event');
-        expect(el._test).to.equal(3);
-      },
+      () => expect(el.shadowRoot.textContent).to.equal('0'),
+      () => emit(el.shadowRoot.firstChild, 'event'),
+      () => expect(el.shadowRoot.textContent).to.equal('1'),
+      () => emit(el.shadowRoot.firstChild, 'event'),
+      () => expect(el.shadowRoot.textContent).to.equal('2'),
       done
     );
   });
