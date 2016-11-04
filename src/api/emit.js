@@ -18,11 +18,10 @@ function createCustomEvent (name, opts = {}) {
   let e;
   if (Event) {
     e = new Event(name, opts);
-    if (typeof detail !== 'undefined') {
-      Object.defineProperty(e, 'detail', { value: detail });
-    }
+    Object.defineProperty(e, 'detail', { value: detail });
   } else {
     e = document.createEvent('CustomEvent');
+    Object.defineProperty(e, 'composed', { value: opts.composed });
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, detail);
   }
   return e;

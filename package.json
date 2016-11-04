@@ -24,15 +24,14 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
-    "window-or-global": "^1.0.1"
+    "window-or-global": "1.0.1"
   },
   "devDependencies": {
     "birdpoo": "0.x",
-    "document-register-element": "1.x",
     "react": "15.x",
     "react-dom": "15.x",
-    "skatejs-build": "9.x",
-    "skatejs-web-components": "2.0.2"
+    "skatejs-build": "12.x",
+    "skatejs-web-components": "3.x"
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
