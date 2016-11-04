@@ -27,11 +27,11 @@
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
-    "birdpoo": "0",
-    "react": "15",
-    "react-dom": "15",
-    "skatejs-build": "12",
-    "skatejs-web-components": "3"
+    "birdpoo": "0.x",
+    "react": "15.x",
+    "react-dom": "15.x",
+    "skatejs-build": "12.x",
+    "skatejs-web-components": "3.x"
   },
   "scripts": {
     "test": "node dist/ && sk-tests",

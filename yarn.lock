@@ -1028,7 +1028,7 @@ binary-extensions@^1.0.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.7.0.tgz#6c1610db163abfb34edfe42fa423343a1e01185d"
 
-birdpoo@0:
+birdpoo@0.x:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/birdpoo/-/birdpoo-0.2.2.tgz#9e6a2ce19f2e15dedbb3609619e0488fa1f32631"
 
@@ -4959,11 +4959,11 @@ rc@~1.1.0:
     minimist "^1.2.0"
     strip-json-comments "~1.0.4"
 
-react-dom@15:
+react-dom@15.x:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.2.tgz#c46b0aa5380d7b838e7a59c4a7beff2ed315531f"
 
-react@15:
+react@15.x:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react/-/react-15.3.2.tgz#a7bccd2fee8af126b0317e222c28d1d54528d09e"
   dependencies:
@@ -5657,7 +5657,7 @@ sinon@^1.17.2:
     samsam "1.1.2"
     util ">=0.10.3 <1"
 
-skatejs-build@12:
+skatejs-build@12.x:
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/skatejs-build/-/skatejs-build-12.0.0.tgz#2ce019d10411147f6c14f1aac6f6e9fad2cc900f"
   dependencies:
@@ -5703,7 +5703,7 @@ skatejs-build@12:
     webpack "1.13.3"
     webpack-dev-server "1.16.2"
 
-skatejs-web-components@3:
+skatejs-web-components@3.x:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-3.0.0.tgz#9dd5b532766a5527a385c503c570fdaa3e0a9742"
   dependencies:
