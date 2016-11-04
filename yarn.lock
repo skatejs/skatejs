@@ -32,6 +32,18 @@
     conventional-changelog "0.0.17"
     github-url-from-git "^1.4.0"
 
+"@webcomponents/custom-elements@https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz":
+  version "1.0.0-alpha.3"
+  resolved "https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz#97c1647eac7dec91fd29860d555cb649ee93b10d"
+
+"@webcomponents/shadycss@https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz":
+  version "0.0.1"
+  resolved "https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz#aae7f1af52ca7ddf8ad384dfa0df8e2e3c547045"
+
+"@webcomponents/shadydom@https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz":
+  version "0.0.1"
+  resolved "https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz#982f14e1cd01001530c7982dc9db1b4f80a65bb0"
+
 abbrev@~1.0.9, abbrev@1:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.0.9.tgz#91b4792588a7738c25f35dd6f63752a2f8776135"
@@ -1640,10 +1652,6 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
-custom-event-polyfill@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/custom-event-polyfill/-/custom-event-polyfill-0.3.0.tgz#99807839be62edb446b645832e0d80ead6fa1888"
-
 custom-event@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/custom-event/-/custom-event-1.0.0.tgz#2e4628be19dc4b214b5c02630c5971e811618062"
@@ -1675,22 +1683,12 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
-date-now@1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/date-now/-/date-now-1.0.1.tgz#bb7d086438debe4182a485fb3df3fbfb99d6153c"
-
 dateformat@^1.0.11:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-1.0.12.tgz#9f124b67594c937ff706932e4a642cca8dbbfee9"
   dependencies:
     get-stdin "^4.0.1"
     meow "^3.3.0"
-
-debounce@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/debounce/-/debounce-1.0.0.tgz#0948af513d2e4ce407916f8506a423d3f9cf72d8"
-  dependencies:
-    date-now "1.0.1"
 
 debug-log@^1.0.0:
   version "1.0.1"
@@ -5705,20 +5703,14 @@ skatejs-build@12:
     webpack "1.13.3"
     webpack-dev-server "1.16.2"
 
-skatejs-named-slots@2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/skatejs-named-slots/-/skatejs-named-slots-2.0.4.tgz#66ab654f80ba553d956df8c76ec65b8fc9fe2362"
+skatejs-web-components@3:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-3.0.0.tgz#9dd5b532766a5527a385c503c570fdaa3e0a9742"
   dependencies:
-    custom-event-polyfill "^0.3.0"
-    debounce "^1.0.0"
-    weak-map "^1.0.5"
-
-skatejs-web-components@2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-2.0.2.tgz#7b51d4a6a5d0b63dee2e1502b829f729d9aed84a"
-  dependencies:
+    "@webcomponents/custom-elements" "https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz"
+    "@webcomponents/shadycss" "https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz"
+    "@webcomponents/shadydom" "https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz"
     document-register-element "1.2.0"
-    skatejs-named-slots "2.0.4"
 
 slash@^1.0.0:
   version "1.0.0"
@@ -6392,10 +6384,6 @@ wd@^0.3.12, wd@^0.3.4:
     request "~2.55.0"
     underscore.string "~3.0.3"
     vargs "~0.1.0"
-
-weak-map@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/weak-map/-/weak-map-1.0.5.tgz#79691584d98607f5070bd3b70a40e6bb22e401eb"
 
 webpack-core@~0.6.0:
   version "0.6.8"

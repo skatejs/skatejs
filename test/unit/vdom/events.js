@@ -60,25 +60,23 @@ describe('vdom/events (on*)', () => {
   it('should emit events from shadow dom', done => {
     let called = false;
     let detail = null;
-    const test = (e) => {
-      called = true;
-      detail = e.detail;
-    };
+
     const myel = new (element().skate({
       render () {
         vdom.element('div', {}, vdom.element.bind(null, 'span'));
       }
     }))();
-    myel.addEventListener('test', test);
+
+    myel.addEventListener('test', (e) => {
+      called = true;
+      detail = e.detail;
+    });
     fixture().appendChild(myel);
 
     afterMutations(
-      () => {}, // .render()
-      () => {
-        emit(myel.shadowRoot.querySelector('span'), 'test', { detail: 'detail' });
-        expect(called).to.equal(true);
-        expect(detail).to.equal('detail');
-      },
+      () => emit(myel.shadowRoot.querySelector('span'), 'test', { detail: 'detail' }),
+      () => expect(called).to.equal(true),
+      () => expect(detail).to.equal('detail'),
       done
     );
   });
@@ -92,8 +90,9 @@ describe('vdom/events (on*)', () => {
         return h('div', { onTest: elem.handler });
       }
     }))();
+
+    let div;
     fixture(myel);
-    let div
     afterMutations(
       () => (div = myel.shadowRoot.firstChild),
       () => (myel.handler = undefined),
