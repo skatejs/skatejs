@@ -31,7 +31,7 @@
     "react": "15",
     "react-dom": "15",
     "skatejs-build": "12",
-    "skatejs-web-components": "2"
+    "skatejs-web-components": "3"
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
