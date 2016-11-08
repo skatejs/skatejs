@@ -1,9 +1,10 @@
 import { name as $name } from '../util/symbols';
 import Component from './component';
 import uniqueId from '../util/unique-id';
+import root from 'window-or-global';
 
 export default function (name, opts) {
-  const { customElements } = window;
+  const { customElements } = root;
 
   if (!customElements) {
     throw new Error('Skate requires native custom element support or a polyfill.');

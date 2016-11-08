@@ -11,8 +11,9 @@ import {
 } from 'incremental-dom';
 import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
+import root from 'window-or-global';
 
-const { customElements, HTMLElement } = window;
+const { customElements, HTMLElement } = root;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being
@@ -43,17 +44,22 @@ function applyEvent (elem, ename, newFunc) {
     events = elem[$currentEventHandlers] = {};
   }
 
-  const oldFunc = events[ename];
-
-  // Remove old listener so they don't double up.
-  if (oldFunc) {
-    elem.removeEventListener(ename, oldFunc);
+  // Undefined indicates that there is no listener yet.
+  if (typeof events[ename] === 'undefined') {
+    // We only add a single listener once. Originally this was a workaround for
+    // the Webcomponents ShadyDOM polyfill not removing listeners, but it's
+    // also a simpler model for binding / unbinding events because you only
+    // have a single handler you need to worry about and a single place where
+    // you only store one event handler
+    elem.addEventListener(ename, function (e) {
+      if (events[ename]) {
+        events[ename].call(this, e);
+      }
+    });
   }
 
-  // Bind new listener.
-  if (newFunc) {
-    elem.addEventListener(ename, events[ename] = newFunc);
-  }
+  // Not undefined indicates that we have set a listener, so default to null.
+  events[ename] = typeof newFunc === 'function' ? newFunc : null;
 }
 
 const attributesContext = propContext(attributes, {
