@@ -188,6 +188,8 @@ Component.extend = function extend (definition = {}, Base = this) {
 // Skate
 //
 // DEPRECATED
+//
+// Move this to rendererCallback() before removing.
 Component.updated = function _updated (elem, prev) {
   if (!prev) {
     return true;
@@ -208,12 +210,19 @@ Component.updated = function _updated (elem, prev) {
 // Skate
 //
 // DEPRECATED
+//
+// Move this to rendererCallback() before removing.
 Component.rendered = function _rendered () {};
 
 // Skate
 //
 // DEPRECATED
+//
+// Move this to rendererCallback() before removing.
 Component.renderer = function _renderer (elem) {
+  if (!elem.shadowRoot) {
+    elem.attachShadow({ mode: 'open' });
+  }
   patchInner(elem.shadowRoot, () => {
     const possibleFn = elem.renderCallback();
     if (typeof possibleFn === 'function') {
@@ -296,9 +305,8 @@ Component.prototype = Object.create(htmlElementPrototype, {
 
   // Skate
   //
-  // This is a default implementation that does strict equality comparison on
-  // previous props and next props. It synchronously renders on the first prop
-  // that is different and returns immediately.
+  // Maps to the static updated() callback. That logic should be moved here
+  // when that is finally removed.
   updatedCallback: prop({
     value (prev) {
       return this.constructor.updated(this, prev);
@@ -307,14 +315,16 @@ Component.prototype = Object.create(htmlElementPrototype, {
 
   // Skate
   //
-  // Defaults to null because the rendering process is opt-in.
+  // Maps to the static render() callback. That logic should be moved here
+  // when that is finally removed.
   renderCallback: prop({
     value: null
   }),
 
   // Skate
   //
-  // Defaults to noop because that way we don't have to check.
+  // Maps to the static rendered() callback. That logic should be moved here
+  // when that is finally removed.
   renderedCallback: prop({
     value () {
       return this.constructor.rendered(this);
@@ -323,8 +333,8 @@ Component.prototype = Object.create(htmlElementPrototype, {
 
   // Skate
   //
-  // Default Incremental DOM renderer. Can be overridden to use any virtual DOM
-  // library.
+  // Maps to the static renderer() callback. That logic should be moved here
+  // when that is finally removed.
   rendererCallback: prop({
     value () {
       return this.constructor.renderer(this);
@@ -345,9 +355,6 @@ Component.prototype = Object.create(htmlElementPrototype, {
       this[$rendering] = true;
 
       if (this[$updated]() && typeof this.renderCallback === 'function') {
-        if (!this.shadowRoot) {
-          this.attachShadow({ mode: 'open' });
-        }
         this.rendererCallback();
         this.renderedCallback();
       }
