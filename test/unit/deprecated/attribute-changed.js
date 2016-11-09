@@ -56,7 +56,7 @@ describe('deprecated/lifecycle/attribute-changed', () => {
       static attributeChanged () {
         counter += 1;
       }
-    }));
+    }))();
     fixtureArea.appendChild(elem);
     afterMutations(
       () => expect(counter).to.equal(0),
