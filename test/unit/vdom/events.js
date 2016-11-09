@@ -1,24 +1,25 @@
 /* eslint-env jasmine, mocha */
 
-import { emit, h, prop, props, vdom } from '../../../src/index';
+import { Component, define, emit, h, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 
 const { boolean, number } = prop;
 
 describe('vdom/events (on*)', () => {
   it('should not duplicate listeners', done => {
-    const MyEl = element().skate({
-      props: {
-        test: number({ default: 0 })
-      },
-      render (elem) {
+    const MyEl = define(class extends Component {
+      static get props () {
+        return {
+          test: number({ default: 0 })
+        };
+      }
+      renderCallback () {
         vdom.element('div', {
           'on-event': () => {
-            elem.test++;
+            this.test++;
           }
-        }, elem.test);
+        }, this.test);
       }
     });
 
@@ -40,15 +41,14 @@ describe('vdom/events (on*)', () => {
     const test = () => {
       called = true;
     };
-    const myel = new (element().skate({
-      render () {
+    const myel = new (define(class extends Component {
+      renderCallback () {
         vdom.element('div', { 'on-test': test }, vdom.element.bind(null, 'span'));
       }
     }))();
     fixture().appendChild(myel);
 
     afterMutations(
-      () => {}, // .render()
       () => {
         emit(myel.shadowRoot.querySelector('span'), 'test');
         expect(called).to.equal(true);
@@ -61,8 +61,8 @@ describe('vdom/events (on*)', () => {
     let called = false;
     let detail = null;
 
-    const myel = new (element().skate({
-      render () {
+    const myel = new (define(class extends Component {
+      renderCallback () {
         vdom.element('div', {}, vdom.element.bind(null, 'span'));
       }
     }))();
@@ -82,12 +82,14 @@ describe('vdom/events (on*)', () => {
   });
 
   it('should not fail for listeners that are not functions', done => {
-    const myel = new (element().skate({
-      props: {
-        handler: {}
-      },
-      render (elem) {
-        return h('div', { onTest: elem.handler });
+    const myel = new (define(class extends Component {
+      static get props () {
+        return {
+          handler: {}
+        }
+      }
+      renderCallback () {
+        return h('div', { onTest: this.handler });
       }
     }))();
 
@@ -126,12 +128,14 @@ describe('vdom/events (on*)', () => {
 
     beforeEach(done => {
       count = 0;
-      el = new (element().skate({
-        props: {
-          unbind: boolean()
-        },
-        render (elem) {
-          if (elem.unbind) {
+      el = new (define(class extends Component {
+        static get props () {
+          return {
+            unbind: boolean()
+          };
+        }
+        renderCallback () {
+          if (this.unbind) {
             vdom.element('div');
           } else {
             vdom.element('div', { onclick: inc, onTest1: inc, 'on-test2': inc });

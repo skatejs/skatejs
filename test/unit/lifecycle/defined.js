@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { define } from '../../../src/index';
+import { Component, define } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
@@ -11,7 +11,7 @@ describe('lifecycle/defined', () => {
   });
 
   it('should add the [defined] attribute when the element is upgraded', (done) => {
-    const Elem = define('x-test', {});
+    const Elem = define('x-test', class extends Component {});
     const elem = new Elem();
 
     // Sanity check for non-native (native would throw).

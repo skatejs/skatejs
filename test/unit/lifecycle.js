@@ -1,31 +1,32 @@
 /* eslint-env jasmine, mocha */
 
+import { Component, define, ready } from '../../src/index';
 import afterMutations from '../lib/after-mutations';
-import helperElement from '../lib/element';
-import helperFixture from '../lib/fixture';
-import { define, ready } from '../../src/index';
+import fixture from '../lib/fixture';
+import uniqueId from '../../src/util/unique-id';
 
 describe('lifecycle', () => {
   let MyEl;
   let myEl;
-  let tagName;
   let created = false;
   let attached = false;
   let detached = false;
 
   beforeEach(() => {
-    tagName = helperElement('my-el');
     created = false;
     attached = false;
     detached = false;
-    MyEl = define(tagName.safe, {
-      created: () => {
+    MyEl = define(class extends Component {
+      constructor () {
+        super();
         created = true;
-      },
-      attached: () => {
+      }
+      connectedCallback () {
+        super.connectedCallback();
         attached = true;
-      },
-      detached: () => {
+      }
+      disconnectedCallback () {
+        super.disconnectedCallback();
         detached = true;
       }
     });
@@ -39,7 +40,7 @@ describe('lifecycle', () => {
   });
 
   it('should call the attached() callback when the element is attached', (done) => {
-    helperFixture().appendChild(myEl);
+    fixture().appendChild(myEl);
     afterMutations(
       () => expect(created).to.equal(true, 'created'),
       () => expect(attached).to.equal(true, 'attached'),
@@ -49,9 +50,9 @@ describe('lifecycle', () => {
   });
 
   it('should call the detached() callback when the element is detached', (done) => {
-    helperFixture().appendChild(myEl);
+    fixture().appendChild(myEl);
     ready(myEl, () => {
-      helperFixture().removeChild(myEl);
+      fixture().removeChild(myEl);
       afterMutations(
         () => expect(created).to.equal(true, 'created'),
         () => expect(attached).to.equal(true, 'attached'),

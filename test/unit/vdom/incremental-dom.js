@@ -1,10 +1,10 @@
 /* eslint-env jasmine, mocha */
 
 import * as IncrementalDOM from 'incremental-dom';
-import { define, vdom } from '../../../src/index';
-import element from '../../lib/element';
+import { Component, define, vdom } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import native from '../../../src/util/native';
+import uniqueId from '../../../src/util/unique-id';
 
 const { MutationObserver } = window;
 
@@ -33,16 +33,18 @@ describe('IncrementalDOM', () => {
       const skip = !native(MutationObserver);
 
       function renderCounter () {
-        const { safe, skate } = element();
+        const safe = uniqueId();
         let renderCount = 0;
 
-        skate({
-          render () {
+        define(safe, class extends Component {
+          static get props () {
+            return {
+              foo: { attribute: true },
+              bar: { attribute: true }
+            };
+          }
+          renderCallback () {
             renderCount++;
-          },
-          props: {
-            foo: { attribute: true },
-            bar: { attribute: true }
           }
         });
 

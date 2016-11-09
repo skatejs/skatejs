@@ -1,17 +1,19 @@
 /* eslint-env jasmine, mocha */
 
 import { classStaticsInheritance } from '../../lib/support';
-import { Component } from '../../../src';
+import { Component, define } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import propsInit from '../../../src/lifecycle/props-init';
+import uniqueId from '../../../src/util/unique-id';
 
 describe('lifecycle/property', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (element().skate({
-      props: {
-        [name]: definition
+    const elem = new (define(class extends Component {
+      static get props () {
+        return {
+          [name]: definition
+        };
       }
     }))();
     if (arguments.length === 3) { // eslint-disable-line prefer-rest-params
@@ -34,7 +36,7 @@ describe('lifecycle/property', () => {
     it('uses the same attribute and property name for lower-case names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (element().skate(class extends Component {
+      const elem = new (define(class extends Component {
         static get props () {
           return { testprop: { attribute: true } };
         }
@@ -50,7 +52,7 @@ describe('lifecycle/property', () => {
     it('uses the same attribute and property name for dashed-names names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (element().skate(class extends Component {
+      const elem = new (define(class extends Component {
         static get props () {
           return { 'test-prop': { attribute: true } };
         }
@@ -66,7 +68,7 @@ describe('lifecycle/property', () => {
     it('uses a dash-cased attribute name for camel-case property names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (element().skate(class extends Component {
+      const elem = new (define(class extends Component {
         static get props () {
           return { testProp: { attribute: true } };
         }
@@ -82,9 +84,11 @@ describe('lifecycle/property', () => {
 
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
-      const elem = new (element().skate({
-        props: {
-          testprop: { attribute: true }
+      const elem = new (define(class extends Component {
+        static get props () {
+          return {
+            testprop: { attribute: true  }
+          };
         }
       }))();
 
@@ -96,8 +100,12 @@ describe('lifecycle/property', () => {
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
-      const elem = new (element().skate({
-        props: { 'test-prop': { attribute: true } }
+      const elem = new (define(class extends Component {
+        static get props () {
+          return {
+            'test-prop': { attribute: true }
+          };
+        }
       }))();
 
       afterMutations(
@@ -108,9 +116,11 @@ describe('lifecycle/property', () => {
     });
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
-      const elem = new (element().skate({
-        props: {
-          testProp: { attribute: true }
+      const elem = new (define(class extends Component {
+        static get props () {
+          return {
+            testProp: { attribute: true }
+          };
         }
       }))();
 
@@ -123,20 +133,22 @@ describe('lifecycle/property', () => {
   });
 
   it('should not leak options to other definitions', () => {
-    const elem = new (element().skate({
-      props: {
-        test1: {
-          attribute: true,
-          default: 'test1',
-          deserialize: () => 'test1',
-          serialize: () => 'test1'
-        },
-        test2: {
-          attribute: true,
-          default: 'test2',
-          deserialize: () => 'test2',
-          serialize: () => 'test2'
-        }
+    const elem = new (define(class extends Component {
+      static get props () {
+        return {
+          test1: {
+            attribute: true,
+            default: 'test1',
+            deserialize: () => 'test1',
+            serialize: () => 'test1'
+          },
+          test2: {
+            attribute: true,
+            default: 'test2',
+            deserialize: () => 'test2',
+            serialize: () => 'test2'
+          }
+        };
       }
     }))();
 
@@ -457,10 +469,10 @@ describe('lifecycle/property', () => {
     describe('set()', () => {
       describe('for elements initialised from the DOM', () => {
         it('is called for an attribute prop when initialised as an attribute', (done) => {
-          const { skate, safe } = element();
+          const safe = uniqueId();
           let calls = 0;
 
-          skate({
+          define(safe, {
             props: {
               foo: {
                 attribute: true,
@@ -481,10 +493,10 @@ describe('lifecycle/property', () => {
         });
 
         it('is called for a non-attribute prop when set as a property before it upgrades (polyfill)', (done) => {
+          const safe = uniqueId();
           let calls = 0;
-          const { skate, safe } = element();
 
-          skate({
+          define(safe, {
             props: {
               foo: {
                 set (elem, data) {
@@ -506,11 +518,11 @@ describe('lifecycle/property', () => {
 
         it('is called for a non-attribute prop when set as a property before it upgrades (native)', (done) => {
           let calls = 0;
-          const { skate, safe } = element();
+          const safe = uniqueId();
           const elem = fixture(`<${safe} foo="bar" />`).firstChild;
           elem.foo = 'bar';
 
-          skate({
+          define(safe, {
             props: {
               foo: {
                 set (elem, data) {

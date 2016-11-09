@@ -1,14 +1,12 @@
 /* eslint-env jasmine, mocha */
 
-import { define } from '../../src/index';
-import helperElement from '../lib/element';
+import { define } from '../../../src/index';
 
 const { HTMLElement } = window;
 
 describe('Returning a constructor', () => {
   it('should return a constructor that extends a native element.', () => {
-    const tag = helperElement('my-el');
-    const Element = define(tag.safe, {
+    const Element = define({
       prototype: {
         func1: () => {}
       }
@@ -31,8 +29,7 @@ describe('Returning a constructor', () => {
   });
 
   it('should not allow the constructor property to be enumerated.', () => {
-    const tag = helperElement('my-el');
-    const Element = define(tag.safe, {});
+    const Element = define({});
 
     Object.keys(Element.prototype).forEach((prop) => {
       if (prop === 'constructor') {
@@ -42,8 +39,7 @@ describe('Returning a constructor', () => {
   });
 
   it('should affect the element prototype even if it was not constructed using the constructor.', () => {
-    const tag = helperElement('my-el');
-    const Element = define(tag.safe, {
+    const Element = define({
       prototype: {
         func1: () => {}
       }
@@ -58,8 +54,7 @@ describe('Returning a constructor', () => {
   });
 
   it('should allow getters and setters on the prototype', () => {
-    const tag = helperElement('my-el');
-    const Element = define(tag.safe, {
+    const Element = define({
       prototype: Object.create({}, {
         test: {
           get: () => true
@@ -73,8 +68,7 @@ describe('Returning a constructor', () => {
 
   it('should overwrite prototype members', () => {
     let called = false;
-    const { safe: tagName } = helperElement('super-input');
-    const Input = define(tagName, {
+    const Input = define({
       extends: 'input',
       prototype: {
         focus: () => {

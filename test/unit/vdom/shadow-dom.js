@@ -1,12 +1,14 @@
 /* eslint-env jasmine, mocha */
 
-import element from '../../lib/element';
+import { Component, define } from '../../../src';
 
 describe('vdom/shadow-dom', () => {
   let Elem;
 
   beforeEach(() => {
-    Elem = element().skate({ render () {} });
+    Elem = define({
+      renderCallback () {}
+    });
   });
 
   it('should work for attachShadow()', () => {

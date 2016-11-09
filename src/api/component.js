@@ -3,8 +3,8 @@ import {
   connected as $connected,
   created as $created,
   props as $props,
-  renderer as $render,
-  rendererDebounced as $renderDebounced,
+  renderer as $renderer,
+  rendererDebounced as $rendererDebounced,
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
@@ -115,7 +115,7 @@ function Component (...args) {
   }
 
   // Set up a renderer that is debounced for property sets to call directly.
-  elem[$renderDebounced] = debounce(elem[$render].bind(elem));
+  elem[$rendererDebounced] = debounce(elem[$renderer].bind(elem));
 
   // Set up property lifecycle.
   if (constructor.props && constructor[$props]) {
@@ -246,7 +246,7 @@ Component.prototype = Object.create(htmlElementPrototype, {
       syncPropsToAttrs(this);
 
       this[$connected] = true;
-      this[$renderDebounced]();
+      this[$rendererDebounced]();
 
       // DEPRECATED static attached()
       if (typeof constructor.attached === 'function') {
@@ -344,7 +344,7 @@ Component.prototype = Object.create(htmlElementPrototype, {
   // Skate
   //
   // Invokes the complete render lifecycle.
-  [$render]: prop({
+  [$renderer]: prop({
     value () {
       if (this[$rendering] || !this[$connected]) {
         return;

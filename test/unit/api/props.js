@@ -1,15 +1,14 @@
 /* eslint-env jasmine, mocha */
 
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { Component, props } from '../../../src/index';
+import { Component, define, props } from '../../../src/index';
 
 describe('api/props', () => {
   let elem;
 
   beforeEach(done => {
-    elem = new (element().skate(class extends Component {
+    elem = new (define(class extends Component {
       static get props () {
         return {
           prop1: {
@@ -83,7 +82,7 @@ describe('api/props', () => {
     });
 
     it('should succeed on an uninitialised element', () => {
-      const elem = element().create();
+      const elem = new (define(class extends Component {}))();
       props(elem, { undeclaredProp: 'foo' });
       expect(elem).property('undeclaredProp', 'foo');
     });

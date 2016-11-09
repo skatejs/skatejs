@@ -10,6 +10,12 @@ export default function (name, opts) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
+  // Support passing an anonymous definition.
+  if (!opts) {
+    opts = name;
+    name = null;
+  }
+
   // Unique IDs.
   if (!name || customElements.get(name)) {
     name = uniqueId(name);

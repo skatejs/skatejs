@@ -1,7 +1,6 @@
 /* eslint-env jasmine, mocha */
 
 import { Component, define } from '../../../src';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
@@ -45,7 +44,7 @@ describe('deprecated/lifecycle/attribute-changed', () => {
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
-    const elem = new (element().skate(class extends Component {
+    const elem = new (define(class extends Component {
       static get props () {
         return {
           test: {

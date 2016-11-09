@@ -2,17 +2,19 @@
 
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import { define, prop, props, vdom } from '../../../src/index';
+import { Component, define, prop, props, vdom } from '../../../src/index';
 
 function test (name, el) {
   function create (ref) {
-    const Elem = define('x-test', {
-      props: {
-        num: prop.number(),
-        ref: { initial: () => ref }
-      },
-      render (elem) {
-        vdom.element(el, { ref: elem.ref, id: 'div' }, () =>
+    const Elem = define(class extends Component {
+      static get props () {
+        return {
+          num: prop.number(),
+          ref: { initial: () => ref }
+        };
+      }
+      renderCallback () {
+        vdom.element(el, { ref: this.ref, id: 'div' }, () =>
           vdom.element('span', { id: 'span' }, 'test')
         );
       }
@@ -80,8 +82,8 @@ function test (name, el) {
 describe('vdom/ref', () => {
   test('normal elements', 'div');
 
-  test('custom elements', define('x-test', {
-    render () {
+  test('custom elements', define(class extends Component {
+    renderCallback () {
       vdom.element('slot');
     }
   }));
@@ -91,8 +93,8 @@ describe('vdom/ref', () => {
   });
 
   it('void elements', done => {
-    const Elem = define('x-test', {
-      render () {
+    const Elem = define(class extends Component {
+      renderCallback () {
         vdom.elementVoid('div', null, null, 'ref', () => done());
       }
     });

@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha, chai */
 
-import { define, prop, props, vdom } from '../../../src/index';
+import { Component, define, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
@@ -9,12 +9,14 @@ const sr = el => el.shadowRoot;
 
 describe('vdom/skip', () => {
   it('should skip the element children', done => {
-    const Elem = define('x-test', {
-      props: {
-        num: prop.number()
-      },
+    const Elem = define(class extends Component {
+      static get props () {
+        return {
+          num: prop.number()
+        };
+      }
       /* eslint indent: 0 */
-      render () {
+      renderCallback () {
         text('1 ');
         elementOpen('div');
           text('2 ');
@@ -65,7 +67,6 @@ describe('vdom/skip', () => {
       '<div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
     fixture(elem);
     afterMutations(
-      () => {}, // x-test.render()
       () => expect(sr(elem).innerHTML).to.equal(html),
       () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
       () => props(elem, { num: elem.num + 1 }),
@@ -79,19 +80,21 @@ describe('vdom/skip', () => {
     function isEven (num) {
       return num % 2 === 0;
     }
-    const Elem = define('x-test', {
-      props: {
-        num: prop.number({ default: 2 })
-      },
-      render (elem) {
-        elementOpen('div', null, null, 'skip', !isEven(elem.num));
-          text(elem.num);
+    const Elem = define(class extends Component {
+      static get props () {
+        return {
+          num: prop.number({ default: 2 })
+        };
+      }
+      renderCallback () {
+        elementOpen('div', null, null, 'skip', !isEven(this.num));
+          text(this.num);
           elementOpen('span');
-            text(elem.num.toString());
+            text(this.num.toString());
           elementClose('span');
           elementOpen('div');
             elementOpen('span');
-              text(elem.num.toString());
+              text(this.num.toString());
             elementClose('span');
           elementClose('div');
         elementClose('div');
@@ -100,7 +103,6 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => {}, // x-test.render()
       () => expect(elem.shadowRoot.textContent).to.equal('222'),
       () => props(elem, { num: elem.num + 1 }),
       () => expect(elem.shadowRoot.textContent).to.equal('222'),
@@ -115,11 +117,13 @@ describe('vdom/skip', () => {
   });
 
   it('re-rendering an empty, skipped element should keep the mutated content', done => {
-    const Elem = define('x-test', {
-      props: {
-        test: {}
-      },
-      render () {
+    const Elem = define(class extends Component {
+      static get props () {
+        return {
+          test: {}
+        };
+      }
+      renderCallback () {
         elementOpen('div', null, null, 'skip', true);
         elementClose('div');
       }
@@ -127,7 +131,6 @@ describe('vdom/skip', () => {
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => {}, // x-test.render()
       () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
       () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),
@@ -136,18 +139,19 @@ describe('vdom/skip', () => {
   });
 
   it('re-rendering an void, skipped element should keep the mutated content', done => {
-    const Elem = define('x-test', {
-      props: {
-        test: {}
-      },
-      render () {
+    const Elem = define(class extends Component {
+      static get props () {
+        return {
+          test: {}
+        };
+      }
+      renderCallback () {
         elementVoid('div', null, null, 'skip', true);
       }
     });
     const elem = new Elem();
     fixture(elem);
     afterMutations(
-      () => {}, // x-test.render()
       () => (elem.shadowRoot.firstElementChild.textContent = 'testing'),
       () => props(elem, { test: 0 }),
       () => expect(elem.shadowRoot.firstElementChild.textContent).to.equal('testing'),

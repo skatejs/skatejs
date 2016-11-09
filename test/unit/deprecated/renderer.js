@@ -2,7 +2,7 @@
 
 import { define } from '../../../src';
 
-describe('lifecycle/renderer', () => {
+describe('deprecated/lifecycle/renderer', () => {
   it('default', () => {
     expect(define('x-test', {}).renderer).to.be.a('function');
   });
