@@ -3,7 +3,7 @@
 import afterMutations from '../lib/after-mutations';
 import helperElement from '../lib/element';
 import helperFixture from '../lib/fixture';
-import { define, ready } from '../../src/index';
+import { define } from '../../src/index';
 
 describe('lifecycle', () => {
   let MyEl;

@@ -20,8 +20,6 @@ import root from 'window-or-global';
 const { HTMLElement } = root;
 const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
 
-
-
 // Prevent double-calling with polyfill.
 
 const $prevName = createSymbol('name');
@@ -29,12 +27,10 @@ const $prevOldValue = createSymbol('oldValue');
 const $prevNewValue = createSymbol('newValue');
 
 function preventDoubleCalling (elem, name, oldValue, newValue) {
-  return name === elem[$prevName]
-    && oldValue === elem[$prevOldValue]
-    && newValue === elem[$prevNewValue];
+  return name === elem[$prevName] &&
+    oldValue === elem[$prevOldValue] &&
+    newValue === elem[$prevNewValue];
 }
-
-
 
 function callConstructor (elem) {
   const elemData = data(elem);
