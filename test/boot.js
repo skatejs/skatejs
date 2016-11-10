@@ -3,7 +3,6 @@
 import helperFixture from './lib/fixture';
 import '@webcomponents/custom-elements';
 import '@webcomponents/shadydom';
-import '@webcomponents/shadycss';
 
 // eslint-disable-next-line no-undef
 mocha.setup({ timeout: 10000 });
