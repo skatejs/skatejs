@@ -89,7 +89,7 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
-    const { props, prototype } = customElements.get(elem.tagName) || {
+    const { props, prototype } = customElements.get(elem.tagName.toLowerCase()) || {
       props: {},
       prototype: {}
     };
