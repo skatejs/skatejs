@@ -24,9 +24,9 @@ const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
 
 // Prevent double-calling with polyfill.
 
-const $prevName = createSymbol();
-const $prevOldValue = createSymbol();
-const $prevNewValue = createSymbol();
+const $prevName = createSymbol('name');
+const $prevOldValue = createSymbol('oldValue');
+const $prevNewValue = createSymbol('newValue');
 
 function preventDoubleCalling (elem, name, oldValue, newValue) {
   return name === elem[$prevName]
