@@ -353,7 +353,7 @@ You can also use `Component.extend()` to eliminate the boilerplate of extending 
 import { Component, define } from 'skatejs';
 
 const MyComponent1 = define('my-component-1', {});
-const MyComponent2 = define('my-component-2', MyComponent1.extend({});
+const MyComponent2 = define('my-component-2', MyComponent1.extend({}));
 ```
 
 Whichever method you use, `define()` will return you a constructor you can use to create a new instance of your element:
