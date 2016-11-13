@@ -952,8 +952,8 @@ skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
 skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
 skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
 skate.h('select', { name: 'someValue4', onChange: linkage },
-  skate.h('option', { value: 2 }, 'Option 2');
-  skate.h('option', { value: 1 }, 'Option 1');
+  skate.h('option', { value: 2 }, 'Option 2'),
+  skate.h('option', { value: 1 }, 'Option 1'),
 );
 ```
 
