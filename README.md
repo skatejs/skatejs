@@ -904,7 +904,7 @@ skate.emit(elem, 'event', {
 The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding, but is safer as the propagation of the user input value back to the component element will trigger a re-render, ensuring all dependent UI is up to date.
 
 ```js
-skate.define('my-input', function () {
+skate.define('my-input', {
   props: {
     value: { attribute: true }
   },
