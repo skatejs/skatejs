@@ -1409,8 +1409,8 @@ This gives the virtual element a [`key`](http://google.github.io/incremental-dom
 
 ```js
 skate.h('ul',
-  skate.h('li', { key: 0 });
-  skate.h('li', { key: 1 });
+  skate.h('li', { key: 0 }),
+  skate.h('li', { key: 1 }),
 );
 ```
 
