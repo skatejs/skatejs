@@ -25,17 +25,14 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
-    "skatejs-build": "^12.0.1",
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
-    "@webcomponents/custom-elements": "https://github.com/webcomponents/custom-elements/archive/fc022e8.tar.gz",
-    "@webcomponents/shadycss": "https://github.com/webcomponents/shadycss/archive/19a46c9.tar.gz",
-    "@webcomponents/shadydom": "https://github.com/webcomponents/shadydom/archive/c162774.tar.gz",
     "birdpoo": "0.x",
     "react": "15.x",
     "react-dom": "15.x",
-    "skatejs-build": "12.x"
+    "skatejs-build": "12.x",
+    "skatejs-web-components": "3.x"
   },
   "scripts": {
     "test": "node dist/ && sk-tests",

@@ -1,8 +1,7 @@
 /* eslint-env jasmine, mocha */
 
+import 'skatejs-web-components';
 import helperFixture from './lib/fixture';
-import '@webcomponents/custom-elements';
-import '@webcomponents/shadydom';
 
 // eslint-disable-next-line no-undef
 mocha.setup({ timeout: 10000 });
