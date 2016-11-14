@@ -43,7 +43,9 @@ describe('lifecycle/attribute-changed', () => {
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
-    const elem = new (element().skate({ // eslint-disable-line new-parens
+
+    // eslint-disable-next-line new-parens
+    const elem = new (element().skate({
       attributeChanged () {
         counter += 1;
       },
@@ -53,6 +55,7 @@ describe('lifecycle/attribute-changed', () => {
         }
       }
     }));
+
     fixtureArea.appendChild(elem);
     afterMutations(
       () => expect(counter).to.equal(0),

@@ -8,6 +8,7 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
+import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
@@ -18,6 +19,18 @@ import root from 'window-or-global';
 
 const { HTMLElement } = root;
 const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
+
+// Prevent double-calling with polyfill.
+
+const $prevName = createSymbol('name');
+const $prevOldValue = createSymbol('oldValue');
+const $prevNewValue = createSymbol('newValue');
+
+function preventDoubleCalling (elem, name, oldValue, newValue) {
+  return name === elem[$prevName] &&
+    oldValue === elem[$prevOldValue] &&
+    newValue === elem[$prevNewValue];
+}
 
 function callConstructor (elem) {
   const elemData = data(elem);
@@ -237,6 +250,16 @@ Component.prototype = Object.create(htmlElementPrototype, {
   attributeChangedCallback: {
     configurable: true,
     value (name, oldValue, newValue) {
+      // Polyfill calls this twice.
+      if (preventDoubleCalling(this, name, oldValue, newValue)) {
+        return;
+      }
+
+      // Set data so we can prevent double calling if the polyfill.
+      this[$prevName] = name;
+      this[$prevOldValue] = oldValue;
+      this[$prevNewValue] = newValue;
+
       const { attributeChanged } = this.constructor;
       const propertyName = data(this, 'attributeLinks')[name];
 
