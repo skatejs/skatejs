@@ -1187,9 +1187,9 @@ camelcase@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-2.1.1.tgz#7c1d16d679a1bbe59ca02cacecfb011e201f5a1f"
 
-camelcase@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
+camelcase@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.0.0.tgz#8b0f90d44be5e281b903b9887349b92595ef07f2"
 
 caniuse-db@^1.0.30000539, caniuse-db@^1.0.30000554:
   version "1.0.30000554"
@@ -3441,9 +3441,11 @@ karma-firefox-launcher@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/karma-firefox-launcher/-/karma-firefox-launcher-1.0.0.tgz#e08af3ce42e39860c2952ea7b7eaa64d63508bdc"
 
-karma-mocha@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/karma-mocha/-/karma-mocha-1.2.0.tgz#bca6be2a66805b847417e8d2873fd0b5b27ee7cd"
+karma-mocha@1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/karma-mocha/-/karma-mocha-1.3.0.tgz#eeaac7ffc0e201eb63c467440d2b69c7cf3778bf"
+  dependencies:
+    minimist "1.2.0"
 
 karma-opera-launcher@1.0.0:
   version "1.0.0"
@@ -5657,9 +5659,9 @@ sinon@^1.17.2:
     samsam "1.1.2"
     util ">=0.10.3 <1"
 
-skatejs-build@12.x:
-  version "12.0.0"
-  resolved "https://registry.yarnpkg.com/skatejs-build/-/skatejs-build-12.0.0.tgz#2ce019d10411147f6c14f1aac6f6e9fad2cc900f"
+skatejs-build:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/skatejs-build/-/skatejs-build-12.0.1.tgz#0c62d057a402253bbd1be6ded4a3414dc1210db8"
   dependencies:
     babel-core "6.18.2"
     babel-eslint "^7.0.0"
@@ -5670,7 +5672,7 @@ skatejs-build@12.x:
     babel-preset-es2015 "6.16.0"
     babel-preset-es2015-rollup "1.2.0"
     babel-preset-react "^6.5.0"
-    camelcase "^3.0.0"
+    camelcase "^4.0.0"
     commitizen "^2.8.2"
     css-loader "0.25.0"
     cz-conventional-changelog "1.2.0"
@@ -5679,7 +5681,7 @@ skatejs-build@12.x:
     karma-chai-plugins "0.8.0"
     karma-chrome-launcher "2.0.0"
     karma-firefox-launcher "1.0.0"
-    karma-mocha "1.2.0"
+    karma-mocha "1.3.0"
     karma-opera-launcher "1.0.0"
     karma-safari-launcher "1.0.0"
     karma-sauce-launcher "^1.0.0"

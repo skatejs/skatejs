@@ -222,10 +222,11 @@ If you want finer grained control about which polyfills you use, you'll have to 
 
 ## Browser Support
 
-Skate supports all major browsers and some older versions of IE. IE support depends on which polyfills you include:
+Skate supports all evergreens and IE11. We recommend using the following polyfills:
 
-- IE9+ [`skatejs-web-components`](https://github.com/skatejs/web-components) or [`document-register-element`](https://github.com/WebReflection/document-register-element) - *recommended*
-- IE11+ [`webcomponents.js`](https://github.com/webcomponents/webcomponentsjs) - only the v1 polyfill is supported
+- Custom Elements: https://github.com/webcomponents/custom-elements
+- Shadow DOM: https://github.com/webcomponents/shadydom
+- Shadow DOM (CSS fills): https://github.com/webcomponents/shadycss
 
 
 
