@@ -11,7 +11,7 @@ install:
   - yarn install
 script:
   - sk-bundle
-  - if [ "<%= "${TRAVIS_SECURE_ENV_VARS}" %>" = "true" ]; then
+  - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
     npm test -- --all;
     else
     npm test;
