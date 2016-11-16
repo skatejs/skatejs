@@ -354,7 +354,7 @@ You can also use `Component.extend()` to eliminate the boilerplate of extending 
 import { Component, define } from 'skatejs';
 
 const MyComponent1 = define('my-component-1', {});
-const MyComponent2 = define('my-component-2', MyComponent1.extend({});
+const MyComponent2 = define('my-component-2', MyComponent1.extend({}));
 ```
 
 Whichever method you use, `define()` will return you a constructor you can use to create a new instance of your element:
@@ -905,7 +905,7 @@ skate.emit(elem, 'event', {
 The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding, but is safer as the propagation of the user input value back to the component element will trigger a re-render, ensuring all dependent UI is up to date.
 
 ```js
-skate.define('my-input', function () {
+skate.define('my-input', {
   props: {
     value: { attribute: true }
   },
@@ -953,8 +953,8 @@ skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
 skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
 skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
 skate.h('select', { name: 'someValue4', onChange: linkage },
-  skate.h('option', { value: 2 }, 'Option 2');
-  skate.h('option', { value: 1 }, 'Option 1');
+  skate.h('option', { value: 2 }, 'Option 2'),
+  skate.h('option', { value: 1 }, 'Option 1'),
 );
 ```
 
@@ -1410,8 +1410,8 @@ This gives the virtual element a [`key`](http://google.github.io/incremental-dom
 
 ```js
 skate.h('ul',
-  skate.h('li', { key: 0 });
-  skate.h('li', { key: 1 });
+  skate.h('li', { key: 0 }),
+  skate.h('li', { key: 1 }),
 );
 ```
 
