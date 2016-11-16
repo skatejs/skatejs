@@ -1,13 +1,14 @@
 /* eslint-env jasmine, mocha */
 
+import 'skatejs-web-components';
 import helperFixture from './lib/fixture';
 
-require('skatejs-web-components');
-
-mocha.setup({ timeout: 10000 }); // eslint-disable-line no-undef
+// eslint-disable-next-line no-undef
+mocha.setup({ timeout: 10000 });
 
 afterEach(() => {
   // Ensure perf tests have enough time to cleanup after themselves.
-  mocha.timeout(120000); // eslint-disable-line no-undef
+  // eslint-disable-next-line no-undef
+  mocha.timeout(120000);
   helperFixture('');
 });

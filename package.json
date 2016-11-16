@@ -29,8 +29,8 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
-    "react": "15.x",
-    "react-dom": "15.x",
+    "react": "15.4.0",
+    "react-dom": "15.4.0",
     "skatejs-build": "12.x",
     "skatejs-web-components": "3.x"
   },

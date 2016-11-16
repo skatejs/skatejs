@@ -221,10 +221,11 @@ If you want finer grained control about which polyfills you use, you'll have to 
 
 ## Browser Support
 
-Skate supports all major browsers and some older versions of IE. IE support depends on which polyfills you include:
+Skate supports all evergreens and IE11. We recommend using the following polyfills:
 
-- IE9+ [`skatejs-web-components`](https://github.com/skatejs/web-components) or [`document-register-element`](https://github.com/WebReflection/document-register-element) - *recommended*
-- IE11+ [`webcomponents.js`](https://github.com/webcomponents/webcomponentsjs) - only the v1 polyfill is supported
+- Custom Elements: https://github.com/webcomponents/custom-elements
+- Shadow DOM: https://github.com/webcomponents/shadydom
+- Shadow DOM (CSS fills): https://github.com/webcomponents/shadycss
 
 
 
@@ -378,7 +379,6 @@ customElements.define('my-component', class extends skate.Component {
 ```
 
 *The default implementation in `skate.Component` will render, so you should make sure to call it back if you override it.*
-
 
 
 ### `disconnectedCallback` - supersedes `static detached()`
@@ -1001,8 +1001,8 @@ skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
 skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
 skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
 skate.h('select', { name: 'someValue4', onChange: linkage },
-  skate.h('option', { value: 2 }, 'Option 2');
-  skate.h('option', { value: 1 }, 'Option 1');
+  skate.h('option', { value: 2 }, 'Option 2'),
+  skate.h('option', { value: 1 }, 'Option 1'),
 );
 ```
 
@@ -1423,8 +1423,8 @@ This gives the virtual element a [`key`](http://google.github.io/incremental-dom
 
 ```js
 skate.h('ul',
-  skate.h('li', { key: 0 });
-  skate.h('li', { key: 1 });
+  skate.h('li', { key: 0 }),
+  skate.h('li', { key: 1 }),
 );
 ```
 
