@@ -282,7 +282,7 @@ customElements.define('x-counter', class extends skate.Component {
     super.connectedCallback();
 
     // We use a symbol so we don't pollute the element's namespace.
-    elem[sym] = setInterval(() => ++elem.count, 1000);
+    this[sym] = setInterval(() => ++this.count, 1000);
   },
   disconnectedCallback () {
     // Ensure we callback the parent.
@@ -290,7 +290,7 @@ customElements.define('x-counter', class extends skate.Component {
 
     // If we didn't clean up after ourselves, we'd continue to render
     // unnecessarily.
-    clearInterval(elem[sym]);
+    clearInterval(this[sym]);
   },
   renderCallback () {
     // By separating the strings (and not using template literals or string
@@ -348,7 +348,7 @@ Recently, we've deprecated several old methods in favour of aligning closer to t
 - `static render()` -> `renderCallback()`
 - `static rendered()` -> `renderedCallback()`
 
-Most of the old API were static methods, or specified as options not on the `prototype`. The new APIs are mostly specified on the custom element's `prototype` unless it makes sense to be a `static`, such as `props` as they loosely correspond to `observedAttributes`. 
+Most of the old API were static methods, or specified as options not on the `prototype`. The new APIs are mostly specified on the custom element's `prototype` unless it makes sense to be a `static`, such as `props` as they loosely correspond to `observedAttributes`.
 
 
 
@@ -707,15 +707,15 @@ Called before `renderCallback()` after `props` are updated. If it returns falsy,
 
 ```js
 customElements.define('x-component', class extends skate.Component {
-  updatedCallback (previousState) {
+  updatedCallback (previousProps) {
     // The previous props will not be defined if it is the initial render.
-    if (!previousState) {
+    if (!previousProps) {
       return true;
     }
 
     // The previous props will always contain all of the keys.
-    for (let name in previousState) {
-      if (previousState[name] !== this[name]) {
+    for (let name in previousProps) {
+      if (previousProps[name] !== this[name]) {
         return true;
       }
     }
@@ -828,7 +828,7 @@ customElements.define('my-component', class extends skate.Component {
 
 ##### Return Value
 
-The return value of `renderCallback()` should be either the result of a `skate.h` call, or an array of `skate.h` calls. Calling the deprecated `vdom.element()` and `vdom.text()` calls are not supported here (though they may still work). They are only supported in the deprecated `static reander()` callback.
+The return value of `renderCallback()` should be either the result of a `skate.h` call, or an array of `skate.h` calls. Calling the deprecated `vdom.element()` and `vdom.text()` calls are not supported here (though they may still work). They are only supported in the deprecated `static render()` callback.
 
 *It is not called if the element is not in the document. It will be called in `connectedCallback()` so that it renders as early as possible, but only if necessary.*
 
@@ -1451,13 +1451,13 @@ if you need to bind listeners directly to your host element, you should do this 
 ```js
 customElements.define('my-element', class extends skate.Component {
   constructor () {
+    super();
     this.addEventListener('change', this.handleChange);
-  },
-  prototype: {
-    handleChange(e) {
-      // `this` is the element.
-      // The event is passed as the only argument.
-    }
+  }
+
+  handleChange(e) {
+    // `this` is the element.
+    // The event is passed as the only argument.
   }
 });
 ```
@@ -1651,7 +1651,7 @@ The nice part about thinking this way is that you get both a declarative and imp
 
 ### Naming Collisions
 
-You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. One option is to choose a different name for your component, but that may not be idea. You could also use `skate.define()` to ensure the name is unique. An ideal solution would be to only export your constructor and let the consumer register it.
+You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. One option is to choose a different name for your component, but that may not be ideal. You could also use `skate.define()` to ensure the name is unique. An ideal solution would be to only export your constructor and let the consumer register it.
 
 ```js
 export default class extends skate.Component {
@@ -1717,7 +1717,7 @@ customElements.define('my-component', class extends skate.Component {
   constructor () {
     super();
     scoped(this);
-    this._privateButNotReally();  
+    this._privateButNotReally();
   }
   _privateButNotReally() {}
 });
