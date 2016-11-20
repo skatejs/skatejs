@@ -53,7 +53,7 @@ describe('lifecycle', () => {
     fixture().appendChild(myEl);
     ready(myEl, () => {
       afterMutations(
-        () => helperFixture().removeChild(myEl),
+        () => fixture().removeChild(myEl),
         () => expect(created).to.equal(true, 'created'),
         () => expect(attached).to.equal(true, 'attached'),
         () => expect(detached).to.equal(true, 'detached'),
