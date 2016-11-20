@@ -32,7 +32,7 @@
     "flow": "0.2.3",
     "react": "15.4.0",
     "react-dom": "15.4.0",
-    "skatejs-build": "12.x",
+    "skatejs-build": "12.1.0",
     "skatejs-web-components": "3.x"
   },
   "scripts": {
