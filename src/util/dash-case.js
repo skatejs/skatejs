@@ -1,6 +1,7 @@
-export default function (str) {
+//@flow
+export default function (str:string):string {
   return str.split(/([A-Z])/).reduce((one, two, idx) => {
-    const dash = !one || idx % 2 === 0 ? '' : '-';
+    const dash:string = !one || idx % 2 === 0 ? '' : '-';
     return `${one}${dash}${two.toLowerCase()}`;
   });
 }

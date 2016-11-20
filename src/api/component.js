@@ -1,3 +1,4 @@
+//@flow
 import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
@@ -9,12 +10,16 @@ import {
   updated as $updated
 } from '../util/symbols';
 import data from '../util/data';
-import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
+import empty from '../util/empty';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import {
+  getPropDefs,
+  getPropDefsCount
+} from '../util/cached-prop-defs';
 import getSetProps from './props';
-import initProps from '../lifecycle/props-init';
+import {createPropertyDescriptors} from '../lifecycle/props-init';
 import prop from '../util/prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -22,58 +27,37 @@ import root from 'window-or-global';
 const { HTMLElement } = root;
 const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
 
-function syncPropsToAttrs (elem) {
-  const props = elem.constructor.props;
-  Object.keys(props).forEach((propName) => {
-    const prop = props[propName];
-    syncPropToAttr(elem, prop, propName, true);
+function syncPropsToAttrs (elem:any) {
+  const props:{[k:string|Symbol]:IPropDef} = getPropDefs(elem.constructor);
+  getAllKeys(props).forEach((propName:string|Symbol) => {
+    const prop:IPropDef = props[propName];
+    syncPropToAttr(elem, prop, propName);
   });
 }
 
-// Ensures that definitions passed as part of the constructor are functions
-// that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  const props = Ctor.props;
+/**
+ * Returns a function that will create all the native properties on an elem instance
+ */
+//todo: move this function into props-init file
+function createPropDescriptorsFunc (Ctor:any):(elem:any) => void {
 
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
-    }
-    return descriptors;
-  }, {});
-}
+  const propDescriptors:{[k:string|Symbol]:IPropertyDescriptor} = createPropertyDescriptors(Ctor);
+  //console.log('>> createPropDescriptorsFunc propDescriptors:', propDescriptors);
 
-// Ensures the property definitions are transformed to objects that can be used
-// to create properties on the element.
-function ensurePropertyDefinitions (Ctor) {
-  const props = ensurePropertyFunctions(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName](descriptorName);
-    return descriptors;
-  }, {});
-}
+  return (elem:any) => {
 
-function createInitProps (Ctor) {
-  const props = ensurePropertyDefinitions(Ctor);
-
-  return (elem) => {
-    if (!props) {
-      return;
-    }
-
-    getAllKeys(props).forEach((name) => {
-      const prop = props[name];
-      prop.created(elem);
+    getAllKeys(propDescriptors).forEach((name:any) => {
+      const propDescriptor:IPropertyDescriptor = propDescriptors[name];
+      propDescriptor.created(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
-      const hasPropBeforeUpgrading = name in elem;
+      const hasPropBeforeUpgrading:boolean = name in elem;
 
       // This is saved prior to defining so that we can set it after it it was
       // defined prior to upgrading. We don't want to invoke the getter if we
       // don't need to, so we only get the value if we need to re-sync.
-      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[name];
+      const valueBeforeUpgrading:any = hasPropBeforeUpgrading && elem[name];
 
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -81,7 +65,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, prop);
+      Object.defineProperty(elem, name, propDescriptor);
 
       // We re-set the prop if it was specified prior to upgrading because we
       // need to ensure set() is triggered both in polyfilled environments and
@@ -91,10 +75,13 @@ function createInitProps (Ctor) {
         elem[name] = valueBeforeUpgrading;
       }
     });
+
   };
+
 }
 
-function Component (...args) {
+function Component (...args:any[]) {
+
   const elem = typeof Reflect === 'object'
     ? Reflect.construct(HTMLElement, args, this.constructor)
     : HTMLElement.call(this, args[0]);
@@ -107,18 +94,18 @@ function Component (...args) {
   if (elem[$created]) {
     return;
   }
-
   elem[$created] = true;
 
-  if (!constructor[$props]) {
-    constructor[$props] = createInitProps(constructor);
+  // Create the function to create all the native properties for this class
+  if (!constructor.hasOwnProperty($props) && !constructor[$props]) {
+    constructor[$props] = createPropDescriptorsFunc(constructor);
   }
 
   // Set up a renderer that is debounced for property sets to call directly.
   elem[$rendererDebounced] = debounce(elem[$renderer].bind(elem));
 
   // Set up property lifecycle.
-  if (constructor.props && constructor[$props]) {
+  if (getPropDefsCount(constructor) && constructor[$props]) {
     constructor[$props](elem);
   }
 
@@ -145,10 +132,9 @@ Object.defineProperties(Component, {
   // Custom Elements v1
   observedAttributes: prop({
     get () {
-      const { props } = this;
-      return Object.keys(props).map(key => {
-        const { attribute } = props[key];
-        return attribute === true ? dashCase(key) : attribute;
+      const propDefs:{[k:string|Symbol]:IPropDef} = getPropDefs(this);
+      return getAllKeys(propDefs).map(key => {
+        return propDefs[key].attrName;
       }).filter(Boolean);
     },
     override: 'observedAttributes'
@@ -159,7 +145,7 @@ Object.defineProperties(Component, {
 });
 
 // Skate
-Component.extend = function extend (definition = {}, Base = this) {
+Component.extend = function extend (definition = {}, Base:any = this) {
   // Create class for the user.
   class Ctor extends Base {}
 
@@ -238,17 +224,17 @@ Component.renderer = function _renderer (elem) {
 };
 
 Component.prototype = Object.create(htmlElementPrototype, {
+
   // Custom Elements v1
   connectedCallback: prop({
     value () {
-      const { constructor } = this;
-
       syncPropsToAttrs(this);
 
       this[$connected] = true;
       this[$rendererDebounced]();
 
       // DEPRECATED static attached()
+      const { constructor } = this;
       if (typeof constructor.attached === 'function') {
         constructor.attached(this);
       }
@@ -260,11 +246,10 @@ Component.prototype = Object.create(htmlElementPrototype, {
   // Custom Elements v1
   disconnectedCallback: prop({
     value () {
-      const { constructor } = this;
-
       this[$connected] = false;
 
       // DEPRECATED static detached()
+      const { constructor } = this;
       if (typeof constructor.detached === 'function') {
         constructor.detached(this);
       }
@@ -273,32 +258,32 @@ Component.prototype = Object.create(htmlElementPrototype, {
 
   // Custom Elements v1
   attributeChangedCallback: prop({
-    value (name, oldValue, newValue) {
-      const { attributeChanged } = this.constructor;
-      const propertyName = data(this, 'attributeLinks')[name];
-
+    value (attrName:string, oldValue:?string, newValue:?string) {
+      //console.log('sk.attributeChangedCallback', attrName, 'from', oldValue, 'to', newValue);
+      const propertyName = data(this, 'attributeLinks')[attrName];
       if (propertyName) {
         const propData = data(this, 'props')[propertyName];
+        const { internalValue } = propData;
+        const propDef:IPropDef = getPropDefs(this.constructor)[propertyName];
 
-        // This ensures a property set doesn't cause the attribute changed
-        // handler to run again once we set this flag. This only ever has a
-        // chance to run when you set an attribute, it then sets a property and
-        // then that causes the attribute to be set again.
-        if (propData.syncingAttribute) {
-          propData.syncingAttribute = false;
-        } else {
+        const serializedValue = propDef.serialize(internalValue);
+        const valueChanged:boolean = !(
+          (empty(serializedValue) && empty(newValue)) || serializedValue === newValue
+        );
+        if (valueChanged) {
           // Sync up the property.
-          const propOpts = this.constructor.props[propertyName];
-          propData.settingAttribute = true;
-          const newPropVal = newValue !== null && propOpts.deserialize
-            ? propOpts.deserialize(newValue)
-            : newValue;
-          this[propertyName] = newPropVal;
+          this[propertyName] = propDef.deserialize(newValue);
         }
+        // else {
+        //   console.log('sk.attributeChangedCallback NOT changed');
+        // }
       }
 
-      if (attributeChanged) {
-        attributeChanged(this, { name, newValue, oldValue });
+      // DEPRECATED static attributeChanged()
+      const { constructor } = this;
+      if (typeof constructor.attributeChanged === 'function') {
+        // note: newValue and oldValue are swapped here for backward compatibility.
+        constructor.attributeChanged(this, { attrName, newValue, oldValue });
       }
     }
   }),

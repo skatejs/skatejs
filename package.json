@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
+    "flow": "^0.2.3",
     "react": "15.x",
     "react-dom": "15.x",
     "skatejs-build": "12.x",
