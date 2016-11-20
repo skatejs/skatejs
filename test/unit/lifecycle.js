@@ -52,8 +52,8 @@ describe('lifecycle', () => {
   it('should call the detached() callback when the element is detached', (done) => {
     fixture().appendChild(myEl);
     ready(myEl, () => {
-      fixture().removeChild(myEl);
       afterMutations(
+        () => helperFixture().removeChild(myEl),
         () => expect(created).to.equal(true, 'created'),
         () => expect(attached).to.equal(true, 'attached'),
         () => expect(detached).to.equal(true, 'detached'),

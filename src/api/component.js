@@ -9,6 +9,7 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
+import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import empty from '../util/empty';
@@ -26,6 +27,20 @@ import root from 'window-or-global';
 
 const { HTMLElement } = root;
 const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
+
+
+// Prevent double-calling with polyfill.
+
+const $prevName = createSymbol('name');
+const $prevOldValue = createSymbol('oldValue');
+const $prevNewValue = createSymbol('newValue');
+
+function preventDoubleCalling (elem:any, name:string, oldValue:?string, newValue:?string) {
+  return name === elem[$prevName] &&
+    oldValue === elem[$prevOldValue] &&
+    newValue === elem[$prevNewValue];
+}
+
 
 function syncPropsToAttrs (elem:any) {
   const props:{[k:string|Symbol]:IPropDef} = getPropDefs(elem.constructor);
@@ -260,6 +275,17 @@ Component.prototype = Object.create(htmlElementPrototype, {
   attributeChangedCallback: prop({
     value (attrName:string, oldValue:?string, newValue:?string) {
       //console.log('sk.attributeChangedCallback', attrName, 'from', oldValue, 'to', newValue);
+
+      // Polyfill calls this twice.
+      if (preventDoubleCalling(this, attrName, oldValue, newValue)) {
+        return;
+      }
+
+      // Set data so we can prevent double calling if the polyfill.
+      this[$prevName] = attrName;
+      this[$prevOldValue] = oldValue;
+      this[$prevNewValue] = newValue;
+
       const propertyName = data(this, 'attributeLinks')[attrName];
       if (propertyName) {
         const propData = data(this, 'props')[propertyName];
