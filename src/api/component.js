@@ -19,7 +19,7 @@ import initProps from '../lifecycle/props-init';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
-const { HTMLElement } = root;
+const HTMLElement = root.HTMLElement || class {};
 const _observedAttributes = createSymbol('observedAttributes');
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
