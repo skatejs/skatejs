@@ -1,8 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { Component, define } from '../../src/index';
-import { classStaticsInheritance } from '../lib/support';
-import uniqueId from '../../src/util/unique-id';
+import { Component, define } from '../../../src/index';
 
 describe('extending', () => {
   let Ctor;
@@ -69,17 +67,4 @@ describe('extending', () => {
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
-
-  if (classStaticsInheritance()) {
-    it('extend()', () => {
-      const Comp1 = define(class extends Component {});
-      const Comp2 = define(class extends Comp1 {});
-      const elem1 = new Comp1();
-      const elem2 = new Comp2();
-      expect(elem1).to.be.an.instanceof(Comp1);
-      expect(elem1).to.not.be.an.instanceof(Comp2);
-      expect(elem2).to.be.an.instanceof(Comp1);
-      expect(elem2).to.be.an.instanceof(Comp2);
-    });
-  }
 });

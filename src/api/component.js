@@ -16,13 +16,10 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
-import prop from '../util/prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
 const { HTMLElement } = root;
-const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
-
 const _observedAttributes = createSymbol('observedAttributes');
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
@@ -156,6 +153,10 @@ export default class extends HTMLElement {
       this.renderCallback = constructor.render.bind(constructor, this);
     }
 
+    // DEPRECATED
+    //
+    // static created()
+    //
     // Props should be set up before calling this.
     if (typeof constructor.created === 'function') {
       constructor.created(this);
@@ -255,12 +256,6 @@ export default class extends HTMLElement {
   updatedCallback (prev) {
     return this.constructor.updated(this, prev);
   }
-
-  // Skate
-  //
-  // Maps to the static render() callback. That logic should be moved here
-  // when that is finally removed.
-  renderCallback = null
 
   // Skate
   //
