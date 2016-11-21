@@ -32,17 +32,17 @@
     conventional-changelog "0.0.17"
     github-url-from-git "^1.4.0"
 
-"@webcomponents/custom-elements@https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz":
+"@webcomponents/custom-elements@https://github.com/webcomponents/custom-elements/archive/fc022e8.tar.gz":
   version "1.0.0-alpha.3"
-  resolved "https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz#97c1647eac7dec91fd29860d555cb649ee93b10d"
+  resolved "https://github.com/webcomponents/custom-elements/archive/fc022e8.tar.gz#f3411042f7301f1ce0b3061c5bb80dcb369be7cc"
 
-"@webcomponents/shadycss@https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz":
+"@webcomponents/shadycss@https://github.com/webcomponents/shadycss/archive/19a46c9.tar.gz":
   version "0.0.1"
-  resolved "https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz#aae7f1af52ca7ddf8ad384dfa0df8e2e3c547045"
+  resolved "https://github.com/webcomponents/shadycss/archive/19a46c9.tar.gz#c4614f09d107128e4945a3f7222ad8d1354c5994"
 
-"@webcomponents/shadydom@https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz":
+"@webcomponents/shadydom@https://github.com/webcomponents/shadydom/archive/c162774.tar.gz":
   version "0.0.1"
-  resolved "https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz#982f14e1cd01001530c7982dc9db1b4f80a65bb0"
+  resolved "https://github.com/webcomponents/shadydom/archive/c162774.tar.gz#a59595b55b0a3422cdad1c428533feedbb99b802"
 
 abbrev@~1.0.9, abbrev@1:
   version "1.0.9"
@@ -1845,10 +1845,6 @@ doctrine@^1.2.2:
     esutils "^2.0.2"
     isarray "^1.0.0"
 
-document-register-element@1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/document-register-element/-/document-register-element-1.2.0.tgz#aa0f1312320b4155ac13599edeb7a7cda4d5ac2a"
-
 dom-serialize@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/dom-serialize/-/dom-serialize-2.2.1.tgz#562ae8999f44be5ea3076f5419dcd59eb43ac95b"
@@ -2414,6 +2410,17 @@ faye-websocket@~0.11.0:
   resolved "https://registry.yarnpkg.com/faye-websocket/-/faye-websocket-0.11.0.tgz#d9ccf0e789e7db725d74bc4877d23aa42972ac50"
   dependencies:
     websocket-driver ">=0.5.1"
+
+fbjs@^0.8.1:
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.6.tgz#7eb67d6986b2d5007a9b6e92e0e7cb6f75cad290"
+  dependencies:
+    core-js "^1.0.0"
+    isomorphic-fetch "^2.1.1"
+    loose-envify "^1.0.0"
+    object-assign "^4.1.0"
+    promise "^7.1.1"
+    ua-parser-js "^0.7.9"
 
 fbjs@^0.8.4:
   version "0.8.5"
@@ -4961,13 +4968,17 @@ rc@~1.1.0:
     minimist "^1.2.0"
     strip-json-comments "~1.0.4"
 
-react-dom@15.x:
-  version "15.3.2"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.2.tgz#c46b0aa5380d7b838e7a59c4a7beff2ed315531f"
+react-dom@15.4.0:
+  version "15.4.0"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.4.0.tgz#6a97a69000966570db48c746bc4b7b0ca50d1534"
+  dependencies:
+    fbjs "^0.8.1"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.0"
 
-react@15.x:
-  version "15.3.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-15.3.2.tgz#a7bccd2fee8af126b0317e222c28d1d54528d09e"
+react@15.4.0:
+  version "15.4.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-15.4.0.tgz#736c1c7c542e8088127106e1f450b010f86d172b"
   dependencies:
     fbjs "^0.8.4"
     loose-envify "^1.1.0"
@@ -5705,14 +5716,13 @@ skatejs-build:
     webpack "1.13.3"
     webpack-dev-server "1.16.2"
 
-skatejs-web-components@3.x:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-3.0.0.tgz#9dd5b532766a5527a385c503c570fdaa3e0a9742"
+skatejs-web-components@5.x:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-5.0.0.tgz#c350ec9614d88cc1331602f4827ecc7210d3286d"
   dependencies:
-    "@webcomponents/custom-elements" "https://github.com/webcomponents/custom-elements/archive/a0f55ecbb17eee97aab877cfda9ac3a16b3b14ac.tar.gz"
-    "@webcomponents/shadycss" "https://github.com/webcomponents/shadycss/archive/3002ac1fc9d59893f50dfad922dd503bca64300c.tar.gz"
-    "@webcomponents/shadydom" "https://github.com/webcomponents/shadydom/archive/e4a8be7b4dceb94b79de10ee450848a339ad1a58.tar.gz"
-    document-register-element "1.2.0"
+    "@webcomponents/custom-elements" "https://github.com/webcomponents/custom-elements/archive/fc022e8.tar.gz"
+    "@webcomponents/shadycss" "https://github.com/webcomponents/shadycss/archive/19a46c9.tar.gz"
+    "@webcomponents/shadydom" "https://github.com/webcomponents/shadydom/archive/c162774.tar.gz"
 
 slash@^1.0.0:
   version "1.0.0"

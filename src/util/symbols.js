@@ -1,6 +1,5 @@
 export const connected = '____skate_connected';
 export const created = '____skate_created';
-export const props = '____skate_props';
 
 // DEPRECATED
 //
@@ -10,6 +9,7 @@ export const props = '____skate_props';
 // be passed to vdom functions as tag names.
 export const name = '____skate_name';
 
+export const props = '____skate_props';
 export const ref = '____skate_ref';
 export const renderer = '____skate_renderer';
 export const rendering = '____skate_rendering';
