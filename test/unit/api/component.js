@@ -51,22 +51,26 @@ describe('api/Component', () => {
     });
   });
 
-  describe('updated function', () => {
+  describe('updated()', () => {
     it('should return true if a prop changes', () => {
       const initialValue = 'hello world!';
-      class Test extends Component {}
-      Test.props = {
-        test: {
-          attribute: true,
-          initial: initialValue
+      class Test extends Component {
+        static get props () {
+          return {
+            test: {
+              attribute: true,
+              initial: initialValue
+            }
+          };
         }
-      };
+      }
+
       define('test-updated-function', Test);
       const instance = document.createElement('test-updated-function');
       expect(instance.test).to.equal(initialValue);
 
       instance.test = 'Hello world!';
-      const hasChange = Component.updated(instance, { test: initialValue });
+      const hasChange = instance.updatedCallback({ test: initialValue });
 
       expect(hasChange).to.be.true;
     });
@@ -74,18 +78,22 @@ describe('api/Component', () => {
     it('should return true if a Symbol() prop has changed', () => {
       const initialValue = 'hello world!';
       const testSymbol = createSymbol('test');
-      class Test extends Component {}
-      Test.props = {
-        [testSymbol]: {
-          initial: initialValue
+      class Test extends Component {
+        static get props () {
+          return {
+            [testSymbol]: {
+              initial: initialValue
+            }
+          };
         }
-      };
+      }
+
       define('test-updated-function-2', Test);
       const instance = document.createElement('test-updated-function-2');
       expect(instance[testSymbol]).to.equal(initialValue);
 
       instance[testSymbol] = 'Hello world!';
-      const hasChange = Component.updated(instance, { [testSymbol]: initialValue });
+      const hasChange = instance.updatedCallback({ [testSymbol]: initialValue });
 
       expect(hasChange).to.be.true;
     });

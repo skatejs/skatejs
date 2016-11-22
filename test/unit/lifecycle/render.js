@@ -1,63 +1,46 @@
 /* eslint-env jasmine, mocha */
 
-import { define, prop, props } from '../../../src/index';
+import { Component, define, prop, props } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
-import elem from '../../lib/element';
 import fixture from '../../lib/fixture';
+import uniqueId from '../../../src/util/unique-id';
 
 const { sinon } = window;
 
-describe('lifecycle/render', () => {
+describe('lifecycle/renderCallback', () => {
   it('should be called', (done) => {
     let called = false;
-    const Elem = define('x-test', {
-      render () {
+    const Elem = define(class extends Component {
+      renderCallback () {
         called = true;
       }
     });
     fixture(new Elem());
     afterMutations(
-      () => {}, // .render()
       () => expect(called).to.equal(true),
-      done
-    );
-  });
-
-  it('should get called after created()', (done) => {
-    const called = [];
-    const Elem = define('x-test', {
-      created () {
-        called.push('created');
-      },
-      render () {
-        called.push('render');
-      }
-    });
-    fixture(new Elem());
-    afterMutations(
-      () => expect(called[0]).to.equal('created'),
-      () => expect(called[1]).to.equal('render'),
       done
     );
   });
 
   it('should get called before descendants are initialised', (done) => {
     const called = [];
-    const elem1 = elem();
-    const elem2 = elem();
+    const elem1 = uniqueId();
+    const elem2 = uniqueId();
 
-    elem1.skate({
-      created () {
+    define(elem1, class extends Component {
+      constructor () {
+        super();
         called.push('elem1');
       }
     });
-    elem2.skate({
-      created () {
+    define(elem2, class extends Component {
+      constructor () {
+        super();
         called.push('elem2');
       }
     });
 
-    fixture(`<${elem1.safe}><${elem2.safe}></${elem2.safe}></${elem1.safe}>`);
+    fixture(`<${elem1}><${elem2}></${elem2}></${elem1}>`);
     afterMutations(
       () => expect(called[0]).to.equal('elem1'),
       () => expect(called[1]).to.equal('elem2'),
@@ -71,51 +54,51 @@ describe('lifecycle/render', () => {
     beforeEach(() => (spy = sinon.spy()));
 
     it('function', (done) => {
-      const Elem = define('x-test', {
-        render () {
+      const Elem = define(class extends Component {
+        renderCallback () {
           return spy;
         }
       });
       fixture(new Elem());
       afterMutations(
-        () => {}, // .render()
         () => expect(spy.callCount).to.equal(1),
         done
       );
     });
 
     it('array of functions', (done) => {
-      const Elem = define('x-test', {
-        render () {
+      const Elem = define(class extends Component {
+        renderCallback () {
           return [spy, null, spy];
         }
       });
       fixture(new Elem());
       afterMutations(
-        () => {}, // .render()
         () => expect(spy.callCount).to.equal(2),
         done
       );
     });
   });
 
-  describe('updated()', () => {
+  describe('updatedCallback()', () => {
     it('should be called even if there is no render function', (done) => {
       let called = 0;
-      const Elem = define('x-test', {
-        props: {
-          test: prop.number()
-        },
+      const Elem = define(class extends Component {
+        static get props () {
+          return {
+            test: prop.number()
+          };
+        }
         /* eslint-disable no-use-before-define */
-        updated (el, prev) {
+        updatedCallback (prev) {
           if (elemLocal.test === 0) {
-            expect(el).to.equal(elemLocal);
+            expect(this).to.equal(elemLocal);
             expect(prev).to.equal(undefined);
           } else if (elemLocal.test === 1) {
-            expect(el).to.equal(elemLocal);
+            expect(this).to.equal(elemLocal);
             expect(prev.test).to.equal(0);
           } else if (elemLocal.test === 2) {
-            expect(el).to.equal(elemLocal);
+            expect(this).to.equal(elemLocal);
             expect(prev.test).to.equal(1);
           }
           ++called;
@@ -125,17 +108,12 @@ describe('lifecycle/render', () => {
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
-        () => {}, // .render()
         () => expect(called).to.equal(1),
         () => expect(elemLocal.test).to.equal(0),
-        () => {
-          elemLocal.test = 1;
-        },
+        () => (elemLocal.test = 1),
         () => expect(called).to.equal(2),
         () => expect(elemLocal.test).to.equal(1),
-        () => {
-          elemLocal.test = 2;
-        },
+        () => (elemLocal.test = 2),
         () => expect(called).to.equal(3),
         () => expect(elemLocal.test).to.equal(2),
         done
@@ -145,18 +123,17 @@ describe('lifecycle/render', () => {
     it('should prevent rendering if it returns falsy', (done) => {
       let calledUpdated;
       let calledRender = false;
-      const Elem = define('x-test', {
-        updated () {
+      const Elem = define(class extends Component {
+        updatedCallback () {
           calledUpdated = true;
-        },
-        render () {
+        }
+        renderCallback () {
           calledRender = true;
         }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
-        () => {}, // .render()
         () => {
           expect(calledUpdated).to.equal(true);
           expect(calledRender).to.equal(false);
@@ -168,19 +145,18 @@ describe('lifecycle/render', () => {
     it('should allow rendering', (done) => {
       let calledUpdated;
       let calledRender = false;
-      const Elem = define('x-test', {
-        updated () {
+      const Elem = define(class extends Component {
+        updatedCallback () {
           calledUpdated = true;
           return true;
-        },
-        render () {
+        }
+        renderCallback () {
           calledRender = true;
         }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
-        () => {}, // .render()
         () => {
           expect(calledUpdated).to.equal(true);
           expect(calledRender).to.equal(true);
@@ -192,34 +168,35 @@ describe('lifecycle/render', () => {
     it('should allow props to be set within it and not be called again as a result', (done) => {
       let calledUpdated = 0;
       let calledRender = 0;
-      const Elem = define('x-test', {
-        props: {
-          test: {}
-        },
-        updated (el) {
+      const Elem = define(class extends Component {
+        static get props () {
+          return {
+            test: {}
+          };
+        }
+        updatedCallback () {
           // In this test case `updated()` is *only called once* during a debounced
           // rendering of the element (triggered when it was connected to the DOM).
 
           ++calledUpdated;
 
           // An internal guard should prevent this from re-rendering.
-          props(el, { test: 'updated 1' });
+          props(this, { test: 'updated 1' });
 
           // An internal guard should prevent this from re-rendering.
-          el.test = 'updated 2';
+          this.test = 'updated 2';
 
           // Allow the render to actually proceed.
           return true;
-        },
-        render () {
-          /* eslint no-plusplus: 0 */
+        }
+        renderCallback () {
+          // eslint-disable-next-line no-plusplus
           ++calledRender;
         }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
-        () => {}, // .render()
         () => {
           expect(calledUpdated).to.equal(1, 'before');
           expect(calledRender).to.equal(1, 'render');
@@ -229,26 +206,27 @@ describe('lifecycle/render', () => {
     });
   });
 
-  describe('rendered()', () => {
+  describe('renderedCallback()', () => {
     it('should be called after rendering', (done) => {
       const order = [];
-      const Elem = define('x-test', {
-        updated () {
+      const Elem = define(class extends Component {
+        updatedCallback () {
           order.push('updated');
           return true;
-        },
-        render () {
+        }
+        renderCallback () {
           order.push('render');
-        },
-        rendered (el) {
+        }
+        renderedCallback () {
           order.push('rendered');
-          expect(el).to.equal(elemLocal); // eslint-disable-line no-use-before-define
+
+          // eslint-disable-next-line no-use-before-define
+          expect(this).to.equal(elemLocal);
         }
       });
       const elemLocal = new Elem();
       fixture(elemLocal);
       afterMutations(
-        () => {}, // .render()
         () => {
           expect(order[0]).to.equal('updated');
           expect(order[1]).to.equal('render');
@@ -258,10 +236,10 @@ describe('lifecycle/render', () => {
       );
     });
 
-    it('should not be called if render() is not defined', (done) => {
+    it('should not be called if renderCallback() is not defined', (done) => {
       let afterCalled = false;
-      const Elem = define('x-test', {
-        rendered () {
+      const Elem = define(class extends Component {
+        renderedCallback () {
           afterCalled = true;
         }
       });
@@ -275,14 +253,10 @@ describe('lifecycle/render', () => {
 
     it('should not be called if rendering is prevented', (done) => {
       let afterCalled = false;
-      const Elem = define('x-test', {
-        updated () {
-
-        },
-        render () {
-
-        },
-        rendered () {
+      const Elem = define(class extends Component {
+        updatedCallback () {}
+        renderCallback () {}
+        renderedCallback () {
           afterCalled = true;
         }
       });

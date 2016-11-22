@@ -1,40 +1,39 @@
 /* eslint-env jasmine, mocha */
 
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { symbols, vdom } from '../../../src/index';
+import { Component, define, vdom } from '../../../src/index';
 
 describe('vdom/elements', () => {
   describe('element()', () => {
     describe('arguments', () => {
-      function create (render) {
-        const elem = new (element().skate({ render }))();
+      function create (renderCallback) {
+        const elem = new (define(class extends Component {
+          renderCallback () {
+            return renderCallback.call(this);
+          }
+        }))();
         fixture(elem);
         return elem;
       }
 
-      function ctor (name) {
-        const Ctor = () => {};
-        Ctor[symbols.name] = name;
-        return Ctor;
+      function ctor () {
+        return define(class extends Component {});
       }
 
       it('(tagName)', (done) => {
         const elem = create(() => vdom.element('div'));
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           done
         );
       });
 
       it('(Constructor)', (done) => {
-        const Ctor = ctor('div');
+        const Ctor = ctor();
         const elem = create(() => vdom.element(Ctor));
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.constructor).to.equal(Ctor),
           done
         );
       });
@@ -42,7 +41,6 @@ describe('vdom/elements', () => {
       it('(tagName, textContent)', (done) => {
         const elem = create(() => vdom.element('div', 'text'));
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
@@ -52,7 +50,6 @@ describe('vdom/elements', () => {
       it('(tagName, childrenFunction)', (done) => {
         const elem = create(() => vdom.element('div', vdom.text.bind(null, 'text')));
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
@@ -60,22 +57,20 @@ describe('vdom/elements', () => {
       });
 
       it('(Contructor, textContent)', (done) => {
-        const Ctor = ctor('div');
+        const Ctor = ctor();
         const elem = create(() => vdom.element(Ctor, 'text'));
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.constructor).to.equal(Ctor),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
       });
 
       it('(Contructor, childrenFunction)', (done) => {
-        const Ctor = ctor('div');
+        const Ctor = ctor();
         const elem = create(() => vdom.element(Ctor, vdom.text.bind(null, 'text')));
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.constructor).to.equal(Ctor),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
         );
@@ -84,7 +79,6 @@ describe('vdom/elements', () => {
       it('tagName, attrsObject, textContent', (done) => {
         const elem = create(() => vdom.element('div', { id: 'test' }, 'text'));
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
@@ -95,7 +89,6 @@ describe('vdom/elements', () => {
       it('tagName, attrsObject, childrenFunction', (done) => {
         const elem = create(() => vdom.element('div', { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
           () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
@@ -104,11 +97,10 @@ describe('vdom/elements', () => {
       });
 
       it('Constructor, attrsObject, textContent', (done) => {
-        const Ctor = ctor('div');
+        const Ctor = ctor();
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, 'text'));
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.constructor).to.equal(Ctor),
           () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
@@ -116,11 +108,10 @@ describe('vdom/elements', () => {
       });
 
       it('Constructor, attrsObject, childrenFunction', (done) => {
-        const Ctor = ctor('div');
+        const Ctor = ctor();
         const elem = create(() => vdom.element(Ctor, { id: 'test' }, vdom.text.bind(null, 'text')));
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.firstChild.tagName).to.equal('DIV'),
+          () => expect(elem.shadowRoot.firstChild.constructor).to.equal(Ctor),
           () => expect(elem.shadowRoot.firstChild.id).to.equal('test'),
           () => expect(elem.shadowRoot.firstChild.textContent).to.equal('text'),
           done
@@ -136,13 +127,13 @@ describe('vdom/elements', () => {
   });
 
   it('passing a component constructor to the vdom.element() function', (done) => {
-    const Elem2 = element().skate({
-      render () {
+    const Elem2 = define(class extends Component {
+      renderCallback () {
         vdom.text('rendered');
       }
     });
-    const Elem1 = element().skate({
-      render () {
+    const Elem1 = define(class extends Component {
+      renderCallback () {
         vdom.element(Elem2);
       }
     });
@@ -155,7 +146,6 @@ describe('vdom/elements', () => {
 
     fixture().appendChild(elem1);
     afterMutations(
-      () => {}, // .render()
       () => expect(elem2.shadowRoot.textContent).to.equal('rendered'),
       done
     );
@@ -166,8 +156,8 @@ describe('vdom/elements', () => {
       it(`*div* > span > ${ch}`, (done) => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = (props, chren) => vdom.element('div', () => vdom.element(Span, chren));
-        const Elem = element().skate({
-          render () {
+        const Elem = define(class extends Component {
+          renderCallback () {
             vdom.element(Div, ch);
           }
         });
@@ -176,7 +166,6 @@ describe('vdom/elements', () => {
 
         fixture().appendChild(elem);
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
@@ -185,8 +174,8 @@ describe('vdom/elements', () => {
       it(`div > *span* > ${ch}`, (done) => {
         const Span = (props, chren) => vdom.element('span', chren);
         const Div = () => vdom.element('div', () => vdom.element(Span, ch));
-        const Elem = element().skate({
-          render () {
+        const Elem = define(class extends Component {
+          renderCallback () {
             vdom.element(Div);
           }
         });
@@ -194,7 +183,6 @@ describe('vdom/elements', () => {
 
         fixture().appendChild(elem);
         afterMutations(
-          () => {}, // .render()
           () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
           done
         );
@@ -203,8 +191,8 @@ describe('vdom/elements', () => {
       it(`div > span > *${ch}*`, (done) => {
         const Span = () => vdom.element('span', ch);
         const Div = () => vdom.element('div', () => vdom.element(Span));
-        const Elem = element().skate({
-          render () {
+        const Elem = define(class extends Component {
+          renderCallback () {
             vdom.element(Div);
           }
         });
@@ -224,8 +212,8 @@ describe('vdom/elements', () => {
     it('*ul* (items) > li > a > text', (done) => {
       const Li = (props, chren) => vdom.element('li', () => vdom.element('a', chren));
       const Ul = props => vdom.element('ul', () => props.items.map(item => vdom.element(Li, item)));
-      const Elem = element().skate({
-        render () {
+      const Elem = define(class extends Component {
+        renderCallback () {
           vdom.element(Ul, { items: ['Item 1', 'Item 2'] });
         }
       });
@@ -249,8 +237,8 @@ describe('vdom/elements', () => {
         expect(props.statics).to.equal(statics, 'statics');
         vdom.element('div', { key, ref, statics });
       };
-      const Elem = element().skate({
-        render () {
+      const Elem = define(class extends Component {
+        renderCallback () {
           vdom.element(El, { key, ref, statics });
         }
       });
@@ -258,7 +246,6 @@ describe('vdom/elements', () => {
 
       fixture().appendChild(elem);
       afterMutations(
-        () => {}, // .render()
         () => expect(elem.shadowRoot.innerHTML).to.equal('<div></div>'),
         () => {
           const div = elem.shadowRoot;

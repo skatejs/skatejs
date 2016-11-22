@@ -13,7 +13,7 @@ import { name as $name, ref as $ref } from '../util/symbols';
 import propContext from '../util/prop-context';
 import root from 'window-or-global';
 
-const { customElements } = root;
+const { customElements, HTMLElement } = root;
 const applyDefault = attributes[symbols.default];
 
 // A stack of children that corresponds to the current function helper being
@@ -139,18 +139,27 @@ const attributesContext = propContext(attributes, {
   }
 });
 
-function resolveTagName (tname) {
-  // If the tag name is a function, a Skate constructor or a standard function
-  // is supported.
-  //
-  // - If a Skate constructor, the tag name is extracted from that.
-  // - If a standard function, it is used as a helper.
-  if (typeof tname === 'function') {
-    return tname[$name] || tname;
+function resolveTagName (name) {
+  // We return falsy values as some wrapped IDOM functions allow empty values.
+  if (!name) {
+    return name;
   }
 
-  // All other tag names are just passed through.
-  return tname;
+  // We try and return the cached tag name, if one exists.
+  if (name[$name]) {
+    return name[$name];
+  }
+
+  // If it's a custom element, we get the tag name by constructing it and
+  // caching it.
+  if (name.prototype instanceof HTMLElement) {
+    // eslint-disable-next-line
+    const elem = new name();
+    return (name[$name] = elem.localName);
+  }
+
+  // Pass all other values through so IDOM gets what it's expecting.
+  return name;
 }
 
 // Incremental DOM's elementOpen is where the hooks in `attributes` are applied,

@@ -27,12 +27,14 @@ HTML
 JavaScript
 
 ```js
-skate.define('x-hello', {
-  props: {
-    name: { attribute: true }
-  },
-  render (elem) {
-    return skate.h('div', `Hello, ${elem.name}`);
+customElements.define('x-hello', class extends skate.Component {
+  static get props () {
+    return {
+      name: { attribute: true }
+    };
+  }
+  renderCallback () {
+    return skate.h('div', `Hello, ${this.name}`);
   }
 });
 ```
@@ -64,26 +66,29 @@ Whenever you change the `name` property - or attribute - the component will re-r
   - [Examples](#examples)
     - [Counter](#counter)
   - [API](#api)
-    - [`define(name, definition)`](#definename-definition)
-      - [`prototype`](#prototype)
-      - [`props`](#props)
-        - [`attribute`](#attribute)
-        - [`coerce`](#coerce)
-        - [`default`](#default)
-        - [`deserialize`](#deserialize)
-        - [`get`](#get)
-        - [`initial`](#initial)
-        - [`serialize`](#serialize)
-        - [`set`](#set)
-      - [`created`](#created)
-      - [`updated`](#updated)
+    - [Using the Platform](#using-the-platform)
+    - [`constructor` - supersedes `static created()`](#constructor---supersedes-static-created)
+    - [`connectedCallback` - supersedes `static attached()`](#connectedcallback---supersedes-static-attached)
+    - [`disconnectedCallback` - supersedes `static detached()`](#disconnectedcallback---supersedes-static-detached)
+    - [`attributeChangedCallback` - supersedes `static attributeChanged()`](#attributechangedcallback---supersedes-static-attributechanged)
+    - [`static observedAttributes`](#static-observedattributes)
+    - [`static props`](#static-props)
+      - [`attribute`](#attribute)
+      - [`coerce`](#coerce)
+      - [`default`](#default)
+      - [`deserialize`](#deserialize)
+      - [`get`](#get)
+      - [`initial`](#initial)
+      - [`serialize`](#serialize)
+      - [`set`](#set)
+    - [`prototype`](#prototype)
+      - [`updatedCallback` - supersedes `static updated()`](#updatedcallback---supersedes-static-updated)
         - [Other use-cases](#other-use-cases)
-      - [`render`](#render)
-      - [`rendered`](#rendered)
-      - [`attached`](#attached)
-      - [`detached`](#detached)
-      - [`attributeChanged`](#attributechanged)
-      - [`observedAttributes`](#observedattributes)
+      - [`renderCallback` - supersedes `static render()`](#rendercallback---supersedes-static-render)
+        - [Return Value](#return-value)
+      - [`renderedCallback` - supersedes `static rendered()`](#renderedcallback---supersedes-static-rendered)
+    - [`define (nameOrConstructor, Constructor)`](#define-nameorconstructor-constructor)
+      - [WebPack Hot-Module Reloading](#webpack-hot-module-reloading)
     - [`emit (elem, eventName, eventOptions = {})`](#emit-elem-eventname-eventoptions--)
       - [Preventing Bubbling or Canceling](#preventing-bubbling-or-canceling)
       - [Passing Data](#passing-data)
@@ -96,9 +101,6 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [`props (elem[, props])`](#props-elem-props)
     - [`ready (element, callback)`](#ready-element-callback)
       - [Background](#background)
-    - [`symbols`](#symbols)
-      - [`name`](#name)
-      - [`shadowRoot`](#shadowroot)
     - [`h`](#h)
       - [`Hyperscript`](#hyperscript)
       - [`JSX`](#jsx)
@@ -121,7 +123,6 @@ Whenever you change the `name` property - or attribute - the component will re-r
           - [`skip`](#skip)
           - [`statics`](#statics)
           - [Boolean Attributes](#boolean-attributes)
-  - [Component Lifecycle](#component-lifecycle)
   - [Customised built-in elements](#customised-built-in-elements)
   - [VS other libraries](#vs-other-libraries)
     - [VS WebComponentsJS](#vs-webcomponentsjs)
@@ -138,13 +139,11 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [Private Members](#private-members)
     - [Private Data](#private-data)
   - [React Integration](#react-integration)
-  - [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)
   - [Form Behaviour and the Shadow DOM](#form-behaviour-and-the-shadow-dom)
     - [Submission](#submission)
     - [Form Data](#form-data)
   - [Stateless Components](#stateless-components)
   - [Styling Components](#styling-components)
-  - [Using ES2015 classes](#using-es2015-classes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -187,7 +186,7 @@ There's three files in `dist/`. Each has a UMD definition and a corresponding so
 Since Skate exports a UMD definition, you can then access it via the global:
 
 ```js
-const skate = window.skate;
+const { skate } = window;
 ```
 
 
@@ -270,26 +269,34 @@ The following is a simple counter that increments the count for every second tha
 ```js
 const sym = Symbol();
 
-skate.define('x-counter', {
-  props: {
-    // By declaring the property an attribute, we can now pass an initial value
-    // for the count as part of the HTML.
-    count: skate.prop.number({ attribute: true })
-  },
-  attached(elem) {
+customElements.define('x-counter', class extends skate.Component {
+  static get props () {
+    return {
+      // By declaring the property an attribute, we can now pass an initial value
+      // for the count as part of the HTML.
+      count: skate.prop.number({ attribute: true })
+    };
+  }
+  connectedCallback () {
+    // Ensure we call the parent.
+    super.connectedCallback();
+
     // We use a symbol so we don't pollute the element's namespace.
-    elem[sym] = setInterval(() => ++elem.count, 1000);
+    this[sym] = setInterval(() => ++this.count, 1000);
   },
-  detached(elem) {
+  disconnectedCallback () {
+    // Ensure we callback the parent.
+    super.disconnectedCallback();
+
     // If we didn't clean up after ourselves, we'd continue to render
     // unnecessarily.
-    clearInterval(elem[sym]);
+    clearInterval(this[sym]);
   },
-  render(elem) {
+  renderCallback () {
     // By separating the strings (and not using template literals or string
     // concatenation) it ensures the strings are diffed indepenedently. If
     // you select "Count" with your mouse, it will not deselect whenr endered.
-    return skate.h('div', 'Count ', elem.count);
+    return skate.h('div', 'Count ', this.count);
   }
 });
 ```
@@ -318,86 +325,127 @@ import { define, vdom } from 'skatejs';
 
 
 
-### `define(name, definition)`
+### Using the Platform
 
-The `name` is a string that is the tag name of the custom element that you are creating. It must be a "valid custom element name" as specified [in the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-core-concepts). For example, `my-component`, is a valid custom element name.
+Skate focuses on staying as close to the platform as possible. This means that instead of having to use `skate.define()` you can just use `customElements.define()`, which is built-in. You can still use `skate.define()`, but it's opt-in, and only serves to enhance what the browser already gives you.
 
-The `definition` argument is a class / constructor or object literal of component definition to use for your custom element. The recommended way is to use ES2015 classes:
+The lifecycle methods in Skate also use the `*Callback` naming convention. For example, the `render` lifecycle is represented by the `renderCallback()` on the custom element `prototype`. Things like `props` follow the convention of `observedAttributes` and are provided as static getters.
+
+If you're using IE9 and 10, transpiling class extension is limited to instance methods and properties. Statics don't get added to the chain. However, Skate supports calling `extend()` on a component which you want to extend. This means that in older browsers, you can do something like:
 
 ```js
-import { Component, define } from 'skatejs';
-
-const MyComponent = define('my-component', class extends Component {});
+const MyComponent1 = skate.Component.extend();
+const MyComponent2 = MyComponent1.extend();
 ```
 
-A simpler way, especially for ES5 users, would be to just pass an object literal.
+Recently, we've deprecated several old methods in favour of aligning closer to the native APIs. These methods still work but will be removed in a future version. Not all methods / properties are listed here, only the ones that have been deprecated and what they're superseded by.
+
+- `static created()` -> `constructor()`
+- `static attached()` -> `connectedCallback()`
+- `static detached()` -> `disconnectedCallback()`
+- `static attributeChanged` -> `attributeChangedCallback()`
+- `static updated()` -> `updatedCallback()`
+- `static render()` -> `renderCallback()`
+- `static rendered()` -> `renderedCallback()`
+
+Most of the old API were static methods, or specified as options not on the `prototype`. The new APIs are mostly specified on the custom element's `prototype` unless it makes sense to be a `static`, such as `props` as they loosely correspond to `observedAttributes`.
+
+
+
+### `constructor` - supersedes `static created()`
+
+Override `constructor` to do any setup of the custom element. You're subject to the [requirements for custom element constructors as defined in the spec](https://www.w3.org/TR/custom-elements/#custom-element-conformance).
 
 ```js
-import { define } from 'skatejs';
-
-const MyComponent = define('my-component', {});
-```
-
-Using this method will automatically extend the base `Component` for you.
-
-This is exactly the same thing as doing:
-
-```js
-import { Component, define } from 'skatejs';
-
-const MyComponent = define('my-component', Component.extend({}));
-```
-
-You can also use `Component.extend()` to eliminate the boilerplate of extending base classes in ES5:
-
-```js
-import { Component, define } from 'skatejs';
-
-const MyComponent1 = define('my-component-1', {});
-const MyComponent2 = define('my-component-2', MyComponent1.extend({}));
-```
-
-Whichever method you use, `define()` will return you a constructor you can use to create a new instance of your element:
-
-```js
-const myElement = new MyComponent();
-```
-
-
-
-#### `prototype`
-
-The element's prototype. This is the first thing that happens in the element's lifecycle.
-
-```js
-skate.define('my-component', {
-  prototype: {
-    get someProperty () {},
-    set someProperty () {},
-    someMethod () {},
+customElements.define('my-component', class extends skate.Component {
+  constructor () {
+    super();
   }
 });
 ```
 
 
 
-#### `props`
+### `connectedCallback` - supersedes `static attached()`
 
-Custom properties that should be defined on the element. These are set up after the `created` lifecycle callback is called.
+Function that is called after the element has been inserted to the document.
 
 ```js
-skate.define('my-component', {
-  props: { ...props }
+customElements.define('my-component', class extends skate.Component {
+  connectedCallback () {
+    super.connectedCallback();
+  }
 });
 ```
 
-Custom properties, when set, queue a `render()`. This happens after a `setTimeout()` so that you only trigger a single render for a series of property sets.
+*The default implementation in `skate.Component` will render, so you should make sure to call it back if you override it.*
+
+
+### `disconnectedCallback` - supersedes `static detached()`
+
+Function that is called after the element has been removed from the document.
+
+```js
+customElements.define('my-component', class extends skate.Component {
+  disconnectedCallback () {
+    super.disconnectedCallback();
+  }
+});
+```
+
+
+
+### `attributeChangedCallback` - supersedes `static attributeChanged()`
+
+Function that is called when an attribute changes value (added, updated or removed).
+
+```js
+customElements.define('my-component', class extends skate.Component {
+  attributeChangedCallback (name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+  }
+});
+```
+
+*The default implementation in `skate.Component` will sync linked props, so you should make sure to call it back if you override it.*
+
+
+
+### `static observedAttributes`
+
+The attributes that trigger `attributeChangedCallback` [as per the spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
+
+```js
+customElements.define('my-component', class extends skate.Component {
+  static get observedAttributes () {
+    return super.observedAttributes.concat('my-attribute');
+  }
+});
+```
+
+*The default implementation in `skate.Component` will return attributes linked to props, so you should make sure to do something with the default value if you override it.*
+
+
+
+### `static props`
+
+Custom properties that should be defined on the element. These are set up in the `constructor`.
+
+```js
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {};
+  }
+});
+```
+
+Declare properties that (when mutated) cause the component re-render.
 
 The custom property definition accepts the following options.
 
 
 
-##### `attribute`
+#### `attribute`
 
 Whether or not to link the property to an attribute. This can be either a `Boolean` or `String`.
 
@@ -408,31 +456,35 @@ Whether or not to link the property to an attribute. This can be either a `Boole
 Attributes are set from props on your element once it is inserted into the DOM.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      attribute: true
-    }
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: { attribute: true }
+    };
   }
 });
 ```
 
 *When you declare a linked attribute, it automatically adds this attribute to the list of `observedAttributes`.*
 
+*Even though property values are set up in the `constructor`, attributes are not synced until `connectedCallback()` is invoked.*
 
 
-##### `coerce`
+
+#### `coerce`
 
 A function that coerces the incoming property value and returns the coerced value. This value is used as the internal value of the property.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      coerce (value) {
-        return value;
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        coerce (value) {
+          return value;
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -443,16 +495,18 @@ The parameters passed to the function are:
 
 
 
-##### `default`
+#### `default`
 
 Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being empty, the `default` value will be used instead.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      default: 'default value'
-    }
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        default: 'default value'
+      }
+    };
   }
 });
 ```
@@ -461,13 +515,15 @@ You may also specify a function that returns the default value. This is useful i
 
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      default (elem, data) {
-        return [];
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        default (elem, data) {
+          return [];
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -482,18 +538,20 @@ The parameters passed to the function are:
 
 
 
-##### `deserialize`
+#### `deserialize`
 
 A function that converts the linked attribute value to the linked property value.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      deserialize (value) {
-        return value.split(',');
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        deserialize (value) {
+          return value.split(',');
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -504,18 +562,20 @@ The parameters passed to the function are:
 
 
 
-##### `get`
+#### `get`
 
 A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      get (elem, data) {
-        return `prefix_${data.internalValue}`;
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        get (elem, data) {
+          return `prefix_${data.internalValue}`;
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -529,16 +589,18 @@ The parameters passed to the function are:
 
 
 
-##### `initial`
+#### `initial`
 
 The initial value the property should have. This is different from `default` in the sense that it is only ever invoked once to set the initial value. If this is not specified, then `default` is used in its place.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      initial: 'initial value'
-    }
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        initial: 'initial value'
+      }
+    };
   }
 });
 ```
@@ -546,13 +608,15 @@ skate.define('my-component', {
 It can also be a function that returns the initial value:
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      initial (elem, data) {
-        return 'initial value';
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        initial (elem, data) {
+          return 'initial value';
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -567,18 +631,20 @@ The parameters passed to the function are:
 
 
 
-##### `serialize`
+#### `serialize`
 
 A function that converts the linked property value to the linked attribute value.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      serialize (value) {
-        return value.join(',');
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        serialize (value) {
+          return value.join(',');
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -589,18 +655,20 @@ The parameters passed to the function are:
 
 
 
-##### `set`
+#### `set`
 
 A function that is called whenever the property is set. This is also called when the property is first initialised.
 
 ```js
-skate.define('my-component', {
-  props: {
-    myProp: {
-      set (elem, data) {
-        // do something
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      myProp: {
+        set (elem, data) {
+          // do something
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -619,35 +687,35 @@ When the property is initialised, `oldValue` will always be `undefined` and `new
 
 
 
-#### `created`
+### `prototype`
 
-Function that is called when the element is created. This gets called during element construction. We don't use `constructor` here because Skate does a lot of automation in it and thus offers this as a way to hook into that part of the lifecycle. It is the first lifecycle callback that is called and is called after the `prototype` is set up.
+Specifying methods and properties on your custom element is done simply by adding them to the prototype as you would with any web component.
 
 ```js
-skate.define('my-component', {
-  created (elem) {}
+customElements.define('my-component', class extends skate.Component {
+  get someProperty () {}
+  set someProperty () {}
+  someMethod () {}
 });
 ```
 
-The only argument passed to `created` is component element. In this case that is `<my-component>`.
 
 
+#### `updatedCallback` - supersedes `static updated()`
 
-#### `updated`
-
-Called before `render()` after `props` are updated. If it returns falsy, `render()` is not called. If it returns truthy, `render()` is called.
+Called before `renderCallback()` after `props` are updated. If it returns falsy, `renderCallback()` is not called. If it returns truthy, `renderCallback()` is called.
 
 ```js
-skate.define('x-component', {
-  updated(elem, prevProps) {
+customElements.define('x-component', class extends skate.Component {
+  updatedCallback (previousProps) {
     // The previous props will not be defined if it is the initial render.
-    if (!prevProps) {
+    if (!previousProps) {
       return true;
     }
 
     // The previous props will always contain all of the keys.
-    for (let name in prevProps) {
-      if (prevProps[name] !== elem[name]) {
+    for (let name in previousProps) {
+      if (previousProps[name] !== this[name]) {
         return true;
       }
     }
@@ -657,22 +725,26 @@ skate.define('x-component', {
 
 The default implementation does what is described in the example above:
 
-- If it is the initial update, always call `render()`
-- If any of the properties have changed according to a strict equality comparison, always call `render()`
-- In any other scenario, don't render
+- If it is the initial update, always call `renderCallback()`.
+- If any of the properties have changed according to a strict equality comparison, always call `renderCallback()`.
+- In any other scenario, don't render.
 
 This generally covers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
 
 ```js
-const Elem = skate.define('x-component', {
-  props: {
-    str: skate.prop.string(),
-    arr: skate.prop.array(),
-  },
-  render() {
+class Elem extends skate.Component {
+  static get props () {
+    return {
+      str: skate.prop.string(),
+      arr: skate.prop.array()
+    }
+  }
+  renderCallback () {
+    return skate.h('div', 'testing');
+  }
+}
 
-  },
-});
+customElements.define('x-element', Elem);
 
 const elem = new Elem();
 
@@ -686,9 +758,9 @@ elem.arr.push('something');
 elem.arr = elem.arr.concat('something');
 ```
 
-*It is not called if the element is not in the document for the same reasons as `render()`.*
+*It is not called if the element is not in the document for the same reasons as `renderCallback()`.*
 
-*If you set properties within `updated()`, they will not cause it to be called more than once.*
+*If you set properties within `updatedCallback()`, they will not cause it to be called more than once.*
 
 *The code you write in here is performance critical.*
 
@@ -696,28 +768,30 @@ elem.arr = elem.arr.concat('something');
 
 ##### Other use-cases
 
-Generally you'll probably supply a `render()` function for most of your components. If you require special checks for your props, you can override it:
+Generally you'll probably supply a `renderCallback()` function for most of your components. If you require special checks for your props, you can override it:
 
 ```js
-skate.define('my-component', class extends skate.Component {
-  static updated(elem, prev) {
+customElements.define('my-component', class extends skate.Component {
+  updatedCallback (prev) {
     // You can reuse the original check if you want as part of your new check.
     // You could also call it directly if not extending: skate.Component().
-    return super.updated(elem, prev) && myCustomCheck(elem, prev);
+    return super.updated(prev) && myCustomCheck(this, prev);
   }
 });
 ```
 
-If you don't have a `render()` function, sometimes it's still useful to respond to property updates:
+If you don't have a `renderCallback()` function, sometimes it's still useful to respond to property updates:
 
 ```js
-skate.define('my-component', {
-  props: {
-    name: skate.prop.string()
-  },
-  updated(elem, prev) {
-    if (prev.name !== next.name) {
-      skate.emit(elem, 'name-changed', { detail: prev });
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      name: skate.prop.string()
+    };
+  }
+  updatedCallback (prev) {
+    if (prev.name !== this.name) {
+      skate.emit(this, 'name-changed', { detail: prev });
     }
   }
 });
@@ -725,14 +799,14 @@ skate.define('my-component', {
 
 
 
-#### `render`
+#### `renderCallback` - supersedes `static render()`
 
-Function that is called to render the element. This is called when the element is first created and on subsequent prop updates if the property `updated()` callback returns `true`.
+Function that is called to render the element.
 
 ```js
-skate.define('my-component', {
-  render(elem) {
-    return skate.h('p', `My name is ${elem.tagName}.`);
+customElements.define('my-component', class extends skate.Component {
+  renderCallback () {
+    return skate.h('p', `My name is ${this.tagName}.`);
   }
 });
 ```
@@ -740,8 +814,8 @@ skate.define('my-component', {
 You may also return an array which negates the need to put a wrapper around several elements:
 
 ```js
-skate.define('my-component', {
-  render(elem) {
+customElements.define('my-component', class extends skate.Component {
+  renderCallback () {
     return [
       skate.h('paragraph 1'),
       skate.h('paragraph 2'),
@@ -750,118 +824,90 @@ skate.define('my-component', {
 });
 ```
 
-The above isn't restricted to the `vdom.builder()` API, either; it works with all forms of declaring your virtual DOM.
-
-*It is not called if the element is not in the document. It will be called just before `attached` so that it renders as early as possible, but only if necessary.*
-
-*Updating props from within `render()`, while discouraged, will not trigger another render.*
-
-*Returning the result of your `vdom` calls is only required when you're using `vdom.builder()` or `h`. It is not required when using the (now deprecated) `vdom.element()` and `vdom.text()` calls, or if you're using Incremental DOM directly.*
 
 
+##### Return Value
 
-#### `rendered`
+The return value of `renderCallback()` should be either the result of a `skate.h` call, or an array of `skate.h` calls. Calling the deprecated `vdom.element()` and `vdom.text()` calls are not supported here (though they may still work). They are only supported in the deprecated `static render()` callback.
 
-Called after the component has rendered (i.e. called `render()`). If you need to do any DOM manipulation that can't be done in refs, you can do it here. This is not called if `updated()` prevents rendering, or `render()` is not defined.
+*It is not called if the element is not in the document. It will be called in `connectedCallback()` so that it renders as early as possible, but only if necessary.*
+
+*Updating props from within `renderCallback()`, while discouraged, will not trigger another render.*
 
 
 
-#### `attached`
+See also:
 
-Function that is called after the element has been inserted to the document. This corresponds to the native `attachedCallback`. This can be called several times, for example, if you were to remove the element and re-insert it.
+- [`updatedCallback()`](#updatedcallback---supersedes-static-updated)
+- [`renderedCallback()`](#renderedcallback---supersedes-static-rendered)
+
+
+
+#### `renderedCallback` - supersedes `static rendered()`
+
+Called after the component has rendered (i.e. called `renderCallback()`). If you need to do any DOM manipulation that can't be done in a `ref`, you can do it here. This is not called if `updatedCallback()` prevents rendering, or `renderCallback()` is not defined.
+
+
+
+### `define (nameOrConstructor, Constructor)`
+
+The `define()` function is syntactic sugar on top of `customElements.define()` that enables the following things:
+
+1. Non-conflicting custom element names
+2. Automated custom element names
+
+Both non-conflicting names and automated names are complementary and derive from the same functionality. Basically, if you were to do:
 
 ```js
-skate.define('my-component', {
-  attached (elem) {}
+customElements.define('x-test', class extends HTMLElement {});
+customElements.define('x-test', class extends HTMLElement {});
+```
+
+Then you'd get an error. Similarly, you could do this:
+
+```js
+skate.define('x-test', class extends HTMLElement {});
+skate.define('x-test', class extends HTMLElement {});
+```
+
+Skate will ensure that the second definition gets a unique name prefixed with `x-test`. This is immensely useful when writing tests because you don't need to keep track of what's already registered, but it can also be useful if you have several versions of a particular component appearing on the page. The only caveat is that if you need the tag name that the element was registered with, you have to use the constructor and access the `tagName` property. However, if you have access to the constructor, it's likely you don't need the tag name in the first place.
+
+You may also omit the first argument, making your custom elements autonomous. This is useful if you're building your app comprised entirely of Skate and your components will only be used within a Skate app.
+
+```js
+skate.define(class extends skate.Component {
+  renderCallback () {}
 });
 ```
 
-The only argument passed to `attached` is component element. In this case that is `<my-component>`.
+This works well because you can pass around constructors within your Skate components and you won't ever need to worry about HTML tag naming conventions.
+
+*Autonomous custom element names aren't recommended if you're exposing your components outside of your app because then one wouldn't be able to just write HTML as they wouldn't know the tag name.*
 
 
 
-#### `detached`
+#### WebPack Hot-Module Reloading
 
-Function that is called after the element has been removed from the document. This corresponds to the native `detachedCallback`. This can be called several times, for example, if you were to remove the element, re-attach it and the remove it again.
+If you're using HMR and the standard `customElements.define()`, you'll run into issues if you've defined your component a module that reloads. If this is the case, you can use `skate.define()` to ensure each registration has a unique name.
 
-```js
-skate.define('my-component', {
-  detached (elem) {}
-});
-```
-
-The only argument passed to `detached` is component element. In this case that is `<my-component>`.
-
-
-
-#### `attributeChanged`
-
-Function that is called whenever an attribute is added, updated or removed. This corresponds to the native `attributeChangedCallback`. Generally, you'll probably end up using `props` that have linked attributes instead of this callback, but there are still use cases where this could come in handy.
-
-```js
-skate.define('my-component', {
-  attributeChanged (elem, data) {
-    if (data.oldValue === undefined) {
-      // created
-    } else if (data.newValue === undefined) {
-      // removed
-    } else {
-      // updated
-    }
-  }
-});
-```
-
-The arguments passed to the `attributeChanged()` callback differ from the native `attributeChangedCallback()` to provide consistency and predictability with the rest of the Skate API:
-
-- `elem` is the component element
-- `data` is an object containing attribute `name`, `newValue` and `oldValue`. If `newValue` and `oldValue` are empty, the values are `undefined`.
-
-
-
-#### `observedAttributes`
-
-This behaves exactly like described in the [spec](http://w3c.github.io/webcomponents/spec/custom/#custom-elements-autonomous-example).
-
-For example, the following:
-
-```js
-skate.define('my-component', {
-  observedAttributes: ['some-attribute'],
-  attributeChanged () {}
-});
-```
-
-Could similarly be written as:
-
-```js
-skate.define('my-component', {
-  props: {
-    someAttribute: { attribute: true }
-  }
-});
-```
-
-The differences being that as a result of defining it as a property, it is now linked to an attribute and will cause a re-render. If you only want to observe attribute changes within the `attributeChanged()` callback, then that is totally valid.
-
-*Observing attributes directly using `observedAttributes` doesn't make sense without specifying an `attributeChanged()` callback.*
+*Skate cannot refresh the component definition as there is no way to reregister a component using the web component APIs.*
 
 
 
 ### `emit (elem, eventName, eventOptions = {})`
 
-Emits an `Event` on `elem` that `composed`, `bubbles` and is `cancelable` by default, or a 'CustomEvent' in older browsers such as IE. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits an `Event` on `elem` that is `composed`, `bubbles` and is `cancelable` by default. It also ensures a 'CustomEvent' is emitted properly in browsers that don't support using `new CustomEvent()`. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
 
 ```js
-skate.define('x-tabs', {
-  render(elem) {
+customElements.define('x-tabs', class extends skate.Component {
+  renderCallback () {
     return skate.h('x-tab', { onSelect: () => {} });
   }
 });
 
-skate.define('x-tab', {
-  render(elem) {
-    return skate.h('a', { onClick: () => emit(elem, 'select') });
+customElements.define('x-tab', class extends skate.Component {
+  renderCallback () {
+    return skate.h('a', { onClick: () => skate.emit(this, 'select') });
   }
 });
 ```
@@ -874,7 +920,7 @@ The return value of `emit()` is the same as [`dispatchEvent()`](https://develope
 
 #### Preventing Bubbling or Canceling
 
-If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify those options in the `eventOptions` argument.
+If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify the standard event options in the `eventOptions` argument.
 
 ```js
 skate.emit(elem, 'event', {
@@ -905,12 +951,14 @@ skate.emit(elem, 'event', {
 The `link()` function returns a function that you can bind as an event listener. The handler will take the event and propagate the changes back to the host element. This essentially allows for 2-way data-binding, but is safer as the propagation of the user input value back to the component element will trigger a re-render, ensuring all dependent UI is up to date.
 
 ```js
-skate.define('my-input', {
-  props: {
-    value: { attribute: true }
-  },
-  render (elem) {
-    return skate.h('input', { onChange: skate.link(elem), type: 'text' });
+customElements.define('my-input', class extends skate.Component {
+  static get props () {
+    return {
+      value: { attribute: true }
+    };
+  }
+  renderCallback () {
+    return skate.h('input', { onChange: skate.link(this), type: 'text' });
   }
 });
 ```
@@ -918,7 +966,7 @@ skate.define('my-input', {
 By default the `propSpec` defaults to `e.currentTarget.getAttribute('name')` or `"value"` which is why it wasn't specified in the example above. In the example above, it would set `value` on the component. If you were to give your input a name, it would use the name from the event `currentTarget` as the name that should be set. For example if you changed your input to read:
 
 ```js
-skate.h('input', { name: 'someValue', onChange: skate.link(elem), type: 'text' });
+skate.h('input', { name: 'someValue', onChange: skate.link(this), type: 'text' });
 ```
 
 Then instead of setting `value` on the component, it would set `someValue`.
@@ -926,7 +974,7 @@ Then instead of setting `value` on the component, it would set `someValue`.
 You may explicitly set the property you would like to set by specifying a second argument to `link()`:
 
 ```js
-skate.link(elem, 'someValue')
+skate.link(this, 'someValue')
 ```
 
 The above link would set `someValue` on the component.
@@ -934,7 +982,7 @@ The above link would set `someValue` on the component.
 You can also use dot-notation to reach into objects. If you do this, the top-most object will trigger a re-render of the component.
 
 ```js
-skate.link(elem, 'obj.someValue')
+skate.link(this, 'obj.someValue')
 ```
 
 In the above example, the `obj` property would trigger an update even though only the `someValue` sub-property was changed. This is so you don't have to worry about re-rendering.
@@ -942,13 +990,13 @@ In the above example, the `obj` property would trigger an update even though onl
 You can even take this a step further and specify a sub-object to modify using the name of the `currentTarget` (or `value`, of course) if `propSpec` ends with a `.`. For example:
 
 ```js
-skate.h('input', { name: 'someValue', onChange: skate.link(elem, 'obj.'), type: 'text' });
+skate.h('input', { name: 'someValue', onChange: skate.link(this, 'obj.'), type: 'text' });
 ```
 
 The above example would set `obj.someValue` because the name of the input was `someValue`. This doesn't look much different from the previous example, but this allows you to create a single link handler for use with multiple inputs:
 
 ```js
-const linkage = skate.link(elem, 'obj.');
+const linkage = skate.link(this, 'obj.');
 skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
 skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
 skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
@@ -1038,11 +1086,14 @@ Component state is derived from the declared properties. It will only ever retur
 ```js
 import { define, props } from 'skatejs';
 
-const Elem = define('my-element', {
-  props: {
-    prop1: null
+class Elem extends skate.Component {
+  static get props () {
+    return {
+      prop1: {}
+    };
   }
 });
+customElements.define('my-element', Elem);
 const elem = new Elem();
 
 // Set any property you want.
@@ -1097,48 +1148,6 @@ In this example, we are loading `component-a` before `component-b` and the same 
 
 
 
-### `symbols`
-
-Symbols allow you to access object information which would be otherwise inaccessible.
-
-#### `name`
-
-The `name` symbol can be used to retrieve the tag name of the component from the constructor. This will be the tag name the component was registered with. If the component has been re-registered with a unique name (see [Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr)) then this will be the unique name.
-
-```js
-const MyComponent1 = skate.define('my-component', {});
-
-// my-component
-console.log(MyComponent1[skate.symbols.name]);
-
-// If re-registering in HMR...
-const MyComponent2 = skate.define('my-component', {});
-
-// my-component-1
-console.log(MyComponent2[skate.symbols.name]);
-```
-
-
-
-#### `shadowRoot`
-
-When a component renders for the first time, it creates a new shadow root - if it can - and stores this shadow root on the element using this symbol. If a shadow root cannot be created, this returns the element itself.
-
-```js
-skate.define('my-component', {
-  render() {
-    return skate.h('p', 'test');
-  },
-  ready(elem) {
-    // #shadow-root
-    //   <p>test</p>
-    elem[skate.symbols.shadowRoot];
-  }
-});
-```
-
-
-
 ### `h`
 
 The `h` export is the result of a call to `vdom.builder()` that allows you to write [Hyperscript](https://github.com/dominictarr/hyperscript). This also adds first-class JSX support so you can just set the JSX `pragma` to `h` and carry on building stuff.
@@ -1148,8 +1157,8 @@ The `h` export is the result of a call to `vdom.builder()` that allows you to wr
 You can use the `h` export to write Hyperscript:
 
 ```js
-skate.define('my-component', {
-  render() {
+customElements.define('my-component', class extends skate.Component {
+  renderCallback () {
     return skate.h('p', { style: { fontWeight: 'bold' } }, 'Hello!');
   }
 });
@@ -1180,9 +1189,10 @@ It's preferred that you set the JSX `pragma` to `h` (or `skate.h` if you're usin
 }
 
 // my-component.js
-import { define, h } from 'skatejs';
-define('my-component', {
-  render() {
+import { Component, h } from 'skatejs';
+
+customElements.define('my-component', class extends Component {
+  renderCallback () {
     return <p>Hello!</p>;
   }
 });
@@ -1195,10 +1205,10 @@ define('my-component', {
 If you don't have control over the `pragma`, you can get around it by defining the `React.createElement()` interface with the `h` export.
 
 ```js
-import { define, h } from 'skatejs';
+import { Component, h } from 'skatejs';
 const React = { createElement: h };
-define('my-component', {
-  render() {
+customElements.define('my-component', class extends Component {
+  renderCallback () {
     return <p>Hello!</p>;
   }
 });
@@ -1222,14 +1232,16 @@ IncrementalDOM = skate.vdom;
 // so the functions are in scope.
 const { elementOpen, elementOpenStart, elementVoid } = skate.vdom;
 
-skate.define('my-element', {
-  props: {
-    title: skate.prop.string()
-  },
-  render (elem) {
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      title: skate.prop.string()
+    };
+  }
+  renderCallback () {
     return (
       <div>
-        <h1>{elem.title}</h1>
+        <h1>{this.title}</h1>
         <slot name="description" />
         <article>
           <slot />
@@ -1250,12 +1262,12 @@ Skate includes several helpers for creating virtual elements with Incremental DO
 
 #### `vdom.builder ()`
 
-Calling `vdom.builder()` without any arguments returns a function that you can call in `render()` to create elements. This is how the `h` export is created.
+Calling `vdom.builder()` without any arguments returns a function that you can call in `renderCallback()` to create elements. This is how the `h` export is created.
 
 ```js
 const h = vdom.builder();
-define('my-component', {
-  render() {
+customElements.define('my-component', class extends skate.Component {
+  renderCallback () {
     return h('div', { id: 'test', }, h('p', 'test'));
   }
 });
@@ -1269,8 +1281,8 @@ When `vdom.builder()` is called with arguments, it returns an array of functions
 
 ```js
 const [ div, p ] = skate.vdom.builder('div', 'p');
-define('my-component', {
-  render() {
+customElements.define('my-component', class extends skate.Component {
+  renderCallback() {
     return div({ id: 'mydiv' }, p('test'));
   }
 });
@@ -1330,7 +1342,8 @@ We wrap Incremental DOM to add functionality on top of it that we feel is essent
 If you pass a component constructor instead of an string as the element name, the name of the component will be used. This means that instead of using hard-coded custom element names, you can import your constructor and pass that instead:
 
 ```js
-const MyElement = skate.define('my-element');
+class MyElement extends skate.Component {}
+customElements.define('my-element', MyElement);
 
 // Renders <my-element />
 skate.h(MyElement);
@@ -1436,15 +1449,15 @@ skate.h('button', { onclick: onClick });
 if you need to bind listeners directly to your host element, you should do this in one of your lifecycle callbacks:
 
 ```js
-skate.define('x-element', {
-  created(elem) {
-    elem.addEventListener('change', elem.handleChange);
-  },
-  prototype: {
-    handleChange(e) {
-      // `this` is the element.
-      // The event is passed as the only argument.
-    }
+customElements.define('my-element', class extends skate.Component {
+  constructor () {
+    super();
+    this.addEventListener('change', this.handleChange);
+  }
+
+  handleChange(e) {
+    // `this` is the element.
+    // The event is passed as the only argument.
   }
 });
 ```
@@ -1462,22 +1475,22 @@ skate.h('button', { ref });
 
 Refs are only called on the element when the value of `ref` changes. This means they get called on the initial set, and subsequent sets if the reference to the value changes.
 
-For example, if you define a function outside of `render()`, it will only be called when the element is rendered for the first time:
+For example, if you define a function outside of `renderCallback()`, it will only be called when the element is rendered for the first time:
 
 ```js
 const ref = console.log;
-skate.define('my-element', {
-  render() {
+customElements.define('my-element', class extends skate.Component {
+  renderCallback () {
     return skate.h('div', { ref });
   }
 });
 ```
 
-However, if you define the `ref` function within `render()`, it will be a new reference every time, and thus be called every time:
+However, if you define the `ref` function within `renderCallback()`, it will be a new reference every time, and thus be called every time:
 
 ```js
-skate.define('my-element', {
-  render() {
+customElements.define('my-element', class extends skate.Component {
+  renderCallback () {
     const ref = console.log;
     return skate.h('div', { ref });
   }
@@ -1514,21 +1527,6 @@ If you specify `false` as any attribute value, the attribute will not be added, 
 
 
 
-## Component Lifecycle
-
-The component lifecycle consists of several paths in the following order starting from when the element is first created.
-
-1. `props` are defined and set to initial values
-2. `created` is invoked
-3. `attached` is invoked when added to the document (or if already in the document)
-4. `updated` is always invoked before `render()` when properties have changed
-5. `render` is invoked to render an HTML structure to the component if it is not prevented by `updated()`
-6. `rendered` is always invoked after `render()`, if it is not prevented by `updated()`
-7. `detached` is invoked when removed from the document
-8. `attributeChanged` is invoked whenever an attribute is changed
-
-
-
 ## Customised built-in elements
 
 The spec [mentions](http://w3c.github.io/webcomponents/spec/custom/#customized-built-in-element) this as a way to extend built-in elements. Currently, how this is exposed to the user is still [under contention](https://github.com/w3c/webcomponents/issues/509#issuecomment-222860736). Skate doesn't need do anything to support this underneath the hood, but be aware of this when building components.
@@ -1552,7 +1550,7 @@ WebComponentsJS is a suite of polyfills. If there is native browser support, the
 
 Polymer uses webcomponentsjs and adds an abstraction on top of it. In their high-level design, Skate and Polymer are very similar in that they're built on top of emerging standards. However, fundamentally, Skate and Polymer are very different.
 
-- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `render()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
+- Skate uses a functional programming model for rendering in which you can use any templating language you want that compiles down to Incremental DOM. It calls `renderCallback()` when something changes and then tells Incremental DOM to diff and patch what's different between the two states. With Polymer, you use their custom template syntax that creates links between properties and mutations happen to the DOM directly.
 - Skate only has a single option for its usage, making it simpler to grok what you're getting. Polymer has three different builds, most of which Skate is smaller than. The following comparisons are using non-gzipped, minified versions.
   - `polymer-micro.html` 17k vs 11k
   - `polymer-mini.html` 54k vs 11k
@@ -1612,7 +1610,9 @@ A web component's public API should be available both imperatively (via JavaScri
 You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
 
 ```js
-export default skate.define('my-component', {});
+class MyComponent extends skate.Component {}
+customElements.define('my-component', MyComponent);
+export default MyComponent;
 ```
 
 
@@ -1622,7 +1622,7 @@ export default skate.define('my-component', {});
 By declaring a Skate component, you are automatically making your element available to be used as HTML. For example, if you were to create a custom element for a video player:
 
 ```js
-skate.define('x-video', {});
+customElements.define('x-video', class extends skate.Component {});
 ```
 
 You could now just write:
@@ -1651,19 +1651,15 @@ The nice part about thinking this way is that you get both a declarative and imp
 
 ### Naming Collisions
 
-You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. You could rename your component so it can co-exist with the old one, or you can create a function that allows your users to define a name for your component:
+You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. One option is to choose a different name for your component, but that may not be ideal. You could also use `skate.define()` to ensure the name is unique. An ideal solution would be to only export your constructor and let the consumer register it.
 
 ```js
-export default function (name) {
-  return skate.define(name, {
-    render (elem) {
-      return skate.h('div', `This element has been called: ${elem.tagName}.`);
-    }
-  });
+export default class extends skate.Component {
+  renderCallback () {
+    return skate.h('div', `This element has been called: ${this.tagName}.`);
+  }
 }
 ```
-
-*If you define the same component more than once, Skate will choose a unique name for subsequent registrations after the first. This generally is something you'd want to avoid, but it is very helpful during development. For more information see the [HMR docs](#multiple-component-names-and-hot-module-reloading-aka-webpack-hmr).*
 
 
 
@@ -1678,10 +1674,12 @@ Skate is designed so that you can have multiple versions of it on the same page.
 Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, its API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
 
 ```js
-skate.define('my-component', {
-  props: {
-    // Links the `name` property to the `name` attribute.
-    name: { attribute: true }
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      // Links the `name` property to the `name` attribute.
+      name: { attribute: true }
+    };
   }
 });
 ```
@@ -1689,17 +1687,19 @@ skate.define('my-component', {
 Sometimes this may not be viable, for example when passing complex data types to attributes. In this scenario, you can try and serialize / deserialize to / from attributes. For example, if you wanted to take a comma-separated list in an attribute and have the property take an array, but still have them linked, you could do something like:
 
 ```js
-skate.define('my-component', {
-  props: {
-    values: {
-      attribute: true,
-      deserialize (val) {
-        return val.split(',');
-      },
-      serialize (val) {
-        return val.join(',');
+customElements.define('my-component', class extends skate.Component {
+  static get props () {
+    return {
+      values: {
+        attribute: true,
+        deserialize (val) {
+          return val.split(',');
+        },
+        serialize (val) {
+          return val.join(',');
+        }
       }
-    }
+    };
   }
 });
 ```
@@ -1713,14 +1713,13 @@ Skate doesn't have any opinions on how you store or use private methods and prop
 ```js
 function scoped(elem) {}
 
-skate.define('x-element', {
-  created(elem) {
-    scoped(elem);
-    elem._privateButNotReally();
-  },
-  prototype: {
-    _privateButNotReally() {}
+customElements.define('my-component', class extends skate.Component {
+  constructor () {
+    super();
+    scoped(this);
+    this._privateButNotReally();
   }
+  _privateButNotReally() {}
 });
 ```
 
@@ -1729,12 +1728,13 @@ However, if you're using ES2015 you can use symbols. Using this pattern, your me
 ```js
 const sym = Symbol();
 
-skate.define('x-element', {
-  created(elem) {
-    elem[sym]();
-  },
-  prototype: {
-    [sym]() {}
+customElements.define('my-component', class extends skate.Component {
+  constructor () {
+    super();
+    this[sym]();
+  }
+  [sym]() {
+
   }
 });
 ```
@@ -1749,13 +1749,13 @@ The best way to do this depends on your needs. Generally a `WeakMap` is a good c
 ```js
 const map = new WeakMap();
 
-skate.define('x-element', {
-  created(elem) {
-    map.set(elem, 'some data');
+customElements.define('my-component', class extends skate.Component {
+  constructor () {
+    map.set(this, 'some data');
   },
-  render(elem) {
+  renderCallback () {
     // Renders: "<div>some data</div>"
-    return skate.h('div', map.get(elem));
+    return skate.h('div', map.get(this));
   }
 });
 ```
@@ -1767,19 +1767,6 @@ You can also use symbols on your element just like we did above with standard me
 ## React Integration
 
 There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components - written with any *true* web component library - and convert them to react components using a single function. Once converted, it can be used in React just like you would use a normal React component.
-
-
-
-## Multiple Component Names and Hot Module Reloading (a.k.a. Webpack HMR)
-
-Skate is designed to work with hot-module reloading out of the box:
-
-- It will always use the canonical name on the initial registration
-- Subsequent registrations will register using the canonical name with a number suffix to identify how many times it's been registered
-
-*Skate cannot refresh the component definition as there is no way to reregister a component using the web component APIs.*
-
-While this makes the name non-deterministic, you can still get the name from the constructor if you need to using the [`name` symbol](#name).
 
 
 
@@ -1802,8 +1789,8 @@ Let's say we have a custom form and custom button (to reproduce, only one of the
 The definitions look like the following:
 
 ```js
-skate.define('x-form', {
-  render() {
+customElements.define('x-form', class extends skate.Component {
+  renderCallback () {
     return (
       <form>
         <slot />
@@ -1812,8 +1799,8 @@ skate.define('x-form', {
   }
 });
 
-skate.define('x-button', {
-  render() {
+customElements.define('x-button', class extends skate.Component {
+  renderCallback () {
     return (
       <button>
         <slot />
@@ -1826,7 +1813,7 @@ skate.define('x-button', {
 To wire this up we listen for clicks coming from something that has a `type` of `"submit"`. You can also check for type, but for the sake of simplicity, we'll just check for `type`:
 
 ```js
-function onclick (e) {
+function onClick (e) {
   if (e.target.getAttribute('type') === 'submit') {
     // do something submitty
   }
@@ -1836,13 +1823,13 @@ function onclick (e) {
 Now all you need to do is put that on the `<form>` inside of `<x-form>`:
 
 ```js
-<form { onclick }>
+<form { onClick }>
 ```
 
 You cane take this a step further and emit a `submit` event on the form and call `submit()` on it if the event wasn't canceled:
 
 ```js
-function onclick (e) {
+function onClick (e) {
   if (e.target.getAttribute('type') === 'submit') {
     if (skate.emit(e.currentTarget, 'submit')) {
       e.currentTarget.submit();
@@ -1854,7 +1841,7 @@ function onclick (e) {
 The full example looks like:
 
 ```js
-function onclick (e) {
+function onClick (e) {
   if (e.target.getAttribute('type') === 'submit') {
     if (skate.emit(e.currentTarget, 'submit')) {
       e.currentTarget.submit();
@@ -1862,18 +1849,18 @@ function onclick (e) {
   }
 }
 
-skate.define('x-form', {
-  render() {
+customElements.define('x-form', class extends skate.Component {
+  renderCallback () {
     return (
-      <form>
+      <form { onClick }>
         <slot />
       </form>
     );
   }
 });
 
-skate.define('x-button', {
-  render() {
+customElements.define('x-button', class extends skate.Component {
+  renderCallback () {
     return (
       <button>
         <slot />
@@ -1900,23 +1887,23 @@ If you write a component that manages its props internally, this is called a "sm
 However, there is one way where you can write a smart component and it can be made "dumb" as part of its API by emitting an event that allows any listeners to optionally prevent it from updating, or to simply update it with new props that it should render with.
 
 ```js
-skate.define('x-component', {
-  updated(elem, prev) {
+customElements.define('x-component', class extends skate.Component {
+  updatedCallback (prev) {
     // Notify any listeners that the component updated. At this point the
     // listener can update the component's props without fear that this will
     // cause recursion - because it's prevented internally - and it will
     // proceed past this point with the updated props.
-    const canRender = skate.emit(elem, 'updated', { detail: prev });
+    const canRender = skate.emit(this, 'updated', { detail: prev });
 
     // This can be custom, or just reuse the default implementation. Since we
     // emitted the event and listeners had a chance to update the component,
     // this will get called with the updated state.
-    return canRender && skate.Component.updated(elem, prev);
+    return canRender && super.updatedCallback(prev);
   }
 });
 ```
 
-The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updated()` check.
+The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updatedCallback()` check.
 
 
 
@@ -1925,8 +1912,8 @@ The previous example emits an event that bubbles and is cancelable. If it is can
 In order to style your components, you should assume Shadow DOM encapsulation. The best-practice here is to simply put styles into a `<style>` block:
 
 ```js
-skate.define('x-component', {
-  render() {
+customElements.define('x-component', class extends skate.Component {
+  renderCallback () {
     return [
       skate.h('style', '.my-class { display: block; }'),
       skate.h('div', { class: 'my-class' }),
@@ -1935,48 +1922,4 @@ skate.define('x-component', {
 });
 ```
 
-If you want to ensure your styles are encapsulated even if using a polyfill, use [CSS Modules](https://github.com/css-modules/css-modules), they are absolutely amazing!
-
-## Using ES2015 classes
-
-When using ES2015 classes, there are slight differences to how you'd specify things when using an object literal. For example, lifecycle callbacks become `static`:
-
-```js
-skate.define('x-component', class extends skate.Component {
-  static created(elem) {}
-  static attached(elem) {}
-  static detached(elem) {}
-});
-```
-
-This also means properties like `props` must be specified as a getter:
-
-```js
-skate.define('x-component', class extends skate.Component {
-  static get props () {
-    return {
-      myProp: { attribute: true }
-    };
-  }
-});
-```
-
-Or a class property:
-
-```js
-skate.define('x-component', class extends skate.Component {
-  static props = {
-    myProp: { attribute: true }
-  }
-});
-```
-
-Adding instance methods to the element prototype is done by simply specifying them as non-static items:
-
-```js
-skate.define('x-component', class extends skate.Component {
-  myProp1 = 'some value'
-  get myProp2 () { return 'another value'; }
-  myMethod() {}
-});
-```
+If you want to ensure your styles are encapsulated even if using a polyfill, you can use something like [CSS Modules](https://github.com/css-modules/css-modules).

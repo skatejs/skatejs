@@ -1,11 +1,10 @@
 /* eslint-env jasmine, mocha */
 
-import { define } from '../../../src';
-import element from '../../lib/element';
+import { Component, define } from '../../../src';
 import fixture from '../../lib/fixture';
 import afterMutations from '../../lib/after-mutations';
 
-describe('lifecycle/attribute-changed', () => {
+describe('deprecated/lifecycle/attribute-changed', () => {
   let fixtureArea;
 
   beforeEach(() => {
@@ -18,9 +17,11 @@ describe('lifecycle/attribute-changed', () => {
 
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
     let test = false;
-    const Elem = define('x-test', {
-      observedAttributes: ['test'],
-      attributeChanged (elem, data) {
+    const Elem = define('x-test', class extends Component {
+      static get observedAttributes () {
+        return ['test'];
+      }
+      static attributeChanged (elem, data) {
         // We have an issue right now where attributeChanged is fired twice in
         // polyfill - once for init and once for set - so we must only check
         // this after setting.
@@ -43,19 +44,18 @@ describe('lifecycle/attribute-changed', () => {
 
   it('attributes that are defined as properties should call attributeChanged callback', (done) => {
     let counter = 0;
-
-    // eslint-disable-next-line new-parens
-    const elem = new (element().skate({
-      attributeChanged () {
-        counter += 1;
-      },
-      props: {
-        test: {
-          attribute: true
-        }
+    const elem = new (define(class extends Component {
+      static get props () {
+        return {
+          test: {
+            attribute: true
+          }
+        };
       }
-    }));
-
+      static attributeChanged () {
+        counter += 1;
+      }
+    }))();
     fixtureArea.appendChild(elem);
     afterMutations(
       () => expect(counter).to.equal(0),

@@ -13,8 +13,8 @@ function get (elem) {
 
 function set (elem, newProps) {
   assign(elem, newProps);
-  if (elem.constructor[$renderer]) {
-    elem.constructor[$renderer](elem);
+  if (elem[$renderer]) {
+    elem[$renderer]();
   }
 }
 

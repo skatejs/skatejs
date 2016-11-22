@@ -1,31 +1,33 @@
 /* eslint-env jasmine, mocha */
 
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { props } from '../../../src/index';
+import { Component, define, props } from '../../../src/index';
 
 describe('api/props', () => {
   let elem;
 
   beforeEach(done => {
-    elem = new (element().skate({
-      props: {
-        prop1: {
-          initial: 'test1'
-        },
-        prop2: {
-          initial: 'test2'
-        },
-        prop3: {
-          default: undefined
-        }
-      },
-      created (el) {
-        el._rendered = 0;
-      },
-      render (el) {
-        el._rendered++;
+    elem = new (define(class extends Component {
+      static get props () {
+        return {
+          prop1: {
+            initial: 'test1'
+          },
+          prop2: {
+            initial: 'test2'
+          },
+          prop3: {
+            default: undefined
+          }
+        };
+      }
+      constructor () {
+        super();
+        this._rendered = 0;
+      }
+      renderCallback () {
+        this._rendered++;
       }
     }))();
     fixture(elem);
@@ -80,7 +82,7 @@ describe('api/props', () => {
     });
 
     it('should succeed on an uninitialised element', () => {
-      const elem = element().create();
+      const elem = new (define(class extends Component {}))();
       props(elem, { undeclaredProp: 'foo' });
       expect(elem).property('undeclaredProp', 'foo');
     });

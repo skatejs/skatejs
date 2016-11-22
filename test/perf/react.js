@@ -15,7 +15,7 @@ define('x-app', {
   props: {
     title: prop.string({ default: 'initial' })
   },
-  render (elem) {
+  renderCallback (elem) {
     div(() => {
       h1(elem.title);
       list(() => {
@@ -35,7 +35,7 @@ const Xapp = class extends React.Component {
     super();
     this.state = { title: 'initial' };
   }
-  render () {
+  renderCallback () {
     return React.createElement('div', null,
       React.createElement('h1', null, this.state.title),
       React.createElement(Xlist, null, (() => {

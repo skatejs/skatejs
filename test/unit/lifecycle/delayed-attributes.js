@@ -1,17 +1,20 @@
 /* eslint-env jasmine, mocha */
 
+import { Component, define } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
 
 describe('lifecycle/attributes', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (element().skate({
-      props: {
-        [name]: definition
+    const elem = new (define(class extends Component {
+      static get props () {
+        return {
+          [name]: definition
+        };
       }
     }))();
-    if (arguments.length === 3) { // eslint-disable-line prefer-rest-params
+    // eslint-disable-next-line prefer-rest-params
+    if (arguments.length === 3) {
       elem[name] = value;
     }
     return elem;

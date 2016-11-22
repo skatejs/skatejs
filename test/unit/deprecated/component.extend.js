@@ -1,15 +1,12 @@
 /* eslint-env jasmine, mocha */
 
-import helperElement from '../lib/element';
-import { define } from '../../src/index';
-import { classStaticsInheritance } from '../lib/support';
+import { Component, define } from '../../../src/index';
 
 describe('extending', () => {
   let Ctor;
-  let tag;
 
   beforeEach(() => {
-    Ctor = define(helperElement().safe, {
+    Ctor = Component.extend({
       extends: 'div',
       someNonStandardProperty: true,
       created (elem) {
@@ -21,7 +18,6 @@ describe('extending', () => {
         someFunction: () => {}
       }
     });
-    tag = helperElement().safe;
   });
 
   it('should copy all configuration options to the constructor', () => {
@@ -34,7 +30,7 @@ describe('extending', () => {
   });
 
   it('should copy all configuration options to the extended object', () => {
-    const ExtendedCtor = define(tag, Ctor.extend());
+    const ExtendedCtor = define(Ctor.extend());
     expect(ExtendedCtor.extends).to.equal('div');
     expect(ExtendedCtor.someNonStandardProperty).to.equal(true);
     expect(ExtendedCtor.created).to.be.a('function');
@@ -44,18 +40,18 @@ describe('extending', () => {
   });
 
   it('prototype members should be available', () => {
-    const ExtendedCtor = define(tag, Ctor.extend());
+    const ExtendedCtor = define(Ctor.extend());
     expect(new ExtendedCtor().test).to.equal(true);
     expect(new ExtendedCtor().someFunction).to.be.a('function');
   });
 
   it('should not mess with callbacks', () => {
-    const ExtendedCtor = define(tag, Ctor.extend());
+    const ExtendedCtor = define(Ctor.extend());
     expect(new ExtendedCtor().__test).to.equal('test');
   });
 
   it('should allow overriding of callbacks', () => {
-    const ExtendedCtor = define(tag, Ctor.extend({
+    const ExtendedCtor = define(Ctor.extend({
       created (elem) {
         Ctor.created(elem);
         elem.__test += 'ing';
@@ -66,22 +62,9 @@ describe('extending', () => {
   });
 
   it('constructor should be accessible', () => {
-    const El = define(tag, Ctor.extend());
+    const El = define(Ctor.extend());
     const el = new El();
     expect(el.constructor).to.be.a('function');
     expect(el.constructor.extends).to.equal('div');
   });
-
-  if (classStaticsInheritance()) {
-    it('extend()', () => {
-      const Comp1 = define(`${tag}-1`, {});
-      const Comp2 = define(`${tag}-2`, Comp1.extend({}));
-      const elem1 = new Comp1();
-      const elem2 = new Comp2();
-      expect(elem1).to.be.an.instanceof(Comp1);
-      expect(elem1).to.not.be.an.instanceof(Comp2);
-      expect(elem2).to.be.an.instanceof(Comp1);
-      expect(elem2).to.be.an.instanceof(Comp2);
-    });
-  }
 });

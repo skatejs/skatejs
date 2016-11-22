@@ -3,9 +3,8 @@
 import afterMutations from '../../lib/after-mutations';
 import hasSymbol from '../../lib/has-symbol';
 import createSymbol from '../../../src/util/create-symbol';
-import element from '../../lib/element';
 import fixture from '../../lib/fixture';
-import { props } from '../../../src/index';
+import { Component, define, props } from '../../../src/index';
 
 describe('api/props-with-symbol', () => {
   if (!hasSymbol()) {
@@ -17,20 +16,23 @@ describe('api/props-with-symbol', () => {
   const secret2 = createSymbol('secret');
 
   beforeEach(done => {
-    elem = new (element().skate({
-      props: {
-        [secret]: {
-          initial: 'secretKey'
-        },
-        [secret2]: {
-          initial: 'secretKey2'
-        }
-      },
-      created (el) {
-        el._rendered = 0;
-      },
-      render (el) {
-        el._rendered++;
+    elem = new (define(class extends Component {
+      static get props () {
+        return {
+          [secret]: {
+            initial: 'secretKey'
+          },
+          [secret2]: {
+            initial: 'secretKey2'
+          }
+        };
+      }
+      constructor () {
+        super();
+        this._rendered = 0;
+      }
+      renderCallback () {
+        this._rendered++;
       }
     }))();
     fixture(elem);

@@ -1,146 +1,49 @@
-/* eslint no-bitwise: 0 */
-
-import {
-  name as $name,
-  props as $props
-} from '../util/symbols';
+import { name as $name } from '../util/symbols';
 import Component from './component';
-import dashCase from '../util/dash-case';
-import initProps from '../lifecycle/props-init';
-import keys from '../util/get-all-keys';
+import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
-// Ensures that definitions passed as part of the constructor are functions
-// that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  const props = Ctor.props;
-
-  return keys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
-    }
-    return descriptors;
-  }, {});
-}
-
-// Ensures the property definitions are transformed to objects that can be used
-// to create properties on the element.
-function ensurePropertyDefinitions (Ctor) {
-  const props = ensurePropertyFunctions(Ctor);
-  return keys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName](descriptorName);
-    return descriptors;
-  }, {});
-}
-
-// Ensures linked properties that have linked attributes are pre-formatted to
-// the attribute name in which they are linked.
-function formatLinkedAttributes (Ctor) {
-  const { observedAttributes, props } = Ctor;
-
-  if (!props) {
-    return;
-  }
-
-  keys(props).forEach((name) => {
-    const prop = props[name];
-    const attr = prop.attribute;
-    if (attr) {
-      // Ensure the property is updated.
-      const linkedAttr = prop.attribute = attr === true ? dashCase(name) : attr;
-
-      // Automatically observe the attribute since they're linked from the
-      // attributeChangedCallback.
-      if (observedAttributes.indexOf(linkedAttr) === -1) {
-        observedAttributes.push(linkedAttr);
-      }
-    }
-  });
-
-  // Merge observed attributes.
-  Object.defineProperty(Ctor, 'observedAttributes', {
-    configurable: true,
-    enumerable: true,
-    get () {
-      return observedAttributes;
-    }
-  });
-}
-
-function createInitProps (Ctor) {
-  const props = ensurePropertyDefinitions(Ctor);
-
-  return (elem) => {
-    if (!props) {
-      return;
-    }
-
-    keys(props).forEach((name) => {
-      const prop = props[name];
-      prop.created(elem);
-
-      // We check here before defining to see if the prop was specified prior
-      // to upgrading.
-      const hasPropBeforeUpgrading = name in elem;
-
-      // This is saved prior to defining so that we can set it after it it was
-      // defined prior to upgrading. We don't want to invoke the getter if we
-      // don't need to, so we only get the value if we need to re-sync.
-      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[name];
-
-      // https://bugs.webkit.org/show_bug.cgi?id=49739
-      //
-      // When Webkit fixes that bug so that native property accessors can be
-      // retrieved, we can move defining the property to the prototype and away
-      // from having to do if for every instance as all other browsers support
-      // this.
-      Object.defineProperty(elem, name, prop);
-
-      // We re-set the prop if it was specified prior to upgrading because we
-      // need to ensure set() is triggered both in polyfilled environments and
-      // in native where the definition may be registerd after elements it
-      // represents have already been created.
-      if (hasPropBeforeUpgrading) {
-        elem[name] = valueBeforeUpgrading;
-      }
-    });
-  };
-}
-
-function generateUniqueName (name) {
-  // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
-  const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8); // eslint-disable-line no-mixed-operators
-    return v.toString(16);
-  });
-
-  return `${name}-${rand}`;
-}
-
-function prepareForRegistration (name, Ctor) {
-  Ctor[$name] = name;
-  Ctor[$props] = createInitProps(Ctor);
-}
-
-export default function (name, opts) {
-  if (opts === undefined) {
-    throw new Error(`You have to define options to register a component ${name}`);
-  }
-  const Ctor = typeof opts === 'object' ? Component.extend(opts) : opts;
+export default function (...args) {
   const { customElements } = root;
-  formatLinkedAttributes(Ctor);
+  let [ name, Ctor ] = args;
 
   if (!customElements) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
-  let uniqueName = name;
-  if (customElements.get(name)) {
-    uniqueName = generateUniqueName(name);
+  // Support passing an anonymous definition.
+  if (args.length === 1) {
+    // We are checking string for now, but once we remove the ability to pass
+    // an object literal, we can change this to check "function" and invert the
+    // blocks of logic.
+    if (typeof name === 'string') {
+      throw new Error('When passing only one argument to define(), it must be a custom element constructor.');
+    } else {
+      Ctor = name;
+      name = uniqueId();
+    }
   }
-  prepareForRegistration(uniqueName, Ctor);
-  customElements.define(uniqueName, Ctor, Ctor.extends ? { extends: Ctor.extends } : null);
+
+  // Ensure there's no conflicts.
+  if (customElements.get(name)) {
+    name = uniqueId(name);
+  }
+
+  // DEPRECATED
+  //
+  // Object literals.
+  if (typeof Ctor === 'object') {
+    Ctor = Component.extend(Ctor);
+  }
+
+  // This allows us to check this before instantiating the custom element to
+  // find its name from the constructor in the vdom module, thus improving
+  // performance but still falling back to a robust method.
+  Ctor[$name] = name;
+
+  // Sipmle define. Not supporting customised built-ins yet.
+  customElements.define(name, Ctor);
+
+  // The spec doesn't return but this allows for a simpler, more concise API.
   return Ctor;
 }

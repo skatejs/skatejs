@@ -1,9 +1,11 @@
 /* eslint-env jasmine, mocha */
 
-import { define, h, vdom } from '../../../src';
+import { Component, define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
-describe('create()', () => {
+const { customElements, HTMLElement } = window;
+
+describe('builder()', () => {
   const { builder } = vdom;
 
   describe('no arguments', () => {
@@ -21,8 +23,8 @@ describe('create()', () => {
 
     it('should return an array of functions that create corresponding elements', (done) => {
       const [a, b, c] = builder('a', 'b', 'c');
-      fixture(new (define('x-test', {
-        render () {
+      fixture(new (define(class extends Component {
+        renderCallback () {
           return [
             a(),
             b(),
@@ -34,9 +36,9 @@ describe('create()', () => {
               )
             )
           ];
-        },
-        rendered ({ shadowRoot }) {
-          const [elA, elB, elC, elD] = [].slice.call(shadowRoot.children);
+        }
+        renderedCallback () {
+          const [elA, elB, elC, elD] = [].slice.call(this.shadowRoot.children);
           expect(elA.tagName).to.equal('A');
           expect(elB.tagName).to.equal('B');
           expect(elC.tagName).to.equal('C');
@@ -51,16 +53,16 @@ describe('create()', () => {
         (props, chren) => vdom.element('a', props, chren),
         (props, chren) => builder('a')[0](props, chren)
       );
-      fixture(new (define('x-test', {
-        render () {
+      fixture(new (define(class extends Component {
+        renderCallback () {
           return [
             e1({ a1: 'a1' }, 'a1'),
             e2({ a2: 'a2' }, 'a2')
           ];
-        },
-        rendered ({ shadowRoot }) {
-          const [el1, el2] = [].slice.call(shadowRoot.children);
-          expect(shadowRoot.children.length).to.equal(2);
+        }
+        renderedCallback () {
+          const [el1, el2] = [].slice.call(this.shadowRoot.children);
+          expect(this.shadowRoot.children.length).to.equal(2);
           expect(el1.outerHTML).to.equal('<a a1="a1">a1</a>');
           expect(el2.outerHTML).to.equal('<a a2="a2">a2</a>');
           done();
@@ -68,14 +70,16 @@ describe('create()', () => {
       }))());
     });
 
-    it('should work with web component constructors', (done) => {
-      const [xTest] = builder(define('x-test', {}));
-      fixture(new (define('x-test', {
-        render () {
+    it('should work with all web component constructors', (done) => {
+      class RawWc extends HTMLElement {}
+      customElements.define('x-test-raw-wc', RawWc);
+      const [xTest] = builder(RawWc);
+      fixture(new (define(class extends Component {
+        renderCallback () {
           return xTest();
-        },
-        rendered ({ shadowRoot }) {
-          const [elXTest] = [].slice.call(shadowRoot.children);
+        }
+        renderedCallback () {
+          const [elXTest] = [].slice.call(this.shadowRoot.children);
           expect(elXTest.tagName).to.match(/^X-TEST/);
           done();
         }
@@ -83,8 +87,8 @@ describe('create()', () => {
     });
 
     it('should allow arrays as children', (done) => {
-      fixture(new (define('x-test', {
-        render () {
+      fixture(new (define(class extends Component {
+        renderCallback () {
           return (
             h('div',
               h('span', { id: 1 }),
@@ -92,9 +96,9 @@ describe('create()', () => {
               [h('span', { id: 4 }), h('span', { id: 5 }), h('span', { id: 6 })]
             )
           );
-        },
-        rendered ({ shadowRoot }) {
-          expect(shadowRoot.innerHTML).to.equal(
+        }
+        renderedCallback () {
+          expect(this.shadowRoot.innerHTML).to.equal(
             '<div>' +
               '<span id="1"></span>' +
               '<span id="2"></span>' +
