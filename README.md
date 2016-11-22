@@ -283,7 +283,7 @@ customElements.define('x-counter', class extends skate.Component {
 
     // We use a symbol so we don't pollute the element's namespace.
     this[sym] = setInterval(() => ++this.count, 1000);
-  },
+  }
   disconnectedCallback () {
     // Ensure we callback the parent.
     super.disconnectedCallback();
@@ -291,7 +291,7 @@ customElements.define('x-counter', class extends skate.Component {
     // If we didn't clean up after ourselves, we'd continue to render
     // unnecessarily.
     clearInterval(this[sym]);
-  },
+  }
   renderCallback () {
     // By separating the strings (and not using template literals or string
     // concatenation) it ensures the strings are diffed indepenedently. If
@@ -1092,7 +1092,7 @@ class Elem extends skate.Component {
       prop1: {}
     };
   }
-});
+}
 customElements.define('my-element', Elem);
 const elem = new Elem();
 
