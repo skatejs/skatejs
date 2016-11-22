@@ -20,27 +20,22 @@ import {
 } from '../util/cached-prop-defs';
 import getSetProps from './props';
 import {createPropertyDescriptors} from '../lifecycle/props-init';
-import prop from '../util/prop';
 import syncAttrToProp from '../util/sync-attr-to-prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
-const { HTMLElement } = root;
-const htmlElementPrototype = HTMLElement ? HTMLElement.prototype : {};
-
-
-// Prevent double-calling with polyfill.
-
-const $prevName = createSymbol('name');
-const $prevOldValue = createSymbol('oldValue');
-const $prevNewValue = createSymbol('newValue');
+const HTMLElement = root.HTMLElement || class {};
+const _observedAttributes = createSymbol('observedAttributes');
+const _prevName = createSymbol('prevName');
+const _prevOldValue = createSymbol('prevOldValue');
+const _prevNewValue = createSymbol('prevNewValue');
+const _props = createSymbol('props');
 
 function preventDoubleCalling (elem:any, name:string, oldValue:?string, newValue:?string) {
-  return name === elem[$prevName] &&
-    oldValue === elem[$prevOldValue] &&
-    newValue === elem[$prevNewValue];
+  return name === elem[_prevName] &&
+    oldValue === elem[_prevOldValue] &&
+    newValue === elem[_prevNewValue];
 }
-
 
 function syncPropsToAttrs (elem:any) {
   const props:{[k:string|Symbol]:IPropDef} = getPropDefs(elem.constructor);
@@ -48,7 +43,6 @@ function syncPropsToAttrs (elem:any) {
     syncPropToAttr(elem, props[propName], propName);
   });
 }
-
 
 /**
  * Returns a function that will create all the native properties on an elem instance
@@ -95,278 +89,266 @@ function createPropDescriptorsFunc (Ctor:any):(elem:any) => void {
 
 }
 
-function Component (...args:any[]) {
-
-  const elem = typeof Reflect === 'object'
-    ? Reflect.construct(HTMLElement, args, this.constructor)
-    : HTMLElement.call(this, args[0]);
-
-  const elemData = data(elem);
-  const readyCallbacks = elemData.readyCallbacks;
-  const { constructor } = elem;
-
-  // Ensures that this can never be called twice.
-  if (elem[$created]) {
-    return;
-  }
-  elem[$created] = true;
-
-  // Create the function to create all the native properties for this class
-  if (!constructor.hasOwnProperty($props) && !constructor[$props]) {
-    constructor[$props] = createPropDescriptorsFunc(constructor);
-  }
-
-  // Set up a renderer that is debounced for property sets to call directly.
-  elem[$rendererDebounced] = debounce(elem[$renderer].bind(elem));
-
-  // Set up property lifecycle.
-  if (getPropDefsCount(constructor) && constructor[$props]) {
-    constructor[$props](elem);
-  }
-
-  // DEPRECATED static render()
-  if (!elem.renderCallback && constructor.render) {
-    elem.renderCallback = constructor.render.bind(constructor, elem);
-  }
-
-  // Props should be set up before calling this.
-  if (typeof constructor.created === 'function') {
-    constructor.created(elem);
-  }
-
-  // Created should be set before invoking the ready listeners.
-  if (readyCallbacks) {
-    readyCallbacks.forEach(cb => cb(elem));
-    delete elemData.readyCallbacks;
-  }
-
-  return elem;
-}
-
-Object.defineProperties(Component, {
+export default class extends HTMLElement {
   // Custom Elements v1
-  observedAttributes: prop({
-    get () {
-      const propDefs:{[k:string|Symbol]:IPropDef} = getPropDefs(this);
-      return getAllKeys(propDefs).map(key => {
-        return propDefs[key].attrName;
-      }).filter(Boolean);
-    },
-    override: 'observedAttributes'
-  }),
+  static get observedAttributes ():string[] {
+    const propDefs:{[k:string|Symbol]:IPropDef} = getPropDefs(this);
+    return this[_observedAttributes] || Object.keys(propDefs).map(key => {
+      return propDefs[key].attrName;
+    }).filter(Boolean);
+  }
+  static set observedAttributes (val:string[]) {
+    this[_observedAttributes] = val;
+  }
 
   // Skate
-  props: prop({ value: {} })
-});
-
-// Skate
-Component.extend = function extend (definition = {}, Base:any = this) {
-  // Create class for the user.
-  class Ctor extends Base {}
-
-  // Pass on statics from the Base if not supported (IE 9 and 10).
-  if (!Ctor.observedAttributes) {
-    const staticOpts = getOwnPropertyDescriptors(Base);
-    delete staticOpts.length;
-    delete staticOpts.prototype;
-    Object.defineProperties(Ctor, staticOpts);
+  static get props ():{[k:string|Symbol]:IPropConfig} {
+    return this[_props] || {};
+  }
+  static set props (val:{[k:string|Symbol]:IPropConfig}) {
+    this[_props] = val;
   }
 
-  // For inheriting from the object literal.
-  const opts = getOwnPropertyDescriptors(definition);
-  const prot = getOwnPropertyDescriptors(definition.prototype);
+  constructor () {
+    super();
 
-  // Prototype is non configurable (but is writable).
-  delete opts.prototype;
+    const elemData = data(this);
+    const readyCallbacks = elemData.readyCallbacks;
+    const { constructor } = this;
 
-  // Pass on static and instance members from the definition.
-  Object.defineProperties(Ctor, opts);
-  Object.defineProperties(Ctor.prototype, prot);
+    // Used for the ready() function so it knows when it can call its callback.
+    this[$created] = true;
 
-  return Ctor;
-};
+    // Create the function to create all the native properties for this class
+    if (!constructor[$props]) {
+      constructor[$props] = createPropDescriptorsFunc(constructor);
+    }
 
-// Skate
-//
-// DEPRECATED
-//
-// Move this to rendererCallback() before removing.
-Component.updated = function _updated (elem, prev) {
-  if (!prev) {
-    return true;
-  }
+    // Set up a renderer that is debounced for property sets to call directly.
+    this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
-  // use get all keys so that we check Symbols as well as regular props
-  // using a for loop so we can break early
-  const allKeys = getAllKeys(prev);
-  for (let i = 0; i < allKeys.length; i += 1) {
-    if (prev[allKeys[i]] !== elem[allKeys[i]]) {
-      return true;
+    // Set up property lifecycle.
+    if (getPropDefsCount(constructor) && constructor[$props]) {
+      constructor[$props](this);
+    }
+
+    // DEPRECATED
+    //
+    // static render()
+    if (!this.renderCallback && constructor.render) {
+      this.renderCallback = constructor.render.bind(constructor, this);
+    }
+
+    // DEPRECATED
+    //
+    // static created()
+    //
+    // Props should be set up before calling this.
+    if (typeof constructor.created === 'function') {
+      constructor.created(this);
+    }
+
+    // Created should be set before invoking the ready listeners.
+    if (readyCallbacks) {
+      readyCallbacks.forEach(cb => cb(this));
+      delete elemData.readyCallbacks;
     }
   }
-
-  return false;
-};
-
-// Skate
-//
-// DEPRECATED
-//
-// Move this to rendererCallback() before removing.
-Component.rendered = function _rendered () {};
-
-// Skate
-//
-// DEPRECATED
-//
-// Move this to rendererCallback() before removing.
-Component.renderer = function _renderer (elem) {
-  if (!elem.shadowRoot) {
-    elem.attachShadow({ mode: 'open' });
-  }
-  patchInner(elem.shadowRoot, () => {
-    const possibleFn = elem.renderCallback();
-    if (typeof possibleFn === 'function') {
-      possibleFn();
-    } else if (Array.isArray(possibleFn)) {
-      possibleFn.forEach((fn) => {
-        if (typeof fn === 'function') {
-          fn();
-        }
-      });
-    }
-  });
-};
-
-Component.prototype = Object.create(htmlElementPrototype, {
 
   // Custom Elements v1
-  connectedCallback: prop({
-    value () {
-      this[$connected] = true;
+  connectedCallback () {
 
-      syncPropsToAttrs(this);
+    // Used to check whether or not the component can render.
+    this[$connected] = true;
 
-      this[$rendererDebounced]();
+    // Call this after connected = true
+    syncPropsToAttrs(this);
 
-      // DEPRECATED static attached()
-      const { constructor } = this;
-      if (typeof constructor.attached === 'function') {
-        constructor.attached(this);
-      }
+    // Render!
+    this[$rendererDebounced]();
 
-      this.setAttribute('defined', '');
+    // DEPRECATED
+    //
+    // static attached()
+    const { constructor } = this;
+    if (typeof constructor.attached === 'function') {
+      constructor.attached(this);
     }
-  }),
+
+    // DEPRECATED
+    //
+    // We can remove this once all browsers support :defined.
+    this.setAttribute('defined', '');
+  }
 
   // Custom Elements v1
-  disconnectedCallback: prop({
-    value () {
-      this[$connected] = false;
+  disconnectedCallback () {
 
-      // DEPRECATED static detached()
-      const { constructor } = this;
-      if (typeof constructor.detached === 'function') {
-        constructor.detached(this);
-      }
+    // Ensures the component can't be rendered while disconnected.
+    this[$connected] = false;
+
+    // DEPRECATED
+    //
+    // static detached()
+    const { constructor } = this;
+    if (typeof constructor.detached === 'function') {
+      constructor.detached(this);
     }
-  }),
+  }
 
   // Custom Elements v1
-  attributeChangedCallback: prop({
-    value (attrName:string, oldValue:?string, newValue:?string) {
-
-      // Polyfill calls this twice.
-      if (preventDoubleCalling(this, attrName, oldValue, newValue)) {
-        return;
-      }
-
-      // Set data so we can prevent double calling if the polyfill.
-      this[$prevName] = attrName;
-      this[$prevOldValue] = oldValue;
-      this[$prevNewValue] = newValue;
-
-      syncAttrToProp(this, attrName, oldValue, newValue);
-
-      // DEPRECATED static attributeChanged()
-      const { constructor } = this;
-      if (typeof constructor.attributeChanged === 'function') {
-        // note: newValue and oldValue are swapped here for backward compatibility.
-        constructor.attributeChanged(this, { attrName, newValue, oldValue });
-      }
+  attributeChangedCallback (name:string, oldValue:?string, newValue:?string) {
+    // Polyfill calls this twice.
+    if (preventDoubleCalling(this, name, oldValue, newValue)) {
+      return;
     }
-  }),
+
+    // Set data so we can prevent double calling if the polyfill.
+    this[_prevName] = name;
+    this[_prevOldValue] = oldValue;
+    this[_prevNewValue] = newValue;
+
+    syncAttrToProp(this, name, oldValue, newValue);
+
+    // DEPRECATED static attributeChanged()
+    const { attributeChanged } = this.constructor;
+    if (attributeChanged) {
+      // Note: newValue and oldValue are swapped here in the deprecated method
+      attributeChanged(this, { name, newValue, oldValue });
+    }
+  }
 
   // Skate
   //
   // Maps to the static updated() callback. That logic should be moved here
   // when that is finally removed.
-  updatedCallback: prop({
-    value (prev) {
-      return this.constructor.updated(this, prev);
-    }
-  }),
-
-  // Skate
-  //
-  // Maps to the static render() callback. That logic should be moved here
-  // when that is finally removed.
-  renderCallback: prop({
-    value: null
-  }),
+  updatedCallback (prev:{[k:string|Symbol]:any}) {
+    return this.constructor.updated(this, prev);
+  }
 
   // Skate
   //
   // Maps to the static rendered() callback. That logic should be moved here
   // when that is finally removed.
-  renderedCallback: prop({
-    value () {
-      return this.constructor.rendered(this);
-    }
-  }),
+  renderedCallback () {
+    return this.constructor.rendered(this);
+  }
 
   // Skate
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
-  rendererCallback: prop({
-    value () {
-      return this.constructor.renderer(this);
-    }
-  }),
+  rendererCallback () {
+    return this.constructor.renderer(this);
+  }
 
   // Skate
   //
   // Invokes the complete render lifecycle.
-  [$renderer]: prop({
-    value () {
-      if (this[$rendering] || !this[$connected]) {
-        return;
-      }
-
-      // Flag as rendering. This prevents anything from trying to render - or
-      // queueing a render - while there is a pending render.
-      this[$rendering] = true;
-
-      if (this[$updated]() && typeof this.renderCallback === 'function') {
-        this.rendererCallback();
-        this.renderedCallback();
-      }
-
-      this[$rendering] = false;
+  //$FlowFixMe
+  [$renderer] () {
+    if (this[$rendering] || !this[$connected]) {
+      return;
     }
-  }),
+
+    // Flag as rendering. This prevents anything from trying to render - or
+    // queueing a render - while there is a pending render.
+    this[$rendering] = true;
+
+    if (this[$updated]() && typeof this.renderCallback === 'function') {
+      this.rendererCallback();
+      this.renderedCallback();
+    }
+
+    this[$rendering] = false;
+  }
 
   // Skate
   //
   // Calls the user-defined updated() lifecycle callback.
-  [$updated]: prop({
-    value () {
-      const prev = this[$props];
-      this[$props] = getSetProps(this);
-      return this.updatedCallback(prev);
-    }
-  })
-});
+  //$FlowFixMe
+  [$updated] () {
+    const prev = this[$props];
+    this[$props] = getSetProps(this);
+    return this.updatedCallback(prev);
+  }
 
-export default Component;
+  // Skate
+  static extend (definition = {}, Base:any = this) {
+    // Create class for the user.
+    class Ctor extends Base {}
+
+    // Pass on statics from the Base if not supported (IE 9 and 10).
+    if (!Ctor.observedAttributes) {
+      const staticOpts = getOwnPropertyDescriptors(Base);
+      delete staticOpts.length;
+      delete staticOpts.prototype;
+      Object.defineProperties(Ctor, staticOpts);
+    }
+
+    // For inheriting from the object literal.
+    const opts = getOwnPropertyDescriptors(definition);
+    const prot = getOwnPropertyDescriptors(definition.prototype);
+
+    // Prototype is non configurable (but is writable).
+    delete opts.prototype;
+
+    // Pass on static and instance members from the definition.
+    Object.defineProperties(Ctor, opts);
+    Object.defineProperties(Ctor.prototype, prot);
+
+    return Ctor;
+  }
+
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to rendererCallback() before removing.
+  static updated (elem:any, prev:{[k:string|Symbol]:any}) {
+    if (!prev) {
+      return true;
+    }
+
+    // use get all keys so that we check Symbols as well as regular props
+    // using a for loop so we can break early
+    const allKeys = getAllKeys(prev);
+    for (let i = 0; i < allKeys.length; i += 1) {
+      if (prev[allKeys[i]] !== elem[allKeys[i]]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to rendererCallback() before removing.
+  static rendered () {}
+
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to rendererCallback() before removing.
+  static renderer (elem:any) {
+    if (!elem.shadowRoot) {
+      elem.attachShadow({ mode: 'open' });
+    }
+    patchInner(elem.shadowRoot, () => {
+      const possibleFn = elem.renderCallback();
+      if (typeof possibleFn === 'function') {
+        possibleFn();
+      } else if (Array.isArray(possibleFn)) {
+        possibleFn.forEach((fn) => {
+          if (typeof fn === 'function') {
+            fn();
+          }
+        });
+      }
+    });
+  }
+}

@@ -7,7 +7,7 @@ import uniqueId from '../../../src/util/unique-id';
 
 const { sinon } = window;
 
-describe('lifecycle/render', () => {
+describe('lifecycle/renderCallback', () => {
   it('should be called', (done) => {
     let called = false;
     const Elem = define(class extends Component {
@@ -18,25 +18,6 @@ describe('lifecycle/render', () => {
     fixture(new Elem());
     afterMutations(
       () => expect(called).to.equal(true),
-      done
-    );
-  });
-
-  it('should get called after created()', (done) => {
-    const called = [];
-    const Elem = define(class extends Component {
-      constructor () {
-        super();
-        called.push('created');
-      }
-      renderCallback () {
-        called.push('render');
-      }
-    });
-    fixture(new Elem());
-    afterMutations(
-      () => expect(called[0]).to.equal('created'),
-      () => expect(called[1]).to.equal('render'),
       done
     );
   });
