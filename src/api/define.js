@@ -3,34 +3,47 @@ import Component from './component';
 import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
-export default function (name, opts) {
+export default function (...args) {
   const { customElements } = root;
+  let [ name, Ctor ] = args;
 
   if (!customElements) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
   // Support passing an anonymous definition.
-  if (!opts) {
-    opts = name;
-    name = null;
+  if (args.length === 1) {
+    // We are checking string for now, but once we remove the ability to pass
+    // an object literal, we can change this to check "function" and invert the
+    // blocks of logic.
+    if (typeof name === 'string') {
+      throw new Error('When passing only one argument to define(), it must be a custom element constructor.');
+    } else {
+      Ctor = name;
+      name = uniqueId();
+    }
   }
 
-  // Unique IDs.
-  if (!name || customElements.get(name)) {
+  // Ensure there's no conflicts.
+  if (customElements.get(name)) {
     name = uniqueId(name);
   }
 
+  // DEPRECATED
+  //
   // Object literals.
-  if (typeof opts === 'object') {
-    opts = Component.extend(opts);
+  if (typeof Ctor === 'object') {
+    Ctor = Component.extend(Ctor);
   }
 
   // This allows us to check this before instantiating the custom element to
   // find its name from the constructor in the vdom module, thus improving
   // performance but still falling back to a robust method.
-  opts[$name] = name;
+  Ctor[$name] = name;
 
-  customElements.define(name, opts, opts.extends ? { extends: opts.extends } : null);
-  return opts;
+  // Sipmle define. Not supporting customised built-ins yet.
+  customElements.define(name, Ctor);
+
+  // The spec doesn't return but this allows for a simpler, more concise API.
+  return Ctor;
 }
