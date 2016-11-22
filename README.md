@@ -1262,7 +1262,7 @@ Skate includes several helpers for creating virtual elements with Incremental DO
 
 #### `vdom.builder ()`
 
-Calling `vdom.builder()` without any arguments returns a function that you can call in `render()` to create elements. This is how the `h` export is created.
+Calling `vdom.builder()` without any arguments returns a function that you can call in `renderCallback()` to create elements. This is how the `h` export is created.
 
 ```js
 const h = vdom.builder();
@@ -1475,7 +1475,7 @@ skate.h('button', { ref });
 
 Refs are only called on the element when the value of `ref` changes. This means they get called on the initial set, and subsequent sets if the reference to the value changes.
 
-For example, if you define a function outside of `render()`, it will only be called when the element is rendered for the first time:
+For example, if you define a function outside of `renderCallback()`, it will only be called when the element is rendered for the first time:
 
 ```js
 const ref = console.log;
@@ -1486,7 +1486,7 @@ customElements.define('my-element', class extends skate.Component {
 });
 ```
 
-However, if you define the `ref` function within `render()`, it will be a new reference every time, and thus be called every time:
+However, if you define the `ref` function within `renderCallback()`, it will be a new reference every time, and thus be called every time:
 
 ```js
 customElements.define('my-element', class extends skate.Component {
@@ -1903,7 +1903,7 @@ customElements.define('x-component', class extends skate.Component {
 });
 ```
 
-The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updated()` check.
+The previous example emits an event that bubbles and is cancelable. If it is canceled, then the component does not render. If the listening component updates the component's props in response to the event, the component will render with the updated props if it passes the default `updatedCallback()` check.
 
 
 
