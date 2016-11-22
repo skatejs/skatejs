@@ -1,0 +1,14 @@
+[ignore]
+.*/node\_modules/esformatter/test/.*
+.*/node\_modules/config\-chain/test/.*
+.*/node\_modules/flow\-remove\-types/test/.*
+.*/node\_modules/npm/test/.*
+.*/node\_modules/npmconf/test/.*
+
+[include]
+
+[libs]
+flow/
+
+[options]
+unsafe.enable_getters_and_setters=true
