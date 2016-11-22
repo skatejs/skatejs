@@ -1,64 +1,55 @@
-import data from './data';
-import empty from './empty';
-import getDefaultValue from '../util/get-default-value';
-import getInitialValue from './get-initial-value';
+//@flow
+import {
+  connected as $connected,
+} from '../util/symbols';
 import getPropData from './get-prop-data';
+import toNullString from './to-null-string';
 
-function syncFirstTimeProp (elem, prop, propName, attributeName, propData) {
-  let syncAttrValue = propData.lastAssignedValue;
-  if (empty(syncAttrValue)) {
-    if ('initial' in prop) {
-      syncAttrValue = getInitialValue(elem, propName, prop);
-    } else if ('default' in prop) {
-      syncAttrValue = getDefaultValue(elem, propName, prop);
+export default function syncPropToAttr (elem:any, propDef:IPropDef, propName:string|Symbol) {
+
+  // Must have a linked attribute
+  if (!propDef.attrName) {
+    return;
+  }
+
+  // Sync attribute only if connected
+  if (!elem[$connected]) {
+    //console.log('syncPropToAttr STOP elem is not connected');
+    return;
+  }
+
+  const propData:any = getPropData(elem, propName);
+
+  // Don't sync back the attribute when called from syncAttrToProp
+  if (propData.settingProp) {
+    propData.settingProp = false;
+    //console.log('syncPropToAttr', name, 'was called from syncAttrToProp');
+    return;
+  }
+
+  const newAttrValue:?string = toNullString(propDef.serialize(propData.internalValue));
+
+  const attrName:string = String(propDef.attrName);
+  const currAttrValue:?string = toNullString(elem.getAttribute(attrName));
+
+
+  if (currAttrValue !== newAttrValue) {
+
+    // Prevent an unnecessary re-sync from syncAttrToProp
+    propData.attrValueFromProp = newAttrValue;
+
+    if (newAttrValue === null) {
+      //console.log('syncPropToAttr removeAttribute', attrName);
+      elem.removeAttribute(attrName);
     }
-  }
-  if (!empty(syncAttrValue) && prop.serialize) {
-    syncAttrValue = prop.serialize(syncAttrValue);
-  }
-  if (!empty(syncAttrValue)) {
-    propData.syncingAttribute = true;
-    elem.setAttribute(attributeName, syncAttrValue);
-  }
-}
-
-function syncExistingProp (elem, prop, propName, attributeName, propData) {
-  if (attributeName && !propData.settingAttribute) {
-    const { internalValue } = propData;
-    const serializedValue = prop.serialize(internalValue);
-    const currentAttrValue = elem.getAttribute(attributeName);
-    const serializedIsEmpty = empty(serializedValue);
-    const attributeChanged = !(
-      (serializedIsEmpty && empty(currentAttrValue)) || serializedValue === currentAttrValue
-    );
-
-    propData.syncingAttribute = true;
-
-    const shouldRemoveAttribute = empty(propData.lastAssignedValue);
-    if (shouldRemoveAttribute || serializedIsEmpty) {
-      elem.removeAttribute(attributeName);
-    } else {
-      elem.setAttribute(attributeName, serializedValue);
+    else {
+      //console.log('syncPropToAttr setAttribute', attrName, 'to:', newAttrValue);
+      elem.setAttribute(attrName, newAttrValue);
     }
 
-    if (!attributeChanged && propData.syncingAttribute) {
-      propData.syncingAttribute = false;
-    }
+  }
+  else {
+    //console.log('syncPropToAttr NOT needed', attrName, 'is already', typeof currAttrValue, currAttrValue);
   }
 
-  // Allow the attribute to be linked again.
-  propData.settingAttribute = false;
-}
-
-export default function syncPropToAttr (elem, prop, propName, isFirstSync) {
-  const attributeName = data(elem, 'propertyLinks')[propName];
-  const propData = getPropData(elem, propName);
-
-  if (attributeName) {
-    if (isFirstSync) {
-      syncFirstTimeProp(elem, prop, propName, attributeName, propData);
-    } else {
-      syncExistingProp(elem, prop, propName, attributeName, propData);
-    }
-  }
 }

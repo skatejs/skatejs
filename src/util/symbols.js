@@ -1,3 +1,6 @@
+//@flow
+//todo: are these strings instead of actual Symbols for backward compatibility?
+
 export const connected = '____skate_connected';
 export const created = '____skate_created';
 

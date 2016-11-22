@@ -39,6 +39,7 @@ function taskDebounce (cbFunc) {
     cbArgs = args;
     if (!scheduled) {
       scheduled = true;
+      //todo: why not use requestAnimationFrame instead of setTimeout?
       setTimeout(() => {
         scheduled = false;
         cbFunc(...cbArgs);

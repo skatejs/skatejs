@@ -1,99 +1,114 @@
+//@flow
 import {
   connected as $connected,
   rendererDebounced as $rendererDebounced
 } from '../util/symbols';
-import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
-import dashCase from '../util/dash-case';
+import getAllKeys from '../util/get-all-keys';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
+import {getPropDefs} from '../util/cached-prop-defs';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function createNativePropertyDefinition (name, opts) {
-  const prop = {
+function createPropertyDescriptor (propDef:IPropDef):IPropertyDescriptor {
+
+  const name:string|Symbol = propDef.name;
+
+  const propDescriptor:IPropertyDescriptor = {
     configurable: true,
-    enumerable: true
-  };
+    enumerable: true,
 
-  prop.created = function created (elem) {
-    const propData = getPropData(elem, name);
-    const attributeName = opts.attribute === true ? dashCase(name) : opts.attribute;
-    let initialValue = elem[name];
+    //called just before actually creating the native property with Object.defineProperty
+    created: function created (elem:any) {
+      const propData:any = getPropData(elem, name);
+      const attrName:?string = propDef.attrName;
+      let initialValue:any = elem[name];
 
-    // Store property to attribute link information.
-    data(elem, 'attributeLinks')[attributeName] = name;
-    data(elem, 'propertyLinks')[name] = attributeName;
-
-    // Set up initial value if it wasn't specified.
-    if (empty(initialValue)) {
-      if (attributeName && elem.hasAttribute(attributeName)) {
-        initialValue = opts.deserialize(elem.getAttribute(attributeName));
-      } else if ('initial' in opts) {
-        initialValue = getInitialValue(elem, name, opts);
-      } else if ('default' in opts) {
-        initialValue = getDefaultValue(elem, name, opts);
+      if (attrName) {
+        // Store attribute to property link information.
+        data(elem, 'attributeLinks')[attrName] = name;
       }
+
+      // Set up initial value if it wasn't specified.
+      if (empty(initialValue)) {
+        if (attrName && elem.hasAttribute(attrName)) {
+          initialValue = propDef.deserialize(elem.getAttribute(attrName));
+        } else if ('initial' in propDef) {
+          initialValue = getInitialValue(elem, name, propDef);
+        } else if ('default' in propDef) {
+          initialValue = getDefaultValue(elem, name, propDef);
+        }
+      }
+      if (propDef.coerce) {
+        initialValue = propDef.coerce(initialValue);
+      }
+      //console.log('init internalValue prop', name, typeof initialValue, initialValue);
+      propData.internalValue = initialValue;
+    },
+
+    get: function get () {
+      const propData:any = getPropData(this, name);
+      const { internalValue } = propData;
+      return typeof propDef.get === 'function' ? propDef.get(this, { name, internalValue }) : internalValue;
+    },
+
+    set: function set (newValue:any) {
+
+      const propData:any = getPropData(this, name);
+
+      if (empty(newValue)) {
+        newValue = getDefaultValue(this, name, propDef);
+      }
+
+      if (typeof propDef.coerce === 'function') {
+        newValue = propDef.coerce(newValue);
+      }
+
+      if (typeof propDef.set === 'function') {
+        let { oldValue } = propData;
+
+        // todo: I comment this out because in doc we say:
+        // When the property is initialised, oldValue will always be undefined
+        // if (empty(oldValue)) {
+        //   oldValue = null;
+        // }
+
+        const changeData:ISetData = { name, newValue, oldValue };
+
+        propDef.set(this, changeData);
+      }
+
+      //console.log('prop.set', name, 'to:', typeof newValue, newValue, 'was:', typeof oldValue, oldValue);
+
+      // Queue a re-render.
+      // Note: re-render is queued even when the value didn't change.
+      this[$rendererDebounced](this);
+
+      // Update prop data so we can use it next time.
+      propData.internalValue = propData.oldValue = newValue;
+
+      // Lync the attribute.
+      if (this[$connected]) {
+        syncPropToAttr(this, propDef, name);
+      }
+
     }
 
-    propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
   };
 
-  prop.get = function get () {
-    const propData = getPropData(this, name);
-    const { internalValue } = propData;
-    return typeof opts.get === 'function' ? opts.get(this, { name, internalValue }) : internalValue;
-  };
-
-  prop.set = function set (newValue) {
-    const propData = getPropData(this, name);
-    propData.lastAssignedValue = newValue;
-    let { oldValue } = propData;
-
-    if (empty(oldValue)) {
-      oldValue = null;
-    }
-
-    if (empty(newValue)) {
-      newValue = getDefaultValue(this, name, opts);
-    }
-
-    if (typeof opts.coerce === 'function') {
-      newValue = opts.coerce(newValue);
-    }
-
-    const changeData = { name, newValue, oldValue };
-
-    if (typeof opts.set === 'function') {
-      opts.set(this, changeData);
-    }
-
-    // Queue a re-render.
-    this[$rendererDebounced](this);
-
-    // Update prop data so we can use it next time.
-    propData.internalValue = propData.oldValue = newValue;
-
-    // Link up the attribute.
-    if (this[$connected]) {
-      syncPropToAttr(this, opts, name, false);
-    }
-  };
-
-  return prop;
+  return propDescriptor;
 }
 
-export default function (opts) {
-  opts = opts || {};
+export function createPropertyDescriptors (Ctor:any):{[k:string|Symbol]:IPropertyDescriptor} {
+  const propDefs:{[k:string|Symbol]:IPropDef} = getPropDefs(Ctor);
+  // console.log('>> createPropDescriptors propDefs:', propDefs);
 
-  if (typeof opts === 'function') {
-    opts = { coerce: opts };
-  }
-
-  return name => createNativePropertyDefinition(name, assign({
-    default: null,
-    deserialize: value => value,
-    serialize: value => value
-  }, opts));
+  return getAllKeys(propDefs).reduce((propDescriptors:{[k:string|Symbol]:IPropertyDescriptor}, propName:string|Symbol) => {
+    propDescriptors[propName] = createPropertyDescriptor(propDefs[propName]);
+    return propDescriptors;
+  }, {});
 }
+
+

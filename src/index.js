@@ -1,3 +1,4 @@
+//@flow
 import * as prop from './api/prop';
 import * as symbols from './api/symbols';
 import * as vdom from './api/vdom';
