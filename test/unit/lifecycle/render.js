@@ -80,7 +80,7 @@ describe('lifecycle/renderCallback', () => {
     });
   });
 
-  describe('updated()', () => {
+  describe('updatedCallback()', () => {
     it('should be called even if there is no render function', (done) => {
       let called = 0;
       const Elem = define(class extends Component {
@@ -206,7 +206,7 @@ describe('lifecycle/renderCallback', () => {
     });
   });
 
-  describe('rendered()', () => {
+  describe('renderedCallback()', () => {
     it('should be called after rendering', (done) => {
       const order = [];
       const Elem = define(class extends Component {
@@ -236,7 +236,7 @@ describe('lifecycle/renderCallback', () => {
       );
     });
 
-    it('should not be called if render() is not defined', (done) => {
+    it('should not be called if renderCallback() is not defined', (done) => {
       let afterCalled = false;
       const Elem = define(class extends Component {
         renderedCallback () {

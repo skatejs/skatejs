@@ -13,13 +13,13 @@ export function define<C>(name: string, component: C): C;
 export function define<Proto, Props>(name: string, definition: {
   prototype: Proto;
   props: Props;
-  created?(elem: Component & Proto & Props): any;
-  updated?(elem: Component & Proto & Props, prevProps: { [name: string]: any }): boolean | undefined;
-  render?(elem: Component & Proto & Props): () => any | undefined;
-  rendered?(elem: Component & Proto & Props): any;
-  attached?(elem: Component & Proto & Props): any;
-  detached?(elem: Component & Proto & Props): any;
-  attributeChanged?(elem: Component & Proto & Props, data: { name: string, oldValue: any, newValue: any }): any;
+  constructor?(elem: Component & Proto & Props): any;
+  updatedCallback?(elem: Component & Proto & Props, prevProps: { [name: string]: any }): boolean | undefined;
+  renderCallback?(elem: Component & Proto & Props): () => any | undefined;
+  renderedCallback?(elem: Component & Proto & Props): any;
+  connectedCallback?(elem: Component & Proto & Props): any;
+  disconnectedCallback?(elem: Component & Proto & Props): any;
+  attributeChangedCallback?(elem: Component & Proto & Props, data: { name: string, oldValue: any, newValue: any }): any;
   observedAttributes?: string[];
 }): { new(...args: any[]): Component & Proto & Props };
 
