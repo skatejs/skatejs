@@ -139,20 +139,27 @@ const attributesContext = propContext(attributes, {
   }
 });
 
-function resolveTagName (tname) {
-  if (!tname) {
-    return tname;
+function resolveTagName (name) {
+  // We return falsy values as some wrapped IDOM functions allow empty values.
+  if (!name) {
+    return name;
   }
-  // If the tag name passed is a custom element, get it's tag name. We try the
-  // optimistic path of trying to get it by the $name symbol (same versions) or
-  // falling back to getting it from an actual instance and caching it using
-  // the same symbol.
-  if (tname.prototype instanceof HTMLElement) {
+
+  // We try and return the cached tag name, if one exists.
+  if (name[$name]) {
+    return name[$name];
+  }
+
+  // If it's a custom element, we get the tag name by constructing it and
+  // caching it.
+  if (name.prototype instanceof HTMLElement) {
     // eslint-disable-next-line
-    const elem = new tname();
-    tname[$name] = elem.tagName.toLowerCase();
+    const elem = new name();
+    return (name[$name] = elem.localName);
   }
-  return tname[$name] || tname;
+
+  // Pass all other values through so IDOM gets what it's expecting.
+  return name;
 }
 
 // Incremental DOM's elementOpen is where the hooks in `attributes` are applied,
