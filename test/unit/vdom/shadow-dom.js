@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { Component, define } from '../../../src';
+import { define } from '../../../src';
 
 describe('vdom/shadow-dom', () => {
   let Elem;

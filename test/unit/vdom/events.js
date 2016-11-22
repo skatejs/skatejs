@@ -86,7 +86,7 @@ describe('vdom/events (on*)', () => {
       static get props () {
         return {
           handler: {}
-        }
+        };
       }
       renderCallback () {
         return h('div', { onTest: this.handler });

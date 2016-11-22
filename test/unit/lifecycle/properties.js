@@ -87,7 +87,7 @@ describe('lifecycle/property', () => {
       const elem = new (define(class extends Component {
         static get props () {
           return {
-            testprop: { attribute: true  }
+            testprop: { attribute: true }
           };
         }
       }))();

@@ -64,7 +64,6 @@ function ensurePropertyDefinitions (Ctor) {
   }, {});
 }
 
-
 // TODO refactor when not catering to Safari < 10.
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
