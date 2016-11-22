@@ -1,3 +1,14 @@
+declare interface IGetData {
+  name:string|Symbol;
+  internalValue:any;
+}
+
+declare interface ISetData {
+  name:string|Symbol;
+  newValue:any;
+  oldValue:any;
+}
+
 /**
  * Property Configuration
  * The options that can be used when configuring a property with skate
@@ -8,8 +19,10 @@ declare interface IPropConfig {
   coerce?: (v:any) => any;
   default?: any; //|(elem:any, data:any) => any;
   deserialize?: (v:?string) => any;
+  get?: (elem:any, data:IGetData) => any;
   initial?: any; //|(elem:any, data:any) => any;
   serialize?: (v:any) => ?string;
+  set?: (elem:any, data:ISetData) => void;
 }
 
 /**
@@ -27,9 +40,11 @@ declare interface IPropDef {
   coerce?: ?(v:any) => any;
   default: any; //|(elem:any, data:any) => any;
   deserialize: (v:?string) => any;
+  get?: (elem:any, data:IGetData) => any;
   initial?: any; //|(elem:any, data:any) => any;
   name: string|Symbol; //property name can also be a symbol!
   serialize: (v:any) => ?string;
+  set?: (elem:any, data:ISetData) => void;
 }
 
 /**

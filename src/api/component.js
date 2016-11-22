@@ -12,7 +12,6 @@ import {
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
-import empty from '../util/empty';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import {
@@ -22,6 +21,7 @@ import {
 import getSetProps from './props';
 import {createPropertyDescriptors} from '../lifecycle/props-init';
 import prop from '../util/prop';
+import syncAttrToProp from '../util/sync-attr-to-prop';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
@@ -45,10 +45,10 @@ function preventDoubleCalling (elem:any, name:string, oldValue:?string, newValue
 function syncPropsToAttrs (elem:any) {
   const props:{[k:string|Symbol]:IPropDef} = getPropDefs(elem.constructor);
   getAllKeys(props).forEach((propName:string|Symbol) => {
-    const prop:IPropDef = props[propName];
-    syncPropToAttr(elem, prop, propName);
+    syncPropToAttr(elem, props[propName], propName);
   });
 }
+
 
 /**
  * Returns a function that will create all the native properties on an elem instance
@@ -243,9 +243,10 @@ Component.prototype = Object.create(htmlElementPrototype, {
   // Custom Elements v1
   connectedCallback: prop({
     value () {
+      this[$connected] = true;
+
       syncPropsToAttrs(this);
 
-      this[$connected] = true;
       this[$rendererDebounced]();
 
       // DEPRECATED static attached()
@@ -274,7 +275,6 @@ Component.prototype = Object.create(htmlElementPrototype, {
   // Custom Elements v1
   attributeChangedCallback: prop({
     value (attrName:string, oldValue:?string, newValue:?string) {
-      //console.log('sk.attributeChangedCallback', attrName, 'from', oldValue, 'to', newValue);
 
       // Polyfill calls this twice.
       if (preventDoubleCalling(this, attrName, oldValue, newValue)) {
@@ -286,24 +286,7 @@ Component.prototype = Object.create(htmlElementPrototype, {
       this[$prevOldValue] = oldValue;
       this[$prevNewValue] = newValue;
 
-      const propertyName = data(this, 'attributeLinks')[attrName];
-      if (propertyName) {
-        const propData = data(this, 'props')[propertyName];
-        const { internalValue } = propData;
-        const propDef:IPropDef = getPropDefs(this.constructor)[propertyName];
-
-        const serializedValue = propDef.serialize(internalValue);
-        const valueChanged:boolean = !(
-          (empty(serializedValue) && empty(newValue)) || serializedValue === newValue
-        );
-        if (valueChanged) {
-          // Sync up the property.
-          this[propertyName] = propDef.deserialize(newValue);
-        }
-        // else {
-        //   console.log('sk.attributeChangedCallback NOT changed');
-        // }
-      }
+      syncAttrToProp(this, attrName, oldValue, newValue);
 
       // DEPRECATED static attributeChanged()
       const { constructor } = this;
