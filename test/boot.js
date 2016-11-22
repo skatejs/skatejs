@@ -1,6 +1,5 @@
 /* eslint-env jasmine, mocha */
 
-import 'skatejs-web-components/src/native-shim';
 import '@webcomponents/custom-elements';
 import '@webcomponents/shadydom';
 import fixture from './lib/fixture';

@@ -20,11 +20,9 @@ import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
 const HTMLElement = root.HTMLElement || class {};
-const _observedAttributes = createSymbol('observedAttributes');
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
-const _props = createSymbol('props');
 
 function preventDoubleCalling (elem, name, oldValue, newValue) {
   return name === elem[_prevName] &&
@@ -40,6 +38,8 @@ function syncPropsToAttrs (elem) {
   });
 }
 
+// TODO remove when not catering to Safari < 10.
+//
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions (Ctor) {
@@ -53,8 +53,9 @@ function ensurePropertyFunctions (Ctor) {
   }, {});
 }
 
-// Ensures the property definitions are transformed to objects that can be used
-// to create properties on the element.
+// TODO remove when not catering to Safari < 10.
+//
+// This can probably be simplified into createInitProps().
 function ensurePropertyDefinitions (Ctor) {
   const props = ensurePropertyFunctions(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
@@ -63,6 +64,10 @@ function ensurePropertyDefinitions (Ctor) {
   }, {});
 }
 
+
+// TODO refactor when not catering to Safari < 10.
+//
+// We should be able to simplify this where all we do is Object.defineProperty().
 function createInitProps (Ctor) {
   const props = ensurePropertyDefinitions(Ctor);
 
@@ -92,6 +97,11 @@ function createInitProps (Ctor) {
       // this.
       Object.defineProperty(elem, name, prop);
 
+      // DEPRECATED
+      //
+      // We'll be removing get / set callbacks on properties. Use the
+      // updatedCallback() instead.
+      //
       // We re-set the prop if it was specified prior to upgrading because we
       // need to ensure set() is triggered both in polyfilled environments and
       // in native where the definition may be registerd after elements it
@@ -104,36 +114,34 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
-  // Custom Elements v1
   static get observedAttributes () {
     const { props } = this;
-    return this[_observedAttributes] || Object.keys(props).map(key => {
+    return Object.keys(props).map(key => {
       const { attribute } = props[key];
       return attribute === true ? dashCase(key) : attribute;
     }).filter(Boolean);
   }
-  static set observedAttributes (val) {
-    this[_observedAttributes] = val;
+  static set observedAttributes (value) {
+    Object.defineProperty(this, 'observedAttributes', { configurable: true, value });
   }
 
-  // Skate
   static get props () {
-    return this[_props] || {};
+    return {};
   }
-  static set props (val) {
-    this[_props] = val;
+  static set props (value) {
+    Object.defineProperty(this, 'props', { configurable: true, value });
   }
 
   constructor () {
     super();
 
-    const elemData = data(this);
-    const readyCallbacks = elemData.readyCallbacks;
     const { constructor } = this;
 
     // Used for the ready() function so it knows when it can call its callback.
     this[$created] = true;
 
+    // TODO refactor to not cater to Safari < 10. This means we can depend on
+    // built-in property descriptors.
     if (!constructor[$props]) {
       constructor[$props] = createInitProps(constructor);
     }
@@ -162,7 +170,13 @@ export default class extends HTMLElement {
       constructor.created(this);
     }
 
+    // DEPRECATED
+    //
+    // Feature has rarely been used.
+    //
     // Created should be set before invoking the ready listeners.
+    const elemData = data(this);
+    const readyCallbacks = elemData.readyCallbacks;
     if (readyCallbacks) {
       readyCallbacks.forEach(cb => cb(this));
       delete elemData.readyCallbacks;
@@ -173,6 +187,9 @@ export default class extends HTMLElement {
   connectedCallback () {
     const { constructor } = this;
 
+    // DEPRECATED
+    //
+    // No more reflecting back to attributes in favour of one-way reflection.
     syncPropsToAttrs(this);
 
     // Used to check whether or not the component can render.
