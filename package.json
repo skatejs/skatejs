@@ -37,7 +37,7 @@
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
-    "prepublish": "sk-bundle",
+    "prepublish": "tsc -p ./ && sk-bundle",
     "try-ts": "tsc -p ./"
   },
   "config": {

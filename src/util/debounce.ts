@@ -46,4 +46,6 @@ function taskDebounce (cbFunc) {
     }
   };
 }
-export default native(MutationObserver) ? microtaskDebounce : taskDebounce;
+
+const _: (callback: Function) => Function = native(MutationObserver) ? microtaskDebounce : taskDebounce;
+export default _;

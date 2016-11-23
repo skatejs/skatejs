@@ -20,7 +20,7 @@ import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
 
-const _HTMLElement: typeof HTMLElement = root.HTMLElement || class {};
+export const _HTMLElement: typeof HTMLElement = root.HTMLElement || class {};
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
@@ -327,7 +327,7 @@ export default class extends _HTMLElement {
   }
 
   // Skate
-  static extend (definition: any = {}, Base = this) {
+  static extend (definition: any = {}, Base = this): {new (...args:any[]): any; } {
     // Create class for the user.
     class Ctor extends Base {}
 

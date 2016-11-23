@@ -31,6 +31,5 @@ node_modules
 .idea
 .tmp
 dist
-src/**/*.js
-src/**/*.js.map
-src/**/*.d.ts
+# for https://github.com/Microsoft/TypeScript/issues/4667
+src/**/*.ts
