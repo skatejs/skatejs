@@ -14,7 +14,7 @@ export function getPropConfigs (Ctor) {
 
     const propConfigs = Ctor.props || {};
 
-    let count:number = 0;
+    let count = 0;
 
     Ctor[CACHED_PROP_CONFIGS] = getAllKeys(propConfigs).reduce((result, propName) => {
       count++;
@@ -32,7 +32,7 @@ export function getPropConfigs (Ctor) {
   return Ctor[CACHED_PROP_CONFIGS];
 }
 
-export function getPropConfigsCount (Ctor:any):number {
+export function getPropConfigsCount (Ctor) {
   getPropConfigs(Ctor);
   return Ctor.hasOwnProperty(PROP_CONFIGS_COUNT) ? Ctor[PROP_CONFIGS_COUNT] : 0;
 }
