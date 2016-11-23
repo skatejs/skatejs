@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es5",
+    "strictNullChecks": false,
+    "allowJs": false
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

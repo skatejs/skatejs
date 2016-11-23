@@ -31,8 +31,11 @@
     "birdpoo": "0.x",
     "react": "15.4.0",
     "react-dom": "15.4.0",
+    "rollup-plugin-typescript": "^0.8.1",
     "skatejs-build": "12.x",
-    "skatejs-web-components": "5.x"
+    "skatejs-web-components": "5.x",
+    "ts-loader": "^1.2.2",
+    "typescript": "^2.0.10"
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
