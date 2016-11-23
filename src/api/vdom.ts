@@ -176,7 +176,7 @@ function elementOpenEnd () {
   return node;
 }
 
-function wrapIdomFunc (func, tnameFuncHandler = noop) {
+function wrapIdomFunc (func, tnameFuncHandler:Function = noop) {
   return function wrap (...args) {
     args[0] = resolveTagName(args[0]);
     stackCurrentHelper = null;
@@ -336,7 +336,7 @@ export function element (tname, attrs, ...chren) {
 
 // Even further convenience for building a DSL out of JavaScript functions or hooking into standard
 // transpiles for JSX (React.createElement() / h).
-export function builder (...tags) {
+export function builder (...tags): any {
   if (tags.length === 0) {
     return (...args) => element.bind(null, ...args);
   }

@@ -25,6 +25,7 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
+    "typescript": "^2.0.10",
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
@@ -36,7 +37,8 @@
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
-    "prepublish": "sk-bundle"
+    "prepublish": "sk-bundle",
+    "try-ts": "tsc -p ./"
   },
   "config": {
     "commitizen": {

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "lib": [
+            "dom",
+            "es2016"
+        ],
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "noEmit": true,
+        "baseUrl": "./definitions/",
+        "typeRoots": [
+            "./definitions/"
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}

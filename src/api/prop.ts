@@ -6,8 +6,8 @@ const alwaysUndefinedIfEmptyOrString = val => (empty(val) ? undefined : String(v
 
 export function create (def) {
   return (...args) => {
-    args.unshift({}, def);
-    return assign(...args);
+    args.unshift(def);
+    return assign({}, ...args);
   };
 }
 

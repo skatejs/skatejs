@@ -12,7 +12,7 @@ import getPropData from '../util/get-prop-data';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
 function createNativePropertyDefinition (name, opts) {
-  const prop = {
+  const prop: any = {
     configurable: true,
     enumerable: true
   };

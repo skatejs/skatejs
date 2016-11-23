@@ -19,7 +19,8 @@ import initProps from '../lifecycle/props-init';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
-const HTMLElement = root.HTMLElement || class {};
+
+const _HTMLElement: typeof HTMLElement = root.HTMLElement || class {};
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
@@ -112,7 +113,7 @@ function createInitProps (Ctor) {
   };
 }
 
-export default class extends HTMLElement {
+export default class extends _HTMLElement {
   static get observedAttributes () {
     const { props } = this;
     return Object.keys(props).map(key => {
@@ -131,10 +132,12 @@ export default class extends HTMLElement {
     Object.defineProperty(this, 'props', { configurable: true, value });
   }
 
+  renderCallback: any;
+
   constructor () {
     super();
 
-    const { constructor } = this;
+    const constructor: any = this.constructor;
 
     // Used for the ready() function so it knows when it can call its callback.
     this[$created] = true;
@@ -184,7 +187,7 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   connectedCallback () {
-    const { constructor } = this;
+    const constructor: any = this.constructor;
 
     // DEPRECATED
     //
@@ -212,7 +215,7 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
-    const { constructor } = this;
+    const constructor: any = this.constructor;
 
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
@@ -227,6 +230,8 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   attributeChangedCallback (name, oldValue, newValue) {
+    const constructor: any = this.constructor;
+
     // Polyfill calls this twice.
     if (preventDoubleCalling(this, name, oldValue, newValue)) {
       return;
@@ -237,7 +242,7 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const { attributeChanged } = this.constructor;
+    const { attributeChanged } = constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
     if (propertyName) {
@@ -251,7 +256,7 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = this.constructor.props[propertyName];
+        const propOpts = constructor.props[propertyName];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)
@@ -270,7 +275,8 @@ export default class extends HTMLElement {
   // Maps to the static updated() callback. That logic should be moved here
   // when that is finally removed.
   updatedCallback (prev) {
-    return this.constructor.updated(this, prev);
+    const constructor: any = this.constructor;
+    return constructor.updated(this, prev);
   }
 
   // Skate
@@ -278,7 +284,8 @@ export default class extends HTMLElement {
   // Maps to the static rendered() callback. That logic should be moved here
   // when that is finally removed.
   renderedCallback () {
-    return this.constructor.rendered(this);
+    const constructor: any = this.constructor;
+    return constructor.rendered(this);
   }
 
   // Skate
@@ -286,7 +293,8 @@ export default class extends HTMLElement {
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
   rendererCallback () {
-    return this.constructor.renderer(this);
+    const constructor: any = this.constructor;
+    return constructor.renderer(this);
   }
 
   // Skate
@@ -319,7 +327,7 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  static extend (definition = {}, Base = this) {
+  static extend (definition: any = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
 

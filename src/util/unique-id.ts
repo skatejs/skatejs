@@ -1,4 +1,4 @@
-export default function uniqueId (prefix) {
+export default function uniqueId (prefix?:string) {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
