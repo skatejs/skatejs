@@ -14,6 +14,7 @@ import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import {getPropConfigs, getPropConfigsCount} from '../util/cached-prop-configs';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
 import syncPropToAttr from '../util/sync-prop-to-attr';
@@ -31,7 +32,7 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = elem.constructor.props;
+  const props = getPropConfigs(elem.constructor);
   Object.keys(props).forEach((propName) => {
     const prop = props[propName];
     syncPropToAttr(elem, prop, propName, true);
@@ -43,7 +44,7 @@ function syncPropsToAttrs (elem) {
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions (Ctor) {
-  const props = Ctor.props;
+  const props = getPropConfigs(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
@@ -114,7 +115,7 @@ function createInitProps (Ctor) {
 
 export default class extends HTMLElement {
   static get observedAttributes () {
-    const { props } = this;
+    const props = getPropConfigs(this);
     return Object.keys(props).map(key => {
       const { attribute } = props[key];
       return attribute === true ? dashCase(key) : attribute;
@@ -141,6 +142,9 @@ export default class extends HTMLElement {
 
     // TODO refactor to not cater to Safari < 10. This means we can depend on
     // built-in property descriptors.
+
+    // todo: createInitProps Must be defined on the constructor and not on an inherited Component
+    // if (!constructor.hasOwnProperty($props)) {
     if (!constructor[$props]) {
       constructor[$props] = createInitProps(constructor);
     }
@@ -149,7 +153,7 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    if (constructor.props && constructor[$props]) {
+    if (getPropConfigsCount(constructor) && constructor[$props]) {
       constructor[$props](this);
     }
 
@@ -251,7 +255,7 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = this.constructor.props[propertyName];
+        const propOpts = getPropConfigs(this.constructor)[propertyName];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)
