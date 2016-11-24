@@ -5,8 +5,11 @@ import {
 } from './symbols';
 
 /**
- * Returns the Property Definitions for the given Component Class
- * The first time this is called Property Definitions are created an cached on the constructor.
+ * Returns the Property Configs for the given Component Class.
+ *
+ * The first time this is called for a new Component Class the Property Configs
+ * returned by the static get props are cached on the constructor.
+ * This usually occurs when a new Component is registered with customElements.define()
  */
 export function getPropConfigs (Ctor) {
 
