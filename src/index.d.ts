@@ -4,7 +4,7 @@ type PropData = { [prop: string]: any };
 export function props(elem: any): PropData;
 export function props(elem: any, data?: PropData): void;
 
-export const emit: (elem: any, eventName: string, eventOptions = {}) => boolean;
+export const emit: (elem: any, eventName: string, eventOptions?:any) => boolean;
 
 export class Component extends HTMLElement {}
 
