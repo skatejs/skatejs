@@ -1,6 +1,6 @@
 import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
-import {getPropConfigs} from '../util/cached-prop-configs'
+import getPropConfigs from '../util/get-prop-configs';
 import keys from '../util/get-all-keys';
 
 function get (elem) {

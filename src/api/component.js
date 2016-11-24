@@ -2,8 +2,9 @@ import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
-  ctor_props as $ctor_props,
-  ctor_createInitProps as $ctor_createInitProps,
+  ctorObservedAttributes as $ctorObservedAttributes,
+  ctorProps as $ctorProps,
+  ctorCreateInitProps as $ctorCreateInitProps,
   props as $props,
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
@@ -17,9 +18,10 @@ import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import {getPropConfigs, getPropConfigsCount} from '../util/cached-prop-configs';
+import getPropConfigs from '../util/get-prop-configs';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
+import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
@@ -117,23 +119,37 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
+
+  /**
+   * Returns unique attribute names configured with props and
+   * those set on the Component constructor if any
+   */
   static get observedAttributes () {
+    const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
+
     const props = getPropConfigs(this);
-    return Object.keys(props).map(key => {
+    const attrsFromLinkedProps = Object.keys(props).map(key => {
       const { attribute } = props[key];
       return attribute === true ? dashCase(key) : attribute;
     }).filter(Boolean);
+
+    const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
+
+    return all.filter(function (item, index) {
+      return all.indexOf(item) === index;
+    });
   }
   static set observedAttributes (value) {
-    Object.defineProperty(this, 'observedAttributes', { configurable: true, value });
+    value = Array.isArray(value) ? value : [];
+    setCtorNativeProperty(this, 'observedAttributes', value);
   }
 
-  // returns inherited super props overwritten with this Component props
+  // Returns superclass props overwritten with this Component props
   static get props () {
-    return assign({}, super.props, this[$ctor_props]);
+    return assign({}, super.props, this[$ctorProps]);
   }
   static set props (value) {
-    this[$ctor_props] = value;
+    setCtorNativeProperty(this, $ctorProps, value);
   }
 
   constructor () {
@@ -146,17 +162,18 @@ export default class extends HTMLElement {
 
     // TODO refactor to not cater to Safari < 10. This means we can depend on
     // built-in property descriptors.
-    // Note: createInitProps must exist on the constructor and not from an inherited Component
-    if (!constructor.hasOwnProperty($ctor_createInitProps)) {
-      constructor[$ctor_createInitProps] = createInitProps(constructor);
+    // Must be defined on constructor and not from a superclass
+    if (!constructor.hasOwnProperty($ctorCreateInitProps)) {
+      setCtorNativeProperty(constructor, $ctorCreateInitProps, createInitProps(constructor));
     }
 
     // Set up a renderer that is debounced for property sets to call directly.
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    if (getPropConfigsCount(constructor) && constructor[$ctor_createInitProps]) {
-      constructor[$ctor_createInitProps](this);
+    const propConfigsCount = getAllKeys(getPropConfigs(constructor)).length;
+    if (propConfigsCount && constructor[$ctorCreateInitProps]) {
+      constructor[$ctorCreateInitProps](this);
     }
 
     // DEPRECATED
