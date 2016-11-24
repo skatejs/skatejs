@@ -2,12 +2,15 @@ import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
+  ctor_props as $ctor_props,
+  ctor_createInitProps as $ctor_createInitProps,
   props as $props,
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
+import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import dashCase from '../util/dash-case';
@@ -125,11 +128,12 @@ export default class extends HTMLElement {
     Object.defineProperty(this, 'observedAttributes', { configurable: true, value });
   }
 
+  // returns inherited super props overwritten with this Component props
   static get props () {
-    return {};
+    return assign({}, super.props, this[$ctor_props]);
   }
   static set props (value) {
-    Object.defineProperty(this, 'props', { configurable: true, value });
+    this[$ctor_props] = value;
   }
 
   constructor () {
@@ -142,19 +146,17 @@ export default class extends HTMLElement {
 
     // TODO refactor to not cater to Safari < 10. This means we can depend on
     // built-in property descriptors.
-
-    // todo: createInitProps Must be defined on the constructor and not on an inherited Component
-    // if (!constructor.hasOwnProperty($props)) {
-    if (!constructor[$props]) {
-      constructor[$props] = createInitProps(constructor);
+    // Note: createInitProps must exist on the constructor and not from an inherited Component
+    if (!constructor.hasOwnProperty($ctor_createInitProps)) {
+      constructor[$ctor_createInitProps] = createInitProps(constructor);
     }
 
     // Set up a renderer that is debounced for property sets to call directly.
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    if (getPropConfigsCount(constructor) && constructor[$props]) {
-      constructor[$props](this);
+    if (getPropConfigsCount(constructor) && constructor[$ctor_createInitProps]) {
+      constructor[$ctor_createInitProps](this);
     }
 
     // DEPRECATED
@@ -326,14 +328,6 @@ export default class extends HTMLElement {
   static extend (definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
-
-    // Pass on statics from the Base if not supported (IE 9 and 10).
-    if (!Ctor.observedAttributes) {
-      const staticOpts = getOwnPropertyDescriptors(Base);
-      delete staticOpts.length;
-      delete staticOpts.prototype;
-      Object.defineProperties(Ctor, staticOpts);
-    }
 
     // For inheriting from the object literal.
     const opts = getOwnPropertyDescriptors(definition);

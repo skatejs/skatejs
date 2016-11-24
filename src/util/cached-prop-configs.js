@@ -1,7 +1,8 @@
 import getAllKeys from './get-all-keys';
-
-const CACHED_PROP_CONFIGS = '____skate_propConfigs';
-const PROP_CONFIGS_COUNT = '____skate_propConfigsCount';
+import {
+  ctor_propConfigs as $ctor_propConfigs,
+  ctor_propConfigsCount as $ctor_propConfigsCount
+} from './symbols';
 
 /**
  * Returns the Property Definitions for the given Component Class
@@ -10,29 +11,29 @@ const PROP_CONFIGS_COUNT = '____skate_propConfigsCount';
 export function getPropConfigs (Ctor) {
 
   // Must be defined on the constructor and not on an inherited Component
-  if (!Ctor.hasOwnProperty(CACHED_PROP_CONFIGS)) {
+  if (!Ctor.hasOwnProperty($ctor_propConfigs)) {
 
     const propConfigs = Ctor.props || {};
 
     let count = 0;
 
-    Ctor[CACHED_PROP_CONFIGS] = getAllKeys(propConfigs).reduce((result, propName) => {
+    Ctor[$ctor_propConfigs] = getAllKeys(propConfigs).reduce((result, propName) => {
       count++;
       result[propName] = propConfigs[propName];
       return result;
     }, {});
 
-    // console.log('create', CACHED_PROP_CONFIGS, 'on constructor', Ctor.name, Ctor[CACHED_PROP_CONFIGS]);
-    Ctor[PROP_CONFIGS_COUNT] = count;
+    // console.log('created PropConfigs on', Ctor.name, Ctor[$ctor_propConfigs]);
+    Ctor[$ctor_propConfigsCount] = count;
   }
   // else {
-  //   console.log('Cached PropConfigs already found on constructor', Ctor.name, Ctor[CACHED_PROP_CONFIGS]);
+  //   console.log('use PropConfigs on', Ctor.name, Ctor[$ctor_propConfigs]);
   // }
 
-  return Ctor[CACHED_PROP_CONFIGS];
+  return Ctor[$ctor_propConfigs];
 }
 
 export function getPropConfigsCount (Ctor) {
   getPropConfigs(Ctor);
-  return Ctor.hasOwnProperty(PROP_CONFIGS_COUNT) ? Ctor[PROP_CONFIGS_COUNT] : 0;
+  return Ctor.hasOwnProperty($ctor_propConfigsCount) ? Ctor[$ctor_propConfigsCount] : 0;
 }
