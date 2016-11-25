@@ -50,7 +50,6 @@ describe('api/Component', () => {
       secondInstance.test = 'Hello';
       expect(count).to.equal(1);
     });
-
   });
 
   describe('property initialisers', () => {
