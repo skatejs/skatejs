@@ -7,12 +7,12 @@ export function props(elem: any, data?: PropData): void;
 export const emit: (elem: any, eventName: string, eventOptions = {}) => boolean;
 
 export class Component extends HTMLElement {
-  updatedCallback?(prevProps: { [name: string]: any }): boolean;
-  renderCallback?(): void;
-  renderedCallback?(): void;
-  connectedCallback?(): void;
-  disconnectedCallback?(): void;
-  attributeChangedCallback?(name: string, oldValue: any, newValue: any): void;
+  updatedCallback(prevProps: { [name: string]: any }): boolean;
+  renderCallback(): void;
+  renderedCallback(): void;
+  connectedCallback(): void;
+  disconnectedCallback(): void;
+  attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
 }
 
 export function define<C>(name: string, component: C): C;
