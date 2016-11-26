@@ -2,16 +2,17 @@ import {
   connected as $connected,
   rendererDebounced as $rendererDebounced
 } from '../util/symbols';
-import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
-import dashCase from '../util/dash-case';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
+import PropDefinition from '../util/prop-definition';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function createNativePropertyDefinition (name, opts) {
+export function createNativePropertyDescriptor (opts) {
+  const name = opts.name;
+
   const prop = {
     configurable: true,
     enumerable: true
@@ -19,21 +20,22 @@ function createNativePropertyDefinition (name, opts) {
 
   prop.created = function created (elem) {
     const propData = getPropData(elem, name);
-    const attributeName = opts.attribute === true ? dashCase(name) : opts.attribute;
+    const attributeName = opts.attrIn;
     let initialValue = elem[name];
 
     // Store property to attribute link information.
-    data(elem, 'attributeLinks')[attributeName] = name;
-    data(elem, 'propertyLinks')[name] = attributeName;
+    if (attributeName) {
+      data(elem, 'attributeLinks')[attributeName] = name;
+    }
 
     // Set up initial value if it wasn't specified.
     if (empty(initialValue)) {
       if (attributeName && elem.hasAttribute(attributeName)) {
         initialValue = opts.deserialize(elem.getAttribute(attributeName));
-      } else if ('initial' in opts) {
-        initialValue = getInitialValue(elem, name, opts);
-      } else if ('default' in opts) {
-        initialValue = getDefaultValue(elem, name, opts);
+      } else if (opts.hasOwnProperty('initial')) {
+        initialValue = getInitialValue(elem, opts);
+      } else if (opts.hasOwnProperty('default')) {
+        initialValue = getDefaultValue(elem, opts);
       }
     }
 
@@ -56,7 +58,7 @@ function createNativePropertyDefinition (name, opts) {
     }
 
     if (empty(newValue)) {
-      newValue = getDefaultValue(this, name, opts);
+      newValue = getDefaultValue(this, opts);
     }
 
     if (typeof opts.coerce === 'function') {
@@ -77,23 +79,15 @@ function createNativePropertyDefinition (name, opts) {
 
     // Link up the attribute.
     if (this[$connected]) {
-      syncPropToAttr(this, opts, name, false);
+      syncPropToAttr(this, opts, false);
     }
   };
 
   return prop;
 }
 
+// todo: This is only used from unit tests
 export default function (opts) {
-  opts = opts || {};
-
-  if (typeof opts === 'function') {
-    opts = { coerce: opts };
-  }
-
-  return name => createNativePropertyDefinition(name, assign({
-    default: null,
-    deserialize: value => value,
-    serialize: value => value
-  }, opts));
+  const propDef = new PropDefinition(opts);
+  return () => createNativePropertyDescriptor(propDef);
 }

@@ -2,6 +2,7 @@ import {
   ctorPropConfigs as $ctorPropConfigs
 } from './symbols';
 import getAllKeys from './get-all-keys';
+import PropDefinition from './prop-definition';
 import setCtorNativeProperty from './set-ctor-native-property';
 
 /**
@@ -17,7 +18,7 @@ export default function getPropConfigs (Ctor) {
     const props = Ctor.props || {};
 
     const propConfigs = getAllKeys(props).reduce((result, propName) => {
-      result[propName] = props[propName];
+      result[propName] = new PropDefinition(propName, props[propName]);
       return result;
     }, {});
     setCtorNativeProperty(Ctor, $ctorPropConfigs, propConfigs);

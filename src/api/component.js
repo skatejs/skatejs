@@ -20,7 +20,7 @@ import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropConfigs from '../util/get-prop-configs';
 import getSetProps from './props';
-import initProps from '../lifecycle/props-init';
+import {createNativePropertyDescriptor} from '../lifecycle/props-init';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -39,34 +39,17 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 function syncPropsToAttrs (elem) {
   const props = getPropConfigs(elem.constructor);
   Object.keys(props).forEach((propName) => {
-    const prop = props[propName];
-    syncPropToAttr(elem, prop, propName, true);
+    syncPropToAttr(elem, props[propName], true);
   });
 }
 
 // TODO remove when not catering to Safari < 10.
 //
-// Ensures that definitions passed as part of the constructor are functions
-// that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  const props = getPropConfigs(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
-    }
-    return descriptors;
-  }, {});
-}
-
-// TODO remove when not catering to Safari < 10.
-//
-// This can probably be simplified into createInitProps().
-function ensurePropertyDefinitions (Ctor) {
-  const props = ensurePropertyFunctions(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName](descriptorName);
-    return descriptors;
+function createNativePropertyDescriptors (Ctor) {
+  const propDefs = getPropConfigs(Ctor);
+  return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
+    propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
+    return propDescriptors;
   }, {});
 }
 
@@ -74,12 +57,9 @@ function ensurePropertyDefinitions (Ctor) {
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
 function createInitProps (Ctor) {
-  const props = ensurePropertyDefinitions(Ctor);
+  const props = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    if (!props) {
-      return;
-    }
 
     getAllKeys(props).forEach((name) => {
       const prop = props[name];
