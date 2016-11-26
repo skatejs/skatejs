@@ -6,8 +6,7 @@
 const cwd = process.cwd();
 const path = require('path');
 const browsers = require(path.join(cwd, 'karma.browsers'));
-// const webpackConfig = require(path.join(cwd, 'webpack.config'));
-const webpackConfig = require('./webpack.config');
+const webpackConfig = require(path.join(cwd, 'webpack.config'));
 
 module.exports = function (config) {
   // list of files / patterns to load in the browser

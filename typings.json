@@ -1,5 +1,0 @@
-{
-  "globalDependencies": {
-    "node-require": "file:./types-local-declares/node-require/index.d.ts"
-  }
-}
