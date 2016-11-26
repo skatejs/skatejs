@@ -1,6 +1,4 @@
-//import * as prop from './api/prop';
-const prop = require('./api/prop');
-
+import * as prop from './api/prop';
 import * as symbols from './api/symbols';
 import * as vdom from './api/vdom';
 import Component from './api/component';

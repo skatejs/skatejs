@@ -5,4 +5,5 @@ module.exports.globals = {
 };
 
 import typescript from 'rollup-plugin-typescript';
-module.exports.plugins.push(typescript());
+// Note: rollup-plugin-typescript must be first in the plugins array
+module.exports.plugins.unshift(typescript());

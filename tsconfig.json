@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
     "module": "commonjs",
     "target": "es5",
-    "strictNullChecks": false,
-    "allowJs": false
+
+    "allowJs": true,
+    "noImplicitAny": true,
+    "strictNullChecks": false
   },
-  "exclude": [
-    "node_modules"
+  "include": [
+    "src/**/*.ts"
   ]
 }

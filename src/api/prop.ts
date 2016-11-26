@@ -1,24 +1,18 @@
-/// <reference path="../../types-local-declares/node-require/index.d.ts"/>
-
-// import assign from '../util/assign.js';
-const assign = require('../util/assign.js').default;
-
-// import empty from '../util/empty.js';
-const empty = require('../util/empty.js').default;
+import assign from '../util/assign.js';
+import empty from '../util/empty.js';
 
 const alwaysUndefinedIfNotANumberOrNumber = (val:any) => (isNaN(val) ? undefined : Number(val));
 const alwaysUndefinedIfNotANumberOrString = (val:any) => (isNaN(val) ? undefined : String(val));
 const alwaysUndefinedIfEmptyOrString = (val:any) => (empty(val) ? undefined : String(val));
 
 /**
- * Returns a function to create Property Configurations based on the
- * given template Property Configuration that provides some default options.
+ * Returns a function to generate Property Configurations that will contain
+ * the default options defined in the template and
+ * the options defined in the config object when calling the function.
  */
 export function create (template:IPropConfig):IPropConfig {
-  //todo: where this is called will more than on argument?
-  return (...args:IPropConfig[]) => {
-    args.unshift({}, template);
-    return assign(...args);
+  return (config:IPropConfig) => {
+    return assign({}, template, config) as IPropConfig;
   };
 }
 
@@ -32,7 +26,9 @@ export const array:IPropConfig = create({
 export const boolean:IPropConfig = create({
   coerce: (value:any) => !!value,
   default: false,
-  deserialize: (value:null|string) => !(value === null),
+  // todo: rollup-plugin-typescript doesn't support strictNullChecks option!
+  // deserialize: (value:string|null) => !(value === null),
+  deserialize: (value:string) => !(value === null),
   serialize: (value:any) => (value ? '' : undefined)
 });
 
