@@ -109,8 +109,7 @@ export default class extends HTMLElement {
 
     const props = getPropConfigs(this);
     const attrsFromLinkedProps = Object.keys(props).map(key => {
-      const { attribute } = props[key];
-      return attribute === true ? dashCase(key) : attribute;
+      return props[key].attrIn;
     }).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);

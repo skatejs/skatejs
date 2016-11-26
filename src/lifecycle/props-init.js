@@ -54,6 +54,8 @@ export function createNativePropertyDescriptor (opts) {
     let { oldValue } = propData;
 
     if (empty(oldValue)) {
+      // todo: the doc is incorrect:  When the property is initialised, oldValue will always be undefined
+      // we probabbly need to update the doc
       oldValue = null;
     }
 

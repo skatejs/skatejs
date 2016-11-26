@@ -17,21 +17,25 @@ export default class PropDefinition {
 
   // constructor(name:string|symbol, cfg:IPropConfig) {
   constructor (name, cfg) {
-    cfg = cfg || {};
 
-    this.name = name;
+    this._name = name;
+
+    cfg = cfg || {};
 
     if (typeof cfg === 'function') {
       // todo: Where is documented that a config can just be the coerce function?
       cfg = {coerce: cfg};
     }
 
-    // this.coerce = null;
-    // this.get = null;
-    // this.set = null;
-    // this.initial = undefined; //todo?
+    this.coerce = null;
+    this.get = null;
+    this.set = null;
+
+    // Note: initial option is truly optional and it cannot be initialized.
+    // Its presence is tested using hasOwnProperty()
 
     // todo: from doc one would think default value is undefined
+    // we probabbly need to update the doc
     // value was defined inside props-init.js
     this.default = null;
 
@@ -46,25 +50,22 @@ export default class PropDefinition {
     // Copy options from Prop Config
     assign(this, cfg);
 
-    if (!empty(this.attribute)) {
-      this.attrIn = this.attribute;
-      this.attrOut = this.attribute;
+    // attribute option
+    if (!empty(cfg.attribute)) {
+      this.attrIn = cfg.attribute;
+      this.attrOut = cfg.attribute;
     }
 
-    // attribute is not a member of IPropDef
-    // todo
-    // delete this.attribute;
-    this.attribute = resolveAttrName(this.attribute, name);
+    // attribute option is not a member of IPropDef
+    delete this.attribute;
 
     this.attrIn = resolveAttrName(this.attrIn, name);
     this.attrOut = resolveAttrName(this.attrOut, name);
-
-    // console.log(this);
   }
 
-  // get name () {
-  //   return this._name;
-  // }
+  get name () {
+    return this._name;
+  }
 
 }
 
@@ -74,11 +75,11 @@ function resolveAttrName (attrOption, nameOrSymbol) {
       return dashCase(nameOrSymbol);
     }
     if (typeof nameOrSymbol === 'symbol') {
+      // todo: should we allow a symbol prop to have a linked attribute?
       console.error('attribute must be a string for property ' + nameOrSymbol.toString());
     }
   }
   if (typeof attrOption === 'string') {
     return attrOption;
   }
-  return null;
 }
