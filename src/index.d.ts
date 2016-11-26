@@ -8,7 +8,7 @@ export const emit: (elem: any, eventName: string, eventOptions = {}) => boolean;
 
 export class Component extends HTMLElement {
   updatedCallback(prevProps: { [name: string]: any }): boolean;
-  renderCallback(): void;
+  renderCallback(): any | undefined;
   renderedCallback(): void;
   connectedCallback(): void;
   disconnectedCallback(): void;
