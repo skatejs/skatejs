@@ -18,7 +18,7 @@ import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import getPropConfigs from '../util/get-prop-configs';
+import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
@@ -37,7 +37,7 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = getPropConfigs(elem.constructor);
+  const props = getPropsMap(elem.constructor);
   Object.keys(props).forEach((propName) => {
     const prop = props[propName];
     syncPropToAttr(elem, prop, propName, true);
@@ -49,7 +49,7 @@ function syncPropsToAttrs (elem) {
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions (Ctor) {
-  const props = getPropConfigs(Ctor);
+  const props = getPropsMap(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
@@ -127,7 +127,7 @@ export default class extends HTMLElement {
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
 
-    const props = getPropConfigs(this);
+    const props = getPropsMap(this);
     const attrsFromLinkedProps = Object.keys(props).map(key => {
       const { attribute } = props[key];
       return attribute === true ? dashCase(key) : attribute;
@@ -171,7 +171,7 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propConfigsCount = getAllKeys(getPropConfigs(constructor)).length;
+    const propConfigsCount = getAllKeys(getPropsMap(constructor)).length;
     if (propConfigsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
@@ -274,7 +274,7 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = getPropConfigs(this.constructor)[propertyName];
+        const propOpts = getPropsMap(this.constructor)[propertyName];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)
