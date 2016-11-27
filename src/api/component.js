@@ -14,11 +14,10 @@ import {
 import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
-import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
-import getPropConfigs from '../util/get-prop-configs';
+import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import {createNativePropertyDescriptor} from '../lifecycle/props-init';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
@@ -37,7 +36,7 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = getPropConfigs(elem.constructor);
+  const props = getPropsMap(elem.constructor);
   Object.keys(props).forEach((propName) => {
     syncPropToAttr(elem, props[propName], true);
   });
@@ -46,7 +45,7 @@ function syncPropsToAttrs (elem) {
 // TODO remove when not catering to Safari < 10.
 //
 function createNativePropertyDescriptors (Ctor) {
-  const propDefs = getPropConfigs(Ctor);
+  const propDefs = getPropsMap(Ctor);
   return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
     propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
     return propDescriptors;
@@ -60,7 +59,6 @@ function createInitProps (Ctor) {
   const props = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-
     getAllKeys(props).forEach((name) => {
       const prop = props[name];
       prop.created(elem);
@@ -107,7 +105,7 @@ export default class extends HTMLElement {
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
 
-    const props = getPropConfigs(this);
+    const props = getPropsMap(this);
     const attrsFromLinkedProps = Object.keys(props).map(key => {
       return props[key].attrIn;
     }).filter(Boolean);
@@ -150,8 +148,8 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propConfigsCount = getAllKeys(getPropConfigs(constructor)).length;
-    if (propConfigsCount && constructor[$ctorCreateInitProps]) {
+    const propsMapCount = getAllKeys(getPropsMap(constructor)).length;
+    if (propsMapCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
 
@@ -253,7 +251,7 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = getPropConfigs(this.constructor)[propertyName];
+        const propOpts = getPropsMap(this.constructor)[propertyName];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)

@@ -3,21 +3,21 @@ import dashCase from './dash-case';
 import empty from './empty';
 
 /**
+ * @internal
  * Property Definition
  *
- * Used internally. It is the meta model for a property.
- * It is created from the options of a property Config object.
+ * Internal meta data and strategies for a property.
+ * Created from the options of a PropOptions config object.
  *
- * Once created a Property Definition should be considered final and immutable
- * Property Definitions are created and cached per Component Class
+ * Once created a PropDefinition should be treated as immutable and final
+ * PropDefinitions are created and cached by Component's Class by getPropsMap()
  *
- * Note: some options from the property Config object are transformed
+ * Note: some options of PropOptions no longer exist in PropDefinition
  */
 export default class PropDefinition {
 
-  // constructor(name:string|symbol, cfg:IPropConfig) {
+  // constructor(name:string|symbol, cfg:PropOptions) {
   constructor (name, cfg) {
-
     this._name = name;
 
     cfg = cfg || {};
@@ -34,8 +34,8 @@ export default class PropDefinition {
     // Note: initial option is truly optional and it cannot be initialized.
     // Its presence is tested using hasOwnProperty()
 
-    // todo: from doc one would think default value is undefined
-    // we probabbly need to update the doc
+    // todo: we probabbly need to update the doc
+    // from doc one would think default value is undefined
     // value was defined inside props-init.js
     this.default = null;
 
@@ -47,7 +47,7 @@ export default class PropDefinition {
     // value was defined inside props-init.js
     this.serialize = value => value;
 
-    // Copy options from Prop Config
+    // Merge options from PropOptions config
     assign(this, cfg);
 
     // attribute option
@@ -75,7 +75,7 @@ function resolveAttrName (attrOption, nameOrSymbol) {
       return dashCase(nameOrSymbol);
     }
     if (typeof nameOrSymbol === 'symbol') {
-      // todo: should we allow a symbol prop to have a linked attribute?
+      // todo: should we even allow a symbol prop to have a linked attribute?
       console.error('attribute must be a string for property ' + nameOrSymbol.toString());
     }
   }
