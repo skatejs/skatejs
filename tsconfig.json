@@ -5,7 +5,9 @@
 
     "allowJs": true,
     "noImplicitAny": true,
-    "strictNullChecks": false
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*.ts"

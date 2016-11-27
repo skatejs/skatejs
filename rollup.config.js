@@ -4,6 +4,9 @@ module.exports.globals = {
   'window-or-global': 'windowOrGlobal'
 };
 
-import typescript from 'rollup-plugin-typescript';
+import rollupPluginTypescript from 'rollup-plugin-typescript';
 // Note: rollup-plugin-typescript must be first in the plugins array
-module.exports.plugins.unshift(typescript());
+module.exports.plugins.unshift(rollupPluginTypescript({
+  typescript: require('typescript')
+}));
+

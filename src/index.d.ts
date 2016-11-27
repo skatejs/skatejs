@@ -39,12 +39,12 @@ export const builder: (...args: string[]) => HBuilder[];
 type PropOptions = {
   attribute?: boolean | string;
   coerce?: (value: any) => any;
-  default?: undefined | null | boolean | string | ((elem: any, data: { name: string }) => any);
-  deserialize?: (value: string) => any;
-  get?: (elem: any, data: { name: string, internalValue: any }) => any;
-  initial?: undefined | null | boolean | string | ((elem: any, data: { name: string }) => any);
-  serialize?: (value: any) => string;
-  set?: (elem: any, data: { name: string, newValue: any, oldValue: any }) => void;
+  default?: undefined | null | boolean | number | string | ((elem: any, data: { name: string | symbol }) => any);
+  deserialize?: (value: undefined | null | string) => any;
+  get?: (elem: any, data: { name: string | symbol, internalValue: any }) => any;
+  initial?: undefined | null | boolean | number | string | ((elem: any, data: { name: string }) => any);
+  serialize?: (value: any) => null | string;
+  set?: (elem: any, data: { name: string | symbol, newValue: any, oldValue: any }) => void;
 };
 
 export const prop: {
