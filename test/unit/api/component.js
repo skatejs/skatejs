@@ -31,6 +31,25 @@ describe('api/Component', () => {
         test: { attribute: true }
       });
     });
+
+    it('static props is called once', () => {
+      let count = 0;
+      class Test extends Component {
+        static get props () {
+          count++;
+          return {
+            test: { attribute: true }
+          };
+        }
+      }
+      define('test-props-called-once', Test);
+      const instance = document.createElement('test-props-called-once');
+      instance.test = 'Hello';
+
+      const secondInstance = new Test();
+      secondInstance.test = 'Hello';
+      expect(count).to.equal(1);
+    });
   });
 
   describe('property initialisers', () => {
