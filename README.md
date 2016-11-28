@@ -1708,7 +1708,7 @@ customElements.define('my-component', class extends skate.Component {
 
 ### Private Members
 
-Skate doesn't have any opinions on how you store or use private methods and properties on your elements. Classically one would normally use scoped functions or underscores to indicate privacy:
+Skate doesn't have any opinions on how you store or use private methods and properties on your elements. Classically, one would normally use scoped functions or underscores to indicate privacy:
 
 ```js
 function scoped(elem) {}
@@ -1723,7 +1723,7 @@ customElements.define('my-component', class extends skate.Component {
 });
 ```
 
-However, if you're using ES2015 you can use symbols. Using this pattern, your members are completely private and only available if you have access to the symbol:
+With ES2015, another pattern for "private" members is to use [symbol-keyed](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) properties:
 
 ```js
 const sym = Symbol();
@@ -1739,6 +1739,7 @@ customElements.define('my-component', class extends skate.Component {
 });
 ```
 
+Note these also are not truly private, as they're discoverable via reflection.
 
 ### Private Data
 
