@@ -1,11 +1,12 @@
 module.exports = require('skatejs-build/webpack.config');
 module.exports.module.loaders[2].query.plugins = ['transform-class-properties'];
 
-const path = require('path');
+// Resolve .ts files
 module.exports.resolve = {
-  root: path.resolve('./src'),
   extensions: ['', '.js', '.ts']
 };
+
+// ts-loader
 module.exports.module.loaders.push(
   {
     test: /\.ts$/,
