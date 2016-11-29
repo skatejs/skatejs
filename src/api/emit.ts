@@ -11,7 +11,7 @@ const Event = ((TheEvent) => {
   return TheEvent;
 })(root.Event);
 
-function createCustomEvent (name, opts = {}) {
+function createCustomEvent (name, opts: any = {}) {
   const { detail } = opts;
   delete opts.detail;
 
@@ -27,7 +27,7 @@ function createCustomEvent (name, opts = {}) {
   return e;
 }
 
-export default function (elem, name, opts = {}) {
+export default function (elem, name, opts: any = {}) {
   if (opts.bubbles === undefined) {
     opts.bubbles = true;
   }

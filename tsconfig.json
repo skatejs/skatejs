@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "moduleResolution": "node",
+        "target": "es2015",
+        "lib": [
+            "dom",
+            "es2016"
+        ],
+        "noImplicitAny": false,
+        "declaration": true,
+        "sourceMap": false,
+        "noEmit": false,
+        "baseUrl": "./definitions/",
+        "typeRoots": [
+            "./definitions/"
+        ],
+        "types": [
+            "incremental-dom",
+            "window-or-global"
+        ]
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}

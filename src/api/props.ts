@@ -18,6 +18,6 @@ function set (elem, newProps) {
   }
 }
 
-export default function (elem, newProps) {
+export default function (elem, newProps?: any) {
   return typeof newProps === 'undefined' ? get(elem) : set(elem, newProps);
 }
