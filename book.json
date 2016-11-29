@@ -1,0 +1,13 @@
+{
+  "title": "skatejs",
+  "plugins": [ "jsfiddle"],
+  "pluginsConfig": {
+    "jsfiddle":{
+      "type":"script",
+      "tabs":["result","js", "html","css"],
+      "height": "250",
+      "width": "500",
+      "fontColor": "00FF00"
+    }
+  }
+}
