@@ -10,4 +10,7 @@ module.exports = (config) => {
   config.webpack = Object.assign({}, config.webpack, webpackConfig, {
     entry: undefined
   });
+
+  // karma-typescript-preprocessor
+  config.preprocessors['**/*.ts'] = ['typescript'];
 };
