@@ -50,17 +50,11 @@ export default class PropDefinition {
     // Merge options from PropOptions config
     assign(this, cfg);
 
-    // attribute option
-    if (!empty(cfg.attribute)) {
-      this.attrIn = cfg.attribute;
-      this.attrOut = cfg.attribute;
-    }
+    // The resolved linked attribute name if any
+    this.attrName = resolveAttrName(cfg.attribute, name);
 
     // attribute option is not a member of IPropDef
     delete this.attribute;
-
-    this.attrIn = resolveAttrName(this.attrIn, name);
-    this.attrOut = resolveAttrName(this.attrOut, name);
   }
 
   get name () {

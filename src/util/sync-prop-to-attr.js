@@ -19,13 +19,13 @@ function syncFirstTimeProp (elem, prop) {
   }
   if (!empty(syncAttrValue)) {
     propData.syncingAttribute = true;
-    elem.setAttribute(prop.attrOut, syncAttrValue);
+    elem.setAttribute(prop.attrName, syncAttrValue);
   }
 }
 
 function syncExistingProp (elem, prop) {
   const propData = getPropData(elem, prop.name);
-  const attributeName = prop.attrOut;
+  const attributeName = prop.attrName;
 
   if (attributeName && !propData.settingAttribute) {
     const { internalValue } = propData;
@@ -55,7 +55,7 @@ function syncExistingProp (elem, prop) {
 }
 
 export default function syncPropToAttr (elem, prop, isFirstSync) {
-  if (prop.attrOut) {
+  if (prop.attrName) {
     if (isFirstSync) {
       syncFirstTimeProp(elem, prop);
     } else {

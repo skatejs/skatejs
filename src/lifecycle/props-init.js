@@ -20,7 +20,7 @@ export function createNativePropertyDescriptor (opts) {
 
   prop.created = function created (elem) {
     const propData = getPropData(elem, name);
-    const attributeName = opts.attrIn;
+    const attributeName = opts.attrName;
     let initialValue = elem[name];
 
     // Store property to attribute link information.
