@@ -14,7 +14,7 @@ export class Component extends HTMLElement {
   renderedCallback(): void;
   connectedCallback(): void;
   disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
+  attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
 
   // DEPRECATED
   static created?(elem: Component): void;
@@ -23,7 +23,7 @@ export class Component extends HTMLElement {
   // DEPRECATED
   static detached?(elem: Component): void;
   // DEPRECATED
-  static attributeChanged?(elem: Component, data: { name: string, oldValue: any, newValue: any }): void;
+  static attributeChanged?(elem: Component, data: { name: string, oldValue: string, newValue: string }): void;
   // DEPRECATED
   static updated(elem: Component, prevProps: { [name: string]: any }): boolean;
   // DEPRECATED
