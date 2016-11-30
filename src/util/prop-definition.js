@@ -1,6 +1,4 @@
-import assign from './assign';
 import dashCase from './dash-case';
-import empty from './empty';
 
 /**
  * @internal
@@ -27,12 +25,9 @@ export default class PropDefinition {
       cfg = {coerce: cfg};
     }
 
-    this.coerce = null;
-    this.get = null;
-    this.set = null;
+    // Set Default values
 
-    // Note: initial option is truly optional and it cannot be initialized.
-    // Its presence is tested using hasOwnProperty()
+    this.coerce = null;
 
     // todo: we probabbly need to update the doc
     // from doc one would think default value is undefined
@@ -43,18 +38,47 @@ export default class PropDefinition {
     // value was defined inside props-init.js
     this.deserialize = value => value;
 
+    // "initial" option is truly optional and it cannot be initialized.
+    // Its presence is tested using hasOwnProperty()
+
+    this.get = null;
+
     // todo: should be JSON.parse ?
     // value was defined inside props-init.js
     this.serialize = value => value;
 
-    // Merge options from PropOptions config
-    assign(this, cfg);
+    this.set = null;
 
-    // The resolved linked attribute name if any
-    this.attrName = resolveAttrName(cfg.attribute, name);
+    // Note: option key is always a string (no symbols here)
+    Object.keys(cfg).forEach(option => {
+      const optVal = cfg[option];
 
-    // attribute option is not a member of IPropDef
-    delete this.attribute;
+      // Only accept documented options and perform minimal input validation.
+      switch (option) {
+        case 'attribute':
+          this.attrName = resolveAttrName(cfg.attribute, name);
+          break;
+        case 'coerce':
+        case 'deserialize':
+        case 'get':
+        case 'serialize':
+        case 'set':
+          if (typeof optVal === 'function') {
+            this[option] = optVal;
+          }
+          else {
+            console.error(option + ' must be a function.');
+          }
+          break;
+        case 'default':
+        case 'initial':
+          this[option] = optVal;
+          break;
+        default:
+          console.error(option + ' is not a valid option.');
+          break;
+      }
+    });
   }
 
   get name () {

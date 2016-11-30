@@ -45,7 +45,7 @@ export function createNativePropertyDescriptor (opts) {
   prop.get = function get () {
     const propData = getPropData(this, name);
     const { internalValue } = propData;
-    return typeof opts.get === 'function' ? opts.get(this, { name, internalValue }) : internalValue;
+    return opts.get ? opts.get(this, { name, internalValue }) : internalValue;
   };
 
   prop.set = function set (newValue) {
@@ -63,13 +63,13 @@ export function createNativePropertyDescriptor (opts) {
       newValue = getDefaultValue(this, opts);
     }
 
-    if (typeof opts.coerce === 'function') {
+    if (opts.coerce) {
       newValue = opts.coerce(newValue);
     }
 
     const changeData = { name, newValue, oldValue };
 
-    if (typeof opts.set === 'function') {
+    if (opts.set) {
       opts.set(this, changeData);
     }
 
