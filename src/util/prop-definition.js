@@ -7,10 +7,10 @@ import dashCase from './dash-case';
  * Internal meta data and strategies for a property.
  * Created from the options of a PropOptions config object.
  *
- * Once created a PropDefinition should be treated as immutable and final
- * PropDefinitions are created and cached by Component's Class by getPropsMap()
+ * Once created a PropDefinition should be treated as immutable and final.
+ * 'getPropsMap' function memoizes PropDefinitions by Component's Class.
  *
- * Note: some options of PropOptions no longer exist in PropDefinition
+ * The 'attribute' option is normalized into the 'attrName' property.
  */
 export default class PropDefinition {
 
@@ -26,6 +26,8 @@ export default class PropDefinition {
     }
 
     // Set Default values
+
+    this.attrName = null;
 
     this.coerce = null;
 

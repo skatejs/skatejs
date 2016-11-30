@@ -105,9 +105,11 @@ export default class extends HTMLElement {
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
 
-    const props = getPropsMap(this);
-    const attrsFromLinkedProps = Object.keys(props).map(key => {
-      return props[key].attrName;
+    const propDefs = getPropsMap(this);
+    // todo: with Object.keys we skip symbol properties!
+    // should we allow symbol properties to have linked attributes?
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName => {
+      return propDefs[propName].attrName;
     }).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
@@ -250,10 +252,10 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = getPropsMap(this.constructor)[propNameOrSymbol];
+        const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
         propData.settingAttribute = true;
-        const newPropVal = newValue !== null && propOpts.deserialize
-          ? propOpts.deserialize(newValue)
+        const newPropVal = newValue !== null && propDef.deserialize
+          ? propDef.deserialize(newValue)
           : newValue;
         this[propNameOrSymbol] = newPropVal;
       }

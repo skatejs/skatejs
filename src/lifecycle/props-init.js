@@ -34,7 +34,7 @@ export function createNativePropertyDescriptor (propDef) {
         initialValue = propDef.deserialize(elem.getAttribute(attrName));
       } else if (propDef.hasOwnProperty('initial')) {
         initialValue = getInitialValue(elem, propDef);
-      } else if (propDef.hasOwnProperty('default')) {
+      } else {
         initialValue = getDefaultValue(elem, propDef);
       }
     }

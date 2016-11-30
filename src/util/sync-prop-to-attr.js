@@ -10,7 +10,7 @@ function syncFirstTimeProp (elem, propDef) {
   if (empty(syncAttrValue)) {
     if (propDef.hasOwnProperty('initial')) {
       syncAttrValue = getInitialValue(elem, propDef);
-    } else if (propDef.hasOwnProperty('default')) {
+    } else {
       syncAttrValue = getDefaultValue(elem, propDef);
     }
   }
