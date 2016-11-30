@@ -1,3 +1,5 @@
-export default function getDefaultValue (elem, opts) {
-  return typeof opts.default === 'function' ? opts.default(elem, { name: opts.name }) : opts.default;
+export default function getDefaultValue (elem, propDef) {
+  return typeof propDef.default === 'function'
+    ? propDef.default(elem, { name: propDef.name })
+    : propDef.default;
 }

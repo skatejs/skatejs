@@ -36,9 +36,9 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = getPropsMap(elem.constructor);
-  Object.keys(props).forEach((propName) => {
-    syncPropToAttr(elem, props[propName], true);
+  const propDefs = getPropsMap(elem.constructor);
+  Object.keys(propDefs).forEach((propName) => {
+    syncPropToAttr(elem, propDefs[propName], true);
   });
 }
 
@@ -56,12 +56,12 @@ function createNativePropertyDescriptors (Ctor) {
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
 function createInitProps (Ctor) {
-  const props = createNativePropertyDescriptors(Ctor);
+  const propDescriptors = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    getAllKeys(props).forEach((name) => {
-      const prop = props[name];
-      prop.created(elem);
+    getAllKeys(propDescriptors).forEach((name) => {
+      const propDescriptor = propDescriptors[name];
+      propDescriptor.created(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
@@ -78,7 +78,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, prop);
+      Object.defineProperty(elem, name, propDescriptor);
 
       // DEPRECATED
       //
@@ -237,11 +237,10 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const { attributeChanged } = this.constructor;
-    const propertyName = data(this, 'attributeLinks')[name];
+    const propNameOrSymbol = data(this, 'attributeLinks')[name];
 
-    if (propertyName) {
-      const propData = data(this, 'props')[propertyName];
+    if (propNameOrSymbol) {
+      const propData = data(this, 'props')[propNameOrSymbol];
 
       // This ensures a property set doesn't cause the attribute changed
       // handler to run again once we set this flag. This only ever has a
@@ -251,15 +250,18 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = getPropsMap(this.constructor)[propertyName];
+        const propOpts = getPropsMap(this.constructor)[propNameOrSymbol];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)
           : newValue;
-        this[propertyName] = newPropVal;
+        this[propNameOrSymbol] = newPropVal;
       }
     }
 
+    // DEPRECATED
+    //
+    const { attributeChanged } = this.constructor;
     if (attributeChanged) {
       attributeChanged(this, { name, newValue, oldValue });
     }

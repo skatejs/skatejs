@@ -10,8 +10,8 @@ import getPropData from '../util/get-prop-data';
 import PropDefinition from '../util/prop-definition';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
-export function createNativePropertyDescriptor (opts) {
-  const name = opts.name;
+export function createNativePropertyDescriptor (propDef) {
+  const name = propDef.name;
 
   const prop = {
     configurable: true,
@@ -20,32 +20,32 @@ export function createNativePropertyDescriptor (opts) {
 
   prop.created = function created (elem) {
     const propData = getPropData(elem, name);
-    const attributeName = opts.attrName;
+    const attrName = propDef.attrName;
     let initialValue = elem[name];
 
     // Store property to attribute link information.
-    if (attributeName) {
-      data(elem, 'attributeLinks')[attributeName] = name;
+    if (attrName) {
+      data(elem, 'attributeLinks')[attrName] = name;
     }
 
     // Set up initial value if it wasn't specified.
     if (empty(initialValue)) {
-      if (attributeName && elem.hasAttribute(attributeName)) {
-        initialValue = opts.deserialize(elem.getAttribute(attributeName));
-      } else if (opts.hasOwnProperty('initial')) {
-        initialValue = getInitialValue(elem, opts);
-      } else if (opts.hasOwnProperty('default')) {
-        initialValue = getDefaultValue(elem, opts);
+      if (attrName && elem.hasAttribute(attrName)) {
+        initialValue = propDef.deserialize(elem.getAttribute(attrName));
+      } else if (propDef.hasOwnProperty('initial')) {
+        initialValue = getInitialValue(elem, propDef);
+      } else if (propDef.hasOwnProperty('default')) {
+        initialValue = getDefaultValue(elem, propDef);
       }
     }
 
-    propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+    propData.internalValue = propDef.coerce ? propDef.coerce(initialValue) : initialValue;
   };
 
   prop.get = function get () {
     const propData = getPropData(this, name);
     const { internalValue } = propData;
-    return opts.get ? opts.get(this, { name, internalValue }) : internalValue;
+    return propDef.get ? propDef.get(this, { name, internalValue }) : internalValue;
   };
 
   prop.set = function set (newValue) {
@@ -60,17 +60,17 @@ export function createNativePropertyDescriptor (opts) {
     }
 
     if (empty(newValue)) {
-      newValue = getDefaultValue(this, opts);
+      newValue = getDefaultValue(this, propDef);
     }
 
-    if (opts.coerce) {
-      newValue = opts.coerce(newValue);
+    if (propDef.coerce) {
+      newValue = propDef.coerce(newValue);
     }
 
     const changeData = { name, newValue, oldValue };
 
-    if (opts.set) {
-      opts.set(this, changeData);
+    if (propDef.set) {
+      propDef.set(this, changeData);
     }
 
     // Queue a re-render.
@@ -81,7 +81,7 @@ export function createNativePropertyDescriptor (opts) {
 
     // Link up the attribute.
     if (this[$connected]) {
-      syncPropToAttr(this, opts, false);
+      syncPropToAttr(this, propDef, false);
     }
   };
 

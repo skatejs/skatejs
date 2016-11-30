@@ -15,8 +15,8 @@ import dashCase from './dash-case';
 export default class PropDefinition {
 
   // constructor(name:string|symbol, cfg:PropOptions) {
-  constructor (name, cfg) {
-    this._name = name;
+  constructor (nameOrSymbol, cfg) {
+    this._name = nameOrSymbol;
 
     cfg = cfg || {};
 
@@ -56,7 +56,7 @@ export default class PropDefinition {
       // Only accept documented options and perform minimal input validation.
       switch (option) {
         case 'attribute':
-          this.attrName = resolveAttrName(cfg.attribute, name);
+          this.attrName = resolveAttrName(cfg.attribute, nameOrSymbol);
           break;
         case 'coerce':
         case 'deserialize':
@@ -65,8 +65,7 @@ export default class PropDefinition {
         case 'set':
           if (typeof optVal === 'function') {
             this[option] = optVal;
-          }
-          else {
+          } else {
             console.error(option + ' must be a function.');
           }
           break;

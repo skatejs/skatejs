@@ -3,33 +3,33 @@ import getDefaultValue from '../util/get-default-value';
 import getInitialValue from './get-initial-value';
 import getPropData from './get-prop-data';
 
-function syncFirstTimeProp (elem, prop) {
-  const propData = getPropData(elem, prop.name);
+function syncFirstTimeProp (elem, propDef) {
+  const propData = getPropData(elem, propDef.name);
 
   let syncAttrValue = propData.lastAssignedValue;
   if (empty(syncAttrValue)) {
-    if (prop.hasOwnProperty('initial')) {
-      syncAttrValue = getInitialValue(elem, prop);
-    } else if (prop.hasOwnProperty('default')) {
-      syncAttrValue = getDefaultValue(elem, prop);
+    if (propDef.hasOwnProperty('initial')) {
+      syncAttrValue = getInitialValue(elem, propDef);
+    } else if (propDef.hasOwnProperty('default')) {
+      syncAttrValue = getDefaultValue(elem, propDef);
     }
   }
-  if (!empty(syncAttrValue) && prop.serialize) {
-    syncAttrValue = prop.serialize(syncAttrValue);
+  if (!empty(syncAttrValue) && propDef.serialize) {
+    syncAttrValue = propDef.serialize(syncAttrValue);
   }
   if (!empty(syncAttrValue)) {
     propData.syncingAttribute = true;
-    elem.setAttribute(prop.attrName, syncAttrValue);
+    elem.setAttribute(propDef.attrName, syncAttrValue);
   }
 }
 
-function syncExistingProp (elem, prop) {
-  const propData = getPropData(elem, prop.name);
-  const attributeName = prop.attrName;
+function syncExistingProp (elem, propDef) {
+  const propData = getPropData(elem, propDef.name);
+  const attributeName = propDef.attrName;
 
   if (attributeName && !propData.settingAttribute) {
     const { internalValue } = propData;
-    const serializedValue = prop.serialize(internalValue);
+    const serializedValue = propDef.serialize(internalValue);
     const currentAttrValue = elem.getAttribute(attributeName);
     const serializedIsEmpty = empty(serializedValue);
     const attributeChanged = !(
@@ -54,12 +54,12 @@ function syncExistingProp (elem, prop) {
   propData.settingAttribute = false;
 }
 
-export default function syncPropToAttr (elem, prop, isFirstSync) {
-  if (prop.attrName) {
+export default function syncPropToAttr (elem, propDef, isFirstSync) {
+  if (propDef.attrName) {
     if (isFirstSync) {
-      syncFirstTimeProp(elem, prop);
+      syncFirstTimeProp(elem, propDef);
     } else {
-      syncExistingProp(elem, prop);
+      syncExistingProp(elem, propDef);
     }
   }
 }
