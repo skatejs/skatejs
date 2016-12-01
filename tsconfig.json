@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "es2015",
+        "target": "es5",
+        "noImplicitAny": true,
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "strictNullChecks": true,
+        "noEmit": true
+    },
+    "include": [
+      "index.d.ts",
+      "jsx.d.ts"
+    ]
+}
