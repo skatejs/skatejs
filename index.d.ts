@@ -3,7 +3,7 @@ export { } from "./jsx";
 export as namespace skate;
 
 export interface HasProps<El extends Component> {
-  props: { [key: string]: skate.PropAttr<El, any>; };
+  props: { [key: string]: skate.PropOptions<El, any>; };
 }
 
 export interface OnUpdatedCallback {
@@ -31,7 +31,7 @@ export class Component extends HTMLElement {
   updated(prev: any): boolean;
 }
 
-export interface PropAttr<El, T> {
+export interface PropOptions<El, T> {
   attribute?: boolean | string;
   coerce?: (value: T | null) => T | null | undefined | void;
   default?: ((elem: El, data: { name: string; }) => T) | T;
@@ -47,13 +47,13 @@ export var define: {
   (ctor: Function): any;
 };
 
-export interface EmitOpts {
+export interface EmitOptions {
   bubbles?: boolean;
   cancelable?: boolean;
   composed?: boolean;
   detail?: any;
 }
-export function emit(elem: EventTarget, name: string, opts?: EmitOpts): void;
+export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
 
 export function link(elem: Component, target?: string): (e: Event) => void;
 
@@ -84,12 +84,12 @@ export function ready(elem: Component, done: (c: Component) => void): void;
 // export var symbols: any;
 
 export var prop: {
-  create<T>(attr: PropAttr<any, T>): PropAttr<any, T> & ((attr: PropAttr<any, T>) => PropAttr<any, T>);
+  create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
 
-  number(attr?: PropAttr<any, number>): PropAttr<any, number>;
-  boolean(attr?: PropAttr<any, boolean>): PropAttr<any, boolean>;
-  string(attr?: PropAttr<any, string>): PropAttr<any, string>;
-  array(attr?: PropAttr<any, any[]>): PropAttr<any, any[]>;
+  number(attr?: PropOptions<any, number>): PropOptions<any, number>;
+  boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
+  string(attr?: PropOptions<any, string>): PropOptions<any, string>;
+  array(attr?: PropOptions<any, any[]>): PropOptions<any, any[]>;
 };
 
 export function props(elem: Component, props?: any): void;
