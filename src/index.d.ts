@@ -23,7 +23,7 @@ export class Component extends HTMLElement {
   // DEPRECATED
   static detached?(elem: Component): void;
   // DEPRECATED
-  static attributeChanged?(elem: Component, data: { name: string, oldValue: string, newValue: string }): void;
+  static attributeChanged?(elem: Component, data: { name: string, oldValue: null | string, newValue: null | string }): void;
   // DEPRECATED
   static updated(elem: Component, prevProps: { [name: string]: any }): boolean;
   // DEPRECATED
@@ -38,12 +38,12 @@ export function define<Proto, Props>(name: string, definition: {
   prototype: Proto;
   props: Props;
   constructor?(elem: Component & Proto & Props): any;
-  updatedCallback?(elem: Component & Proto & Props, prevProps: { [name: string]: any }): boolean | undefined;
+  updatedCallback?(elem: Component & Proto & Props, prevProps: { [name: string]: any }): boolean;
   renderCallback?(elem: Component & Proto & Props): () => any | undefined;
   renderedCallback?(elem: Component & Proto & Props): any;
   connectedCallback?(elem: Component & Proto & Props): any;
   disconnectedCallback?(elem: Component & Proto & Props): any;
-  attributeChangedCallback?(elem: Component & Proto & Props, data: { name: string, oldValue: any, newValue: any }): any;
+  attributeChangedCallback?(elem: Component & Proto & Props, data: { name: string, oldValue: null | string, newValue: null | string }): any;
   observedAttributes?: string[];
 }): { new(...args: any[]): Component & Proto & Props };
 
