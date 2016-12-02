@@ -150,8 +150,8 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propsMapCount = getAllKeys(getPropsMap(constructor)).length;
-    if (propsMapCount && constructor[$ctorCreateInitProps]) {
+    const propDefsCount = getAllKeys(getPropsMap(constructor)).length;
+    if (propDefsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
 
