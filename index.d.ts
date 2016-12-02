@@ -29,13 +29,13 @@ export class Component extends HTMLElement {
 
 export interface PropOptions<El, T> {
   attribute?: boolean | string;
-  coerce?: (value: T | null) => T | null | undefined | void;
-  default?: ((elem: El, data: { name: string; }) => T) | T;
-  deserialize?: (value: string | null) => T | null;
+  coerce?: (value: any) => T | null | undefined;
+  default?:  T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
+  deserialize?: (value: string | null) => T | null | undefined;
   get?: <R>(elem: El, data: { name: string; internalValue: T; }) => R;
-  initial?: T | ((elem: El, data: { name: string; }) => T);
-  serialize?: (value: T | null) => string | null;
-  set?: (elem: El, data: { name: string; newValue: T; oldValue: T; }) => void;
+  initial?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
+  serialize?: (value: T | null | undefined) => string | null;
+  set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;
 }
 
 export var define: {
