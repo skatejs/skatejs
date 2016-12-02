@@ -152,8 +152,8 @@ export default class extends HTMLElement {
     setCtorNativeProperty(this, $ctorProps, value);
   }
 
-  constructor () {
-    super();
+  constructor (...args) {
+    super(...args);
 
     const { constructor } = this;
 
