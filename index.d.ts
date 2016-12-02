@@ -2,33 +2,29 @@ export { } from "./jsx";
 
 export as namespace skate;
 
-export interface HasProps<El extends Component> {
-  props: { [key: string]: skate.PropOptions<El, any>; };
-}
-
-export interface OnUpdatedCallback {
-  updatedCallback(previousProps: any): boolean | undefined | void;
-}
-
-export interface OnRenderCallback {
-  renderCallback(): any;
-}
-
-export interface OnRenderedCallback {
-  renderedCallback(): void;
-}
-
-export class Component extends HTMLElement {
-  // static readonly props: { [name: string]: PropAttr<Component, any> };
+export class Component extends HTMLElement implements ICustomElementV1, ISkateLivecycle {
+  static readonly props: { [nameOrSymbol: string]: PropOptions<El, any> };
   static readonly observedAttributes: string[];
 
   // Custom Elements v1
   connectedCallback(): void;
   disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: any, newValue: any): void;
+  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
+  adoptedCallback?(): void;
 
-  // SkateJS
-  updated(prev: any): boolean;
+  // SkateJS Livecycle
+  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean;
+  renderCallback(): any;
+  renderedCallback(): void;
+                          
+  // SkateJS DEPRECATED
+  static created?(elem: Component): void;
+  static attached?(elem: Component): void;
+  static detached?(elem: Component): void;
+  static attributeChanged?(elem: Component, data: { name: string, oldValue: null | string, newValue: null | string }): void;
+  static updated(elem: Component, prevProps: { [nameOrSymbol: string]: any }): boolean;
+  static render?(elem: Component): any | undefined;
+  static rendered?(elem: Component): void;  
 }
 
 export interface PropOptions<El, T> {
