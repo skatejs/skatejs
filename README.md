@@ -682,7 +682,6 @@ The parameters passed to the function are:
   - `oldValue` - the old property value.
 
 When the property is initialised, `oldValue` will always be `null` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the `oldValue` is again normalised to be `null` for consistency.
-todo: this does not make sense for a `number`.
 
 *An important thing to note is that native property setters are not invoked if you use the `delete` keyword. For that reason, Skate property setters are also not able to be invoked, so keep this in mind when using your components.*
 
@@ -1048,7 +1047,7 @@ skate.prop.boolean({
 
 Generally built-in properties will only return a definition containing `coerce`, `deserialize` and `serialize` options. They may also define a `deafult`, such as with the `boolean` property.
 
-*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`, except for 'number' which keeps `undefined` and normalizes `null` to 0.
+*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`, except for 'number' which defaults to 0.
 
 *Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
 
