@@ -8,7 +8,7 @@ function syncFirstTimeProp (elem, propDef) {
 
   let syncAttrValue = propData.lastAssignedValue;
   if (empty(syncAttrValue)) {
-    if (propDef.hasOwnProperty('initial')) {
+    if ('initial' in propDef) {
       syncAttrValue = getInitialValue(elem, propDef);
     } else {
       syncAttrValue = getDefaultValue(elem, propDef);

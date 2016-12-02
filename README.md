@@ -497,7 +497,7 @@ The parameters passed to the function are:
 
 #### `default`
 
-Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being empty, the `default` value will be used instead.
+Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being set to 'null', the `default` value will be used instead.
 
 ```js
 customElements.define('my-component', class extends skate.Component {
@@ -681,7 +681,8 @@ The parameters passed to the function are:
   - `newValue` - the new property value
   - `oldValue` - the old property value.
 
-When the property is initialised, `oldValue` will always be `undefined` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the value is normalised to be `undefined` for consistency.
+When the property is initialised, `oldValue` will always be `null` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the `oldValue` is again normalised to be `null` for consistency.
+todo: this does not make sense for a `number`.
 
 *An important thing to note is that native property setters are not invoked if you use the `delete` keyword. For that reason, Skate property setters are also not able to be invoked, so keep this in mind when using your components.*
 
@@ -1047,7 +1048,7 @@ skate.prop.boolean({
 
 Generally built-in properties will only return a definition containing `coerce`, `deserialize` and `serialize` options. They may also define a `deafult`, such as with the `boolean` property.
 
-*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `undefined`.
+*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`, except for 'number' which keeps `undefined` and normalizes `null` to 0.
 
 *Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
 
@@ -1067,7 +1068,7 @@ The `boolean` property allows you to define a property that should *always* have
 
 #### `number`
 
-Ensures the value is a `Number` and is correctly linked to an attribute. Numeric string values such as `'10'` will be converted to a `Number`. Non-numeric string values will be converted to `undefined`. The value will default to `0` if an empty value is passed.
+Ensures the value is a `Number` and is correctly linked to an attribute. Numeric string values such as `'10'` will be converted to a `Number`. Non-numeric string values will be converted to `undefined`. The value will default to `0` if an null value is passed.
 
 
 

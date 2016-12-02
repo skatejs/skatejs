@@ -7,7 +7,6 @@ import empty from '../util/empty';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
-import PropDefinition from '../util/prop-definition';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 
 export function createNativePropertyDescriptor (propDef) {
@@ -32,7 +31,7 @@ export function createNativePropertyDescriptor (propDef) {
     if (empty(initialValue)) {
       if (attrName && elem.hasAttribute(attrName)) {
         initialValue = propDef.deserialize(elem.getAttribute(attrName));
-      } else if (propDef.hasOwnProperty('initial')) {
+      } else if ('initial' in propDef) {
         initialValue = getInitialValue(elem, propDef);
       } else {
         initialValue = getDefaultValue(elem, propDef);
@@ -54,8 +53,6 @@ export function createNativePropertyDescriptor (propDef) {
     let { oldValue } = propData;
 
     if (empty(oldValue)) {
-      // todo: the doc is incorrect:  When the property is initialised, oldValue will always be undefined
-      // we probabbly need to update the doc
       oldValue = null;
     }
 
@@ -86,10 +83,4 @@ export function createNativePropertyDescriptor (propDef) {
   };
 
   return prop;
-}
-
-// todo: This is only used from unit tests
-export default function (opts) {
-  const propDef = new PropDefinition(opts);
-  return () => createNativePropertyDescriptor(propDef);
 }

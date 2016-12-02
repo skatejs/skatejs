@@ -1,4 +1,5 @@
 import dashCase from './dash-case';
+import empty from './empty';
 
 /**
  * @internal
@@ -14,16 +15,10 @@ import dashCase from './dash-case';
  */
 export default class PropDefinition {
 
-  // constructor(name:string|symbol, cfg:PropOptions) {
-  constructor (nameOrSymbol, cfg) {
+  constructor (nameOrSymbol, opts) {
     this._name = nameOrSymbol;
 
-    cfg = cfg || {};
-
-    if (typeof cfg === 'function') {
-      // todo: Where is documented that a config can just be the coerce function?
-      cfg = {coerce: cfg};
-    }
+    opts = opts || {};
 
     // Set Default values
 
@@ -31,34 +26,30 @@ export default class PropDefinition {
 
     this.coerce = null;
 
-    // todo: we probabbly need to update the doc
-    // from doc one would think default value is undefined
-    // value was defined inside props-init.js
+    // default is null unless overridden
     this.default = null;
 
-    // todo: should be JSON.stringify ?
-    // value was defined inside props-init.js
+    // deserialize default implementation returns the value of the attribute
     this.deserialize = value => value;
 
     // "initial" option is truly optional and it cannot be initialized.
-    // Its presence is tested using hasOwnProperty()
+    // Its presence is tested using: ('initial' in propDef)
 
     this.get = null;
 
-    // todo: should be JSON.parse ?
-    // value was defined inside props-init.js
-    this.serialize = value => value;
+    // serialize must return a string or null
+    this.serialize = value => (empty(value) ? null : String(value));
 
     this.set = null;
 
     // Note: option key is always a string (no symbols here)
-    Object.keys(cfg).forEach(option => {
-      const optVal = cfg[option];
+    Object.keys(opts).forEach(option => {
+      const optVal = opts[option];
 
       // Only accept documented options and perform minimal input validation.
       switch (option) {
         case 'attribute':
-          this.attrName = resolveAttrName(cfg.attribute, nameOrSymbol);
+          this.attrName = resolveAttrName(optVal, nameOrSymbol);
           break;
         case 'coerce':
         case 'deserialize':
@@ -89,16 +80,15 @@ export default class PropDefinition {
 }
 
 function resolveAttrName (attrOption, nameOrSymbol) {
-  if (attrOption === true) {
-    if (typeof nameOrSymbol === 'string') {
-      return dashCase(nameOrSymbol);
+  if (typeof nameOrSymbol === 'symbol') {
+    console.error('symbol property cannot have an attribute', nameOrSymbol);
+  } else {
+    if (attrOption === true) {
+      return dashCase(String(nameOrSymbol));
     }
-    if (typeof nameOrSymbol === 'symbol') {
-      // todo: should we even allow a symbol prop to have a linked attribute?
-      console.error('attribute must be a string for property ' + nameOrSymbol.toString());
+    if (typeof attrOption === 'string') {
+      return attrOption;
     }
   }
-  if (typeof attrOption === 'string') {
-    return attrOption;
-  }
+  return null;
 }

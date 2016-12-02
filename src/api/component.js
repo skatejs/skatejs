@@ -37,6 +37,7 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 
 function syncPropsToAttrs (elem) {
   const propDefs = getPropsMap(elem.constructor);
+  // Use Object.keys to skips symbol props since have no linked attributes
   Object.keys(propDefs).forEach((propName) => {
     syncPropToAttr(elem, propDefs[propName], true);
   });
@@ -106,8 +107,7 @@ export default class extends HTMLElement {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
 
     const propDefs = getPropsMap(this);
-    // todo: with Object.keys we skip symbol properties!
-    // should we allow symbol properties to have linked attributes?
+    // Use Object.keys to skips symbol props since they have no linked attributes
     const attrsFromLinkedProps = Object.keys(propDefs).map(propName => {
       return propDefs[propName].attrName;
     }).filter(Boolean);
