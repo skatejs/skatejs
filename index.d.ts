@@ -2,8 +2,8 @@ export { } from "./jsx";
 
 export as namespace skate;
 
-export class Component extends HTMLElement implements ICustomElementV1, ISkateLivecycle {
-  static readonly props: { [nameOrSymbol: string]: PropOptions<El, any> };
+export class Component extends HTMLElement {
+  static readonly props: { [nameOrSymbol: string]: PropOptions<Component, any> };
   static readonly observedAttributes: string[];
 
   // Custom Elements v1
