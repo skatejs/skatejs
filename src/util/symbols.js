@@ -9,6 +9,13 @@ export const created = '____skate_created';
 // be passed to vdom functions as tag names.
 export const name = '____skate_name';
 
+// Used on the Constructor
+export const ctorCreateInitProps = '____skate_ctor_createInitProps';
+export const ctorObservedAttributes = '____skate_ctor_observedAttributes';
+export const ctorProps = '____skate_ctor_props';
+export const ctorPropsMap = '____skate_ctor_propsMap';
+
+// Used on the Element
 export const props = '____skate_props';
 export const ref = '____skate_ref';
 export const renderer = '____skate_renderer';

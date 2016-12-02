@@ -2,20 +2,26 @@ import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
   created as $created,
+  ctorObservedAttributes as $ctorObservedAttributes,
+  ctorProps as $ctorProps,
+  ctorCreateInitProps as $ctorCreateInitProps,
   props as $props,
   renderer as $renderer,
   rendererDebounced as $rendererDebounced,
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
+import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
+import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
@@ -31,7 +37,7 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = elem.constructor.props;
+  const props = getPropsMap(elem.constructor);
   Object.keys(props).forEach((propName) => {
     const prop = props[propName];
     syncPropToAttr(elem, prop, propName, true);
@@ -43,7 +49,7 @@ function syncPropsToAttrs (elem) {
 // Ensures that definitions passed as part of the constructor are functions
 // that return property definitions used on the element.
 function ensurePropertyFunctions (Ctor) {
-  const props = Ctor.props;
+  const props = getPropsMap(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
     if (typeof descriptors[descriptorName] !== 'function') {
@@ -113,22 +119,37 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
+
+  /**
+   * Returns unique attribute names configured with props and
+   * those set on the Component constructor if any
+   */
   static get observedAttributes () {
-    const { props } = this;
-    return Object.keys(props).map(key => {
+    const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
+
+    const props = getPropsMap(this);
+    const attrsFromLinkedProps = Object.keys(props).map(key => {
       const { attribute } = props[key];
       return attribute === true ? dashCase(key) : attribute;
     }).filter(Boolean);
+
+    const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
+
+    return all.filter(function (item, index) {
+      return all.indexOf(item) === index;
+    });
   }
   static set observedAttributes (value) {
-    Object.defineProperty(this, 'observedAttributes', { configurable: true, value });
+    value = Array.isArray(value) ? value : [];
+    setCtorNativeProperty(this, 'observedAttributes', value);
   }
 
+  // Returns superclass props overwritten with this Component props
   static get props () {
-    return {};
+    return assign({}, super.props, this[$ctorProps]);
   }
   static set props (value) {
-    Object.defineProperty(this, 'props', { configurable: true, value });
+    setCtorNativeProperty(this, $ctorProps, value);
   }
 
   constructor () {
@@ -141,16 +162,18 @@ export default class extends HTMLElement {
 
     // TODO refactor to not cater to Safari < 10. This means we can depend on
     // built-in property descriptors.
-    if (!constructor[$props]) {
-      constructor[$props] = createInitProps(constructor);
+    // Must be defined on constructor and not from a superclass
+    if (!constructor.hasOwnProperty($ctorCreateInitProps)) {
+      setCtorNativeProperty(constructor, $ctorCreateInitProps, createInitProps(constructor));
     }
 
     // Set up a renderer that is debounced for property sets to call directly.
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    if (constructor.props && constructor[$props]) {
-      constructor[$props](this);
+    const propConfigsCount = getAllKeys(getPropsMap(constructor)).length;
+    if (propConfigsCount && constructor[$ctorCreateInitProps]) {
+      constructor[$ctorCreateInitProps](this);
     }
 
     // DEPRECATED
@@ -251,7 +274,7 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = this.constructor.props[propertyName];
+        const propOpts = getPropsMap(this.constructor)[propertyName];
         propData.settingAttribute = true;
         const newPropVal = newValue !== null && propOpts.deserialize
           ? propOpts.deserialize(newValue)
@@ -322,14 +345,6 @@ export default class extends HTMLElement {
   static extend (definition = {}, Base = this) {
     // Create class for the user.
     class Ctor extends Base {}
-
-    // Pass on statics from the Base if not supported (IE 9 and 10).
-    if (!Ctor.observedAttributes) {
-      const staticOpts = getOwnPropertyDescriptors(Base);
-      delete staticOpts.length;
-      delete staticOpts.prototype;
-      Object.defineProperties(Ctor, staticOpts);
-    }
 
     // For inheriting from the object literal.
     const opts = getOwnPropertyDescriptors(definition);
