@@ -7,14 +7,19 @@ export function props(elem: any, data?: PropData): void;
 export const emit: (elem: any, eventName: string, eventOptions?: any) => boolean;
 
 export class Component extends HTMLElement {
-  static readonly props: { [name: string]: PropOptions };
-  static readonly observedAttributes: string[];
-  updatedCallback(prevProps: { [name: string]: any }): boolean;
-  renderCallback(): any | undefined;
-  renderedCallback(): void;
+
+  // Custom Elements v1
   connectedCallback(): void;
   disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: string, newValue: string): void;
+  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
+  adoptedCallback?(): void;
+
+  // SkateJS
+  static readonly props: { [nameOrSymbol: string]: PropOptions };
+  static readonly observedAttributes: string[];
+  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean;
+  renderCallback(): any;
+  renderedCallback(): void;
 
   // DEPRECATED
   static created?(elem: Component): void;
@@ -25,7 +30,7 @@ export class Component extends HTMLElement {
   // DEPRECATED
   static attributeChanged?(elem: Component, data: { name: string, oldValue: null | string, newValue: null | string }): void;
   // DEPRECATED
-  static updated(elem: Component, prevProps: { [name: string]: any }): boolean;
+  static updated(elem: Component, prevProps: { [nameOrSymbol: string]: any }): boolean;
   // DEPRECATED
   static render?(elem: Component): any | undefined;
   // DEPRECATED
