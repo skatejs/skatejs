@@ -179,6 +179,7 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static render()
+    // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
       this.renderCallback = constructor.render.bind(constructor, this);
     }
@@ -207,8 +208,6 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   connectedCallback () {
-    const { constructor } = this;
-
     // DEPRECATED
     //
     // No more reflecting back to attributes in favour of one-way reflection.
@@ -223,8 +222,9 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static attached()
-    if (typeof constructor.attached === 'function') {
-      constructor.attached(this);
+    const { attached } = this.constructor;
+    if (typeof attached === 'function') {
+      attached(this);
     }
 
     // DEPRECATED
@@ -235,16 +235,15 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
-    const { constructor } = this;
-
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
 
     // DEPRECATED
     //
     // static detached()
-    if (typeof constructor.detached === 'function') {
-      constructor.detached(this);
+    const { detached } = this.constructor;
+    if (typeof detached === 'function') {
+      detached(this);
     }
   }
 
@@ -260,7 +259,6 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const { attributeChanged } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
     if (propertyName) {
@@ -283,37 +281,70 @@ export default class extends HTMLElement {
       }
     }
 
-    if (attributeChanged) {
+    // DEPRECATED
+    //
+    // static attributeChanged()
+    const { attributeChanged } = this.constructor;
+    if (typeof attributeChanged === 'function') {
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
   //
-  // Maps to the static updated() callback. That logic should be moved here
-  // when that is finally removed.
   updatedCallback (prev) {
-    return this.constructor.updated(this, prev);
+    // DEPRECATED
+    //
+    // static updated()
+    const { updated } = this.constructor;
+    if (typeof updated === 'function') {
+      return updated(this, prev);
+    }
+
+    // updatedCallback() default implementation
+    //
+    if (!prev) {
+      return true;
+    }
+
+    // use get all keys so that we check Symbols as well as regular props
+    // using a for loop so we can break early
+    const allKeys = getAllKeys(prev);
+    for (let i = 0; i < allKeys.length; i += 1) {
+      const key = allKeys[i];
+      if (prev[key] !== this[key]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // Skate
   //
-  // Maps to the static rendered() callback. That logic should be moved here
-  // when that is finally removed.
   renderedCallback () {
-    return this.constructor.rendered(this);
+    // DEPRECATED
+    //
+    // static rendered()
+    const { rendered } = this.constructor;
+    if (typeof rendered === 'function') {
+      return rendered(this);
+    }
   }
 
   // Skate
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
+  // todo: rendererCallback is not documented
+  // Extension point for implementing a different rendering strategies.
   rendererCallback () {
+    // todo: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
 
   // Skate
-  //
+  // @internal
   // Invokes the complete render lifecycle.
   [$renderer] () {
     if (this[$rendering] || !this[$connected]) {
@@ -333,8 +364,8 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  //
-  // Calls the user-defined updated() lifecycle callback.
+  // @internal
+  // Calls the updatedCallback() with previous props.
   [$updated] () {
     const prev = this[$props];
     this[$props] = getSetProps(this);
@@ -365,35 +396,6 @@ export default class extends HTMLElement {
   // DEPRECATED
   //
   // Move this to rendererCallback() before removing.
-  static updated (elem, prev) {
-    if (!prev) {
-      return true;
-    }
-
-    // use get all keys so that we check Symbols as well as regular props
-    // using a for loop so we can break early
-    const allKeys = getAllKeys(prev);
-    for (let i = 0; i < allKeys.length; i += 1) {
-      if (prev[allKeys[i]] !== elem[allKeys[i]]) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Skate
-  //
-  // DEPRECATED
-  //
-  // Move this to rendererCallback() before removing.
-  static rendered () {}
-
-  // Skate
-  //
-  // DEPRECATED
-  //
-  // Move this to rendererCallback() before removing.
   static renderer (elem) {
     if (!elem.shadowRoot) {
       elem.attachShadow({ mode: 'open' });
@@ -411,4 +413,5 @@ export default class extends HTMLElement {
       }
     });
   }
+
 }
