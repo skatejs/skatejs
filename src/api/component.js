@@ -308,9 +308,11 @@ export default class extends HTMLElement {
       return true;
     }
 
-    // Use getAllKeys so that we check all props: Symbols as well as regular props
+    // Use getAllKeys to include all props names or Symbols
     const allKeys = getAllKeys(prevProps);
-    for (const nameOrSymbol of allKeys) {
+    // Use classic loop because for ... of will skips symbols
+    for (let i = 0; i < allKeys.length; i++) {
+      const nameOrSymbol = allKeys[i];
       if (prevProps[nameOrSymbol] !== this[nameOrSymbol]) {
         return true;
       }
