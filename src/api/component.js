@@ -21,6 +21,7 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
+import {isFunction} from '../util/isType';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -52,7 +53,7 @@ function ensurePropertyFunctions (Ctor) {
   const props = getPropsMap(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
+    if (!isFunction(descriptors[descriptorName])) {
       descriptors[descriptorName] = initProps(descriptors[descriptorName]);
     }
     return descriptors;
@@ -189,7 +190,7 @@ export default class extends HTMLElement {
     // static created()
     //
     // Props should be set up before calling this.
-    if (typeof constructor.created === 'function') {
+    if (isFunction(constructor.created)) {
       constructor.created(this);
     }
 
@@ -223,7 +224,7 @@ export default class extends HTMLElement {
     //
     // static attached()
     const { attached } = this.constructor;
-    if (typeof attached === 'function') {
+    if (isFunction(attached)) {
       attached(this);
     }
 
@@ -242,7 +243,7 @@ export default class extends HTMLElement {
     //
     // static detached()
     const { detached } = this.constructor;
-    if (typeof detached === 'function') {
+    if (isFunction(detached)) {
       detached(this);
     }
   }
@@ -285,34 +286,32 @@ export default class extends HTMLElement {
     //
     // static attributeChanged()
     const { attributeChanged } = this.constructor;
-    if (typeof attributeChanged === 'function') {
+    if (isFunction(attributeChanged)) {
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
   //
-  updatedCallback (prev) {
+  updatedCallback (prevProps) {
     // DEPRECATED
     //
     // static updated()
     const { updated } = this.constructor;
-    if (typeof updated === 'function') {
-      return updated(this, prev);
+    if (isFunction(updated)) {
+      return updated(this, prevProps);
     }
 
     // updatedCallback() default implementation
     //
-    if (!prev) {
+    if (!prevProps) {
       return true;
     }
 
-    // use get all keys so that we check Symbols as well as regular props
-    // using a for loop so we can break early
-    const allKeys = getAllKeys(prev);
-    for (let i = 0; i < allKeys.length; i += 1) {
-      const key = allKeys[i];
-      if (prev[key] !== this[key]) {
+    // Use getAllKeys so that we check all props: Symbols as well as regular props
+    const allKeys = getAllKeys(prevProps);
+    for (const nameOrSymbol of allKeys) {
+      if (prevProps[nameOrSymbol] !== this[nameOrSymbol]) {
         return true;
       }
     }
@@ -327,7 +326,7 @@ export default class extends HTMLElement {
     //
     // static rendered()
     const { rendered } = this.constructor;
-    if (typeof rendered === 'function') {
+    if (isFunction(rendered)) {
       return rendered(this);
     }
   }
@@ -354,8 +353,7 @@ export default class extends HTMLElement {
     // Flag as rendering. This prevents anything from trying to render - or
     // queueing a render - while there is a pending render.
     this[$rendering] = true;
-
-    if (this[$updated]() && typeof this.renderCallback === 'function') {
+    if (this[$updated]() && isFunction(this.renderCallback)) {
       this.rendererCallback();
       this.renderedCallback();
     }
@@ -367,9 +365,9 @@ export default class extends HTMLElement {
   // @internal
   // Calls the updatedCallback() with previous props.
   [$updated] () {
-    const prev = this[$props];
+    const prevProps = this[$props];
     this[$props] = getSetProps(this);
-    return this.updatedCallback(prev);
+    return this.updatedCallback(prevProps);
   }
 
   // Skate
@@ -402,11 +400,11 @@ export default class extends HTMLElement {
     }
     patchInner(elem.shadowRoot, () => {
       const possibleFn = elem.renderCallback();
-      if (typeof possibleFn === 'function') {
+      if (isFunction(possibleFn)) {
         possibleFn();
       } else if (Array.isArray(possibleFn)) {
         possibleFn.forEach((fn) => {
-          if (typeof fn === 'function') {
+          if (isFunction(fn)) {
             fn();
           }
         });
