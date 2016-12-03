@@ -21,6 +21,9 @@ export const array = create({
 export const boolean = create({
   coerce: val => !!val,
   default: false,
+  // todo: When angular 1 binds to attribute 'false' must deserialize to false
+  // this breaks one existing test.
+  // deserialize: val => !(val === null || val === 'false'),
   deserialize: val => !(val === null),
   serialize: val => (val ? '' : null)
 });
