@@ -190,8 +190,9 @@ export default class extends HTMLElement {
     // static created()
     //
     // Props should be set up before calling this.
-    if (isFunction(constructor.created)) {
-      constructor.created(this);
+    const { created } = constructor;
+    if (isFunction(created)) {
+      created(this);
     }
 
     // DEPRECATED
@@ -308,9 +309,9 @@ export default class extends HTMLElement {
       return true;
     }
 
-    // Use getAllKeys to include all props names or Symbols
+    // Use getAllKeys to include all props names and Symbols
     const allKeys = getAllKeys(prevProps);
-    // Use classic loop because for ... of will skips symbols
+    // Use classic loop because 'for ... of' skips symbols
     for (let i = 0; i < allKeys.length; i++) {
       const nameOrSymbol = allKeys[i];
       if (prevProps[nameOrSymbol] !== this[nameOrSymbol]) {

@@ -355,12 +355,11 @@ Most of the old API were static methods, or specified as options not on the `pro
 ### `constructor` - supersedes `static created()`
 
 Override `constructor` to do any setup of the custom element. You're subject to the [requirements for custom element constructors as defined in the spec](https://www.w3.org/TR/custom-elements/#custom-element-conformance).
-Always pass all arguments received into the super. These are required by some Polyfills.
 
 ```js
 customElements.define('my-component', class extends skate.Component {
-  constructor (...args) {
-    super(...args);
+  constructor ()) {
+    super();
   }
 });
 ```
