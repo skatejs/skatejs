@@ -1047,7 +1047,7 @@ skate.prop.boolean({
 
 Generally built-in properties return a definition containing `default`, `coerce`, `deserialize` and `serialize` options.
 
-*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`, except for 'number' which defaults to 0.
+*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`.
 
 *Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
 
