@@ -358,7 +358,7 @@ Override `constructor` to do any setup of the custom element. You're subject to 
 
 ```js
 customElements.define('my-component', class extends skate.Component {
-  constructor ()) {
+  constructor () {
     super();
   }
 });
