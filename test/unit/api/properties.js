@@ -146,7 +146,7 @@ describe('api/prop', () => {
         [null, 0, null],
         [undefined, 0, null],
         [0.1, 0.1, '0.1'],
-        ['test', undefined, null],
+        ['test', null, null],
         ['', 0, '0']
       ], done);
     });

@@ -15,36 +15,39 @@ import empty from './empty';
  */
 export default class PropDefinition {
 
-  constructor (nameOrSymbol, opts) {
+  constructor (nameOrSymbol, propOptions) {
     this._name = nameOrSymbol;
 
-    opts = opts || {};
+    propOptions = propOptions || {};
 
-    // Set Default values
-
+    // default 'attrName': no linked attribute
     this.attrName = null;
 
+    // default 'coerce': don't coerce
     this.coerce = null;
 
-    // default is null unless overridden
+    // default 'default': set prop to 'null'
     this.default = null;
 
-    // deserialize default implementation returns the value of the attribute
+    // default 'deserialize': return attribute's value (string or null)
     this.deserialize = value => value;
 
-    // "initial" option is truly optional and it cannot be initialized.
-    // Its presence is tested using: ('initial' in propDef)
-
+    // default 'get': no function
     this.get = null;
 
-    // serialize must return a string or null
+    // 'initial' default: unspecified
+    // 'initial' option is truly optional and it cannot be initialized.
+    // Its presence is tested using: ('initial' in propDef)
+
+    // 'serialize' default: return string value or null
     this.serialize = value => (empty(value) ? null : String(value));
 
+    // default 'set': no function
     this.set = null;
 
     // Note: option key is always a string (no symbols here)
-    Object.keys(opts).forEach(option => {
-      const optVal = opts[option];
+    Object.keys(propOptions).forEach(option => {
+      const optVal = propOptions[option];
 
       // Only accept documented options and perform minimal input validation.
       switch (option) {

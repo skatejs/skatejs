@@ -1045,7 +1045,7 @@ skate.prop.boolean({
 });
 ```
 
-Generally built-in properties will only return a definition containing `coerce`, `deserialize` and `serialize` options. They may also define a `deafult`, such as with the `boolean` property.
+Generally built-in properties return a definition containing `default`, `coerce`, `deserialize` and `serialize` options.
 
 *Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`, except for 'number' which defaults to 0.
 

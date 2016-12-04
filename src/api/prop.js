@@ -1,7 +1,7 @@
 import assign from '../util/assign';
 import empty from '../util/empty';
 
-const alwaysUndefinedIfNotANumberOrNumber = val => (isNaN(val) ? undefined : Number(val));
+const alwaysNullIfNotANumberOrNumber = val => (isNaN(val) ? null : Number(val));
 const alwaysNullIfEmptyOrString = val => (empty(val) ? null : String(val));
 
 export function create (def) {
@@ -21,8 +21,8 @@ export const array = create({
 export const boolean = create({
   coerce: val => !!val,
   default: false,
-  // todo: When angular 1 binds to attribute 'false' must deserialize to false
-  // this breaks one existing test.
+  // todo: 'false' string must deserialize to false for angular 1.x to work
+  // This breaks one existing test.
   // deserialize: val => !(val === null || val === 'false'),
   deserialize: val => !(val === null),
   serialize: val => (val ? '' : null)
@@ -30,8 +30,8 @@ export const boolean = create({
 
 export const number = create({
   default: 0,
-  coerce: alwaysUndefinedIfNotANumberOrNumber,
-  deserialize: alwaysUndefinedIfNotANumberOrNumber,
+  coerce: alwaysNullIfNotANumberOrNumber,
+  deserialize: alwaysNullIfNotANumberOrNumber,
   serialize: alwaysNullIfEmptyOrString
 });
 
