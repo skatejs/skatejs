@@ -497,7 +497,7 @@ The parameters passed to the function are:
 
 #### `default`
 
-Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being empty, the `default` value will be used instead.
+Specifies the default value of the property. If the property is ever set to `null` or `undefined`, instead of being set to 'null', the `default` value will be used instead.
 
 ```js
 customElements.define('my-component', class extends skate.Component {
@@ -681,7 +681,7 @@ The parameters passed to the function are:
   - `newValue` - the new property value
   - `oldValue` - the old property value.
 
-When the property is initialised, `oldValue` will always be `undefined` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the value is normalised to be `undefined` for consistency.
+When the property is initialised, `oldValue` will always be `null` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the `oldValue` is again normalised to be `null` for consistency.
 
 *An important thing to note is that native property setters are not invoked if you use the `delete` keyword. For that reason, Skate property setters are also not able to be invoked, so keep this in mind when using your components.*
 
@@ -1045,9 +1045,9 @@ skate.prop.boolean({
 });
 ```
 
-Generally built-in properties will only return a definition containing `coerce`, `deserialize` and `serialize` options. They may also define a `deafult`, such as with the `boolean` property.
+Generally built-in properties return a definition containing `default`, `coerce`, `deserialize` and `serialize` options.
 
-*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `undefined`.
+*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`.
 
 *Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
 

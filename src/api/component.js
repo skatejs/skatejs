@@ -14,13 +14,12 @@ import {
 import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
-import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
-import initProps from '../lifecycle/props-init';
+import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/isType';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
@@ -38,36 +37,20 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 }
 
 function syncPropsToAttrs (elem) {
-  const props = getPropsMap(elem.constructor);
-  Object.keys(props).forEach((propName) => {
-    const prop = props[propName];
-    syncPropToAttr(elem, prop, propName, true);
+  const propDefs = getPropsMap(elem.constructor);
+  // Use Object.keys to skips symbol props since have no linked attributes
+  Object.keys(propDefs).forEach((propName) => {
+    syncPropToAttr(elem, propDefs[propName], true);
   });
 }
 
 // TODO remove when not catering to Safari < 10.
 //
-// Ensures that definitions passed as part of the constructor are functions
-// that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  const props = getPropsMap(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName];
-    if (!isFunction(descriptors[descriptorName])) {
-      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
-    }
-    return descriptors;
-  }, {});
-}
-
-// TODO remove when not catering to Safari < 10.
-//
-// This can probably be simplified into createInitProps().
-function ensurePropertyDefinitions (Ctor) {
-  const props = ensurePropertyFunctions(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName](descriptorName);
-    return descriptors;
+function createNativePropertyDescriptors (Ctor) {
+  const propDefs = getPropsMap(Ctor);
+  return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
+    propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
+    return propDescriptors;
   }, {});
 }
 
@@ -75,16 +58,12 @@ function ensurePropertyDefinitions (Ctor) {
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
 function createInitProps (Ctor) {
-  const props = ensurePropertyDefinitions(Ctor);
+  const propDescriptors = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    if (!props) {
-      return;
-    }
-
-    getAllKeys(props).forEach((name) => {
-      const prop = props[name];
-      prop.created(elem);
+    getAllKeys(propDescriptors).forEach((name) => {
+      const propDescriptor = propDescriptors[name];
+      propDescriptor.created(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
@@ -101,7 +80,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, prop);
+      Object.defineProperty(elem, name, propDescriptor);
 
       // DEPRECATED
       //
@@ -128,10 +107,10 @@ export default class extends HTMLElement {
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
 
-    const props = getPropsMap(this);
-    const attrsFromLinkedProps = Object.keys(props).map(key => {
-      const { attribute } = props[key];
-      return attribute === true ? dashCase(key) : attribute;
+    const propDefs = getPropsMap(this);
+    // Use Object.keys to skips symbol props since they have no linked attributes
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName => {
+      return propDefs[propName].attrName;
     }).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
@@ -172,8 +151,8 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propConfigsCount = getAllKeys(getPropsMap(constructor)).length;
-    if (propConfigsCount && constructor[$ctorCreateInitProps]) {
+    const propDefsCount = getAllKeys(getPropsMap(constructor)).length;
+    if (propDefsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
 
@@ -261,10 +240,10 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const propertyName = data(this, 'attributeLinks')[name];
+    const propNameOrSymbol = data(this, 'attributeLinks')[name];
 
-    if (propertyName) {
-      const propData = data(this, 'props')[propertyName];
+    if (propNameOrSymbol) {
+      const propData = data(this, 'props')[propNameOrSymbol];
 
       // This ensures a property set doesn't cause the attribute changed
       // handler to run again once we set this flag. This only ever has a
@@ -274,12 +253,12 @@ export default class extends HTMLElement {
         propData.syncingAttribute = false;
       } else {
         // Sync up the property.
-        const propOpts = getPropsMap(this.constructor)[propertyName];
+        const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
         propData.settingAttribute = true;
-        const newPropVal = newValue !== null && propOpts.deserialize
-          ? propOpts.deserialize(newValue)
+        const newPropVal = newValue !== null && propDef.deserialize
+          ? propDef.deserialize(newValue)
           : newValue;
-        this[propertyName] = newPropVal;
+        this[propNameOrSymbol] = newPropVal;
       }
     }
 
@@ -312,7 +291,8 @@ export default class extends HTMLElement {
     // Use classic loop because 'for ... of' skips symbols
     for (let i = 0; i < allKeys.length; i++) {
       const nameOrSymbol = allKeys[i];
-      if (prevProps[nameOrSymbol] !== this[nameOrSymbol]) {
+      // Object.is (NaN is equal NaN)
+      if (!Object.is(prevProps[nameOrSymbol], this[nameOrSymbol])) {
         return true;
       }
     }
