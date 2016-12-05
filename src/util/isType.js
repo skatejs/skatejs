@@ -1,3 +1,1 @@
-export function isFunction (val) {
-  return typeof val === 'function';
-}
+export const isFunction = val => typeof val === 'function';

@@ -21,7 +21,7 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
-import {isFunction} from '../util/isType';
+import { isFunction } from '../util/isType';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -303,12 +303,10 @@ export default class extends HTMLElement {
       return updated(this, prevProps);
     }
 
-    // updatedCallback() default implementation
-    //
+    // short-circuits if this is the first time
     if (!prevProps) {
       return true;
     }
-
     // Use getAllKeys to include all props names and Symbols
     const allKeys = getAllKeys(prevProps);
     // Use classic loop because 'for ... of' skips symbols
@@ -318,7 +316,6 @@ export default class extends HTMLElement {
         return true;
       }
     }
-
     return false;
   }
 
@@ -338,8 +335,7 @@ export default class extends HTMLElement {
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
-  // todo: rendererCallback is not documented
-  // Extension point for implementing a different rendering strategies.
+  // todo: finalize how to support different rendering strategies.
   rendererCallback () {
     // todo: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
