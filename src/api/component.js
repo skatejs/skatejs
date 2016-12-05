@@ -21,6 +21,7 @@ import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/isType';
+import objectIs from '../util/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -292,7 +293,7 @@ export default class extends HTMLElement {
     for (let i = 0; i < allKeys.length; i++) {
       const nameOrSymbol = allKeys[i];
       // Object.is (NaN is equal NaN)
-      if (!Object.is(prevProps[nameOrSymbol], this[nameOrSymbol])) {
+      if (!objectIs(prevProps[nameOrSymbol], this[nameOrSymbol])) {
         return true;
       }
     }
