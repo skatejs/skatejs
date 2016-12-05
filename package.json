@@ -28,10 +28,12 @@
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-flow-strip-types": "6.18.0",
     "birdpoo": "0.x",
+    "flow": "0.2.3",
     "react": "15.4.1",
     "react-dom": "15.4.1",
-    "skatejs-build": "12.x",
+    "skatejs-build": "12.1.0",
     "skatejs-web-components": "5.x"
   },
   "scripts": {
