@@ -18,7 +18,7 @@ export class Component extends HTMLElement {
   static readonly props: { [nameOrSymbol: string]: PropOptions };
   static readonly observedAttributes: string[];
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean;
-  renderCallback(): any;
+  renderCallback?(): any;
   renderedCallback(): void;
 
   // DEPRECATED

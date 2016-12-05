@@ -21,6 +21,7 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import initProps from '../lifecycle/props-init';
+import { isFunction } from '../util/isType';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
@@ -52,7 +53,7 @@ function ensurePropertyFunctions (Ctor) {
   const props = getPropsMap(Ctor);
   return getAllKeys(props).reduce((descriptors, descriptorName) => {
     descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
+    if (!isFunction(descriptors[descriptorName])) {
       descriptors[descriptorName] = initProps(descriptors[descriptorName]);
     }
     return descriptors;
@@ -179,6 +180,7 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static render()
+    // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
       this.renderCallback = constructor.render.bind(constructor, this);
     }
@@ -188,8 +190,9 @@ export default class extends HTMLElement {
     // static created()
     //
     // Props should be set up before calling this.
-    if (typeof constructor.created === 'function') {
-      constructor.created(this);
+    const { created } = constructor;
+    if (isFunction(created)) {
+      created(this);
     }
 
     // DEPRECATED
@@ -207,8 +210,6 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   connectedCallback () {
-    const { constructor } = this;
-
     // DEPRECATED
     //
     // No more reflecting back to attributes in favour of one-way reflection.
@@ -223,8 +224,9 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static attached()
-    if (typeof constructor.attached === 'function') {
-      constructor.attached(this);
+    const { attached } = this.constructor;
+    if (isFunction(attached)) {
+      attached(this);
     }
 
     // DEPRECATED
@@ -235,16 +237,15 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
-    const { constructor } = this;
-
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
 
     // DEPRECATED
     //
     // static detached()
-    if (typeof constructor.detached === 'function') {
-      constructor.detached(this);
+    const { detached } = this.constructor;
+    if (isFunction(detached)) {
+      detached(this);
     }
   }
 
@@ -260,7 +261,6 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const { attributeChanged } = this.constructor;
     const propertyName = data(this, 'attributeLinks')[name];
 
     if (propertyName) {
@@ -283,37 +283,66 @@ export default class extends HTMLElement {
       }
     }
 
-    if (attributeChanged) {
+    // DEPRECATED
+    //
+    // static attributeChanged()
+    const { attributeChanged } = this.constructor;
+    if (isFunction(attributeChanged)) {
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
   //
-  // Maps to the static updated() callback. That logic should be moved here
-  // when that is finally removed.
-  updatedCallback (prev) {
-    return this.constructor.updated(this, prev);
+  updatedCallback (prevProps) {
+    // DEPRECATED
+    //
+    // static updated()
+    const { updated } = this.constructor;
+    if (isFunction(updated)) {
+      return updated(this, prevProps);
+    }
+
+    // short-circuits if this is the first time
+    if (!prevProps) {
+      return true;
+    }
+    // Use getAllKeys to include all props names and Symbols
+    const allKeys = getAllKeys(prevProps);
+    // Use classic loop because 'for ... of' skips symbols
+    for (let i = 0; i < allKeys.length; i++) {
+      const nameOrSymbol = allKeys[i];
+      if (prevProps[nameOrSymbol] !== this[nameOrSymbol]) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Skate
   //
-  // Maps to the static rendered() callback. That logic should be moved here
-  // when that is finally removed.
   renderedCallback () {
-    return this.constructor.rendered(this);
+    // DEPRECATED
+    //
+    // static rendered()
+    const { rendered } = this.constructor;
+    if (isFunction(rendered)) {
+      return rendered(this);
+    }
   }
 
   // Skate
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
+  // todo: finalize how to support different rendering strategies.
   rendererCallback () {
+    // todo: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
 
   // Skate
-  //
+  // @internal
   // Invokes the complete render lifecycle.
   [$renderer] () {
     if (this[$rendering] || !this[$connected]) {
@@ -323,8 +352,7 @@ export default class extends HTMLElement {
     // Flag as rendering. This prevents anything from trying to render - or
     // queueing a render - while there is a pending render.
     this[$rendering] = true;
-
-    if (this[$updated]() && typeof this.renderCallback === 'function') {
+    if (this[$updated]() && isFunction(this.renderCallback)) {
       this.rendererCallback();
       this.renderedCallback();
     }
@@ -333,12 +361,12 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  //
-  // Calls the user-defined updated() lifecycle callback.
+  // @internal
+  // Calls the updatedCallback() with previous props.
   [$updated] () {
-    const prev = this[$props];
+    const prevProps = this[$props];
     this[$props] = getSetProps(this);
-    return this.updatedCallback(prev);
+    return this.updatedCallback(prevProps);
   }
 
   // Skate
@@ -365,50 +393,22 @@ export default class extends HTMLElement {
   // DEPRECATED
   //
   // Move this to rendererCallback() before removing.
-  static updated (elem, prev) {
-    if (!prev) {
-      return true;
-    }
-
-    // use get all keys so that we check Symbols as well as regular props
-    // using a for loop so we can break early
-    const allKeys = getAllKeys(prev);
-    for (let i = 0; i < allKeys.length; i += 1) {
-      if (prev[allKeys[i]] !== elem[allKeys[i]]) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Skate
-  //
-  // DEPRECATED
-  //
-  // Move this to rendererCallback() before removing.
-  static rendered () {}
-
-  // Skate
-  //
-  // DEPRECATED
-  //
-  // Move this to rendererCallback() before removing.
   static renderer (elem) {
     if (!elem.shadowRoot) {
       elem.attachShadow({ mode: 'open' });
     }
     patchInner(elem.shadowRoot, () => {
       const possibleFn = elem.renderCallback();
-      if (typeof possibleFn === 'function') {
+      if (isFunction(possibleFn)) {
         possibleFn();
       } else if (Array.isArray(possibleFn)) {
         possibleFn.forEach((fn) => {
-          if (typeof fn === 'function') {
+          if (isFunction(fn)) {
             fn();
           }
         });
       }
     });
   }
+
 }
