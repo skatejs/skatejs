@@ -21,7 +21,10 @@ function testTypeValues (type, values, done) {
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
-      expect(elem.test).to.equal(value[1], 'prop value after prop set');
+      // for number comparison use Object.is where NaN is equal NaN
+      if (type !== 'number' || !Object.is(elem.test, value[1])) {
+        expect(elem.test).to.equal(value[1], 'prop value after prop set');
+      }
       expect(elem.getAttribute('test')).to.equal(value[2], 'attr value after prop set');
     });
     done();
@@ -146,7 +149,7 @@ describe('api/prop', () => {
         [null, 0, null],
         [undefined, 0, null],
         [0.1, 0.1, '0.1'],
-        ['test', null, null],
+        ['test', NaN, 'NaN'],
         ['', 0, '0']
       ], done);
     });
