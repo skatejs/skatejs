@@ -1,3 +1,5 @@
-export default function getInitialValue (elem, name, opts) {
-  return typeof opts.initial === 'function' ? opts.initial(elem, { name }) : opts.initial;
+export default function getInitialValue (elem, propDef) {
+  return typeof propDef.initial === 'function'
+    ? propDef.initial(elem, { name: propDef.name })
+    : propDef.initial;
 }
