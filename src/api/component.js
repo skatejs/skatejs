@@ -46,7 +46,6 @@ function syncPropsToAttrs (elem) {
 }
 
 // TODO remove when not catering to Safari < 10.
-//
 function createNativePropertyDescriptors (Ctor) {
   const propDefs = getPropsMap(Ctor);
   return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
@@ -100,26 +99,23 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
-
   /**
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
    */
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
-
     const propDefs = getPropsMap(this);
+
     // Use Object.keys to skips symbol props since they have no linked attributes
-    const attrsFromLinkedProps = Object.keys(propDefs).map(propName => {
-      return propDefs[propName].attrName;
-    }).filter(Boolean);
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
+      propDefs[propName].attrName).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
-
-    return all.filter(function (item, index) {
-      return all.indexOf(item) === index;
-    });
+    return all.filter((item, index) =>
+      all.indexOf(item) === index);
   }
+
   static set observedAttributes (value) {
     value = Array.isArray(value) ? value : [];
     setCtorNativeProperty(this, 'observedAttributes', value);
@@ -129,6 +125,7 @@ export default class extends HTMLElement {
   static get props () {
     return assign({}, super.props, this[$ctorProps]);
   }
+
   static set props (value) {
     setCtorNativeProperty(this, $ctorProps, value);
   }
@@ -391,5 +388,4 @@ export default class extends HTMLElement {
       }
     });
   }
-
 }
