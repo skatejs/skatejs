@@ -130,6 +130,8 @@ export default class extends HTMLElement {
     setCtorNativeProperty(this, $ctorProps, value);
   }
 
+  // Passing args is designed to work with document-register-element. It's not
+  // necessary for the webcomponents/custom-element polyfill.
   constructor (...args) {
     super(...args);
 
