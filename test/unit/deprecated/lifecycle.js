@@ -1,6 +1,7 @@
 /* eslint-env jasmine, mocha */
+/** @jsx h */
 
-import { Component, define, ready } from '../../../src';
+import { Component, define, h, ready } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
@@ -83,6 +84,30 @@ describe('deprecated/lifecycle', () => {
           done
         );
       });
+    });
+
+    it('should call the updated() callback', done => {
+      const El = define(class extends Component {
+        static updated () {
+          super.updated();
+          done();
+        }
+      });
+      fixture(new El());
+    });
+
+    it('should call render() and rendered() callbacks', done => {
+      const El = define(class extends Component {
+        static render () {
+          return <div />;
+        }
+        static rendered (elem) {
+          super.rendered(elem);
+          expect(elem.shadowRoot.firstElementChild.localName).to.equal('div');
+          done();
+        }
+      });
+      fixture(new El());
     });
   });
 });

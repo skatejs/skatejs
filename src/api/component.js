@@ -272,43 +272,13 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  //
   updatedCallback (prevProps) {
-    // DEPRECATED
-    //
-    // static updated()
-    const { updated } = this.constructor;
-    if (isFunction(updated)) {
-      return updated(this, prevProps);
-    }
-
-    // short-circuits if this is the first time
-    if (!prevProps) {
-      return true;
-    }
-    // Use getAllKeys to include all props names and Symbols
-    const allKeys = getAllKeys(prevProps);
-    // Use classic loop because 'for ... of' skips symbols
-    for (let i = 0; i < allKeys.length; i++) {
-      const nameOrSymbol = allKeys[i];
-      // Object.is (NaN is equal NaN)
-      if (!objectIs(prevProps[nameOrSymbol], this[nameOrSymbol])) {
-        return true;
-      }
-    }
-    return false;
+    return this.constructor.updated(this, prevProps);
   }
 
   // Skate
-  //
   renderedCallback () {
-    // DEPRECATED
-    //
-    // static rendered()
-    const { rendered } = this.constructor;
-    if (isFunction(rendered)) {
-      return rendered(this);
-    }
+    return this.constructor.rendered(this);
   }
 
   // Skate
@@ -372,6 +342,13 @@ export default class extends HTMLElement {
   //
   // DEPRECATED
   //
+  // Stubbed in case any subclasses are calling it.
+  static rendered () {}
+
+  // Skate
+  //
+  // DEPRECATED
+  //
   // Move this to rendererCallback() before removing.
   static renderer (elem) {
     if (!elem.shadowRoot) {
@@ -389,5 +366,31 @@ export default class extends HTMLElement {
         });
       }
     });
+  }
+
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to updatedCallback() before removing.
+  static updated (elem, prevProps) {
+    // short-circuits if this is the first time
+    if (!prevProps) {
+      return true;
+    }
+
+    // Use getAllKeys to include all props names and Symbols
+    const allKeys = getAllKeys(prevProps);
+
+    // Use classic loop because 'for ... of' skips symbols
+    for (let i = 0; i < allKeys.length; i++) {
+      const nameOrSymbol = allKeys[i];
+
+      // Object.is (NaN is equal NaN)
+      if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
+        return true;
+      }
+    }
+    return false;
   }
 }
