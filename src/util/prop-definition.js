@@ -1,5 +1,6 @@
 import dashCase from './dash-case';
 import empty from './empty';
+import { isFunction } from './isType';
 
 /**
  * @internal
@@ -23,8 +24,8 @@ export default class PropDefinition {
     // default 'attrName': no linked attribute
     this.attrName = null;
 
-    // default 'coerce': don't coerce
-    this.coerce = null;
+    // default 'coerce': identity function
+    this.coerce = value => value;
 
     // default 'default': set prop to 'null'
     this.default = null;
@@ -59,7 +60,7 @@ export default class PropDefinition {
         case 'get':
         case 'serialize':
         case 'set':
-          if (typeof optVal === 'function') {
+          if (isFunction(optVal)) {
             this[option] = optVal;
           } else {
             console.error(option + ' must be a function.');

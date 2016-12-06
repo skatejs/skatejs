@@ -12,6 +12,7 @@ import {
   updated as $updated
 } from '../util/symbols';
 import assign from '../util/assign';
+import getAttrMgr from '../util/attributes-manager';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -23,7 +24,6 @@ import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/isType';
 import objectIs from '../util/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
-import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
 const HTMLElement = root.HTMLElement || class {};
@@ -35,14 +35,6 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
   return name === elem[_prevName] &&
     oldValue === elem[_prevOldValue] &&
     newValue === elem[_prevNewValue];
-}
-
-function syncPropsToAttrs (elem) {
-  const propDefs = getPropsMap(elem.constructor);
-  // Use Object.keys to skips symbol props since have no linked attributes
-  Object.keys(propDefs).forEach((propName) => {
-    syncPropToAttr(elem, propDefs[propName], true);
-  });
 }
 
 // TODO remove when not catering to Safari < 10.
@@ -189,10 +181,8 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   connectedCallback () {
-    // DEPRECATED
-    //
-    // No more reflecting back to attributes in favour of one-way reflection.
-    syncPropsToAttrs(this);
+    // Reflect attributes pending values
+    getAttrMgr(this).syncAttributes(true);
 
     // Used to check whether or not the component can render.
     this[$connected] = true;
@@ -219,6 +209,9 @@ export default class extends HTMLElement {
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
 
+    // Suspend updating Attributes until re-connected
+    getAttrMgr(this).syncAttributes(false);
+
     // DEPRECATED
     //
     // static detached()
@@ -241,24 +234,19 @@ export default class extends HTMLElement {
     this[_prevNewValue] = newValue;
 
     const propNameOrSymbol = data(this, 'attributeLinks')[name];
-
     if (propNameOrSymbol) {
-      const propData = data(this, 'props')[propNameOrSymbol];
-
-      // This ensures a property set doesn't cause the attribute changed
-      // handler to run again once we set this flag. This only ever has a
-      // chance to run when you set an attribute, it then sets a property and
-      // then that causes the attribute to be set again.
-      if (propData.syncingAttribute) {
-        propData.syncingAttribute = false;
-      } else {
+      let hasChanged = getAttrMgr(this).onAttributeChanged(name, newValue);
+      if (hasChanged) {
         // Sync up the property.
         const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
-        propData.settingAttribute = true;
         const newPropVal = newValue !== null && propDef.deserialize
           ? propDef.deserialize(newValue)
           : newValue;
+
+        const propData = data(this, 'props')[propNameOrSymbol];
+        propData.settingProp = true;
         this[propNameOrSymbol] = newPropVal;
+        propData.settingProp = false;
       }
     }
 

@@ -1,16 +1,15 @@
 import {
-  connected as $connected,
   rendererDebounced as $rendererDebounced
 } from '../util/symbols';
 import data from '../util/data';
 import empty from '../util/empty';
+import getAttrMgr from '../util/attributes-manager';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
-import syncPropToAttr from '../util/sync-prop-to-attr';
 
 export function createNativePropertyDescriptor (propDef) {
-  const name = propDef.name;
+  const nameOrSymbol = propDef.name;
 
   const prop = {
     configurable: true,
@@ -18,14 +17,14 @@ export function createNativePropertyDescriptor (propDef) {
   };
 
   prop.created = function created (elem) {
-    const propData = getPropData(elem, name);
     const attrName = propDef.attrName;
-    let initialValue = elem[name];
 
-    // Store property to attribute link information.
+    // Store attribute to property link.
     if (attrName) {
-      data(elem, 'attributeLinks')[attrName] = name;
+      data(elem, 'attributeLinks')[attrName] = nameOrSymbol;
     }
+
+    let initialValue = elem[nameOrSymbol];
 
     // Set up initial value if it wasn't specified.
     if (empty(initialValue)) {
@@ -38,35 +37,35 @@ export function createNativePropertyDescriptor (propDef) {
       }
     }
 
-    propData.internalValue = propDef.coerce ? propDef.coerce(initialValue) : initialValue;
+    initialValue = propDef.coerce(initialValue);
+
+    const propData = getPropData(elem, nameOrSymbol);
+    propData.internalValue = initialValue;
   };
 
   prop.get = function get () {
-    const propData = getPropData(this, name);
+    const propData = getPropData(this, nameOrSymbol);
     const { internalValue } = propData;
-    return propDef.get ? propDef.get(this, { name, internalValue }) : internalValue;
+    return propDef.get ? propDef.get(this, { name: nameOrSymbol, internalValue }) : internalValue;
   };
 
   prop.set = function set (newValue) {
-    const propData = getPropData(this, name);
-    propData.lastAssignedValue = newValue;
-    let { oldValue } = propData;
+    const propData = getPropData(this, nameOrSymbol);
 
-    if (empty(oldValue)) {
-      oldValue = null;
-    }
-
-    if (empty(newValue)) {
+    const useDefaultValue = empty(newValue);
+    if (useDefaultValue) {
       newValue = getDefaultValue(this, propDef);
     }
 
-    if (propDef.coerce) {
-      newValue = propDef.coerce(newValue);
-    }
-
-    const changeData = { name, newValue, oldValue };
+    newValue = propDef.coerce(newValue);
 
     if (propDef.set) {
+      let { oldValue } = propData;
+
+      if (empty(oldValue)) {
+        oldValue = null;
+      }
+      const changeData = { name: nameOrSymbol, newValue, oldValue };
       propDef.set(this, changeData);
     }
 
@@ -77,8 +76,11 @@ export function createNativePropertyDescriptor (propDef) {
     propData.internalValue = propData.oldValue = newValue;
 
     // Link up the attribute.
-    if (this[$connected]) {
-      syncPropToAttr(this, propDef, false);
+    if (propDef.attrName && !propData.settingProp) {
+      // Note: setting the prop to empty implies the default value
+      // and therefore no attribute should be present!
+      let serializedValue = useDefaultValue ? null : propDef.serialize(newValue);
+      getAttrMgr(this).setAttrValue(propDef.attrName, serializedValue);
     }
   };
 
