@@ -46,7 +46,6 @@ function syncPropsToAttrs (elem) {
 }
 
 // TODO remove when not catering to Safari < 10.
-//
 function createNativePropertyDescriptors (Ctor) {
   const propDefs = getPropsMap(Ctor);
   return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
@@ -100,26 +99,23 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
-
   /**
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
    */
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
-
     const propDefs = getPropsMap(this);
+
     // Use Object.keys to skips symbol props since they have no linked attributes
-    const attrsFromLinkedProps = Object.keys(propDefs).map(propName => {
-      return propDefs[propName].attrName;
-    }).filter(Boolean);
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
+      propDefs[propName].attrName).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
-
-    return all.filter(function (item, index) {
-      return all.indexOf(item) === index;
-    });
+    return all.filter((item, index) =>
+      all.indexOf(item) === index);
   }
+
   static set observedAttributes (value) {
     value = Array.isArray(value) ? value : [];
     setCtorNativeProperty(this, 'observedAttributes', value);
@@ -129,10 +125,13 @@ export default class extends HTMLElement {
   static get props () {
     return assign({}, super.props, this[$ctorProps]);
   }
+
   static set props (value) {
     setCtorNativeProperty(this, $ctorProps, value);
   }
 
+  // Passing args is designed to work with document-register-element. It's not
+  // necessary for the webcomponents/custom-element polyfill.
   constructor (...args) {
     super(...args);
 
@@ -273,43 +272,13 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  //
   updatedCallback (prevProps) {
-    // DEPRECATED
-    //
-    // static updated()
-    const { updated } = this.constructor;
-    if (isFunction(updated)) {
-      return updated(this, prevProps);
-    }
-
-    // short-circuits if this is the first time
-    if (!prevProps) {
-      return true;
-    }
-    // Use getAllKeys to include all props names and Symbols
-    const allKeys = getAllKeys(prevProps);
-    // Use classic loop because 'for ... of' skips symbols
-    for (let i = 0; i < allKeys.length; i++) {
-      const nameOrSymbol = allKeys[i];
-      // Object.is (NaN is equal NaN)
-      if (!objectIs(prevProps[nameOrSymbol], this[nameOrSymbol])) {
-        return true;
-      }
-    }
-    return false;
+    return this.constructor.updated(this, prevProps);
   }
 
   // Skate
-  //
   renderedCallback () {
-    // DEPRECATED
-    //
-    // static rendered()
-    const { rendered } = this.constructor;
-    if (isFunction(rendered)) {
-      return rendered(this);
-    }
+    return this.constructor.rendered(this);
   }
 
   // Skate
@@ -373,6 +342,13 @@ export default class extends HTMLElement {
   //
   // DEPRECATED
   //
+  // Stubbed in case any subclasses are calling it.
+  static rendered () {}
+
+  // Skate
+  //
+  // DEPRECATED
+  //
   // Move this to rendererCallback() before removing.
   static renderer (elem) {
     if (!elem.shadowRoot) {
@@ -392,4 +368,29 @@ export default class extends HTMLElement {
     });
   }
 
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to updatedCallback() before removing.
+  static updated (elem, prevProps) {
+    // short-circuits if this is the first time
+    if (!prevProps) {
+      return true;
+    }
+
+    // Use getAllKeys to include all props names and Symbols
+    const allKeys = getAllKeys(prevProps);
+
+    // Use classic loop because 'for ... of' skips symbols
+    for (let i = 0; i < allKeys.length; i++) {
+      const nameOrSymbol = allKeys[i];
+
+      // Object.is (NaN is equal NaN)
+      if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
