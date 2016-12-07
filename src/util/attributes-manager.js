@@ -95,7 +95,7 @@ const $attributesMgr = '____skate_attributesMgr';
 
 /**
  * @internal
- * Memoizes the attribute manager for the given Component
+ * Returns attribute manager instance for the given Component
  */
 export default function getAttrMgr (elem) {
   let mgr = elem[$attributesMgr];
