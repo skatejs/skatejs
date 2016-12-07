@@ -1,9 +1,6 @@
 import assign from '../util/assign';
 import empty from '../util/empty';
-
-// defaults empty to 0 and allow NaN
-const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
-const nullIfEmptyOrString = val => (empty(val) ? null : String(val));
+import toNullOrString from '../util/to-null-or-string';
 
 export function create (def) {
   return (...args) => {
@@ -29,16 +26,19 @@ export const boolean = create({
   serialize: val => (val ? '' : null)
 });
 
+// defaults empty to 0 and allows NaN
+const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
+
 export const number = create({
   default: 0,
   coerce: zeroIfEmptyOrNumberIncludesNaN,
   deserialize: zeroIfEmptyOrNumberIncludesNaN,
-  serialize: nullIfEmptyOrString
+  serialize: toNullOrString
 });
 
 export const string = create({
   default: '',
-  coerce: nullIfEmptyOrString,
-  deserialize: nullIfEmptyOrString,
-  serialize: nullIfEmptyOrString
+  coerce: toNullOrString,
+  deserialize: toNullOrString,
+  serialize: toNullOrString
 });
