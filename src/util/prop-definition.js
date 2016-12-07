@@ -64,7 +64,7 @@ export default class PropDefinition {
           if (isFunction(optVal)) {
             this[option] = optVal;
           } else {
-            error(`${option} must be a function`);
+            error(`${option} must be a function.`);
           }
           break;
         case 'default':
@@ -72,7 +72,7 @@ export default class PropDefinition {
           this[option] = optVal;
           break;
         default:
-          error(`${option} is not a valid option`);
+          error(`${option} is not a valid option. Options are: attribute, initial, default, coerce, deserialize, serialize.`);
           break;
       }
     });
@@ -86,7 +86,7 @@ export default class PropDefinition {
 
 function resolveAttrName (attrOption, nameOrSymbol) {
   if (typeof nameOrSymbol === 'symbol') {
-    error(`${nameOrSymbol.toString()} symbol property cannot have an attribute`);
+    error(`${nameOrSymbol.toString()} symbol property cannot have an attribute.`);
   } else {
     if (attrOption === true) {
       return dashCase(String(nameOrSymbol));

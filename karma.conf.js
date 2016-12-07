@@ -1,10 +1,12 @@
+/**
+ * TIP: easy way to test locally with multiple browsers
+ * use command: sk-tests-watch --browsers Chrome,Firefox
+ */
+
 const base = require('skatejs-build/karma.conf');
 const webpackConfig = require('./webpack.config');
 module.exports = (config) => {
   base(config);
-
-  // Easy way to test locally with a different browser:
-  // config.browsers = ['Chrome'];
 
   // Ensure mobile browsers have enough time to run.
   config.browserNoActivityTimeout = 60000;
