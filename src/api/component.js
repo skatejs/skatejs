@@ -12,11 +12,11 @@ import {
   updated as $updated
 } from '../util/symbols';
 import assign from '../util/assign';
-import getAttrMgr from '../util/attributes-manager';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
+import getAttrMgr from '../util/attributes-manager';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
@@ -206,7 +206,7 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
-    // Suspend updating Attributes until re-connected
+    // Suspend updating attributes until re-connected
     getAttrMgr(this).suspendAttributesUpdates();
 
     // Ensures the component can't be rendered while disconnected.
