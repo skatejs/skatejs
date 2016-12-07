@@ -205,6 +205,45 @@ describe('lifecycle/property', () => {
         });
       });
 
+      it('1st mutation updates prop', (done) => {
+        const safe = uniqueId();
+        define(safe, {
+          props: {
+            foo: {
+              attribute: true
+            }
+          }
+        });
+        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        afterMutations(
+          () => (elem.foo = 'bar'),
+          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => (elem.setAttribute('foo', 'bar1')),
+          () => expect(elem.foo).to.equal('bar1'),
+          done
+        );
+      });
+
+      it('2nd mutation updates prop', (done) => {
+        const safe = uniqueId();
+        define(safe, {
+          props: {
+            foo: {
+              attribute: true
+            }
+          }
+        });
+        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        afterMutations(
+          () => (elem.foo = 'bar'),
+          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => (elem.setAttribute('foo', 'bar1')),
+          () => (elem.setAttribute('foo', 'bar2')),
+          () => expect(elem.foo).to.equal('bar2'),
+          done
+        );
+      });
+
       describe('undefined and null', () => {
         it('when a string, the value is used as the attribute name', (done) => {
           const fixtureArea = fixture();
