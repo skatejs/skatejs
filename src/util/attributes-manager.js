@@ -58,22 +58,18 @@ class AttributesManager {
    *
    * When the component is not connected the value is saved and
    * the attribute is only updated when the component is re-connected.
-   *
-   * Returns true if value is different then previous set one.
    */
   setAttrValue (name, value) {
     value = toNullOrString(value);
 
-    const changed = this.lastSetValues[name] !== value;
     this.lastSetValues[name] = value;
 
-    if (!this.connected) {
-      this.pendingValues[name] = value;
-    } else {
+    if (this.connected) {
       this._clearPendingValue(name);
       this._syncAttrValue(name, value);
+    } else {
+      this.pendingValues[name] = value;
     }
-    return changed;
   }
 
   _syncAttrValue (name, value) {
