@@ -55,7 +55,7 @@ function createInitProps (Ctor) {
   return (elem) => {
     getAllKeys(propDescriptors).forEach((name) => {
       const propDescriptor = propDescriptors[name];
-      propDescriptor.created(elem);
+      propDescriptor.beforeDefineProperty(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
