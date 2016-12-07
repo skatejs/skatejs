@@ -1,4 +1,3 @@
-import { rendering as $rendering } from './symbols';
 import toNullOrString from './to-null-or-string';
 
 /**
@@ -52,8 +51,10 @@ class AttributesManager {
 
   /**
    * Updates or removes the attribute if value === null.
-   * When the component is not connected the value is saved and the
-   * attribute is only updated when the component is re-connected.
+   *
+   * When the component is not connected the value is saved and
+   * the attribute is only updated when the component is re-connected.
+   *
    * Returns true if value is different then previous set one.
    */
   setAttrValue (name, value) {
@@ -62,7 +63,7 @@ class AttributesManager {
     const changed = this.lastSetValues[name] !== value;
     this.lastSetValues[name] = value;
 
-    if (!this.connected || this.elem[$rendering]) {
+    if (!this.connected) {
       this.pendingValues[name] = value;
     } else {
       this._clearPendingValue(name);
@@ -103,17 +104,4 @@ export default function getAttrMgr (elem) {
     elem[$attributesMgr] = mgr;
   }
   return mgr;
-}
-
-/**
- * todo: We could expose this API?
- *
- * Updates or removes the attribute if value === null.
- * When the component is not connected or rendering the value is
- * saved and the attribute is then only updated when the component
- * is re-connected or completed rendering.
- * Returns true if value is different then previous set one.
- */
-export function setAttributeWhenConnected (elem, name, value) {
-  return getAttrMgr(elem).setAttrValue(name, value);
 }
