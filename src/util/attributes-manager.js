@@ -1,20 +1,13 @@
-import empty from './empty';
-import { isUndefined } from './isType';
 import { rendering as $rendering } from './symbols';
-
-const $attributesMgr = '____skate_attributesMgr';
-
-// Attributes value can only be null or string;
-const nullIfEmptyOrString = val => (empty(val) ? null : String(val));
+import toNullOrString from './to-null-or-string';
 
 /**
  * @internal
  * Attributes Manager
  *
- * Postpones attributes updates when connected.
+ * Postpones attributes updates until when connected.
  */
 class AttributesManager {
-
   constructor (elem) {
     this.elem = elem;
     this.connected = false;
@@ -22,9 +15,36 @@ class AttributesManager {
     this.lastSetValues = {};
   }
 
-  // Returns true if value is different then previous set one.
+  /**
+   * Called from disconnectedCallback
+   */
+  suspendAttributesUpdates () {
+    this.connected = false;
+  }
+
+  /**
+   * Called from connectedCallback
+   */
+  resumeAttributesUpdates () {
+    this.connected = true;
+    const names = Object.keys(this.pendingValues);
+    names.forEach(name => {
+      const value = this.pendingValues[name];
+      delete this.pendingValues[name];
+      this._syncAttrValue(name, value);
+    });
+  }
+
+  /**
+   * Returns true if the value is different from the one set internally
+   * using setAttrValue()
+   */
   onAttributeChanged (name, value) {
-    value = nullIfEmptyOrString(value);
+    value = toNullOrString(value);
+
+    // A new attribute value voids the pending one
+    this._clearPendingValue(name);
+
     const changed = this.lastSetValues[name] !== value;
     this.lastSetValues[name] = value;
     return changed;
@@ -32,12 +52,12 @@ class AttributesManager {
 
   /**
    * Updates or removes the attribute if value === null.
-   * When the component is not connected the value is saved and the attribute
-   * is then only updated when the component is re-connected.
+   * When the component is not connected the value is saved and the
+   * attribute is only updated when the component is re-connected.
    * Returns true if value is different then previous set one.
    */
   setAttrValue (name, value) {
-    value = nullIfEmptyOrString(value);
+    value = toNullOrString(value);
 
     const changed = this.lastSetValues[name] !== value;
     this.lastSetValues[name] = value;
@@ -45,18 +65,15 @@ class AttributesManager {
     if (!this.connected || this.elem[$rendering]) {
       this.pendingValues[name] = value;
     } else {
-      // Clear any pending value just in case
-      // todo: is this even possible?
-      if (name in this.pendingValues) {
-        delete this.pendingValues[name];
-      }
+      this._clearPendingValue(name);
       this._syncAttrValue(name, value);
     }
     return changed;
   }
 
   _syncAttrValue (name, value) {
-    if (value !== this._getCurrAttrValue(name)) {
+    const currAttrValue = toNullOrString(this.elem.getAttribute(name));
+    if (value !== currAttrValue) {
       if (value === null) {
         this.elem.removeAttribute(name);
       } else {
@@ -65,27 +82,15 @@ class AttributesManager {
     }
   }
 
-  _getCurrAttrValue (name) {
-    return nullIfEmptyOrString(this.elem.getAttribute(name));
-  }
-
-  /**
-   * Called from connectedCallback and disconnectedCallback
-   */
-  syncAttributes (connected) {
-    this.connected = connected;
-    if (connected) {
-      const names = Object.keys(this.pendingValues);
-      names.forEach(name => {
-        const value = this.pendingValues[name];
-        if (!isUndefined(value)) {
-          delete this.pendingValues[name];
-          this._syncAttrValue(name, value);
-        }
-      });
+  _clearPendingValue (name) {
+    if (name in this.pendingValues) {
+      delete this.pendingValues[name];
     }
   }
 }
+
+// Only used by getAttrMgr
+const $attributesMgr = '____skate_attributesMgr';
 
 /**
  * @internal

@@ -3,6 +3,9 @@ const webpackConfig = require('./webpack.config');
 module.exports = (config) => {
   base(config);
 
+  // Easy way to test locally with a different browser:
+  // config.browsers = ['Chrome'];
+
   // Ensure mobile browsers have enough time to run.
   config.browserNoActivityTimeout = 60000;
 

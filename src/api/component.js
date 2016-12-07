@@ -21,7 +21,7 @@ import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import { createNativePropertyDescriptor } from '../lifecycle/props-init';
-import { isFunction } from '../util/isType';
+import { isFunction } from '../util/is-type';
 import objectIs from '../util/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import root from 'window-or-global';
@@ -182,7 +182,7 @@ export default class extends HTMLElement {
   // Custom Elements v1
   connectedCallback () {
     // Reflect attributes pending values
-    getAttrMgr(this).syncAttributes(true);
+    getAttrMgr(this).resumeAttributesUpdates();
 
     // Used to check whether or not the component can render.
     this[$connected] = true;
@@ -206,11 +206,11 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
+    // Suspend updating Attributes until re-connected
+    getAttrMgr(this).suspendAttributesUpdates();
+
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
-
-    // Suspend updating Attributes until re-connected
-    getAttrMgr(this).syncAttributes(false);
 
     // DEPRECATED
     //
@@ -235,8 +235,8 @@ export default class extends HTMLElement {
 
     const propNameOrSymbol = data(this, 'attributeLinks')[name];
     if (propNameOrSymbol) {
-      let hasChanged = getAttrMgr(this).onAttributeChanged(name, newValue);
-      if (hasChanged) {
+      const changedExternally = getAttrMgr(this).onAttributeChanged(name, newValue);
+      if (changedExternally) {
         // Sync up the property.
         const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
         const newPropVal = newValue !== null && propDef.deserialize

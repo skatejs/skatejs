@@ -17,6 +17,7 @@ export function createNativePropertyDescriptor (propDef) {
   };
 
   prop.created = function created (elem) {
+    const propData = getPropData(elem, nameOrSymbol);
     const attrName = propDef.attrName;
 
     // Store attribute to property link.
@@ -27,19 +28,26 @@ export function createNativePropertyDescriptor (propDef) {
     let initialValue = elem[nameOrSymbol];
 
     // Set up initial value if it wasn't specified.
+    let valueFromAttribute = false;
     if (empty(initialValue)) {
       if (attrName && elem.hasAttribute(attrName)) {
+        valueFromAttribute = true;
         initialValue = propDef.deserialize(elem.getAttribute(attrName));
       } else if ('initial' in propDef) {
         initialValue = getInitialValue(elem, propDef);
       } else {
         initialValue = getDefaultValue(elem, propDef);
       }
+
+      // reflect initial or default value to attribute
+      if (attrName && !valueFromAttribute && !empty(initialValue)) {
+        let serializedValue = propDef.serialize(initialValue);
+        getAttrMgr(elem).setAttrValue(propDef.attrName, serializedValue);
+      }
     }
 
     initialValue = propDef.coerce(initialValue);
 
-    const propData = getPropData(elem, nameOrSymbol);
     propData.internalValue = initialValue;
   };
 
