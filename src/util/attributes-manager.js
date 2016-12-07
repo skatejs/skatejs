@@ -1,4 +1,5 @@
 import toNullOrString from './to-null-or-string';
+import { isUndefined } from './is-type';
 
 /**
  * @internal
@@ -29,8 +30,11 @@ class AttributesManager {
     const names = Object.keys(this.pendingValues);
     names.forEach(name => {
       const value = this.pendingValues[name];
-      delete this.pendingValues[name];
-      this._syncAttrValue(name, value);
+      // Skip if already cleared
+      if (!isUndefined(value)) {
+        delete this.pendingValues[name];
+        this._syncAttrValue(name, value);
+      }
     });
   }
 
