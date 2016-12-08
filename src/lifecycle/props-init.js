@@ -1,72 +1,81 @@
 import {
-  connected as $connected,
   rendererDebounced as $rendererDebounced
 } from '../util/symbols';
-import assign from '../util/assign';
 import data from '../util/data';
 import empty from '../util/empty';
-import dashCase from '../util/dash-case';
+import getAttrMgr from '../util/attributes-manager';
 import getDefaultValue from '../util/get-default-value';
 import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
-import syncPropToAttr from '../util/sync-prop-to-attr';
 
-function createNativePropertyDefinition (name, opts) {
+export function createNativePropertyDescriptor (propDef) {
+  const nameOrSymbol = propDef.name;
+
   const prop = {
     configurable: true,
     enumerable: true
   };
 
-  prop.created = function created (elem) {
-    const propData = getPropData(elem, name);
-    const attributeName = opts.attribute === true ? dashCase(name) : opts.attribute;
-    let initialValue = elem[name];
+  prop.beforeDefineProperty = elem => {
+    const propData = getPropData(elem, nameOrSymbol);
+    const attrName = propDef.attrName;
 
-    // Store property to attribute link information.
-    data(elem, 'attributeLinks')[attributeName] = name;
-    data(elem, 'propertyLinks')[name] = attributeName;
+    // Store attribute to property link.
+    if (attrName) {
+      data(elem, 'attributeLinks')[attrName] = nameOrSymbol;
+    }
+
+    // prop value before upgrading
+    let initialValue = elem[nameOrSymbol];
 
     // Set up initial value if it wasn't specified.
+    let valueFromAttribute = false;
     if (empty(initialValue)) {
-      if (attributeName && elem.hasAttribute(attributeName)) {
-        initialValue = opts.deserialize(elem.getAttribute(attributeName));
-      } else if ('initial' in opts) {
-        initialValue = getInitialValue(elem, name, opts);
-      } else if ('default' in opts) {
-        initialValue = getDefaultValue(elem, name, opts);
+      if (attrName && elem.hasAttribute(attrName)) {
+        valueFromAttribute = true;
+        initialValue = propDef.deserialize(elem.getAttribute(attrName));
+      } else if ('initial' in propDef) {
+        initialValue = getInitialValue(elem, propDef);
+      } else {
+        initialValue = getDefaultValue(elem, propDef);
       }
     }
 
-    propData.internalValue = opts.coerce ? opts.coerce(initialValue) : initialValue;
+    initialValue = propDef.coerce(initialValue);
+
+    propData.internalValue = initialValue;
+
+    // Reflect to attribute unless valueFromAttribute
+    if (!valueFromAttribute && attrName && !empty(initialValue)) {
+      let serializedValue = propDef.serialize(initialValue);
+      getAttrMgr(elem).setAttrValue(propDef.attrName, serializedValue);
+    }
   };
 
   prop.get = function get () {
-    const propData = getPropData(this, name);
+    const propData = getPropData(this, nameOrSymbol);
     const { internalValue } = propData;
-    return typeof opts.get === 'function' ? opts.get(this, { name, internalValue }) : internalValue;
+    return propDef.get ? propDef.get(this, { name: nameOrSymbol, internalValue }) : internalValue;
   };
 
   prop.set = function set (newValue) {
-    const propData = getPropData(this, name);
-    propData.lastAssignedValue = newValue;
-    let { oldValue } = propData;
+    const propData = getPropData(this, nameOrSymbol);
 
-    if (empty(oldValue)) {
-      oldValue = null;
+    const useDefaultValue = empty(newValue);
+    if (useDefaultValue) {
+      newValue = getDefaultValue(this, propDef);
     }
 
-    if (empty(newValue)) {
-      newValue = getDefaultValue(this, name, opts);
-    }
+    newValue = propDef.coerce(newValue);
 
-    if (typeof opts.coerce === 'function') {
-      newValue = opts.coerce(newValue);
-    }
+    if (propDef.set) {
+      let { oldValue } = propData;
 
-    const changeData = { name, newValue, oldValue };
-
-    if (typeof opts.set === 'function') {
-      opts.set(this, changeData);
+      if (empty(oldValue)) {
+        oldValue = null;
+      }
+      const changeData = { name: nameOrSymbol, newValue, oldValue };
+      propDef.set(this, changeData);
     }
 
     // Queue a re-render.
@@ -76,24 +85,13 @@ function createNativePropertyDefinition (name, opts) {
     propData.internalValue = propData.oldValue = newValue;
 
     // Link up the attribute.
-    if (this[$connected]) {
-      syncPropToAttr(this, opts, name, false);
+    if (propDef.attrName && !propData.settingProp) {
+      // Note: setting the prop to empty implies the default value
+      // and therefore no attribute should be present!
+      let serializedValue = useDefaultValue ? null : propDef.serialize(newValue);
+      getAttrMgr(this).setAttrValue(propDef.attrName, serializedValue);
     }
   };
 
   return prop;
-}
-
-export default function (opts) {
-  opts = opts || {};
-
-  if (typeof opts === 'function') {
-    opts = { coerce: opts };
-  }
-
-  return name => createNativePropertyDefinition(name, assign({
-    default: null,
-    deserialize: value => value,
-    serialize: value => value
-  }, opts));
 }

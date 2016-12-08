@@ -14,15 +14,16 @@ import {
 import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
-import dashCase from '../util/dash-case';
 import debounce from '../util/debounce';
 import getAllKeys from '../util/get-all-keys';
+import getAttrMgr from '../util/attributes-manager';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
-import initProps from '../lifecycle/props-init';
+import { createNativePropertyDescriptor } from '../lifecycle/props-init';
+import { isFunction } from '../util/is-type';
+import objectIs from '../util/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
-import syncPropToAttr from '../util/sync-prop-to-attr';
 import root from 'window-or-global';
 
 const HTMLElement = root.HTMLElement || class {};
@@ -36,37 +37,12 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
     newValue === elem[_prevNewValue];
 }
 
-function syncPropsToAttrs (elem) {
-  const props = getPropsMap(elem.constructor);
-  Object.keys(props).forEach((propName) => {
-    const prop = props[propName];
-    syncPropToAttr(elem, prop, propName, true);
-  });
-}
-
 // TODO remove when not catering to Safari < 10.
-//
-// Ensures that definitions passed as part of the constructor are functions
-// that return property definitions used on the element.
-function ensurePropertyFunctions (Ctor) {
-  const props = getPropsMap(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName];
-    if (typeof descriptors[descriptorName] !== 'function') {
-      descriptors[descriptorName] = initProps(descriptors[descriptorName]);
-    }
-    return descriptors;
-  }, {});
-}
-
-// TODO remove when not catering to Safari < 10.
-//
-// This can probably be simplified into createInitProps().
-function ensurePropertyDefinitions (Ctor) {
-  const props = ensurePropertyFunctions(Ctor);
-  return getAllKeys(props).reduce((descriptors, descriptorName) => {
-    descriptors[descriptorName] = props[descriptorName](descriptorName);
-    return descriptors;
+function createNativePropertyDescriptors (Ctor) {
+  const propDefs = getPropsMap(Ctor);
+  return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
+    propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
+    return propDescriptors;
   }, {});
 }
 
@@ -74,16 +50,12 @@ function ensurePropertyDefinitions (Ctor) {
 //
 // We should be able to simplify this where all we do is Object.defineProperty().
 function createInitProps (Ctor) {
-  const props = ensurePropertyDefinitions(Ctor);
+  const propDescriptors = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    if (!props) {
-      return;
-    }
-
-    getAllKeys(props).forEach((name) => {
-      const prop = props[name];
-      prop.created(elem);
+    getAllKeys(propDescriptors).forEach((name) => {
+      const propDescriptor = propDescriptors[name];
+      propDescriptor.beforeDefineProperty(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
@@ -100,7 +72,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, prop);
+      Object.defineProperty(elem, name, propDescriptor);
 
       // DEPRECATED
       //
@@ -119,26 +91,23 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
-
   /**
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
    */
   static get observedAttributes () {
     const attrsOnCtor = this.hasOwnProperty($ctorObservedAttributes) ? this[$ctorObservedAttributes] : [];
+    const propDefs = getPropsMap(this);
 
-    const props = getPropsMap(this);
-    const attrsFromLinkedProps = Object.keys(props).map(key => {
-      const { attribute } = props[key];
-      return attribute === true ? dashCase(key) : attribute;
-    }).filter(Boolean);
+    // Use Object.keys to skips symbol props since they have no linked attributes
+    const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
+      propDefs[propName].attrName).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
-
-    return all.filter(function (item, index) {
-      return all.indexOf(item) === index;
-    });
+    return all.filter((item, index) =>
+      all.indexOf(item) === index);
   }
+
   static set observedAttributes (value) {
     value = Array.isArray(value) ? value : [];
     setCtorNativeProperty(this, 'observedAttributes', value);
@@ -148,12 +117,15 @@ export default class extends HTMLElement {
   static get props () {
     return assign({}, super.props, this[$ctorProps]);
   }
+
   static set props (value) {
     setCtorNativeProperty(this, $ctorProps, value);
   }
 
-  constructor () {
-    super();
+  // Passing args is designed to work with document-register-element. It's not
+  // necessary for the webcomponents/custom-element polyfill.
+  constructor (...args) {
+    super(...args);
 
     const { constructor } = this;
 
@@ -171,14 +143,15 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propConfigsCount = getAllKeys(getPropsMap(constructor)).length;
-    if (propConfigsCount && constructor[$ctorCreateInitProps]) {
+    const propDefsCount = getAllKeys(getPropsMap(constructor)).length;
+    if (propDefsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
 
     // DEPRECATED
     //
     // static render()
+    // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
       this.renderCallback = constructor.render.bind(constructor, this);
     }
@@ -188,8 +161,9 @@ export default class extends HTMLElement {
     // static created()
     //
     // Props should be set up before calling this.
-    if (typeof constructor.created === 'function') {
-      constructor.created(this);
+    const { created } = constructor;
+    if (isFunction(created)) {
+      created(this);
     }
 
     // DEPRECATED
@@ -207,12 +181,8 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   connectedCallback () {
-    const { constructor } = this;
-
-    // DEPRECATED
-    //
-    // No more reflecting back to attributes in favour of one-way reflection.
-    syncPropsToAttrs(this);
+    // Reflect attributes pending values
+    getAttrMgr(this).resumeAttributesUpdates();
 
     // Used to check whether or not the component can render.
     this[$connected] = true;
@@ -223,8 +193,9 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static attached()
-    if (typeof constructor.attached === 'function') {
-      constructor.attached(this);
+    const { attached } = this.constructor;
+    if (isFunction(attached)) {
+      attached(this);
     }
 
     // DEPRECATED
@@ -235,7 +206,8 @@ export default class extends HTMLElement {
 
   // Custom Elements v1
   disconnectedCallback () {
-    const { constructor } = this;
+    // Suspend updating attributes until re-connected
+    getAttrMgr(this).suspendAttributesUpdates();
 
     // Ensures the component can't be rendered while disconnected.
     this[$connected] = false;
@@ -243,8 +215,9 @@ export default class extends HTMLElement {
     // DEPRECATED
     //
     // static detached()
-    if (typeof constructor.detached === 'function') {
-      constructor.detached(this);
+    const { detached } = this.constructor;
+    if (isFunction(detached)) {
+      detached(this);
     }
   }
 
@@ -260,46 +233,38 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const { attributeChanged } = this.constructor;
-    const propertyName = data(this, 'attributeLinks')[name];
-
-    if (propertyName) {
-      const propData = data(this, 'props')[propertyName];
-
-      // This ensures a property set doesn't cause the attribute changed
-      // handler to run again once we set this flag. This only ever has a
-      // chance to run when you set an attribute, it then sets a property and
-      // then that causes the attribute to be set again.
-      if (propData.syncingAttribute) {
-        propData.syncingAttribute = false;
-      } else {
+    const propNameOrSymbol = data(this, 'attributeLinks')[name];
+    if (propNameOrSymbol) {
+      const changedExternally = getAttrMgr(this).onAttributeChanged(name, newValue);
+      if (changedExternally) {
         // Sync up the property.
-        const propOpts = getPropsMap(this.constructor)[propertyName];
-        propData.settingAttribute = true;
-        const newPropVal = newValue !== null && propOpts.deserialize
-          ? propOpts.deserialize(newValue)
+        const propDef = getPropsMap(this.constructor)[propNameOrSymbol];
+        const newPropVal = newValue !== null && propDef.deserialize
+          ? propDef.deserialize(newValue)
           : newValue;
-        this[propertyName] = newPropVal;
+
+        const propData = data(this, 'props')[propNameOrSymbol];
+        propData.settingProp = true;
+        this[propNameOrSymbol] = newPropVal;
+        propData.settingProp = false;
       }
     }
 
-    if (attributeChanged) {
+    // DEPRECATED
+    //
+    // static attributeChanged()
+    const { attributeChanged } = this.constructor;
+    if (isFunction(attributeChanged)) {
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
-  //
-  // Maps to the static updated() callback. That logic should be moved here
-  // when that is finally removed.
-  updatedCallback (prev) {
-    return this.constructor.updated(this, prev);
+  updatedCallback (prevProps) {
+    return this.constructor.updated(this, prevProps);
   }
 
   // Skate
-  //
-  // Maps to the static rendered() callback. That logic should be moved here
-  // when that is finally removed.
   renderedCallback () {
     return this.constructor.rendered(this);
   }
@@ -308,12 +273,14 @@ export default class extends HTMLElement {
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
+  // todo: finalize how to support different rendering strategies.
   rendererCallback () {
+    // todo: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
 
   // Skate
-  //
+  // @internal
   // Invokes the complete render lifecycle.
   [$renderer] () {
     if (this[$rendering] || !this[$connected]) {
@@ -323,8 +290,7 @@ export default class extends HTMLElement {
     // Flag as rendering. This prevents anything from trying to render - or
     // queueing a render - while there is a pending render.
     this[$rendering] = true;
-
-    if (this[$updated]() && typeof this.renderCallback === 'function') {
+    if (this[$updated]() && isFunction(this.renderCallback)) {
       this.rendererCallback();
       this.renderedCallback();
     }
@@ -333,12 +299,12 @@ export default class extends HTMLElement {
   }
 
   // Skate
-  //
-  // Calls the user-defined updated() lifecycle callback.
+  // @internal
+  // Calls the updatedCallback() with previous props.
   [$updated] () {
-    const prev = this[$props];
+    const prevProps = this[$props];
     this[$props] = getSetProps(this);
-    return this.updatedCallback(prev);
+    return this.updatedCallback(prevProps);
   }
 
   // Skate
@@ -364,29 +330,7 @@ export default class extends HTMLElement {
   //
   // DEPRECATED
   //
-  // Move this to rendererCallback() before removing.
-  static updated (elem, prev) {
-    if (!prev) {
-      return true;
-    }
-
-    // use get all keys so that we check Symbols as well as regular props
-    // using a for loop so we can break early
-    const allKeys = getAllKeys(prev);
-    for (let i = 0; i < allKeys.length; i += 1) {
-      if (prev[allKeys[i]] !== elem[allKeys[i]]) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  // Skate
-  //
-  // DEPRECATED
-  //
-  // Move this to rendererCallback() before removing.
+  // Stubbed in case any subclasses are calling it.
   static rendered () {}
 
   // Skate
@@ -400,15 +344,41 @@ export default class extends HTMLElement {
     }
     patchInner(elem.shadowRoot, () => {
       const possibleFn = elem.renderCallback();
-      if (typeof possibleFn === 'function') {
+      if (isFunction(possibleFn)) {
         possibleFn();
       } else if (Array.isArray(possibleFn)) {
         possibleFn.forEach((fn) => {
-          if (typeof fn === 'function') {
+          if (isFunction(fn)) {
             fn();
           }
         });
       }
     });
+  }
+
+  // Skate
+  //
+  // DEPRECATED
+  //
+  // Move this to updatedCallback() before removing.
+  static updated (elem, prevProps) {
+    // short-circuits if this is the first time
+    if (!prevProps) {
+      return true;
+    }
+
+    // Use getAllKeys to include all props names and Symbols
+    const allKeys = getAllKeys(prevProps);
+
+    // Use classic loop because 'for ... of' skips symbols
+    for (let i = 0; i < allKeys.length; i++) {
+      const nameOrSymbol = allKeys[i];
+
+      // Object.is (NaN is equal NaN)
+      if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -1,8 +1,6 @@
 import assign from '../util/assign';
 import empty from '../util/empty';
-
-const alwaysUndefinedIfNotANumberOrNumber = val => (isNaN(val) ? undefined : Number(val));
-const alwaysUndefinedIfEmptyOrString = val => (empty(val) ? undefined : String(val));
+import toNullOrString from '../util/to-null-or-string';
 
 export function create (def) {
   return (...args) => {
@@ -12,29 +10,35 @@ export function create (def) {
 }
 
 export const array = create({
-  coerce: val => (Array.isArray(val) ? val : [val]),
+  coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
   default: () => [],
-  deserialize: JSON.parse,
+  deserialize: val => (empty(val) ? null : JSON.parse(val)),
   serialize: JSON.stringify
 });
 
 export const boolean = create({
-  coerce: value => !!value,
+  coerce: val => !!val,
   default: false,
-  deserialize: value => !(value === null),
-  serialize: value => (value ? '' : undefined)
+  // todo: 'false' string must deserialize to false for angular 1.x to work
+  // This breaks one existing test.
+  // deserialize: val => !(val === null || val === 'false'),
+  deserialize: val => !(val === null),
+  serialize: val => (val ? '' : null)
 });
+
+// defaults empty to 0 and allows NaN
+const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
 
 export const number = create({
   default: 0,
-  coerce: alwaysUndefinedIfNotANumberOrNumber,
-  deserialize: alwaysUndefinedIfNotANumberOrNumber,
-  serialize: alwaysUndefinedIfNotANumberOrNumber
+  coerce: zeroIfEmptyOrNumberIncludesNaN,
+  deserialize: zeroIfEmptyOrNumberIncludesNaN,
+  serialize: toNullOrString
 });
 
 export const string = create({
   default: '',
-  coerce: alwaysUndefinedIfEmptyOrString,
-  deserialize: alwaysUndefinedIfEmptyOrString,
-  serialize: alwaysUndefinedIfEmptyOrString
+  coerce: toNullOrString,
+  deserialize: toNullOrString,
+  serialize: toNullOrString
 });

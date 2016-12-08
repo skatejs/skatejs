@@ -3,8 +3,9 @@
 import { classStaticsInheritance } from '../../lib/support';
 import { Component, define } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
+import {createNativePropertyDescriptor} from '../../../src/lifecycle/props-init';
 import fixture from '../../lib/fixture';
-import propsInit from '../../../src/lifecycle/props-init';
+import PropDefinition from '../../../src/util/prop-definition';
 import uniqueId from '../../../src/util/unique-id';
 
 describe('lifecycle/property', () => {
@@ -21,14 +22,6 @@ describe('lifecycle/property', () => {
     }
     return elem;
   }
-
-  it('should accept zero arguments', () => {
-    propsInit();
-  });
-
-  it('should return a function', () => {
-    expect(propsInit()).to.be.a('function');
-  });
 
   describe('props declared as attributes with ES2015 classes are linked', () => {
     const skip = !classStaticsInheritance();
@@ -164,8 +157,9 @@ describe('lifecycle/property', () => {
   });
 
   describe('property definition', () => {
-    function create2 () {
-      return propsInit()();
+    function create2 (opts) {
+      const propDef = new PropDefinition(opts);
+      return createNativePropertyDescriptor(propDef);
     }
 
     describe('native', () => {
@@ -209,6 +203,45 @@ describe('lifecycle/property', () => {
             done();
           });
         });
+      });
+
+      it('1st mutation updates prop', (done) => {
+        const safe = uniqueId();
+        define(safe, {
+          props: {
+            foo: {
+              attribute: true
+            }
+          }
+        });
+        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        afterMutations(
+          () => (elem.foo = 'bar'),
+          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => (elem.setAttribute('foo', 'bar1')),
+          () => expect(elem.foo).to.equal('bar1'),
+          done
+        );
+      });
+
+      it('2nd mutation updates prop', (done) => {
+        const safe = uniqueId();
+        define(safe, {
+          props: {
+            foo: {
+              attribute: true
+            }
+          }
+        });
+        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        afterMutations(
+          () => (elem.foo = 'bar'),
+          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => (elem.setAttribute('foo', 'bar1')),
+          () => (elem.setAttribute('foo', 'bar2')),
+          () => expect(elem.foo).to.equal('bar2'),
+          done
+        );
       });
 
       describe('undefined and null', () => {

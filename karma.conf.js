@@ -1,3 +1,8 @@
+/**
+ * TIP: easy way to test locally with multiple browsers
+ * use command: sk-tests-watch --browsers Chrome,Firefox
+ */
+
 const base = require('skatejs-build/karma.conf');
 const webpackConfig = require('./webpack.config');
 module.exports = (config) => {
