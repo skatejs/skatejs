@@ -12,7 +12,7 @@ export class Component extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
   adoptedCallback?(): void;
 
-  // SkateJS Livecycle
+  // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean;
   renderCallback(): any;
   renderedCallback(): void;
@@ -51,33 +51,9 @@ export interface EmitOptions {
 }
 export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
 
-export function link(elem: Component, target?: string): (e: Event) => void;
-
-type VDOMElementTName = string | typeof Component | typeof vdom.element | { id: string; };
-type VDOMElementChild = Function | string | number;
-type VDOMElementSet = VDOMElementChild | VDOMElementChild[];
-
 export var h: typeof vdom.element;
 
-export var vdom: {
-  element(tname: VDOMElementTName, attrs: { key: any; statics: any; } & any, ...chren: VDOMElementSet[]): Component | any;
-  element(tname: VDOMElementTName, ...chren: VDOMElementSet[]): Component | any;
-  builder(): typeof vdom.element;
-  builder(...tags: string[]): (typeof vdom.element)[];
-
-  attr: Function;
-  elementClose: Function;
-  elementOpen: Function;
-  elementOpenEnd: Function;
-  elementOpenStart: Function;
-  elementVoid: Function;
-  text: Function;
-};
-
-export function ready(elem: Component, done: (c: Component) => void): void;
-
-// DEPRECATED
-// export var symbols: any;
+export function link(elem: Component, target?: string): (e: Event) => void;
 
 export var prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
@@ -89,3 +65,27 @@ export var prop: {
 };
 
 export function props(elem: Component, props?: any): void;
+
+export function ready(elem: Component, done: (c: Component) => void): void;
+
+// DEPRECATED
+// export var symbols: any;
+
+type VDOMElementTName = string | typeof Component | typeof vdom.element | { id: string; };
+type VDOMElementChild = Function | string | number;
+type VDOMElementSet = VDOMElementChild | VDOMElementChild[];
+
+export var vdom: {
+  element(tname: VDOMElementTName, attrs: { key: any; statics: any; } & any, ...chren: VDOMElementSet[]): Component | any;
+  element(tname: VDOMElementTName, ...chren: VDOMElementSet[]): Component | any;
+  builder(): typeof vdom.element;
+  builder(...tags: string[]): (typeof vdom.element)[];
+
+  attr(...args:any[]):void;
+  elementClose: Function;
+  elementOpen: Function;
+  elementOpenEnd: Function;
+  elementOpenStart: Function;
+  elementVoid: Function;
+  text: Function;
+};
