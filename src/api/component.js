@@ -343,7 +343,7 @@ export default class extends HTMLElement {
       elem.attachShadow({ mode: 'open' });
     }
     patchInner(elem.shadowRoot, () => {
-      const possibleFn = elem.renderCallback();
+      const possibleFn = elem.renderCallback(elem);
       if (isFunction(possibleFn)) {
         possibleFn();
       } else if (Array.isArray(possibleFn)) {
