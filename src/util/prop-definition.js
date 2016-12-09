@@ -1,7 +1,7 @@
 import dashCase from './dash-case';
 import empty from './empty';
 import error from './error';
-import { isFunction } from './is-type';
+import { isFunction, isObject } from './is-type';
 
 /**
  * @internal
@@ -13,7 +13,7 @@ import { isFunction } from './is-type';
  * Once created a PropDefinition should be treated as immutable and final.
  * 'getPropsMap' function memoizes PropDefinitions by Component's Class.
  *
- * The 'attribute' option is normalized into the 'attrName' property.
+ * The 'attribute' option is normalized to 'attrSource' and 'attrTarget' properties.
  */
 export default class PropDefinition {
 
@@ -22,8 +22,11 @@ export default class PropDefinition {
 
     propOptions = propOptions || {};
 
-    // default 'attrName': no linked attribute
-    this.attrName = null;
+    // default 'attrSource': no observed source attribute (name)
+    this.attrSource = null;
+
+    // default 'attrTarget': no reflected target attribute (name)
+    this.attrTarget = null;
 
     // default 'coerce': identity function
     this.coerce = value => value;
@@ -54,7 +57,13 @@ export default class PropDefinition {
       // Only accept documented options and perform minimal input validation.
       switch (option) {
         case 'attribute':
-          this.attrName = resolveAttrName(optVal, nameOrSymbol);
+          if (isObject(optVal)) {
+            this.attrSource = resolveAttrName(optVal.source, nameOrSymbol);
+            this.attrTarget = resolveAttrName(optVal.target, nameOrSymbol);
+          } else {
+            this.attrSource = resolveAttrName(optVal, nameOrSymbol);
+            this.attrTarget = this.attrSource;
+          }
           break;
         case 'coerce':
         case 'deserialize':
@@ -76,6 +85,8 @@ export default class PropDefinition {
           break;
       }
     });
+
+    this.attrTargetIsSource = this.attrTarget && (this.attrTarget === this.attrSource);
   }
 
   get name () {

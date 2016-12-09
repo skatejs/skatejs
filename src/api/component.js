@@ -101,7 +101,7 @@ export default class extends HTMLElement {
 
     // Use Object.keys to skips symbol props since they have no linked attributes
     const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
-      propDefs[propName].attrName).filter(Boolean);
+      propDefs[propName].attrSource).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
     return all.filter((item, index) =>
@@ -233,7 +233,7 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const propNameOrSymbol = data(this, 'attributeLinks')[name];
+    const propNameOrSymbol = data(this, 'attrSourceLinks')[name];
     if (propNameOrSymbol) {
       const changedExternally = getAttrMgr(this).onAttributeChanged(name, newValue);
       if (changedExternally) {
@@ -244,9 +244,9 @@ export default class extends HTMLElement {
           : newValue;
 
         const propData = data(this, 'props')[propNameOrSymbol];
-        propData.settingProp = true;
+        propData.settingPropFromAttrSource = true;
         this[propNameOrSymbol] = newPropVal;
-        propData.settingProp = false;
+        propData.settingPropFromAttrSource = false;
       }
     }
 
