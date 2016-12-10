@@ -447,11 +447,15 @@ The custom property definition accepts the following options.
 
 #### `attribute`
 
-Whether or not to link the property to an attribute. This can be either a `Boolean` or `String`.
+Whether or not to link the property to an attribute. This can be either a `Boolean`, `String` or and `Object` with properties `source` or/and `target`.
 
 - If it's `false`, it's not linked to an attribute. This is the default.
 - If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
 - If it's a `String`, the value is used as the attribute name it should be linked to.
+- If it's a `Object`
+	- `source` indicates the observed input attribute that sets the property value.
+	- `target` indicates the output attribute where the property's value will be reflected to.
+	- `source` and `target` can be eighter `Boolean` or `String` and follow the same rules as described above.
 
 Attributes are set from props on your element once it is inserted into the DOM.
 
