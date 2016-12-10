@@ -61,8 +61,7 @@ export default class PropDefinition {
             this.attrSource = resolveAttrName(optVal.source, nameOrSymbol);
             this.attrTarget = resolveAttrName(optVal.target, nameOrSymbol);
           } else {
-            this.attrSource = resolveAttrName(optVal, nameOrSymbol);
-            this.attrTarget = this.attrSource;
+            this.attrSource = this.attrTarget = resolveAttrName(optVal, nameOrSymbol);
           }
           break;
         case 'coerce':
@@ -86,7 +85,7 @@ export default class PropDefinition {
       }
     });
 
-    this.attrTargetIsSource = this.attrTarget && (this.attrTarget === this.attrSource);
+    this.attrTargetIsNotSource = this.attrTarget !== this.attrSource;
   }
 
   get name () {

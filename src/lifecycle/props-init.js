@@ -47,7 +47,7 @@ export function createNativePropertyDescriptor (propDef) {
 
     // Reflect to Target Attribute
     const mustReflect = propDef.attrTarget && !empty(initialValue) &&
-      (!valueFromAttrSource || !propDef.attrTargetIsSource);
+      (!valueFromAttrSource || propDef.attrTargetIsNotSource);
 
     if (mustReflect) {
       let serializedValue = propDef.serialize(initialValue);
@@ -89,7 +89,7 @@ export function createNativePropertyDescriptor (propDef) {
 
     // Reflect to Target attribute.
     const mustReflect = propDef.attrTarget &&
-      (!propDef.attrTargetIsSource || !propData.settingPropFromAttrSource);
+      (propDef.attrTargetIsNotSource || !propData.settingPropFromAttrSource);
     if (mustReflect) {
       // Note: setting the prop to empty implies the default value
       // and therefore no attribute should be present!
