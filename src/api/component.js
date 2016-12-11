@@ -373,7 +373,7 @@ export default class extends HTMLElement {
     for (let i = 0; i < namesAndSymbols.length; i++) {
       const nameOrSymbol = namesAndSymbols[i];
 
-      // Object.is (NaN is equal NaN)
+      // With Object.is NaN is equal to NaN
       if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
       }

@@ -447,7 +447,7 @@ The custom property definition accepts the following options.
 
 #### `attribute`
 
-Whether or not to link the property to an attribute. This can be either a `Boolean`, `String` or and `Object` with properties `source` or/and `target`.
+Whether or not to link the property to an attribute. This can be either a `Boolean`, `String` or and `Object` with properties `source` and/or `target`.
 
 - If it's `false`, it's not linked to an attribute. This is the default.
 - If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
@@ -719,6 +719,7 @@ customElements.define('x-component', class extends skate.Component {
 
     // The previous props will always contain all of the keys.
     for (let name in previousProps) {
+      // With Object.is NaN is equal to NaN
       if (!Object.is(previousProps[name], this[name]) {
         return true;
       }
