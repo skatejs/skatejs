@@ -447,13 +447,13 @@ The custom property definition accepts the following options.
 
 #### `attribute`
 
-Whether or not to link the property to an attribute. This can be either a `Boolean`, `String` or and `Object` with properties `source` and/or `target`.
+Whether or not to link the property to an attribute. This can be either a `Boolean`, a `String`, or an `Object` with properties `source` and/or `target`.
 
 - If it's `false`, it's not linked to an attribute. This is the default.
 - If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
 - If it's a `String`, the value is used as the attribute name it should be linked to.
-- If it's a `Object`
-	- `source` indicates the observed input attribute that sets the property value.
+- If it's a `Object`, it must have properties `source` or `target` or both.
+	- `source` indicates the observed input attribute that sets the property's value.
 	- `target` indicates the output attribute where the property's value will be reflected to.
 	- `source` and `target` can be eighter `Boolean` or `String` and follow the same rules as described above.
 
