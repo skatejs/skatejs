@@ -712,15 +712,20 @@ Called before `renderCallback()` after `props` are updated. If it returns falsy,
 ```js
 customElements.define('x-component', class extends skate.Component {
   updatedCallback (previousProps) {
-    // The previous props will not be defined if it is the initial render.
+    // The 'previousProps' will be undefined if it is the initial render.
     if (!previousProps) {
       return true;
     }
 
-    // The previous props will always contain all of the keys.
-    for (let name in previousProps) {
+    // The keys are the prop names, these can be String or Symbol.
+    const namesAndSymbols = Object.getOwnPropertySymbols
+      ? Object.getOwnPropertySymbols(previousProps).concat(Object.getOwnPropertyNames(previousProps))
+      : Object.getOwnPropertyNames(previousProps);
+
+    // The 'previousProps' will always contain all of the keys.
+    for (let nameOrSymbol of namesAndSymbols) {
       // With Object.is NaN is equal to NaN
-      if (!Object.is(previousProps[name], this[name]) {
+      if (!Object.is(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
       }
     }

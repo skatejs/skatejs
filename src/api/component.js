@@ -361,23 +361,20 @@ export default class extends HTMLElement {
   // DEPRECATED
   //
   // Move this to updatedCallback() before removing.
-  static updated (elem, prevProps) {
-    // short-circuits if this is the first time
-    if (!prevProps) {
+  static updated (elem, previousProps) {
+    // The 'previousProps' will be undefined if it is the initial render.
+    if (!previousProps) {
       return true;
     }
 
-    const namesAndSymbols = getPropNamesAndSymbols(prevProps);
-
-    // Use classic loop because 'for ... of' skips symbols
-    for (let i = 0; i < namesAndSymbols.length; i++) {
-      const nameOrSymbol = namesAndSymbols[i];
-
+    // The 'previousProps' will always contain all of the keys.
+    for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
       // With Object.is NaN is equal to NaN
-      if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
+      if (!objectIs(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
       }
     }
+
     return false;
   }
 }
