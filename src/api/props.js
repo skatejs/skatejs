@@ -1,13 +1,13 @@
 import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
+import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
-import getAllKeys from '../util/get-all-keys';
 
 function get (elem) {
   const props = {};
 
-  getAllKeys(getPropsMap(elem.constructor)).forEach((propNameOrSymbol) => {
-    props[propNameOrSymbol] = elem[propNameOrSymbol];
+  getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
+    props[nameOrSymbol] = elem[nameOrSymbol];
   });
 
   return props;

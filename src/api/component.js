@@ -15,9 +15,9 @@ import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
-import getAllKeys from '../util/get-all-keys';
 import getAttrMgr from '../util/attributes-manager';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import { createNativePropertyDescriptor } from '../lifecycle/props-init';
@@ -40,8 +40,8 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 // TODO remove when not catering to Safari < 10.
 function createNativePropertyDescriptors (Ctor) {
   const propDefs = getPropsMap(Ctor);
-  return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
-    propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
+  return getPropNamesAndSymbols(propDefs).reduce((propDescriptors, nameOrSymbol) => {
+    propDescriptors[nameOrSymbol] = createNativePropertyDescriptor(propDefs[nameOrSymbol]);
     return propDescriptors;
   }, {});
 }
@@ -53,18 +53,18 @@ function createInitProps (Ctor) {
   const propDescriptors = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    getAllKeys(propDescriptors).forEach((name) => {
-      const propDescriptor = propDescriptors[name];
+    getPropNamesAndSymbols(propDescriptors).forEach((nameOrSymbol) => {
+      const propDescriptor = propDescriptors[nameOrSymbol];
       propDescriptor.beforeDefineProperty(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
-      const hasPropBeforeUpgrading = name in elem;
+      const hasPropBeforeUpgrading = nameOrSymbol in elem;
 
       // This is saved prior to defining so that we can set it after it it was
       // defined prior to upgrading. We don't want to invoke the getter if we
       // don't need to, so we only get the value if we need to re-sync.
-      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[name];
+      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[nameOrSymbol];
 
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -72,7 +72,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, propDescriptor);
+      Object.defineProperty(elem, nameOrSymbol, propDescriptor);
 
       // DEPRECATED
       //
@@ -84,7 +84,7 @@ function createInitProps (Ctor) {
       // in native where the definition may be registerd after elements it
       // represents have already been created.
       if (hasPropBeforeUpgrading) {
-        elem[name] = valueBeforeUpgrading;
+        elem[nameOrSymbol] = valueBeforeUpgrading;
       }
     });
   };
@@ -143,7 +143,7 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propDefsCount = getAllKeys(getPropsMap(constructor)).length;
+    const propDefsCount = getPropNamesAndSymbols(getPropsMap(constructor)).length;
     if (propDefsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
@@ -367,12 +367,11 @@ export default class extends HTMLElement {
       return true;
     }
 
-    // Use getAllKeys to include all props names and Symbols
-    const allKeys = getAllKeys(prevProps);
+    const namesAndSymbols = getPropNamesAndSymbols(prevProps);
 
     // Use classic loop because 'for ... of' skips symbols
-    for (let i = 0; i < allKeys.length; i++) {
-      const nameOrSymbol = allKeys[i];
+    for (let i = 0; i < namesAndSymbols.length; i++) {
+      const nameOrSymbol = namesAndSymbols[i];
 
       // Object.is (NaN is equal NaN)
       if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {

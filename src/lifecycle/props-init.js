@@ -9,7 +9,7 @@ import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
 
 export function createNativePropertyDescriptor (propDef) {
-  const nameOrSymbol = propDef.name;
+  const { nameOrSymbol } = propDef;
 
   const prop = {
     configurable: true,

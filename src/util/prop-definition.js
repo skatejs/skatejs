@@ -23,7 +23,7 @@ import {
 export default class PropDefinition {
 
   constructor (nameOrSymbol, propOptions) {
-    this._name = nameOrSymbol;
+    this._nameOrSymbol = nameOrSymbol;
 
     propOptions = propOptions || {};
 
@@ -99,8 +99,8 @@ export default class PropDefinition {
     });
   }
 
-  get name () {
-    return this._name;
+  get nameOrSymbol () {
+    return this._nameOrSymbol;
   }
 
 }

@@ -719,7 +719,7 @@ customElements.define('x-component', class extends skate.Component {
 
     // The previous props will always contain all of the keys.
     for (let name in previousProps) {
-      if (previousProps[name] !== this[name]) {
+      if (!Object.is(previousProps[name], this[name]) {
         return true;
       }
     }
