@@ -22,7 +22,7 @@ import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/is-type';
-import objectIs from '../util/object-is';
+import objectIs from '../polyfills/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import root from 'window-or-global';
 
