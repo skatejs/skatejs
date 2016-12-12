@@ -94,8 +94,7 @@ export default class PropDefinition {
           this[option] = optVal;
           break;
         default:
-          deprecated(`${option} is not a valid option. Options are: attribute, initial, default, coerce, deserialize, serialize.`);
-          // TODO: still allow undocumented options until we define where these should go. Maybe in a 'bag' option?
+          // TODO: undocumented options?
           this[option] = optVal;
           break;
       }
