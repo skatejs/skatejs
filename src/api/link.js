@@ -10,11 +10,17 @@ function getValue (elem) {
 
 export default function (elem, target) {
   return (e) => {
-    const value = getValue(e.target);
-    const localTarget = target || e.target.name || 'value';
+    // We fallback to checking the composed path. Unfortunately this behaviour
+    // is difficult to impossible to reproduce as it seems to be a possible
+    // quirk in the shadydom polyfill that incorrectly returns null for the
+    // target but has the target as the first point in the path.
+    // TODO revisit once all browsers have native support.
+    const localTarget = e.target || e.composedPath()[0];
+    const value = getValue(localTarget);
+    const localTargetName = target || localTarget.name || 'value';
 
-    if (localTarget.indexOf('.') > -1) {
-      const parts = localTarget.split('.');
+    if (localTargetName.indexOf('.') > -1) {
+      const parts = localTargetName.split('.');
       const firstPart = parts[0];
       const propName = parts.pop();
       const obj = parts.reduce((prev, curr) => (prev && prev[curr]), elem);
@@ -25,7 +31,7 @@ export default function (elem, target) {
       });
     } else {
       props(elem, {
-        [localTarget]: value
+        [localTargetName]: value
       });
     }
   };
