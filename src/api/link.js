@@ -10,11 +10,12 @@ function getValue (elem) {
 
 export default function (elem, target) {
   return (e) => {
-    const value = getValue(e.target);
-    const localTarget = target || e.target.name || 'value';
+    const localTarget = target || e.target || e.composedPath()[0];
+    const value = getValue(localTarget);
+    const localTargetName = e.target.name || 'value';
 
-    if (localTarget.indexOf('.') > -1) {
-      const parts = localTarget.split('.');
+    if (localTargetName.indexOf('.') > -1) {
+      const parts = localTargetName.split('.');
       const firstPart = parts[0];
       const propName = parts.pop();
       const obj = parts.reduce((prev, curr) => (prev && prev[curr]), elem);
@@ -25,7 +26,7 @@ export default function (elem, target) {
       });
     } else {
       props(elem, {
-        [localTarget]: value
+        [localTargetName]: value
       });
     }
   };
