@@ -368,7 +368,14 @@ export default class extends HTMLElement {
     }
 
     // The 'previousProps' will always contain all of the keys.
-    for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
+    //
+    // Use classic loop because:
+    // 'for ... in' skips symbols and 'for ... of' is not working yet with IE!?
+    // for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
+    const namesAndSymbols = getPropNamesAndSymbols(previousProps);
+    for (let i = 0; i < namesAndSymbols.length; i++) {
+      const nameOrSymbol = namesAndSymbols[i];
+
       // With Object.is NaN is equal to NaN
       if (!objectIs(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
