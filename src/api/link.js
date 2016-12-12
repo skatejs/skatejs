@@ -15,9 +15,9 @@ export default function (elem, target) {
     // quirk in the shadydom polyfill that incorrectly returns null for the
     // target but has the target as the first point in the path.
     // TODO revisit once all browsers have native support.
-    const localTarget = target || e.target || e.composedPath()[0];
+    const localTarget = e.target || e.composedPath()[0];
     const value = getValue(localTarget);
-    const localTargetName = e.target.name || 'value';
+    const localTargetName = target || localTarget.name || 'value';
 
     if (localTargetName.indexOf('.') > -1) {
       const parts = localTargetName.split('.');
