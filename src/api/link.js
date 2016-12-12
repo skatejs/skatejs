@@ -10,6 +10,11 @@ function getValue (elem) {
 
 export default function (elem, target) {
   return (e) => {
+    // We fallback to checking the composed path. Unfortunately this behaviour
+    // is difficult to impossible to reproduce as it seems to be a possible
+    // quirk in the shadydom polyfill that incorrectly returns null for the
+    // target but has the target as the first point in the path.
+    // TODO revisit once all browsers have native support.
     const localTarget = target || e.target || e.composedPath()[0];
     const value = getValue(localTarget);
     const localTargetName = e.target.name || 'value';
