@@ -15,6 +15,7 @@ import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
+import deprecated from '../util/deprecated';
 import getAttrMgr from '../util/attributes-manager';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
@@ -90,6 +91,10 @@ function createInitProps (Ctor) {
   };
 }
 
+function tagName (elem) {
+  return elem && elem.tagName ? elem.tagName.toLowerCase() : '';
+}
+
 export default class extends HTMLElement {
   /**
    * Returns unique attribute names configured with props and
@@ -153,6 +158,7 @@ export default class extends HTMLElement {
     // static render()
     // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
+      deprecated(`${tagName(this)} static render is deprecated. Use renderCallback.`);
       this.renderCallback = constructor.render.bind(constructor, this);
     }
 
@@ -163,6 +169,7 @@ export default class extends HTMLElement {
     // Props should be set up before calling this.
     const { created } = constructor;
     if (isFunction(created)) {
+      deprecated(`${tagName(this)} static created is deprecated. Use constructor.`);
       created(this);
     }
 
@@ -195,6 +202,7 @@ export default class extends HTMLElement {
     // static attached()
     const { attached } = this.constructor;
     if (isFunction(attached)) {
+      deprecated(`${tagName(this)} static attached is deprecated. Use connectedCallback.`);
       attached(this);
     }
 
@@ -217,6 +225,7 @@ export default class extends HTMLElement {
     // static detached()
     const { detached } = this.constructor;
     if (isFunction(detached)) {
+      deprecated(`${tagName(this)} static detached is deprecated. Use disconnectedCallback.`);
       detached(this);
     }
   }
@@ -255,17 +264,24 @@ export default class extends HTMLElement {
     // static attributeChanged()
     const { attributeChanged } = this.constructor;
     if (isFunction(attributeChanged)) {
+      deprecated(`${tagName(this)} static attributeChanged is deprecated. Use attributeChangedCallback.`);
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
   updatedCallback (prevProps) {
+    if (this.constructor.hasOwnProperty('updated')) {
+      deprecated(`${tagName(this)} static updated is deprecated. Use updatedCallback.`);
+    }
     return this.constructor.updated(this, prevProps);
   }
 
   // Skate
   renderedCallback () {
+    if (this.constructor.hasOwnProperty('rendered')) {
+      deprecated(`${tagName(this)} static rendered is deprecated. Use renderedCallback.`);
+    }
     return this.constructor.rendered(this);
   }
 

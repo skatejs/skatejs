@@ -1,4 +1,5 @@
 import dashCase from './dash-case';
+import deprecated from './deprecated';
 import empty from './empty';
 import error from './error';
 import {
@@ -93,7 +94,9 @@ export default class PropDefinition {
           this[option] = optVal;
           break;
         default:
-          error(`${option} is not a valid option. Options are: attribute, initial, default, coerce, deserialize, serialize.`);
+          deprecated(`${option} is not a valid option. Options are: attribute, initial, default, coerce, deserialize, serialize.`);
+          // TODO: still allow undocumented options until we define where these should go. Maybe in a 'bag' option?
+          this[option] = optVal;
           break;
       }
     });
