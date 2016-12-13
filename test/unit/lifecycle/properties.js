@@ -281,7 +281,7 @@ describe('lifecycle/property', () => {
           );
         });
 
-        it('when an attribute is removed, the property should be set to undefined', (done) => {
+        it('when an attribute is removed, the property should be set to null', (done) => {
           const fixtureArea = fixture();
           const elem = create({ attribute: true });
           fixtureArea.appendChild(elem);
@@ -805,6 +805,134 @@ describe('lifecycle/property', () => {
         afterMutations(() => {
           expect(elem.testName).to.equal(true);
           expect(elem.getAttribute('test-name')).to.equal('');
+          done();
+        });
+      });
+    });
+  });
+
+  describe('attribute one-way', () => {
+    it('source is not updated', (done) => {
+      const safe = uniqueId();
+      define(safe, {
+        props: {
+          prop: {
+            attribute: { source: 'in' }
+          }
+        }
+      });
+      const elem = fixture(`<${safe} in="val" />`).firstChild;
+      afterMutations(() => {
+        expect(elem.getAttribute('in')).to.equal('val');
+        expect(elem.prop).to.equal('val');
+        elem.prop = 'val1';
+        afterMutations(() => {
+          expect(elem.getAttribute('in')).to.equal('val');
+          expect(elem.prop).to.equal('val1');
+          done();
+        });
+      });
+    });
+
+    it('source change, updates prop', (done) => {
+      const safe = uniqueId();
+      define(safe, {
+        props: {
+          prop: {
+            attribute: { source: 'in' }
+          }
+        }
+      });
+      const elem = fixture(`<${safe} in="val" />`).firstChild;
+      afterMutations(() => {
+        expect(elem.getAttribute('in')).to.equal('val');
+        expect(elem.prop).to.equal('val');
+        elem.setAttribute('in', 'val1');
+        expect(elem.prop).to.equal('val1');
+        expect(elem.getAttribute('in')).to.equal('val1');
+        done();
+      });
+    });
+
+    it('prop change, updates target', (done) => {
+      const safe = uniqueId();
+      define(safe, {
+        props: {
+          prop: {
+            attribute: { source: 'in', target: 'out' }
+          }
+        }
+      });
+      const elem = fixture(`<${safe} in="val" out="abc"/>`).firstChild;
+      afterMutations(() => {
+        expect(elem.getAttribute('in')).to.equal('val');
+        expect(elem.prop).to.equal('val');
+        expect(elem.getAttribute('out')).to.equal('val');
+        elem.prop = 'val1';
+        afterMutations(() => {
+          expect(elem.getAttribute('in')).to.equal('val');
+          expect(elem.prop).to.equal('val1');
+          expect(elem.getAttribute('out')).to.equal('val1');
+          done();
+        });
+      });
+    });
+
+    it('source change, updates target', (done) => {
+      const safe = uniqueId();
+      define(safe, {
+        props: {
+          prop: {
+            attribute: { source: 'in', target: 'out' },
+            initial: 'init',
+            default: 'def'
+          }
+        }
+      });
+      const elem = fixture(`<${safe} />`).firstChild;
+      afterMutations(() => {
+        expect(elem.getAttribute('in')).to.equal(null);
+        expect(elem.getAttribute('out')).to.equal('init');
+        expect(elem.prop).to.equal('init');
+        elem.setAttribute('in', 'val');
+        afterMutations(() => {
+          expect(elem.getAttribute('in')).to.equal('val');
+          expect(elem.getAttribute('out')).to.equal('val');
+          expect(elem.prop).to.equal('val');
+          elem.setAttribute('in', 'val1');
+          afterMutations(() => {
+            expect(elem.getAttribute('in')).to.equal('val1');
+            expect(elem.getAttribute('out')).to.equal('val1');
+            expect(elem.prop).to.equal('val1');
+            elem.removeAttribute('in');
+            afterMutations(() => {
+              expect(elem.getAttribute('in')).to.equal(null);
+              expect(elem.getAttribute('out')).to.equal(null);
+              expect(elem.prop).to.equal('def');
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it('target change is ignored', (done) => {
+      const safe = uniqueId();
+      define(safe, {
+        props: {
+          prop: {
+            attribute: { source: 'in', target: 'out' }
+          }
+        }
+      });
+      const elem = fixture(`<${safe} out="abc"/>`).firstChild;
+      afterMutations(() => {
+        expect(elem.prop).to.equal(null);
+        expect(elem.getAttribute('out')).to.equal('abc');
+        elem.setAttribute('out', 'val');
+        afterMutations(() => {
+          expect(elem.prop).to.equal(null);
+          expect(elem.getAttribute('out')).to.equal('val');
           done();
         });
       });

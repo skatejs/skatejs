@@ -15,14 +15,15 @@ import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
-import getAllKeys from '../util/get-all-keys';
+import deprecated from '../util/deprecated';
 import getAttrMgr from '../util/attributes-manager';
 import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
+import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
 import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/is-type';
-import objectIs from '../util/object-is';
+import objectIs from '../polyfills/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import root from 'window-or-global';
 
@@ -40,8 +41,8 @@ function preventDoubleCalling (elem, name, oldValue, newValue) {
 // TODO remove when not catering to Safari < 10.
 function createNativePropertyDescriptors (Ctor) {
   const propDefs = getPropsMap(Ctor);
-  return getAllKeys(propDefs).reduce((propDescriptors, propName) => {
-    propDescriptors[propName] = createNativePropertyDescriptor(propDefs[propName]);
+  return getPropNamesAndSymbols(propDefs).reduce((propDescriptors, nameOrSymbol) => {
+    propDescriptors[nameOrSymbol] = createNativePropertyDescriptor(propDefs[nameOrSymbol]);
     return propDescriptors;
   }, {});
 }
@@ -53,18 +54,18 @@ function createInitProps (Ctor) {
   const propDescriptors = createNativePropertyDescriptors(Ctor);
 
   return (elem) => {
-    getAllKeys(propDescriptors).forEach((name) => {
-      const propDescriptor = propDescriptors[name];
+    getPropNamesAndSymbols(propDescriptors).forEach((nameOrSymbol) => {
+      const propDescriptor = propDescriptors[nameOrSymbol];
       propDescriptor.beforeDefineProperty(elem);
 
       // We check here before defining to see if the prop was specified prior
       // to upgrading.
-      const hasPropBeforeUpgrading = name in elem;
+      const hasPropBeforeUpgrading = nameOrSymbol in elem;
 
       // This is saved prior to defining so that we can set it after it it was
       // defined prior to upgrading. We don't want to invoke the getter if we
       // don't need to, so we only get the value if we need to re-sync.
-      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[name];
+      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[nameOrSymbol];
 
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
@@ -72,7 +73,7 @@ function createInitProps (Ctor) {
       // retrieved, we can move defining the property to the prototype and away
       // from having to do if for every instance as all other browsers support
       // this.
-      Object.defineProperty(elem, name, propDescriptor);
+      Object.defineProperty(elem, nameOrSymbol, propDescriptor);
 
       // DEPRECATED
       //
@@ -84,7 +85,7 @@ function createInitProps (Ctor) {
       // in native where the definition may be registerd after elements it
       // represents have already been created.
       if (hasPropBeforeUpgrading) {
-        elem[name] = valueBeforeUpgrading;
+        elem[nameOrSymbol] = valueBeforeUpgrading;
       }
     });
   };
@@ -101,7 +102,7 @@ export default class extends HTMLElement {
 
     // Use Object.keys to skips symbol props since they have no linked attributes
     const attrsFromLinkedProps = Object.keys(propDefs).map(propName =>
-      propDefs[propName].attrName).filter(Boolean);
+      propDefs[propName].attrSource).filter(Boolean);
 
     const all = attrsFromLinkedProps.concat(attrsOnCtor).concat(super.observedAttributes);
     return all.filter((item, index) =>
@@ -143,7 +144,7 @@ export default class extends HTMLElement {
     this[$rendererDebounced] = debounce(this[$renderer].bind(this));
 
     // Set up property lifecycle.
-    const propDefsCount = getAllKeys(getPropsMap(constructor)).length;
+    const propDefsCount = getPropNamesAndSymbols(getPropsMap(constructor)).length;
     if (propDefsCount && constructor[$ctorCreateInitProps]) {
       constructor[$ctorCreateInitProps](this);
     }
@@ -153,6 +154,7 @@ export default class extends HTMLElement {
     // static render()
     // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
+      deprecated(this, 'static render', 'renderCallback');
       this.renderCallback = constructor.render.bind(constructor, this);
     }
 
@@ -163,6 +165,7 @@ export default class extends HTMLElement {
     // Props should be set up before calling this.
     const { created } = constructor;
     if (isFunction(created)) {
+      deprecated(this, 'static created', 'constructor');
       created(this);
     }
 
@@ -195,6 +198,7 @@ export default class extends HTMLElement {
     // static attached()
     const { attached } = this.constructor;
     if (isFunction(attached)) {
+      deprecated(this, 'static attached', 'connectedCallback');
       attached(this);
     }
 
@@ -217,6 +221,7 @@ export default class extends HTMLElement {
     // static detached()
     const { detached } = this.constructor;
     if (isFunction(detached)) {
+      deprecated(this, 'static detached', 'disconnectedCallback');
       detached(this);
     }
   }
@@ -233,7 +238,7 @@ export default class extends HTMLElement {
     this[_prevOldValue] = oldValue;
     this[_prevNewValue] = newValue;
 
-    const propNameOrSymbol = data(this, 'attributeLinks')[name];
+    const propNameOrSymbol = data(this, 'attrSourceLinks')[name];
     if (propNameOrSymbol) {
       const changedExternally = getAttrMgr(this).onAttributeChanged(name, newValue);
       if (changedExternally) {
@@ -244,9 +249,9 @@ export default class extends HTMLElement {
           : newValue;
 
         const propData = data(this, 'props')[propNameOrSymbol];
-        propData.settingProp = true;
+        propData.settingPropFromAttrSource = true;
         this[propNameOrSymbol] = newPropVal;
-        propData.settingProp = false;
+        propData.settingPropFromAttrSource = false;
       }
     }
 
@@ -255,17 +260,24 @@ export default class extends HTMLElement {
     // static attributeChanged()
     const { attributeChanged } = this.constructor;
     if (isFunction(attributeChanged)) {
+      deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
 
   // Skate
   updatedCallback (prevProps) {
+    if (this.constructor.hasOwnProperty('updated')) {
+      deprecated(this, 'static updated', 'updatedCallback');
+    }
     return this.constructor.updated(this, prevProps);
   }
 
   // Skate
   renderedCallback () {
+    if (this.constructor.hasOwnProperty('rendered')) {
+      deprecated(this, 'static rendered', 'renderedCallback');
+    }
     return this.constructor.rendered(this);
   }
 
@@ -273,9 +285,9 @@ export default class extends HTMLElement {
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
-  // todo: finalize how to support different rendering strategies.
+  // TODO: finalize how to support different rendering strategies.
   rendererCallback () {
-    // todo: cannot move code here because tests expects renderer function to still exist on constructor!
+    // TODO: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
 
@@ -361,24 +373,27 @@ export default class extends HTMLElement {
   // DEPRECATED
   //
   // Move this to updatedCallback() before removing.
-  static updated (elem, prevProps) {
-    // short-circuits if this is the first time
-    if (!prevProps) {
+  static updated (elem, previousProps) {
+    // The 'previousProps' will be undefined if it is the initial render.
+    if (!previousProps) {
       return true;
     }
 
-    // Use getAllKeys to include all props names and Symbols
-    const allKeys = getAllKeys(prevProps);
+    // The 'previousProps' will always contain all of the keys.
+    //
+    // Use classic loop because:
+    // 'for ... in' skips symbols and 'for ... of' is not working yet with IE!?
+    // for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
+    const namesAndSymbols = getPropNamesAndSymbols(previousProps);
+    for (let i = 0; i < namesAndSymbols.length; i++) {
+      const nameOrSymbol = namesAndSymbols[i];
 
-    // Use classic loop because 'for ... of' skips symbols
-    for (let i = 0; i < allKeys.length; i++) {
-      const nameOrSymbol = allKeys[i];
-
-      // Object.is (NaN is equal NaN)
-      if (!objectIs(prevProps[nameOrSymbol], elem[nameOrSymbol])) {
+      // With Object.is NaN is equal to NaN
+      if (!objectIs(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
       }
     }
+
     return false;
   }
 }

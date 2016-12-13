@@ -42,5 +42,10 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "semistandard": {
+    "ignore": [
+      "/src/polyfills/object-is.js"
+    ]
   }
 }
