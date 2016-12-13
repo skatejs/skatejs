@@ -1,7 +1,7 @@
 import {
   ctorPropsMap as $ctorPropsMap
 } from './symbols';
-import getAllKeys from './get-all-keys';
+import getPropNamesAndSymbols from './get-prop-names-and-symbols';
 import PropDefinition from './prop-definition';
 import setCtorNativeProperty from './set-ctor-native-property';
 
@@ -16,8 +16,8 @@ export default function getPropsMap (Ctor) {
   if (!Ctor.hasOwnProperty($ctorPropsMap)) {
     const props = Ctor.props || {};
 
-    const propsMap = getAllKeys(props).reduce((result, propNameOrSymbol) => {
-      result[propNameOrSymbol] = new PropDefinition(propNameOrSymbol, props[propNameOrSymbol]);
+    const propsMap = getPropNamesAndSymbols(props).reduce((result, nameOrSymbol) => {
+      result[nameOrSymbol] = new PropDefinition(nameOrSymbol, props[nameOrSymbol]);
       return result;
     }, {});
     setCtorNativeProperty(Ctor, $ctorPropsMap, propsMap);

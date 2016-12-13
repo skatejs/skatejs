@@ -447,11 +447,15 @@ The custom property definition accepts the following options.
 
 #### `attribute`
 
-Whether or not to link the property to an attribute. This can be either a `Boolean` or `String`.
+Whether or not to link the property to an attribute. This can be either a `Boolean`, a `String`, or an `Object` with properties `source` and/or `target`.
 
 - If it's `false`, it's not linked to an attribute. This is the default.
 - If it's `true`, the property name is dash-cased and used as the attribute name it should be linked to.
 - If it's a `String`, the value is used as the attribute name it should be linked to.
+- If it's a `Object`, it must have properties `source` or `target` or both.
+	- `source` indicates the observed input attribute that sets the property's value.
+	- `target` indicates the output attribute where the property's value will be reflected to.
+	- `source` and `target` can be eighter `Boolean` or `String` and follow the same rules as described above.
 
 Attributes are set from props on your element once it is inserted into the DOM.
 
@@ -708,14 +712,20 @@ Called before `renderCallback()` after `props` are updated. If it returns falsy,
 ```js
 customElements.define('x-component', class extends skate.Component {
   updatedCallback (previousProps) {
-    // The previous props will not be defined if it is the initial render.
+    // The 'previousProps' will be undefined if it is the initial render.
     if (!previousProps) {
       return true;
     }
 
-    // The previous props will always contain all of the keys.
-    for (let name in previousProps) {
-      if (previousProps[name] !== this[name]) {
+    // The keys are the prop names, these can be String or Symbol.
+    const namesAndSymbols = Object.getOwnPropertySymbols
+      ? Object.getOwnPropertySymbols(previousProps).concat(Object.getOwnPropertyNames(previousProps))
+      : Object.getOwnPropertyNames(previousProps);
+
+    // The 'previousProps' will always contain all of the keys.
+    for (let nameOrSymbol of namesAndSymbols) {
+      // With Object.is NaN is equal to NaN
+      if (!Object.is(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
         return true;
       }
     }
