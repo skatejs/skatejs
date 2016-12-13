@@ -352,6 +352,32 @@ Most of the old API were static methods, or specified as options not on the `pro
 
 
 
+### Extension
+
+Since Skate is already close to the platform, you can easily extend other component classes just as you normally would:
+
+```js
+import { Component, h } from 'skatejs';
+
+// If you never use this class for an HTML element then you don't have to
+// ever register it as a custom element and it can still be extended.
+class BaseComponent extends Component {
+  static props = {
+    someBaseProp: {}
+  }
+}
+
+class SuperComponent extends BaseComponent {
+  renderCallback ({ someBaseProp }) {
+    return <div>{someBaseProp}</div>;
+  }
+}
+
+customElements.define('super-component', SuperComponent);
+```
+
+
+
 ### `constructor` - supersedes `static created()`
 
 Override `constructor` to do any setup of the custom element. You're subject to the [requirements for custom element constructors as defined in the spec](https://www.w3.org/TR/custom-elements/#custom-element-conformance).
