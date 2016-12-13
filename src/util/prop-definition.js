@@ -1,5 +1,4 @@
 import dashCase from './dash-case';
-import deprecated from './deprecated';
 import empty from './empty';
 import error from './error';
 import {

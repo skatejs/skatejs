@@ -285,9 +285,9 @@ export default class extends HTMLElement {
   //
   // Maps to the static renderer() callback. That logic should be moved here
   // when that is finally removed.
-  // todo: finalize how to support different rendering strategies.
+  // TODO: finalize how to support different rendering strategies.
   rendererCallback () {
-    // todo: cannot move code here because tests expects renderer function to still exist on constructor!
+    // TODO: cannot move code here because tests expects renderer function to still exist on constructor!
     return this.constructor.renderer(this);
   }
 
