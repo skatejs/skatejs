@@ -15,10 +15,10 @@ module.exports = (config) => {
 
   // Override process.env.NODE_ENV
   webpackConfig.plugins[1] = new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('test')
-      }
-    });
+    'process.env': {
+      NODE_ENV: JSON.stringify('test')
+    }
+  });
 
   // Since we override the Webpack config, we must make sure Karma gets it.
   config.webpack = Object.assign({}, config.webpack, webpackConfig, {
