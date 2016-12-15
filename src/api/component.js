@@ -154,7 +154,7 @@ export default class extends HTMLElement {
     // static render()
     // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
-      deprecated(this, 'static render', 'renderCallback');
+      DEBUG && deprecated(this, 'static render', 'renderCallback');
       this.renderCallback = constructor.render.bind(constructor, this);
     }
 
@@ -165,7 +165,7 @@ export default class extends HTMLElement {
     // Props should be set up before calling this.
     const { created } = constructor;
     if (isFunction(created)) {
-      deprecated(this, 'static created', 'constructor');
+      DEBUG && deprecated(this, 'static created', 'constructor');
       created(this);
     }
 
@@ -198,7 +198,7 @@ export default class extends HTMLElement {
     // static attached()
     const { attached } = this.constructor;
     if (isFunction(attached)) {
-      deprecated(this, 'static attached', 'connectedCallback');
+      DEBUG && deprecated(this, 'static attached', 'connectedCallback');
       attached(this);
     }
 
@@ -221,7 +221,7 @@ export default class extends HTMLElement {
     // static detached()
     const { detached } = this.constructor;
     if (isFunction(detached)) {
-      deprecated(this, 'static detached', 'disconnectedCallback');
+      DEBUG && deprecated(this, 'static detached', 'disconnectedCallback');
       detached(this);
     }
   }
@@ -260,7 +260,7 @@ export default class extends HTMLElement {
     // static attributeChanged()
     const { attributeChanged } = this.constructor;
     if (isFunction(attributeChanged)) {
-      deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
+      DEBUG && deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
@@ -268,7 +268,7 @@ export default class extends HTMLElement {
   // Skate
   updatedCallback (prevProps) {
     if (this.constructor.hasOwnProperty('updated')) {
-      deprecated(this, 'static updated', 'updatedCallback');
+      DEBUG && deprecated(this, 'static updated', 'updatedCallback');
     }
     return this.constructor.updated(this, prevProps);
   }
@@ -276,7 +276,7 @@ export default class extends HTMLElement {
   // Skate
   renderedCallback () {
     if (this.constructor.hasOwnProperty('rendered')) {
-      deprecated(this, 'static rendered', 'renderedCallback');
+      DEBUG && deprecated(this, 'static rendered', 'renderedCallback');
     }
     return this.constructor.rendered(this);
   }
