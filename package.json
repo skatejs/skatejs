@@ -25,6 +25,7 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
+    "rollup-plugin-replace": "^1.1.1",
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
