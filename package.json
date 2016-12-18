@@ -30,6 +30,8 @@
   },
   "devDependencies": {
     "birdpoo": "0.x",
+    "gitbook-cli": "^2.3.0",
+    "gitbook-plugin-jsfiddle": "^1.0.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "skatejs-build": "12.x",
@@ -37,7 +39,8 @@
   },
   "scripts": {
     "test": "node dist/ && sk-tests",
-    "prepublish": "sk-bundle"
+    "prepublish": "sk-bundle",
+    "gitbook:dev": "gitbook serve"
   },
   "config": {
     "commitizen": {
