@@ -2,8 +2,18 @@ export { } from "./jsx";
 
 export as namespace skate;
 
-export class Component extends HTMLElement {
-  static readonly props: { [nameOrSymbol: string]: PropOptions<Component, any> };
+export type ComponentProps <El, T> = {
+[P in keyof T]: PropOptions<El, T[P]>;
+};
+
+interface ComponentDefaultProps {
+  children?: JSX.Element[];
+  key?: string;
+}
+
+export class Component<Props> extends HTMLElement {
+  _props: Props & ComponentDefaultProps;
+  static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
 
   // Custom Elements v1
@@ -13,24 +23,24 @@ export class Component extends HTMLElement {
   adoptedCallback?(): void;
 
   // SkateJS life cycle
-  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean;
+  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
   renderCallback(): any;
   renderedCallback(): void;
-                          
+
   // SkateJS DEPRECATED
-  static created?(elem: Component): void;
-  static attached?(elem: Component): void;
-  static detached?(elem: Component): void;
-  static attributeChanged?(elem: Component, data: { name: string, oldValue: null | string, newValue: null | string }): void;
-  static updated(elem: Component, prevProps: { [nameOrSymbol: string]: any }): boolean;
-  static render?(elem: Component): any | undefined;
-  static rendered?(elem: Component): void;  
+  static created?(elem: Component<any>): void;
+  static attached?(elem: Component<any>): void;
+  static detached?(elem: Component<any>): void;
+  static attributeChanged?(elem: Component<any>, data: { name: string, oldValue: null | string, newValue: null | string }): void;
+  static updated(elem: Component<any>, prevProps: { [nameOrSymbol: string]: any }): boolean;
+  static render?(elem: Component<any>): any | undefined;
+  static rendered?(elem: Component<any>): void;
 }
 
 export interface PropOptions<El, T> {
   attribute?: boolean | string;
   coerce?: (value: any) => T | null | undefined;
-  default?:  T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
+  default?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
   deserialize?: (value: string | null) => T | null | undefined;
   get?: <R>(elem: El, data: { name: string; internalValue: T; }) => R;
   initial?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
@@ -53,7 +63,7 @@ export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
 
 export var h: typeof vdom.element;
 
-export function link(elem: Component, target?: string): (e: Event) => void;
+export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export var prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
@@ -64,9 +74,9 @@ export var prop: {
   array(attr?: PropOptions<any, any[]>): PropOptions<any, any[]>;
 };
 
-export function props(elem: Component, props?: any): void;
+export function props(elem: Component<any>, props?: any): void;
 
-export function ready(elem: Component, done: (c: Component) => void): void;
+export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 
 // DEPRECATED
 // export var symbols: any;
@@ -76,12 +86,12 @@ type VDOMElementChild = Function | string | number;
 type VDOMElementSet = VDOMElementChild | VDOMElementChild[];
 
 export var vdom: {
-  element(tname: VDOMElementTName, attrs: { key: any; statics: any; } & any, ...chren: VDOMElementSet[]): Component | any;
-  element(tname: VDOMElementTName, ...chren: VDOMElementSet[]): Component | any;
+  element(tname: VDOMElementTName, attrs: { key: any; statics: any; } & any, ...chren: VDOMElementSet[]): Component<any> | any;
+  element(tname: VDOMElementTName, ...chren: VDOMElementSet[]): Component<any> | any;
   builder(): typeof vdom.element;
   builder(...tags: string[]): (typeof vdom.element)[];
 
-  attr(...args:any[]):void;
+  attr(...args: any[]): void;
   elementClose: Function;
   elementOpen: Function;
   elementOpenEnd: Function;

@@ -78,8 +78,8 @@ declare global {
     interface ElementClass {
     }
 
-    interface ElementAttributesProperty {
-      '': any;
+    interface ElementAttributesProperty<Props> {
+      readonly _props: Props,
     }
 
     interface Element {

@@ -1,15 +1,32 @@
 {
     "compilerOptions": {
         "module": "es2015",
-        "target": "es5",
+        "target": "es2016",
+        "lib": [
+            "dom",
+            "es2016"
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "skatejs": ["./"]
+        },
+        "typeRoots": [
+            "definitions/"
+        ],
+        "types": [
+            "w3c-customelements"
+        ],
         "noImplicitAny": true,
         "sourceMap": false,
         "moduleResolution": "node",
         "strictNullChecks": true,
-        "noEmit": true
+        "noEmit": true,
+        "jsx": "react",
+        "jsxFactory": "skate.h"
     },
     "include": [
       "index.d.ts",
-      "jsx.d.ts"
+      "jsx.d.ts",
+      "test/definitions/**/*.tsx"
     ]
 }
