@@ -1,4 +1,4 @@
-# Skate
+# [Skate][gitbook]
 
 [![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
@@ -59,9 +59,9 @@ Whenever you change the `name` property - or attribute - the component will re-r
     - [Script Tag](#script-tag)
   - [Dependencies](#dependencies)
   - [Browser Support](#browser-support)
-  - [Recipes](docs/recipes/README.md)
-  - [Examples](docs/examples/README.md)
-  - [API](docs/api/README.md)
+  - [Recipes](https://skatejs.gitbooks.io/skatejs/content/docs/recipes)
+  - [Examples](https://skatejs.gitbooks.io/skatejs/content/docs/examples)
+  - [API](https://skatejs.gitbooks.io/skatejs/content/docs/api)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -144,3 +144,6 @@ Skate supports all evergreens and IE11. We recommend using the following polyfil
 - Custom Elements: https://github.com/webcomponents/custom-elements
 - Shadow DOM: https://github.com/webcomponents/shadydom
 - Shadow DOM (CSS fills): https://github.com/webcomponents/shadycss
+
+
+[gitbook]: https://skatejs.gitbooks.io/skatejs/content/
