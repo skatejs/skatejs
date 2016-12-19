@@ -9,7 +9,7 @@ import getInitialValue from '../util/get-initial-value';
 import getPropData from '../util/get-prop-data';
 
 export function createNativePropertyDescriptor (propDef) {
-  const nameOrSymbol = propDef.name;
+  const { nameOrSymbol } = propDef;
 
   const prop = {
     configurable: true,
@@ -18,22 +18,22 @@ export function createNativePropertyDescriptor (propDef) {
 
   prop.beforeDefineProperty = elem => {
     const propData = getPropData(elem, nameOrSymbol);
-    const attrName = propDef.attrName;
+    const attrSource = propDef.attrSource;
 
-    // Store attribute to property link.
-    if (attrName) {
-      data(elem, 'attributeLinks')[attrName] = nameOrSymbol;
+    // Store attrSource name to property link.
+    if (attrSource) {
+      data(elem, 'attrSourceLinks')[attrSource] = nameOrSymbol;
     }
 
     // prop value before upgrading
     let initialValue = elem[nameOrSymbol];
 
     // Set up initial value if it wasn't specified.
-    let valueFromAttribute = false;
+    let valueFromAttrSource = false;
     if (empty(initialValue)) {
-      if (attrName && elem.hasAttribute(attrName)) {
-        valueFromAttribute = true;
-        initialValue = propDef.deserialize(elem.getAttribute(attrName));
+      if (attrSource && elem.hasAttribute(attrSource)) {
+        valueFromAttrSource = true;
+        initialValue = propDef.deserialize(elem.getAttribute(attrSource));
       } else if ('initial' in propDef) {
         initialValue = getInitialValue(elem, propDef);
       } else {
@@ -45,10 +45,13 @@ export function createNativePropertyDescriptor (propDef) {
 
     propData.internalValue = initialValue;
 
-    // Reflect to attribute unless valueFromAttribute
-    if (!valueFromAttribute && attrName && !empty(initialValue)) {
+    // Reflect to Target Attribute
+    const mustReflect = propDef.attrTarget && !empty(initialValue) &&
+      (!valueFromAttrSource || propDef.attrTargetIsNotSource);
+
+    if (mustReflect) {
       let serializedValue = propDef.serialize(initialValue);
-      getAttrMgr(elem).setAttrValue(propDef.attrName, serializedValue);
+      getAttrMgr(elem).setAttrValue(propDef.attrTarget, serializedValue);
     }
   };
 
@@ -84,12 +87,14 @@ export function createNativePropertyDescriptor (propDef) {
     // Update prop data so we can use it next time.
     propData.internalValue = propData.oldValue = newValue;
 
-    // Link up the attribute.
-    if (propDef.attrName && !propData.settingProp) {
+    // Reflect to Target attribute.
+    const mustReflect = propDef.attrTarget &&
+      (propDef.attrTargetIsNotSource || !propData.settingPropFromAttrSource);
+    if (mustReflect) {
       // Note: setting the prop to empty implies the default value
       // and therefore no attribute should be present!
       let serializedValue = useDefaultValue ? null : propDef.serialize(newValue);
-      getAttrMgr(this).setAttrValue(propDef.attrName, serializedValue);
+      getAttrMgr(this).setAttrValue(propDef.attrTarget, serializedValue);
     }
   };
 

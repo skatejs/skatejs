@@ -25,12 +25,15 @@
   ],
   "dependencies": {
     "incremental-dom": "0.4.1",
+    "rollup-plugin-replace": "^1.1.1",
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
     "@types/incremental-dom": "^0.5.0",
     "@types/window-or-global": "^1.0.0",
     "birdpoo": "0.x",
+    "gitbook-cli": "^2.3.0",
+    "gitbook-plugin-jsfiddle": "^1.0.0",
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "skatejs-build": "12.x",
@@ -41,11 +44,17 @@
   "scripts": {
     "test": "node dist/ && sk-tests && npm run test:ts",
     "test:ts": "tsfmt -r && tsc -p ./",
-    "prepublish": "sk-bundle"
+    "prepublish": "sk-bundle",
+    "gitbook:dev": "gitbook serve"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "semistandard": {
+    "ignore": [
+      "/src/polyfills/object-is.js"
+    ]
   }
 }

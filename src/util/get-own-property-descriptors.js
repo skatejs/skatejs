@@ -1,8 +1,8 @@
-import getAllKeys from './get-all-keys';
+import getPropNamesAndSymbols from './get-prop-names-and-symbols';
 
 export default function (obj = {}) {
-  return getAllKeys(obj).reduce((prev, curr) => {
-    prev[curr] = Object.getOwnPropertyDescriptor(obj, curr);
+  return getPropNamesAndSymbols(obj).reduce((prev, nameOrSymbol) => {
+    prev[nameOrSymbol] = Object.getOwnPropertyDescriptor(obj, nameOrSymbol);
     return prev;
   }, {});
 }
