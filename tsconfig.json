@@ -22,7 +22,8 @@
         "strictNullChecks": true,
         "noEmit": true,
         "jsx": "react",
-        "jsxFactory": "skate.h"
+        "jsxFactory": "skate.h",
+        "pretty": true
     },
     "include": [
       "index.d.ts",

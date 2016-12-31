@@ -12,7 +12,12 @@ interface ComponentDefaultProps {
 }
 
 export class Component<Props> extends HTMLElement {
+  // Special hack for own components type checking.
+  // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
+  // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
+  //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
   _props: Props & ComponentDefaultProps;
+
   static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
 

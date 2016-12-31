@@ -79,6 +79,9 @@ declare global {
     }
 
     interface ElementAttributesProperty<Props> {
+      // Special hack for own components type checking.
+      // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
+      //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
       readonly _props: Props,
     }
 

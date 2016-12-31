@@ -29,8 +29,6 @@
     "window-or-global": "1.0.1"
   },
   "devDependencies": {
-    "@types/incremental-dom": "^0.5.0",
-    "@types/window-or-global": "^1.0.0",
     "birdpoo": "0.x",
     "gitbook-cli": "^2.3.0",
     "gitbook-plugin-jsfiddle": "^1.0.0",
