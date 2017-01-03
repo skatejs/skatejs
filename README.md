@@ -113,7 +113,7 @@ const { skate } = window;
 
 Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for. **Skate requires both Custom Elements and Shadow DOM v1.**
 
-To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before Skate*.
+To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before your definitions*.
 
 ```sh
 npm install skatejs skatejs-web-components
@@ -134,6 +134,18 @@ Or you can use script tags:
 ```
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.
+
+
+
+### Gotchas
+
+Native custom element support requires that you load a shim if you're not delivering ES2015 to the browser. If you're transpiling to ES5, you must - at the very least - load the native shim:
+
+```html
+<script src="https://unpkg.com/skatejs-web-components/src/native-shim.js"></script>
+```
+
+However, if you're able to deliver native ES2015 classes then you don't need to load any shims at all.
 
 
 
