@@ -145,7 +145,7 @@ Native custom element support requires that you load a shim if you're not delive
 <script src="https://unpkg.com/skatejs-web-components/src/native-shim.js"></script>
 ```
 
-However, if you're able to deliver native ES2015 classes then you don't need to load any shims at all.
+However, if you're able to deliver native ES2015 classes then you don't need to load any shims at all. A more in dept explanation can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
 
 
 
