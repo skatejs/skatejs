@@ -35,10 +35,13 @@
     "react": "15.4.1",
     "react-dom": "15.4.1",
     "skatejs-build": "12.x",
-    "skatejs-web-components": "5.x"
+    "skatejs-web-components": "5.x",
+    "typescript": "^2.1.4",
+    "typescript-formatter": "^4.0.1"
   },
   "scripts": {
-    "test": "node dist/ && sk-tests",
+    "test": "node dist/ && sk-tests && npm run test:ts",
+    "test:ts": "tsfmt -r && tsc -p ./",
     "prepublish": "sk-bundle",
     "gitbook:dev": "gitbook serve"
   },
