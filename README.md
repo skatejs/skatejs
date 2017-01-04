@@ -113,7 +113,7 @@ const { skate } = window;
 
 Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for. **Skate requires both Custom Elements and Shadow DOM v1.**
 
-To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before Skate*.
+To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before your definitions*.
 
 ```sh
 npm install skatejs skatejs-web-components
@@ -134,6 +134,16 @@ Or you can use script tags:
 ```
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.
+
+
+
+### Transpilation and native custom element gotchas
+
+Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
+
+When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain. If you want to deliever native classes you have to point to the non-transpiled Skate source: `import { ... } from 'skatejs/src';`. Currently this is not supported by our API versioning but we have an [issue](#992) to work around this.
+
+More information can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
 
 
 
