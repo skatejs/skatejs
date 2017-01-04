@@ -1,5 +1,6 @@
 ## Resources
 
+- [Building a custom tag input with SkateJS](https://hackernoon.com/building-a-custom-tag-input-with-skate-js-fbd4cdf744f#.16oe09fif)
 - [SkateJS Website](https://github.com/skatejs/skatejs.github.io)
 - [Web Platform Podcast: Custom Elements & SkateJS](http://thewebplatformpodcast.com/66-custom-elements-skatejs)
 - [SydJS: Skating with Web Components](http://slides.com/treshugart/skating-with-web-components#/)
