@@ -37,7 +37,7 @@ describe('api/prop', () => {
 
     beforeEach((done) => {
       elem = create(prop.array());
-      afterMutations(done, 1);
+      afterMutations(done);
     });
 
     afterEach(() => document.body.removeChild(elem));
@@ -131,7 +131,7 @@ describe('api/prop', () => {
 
     beforeEach((done) => {
       elem = create(prop.number());
-      afterMutations(done, 1);
+      afterMutations(done);
     });
 
     it('default', () => {
@@ -181,6 +181,39 @@ describe('api/prop', () => {
           ['', '', '']
         ], done);
       });
+    });
+  });
+
+  describe('object', () => {
+    let elem;
+
+    beforeEach((done) => {
+      elem = create(prop.object());
+      afterMutations(done);
+    });
+
+    it('default', () => {
+      const elem2 = create(prop.object());
+
+      expect(elem.test).to.be.an('object');
+      expect(elem.test).not.to.equal(elem2.test);
+      expect(elem.getAttribute('test')).to.equal('{}');
+    });
+
+    it('deserialize', (done) => {
+      elem.setAttribute('test', '{"one": 1, "two": 2}');
+      afterMutations(
+        () => expect(elem.test).to.be.an('object'),
+        () => expect(elem.test.one).to.equal(1),
+        () => expect(elem.test.two).to.equal(2),
+        done
+      );
+    });
+
+    it('serialize', () => {
+      elem.test = {one: 1, two: 2};
+      expect(elem.getAttribute('test')).to.be.a('string');
+      expect(elem.getAttribute('test')).to.equal('{"one":1,"two":2}');
     });
   });
 
