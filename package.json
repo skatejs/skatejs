@@ -33,7 +33,7 @@
     "gitbook-cli": "^2.3.0",
     "gitbook-plugin-jsfiddle": "^1.0.0",
     "react": "15.4.1",
-    "react-dom": "15.4.1",
+    "react-dom": "15.4.2",
     "skatejs-build": "12.x",
     "skatejs-web-components": "5.x",
     "typescript": "^2.1.4",
