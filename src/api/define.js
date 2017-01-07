@@ -20,7 +20,7 @@ export default function (...args) {
       throw new Error('When passing only one argument to define(), it must be a custom element constructor.');
     } else {
       Ctor = name;
-      name = uniqueId();
+      name = Ctor.is || uniqueId();
     }
   }
 
@@ -41,7 +41,7 @@ export default function (...args) {
   // performance but still falling back to a robust method.
   Ctor[$name] = name;
 
-  // Sipmle define. Not supporting customised built-ins yet.
+  // Simple define. Not supporting customised built-ins yet.
   customElements.define(name, Ctor);
 
   // The spec doesn't return but this allows for a simpler, more concise API.

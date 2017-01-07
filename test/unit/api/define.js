@@ -39,16 +39,36 @@ describe('api/define', () => {
     }).to.not.throw();
   });
 
-  // DEPRECATED
-  it('should take an object and extend Component', () => {
-    expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+  it('static "is" should be used as "name" argument', () => {
+    const name = 'x-test-api-define-is';
+    const Elem = define(class extends Component {
+      static is = name
+    });
+    const elem = new Elem();
+    expect(elem.localName).to.equal(name);
   });
 
-  it('should be able to take an ES5 extension of Component', () => {
-    expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+  it('static "is" should not override "name" argument', () => {
+    const name1 = 'x-test-api-define-is-override';
+    const name2 = 'x-test-api-define-is-not-override';
+    const Elem = define(name2, class extends Component {
+      static is = name1
+    });
+    const elem = new Elem();
+    expect(elem.localName).to.equal(name2);
   });
 
-  it('should take a constructor that extends Component', () => {
-    expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+  describe('deprecated', () => {
+    it('should take an object and extend Component', () => {
+      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+    });
+
+    it('should be able to take an ES5 extension of Component', () => {
+      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+    });
+
+    it('should take a constructor that extends Component', () => {
+      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
+    });
   });
 });
