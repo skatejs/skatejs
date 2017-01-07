@@ -9,10 +9,12 @@ export function create (def) {
   };
 }
 
+const parseIfNotEmpty = val => (empty(val) ? null : JSON.parse(val));
+
 export const array = create({
   coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
   default: () => [],
-  deserialize: val => (empty(val) ? null : JSON.parse(val)),
+  deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
 });
 
@@ -41,4 +43,10 @@ export const string = create({
   coerce: toNullOrString,
   deserialize: toNullOrString,
   serialize: toNullOrString
+});
+
+export const object = create({
+  default: () => ({}),
+  deserialize: parseIfNotEmpty,
+  serialize: JSON.stringify
 });
