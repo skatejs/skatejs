@@ -105,7 +105,7 @@ describe('IncrementalDOM', () => {
     });
 
     describe('passing a component constructor', () => {
-      const Elem = define(class extends HTMLElement {});
+      const Elem = define(class extends Component {});
 
       patchIt('elementOpen, elementClose', () => {
         vdom.elementOpen(Elem);

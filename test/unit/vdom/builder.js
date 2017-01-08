@@ -3,7 +3,7 @@
 import { Component, define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
-const { customElements, HTMLElement } = window;
+const { HTMLElement } = window;
 
 describe('builder()', () => {
   const { builder } = vdom;

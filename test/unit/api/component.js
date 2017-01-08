@@ -9,6 +9,13 @@ describe('api/Component', () => {
     return;
   }
 
+  describe('static is', () => {
+    it('should default to an empty string', () => {
+      class Test extends Component {};
+      expect(Test.is).to.equal('');
+    });
+  });
+
   describe('property getters', () => {
     it('observedAttributes', () => {
       class Test extends Component {

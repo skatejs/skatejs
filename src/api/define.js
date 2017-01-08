@@ -1,10 +1,9 @@
 import Component from './component';
-import deprecated from '../util/deprecated';
 import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
 export default function (...args) {
-  const { customElements } = root;
+  const { customElements HTMLElement } = root;
   let [ name, Ctor ] = args;
 
   if (!customElements) {
