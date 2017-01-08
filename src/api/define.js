@@ -3,7 +3,7 @@ import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
 export default function (...args) {
-  const { customElements HTMLElement } = root;
+  const { customElements, HTMLElement } = root;
   let [ name, Ctor ] = args;
 
   if (!customElements) {
