@@ -18,6 +18,7 @@ export class Component<Props> extends HTMLElement {
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
   _props: Props & ComponentDefaultProps;
 
+  static is: string[];
   static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
 
