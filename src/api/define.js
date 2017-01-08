@@ -43,8 +43,6 @@ export default function (...args) {
   // Ensure the "is" property is consistent.
   Ctor.is = is;
 
-  console.log(is, Ctor);
-
   // Simple define. Not supporting customised built-ins yet.
   customElements.define(is, Ctor);
 
