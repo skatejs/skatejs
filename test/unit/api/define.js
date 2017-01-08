@@ -2,8 +2,8 @@
 
 import { Component, define } from '../../../src/index';
 
-function mockDefine (name) {
-  window.customElements.define(name, function customElemMock () {});
+function mockDefine (Ctor) {
+  window.customElements.define(Ctor.is, Ctor);
 }
 
 describe('api/define', () => {
@@ -52,9 +52,13 @@ describe('api/define', () => {
   });
 
   it('should register components with unique names with multiple versions of skate', () => {
-    mockDefine('x-test-api-define-multi', class extends Component {});
+    mockDefine(class extends Component {
+      static is = 'x-test-api-define-multi'
+    });
     expect(() => {
-      define('x-test-api-define-multi', class extends Component {});
+      define(class extends Component {
+        static is = 'x-test-api-define-multi'
+      });
     }).to.not.throw();
   });
 

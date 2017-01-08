@@ -89,10 +89,9 @@ const attributesContext = propContext(attributes, {
 
   // Default attribute applicator.
   [symbols.default] (elem, name, value) {
-    const { props, prototype } = customElements.get(elem.localName) || {
-      props: {},
-      prototype: {}
-    };
+    const ce = customElements.get(elem.localName);
+    const props = ce && ce.props || {};
+    const prototype = ce && ce.prototype || {};
 
     // TODO when refactoring properties to not have to workaround the old
     // WebKit bug we can remove the "name in props" check below.

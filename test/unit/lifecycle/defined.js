@@ -11,7 +11,7 @@ describe('lifecycle/defined', () => {
   });
 
   it('should add the [defined] attribute when the element is upgraded', (done) => {
-    const Elem = define('x-test', class extends Component {});
+    const Elem = define(class extends Component {});
     const elem = new Elem();
 
     // Sanity check for non-native (native would throw).

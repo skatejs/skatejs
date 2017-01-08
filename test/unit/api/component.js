@@ -35,6 +35,7 @@ describe('api/Component', () => {
     it('static props is called once', () => {
       let count = 0;
       class Test extends Component {
+        static is = 'test-props-called-once'
         static get props () {
           count++;
           return {
@@ -42,7 +43,7 @@ describe('api/Component', () => {
           };
         }
       }
-      define('test-props-called-once', Test);
+      define(Test);
       const instance = document.createElement('test-props-called-once');
       instance.test = 'Hello';
 
@@ -74,6 +75,7 @@ describe('api/Component', () => {
     it('should return true if a prop changes', () => {
       const initialValue = 'hello world!';
       class Test extends Component {
+        static is = 'test-updated-function'
         static get props () {
           return {
             test: {
@@ -84,7 +86,7 @@ describe('api/Component', () => {
         }
       }
 
-      define('test-updated-function', Test);
+      define(Test);
       const instance = document.createElement('test-updated-function');
       expect(instance.test).to.equal(initialValue);
 
@@ -98,6 +100,7 @@ describe('api/Component', () => {
       const initialValue = 'hello world!';
       const testSymbol = createSymbol('test');
       class Test extends Component {
+        static is = 'test-updated-function-2'
         static get props () {
           return {
             [testSymbol]: {
@@ -107,7 +110,7 @@ describe('api/Component', () => {
         }
       }
 
-      define('test-updated-function-2', Test);
+      define(Test);
       const instance = document.createElement('test-updated-function-2');
       expect(instance[testSymbol]).to.equal(initialValue);
 
