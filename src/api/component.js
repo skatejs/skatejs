@@ -92,6 +92,8 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
+  static is = ''
+
   /**
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
