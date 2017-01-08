@@ -1,35 +1,54 @@
 /* eslint-env jasmine, mocha */
 
-import { Component, define, symbols } from '../../../src/index';
-
-const { name: $name } = symbols;
+import { Component, define } from '../../../src/index';
 
 function mockDefine (name) {
   window.customElements.define(name, function customElemMock () {});
 }
 
 describe('api/define', () => {
-  it('should not register without any properties', () => {
-    expect(() => define('x-test')).to.throw(Error);
+  it('static "is" should be set on the constructor if not specified', () => {
+    const Elem = define(class extends HTMLElement {});
+    expect(Elem.is).to.contain('x-');
   });
 
-  it('should add ____skate_name to the constructor to allow itself (and other versions of skate) to identify it as a component', () => {
-    const elem = define('x-test-skate-name', class extends Component {});
-    expect(elem.____skate_name).to.equal('x-test-skate-name');
+  it('static "is" should be updated if a conflicting "is" was found', () => {
+    const Elem1 = define(class extends HTMLElement {
+      static is = 'x-test';
+    });
+    const Elem2 = define(class extends HTMLElement {
+      static is = 'x-test';
+    });
+    expect(Elem1.is).to.not.equal(Elem2.is);
+    expect(Elem2.is).to.contain('x-');
+  });
+
+  it('static "is" should not change if it was unique already', () => {
+    const name = 'x-uber-unique-and-stuff';
+    const Elem = define(class extends HTMLElement {
+      static is = name
+    });
+    expect(Elem.is).to.equal(name);
   });
 
   it('should register components with unique names', () => {
-    const elem1 = define('x-test-api-define', class extends Component {});
-    const elem2 = define('x-test-api-define', class extends Component {});
-    const elem3 = define('x-test-api-define', class extends Component {});
+    const name = 'x-test-api-define';
+    const elem1 = define(class extends Component {
+      static is = name
+    });
+    const elem2 = define(class extends Component {
+      static is = name
+    });
+    const elem3 = define(class extends Component {
+      static is = name
+    });
 
-    // the first one is registered by its own name
-    // the rest is registered by the name plus random string
-    expect(elem1[$name]).to.equal('x-test-api-define');
-    expect(elem2[$name]).not.to.equal('x-test-api-define');
-    expect(elem2[$name].indexOf('x-test-api-define') === 0).to.equal(true);
-    expect(elem3[$name]).not.to.equal('x-test-api-define');
-    expect(elem3[$name].indexOf('x-test-api-define') === 0).to.equal(true);
+    expect(elem1.is).to.equal('x-test-api-define');
+    expect(elem2.is).not.to.equal('x-test-api-define');
+    expect(elem3.is).not.to.equal('x-test-api-define');
+
+    expect(elem2.is.indexOf('x-test-api-define') === 0).to.equal(true);    
+    expect(elem3.is.indexOf('x-test-api-define') === 0).to.equal(true);
   });
 
   it('should register components with unique names with multiple versions of skate', () => {
@@ -39,26 +58,16 @@ describe('api/define', () => {
     }).to.not.throw();
   });
 
-  it('static "is" should be used as "name" argument', () => {
-    const name = 'x-test-api-define-is';
-    const Elem = define(class extends Component {
-      static is = name
-    });
-    const elem = new Elem();
-    expect(elem.localName).to.equal(name);
-  });
-
-  it('static "is" should not override "name" argument', () => {
-    const name1 = 'x-test-api-define-is-override';
-    const name2 = 'x-test-api-define-is-not-override';
-    const Elem = define(name2, class extends Component {
-      static is = name1
-    });
-    const elem = new Elem();
-    expect(elem.localName).to.equal(name2);
+  it('should throw if the constructor does not extend HTMLElement', () => {
+    expect(() => define(() => {})).to.throw();
+    expect(() => define(HTMLElement)).to.throw();
   });
 
   describe('deprecated', () => {
+    it('should not register without any properties', () => {
+      expect(() => define('x-test')).to.throw(Error);
+    });
+
     it('should take an object and extend Component', () => {
       expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
     });

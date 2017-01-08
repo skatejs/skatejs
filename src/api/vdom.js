@@ -145,17 +145,22 @@ function resolveTagName (name) {
     return name;
   }
 
-  // We try and return the cached tag name, if one exists.
-  if (name[$name]) {
-    return name[$name];
+  // We try and return the cached tag name, if one exists. This will work with
+  // *any* web component of any version that defines a `static is` property.
+  if (name.is) {
+    return name.is;
   }
 
-  // If it's a custom element, we get the tag name by constructing it and
-  // caching it.
+  // Get the name for the custom element by constructing it and using the
+  // localName property. Cache it and lookup the cached value for future calls.
   if (name.prototype instanceof HTMLElement) {
+    if (name[$name]) {
+      return name[$name];
+    }
+
     // eslint-disable-next-line
     const elem = new name();
-    return (name[$name] = elem.localName);
+    return (elem[$name] = elem.localName);
   }
 
   // Pass all other values through so IDOM gets what it's expecting.

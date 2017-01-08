@@ -1,5 +1,5 @@
-import { name as $name } from '../util/symbols';
 import Component from './component';
+import deprecated from '../util/deprecated';
 import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
@@ -11,38 +11,42 @@ export default function (...args) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
-  // Support passing an anonymous definition.
+  // DEPRECATED remove when removing the "name" argument.
+  if (DEBUG && args.legnth === 2) {
+    console.warn('The "name" argument to define() is deprecated. Please define a `static is` property on the constructor instead.');
+  }
+
+  // DEPRECATED remove when removing the "name" argument.
   if (args.length === 1) {
-    // We are checking string for now, but once we remove the ability to pass
-    // an object literal, we can change this to check "function" and invert the
-    // blocks of logic.
-    if (typeof name === 'string') {
-      throw new Error('When passing only one argument to define(), it must be a custom element constructor.');
-    } else {
-      Ctor = name;
-      name = Ctor.is || uniqueId();
-    }
+    Ctor = name;
+    name = null;
   }
 
-  // Ensure there's no conflicts.
-  if (customElements.get(name)) {
-    name = uniqueId(name);
-  }
-
-  // DEPRECATED
-  //
-  // Object literals.
+  // DEPRECATED Object literals.
   if (typeof Ctor === 'object') {
     Ctor = Component.extend(Ctor);
   }
 
-  // This allows us to check this before instantiating the custom element to
-  // find its name from the constructor in the vdom module, thus improving
-  // performance but still falling back to a robust method.
-  Ctor[$name] = name;
+  // Ensure a custom element is passed.
+  if (!(Ctor.prototype instanceof HTMLElement)) {
+    throw new Error('You must provide a constructor that extends HTMLElement to define().');
+  }
+
+  // "is" takes precendence over "name" and falls back to a unique id
+  let is = Ctor.is || name || uniqueId();
+
+  // Ensure there's no conflicts.
+  if (customElements.get(is)) {
+    is = uniqueId(is);
+  }
+
+  // Ensure the "is" property is consistent.
+  Ctor.is = is;
+
+  console.log(is, Ctor);
 
   // Simple define. Not supporting customised built-ins yet.
-  customElements.define(name, Ctor);
+  customElements.define(is, Ctor);
 
   // The spec doesn't return but this allows for a simpler, more concise API.
   return Ctor;
