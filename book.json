@@ -1,10 +1,27 @@
 {
   "title": "skatejs",
-  "plugins": ["jsfiddle"],
+  "plugins": [
+    "github",
+    "edit-link",
+    "anchors",
+    "jsfiddle"
+  ],
   "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/skatejs/skatejs/tree/master",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/skatejs/skatejs/"
+    },
     "jsfiddle": {
       "type": "frame",
-      "tabs": ["result", "js", "html", "css"],
+      "tabs": [
+        "result",
+        "js",
+        "html",
+        "css"
+      ],
       "height": 250,
       "fontColor": "333"
     }

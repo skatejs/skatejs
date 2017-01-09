@@ -31,7 +31,6 @@
   "devDependencies": {
     "birdpoo": "0.x",
     "gitbook-cli": "^2.3.0",
-    "gitbook-plugin-jsfiddle": "^1.0.0",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "skatejs-build": "12.x",
@@ -43,7 +42,9 @@
     "test": "node dist/ && sk-tests && npm run test:ts",
     "test:ts": "tsfmt -r && tsc -p ./",
     "prepublish": "sk-bundle",
-    "gitbook:dev": "gitbook serve"
+    "docs:prepare": "gitbook install",
+    "docs:build": "npm run docs:prepare && gitbook build",
+    "docs:watch": "npm run docs:prepare && gitbook serve"
   },
   "config": {
     "commitizen": {
