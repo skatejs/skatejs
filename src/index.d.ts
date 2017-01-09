@@ -76,7 +76,8 @@ export var prop: {
   number(attr?: PropOptions<any, number>): PropOptions<any, number>;
   boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
   string(attr?: PropOptions<any, string>): PropOptions<any, string>;
-  array(attr?: PropOptions<any, any[]>): PropOptions<any, any[]>;
+  array<T>(attr?: PropOptions<any, T[]>): PropOptions<any, T[]>;
+  object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
 };
 
 export function props(elem: Component<any>, props?: any): void;
