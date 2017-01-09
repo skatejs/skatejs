@@ -31,19 +31,21 @@ export default function (...args) {
     throw new Error('You must provide a constructor that extends HTMLElement to define().');
   }
 
-  // "is" takes precendence over "name" and falls back to a unique id
-  let is = Ctor.is || name || uniqueId();
-
-  // Ensure there's no conflicts.
-  if (customElements.get(is)) {
-    is = uniqueId(is);
+  // DEPRECATED two arguments
+  if (args.length === 2) {
+    customElements.define(customElements.get(name) ? uniqueId(name) : name, Ctor);
+  } else {
+    // We must use hasOwnProperty() because we want to know if it was specified
+    // directly on this class, not subclasses, as we don't want to inherit tag
+    // names from subclasses.
+    if (!Ctor.hasOwnProperty('is')) {
+      // If we used defineProperty() then the consumer must also use it and
+      // cannot use property initialisers. Instead we just set it so they can
+      // use whatever method of overridding that they want.
+      Ctor.is = uniqueId();
+    }
+    customElements.define(Ctor.is, Ctor);
   }
-
-  // Ensure the "is" property is consistent.
-  Ctor.is = is;
-
-  // Simple define. Not supporting customised built-ins yet.
-  customElements.define(is, Ctor);
 
   // The spec doesn't return but this allows for a simpler, more concise API.
   return Ctor;
