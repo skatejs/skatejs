@@ -93,6 +93,21 @@
       };
     }
   });
+
+  class MyCmp extends skate.Component<any> {
+    static get props() {
+      return {
+        myProp: {
+          attribute: {
+            // set propert from my-prop attribute on element
+            source: true,
+            // reflect property value to different-prop on element
+            target: 'differentProp'
+          }
+        }
+      };
+    }
+  }
 }
 { // https://github.com/skatejs/skatejs#coerce
   customElements.define('my-component', class extends skate.Component<{ myProp: any; }> {

@@ -42,8 +42,13 @@ export class Component<Props> extends HTMLElement {
   static rendered?(elem: Component<any>): void;
 }
 
+type AttributeReflectionBaseType = boolean | string;
+type AttributeReflectionConfig = AttributeReflectionBaseType | {
+  source?: AttributeReflectionBaseType,
+  target?: AttributeReflectionBaseType
+}
 export interface PropOptions<El, T> {
-  attribute?: boolean | string;
+  attribute?: AttributeReflectionConfig ;
   coerce?: (value: any) => T | null | undefined;
   default?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
   deserialize?: (value: string | null) => T | null | undefined;
