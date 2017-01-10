@@ -4,6 +4,7 @@
     "github",
     "edit-link",
     "anchors",
+    "toggle-chapters",
     "jsfiddle"
   ],
   "pluginsConfig": {
