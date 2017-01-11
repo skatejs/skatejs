@@ -47,7 +47,7 @@
   "scripts": {
     "test": "node dist/ && sk-tests && npm run test:ts",
     "test:ts": "tsfmt -r && tsc -p ./",
-    "prepublish": "sk-bundle",
+    "prepublish": "webpack && webpack -p && webpack --config webpack.config.bundle.js && webpack -p --config webpack.config.bundle.js",
     "docs:prepare": "gitbook install",
     "docs:build": "npm run docs:prepare && gitbook build",
     "docs:watch": "npm run docs:prepare && gitbook serve"
