@@ -670,4 +670,13 @@
       }
     }
   }
+  {
+    skate.h('div', { class:'c-button c-button--block' });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div class='c-button c-button--block'></div>
+      }
+    }
+  }
 }
