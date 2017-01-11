@@ -1,6 +1,21 @@
+import { VDOMElement } from './index'
 export { }
 
-type HTMLProps<T extends Element> = Partial<T> & HyperscriptEventHandler<T>;
+export type Key = string | number;
+export type Ref<T> = string | ((instance: T) => any);
+
+export type HTMLProps<T extends Element> = Partial<T> & Attributes<T>;
+
+export type Attributes<T> = IncrementalDomHTMLAttributes<T> & HyperscriptHTMLAttributes & HyperscriptEventHandler<T>;
+interface IncrementalDomHTMLAttributes<T> {
+  key?: Key,
+  ref?: Ref<T>,
+  statics?: string[],
+  skip?: boolean,
+}
+interface HyperscriptHTMLAttributes {
+  class?: string,
+}
 
 interface HyperscriptEventHandler<T> {
   onAbort?: typeof HTMLElement.prototype.onabort;
@@ -85,7 +100,7 @@ declare global {
       readonly _props: Props,
     }
 
-    interface Element {
+    interface Element extends VDOMElement<any> {
     }
 
     interface IntrinsicElements {

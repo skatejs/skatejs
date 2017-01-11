@@ -1,4 +1,5 @@
-export { } from "./jsx";
+import { Attributes, HTMLProps, Key, Ref } from './jsx';
+export { } from './jsx';
 
 export as namespace skate;
 
@@ -7,16 +8,26 @@ export type ComponentProps <El, T> = {
 };
 
 interface ComponentDefaultProps {
-  children?: JSX.Element[];
-  key?: string;
+  children?: VDOMElement<any>[];
+  key?: Key;
 }
 
+export interface StatelessComponent<Props> {
+  (props: Props, children?: VDOMNode): VDOMElement<any>,
+}
+export type SFC<P> = StatelessComponent<P>;
+
+interface ComponentClass<PropsType> {
+  new (props?: PropsType): Component<PropsType>;
+}
 export class Component<Props> extends HTMLElement {
   // Special hack for own components type checking.
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
   _props: Props & ComponentDefaultProps;
+  // this is not possible yet? ... without this we have to duplicate props definition with class props definition
+  // [K in keyof Props]: Props[K],
 
   static is: string;
   static readonly props: ComponentProps<any, any>;
@@ -30,7 +41,7 @@ export class Component<Props> extends HTMLElement {
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
-  renderCallback(): any;
+  renderCallback(): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
@@ -39,9 +50,10 @@ export class Component<Props> extends HTMLElement {
   static detached?(elem: Component<any>): void;
   static attributeChanged?(elem: Component<any>, data: { name: string, oldValue: null | string, newValue: null | string }): void;
   static updated(elem: Component<any>, prevProps: { [nameOrSymbol: string]: any }): boolean;
-  static render?(elem: Component<any>): any | undefined;
+  static render?(elem: Component<any>): JSX.Element | JSX.Element[] | null;
   static rendered?(elem: Component<any>): void;
 }
+
 
 type AttributeReflectionBaseType = boolean | string;
 type AttributeReflectionConfig = AttributeReflectionBaseType | {
@@ -90,18 +102,35 @@ export function props(elem: Component<any>, props?: any): void;
 
 export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 
-// DEPRECATED
+// @DEPRECATED
 // export var symbols: any;
 
-type VDOMElementTName = string | typeof Component | typeof vdom.element | { id: string; };
-type VDOMElementChild = Function | string | number;
-type VDOMElementSet = VDOMElementChild | VDOMElementChild[];
+
+//
+// VDOM Nodes
+// ----------------------------------------------------------------------
+
+export interface VDOMElement<P> {
+  type: VDOMElementType<P>;
+  props: P;
+  key: Key | null;
+}
+type VDOMText = string | number;
+type VDOMChild = VDOMElement<any> | VDOMText;
+
+// Should be Array<VDOMNode> but type aliases cannot be recursive
+type VDOMFragment = {} | Array<VDOMChild | any[] | boolean>;
+type VDOMNode = VDOMChild | VDOMFragment | boolean | null | undefined;
+
+type VDOMElementType<P> = string | { id: string } | ComponentClass<P> | SFC<P>;
 
 export var vdom: {
-  element(tname: VDOMElementTName, attrs: { key: any; statics: any; } & any, ...chren: VDOMElementSet[]): Component<any> | any;
-  element(tname: VDOMElementTName, ...chren: VDOMElementSet[]): Component<any> | any;
+
+  element<P>(type: VDOMElementType<P>, attrs?: HTMLProps<HTMLElement> | P, ...children: VDOMChild[]): VDOMElement<any>,
+  element<P>(type: VDOMElementType<P>, ...children: VDOMChild[]): VDOMElement<any>,
+
   builder(): typeof vdom.element;
-  builder(...tags: string[]): (typeof vdom.element)[];
+  builder(...tags: string[]): ((attrs?: HTMLProps<HTMLElement>, ...children: VDOMChild[]) => VDOMElement<any>)[];
 
   attr(...args: any[]): void;
   elementClose: Function;

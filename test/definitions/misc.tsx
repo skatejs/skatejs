@@ -370,23 +370,25 @@
         value: { attribute: true }
       };
     }
-    renderCallback() {
-      skate.h('input', { name: 'someValue', onChange: skate.link(this), type: 'text' });
+    renderCallback(): any {
+      const linkedInput = skate.h('input', { name: 'someValue', onChange: skate.link(this), type: 'text' });
 
-      skate.link(this, 'someValue');
+      const explicitlySetLinkedProp = skate.link(this, 'someValue');
 
-      skate.link(this, 'obj.someValue');
+      const explicitlySetLinkedPropPath = skate.link(this, 'obj.someValue');
 
-      skate.h('input', { name: 'someValue', onChange: skate.link(this, 'obj.'), type: 'text' });
-
+      const explicitlySetLinkedInputPathWithCustomPropName = skate.h('input', { name: 'someValue', onChange: skate.link(this, 'obj.'), type: 'text' });
       const linkage = skate.link(this, 'obj.');
-      skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
-      skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
-      skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
-      skate.h('select', { name: 'someValue4', onChange: linkage },
-        skate.h('option', { value: 2 }, 'Option 2'),
-        skate.h('option', { value: 1 }, 'Option 1'),
-      );
+
+      return [
+        skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' }),
+        skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' }),
+        skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' }),
+        skate.h('select', { name: 'someValue4', onChange: linkage },
+          skate.h('option', { value: 2 }, 'Option 2'),
+          skate.h('option', { value: 1 }, 'Option 1'),
+        )
+      ];
     }
   });
 }
@@ -552,22 +554,22 @@
     skate.h(MyElement);
   }
   {
-    const MyElement = (props: any) => skate.h('div', `Hello, ${props.name}!`);
+    const MyElement = (props: { name: string }) => skate.h('div', `Hello, ${props.name}!`);
 
     // Renders <div>Hello, Bob!</div>
     skate.h(MyElement, { name: 'Bob' });
   }
   {
-    const MyElement = (props: any, chren: any) => skate.h('div', 'Hello, ', chren, '!');
+    const MyElement = (props: void, children: string) => skate.h('div', 'Hello, ', children, '!');
 
     // Renders <div>Hello, Mary!</div>
     skate.h(MyElement, 'Mary');
   }
   {
-    const MyElement = (props: any, chren: any) => <div>Hello, {chren}!</div>;
+    const MyElement = (props: any, children: Node) => <div>Hello, {children}!</div>;
 
     // Renders <div>Hello, Mary!</div>
-    <MyElement>Mary</MyElement>
+    <MyElement>123</MyElement>
   }
 }
 { // https://github.com/skatejs/skatejs#special-attributes
@@ -576,6 +578,14 @@
       skate.h('li', { key: 0 }),
       skate.h('li', { key: 1 }),
     );
+
+    const ArrayCmp = () => (
+      <ul>
+        <li key={0}></li>
+        <li key={1}></li>
+      </ul>
+    );
+
   }
 
   {
@@ -584,6 +594,13 @@
     skate.h('button', { 'on-click': onClick });
 
     skate.h('button', { onclick: onClick });
+
+    const TestCmp = () => (
+      <div>
+        <button onclick={onClick}></button>
+        <button onClick={onClick}></button>
+      </div>
+    );
   }
 
   {
@@ -604,6 +621,10 @@
   {
     const ref = (button: HTMLButtonElement) => button.addEventListener('click', console.log);
     skate.h('button', { ref });
+
+    const TestCmp = () => (
+      <button ref={ref}></button>
+    );
   }
   {
     const ref = console.log;
@@ -612,6 +633,12 @@
         return skate.h('div', { ref });
       }
     });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div ref={ref}></div>
+      }
+    }
   }
   {
     customElements.define('my-element', class extends skate.Component<any> {
@@ -623,8 +650,24 @@
   }
   {
     skate.h('div', { ref: (e: HTMLElement) => (e.innerHTML = '<p>oh no you didn\'t</p>'), skip: true });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div
+          ref={(e: HTMLElement) => (e.innerHTML = '<p>oh no you didn\'t</p>')}
+          skip
+          ></div>
+      }
+    }
+
   }
   {
     skate.h('div', { statics: ['attr1', 'prop2'] });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div statics={['attr1', 'prop2']}></div>
+      }
+    }
   }
 }
