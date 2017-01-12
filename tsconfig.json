@@ -27,7 +27,6 @@
   },
   "include": [
     "index.d.ts",
-    "jsx.d.ts",
     "test/definitions/**/*.tsx"
   ]
 }
