@@ -35,7 +35,7 @@
     "react-dom": "15.4.2",
     "skatejs-build": "12.x",
     "skatejs-web-components": "5.x",
-    "typescript": "^2.1.4",
+    "typescript": "^2.1.5",
     "typescript-formatter": "^4.0.1"
   },
   "scripts": {
