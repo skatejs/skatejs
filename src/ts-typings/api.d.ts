@@ -1,6 +1,6 @@
-import {Key, HTMLProps} from './common';
+import { Key, HTMLProps } from './common';
 
-export type ComponentProps <El, T> = {
+export type ComponentProps<El, T> = {
   [P in keyof T]: PropOptions<El, T[P]>;
 };
 
@@ -57,7 +57,7 @@ type AttributeReflectionConfig = AttributeReflectionBaseType | {
   target?: AttributeReflectionBaseType
 }
 export interface PropOptions<El, T> {
-  attribute?: AttributeReflectionConfig ;
+  attribute?: AttributeReflectionConfig;
   coerce?: (value: any) => T | null | undefined;
   default?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
   deserialize?: (value: string | null) => T | null | undefined;

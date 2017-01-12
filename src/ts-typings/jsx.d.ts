@@ -6,7 +6,7 @@ declare global {
   // https://www.typescriptlang.org/docs/handbook/jsx.html
   namespace JSX {
     interface Element extends VDOMElement<any> { }
-    interface ElementClass extends Component<any> {}
+    interface ElementClass extends Component<any> { }
     interface ElementAttributesProperty<Props> {
       // Special hack for own components type checking.
       // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
