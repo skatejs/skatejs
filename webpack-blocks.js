@@ -1,7 +1,6 @@
 const { entryPoint, group, setOutput, sourceMaps } = require('@webpack-blocks/webpack2');
 const babel = require('@webpack-blocks/babel6');
 const path = require('path');
-const webpackNodeExternals = require('webpack-node-externals');
 
 function min () {
   return prod() ? '.min' : '';
@@ -59,7 +58,6 @@ function output (userDefinedOutput) {
   return setOutput(temp);
 }
 
-
 // Preset for generating a bundle with only the src files.
 function main () {
   return group([
@@ -86,5 +84,5 @@ module.exports = {
   entries,
   externals,
   main,
-  output,
+  output
 };

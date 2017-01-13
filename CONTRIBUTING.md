@@ -1,6 +1,8 @@
 # Contributing
 
-Skate uses the [skatejs-build](http://github.com/skatejs/build) module. Docs for the provided commands can be found there.
+- Creating a bundle: `npm prepublish`
+- Working on docs: `npm run docs:watch`
+- Developing with tests: `npm run test:watch`
 
 ## Committing
 
