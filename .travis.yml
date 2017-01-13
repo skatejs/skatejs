@@ -17,7 +17,7 @@ script:
     npm test;
     fi
 after_success:
-  - sk-release
+  - npm run release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/

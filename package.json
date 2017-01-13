@@ -60,12 +60,13 @@
     "webpack": "2.2.0-rc.3"
   },
   "scripts": {
+    "docs:build": "npm run gitbook install && gitbook build",
+    "docs:watch": "npm run gitbook install && gitbook serve",
+    "prepublish": "rm -rf dist && webpack && webpack -p && webpack --config webpack.config.bundle.js && webpack -p --config webpack.config.bundle.js",
+    "release": "semantic-release pre && npm publish && semantic-release post",
     "test": "npm run prepublish && node dist/ && semistandard && karma start --single-run && npm run test:ts",
     "test:ts": "tsfmt -r && tsc -p ./",
-    "test:watch": "karma start",
-    "prepublish": "rm -rf dist && webpack && webpack -p && webpack --config webpack.config.bundle.js && webpack -p --config webpack.config.bundle.js",
-    "docs:build": "npm run gitbook install && gitbook build",
-    "docs:watch": "npm run gitbook install && gitbook serve"
+    "test:watch": "karma start"
   },
   "config": {
     "commitizen": {
