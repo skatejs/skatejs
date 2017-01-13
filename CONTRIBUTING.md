@@ -6,7 +6,7 @@
 
 ## Committing
 
-Ensure you have [commitizen](https://github.com/commitizen/cz-cli) installed and commit using `git cz` or `sk-commit`.
+Ensure you have [commitizen](https://github.com/commitizen/cz-cli) installed and commit using `git cz`.
 
 ## Pull Requests
 
