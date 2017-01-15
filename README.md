@@ -2,7 +2,6 @@
 
 [![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
-[![Size](https://img.shields.io/badge/min+gz-4.64%20kB-blue.svg)](https://unpkg.com/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
@@ -14,7 +13,6 @@ Skate is a library built on top of the [W3C web component specs](https://github.
 
 - Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
 - Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- Skate itself is only 4k min+gz.
 - It's very fast.
 - It works with multiple versions of itself on the page.
 

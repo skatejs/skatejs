@@ -1,7 +1,4 @@
-const webpack = require('webpack');
+const { createConfig } = require('@webpack-blocks/webpack2');
+const { main } = require('./webpack-blocks');
 
-module.exports = require('skatejs-build/webpack.config');
-module.exports.module.loaders[2].query.plugins = ['transform-class-properties'];
-module.exports.plugins[1] = new webpack.DefinePlugin({
-  DEBUG: JSON.stringify(false)
-});
+module.exports = createConfig([ main() ]);

@@ -1,10 +1,12 @@
 # Contributing
 
-Skate uses the [skatejs-build](http://github.com/skatejs/build) module. Docs for the provided commands can be found there.
+- Creating a bundle: `npm prepublish`
+- Working on docs: `npm run docs:watch`
+- Developing with tests: `npm run test:watch`
 
 ## Committing
 
-Ensure you have [commitizen](https://github.com/commitizen/cz-cli) installed and commit using `git cz` or `sk-commit`.
+Ensure you have [commitizen](https://github.com/commitizen/cz-cli) installed and commit using `git cz`.
 
 ## Pull Requests
 
