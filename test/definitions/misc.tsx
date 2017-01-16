@@ -93,6 +93,21 @@
       };
     }
   });
+
+  class MyCmp extends skate.Component<any> {
+    static get props() {
+      return {
+        myProp: {
+          attribute: {
+            // set propert from my-prop attribute on element
+            source: true,
+            // reflect property value to different-prop on element
+            target: 'differentProp'
+          }
+        }
+      };
+    }
+  }
 }
 { // https://github.com/skatejs/skatejs#coerce
   customElements.define('my-component', class extends skate.Component<{ myProp: any; }> {
@@ -375,11 +390,15 @@
     }
   });
 }
-{ // https://github.com/skatejs/skatejs#prop
-  skate.prop.boolean();
-
+{ // https://skatejs.gitbooks.io/skatejs/content/docs/api/#prop
   const myNewProp = skate.prop.create({});
   myNewProp({});
+
+  skate.prop.boolean();
+  skate.prop.string();
+  skate.prop.number();
+  skate.prop.array();
+  skate.prop.object();
 
   skate.prop.boolean({
     coerce() {
@@ -390,6 +409,50 @@
       // do something when set
     }
   });
+
+  type UserModel = { id: number, email: string }
+  class User extends skate.Component<{ user: UserModel }>{
+    static get is() { return 'my-user' }
+    static get props() {
+      return {
+        user: skate.prop.object({
+          default: { id: -1, email: '' }
+        })
+      }
+    }
+
+    user: UserModel;
+
+    renderCallback() {
+      const {id, email} = this.user;
+      return [
+        <p>
+          <div>ID: {id}</div>
+          <div>Email: {email}</div>
+        </p>
+      ];
+    }
+  }
+
+  class UserList extends skate.Component<{ users: UserModel[] }>{
+    static get is() { return 'my-user-list' }
+    static get props() {
+      return {
+        users: skate.prop.array()
+      }
+    }
+
+    users: UserModel[];
+
+    renderCallback() {
+      const {users} = this;
+      return [
+        <ul>
+          {users.map((user) => (<li><User user={user} /></li>))}
+        </ul>
+      ];
+    }
+  }
 }
 { // https://github.com/skatejs/skatejs#props-elem-props
   const { define, props } = skate;

@@ -43,8 +43,13 @@ export class Component<Props> extends HTMLElement {
   static rendered?(elem: Component<any>): void;
 }
 
+type AttributeReflectionBaseType = boolean | string;
+type AttributeReflectionConfig = AttributeReflectionBaseType | {
+  source?: AttributeReflectionBaseType,
+  target?: AttributeReflectionBaseType
+}
 export interface PropOptions<El, T> {
-  attribute?: boolean | string;
+  attribute?: AttributeReflectionConfig ;
   coerce?: (value: any) => T | null | undefined;
   default?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
   deserialize?: (value: string | null) => T | null | undefined;
@@ -77,7 +82,8 @@ export var prop: {
   number(attr?: PropOptions<any, number>): PropOptions<any, number>;
   boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
   string(attr?: PropOptions<any, string>): PropOptions<any, string>;
-  array(attr?: PropOptions<any, any[]>): PropOptions<any, any[]>;
+  array<T>(attr?: PropOptions<any, T[]>): PropOptions<any, T[]>;
+  object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
 };
 
 export function props(elem: Component<any>, props?: any): void;

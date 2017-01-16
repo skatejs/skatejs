@@ -10,14 +10,14 @@ install:
   - npm install -g yarn
   - yarn install
 script:
-  - sk-bundle
+  - npm run prepublish
   - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-    npm test -- --all;
+    npm test -- --ci;
     else
     npm test;
     fi
 after_success:
-  - sk-release
+  - npm run release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/
