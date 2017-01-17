@@ -2,7 +2,7 @@
 
 import { Component, define } from '../../../src/index';
 
-const { customElements } = window;
+const { customElements, HTMLElement } = window;
 
 describe('api/define', () => {
   it('should throw if the constructor does not extend HTMLElement', () => {
@@ -23,7 +23,7 @@ describe('api/define', () => {
 
       it('should throw if already defined', () => {
         const name = 'x-test-uber-unique-and-stuff';
-        const Elem1 = define(class extends HTMLElement {
+        define(class extends HTMLElement {
           static is = name
         });
         expect(() => {
@@ -47,7 +47,7 @@ describe('api/define', () => {
       });
 
       it('should be extendable with a getter', () => {
-        const name = 'x-test-define-unique-1'
+        const name = 'x-test-define-unique-1';
         const Elem1 = define(class extends HTMLElement {});
         const Elem2 = define(class extends Elem1 {
           static get is () {
@@ -95,15 +95,15 @@ describe('api/define', () => {
 
     it('should register components with unique names', () => {
       const name = 'x-test-api-define';
-      const elem1 = new (define(name, class extends Component {}));
-      const elem2 = new (define(name, class extends Component {}));
-      const elem3 = new (define(name, class extends Component {}));
+      const elem1 = new (define(name, class extends Component {}))();
+      const elem2 = new (define(name, class extends Component {}))();
+      const elem3 = new (define(name, class extends Component {}))();
 
       expect(elem1.localName).to.equal('x-test-api-define');
       expect(elem2.localName).not.to.equal('x-test-api-define');
       expect(elem3.localName).not.to.equal('x-test-api-define');
 
-      expect(elem2.localName.indexOf('x-test-api-define') === 0).to.equal(true);    
+      expect(elem2.localName.indexOf('x-test-api-define') === 0).to.equal(true);
       expect(elem3.localName.indexOf('x-test-api-define') === 0).to.equal(true);
     });
 

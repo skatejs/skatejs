@@ -11,7 +11,7 @@ describe('api/Component', () => {
 
   describe('static is', () => {
     it('should default to an empty string', () => {
-      class Test extends Component {};
+      class Test extends Component {}
       expect(Test.is).to.equal('');
     });
   });

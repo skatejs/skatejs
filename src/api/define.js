@@ -11,7 +11,7 @@ export default function (...args) {
   }
 
   // DEPRECATED remove when removing the "name" argument.
-  if (DEBUG && args.length === 2) {
+  if (process.env.NODE_ENV !== 'production' && args.length === 2) {
     console.warn('The "name" argument to define() is deprecated. Please define a `static is` property on the constructor instead.');
   }
 
