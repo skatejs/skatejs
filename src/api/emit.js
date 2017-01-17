@@ -1,4 +1,4 @@
-import root from 'window-or-global';
+import root from '../util/root';
 
 const Event = ((TheEvent) => {
   if (TheEvent) {

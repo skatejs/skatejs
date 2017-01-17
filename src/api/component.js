@@ -24,7 +24,7 @@ import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import { isFunction } from '../util/is-type';
 import objectIs from '../polyfills/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
-import root from 'window-or-global';
+import root from '../util/root';
 
 const HTMLElement = root.HTMLElement || class {};
 const _prevName = createSymbol('prevName');

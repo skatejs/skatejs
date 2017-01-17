@@ -1,6 +1,6 @@
 import Component from './component';
 import uniqueId from '../util/unique-id';
-import root from 'window-or-global';
+import root from '../util/root';
 
 export default function (...args) {
   const { customElements, HTMLElement } = root;
