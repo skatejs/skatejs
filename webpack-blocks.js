@@ -30,11 +30,12 @@ function externals () {
   const {
     dependencies,
     devDependencies,
+    externals,
     optionalDependencies,
     peerDependencies
   } = pack();
   return () => ({
-    externals: Object.keys(
+    externals: externals || Object.keys(
       Object.assign(
         {},
         dependencies,
