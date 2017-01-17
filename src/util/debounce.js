@@ -1,5 +1,5 @@
 import native from './native';
-import root from 'window-or-global';
+import root from './root';
 
 const { MutationObserver } = root;
 

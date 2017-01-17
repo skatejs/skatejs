@@ -24,8 +24,7 @@
     "src"
   ],
   "dependencies": {
-    "incremental-dom": "0.4.1",
-    "window-or-global": "1.0.1"
+    "incremental-dom": "0.4.1"
   },
   "devDependencies": {
     "@webpack-blocks/babel6": "^0.3.0",
