@@ -17,7 +17,7 @@ describe('deprecated/lifecycle/attribute-changed', () => {
 
   it('should make arguments to attributeChanged consistent with the rest of the callbacks', (done) => {
     let test = false;
-    const Elem = define('x-test', class extends Component {
+    const Elem = define(class extends Component {
       static get observedAttributes () {
         return ['test'];
       }
@@ -26,7 +26,6 @@ describe('deprecated/lifecycle/attribute-changed', () => {
         // polyfill - once for init and once for set - so we must only check
         // this after setting.
         if (test) {
-          expect(elem.tagName).to.match(/^x-test/i);
           expect(data.name).to.equal('test');
           expect(data.oldValue).to.equal(null);
           expect(data.newValue).to.equal('ing');

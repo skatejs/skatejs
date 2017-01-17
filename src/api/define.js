@@ -1,48 +1,51 @@
-import { name as $name } from '../util/symbols';
 import Component from './component';
 import uniqueId from '../util/unique-id';
 import root from 'window-or-global';
 
 export default function (...args) {
-  const { customElements } = root;
+  const { customElements, HTMLElement } = root;
   let [ name, Ctor ] = args;
 
   if (!customElements) {
     throw new Error('Skate requires native custom element support or a polyfill.');
   }
 
-  // Support passing an anonymous definition.
+  // DEPRECATED remove when removing the "name" argument.
+  if (process.env.NODE_ENV !== 'production' && args.length === 2) {
+    console.warn('The "name" argument to define() is deprecated. Please define a `static is` property on the constructor instead.');
+  }
+
+  // DEPRECATED remove when removing the "name" argument.
   if (args.length === 1) {
-    // We are checking string for now, but once we remove the ability to pass
-    // an object literal, we can change this to check "function" and invert the
-    // blocks of logic.
-    if (typeof name === 'string') {
-      throw new Error('When passing only one argument to define(), it must be a custom element constructor.');
-    } else {
-      Ctor = name;
-      name = uniqueId();
-    }
+    Ctor = name;
+    name = null;
   }
 
-  // Ensure there's no conflicts.
-  if (customElements.get(name)) {
-    name = uniqueId(name);
-  }
-
-  // DEPRECATED
-  //
-  // Object literals.
+  // DEPRECATED Object literals.
   if (typeof Ctor === 'object') {
     Ctor = Component.extend(Ctor);
   }
 
-  // This allows us to check this before instantiating the custom element to
-  // find its name from the constructor in the vdom module, thus improving
-  // performance but still falling back to a robust method.
-  Ctor[$name] = name;
+  // Ensure a custom element is passed.
+  if (!(Ctor.prototype instanceof HTMLElement)) {
+    throw new Error('You must provide a constructor that extends HTMLElement to define().');
+  }
 
-  // Sipmle define. Not supporting customised built-ins yet.
-  customElements.define(name, Ctor);
+  // DEPRECATED two arguments
+  if (args.length === 2) {
+    customElements.define(customElements.get(name) ? uniqueId(name) : name, Ctor);
+  } else {
+    // We must use hasOwnProperty() because we want to know if it was specified
+    // directly on this class, not subclasses, as we don't want to inherit tag
+    // names from subclasses.
+    if (!Ctor.hasOwnProperty('is')) {
+      // If we used defineProperty() then the consumer must also use it and
+      // cannot use property initialisers. Instead we just set it so they can
+      // use whatever method of overridding that they want.
+      Ctor.is = uniqueId();
+    }
+    customElements.define(Ctor.is, Ctor);
+  }
 
   // The spec doesn't return but this allows for a simpler, more concise API.
   return Ctor;

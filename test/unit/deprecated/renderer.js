@@ -1,14 +1,14 @@
 /* eslint-env jasmine, mocha */
 
-import { define } from '../../../src';
+import { Component, define } from '../../../src';
 
 describe('deprecated/lifecycle/renderer', () => {
   it('default', () => {
-    expect(define('x-test', {}).renderer).to.be.a('function');
+    expect(define(class extends Component {}).renderer).to.be.a('function');
   });
 
   it('override', () => {
     function renderer () {}
-    expect(define('x-test', { renderer }).renderer).to.equal(renderer);
+    expect(define(class extends Component { static renderer = renderer }).renderer).to.equal(renderer);
   });
 });

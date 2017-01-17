@@ -33,7 +33,7 @@ const _prevNewValue = createSymbol('prevNewValue');
 
 // TEMPORARY: Once deprecations in this file are removed, this can be removed.
 function deprecated (elem, oldUsage, newUsage) {
-  if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV !== 'production') {
     const ownerName = elem.localName ? elem.localName : String(elem);
     console.warn(`${ownerName} ${oldUsage} is deprecated. Use ${newUsage}.`);
   }
@@ -99,6 +99,8 @@ function createInitProps (Ctor) {
 }
 
 export default class extends HTMLElement {
+  static is = ''
+
   /**
    * Returns unique attribute names configured with props and
    * those set on the Component constructor if any
@@ -161,7 +163,7 @@ export default class extends HTMLElement {
     // static render()
     // Note that renderCallback is an optional method!
     if (!this.renderCallback && constructor.render) {
-      process.env.NODE_ENV && deprecated(this, 'static render', 'renderCallback');
+      deprecated(this, 'static render', 'renderCallback');
       this.renderCallback = constructor.render.bind(constructor, this);
     }
 
@@ -172,7 +174,7 @@ export default class extends HTMLElement {
     // Props should be set up before calling this.
     const { created } = constructor;
     if (isFunction(created)) {
-      process.env.NODE_ENV && deprecated(this, 'static created', 'constructor');
+      deprecated(this, 'static created', 'constructor');
       created(this);
     }
 
@@ -205,7 +207,7 @@ export default class extends HTMLElement {
     // static attached()
     const { attached } = this.constructor;
     if (isFunction(attached)) {
-      process.env.NODE_ENV && deprecated(this, 'static attached', 'connectedCallback');
+      deprecated(this, 'static attached', 'connectedCallback');
       attached(this);
     }
 
@@ -228,7 +230,7 @@ export default class extends HTMLElement {
     // static detached()
     const { detached } = this.constructor;
     if (isFunction(detached)) {
-      process.env.NODE_ENV && deprecated(this, 'static detached', 'disconnectedCallback');
+      deprecated(this, 'static detached', 'disconnectedCallback');
       detached(this);
     }
   }
@@ -267,7 +269,7 @@ export default class extends HTMLElement {
     // static attributeChanged()
     const { attributeChanged } = this.constructor;
     if (isFunction(attributeChanged)) {
-      process.env.NODE_ENV && deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
+      deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
       attributeChanged(this, { name, newValue, oldValue });
     }
   }
@@ -275,7 +277,7 @@ export default class extends HTMLElement {
   // Skate
   updatedCallback (prevProps) {
     if (this.constructor.hasOwnProperty('updated')) {
-      process.env.NODE_ENV && deprecated(this, 'static updated', 'updatedCallback');
+      deprecated(this, 'static updated', 'updatedCallback');
     }
     return this.constructor.updated(this, prevProps);
   }
@@ -283,7 +285,7 @@ export default class extends HTMLElement {
   // Skate
   renderedCallback () {
     if (this.constructor.hasOwnProperty('rendered')) {
-      process.env.NODE_ENV && deprecated(this, 'static rendered', 'renderedCallback');
+      deprecated(this, 'static rendered', 'renderedCallback');
     }
     return this.constructor.rendered(this);
   }

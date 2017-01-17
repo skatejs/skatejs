@@ -3,7 +3,7 @@
 import { Component, define, h, vdom } from '../../../src';
 import fixture from '../../lib/fixture';
 
-const { customElements, HTMLElement } = window;
+const { HTMLElement } = window;
 
 describe('builder()', () => {
   const { builder } = vdom;
@@ -71,8 +71,7 @@ describe('builder()', () => {
     });
 
     it('should work with all web component constructors', (done) => {
-      class RawWc extends HTMLElement {}
-      customElements.define('x-test-raw-wc', RawWc);
+      const RawWc = define(class extends HTMLElement {});
       const [xTest] = builder(RawWc);
       fixture(new (define(class extends Component {
         renderCallback () {
@@ -80,7 +79,7 @@ describe('builder()', () => {
         }
         renderedCallback () {
           const [elXTest] = [].slice.call(this.shadowRoot.children);
-          expect(elXTest.tagName).to.match(/^X-TEST/);
+          expect(elXTest).to.be.an.instanceOf(RawWc);
           done();
         }
       }))());

@@ -5,7 +5,7 @@ import afterMutations from '../../lib/after-mutations';
 import assign from '../../../src/util/assign';
 
 function create (propLocal) {
-  const el = new (define('x-test', class extends Component {
+  const el = new (define(class extends Component {
     static get props () {
       return {
         test: assign({ attribute: true }, propLocal)

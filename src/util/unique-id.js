@@ -1,3 +1,4 @@
+// DEPRECATED prefix when we deprecated the name argument to define()
 export default function uniqueId (prefix) {
   // http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript/2117523#2117523
   const rand = 'xxxxxxxx'.replace(/[xy]/g, (c) => {
