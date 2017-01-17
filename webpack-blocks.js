@@ -47,10 +47,10 @@ function externals () {
 }
 
 function output (userDefinedOutput) {
-  const { name } = pack();
+  const { global, name } = pack();
   const temp = Object.assign({}, {
     filename: '[name]',
-    library: name,
+    library: global || name,
     libraryTarget: 'umd',
     path: './',
     sourceMapFilename: '[file].map'
