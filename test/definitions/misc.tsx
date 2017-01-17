@@ -543,7 +543,7 @@
   skate.vdom.elementOpen(MyElement);
 
   // for https://github.com/Microsoft/TypeScript/issues/7004
-  const anyProps: any = {};
+  const anyProps = {};
   <MyElement {...anyProps} />;
 }
 { // https://github.com/skatejs/skatejs#function-helper
@@ -678,5 +678,10 @@
         return <div class='c-button c-button--block'></div>
       }
     }
+  }
+  // anchor test so this https://github.com/Microsoft/TypeScript/issues/13345 is mitigated
+  {
+    const Link: skate.SFC<{ to: string }> = ({to}) => <a href={to}><slot /></a>;
+    const LinkH: skate.SFC<{ to: string }> = ({to}) => skate.h('a', { href: to }, skate.h('slot'));
   }
 }

@@ -18,7 +18,9 @@ declare global {
     interface IntrinsicClassAttributes<T> extends ClassAttributes<T> { }
 
     interface IntrinsicElements {
-      a: HTMLProps<HTMLAnchorElement>;
+      // @FIXME replace with a: HTMLProps<HTMLAnchorElement> once https://github.com/Microsoft/TypeScript/issues/13345 is resolved
+      a: HTMLProps<HTMLAnchorElementFix>;
+
       abbr: HTMLProps<HTMLElement>;
       address: HTMLProps<HTMLElement>;
       area: HTMLProps<HTMLAreaElement>;
@@ -135,4 +137,38 @@ declare global {
       slot: HTMLProps<HTMLSlotElement>;
     }
   }
+}
+
+// @FIXME remove this once https://github.com/Microsoft/TypeScript/issues/13345 is resolved
+interface HTMLAnchorElementFix extends HTMLElement {
+  Methods: string;
+  charset: string;
+  coords: string;
+  download: string;
+  hash: string;
+  host: string;
+  hostname: string;
+  href: string;
+  hreflang: string;
+  readonly mimeType: string;
+  name: string;
+  readonly nameProp: string;
+  pathname: string;
+  port: string;
+  protocol: string;
+  readonly protocolLong: string;
+  rel: string;
+  rev: string;
+  search: string;
+  shape: string;
+  target: string;
+  text: string;
+  type: string;
+  urn: string;
+  addEventListener<K extends keyof HTMLElementEventMap>(
+    type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+    useCapture?: boolean): void;
+  addEventListener(
+    type: string, listener: EventListenerOrEventListenerObject,
+    useCapture?: boolean): void;
 }
