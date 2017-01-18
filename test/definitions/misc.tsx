@@ -684,4 +684,57 @@
     const Link: skate.SFC<{ to: string }> = ({to}) => <a href={to}><slot /></a>;
     const LinkH: skate.SFC<{ to: string }> = ({to}) => skate.h('a', { href: to }, skate.h('slot'));
   }
+  // slot projection attributes on Component references via JSX
+  {
+    const Header = () => (<span>Hello</span>)
+    const Body = () => (<span>Hey yo body!</span>)
+    const Footer = () => (<span>Footer baby</span>)
+
+    class Menu extends skate.Component<void>{
+      private menu = [{ link: 'home', name: 'Home' }, { link: 'about', name: 'About' }];
+      renderCallback() {
+        return (
+          <ul>
+            {this.menu.map((menuItem) => <li><a href={menuItem.link}>{menuItem.name}</a></li>)}
+          </ul>
+        )
+      }
+    }
+    class Page extends skate.Component<void> {
+      static get is() { return 'my-page' }
+      static get slots() {
+        return {
+          header: 'header',
+          body: 'body',
+          footer: 'footer',
+          menu: 'menu'
+        }
+      }
+      renderCallback() {
+        return (
+          <main>
+            <header><slot name={Page.slots.header} /></header>
+            <nav><slot name="menu" /></nav>
+            <section><slot name={Page.slots.body} /></section>
+            <footer><slot name="footer" /></footer>
+          </main>
+        )
+      }
+    }
+
+    class App extends skate.Component<void> {
+      renderCallback() {
+        return (
+          <Page>
+            <Menu slot={Page.slots.menu} ref={_e => console.log(_e)} />
+            {/* this projection doesn't work in actual code https://github.com/skatejs/skatejs/issues/1020 */}
+            <Header slot={Page.slots.header} />
+            <Body slot={Page.slots.body} />
+            <Footer slot="footer" />
+          </Page>
+        );
+      }
+    }
+
+  }
 }

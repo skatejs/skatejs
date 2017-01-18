@@ -2,10 +2,12 @@ export type Key = string | number;
 export type Ref<T> = string | ((instance: T) => any);
 
 interface Attributes {
-  key?: Key;
+  key?: Key,
+  // this will be possible removed and added just to ClassAttributes because of https://github.com/skatejs/skatejs/issues/1020
+  slot?: string,
 }
 interface ClassAttributes<T> extends Attributes {
-  ref?: Ref<T>;
+  ref?: Ref<T>,
 }
 
 //
