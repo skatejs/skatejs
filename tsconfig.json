@@ -26,8 +26,8 @@
     "pretty": true
   },
   "include": [
-    "index.d.ts",
-    "jsx.d.ts",
+    "src/index.d.ts",
+    "src/ts-typings/*",
     "test/definitions/**/*.tsx"
   ]
 }

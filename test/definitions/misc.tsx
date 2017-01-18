@@ -370,23 +370,25 @@
         value: { attribute: true }
       };
     }
-    renderCallback() {
-      skate.h('input', { name: 'someValue', onChange: skate.link(this), type: 'text' });
+    renderCallback(): any {
+      const linkedInput = skate.h('input', { name: 'someValue', onChange: skate.link(this), type: 'text' });
 
-      skate.link(this, 'someValue');
+      const explicitlySetLinkedProp = skate.link(this, 'someValue');
 
-      skate.link(this, 'obj.someValue');
+      const explicitlySetLinkedPropPath = skate.link(this, 'obj.someValue');
 
-      skate.h('input', { name: 'someValue', onChange: skate.link(this, 'obj.'), type: 'text' });
-
+      const explicitlySetLinkedInputPathWithCustomPropName = skate.h('input', { name: 'someValue', onChange: skate.link(this, 'obj.'), type: 'text' });
       const linkage = skate.link(this, 'obj.');
-      skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' });
-      skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' });
-      skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' });
-      skate.h('select', { name: 'someValue4', onChange: linkage },
-        skate.h('option', { value: 2 }, 'Option 2'),
-        skate.h('option', { value: 1 }, 'Option 1'),
-      );
+
+      return [
+        skate.h('input', { name: 'someValue1', onChange: linkage, type: 'text' }),
+        skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' }),
+        skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' }),
+        skate.h('select', { name: 'someValue4', onChange: linkage },
+          skate.h('option', { value: 2 }, 'Option 2'),
+          skate.h('option', { value: 1 }, 'Option 1'),
+        )
+      ];
     }
   });
 }
@@ -541,7 +543,7 @@
   skate.vdom.elementOpen(MyElement);
 
   // for https://github.com/Microsoft/TypeScript/issues/7004
-  const anyProps: any = {};
+  const anyProps = {};
   <MyElement {...anyProps} />;
 }
 { // https://github.com/skatejs/skatejs#function-helper
@@ -552,22 +554,22 @@
     skate.h(MyElement);
   }
   {
-    const MyElement = (props: any) => skate.h('div', `Hello, ${props.name}!`);
+    const MyElement = (props: { name: string }) => skate.h('div', `Hello, ${props.name}!`);
 
     // Renders <div>Hello, Bob!</div>
     skate.h(MyElement, { name: 'Bob' });
   }
   {
-    const MyElement = (props: any, chren: any) => skate.h('div', 'Hello, ', chren, '!');
+    const MyElement = (props: void, children: string) => skate.h('div', 'Hello, ', children, '!');
 
     // Renders <div>Hello, Mary!</div>
     skate.h(MyElement, 'Mary');
   }
   {
-    const MyElement = (props: any, chren: any) => <div>Hello, {chren}!</div>;
+    const MyElement = (props: any, children: Node) => <div>Hello, {children}!</div>;
 
     // Renders <div>Hello, Mary!</div>
-    <MyElement>Mary</MyElement>
+    <MyElement>123</MyElement>
   }
 }
 { // https://github.com/skatejs/skatejs#special-attributes
@@ -576,6 +578,14 @@
       skate.h('li', { key: 0 }),
       skate.h('li', { key: 1 }),
     );
+
+    const ArrayCmp = () => (
+      <ul>
+        <li key={0}></li>
+        <li key={1}></li>
+      </ul>
+    );
+
   }
 
   {
@@ -584,6 +594,13 @@
     skate.h('button', { 'on-click': onClick });
 
     skate.h('button', { onclick: onClick });
+
+    const TestCmp = () => (
+      <div>
+        <button onclick={onClick}></button>
+        <button onClick={onClick}></button>
+      </div>
+    );
   }
 
   {
@@ -604,6 +621,10 @@
   {
     const ref = (button: HTMLButtonElement) => button.addEventListener('click', console.log);
     skate.h('button', { ref });
+
+    const TestCmp = () => (
+      <button ref={ref}></button>
+    );
   }
   {
     const ref = console.log;
@@ -612,6 +633,12 @@
         return skate.h('div', { ref });
       }
     });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div ref={ref}></div>
+      }
+    }
   }
   {
     customElements.define('my-element', class extends skate.Component<any> {
@@ -623,8 +650,91 @@
   }
   {
     skate.h('div', { ref: (e: HTMLElement) => (e.innerHTML = '<p>oh no you didn\'t</p>'), skip: true });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div
+          ref={(e: HTMLElement) => (e.innerHTML = '<p>oh no you didn\'t</p>')}
+          skip
+        ></div>
+      }
+    }
+
   }
   {
     skate.h('div', { statics: ['attr1', 'prop2'] });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div statics={['attr1', 'prop2']}></div>
+      }
+    }
+  }
+  {
+    skate.h('div', { class: 'c-button c-button--block' });
+
+    class TestCmp extends skate.Component<any> {
+      renderCallback() {
+        return <div class='c-button c-button--block'></div>
+      }
+    }
+  }
+  // anchor test so this https://github.com/Microsoft/TypeScript/issues/13345 is mitigated
+  {
+    const Link: skate.SFC<{ to: string }> = ({to}) => <a href={to}><slot /></a>;
+    const LinkH: skate.SFC<{ to: string }> = ({to}) => skate.h('a', { href: to }, skate.h('slot'));
+  }
+  // slot projection attributes on Component references via JSX
+  {
+    const Header = () => (<span>Hello</span>)
+    const Body = () => (<span>Hey yo body!</span>)
+    const Footer = () => (<span>Footer baby</span>)
+
+    class Menu extends skate.Component<void>{
+      private menu = [{ link: 'home', name: 'Home' }, { link: 'about', name: 'About' }];
+      renderCallback() {
+        return (
+          <ul>
+            {this.menu.map((menuItem) => <li><a href={menuItem.link}>{menuItem.name}</a></li>)}
+          </ul>
+        )
+      }
+    }
+    class Page extends skate.Component<void> {
+      static get is() { return 'my-page' }
+      static get slots() {
+        return {
+          header: 'header',
+          body: 'body',
+          footer: 'footer',
+          menu: 'menu'
+        }
+      }
+      renderCallback() {
+        return (
+          <main>
+            <header><slot name={Page.slots.header} /></header>
+            <nav><slot name="menu" /></nav>
+            <section><slot name={Page.slots.body} /></section>
+            <footer><slot name="footer" /></footer>
+          </main>
+        )
+      }
+    }
+
+    class App extends skate.Component<void> {
+      renderCallback() {
+        return (
+          <Page>
+            <Menu slot={Page.slots.menu} ref={_e => console.log(_e)} />
+            {/* this projection doesn't work in actual code https://github.com/skatejs/skatejs/issues/1020 */}
+            <Header slot={Page.slots.header} />
+            <Body slot={Page.slots.body} />
+            <Footer slot="footer" />
+          </Page>
+        );
+      }
+    }
+
   }
 }
