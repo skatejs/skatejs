@@ -24,6 +24,7 @@ interface IncrementalDomHTMLAttributes<T> {
 }
 interface HyperscriptHTMLAttributes {
   class?: string,
+  role?: string,
 }
 
 interface HyperscriptEventHandler<T> {
