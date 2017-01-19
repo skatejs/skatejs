@@ -392,7 +392,11 @@
     }
   });
 }
-{ // https://skatejs.gitbooks.io/skatejs/content/docs/api/#prop
+
+// #prop
+// @link https://skatejs.gitbooks.io/skatejs/content/docs/api/prop.html
+// ====================================================================
+{
   const myNewProp = skate.prop.create({});
   myNewProp({});
 
@@ -456,29 +460,40 @@
     }
   }
 }
-{ // https://github.com/skatejs/skatejs#props-elem-props
+
+// #props
+// @link https://skatejs.gitbooks.io/skatejs/content/docs/api/props.html
+// ====================================================================
+{
   const { define, props } = skate;
 
-  class Elem extends skate.Component<any> {
+  class Elem extends skate.Component<{ prop1?: string }> {
     static get props() {
       return {
         prop1: {}
       };
     }
+    prop1: string;
+    prop2: string;
   }
   customElements.define('my-element', Elem);
   const elem = new Elem();
 
+  elem.prop2 = 'value 2';
   // Set any property you want.
   props(elem, {
     prop1: 'value 1',
-    prop2: 'value 2'
+    // in TS we wanna be explicit and set only "state" props which will trigger render,
+    // so if you wanna set private props, update them via this.yourProp = newValue
+    // - following line works just fine in plain JS but it's considered a mistake, TS will explicitly tell us that we are doing something wrong
+    // prop2: 'value 2'
   });
 
   // Only returns props you've defined on your component.
   // { prop1: 'value 1' }
   props(elem);
 }
+
 { // https://github.com/skatejs/skatejs#ready-element-callback
   // NONE
 }
