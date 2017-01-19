@@ -78,7 +78,12 @@ export interface EmitOptions {
   composed?: boolean;
   detail?: any;
 }
-export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
+
+/**
+ * Emits an Event on elem that is composed, bubbles and is cancelable by default.
+ * The return value of emit() is the same as dispatchEvent().
+ */
+export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
 export var h: typeof vdom.element;
 
