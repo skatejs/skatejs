@@ -686,9 +686,10 @@
   }
   // slot projection attributes on Component references via JSX
   {
-    const Header = () => (<span>Hello</span>)
-    const Body = () => (<span>Hey yo body!</span>)
-    const Footer = () => (<span>Footer baby</span>)
+    type SFCSlotRef<E extends HTMLElement> = skate.SFC<{ slot?: string, ref?: ((instance: E) => any) }>;
+    const Header: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Hello</span>)
+    const Body: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Hey yo body!</span>)
+    const Footer: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Footer baby</span>)
 
     class Menu extends skate.Component<void>{
       private menu = [{ link: 'home', name: 'Home' }, { link: 'about', name: 'About' }];
@@ -727,10 +728,12 @@
         return (
           <Page>
             <Menu slot={Page.slots.menu} ref={_e => console.log(_e)} />
-            {/* this projection doesn't work in actual code https://github.com/skatejs/skatejs/issues/1020 */}
+
+            {/* projection and refs doesn't work by default, because you cant ref,slot a function. Instead you need to manually propagate props */}
             <Header slot={Page.slots.header} />
             <Body slot={Page.slots.body} />
-            <Footer slot="footer" />
+            <Footer slot="footer" ref={_e => console.log(_e)} />
+
           </Page>
         );
       }
