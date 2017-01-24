@@ -13,4 +13,9 @@ describe('api/Element', () => {
   it('should extend any built-in', () => {
     expect(class extends Element(HTMLDivElement) {}.prototype).to.be.an.instanceof(HTMLDivElement);
   });
+
+  it('should extend custom classes', () => {
+    class Base extends HTMLElement {}
+    expect(class extends Element(Base) {}.prototype).to.be.an.instanceOf(Base);
+  });
 });
