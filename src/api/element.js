@@ -406,5 +406,5 @@ export default function (Base = HTMLElement) {
 
       return false;
     }
-  }
+  };
 }
