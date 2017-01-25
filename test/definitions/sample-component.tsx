@@ -1,4 +1,5 @@
 import * as skate from "skatejs";
+import { Component, prop } from 'skatejs';
 
 // @TODO this override is needed because of https://github.com/Microsoft/TypeScript/pull/12488 will be fixed in TS 2.2
 (window as any).__extends = function(d: any, b: any) {
@@ -40,6 +41,26 @@ class CountUpComponent extends skate.Component<CountUpProps> {
   }
 }
 customElements.define(CountUpComponent.is, CountUpComponent);
+
+type SkateParkProps = { year: number, halfPipe: boolean }
+class SkatePark extends Component<SkateParkProps>{
+  static get is() { return 'my-skate-park' }
+  static get props(): skate.ComponentProps<SkatePark, SkateParkProps> {
+    return {
+      year: prop.number(),
+      halfPipe: prop.boolean(),
+    }
+  }
+  renderCallback({halfPipe,year}:SkateParkProps) {
+    const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
+    return (
+      <div>
+        <p>Skate park exists since {year} and it {halfPipe} Half-Pipe</p>
+      </div>
+    )
+  }
+}
+customElements.define(SkatePark.is, SkatePark);
 
 customElements.define("x-app", class extends skate.Component<{}> {
   renderCallback() {
