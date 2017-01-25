@@ -78,7 +78,12 @@ export interface EmitOptions {
   composed?: boolean;
   detail?: any;
 }
-export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
+
+/**
+ * Emits an Event on elem that is composed, bubbles and is cancelable by default.
+ * The return value of emit() is the same as dispatchEvent().
+ */
+export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
 export var h: typeof vdom.element;
 
@@ -94,7 +99,14 @@ export var prop: {
   object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
 };
 
-export function props(elem: Component<any>, props?: any): void;
+/**
+ * The props function is a getter or setter depending on if you specify the second argument.
+ * If you do not provide props, then the current state of the component is returned.
+ * If you pass props, then the current state of the component is set.
+ * When you set state, the component will re-render synchronously only if it needs to be re-rendered.
+ */
+export function props<P>(elem: Component<P>): P;
+export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
 
 export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 
