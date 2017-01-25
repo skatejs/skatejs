@@ -67,10 +67,17 @@ export interface PropOptions<El, T> {
   set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;
 }
 
-export var define: {
-  (name: string, ctor: Function): any;
-  (ctor: Function): any;
-};
+interface Define {
+  <T extends Partial<HTMLElement>>(ctor: T): T;
+  /**
+   *  @Deprecated - will be removed in 5.0
+   */
+  <T extends Partial<HTMLElement>>(name: string, ctor: T): T;
+}
+/**
+ * The define() function is syntactic sugar on top of customElements.define() that allows you to specify a static is property on your constructor that is the name of the component, or omit it altogether.
+ */
+export var define: Define;
 
 export interface EmitOptions {
   bubbles?: boolean;
