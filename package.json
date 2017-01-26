@@ -57,7 +57,7 @@
     "karma-sauce-launcher": "^1.0.0",
     "karma-saucelabs-launcher": "0.0.0",
     "karma-sourcemap-loader": "0.3.7",
-    "karma-webpack": "1.8.1",
+    "karma-webpack": "2.0.2",
     "mocha": "3.2.0",
     "react": "15.4.2",
     "react-dom": "15.4.2",
