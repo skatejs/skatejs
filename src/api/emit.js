@@ -12,7 +12,7 @@ const Event = (() => {
     return function (name, opts) {
       const e = document.createEvent('CustomEvent');
       Object.defineProperty(e, 'composed', { value: opts.composed });
-      e.initCustomEvent(name, opts.bubbles, opts.cancelable, null);
+      e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
       return e;
     };
   }
@@ -26,8 +26,7 @@ const optsDefaults = {
 
 export default function (elem, name, opts) {
   opts = assign({}, optsDefaults, opts);
-  const { detail } = opts;
   const e = new Event(name, opts);
-  Object.defineProperty(e, 'detail', { value: detail });
+  Object.defineProperty(e, 'detail', { value: opts.detail });
   return elem.dispatchEvent(e);
 }

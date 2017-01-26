@@ -3,57 +3,43 @@
 import emit from '../../../src/api/emit';
 import fixture from '../../lib/fixture';
 
-describe('api/emit', () => {
-  let child;
-  let parent;
-  let triggered;
-
-  beforeEach(() => {
-    child = document.createElement('child');
-    parent = document.createElement('parent');
-    parent.appendChild(child);
-
-    triggered = 0;
-
-    // All listeners should increment triggered.
-    // Child should always prevent default.
-    child.addEventListener('test', () => ++triggered);
-    child.addEventListener('test', e => e.preventDefault());
-    parent.addEventListener('test', () => ++triggered);
-
-    // It's not spec'd whether or not detached elements should bubble. In some
-    // they do, in some they don't. We ensure they do by adding the nodes to
-    // the document.
-    fixture(parent);
+describe.only('api/emit', () => {
+  it('default event options', done => {
+    const elem = document.createElement('div');
+    fixture(elem);
+    elem.addEventListener('test', e => {
+      expect(e.bubbles).to.equal(true);
+      expect(e.cancelable).to.equal(true);
+      expect(e.composed).to.equal(false);
+      done();
+    });
+    emit(elem, 'test');
   });
 
-  it('string eventName', () => {
-    emit(parent, 'test');
-    expect(triggered).to.equal(1);
+  it('custom event options', done => {
+    const elem = document.createElement('div');
+    fixture(elem);
+    elem.addEventListener('test', e => {
+      expect(e.bubbles).to.equal(false);
+      expect(e.cancelable).to.equal(false);
+      expect(e.composed).to.equal(true);
+      done();
+    });
+    emit(elem, 'test', {
+      bubbles: false,
+      cancelable: false,
+      composed: true
+    });
   });
 
-  it('undefined eventOptions', () => {
-    const canceled = !emit(child, 'test');
-    expect(triggered).to.equal(2);
-    expect(canceled).to.equal(true);
-  });
-
-  it('{ bubbles: false } eventOptions', () => {
-    const canceled = !emit(child, 'test', { bubbles: false });
-    expect(triggered).to.equal(1);
-    expect(canceled).to.equal(true);
-  });
-
-  it('{ cancelable: false } eventOptions', () => {
-    const canceled = !emit(child, 'test', { cancelable: false });
-    expect(triggered).to.equal(2);
-    expect(canceled).to.equal(false);
-  });
-
-  it('stopPropagation()', () => {
-    child.addEventListener('test', e => e.stopPropagation());
-    parent.addEventListener('test', () => { throw new Error('propagation should have been stopped'); });
-    const canceled = !emit(child, 'test');
-    expect(canceled).to.equal(true);
+  it('detail', done => {
+    const elem = document.createElement('div');
+    fixture(elem);
+    const detail = {};
+    elem.addEventListener('test', e => {
+      expect(e.detail).to.equal(detail);
+      done();
+    });
+    emit(elem, 'test', { detail });
   });
 });
