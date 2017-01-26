@@ -63,7 +63,7 @@
     "react-dom": "15.4.2",
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
-    "skatejs-web-components": "5.x",
+    "skatejs-web-components": "5.1.0",
     "typescript": "^2.1.4",
     "typescript-formatter": "^4.0.1",
     "webpack": "2.2.0-rc.3"
