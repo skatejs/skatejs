@@ -98,4 +98,8 @@
 
 ----
 
+- [Migrating between major versions](docs/migrating/README.md)
+
+----
+
 - [Change Log](CHANGELOG.md)
