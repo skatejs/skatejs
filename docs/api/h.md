@@ -2,6 +2,8 @@
 
 The `h` export is the result of a call to `vdom.builder()` that allows you to write [Hyperscript](https://github.com/dominictarr/hyperscript). This also adds first-class JSX support so you can just set the JSX `pragma` to `h` and carry on building stuff.
 
+
+
 ## `Hyperscript`
 
 You can use the `h` export to write Hyperscript:
@@ -101,3 +103,45 @@ customElements.define('my-component', class extends skate.Component {
   }
 });
 ```
+
+
+
+### Passing nodes from other virtual DOM libraries
+
+The `h()` function also understands other virtual DOM libraries. What this means is that you can pass a virtual node created in a nother virtual DOM library directly into `h()` as children, and it will convert it to something that it understands.
+
+For example, you might do the following in React:
+
+`custom-element.js`
+
+```js
+/** @jsx h **/
+import { Component, define, h } from 'skatejs';
+
+export default define(class extends Component {
+  static props = {
+    tbody: {}
+  }
+  renderCallback ({ tbody }) {
+    return (
+      <table>{tbody}</table>
+    );
+  }
+});
+```
+
+`react-element.js`
+
+```js
+/** @jsx React.createElement */
+
+import React from 'the-gist-above-that-patches-react';
+import { render } from 'react-dom';
+import CustomElement from './custom-element';
+
+render(<CustomElement tbody={<tbody />} />);
+```
+
+Currently we support virtual nodes from the following libraries:
+
+- React
