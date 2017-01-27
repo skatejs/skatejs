@@ -1,8 +1,10 @@
 /* eslint-env jasmine, mocha */
+/** @jsx h */
 
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 import { Component, define, vdom } from '../../../src/index';
+import { h, mount } from 'bore';
 
 describe('vdom/elements', () => {
   describe('element()', () => {
@@ -166,7 +168,9 @@ describe('vdom/elements', () => {
 
         fixture().appendChild(elem);
         afterMutations(
-          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.firstChild.localName).to.equal('div'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.localName).to.equal('span'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.textContent).to.equal(`${ch}`),
           done
         );
       });
@@ -183,7 +187,9 @@ describe('vdom/elements', () => {
 
         fixture().appendChild(elem);
         afterMutations(
-          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.firstChild.localName).to.equal('div'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.localName).to.equal('span'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.textContent).to.equal(`${ch}`),
           done
         );
       });
@@ -200,8 +206,9 @@ describe('vdom/elements', () => {
 
         fixture().appendChild(elem);
         afterMutations(
-          () => {}, // .render()
-          () => expect(elem.shadowRoot.innerHTML).to.equal(`<div><span>${ch}</span></div>`),
+          () => expect(elem.shadowRoot.firstChild.localName).to.equal('div'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.localName).to.equal('span'),
+          () => expect(elem.shadowRoot.firstChild.firstChild.textContent).to.equal(`${ch}`),
           done
         );
       });
@@ -209,7 +216,7 @@ describe('vdom/elements', () => {
 
     ['text', 1].forEach(testHelper);
 
-    it('*ul* (items) > li > a > text', (done) => {
+    it('*ul* (items) > li > a > text', () => {
       const Li = (props, chren) => vdom.element('li', () => vdom.element('a', chren));
       const Ul = props => vdom.element('ul', () => props.items.map(item => vdom.element(Li, item)));
       const Elem = define(class extends Component {
@@ -217,21 +224,19 @@ describe('vdom/elements', () => {
           vdom.element(Ul, { items: ['Item 1', 'Item 2'] });
         }
       });
-      const elem = new Elem();
-
-      fixture().appendChild(elem);
-      afterMutations(
-        () => {}, // .render()
-        () => expect(elem.shadowRoot.innerHTML).to.equal('<ul><li><a>Item 1</a></li><li><a>Item 2</a></li></ul>'),
-        done
-      );
+      return mount(<Elem />).wait()
+        .then(w => w.all('ul > li > a'))
+        .then(w => w.map(w => w.node.textContent))
+        .then(w => expect(w).to.have.length.of(2) && w)
+        .then(w => expect(w).to.include('Item 1', 'Item 2'));
     });
 
-    it('should pass through special attrs and not set them as attrs or props', (done) => {
+    it('should pass through special attrs and not set them as attrs or props', () => {
       const key = 'my-key';
       const ref = () => {};
       const statics = [];
       const El = (props) => {
+        // These assert they were passed down in correctly.
         expect(props.key).to.equal(key, 'key');
         expect(props.ref).to.equal(ref, 'ref');
         expect(props.statics).to.equal(statics, 'statics');
@@ -242,19 +247,18 @@ describe('vdom/elements', () => {
           vdom.element(El, { key, ref, statics });
         }
       });
-      const elem = new Elem();
-
-      fixture().appendChild(elem);
-      afterMutations(
-        () => expect(elem.shadowRoot.innerHTML).to.equal('<div></div>'),
-        () => {
-          const div = elem.shadowRoot;
-          expect(div.key).to.equal(undefined);
-          expect(div.ref).to.equal(undefined);
-          expect(div.statics).to.equal(undefined);
-        },
-        done
-      );
+      // This asserts there's no attr or prop on the resulting DOM node.
+      return mount(<Elem />).wait()
+        .then(w => w.one('div'))
+        .then(w => w.node)
+        .then(w => {
+          expect(w.hasAttribute('key')).to.equal(false);
+          expect(w.hasAttribute('ref')).to.equal(false);
+          expect(w.hasAttribute('statics')).to.equal(false);
+          expect(w.key).to.equal(undefined);
+          expect(w.ref).to.equal(undefined);
+          expect(w.statics).to.equal(undefined);
+        });
     });
   });
 });

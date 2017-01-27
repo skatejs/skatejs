@@ -4,12 +4,7 @@
 // arent't expecting. We also have to put the native-shim through babel because
 // it's being pulled in from the node_modules directory which is excluded by
 // default.
-require('array.from').shim();
-require('object.assign').shim();
-require('es6-promise').polyfill();
-require('@webcomponents/custom-elements');
-require('@webcomponents/shadydom');
-require('skatejs-web-components/src/native-shim');
+require('skatejs-web-components');
 const fixture = require('./lib/fixture').default;
 
 // eslint-disable-next-line no-undef
