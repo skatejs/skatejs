@@ -92,11 +92,11 @@ export function link(elem: Component<any>, target?: string): (e: Event) => void;
 export var prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
 
-  number(attr?: PropOptions<any, number>): PropOptions<any, number>;
-  boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
-  string(attr?: PropOptions<any, string>): PropOptions<any, string>;
-  array<T>(attr?: PropOptions<any, T[]>): PropOptions<any, T[]>;
-  object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
+  number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  boolean<E extends Component<any>, T extends boolean>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  string<E extends Component<any>, T extends string>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  array<E extends Component<any>, T>(attr?: PropOptions<E, T[]>): PropOptions<E, T[]>;
+  object<E extends Component<any>, T extends Object>(attr?: PropOptions<E, T>): PropOptions<E, T>;
 };
 
 /**

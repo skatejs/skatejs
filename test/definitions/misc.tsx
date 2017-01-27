@@ -245,11 +245,12 @@
     }
   });
 
-  class Elem extends skate.Component<{ str: string; arr: any[]; }> {
-    static get props() {
+  type ElemProps = { str: string; arr: string[]; };
+  class Elem extends skate.Component<ElemProps> {
+    static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
         str: skate.prop.string(),
-        arr: skate.prop.array()
+        arr: skate.prop.array<Elem, string>()
       }
     }
 
