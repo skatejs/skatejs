@@ -303,7 +303,7 @@ export function child (ch) {
     newText(ch);
   } else if (Array.isArray(ch)) {
     ch.forEach(child);
-  } else if (ctype === 'object' && ch.$$typeof.toString() === 'Symbol(react.element)') {
+  } else if (ctype === 'object' && ch.$$typeof) {
     const { key, props, ref, type } = ch;
     const { children, ...rest } = props;
     element(type, { ...{ key, ref }, rest }, children);
