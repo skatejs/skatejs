@@ -295,6 +295,21 @@ function newElementVoid (tag, ...args) {
 // Text override ensures their calls can queue if using function helpers.
 const newText = wrapIdomFunc(text);
 
+export function child (ch) {
+  const ctype = typeof ch;
+  if (ctype === 'function') {
+    ch();
+  } else if (ctype === 'string' || ctype === 'number') {
+    newText(ch);
+  } else if (Array.isArray(ch)) {
+    ch.forEach(child);
+  } else if (ctype === 'object' && ch.$$typeof.toString() === 'Symbol(react.element)') {
+    const { key, props, ref, type } = ch;
+    const { children, ...rest } = props;
+    element(type, { ...{ key, ref }, rest }, children);
+  }
+}
+
 // Convenience function for declaring an Incremental DOM element using
 // hyperscript-style syntax.
 export function element (tname, attrs, ...chren) {
@@ -324,16 +339,8 @@ export function element (tname, attrs, ...chren) {
   // Close before we render the descendant tree.
   newElementOpenEnd(tname);
 
-  chren.forEach((ch) => {
-    const ctype = typeof ch;
-    if (ctype === 'function') {
-      ch();
-    } else if (ctype === 'string' || ctype === 'number') {
-      newText(ch);
-    } else if (Array.isArray(ch)) {
-      ch.forEach(sch => sch());
-    }
-  });
+  // Convert children to vnodes.
+  chren.forEach(child);
 
   return newElementClose(tname);
 }
