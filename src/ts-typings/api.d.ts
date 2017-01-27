@@ -37,7 +37,8 @@ export class Component<Props> extends HTMLElement {
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
-  renderCallback(): VDOMElement<any> | VDOMElement<any>[] | null;
+  // NOTE: infering generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
+  renderCallback(props?:Props): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
