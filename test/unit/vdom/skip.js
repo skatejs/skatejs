@@ -1,14 +1,15 @@
 /* eslint-env jasmine, mocha, chai */
+/** @jsx h */
 
 import { Component, define, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
+import { h, mount } from 'bore';
 
 const { text, elementOpen, elementClose, elementOpenStart, elementOpenEnd, elementVoid } = vdom;
-const sr = el => el.shadowRoot;
 
 describe('vdom/skip', () => {
-  it('should skip the element children', done => {
+  it('should skip the element children', () => {
     const Elem = define(class extends Component {
       static get props () {
         return {
@@ -61,19 +62,9 @@ describe('vdom/skip', () => {
         elementClose('div');
       }
     });
-    const elem = new Elem();
-    const html = '1 <div>2 <void></void><span>3 </span>' +
-      '<div>4 <span>5 </span></div></div>6 ' +
-      '<div></div>11 <div>12 <void></void><span>13 </span><div>14 <span>15</span></div></div>';
-    fixture(elem);
-    afterMutations(
-      () => expect(sr(elem).innerHTML).to.equal(html),
-      () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
-      () => props(elem, { num: elem.num + 1 }),
-      () => expect(sr(elem).innerHTML).to.equal(html),
-      () => expect(sr(elem).querySelectorAll('void').length).to.equal(2),
-      done
-    );
+    return mount(<Elem />).wait()
+      .then(w => expect(w.all('void')).to.have.length.of(2) && w)
+      .then(w => expect(w.node.shadowRoot.textContent).to.equal('1 2 3 4 5 6 11 12 13 14 15') && w);
   });
 
   it('should allow conditional rendering', done => {

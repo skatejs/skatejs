@@ -1,43 +1,35 @@
 /* eslint-env jasmine, mocha */
+/** @jsx boreH */
 
 import * as IncrementalDOM from 'incremental-dom';
-
 import { Component, define, h, prop, props, vdom } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
+import { h as boreH, mount } from 'bore';
 
 describe('vdom/properties', () => {
-  it('class -> className', done => {
-    const elem = new (define(class extends Component {
+  it('class -> className', () => {
+    const Elem = define(class extends Component {
       renderCallback () {
         vdom.element('div', { class: 'test' });
       }
-    }))();
-    fixture(elem);
-    afterMutations(
-      () => expect(elem.shadowRoot.firstChild.className).to.equal('test'),
-      done
-    );
+    });
+    return mount(<Elem />).wait()
+      .then(w => expect(w.has('.test')).to.equal(true));
   });
 
-  it('applies custom semantics to the className attribute when used in a stack context', done => {
+  it('applies custom semantics to the className attribute when used in a stack context', () => {
     const helper = (_, children) => children();
-
-    const elem = new (define(class extends Component {
+    const Elem = define(class extends Component {
       renderCallback () {
         vdom.elementOpen(helper);
         vdom.elementOpen('div', null, null, 'className', 'inner');
         vdom.elementClose('div');
         vdom.elementClose(helper);
       }
-    }))();
-
-    fixture(elem);
-
-    afterMutations(
-      () => expect(elem.shadowRoot.firstChild.getAttribute('class')).to.equal('inner'),
-      done
-    );
+    });
+    return mount(<Elem />).wait()
+      .then(w => expect(w.has('.inner')).to.equal(true));
   });
 
   it('false should remove the attribute', done => {

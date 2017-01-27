@@ -433,33 +433,6 @@ The parameters passed to the function are:
 
 
 
-#### `get`
-
-A function that is used to return the value of the property. If this is not specified, the internal property value is returned.
-
-```js
-customElements.define('my-component', class extends skate.Component {
-  static get props () {
-    return {
-      myProp: {
-        get (elem, data) {
-          return `prefix_${data.internalValue}`;
-        }
-      }
-    };
-  }
-});
-```
-
-The parameters passed to the function are:
-
-- `elem` - the component element
-- `data` - an object containing information about the property
-  - `name` - the property name
-  - `internalValue` - the current internal value of the property
-
-
-
 #### `initial`
 
 The initial value the property should have. This is different from `default` in the sense that it is only ever invoked once to set the initial value. If this is not specified, then `default` is used in its place.
@@ -523,35 +496,3 @@ customElements.define('my-component', class extends skate.Component {
 The parameters passed to the function are:
 
 - `value` - the attribute value that needs to be coerced to the property value.
-
-
-
-#### `set`
-
-A function that is called whenever the property is set. This is also called when the property is first initialised.
-
-```js
-customElements.define('my-component', class extends skate.Component {
-  static get props () {
-    return {
-      myProp: {
-        set (elem, data) {
-          // do something
-        }
-      }
-    };
-  }
-});
-```
-
-The parameters passed to the function are:
-
-- `elem` - the component element
-- `data` - an object containing information about the property
-  - `name` - the property name
-  - `newValue` - the new property value
-  - `oldValue` - the old property value.
-
-When the property is initialised, `oldValue` will always be `null` and `newValue` will correspond to the initial value. If the property is set to `null` or `undefined`, the `oldValue` is again normalised to be `null` for consistency.
-
-*An important thing to note is that native property setters are not invoked if you use the `delete` keyword. For that reason, Skate property setters are also not able to be invoked, so keep this in mind when using your components.*

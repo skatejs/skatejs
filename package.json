@@ -43,6 +43,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.16.0",
     "birdpoo": "0.x",
+    "bore": "^1.2.0",
     "commitizen": "^2.8.2",
     "cz-conventional-changelog": "1.2.0",
     "gitbook-cli": "^2.3.0",

@@ -96,6 +96,10 @@
         - [`statics`](docs/api/vdom.md#statics)
         - [Boolean Attributes](docs/api/vdom.md#boolean-attributes)
 
----
+----
+
+- [Migrating between major versions](docs/migrating/README.md)
+
+----
 
 - [Change Log](CHANGELOG.md)
