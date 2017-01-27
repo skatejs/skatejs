@@ -17,10 +17,7 @@ describe('vdom/react', () => {
       }
     });
     return mount(<Elem />).wait()
-      .then(w => expect(w.has(
-        <div>
-          <span>text</span>
-        </div>
-      )).to.equal(true));
+      .then(w => expect(w.has('div > div > span')).to.equal(true) && w)
+      .then(w => expect(w.one('span').node.textContent).to.equal('text'));
   });
 });
