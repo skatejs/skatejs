@@ -1,4 +1,5 @@
 import * as skate from "skatejs";
+import { Component, prop } from 'skatejs';
 
 // @TODO this override is needed because of https://github.com/Microsoft/TypeScript/pull/12488 will be fixed in TS 2.2
 (window as any).__extends = function(d: any, b: any) {
@@ -7,20 +8,38 @@ import * as skate from "skatejs";
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 
-interface CountUpProps {
-  count: number;
+
+export type NumLiteral = 123 | 124 | 125;
+export type StrLiteral = 'one' | 'two' | 'three';
+export type SkateType = { trucks: string, deck: string }
+export interface CountUpProps {
+  count?: number;
+  num?: number,
+  numLiteral?: NumLiteral,
+  str?: string,
+  strLiteral?: StrLiteral,
+  bool?: boolean,
+  arr?: string[],
+  obj?: SkateType,
 }
 
-class CountUpComponent extends skate.Component<CountUpProps> {
+export class CountUpComponent extends skate.Component<CountUpProps> {
   static get is() { return 'x-countup' }
   static get props(): skate.ComponentProps<CountUpComponent, CountUpProps> {
     return {
-      count: skate.prop.number({
+      count: skate.prop.number<CountUpComponent, number>({
         attribute: true,
         default(elem, data) {
           return 7;
         },
       }),
+      num: skate.prop.number(),
+      numLiteral: skate.prop.number<CountUpComponent, NumLiteral>(),
+      str: skate.prop.string(),
+      strLiteral: skate.prop.string<CountUpComponent, StrLiteral>(),
+      bool: skate.prop.boolean(),
+      arr: skate.prop.array<CountUpComponent, string>(),
+      obj: skate.prop.object<CountUpComponent, SkateType>(),
     }
   }
 
@@ -41,16 +60,53 @@ class CountUpComponent extends skate.Component<CountUpProps> {
 }
 customElements.define(CountUpComponent.is, CountUpComponent);
 
+type SkateParkProps = { year: number, halfPipe: boolean }
+class SkatePark extends Component<SkateParkProps>{
+  static get is() { return 'my-skate-park' }
+  static get props(): skate.ComponentProps<SkatePark, SkateParkProps> {
+    return {
+      year: prop.number(),
+      halfPipe: prop.boolean(),
+    }
+  }
+  renderCallback({halfPipe,year}:SkateParkProps) {
+    const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
+    return (
+      <div>
+        <p>Skate park exists since {year} and it {halfPipe} Half-Pipe</p>
+      </div>
+    )
+  }
+}
+customElements.define(SkatePark.is, SkatePark);
+
 customElements.define("x-app", class extends skate.Component<{}> {
   renderCallback() {
     return (
       <div>
         <h1>app</h1>
-        <CountUpComponent count={100}></CountUpComponent>
+        <CountUpComponent count={100} obj={{ trucks: 'Independent', deck: 'ZERO' }}></CountUpComponent>
       </div>
     );
   }
 });
+
+export type ElmProps = { str: string; arr: any[]; };
+class Elem extends skate.Component<ElmProps> {
+  static get props(): skate.ComponentProps<Elem, ElmProps> {
+    return {
+      str: skate.prop.string(),
+      arr: skate.prop.array()
+    }
+  }
+
+  str: string;
+  arr: string[];
+
+  renderCallback() {
+    return skate.h('div', 'testing');
+  }
+}
 
 
 type ButtonProps = { onClick: (e: MouseEvent) => void };

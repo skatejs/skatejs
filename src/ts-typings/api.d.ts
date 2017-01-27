@@ -37,7 +37,8 @@ export class Component<Props> extends HTMLElement {
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
-  renderCallback(): VDOMElement<any> | VDOMElement<any>[] | null;
+  // NOTE: infering generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
+  renderCallback(props?:Props): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
@@ -67,10 +68,17 @@ export interface PropOptions<El, T> {
   set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;
 }
 
-export var define: {
-  (name: string, ctor: Function): any;
-  (ctor: Function): any;
-};
+interface Define {
+  <T extends Partial<HTMLElement>>(ctor: T): T;
+  /**
+   *  @Deprecated - will be removed in 5.0
+   */
+  <T extends Partial<HTMLElement>>(name: string, ctor: T): T;
+}
+/**
+ * The define() function is syntactic sugar on top of customElements.define() that allows you to specify a static is property on your constructor that is the name of the component, or omit it altogether.
+ */
+export const define: Define;
 
 export interface EmitOptions {
   bubbles?: boolean;
@@ -85,18 +93,18 @@ export interface EmitOptions {
  */
 export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
-export var h: typeof vdom.element;
+export const h: typeof vdom.element;
 
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
-export var prop: {
+export const prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
 
-  number(attr?: PropOptions<any, number>): PropOptions<any, number>;
-  boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
-  string(attr?: PropOptions<any, string>): PropOptions<any, string>;
-  array<T>(attr?: PropOptions<any, T[]>): PropOptions<any, T[]>;
-  object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
+  number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  boolean<E extends Component<any>, T extends boolean>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  string<E extends Component<any>, T extends string>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  array<E extends Component<any>, T>(attr?: PropOptions<E, T[]>): PropOptions<E, T[]>;
+  object<E extends Component<any>, T extends Object>(attr?: PropOptions<E, T>): PropOptions<E, T>;
 };
 
 /**
@@ -111,7 +119,7 @@ export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>
 export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 
 // @DEPRECATED
-// export var symbols: any;
+// export const symbols: any;
 
 
 //
@@ -132,7 +140,7 @@ type VDOMNode = VDOMChild | VDOMFragment | boolean | null | undefined;
 
 type VDOMElementType<P> = string | { id: string } | ComponentClass<P> | SFC<P>;
 
-export var vdom: {
+export const vdom: {
 
   element<P>(type: VDOMElementType<P>, attrs?: HTMLProps<HTMLElement> | P, ...children: VDOMChild[]): VDOMElement<any>,
   element<P>(type: VDOMElementType<P>, ...children: VDOMChild[]): VDOMElement<any>,

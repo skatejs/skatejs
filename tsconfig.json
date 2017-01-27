@@ -20,10 +20,12 @@
     "sourceMap": false,
     "moduleResolution": "node",
     "strictNullChecks": true,
+    "declaration": true,
     "noEmit": true,
     "jsx": "react",
     "jsxFactory": "skate.h",
-    "pretty": true
+    "pretty": true,
+    "outDir": "ts-output"
   },
   "include": [
     "src/index.d.ts",

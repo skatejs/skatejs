@@ -245,11 +245,12 @@
     }
   });
 
-  class Elem extends skate.Component<{ str: string; arr: any[]; }> {
-    static get props() {
+  type ElemProps = { str: string; arr: string[]; };
+  class Elem extends skate.Component<ElemProps> {
+    static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
         str: skate.prop.string(),
-        arr: skate.prop.array()
+        arr: skate.prop.array<Elem, string>()
       }
     }
 
@@ -322,6 +323,48 @@
 }
 { // https://github.com/skatejs/skatejs#renderedcallback---supersedes-static-rendered
   // NONE
+}
+{
+  // https://skatejs.gitbooks.io/skatejs/content/docs/api/define.html
+
+  const Ctor1 = skate.define(class extends HTMLElement {
+    static is = 'x-test-1';
+    private _who: string;
+    get who() { return this._who }
+    set who(val) { this._who = val }
+  });
+
+  const pureElemenInst = new Ctor1();
+  console.log(pureElemenInst.who);
+
+  const Ctor2 = skate.define(class extends HTMLElement {
+    static is = 'x-test-2'
+  });
+
+  const SkateCtor = skate.define(class extends skate.Component<{ who: string }>{
+    static get is() { return 'my-skate' }
+    static get props() {
+      return {
+        who: skate.prop.string()
+      }
+    }
+    who: string
+  });
+
+  const skElementInst = new SkateCtor();
+  console.log(skElementInst.who);
+
+  // @Deprecated
+  const SkateCtor2 = skate.define('my-skate', class SkateCmp2 extends skate.Component<{ who: string }>{
+    static get props() {
+      return {
+        who: skate.prop.string()
+      }
+    }
+    who: string
+  });
+
+
 }
 { // https://github.com/skatejs/skatejs#emit-elem-eventname-eventoptions--
   customElements.define('x-tabs', class extends skate.Component<any> {
