@@ -3,7 +3,7 @@
 import emit from '../../../src/api/emit';
 import fixture from '../../lib/fixture';
 
-describe.only('api/emit', () => {
+describe('api/emit', () => {
   it('default event options', done => {
     const elem = document.createElement('div');
     fixture(elem);
