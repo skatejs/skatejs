@@ -96,6 +96,6 @@
         - [`statics`](docs/api/vdom.md#statics)
         - [Boolean Attributes](docs/api/vdom.md#boolean-attributes)
 
----
+----
 
 - [Change Log](CHANGELOG.md)

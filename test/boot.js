@@ -9,6 +9,7 @@ require('object.assign').shim();
 require('es6-promise').polyfill();
 require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
+require('skatejs-web-components/src/native-shim');
 const fixture = require('./lib/fixture').default;
 
 // eslint-disable-next-line no-undef
