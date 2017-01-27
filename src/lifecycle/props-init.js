@@ -56,36 +56,24 @@ export function createNativePropertyDescriptor (propDef) {
   };
 
   prop.get = function get () {
-    const propData = getPropData(this, nameOrSymbol);
-    const { internalValue } = propData;
-    return propDef.get ? propDef.get(this, { name: nameOrSymbol, internalValue }) : internalValue;
+    return getPropData(this, nameOrSymbol).internalValue;
   };
 
   prop.set = function set (newValue) {
     const propData = getPropData(this, nameOrSymbol);
-
     const useDefaultValue = empty(newValue);
+
     if (useDefaultValue) {
       newValue = getDefaultValue(this, propDef);
     }
 
     newValue = propDef.coerce(newValue);
 
-    if (propDef.set) {
-      let { oldValue } = propData;
-
-      if (empty(oldValue)) {
-        oldValue = null;
-      }
-      const changeData = { name: nameOrSymbol, newValue, oldValue };
-      propDef.set(this, changeData);
-    }
-
     // Queue a re-render.
     this[$rendererDebounced](this);
 
     // Update prop data so we can use it next time.
-    propData.internalValue = propData.oldValue = newValue;
+    propData.internalValue = newValue;
 
     // Reflect to Target attribute.
     const mustReflect = propDef.attrTarget &&

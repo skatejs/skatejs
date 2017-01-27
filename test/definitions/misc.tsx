@@ -245,11 +245,12 @@
     }
   });
 
-  class Elem extends skate.Component<{ str: string; arr: any[]; }> {
-    static get props() {
+  type ElemProps = { str: string; arr: string[]; };
+  class Elem extends skate.Component<ElemProps> {
+    static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
         str: skate.prop.string(),
-        arr: skate.prop.array()
+        arr: skate.prop.array<Elem, string>()
       }
     }
 
@@ -392,7 +393,11 @@
     }
   });
 }
-{ // https://skatejs.gitbooks.io/skatejs/content/docs/api/#prop
+
+// #prop
+// @link https://skatejs.gitbooks.io/skatejs/content/docs/api/prop.html
+// ====================================================================
+{
   const myNewProp = skate.prop.create({});
   myNewProp({});
 
@@ -456,29 +461,40 @@
     }
   }
 }
-{ // https://github.com/skatejs/skatejs#props-elem-props
+
+// #props
+// @link https://skatejs.gitbooks.io/skatejs/content/docs/api/props.html
+// ====================================================================
+{
   const { define, props } = skate;
 
-  class Elem extends skate.Component<any> {
+  class Elem extends skate.Component<{ prop1?: string }> {
     static get props() {
       return {
         prop1: {}
       };
     }
+    prop1: string;
+    prop2: string;
   }
   customElements.define('my-element', Elem);
   const elem = new Elem();
 
+  elem.prop2 = 'value 2';
   // Set any property you want.
   props(elem, {
     prop1: 'value 1',
-    prop2: 'value 2'
+    // in TS we wanna be explicit and set only "state" props which will trigger render,
+    // so if you wanna set private props, update them via this.yourProp = newValue
+    // - following line works just fine in plain JS but it's considered a mistake, TS will explicitly tell us that we are doing something wrong
+    // prop2: 'value 2'
   });
 
   // Only returns props you've defined on your component.
   // { prop1: 'value 1' }
   props(elem);
 }
+
 { // https://github.com/skatejs/skatejs#ready-element-callback
   // NONE
 }
@@ -686,9 +702,10 @@
   }
   // slot projection attributes on Component references via JSX
   {
-    const Header = () => (<span>Hello</span>)
-    const Body = () => (<span>Hey yo body!</span>)
-    const Footer = () => (<span>Footer baby</span>)
+    type SFCSlotRef<E extends HTMLElement> = skate.SFC<{ slot?: string, ref?: ((instance: E) => any) }>;
+    const Header: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Hello</span>)
+    const Body: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Hey yo body!</span>)
+    const Footer: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Footer baby</span>)
 
     class Menu extends skate.Component<void>{
       private menu = [{ link: 'home', name: 'Home' }, { link: 'about', name: 'About' }];
@@ -727,10 +744,12 @@
         return (
           <Page>
             <Menu slot={Page.slots.menu} ref={_e => console.log(_e)} />
-            {/* this projection doesn't work in actual code https://github.com/skatejs/skatejs/issues/1020 */}
+
+            {/* projection and refs doesn't work by default, because you cant ref,slot a function. Instead you need to manually propagate props */}
             <Header slot={Page.slots.header} />
             <Body slot={Page.slots.body} />
-            <Footer slot="footer" />
+            <Footer slot="footer" ref={_e => console.log(_e)} />
+
           </Page>
         );
       }

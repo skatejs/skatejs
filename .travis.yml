@@ -11,11 +11,7 @@ install:
   - yarn install
 script:
   - npm run prepublish
-  - if [ "${TRAVIS_SECURE_ENV_VARS}" = "true" ]; then
-    npm test -- --ci;
-    else
-    npm test;
-    fi
+  - npm test
 after_success:
   - npm run release
 branches:
