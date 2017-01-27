@@ -37,7 +37,8 @@ export class Component<Props> extends HTMLElement {
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
-  renderCallback(): VDOMElement<any> | VDOMElement<any>[] | null;
+  // NOTE: infering generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
+  renderCallback(props?:Props): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
@@ -78,7 +79,12 @@ export interface EmitOptions {
   composed?: boolean;
   detail?: any;
 }
-export function emit(elem: EventTarget, name: string, opts?: EmitOptions): void;
+
+/**
+ * Emits an Event on elem that is composed, bubbles and is cancelable by default.
+ * The return value of emit() is the same as dispatchEvent().
+ */
+export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
 export var h: typeof vdom.element;
 
@@ -87,14 +93,21 @@ export function link(elem: Component<any>, target?: string): (e: Event) => void;
 export var prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
 
-  number(attr?: PropOptions<any, number>): PropOptions<any, number>;
-  boolean(attr?: PropOptions<any, boolean>): PropOptions<any, boolean>;
-  string(attr?: PropOptions<any, string>): PropOptions<any, string>;
-  array<T>(attr?: PropOptions<any, T[]>): PropOptions<any, T[]>;
-  object<T extends Object>(attr?: PropOptions<any, T>): PropOptions<any, T>;
+  number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  boolean<E extends Component<any>, T extends boolean>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  string<E extends Component<any>, T extends string>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  array<E extends Component<any>, T>(attr?: PropOptions<E, T[]>): PropOptions<E, T[]>;
+  object<E extends Component<any>, T extends Object>(attr?: PropOptions<E, T>): PropOptions<E, T>;
 };
 
-export function props(elem: Component<any>, props?: any): void;
+/**
+ * The props function is a getter or setter depending on if you specify the second argument.
+ * If you do not provide props, then the current state of the component is returned.
+ * If you pass props, then the current state of the component is set.
+ * When you set state, the component will re-render synchronously only if it needs to be re-rendered.
+ */
+export function props<P>(elem: Component<P>): P;
+export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
 
 export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 

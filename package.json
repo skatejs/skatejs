@@ -57,7 +57,7 @@
     "karma-sauce-launcher": "^1.0.0",
     "karma-saucelabs-launcher": "0.0.0",
     "karma-sourcemap-loader": "0.3.7",
-    "karma-webpack": "1.8.1",
+    "karma-webpack": "2.0.2",
     "mocha": "3.2.0",
     "react": "15.4.2",
     "react-dom": "15.4.2",
@@ -73,7 +73,7 @@
     "docs:watch": "npm run gitbook install && gitbook serve",
     "prepublish": "rm -rf dist && webpack && webpack -p && webpack --config webpack.config.bundle.js && webpack -p --config webpack.config.bundle.js",
     "release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "npm run prepublish && node dist/ && semistandard && karma start --single-run && npm run test:ts",
+    "test": "npm run prepublish && node dist/ && semistandard && karma start --single-run --ci && npm run test:ts",
     "test:ts": "tsfmt -r && tsc -p ./",
     "test:watch": "karma start"
   },
