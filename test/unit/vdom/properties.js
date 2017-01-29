@@ -55,18 +55,6 @@ describe('vdom/properties', () => {
     );
   });
 
-  it('should not set properties on SVG elements', done => {
-    expect(() => {
-      const Test = define(class extends Component {
-        renderCallback () {
-          vdom.element('svg', { width: 100 });
-        }
-      });
-      fixture(new Test());
-      afterMutations(done);
-    }).to.not.throw(Error);
-  });
-
   it('should set props as properties instead of attributes on ctor references', () => {
     let fixture = document.createElement('div');
     const Elem = define(class extends Component {
