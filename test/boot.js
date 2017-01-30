@@ -4,8 +4,7 @@
 // arent't expecting. We also have to put the native-shim through babel because
 // it's being pulled in from the node_modules directory which is excluded by
 // default.
-import '@webcomponents/custom-elements';
-import '@webcomponents/shadydom';
+import 'skatejs-web-components';
 import fixture from './lib/fixture';
 
 // eslint-disable-next-line no-undef
