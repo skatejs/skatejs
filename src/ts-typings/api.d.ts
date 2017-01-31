@@ -68,10 +68,17 @@ export interface PropOptions<El, T> {
   set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;
 }
 
-export var define: {
-  (name: string, ctor: Function): any;
-  (ctor: Function): any;
-};
+interface Define {
+  <T extends Partial<HTMLElement>>(ctor: T): T;
+  /**
+   *  @Deprecated - will be removed in 5.0
+   */
+  <T extends Partial<HTMLElement>>(name: string, ctor: T): T;
+}
+/**
+ * The define() function is syntactic sugar on top of customElements.define() that allows you to specify a static is property on your constructor that is the name of the component, or omit it altogether.
+ */
+export const define: Define;
 
 export interface EmitOptions {
   bubbles?: boolean;
@@ -86,11 +93,11 @@ export interface EmitOptions {
  */
 export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
-export var h: typeof vdom.element;
+export const h: typeof vdom.element;
 
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
-export var prop: {
+export const prop: {
   create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
 
   number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
@@ -112,7 +119,7 @@ export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>
 export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
 
 // @DEPRECATED
-// export var symbols: any;
+// export const symbols: any;
 
 
 //
@@ -133,7 +140,7 @@ type VDOMNode = VDOMChild | VDOMFragment | boolean | null | undefined;
 
 type VDOMElementType<P> = string | { id: string } | ComponentClass<P> | SFC<P>;
 
-export var vdom: {
+export const vdom: {
 
   element<P>(type: VDOMElementType<P>, attrs?: HTMLProps<HTMLElement> | P, ...children: VDOMChild[]): VDOMElement<any>,
   element<P>(type: VDOMElementType<P>, ...children: VDOMChild[]): VDOMElement<any>,

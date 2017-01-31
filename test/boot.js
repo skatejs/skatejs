@@ -4,8 +4,8 @@
 // arent't expecting. We also have to put the native-shim through babel because
 // it's being pulled in from the node_modules directory which is excluded by
 // default.
-require('skatejs-web-components');
-const fixture = require('./lib/fixture').default;
+import 'skatejs-web-components';
+import fixture from './lib/fixture';
 
 // eslint-disable-next-line no-undef
 mocha.setup({ timeout: 10000 });
