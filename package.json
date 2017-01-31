@@ -43,7 +43,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.16.0",
     "birdpoo": "0.x",
-    "bore": "latest",
+    "bore": "^1.1.0",
     "commitizen": "^2.8.2",
     "cz-conventional-changelog": "1.2.0",
     "gitbook-cli": "^2.3.0",
@@ -63,7 +63,7 @@
     "react-dom": "15.4.2",
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
-    "skatejs-web-components": "5.1.0",
+    "skatejs-web-components": "^5.1.0",
     "typescript": "^2.1.4",
     "typescript-formatter": "^4.0.1",
     "webpack": "2.2.1"

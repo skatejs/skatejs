@@ -57,30 +57,6 @@ describe('vdom/events (on*)', () => {
     );
   });
 
-  it('should emit events from shadow dom', done => {
-    let called = false;
-    let detail = null;
-
-    const myel = new (define(class extends Component {
-      renderCallback () {
-        vdom.element('div', {}, vdom.element.bind(null, 'span'));
-      }
-    }))();
-
-    myel.addEventListener('test', (e) => {
-      called = true;
-      detail = e.detail;
-    });
-    fixture().appendChild(myel);
-
-    afterMutations(
-      () => emit(myel.shadowRoot.querySelector('span'), 'test', { detail: 'detail' }),
-      () => expect(called).to.equal(true),
-      () => expect(detail).to.equal('detail'),
-      done
-    );
-  });
-
   it('should not fail for listeners that are not functions', done => {
     const myel = new (define(class extends Component {
       static get props () {
