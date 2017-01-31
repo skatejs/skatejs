@@ -8,7 +8,7 @@ function create (propLocal) {
   const el = new (define(class extends Component {
     static get props () {
       return {
-        test: assign({ attribute: true }, propLocal)
+        test: assign(propLocal, { attribute: true })
       };
     }
   }))();
@@ -31,7 +31,7 @@ function testTypeValues (type, values, done) {
   }, 1);
 }
 
-describe('api/prop', () => {
+describe.only('api/prop', () => {
   describe('array', () => {
     let elem;
 
@@ -217,17 +217,25 @@ describe('api/prop', () => {
     });
   });
 
-  describe('overriding', () => {
-    it('boolean', () => {
-      expect(prop.boolean({ default: true }).default).to.equal(true);
+  describe('sanity', () => {
+    const types = ['array', 'boolean', 'number', 'object', 'string'];
+
+    describe('default one-way attribute -> prop reflection', () => {
+      const attribute = { source: true };
+      types.forEach(type => {
+        it(type, () => {
+          expect(prop[type]().attribute).to.deep.equal(attribute);
+        });
+      });
     });
 
-    it('number', () => {
-      expect(prop.number({ default: 1 }).default).to.equal(1);
-    });
-
-    it('string', () => {
-      expect(prop.string({ default: 'test' }).default).to.equal('test');
+    describe('overriding', () => {
+      const values = [[], true, 1, {}, 'string'];
+      types.forEach((type, index) => {
+        it(type, () => {
+          expect(prop[type]({ default: values[index] }).default).to.equal(values[index]);
+        });
+      });
     });
   });
 });
