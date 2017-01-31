@@ -4,7 +4,6 @@ import * as IncrementalDOM from 'incremental-dom';
 import { Component, define, vdom } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import native from '../../../src/util/native';
-import uniqueId from '../../../src/util/unique-id';
 
 const { MutationObserver } = window;
 

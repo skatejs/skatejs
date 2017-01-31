@@ -1,6 +1,6 @@
 /* eslint-env jasmine, mocha */
 
-import { Component, define } from '../../../src/index';
+import { define } from '../../../src/index';
 
 const { customElements, HTMLElement } = window;
 

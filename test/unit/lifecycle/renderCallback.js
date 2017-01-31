@@ -3,7 +3,6 @@
 import { Component, define } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import uniqueId from '../../../src/util/unique-id';
 
 const { sinon } = window;
 
