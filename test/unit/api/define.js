@@ -75,44 +75,4 @@ describe('api/define', () => {
       });
     });
   });
-
-  describe('deprecated', () => {
-    it('should not register without any properties', () => {
-      expect(() => define('x-test')).to.throw(Error);
-    });
-
-    it('should take an object and extend Component', () => {
-      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
-    });
-
-    it('should be able to take an ES5 extension of Component', () => {
-      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
-    });
-
-    it('should take a constructor that extends Component', () => {
-      expect(define('x-test', class extends Component {}).prototype).to.be.an.instanceof(Component);
-    });
-
-    it('should register components with unique names', () => {
-      const name = 'x-test-api-define';
-      const elem1 = new (define(name, class extends Component {}))();
-      const elem2 = new (define(name, class extends Component {}))();
-      const elem3 = new (define(name, class extends Component {}))();
-
-      expect(elem1.localName).to.equal('x-test-api-define');
-      expect(elem2.localName).not.to.equal('x-test-api-define');
-      expect(elem3.localName).not.to.equal('x-test-api-define');
-
-      expect(elem2.localName.indexOf('x-test-api-define') === 0).to.equal(true);
-      expect(elem3.localName.indexOf('x-test-api-define') === 0).to.equal(true);
-    });
-
-    it('should register components with unique names with multiple versions of skate', () => {
-      const name = 'x-test-api-define-multi';
-      window.customElements.define(name, class extends Component {});
-      expect(() => {
-        define(name, class extends Component {});
-      }).to.not.throw();
-    });
-  });
 });

@@ -1,7 +1,8 @@
+const { createConfig, sourceMaps } = require('@webpack-blocks/webpack2');
+const { bundle } = require('./webpack-blocks');
 const cwd = process.cwd();
 const path = require('path');
 const browsers = require(path.join(cwd, 'karma.browsers'));
-const webpackConfig = require('./webpack.config.bundle');
 
 module.exports = function (config) {
   // list of files / patterns to load in the browser
@@ -43,7 +44,7 @@ module.exports = function (config) {
     // karma watches the test entry points
     // (you don't need to specify the entry option)
     // webpack watches dependencies
-    webpack: Object.assign({}, webpackConfig),
+    webpack: createConfig([ bundle(), sourceMaps('inline-source-map') ]),
 
     // test results reporter to use
     // possible values: 'dots', 'progress'

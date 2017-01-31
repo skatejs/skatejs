@@ -6,7 +6,6 @@ import afterMutations from '../../lib/after-mutations';
 import {createNativePropertyDescriptor} from '../../../src/lifecycle/props-init';
 import fixture from '../../lib/fixture';
 import PropDefinition from '../../../src/util/prop-definition';
-import uniqueId from '../../../src/util/unique-id';
 
 describe('lifecycle/property', () => {
   function create (definition = {}, name = 'testName', value) {
@@ -206,15 +205,14 @@ describe('lifecycle/property', () => {
       });
 
       it('1st mutation updates prop', (done) => {
-        const safe = uniqueId();
-        define(safe, {
-          props: {
+        const Elem = define(class extends Component {
+          static props = {
             foo: {
               attribute: true
             }
           }
         });
-        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        const elem = fixture(`<${Elem.is} foo="bar" />`).firstChild;
         afterMutations(
           () => (elem.foo = 'bar'),
           () => expect(elem.getAttribute('foo')).to.equal('bar'),
@@ -225,15 +223,14 @@ describe('lifecycle/property', () => {
       });
 
       it('2nd mutation updates prop', (done) => {
-        const safe = uniqueId();
-        define(safe, {
-          props: {
+        const Elem = define(class extends Component {
+          static props = {
             foo: {
               attribute: true
             }
           }
         });
-        const elem = fixture(`<${safe} foo="bar" />`).firstChild;
+        const elem = fixture(`<${Elem.is} foo="bar" />`).firstChild;
         afterMutations(
           () => (elem.foo = 'bar'),
           () => expect(elem.getAttribute('foo')).to.equal('bar'),
@@ -614,15 +611,14 @@ describe('lifecycle/property', () => {
 
   describe('attribute one-way', () => {
     it('source is not updated', (done) => {
-      const safe = uniqueId();
-      define(safe, {
-        props: {
+      const Elem = define(class extends Component {
+        static props = {
           prop: {
             attribute: { source: 'in' }
           }
         }
       });
-      const elem = fixture(`<${safe} in="val" />`).firstChild;
+      const elem = fixture(`<${Elem.is} in="val" />`).firstChild;
       afterMutations(() => {
         expect(elem.getAttribute('in')).to.equal('val');
         expect(elem.prop).to.equal('val');
@@ -636,15 +632,14 @@ describe('lifecycle/property', () => {
     });
 
     it('source change, updates prop', (done) => {
-      const safe = uniqueId();
-      define(safe, {
-        props: {
+      const Elem = define(class extends Component {
+        static props = {
           prop: {
             attribute: { source: 'in' }
           }
         }
       });
-      const elem = fixture(`<${safe} in="val" />`).firstChild;
+      const elem = fixture(`<${Elem.is} in="val" />`).firstChild;
       afterMutations(() => {
         expect(elem.getAttribute('in')).to.equal('val');
         expect(elem.prop).to.equal('val');
@@ -656,33 +651,31 @@ describe('lifecycle/property', () => {
     });
 
     it('prop change, updates target', (done) => {
-      const safe = uniqueId();
-      define(safe, {
-        props: {
+      const Elem = define(class extends Component {
+        static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
           }
         }
       });
-      const elem = fixture(`<${safe} in="val" out="abc"/>`).firstChild;
+      const elem = fixture(`<${Elem.is} in="val" out="abc"/>`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).to.equal('val');
-        expect(elem.prop).to.equal('val');
-        expect(elem.getAttribute('out')).to.equal('val');
+        expect(elem.getAttribute('in')).to.equal('val', 'attr in');
+        expect(elem.prop).to.equal('val', 'prop out');
+        expect(elem.getAttribute('out')).to.equal('val', 'attr in');
         elem.prop = 'val1';
         afterMutations(() => {
-          expect(elem.getAttribute('in')).to.equal('val');
-          expect(elem.prop).to.equal('val1');
-          expect(elem.getAttribute('out')).to.equal('val1');
+          expect(elem.getAttribute('in')).to.equal('val', 'attr in');
+          expect(elem.prop).to.equal('val1', 'prop out');
+          expect(elem.getAttribute('out')).to.equal('val1', 'attr in');
           done();
         });
       });
     });
 
     it('source change, updates target', (done) => {
-      const safe = uniqueId();
-      define(safe, {
-        props: {
+      const Elem = define(class extends Component {
+        static props = {
           prop: {
             attribute: { source: 'in', target: 'out' },
             initial: 'init',
@@ -690,7 +683,7 @@ describe('lifecycle/property', () => {
           }
         }
       });
-      const elem = fixture(`<${safe} />`).firstChild;
+      const elem = fixture(`<${Elem.is} />`).firstChild;
       afterMutations(() => {
         expect(elem.getAttribute('in')).to.equal(null);
         expect(elem.getAttribute('out')).to.equal('init');
@@ -718,15 +711,14 @@ describe('lifecycle/property', () => {
     });
 
     it('target change is ignored', (done) => {
-      const safe = uniqueId();
-      define(safe, {
-        props: {
+      const Elem = define(class extends Component {
+        static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
           }
         }
       });
-      const elem = fixture(`<${safe} out="abc"/>`).firstChild;
+      const elem = fixture(`<${Elem.is} out="abc"/>`).firstChild;
       afterMutations(() => {
         expect(elem.prop).to.equal(null);
         expect(elem.getAttribute('out')).to.equal('abc');

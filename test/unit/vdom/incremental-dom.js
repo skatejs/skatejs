@@ -33,10 +33,8 @@ describe('IncrementalDOM', () => {
       const skip = !native(MutationObserver);
 
       function renderCounter () {
-        const safe = uniqueId();
         let renderCount = 0;
-
-        define(safe, class extends Component {
+        const Elem = define(class extends Component {
           static get props () {
             return {
               foo: { attribute: true },
@@ -49,7 +47,7 @@ describe('IncrementalDOM', () => {
         });
 
         return {
-          tag: safe,
+          tag: Elem.is,
           renderCount: () => renderCount
         };
       }
