@@ -31,7 +31,7 @@ function testTypeValues (type, values, done) {
   }, 1);
 }
 
-describe.only('api/prop', () => {
+describe('api/prop', () => {
   describe('array', () => {
     let elem;
 
