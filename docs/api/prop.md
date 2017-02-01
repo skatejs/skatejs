@@ -2,6 +2,12 @@
 
 Skate has some built-in property definitions to help you with defining consistent property behaviour within your components. All built-in properties are functions that return a property definition.
 
+By default, all built-in props are have one-way reflection with their corresponding attribute. This ensures that you get three things out of the box:
+
+- A consistent API for your consumers because they can still use HTML attributes if necessary to update the components.
+- Less friction for the developer because they don't need to think about the `attribute` API, unless they need special behaviour.
+- Good performance. You should always be setting `props` when possible which doesn't inherently affect performance because there's no round trip back to the attribute.
+
 ```js
 skate.prop.boolean();
 ```
@@ -31,8 +37,6 @@ skate.prop.boolean({
 Generally built-in properties return a definition containing `default`, `coerce`, `deserialize` and `serialize` options.
 
 *Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`.
-
-*Properties are only linked to attributes if the `attribute` option is set. Each built-in property, if possible, will supply a `deserialize` and `serialize` option but will not be linked by default.*
 
 
 
