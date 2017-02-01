@@ -4,7 +4,6 @@ import * as IncrementalDOM from 'incremental-dom';
 import { Component, define, vdom } from '../../../src/index';
 import fixture from '../../lib/fixture';
 import native from '../../../src/util/native';
-import uniqueId from '../../../src/util/unique-id';
 
 const { MutationObserver } = window;
 
@@ -33,10 +32,8 @@ describe('IncrementalDOM', () => {
       const skip = !native(MutationObserver);
 
       function renderCounter () {
-        const safe = uniqueId();
         let renderCount = 0;
-
-        define(safe, class extends Component {
+        const Elem = define(class extends Component {
           static get props () {
             return {
               foo: { attribute: true },
@@ -49,7 +46,7 @@ describe('IncrementalDOM', () => {
         });
 
         return {
-          tag: safe,
+          tag: Elem.is,
           renderCount: () => renderCount
         };
       }
