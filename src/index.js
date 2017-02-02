@@ -7,7 +7,6 @@ import define from './api/define';
 import emit from './api/emit';
 import link from './api/link';
 import props from './api/props';
-import ready from './api/ready';
 
 const h = vdom.builder();
 
@@ -20,7 +19,6 @@ export {
   link,
   prop,
   props,
-  ready,
   symbols,
   vdom
 };

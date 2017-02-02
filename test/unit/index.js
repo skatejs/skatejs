@@ -37,10 +37,6 @@ describe('exports', () => {
     expect(api.props).to.be.a('function');
   });
 
-  it('skate.ready', () => {
-    expect(api.ready).to.be.a('function');
-  });
-
   it('skate.symbols', () => {
     expect(api.symbols).to.be.an('object');
     expect(api.symbols.name).to.equal(symbols.name);

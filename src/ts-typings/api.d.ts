@@ -116,8 +116,6 @@ export const prop: {
 export function props<P>(elem: Component<P>): P;
 export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
 
-export function ready(elem: Component<any>, done: (c: Component<any>) => void): void;
-
 // @DEPRECATED
 // export const symbols: any;
 
