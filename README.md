@@ -140,7 +140,7 @@ If you want finer grained control about which polyfills you use, you'll have to 
 
 ### Transpilation and native custom element gotchas
 
-*If you’re using Babel or some other tool to transpile your ES2015 code to ES5, simply import `skatejs` and `skatejs-web-components` (or selectively include the polyfills) as normal and ignore the following.*
+*If you’re using Babel or some other tool to transpile your ES2015 code to ES5, simply import `skatejs` and `skatejs-web-components` (or selectively include the polyfills) as needed and ignore the following.*
 
 Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
 
