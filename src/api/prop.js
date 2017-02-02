@@ -9,9 +9,11 @@ export function create (def) {
   };
 }
 
+const attribute = { source: true };
 const parseIfNotEmpty = val => (empty(val) ? null : JSON.parse(val));
 
 export const array = create({
+  attribute,
   coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
   default: () => [],
   deserialize: parseIfNotEmpty,
@@ -19,6 +21,7 @@ export const array = create({
 });
 
 export const boolean = create({
+  attribute,
   coerce: val => !!val,
   default: false,
   // TODO: 'false' string must deserialize to false for angular 1.x to work
@@ -32,6 +35,7 @@ export const boolean = create({
 const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
 
 export const number = create({
+  attribute,
   default: 0,
   coerce: zeroIfEmptyOrNumberIncludesNaN,
   deserialize: zeroIfEmptyOrNumberIncludesNaN,
@@ -39,6 +43,7 @@ export const number = create({
 });
 
 export const string = create({
+  attribute,
   default: '',
   coerce: toNullOrString,
   deserialize: toNullOrString,
@@ -46,6 +51,7 @@ export const string = create({
 });
 
 export const object = create({
+  attribute,
   default: () => ({}),
   deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
