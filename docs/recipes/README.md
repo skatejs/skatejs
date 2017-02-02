@@ -185,6 +185,16 @@ You can also use symbols on your element just like we did above with standard me
 
 There is a [React integration library](https://github.com/webcomponents/react-integration) that allows you to write web components - written with any *true* web component library - and convert them to react components using a single function. Once converted, it can be used in React just like you would use a normal React component.
 
+### Patching `React.createElement()` for better DOM integration
+
+If you want better control over attributes, properties and events, or want to pass off custom element constructors as React component names (`<CustomElement />`) have a look at [this gist](https://gist.github.com/treshugart/2fb509a8828adf7fee5245bfa2a54ba7).
+
+### Rendering React nodes in `renderCallback()`
+
+Skate now supports rendering a React node directly in `renderCallback()`. This means you can pass a React node as a prop and directly render it. This works very well in conjunction with the gist linked to above because you can render a custom element just like are React element and pass on React virtual nodes to it and it will render them just like it would a Skate virtual node.
+
+See the documentation on `h()` for more information.
+
 
 
 ## Form Behaviour and the Shadow DOM

@@ -3,7 +3,6 @@
 import { Component, define } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
-import uniqueId from '../../../src/util/unique-id';
 
 const { sinon } = window;
 
@@ -24,23 +23,20 @@ describe('lifecycle/renderCallback', () => {
 
   it('should get called before descendants are initialised', (done) => {
     const called = [];
-    const elem1 = uniqueId();
-    const elem2 = uniqueId();
-
-    define(elem1, class extends Component {
+    const Elem1 = define(class extends Component {
       constructor () {
         super();
         called.push('elem1');
       }
     });
-    define(elem2, class extends Component {
+    const Elem2 = define(class extends Component {
       constructor () {
         super();
         called.push('elem2');
       }
     });
 
-    fixture(`<${elem1}><${elem2}></${elem2}></${elem1}>`);
+    fixture(`<${Elem1.is}><${Elem2.is}></${Elem2.is}></${Elem1.is}>`);
     afterMutations(
       () => expect(called[0]).to.equal('elem1'),
       () => expect(called[1]).to.equal('elem2'),

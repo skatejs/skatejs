@@ -2,11 +2,13 @@
 
 import { define } from '../../../src';
 
+const { HTMLElement } = window;
+
 describe('vdom/shadow-dom', () => {
   let Elem;
 
   beforeEach(() => {
-    Elem = define({
+    Elem = define(class extends HTMLElement {
       renderCallback () {}
     });
   });

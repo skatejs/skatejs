@@ -1,41 +1,32 @@
+import assign from '../util/assign';
 import root from '../util/root';
 
-const Event = ((TheEvent) => {
-  if (TheEvent) {
-    try {
-      new TheEvent('emit-init'); // eslint-disable-line no-new
-    } catch (e) {
-      return undefined;
-    }
+// Once the Event constructor is newable cross-browser, this can be reomved.
+const Event = (() => {
+  try {
+    const { Event } = root;
+    // eslint-disable-next-line
+    new Event('test');
+    return Event;
+  } catch (e) {
+    return function (name, opts) {
+      const e = document.createEvent('CustomEvent');
+      Object.defineProperty(e, 'composed', { value: opts.composed });
+      e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+      return e;
+    };
   }
-  return TheEvent;
-})(root.Event);
+})();
 
-function createCustomEvent (name, opts = {}) {
-  const { detail } = opts;
-  delete opts.detail;
+const optsDefaults = {
+  bubbles: true,
+  cancelable: true,
+  composed: false
+};
 
-  let e;
-  if (Event) {
-    e = new Event(name, opts);
-    Object.defineProperty(e, 'detail', { value: detail });
-  } else {
-    e = document.createEvent('CustomEvent');
-    Object.defineProperty(e, 'composed', { value: opts.composed });
-    e.initCustomEvent(name, opts.bubbles, opts.cancelable, detail);
-  }
-  return e;
-}
-
-export default function (elem, name, opts = {}) {
-  if (opts.bubbles === undefined) {
-    opts.bubbles = true;
-  }
-  if (opts.cancelable === undefined) {
-    opts.cancelable = true;
-  }
-  if (opts.composed === undefined) {
-    opts.composed = true;
-  }
-  return elem.dispatchEvent(createCustomEvent(name, opts));
+export default function (elem, name, opts) {
+  opts = assign({}, optsDefaults, opts);
+  const e = new Event(name, opts);
+  Object.defineProperty(e, 'detail', { value: opts.detail });
+  return elem.dispatchEvent(e);
 }
