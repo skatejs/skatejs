@@ -1,7 +1,6 @@
 import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
-  created as $created,
   ctorObservedAttributes as $ctorObservedAttributes,
   ctorProps as $ctorProps,
   ctorCreateInitProps as $ctorCreateInitProps,
@@ -139,9 +138,6 @@ export default class extends HTMLElement {
 
     const { constructor } = this;
 
-    // Used for the ready() function so it knows when it can call its callback.
-    this[$created] = true;
-
     // TODO refactor to not cater to Safari < 10. This means we can depend on
     // built-in property descriptors.
     // Must be defined on constructor and not from a superclass
@@ -176,18 +172,6 @@ export default class extends HTMLElement {
     if (isFunction(created)) {
       deprecated(this, 'static created', 'constructor');
       created(this);
-    }
-
-    // DEPRECATED
-    //
-    // Feature has rarely been used.
-    //
-    // Created should be set before invoking the ready listeners.
-    const elemData = data(this);
-    const readyCallbacks = elemData.readyCallbacks;
-    if (readyCallbacks) {
-      readyCallbacks.forEach(cb => cb(this));
-      delete elemData.readyCallbacks;
     }
   }
 
