@@ -140,6 +140,8 @@ If you want finer grained control about which polyfills you use, you'll have to 
 
 ### Transpilation and native custom element gotchas
 
+*If you’re using Babel or some other tool to transpile your ES2015 code to ES5, you don’t need to worry about this if including `skatejs-web-components`.*
+
 Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
 
 When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain. If you want to deliever native classes you have to point to the non-transpiled Skate source: `import { ... } from 'skatejs/src';`. Currently this is not supported by our API versioning but we have an [issue](#992) to work around this.
