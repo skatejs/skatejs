@@ -1,6 +1,6 @@
 # `h`
 
-The `h` export is the result of a call to `vdom.builder()` that allows you to write [Hyperscript](https://github.com/dominictarr/hyperscript). This also adds first-class JSX support so you can just set the JSX `pragma` to `h` and carry on building stuff.
+The `h` export allows you to write virtual DOM using a [Hyperscript](https://github.com/dominictarr/hyperscript)-like API. This also adds first-class JSX support so you can just set the JSX `pragma` to `h` and carry on building stuff.
 
 
 
