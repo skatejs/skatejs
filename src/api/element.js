@@ -1,7 +1,6 @@
 import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
-  created as $created,
   ctorObservedAttributes as $ctorObservedAttributes,
   ctorProps as $ctorProps,
   ctorCreateInitProps as $ctorCreateInitProps,
@@ -108,9 +107,6 @@ export default function (Base = HTMLElement) {
       super(...args);
 
       const { constructor } = this;
-
-      // Used for the ready() function so it knows when it can call its callback.
-      this[$created] = true;
 
       // TODO refactor to not cater to Safari < 10. This means we can depend on
       // built-in property descriptors.
