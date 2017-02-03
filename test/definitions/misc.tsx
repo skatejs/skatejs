@@ -570,23 +570,6 @@
     }
   });
 }
-{ // https://github.com/skatejs/skatejs#vdombuilder-
-  const {vdom} = skate;
-  const h = vdom.builder();
-  customElements.define('my-component', class extends skate.Component<any> {
-    renderCallback() {
-      return h('div', { id: 'test', }, h('p', 'test'));
-    }
-  });
-}
-{ // https://github.com/skatejs/skatejs#vdombuilder-elements
-  const [div, p] = skate.vdom.builder('div', 'p');
-  customElements.define('my-component', class extends skate.Component<any> {
-    renderCallback() {
-      return div({ id: 'mydiv' }, p('test'));
-    }
-  });
-}
 { // https://github.com/skatejs/skatejs#component-constructor
   class MyElement extends skate.Component<any> { }
   customElements.define('my-element', MyElement);

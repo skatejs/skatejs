@@ -8,7 +8,7 @@ import emit from './api/emit';
 import link from './api/link';
 import props from './api/props';
 
-const h = vdom.builder();
+const { h } = vdom;
 
 export {
   Component,

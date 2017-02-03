@@ -143,9 +143,6 @@ export const vdom: {
   element<P>(type: VDOMElementType<P>, attrs?: HTMLProps<HTMLElement> | P, ...children: VDOMChild[]): VDOMElement<any>,
   element<P>(type: VDOMElementType<P>, ...children: VDOMChild[]): VDOMElement<any>,
 
-  builder(): typeof vdom.element;
-  builder(...tags: string[]): ((attrs?: HTMLProps<HTMLElement>, ...children: VDOMChild[]) => VDOMElement<any>)[];
-
   attr(...args: any[]): void;
   elementClose: Function;
   elementOpen: Function;

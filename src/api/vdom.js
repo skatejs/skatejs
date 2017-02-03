@@ -345,17 +345,8 @@ export function element (tname, attrs, ...chren) {
   return newElementClose(tname);
 }
 
-// Even further convenience for building a DSL out of JavaScript functions or hooking into standard
-// transpiles for JSX (React.createElement() / h).
-export function builder (...tags) {
-  if (tags.length === 0) {
-    return (...args) => element.bind(null, ...args);
-  }
-  return tags.map(tag =>
-    (...args) =>
-      element.bind(null, tag, ...args)
-  );
-}
+// Hyperscript style API.
+export const h = (...args) => element.bind(null, ...args);
 
 // We don't have to do anything special for the text function; it's just a
 // straight export from Incremental DOM.

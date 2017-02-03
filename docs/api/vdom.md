@@ -4,38 +4,9 @@ Skate includes several helpers for creating virtual elements with Incremental DO
 
 
 
-## `vdom.builder ()`
-
-Calling `vdom.builder()` without any arguments returns a function that you can call in `renderCallback()` to create elements. This is how the `h` export is created.
-
-```js
-const h = vdom.builder();
-customElements.define('my-component', class extends skate.Component {
-  renderCallback () {
-    return h('div', { id: 'test', }, h('p', 'test'));
-  }
-});
-```
-
-
-
-## `vdom.builder (...elements)`
-
-When `vdom.builder()` is called with arguments, it returns an array of functions that create elements corresponding to the arguments that you've passed in. This makes creating a DSL very simple:
-
-```js
-const [ div, p ] = skate.vdom.builder('div', 'p');
-customElements.define('my-component', class extends skate.Component {
-  renderCallback() {
-    return div({ id: 'mydiv' }, p('test'));
-  }
-});
-```
-
-
 ## [DEPRECATED] `vdom.element (elementName, attributesOrChildren, ...children)`
 
-*This has been deprecated in favour of using the `vdom.builder()` API, or the `h` export directly.*
+*This has been deprecated in favour of using the the `h` export directly.*
 
 The `elementName` argument is the name of the element you want to create. This can be a string or a function. If it's a function, it is treated as a [component constructor](#component-constructor) or [function helper](#function-helper).
 
