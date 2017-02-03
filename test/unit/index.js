@@ -1,7 +1,6 @@
 /* eslint-env jasmine, mocha */
 
 import * as api from '../../src/index';
-import * as symbols from '../../src/util/symbols';
 
 describe('exports', () => {
   it('skate', () => {
@@ -35,11 +34,6 @@ describe('exports', () => {
 
   it('skate.props', () => {
     expect(api.props).to.be.a('function');
-  });
-
-  it('skate.symbols', () => {
-    expect(api.symbols).to.be.an('object');
-    expect(api.symbols.name).to.equal(symbols.name);
   });
 
   it('skate.h', () => {

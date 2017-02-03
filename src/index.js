@@ -1,5 +1,4 @@
 import * as prop from './api/prop';
-import * as symbols from './api/symbols';
 import * as vdom from './api/vdom';
 import Component from './api/component';
 import Element from './api/element';
@@ -19,6 +18,5 @@ export {
   link,
   prop,
   props,
-  symbols,
   vdom
 };
