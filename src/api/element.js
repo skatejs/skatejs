@@ -330,25 +330,6 @@ export default function (Base = HTMLElement) {
     }
 
     // Skate
-    static extend (definition = {}, Base = this) {
-      // Create class for the user.
-      class Ctor extends Base {}
-
-      // For inheriting from the object literal.
-      const opts = getOwnPropertyDescriptors(definition);
-      const prot = getOwnPropertyDescriptors(definition.prototype);
-
-      // Prototype is non configurable (but is writable).
-      delete opts.prototype;
-
-      // Pass on static and instance members from the definition.
-      Object.defineProperties(Ctor, opts);
-      Object.defineProperties(Ctor.prototype, prot);
-
-      return Ctor;
-    }
-
-    // Skate
     //
     // DEPRECATED
     //
