@@ -536,10 +536,6 @@
   // { prop1: 'value 1' }
   props(elem);
 }
-
-{ // https://github.com/skatejs/skatejs#ready-element-callback
-  // NONE
-}
 { // https://github.com/skatejs/skatejs#h
   customElements.define('my-component', class extends skate.Component<any> {
     renderCallback() {

@@ -1,5 +1,4 @@
 export const connected = '____skate_connected';
-export const created = '____skate_created';
 
 // DEPRECATED
 //

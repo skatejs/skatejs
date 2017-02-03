@@ -12,7 +12,6 @@ export {
   SFC,
   prop,
   props,
-  ready,
   link,
   define,
   emit,
