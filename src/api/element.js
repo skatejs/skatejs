@@ -1,7 +1,6 @@
 import { patchInner } from 'incremental-dom';
 import {
   connected as $connected,
-  created as $created,
   ctorObservedAttributes as $ctorObservedAttributes,
   ctorProps as $ctorProps,
   ctorCreateInitProps as $ctorCreateInitProps,
@@ -30,14 +29,6 @@ const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
 
-// TEMPORARY: Once deprecations in this file are removed, this can be removed.
-function deprecated (elem, oldUsage, newUsage) {
-  if (process.env.NODE_ENV !== 'production') {
-    const ownerName = elem.localName ? elem.localName : String(elem);
-    console.warn(`${ownerName} ${oldUsage} is deprecated. Use ${newUsage}.`);
-  }
-}
-
 function preventDoubleCalling (elem, name, oldValue, newValue) {
   return name === elem[_prevName] &&
     oldValue === elem[_prevOldValue] &&
@@ -64,15 +55,6 @@ function createInitProps (Ctor) {
       const propDescriptor = propDescriptors[nameOrSymbol];
       propDescriptor.beforeDefineProperty(elem);
 
-      // We check here before defining to see if the prop was specified prior
-      // to upgrading.
-      const hasPropBeforeUpgrading = nameOrSymbol in elem;
-
-      // This is saved prior to defining so that we can set it after it it was
-      // defined prior to upgrading. We don't want to invoke the getter if we
-      // don't need to, so we only get the value if we need to re-sync.
-      const valueBeforeUpgrading = hasPropBeforeUpgrading && elem[nameOrSymbol];
-
       // https://bugs.webkit.org/show_bug.cgi?id=49739
       //
       // When Webkit fixes that bug so that native property accessors can be
@@ -80,19 +62,6 @@ function createInitProps (Ctor) {
       // from having to do if for every instance as all other browsers support
       // this.
       Object.defineProperty(elem, nameOrSymbol, propDescriptor);
-
-      // DEPRECATED
-      //
-      // We'll be removing get / set callbacks on properties. Use the
-      // updatedCallback() instead.
-      //
-      // We re-set the prop if it was specified prior to upgrading because we
-      // need to ensure set() is triggered both in polyfilled environments and
-      // in native where the definition may be registerd after elements it
-      // represents have already been created.
-      if (hasPropBeforeUpgrading) {
-        elem[nameOrSymbol] = valueBeforeUpgrading;
-      }
     });
   };
 }
@@ -139,9 +108,6 @@ export default function (Base = HTMLElement) {
 
       const { constructor } = this;
 
-      // Used for the ready() function so it knows when it can call its callback.
-      this[$created] = true;
-
       // TODO refactor to not cater to Safari < 10. This means we can depend on
       // built-in property descriptors.
       // Must be defined on constructor and not from a superclass
@@ -156,38 +122,6 @@ export default function (Base = HTMLElement) {
       const propDefsCount = getPropNamesAndSymbols(getPropsMap(constructor)).length;
       if (propDefsCount && constructor[$ctorCreateInitProps]) {
         constructor[$ctorCreateInitProps](this);
-      }
-
-      // DEPRECATED
-      //
-      // static render()
-      // Note that renderCallback is an optional method!
-      if (!this.renderCallback && constructor.render) {
-        deprecated(this, 'static render', 'renderCallback');
-        this.renderCallback = constructor.render.bind(constructor, this);
-      }
-
-      // DEPRECATED
-      //
-      // static created()
-      //
-      // Props should be set up before calling this.
-      const { created } = constructor;
-      if (isFunction(created)) {
-        deprecated(this, 'static created', 'constructor');
-        created(this);
-      }
-
-      // DEPRECATED
-      //
-      // Feature has rarely been used.
-      //
-      // Created should be set before invoking the ready listeners.
-      const elemData = data(this);
-      const readyCallbacks = elemData.readyCallbacks;
-      if (readyCallbacks) {
-        readyCallbacks.forEach(cb => cb(this));
-        delete elemData.readyCallbacks;
       }
     }
 
@@ -204,15 +138,6 @@ export default function (Base = HTMLElement) {
 
       // DEPRECATED
       //
-      // static attached()
-      const { attached } = this.constructor;
-      if (isFunction(attached)) {
-        deprecated(this, 'static attached', 'connectedCallback');
-        attached(this);
-      }
-
-      // DEPRECATED
-      //
       // We can remove this once all browsers support :defined.
       this.setAttribute('defined', '');
     }
@@ -224,15 +149,6 @@ export default function (Base = HTMLElement) {
 
       // Ensures the component can't be rendered while disconnected.
       this[$connected] = false;
-
-      // DEPRECATED
-      //
-      // static detached()
-      const { detached } = this.constructor;
-      if (isFunction(detached)) {
-        deprecated(this, 'static detached', 'disconnectedCallback');
-        detached(this);
-      }
     }
 
     // Custom Elements v1
@@ -263,45 +179,62 @@ export default function (Base = HTMLElement) {
           propData.settingPropFromAttrSource = false;
         }
       }
-
-      // DEPRECATED
-      //
-      // static attributeChanged()
-      const { attributeChanged } = this.constructor;
-      if (isFunction(attributeChanged)) {
-        deprecated(this, 'static attributeChanged', 'attributeChangedCallback');
-        attributeChanged(this, { name, newValue, oldValue });
-      }
     }
 
     // Skate
     updatedCallback (prevProps) {
-      if (this.constructor.hasOwnProperty('updated')) {
-        deprecated(this, 'static updated', 'updatedCallback');
+      // The 'previousProps' will be undefined if it is the initial render.
+      if (!prevProps) {
+        return true;
       }
-      return this.constructor.updated(this, prevProps);
+
+      // The 'prevProps' will always contain all of the keys.
+      //
+      // Use classic loop because:
+      // 'for ... in' skips symbols and 'for ... of' is not working yet with IE!?
+      // for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
+      const namesAndSymbols = getPropNamesAndSymbols(prevProps);
+      for (let i = 0; i < namesAndSymbols.length; i++) {
+        const nameOrSymbol = namesAndSymbols[i];
+
+        // With Object.is NaN is equal to NaN
+        if (!objectIs(prevProps[nameOrSymbol], this[nameOrSymbol])) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
     // Skate
-    renderedCallback () {
-      if (this.constructor.hasOwnProperty('rendered')) {
-        deprecated(this, 'static rendered', 'renderedCallback');
-      }
-      return this.constructor.rendered(this);
-    }
+    renderedCallback () {}
 
     // Skate
     //
     // Maps to the static renderer() callback. That logic should be moved here
     // when that is finally removed.
+    //
     // TODO: finalize how to support different rendering strategies.
     rendererCallback () {
-      // TODO: cannot move code here because tests expects renderer function to still exist on constructor!
-      return this.constructor.renderer(this);
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: 'open' });
+      }
+      patchInner(this.shadowRoot, () => {
+        const possibleFn = this.renderCallback(this);
+        if (isFunction(possibleFn)) {
+          possibleFn();
+        } else if (Array.isArray(possibleFn)) {
+          possibleFn.forEach((fn) => {
+            if (isFunction(fn)) {
+              fn();
+            }
+          });
+        }
+      });
     }
 
     // Skate
-    // @internal
+    //
     // Invokes the complete render lifecycle.
     [$renderer] () {
       if (this[$rendering] || !this[$connected]) {
@@ -320,71 +253,12 @@ export default function (Base = HTMLElement) {
     }
 
     // Skate
-    // @internal
+    //
     // Calls the updatedCallback() with previous props.
     [$updated] () {
       const prevProps = this[$props];
       this[$props] = getSetProps(this);
       return this.updatedCallback(prevProps);
-    }
-
-    // Skate
-    //
-    // DEPRECATED
-    //
-    // Stubbed in case any subclasses are calling it.
-    static rendered () {}
-
-    // Skate
-    //
-    // DEPRECATED
-    //
-    // Move this to rendererCallback() before removing.
-    static renderer (elem) {
-      if (!elem.shadowRoot) {
-        elem.attachShadow({ mode: 'open' });
-      }
-      patchInner(elem.shadowRoot, () => {
-        const possibleFn = elem.renderCallback(elem);
-        if (isFunction(possibleFn)) {
-          possibleFn();
-        } else if (Array.isArray(possibleFn)) {
-          possibleFn.forEach((fn) => {
-            if (isFunction(fn)) {
-              fn();
-            }
-          });
-        }
-      });
-    }
-
-    // Skate
-    //
-    // DEPRECATED
-    //
-    // Move this to updatedCallback() before removing.
-    static updated (elem, previousProps) {
-      // The 'previousProps' will be undefined if it is the initial render.
-      if (!previousProps) {
-        return true;
-      }
-
-      // The 'previousProps' will always contain all of the keys.
-      //
-      // Use classic loop because:
-      // 'for ... in' skips symbols and 'for ... of' is not working yet with IE!?
-      // for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
-      const namesAndSymbols = getPropNamesAndSymbols(previousProps);
-      for (let i = 0; i < namesAndSymbols.length; i++) {
-        const nameOrSymbol = namesAndSymbols[i];
-
-        // With Object.is NaN is equal to NaN
-        if (!objectIs(previousProps[nameOrSymbol], elem[nameOrSymbol])) {
-          return true;
-        }
-      }
-
-      return false;
     }
   };
 }
