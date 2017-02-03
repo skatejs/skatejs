@@ -2,13 +2,12 @@
 
 import { Component, define, prop } from '../../../src/index';
 import afterMutations from '../../lib/after-mutations';
-import assign from '../../../src/util/assign';
 
 function create (propLocal) {
   const el = new (define(class extends Component {
     static get props () {
       return {
-        test: assign(propLocal, { attribute: true })
+        test: { ...propLocal, ...{ attribute: true } }
       };
     }
   }))();
@@ -17,7 +16,7 @@ function create (propLocal) {
 }
 
 function testTypeValues (type, values, done) {
-  const elem = create(prop[type]());
+  const elem = create(prop[type]);
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
@@ -36,7 +35,7 @@ describe('api/prop', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.array());
+      elem = create(prop.array);
       afterMutations(done);
     });
 
@@ -83,7 +82,7 @@ describe('api/prop', () => {
 
   describe('boolean', () => {
     it('initial value', () => {
-      const elem = create(prop.boolean());
+      const elem = create(prop.boolean);
       expect(elem.test).to.equal(false);
       expect(elem.getAttribute('test')).to.equal(null);
     });
@@ -91,7 +90,7 @@ describe('api/prop', () => {
     [undefined, null, false, 0, '', 'something'].forEach((value) => {
       value = String(value);
       it(`setting attribute to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean());
+        const elem = create(prop.boolean);
         afterMutations(() => {
           elem.setAttribute('test', value);
           afterMutations(() => {
@@ -102,7 +101,7 @@ describe('api/prop', () => {
         });
       });
       it(`setting property to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean());
+        const elem = create(prop.boolean);
         afterMutations(() => {
           elem.test = value;
           expect(elem.test).to.equal(!!value, 'property');
@@ -113,7 +112,7 @@ describe('api/prop', () => {
     });
 
     it('removing attribute', (done) => {
-      const elem = create(prop.boolean());
+      const elem = create(prop.boolean);
       afterMutations(
         () => elem.setAttribute('test', ''),
         () => expect(elem.test).to.equal(true),
@@ -130,7 +129,7 @@ describe('api/prop', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.number());
+      elem = create(prop.number);
       afterMutations(done);
     });
 
@@ -169,7 +168,7 @@ describe('api/prop', () => {
 
   describe('string', () => {
     it('values', (done) => {
-      const elem = create(prop.string());
+      const elem = create(prop.string);
       afterMutations(() => {
         expect(elem.test).to.equal('');
         expect(elem.getAttribute('test')).to.equal('');
@@ -188,12 +187,12 @@ describe('api/prop', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.object());
+      elem = create(prop.object);
       afterMutations(done);
     });
 
     it('default', () => {
-      const elem2 = create(prop.object());
+      const elem2 = create(prop.object);
 
       expect(elem.test).to.be.an('object');
       expect(elem.test).not.to.equal(elem2.test);
@@ -224,16 +223,7 @@ describe('api/prop', () => {
       const attribute = { source: true };
       types.forEach(type => {
         it(type, () => {
-          expect(prop[type]().attribute).to.deep.equal(attribute);
-        });
-      });
-    });
-
-    describe('overriding', () => {
-      const values = [[], true, 1, {}, 'string'];
-      types.forEach((type, index) => {
-        it(type, () => {
-          expect(prop[type]({ default: values[index] }).default).to.equal(values[index]);
+          expect(prop[type].attribute).to.deep.equal(attribute);
         });
       });
     });

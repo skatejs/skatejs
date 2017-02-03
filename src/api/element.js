@@ -10,7 +10,6 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
-import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -94,7 +93,7 @@ export default function (Base = HTMLElement) {
 
     // Returns superclass props overwritten with this Component props
     static get props () {
-      return assign({}, super.props, this[$ctorProps]);
+      return { ...super.props, ...this[$ctorProps] };
     }
 
     static set props (value) {

@@ -4,14 +4,12 @@ import { Component, define, emit, h, prop, props, vdom } from '../../../src/inde
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-const { boolean, number } = prop;
-
 describe('vdom/events (on*)', () => {
   it('should not duplicate listeners', done => {
     const MyEl = define(class extends Component {
       static get props () {
         return {
-          test: number({ default: 0 })
+          test: { ...prop.number, ...{ default: 0 } }
         };
       }
       renderCallback () {
@@ -107,7 +105,7 @@ describe('vdom/events (on*)', () => {
       el = new (define(class extends Component {
         static get props () {
           return {
-            unbind: boolean()
+            unbind: prop.boolean
           };
         }
         renderCallback () {

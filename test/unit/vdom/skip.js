@@ -13,7 +13,7 @@ describe('vdom/skip', () => {
     const Elem = define(class extends Component {
       static get props () {
         return {
-          num: prop.number()
+          num: prop.number
         };
       }
       /* eslint indent: 0 */
@@ -74,7 +74,7 @@ describe('vdom/skip', () => {
     const Elem = define(class extends Component {
       static get props () {
         return {
-          num: prop.number({ default: 2 })
+          num: { ...prop.number, ...{ default: 2 } }
         };
       }
       renderCallback () {

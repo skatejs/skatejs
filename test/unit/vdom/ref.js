@@ -9,7 +9,7 @@ function test (name, el) {
     const Elem = define(class extends Component {
       static get props () {
         return {
-          num: prop.number(),
+          num: prop.number,
           ref: { initial: () => ref }
         };
       }
