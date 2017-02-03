@@ -16,7 +16,6 @@ import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAttrMgr from '../util/attributes-manager';
-import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
@@ -327,25 +326,6 @@ export default function (Base = HTMLElement) {
       const prevProps = this[$props];
       this[$props] = getSetProps(this);
       return this.updatedCallback(prevProps);
-    }
-
-    // Skate
-    static extend (definition = {}, Base = this) {
-      // Create class for the user.
-      class Ctor extends Base {}
-
-      // For inheriting from the object literal.
-      const opts = getOwnPropertyDescriptors(definition);
-      const prot = getOwnPropertyDescriptors(definition.prototype);
-
-      // Prototype is non configurable (but is writable).
-      delete opts.prototype;
-
-      // Pass on static and instance members from the definition.
-      Object.defineProperties(Ctor, opts);
-      Object.defineProperties(Ctor.prototype, prot);
-
-      return Ctor;
     }
 
     // Skate
