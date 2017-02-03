@@ -16,7 +16,6 @@ import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
 import getAttrMgr from '../util/attributes-manager';
-import getOwnPropertyDescriptors from '../util/get-own-property-descriptors';
 import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
