@@ -9,7 +9,10 @@ import {
   symbols,
   text
 } from 'incremental-dom';
-import { name as $name, ref as $ref } from '../util/symbols';
+import {
+  name as $name,
+  ref as $ref
+} from '../util/symbols';
 import propContext from '../util/prop-context';
 import root from '../util/root';
 
