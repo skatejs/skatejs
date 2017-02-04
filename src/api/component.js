@@ -1,3 +1,3 @@
-import { Vdom } from './mixins';
+import { Component } from './mixins';
 
-export default Vdom();
+export default Component();

@@ -23,6 +23,14 @@ describe('exports', () => {
     expect(api.link).to.be.a('function');
   });
 
+  it('skate.Mixins', () => {
+    expect(api.Mixins).to.be.an('object');
+    expect(api.Mixins.Base).to.be.a('function', 'Base');
+    expect(api.Mixins.Component).to.be.a('function', 'Component');
+    expect(api.Mixins.Props).to.be.a('function', 'Props');
+    expect(api.Mixins.Render).to.be.a('function', 'Render');
+  });
+
   it('skate.prop', () => {
     expect(api.prop).to.be.an('object');
     expect(api.prop.array).to.be.a('function', 'array');

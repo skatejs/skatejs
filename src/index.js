@@ -1,7 +1,7 @@
+import * as Mixins from './api/mixins';
 import * as prop from './api/prop';
 import * as vdom from './api/vdom';
 import Component from './api/component';
-import Element from './api/element';
 import define from './api/define';
 import emit from './api/emit';
 import link from './api/link';
@@ -11,11 +11,11 @@ const { h } = vdom;
 
 export {
   Component,
-  Element,
   define,
   emit,
   h,
   link,
+  Mixins,
   prop,
   props,
   vdom

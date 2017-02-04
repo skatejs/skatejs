@@ -249,7 +249,7 @@ export function Render (Base = Props()) {
   };
 }
 
-export function Vdom (Base = Render()) {
+export function Component (Base = Render()) {
   return class extends Base {
     rendererCallback () {
       if (!this.shadowRoot) {
