@@ -1,3 +1,3 @@
-import Element from './element';
+import { Vdom } from './mixins';
 
-export default Element();
+export default Vdom();
