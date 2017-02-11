@@ -27,6 +27,8 @@
     - [Properties and Attributes](docs/recipes/designing-web-components.md#properties-and-attributes)
     - [Private Members](docs/recipes/designing-web-components.md#private-members)
     - [Private Data](docs/recipes/designing-web-components.md#private-data)
+  - [Design patterns](docs/recipes/design-patterns/README.md)
+    - [Composition/Extending](docs/recipes/design-patterns/component-composition.md)
   - [Framework Integration](docs/recipes/framework-integration/README.md)
     - [React](docs/recipes/framework-integration/React.md)
     - [Preact](docs/recipes/framework-integration/Preact.md)
