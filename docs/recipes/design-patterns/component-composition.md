@@ -1,9 +1,9 @@
 # Component composition/extending
 
-Since Skate is already close to the platform, you can easily extend other component classes in 2 ways:
+Since Skate is already close to the platform, you can easily extend other component classes via:
 
-- via [Inheritance](#inheritance)
-- via [Mixins](#mixins)
+- [Inheritance](#inheritance)
+- [Mixins](#mixins)
 
 ## Inheritance
 
@@ -31,33 +31,31 @@ customElements.define('super-component', SuperComponent);
 
 Let's say you want to inherit from some component which already defines some common `props`.
 
-**Solution is following:**
-
 ```js
 // some common component
 class Colors extends Component {
-   static get props () {
-      return {
-        color: prop.string()
-      }
-   }
+  static get props () {
+    return {
+      color: prop.string()
+    }
+  }
 }
 
 // your component which will have color and disabled as props
 class Button extends Colors {
-    static get props () {
-      return {
-           // inherit from super class
-          ...super.props,
-          // your component specific props API
-          ...{
-            disabled: prop.boolean()
-          }
-        }
+  static get props () {
+    return {
+        // inherit from super class
+      ...super.props,
+      // your component specific props API
+      ...{
+        disabled: prop.boolean()
+      }
     }
-    renderCallback ({color}) {
-       return <button style={{color}}>Hello</button>
-    }
+  }
+  renderCallback ({color}) {
+    return <button style={{color}}>Hello</button>
+  }
 }
 ```
 
@@ -91,16 +89,13 @@ customElements.define('super-component', SuperComponent);
 
 ### Extending Props API via mixin
 
-
-**Solution is following:**
-
 ```js
 import { Component, h, prop } from 'skatejs';
 
 // some common mixin factory
 function Colored(Base) {
   return class extends Base {
-   static get props () {
+    static get props () {
       return {
         // mixins are composable, so we have to make sure that the apply chain will always continue
         ...super.props,
@@ -114,19 +109,19 @@ function Colored(Base) {
 
 // your component which will have color and disabled as props
 class Button extends Colors(Component) {
-    static get props () {
-      return {
-           // inherit from any mixin application so both mixed and our props will be applied
-          ...super.props,
-          // your component specific props API
-          ...{
-            disabled: prop.boolean()
-          }
-        }
+  static get props () {
+    return {
+      // inherit from any mixin application so both mixed and our props will be applied
+      ...super.props,
+      // your component specific props API
+      ...{
+        disabled: prop.boolean()
+      }
     }
-    renderCallback ({color}) {
-       return <button style={{color}}>Hello</button>
-    }
+  }
+  renderCallback ({color}) {
+    return <button style={{color}}>Hello</button>
+  }
 }
 
 customElements.define('x-button', Button);

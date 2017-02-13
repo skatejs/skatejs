@@ -1,5 +1,5 @@
 # Design Patterns
 
-Every Library or technology has it's desing patterns.
+Every Library or technology has its desing patterns.
 
-This chapter describes common patterns used in web components development via Skate
+This chapter describes common patterns used in Web Component development via Skate.
