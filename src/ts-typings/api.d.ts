@@ -26,6 +26,7 @@ export class Component<Props> extends HTMLElement {
   // this is not possible yet? ... without this we have to duplicate props definition with class props definition
   // [K in keyof Props]: Props[K],
 
+  static readonly is: string;
   static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
 
@@ -33,12 +34,12 @@ export class Component<Props> extends HTMLElement {
   connectedCallback(): void;
   disconnectedCallback(): void;
   attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
-  adoptedCallback?(): void;
+  adoptedCallback(): void;
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
   // NOTE: infering generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?:Props): VDOMElement<any> | VDOMElement<any>[] | null;
+  renderCallback(props?: Props): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
