@@ -47,7 +47,7 @@
     "commitizen": "^2.8.2",
     "cz-conventional-changelog": "1.2.0",
     "gitbook-cli": "^2.3.0",
-    "karma": "1.4.1",
+    "karma": "1.5.0",
     "karma-chai-plugins": "0.8.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-firefox-launcher": "1.0.0",
