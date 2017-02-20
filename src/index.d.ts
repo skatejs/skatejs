@@ -8,6 +8,7 @@ export { } from './ts-typings/jsx';
 export {
   Component,
   ComponentProps,
+  PropOptions,
   StatelessComponent,
   SFC,
   prop,
