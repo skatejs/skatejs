@@ -27,14 +27,12 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
   static get is() { return 'x-countup' }
   static get props(): skate.ComponentProps<CountUpComponent, CountUpProps> {
     return {
-      count: {
-        ...skate.prop.number, ...{
-          attribute: true,
-          default(elem: HTMLElement, data: Object) {
-            return 7;
-          },
-        }
-      },
+      count: {...skate.prop.number, ...{
+        attribute: true,
+        default(elem: HTMLElement, data: Object) {
+          return 7;
+        },
+      }},
       num: skate.prop.number,
       numLiteral: skate.prop.number,
       str: skate.prop.string,
