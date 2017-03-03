@@ -38,29 +38,3 @@ Recently, we've deprecated several old methods in favour of aligning closer to t
 - `static rendered()` -> `renderedCallback()`
 
 Most of the old API were static methods, or specified as options not on the `prototype`. The new APIs are mostly specified on the custom element's `prototype` unless it makes sense to be a `static`, such as `props` as they loosely correspond to `observedAttributes`.
-
-
-
-### Extension
-
-Since Skate is already close to the platform, you can easily extend other component classes just as you normally would:
-
-```js
-import { Component, h } from 'skatejs';
-
-// If you never use this class for an HTML element then you don't have to
-// ever register it as a custom element and it can still be extended.
-class BaseComponent extends Component {
-  static props = {
-    someBaseProp: {}
-  }
-}
-
-class SuperComponent extends BaseComponent {
-  renderCallback ({ someBaseProp }) {
-    return <div>{someBaseProp}</div>;
-  }
-}
-
-customElements.define('super-component', SuperComponent);
-```

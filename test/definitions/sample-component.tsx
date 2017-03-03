@@ -69,7 +69,7 @@ class SkatePark extends Component<SkateParkProps>{
       halfPipe: prop.boolean(),
     }
   }
-  renderCallback({halfPipe,year}:SkateParkProps) {
+  renderCallback({halfPipe, year}: SkateParkProps) {
     const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
     return (
       <div>
