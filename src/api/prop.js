@@ -5,11 +5,13 @@ const freeze = Object.freeze;
 const attribute = freeze({ source: true });
 const parseIfNotEmpty = val => (empty(val) ? null : JSON.parse(val));
 const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
+const sharedFrozenArray = Object.freeze([]);
+const sharedFrozenObject = Object.freeze({});
 
 export const array = freeze({
   attribute,
   coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
-  default: () => [],
+  default: () => sharedFrozenArray,
   deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
 });
@@ -40,7 +42,7 @@ export const string = freeze({
 
 export const object = freeze({
   attribute,
-  default: () => ({}),
+  default: () => sharedFrozenObject,
   deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
 });

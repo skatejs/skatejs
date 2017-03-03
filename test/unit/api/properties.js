@@ -42,9 +42,13 @@ describe('api/prop', () => {
     afterEach(() => document.body.removeChild(elem));
 
     it('default', () => {
+      const elem2 = create(prop.array);
+
       expect(elem.test).to.be.an('array');
-      expect(elem.test.length).to.equal(0);
-      expect(elem.getAttribute('test')).to.equal('[]');
+      expect(elem.test).to.equal(elem2.test, 'should be shared');
+      expect(Object.isFrozen(elem.test)).to.equal(true, 'should be frozen');
+      expect(elem.test.length).to.equal(0, 'should not contain any items');
+      expect(elem.getAttribute('test')).to.equal('[]', 'should set the attribute');
     });
 
     describe('coerce', () => {
@@ -195,8 +199,9 @@ describe('api/prop', () => {
       const elem2 = create(prop.object);
 
       expect(elem.test).to.be.an('object');
-      expect(elem.test).not.to.equal(elem2.test);
-      expect(elem.getAttribute('test')).to.equal('{}');
+      expect(elem.test).to.equal(elem2.test, 'should be shared');
+      expect(Object.isFrozen(elem.test)).to.equal(true, 'should be frozen');
+      expect(elem.getAttribute('test')).to.equal('{}', 'should set the attribute');
     });
 
     it('deserialize', (done) => {
