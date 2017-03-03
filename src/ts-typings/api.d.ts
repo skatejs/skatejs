@@ -99,8 +99,6 @@ export const h: typeof vdom.element;
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export const prop: {
-  create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
-
   number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
   boolean<E extends Component<any>, T extends boolean>(attr?: PropOptions<E, T>): PropOptions<E, T>;
   string<E extends Component<any>, T extends string>(attr?: PropOptions<E, T>): PropOptions<E, T>;
