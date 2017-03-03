@@ -17,7 +17,7 @@
       return {
         // By declaring the property an attribute, we can now pass an initial value
         // for the count as part of the HTML.
-        count: skate.prop.number({ attribute: true })
+        count: { ...skate.prop.number, ...{ attribute: true } }
       };
     }
 
@@ -249,8 +249,8 @@
   class Elem extends skate.Component<ElemProps> {
     static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
-        str: skate.prop.string(),
-        arr: skate.prop.array<Elem, string>()
+        str: skate.prop.string,
+        arr: skate.prop.array
       }
     }
 
@@ -292,7 +292,7 @@
   customElements.define('my-component', class extends skate.Component<any> {
     static get props() {
       return {
-        name: skate.prop.string()
+        name: skate.prop.string
       };
     }
 
@@ -345,7 +345,7 @@
     static get is() { return 'my-skate' }
     static get props() {
       return {
-        who: skate.prop.string()
+        who: skate.prop.string
       }
     }
     who: string
@@ -358,7 +358,7 @@
   const SkateCtor2 = skate.define('my-skate', class SkateCmp2 extends skate.Component<{ who: string }>{
     static get props() {
       return {
-        who: skate.prop.string()
+        who: skate.prop.string
       }
     }
     who: string
@@ -440,33 +440,34 @@
 // @link https://skatejs.gitbooks.io/skatejs/content/docs/api/prop.html
 // ====================================================================
 {
-  const myNewProp = skate.prop.create({});
-  myNewProp({});
+  skate.prop.boolean;
+  skate.prop.string;
+  skate.prop.number;
+  skate.prop.array;
+  skate.prop.object;
 
-  skate.prop.boolean();
-  skate.prop.string();
-  skate.prop.number();
-  skate.prop.array();
-  skate.prop.object();
-
-  skate.prop.boolean({
-    coerce() {
-      // coerce it differently than the default way
-      return false;
-    },
-    set() {
-      // do something when set
+  const customProp = {
+    ...skate.prop.boolean, ...{
+      coerce() {
+        // coerce it differently than the default way
+        return false;
+      },
+      set() {
+        // do something when set
+      }
     }
-  });
+  }
 
   type UserModel = { id: number, email: string }
   class User extends skate.Component<{ user: UserModel }>{
     static get is() { return 'my-user' }
     static get props() {
       return {
-        user: skate.prop.object({
-          default: { id: -1, email: '' }
-        })
+        user: {
+          ...skate.prop.object, ...{
+            default: { id: -1, email: '' }
+          }
+        }
       }
     }
 
@@ -487,7 +488,7 @@
     static get is() { return 'my-user-list' }
     static get props() {
       return {
-        users: skate.prop.array()
+        users: skate.prop.array
       }
     }
 
@@ -554,7 +555,7 @@
   customElements.define('my-component', class extends skate.Component<{ title: string; }> {
     static get props() {
       return {
-        title: skate.prop.string()
+        title: skate.prop.string
       };
     }
     renderCallback() {
@@ -775,6 +776,5 @@
         );
       }
     }
-
   }
 }
