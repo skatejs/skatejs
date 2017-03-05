@@ -1,40 +1,30 @@
-import assign from '../util/assign';
 import empty from '../util/empty';
 import toNullOrString from '../util/to-null-or-string';
 
-export function create (def) {
-  return (...args) => {
-    args.unshift({}, def);
-    return assign(...args);
-  };
-}
-
-const attribute = { source: true };
+const freeze = Object.freeze;
+const attribute = freeze({ source: true });
 const parseIfNotEmpty = val => (empty(val) ? null : JSON.parse(val));
+const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
+const sharedFrozenArray = Object.freeze([]);
+const sharedFrozenObject = Object.freeze({});
 
-export const array = create({
+export const array = freeze({
   attribute,
   coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
-  default: () => [],
+  default: () => sharedFrozenArray,
   deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
 });
 
-export const boolean = create({
+export const boolean = freeze({
   attribute,
   coerce: val => !!val,
   default: false,
-  // TODO: 'false' string must deserialize to false for angular 1.x to work
-  // This breaks one existing test.
-  // deserialize: val => !(val === null || val === 'false'),
   deserialize: val => !(val === null),
   serialize: val => (val ? '' : null)
 });
 
-// defaults empty to 0 and allows NaN
-const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
-
-export const number = create({
+export const number = freeze({
   attribute,
   default: 0,
   coerce: zeroIfEmptyOrNumberIncludesNaN,
@@ -42,7 +32,7 @@ export const number = create({
   serialize: toNullOrString
 });
 
-export const string = create({
+export const string = freeze({
   attribute,
   default: '',
   coerce: toNullOrString,
@@ -50,9 +40,9 @@ export const string = create({
   serialize: toNullOrString
 });
 
-export const object = create({
+export const object = freeze({
   attribute,
-  default: () => ({}),
+  default: () => sharedFrozenObject,
   deserialize: parseIfNotEmpty,
   serialize: JSON.stringify
 });

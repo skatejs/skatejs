@@ -100,7 +100,7 @@ Custom properties that should be defined on the element. These are set up in the
 ```js
 import { Mixins } from 'skatejs';
 
-customElements.define('my-component', class extends Mixin.Props() {
+customElements.define('my-component', class extends Mixins.Props() {
   static get props () {
     return {
       // Defaults are shown.

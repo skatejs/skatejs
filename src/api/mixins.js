@@ -10,7 +10,6 @@ import {
   rendering as $rendering,
   updated as $updated
 } from '../util/symbols';
-import assign from '../util/assign';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -103,7 +102,7 @@ export function Props (Base = Raw()) {
     // Automatically mixes in the super class props so the user doesn't have
     // to do that manually.
     static get props () {
-      return assign({}, super.props, this[$ctorProps]);
+      return { ...super.props, ...this[$ctorProps] };
     }
 
     // Allows setting of props that get mixed in with the super ones.

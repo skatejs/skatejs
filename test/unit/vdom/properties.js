@@ -36,7 +36,7 @@ describe('vdom/properties', () => {
     const elem = new (define(class extends Component {
       static get props () {
         return {
-          test: prop.boolean()
+          test: prop.boolean
         };
       }
       renderCallback () {
@@ -95,7 +95,7 @@ describe('vdom/properties', () => {
       Elem1 = define(class extends Component {
         static get props () {
           return {
-            open: prop.boolean()
+            open: prop.boolean
           };
         }
         renderCallback () {
@@ -105,7 +105,7 @@ describe('vdom/properties', () => {
       Elem2 = define(class extends Component {
         static get props () {
           return {
-            open: prop.boolean()
+            open: prop.boolean
           };
         }
         renderCallback () {
