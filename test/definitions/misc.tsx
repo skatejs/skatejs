@@ -158,19 +158,6 @@
     }
   });
 }
-{ // https://github.com/skatejs/skatejs#get
-  customElements.define('my-component', class A extends skate.Component<{ myProp: any }> {
-    static get props() {
-      return {
-        myProp: {
-          get(elem: A, data: any) {
-            return `prefix_${data.internalValue}`;
-          }
-        }
-      };
-    }
-  });
-}
 { // https://github.com/skatejs/skatejs#initial
   customElements.define('my-component', class extends skate.Component<{ myProp: any }> {
     static get props() {
@@ -201,18 +188,6 @@
         myProp: {
           serialize(value: string[]) {
             return value.join(',');
-          }
-        }
-      };
-    }
-  });
-
-  customElements.define('my-component', class extends skate.Component<{ myProp: any }> {
-    static get props() {
-      return {
-        myProp: {
-          set(elem: any, data: any) {
-            // do something
           }
         }
       };
@@ -451,9 +426,6 @@
       coerce() {
         // coerce it differently than the default way
         return false;
-      },
-      set() {
-        // do something when set
       }
     }
   }
