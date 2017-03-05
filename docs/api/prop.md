@@ -8,37 +8,22 @@ By default, all built-in props are have one-way reflection with their correspond
 - Less friction for the developer because they don't need to think about the `attribute` API, unless they need special behaviour.
 - Good performance. You should always be setting `props` when possible which doesn't inherently affect performance because there's no round trip back to the attribute.
 
-```js
-skate.prop.boolean();
-```
-
-You are able to pass options to these properties to override built-in behaviour, or to define extra options that would normally be supported by a Skate property definition.
-
-You can easily define a new property by calling `skate.prop.create()` as a function and passing it the default options for the property. All built-in properties are created using this method.
-
-```js
-const myNewProp = skate.prop.create({ ... });
-myNewProp({ ... });
-```
-
 Built-in properties are accessed on the `skate.prop` namespace:
 
 ```js
-skate.prop.boolean({
-  coerce () {
-    // coerce it differently than the default way
-  },
-  set () {
-    // do something when set
+import { Component, prop } from 'skatejs';
+
+export default class extends Component {
+  static get props () {
+    return {
+      myArray: prop.array,
+      myBoolean: prop.boolean
+    };
   }
-});
+}
 ```
 
-Generally built-in properties return a definition containing `default`, `coerce`, `deserialize` and `serialize` options.
-
-*Empty values are defined as `null` or `undefined`. All empty values, if the property accepts them, are normalised to `null`.
-
-
+Generally built-in properties return a definition containing some form of `default`, `coerce`, `deserialize` and `serialize` options.
 
 ## `array`
 
@@ -61,3 +46,48 @@ Ensures the value is a `Number` and is correctly linked to an attribute. Numeric
 ## `string`
 
 Ensures the value is always a `String` and is correctly linked to an attribute. Empty values are not coerced to strings.
+
+*All built in properties normalise empty property values such as `null` or `undefined` to be `null`.*
+
+## Custom properties
+
+Custom properties can be defined by simply passing an object definition.
+
+```js
+const myProps = {
+  customProp: {}
+};
+```
+
+If you're defining a property that can be anything, you can also pass an empty value such as `null`:
+
+```js
+const myProps = {
+  customProp: null
+}
+```
+
+If you want to customise the behaviour of a built-in, you can do something like:
+
+```js
+const myProps = {
+  customProp: Object.assign({}, prop.array, {
+    deserialize () {}
+  });
+};
+```
+
+A simpler way of doing this, if you're using object spread, is to do something like:
+
+```js
+const myProps = {
+  customProp: {
+    ...prop.array,
+    ...{ deserialize () {} }
+  }
+}
+```
+
+This has the added benefit of not accidentally causing a mutation of the source prop, if it's not frozen.
+
+*All built-in props are frozen, so they can't be mutated. However, if you create custom properties, they can be mutated unless you freeze them.*

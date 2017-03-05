@@ -10,7 +10,7 @@ describe('updatedCallback()', () => {
     const Elem = define(class extends Component {
       static get props () {
         return {
-          test: prop.number()
+          test: prop.number
         };
       }
       /* eslint-disable no-use-before-define */

@@ -1,4 +1,3 @@
-import assign from '../util/assign';
 import root from '../util/root';
 
 // Once the Event constructor is newable cross-browser, this can be reomved.
@@ -25,7 +24,7 @@ const optsDefaults = {
 };
 
 export default function (elem, name, opts) {
-  opts = assign({}, optsDefaults, opts);
+  opts = { ...optsDefaults, ...opts };
   const e = new Event(name, opts);
   Object.defineProperty(e, 'detail', { value: opts.detail });
   return elem.dispatchEvent(e);

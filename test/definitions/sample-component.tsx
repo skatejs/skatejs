@@ -27,19 +27,21 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
   static get is() { return 'x-countup' }
   static get props(): skate.ComponentProps<CountUpComponent, CountUpProps> {
     return {
-      count: skate.prop.number<CountUpComponent, number>({
-        attribute: true,
-        default(elem, data) {
-          return 7;
-        },
-      }),
-      num: skate.prop.number(),
-      numLiteral: skate.prop.number<CountUpComponent, NumLiteral>(),
-      str: skate.prop.string(),
-      strLiteral: skate.prop.string<CountUpComponent, StrLiteral>(),
-      bool: skate.prop.boolean(),
-      arr: skate.prop.array<CountUpComponent, string>(),
-      obj: skate.prop.object<CountUpComponent, SkateType>(),
+      count: {
+        ...skate.prop.number, ...{
+          attribute: true,
+          default(elem: HTMLElement, data: Object) {
+            return 7;
+          },
+        }
+      },
+      num: skate.prop.number,
+      numLiteral: skate.prop.number,
+      str: skate.prop.string,
+      strLiteral: skate.prop.string,
+      bool: skate.prop.boolean,
+      arr: skate.prop.array,
+      obj: skate.prop.object,
     }
   }
 
@@ -65,11 +67,11 @@ class SkatePark extends Component<SkateParkProps>{
   static get is() { return 'my-skate-park' }
   static get props(): skate.ComponentProps<SkatePark, SkateParkProps> {
     return {
-      year: prop.number(),
-      halfPipe: prop.boolean(),
+      year: prop.number,
+      halfPipe: prop.boolean,
     }
   }
-  renderCallback({halfPipe,year}:SkateParkProps) {
+  renderCallback({halfPipe, year}: SkateParkProps) {
     const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
     return (
       <div>
@@ -95,8 +97,8 @@ export type ElmProps = { str: string; arr: any[]; };
 class Elem extends skate.Component<ElmProps> {
   static get props(): skate.ComponentProps<Elem, ElmProps> {
     return {
-      str: skate.prop.string(),
-      arr: skate.prop.array()
+      str: skate.prop.string,
+      arr: skate.prop.array
     }
   }
 

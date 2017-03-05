@@ -1,7 +1,7 @@
 import { Key, HTMLProps } from './common';
 
 export type ComponentProps<El, T> = {
-  [P in keyof T]: PropOptions<El, T[P]>;
+  [P in keyof T]: PropOptions;
 };
 
 interface ComponentDefaultProps {
@@ -26,6 +26,7 @@ export class Component<Props> extends HTMLElement {
   // this is not possible yet? ... without this we have to duplicate props definition with class props definition
   // [K in keyof Props]: Props[K],
 
+  static readonly is: string;
   static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
 
@@ -33,12 +34,12 @@ export class Component<Props> extends HTMLElement {
   connectedCallback(): void;
   disconnectedCallback(): void;
   attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
-  adoptedCallback?(): void;
+  adoptedCallback(): void;
 
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
-  // NOTE: infering generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?:Props): VDOMElement<any> | VDOMElement<any>[] | null;
+  // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
+  renderCallback(props?: Props): VDOMElement<any> | VDOMElement<any>[] | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
@@ -57,15 +58,13 @@ type AttributeReflectionConfig = AttributeReflectionBaseType | {
   source?: AttributeReflectionBaseType,
   target?: AttributeReflectionBaseType
 }
-export interface PropOptions<El, T> {
+export interface PropOptions {
   attribute?: AttributeReflectionConfig;
-  coerce?: (value: any) => T | null | undefined;
-  default?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
-  deserialize?: (value: string | null) => T | null | undefined;
-  get?: <R>(elem: El, data: { name: string; internalValue: T; }) => R;
-  initial?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);
-  serialize?: (value: T | null | undefined) => string | null;
-  set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;
+  coerce?: <T>(value: any) => T | null | undefined;
+  default?: any | ((elem: HTMLElement, data: { name: string; }) => any);
+  deserialize?: <T>(value: string | null) => T | null | undefined;
+  initial?: any | ((elem: HTMLElement, data: { name: string; }) => any);
+  serialize?: <T>(value: T | null | undefined) => string | null;
 }
 
 interface Define {
@@ -98,13 +97,11 @@ export const h: typeof vdom.element;
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export const prop: {
-  create<T>(attr: PropOptions<any, T>): PropOptions<any, T> & ((attr: PropOptions<any, T>) => PropOptions<any, T>);
-
-  number<E extends Component<any>, T extends number>(attr?: PropOptions<E, T>): PropOptions<E, T>;
-  boolean<E extends Component<any>, T extends boolean>(attr?: PropOptions<E, T>): PropOptions<E, T>;
-  string<E extends Component<any>, T extends string>(attr?: PropOptions<E, T>): PropOptions<E, T>;
-  array<E extends Component<any>, T>(attr?: PropOptions<E, T[]>): PropOptions<E, T[]>;
-  object<E extends Component<any>, T extends Object>(attr?: PropOptions<E, T>): PropOptions<E, T>;
+  readonly number: PropOptions;
+  readonly boolean: PropOptions;
+  readonly string: PropOptions;
+  readonly array: PropOptions;
+  readonly object: PropOptions;
 };
 
 /**

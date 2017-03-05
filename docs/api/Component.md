@@ -119,15 +119,19 @@ The default implementation does what is described in the example above:
 This generally covers 99% of the use-cases and vastly improves performance over just returning `true` by default. A good rule of thumb is to always reassign your props. For example, if you have a component that has a string prop and an array prop:
 
 ```js
-class Elem extends skate.Component {
+/** @jsx h*/
+
+import { Component, h, prop } from 'skatejs';
+
+class Elem extends Component {
   static get props () {
     return {
-      str: skate.prop.string(),
-      arr: skate.prop.array()
+      str: prop.string,
+      arr: prop.array
     }
   }
-  renderCallback () {
-    return skate.h('div', 'testing');
+  renderCallback ({ arr, str }) {
+    return <div>{str}: {arr.join(',')}</div>;
   }
 }
 
@@ -170,15 +174,17 @@ customElements.define('my-component', class extends skate.Component {
 If you don't have a `renderCallback()` function, sometimes it's still useful to respond to property updates:
 
 ```js
-customElements.define('my-component', class extends skate.Component {
+import { Component, emit, prop } from 'skatejs';
+
+customElements.define('my-component', class extends Component {
   static get props () {
     return {
-      name: skate.prop.string()
+      name: prop.string()
     };
   }
   updatedCallback (prev) {
     if (prev.name !== this.name) {
-      skate.emit(this, 'name-changed', { detail: prev });
+      emit(this, 'name-changed', { detail: prev });
     }
   }
 });
@@ -191,9 +197,13 @@ customElements.define('my-component', class extends skate.Component {
 Function that is called to render the element.
 
 ```js
-customElements.define('my-component', class extends skate.Component {
-  renderCallback () {
-    return skate.h('p', `My name is ${this.tagName}.`);
+/** @jsx h */
+
+import { Component, h } from 'skatejs';
+
+customElements.define('my-component', class extends Component {
+  renderCallback ({ tagName }) {
+    return <p>My name is {tagName}.</p>
   }
 });
 ```
@@ -201,11 +211,15 @@ customElements.define('my-component', class extends skate.Component {
 You may also return an array which negates the need to put a wrapper around several elements:
 
 ```js
-customElements.define('my-component', class extends skate.Component {
+/** @jsx h */
+
+import { Component, h } from 'skatejs';
+
+customElements.define('my-component', class extends Component {
   renderCallback () {
     return [
-      skate.h('paragraph 1'),
-      skate.h('paragraph 2'),
+      <p>Paragraph 1</p>,
+      <p>Paragraph 2</p>
     ];
   }
 });
