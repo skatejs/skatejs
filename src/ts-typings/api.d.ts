@@ -97,11 +97,11 @@ export const h: typeof vdom.element;
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export const prop: {
-  number: PropOptions;
-  boolean: PropOptions;
-  string: PropOptions;
-  array: PropOptions;
-  object: PropOptions;
+  readonly number: PropOptions;
+  readonly boolean: PropOptions;
+  readonly string: PropOptions;
+  readonly array: PropOptions;
+  readonly object: PropOptions;
 };
 
 /**
