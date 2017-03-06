@@ -1,13 +1,14 @@
-/* eslint-env jasmine, mocha */
+/* eslint-env mocha */
 
-import { define } from '../../../src/index';
+import { define } from 'src';
+import expect from 'expect';
 
 const { customElements, HTMLElement } = window;
 
 describe('api/define', () => {
   it('should throw if the constructor does not extend HTMLElement', () => {
-    expect(() => define(() => {})).to.throw();
-    expect(() => define(HTMLElement)).to.throw();
+    expect(() => define(() => {})).toThrow();
+    expect(() => define(HTMLElement)).toThrow();
   });
 
   describe('`static is`', () => {
@@ -17,8 +18,8 @@ describe('api/define', () => {
         const Elem = define(class extends HTMLElement {
           static is = name
         });
-        expect(Elem.is).to.equal(name);
-        expect(customElements.get(Elem.is)).to.equal(Elem);
+        expect(Elem.is).toEqual(name);
+        expect(customElements.get(Elem.is)).toEqual(Elem);
       });
 
       it('should throw if already defined', () => {
@@ -30,7 +31,7 @@ describe('api/define', () => {
           define(class extends HTMLElement {
             static is = name
           });
-        }).to.throw();
+        }).toThrow();
       });
     });
 
@@ -39,11 +40,11 @@ describe('api/define', () => {
         const Elem1 = define(class extends HTMLElement {});
         const Elem2 = define(class extends HTMLElement {});
 
-        expect(Elem1.is).to.contain('x-');
-        expect(Elem2.is).to.contain('x-');
-        expect(Elem1.is).not.to.equal(Elem2.is);
-        expect(customElements.get(Elem1.is)).to.equal(Elem1);
-        expect(customElements.get(Elem2.is)).to.equal(Elem2);
+        expect(Elem1.is).toContain('x-');
+        expect(Elem2.is).toContain('x-');
+        expect(Elem1.is).toNotEqual(Elem2.is);
+        expect(customElements.get(Elem1.is)).toEqual(Elem1);
+        expect(customElements.get(Elem2.is)).toEqual(Elem2);
       });
 
       it('should be extendable with a getter', () => {
@@ -54,8 +55,8 @@ describe('api/define', () => {
             return name;
           }
         });
-        expect(Elem1.is).not.to.equal(Elem2.is);
-        expect(Elem2.is).to.equal(name);
+        expect(Elem1.is).toNotEqual(Elem2.is);
+        expect(Elem2.is).toEqual(name);
       });
 
       it('should be extendable with a property initialiser', () => {
@@ -64,14 +65,14 @@ describe('api/define', () => {
         const Elem2 = define(class extends Elem1 {
           static is = name
         });
-        expect(Elem1.is).not.to.equal(Elem2.is);
-        expect(Elem2.is).to.equal(name);
+        expect(Elem1.is).toNotEqual(Elem2.is);
+        expect(Elem2.is).toEqual(name);
       });
 
       it('should be extendable without specifying it at all', () => {
         const Elem1 = define(class extends HTMLElement {});
         const Elem2 = define(class extends Elem1 {});
-        expect(Elem1.is).not.to.equal(Elem2.is);
+        expect(Elem1.is).toNotEqual(Elem2.is);
       });
     });
   });

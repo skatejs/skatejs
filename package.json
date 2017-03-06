@@ -1,13 +1,4 @@
 {
-  "global": "skate",
-  "externals": {
-    "incremental-dom": {
-      "amd": "incremental-dom",
-      "commonjs": "incremental-dom",
-      "commonjs2": "incremental-dom",
-      "root": "IncrementalDOM"
-    }
-  },
   "name": "skatejs",
   "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
   "license": "MIT",
@@ -16,66 +7,50 @@
     "type": "git",
     "url": "https://github.com/skatejs/skatejs"
   },
-  "main": "dist/index.js",
-  "jsnext:main": "src/index.js",
+  "main": "lib/index.js",
+  "module": "es/index.js",
   "types": "src/index.d.ts",
   "keywords": [
     "components",
     "custom",
-    "custom-elements",
+    "dom",
     "elements",
     "web",
-    "web-components"
+    "components",
+    "vdom",
+    "virtual"
   ],
   "files": [
-    "dist",
-    "src"
+    "es",
+    "lib",
+    "umd"
   ],
-  "dependencies": {
-    "incremental-dom": "0.4.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@webpack-blocks/babel6": "^0.3.0",
-    "@webpack-blocks/webpack2": "^0.3.1",
-    "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.2.10",
-    "babel-preset-es2015": "6.22.0",
-    "babel-preset-react": "^6.5.0",
-    "babel-preset-stage-0": "^6.16.0",
-    "birdpoo": "0.x",
     "bore": "^1.1.0",
     "commitizen": "^2.8.2",
     "cz-conventional-changelog": "2.0.0",
     "gitbook-cli": "^2.3.0",
-    "karma": "1.5.0",
-    "karma-chai-plugins": "0.8.0",
     "karma-chrome-launcher": "2.0.0",
-    "karma-firefox-launcher": "1.0.0",
-    "karma-mocha": "1.3.0",
-    "karma-opera-launcher": "1.0.0",
-    "karma-safari-launcher": "1.0.0",
-    "karma-sauce-launcher": "^1.0.0",
-    "karma-saucelabs-launcher": "0.0.0",
-    "karma-sourcemap-loader": "0.3.7",
-    "karma-webpack": "2.0.2",
-    "mocha": "3.2.0",
-    "react": "15.4.2",
-    "react-dom": "15.4.2",
+    "nwb": "^0.15.6",
+    "preact": "^7.2.0",
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
     "skatejs-web-components": "5.2.1",
     "typescript": "^2.1.4",
-    "typescript-formatter": "^5.0.0",
-    "webpack": "2.2.1"
+    "typescript-formatter": "^5.0.0"
+  },
+  "peerDependencies": {
+    "preact": "^7.2.0"
   },
   "scripts": {
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "prepublish": "rm -rf dist && webpack && webpack -p && webpack --config webpack.config.bundle.js && webpack -p --config webpack.config.bundle.js",
+    "prepublish": "nwb build",
     "release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "npm run prepublish && node dist/ && semistandard && karma start --single-run --ci && npm run test:ts",
+    "test": "npm run prepublish && node dist/ && semistandard && npm run test:ts && nwb test",
     "test:ts": "tsfmt -r && tsc -p ./",
-    "test:watch": "karma start"
+    "test:watch": "nwb test --server"
   },
   "config": {
     "commitizen": {
@@ -83,9 +58,6 @@
     }
   },
   "semistandard": {
-    "ignore": [
-      "/src/polyfills/object-is.js"
-    ],
     "parser": "babel-eslint"
   }
 }

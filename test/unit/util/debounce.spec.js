@@ -1,6 +1,8 @@
-/* eslint-env jasmine, mocha */
+/* eslint-env mocha */
 
-import debounce from '../../../src/util/debounce';
+import expect from 'expect';
+
+import debounce from 'src/util/debounce';
 
 describe('utils/debounce', () => {
   it('should be called only once', (done) => {
@@ -10,7 +12,7 @@ describe('utils/debounce', () => {
     debounced();
     debounced();
     setTimeout(() => {
-      expect(i).to.equal(1, 'debounce is called only once');
+      expect(i).toEqual(1, 'debounce is called only once');
       done();
     }, 1);
   });
@@ -22,7 +24,7 @@ describe('utils/debounce', () => {
     debounced(2);
     debounced(3);
     setTimeout(() => {
-      expect(arg).to.equal(3, 'debounce is called with the last argument');
+      expect(arg).toEqual(3, 'debounce is called with the last argument');
       done();
     }, 1);
   });

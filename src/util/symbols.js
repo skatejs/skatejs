@@ -1,3 +1,5 @@
+import createSymbol from './create-symbol';
+
 export const connected = '____skate_connected';
 export const name = '____skate_name';
 
@@ -14,3 +16,5 @@ export const renderer = '____skate_renderer';
 export const rendering = '____skate_rendering';
 export const rendererDebounced = '____skate_rendererDebounced';
 export const updated = '____skate_updated';
+
+export const _updateDebounced = createSymbol('_updateDebounced');

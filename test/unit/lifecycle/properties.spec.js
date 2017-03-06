@@ -1,15 +1,18 @@
-/* eslint-env jasmine, mocha */
+/* eslint-env mocha */
+
+import expect from 'expect';
 
 import { classStaticsInheritance } from '../../lib/support';
-import { Component, define } from '../../../src';
 import afterMutations from '../../lib/after-mutations';
-import {createNativePropertyDescriptor} from '../../../src/lifecycle/props-init';
 import fixture from '../../lib/fixture';
-import PropDefinition from '../../../src/util/prop-definition';
 
-describe('lifecycle/property', () => {
+import { define, Mixins } from 'src';
+import { createNativePropertyDescriptor } from 'src/lifecycle/props-init';
+import PropDefinition from 'src/util/prop-definition';
+
+describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends Component {
+    const elem = new (define(class extends Mixins.Props() {
       static get props () {
         return {
           [name]: definition
@@ -28,7 +31,7 @@ describe('lifecycle/property', () => {
     it('uses the same attribute and property name for lower-case names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return { testprop: { attribute: true } };
         }
@@ -36,7 +39,7 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('testprop', 'foo'),
-        () => expect(elem.testprop).to.equal('foo'),
+        () => expect(elem.testprop).toEqual('foo'),
         done
       );
     });
@@ -44,7 +47,7 @@ describe('lifecycle/property', () => {
     it('uses the same attribute and property name for dashed-names names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return { 'test-prop': { attribute: true } };
         }
@@ -52,7 +55,7 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem['test-prop']).to.equal('foo'),
+        () => expect(elem['test-prop']).toEqual('foo'),
         done
       );
     });
@@ -60,7 +63,7 @@ describe('lifecycle/property', () => {
     it('uses a dash-cased attribute name for camel-case property names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return { testProp: { attribute: true } };
         }
@@ -68,7 +71,7 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem.testProp).to.equal('foo'),
+        () => expect(elem.testProp).toEqual('foo'),
         done
       );
     });
@@ -76,7 +79,7 @@ describe('lifecycle/property', () => {
 
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return {
             testprop: { attribute: true }
@@ -86,13 +89,13 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('testprop', 'foo'),
-        () => expect(elem.testprop).to.equal('foo'),
+        () => expect(elem.testprop).toEqual('foo'),
         done
       );
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return {
             'test-prop': { attribute: true }
@@ -102,13 +105,13 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem['test-prop']).to.equal('foo'),
+        () => expect(elem['test-prop']).toEqual('foo'),
         done
       );
     });
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
-      const elem = new (define(class extends Component {
+      const elem = new (define(class extends Mixins.Props() {
         static get props () {
           return {
             testProp: { attribute: true }
@@ -118,14 +121,14 @@ describe('lifecycle/property', () => {
 
       afterMutations(
         () => elem.setAttribute('test-prop', 'foo'),
-        () => expect(elem.testProp).to.equal('foo'),
+        () => expect(elem.testProp).toEqual('foo'),
         done
       );
     });
   });
 
   it('should not leak options to other definitions', () => {
-    const elem = new (define(class extends Component {
+    const elem = new (define(class extends Mixins.Props() {
       static get props () {
         return {
           test1: {
@@ -145,13 +148,13 @@ describe('lifecycle/property', () => {
     }))();
 
     ['test1', 'test2'].forEach((value) => {
-      expect(elem[value]).to.equal(value);
+      expect(elem[value]).toEqual(value);
       elem[value] = null;
-      expect(elem[value]).to.equal(value);
-      expect(elem.getAttribute(value)).to.equal(null);
+      expect(elem[value]).toEqual(value);
+      expect(elem.getAttribute(value)).toEqual(null);
       elem.removeAttribute(value);
-      expect(elem[value]).to.equal(value);
-      expect(elem.getAttribute(value)).to.equal(null);
+      expect(elem[value]).toEqual(value);
+      expect(elem.getAttribute(value)).toEqual(null);
     });
   });
 
@@ -163,23 +166,23 @@ describe('lifecycle/property', () => {
 
     describe('native', () => {
       it('should define a getter', () => {
-        expect(create2().get).to.be.a('function');
+        expect(create2().get).toBeA('function');
       });
 
       it('should define a setter', () => {
-        expect(create2().set).to.be.a('function');
+        expect(create2().set).toBeA('function');
       });
 
       it('should be enumerable', () => {
-        expect(create2().enumerable).to.equal(true);
+        expect(create2().enumerable).toEqual(true);
       });
 
       it('should be configurable', () => {
-        expect(create2().configurable).to.equal(true);
+        expect(create2().configurable).toEqual(true);
       });
 
       it('should not contain a value', () => {
-        expect(create2().value).to.equal(undefined);
+        expect(create2().value).toEqual(undefined);
       });
     });
   });
@@ -192,12 +195,12 @@ describe('lifecycle/property', () => {
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           elem.testName = 'something';
-          expect(elem.getAttribute('test-name')).to.equal('something', 'attr val');
+          expect(elem.getAttribute('test-name')).toEqual('something', 'attr val');
 
           elem.setAttribute('test-name', 'something else');
           afterMutations(() => {
-            expect(elem.testName).to.equal('something else');
-            expect(elem.getAttribute('test-name')).to.equal('something else');
+            expect(elem.testName).toEqual('something else');
+            expect(elem.getAttribute('test-name')).toEqual('something else');
             fixtureArea.removeChild(elem);
             done();
           });
@@ -205,7 +208,7 @@ describe('lifecycle/property', () => {
       });
 
       it('1st mutation updates prop', (done) => {
-        const Elem = define(class extends Component {
+        const Elem = define(class extends Mixins.Props() {
           static props = {
             foo: {
               attribute: true
@@ -215,15 +218,15 @@ describe('lifecycle/property', () => {
         const elem = fixture(`<${Elem.is} foo="bar" />`).firstChild;
         afterMutations(
           () => (elem.foo = 'bar'),
-          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => expect(elem.getAttribute('foo')).toEqual('bar'),
           () => (elem.setAttribute('foo', 'bar1')),
-          () => expect(elem.foo).to.equal('bar1'),
+          () => expect(elem.foo).toEqual('bar1'),
           done
         );
       });
 
       it('2nd mutation updates prop', (done) => {
-        const Elem = define(class extends Component {
+        const Elem = define(class extends Mixins.Props() {
           static props = {
             foo: {
               attribute: true
@@ -233,10 +236,10 @@ describe('lifecycle/property', () => {
         const elem = fixture(`<${Elem.is} foo="bar" />`).firstChild;
         afterMutations(
           () => (elem.foo = 'bar'),
-          () => expect(elem.getAttribute('foo')).to.equal('bar'),
+          () => expect(elem.getAttribute('foo')).toEqual('bar'),
           () => (elem.setAttribute('foo', 'bar1')),
           () => (elem.setAttribute('foo', 'bar2')),
-          () => expect(elem.foo).to.equal('bar2'),
+          () => expect(elem.foo).toEqual('bar2'),
           done
         );
       });
@@ -248,7 +251,7 @@ describe('lifecycle/property', () => {
           fixtureArea.appendChild(elem);
           afterMutations(() => {
             elem.testName = 'something';
-            expect(elem.getAttribute('test-name')).to.equal('something');
+            expect(elem.getAttribute('test-name')).toEqual('something');
             fixtureArea.removeChild(elem);
             done();
           });
@@ -257,13 +260,13 @@ describe('lifecycle/property', () => {
         it('when a property is set to undefined, the attribute should not be set', () => {
           const elem = create({ attribute: true });
           elem.test = undefined;
-          expect(elem.hasAttribute('test')).to.equal(false);
+          expect(elem.hasAttribute('test')).toEqual(false);
         });
 
         it('when a property is set to null, the attribute should not be set', () => {
           const elem = create({ attribute: true });
           elem.test = null;
-          expect(elem.hasAttribute('test')).to.equal(false);
+          expect(elem.hasAttribute('test')).toEqual(false);
         });
 
         it('when an attribute is set to a string, the property should be set to an empty string', (done) => {
@@ -272,7 +275,7 @@ describe('lifecycle/property', () => {
           fixtureArea.appendChild(elem);
           elem.setAttribute('test-name', '');
           afterMutations(
-            () => expect(elem.testName).to.equal(''),
+            () => expect(elem.testName).toEqual(''),
             () => fixtureArea.removeChild(elem),
             done
           );
@@ -285,10 +288,10 @@ describe('lifecycle/property', () => {
           afterMutations(() => {
             elem.setAttribute('test-name', 'test');
             afterMutations(() => {
-              expect(elem.testName).to.equal('test');
+              expect(elem.testName).toEqual('test');
               elem.removeAttribute('test-name');
               afterMutations(() => {
-                expect(elem.testName).to.equal(null);
+                expect(elem.testName).toEqual(null);
                 fixtureArea.removeChild(elem);
                 done();
               }, 1);
@@ -304,7 +307,7 @@ describe('lifecycle/property', () => {
             called = true;
           } });
           elem.test = true;
-          expect(called).to.equal(false);
+          expect(called).toEqual(false);
         });
 
         it('coerces the value from the attribute to the property', (done) => {
@@ -314,11 +317,11 @@ describe('lifecycle/property', () => {
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
-            () => expect(elem.testName).to.be.an('array'),
-            () => expect(elem.testName).to.have.length(3),
-            () => expect(elem.testName[0]).to.equal(1),
-            () => expect(elem.testName[1]).to.equal(2),
-            () => expect(elem.testName[2]).to.equal(3),
+            () => expect(elem.testName).toBeAn('array'),
+            () => expect(elem.testName.length).toBe(3),
+            () => expect(elem.testName[0]).toEqual(1),
+            () => expect(elem.testName[1]).toEqual(2),
+            () => expect(elem.testName[2]).toEqual(3),
             done
           );
         });
@@ -330,11 +333,11 @@ describe('lifecycle/property', () => {
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
-            () => expect(elem.testName).to.be.an('array'),
-            () => expect(elem.testName).to.have.length(3),
-            () => expect(elem.testName[0]).to.equal(1),
-            () => expect(elem.testName[1]).to.equal(2),
-            () => expect(elem.testName[2]).to.equal(3),
+            () => expect(elem.testName).toBeAn('array'),
+            () => expect(elem.testName.length).toBe(3), 
+            () => expect(elem.testName[0]).toEqual(1),
+            () => expect(elem.testName[1]).toEqual(2),
+            () => expect(elem.testName[2]).toEqual(3),
             done
           );
         });
@@ -347,7 +350,7 @@ describe('lifecycle/property', () => {
             called = true;
           } });
           elem.testName = true;
-          expect(called).to.equal(false);
+          expect(called).toEqual(false);
         });
 
         it('coerces the value from the property to the attribute', (done) => {
@@ -361,7 +364,7 @@ describe('lifecycle/property', () => {
           elem.testName = [1, 2, 3];
           fixtureArea.appendChild(elem);
           afterMutations(() => {
-            expect(elem.getAttribute('test-name')).to.equal('1:2:3');
+            expect(elem.getAttribute('test-name')).toEqual('1:2:3');
             fixtureArea.removeChild(elem);
             done();
           }, 1);
@@ -376,9 +379,9 @@ describe('lifecycle/property', () => {
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {
-            expect(elem.getAttribute('test-name')).to.equal('');
+            expect(elem.getAttribute('test-name')).toEqual('');
             elem.testName = false;
-            expect(elem.getAttribute('test-name')).to.equal(null);
+            expect(elem.getAttribute('test-name')).toEqual(null);
             fixtureArea.removeChild(elem);
             done();
           });
@@ -393,10 +396,10 @@ describe('lifecycle/property', () => {
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {
-            expect(elem.getAttribute('test-name')).to.equal('');
+            expect(elem.getAttribute('test-name')).toEqual('');
             elem.testName = false;
             afterMutations(() => {
-              expect(elem.getAttribute('test-name')).to.equal(null);
+              expect(elem.getAttribute('test-name')).toEqual(null);
               fixtureArea.removeChild(elem);
               done();
             });
@@ -408,47 +411,47 @@ describe('lifecycle/property', () => {
     describe('default', () => {
       it('null by default', () => {
         const elem = create();
-        expect(elem.testName).to.equal(null);
+        expect(elem.testName).toEqual(null);
       });
 
       it('should accept a function', () => {
         const opts = {
           default (elem, data) {
-            expect(this.default).to.equal(opts.default);
-            expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
-            expect(elem.nodeType).to.equal(1);
-            expect(data.name).to.equal('testName');
+            expect(this.default).toEqual(opts.default);
+            expect(arguments.length).toEqual(2); // eslint-disable-line prefer-rest-params
+            expect(elem.nodeType).toEqual(1);
+            expect(data.name).toEqual('testName');
             return 'testValue';
           }
         };
         const elem = create(opts);
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should accept a non-function', () => {
         const elem = create({ default: 'testValue' });
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should be the property value if property is set to null', () => {
         const elem = create({ default: 'testValue' });
         elem.testName = 'updatedValue';
-        expect(elem.testName).to.equal('updatedValue');
+        expect(elem.testName).toEqual('updatedValue');
         elem.testName = null;
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should be the property value if property is set to undefined', () => {
         const elem = create({ default: 'testValue' });
         elem.testName = 'updatedValue';
-        expect(elem.testName).to.equal('updatedValue');
+        expect(elem.testName).toEqual('updatedValue');
         elem.testName = undefined;
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should not set the attribute on init', () => {
         const elem = create({ attribute: true, default: 'testValue' });
-        expect(elem.getAttribute('test-name')).to.equal(null);
+        expect(elem.getAttribute('test-name')).toEqual(null);
       });
 
       it('should not set the attribute on update', (done) => {
@@ -457,9 +460,9 @@ describe('lifecycle/property', () => {
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           elem.testName = 'updatedValue';
-          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          expect(elem.getAttribute('test-name')).toEqual('updatedValue');
           elem.testName = null;
-          expect(elem.getAttribute('test-name')).to.equal(null);
+          expect(elem.getAttribute('test-name')).toEqual(null);
           fixtureArea.removeChild(elem);
           done();
         });
@@ -475,15 +478,15 @@ describe('lifecycle/property', () => {
           }
         });
         elem.testName = 'something';
-        expect(called).to.equal(true);
+        expect(called).toEqual(true);
       });
 
       it('context and arguments', (done) => {
         const opts = {
           coerce (value) {
-            expect(this.type).to.equal(opts.type);
-            expect(arguments.length).to.equal(1); // eslint-disable-line prefer-rest-params
-            expect(value).to.equal('something');
+            expect(this.type).toEqual(opts.type);
+            expect(arguments.length).toEqual(1); // eslint-disable-line prefer-rest-params
+            expect(value).toEqual('something');
             done();
           },
           default: 'something'
@@ -496,36 +499,36 @@ describe('lifecycle/property', () => {
       it('should accept a function', () => {
         const opts = {
           initial (elem, data) {
-            expect(this.initial).to.equal(opts.initial);
-            expect(arguments.length).to.equal(2); // eslint-disable-line prefer-rest-params
-            expect(elem.nodeType).to.equal(1);
-            expect(data.name).to.equal('testName');
+            expect(this.initial).toEqual(opts.initial);
+            expect(arguments.length).toEqual(2); // eslint-disable-line prefer-rest-params
+            expect(elem.nodeType).toEqual(1);
+            expect(data.name).toEqual('testName');
             return 'testValue';
           }
         };
         const elem = create(opts);
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should accept a non-function', () => {
         const elem = create({ initial: 'testValue' });
-        expect(elem.testName).to.equal('testValue');
+        expect(elem.testName).toEqual('testValue');
       });
 
       it('should not be the property value if property is set to null', () => {
         const elem = create({ initial: 'testValue' });
         elem.testName = 'updatedValue';
-        expect(elem.testName).to.equal('updatedValue');
+        expect(elem.testName).toEqual('updatedValue');
         elem.testName = null;
-        expect(elem.testName).to.equal(null);
+        expect(elem.testName).toEqual(null);
       });
 
       it('should not be the property value if property is set to undefined', () => {
         const elem = create({ initial: 'testValue' });
         elem.testName = 'updatedValue';
-        expect(elem.testName).to.equal('updatedValue');
+        expect(elem.testName).toEqual('updatedValue');
         elem.testName = undefined;
-        expect(elem.testName).to.equal(null);
+        expect(elem.testName).toEqual(null);
       });
 
       it('should set the attribute on init', (done) => {
@@ -533,7 +536,7 @@ describe('lifecycle/property', () => {
         const elem = create({ attribute: true, initial: 'testValue' });
         fixtureArea.appendChild(elem);
         afterMutations(() => {
-          expect(elem.getAttribute('test-name')).to.equal('testValue');
+          expect(elem.getAttribute('test-name')).toEqual('testValue');
           fixtureArea.removeChild(elem);
           done();
         });
@@ -545,9 +548,9 @@ describe('lifecycle/property', () => {
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           elem.testName = 'updatedValue';
-          expect(elem.getAttribute('test-name')).to.equal('updatedValue');
+          expect(elem.getAttribute('test-name')).toEqual('updatedValue');
           elem.testName = null;
-          expect(elem.getAttribute('test-name')).to.equal(null);
+          expect(elem.getAttribute('test-name')).toEqual(null);
           fixtureArea.removeChild(elem);
           done();
         });
@@ -561,15 +564,15 @@ describe('lifecycle/property', () => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName', 'something');
         elem.testName = 'something';
-        expect(elem.testName).to.equal('something');
+        expect(elem.testName).toEqual('something');
         fixtureArea.appendChild(elem);
         afterMutations(() => {
-          expect(elem.getAttribute('test-name')).to.equal('something');
+          expect(elem.getAttribute('test-name')).toEqual('something');
 
           elem.setAttribute('test-name', 'something else');
           afterMutations(() => {
-            expect(elem.testName).to.equal('something else');
-            expect(elem.getAttribute('test-name')).to.equal('something else');
+            expect(elem.testName).toEqual('something else');
+            expect(elem.getAttribute('test-name')).toEqual('something else');
             fixtureArea.removeChild(elem);
             done();
           });
@@ -582,8 +585,8 @@ describe('lifecycle/property', () => {
 
         elem.setAttribute('test-name', 'something');
         afterMutations(() => {
-          expect(elem.testName).to.equal('something');
-          expect(elem.getAttribute('test-name')).to.equal('something');
+          expect(elem.testName).toEqual('something');
+          expect(elem.getAttribute('test-name')).toEqual('something');
           done();
         });
       });
@@ -596,13 +599,13 @@ describe('lifecycle/property', () => {
         }));
 
         elem.testName = false;
-        expect(elem.testName).to.equal(false);
-        expect(elem.getAttribute('test-name')).to.equal(null);
+        expect(elem.testName).toEqual(false);
+        expect(elem.getAttribute('test-name')).toEqual(null);
 
         elem.setAttribute('test-name', '');
         afterMutations(() => {
-          expect(elem.testName).to.equal(true);
-          expect(elem.getAttribute('test-name')).to.equal('');
+          expect(elem.testName).toEqual(true);
+          expect(elem.getAttribute('test-name')).toEqual('');
           done();
         });
       });
@@ -611,7 +614,7 @@ describe('lifecycle/property', () => {
 
   describe('attribute one-way', () => {
     it('source is not updated', (done) => {
-      const Elem = define(class extends Component {
+      const Elem = define(class extends Mixins.Props() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -620,19 +623,19 @@ describe('lifecycle/property', () => {
       });
       const elem = fixture(`<${Elem.is} in="val" />`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).to.equal('val');
-        expect(elem.prop).to.equal('val');
+        expect(elem.getAttribute('in')).toEqual('val');
+        expect(elem.prop).toEqual('val');
         elem.prop = 'val1';
         afterMutations(() => {
-          expect(elem.getAttribute('in')).to.equal('val');
-          expect(elem.prop).to.equal('val1');
+          expect(elem.getAttribute('in')).toEqual('val');
+          expect(elem.prop).toEqual('val1');
           done();
         });
       });
     });
 
     it('source change, updates prop', (done) => {
-      const Elem = define(class extends Component {
+      const Elem = define(class extends Mixins.Props() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -641,17 +644,17 @@ describe('lifecycle/property', () => {
       });
       const elem = fixture(`<${Elem.is} in="val" />`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).to.equal('val');
-        expect(elem.prop).to.equal('val');
+        expect(elem.getAttribute('in')).toEqual('val');
+        expect(elem.prop).toEqual('val');
         elem.setAttribute('in', 'val1');
-        expect(elem.prop).to.equal('val1');
-        expect(elem.getAttribute('in')).to.equal('val1');
+        expect(elem.prop).toEqual('val1');
+        expect(elem.getAttribute('in')).toEqual('val1');
         done();
       });
     });
 
     it('prop change, updates target', (done) => {
-      const Elem = define(class extends Component {
+      const Elem = define(class extends Mixins.Props() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
@@ -660,21 +663,21 @@ describe('lifecycle/property', () => {
       });
       const elem = fixture(`<${Elem.is} in="val" out="abc"/>`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).to.equal('val', 'attr in');
-        expect(elem.prop).to.equal('val', 'prop out');
-        expect(elem.getAttribute('out')).to.equal('val', 'attr in');
+        expect(elem.getAttribute('in')).toEqual('val', 'attr in');
+        expect(elem.prop).toEqual('val', 'prop out');
+        expect(elem.getAttribute('out')).toEqual('val', 'attr in');
         elem.prop = 'val1';
         afterMutations(() => {
-          expect(elem.getAttribute('in')).to.equal('val', 'attr in');
-          expect(elem.prop).to.equal('val1', 'prop out');
-          expect(elem.getAttribute('out')).to.equal('val1', 'attr in');
+          expect(elem.getAttribute('in')).toEqual('val', 'attr in');
+          expect(elem.prop).toEqual('val1', 'prop out');
+          expect(elem.getAttribute('out')).toEqual('val1', 'attr in');
           done();
         });
       });
     });
 
     it('source change, updates target', (done) => {
-      const Elem = define(class extends Component {
+      const Elem = define(class extends Mixins.Props() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' },
@@ -685,24 +688,24 @@ describe('lifecycle/property', () => {
       });
       const elem = fixture(`<${Elem.is} />`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).to.equal(null);
-        expect(elem.getAttribute('out')).to.equal('init');
-        expect(elem.prop).to.equal('init');
+        expect(elem.getAttribute('in')).toEqual(null);
+        expect(elem.getAttribute('out')).toEqual('init');
+        expect(elem.prop).toEqual('init');
         elem.setAttribute('in', 'val');
         afterMutations(() => {
-          expect(elem.getAttribute('in')).to.equal('val');
-          expect(elem.getAttribute('out')).to.equal('val');
-          expect(elem.prop).to.equal('val');
+          expect(elem.getAttribute('in')).toEqual('val');
+          expect(elem.getAttribute('out')).toEqual('val');
+          expect(elem.prop).toEqual('val');
           elem.setAttribute('in', 'val1');
           afterMutations(() => {
-            expect(elem.getAttribute('in')).to.equal('val1');
-            expect(elem.getAttribute('out')).to.equal('val1');
-            expect(elem.prop).to.equal('val1');
+            expect(elem.getAttribute('in')).toEqual('val1');
+            expect(elem.getAttribute('out')).toEqual('val1');
+            expect(elem.prop).toEqual('val1');
             elem.removeAttribute('in');
             afterMutations(() => {
-              expect(elem.getAttribute('in')).to.equal(null);
-              expect(elem.getAttribute('out')).to.equal(null);
-              expect(elem.prop).to.equal('def');
+              expect(elem.getAttribute('in')).toEqual(null);
+              expect(elem.getAttribute('out')).toEqual(null);
+              expect(elem.prop).toEqual('def');
               done();
             });
           });
@@ -711,7 +714,7 @@ describe('lifecycle/property', () => {
     });
 
     it('target change is ignored', (done) => {
-      const Elem = define(class extends Component {
+      const Elem = define(class extends Mixins.Props() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
@@ -720,12 +723,12 @@ describe('lifecycle/property', () => {
       });
       const elem = fixture(`<${Elem.is} out="abc"/>`).firstChild;
       afterMutations(() => {
-        expect(elem.prop).to.equal(null);
-        expect(elem.getAttribute('out')).to.equal('abc');
+        expect(elem.prop).toEqual(null);
+        expect(elem.getAttribute('out')).toEqual('abc');
         elem.setAttribute('out', 'val');
         afterMutations(() => {
-          expect(elem.prop).to.equal(null);
-          expect(elem.getAttribute('out')).to.equal('val');
+          expect(elem.prop).toEqual(null);
+          expect(elem.getAttribute('out')).toEqual('val');
           done();
         });
       });

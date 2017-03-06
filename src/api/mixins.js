@@ -1,15 +1,12 @@
-import { patchInner } from 'incremental-dom';
+import { render } from 'preact';
 import {
-  connected as $connected,
   ctorObservedAttributes as $ctorObservedAttributes,
   ctorProps as $ctorProps,
   ctorCreateInitProps as $ctorCreateInitProps,
   props as $props,
-  renderer as $renderer,
-  rendererDebounced as $rendererDebounced,
-  rendering as $rendering,
-  updated as $updated
+  _updateDebounced
 } from '../util/symbols';
+import { createNativePropertyDescriptor } from '../lifecycle/props-init';
 import createSymbol from '../util/create-symbol';
 import data from '../util/data';
 import debounce from '../util/debounce';
@@ -17,16 +14,17 @@ import getAttrMgr from '../util/attributes-manager';
 import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
 import getSetProps from './props';
-import { createNativePropertyDescriptor } from '../lifecycle/props-init';
-import { isFunction } from '../util/is-type';
-import objectIs from '../polyfills/object-is';
 import setCtorNativeProperty from '../util/set-ctor-native-property';
 import root from '../util/root';
 
 const HTMLElement = root.HTMLElement || class {};
+
+const _connected = createSymbol('connected');
 const _prevName = createSymbol('prevName');
 const _prevOldValue = createSymbol('prevOldValue');
 const _prevNewValue = createSymbol('prevNewValue');
+const _update = createSymbol('update');
+const _updating = createSymbol('updating');
 
 function preventDoubleCalling (elem, name, oldValue, newValue) {
   return name === elem[_prevName] &&
@@ -67,7 +65,7 @@ function createInitProps (Ctor) {
 
 export function Raw (Base = HTMLElement) {
   return class extends Base {
-    static is = ''
+    static is = null
     static observedAttributes = []
     attributeChangedCallback () {}
     connectedCallback () {}
@@ -116,7 +114,8 @@ export function Props (Base = Raw()) {
 
       // TODO refactor to not cater to Safari < 10. This means we can depend on
       // built-in property descriptors.
-      // Must be defined on constructor and not from a superclass
+      //
+      // Must be defined on constructor and not from a super class.
       if (!constructor.hasOwnProperty($ctorCreateInitProps)) {
         setCtorNativeProperty(constructor, $ctorCreateInitProps, createInitProps(constructor));
       }
@@ -127,32 +126,8 @@ export function Props (Base = Raw()) {
         constructor[$ctorCreateInitProps](this);
       }
 
-      // Set up a renderer that is debounced for property sets to call directly.
-      this[$rendererDebounced] = debounce(this[$renderer].bind(this));
-    }
-
-    connectedCallback () {
-      // Reflect attributes pending values
-      getAttrMgr(this).resumeAttributesUpdates();
-
-      // Used to check whether or not the component can render.
-      this[$connected] = true;
-
-      // Render!
-      this[$rendererDebounced]();
-
-      // DEPRECATED
-      //
-      // We can remove this once all browsers support :defined.
-      this.setAttribute('defined', '');
-    }
-
-    disconnectedCallback () {
-      // Suspend updating attributes until re-connected
-      getAttrMgr(this).suspendAttributesUpdates();
-
-      // Ensures the component can't be rendered while disconnected.
-      this[$connected] = false;
+      // Bind a debounced updating function to trigger updates in batches.
+      this[_updateDebounced] = debounce(this[_update]);
     }
 
     attributeChangedCallback (name, oldValue, newValue) {
@@ -183,35 +158,49 @@ export function Props (Base = Raw()) {
         }
       }
     }
-  };
-}
 
-export function Render (Base = Props()) {
-  return class extends Base {
-    constructor () {
-      super();
+    connectedCallback () {
+      // Reflect attributes pending values
+      getAttrMgr(this).resumeAttributesUpdates();
 
-      // Set up a renderer that is debounced for property sets to call directly.
-      this[$rendererDebounced] = debounce(this[$renderer].bind(this));
+      // Used to check whether or not the component can render.
+      this[_connected] = true;
+
+      // Queue a render.
+      this[_updateDebounced]();
     }
 
-    updatedCallback (prevProps) {
+    disconnectedCallback () {
+      // Suspend updating attributes until re-connected
+      getAttrMgr(this).suspendAttributesUpdates();
+
+      // Ensures the component can't be rendered while disconnected.
+      this[_connected] = false;
+    }
+
+    // Called when props actually change.
+    propsChangedCallback () {}
+
+    // Called whenever props are set, even if they don't change.
+    propsSetCallback () {}
+
+    // Called to see if the props changed.
+    propsUpdatedCallback (next, prev) {
       // The 'previousProps' will be undefined if it is the initial render.
-      if (!prevProps) {
+      if (!prev) {
         return true;
       }
 
       // The 'prevProps' will always contain all of the keys.
       //
       // Use classic loop because:
-      // 'for ... in' skips symbols and 'for ... of' is not working yet with IE!?
-      // for (let nameOrSymbol of getPropNamesAndSymbols(previousProps)) {
-      const namesAndSymbols = getPropNamesAndSymbols(prevProps);
+      //
+      // - for ... in skips symbols
+      // - for ... of is not working yet with IE!?
+      const namesAndSymbols = getPropNamesAndSymbols(prev);
       for (let i = 0; i < namesAndSymbols.length; i++) {
         const nameOrSymbol = namesAndSymbols[i];
-
-        // With Object.is NaN is equal to NaN
-        if (!objectIs(prevProps[nameOrSymbol], this[nameOrSymbol])) {
+        if (prev[nameOrSymbol] !== next[nameOrSymbol]) {
           return true;
         }
       }
@@ -219,53 +208,61 @@ export function Render (Base = Props()) {
       return false;
     }
 
-    // Invoked after rendering, only if a renderCallback() exists.
-    renderedCallback () {}
-
     // Invokes the complete render lifecycle.
-    [$renderer] () {
-      if (this[$rendering] || !this[$connected]) {
+    [_update] = () => {
+      if (this[_updating] || !this[_connected]) {
         return;
       }
 
       // Flag as rendering. This prevents anything from trying to render - or
       // queueing a render - while there is a pending render.
-      this[$rendering] = true;
-      if (this[$updated]() && isFunction(this.renderCallback)) {
-        this.rendererCallback();
-        this.renderedCallback();
+      this[_updating] = true;
+
+      // Prev / next props for prop lifecycle callbacks.
+      const prev = this[$props];
+      const next = this[$props] = getSetProps(this);
+
+      // Always call set, but only call changed if the props updated.
+      this.propsSetCallback(next, prev);
+      if (this.propsUpdatedCallback(next, prev)) {
+        this.propsChangedCallback(next, prev);
       }
 
-      this[$rendering] = false;
+      this[_updating] = false;
+    }
+  };
+}
+
+export function Render (Base = Props()) {
+  return class extends Base {
+    propsChangedCallback () {
+      super.propsChangedCallback();
+
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: 'open' });
+      }
+
+      this.rendererCallback(this.shadowRoot, this.renderCallback(this));
+      this.renderedCallback();
     }
 
-    // Calls the updatedCallback() with previous props.
-    [$updated] () {
-      const prevProps = this[$props];
-      this[$props] = getSetProps(this);
-      return this.updatedCallback(prevProps);
-    }
+    // Called to render the component.
+    renderCallback () {}
+
+    // Called after the component has rendered.
+    renderedCallback () {}
+
+    // Called to render the component.
+    rendererCallback () {}
   };
 }
 
 export function Component (Base = Render()) {
   return class extends Base {
-    rendererCallback () {
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: 'open' });
-      }
-      patchInner(this.shadowRoot, () => {
-        const possibleFn = this.renderCallback(this);
-        if (isFunction(possibleFn)) {
-          possibleFn();
-        } else if (Array.isArray(possibleFn)) {
-          possibleFn.forEach((fn) => {
-            if (isFunction(fn)) {
-              fn();
-            }
-          });
-        }
-      });
+    rendererCallback (host, vdom) {
+      render(vdom, host);
     }
   };
 }
+
+export { h } from 'preact';

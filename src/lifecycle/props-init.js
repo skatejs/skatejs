@@ -1,6 +1,4 @@
-import {
-  rendererDebounced as $rendererDebounced
-} from '../util/symbols';
+import { _updateDebounced } from '../util/symbols';
 import data from '../util/data';
 import empty from '../util/empty';
 import getAttrMgr from '../util/attributes-manager';
@@ -70,7 +68,7 @@ export function createNativePropertyDescriptor (propDef) {
     newValue = propDef.coerce(newValue);
 
     // Queue a re-render.
-    this[$rendererDebounced](this);
+    this[_updateDebounced]();
 
     // Update prop data so we can use it next time.
     propData.internalValue = newValue;

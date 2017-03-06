@@ -1,19 +1,21 @@
-/* eslint-env jasmine, mocha */
+/* eslint-env mocha */
 
-import native from '../../../src/util/native';
+import expect from 'expect';
+
+import native from 'src/util/native';
 
 describe('utils/native', () => {
   it('Should return true for Chrome native MutationObserver', () => {
     expect(native({
       toString: () => 'function MutationObserver() { [native code] }'
-    })).to.equal(true);
+    })).toEqual(true);
   });
   it('Should return true for Safari native MutationObserver', () => {
     expect(native({
       toString: () => '[object MutationObserverConstructor]'
-    })).to.equal(true);
+    })).toEqual(true);
   });
   it('Should return false for a non native function', () => {
-    expect(native(() => null)).to.equal(false);
+    expect(native(() => null)).toEqual(false);
   });
 });

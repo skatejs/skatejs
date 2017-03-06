@@ -1,16 +1,17 @@
-/* eslint-env jasmine, mocha */
+/* eslint-env mocha */
 
-import emit from '../../../src/api/emit';
-import fixture from '../../lib/fixture';
+import { emit } from 'src';
+import fixture from '../lib/fixture';
+import expect from 'expect';
 
 describe('api/emit', () => {
   it('default event options', done => {
     const elem = document.createElement('div');
     fixture(elem);
     elem.addEventListener('test', e => {
-      expect(e.bubbles).to.equal(true);
-      expect(e.cancelable).to.equal(true);
-      expect(e.composed).to.equal(false);
+      expect(e.bubbles).toEqual(true);
+      expect(e.cancelable).toEqual(true);
+      expect(e.composed).toEqual(false);
       done();
     });
     emit(elem, 'test');
@@ -20,9 +21,9 @@ describe('api/emit', () => {
     const elem = document.createElement('div');
     fixture(elem);
     elem.addEventListener('test', e => {
-      expect(e.bubbles).to.equal(false);
-      expect(e.cancelable).to.equal(false);
-      expect(e.composed).to.equal(true);
+      expect(e.bubbles).toEqual(false);
+      expect(e.cancelable).toEqual(false);
+      expect(e.composed).toEqual(true);
       done();
     });
     emit(elem, 'test', {
@@ -37,7 +38,7 @@ describe('api/emit', () => {
     fixture(elem);
     const detail = {};
     elem.addEventListener('test', e => {
-      expect(e.detail).to.equal(detail);
+      expect(e.detail).toEqual(detail);
       done();
     });
     emit(elem, 'test', { detail });

@@ -1,8 +1,6 @@
-import { renderer as $renderer } from '../util/symbols';
 import assign from '../util/assign';
 import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
 import getPropsMap from '../util/get-props-map';
-import { isUndefined } from '../util/is-type';
 
 function get (elem) {
   const props = {};
@@ -14,13 +12,11 @@ function get (elem) {
   return props;
 }
 
-function set (elem, newProps) {
-  assign(elem, newProps);
-  if (elem[$renderer]) {
-    elem[$renderer]();
-  }
+function set (elem, props) {
+  assign(elem, props);
 }
 
-export default function (elem, newProps) {
-  return isUndefined(newProps) ? get(elem) : set(elem, newProps);
+export default function (...args) {
+  const [ elem, props ] = args;
+  return args.length === 1 ? get(elem) : set(elem, props);
 }
