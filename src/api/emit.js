@@ -1,6 +1,6 @@
 import root from '../util/root';
 
-// Once the Event constructor is newable cross-browser, this can be reomved.
+// Once the Event constructor is newable cross-browser, this can be removed.
 const Event = (() => {
   try {
     const { Event } = root;

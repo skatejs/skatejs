@@ -1,49 +1,59 @@
-# `emit (elem, eventName, eventOptions = {})`
+# `emit (elem, name, opts = {})`
 
-Emits an `Event` on `elem` that is `composed`, `bubbles` and is `cancelable` by default. It also ensures a 'CustomEvent' is emitted properly in browsers that don't support using `new CustomEvent()`. This is useful for use in components that are children of a parent component and need to communicate changes to the parent.
+Emits an [`Event`](https://developer.mozilla.org/en-US/docs/Web/API/Event/Event) on `elem` (or `CustomEvent` if `Event` isn't supported). The `detail` option - normally used with `CustomEvent` - is normalised to also work with `Event`.
+
+Events are the proper way to communicate changes up in the DOM tree as this decouples your logic from your DOM structure.
 
 ```js
-customElements.define('x-tabs', class extends skate.Component {
+/** @jsx h */
+
+import { Component, emit, h } from 'skatejs';
+
+customElements.define('x-tabs', class extends Component {
   renderCallback () {
-    return skate.h('x-tab', { onSelect: () => {} });
+    return <x-tab onSelect={() => {}}>clici me</x-tab>;
   }
 });
 
 customElements.define('x-tab', class extends skate.Component {
   renderCallback () {
-    return skate.h('a', { onClick: () => skate.emit(this, 'select') });
+    return <a onClick={() => emit(this, 'select')}><slot /></a>;
   }
 });
 ```
-
-It's preferable not to reach up the DOM hierarchy because that couples your logic to a specific DOM structure that the child has no control over. To decouple this so that your child can be used anywhere, simply trigger an event.
 
 The return value of `emit()` is the same as [`dispatchEvent()`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent).
 
+The default option values are:
+
+- `bubbles: true`
+- `cancelable: true`
+- `composed: false`
 
 
-## Preventing Bubbling or Canceling
+## Passing data
 
-If you don't want the event to bubble, or you don't want it to be cancelable, then you can specify the standard event options in the `eventOptions` argument.
+You can pass data when emitting the event with the `detail` option in the `opts` argument.
 
 ```js
-skate.emit(elem, 'event', {
-  composed: false,
+emit(elem, 'event', {
+  detail: 'some data'
+});
+```
+
+
+## Preventing bubbling / canceling
+
+If you want to override the default options that Skate specifies to `dispatchEvent()`, you can pass them as the `opts` argument.
+
+```js
+emit(elem, 'event', {
   bubbles: false,
-  cancelable: false
+  cancelable: false,
+  composed: true
 });
 ```
 
+## Bubbling through shadow boundaries
 
-
-## Passing Data
-
-You can pass data when emitting the event with the `detail` option in the `eventOptions` argument.
-
-```js
-skate.emit(elem, 'event', {
-  detail: {
-    data: 'my-data'
-  }
-});
-```
+By default, events do not bubble past shadow roots. To enable bubbling past the shadow boundary, set the `composed` option to `true`.
