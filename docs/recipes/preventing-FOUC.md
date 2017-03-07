@@ -1,6 +1,18 @@
 # Preventing FOUC
 
-An element may not be initialised right away if your definitions are loaded after the document is parsed. In native custom elements, you can use the `:defined` pseudo-class to select all elements that have been upgraded, thus allowing you to do `:not(:defined)` to invert that. Since that only works in native, Skate adds a `defined` attribute so that you have a cross-browser way of dealing with FOUC and jank.
+An element may not be initialised right away if your definitions are loaded after the document is parsed. In native custom elements, you can use the `:defined` pseudo-class to select all elements that have been upgraded, thus allowing you to do `:not(:defined)` to invert that.
+
+If you need to do something similar where custom elements aren't natively supported, then you can add an attribute - or something similar:
+
+```js
+customElements.define('my-element', class extends HTMLElement {
+  connectedCallback () {
+    this.setAttribute('defined', '');
+  }
+});
+```
+
+And then you can target it with CSS:
 
 ```css
 my-element {

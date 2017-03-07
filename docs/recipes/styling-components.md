@@ -3,12 +3,21 @@
 In order to style your components, you should assume Shadow DOM encapsulation. The best-practice here is to simply put styles into a `<style>` block:
 
 ```js
-customElements.define('x-component', class extends skate.Component {
-  renderCallback () {
-    return [
-      skate.h('style', '.my-class { display: block; }'),
-      skate.h('div', { class: 'my-class' }),
-    ];
+import { Component, h } from 'skatejs';
+
+customElements.define('x-component', class extends Component {
+  css = `
+    .my-class {
+      display: block;
+    }
+  `;
+  renderCallback ({ css }) {
+    return (
+      <div>
+        <style>{css}</style>
+        <div className="my-class" />
+      </div>
+    );
   }
 });
 ```

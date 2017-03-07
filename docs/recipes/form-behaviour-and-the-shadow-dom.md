@@ -17,7 +17,9 @@ Let's say we have a custom form and custom button (to reproduce, only one of the
 The definitions look like the following:
 
 ```js
-customElements.define('x-form', class extends skate.Component {
+import { Component, h } from 'skatejs';
+
+customElements.define('x-form', class extends Component {
   renderCallback () {
     return (
       <form>
@@ -27,7 +29,7 @@ customElements.define('x-form', class extends skate.Component {
   }
 });
 
-customElements.define('x-button', class extends skate.Component {
+customElements.define('x-button', class extends Component {
   renderCallback () {
     return (
       <button>
@@ -57,9 +59,11 @@ Now all you need to do is put that on the `<form>` inside of `<x-form>`:
 You cane take this a step further and emit a `submit` event on the form and call `submit()` on it if the event wasn't canceled:
 
 ```js
+import { emit } from 'skatejs';
+
 function onClick (e) {
   if (e.target.getAttribute('type') === 'submit') {
-    if (skate.emit(e.currentTarget, 'submit')) {
+    if (emit(e.currentTarget, 'submit')) {
       e.currentTarget.submit();
     }
   }
@@ -69,15 +73,17 @@ function onClick (e) {
 The full example looks like:
 
 ```js
+import { Component, emit, h } from 'skatejs';
+
 function onClick (e) {
   if (e.target.getAttribute('type') === 'submit') {
-    if (skate.emit(e.currentTarget, 'submit')) {
+    if (emit(e.currentTarget, 'submit')) {
       e.currentTarget.submit();
     }
   }
 }
 
-customElements.define('x-form', class extends skate.Component {
+customElements.define('x-form', class extends Component {
   renderCallback () {
     return (
       <form { onClick }>
@@ -87,7 +93,7 @@ customElements.define('x-form', class extends skate.Component {
   }
 });
 
-customElements.define('x-button', class extends skate.Component {
+customElements.define('x-button', class extends Component {
   renderCallback () {
     return (
       <button>
