@@ -27,6 +27,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "babel-eslint": "^7.1.1",
     "bore": "^1.1.0",
     "commitizen": "^2.8.2",
     "cz-conventional-changelog": "2.0.0",
@@ -48,7 +49,7 @@
     "docs:watch": "gitbook install && gitbook serve",
     "prepublish": "nwb build",
     "release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "npm run prepublish && node umd/skatejs.js && semistandard && npm run test:ts && nwb test",
+    "test": "node umd/skatejs.js && semistandard && npm run test:ts && nwb test",
     "test:ts": "tsfmt -r && tsc -p ./",
     "test:watch": "nwb test --server"
   },

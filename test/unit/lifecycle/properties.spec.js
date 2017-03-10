@@ -334,7 +334,7 @@ describe('lifecycle/properties', () => {
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
             () => expect(elem.testName).toBeAn('array'),
-            () => expect(elem.testName.length).toBe(3), 
+            () => expect(elem.testName.length).toBe(3),
             () => expect(elem.testName[0]).toEqual(1),
             () => expect(elem.testName[1]).toEqual(2),
             () => expect(elem.testName[2]).toEqual(3),
