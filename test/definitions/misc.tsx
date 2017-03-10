@@ -446,7 +446,7 @@
     user: UserModel;
 
     renderCallback() {
-      const {id, email} = this.user;
+      const { id, email } = this.user;
       return [
         <p>
           <div>ID: {id}</div>
@@ -467,7 +467,7 @@
     users: UserModel[];
 
     renderCallback() {
-      const {users} = this;
+      const { users } = this;
       return [
         <ul>
           {users.map((user) => (<li><User user={user} /></li>))}
@@ -549,8 +549,6 @@
 
   // Renders <my-element />
   skate.h(MyElement);
-
-  skate.vdom.elementOpen(MyElement);
 
   // for https://github.com/Microsoft/TypeScript/issues/7004
   const anyProps = {};
@@ -691,8 +689,8 @@
   }
   // anchor test so this https://github.com/Microsoft/TypeScript/issues/13345 is mitigated
   {
-    const Link: skate.SFC<{ to: string }> = ({to}) => <a href={to}><slot /></a>;
-    const LinkH: skate.SFC<{ to: string }> = ({to}) => skate.h('a', { href: to }, skate.h('slot'));
+    const Link: skate.SFC<{ to: string }> = ({ to }) => <a href={to}><slot /></a>;
+    const LinkH: skate.SFC<{ to: string }> = ({ to }) => skate.h('a', { href: to }, skate.h('slot'));
   }
   // slot projection attributes on Component references via JSX
   {
