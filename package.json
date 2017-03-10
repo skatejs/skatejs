@@ -33,6 +33,7 @@
     "cz-conventional-changelog": "2.0.0",
     "gitbook-cli": "^2.3.0",
     "karma-chrome-launcher": "2.0.0",
+    "karma-sauce-launcher": "^1.1.0",
     "nwb": "^0.15.6",
     "preact": "^7.2.0",
     "semantic-release": "^6.3.2",
@@ -49,7 +50,7 @@
     "docs:watch": "gitbook install && gitbook serve",
     "prepublish": "nwb build",
     "release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "node umd/skatejs.js && semistandard && npm run test:ts && nwb test",
+    "test": "node umd/skatejs.js && semistandard && npm run test:ts && nwb test -- --ci",
     "test:ts": "tsfmt -r && tsc -p ./",
     "test:watch": "nwb test --server"
   },
