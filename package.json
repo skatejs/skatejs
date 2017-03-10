@@ -48,7 +48,7 @@
     "docs:watch": "gitbook install && gitbook serve",
     "prepublish": "nwb build",
     "release": "semantic-release pre && npm publish && semantic-release post",
-    "test": "npm run prepublish && node dist/ && semistandard && npm run test:ts && nwb test",
+    "test": "npm run prepublish && node umd/skatejs.js && semistandard && npm run test:ts && nwb test",
     "test:ts": "tsfmt -r && tsc -p ./",
     "test:watch": "nwb test --server"
   },
