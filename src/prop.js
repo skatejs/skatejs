@@ -1,5 +1,5 @@
-import empty from '../util/empty';
-import toNullOrString from '../util/to-null-or-string';
+import empty from './util/empty';
+import toNullOrString from './util/to-null-or-string';
 
 const freeze = Object.freeze;
 const attribute = freeze({ source: true });

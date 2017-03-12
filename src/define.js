@@ -1,5 +1,5 @@
-import uniqueId from '../util/unique-id';
-import root from '../util/root';
+import uniqueId from './util/unique-id';
+import root from './util/root';
 
 export default function (Ctor) {
   const { customElements, HTMLElement } = root;

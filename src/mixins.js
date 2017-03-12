@@ -5,17 +5,17 @@ import {
   ctorCreateInitProps as $ctorCreateInitProps,
   props as $props,
   _updateDebounced
-} from '../util/symbols';
-import { createNativePropertyDescriptor } from '../lifecycle/props-init';
-import createSymbol from '../util/create-symbol';
-import data from '../util/data';
-import debounce from '../util/debounce';
-import getAttrMgr from '../util/attributes-manager';
-import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
-import getPropsMap from '../util/get-props-map';
+} from './util/symbols';
+import { createNativePropertyDescriptor } from './lifecycle/props-init';
+import createSymbol from './util/create-symbol';
+import data from './util/data';
+import debounce from './util/debounce';
+import getAttrMgr from './util/attributes-manager';
+import getPropNamesAndSymbols from './util/get-prop-names-and-symbols';
+import getPropsMap from './util/get-props-map';
 import getSetProps from './props';
-import setCtorNativeProperty from '../util/set-ctor-native-property';
-import root from '../util/root';
+import setCtorNativeProperty from './util/set-ctor-native-property';
+import root from './util/root';
 
 const HTMLElement = root.HTMLElement || class {};
 

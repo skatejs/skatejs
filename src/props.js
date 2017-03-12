@@ -1,6 +1,6 @@
-import assign from '../util/assign';
-import getPropNamesAndSymbols from '../util/get-prop-names-and-symbols';
-import getPropsMap from '../util/get-props-map';
+import assign from './util/assign';
+import getPropNamesAndSymbols from './util/get-prop-names-and-symbols';
+import getPropsMap from './util/get-props-map';
 
 function get (elem) {
   const props = {};

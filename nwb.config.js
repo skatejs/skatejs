@@ -6,13 +6,13 @@ module.exports = {
     esModules: true,
     umd: true
   },
-  karma: {
+  karma: process.argv.indexOf('--ci') === -1 ? {
+    browsers: [require('karma-chrome-launcher')]
+  } : {
     browsers: Object.keys(browsers),
     plugins: ['karma-sauce-launcher'],
-    reporters: ['dots', 'saucelabs'],
-    extra: process.argv.indexOf('--ci') === -1 ? {
-      browsers: [require('karma-chrome-launcher')]
-    } : {
+    reporters: ['saucelabs'],
+    extra: {
       sauceLabs: {},
       customLaunchers: browsers,
       retryLimit: 3,

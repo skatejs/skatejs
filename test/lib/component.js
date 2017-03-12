@@ -1,4 +1,4 @@
-import { define } from '../../src/index';
+import { define } from 'src';
 
 let componentCount = 0;
 

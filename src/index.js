@@ -1,10 +1,10 @@
-import * as Mixins from './api/mixins';
-import * as prop from './api/prop';
-import Component from './api/component';
-import define from './api/define';
-import emit from './api/emit';
-import link from './api/link';
-import props from './api/props';
+import * as Mixins from './mixins';
+import * as prop from './prop';
+import Component from './component';
+import define from './define';
+import emit from './emit';
+import link from './link';
+import props from './props';
 
 const { h } = Mixins;
 
