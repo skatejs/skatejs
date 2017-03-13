@@ -17,20 +17,16 @@ describe('api/props', () => {
     elem = new (define(class extends Mixins.Props() {
       static get props () {
         return {
-          prop1: {
-            initial: 'test1'
-          },
-          prop2: {
-            initial: 'test2'
-          },
-          prop3: {
-            default: undefined
-          }
+          prop1: null,
+          prop2: null,
+          prop3: null
         };
       }
       constructor () {
         super();
         this._rendered = 0;
+        this.prop1 = 'test1';
+        this.prop2 = 'test2';
       }
       propsSetCallback () {
         this._rendered++;

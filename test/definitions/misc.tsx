@@ -158,29 +158,6 @@
     }
   });
 }
-{ // https://github.com/skatejs/skatejs#initial
-  customElements.define('my-component', class extends skate.Component<{ myProp: any }> {
-    static get props() {
-      return {
-        myProp: {
-          initial: 'initial value'
-        }
-      };
-    }
-  });
-
-  customElements.define('my-component', class extends skate.Component<{ myProp: any }> {
-    static get props() {
-      return {
-        myProp: {
-          initial(elem: any, data: any) {
-            return 'initial value';
-          }
-        }
-      };
-    }
-  });
-}
 { // https://github.com/skatejs/skatejs#serialize
   customElements.define('my-component', class extends skate.Component<{ myProp: any }> {
     static get props() {

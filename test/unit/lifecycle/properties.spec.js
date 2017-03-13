@@ -494,68 +494,6 @@ describe('lifecycle/properties', () => {
         create(opts);
       });
     });
-
-    describe('initial', () => {
-      it('should accept a function', () => {
-        const opts = {
-          initial (elem, data) {
-            expect(this.initial).toEqual(opts.initial);
-            expect(arguments.length).toEqual(2); // eslint-disable-line prefer-rest-params
-            expect(elem.nodeType).toEqual(1);
-            expect(data.name).toEqual('testName');
-            return 'testValue';
-          }
-        };
-        const elem = create(opts);
-        expect(elem.testName).toEqual('testValue');
-      });
-
-      it('should accept a non-function', () => {
-        const elem = create({ initial: 'testValue' });
-        expect(elem.testName).toEqual('testValue');
-      });
-
-      it('should not be the property value if property is set to null', () => {
-        const elem = create({ initial: 'testValue' });
-        elem.testName = 'updatedValue';
-        expect(elem.testName).toEqual('updatedValue');
-        elem.testName = null;
-        expect(elem.testName).toEqual(null);
-      });
-
-      it('should not be the property value if property is set to undefined', () => {
-        const elem = create({ initial: 'testValue' });
-        elem.testName = 'updatedValue';
-        expect(elem.testName).toEqual('updatedValue');
-        elem.testName = undefined;
-        expect(elem.testName).toEqual(null);
-      });
-
-      it('should set the attribute on init', (done) => {
-        const fixtureArea = fixture();
-        const elem = create({ attribute: true, initial: 'testValue' });
-        fixtureArea.appendChild(elem);
-        afterMutations(() => {
-          expect(elem.getAttribute('test-name')).toEqual('testValue');
-          fixtureArea.removeChild(elem);
-          done();
-        });
-      });
-
-      it('should set the attribute on update', (done) => {
-        const fixtureArea = fixture();
-        const elem = create({ attribute: true, initial: 'testValue' });
-        fixtureArea.appendChild(elem);
-        afterMutations(() => {
-          elem.testName = 'updatedValue';
-          expect(elem.getAttribute('test-name')).toEqual('updatedValue');
-          elem.testName = null;
-          expect(elem.getAttribute('test-name')).toEqual(null);
-          fixtureArea.removeChild(elem);
-          done();
-        });
-      });
-    });
   });
 
   describe('patterns', () => {
@@ -681,7 +619,6 @@ describe('lifecycle/properties', () => {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' },
-            initial: 'init',
             default: 'def'
           }
         }
@@ -689,8 +626,8 @@ describe('lifecycle/properties', () => {
       const elem = fixture(`<${Elem.is} />`).firstChild;
       afterMutations(() => {
         expect(elem.getAttribute('in')).toEqual(null);
-        expect(elem.getAttribute('out')).toEqual('init');
-        expect(elem.prop).toEqual('init');
+        expect(elem.getAttribute('out')).toEqual('def');
+        expect(elem.prop).toEqual('def');
         elem.setAttribute('in', 'val');
         afterMutations(() => {
           expect(elem.getAttribute('in')).toEqual('val');

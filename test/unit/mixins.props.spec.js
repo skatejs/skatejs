@@ -252,17 +252,15 @@ describe('Mixins.Props', () => {
       elem = new (define(class extends Mixins.Props() {
         static get props () {
           return {
-            [secret1]: {
-              initial: 'secretKey'
-            },
-            [secret2]: {
-              initial: 'secretKey2'
-            }
+            [secret1]: null,
+            [secret2]: null
           };
         }
         constructor () {
           super();
           this._rendered = 0;
+          this[secret1] = 'secretKey';
+          this[secret2] = 'secretKey2';
         }
         propsSetCallback () {
           this._rendered++;

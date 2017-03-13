@@ -43,16 +43,6 @@ describe('lifecycle/attributes', () => {
         done();
       });
     });
-
-    it('with prop set via initial', (done) => {
-      const elem = create({ attribute: true, initial: 'something' }, 'testName');
-      expect(elem.getAttribute('test-name')).toEqual(null);
-      fixture(elem);
-      afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual('something');
-        done();
-      });
-    });
   });
 
   describe('attribute set before attach', () => {

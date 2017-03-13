@@ -2,9 +2,17 @@ import { _updateDebounced } from '../util/symbols';
 import data from '../util/data';
 import empty from '../util/empty';
 import getAttrMgr from '../util/attributes-manager';
-import getDefaultValue from '../util/get-default-value';
-import getInitialValue from '../util/get-initial-value';
-import getPropData from '../util/get-prop-data';
+
+function getDefaultValue (elem, propDef) {
+  return typeof propDef.default === 'function'
+    ? propDef.default(elem, { name: propDef.nameOrSymbol })
+    : propDef.default;
+}
+
+function getPropData (elem, name) {
+  const elemData = data(elem, 'props');
+  return elemData[name] || (elemData[name] = {});
+}
 
 export function createNativePropertyDescriptor (propDef) {
   const { nameOrSymbol } = propDef;
@@ -32,8 +40,6 @@ export function createNativePropertyDescriptor (propDef) {
       if (attrSource && elem.hasAttribute(attrSource)) {
         valueFromAttrSource = true;
         initialValue = propDef.deserialize(elem.getAttribute(attrSource));
-      } else if ('initial' in propDef) {
-        initialValue = getInitialValue(elem, propDef);
       } else {
         initialValue = getDefaultValue(elem, propDef);
       }
