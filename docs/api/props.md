@@ -5,9 +5,9 @@ The `props` function is a getter or setter depending on if you specify the secon
 Component state is derived from the declared properties. It will only ever return properties that are defined in the `props` object. However, when you set state, whatever state you specify will be set even if they're not declared in `props`.
 
 ```js
-import { define, props } from 'skatejs';
+import { Component, define, props } from 'skatejs';
 
-class Elem extends skate.Component {
+class Elem extends Component {
   static get props () {
     return {
       prop1: {}

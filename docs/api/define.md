@@ -3,10 +3,13 @@
 The `define()` function is syntactic sugar on top of `customElements.define()` that allows you to specify a `static is` property on your constructor that is the name of the component, or omit it altogether. If you define the `static is` property, it will attempt to use that as the name for the custom element when calling `customElements.define()` internally. For example:
 
 ```js
-const Ctor1 = skate.define(class extends HTMLElement {
+import { define } from 'skatejs';
+
+const Ctor1 = define(class extends HTMLElement {
   static is = 'x-test-1'
 });
-const Ctor2 = skate.define(class extends HTMLElement {
+
+const Ctor2 = define(class extends HTMLElement {
   static is = 'x-test-2'
 });
 ```
@@ -31,6 +34,6 @@ const Test = define(class extends HTMLEleement {});
 
 Test will not be a Skate component, but will have a unique name associated with it. You can also provide the `static is` property, too, just like you can on a standard Skate component.
 
-## WebPack Hot-Module Reloading
+## WebPack hot-module reloading
 
-If you're using HMR and the standard `customElements.define()`, you'll run into issues if you've defined your component a module that reloads. If this is the case, you can use `skate.define()` to work around that. 
+If you're using HMR and the standard `customElements.define()`, you'll run into issues if you've defined your component a module that reloads. If this is the case, you can use `define()` to work around that. 

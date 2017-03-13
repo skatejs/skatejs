@@ -71,7 +71,7 @@ class SkatePark extends Component<SkateParkProps>{
       halfPipe: prop.boolean,
     }
   }
-  renderCallback({halfPipe, year}: SkateParkProps) {
+  renderCallback({ halfPipe, year }: SkateParkProps) {
     const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
     return (
       <div>
@@ -112,7 +112,7 @@ class Elem extends skate.Component<ElmProps> {
 
 
 type ButtonProps = { onClick: (e: MouseEvent) => void };
-const Button: skate.SFC<ButtonProps> = ({onClick}, children: any) => (
+const Button: skate.SFC<ButtonProps> = ({ onClick }, children: any) => (
   <button onClick={onClick}>{children}</button>
 );
 

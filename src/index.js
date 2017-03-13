@@ -1,22 +1,20 @@
-import * as prop from './api/prop';
-import * as vdom from './api/vdom';
-import Component from './api/component';
-import Element from './api/element';
-import define from './api/define';
-import emit from './api/emit';
-import link from './api/link';
-import props from './api/props';
+import * as Mixins from './mixins';
+import * as prop from './prop';
+import Component from './component';
+import define from './define';
+import emit from './emit';
+import link from './link';
+import props from './props';
 
-const { h } = vdom;
+const { h } = Mixins;
 
 export {
   Component,
-  Element,
   define,
   emit,
   h,
   link,
+  Mixins,
   prop,
-  props,
-  vdom
+  props
 };

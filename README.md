@@ -80,7 +80,7 @@ There's a couple ways to consume Skate.
 npm install skatejs
 ```
 
-Skate exports a UMD definition so you can:
+Skate exports a UMD build in `umd/` so you can:
 
 ```js
 import * as skate from 'skatejs';
@@ -88,18 +88,12 @@ const skate = require('skatejs');
 require(['skatejs'], function (skate) {});
 ```
 
-There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
-
-1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
-2. `index-with-deps.js` - Unminified with dependencies.
-3. `index-with-deps.min.js` - Minified with dependencies.
-
 
 
 ### Script Tag
 
 ```html
-<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
+<script src="https://unpkg.com/skatejs/umd/skatejs.min.js"></script>
 ```
 
 Since Skate exports a UMD definition, you can then access it via the global:
@@ -131,7 +125,7 @@ Or you can use script tags:
 
 ```html
 <script src="https://unpkg.com/skatejs-web-components/dist/index.min.js"></script>
-<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
+<script src="https://unpkg.com/skatejs/umd/skatejs.min.js"></script>
 ```
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.

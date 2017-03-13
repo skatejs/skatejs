@@ -16,6 +16,5 @@ export {
   link,
   define,
   emit,
-  h,
-  vdom
+  h
 } from './ts-typings/api';
