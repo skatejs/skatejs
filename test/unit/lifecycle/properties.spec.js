@@ -6,13 +6,11 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, Mixins } from 'src';
-import { createNativePropertyDescriptor } from 'src/lifecycle/props-init';
-import PropDefinition from 'src/util/prop-definition';
+import { define, withProps } from 'src';
 
 describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends Mixins.Props() {
+    const elem = new (define(class extends withProps() {
       static get props () {
         return {
           [name]: definition
@@ -31,7 +29,7 @@ describe('lifecycle/properties', () => {
     it('uses the same attribute and property name for lower-case names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return { testprop: { attribute: true } };
         }
@@ -47,7 +45,7 @@ describe('lifecycle/properties', () => {
     it('uses the same attribute and property name for dashed-names names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return { 'test-prop': { attribute: true } };
         }
@@ -63,7 +61,7 @@ describe('lifecycle/properties', () => {
     it('uses a dash-cased attribute name for camel-case property names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return { testProp: { attribute: true } };
         }
@@ -79,7 +77,7 @@ describe('lifecycle/properties', () => {
 
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return {
             testprop: { attribute: true }
@@ -95,7 +93,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return {
             'test-prop': { attribute: true }
@@ -111,7 +109,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
-      const elem = new (define(class extends Mixins.Props() {
+      const elem = new (define(class extends withProps() {
         static get props () {
           return {
             testProp: { attribute: true }
@@ -128,7 +126,7 @@ describe('lifecycle/properties', () => {
   });
 
   it('should not leak options to other definitions', () => {
-    const elem = new (define(class extends Mixins.Props() {
+    const elem = new (define(class extends withProps() {
       static get props () {
         return {
           test1: {
@@ -158,35 +156,6 @@ describe('lifecycle/properties', () => {
     });
   });
 
-  describe('property definition', () => {
-    function create2 (opts) {
-      const propDef = new PropDefinition(opts);
-      return createNativePropertyDescriptor(propDef);
-    }
-
-    describe('native', () => {
-      it('should define a getter', () => {
-        expect(create2().get).toBeA('function');
-      });
-
-      it('should define a setter', () => {
-        expect(create2().set).toBeA('function');
-      });
-
-      it('should be enumerable', () => {
-        expect(create2().enumerable).toEqual(true);
-      });
-
-      it('should be configurable', () => {
-        expect(create2().configurable).toEqual(true);
-      });
-
-      it('should not contain a value', () => {
-        expect(create2().value).toEqual(undefined);
-      });
-    });
-  });
-
   describe('api', () => {
     describe('attribute', () => {
       it('setting the attribute updates the property value', (done) => {
@@ -208,7 +177,7 @@ describe('lifecycle/properties', () => {
       });
 
       it('1st mutation updates prop', (done) => {
-        const Elem = define(class extends Mixins.Props() {
+        const Elem = define(class extends withProps() {
           static props = {
             foo: {
               attribute: true
@@ -226,7 +195,7 @@ describe('lifecycle/properties', () => {
       });
 
       it('2nd mutation updates prop', (done) => {
-        const Elem = define(class extends Mixins.Props() {
+        const Elem = define(class extends withProps() {
           static props = {
             foo: {
               attribute: true
@@ -552,7 +521,7 @@ describe('lifecycle/properties', () => {
 
   describe('attribute one-way', () => {
     it('source is not updated', (done) => {
-      const Elem = define(class extends Mixins.Props() {
+      const Elem = define(class extends withProps() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -573,7 +542,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('source change, updates prop', (done) => {
-      const Elem = define(class extends Mixins.Props() {
+      const Elem = define(class extends withProps() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -592,7 +561,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('prop change, updates target', (done) => {
-      const Elem = define(class extends Mixins.Props() {
+      const Elem = define(class extends withProps() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
@@ -615,7 +584,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('source change, updates target', (done) => {
-      const Elem = define(class extends Mixins.Props() {
+      const Elem = define(class extends withProps() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' },
@@ -651,7 +620,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('target change is ignored', (done) => {
-      const Elem = define(class extends Mixins.Props() {
+      const Elem = define(class extends withProps() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }

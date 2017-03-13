@@ -1,4 +1,4 @@
-import { render } from 'preact';
+import { withRaw } from './with-raw';
 import {
   ctorObservedAttributes as $ctorObservedAttributes,
   ctorProps as $ctorProps,
@@ -6,18 +6,16 @@ import {
   props as $props,
   _updateDebounced
 } from './util/symbols';
-import { createNativePropertyDescriptor } from './lifecycle/props-init';
+import assign from './util/assign';
 import createSymbol from './util/create-symbol';
 import data from './util/data';
 import debounce from './util/debounce';
+import empty from './util/empty';
 import getAttrMgr from './util/attributes-manager';
 import getPropNamesAndSymbols from './util/get-prop-names-and-symbols';
 import getPropsMap from './util/get-props-map';
-import getSetProps from './props';
 import setCtorNativeProperty from './util/set-ctor-native-property';
-import root from './util/root';
-
-const HTMLElement = root.HTMLElement || class {};
+import toNullOrString from './util/to-null-or-string';
 
 const _connected = createSymbol('connected');
 const _prevName = createSymbol('prevName');
@@ -63,17 +61,97 @@ function createInitProps (Ctor) {
   };
 }
 
-export function Raw (Base = HTMLElement) {
-  return class extends Base {
-    static is = null
-    static observedAttributes = []
-    attributeChangedCallback () {}
-    connectedCallback () {}
-    disconnectedCallback () {}
-  };
+function getDefaultValue (elem, propDef) {
+  return typeof propDef.default === 'function'
+    ? propDef.default(elem, { name: propDef.nameOrSymbol })
+    : propDef.default;
 }
 
-export function Props (Base = Raw()) {
+function getPropData (elem, name) {
+  const elemData = data(elem, 'props');
+  return elemData[name] || (elemData[name] = {});
+}
+
+function createNativePropertyDescriptor (propDef) {
+  const { nameOrSymbol } = propDef;
+
+  const prop = {
+    configurable: true,
+    enumerable: true
+  };
+
+  prop.beforeDefineProperty = elem => {
+    const propData = getPropData(elem, nameOrSymbol);
+    const attrSource = propDef.attrSource;
+
+    // Store attrSource name to property link.
+    if (attrSource) {
+      data(elem, 'attrSourceLinks')[attrSource] = nameOrSymbol;
+    }
+
+    // prop value before upgrading
+    let initialValue = elem[nameOrSymbol];
+
+    // Set up initial value if it wasn't specified.
+    let valueFromAttrSource = false;
+    if (empty(initialValue)) {
+      if (attrSource && elem.hasAttribute(attrSource)) {
+        valueFromAttrSource = true;
+        initialValue = propDef.deserialize(elem.getAttribute(attrSource));
+      } else {
+        initialValue = getDefaultValue(elem, propDef);
+      }
+    }
+
+    initialValue = propDef.coerce(initialValue);
+
+    propData.internalValue = initialValue;
+
+    // Reflect to Target Attribute
+    const mustReflect = propDef.attrTarget && !empty(initialValue) &&
+      (!valueFromAttrSource || propDef.attrTargetIsNotSource);
+
+    if (mustReflect) {
+      let serializedValue = propDef.serialize(initialValue);
+      getAttrMgr(elem).setAttrValue(propDef.attrTarget, serializedValue);
+    }
+  };
+
+  prop.get = function get () {
+    return getPropData(this, nameOrSymbol).internalValue;
+  };
+
+  prop.set = function set (newValue) {
+    const propData = getPropData(this, nameOrSymbol);
+    const useDefaultValue = empty(newValue);
+
+    if (useDefaultValue) {
+      newValue = getDefaultValue(this, propDef);
+    }
+
+    newValue = propDef.coerce(newValue);
+
+    // Queue a re-render.
+    this[_updateDebounced]();
+
+    // Update prop data so we can use it next time.
+    propData.internalValue = newValue;
+
+    // Reflect to Target attribute.
+    const mustReflect = propDef.attrTarget &&
+      (propDef.attrTargetIsNotSource || !propData.settingPropFromAttrSource);
+    if (mustReflect) {
+      // Note: setting the prop to empty implies the default value
+      // and therefore no attribute should be present!
+      let serializedValue = useDefaultValue ? null : propDef.serialize(newValue);
+      getAttrMgr(this).setAttrValue(propDef.attrTarget, serializedValue);
+    }
+  };
+
+  return prop;
+}
+
+export function withProps (Base = withRaw()) {
   return class extends Base {
     // Returns unique attribute names configured with props and those set on
     // the Component constructor if any.
@@ -220,7 +298,7 @@ export function Props (Base = Raw()) {
 
       // Prev / next props for prop lifecycle callbacks.
       const prev = this[$props];
-      const next = this[$props] = getSetProps(this);
+      const next = this[$props] = getProps(this);
 
       // Always call set, but only call changed if the props updated.
       this.propsSetCallback(next, prev);
@@ -233,36 +311,62 @@ export function Props (Base = Raw()) {
   };
 }
 
-export function Render (Base = Props()) {
-  return class extends Base {
-    propsChangedCallback () {
-      super.propsChangedCallback();
+const freeze = Object.freeze;
+const attribute = freeze({ source: true });
+const parseIfNotEmpty = val => (empty(val) ? null : JSON.parse(val));
+const zeroIfEmptyOrNumberIncludesNaN = val => (empty(val) ? 0 : Number(val));
+const sharedFrozenArray = Object.freeze([]);
+const sharedFrozenObject = Object.freeze({});
 
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: 'open' });
-      }
+export const propArray = freeze({
+  attribute,
+  coerce: val => (Array.isArray(val) ? val : (empty(val) ? null : [val])),
+  default: () => sharedFrozenArray,
+  deserialize: parseIfNotEmpty,
+  serialize: JSON.stringify
+});
 
-      this.rendererCallback(this.shadowRoot, this.renderCallback(this));
-      this.renderedCallback();
-    }
+export const propBoolean = freeze({
+  attribute,
+  coerce: val => !!val,
+  default: false,
+  deserialize: val => !(val === null),
+  serialize: val => (val ? '' : null)
+});
 
-    // Called to render the component.
-    renderCallback () {}
+export const propNumber = freeze({
+  attribute,
+  default: 0,
+  coerce: zeroIfEmptyOrNumberIncludesNaN,
+  deserialize: zeroIfEmptyOrNumberIncludesNaN,
+  serialize: toNullOrString
+});
 
-    // Called after the component has rendered.
-    renderedCallback () {}
+export const propObject = freeze({
+  attribute,
+  default: () => sharedFrozenObject,
+  deserialize: parseIfNotEmpty,
+  serialize: JSON.stringify
+});
 
-    // Called to render the component.
-    rendererCallback () {}
-  };
+export const propString = freeze({
+  attribute,
+  default: '',
+  coerce: toNullOrString,
+  deserialize: toNullOrString,
+  serialize: toNullOrString
+});
+
+export function getProps (elem) {
+  const props = {};
+
+  getPropNamesAndSymbols(getPropsMap(elem.constructor)).forEach((nameOrSymbol) => {
+    props[nameOrSymbol] = elem[nameOrSymbol];
+  });
+
+  return props;
 }
 
-export function Component (Base = Render()) {
-  return class extends Base {
-    rendererCallback (host, vdom) {
-      render(vdom, host);
-    }
-  };
+export function setProps (elem, props) {
+  assign(elem, props);
 }
-
-export { h } from 'preact';

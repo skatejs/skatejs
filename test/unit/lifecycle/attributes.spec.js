@@ -5,11 +5,11 @@ import expect from 'expect';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, Mixins } from 'src';
+import { define, withProps } from 'src';
 
 describe('lifecycle/attributes', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends Mixins.Props() {
+    const elem = new (define(class extends withProps() {
       static get props () {
         return {
           [name]: definition

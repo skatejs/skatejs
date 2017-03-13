@@ -1,7 +1,7 @@
 import uniqueId from './util/unique-id';
 import root from './util/root';
 
-export default function (Ctor) {
+export function define (Ctor) {
   const { customElements, HTMLElement } = root;
 
   if (!customElements) {

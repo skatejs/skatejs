@@ -23,7 +23,7 @@ const optsDefaults = {
   composed: false
 };
 
-export default function (elem, name, opts) {
+export function emit (elem, name, opts) {
   opts = { ...optsDefaults, ...opts };
   const e = new Event(name, opts);
   Object.defineProperty(e, 'detail', { value: opts.detail });

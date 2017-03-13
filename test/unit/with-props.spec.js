@@ -1,15 +1,36 @@
 /* eslint-env mocha */
 
-import { define, Mixins, prop, props } from 'src';
+import expect from 'expect';
+
+import {
+  define,
+  h,
+  getProps,
+  propArray,
+  propBoolean,
+  propNumber,
+  propObject,
+  propString,
+  setProps,
+  withProps
+} from 'src';
+import { h as preactH } from 'preact';
 import createSymbol from 'src/util/create-symbol';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 import hasSymbol from '../lib/has-symbol';
-import expect from 'expect';
+
+const prop = {
+  array: propArray,
+  boolean: propBoolean,
+  number: propNumber,
+  object: propObject,
+  string: propString
+};
 
 function create (propLocal) {
-  const el = new (define(class extends Mixins.Props() {
+  const el = new (define(class extends withProps() {
     static get props () {
       return {
         test: { ...propLocal, ...{ attribute: true } }
@@ -35,7 +56,7 @@ function testTypeValues (type, values, done) {
   }, 1);
 }
 
-describe('Mixins.Props', () => {
+describe('withProps', () => {
   describe('array', () => {
     let elem;
 
@@ -249,7 +270,7 @@ describe('Mixins.Props', () => {
     const secret2 = createSymbol('secret');
 
     beforeEach(done => {
-      elem = new (define(class extends Mixins.Props() {
+      elem = new (define(class extends withProps() {
         static get props () {
           return {
             [secret1]: null,
@@ -272,7 +293,7 @@ describe('Mixins.Props', () => {
 
     describe('getting', () => {
       it('should return only properties defined as props', () => {
-        const curr = props(elem);
+        const curr = getProps(elem);
 
         expect(curr[secret1]).toEqual('secretKey');
         expect(curr[secret2]).toEqual('secretKey2');
@@ -285,7 +306,7 @@ describe('Mixins.Props', () => {
 
     describe('setting', () => {
       it('should set all properties', () => {
-        props(elem, {
+        setProps(elem, {
           [secret1]: 'newSecretKey',
           [secret2]: 'newSecretKey2'
         });
@@ -295,7 +316,7 @@ describe('Mixins.Props', () => {
 
       it('should asynchronously render if declared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        props(elem, { [secret1]: 'updated1' });
+        setProps(elem, { [secret1]: 'updated1' });
         afterMutations(
           () => expect(elem._rendered).toEqual(2),
           done
@@ -304,12 +325,16 @@ describe('Mixins.Props', () => {
 
       it('should not render if undeclared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        props(elem, { undeclaredProp: 'updated3' });
+        setProps(elem, { undeclaredProp: 'updated3' });
         afterMutations(
           () => expect(elem._rendered).toEqual(1),
           done
         );
       });
     });
+  });
+
+  it('should directly export h from preact', () => {
+    expect(h).toEqual(preactH);
   });
 });

@@ -1,4 +1,4 @@
-import props from './props';
+import assign from './util/assign';
 
 function getValue (elem) {
   const type = elem.type;
@@ -8,7 +8,7 @@ function getValue (elem) {
   return elem.value;
 }
 
-export default function (elem, target) {
+export function link (elem, target) {
   return (e) => {
     // We fallback to checking the composed path. Unfortunately this behaviour
     // is difficult to impossible to reproduce as it seems to be a possible
@@ -26,11 +26,11 @@ export default function (elem, target) {
       const obj = parts.reduce((prev, curr) => (prev && prev[curr]), elem);
 
       obj[propName || e.target.name] = value;
-      props(elem, {
+      assign(elem, {
         [firstPart]: elem[firstPart]
       });
     } else {
-      props(elem, {
+      assign(elem, {
         [localTargetName]: value
       });
     }
