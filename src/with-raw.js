@@ -1,6 +1,6 @@
 import { root } from './util';
 
-const { HTMLElement } = root;
+const { HTMLElement = class {} } = root;
 
 export function withRaw (Base = HTMLElement) {
   return class extends Base {
