@@ -1,5 +1,3 @@
-import props from './props';
-
 function getValue (elem) {
   const type = elem.type;
   if (type === 'checkbox' || type === 'radio') {
@@ -8,7 +6,7 @@ function getValue (elem) {
   return elem.value;
 }
 
-export default function (elem, target) {
+export function link (elem, target) {
   return (e) => {
     // We fallback to checking the composed path. Unfortunately this behaviour
     // is difficult to impossible to reproduce as it seems to be a possible
@@ -26,13 +24,9 @@ export default function (elem, target) {
       const obj = parts.reduce((prev, curr) => (prev && prev[curr]), elem);
 
       obj[propName || e.target.name] = value;
-      props(elem, {
-        [firstPart]: elem[firstPart]
-      });
+      elem[firstPart] = elem[firstPart];
     } else {
-      props(elem, {
-        [localTargetName]: value
-      });
+      elem[localTargetName] = value;
     }
   };
 }

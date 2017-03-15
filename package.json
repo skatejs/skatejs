@@ -27,6 +27,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "@skatejs/web-components": "^1.0.0",
     "babel-eslint": "^7.1.1",
     "bore": "^1.1.0",
     "commitizen": "^2.8.2",
@@ -35,15 +36,14 @@
     "karma-chrome-launcher": "2.0.0",
     "karma-sauce-launcher": "^1.1.0",
     "nwb": "^0.15.6",
-    "preact": "^7.2.0",
+    "preact": "*",
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
-    "skatejs-web-components": "5.2.1",
     "typescript": "^2.1.4",
     "typescript-formatter": "^5.0.0"
   },
   "peerDependencies": {
-    "preact": "^7.2.0"
+    "preact": "*"
   },
   "scripts": {
     "docs:build": "gitbook install && gitbook build",

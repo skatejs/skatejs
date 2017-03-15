@@ -1,4 +1,4 @@
-import root from './util/root';
+import { root } from './util';
 
 // Once the Event constructor is newable cross-browser, this can be removed.
 const Event = (() => {
@@ -23,7 +23,7 @@ const optsDefaults = {
   composed: false
 };
 
-export default function (elem, name, opts) {
+export function emit (elem, name, opts) {
   opts = { ...optsDefaults, ...opts };
   const e = new Event(name, opts);
   Object.defineProperty(e, 'detail', { value: opts.detail });

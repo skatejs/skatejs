@@ -1,7 +1,6 @@
-import uniqueId from './util/unique-id';
-import root from './util/root';
+import { root, uniqueId } from './util';
 
-export default function (Ctor) {
+export function define (Ctor) {
   const { customElements, HTMLElement } = root;
 
   if (!customElements) {
@@ -19,7 +18,7 @@ export default function (Ctor) {
     // If we used defineProperty() then the consumer must also use it and
     // cannot use property initialisers. Instead we just set it so they can
     // use whatever method of overridding that they want.
-    Ctor.is = uniqueId();
+    Ctor.is = `x-${uniqueId()}`;
   }
   customElements.define(Ctor.is, Ctor);
 

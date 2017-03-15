@@ -5,11 +5,11 @@ import expect from 'expect';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, Mixins } from 'src';
+import { define, withProps } from 'src';
 
 describe('lifecycle/attributes', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends Mixins.Props() {
+    const elem = new (define(class extends withProps() {
       static get props () {
         return {
           [name]: definition
@@ -26,7 +26,7 @@ describe('lifecycle/attributes', () => {
   describe('attribute set after attach', () => {
     it('with prop already set', (done) => {
       const elem = create({ attribute: true }, 'testName', 'something');
-      expect(elem.getAttribute('test-name')).toEqual(null);
+      expect(elem.getAttribute('test-name')).toEqual('something');
       fixture(elem);
       afterMutations(() => {
         expect(elem.getAttribute('test-name')).toEqual('something');
@@ -39,17 +39,7 @@ describe('lifecycle/attributes', () => {
       expect(elem.getAttribute('test-name')).toEqual(null);
       fixture(elem);
       afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual('something');
-        done();
-      });
-    });
-
-    it('with prop set via initial', (done) => {
-      const elem = create({ attribute: true, initial: 'something' }, 'testName');
-      expect(elem.getAttribute('test-name')).toEqual(null);
-      fixture(elem);
-      afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual('something');
+        expect(elem.getAttribute('test-name')).toEqual(null);
         done();
       });
     });

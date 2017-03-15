@@ -1,20 +1,7 @@
-import * as Mixins from './mixins';
-import * as prop from './prop';
-import Component from './component';
-import define from './define';
-import emit from './emit';
-import link from './link';
-import props from './props';
-
-const { h } = Mixins;
-
-export {
-  Component,
-  define,
-  emit,
-  h,
-  link,
-  Mixins,
-  prop,
-  props
-};
+export * from './define';
+export * from './emit';
+export * from './link';
+export * from './with-component';
+export * from './with-props';
+export * from './with-raw';
+export * from './with-render';

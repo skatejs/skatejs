@@ -1,15 +1,36 @@
 /* eslint-env mocha */
 
-import { define, Mixins, prop, props } from 'src';
-import createSymbol from 'src/util/create-symbol';
+import expect from 'expect';
+
+import {
+  define,
+  h,
+  getProps,
+  propArray,
+  propBoolean,
+  propNumber,
+  propObject,
+  propString,
+  setProps,
+  withProps
+} from 'src';
+import { h as preactH } from 'preact';
+import { sym } from 'src/util';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 import hasSymbol from '../lib/has-symbol';
-import expect from 'expect';
+
+const prop = {
+  array: propArray,
+  boolean: propBoolean,
+  number: propNumber,
+  object: propObject,
+  string: propString
+};
 
 function create (propLocal) {
-  const el = new (define(class extends Mixins.Props() {
+  const el = new (define(class extends withProps() {
     static get props () {
       return {
         test: { ...propLocal, ...{ attribute: true } }
@@ -25,17 +46,14 @@ function testTypeValues (type, values, done) {
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
-      // for number comparison use Object.is where NaN is equal NaN
-      if (type !== 'number' || !Object.is(elem.test, value[1])) {
-        expect(elem.test).toEqual(value[1], 'prop value after prop set');
-      }
-      expect(elem.getAttribute('test')).toEqual(value[2], 'attr value after prop set');
+      expect(elem.test).toEqual(value[1], `prop ${value[0]}: ${elem.test} != ${value[1]}`);
+      expect(elem.getAttribute('test')).toEqual(value[2], `attr ${value[0]}: ${elem.getAttribute('test')} != ${value[2]}`);
     });
     done();
   }, 1);
 }
 
-describe('Mixins.Props', () => {
+describe('withProps', () => {
   describe('array', () => {
     let elem;
 
@@ -53,7 +71,7 @@ describe('Mixins.Props', () => {
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
       expect(elem.test.length).toEqual(0, 'should not contain any items');
-      expect(elem.getAttribute('test')).toEqual('[]', 'should set the attribute');
+      expect(elem.getAttribute('test')).toEqual(null, 'should not set the attribute');
     });
 
     describe('coerce', () => {
@@ -84,13 +102,12 @@ describe('Mixins.Props', () => {
 
     it('serialize', () => {
       elem.test = ['val1', 'val2'];
-      expect(elem.getAttribute('test')).toBeA('string');
       expect(elem.getAttribute('test')).toEqual('["val1","val2"]');
     });
   });
 
   describe('boolean', () => {
-    it('initial value', () => {
+    it('default', () => {
       const elem = create(prop.boolean);
       expect(elem.test).toEqual(false);
       expect(elem.getAttribute('test')).toEqual(null);
@@ -113,8 +130,8 @@ describe('Mixins.Props', () => {
         const elem = create(prop.boolean);
         afterMutations(() => {
           elem.test = value;
-          expect(elem.test).toEqual(!!value, 'property');
-          expect(elem.getAttribute('test')).toEqual(value ? '' : null, 'attribute');
+          expect(elem.test).toEqual(Boolean(value), 'property');
+          expect(elem.getAttribute('test')).toEqual(elem.test ? '' : null, 'attribute');
           done();
         });
       });
@@ -145,12 +162,10 @@ describe('Mixins.Props', () => {
     it('default', () => {
       expect(elem.test).toBeA('number');
       expect(elem.test).toEqual(0);
-      expect(elem.getAttribute('test')).toEqual('0');
+      expect(elem.getAttribute('test')).toEqual(null);
     });
 
     it('values', (done) => {
-      expect(elem.test).toEqual(0);
-      expect(elem.getAttribute('test')).toEqual('0');
       testTypeValues('number', [
         [false, 0, '0'],
         [true, 1, '1'],
@@ -175,23 +190,6 @@ describe('Mixins.Props', () => {
     });
   });
 
-  describe('string', () => {
-    it('values', (done) => {
-      const elem = create(prop.string);
-      afterMutations(() => {
-        expect(elem.test).toEqual('');
-        expect(elem.getAttribute('test')).toEqual('');
-        testTypeValues('string', [
-          [false, 'false', 'false'],
-          [null, '', null],
-          [undefined, '', null],
-          [0, '0', '0'],
-          ['', '', '']
-        ], done);
-      });
-    });
-  });
-
   describe('object', () => {
     let elem;
 
@@ -206,7 +204,7 @@ describe('Mixins.Props', () => {
       expect(elem.test).toBeAn('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
-      expect(elem.getAttribute('test')).toEqual('{}', 'should set the attribute');
+      expect(elem.getAttribute('test')).toEqual(null, 'should not set the attribute');
     });
 
     it('deserialize', (done) => {
@@ -223,6 +221,23 @@ describe('Mixins.Props', () => {
       elem.test = {one: 1, two: 2};
       expect(elem.getAttribute('test')).toBeA('string');
       expect(elem.getAttribute('test')).toEqual('{"one":1,"two":2}');
+    });
+  });
+
+  describe('string', () => {
+    it('values', (done) => {
+      const elem = create(prop.string);
+      afterMutations(() => {
+        expect(elem.test).toEqual('');
+        expect(elem.getAttribute('test')).toEqual(null);
+        testTypeValues('string', [
+          [false, 'false', 'false'],
+          [null, 'null', null],
+          [undefined, 'undefined', null],
+          [0, '0', '0'],
+          ['', '', '']
+        ], done);
+      });
     });
   });
 
@@ -245,24 +260,22 @@ describe('Mixins.Props', () => {
     }
 
     let elem;
-    const secret1 = createSymbol('secret');
-    const secret2 = createSymbol('secret');
+    const secret1 = sym();
+    const secret2 = sym();
 
     beforeEach(done => {
-      elem = new (define(class extends Mixins.Props() {
+      elem = new (define(class extends withProps() {
         static get props () {
           return {
-            [secret1]: {
-              initial: 'secretKey'
-            },
-            [secret2]: {
-              initial: 'secretKey2'
-            }
+            [secret1]: null,
+            [secret2]: null
           };
         }
         constructor () {
           super();
           this._rendered = 0;
+          this[secret1] = 'secretKey1';
+          this[secret2] = 'secretKey2';
         }
         propsSetCallback () {
           this._rendered++;
@@ -274,9 +287,9 @@ describe('Mixins.Props', () => {
 
     describe('getting', () => {
       it('should return only properties defined as props', () => {
-        const curr = props(elem);
+        const curr = getProps(elem);
 
-        expect(curr[secret1]).toEqual('secretKey');
+        expect(curr[secret1]).toEqual('secretKey1');
         expect(curr[secret2]).toEqual('secretKey2');
 
         expect(secret1 in curr).toEqual(true);
@@ -287,17 +300,17 @@ describe('Mixins.Props', () => {
 
     describe('setting', () => {
       it('should set all properties', () => {
-        props(elem, {
-          [secret1]: 'newSecretKey',
+        setProps(elem, {
+          [secret1]: 'newSecretKey1',
           [secret2]: 'newSecretKey2'
         });
-        expect(elem[secret1]).toEqual('newSecretKey');
+        expect(elem[secret1]).toEqual('newSecretKey1');
         expect(elem[secret2]).toEqual('newSecretKey2');
       });
 
       it('should asynchronously render if declared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        props(elem, { [secret1]: 'updated1' });
+        setProps(elem, { [secret1]: 'updated1' });
         afterMutations(
           () => expect(elem._rendered).toEqual(2),
           done
@@ -306,12 +319,16 @@ describe('Mixins.Props', () => {
 
       it('should not render if undeclared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        props(elem, { undeclaredProp: 'updated3' });
+        setProps(elem, { undeclaredProp: 'updated3' });
         afterMutations(
           () => expect(elem._rendered).toEqual(1),
           done
         );
       });
     });
+  });
+
+  it('should directly export h from preact', () => {
+    expect(h).toEqual(preactH);
   });
 });
