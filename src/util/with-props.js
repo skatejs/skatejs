@@ -19,6 +19,7 @@ export function defineProps (Ctor) {
     const { attribute: { target }, coerce, default: def, serialize } = props[curr];
     const _value = sym();
     prev[curr] = {
+      configurable: true,
       get () {
         const val = this[_value];
         return val == null ? def : val;

@@ -6,7 +6,7 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, withProps } from 'src';
+import { define, propArray, propBoolean, withProps } from 'src';
 
 describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
@@ -284,7 +284,8 @@ describe('lifecycle/properties', () => {
         it('coerces the value from the attribute to the property', (done) => {
           const elem = create({
             attribute: true,
-            deserialize: value => value.split(':').map(Number)
+            deserialize: value => value.split(':').map(Number),
+            serialize: value => value.join(':')
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
@@ -300,7 +301,8 @@ describe('lifecycle/properties', () => {
         it('coerces the initial value if serialized from an attribute', (done) => {
           const elem = create({
             attribute: true,
-            deserialize: value => value.split(':').map(Number)
+            deserialize: value => value.split(':').map(Number),
+            serialize: value => value.join(':')
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
@@ -326,12 +328,11 @@ describe('lifecycle/properties', () => {
 
         it('coerces the value from the property to the attribute', (done) => {
           const fixtureArea = fixture();
-          const elem = create({
+          const elem = create({ ...propArray, ...{
             attribute: true,
-            default () { return []; },
             deserialize: value => value.split(':'),
             serialize: value => value.join(':')
-          }, 'testName');
+          } }, 'testName');
           elem.testName = [1, 2, 3];
           fixtureArea.appendChild(elem);
           afterMutations(() => {
@@ -343,10 +344,7 @@ describe('lifecycle/properties', () => {
 
         it('removes the attribute if null is returned', (done) => {
           const fixtureArea = fixture();
-          const elem = create({
-            attribute: true,
-            serialize: value => (value ? '' : null)
-          });
+          const elem = create({ ...propBoolean, ...{ attribute: true } });
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {
@@ -360,10 +358,7 @@ describe('lifecycle/properties', () => {
 
         it('removes the attribute if undefined is returned', (done) => {
           const fixtureArea = fixture();
-          const elem = create({
-            attribute: true,
-            serialize: value => (value ? '' : undefined)
-          });
+          const elem = create({ ...propBoolean, ...{ attribute: true } });
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {

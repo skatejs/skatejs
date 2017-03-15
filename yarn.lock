@@ -51,13 +51,25 @@
     conventional-changelog "0.0.17"
     github-url-from-git "^1.4.0"
 
-"@webcomponents/custom-elements@https://github.com/webcomponents/custom-elements/archive/36451e1.tar.gz":
-  version "1.0.0-alpha.3"
-  resolved "https://github.com/webcomponents/custom-elements/archive/36451e1.tar.gz#cd5c86c032a375a5416e00a13e84455c2d716df0"
+"@skatejs/web-components@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@skatejs/web-components/-/web-components-1.0.0.tgz#c806de64f9dd1a2ebc092656aaae1f876365c014"
+  dependencies:
+    "@webcomponents/custom-elements" latest
+    "@webcomponents/shadycss" "https://github.com/webcomponents/shadycss/archive/c396485.tar.gz"
+    "@webcomponents/template" "https://github.com/webcomponents/template/archive/60d743e.tar.gz"
+    array.from "*"
+    cloudydom "*"
+    es6-promise "*"
+    object.assign "*"
 
-"@webcomponents/shadycss@https://github.com/webcomponents/shadycss/archive/bea402d.tar.gz":
-  version "0.0.1"
-  resolved "https://github.com/webcomponents/shadycss/archive/bea402d.tar.gz#421871c681610899ba10a433e4c920c9a31f4666"
+"@webcomponents/custom-elements@latest":
+  version "1.0.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/@webcomponents/custom-elements/-/custom-elements-1.0.0-alpha.3.tgz#340d8cc8307730540ac92276c9a49149f6fc0116"
+
+"@webcomponents/shadycss@https://github.com/webcomponents/shadycss/archive/c396485.tar.gz":
+  version "1.0.0-rc.2"
+  resolved "https://github.com/webcomponents/shadycss/archive/c396485.tar.gz#04efd305516c63beda0e67098210234ad34e0d1f"
 
 "@webcomponents/template@https://github.com/webcomponents/template/archive/60d743e.tar.gz":
   version "0.0.1"
@@ -271,7 +283,7 @@ array-unique@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.2.1.tgz#a1d97ccafcbc2625cc70fadceb36a50c58b01a53"
 
-array.from@^1.0.3:
+array.from@*:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/array.from/-/array.from-1.0.3.tgz#cb586aad92067f341229f41e0ed643281dba56b7"
   dependencies:
@@ -326,13 +338,9 @@ async-some@~1.0.2:
   dependencies:
     dezalgo "^1.0.2"
 
-async@1.4.0:
+async@1.4.0, async@1.x, async@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/async/-/async-1.4.0.tgz#35f86f83c59e0421d099cd9a91d8278fb578c00d"
-
-async@1.x, async@^1.4.0:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
 async@2.0.1:
   version "2.0.1"
@@ -1578,9 +1586,9 @@ clone@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.2.tgz#260b7a99ebb1edfe247538175f783243cb19d149"
 
-cloudydom@^1.0.1:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/cloudydom/-/cloudydom-1.0.4.tgz#edc09d96efe82c8becc5f02c9d7ddc7be412c18e"
+cloudydom@*:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/cloudydom/-/cloudydom-1.0.5.tgz#83139cf2f0162d8f465cb4fa2f9638fef759d929"
 
 cmd-shim@~2.0.2:
   version "2.0.2"
@@ -2086,9 +2094,9 @@ debug@0.7.4:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-0.7.4.tgz#06e1ea8082c2cb14e39806e22e2f6f757f92af39"
 
-debug@2, debug@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
+debug@2, debug@2.6.0, debug@^2.1.1, debug@^2.2.0, debug@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
   dependencies:
     ms "0.7.2"
 
@@ -2104,9 +2112,9 @@ debug@2.3.3:
   dependencies:
     ms "0.7.2"
 
-debug@2.6.0, debug@^2.1.1, debug@^2.2.0, debug@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.0.tgz#bc596bcabe7617f11d9fa15361eded5608b8499b"
+debug@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
     ms "0.7.2"
 
@@ -2476,7 +2484,7 @@ es6-map@^0.1.3:
     es6-symbol "~3.1.0"
     event-emitter "~0.3.4"
 
-es6-promise@^4.0.5, es6-promise@~4.0.3:
+es6-promise@*, es6-promise@~4.0.3:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.0.5.tgz#7882f30adde5b240ccfa7f7d78c548330951ae42"
 
@@ -5230,7 +5238,7 @@ object-keys@^1.0.10, object-keys@^1.0.8, object-keys@^1.0.9:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.11.tgz#c54601778ad560f1142ce0e01bcca8b56d13426d"
 
-object.assign@^4.0.4:
+object.assign@*:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/object.assign/-/object.assign-4.0.4.tgz#b1c9cc044ef1b9fe63606fc141abbb32e14730cc"
   dependencies:
@@ -5800,7 +5808,7 @@ postcss@^5.0.10, postcss@^5.0.11, postcss@^5.0.12, postcss@^5.0.13, postcss@^5.0
     source-map "^0.5.6"
     supports-color "^3.2.3"
 
-preact@^7.2.0:
+preact@*:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/preact/-/preact-7.2.0.tgz#8aacc97465a65509bc556604a7750d48e2fa7ad1"
 
@@ -6068,9 +6076,9 @@ readable-stream@1.0, readable-stream@~1.0.2:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@^2.0.0, readable-stream@^2.1.0, readable-stream@^2.1.5, readable-stream@^2.2.2:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.3.tgz#9cf49463985df016c8ae8813097a9293a9b33729"
+readable-stream@^2.0.0, "readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.1, readable-stream@^2.0.5, readable-stream@~2.1.4, readable-stream@~2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.1.5.tgz#66fa8b720e1438b364681f2ad1a63c618448c9d0"
   dependencies:
     buffer-shims "^1.0.0"
     core-util-is "~1.0.0"
@@ -6080,9 +6088,9 @@ readable-stream@^2.0.0, readable-stream@^2.1.0, readable-stream@^2.1.5, readable
     string_decoder "~0.10.x"
     util-deprecate "~1.0.1"
 
-"readable-stream@^2.0.0 || ^1.1.13", readable-stream@^2.0.1, readable-stream@^2.0.5, readable-stream@~2.1.4, readable-stream@~2.1.5:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.1.5.tgz#66fa8b720e1438b364681f2ad1a63c618448c9d0"
+readable-stream@^2.1.0, readable-stream@^2.1.5, readable-stream@^2.2.2:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.2.3.tgz#9cf49463985df016c8ae8813097a9293a9b33729"
   dependencies:
     buffer-shims "^1.0.0"
     core-util-is "~1.0.0"
@@ -6653,18 +6661,6 @@ skatejs-dom-diff@^0.4.2:
   resolved "https://registry.yarnpkg.com/skatejs-dom-diff/-/skatejs-dom-diff-0.4.2.tgz#9f0406a6d6839c5505d79e75207a0e6a62a7f285"
   dependencies:
     object-assign "^4.0.1"
-
-skatejs-web-components@5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/skatejs-web-components/-/skatejs-web-components-5.2.1.tgz#5f21e2a4d6b19178a781574b862f8284e9cd021b"
-  dependencies:
-    "@webcomponents/custom-elements" "https://github.com/webcomponents/custom-elements/archive/36451e1.tar.gz"
-    "@webcomponents/shadycss" "https://github.com/webcomponents/shadycss/archive/bea402d.tar.gz"
-    "@webcomponents/template" "https://github.com/webcomponents/template/archive/60d743e.tar.gz"
-    array.from "^1.0.3"
-    cloudydom "^1.0.1"
-    es6-promise "^4.0.5"
-    object.assign "^4.0.4"
 
 slash@^1.0.0:
   version "1.0.0"

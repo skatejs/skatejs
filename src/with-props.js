@@ -2,7 +2,7 @@ import { withRaw } from './with-raw';
 import {
   debounce,
   keys,
-  uniqueId
+  sym
 } from './util';
 import {
   _updateDebounced,
@@ -11,12 +11,14 @@ import {
   syncAttributeToProperty
 } from './util/with-props';
 
-const _connected = uniqueId();
-const _observedAttributes = uniqueId();
-const _prevProps = uniqueId();
-const _props = uniqueId();
-const _updateCallback = uniqueId();
-const _updating = uniqueId();
+const _connected = sym();
+const _constructed = sym();
+
+const _observedAttributes = sym();
+const _prevProps = sym();
+const _props = sym();
+const _updateCallback = sym();
+const _updating = sym();
 
 export function withProps (Base = withRaw()) {
   return class extends Base {
@@ -43,20 +45,24 @@ export function withProps (Base = withRaw()) {
 
     constructor () {
       super();
+      if (this[_constructed]) return;
+      this[_constructed] = true;
       const { constructor } = this;
       defineProps(constructor);
       this[_updateDebounced] = debounce(this[_updateCallback]);
     }
 
     connectedCallback () {
-      super.connectedCallback();
+      if (this[_connected]) return;
       this[_connected] = true;
+      super.connectedCallback();
       this[_updateDebounced]();
     }
 
     disconnectedCallback () {
-      super.disconnectedCallback();
+      if (!this[_connected]) return;
       this[_connected] = false;
+      super.disconnectedCallback();
     }
 
     // Called when props actually change.
