@@ -181,5 +181,8 @@ export function getProps (elem) {
 }
 
 export function setProps (elem, props) {
+  if (typeof props === 'function') {
+    props = props(getProps(elem));
+  }
   keys(props).forEach(k => (elem[k] = props[k]));
 }

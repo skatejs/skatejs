@@ -254,7 +254,7 @@ describe('withProps', () => {
     });
   });
 
-  describe('symbols', () => {
+  describe('*Props()', () => {
     if (!hasSymbol()) {
       return;
     }
@@ -268,7 +268,9 @@ describe('withProps', () => {
         static get props () {
           return {
             [secret1]: null,
-            [secret2]: null
+            [secret2]: null,
+            public1: null,
+            public2: null
           };
         }
         constructor () {
@@ -276,6 +278,9 @@ describe('withProps', () => {
           this._rendered = 0;
           this[secret1] = 'secretKey1';
           this[secret2] = 'secretKey2';
+          this.public1 = 'publicKey1';
+          this.public2 = 'publicKey2';
+          this.undeclaredProp = 'undeclaredKey1';
         }
         propsSetCallback () {
           this._rendered++;
@@ -285,27 +290,36 @@ describe('withProps', () => {
       afterMutations(done);
     });
 
-    describe('getting', () => {
+    describe('getProps()', () => {
       it('should return only properties defined as props', () => {
         const curr = getProps(elem);
 
-        expect(curr[secret1]).toEqual('secretKey1');
-        expect(curr[secret2]).toEqual('secretKey2');
-
         expect(secret1 in curr).toEqual(true);
         expect(secret2 in curr).toEqual(true);
+        expect('public1' in curr).toEqual(true);
+        expect('public2' in curr).toEqual(true);
+
+        expect(curr[secret1]).toEqual('secretKey1');
+        expect(curr[secret2]).toEqual('secretKey2');
+        expect(curr.public1).toEqual('publicKey1');
+        expect(curr.public2).toEqual('publicKey2');
+
         expect(curr.undeclaredProp).toEqual(undefined);
       });
     });
 
-    describe('setting', () => {
+    describe('setProps()', () => {
       it('should set all properties', () => {
         setProps(elem, {
           [secret1]: 'newSecretKey1',
-          [secret2]: 'newSecretKey2'
+          public1: 'newPublicKey1',
+          undeclaredProp: 'newUndeclaredKey1'
         });
         expect(elem[secret1]).toEqual('newSecretKey1');
-        expect(elem[secret2]).toEqual('newSecretKey2');
+        expect(elem[secret2]).toEqual('secretKey2');
+        expect(elem.public1).toEqual('newPublicKey1');
+        expect(elem.public2).toEqual('publicKey2');
+        expect(elem.undeclaredProp).toEqual('newUndeclaredKey1');
       });
 
       it('should asynchronously render if declared properties are set', done => {
@@ -322,6 +336,36 @@ describe('withProps', () => {
         setProps(elem, { undeclaredProp: 'updated3' });
         afterMutations(
           () => expect(elem._rendered).toEqual(1),
+          done
+        );
+      });
+
+      it('should allow you to pass a function so you can get the previous state', done => {
+        setProps(elem, prev => {
+          expect(prev).toBeAn('object');
+          expect(prev).toContain({
+            [secret1]: 'secretKey1',
+            [secret2]: 'secretKey2',
+            public1: 'publicKey1',
+            public2: 'publicKey2'
+          });
+          expect(prev.undeclaredProp).toBe(undefined);
+          return {
+            [secret1]: prev[secret1] + '!',
+            public1: prev.public1 + '!',
+            undeclaredProp: prev.undeclaredProp + '!'
+          };
+        });
+        afterMutations(
+          () => {
+            expect(getProps(elem)).toContain({
+              [secret1]: 'secretKey1!',
+              [secret2]: 'secretKey2',
+              public1: 'publicKey1!',
+              public2: 'publicKey2'
+            });
+            expect(elem.undeclaredProp).toBe('undefined!');
+          },
           done
         );
       });
