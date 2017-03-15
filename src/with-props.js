@@ -11,6 +11,9 @@ import {
   syncAttributeToProperty
 } from './util/with-props';
 
+// Unfortunately the polyfills still seem to double up on lifecycle calls. In
+// order to get around this, we need guards to prevent us from executing them
+// more than once for a given state.
 const _connected = sym();
 const _constructed = sym();
 
