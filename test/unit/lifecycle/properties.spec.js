@@ -328,11 +328,14 @@ describe('lifecycle/properties', () => {
 
         it('coerces the value from the property to the attribute', (done) => {
           const fixtureArea = fixture();
-          const elem = create({ ...propArray, ...{
-            attribute: true,
-            deserialize: value => value.split(':'),
-            serialize: value => value.join(':')
-          } }, 'testName');
+          const elem = create({
+            ...propArray,
+            ...{
+              attribute: true,
+              deserialize: value => value.split(':'),
+              serialize: value => value.join(':')
+            }
+          }, 'testName');
           elem.testName = [1, 2, 3];
           fixtureArea.appendChild(elem);
           afterMutations(() => {
