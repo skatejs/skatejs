@@ -1,5 +1,3 @@
-import assign from './util/assign';
-
 function getValue (elem) {
   const type = elem.type;
   if (type === 'checkbox' || type === 'radio') {
@@ -26,13 +24,9 @@ export function link (elem, target) {
       const obj = parts.reduce((prev, curr) => (prev && prev[curr]), elem);
 
       obj[propName || e.target.name] = value;
-      assign(elem, {
-        [firstPart]: elem[firstPart]
-      });
+      elem[firstPart] = elem[firstPart];
     } else {
-      assign(elem, {
-        [localTargetName]: value
-      });
+      elem[localTargetName] = value;
     }
   };
 }

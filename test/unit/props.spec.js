@@ -6,7 +6,7 @@ import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
 import { define, getProps, setProps, withProps } from 'src';
-import root from 'src/util/root';
+import { root } from 'src/util';
 
 const { HTMLElement } = root;
 

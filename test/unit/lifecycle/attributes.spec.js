@@ -26,7 +26,7 @@ describe('lifecycle/attributes', () => {
   describe('attribute set after attach', () => {
     it('with prop already set', (done) => {
       const elem = create({ attribute: true }, 'testName', 'something');
-      expect(elem.getAttribute('test-name')).toEqual(null);
+      expect(elem.getAttribute('test-name')).toEqual('something');
       fixture(elem);
       afterMutations(() => {
         expect(elem.getAttribute('test-name')).toEqual('something');
@@ -39,7 +39,7 @@ describe('lifecycle/attributes', () => {
       expect(elem.getAttribute('test-name')).toEqual(null);
       fixture(elem);
       afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual('something');
+        expect(elem.getAttribute('test-name')).toEqual(null);
         done();
       });
     });

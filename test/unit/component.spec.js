@@ -1,8 +1,9 @@
 /* eslint-env mocha */
 
-import { Component } from 'src';
-import root from 'src/util/root';
 import expect from 'expect';
+
+import { Component } from 'src';
+import { root } from 'src/util';
 
 const { HTMLElement } = root;
 

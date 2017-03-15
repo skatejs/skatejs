@@ -15,7 +15,7 @@ import {
   withProps
 } from 'src';
 import { h as preactH } from 'preact';
-import createSymbol from 'src/util/create-symbol';
+import { sym } from 'src/util';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
@@ -46,11 +46,8 @@ function testTypeValues (type, values, done) {
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
-      // for number comparison use Object.is where NaN is equal NaN
-      if (type !== 'number' || !Object.is(elem.test, value[1])) {
-        expect(elem.test).toEqual(value[1], 'prop value after prop set');
-      }
-      expect(elem.getAttribute('test')).toEqual(value[2], 'attr value after prop set');
+      expect(elem.test).toEqual(value[1], `prop ${value[0]}: ${elem.test} != ${value[1]}`);
+      expect(elem.getAttribute('test')).toEqual(value[2], `attr ${value[0]}: ${elem.getAttribute('test')} != ${value[2]}`);
     });
     done();
   }, 1);
@@ -74,7 +71,7 @@ describe('withProps', () => {
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
       expect(elem.test.length).toEqual(0, 'should not contain any items');
-      expect(elem.getAttribute('test')).toEqual('[]', 'should set the attribute');
+      expect(elem.getAttribute('test')).toEqual(null, 'should not set the attribute');
     });
 
     describe('coerce', () => {
@@ -105,13 +102,12 @@ describe('withProps', () => {
 
     it('serialize', () => {
       elem.test = ['val1', 'val2'];
-      expect(elem.getAttribute('test')).toBeA('string');
       expect(elem.getAttribute('test')).toEqual('["val1","val2"]');
     });
   });
 
   describe('boolean', () => {
-    it('initial value', () => {
+    it('default', () => {
       const elem = create(prop.boolean);
       expect(elem.test).toEqual(false);
       expect(elem.getAttribute('test')).toEqual(null);
@@ -134,8 +130,8 @@ describe('withProps', () => {
         const elem = create(prop.boolean);
         afterMutations(() => {
           elem.test = value;
-          expect(elem.test).toEqual(!!value, 'property');
-          expect(elem.getAttribute('test')).toEqual(value ? '' : null, 'attribute');
+          expect(elem.test).toEqual(Boolean(value), 'property');
+          expect(elem.getAttribute('test')).toEqual(elem.test ? '' : null, 'attribute');
           done();
         });
       });
@@ -166,12 +162,10 @@ describe('withProps', () => {
     it('default', () => {
       expect(elem.test).toBeA('number');
       expect(elem.test).toEqual(0);
-      expect(elem.getAttribute('test')).toEqual('0');
+      expect(elem.getAttribute('test')).toEqual(null);
     });
 
     it('values', (done) => {
-      expect(elem.test).toEqual(0);
-      expect(elem.getAttribute('test')).toEqual('0');
       testTypeValues('number', [
         [false, 0, '0'],
         [true, 1, '1'],
@@ -196,23 +190,6 @@ describe('withProps', () => {
     });
   });
 
-  describe('string', () => {
-    it('values', (done) => {
-      const elem = create(prop.string);
-      afterMutations(() => {
-        expect(elem.test).toEqual('');
-        expect(elem.getAttribute('test')).toEqual('');
-        testTypeValues('string', [
-          [false, 'false', 'false'],
-          [null, '', null],
-          [undefined, '', null],
-          [0, '0', '0'],
-          ['', '', '']
-        ], done);
-      });
-    });
-  });
-
   describe('object', () => {
     let elem;
 
@@ -227,7 +204,7 @@ describe('withProps', () => {
       expect(elem.test).toBeAn('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
-      expect(elem.getAttribute('test')).toEqual('{}', 'should set the attribute');
+      expect(elem.getAttribute('test')).toEqual(null, 'should not set the attribute');
     });
 
     it('deserialize', (done) => {
@@ -244,6 +221,23 @@ describe('withProps', () => {
       elem.test = {one: 1, two: 2};
       expect(elem.getAttribute('test')).toBeA('string');
       expect(elem.getAttribute('test')).toEqual('{"one":1,"two":2}');
+    });
+  });
+
+  describe('string', () => {
+    it('values', (done) => {
+      const elem = create(prop.string);
+      afterMutations(() => {
+        expect(elem.test).toEqual('');
+        expect(elem.getAttribute('test')).toEqual(null);
+        testTypeValues('string', [
+          [false, 'false', 'false'],
+          [null, 'null', null],
+          [undefined, 'undefined', null],
+          [0, '0', '0'],
+          ['', '', '']
+        ], done);
+      });
     });
   });
 
@@ -266,8 +260,8 @@ describe('withProps', () => {
     }
 
     let elem;
-    const secret1 = createSymbol('secret');
-    const secret2 = createSymbol('secret');
+    const secret1 = sym();
+    const secret2 = sym();
 
     beforeEach(done => {
       elem = new (define(class extends withProps() {
@@ -280,7 +274,7 @@ describe('withProps', () => {
         constructor () {
           super();
           this._rendered = 0;
-          this[secret1] = 'secretKey';
+          this[secret1] = 'secretKey1';
           this[secret2] = 'secretKey2';
         }
         propsSetCallback () {
@@ -295,7 +289,7 @@ describe('withProps', () => {
       it('should return only properties defined as props', () => {
         const curr = getProps(elem);
 
-        expect(curr[secret1]).toEqual('secretKey');
+        expect(curr[secret1]).toEqual('secretKey1');
         expect(curr[secret2]).toEqual('secretKey2');
 
         expect(secret1 in curr).toEqual(true);
@@ -307,10 +301,10 @@ describe('withProps', () => {
     describe('setting', () => {
       it('should set all properties', () => {
         setProps(elem, {
-          [secret1]: 'newSecretKey',
+          [secret1]: 'newSecretKey1',
           [secret2]: 'newSecretKey2'
         });
-        expect(elem[secret1]).toEqual('newSecretKey');
+        expect(elem[secret1]).toEqual('newSecretKey1');
         expect(elem[secret2]).toEqual('newSecretKey2');
       });
 

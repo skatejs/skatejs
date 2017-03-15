@@ -147,9 +147,11 @@ describe('lifecycle/properties', () => {
 
     ['test1', 'test2'].forEach((value) => {
       expect(elem[value]).toEqual(value);
+
       elem[value] = null;
       expect(elem[value]).toEqual(value);
-      expect(elem.getAttribute(value)).toEqual(null);
+      expect(elem.getAttribute(value)).toEqual(value);
+
       elem.removeAttribute(value);
       expect(elem[value]).toEqual(value);
       expect(elem.getAttribute(value)).toEqual(null);
@@ -383,21 +385,7 @@ describe('lifecycle/properties', () => {
         expect(elem.testName).toEqual(null);
       });
 
-      it('should accept a function', () => {
-        const opts = {
-          default (elem, data) {
-            expect(this.default).toEqual(opts.default);
-            expect(arguments.length).toEqual(2); // eslint-disable-line prefer-rest-params
-            expect(elem.nodeType).toEqual(1);
-            expect(data.name).toEqual('testName');
-            return 'testValue';
-          }
-        };
-        const elem = create(opts);
-        expect(elem.testName).toEqual('testValue');
-      });
-
-      it('should accept a non-function', () => {
+      it('should accept a value', () => {
         const elem = create({ default: 'testValue' });
         expect(elem.testName).toEqual('testValue');
       });
@@ -439,28 +427,16 @@ describe('lifecycle/properties', () => {
     });
 
     describe('coerce', () => {
-      it('is an arbitrary function that has no return value (the user can do whatever type checking they want here)', () => {
-        let called = false;
+      it('is an arbitrary function that returns the coerced value', () => {
         const elem = create({
-          coerce: () => {
-            called = true;
+          coerce (...args) {
+            expect(args.length).toEqual(1);
+            expect(args[0]).toEqual('something');
+            return 'coerced';
           }
         });
         elem.testName = 'something';
-        expect(called).toEqual(true);
-      });
-
-      it('context and arguments', (done) => {
-        const opts = {
-          coerce (value) {
-            expect(this.type).toEqual(opts.type);
-            expect(arguments.length).toEqual(1); // eslint-disable-line prefer-rest-params
-            expect(value).toEqual('something');
-            done();
-          },
-          default: 'something'
-        };
-        create(opts);
+        expect(elem.testName).toEqual('coerced');
       });
     });
   });
@@ -470,8 +446,10 @@ describe('lifecycle/properties', () => {
       it('to an existing value', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName', 'something');
+
         elem.testName = 'something';
         expect(elem.testName).toEqual('something');
+
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           expect(elem.getAttribute('test-name')).toEqual('something');
@@ -480,6 +458,7 @@ describe('lifecycle/properties', () => {
           afterMutations(() => {
             expect(elem.testName).toEqual('something else');
             expect(elem.getAttribute('test-name')).toEqual('something else');
+
             fixtureArea.removeChild(elem);
             done();
           });
@@ -488,9 +467,13 @@ describe('lifecycle/properties', () => {
 
       it('to an existing null value', (done) => {
         const elem = create({ attribute: true });
-        elem.testName = null;
 
+        // The setting to `null` triggers a removal sync, but before it can be
+        // sync'd, the setAttribute fires and attempts to resync the prop. This
+        // test ensures that the prop resync properly happens.
+        elem.testName = null;
         elem.setAttribute('test-name', 'something');
+
         afterMutations(() => {
           expect(elem.testName).toEqual('something');
           expect(elem.getAttribute('test-name')).toEqual('something');
@@ -530,12 +513,12 @@ describe('lifecycle/properties', () => {
       });
       const elem = fixture(`<${Elem.is} in="val" />`).firstChild;
       afterMutations(() => {
-        expect(elem.getAttribute('in')).toEqual('val');
-        expect(elem.prop).toEqual('val');
+        expect(elem.getAttribute('in')).toEqual('val', 'attr initial value');
+        expect(elem.prop).toEqual('val', 'property initial value');
         elem.prop = 'val1';
         afterMutations(() => {
-          expect(elem.getAttribute('in')).toEqual('val');
-          expect(elem.prop).toEqual('val1');
+          expect(elem.getAttribute('in')).toEqual('val', 'attr updated value');
+          expect(elem.prop).toEqual('val1', 'property updated value');
           done();
         });
       });
@@ -572,7 +555,7 @@ describe('lifecycle/properties', () => {
       afterMutations(() => {
         expect(elem.getAttribute('in')).toEqual('val', 'attr in');
         expect(elem.prop).toEqual('val', 'prop out');
-        expect(elem.getAttribute('out')).toEqual('val', 'attr in');
+        expect(elem.getAttribute('out')).toEqual('val', 'attr out');
         elem.prop = 'val1';
         afterMutations(() => {
           expect(elem.getAttribute('in')).toEqual('val', 'attr in');
@@ -595,7 +578,7 @@ describe('lifecycle/properties', () => {
       const elem = fixture(`<${Elem.is} />`).firstChild;
       afterMutations(() => {
         expect(elem.getAttribute('in')).toEqual(null);
-        expect(elem.getAttribute('out')).toEqual('def');
+        expect(elem.getAttribute('out')).toEqual(null);
         expect(elem.prop).toEqual('def');
         elem.setAttribute('in', 'val');
         afterMutations(() => {
