@@ -36,7 +36,6 @@ The following members are all importable by name.
   - [propNumber]('./prop-number.html)
   - [propObject]('./prop-object.html)
   - [propString]('./prop-string.html)
-- [withRaw](./with-component.html)
 - [withRender](./with-component.html)
 
 *Every member is provided as a top-level export, they're just organised under parent export to show what part of the API they are provided by.*

@@ -1,4 +1,4 @@
-# `withProps (Base = withRaw())`
+# `withProps (Base = HTMLElement)`
 
 The `withProps` mixin defines the behaviour of Skate's special `static props` that can be coerced and reflected to / from attributes.
 

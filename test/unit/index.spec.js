@@ -27,7 +27,6 @@ describe('exports', () => {
   it('skate.with*', () => {
     expect(api.withComponent).toBeA('function', 'withComponent');
     expect(api.withProps).toBeA('function', 'withProps');
-    expect(api.withRaw).toBeA('function', 'withRaw');
     expect(api.withRender).toBeA('function', 'withRender');
   });
 
