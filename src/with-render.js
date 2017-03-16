@@ -3,7 +3,9 @@ import { withProps } from './with-props';
 export function withRender (Base = withProps()) {
   return class extends Base {
     propsChangedCallback () {
-      super.propsChangedCallback();
+      if (super.propsChangedCallback) {
+        super.propsChangedCallback();
+      }
 
       if (!this.shadowRoot) {
         this.attachShadow({ mode: 'open' });

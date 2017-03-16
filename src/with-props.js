@@ -1,4 +1,3 @@
-import { withRaw } from './with-raw';
 import {
   debounce,
   keys,
@@ -11,6 +10,8 @@ import {
   syncAttributeToProperty
 } from './util/with-props';
 
+const { HTMLElement } = root;
+
 const _connected = sym();
 const _constructed = sym();
 
@@ -20,7 +21,7 @@ const _props = sym();
 const _updateCallback = sym();
 const _updating = sym();
 
-export function withProps (Base = withRaw()) {
+export function withProps (Base = HTMLElement) {
   return class extends Base {
     static get observedAttributes () {
       const props = normPropDefs(this);
@@ -55,14 +56,18 @@ export function withProps (Base = withRaw()) {
     connectedCallback () {
       if (this[_connected]) return;
       this[_connected] = true;
-      super.connectedCallback();
+      if (super.connectedCallback) {
+        super.connectedCallback();
+      }
       this[_updateDebounced]();
     }
 
     disconnectedCallback () {
       if (!this[_connected]) return;
       this[_connected] = false;
-      super.disconnectedCallback();
+      if (super.disconnectedCallback) {
+        super.disconnectedCallback();
+      }
     }
 
     // Called when props actually change.
@@ -96,7 +101,9 @@ export function withProps (Base = withRaw()) {
     }
 
     attributeChangedCallback (name, oldValue, newValue) {
-      super.attributeChangedCallback(name, oldValue, newValue);
+      if (super.attributeChangedCallback) {
+        super.attributeChangedCallback(name, oldValue, newValue);
+      }
       syncAttributeToProperty(this, name, newValue);
     }
 
