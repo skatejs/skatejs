@@ -12,12 +12,12 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
-Skate is a library built on top of the [W3C web component specs](https://github.com/w3c/webcomponents) that enables you to write functional and performant web components with a very small footprint.
+Skate is high level, functional abstraction over the web component [specs](https://github.com/w3c/webcomponents) that:
 
-- Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
-- Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's very fast.
-- It works with multiple versions of itself on the page.
+- Produces cross-framework compatible components
+- Abstracts away common attribute / property semantics via `props`, such as attribute reflection and coercion
+- Adds several lifecycle callbacks for responding to prop updates, rendering and more
+- Uses [Preact](https://github.com/developit/preact), by default but also supports custom renderers
 
 HTML
 
@@ -28,14 +28,14 @@ HTML
 JavaScript
 
 ```js
-customElements.define('x-hello', class extends skate.Component {
-  static get props () {
-    return {
-      name: { attribute: true }
-    };
+import { Component, h, propString } from 'skatejs';
+
+customElements.define('x-hello', class extends Component {
+  static props = {
+    name: propString
   }
-  renderCallback () {
-    return skate.h('div', `Hello, ${this.name}`);
+  renderCallback ({ name }) {
+    return h('span', `Hello, ${name}!`);
   }
 });
 ```
@@ -43,36 +43,17 @@ customElements.define('x-hello', class extends skate.Component {
 Result
 
 ```html
-<x-hello name="Bob">Hello, Bob!</x-hello>
+<x-hello name="Bob">
+  #shadow-root
+    <span>Hello, Bob!</span>
+</x-hello>
 ```
 
 Whenever you change the `name` property - or attribute - the component will re-render, only changing the part of the DOM that requires updating.
 
-
-
-## Documentation
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-  - [Installing](#installing)
-    - [NPM](#npm)
-    - [Script Tag](#script-tag)
-  - [Dependencies](#dependencies)
-  - [Browser Support](#browser-support)
-  - [Recipes](https://skatejs.gitbooks.io/skatejs/content/docs/recipes)
-  - [Examples](https://skatejs.gitbooks.io/skatejs/content/docs/examples)
-  - [API](https://skatejs.gitbooks.io/skatejs/content/docs/api)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
-
 ## Installing
 
 There's a couple ways to consume Skate.
-
-
 
 ### NPM
 
@@ -84,11 +65,7 @@ Skate exports a UMD build in `umd/` so you can:
 
 ```js
 import * as skate from 'skatejs';
-const skate = require('skatejs');
-require(['skatejs'], function (skate) {});
 ```
-
-
 
 ### Script Tag
 
@@ -102,8 +79,6 @@ Since Skate exports a UMD definition, you can then access it via the global:
 const { skate } = window;
 ```
 
-
-
 ## Dependencies
 
 Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for. **Skate requires both Custom Elements and Shadow DOM v1.**
@@ -111,30 +86,28 @@ Skate doesn't require you provide any external dependencies, but recommends you 
 To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before your definitions*.
 
 ```sh
-npm install skatejs skatejs-web-components
+npm install skatejs @skatejs/web-components
 ```
 
-And then you can import it:
+And then load it up before everything else:
 
 ```js
 import 'skatejs-web-components';
-import { define, vdom } from 'skatejs';
+import { Component } from 'skatejs';
 ```
 
 Or you can use script tags:
 
 ```html
-<script src="https://unpkg.com/skatejs-web-components/dist/index.min.js"></script>
+<script src="https://unpkg.com/@skatejs/web-components/umd/@skatejs/web-components.min.js"></script>
 <script src="https://unpkg.com/skatejs/umd/skatejs.min.js"></script>
 ```
 
 If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.
 
-
-
 ### Transpilation and native custom element gotchas
 
-*If you’re using Babel or some other tool to transpile your ES2015 code to ES5, simply import `skatejs` and `skatejs-web-components` (or selectively include the polyfills) as needed and ignore the following.*
+*If you’re using Babel or some other tool to transpile to ES5, simply import `@skatejs/web-components` (or selectively include the polyfills) as needed and ignore the following.*
 
 Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
 
@@ -142,16 +115,13 @@ When you load Skate by module name (`import { ... } from 'skatejs';` or `require
 
 More information can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
 
-
-
 ## Browser Support
 
 Skate supports all evergreens and IE11. We recommend using the following polyfills:
 
 - Custom Elements: https://github.com/webcomponents/custom-elements
 - Shadow DOM: https://github.com/webcomponents/shadydom
-- Shadow DOM (CSS fills): https://github.com/webcomponents/shadycss
-
+- Shadow DOM CSS fills: https://github.com/webcomponents/shadycss
 
 [gitbook]: https://skatejs.gitbooks.io/skatejs/content/
 
