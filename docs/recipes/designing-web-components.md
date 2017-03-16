@@ -2,8 +2,6 @@
 
 A web component's public API should be available both imperatively (via JavaScript) and declaratively (via HTML). You should be able to do everything in one, that you can do in the other within reason.
 
-
-
 ## Imperative
 
 You should always try and make the constructor available whether it's exported from an ES2015 module or a global:
@@ -17,8 +15,6 @@ customElements.define('my-component', MyComponent);
 
 export default MyComponent;
 ```
-
-
 
 ## Declarative
 
@@ -54,8 +50,6 @@ If you're using something like React or Skate to render this component, you don'
 
 The nice part about thinking this way is that you get both a declarative and imperative API for free. You can think about this in simpler terms by designing your API around attributes rather than methods.
 
-
-
 ## Naming Collisions
 
 You may write a component that you change in a backward incompatible way. In order for your users to upgrade, they'd have to do so all at once instead of incrementally if you haven't given the new one a different name. One option is to choose a different name for your component, but that may not be ideal. You could also use `define()` to ensure the name is unique. An ideal solution would be to only export your constructor and let the consumer register it.
@@ -72,27 +66,23 @@ export default class extends Component {
 }
 ```
 
-
-
 ## Compatible with multiple versions of itself
 
 Skate is designed so that you can have multiple versions of it on the same page. This is so that if you have several components, your upgrades and releases aren't coupled. If you have a UI library based on Skate and those consuming your library also have Skate, your versions aren't coupled.
-
-
 
 ## Properties and Attributes
 
 Properties and attributes should represent as much of your public API as possible as this will ensure that no matter which way your component is created, its API remains as consistent as the constraints of HTML will allow. You can do this by ensuring your properties have corresponding attributes:
 
 ```js
-import { Component, h, prop } from 'skatejs';
+import { Component, h, propString } from 'skatejs';
 
 customElements.define('my-component', class extends Component {
   static get props () {
     return {
       // Automatically creates a one-way (attribute to prop) binding for the
       // name attribute / property.
-      name: prop.string
+      name: propString
     };
   }
 });
@@ -115,8 +105,6 @@ customElements.define('my-component', class extends Component {
   }
 });
 ```
-
-
 
 ## Private Members
 
@@ -177,4 +165,3 @@ customElements.define('my-component', class extends Component {
 ```
 
 You can also use symbols on your element just like we did above with standard methods and properties, if that suits your workflow better.
-
