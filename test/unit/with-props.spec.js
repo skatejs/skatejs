@@ -5,13 +5,7 @@ import expect from 'expect';
 import {
   define,
   h,
-  getProps,
-  propArray,
-  propBoolean,
-  propNumber,
-  propObject,
-  propString,
-  setProps,
+  props,
   withProps
 } from 'src';
 import { h as preactH } from 'preact';
@@ -20,14 +14,6 @@ import { sym } from 'src/util';
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 import hasSymbol from '../lib/has-symbol';
-
-const prop = {
-  array: propArray,
-  boolean: propBoolean,
-  number: propNumber,
-  object: propObject,
-  string: propString
-};
 
 function create (propLocal) {
   const el = new (define(class extends withProps() {
@@ -42,7 +28,7 @@ function create (propLocal) {
 }
 
 function testTypeValues (type, values, done) {
-  const elem = create(prop[type]);
+  const elem = create(props[type]);
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
@@ -58,14 +44,14 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.array);
+      elem = create(props.array);
       afterMutations(done);
     });
 
     afterEach(() => document.body.removeChild(elem));
 
     it('default', () => {
-      const elem2 = create(prop.array);
+      const elem2 = create(props.array);
 
       expect(elem.test).toBeAn('array');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
@@ -108,7 +94,7 @@ describe('withProps', () => {
 
   describe('boolean', () => {
     it('default', () => {
-      const elem = create(prop.boolean);
+      const elem = create(props.boolean);
       expect(elem.test).toEqual(false);
       expect(elem.getAttribute('test')).toEqual(null);
     });
@@ -116,7 +102,7 @@ describe('withProps', () => {
     [undefined, null, false, 0, '', 'something'].forEach((value) => {
       value = String(value);
       it(`setting attribute to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean);
+        const elem = create(props.boolean);
         afterMutations(() => {
           elem.setAttribute('test', value);
           afterMutations(() => {
@@ -127,7 +113,7 @@ describe('withProps', () => {
         });
       });
       it(`setting property to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean);
+        const elem = create(props.boolean);
         afterMutations(() => {
           elem.test = value;
           expect(elem.test).toEqual(Boolean(value), 'property');
@@ -138,7 +124,7 @@ describe('withProps', () => {
     });
 
     it('removing attribute', (done) => {
-      const elem = create(prop.boolean);
+      const elem = create(props.boolean);
       afterMutations(
         () => elem.setAttribute('test', ''),
         () => expect(elem.test).toEqual(true),
@@ -155,7 +141,7 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.number);
+      elem = create(props.number);
       afterMutations(done);
     });
 
@@ -194,12 +180,12 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.object);
+      elem = create(props.object);
       afterMutations(done);
     });
 
     it('default', () => {
-      const elem2 = create(prop.object);
+      const elem2 = create(props.object);
 
       expect(elem.test).toBeAn('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
@@ -226,7 +212,7 @@ describe('withProps', () => {
 
   describe('string', () => {
     it('values', (done) => {
-      const elem = create(prop.string);
+      const elem = create(props.string);
       afterMutations(() => {
         expect(elem.test).toEqual('');
         expect(elem.getAttribute('test')).toEqual(null);
@@ -290,9 +276,9 @@ describe('withProps', () => {
       afterMutations(done);
     });
 
-    describe('getProps()', () => {
+    describe('elem.props', () => {
       it('should return only properties defined as props', () => {
-        const curr = getProps(elem);
+        const curr = elem.props;
 
         expect(secret1 in curr).toEqual(true);
         expect(secret2 in curr).toEqual(true);
@@ -308,13 +294,13 @@ describe('withProps', () => {
       });
     });
 
-    describe('setProps()', () => {
+    describe('elem.props = {}', () => {
       it('should set all properties', () => {
-        setProps(elem, {
+        elem.props = {
           [secret1]: 'newSecretKey1',
           public1: 'newPublicKey1',
           undeclaredProp: 'newUndeclaredKey1'
-        });
+        };
         expect(elem[secret1]).toEqual('newSecretKey1');
         expect(elem[secret2]).toEqual('secretKey2');
         expect(elem.public1).toEqual('newPublicKey1');
@@ -324,7 +310,7 @@ describe('withProps', () => {
 
       it('should asynchronously render if declared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        setProps(elem, { [secret1]: 'updated1' });
+        elem.props = { [secret1]: 'updated1' };
         afterMutations(
           () => expect(elem._rendered).toEqual(2),
           done
@@ -333,7 +319,7 @@ describe('withProps', () => {
 
       it('should not render if undeclared properties are set', done => {
         expect(elem._rendered).toEqual(1);
-        setProps(elem, { undeclaredProp: 'updated3' });
+        elem.props = { undeclaredProp: 'updated3' };
         afterMutations(
           () => expect(elem._rendered).toEqual(1),
           done
@@ -341,7 +327,7 @@ describe('withProps', () => {
       });
 
       it('should allow you to pass a function so you can get the previous state', done => {
-        setProps(elem, prev => {
+        elem.props = prev => {
           expect(prev).toBeAn('object');
           expect(prev).toContain({
             [secret1]: 'secretKey1',
@@ -355,10 +341,10 @@ describe('withProps', () => {
             public1: prev.public1 + '!',
             undeclaredProp: prev.undeclaredProp + '!'
           };
-        });
+        };
         afterMutations(
           () => {
-            expect(getProps(elem)).toContain({
+            expect(elem.props).toContain({
               [secret1]: 'secretKey1!',
               [secret2]: 'secretKey2',
               public1: 'publicKey1!',

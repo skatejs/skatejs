@@ -46,6 +46,20 @@ export function withProps (Base = withRaw()) {
       this[_props] = value;
     }
 
+    get props () {
+      return keys(this.constructor.props).reduce((prev, curr) => {
+        prev[curr] = this[curr];
+        return prev;
+      }, {});
+    }
+
+    set props (props) {
+      if (typeof props === 'function') {
+        props = props(this.props);
+      }
+      keys(props).forEach(k => (this[k] = props[k]));
+    }
+
     constructor () {
       super();
       if (this[_constructed]) return;
@@ -115,7 +129,7 @@ export function withProps (Base = withRaw()) {
 
       // Prev / next props for prop lifecycle callbacks.
       const prev = this[_prevProps];
-      const next = this[_prevProps] = getProps(this);
+      const next = this[_prevProps] = this.props;
 
       // Always call set, but only call changed if the props updated.
       this.propsSetCallback(next, prev);
@@ -134,7 +148,7 @@ const { freeze } = Object;
 const attribute = freeze({ source: true });
 const zeroIfEmptyOrNumberIncludesNaN = val => (val == null ? 0 : Number(val));
 
-export const propArray = freeze({
+const array = freeze({
   attribute,
   coerce: val => (Array.isArray(val) ? val : (val == null ? null : [val])),
   default: freeze([]),
@@ -142,7 +156,7 @@ export const propArray = freeze({
   serialize: JSON.stringify
 });
 
-export const propBoolean = freeze({
+const boolean = freeze({
   attribute,
   coerce: val => !!val,
   default: false,
@@ -150,7 +164,7 @@ export const propBoolean = freeze({
   serialize: val => val ? '' : null
 });
 
-export const propNumber = freeze({
+const number = freeze({
   attribute,
   default: 0,
   coerce: zeroIfEmptyOrNumberIncludesNaN,
@@ -158,14 +172,14 @@ export const propNumber = freeze({
   serialize: v => v == null ? null : Number(v)
 });
 
-export const propObject = freeze({
+const object = freeze({
   attribute,
   default: freeze({}),
   deserialize: JSON.parse,
   serialize: JSON.stringify
 });
 
-export const propString = freeze({
+const string = freeze({
   attribute,
   default: '',
   coerce: v => String(v),
@@ -173,16 +187,10 @@ export const propString = freeze({
   serialize: v => v == null ? null : String(v)
 });
 
-export function getProps (elem) {
-  return keys(elem.constructor.props).reduce((prev, curr) => {
-    prev[curr] = elem[curr];
-    return prev;
-  }, {});
-}
-
-export function setProps (elem, props) {
-  if (typeof props === 'function') {
-    props = props(getProps(elem));
-  }
-  keys(props).forEach(k => (elem[k] = props[k]));
-}
+export const props = {
+  array,
+  boolean,
+  number,
+  object,
+  string
+};

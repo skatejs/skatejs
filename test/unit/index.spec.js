@@ -31,17 +31,12 @@ describe('exports', () => {
     expect(api.withRender).toBeA('function', 'withRender');
   });
 
-  it('skate.prop*', () => {
-    expect(api.propArray).toBeAn('object', 'array');
-    expect(api.propBoolean).toBeAn('object', 'boolean');
-    expect(api.propNumber).toBeAn('object', 'number');
-    expect(api.propObject).toBeAn('object', 'object');
-    expect(api.propString).toBeAn('object', 'string');
-  });
-
-  it('skate.*Props', () => {
-    expect(api.getProps).toBeA('function');
-    expect(api.setProps).toBeA('function');
+  it('skate.props.*', () => {
+    expect(api.props.array).toBeAn('object', 'array');
+    expect(api.props.boolean).toBeAn('object', 'boolean');
+    expect(api.props.number).toBeAn('object', 'number');
+    expect(api.props.object).toBeAn('object', 'object');
+    expect(api.props.string).toBeAn('object', 'string');
   });
 
   it('skate.h', () => {
