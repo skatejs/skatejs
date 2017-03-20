@@ -234,7 +234,7 @@ describe('withProps', () => {
       const attribute = { source: true };
       types.forEach(type => {
         it(type, () => {
-          expect(prop[type].attribute).toContain(attribute);
+          expect(props[type].attribute).toContain(attribute);
         });
       });
     });
