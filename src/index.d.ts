@@ -1,9 +1,6 @@
 // UMD library
 export as namespace skate;
 
-// empty reexport so user get's JSX to global
-export { } from './ts-typings/jsx';
-
 // Public API
 export {
   Component,
@@ -11,10 +8,16 @@ export {
   PropOptions,
   StatelessComponent,
   SFC,
-  prop,
-  props,
+  getProps,
+  setProps,
+  propString,
+  propObject,
+  propBoolean,
+  propNumber,
+  propArray,
   link,
   define,
-  emit,
-  h
+  emit
 } from './ts-typings/api';
+
+export { h } from 'preact';

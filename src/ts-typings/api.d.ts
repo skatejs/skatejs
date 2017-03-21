@@ -1,16 +1,16 @@
-import { Key, HTMLProps } from './common';
+type Key = string | number;
 
 export type ComponentProps<El, T> = {
   [P in keyof T]: PropOptions;
 };
 
 interface ComponentDefaultProps {
-  children?: VDOMElement<any>[];
+  children?: JSX.Element[];
   key?: Key;
 }
 
 export interface StatelessComponent<Props> {
-  (props: Props, children?: VDOMNode): VDOMElement<any>,
+  (props: Props, children?: JSX.Element[]): JSX.Element,
 }
 export type SFC<P> = StatelessComponent<P>;
 
@@ -39,7 +39,7 @@ export class Component<Props> extends HTMLElement {
   // SkateJS life cycle
   updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?: Props): VDOMElement<any> | VDOMElement<any>[] | null;
+  renderCallback(props?: Props): JSX.Element | null;
   renderedCallback(): void;
 
   // SkateJS DEPRECATED
@@ -48,7 +48,7 @@ export class Component<Props> extends HTMLElement {
   static detached?(elem: Component<any>): void;
   static attributeChanged?(elem: Component<any>, data: { name: string, oldValue: null | string, newValue: null | string }): void;
   static updated(elem: Component<any>, prevProps: { [nameOrSymbol: string]: any }): boolean;
-  static render?(elem: Component<any>): VDOMElement<any> | VDOMElement<any>[] | null;
+  static render?(elem: Component<any>): JSX.Element | null;
   static rendered?(elem: Component<any>): void;
 }
 
@@ -92,17 +92,13 @@ export interface EmitOptions {
  */
 export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOptions): boolean;
 
-export const h: typeof vdom.element;
-
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
-export const prop: {
-  readonly number: PropOptions;
-  readonly boolean: PropOptions;
-  readonly string: PropOptions;
-  readonly array: PropOptions;
-  readonly object: PropOptions;
-};
+export const propString: PropOptions;
+export const propNumber: PropOptions;
+export const propBoolean: PropOptions;
+export const propArray: PropOptions;
+export const propObject: PropOptions;
 
 /**
  * The props function is a getter or setter depending on if you specify the second argument.
@@ -110,41 +106,6 @@ export const prop: {
  * If you pass props, then the current state of the component is set.
  * When you set state, the component will re-render synchronously only if it needs to be re-rendered.
  */
-export function props<P>(elem: Component<P>): P;
-export function props<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
+export function getProps<P>(elem: Component<P>): P;
+export function setProps<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
 
-// @DEPRECATED
-// export const symbols: any;
-
-
-//
-// VDOM Nodes
-// ----------------------------------------------------------------------
-
-export interface VDOMElement<P> {
-  type: VDOMElementType<P>;
-  props: P;
-  key: Key | null;
-}
-type VDOMText = string | number;
-type VDOMChild = VDOMElement<any> | VDOMText;
-
-// Should be Array<VDOMNode> but type aliases cannot be recursive
-type VDOMFragment = {} | Array<VDOMChild | any[] | boolean>;
-type VDOMNode = VDOMChild | VDOMFragment | boolean | null | undefined;
-
-type VDOMElementType<P> = string | { id: string } | ComponentClass<P> | SFC<P>;
-
-export const vdom: {
-
-  element<P>(type: VDOMElementType<P>, attrs?: HTMLProps<HTMLElement> | P, ...children: VDOMChild[]): VDOMElement<any>,
-  element<P>(type: VDOMElementType<P>, ...children: VDOMChild[]): VDOMElement<any>,
-
-  attr(...args: any[]): void;
-  elementClose: Function;
-  elementOpen: Function;
-  elementOpenEnd: Function;
-  elementOpenStart: Function;
-  elementVoid: Function;
-  text: Function;
-};
