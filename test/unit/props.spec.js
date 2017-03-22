@@ -6,9 +6,6 @@ import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
 import { define, withProps } from 'src';
-import { root } from 'src/util';
-
-const { HTMLElement } = root;
 
 describe('api/props', () => {
   let elem;

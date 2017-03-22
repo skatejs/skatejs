@@ -34,6 +34,7 @@ export function debounce (cbFunc) {
 }
 
 export const empty = val => val == null;
+export const { freeze } = Object;
 
 export function keys (obj = {}) {
   const names = getOwnPropertyNames(obj);

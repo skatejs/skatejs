@@ -1,6 +1,7 @@
 import {
   debounce,
   empty,
+  freeze,
   keys,
   root,
   sym
@@ -121,49 +122,42 @@ export function withProps (Base = HTMLElement) {
 
 // Props
 
-const { freeze } = Object;
 const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
+const createProp = obj => freeze({ ...{ attribute }, ...obj });
 const nullOrType = type => val => empty(val) ? null : type(val);
-const passThru = type => val => type ? type(val) : val;
 const zeroOrNumber = val => (empty(val) ? 0 : Number(val));
 
-const array = freeze({
-  attribute,
+const array = createProp({
   coerce: val => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: freeze([]),
   deserialize: parse,
   serialize: stringify
 });
 
-const boolean = freeze({
-  attribute,
-  coerce: passThru(Boolean),
+const boolean = createProp({
+  coerce: Boolean,
   default: false,
   deserialize: val => !empty(val),
   serialize: val => val ? '' : null
 });
 
-const number = freeze({
-  attribute,
+const number = createProp({
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
   serialize: nullOrType(Number)
 });
 
-const object = freeze({
-  attribute,
+const object = createProp({
   default: freeze({}),
   deserialize: parse,
   serialize: stringify
 });
 
-const string = freeze({
-  attribute,
+const string = createProp({
   default: '',
-  coerce: passThru(String),
-  deserialize: passThru(),
+  coerce: String,
   serialize: nullOrType(String)
 });
 

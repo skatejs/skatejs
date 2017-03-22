@@ -1,18 +1,9 @@
-import { withProps } from './with-props';
+import { root } from './util';
 
-export function withRender (Base = withProps()) {
+const { HTMLElement } = root;
+
+export function withRender (Base = HTMLElement) {
   return class extends Base {
-    propsChangedCallback (next, prev) {
-      super.propsChangedCallback(next, prev);
-
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: 'open' });
-      }
-
-      this.rendererCallback(this.shadowRoot, this.renderCallback(this));
-      this.renderedCallback();
-    }
-
     // Called to render the component.
     renderCallback () {}
 
@@ -20,6 +11,12 @@ export function withRender (Base = withProps()) {
     renderedCallback () {}
 
     // Called to render the component.
-    rendererCallback () {}
+    rendererCallback (render) {
+      if (!this.shadowRoot) {
+        this.attachShadow({ mode: 'open' });
+      }
+      render(this.renderCallback(this), this.shadowRoot);
+      this.renderedCallback();
+    }
   };
 }
