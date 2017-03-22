@@ -299,7 +299,7 @@ describe('withProps', () => {
           expect(elem.public1).toBe('updated');
         });
 
-        it('should not undefine props not passed', () => {
+        it('should undefine props not passed', () => {
           elem.props = { public1: 'updated' };
           expect(elem.public2).toBe(undefined);
         });
