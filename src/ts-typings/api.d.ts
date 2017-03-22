@@ -41,15 +41,6 @@ export class Component<Props> extends HTMLElement {
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
   renderCallback(props?: Props): JSX.Element | null;
   renderedCallback(): void;
-
-  // SkateJS DEPRECATED
-  static created?(elem: Component<any>): void;
-  static attached?(elem: Component<any>): void;
-  static detached?(elem: Component<any>): void;
-  static attributeChanged?(elem: Component<any>, data: { name: string, oldValue: null | string, newValue: null | string }): void;
-  static updated(elem: Component<any>, prevProps: { [nameOrSymbol: string]: any }): boolean;
-  static render?(elem: Component<any>): JSX.Element | null;
-  static rendered?(elem: Component<any>): void;
 }
 
 
