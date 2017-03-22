@@ -1,7 +1,8 @@
-import { withRaw } from './with-raw';
 import {
   debounce,
+  empty,
   keys,
+  root,
   sym
 } from './util';
 import {
@@ -10,6 +11,8 @@ import {
   normPropDefs,
   syncAttributeToProperty
 } from './util/with-props';
+
+const { HTMLElement } = root;
 
 // Unfortunately the polyfills still seem to double up on lifecycle calls. In
 // order to get around this, we need guards to prevent us from executing them
@@ -23,7 +26,7 @@ const _props = sym();
 const _updateCallback = sym();
 const _updating = sym();
 
-export function withProps (Base = withRaw()) {
+export function withProps (Base = HTMLElement) {
   return class extends Base {
     static get observedAttributes () {
       const props = normPropDefs(this);
@@ -53,13 +56,6 @@ export function withProps (Base = withRaw()) {
       }, {});
     }
 
-    set props (props) {
-      if (typeof props === 'function') {
-        props = props(this.props);
-      }
-      keys(props).forEach(k => (this[k] = props[k]));
-    }
-
     constructor () {
       super();
       if (this[_constructed]) return;
@@ -72,14 +68,14 @@ export function withProps (Base = withRaw()) {
     connectedCallback () {
       if (this[_connected]) return;
       this[_connected] = true;
-      super.connectedCallback();
+      if (super.connectedCallback) super.connectedCallback();
       this[_updateDebounced]();
     }
 
     disconnectedCallback () {
       if (!this[_connected]) return;
       this[_connected] = false;
-      super.disconnectedCallback();
+      if (super.disconnectedCallback) super.disconnectedCallback();
     }
 
     // Called when props actually change.
@@ -90,30 +86,11 @@ export function withProps (Base = withRaw()) {
 
     // Called to see if the props changed.
     propsUpdatedCallback (next, prev) {
-      // The 'previousProps' will be undefined if it is the initial render.
-      if (!prev) {
-        return true;
-      }
-
-      // The 'prevProps' will always contain all of the keys.
-      //
-      // Use classic loop because:
-      //
-      // - for ... in skips symbols
-      // - for ... of is not working yet with IE!?
-      const namesAndSymbols = keys(prev);
-      for (let i = 0; i < namesAndSymbols.length; i++) {
-        const nameOrSymbol = namesAndSymbols[i];
-        if (prev[nameOrSymbol] !== next[nameOrSymbol]) {
-          return true;
-        }
-      }
-
-      return false;
+      return !prev || keys(prev).every(k => prev[k] === next[k]);
     }
 
     attributeChangedCallback (name, oldValue, newValue) {
-      super.attributeChangedCallback(name, oldValue, newValue);
+      if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
       syncAttributeToProperty(this, name, newValue);
     }
 
@@ -145,46 +122,49 @@ export function withProps (Base = withRaw()) {
 // Props
 
 const { freeze } = Object;
+const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
-const zeroIfEmptyOrNumberIncludesNaN = val => (val == null ? 0 : Number(val));
+const nullOrType = type => val => empty(val) ? null : type(val);
+const passThru = type => val => type ? type(val) : val;
+const zeroOrNumber = val => (empty(val) ? 0 : Number(val));
 
 const array = freeze({
   attribute,
-  coerce: val => (Array.isArray(val) ? val : (val == null ? null : [val])),
+  coerce: val => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: freeze([]),
-  deserialize: JSON.parse,
-  serialize: JSON.stringify
+  deserialize: parse,
+  serialize: stringify
 });
 
 const boolean = freeze({
   attribute,
-  coerce: val => !!val,
+  coerce: passThru(Boolean),
   default: false,
-  deserialize: val => val != null,
+  deserialize: val => !empty(val),
   serialize: val => val ? '' : null
 });
 
 const number = freeze({
   attribute,
   default: 0,
-  coerce: zeroIfEmptyOrNumberIncludesNaN,
-  deserialize: zeroIfEmptyOrNumberIncludesNaN,
-  serialize: v => v == null ? null : Number(v)
+  coerce: zeroOrNumber,
+  deserialize: zeroOrNumber,
+  serialize: nullOrType(Number)
 });
 
 const object = freeze({
   attribute,
   default: freeze({}),
-  deserialize: JSON.parse,
-  serialize: JSON.stringify
+  deserialize: parse,
+  serialize: stringify
 });
 
 const string = freeze({
   attribute,
   default: '',
-  coerce: v => String(v),
-  deserialize: v => v,
-  serialize: v => v == null ? null : String(v)
+  coerce: passThru(String),
+  deserialize: passThru(),
+  serialize: nullOrType(String)
 });
 
 export const props = {
