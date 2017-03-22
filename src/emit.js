@@ -1,31 +1,13 @@
-import { root } from './util';
-
-// Once the Event constructor is newable cross-browser, this can be removed.
-const Event = (() => {
-  try {
-    const { Event } = root;
-    // eslint-disable-next-line
-    new Event('test');
-    return Event;
-  } catch (e) {
-    return function (name, opts) {
-      const e = document.createEvent('CustomEvent');
-      Object.defineProperty(e, 'composed', { value: opts.composed });
-      e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-      return e;
-    };
-  }
-})();
-
-const optsDefaults = {
+const defs = {
   bubbles: true,
   cancelable: true,
   composed: false
 };
 
 export function emit (elem, name, opts) {
-  opts = { ...optsDefaults, ...opts };
-  const e = new Event(name, opts);
-  Object.defineProperty(e, 'detail', { value: opts.detail });
+  opts = { ...defs, ...opts };
+  const e = document.createEvent('CustomEvent');
+  e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+  Object.defineProperty(e, 'composed', { value: opts.composed });
   return elem.dispatchEvent(e);
 }
