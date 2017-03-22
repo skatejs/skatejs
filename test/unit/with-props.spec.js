@@ -293,69 +293,6 @@ describe('withProps', () => {
         expect(curr.undeclaredProp).toEqual(undefined);
       });
     });
-
-    describe('elem.props = {}', () => {
-      it('should set all properties', () => {
-        elem.props = {
-          [secret1]: 'newSecretKey1',
-          public1: 'newPublicKey1',
-          undeclaredProp: 'newUndeclaredKey1'
-        };
-        expect(elem[secret1]).toEqual('newSecretKey1');
-        expect(elem[secret2]).toEqual('secretKey2');
-        expect(elem.public1).toEqual('newPublicKey1');
-        expect(elem.public2).toEqual('publicKey2');
-        expect(elem.undeclaredProp).toEqual('newUndeclaredKey1');
-      });
-
-      it('should asynchronously render if declared properties are set', done => {
-        expect(elem._rendered).toEqual(1);
-        elem.props = { [secret1]: 'updated1' };
-        afterMutations(
-          () => expect(elem._rendered).toEqual(2),
-          done
-        );
-      });
-
-      it('should not render if undeclared properties are set', done => {
-        expect(elem._rendered).toEqual(1);
-        elem.props = { undeclaredProp: 'updated3' };
-        afterMutations(
-          () => expect(elem._rendered).toEqual(1),
-          done
-        );
-      });
-
-      it('should allow you to pass a function so you can get the previous state', done => {
-        elem.props = prev => {
-          expect(prev).toBeAn('object');
-          expect(prev).toContain({
-            [secret1]: 'secretKey1',
-            [secret2]: 'secretKey2',
-            public1: 'publicKey1',
-            public2: 'publicKey2'
-          });
-          expect(prev.undeclaredProp).toBe(undefined);
-          return {
-            [secret1]: prev[secret1] + '!',
-            public1: prev.public1 + '!',
-            undeclaredProp: prev.undeclaredProp + '!'
-          };
-        };
-        afterMutations(
-          () => {
-            expect(elem.props).toContain({
-              [secret1]: 'secretKey1!',
-              [secret2]: 'secretKey2',
-              public1: 'publicKey1!',
-              public2: 'publicKey2'
-            });
-            expect(elem.undeclaredProp).toBe('undefined!');
-          },
-          done
-        );
-      });
-    });
   });
 
   it('should directly export h from preact', () => {
