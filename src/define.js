@@ -1,15 +1,7 @@
 import { root, uniqueId } from './util';
 
 export function define (Ctor) {
-  const { customElements, HTMLElement } = root;
-
-  if (!customElements) {
-    throw new Error('Skate requires native custom element support or a polyfill.');
-  }
-
-  if (!(Ctor.prototype instanceof HTMLElement)) {
-    throw new Error('You must provide a constructor that extends HTMLElement to define().');
-  }
+  const { customElements } = root;
 
   // We must use hasOwnProperty() because we want to know if it was specified
   // directly on this class, not subclasses, as we don't want to inherit tag
