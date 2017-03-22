@@ -347,7 +347,7 @@ describe('lifecycle/properties', () => {
 
         it('removes the attribute if null is returned', (done) => {
           const fixtureArea = fixture();
-          const elem = create({ ...props.oolean, ...{ attribute: true } });
+          const elem = create({ ...props.boolean, ...{ attribute: true } });
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {
