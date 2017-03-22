@@ -292,6 +292,23 @@ describe('withProps', () => {
 
         expect(curr.undeclaredProp).toEqual(undefined);
       });
+
+      describe('setter', () => {
+        it('should set props', () => {
+          elem.props = { public1: 'updated' };
+          expect(elem.public1).toBe('updated');
+        });
+
+        it('should not undefine props not passed', () => {
+          elem.props = { public1: 'updated' };
+          expect(elem.public2).toBe('publicKey2');
+        });
+
+        it('should set undeclared props', () => {
+          elem.props = { undeclared: 'yay' };
+          expect(elem.undeclared).toBe('yay');
+        });
+      });
     });
   });
 
