@@ -301,12 +301,12 @@ describe('withProps', () => {
 
         it('should not undefine props not passed', () => {
           elem.props = { public1: 'updated' };
-          expect(elem.public2).toBe('publicKey2');
+          expect(elem.public2).toBe(undefined);
         });
 
-        it('should set undeclared props', () => {
+        it('should not set undeclared props', () => {
           elem.props = { undeclared: 'yay' };
-          expect(elem.undeclared).toBe('yay');
+          expect(elem.undeclared).toBe(undefined);
         });
       });
     });

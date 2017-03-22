@@ -43,7 +43,7 @@ export function withProps (Base = HTMLElement) {
     }
 
     static get props () {
-      return { ...super.props, ...this[_props] };
+      return this[_props];
     }
 
     static set props (value) {
@@ -58,7 +58,7 @@ export function withProps (Base = HTMLElement) {
     }
 
     set props (props) {
-      keys(props).forEach(k => (this[k] = props[k]));
+      keys(this.constructor.props).forEach(k => (this[k] = props[k]));
     }
 
     constructor () {
