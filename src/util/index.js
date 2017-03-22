@@ -33,6 +33,8 @@ export function debounce (cbFunc) {
   };
 }
 
+export const empty = val => val == null;
+
 export function keys (obj = {}) {
   const names = getOwnPropertyNames(obj);
   return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
