@@ -56,7 +56,8 @@ export function withProps (Base = HTMLElement) {
     }
 
     set props (props) {
-      keys(this.constructor.props).forEach(k => (this[k] = props[k]));
+      const ctorProps = this.constructor.props;
+      keys(props).forEach(k => k in ctorProps && (this[k] = props[k]));
     }
 
     constructor () {

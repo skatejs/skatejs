@@ -299,12 +299,17 @@ describe('withProps', () => {
           expect(elem.public1).toBe('updated');
         });
 
-        it('should undefine props not passed', () => {
-          elem.props = { public1: 'updated' };
-          expect(elem.public2).toBe(undefined);
+        it('should set symbols', () => {
+          elem.props = { [secret1]: 'updated' };
+          expect(elem[secret1]).toBe('updated');
         });
 
-        it('should not set undeclared props', () => {
+        it('should not affect unpassed props', () => {
+          elem.props = { public1: 'updated' };
+          expect(elem.public2).toBe('publicKey2');
+        });
+
+        it('should not affect undeclared props', () => {
           elem.props = { undeclared: 'yay' };
           expect(elem.undeclared).toBe(undefined);
         });
