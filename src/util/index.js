@@ -1,6 +1,6 @@
 export const root = typeof window === 'undefined' ? global : window;
 
-const { Object, MutationObserver } = root;
+const { HTMLElement = null, Object, MutationObserver } = root;
 const { getOwnPropertyNames, getOwnPropertySymbols } = Object;
 
 export function dashCase (str) {
@@ -32,6 +32,10 @@ export function debounce (cbFunc) {
     }
   };
 }
+
+export const empty = val => val == null;
+export const { freeze } = Object;
+export { HTMLElement };
 
 export function keys (obj = {}) {
   const names = getOwnPropertyNames(obj);

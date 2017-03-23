@@ -6,11 +6,6 @@ import expect from 'expect';
 const { customElements, HTMLElement } = window;
 
 describe('api/define', () => {
-  it('should throw if the constructor does not extend HTMLElement', () => {
-    expect(() => define(() => {})).toThrow();
-    expect(() => define(HTMLElement)).toThrow();
-  });
-
   describe('`static is`', () => {
     describe('present', () => {
       it('should be used as the element name', () => {

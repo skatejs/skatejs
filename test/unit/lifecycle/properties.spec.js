@@ -6,7 +6,7 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, propArray, propBoolean, withProps } from 'src';
+import { define, props, withProps } from 'src';
 
 describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
@@ -329,7 +329,7 @@ describe('lifecycle/properties', () => {
         it('coerces the value from the property to the attribute', (done) => {
           const fixtureArea = fixture();
           const elem = create({
-            ...propArray,
+            ...props.array,
             ...{
               attribute: true,
               deserialize: value => value.split(':'),
@@ -347,7 +347,7 @@ describe('lifecycle/properties', () => {
 
         it('removes the attribute if null is returned', (done) => {
           const fixtureArea = fixture();
-          const elem = create({ ...propBoolean, ...{ attribute: true } });
+          const elem = create({ ...props.boolean, ...{ attribute: true } });
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {
@@ -361,7 +361,7 @@ describe('lifecycle/properties', () => {
 
         it('removes the attribute if undefined is returned', (done) => {
           const fixtureArea = fixture();
-          const elem = create({ ...propBoolean, ...{ attribute: true } });
+          const elem = create({ ...props.boolean, ...{ attribute: true } });
           elem.testName = true;
           fixtureArea.appendChild(elem);
           afterMutations(() => {

@@ -1,9 +1,9 @@
 function getValue (elem) {
-  const type = elem.type;
+  const { checked, type, value } = elem;
   if (type === 'checkbox' || type === 'radio') {
-    return elem.checked ? elem.value || true : false;
+    return checked ? value || true : false;
   }
-  return elem.value;
+  return value;
 }
 
 export function link (elem, target) {

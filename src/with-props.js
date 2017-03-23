@@ -1,6 +1,8 @@
-import { withRaw } from './with-raw';
 import {
   debounce,
+  empty,
+  freeze,
+  HTMLElement,
   keys,
   sym
 } from './util';
@@ -11,6 +13,9 @@ import {
   syncAttributeToProperty
 } from './util/with-props';
 
+// Unfortunately the polyfills still seem to double up on lifecycle calls. In
+// order to get around this, we need guards to prevent us from executing them
+// more than once for a given state.
 const _connected = sym();
 const _constructed = sym();
 
@@ -20,7 +25,7 @@ const _props = sym();
 const _updateCallback = sym();
 const _updating = sym();
 
-export function withProps (Base = withRaw()) {
+export function withProps (Base = HTMLElement) {
   return class extends Base {
     static get observedAttributes () {
       const props = normPropDefs(this);
@@ -31,16 +36,28 @@ export function withProps (Base = withRaw()) {
         .concat(this[_observedAttributes] || []);
     }
 
-    static set observedAttributes (value) {
-      this[_observedAttributes] = value;
+    static set observedAttributes (attrs) {
+      this[_observedAttributes] = attrs;
     }
 
     static get props () {
-      return { ...super.props, ...this[_props] };
+      return this[_props];
     }
 
-    static set props (value) {
-      this[_props] = value;
+    static set props (props) {
+      this[_props] = props;
+    }
+
+    get props () {
+      return keys(this.constructor.props).reduce((prev, curr) => {
+        prev[curr] = this[curr];
+        return prev;
+      }, {});
+    }
+
+    set props (props) {
+      const ctorProps = this.constructor.props;
+      keys(props).forEach(k => k in ctorProps && (this[k] = props[k]));
     }
 
     constructor () {
@@ -55,14 +72,14 @@ export function withProps (Base = withRaw()) {
     connectedCallback () {
       if (this[_connected]) return;
       this[_connected] = true;
-      super.connectedCallback();
+      if (super.connectedCallback) super.connectedCallback();
       this[_updateDebounced]();
     }
 
     disconnectedCallback () {
       if (!this[_connected]) return;
       this[_connected] = false;
-      super.disconnectedCallback();
+      if (super.disconnectedCallback) super.disconnectedCallback();
     }
 
     // Called when props actually change.
@@ -73,30 +90,11 @@ export function withProps (Base = withRaw()) {
 
     // Called to see if the props changed.
     propsUpdatedCallback (next, prev) {
-      // The 'previousProps' will be undefined if it is the initial render.
-      if (!prev) {
-        return true;
-      }
-
-      // The 'prevProps' will always contain all of the keys.
-      //
-      // Use classic loop because:
-      //
-      // - for ... in skips symbols
-      // - for ... of is not working yet with IE!?
-      const namesAndSymbols = keys(prev);
-      for (let i = 0; i < namesAndSymbols.length; i++) {
-        const nameOrSymbol = namesAndSymbols[i];
-        if (prev[nameOrSymbol] !== next[nameOrSymbol]) {
-          return true;
-        }
-      }
-
-      return false;
+      return !prev || keys(prev).every(k => prev[k] === next[k]);
     }
 
     attributeChangedCallback (name, oldValue, newValue) {
-      super.attributeChangedCallback(name, oldValue, newValue);
+      if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
       syncAttributeToProperty(this, name, newValue);
     }
 
@@ -112,7 +110,7 @@ export function withProps (Base = withRaw()) {
 
       // Prev / next props for prop lifecycle callbacks.
       const prev = this[_prevProps];
-      const next = this[_prevProps] = getProps(this);
+      const next = this[_prevProps] = this.props;
 
       // Always call set, but only call changed if the props updated.
       this.propsSetCallback(next, prev);
@@ -127,56 +125,49 @@ export function withProps (Base = withRaw()) {
 
 // Props
 
-const { freeze } = Object;
+const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
-const zeroIfEmptyOrNumberIncludesNaN = val => (val == null ? 0 : Number(val));
+const createProp = obj => freeze({ ...{ attribute }, ...obj });
+const nullOrType = type => val => empty(val) ? null : type(val);
+const zeroOrNumber = val => (empty(val) ? 0 : Number(val));
 
-export const propArray = freeze({
-  attribute,
-  coerce: val => (Array.isArray(val) ? val : (val == null ? null : [val])),
+const array = createProp({
+  coerce: val => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: freeze([]),
-  deserialize: JSON.parse,
-  serialize: JSON.stringify
+  deserialize: parse,
+  serialize: stringify
 });
 
-export const propBoolean = freeze({
-  attribute,
-  coerce: val => !!val,
+const boolean = createProp({
+  coerce: Boolean,
   default: false,
-  deserialize: val => val != null,
+  deserialize: val => !empty(val),
   serialize: val => val ? '' : null
 });
 
-export const propNumber = freeze({
-  attribute,
+const number = createProp({
   default: 0,
-  coerce: zeroIfEmptyOrNumberIncludesNaN,
-  deserialize: zeroIfEmptyOrNumberIncludesNaN,
-  serialize: v => v == null ? null : Number(v)
+  coerce: zeroOrNumber,
+  deserialize: zeroOrNumber,
+  serialize: nullOrType(Number)
 });
 
-export const propObject = freeze({
-  attribute,
+const object = createProp({
   default: freeze({}),
-  deserialize: JSON.parse,
-  serialize: JSON.stringify
+  deserialize: parse,
+  serialize: stringify
 });
 
-export const propString = freeze({
-  attribute,
+const string = createProp({
   default: '',
-  coerce: v => String(v),
-  deserialize: v => v,
-  serialize: v => v == null ? null : String(v)
+  coerce: String,
+  serialize: nullOrType(String)
 });
 
-export function getProps (elem) {
-  return keys(elem.constructor.props).reduce((prev, curr) => {
-    prev[curr] = elem[curr];
-    return prev;
-  }, {});
-}
-
-export function setProps (elem, props) {
-  keys(props).forEach(k => (elem[k] = props[k]));
-}
+export const props = {
+  array,
+  boolean,
+  number,
+  object,
+  string
+};
