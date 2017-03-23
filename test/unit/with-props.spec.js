@@ -276,7 +276,22 @@ describe('withProps', () => {
       afterMutations(done);
     });
 
-    describe('elem.props', () => {
+    describe('static props', () => {
+      it('should not merge super props', () => {
+        const one = {};
+        const two = {};
+        class One extends withProps() {
+          static props = { one }
+        }
+        class Two extends One {
+          static props = { two }
+        }
+        expect(One.props).toContain({ one });
+        expect(Two.props).toContain({ two });
+      });
+    });
+
+    describe('props', () => {
       it('should return only properties defined as props', () => {
         const curr = elem.props;
 

@@ -36,16 +36,16 @@ export function withProps (Base = HTMLElement) {
         .concat(this[_observedAttributes] || []);
     }
 
-    static set observedAttributes (value) {
-      this[_observedAttributes] = value;
+    static set observedAttributes (attrs) {
+      this[_observedAttributes] = attrs;
     }
 
     static get props () {
       return this[_props];
     }
 
-    static set props (value) {
-      this[_props] = value;
+    static set props (props) {
+      this[_props] = props;
     }
 
     get props () {
