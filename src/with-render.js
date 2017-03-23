@@ -1,6 +1,4 @@
-import { root } from './util';
-
-const { HTMLElement } = root;
+import { HTMLElement } from './util';
 
 export function withRender (Base = HTMLElement) {
   return class extends Base {

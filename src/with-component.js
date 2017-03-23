@@ -1,9 +1,7 @@
 import { render } from 'preact';
-import { root } from './util';
+import { HTMLElement } from './util';
 import { withProps } from './with-props';
 import { withRender } from './with-render';
-
-const { HTMLElement } = root;
 
 export function withComponent (Base = HTMLElement) {
   return class extends withRender(withProps(Base)) {

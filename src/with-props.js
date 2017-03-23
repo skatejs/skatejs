@@ -2,8 +2,8 @@ import {
   debounce,
   empty,
   freeze,
+  HTMLElement,
   keys,
-  root,
   sym
 } from './util';
 import {
@@ -12,8 +12,6 @@ import {
   normPropDefs,
   syncAttributeToProperty
 } from './util/with-props';
-
-const { HTMLElement } = root;
 
 // Unfortunately the polyfills still seem to double up on lifecycle calls. In
 // order to get around this, we need guards to prevent us from executing them
