@@ -4,7 +4,7 @@ import { withRender } from './with-render';
 export function withComponent (Base = withRender()) {
   return class extends Base {
     rendererCallback (host, vdom) {
-      render(vdom, host);
+      this._root = render(vdom, host, this._root);
     }
   };
 }
