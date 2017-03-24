@@ -2,7 +2,7 @@
 
 import expect from 'expect';
 
-import { dashCase, debounce, keys, sym } from 'src/util';
+import { dashCase, debounce, keys, sym, uniqueId } from 'src/util';
 
 describe('utils', () => {
   describe('{ dashCase }', () => {
@@ -65,6 +65,26 @@ describe('utils', () => {
         expect(_sym).toBeA('symbol');
       } else {
         expect(_sym).toBeA('string');
+      }
+    });
+  });
+
+  describe('{ unqiueId }', () => {
+    it('should be relatively unique', () => {
+      const ids = [];
+      for (let a = 0; a < 1000; a++) {
+        const id = uniqueId();
+        expect(ids.indexOf(id)).toBe(-1);
+        ids.push(id);
+      }
+    });
+
+    it('should be relatively unique (length = 8)', () => {
+      const ids = [];
+      for (let a = 0; a < 1000; a++) {
+        const id = uniqueId().substring(0, 8);
+        expect(ids.indexOf(id)).toBe(-1);
+        ids.push(id);
       }
     });
   });

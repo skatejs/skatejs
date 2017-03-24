@@ -5,11 +5,11 @@ import expect from 'expect';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, withProps } from 'src';
+import { define, withProps, withUnique } from 'src';
 
 describe('lifecycle/attributes', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends withProps() {
+    const elem = new (define(class extends withUnique(withProps()) {
       static get props () {
         return {
           [name]: definition

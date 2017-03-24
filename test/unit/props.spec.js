@@ -5,13 +5,13 @@ import expect from 'expect';
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-import { define, withProps } from 'src';
+import { define, withProps, withUnique } from 'src';
 
 describe('api/props', () => {
   let elem;
 
   beforeEach(done => {
-    elem = new (define(class extends withProps() {
+    elem = new (define(class extends withUnique(withProps()) {
       static get props () {
         return {
           prop1: null,
