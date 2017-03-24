@@ -1,6 +1,6 @@
 export const root = typeof window === 'undefined' ? global : window;
 
-const { btoa, HTMLElement = null, Object, MutationObserver } = root;
+const { HTMLElement = null, Object, MutationObserver } = root;
 const { getOwnPropertyNames, getOwnPropertySymbols } = Object;
 
 export function dashCase (str) {
