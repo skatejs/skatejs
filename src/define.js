@@ -2,6 +2,9 @@ import { root } from './util';
 
 export function define (Ctor) {
   const { customElements } = root;
-  customElements.define(Ctor.is, Ctor);
+  const { is } = Ctor;
+  if (!customElements.get(is)) {
+    customElements.define(is, Ctor);
+  }
   return Ctor;
 }

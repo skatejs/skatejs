@@ -21,6 +21,10 @@ describe('utils', () => {
     it('should not affect a string that is already dash-cased', () => {
       expect(dashCase('some-dash-cased-string')).toEqual('some-dash-cased-string');
     });
+
+    it('should treat underscores as separators dashes', () => {
+      expect(dashCase('some_string')).toBe('some-string');
+    });
   });
 
   describe('{ debounce }', () => {

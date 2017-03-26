@@ -168,6 +168,7 @@ describe('lifecycle/properties', () => {
       it('setting the attribute updates the property value', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName');
+
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           elem.testName = 'something';
