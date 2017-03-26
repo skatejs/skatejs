@@ -3,6 +3,9 @@
 import expect from 'expect';
 
 import { withUnique } from 'src';
+import { root } from 'src/util';
+
+const { customElements } = root;
 
 describe('withUnique', () => {
   describe('static is', () => {
@@ -41,6 +44,13 @@ describe('withUnique', () => {
       };
       expect(E1.is).toNotBe(E2.is);
     });
+  });
+
+  it('should auto-define a custom element when the is prop is specified', () => {
+    class AutoRegister extends withUnique() {
+      static is = 'auto-register'
+    }
+    expect(customElements.get('auto-register')).toBe(AutoRegister);
   });
 
   it('should auto-define a custom element when constructed', () => {
