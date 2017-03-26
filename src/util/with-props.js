@@ -8,9 +8,10 @@ const _syncingPropertyToAttribute = sym('_syncingPropertyToAttribute');
 export const _updateDebounced = sym('_updateDebounced');
 
 export function defineProps (Ctor) {
-  if (!Ctor[_definedProps]) {
-    Ctor[_definedProps] = true;
+  if (Ctor[_definedProps]) {
+    return;
   }
+  Ctor[_definedProps] = true;
 
   const { prototype } = Ctor;
   const props = normPropDefs(Ctor);
