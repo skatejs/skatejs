@@ -1,22 +1,8 @@
-import { customElements, dashCase, HTMLElement, keys, sym } from './util';
-import { define } from './define';
+import { customElements, dashCase, HTMLElement, sym } from './util';
 
 const _is = sym();
-const baseFunctionStatics = keys(function () {});
 
 let suffix = 0;
-
-function extendStatics (Ctor, Base) {
-  keys(Base).forEach(name => {
-    if (baseFunctionStatics.indexOf(name) > -1) {
-      return;
-    }
-    const descriptor = Object.getOwnPropertyDescriptor(Base, name);
-    if (descriptor) {
-      Object.defineProperty(Ctor, name, descriptor);
-    }
-  });
-}
 
 function formatName (prefix, suffix) {
   return (
@@ -26,8 +12,8 @@ function formatName (prefix, suffix) {
   );
 }
 
-function generateName (Ctor, hint) {
-  const prefix = hint || dashCase(Ctor.name) || 'element';
+function generateName (Ctor) {
+  const prefix = dashCase(Ctor.name) || 'element';
   while (customElements.get(formatName(prefix, suffix))) {
     suffix++;
   }
@@ -35,22 +21,12 @@ function generateName (Ctor, hint) {
 }
 
 export function withUnique (Base = HTMLElement) {
-  function Ctor () {
-    const { constructor } = this;
-    define(constructor);
-    return Base.call(this);
-  }
-  Object.defineProperty(Ctor, 'is', {
-    get () {
+  return class extends Base {
+    static get is () {
       return this[_is] || (this[_is] = generateName(this));
-    },
-    set (is) {
-      this[_is] = generateName(this, is);
-      define(this);
     }
-  });
-  Ctor.prototype = Object.create(Base.prototype);
-  Ctor.prototype.constructor = Ctor;
-  extendStatics(Ctor, Base);
-  return Ctor;
+    static set is (is) {
+      this[_is] = is;
+    }
+  };
 }
