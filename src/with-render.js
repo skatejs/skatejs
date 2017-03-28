@@ -6,7 +6,7 @@ export const withRender = (Base = HTMLElement) => class extends Base {
     if (!this.shadowRoot) {
       this.attachShadow({ mode: 'open' });
     }
-    this.rendererCallback(this.shadowRoot, () => this.renderCallback(next));
+    this.rendererCallback(this.shadowRoot, () => this.renderCallback(this));
     this.renderedCallback();
   }
 

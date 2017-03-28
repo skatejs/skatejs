@@ -44,13 +44,14 @@ describe('withRender', () => {
       );
     });
 
-    it('should pass in the props as the only argument', done => {
+    it('should pass in the element as the only argument', done => {
       const Elem = define(class extends Component {
         static props = {
           test: null
         }
-        renderCallback ({ test, ...rest }) {
-          expect(Object.keys(rest).length).toBe(0);
+        renderCallback (elem) {
+          const { test } = elem.props;
+          expect(this).toBe(elem);
           return h('div', null, test);
         }
       });
