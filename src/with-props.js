@@ -16,14 +16,14 @@ import {
 // Unfortunately the polyfills still seem to double up on lifecycle calls. In
 // order to get around this, we need guards to prevent us from executing them
 // more than once for a given state.
-const _connected = sym();
-const _constructed = sym();
+const _connected = sym('_connected');
+const _constructed = sym('_constructed');
 
-const _observedAttributes = sym();
-const _prevProps = sym();
-const _props = sym();
-const _updateCallback = sym();
-const _updating = sym();
+const _observedAttributes = sym('_observedAttributes');
+const _prevProps = sym('_prevProps');
+const _props = sym('_props');
+const _updateCallback = sym('_updateCallback');
+const _updating = sym('_updating');
 
 export const withProps = (Base = HTMLElement) => class extends Base {
   static get observedAttributes () {
