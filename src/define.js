@@ -1,7 +1,6 @@
-import { root } from './util';
+import { customElements } from './util';
 
 export function define (Ctor) {
-  const { customElements } = root;
   const { is } = Ctor;
   if (!customElements.get(is)) {
     customElements.define(is, Ctor);

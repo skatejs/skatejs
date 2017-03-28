@@ -20,13 +20,11 @@ function generateName (Ctor) {
   return formatName(prefix, suffix++);
 }
 
-export function withUnique (Base = HTMLElement) {
-  return class extends Base {
-    static get is () {
-      return this[_is] || (this[_is] = generateName(this));
-    }
-    static set is (is) {
-      this[_is] = is;
-    }
-  };
-}
+export const withUnique = (Base = HTMLElement) => class extends Base {
+  static get is () {
+    return this[_is] || (this[_is] = generateName(this));
+  }
+  static set is (is) {
+    this[_is] = is;
+  }
+};
