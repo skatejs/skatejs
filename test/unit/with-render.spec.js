@@ -46,21 +46,16 @@ describe('withRender', () => {
 
     it('should pass in the element as the only argument', done => {
       const Elem = define(class extends Component {
-        static props = {
-          test: null
-        }
         renderCallback (elem) {
-          const { test } = elem.props;
           expect(this).toBe(elem);
-          return h('div', null, test);
+          return h('div', null, 'called');
         }
       });
 
       const elem = new Elem();
-      elem.test = 'testing';
       fixture(elem);
       afterMutations(
-        () => expect(elem.shadowRoot.firstChild.textContent).toBe('testing'),
+        () => expect(elem.shadowRoot.firstChild.textContent).toBe('called'),
         done
       );
     });
