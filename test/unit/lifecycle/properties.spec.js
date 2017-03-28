@@ -6,11 +6,16 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, props, withProps } from 'src';
+import { HTMLElement } from 'src/util';
+import { define, props, withProps, withUnique } from 'src';
+
+function withPropsUnique (Base = HTMLElement) {
+  return withProps(withUnique(Base));
+}
 
 describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends withProps() {
+    const elem = new (define(class extends withPropsUnique() {
       static get props () {
         return {
           [name]: definition
@@ -29,7 +34,7 @@ describe('lifecycle/properties', () => {
     it('uses the same attribute and property name for lower-case names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return { testprop: { attribute: true } };
         }
@@ -45,7 +50,7 @@ describe('lifecycle/properties', () => {
     it('uses the same attribute and property name for dashed-names names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return { 'test-prop': { attribute: true } };
         }
@@ -61,7 +66,7 @@ describe('lifecycle/properties', () => {
     it('uses a dash-cased attribute name for camel-case property names', function test (done) {
       if (skip) this.skip();
 
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return { testProp: { attribute: true } };
         }
@@ -77,7 +82,7 @@ describe('lifecycle/properties', () => {
 
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return {
             testprop: { attribute: true }
@@ -93,7 +98,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return {
             'test-prop': { attribute: true }
@@ -109,7 +114,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
-      const elem = new (define(class extends withProps() {
+      const elem = new (define(class extends withPropsUnique() {
         static get props () {
           return {
             testProp: { attribute: true }
@@ -126,7 +131,7 @@ describe('lifecycle/properties', () => {
   });
 
   it('should not leak options to other definitions', () => {
-    const elem = new (define(class extends withProps() {
+    const elem = new (define(class extends withPropsUnique() {
       static get props () {
         return {
           test1: {
@@ -163,6 +168,7 @@ describe('lifecycle/properties', () => {
       it('setting the attribute updates the property value', (done) => {
         const fixtureArea = fixture();
         const elem = create({ attribute: true }, 'testName');
+
         fixtureArea.appendChild(elem);
         afterMutations(() => {
           elem.testName = 'something';
@@ -179,7 +185,7 @@ describe('lifecycle/properties', () => {
       });
 
       it('1st mutation updates prop', (done) => {
-        const Elem = define(class extends withProps() {
+        const Elem = define(class extends withPropsUnique() {
           static props = {
             foo: {
               attribute: true
@@ -197,7 +203,7 @@ describe('lifecycle/properties', () => {
       });
 
       it('2nd mutation updates prop', (done) => {
-        const Elem = define(class extends withProps() {
+        const Elem = define(class extends withPropsUnique() {
           static props = {
             foo: {
               attribute: true
@@ -502,7 +508,7 @@ describe('lifecycle/properties', () => {
 
   describe('attribute one-way', () => {
     it('source is not updated', (done) => {
-      const Elem = define(class extends withProps() {
+      const Elem = define(class extends withPropsUnique() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -523,7 +529,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('source change, updates prop', (done) => {
-      const Elem = define(class extends withProps() {
+      const Elem = define(class extends withPropsUnique() {
         static props = {
           prop: {
             attribute: { source: 'in' }
@@ -542,7 +548,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('prop change, updates target', (done) => {
-      const Elem = define(class extends withProps() {
+      const Elem = define(class extends withPropsUnique() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }
@@ -565,7 +571,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('source change, updates target', (done) => {
-      const Elem = define(class extends withProps() {
+      const Elem = define(class extends withPropsUnique() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' },
@@ -601,7 +607,7 @@ describe('lifecycle/properties', () => {
     });
 
     it('target change is ignored', (done) => {
-      const Elem = define(class extends withProps() {
+      const Elem = define(class extends withPropsUnique() {
         static props = {
           prop: {
             attribute: { source: 'in', target: 'out' }

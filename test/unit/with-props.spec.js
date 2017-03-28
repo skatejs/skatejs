@@ -6,7 +6,8 @@ import {
   define,
   h,
   props,
-  withProps
+  withProps,
+  withUnique
 } from 'src';
 import { h as preactH } from 'preact';
 import { sym } from 'src/util';
@@ -16,7 +17,7 @@ import fixture from '../lib/fixture';
 import hasSymbol from '../lib/has-symbol';
 
 function create (propLocal) {
-  const el = new (define(class extends withProps() {
+  const el = new (define(class extends withUnique(withProps()) {
     static get props () {
       return {
         test: { ...propLocal, ...{ attribute: true } }
@@ -250,7 +251,7 @@ describe('withProps', () => {
     const secret2 = sym();
 
     beforeEach(done => {
-      elem = new (define(class extends withProps() {
+      elem = new (define(class extends withUnique(withProps()) {
         static get props () {
           return {
             [secret1]: null,
