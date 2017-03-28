@@ -3,10 +3,10 @@ import { HTMLElement } from './util';
 export const withRender = (Base = HTMLElement) => class extends Base {
   propsUpdatedCallback (next, prev) {
     super.propsUpdatedCallback(next, prev);
-    if (!this.shadowRoot) {
+    if (!this.shadowRoot && this.attachShadow) {
       this.attachShadow({ mode: 'open' });
     }
-    this.rendererCallback(this.shadowRoot, () => this.renderCallback(this));
+    this.rendererCallback(this.shadowRoot || this, () => this.renderCallback(this));
     this.renderedCallback();
   }
 
