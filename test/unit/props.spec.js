@@ -9,9 +9,10 @@ import { define, withProps, withUnique } from 'src';
 
 describe('api/props', () => {
   let elem;
+  let ElemClass;
 
   beforeEach(done => {
-    elem = new (define(class extends withUnique(withProps()) {
+    ElemClass = define(class extends withUnique(withProps()) {
       static get props () {
         return {
           prop1: null,
@@ -28,7 +29,8 @@ describe('api/props', () => {
       propsSetCallback () {
         this._rendered++;
       }
-    }))();
+    });
+    elem = new ElemClass();
     fixture(elem);
     afterMutations(done);
   });
@@ -41,6 +43,19 @@ describe('api/props', () => {
       expect(curr.prop2).toEqual('test2');
       expect('prop3' in curr).toEqual(true);
       expect(curr.undeclaredProp).toEqual(undefined);
+    });
+
+    it('should work the same when the class is instantiated twice', () => {
+      let elem2 = new ElemClass();
+
+      const curr = elem.props;
+
+      expect(curr.prop1).toEqual('test1');
+      expect(curr.prop2).toEqual('test2');
+      expect('prop3' in curr).toEqual(true);
+      expect(curr.undeclaredProp).toEqual(undefined);
+
+      expect(elem2.props.prop1).toEqual(curr.prop1, 'compare value on both instances');
     });
   });
 });
