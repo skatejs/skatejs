@@ -247,8 +247,8 @@ describe('withProps', () => {
     }
 
     let elem;
-    const secret1 = sym();
-    const secret2 = sym();
+    const secret1 = sym('secret1');
+    const secret2 = sym('secret2');
 
     beforeEach(done => {
       elem = new (define(class extends withUnique(withProps()) {

@@ -1,6 +1,6 @@
 import { customElements, dashCase, HTMLElement, sym } from './util';
 
-const _is = sym();
+const _is = sym('_is');
 
 let suffix = 0;
 
