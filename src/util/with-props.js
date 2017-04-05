@@ -1,23 +1,24 @@
 import { dashCase, keys, sym } from '.';
 
-const _definedProps = sym();
-const _normPropDef = sym();
-const _syncingAttributeToProperty = sym();
-const _syncingPropertyToAttribute = sym();
+const _definedProps = sym('_definedProps');
+const _normPropDef = sym('_normPropDef');
+const _syncingAttributeToProperty = sym('_syncingAttributeToProperty');
+const _syncingPropertyToAttribute = sym('_syncingPropertyToAttribute');
 
-export const _updateDebounced = sym();
+export const _updateDebounced = sym('_updateDebounced');
 
 export function defineProps (Ctor) {
-  if (!Ctor[_definedProps]) {
-    Ctor[_definedProps] = true;
+  if (Ctor[_definedProps]) {
+    return;
   }
+  Ctor[_definedProps] = true;
 
   const { prototype } = Ctor;
   const props = normPropDefs(Ctor);
 
   Object.defineProperties(prototype, keys(props).reduce((prev, curr) => {
     const { attribute: { target }, coerce, default: def, serialize } = props[curr];
-    const _value = sym();
+    const _value = sym(curr);
     prev[curr] = {
       configurable: true,
       get () {

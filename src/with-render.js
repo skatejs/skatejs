@@ -1,27 +1,24 @@
-import { withProps } from './with-props';
+import { HTMLElement, sym } from './util';
 
-export function withRender (Base = withProps()) {
-  return class extends Base {
-    propsChangedCallback () {
-      if (super.propsChangedCallback) {
-        super.propsChangedCallback();
-      }
+const _shadowRoot = sym();
 
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: 'open' });
-      }
+const attachShadowOptions = { mode: 'open' };
 
-      this.rendererCallback(this.shadowRoot, this.renderCallback(this));
-      this.renderedCallback();
-    }
-
-    // Called to render the component.
-    renderCallback () {}
-
-    // Called after the component has rendered.
-    renderedCallback () {}
-
-    // Called to render the component.
-    rendererCallback () {}
-  };
+function attachShadow (elem) {
+  return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
 }
+
+export const withRender = (Base = HTMLElement) => class extends Base {
+  propsUpdatedCallback (next, prev) {
+    super.propsUpdatedCallback(next, prev);
+    this[_shadowRoot] = this[_shadowRoot] || (this[_shadowRoot] = attachShadow(this));
+    this.rendererCallback(this[_shadowRoot], () => this.renderCallback(this));
+    this.renderedCallback();
+  }
+
+  // Called to render the component.
+  renderCallback () {}
+
+  // Called after the component has rendered.
+  renderedCallback () {}
+};

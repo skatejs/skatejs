@@ -2,7 +2,7 @@
 
 import expect from 'expect';
 
-import { dashCase, debounce, keys, sym } from 'src/util';
+import { dashCase, debounce, keys, sym, uniqueId } from 'src/util';
 
 describe('utils', () => {
   describe('{ dashCase }', () => {
@@ -20,6 +20,10 @@ describe('utils', () => {
 
     it('should not affect a string that is already dash-cased', () => {
       expect(dashCase('some-dash-cased-string')).toEqual('some-dash-cased-string');
+    });
+
+    it('should treat underscores as separators dashes', () => {
+      expect(dashCase('some_string')).toBe('some-string');
     });
   });
 
@@ -51,7 +55,7 @@ describe('utils', () => {
 
   describe('{ keys }', () => {
     it('should return both normal keys and symbol keys from an object', () => {
-      const _sym = sym();
+      const _sym = sym('_sym');
       const names = keys({ foo: 1, [_sym]: 2 });
       expect(names[0]).toBe('foo');
       expect(names[1]).toBe(_sym);
@@ -65,6 +69,26 @@ describe('utils', () => {
         expect(_sym).toBeA('symbol');
       } else {
         expect(_sym).toBeA('string');
+      }
+    });
+  });
+
+  describe('{ unqiueId }', () => {
+    it('should be relatively unique', () => {
+      const ids = [];
+      for (let a = 0; a < 1000; a++) {
+        const id = uniqueId();
+        expect(ids.indexOf(id)).toBe(-1);
+        ids.push(id);
+      }
+    });
+
+    it('should be relatively unique (length = 8)', () => {
+      const ids = [];
+      for (let a = 0; a < 1000; a++) {
+        const id = uniqueId().substring(0, 8);
+        expect(ids.indexOf(id)).toBe(-1);
+        ids.push(id);
       }
     });
   });

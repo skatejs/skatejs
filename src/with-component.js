@@ -1,13 +1,15 @@
-import { render } from 'preact';
-import { withRender } from './with-render';
+import { h, render } from 'preact';
 
-export function withComponent (Base = withRender()) {
-  return class extends Base {
-    rendererCallback (host, vdom) {
-      render(vdom, host);
-    }
-  };
-}
+import { HTMLElement } from './util';
+import { withProps } from './with-props';
+import { withRender } from './with-render';
+import { withUnique } from './with-unique';
+
+export const withComponent = (Base = HTMLElement) => class extends withUnique(withRender(withProps(Base))) {
+  rendererCallback (shadowRoot, renderCallback) {
+    render(renderCallback(), shadowRoot);
+  }
+};
 
 export const Component = withComponent();
-export { h } from 'preact';
+export { h };

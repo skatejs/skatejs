@@ -5,16 +5,14 @@ import expect from 'expect';
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-import { define, getProps, setProps, withProps } from 'src';
-import { root } from 'src/util';
-
-const { HTMLElement } = root;
+import { define, withProps, withUnique } from 'src';
 
 describe('api/props', () => {
   let elem;
+  let ElemClass;
 
   beforeEach(done => {
-    elem = new (define(class extends withProps() {
+    ElemClass = define(class extends withUnique(withProps()) {
       static get props () {
         return {
           prop1: null,
@@ -31,65 +29,33 @@ describe('api/props', () => {
       propsSetCallback () {
         this._rendered++;
       }
-    }))();
+    });
+    elem = new ElemClass();
     fixture(elem);
     afterMutations(done);
   });
 
   describe('getting', () => {
     it('should return only properties defined as props', () => {
-      const curr = getProps(elem);
+      const curr = elem.props;
 
       expect(curr.prop1).toEqual('test1');
       expect(curr.prop2).toEqual('test2');
       expect('prop3' in curr).toEqual(true);
       expect(curr.undeclaredProp).toEqual(undefined);
     });
-  });
 
-  describe('setting', () => {
-    it('should set all properties', () => {
-      setProps(elem, {
-        prop1: 'updated1',
-        prop2: 'updated2',
-        undeclaredProp: 'updated3'
-      });
-      expect(elem.prop1).toEqual('updated1');
-      expect(elem.prop2).toEqual('updated2');
-      expect(elem.undeclaredProp).toEqual('updated3');
-    });
+    it('should work the same when the class is instantiated twice', () => {
+      let elem2 = new ElemClass();
 
-    it('should asynchronously render if declared properties are set', done => {
-      expect(elem._rendered).toEqual(1);
-      setProps(elem, { prop1: 'updated1' });
-      afterMutations(
-        () => expect(elem._rendered).toEqual(2),
-        done
-      );
-    });
+      const curr = elem.props;
 
-    it('should asynchronously render once when multiple props are set', done => {
-      expect(elem._rendered).toEqual(1);
-      setProps(elem, {
-        prop1: 'updated1',
-        prop2: 'updated2'
-      });
-      afterMutations(
-        () => expect(elem._rendered).toEqual(2),
-        done
-      );
-    });
+      expect(curr.prop1).toEqual('test1');
+      expect(curr.prop2).toEqual('test2');
+      expect('prop3' in curr).toEqual(true);
+      expect(curr.undeclaredProp).toEqual(undefined);
 
-    it('should not render if undeclared properties are set', () => {
-      expect(elem._rendered).toEqual(1);
-      setProps(elem, { undeclaredProp: 'updated3' });
-      expect(elem._rendered).toEqual(1);
-    });
-
-    it('should succeed on an uninitialised element', () => {
-      const elem = new (define(class extends HTMLElement {}))();
-      setProps(elem, { undeclaredProp: 'foo' });
-      expect(elem.undeclaredProp).toBe('foo');
+      expect(elem2.props.prop1).toEqual(curr.prop1, 'compare value on both instances');
     });
   });
 });

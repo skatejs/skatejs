@@ -5,14 +5,9 @@ import expect from 'expect';
 import {
   define,
   h,
-  getProps,
-  propArray,
-  propBoolean,
-  propNumber,
-  propObject,
-  propString,
-  setProps,
-  withProps
+  props,
+  withProps,
+  withUnique
 } from 'src';
 import { h as preactH } from 'preact';
 import { sym } from 'src/util';
@@ -21,16 +16,8 @@ import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 import hasSymbol from '../lib/has-symbol';
 
-const prop = {
-  array: propArray,
-  boolean: propBoolean,
-  number: propNumber,
-  object: propObject,
-  string: propString
-};
-
 function create (propLocal) {
-  const el = new (define(class extends withProps() {
+  const el = new (define(class extends withUnique(withProps()) {
     static get props () {
       return {
         test: { ...propLocal, ...{ attribute: true } }
@@ -42,7 +29,7 @@ function create (propLocal) {
 }
 
 function testTypeValues (type, values, done) {
-  const elem = create(prop[type]);
+  const elem = create(props[type]);
   afterMutations(() => {
     values.forEach((value) => {
       elem.test = value[0];
@@ -58,14 +45,14 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.array);
+      elem = create(props.array);
       afterMutations(done);
     });
 
     afterEach(() => document.body.removeChild(elem));
 
     it('default', () => {
-      const elem2 = create(prop.array);
+      const elem2 = create(props.array);
 
       expect(elem.test).toBeAn('array');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
@@ -108,7 +95,7 @@ describe('withProps', () => {
 
   describe('boolean', () => {
     it('default', () => {
-      const elem = create(prop.boolean);
+      const elem = create(props.boolean);
       expect(elem.test).toEqual(false);
       expect(elem.getAttribute('test')).toEqual(null);
     });
@@ -116,7 +103,7 @@ describe('withProps', () => {
     [undefined, null, false, 0, '', 'something'].forEach((value) => {
       value = String(value);
       it(`setting attribute to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean);
+        const elem = create(props.boolean);
         afterMutations(() => {
           elem.setAttribute('test', value);
           afterMutations(() => {
@@ -127,7 +114,7 @@ describe('withProps', () => {
         });
       });
       it(`setting property to ${JSON.stringify(value)}`, (done) => {
-        const elem = create(prop.boolean);
+        const elem = create(props.boolean);
         afterMutations(() => {
           elem.test = value;
           expect(elem.test).toEqual(Boolean(value), 'property');
@@ -138,7 +125,7 @@ describe('withProps', () => {
     });
 
     it('removing attribute', (done) => {
-      const elem = create(prop.boolean);
+      const elem = create(props.boolean);
       afterMutations(
         () => elem.setAttribute('test', ''),
         () => expect(elem.test).toEqual(true),
@@ -155,7 +142,7 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.number);
+      elem = create(props.number);
       afterMutations(done);
     });
 
@@ -194,12 +181,12 @@ describe('withProps', () => {
     let elem;
 
     beforeEach((done) => {
-      elem = create(prop.object);
+      elem = create(props.object);
       afterMutations(done);
     });
 
     it('default', () => {
-      const elem2 = create(prop.object);
+      const elem2 = create(props.object);
 
       expect(elem.test).toBeAn('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
@@ -226,7 +213,7 @@ describe('withProps', () => {
 
   describe('string', () => {
     it('values', (done) => {
-      const elem = create(prop.string);
+      const elem = create(props.string);
       afterMutations(() => {
         expect(elem.test).toEqual('');
         expect(elem.getAttribute('test')).toEqual(null);
@@ -248,27 +235,29 @@ describe('withProps', () => {
       const attribute = { source: true };
       types.forEach(type => {
         it(type, () => {
-          expect(prop[type].attribute).toContain(attribute);
+          expect(props[type].attribute).toContain(attribute);
         });
       });
     });
   });
 
-  describe('symbols', () => {
+  describe('*Props()', () => {
     if (!hasSymbol()) {
       return;
     }
 
     let elem;
-    const secret1 = sym();
-    const secret2 = sym();
+    const secret1 = sym('secret1');
+    const secret2 = sym('secret2');
 
     beforeEach(done => {
-      elem = new (define(class extends withProps() {
+      elem = new (define(class extends withUnique(withProps()) {
         static get props () {
           return {
             [secret1]: null,
-            [secret2]: null
+            [secret2]: null,
+            public1: null,
+            public2: null
           };
         }
         constructor () {
@@ -276,6 +265,9 @@ describe('withProps', () => {
           this._rendered = 0;
           this[secret1] = 'secretKey1';
           this[secret2] = 'secretKey2';
+          this.public1 = 'publicKey1';
+          this.public2 = 'publicKey2';
+          this.undeclaredProp = 'undeclaredKey1';
         }
         propsSetCallback () {
           this._rendered++;
@@ -285,45 +277,58 @@ describe('withProps', () => {
       afterMutations(done);
     });
 
-    describe('getting', () => {
-      it('should return only properties defined as props', () => {
-        const curr = getProps(elem);
-
-        expect(curr[secret1]).toEqual('secretKey1');
-        expect(curr[secret2]).toEqual('secretKey2');
-
-        expect(secret1 in curr).toEqual(true);
-        expect(secret2 in curr).toEqual(true);
-        expect(curr.undeclaredProp).toEqual(undefined);
+    describe('static props', () => {
+      it('should not merge super props', () => {
+        const one = {};
+        const two = {};
+        class One extends withProps() {
+          static props = { one }
+        }
+        class Two extends One {
+          static props = { two }
+        }
+        expect(One.props).toContain({ one });
+        expect(Two.props).toContain({ two });
       });
     });
 
-    describe('setting', () => {
-      it('should set all properties', () => {
-        setProps(elem, {
-          [secret1]: 'newSecretKey1',
-          [secret2]: 'newSecretKey2'
+    describe('props', () => {
+      it('should return only properties defined as props', () => {
+        const curr = elem.props;
+
+        expect(secret1 in curr).toEqual(true);
+        expect(secret2 in curr).toEqual(true);
+        expect('public1' in curr).toEqual(true);
+        expect('public2' in curr).toEqual(true);
+
+        expect(curr[secret1]).toEqual('secretKey1');
+        expect(curr[secret2]).toEqual('secretKey2');
+        expect(curr.public1).toEqual('publicKey1');
+        expect(curr.public2).toEqual('publicKey2');
+
+        expect(curr.undeclaredProp).toEqual(undefined);
+      });
+
+      describe('setter', () => {
+        it('should set props', () => {
+          elem.props = { public1: 'updated' };
+          expect(elem.public1).toBe('updated');
         });
-        expect(elem[secret1]).toEqual('newSecretKey1');
-        expect(elem[secret2]).toEqual('newSecretKey2');
-      });
 
-      it('should asynchronously render if declared properties are set', done => {
-        expect(elem._rendered).toEqual(1);
-        setProps(elem, { [secret1]: 'updated1' });
-        afterMutations(
-          () => expect(elem._rendered).toEqual(2),
-          done
-        );
-      });
+        it('should set symbols', () => {
+          elem.props = { [secret1]: 'updated' };
+          expect(elem[secret1]).toBe('updated');
+        });
 
-      it('should not render if undeclared properties are set', done => {
-        expect(elem._rendered).toEqual(1);
-        setProps(elem, { undeclaredProp: 'updated3' });
-        afterMutations(
-          () => expect(elem._rendered).toEqual(1),
-          done
-        );
+        it('should not affect unpassed props', () => {
+          elem.props = { public1: 'updated' };
+          expect(elem.public2).toBe('publicKey2');
+        });
+
+        it('should not affect undeclared props', () => {
+          elem.props = { undeclared: 'yay' };
+          expect(elem.undeclared).toBe(undefined);
+        });
       });
     });
   });

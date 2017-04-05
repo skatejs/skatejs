@@ -1,26 +1,23 @@
+/** @jsx h */
 /* eslint-env mocha */
 
 import expect from 'expect';
+import { h, mount } from 'bore';
 
-import { Component, define, h } from 'src';
+import { Component, define, h as vdom } from 'src';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-describe('Mixins.Render', () => {
+describe('withRender', () => {
   describe('renderCallback()', () => {
     it('should be called', done => {
       const Elem = define(class extends Component {
         renderCallback () {
-          return h('div');
+          done();
         }
       });
-
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(
-        done
-      );
+      mount(<Elem />);
     });
 
     it('should get called before descendants are initialised', done => {
@@ -48,15 +45,16 @@ describe('Mixins.Render', () => {
 
     it('should pass in the element as the only argument', done => {
       const Elem = define(class extends Component {
-        renderCallback ({ localName }) {
-          return h('div', null, localName);
+        renderCallback (elem) {
+          expect(this).toBe(elem);
+          return vdom('div', null, 'called');
         }
       });
 
       const elem = new Elem();
       fixture(elem);
       afterMutations(
-        () => expect(elem.shadowRoot.firstChild.textContent).toBe(Elem.is),
+        () => expect(elem.shadowRoot.firstChild.textContent).toBe('called'),
         done
       );
     });
@@ -66,7 +64,7 @@ describe('Mixins.Render', () => {
     it('should be called after rendering', (done) => {
       const Elem = define(class extends Component {
         renderCallback () {
-          return h('div');
+          return vdom('div');
         }
         renderedCallback () {
           expect(this.shadowRoot.firstChild.localName).toBe('div');
@@ -84,7 +82,7 @@ describe('Mixins.Render', () => {
           return false;
         }
         renderCallback () {
-          return h('div');
+          return vdom('div');
         }
         renderedCallback () {
           throw new Error('should not have been called');
@@ -94,6 +92,32 @@ describe('Mixins.Render', () => {
       const elem = new Elem();
       fixture(elem);
       afterMutations(done);
+    });
+  });
+
+  describe('attachShadow', () => {
+    it('should render to the host node if attachShadow is falsy', () => {
+      const Elem = define(class extends Component {
+        attachShadow = false
+        renderCallback () {
+          return 'testing';
+        }
+      });
+      return mount(<Elem />).waitFor(({ node }) => node.textContent === 'testing');
+    });
+
+    it('should render to the return value of attachShadow if provided', () => {
+      const Elem = define(class extends Component {
+        attachShadow () {
+          const div = document.createElement('div');
+          this.appendChild(div);
+          return div;
+        }
+        renderCallback () {
+          return 'testing';
+        }
+      });
+      return mount(<Elem />).waitFor(w => w.has(<div>testing</div>));
     });
   });
 });

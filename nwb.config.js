@@ -22,5 +22,8 @@ module.exports = {
       browserDisconnectTolerance: 5,
       captureTimeout: 120000
     }
+  },
+  babel: {
+    plugins: ['transform-react-jsx']
   }
 };
