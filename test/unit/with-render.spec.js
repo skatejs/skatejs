@@ -7,7 +7,7 @@ import { Component, define, h } from 'src';
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-describe('Mixins.Render', () => {
+describe('withRender', () => {
   describe('renderCallback()', () => {
     it('should be called', done => {
       const Elem = define(class extends Component {
@@ -18,9 +18,7 @@ describe('Mixins.Render', () => {
 
       const elem = new Elem();
       fixture(elem);
-      afterMutations(
-        done
-      );
+      afterMutations(done);
     });
 
     it('should get called before descendants are initialised', done => {
@@ -48,15 +46,16 @@ describe('Mixins.Render', () => {
 
     it('should pass in the element as the only argument', done => {
       const Elem = define(class extends Component {
-        renderCallback ({ localName }) {
-          return h('div', null, localName);
+        renderCallback (elem) {
+          expect(this).toBe(elem);
+          return h('div', null, 'called');
         }
       });
 
       const elem = new Elem();
       fixture(elem);
       afterMutations(
-        () => expect(elem.shadowRoot.firstChild.textContent).toBe(Elem.is),
+        () => expect(elem.shadowRoot.firstChild.textContent).toBe('called'),
         done
       );
     });
