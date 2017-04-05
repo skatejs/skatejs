@@ -1,5 +1,5 @@
 import * as skate from "skatejs";
-import { Component, prop } from 'skatejs';
+import { Component } from 'skatejs';
 
 // @TODO this override is needed because of https://github.com/Microsoft/TypeScript/pull/12488 will be fixed in TS 2.2
 (window as any).__extends = function(d: any, b: any) {
@@ -28,20 +28,20 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
   static get props(): skate.ComponentProps<CountUpComponent, CountUpProps> {
     return {
       count: {
-        ...skate.prop.number, ...{
+        ...skate.propNumber, ...{
           attribute: true,
           default(elem: HTMLElement, data: Object) {
             return 7;
           },
         }
       },
-      num: skate.prop.number,
-      numLiteral: skate.prop.number,
-      str: skate.prop.string,
-      strLiteral: skate.prop.string,
-      bool: skate.prop.boolean,
-      arr: skate.prop.array,
-      obj: skate.prop.object,
+      num: skate.propNumber,
+      numLiteral: skate.propNumber,
+      str: skate.propString,
+      strLiteral: skate.propString,
+      bool: skate.propBoolean,
+      arr: skate.propArray,
+      obj: skate.propObject,
     }
   }
 
@@ -62,13 +62,14 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
 }
 customElements.define(CountUpComponent.is, CountUpComponent);
 
+
 type SkateParkProps = { year: number, halfPipe: boolean }
 class SkatePark extends Component<SkateParkProps>{
   static get is() { return 'my-skate-park' }
   static get props(): skate.ComponentProps<SkatePark, SkateParkProps> {
     return {
-      year: prop.number,
-      halfPipe: prop.boolean,
+      year: skate.propNumber,
+      halfPipe: skate.propBoolean,
     }
   }
   renderCallback({ halfPipe, year }: SkateParkProps) {
@@ -87,7 +88,7 @@ customElements.define("x-app", class extends skate.Component<{}> {
     return (
       <div>
         <h1>app</h1>
-        <CountUpComponent count={100} obj={{ trucks: 'Independent', deck: 'ZERO' }}></CountUpComponent>
+        {skate.h('x-countup', { count: 100, obj: { trucks: 'Independent', deck: 'ZERO' } })}
       </div>
     );
   }
@@ -97,8 +98,8 @@ export type ElmProps = { str: string; arr: any[]; };
 class Elem extends skate.Component<ElmProps> {
   static get props(): skate.ComponentProps<Elem, ElmProps> {
     return {
-      str: skate.prop.string,
-      arr: skate.prop.array
+      str: skate.propString,
+      arr: skate.propArray
     }
   }
 
@@ -106,7 +107,7 @@ class Elem extends skate.Component<ElmProps> {
   arr: string[];
 
   renderCallback() {
-    return skate.h('div', 'testing');
+    return skate.h('div', {}, 'testing');
   }
 }
 
