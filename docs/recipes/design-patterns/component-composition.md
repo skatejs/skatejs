@@ -62,7 +62,7 @@ class Button extends Colors {
 
 ## Mixins
 
-> Learn more at [real-mixins-with-javascript-classes](justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
+> Learn more at [real-mixins-with-javascript-classes](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
 
 ```js
 /** @jsx h */

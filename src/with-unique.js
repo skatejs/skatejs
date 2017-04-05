@@ -1,7 +1,7 @@
 import { HTMLElement, sym } from './util';
 import { generateName } from './util/with-unique';
 
-const _is = sym();
+const _is = sym('_is');
 
 export const withUnique = (Base = HTMLElement) => class extends Base {
   static get is () {

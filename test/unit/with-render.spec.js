@@ -96,16 +96,28 @@ describe('withRender', () => {
   });
 
   describe('attachShadow', () => {
-    it('should not render if attachShadow is falsy', () => {
+    it('should render to the host node if attachShadow is falsy', () => {
       const Elem = define(class extends Component {
         attachShadow = false
         renderCallback () {
           return 'testing';
         }
       });
-      return mount(<Elem />)
-        .waitFor(w => w.node.textContent === 'testing')
-        .then(w => expect(!!w.node.shadowRoot).toBe(false));
+      return mount(<Elem />).waitFor(({ node }) => node.textContent === 'testing');
+    });
+
+    it('should render to the return value of attachShadow if provided', () => {
+      const Elem = define(class extends Component {
+        attachShadow () {
+          const div = document.createElement('div');
+          this.appendChild(div);
+          return div;
+        }
+        renderCallback () {
+          return 'testing';
+        }
+      });
+      return mount(<Elem />).waitFor(w => w.has(<div>testing</div>));
     });
   });
 });

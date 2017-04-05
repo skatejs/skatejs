@@ -55,12 +55,14 @@ export function keys (obj = {}) {
   return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
 }
 
-export function sym () {
-  return typeof Symbol === 'function' ? Symbol() : uniqueId();
+export function sym (description) {
+  return typeof Symbol === 'function'
+    ? Symbol(description ? String(description) : undefined)
+    : uniqueId(description);
 }
 
-export function uniqueId () {
-  return 'xxxxxxxx'.replace(/[xy]/g, (c) => {
+export function uniqueId (description) {
+  return (description ? String(description) : '') + 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
     const v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);

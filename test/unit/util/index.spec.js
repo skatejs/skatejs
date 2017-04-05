@@ -55,7 +55,7 @@ describe('utils', () => {
 
   describe('{ keys }', () => {
     it('should return both normal keys and symbol keys from an object', () => {
-      const _sym = sym();
+      const _sym = sym('_sym');
       const names = keys({ foo: 1, [_sym]: 2 });
       expect(names[0]).toBe('foo');
       expect(names[1]).toBe(_sym);
