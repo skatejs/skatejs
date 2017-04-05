@@ -56,9 +56,9 @@ export function keys (obj = {}) {
 }
 
 export function sym (description) {
-  return typeof Symbol === 'function' ? 
-    Symbol(description ? String(description) : undefined) : 
-    uniqueId(description);
+  return typeof Symbol === 'function'
+    ? Symbol(description ? String(description) : undefined)
+    : uniqueId(description);
 }
 
 export function uniqueId (description) {
