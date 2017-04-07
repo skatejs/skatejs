@@ -39,7 +39,7 @@
     "@webpack-blocks/webpack2": "^0.3.1",
     "babel-eslint": "^7.2.1",
     "babel-loader": "^6.2.10",
-    "babel-preset-es2015": "6.24.0",
+    "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.16.0",
     "birdpoo": "0.x",
