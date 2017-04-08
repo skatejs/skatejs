@@ -60,7 +60,7 @@
     "karma-webpack": "2.0.2",
     "mocha": "3.2.0",
     "react": "15.4.2",
-    "react-dom": "15.4.2",
+    "react-dom": "15.5.2",
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
     "skatejs-web-components": "5.2.1",
