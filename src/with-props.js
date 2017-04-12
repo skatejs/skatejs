@@ -89,7 +89,7 @@ export const withProps = (Base = HTMLElement) => class extends Base {
 
   // Called to see if the props changed.
   propsUpdatedCallback (next, prev) {
-    return !prev || keys(prev).every(k => prev[k] === next[k]);
+    return !prev || keys(prev).some(k => prev[k] !== next[k]);
   }
 
   attributeChangedCallback (name, oldValue, newValue) {
