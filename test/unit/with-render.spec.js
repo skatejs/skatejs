@@ -93,6 +93,42 @@ describe('withRender', () => {
       fixture(elem);
       afterMutations(done);
     });
+
+    it('should be called if props change', (done) => {
+      const Elem = define(class extends Component {
+        static get props () {
+          return {
+            foo: {default: 'bar'}
+          };
+        }
+
+        constructor () {
+          super();
+          this.count = 0;
+        }
+
+        renderCallback () {
+          return vdom('div', null, this.foo);
+        }
+
+        renderedCallback () {
+          this.count++;
+
+          if (this.count === 1) {
+            expect(this.shadowRoot.firstChild.textContent).toBe('bar');
+          } else if (this.count === 2) {
+            expect(this.shadowRoot.firstChild.textContent).toBe('baz');
+            done();
+          }
+        }
+      });
+
+      const elem = new Elem();
+      fixture(elem);
+      afterMutations(() => {
+        elem.foo = 'baz';
+      });
+    });
   });
 
   describe('attachShadow', () => {
