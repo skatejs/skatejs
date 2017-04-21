@@ -1,4 +1,6 @@
-import { dashCase, keys, sym } from '.';
+// @flow
+
+import { dashCase, HTMLElement, keys, sym } from '.';
 
 const _definedProps = sym('_definedProps');
 const _normPropDef = sym('_normPropDef');
@@ -7,7 +9,7 @@ const _syncingPropertyToAttribute = sym('_syncingPropertyToAttribute');
 
 export const _updateDebounced = sym('_updateDebounced');
 
-export function defineProps (Ctor) {
+export function defineProps (Ctor: Function) {
   if (Ctor[_definedProps]) {
     return;
   }
@@ -35,7 +37,7 @@ export function defineProps (Ctor) {
   }, {}));
 }
 
-export function normAttribute (name, prop) {
+export function normAttribute (name: string, prop: Object) {
   const { attribute } = prop;
   const obj = typeof attribute === 'object' ? { ...attribute } : {
     source: attribute,
@@ -50,18 +52,18 @@ export function normAttribute (name, prop) {
   return obj;
 }
 
-export function normPropDef (name, prop) {
+export function normPropDef (name: string, prop: Object) {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
     attribute: normAttribute(name, prop),
-    coerce: coerce || (v => v),
+    coerce: coerce || ((v: any) => v),
     default: def,
-    deserialize: deserialize || (v => v),
-    serialize: serialize || (v => v)
+    deserialize: deserialize || ((v: any) => v),
+    serialize: serialize || ((v: any) => v)
   };
 }
 
-export function normPropDefs (Ctor) {
+export function normPropDefs (Ctor: Function) {
   return Ctor[_normPropDef] || (
     Ctor[_normPropDef] = keys(Ctor.props)
       .reduce((prev, curr) => {
@@ -71,7 +73,7 @@ export function normPropDefs (Ctor) {
   );
 }
 
-export function syncAttributeToProperty (elem, name, value) {
+export function syncAttributeToProperty (elem: HTMLElement, name: string, value: any) {
   if (elem[_syncingPropertyToAttribute]) {
     return;
   }
@@ -86,7 +88,7 @@ export function syncAttributeToProperty (elem, name, value) {
   }
 }
 
-export function syncPropertyToAttribute (elem, target, serialize, val) {
+export function syncPropertyToAttribute (elem: HTMLElement, target: string, serialize: Function, val: any) {
   if (target && elem[_syncingAttributeToProperty] !== target) {
     const serialized = serialize(val);
     elem[_syncingPropertyToAttribute] = true;

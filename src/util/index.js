@@ -1,10 +1,14 @@
+// @flow
+
 export const root = typeof window === 'undefined' ? global : window;
 
 const {
   customElements,
-  HTMLElement = null,
-  Object,
-  MutationObserver
+  Event,
+  HTMLElement,
+  MutationObserver,
+  Node,
+  Object
 } = root;
 const {
   getOwnPropertyNames,
@@ -13,10 +17,12 @@ const {
 
 export {
   customElements,
-  HTMLElement
+  Event,
+  HTMLElement,
+  Node
 };
 
-export function dashCase (str) {
+export function dashCase (str: string) {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
     const dash = !one || idx % 2 === 0 ? '' : '-';
     two = two === '_' ? '' : two;
@@ -24,7 +30,7 @@ export function dashCase (str) {
   });
 }
 
-export function debounce (cbFunc) {
+export function debounce (cbFunc: Function) {
   let scheduled = false;
   let i = 0;
   let cbArgs = [];
@@ -37,7 +43,7 @@ export function debounce (cbFunc) {
 
   observer.observe(elem, { childList: true });
 
-  return (...args) => {
+  return (...args: Array<any>) => {
     cbArgs = args;
     if (!scheduled) {
       scheduled = true;
@@ -47,21 +53,21 @@ export function debounce (cbFunc) {
   };
 }
 
-export const empty = val => val == null;
+export const empty = (val: any) => val == null;
 export const { freeze } = Object;
 
-export function keys (obj = {}) {
+export function keys (obj: Object = {}) {
   const names = getOwnPropertyNames(obj);
   return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
 }
 
-export function sym (description) {
+export function sym (description?: string) {
   return typeof Symbol === 'function'
     ? Symbol(description ? String(description) : undefined)
     : uniqueId(description);
 }
 
-export function uniqueId (description) {
+export function uniqueId (description?: string) {
   return (description ? String(description) : '') + 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
     const v = c === 'x' ? r : (r & 0x3 | 0x8);

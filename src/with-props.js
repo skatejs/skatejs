@@ -1,3 +1,5 @@
+// @flow
+
 import {
   debounce,
   empty,
@@ -25,7 +27,7 @@ const _props = sym('_props');
 const _updateCallback = sym('_updateCallback');
 const _updating = sym('_updating');
 
-export const withProps = (Base = HTMLElement) => class extends Base {
+export const withProps = (Base: HTMLElement = HTMLElement) => class extends Base {
   static get observedAttributes () {
     const props = normPropDefs(this);
     return keys(props)
@@ -47,14 +49,14 @@ export const withProps = (Base = HTMLElement) => class extends Base {
     this[_props] = props;
   }
 
-  get props () {
+  get props (): Object {
     return keys(this.constructor.props).reduce((prev, curr) => {
       prev[curr] = this[curr];
       return prev;
     }, {});
   }
 
-  set props (props) {
+  set props (props: Object) {
     const ctorProps = this.constructor.props;
     keys(props).forEach(k => k in ctorProps && (this[k] = props[k]));
   }
@@ -72,6 +74,7 @@ export const withProps = (Base = HTMLElement) => class extends Base {
     if (this[_connected]) return;
     this[_connected] = true;
     if (super.connectedCallback) super.connectedCallback();
+    // $FlowFixMe
     this[_updateDebounced]();
   }
 
@@ -88,16 +91,17 @@ export const withProps = (Base = HTMLElement) => class extends Base {
   propsSetCallback () {}
 
   // Called to see if the props changed.
-  propsUpdatedCallback (next, prev) {
+  propsUpdatedCallback (next: Object, prev: Object) {
     return !prev || keys(prev).every(k => prev[k] === next[k]);
   }
 
-  attributeChangedCallback (name, oldValue, newValue) {
+  attributeChangedCallback (name: string, oldValue: string | null, newValue: string | null) {
     if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
     syncAttributeToProperty(this, name, newValue);
   }
 
   // Invokes the complete render lifecycle.
+  // $FlowFixMe
   [_updateCallback] = () => {
     if (this[_updating] || !this[_connected]) {
       return;

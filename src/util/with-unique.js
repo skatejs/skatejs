@@ -1,8 +1,10 @@
+// @flow
+
 import { customElements, dashCase } from '.';
 
-let suffix = 0;
+let suffix: number = 0;
 
-export function formatName (prefix, suffix) {
+export function formatName (prefix: string, suffix: number) {
   prefix = prefix || 'element';
   return (
     prefix.indexOf('-') === -1 ? `x-${prefix}` : prefix
@@ -11,7 +13,7 @@ export function formatName (prefix, suffix) {
   );
 }
 
-export function generateName (Ctor) {
+export function generateName (Ctor: Function) {
   const prefix = dashCase(Ctor.name);
   while (customElements.get(formatName(prefix, suffix))) {
     suffix++;

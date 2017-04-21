@@ -1,3 +1,5 @@
+// @flow
+
 import { HTMLElement, sym } from './util';
 
 const _shadowRoot = sym();
@@ -8,8 +10,8 @@ function attachShadow (elem) {
   return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
 }
 
-export const withRender = (Base = HTMLElement) => class extends Base {
-  propsUpdatedCallback (next, prev) {
+export const withRender = (Base: HTMLElement = HTMLElement) => class extends Base {
+  propsUpdatedCallback (next: Object, prev: Object) {
     super.propsUpdatedCallback(next, prev);
     this[_shadowRoot] = this[_shadowRoot] || (this[_shadowRoot] = attachShadow(this));
     this.rendererCallback(this[_shadowRoot], () => this.renderCallback(this));
