@@ -152,6 +152,28 @@ describe('withRender', () => {
     });
   });
 
+  describe('renderRoot', () => {
+    it('allows rendering to somewhere else', (done) => {
+      const Elem = define(class extends Component {
+        get renderRoot () {
+          return this;
+        }
+
+        renderCallback () {
+          return vdom('div');
+        }
+
+        renderedCallback () {
+          expect(this.firstChild.localName).toBe('div');
+        }
+      });
+
+      const elem = new Elem();
+      fixture(elem);
+      afterMutations(done);
+    });
+  });
+
   describe('attachShadow', () => {
     it('should render to the host node if attachShadow is falsy', () => {
       const Elem = define(class extends Component {
