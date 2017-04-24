@@ -1,5 +1,7 @@
 // @flow
 
+import { Event, HTMLElement } from './util';
+
 interface EventOptions {
   bubbles: boolean,
   cancelable: boolean,
@@ -7,14 +9,13 @@ interface EventOptions {
   detail?: any
 }
 
-const { Event, HTMLElement } = window;
 const defs: EventOptions = {
   bubbles: true,
   cancelable: true,
   composed: false
 };
 
-export function emit (elem: HTMLElement, name: string, opts: EventOptions) {
+export function emit (elem: HTMLElement, name: string, opts: EventOptions): boolean {
   opts = { ...defs, ...opts };
   const e: Event = document.createEvent('CustomEvent');
   e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);

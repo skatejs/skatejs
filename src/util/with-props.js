@@ -9,7 +9,7 @@ const _syncingPropertyToAttribute = sym('_syncingPropertyToAttribute');
 
 export const _updateDebounced = sym('_updateDebounced');
 
-export function defineProps (Ctor: Function) {
+export function defineProps (Ctor: Function): void {
   if (Ctor[_definedProps]) {
     return;
   }
@@ -37,7 +37,7 @@ export function defineProps (Ctor: Function) {
   }, {}));
 }
 
-export function normAttribute (name: string, prop: Object) {
+export function normAttribute (name: string, prop: Object): Object {
   const { attribute } = prop;
   const obj = typeof attribute === 'object' ? { ...attribute } : {
     source: attribute,
@@ -52,7 +52,7 @@ export function normAttribute (name: string, prop: Object) {
   return obj;
 }
 
-export function normPropDef (name: string, prop: Object) {
+export function normPropDef (name: string, prop: Object): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
     attribute: normAttribute(name, prop),
@@ -63,7 +63,7 @@ export function normPropDef (name: string, prop: Object) {
   };
 }
 
-export function normPropDefs (Ctor: Function) {
+export function normPropDefs (Ctor: Function): Object {
   return Ctor[_normPropDef] || (
     Ctor[_normPropDef] = keys(Ctor.props)
       .reduce((prev, curr) => {
@@ -73,7 +73,7 @@ export function normPropDefs (Ctor: Function) {
   );
 }
 
-export function syncAttributeToProperty (elem: HTMLElement, name: string, value: any) {
+export function syncAttributeToProperty (elem: HTMLElement, name: string, value: any): void {
   if (elem[_syncingPropertyToAttribute]) {
     return;
   }
@@ -88,7 +88,7 @@ export function syncAttributeToProperty (elem: HTMLElement, name: string, value:
   }
 }
 
-export function syncPropertyToAttribute (elem: HTMLElement, target: string, serialize: Function, val: any) {
+export function syncPropertyToAttribute (elem: HTMLElement, target: string, serialize: Function, val: any): void {
   if (target && elem[_syncingAttributeToProperty] !== target) {
     const serialized = serialize(val);
     elem[_syncingPropertyToAttribute] = true;

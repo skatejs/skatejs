@@ -4,7 +4,7 @@ import { customElements, dashCase } from '.';
 
 let suffix: number = 0;
 
-export function formatName (prefix: string, suffix: number) {
+export function formatName (prefix: string, suffix: number): string {
   prefix = prefix || 'element';
   return (
     prefix.indexOf('-') === -1 ? `x-${prefix}` : prefix
@@ -13,7 +13,7 @@ export function formatName (prefix: string, suffix: number) {
   );
 }
 
-export function generateName (Ctor: Function) {
+export function generateName (Ctor: Function): string {
   const prefix = dashCase(Ctor.name);
   while (customElements.get(formatName(prefix, suffix))) {
     suffix++;

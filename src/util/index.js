@@ -1,15 +1,35 @@
 // @flow
 
-export const root = typeof window === 'undefined' ? global : window;
+// TODO (get-typed)
+//
+// Not support for a ternary or iife yet, so we must if / else and export let.
+let root: Object;
+if (typeof window === 'undefined') {
+  root = window;
+} else {
+  root = global;
+}
+export { root };
 
-const {
-  customElements,
-  Event,
-  HTMLElement,
-  MutationObserver,
-  Node,
-  Object
-} = root;
+// TODO (get-typed)
+//
+// There's no support for destructuring and exporting yet so we must do this
+// differently.
+//
+// const {
+//   customElements,
+//   Event,
+//   HTMLElement,
+//   MutationObserver,
+//   Node,
+//   Object
+// } = root;
+const customElements: Class<CustomElementRegistry> = root.customElements;
+const Event: Class<Event> = root.Event;
+const HTMLElement: Class<HTMLElement> = root.HTMLElement;
+const MutationObserver: Class<MutationOberver> = root.MutationObserver;
+const Node: Class<Node> = root.Node;
+const Object: Function = root.Object;
 const {
   getOwnPropertyNames,
   getOwnPropertySymbols
@@ -22,7 +42,7 @@ export {
   Node
 };
 
-export function dashCase (str: string) {
+export function dashCase (str: string): string {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
     const dash = !one || idx % 2 === 0 ? '' : '-';
     two = two === '_' ? '' : two;
@@ -30,7 +50,7 @@ export function dashCase (str: string) {
   });
 }
 
-export function debounce (cbFunc: Function) {
+export function debounce (cbFunc: Function): Function {
   let scheduled = false;
   let i = 0;
   let cbArgs = [];
@@ -43,7 +63,7 @@ export function debounce (cbFunc: Function) {
 
   observer.observe(elem, { childList: true });
 
-  return (...args: Array<any>) => {
+  return (...args: Array<any>): void => {
     cbArgs = args;
     if (!scheduled) {
       scheduled = true;
@@ -53,21 +73,21 @@ export function debounce (cbFunc: Function) {
   };
 }
 
-export const empty = (val: any) => val == null;
+export const empty = (val: any): boolean => val == null;
 export const { freeze } = Object;
 
-export function keys (obj: Object = {}) {
+export function keys (obj: Object = {}): Array<string> {
   const names = getOwnPropertyNames(obj);
   return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
 }
 
-export function sym (description?: string) {
+export function sym (description?: string): Symbol | string {
   return typeof Symbol === 'function'
     ? Symbol(description ? String(description) : undefined)
     : uniqueId(description);
 }
 
-export function uniqueId (description?: string) {
+export function uniqueId (description?: string): string {
   return (description ? String(description) : '') + 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
     const v = c === 'x' ? r : (r & 0x3 | 0x8);

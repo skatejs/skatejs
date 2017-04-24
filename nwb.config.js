@@ -24,6 +24,6 @@ module.exports = {
     }
   },
   babel: {
-    plugins: ['transform-react-jsx']
+    presets: ['react']
   }
 };

@@ -2,7 +2,7 @@
 
 import { Event, HTMLElement } from './util';
 
-function getValue (elem: HTMLElement) {
+function getValue (elem: HTMLElement): any {
   const { checked, type, value } = elem;
   if (type === 'checkbox' || type === 'radio') {
     return checked ? value || true : false;
@@ -10,8 +10,8 @@ function getValue (elem: HTMLElement) {
   return value;
 }
 
-export function link (elem: HTMLElement, target: string) {
-  return (e: Event) => {
+export function link (elem: HTMLElement, target: string): Function {
+  return (e: Event): void => {
     // We fallback to checking the composed path. Unfortunately this behaviour
     // is difficult to impossible to reproduce as it seems to be a possible
     // quirk in the shadydom polyfill that incorrectly returns null for the

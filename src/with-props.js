@@ -27,140 +27,141 @@ const _props = sym('_props');
 const _updateCallback = sym('_updateCallback');
 const _updating = sym('_updating');
 
-export const withProps = (Base: HTMLElement = HTMLElement) => class extends Base {
-  static get observedAttributes () {
-    const props = normPropDefs(this);
-    return keys(props)
-      .map(k => props[k].attribute)
-      .filter(Boolean)
-      .map(a => a.source)
-      .concat(this[_observedAttributes] || []);
-  }
+export const withProps = (Base?: Class<HTMLElement>): Class<HTMLElement> =>
+  class extends (Base || HTMLElement) {
+    static get observedAttributes () {
+      const props = normPropDefs(this);
+      return keys(props)
+        .map(k => props[k].attribute)
+        .filter(Boolean)
+        .map(a => a.source)
+        .concat(this[_observedAttributes] || []);
+    }
 
-  static set observedAttributes (attrs) {
-    this[_observedAttributes] = attrs;
-  }
+    static set observedAttributes (attrs) {
+      this[_observedAttributes] = attrs;
+    }
 
-  static get props () {
-    return this[_props];
-  }
+    static get props () {
+      return this[_props];
+    }
 
-  static set props (props) {
-    this[_props] = props;
-  }
+    static set props (props) {
+      this[_props] = props;
+    }
 
-  get props (): Object {
-    return keys(this.constructor.props).reduce((prev, curr) => {
-      prev[curr] = this[curr];
-      return prev;
-    }, {});
-  }
+    get props (): Object {
+      return keys(this.constructor.props).reduce((prev, curr) => {
+        prev[curr] = this[curr];
+        return prev;
+      }, {});
+    }
 
-  set props (props: Object) {
-    const ctorProps = this.constructor.props;
-    keys(props).forEach(k => k in ctorProps && (this[k] = props[k]));
-  }
+    set props (props: Object) {
+      const ctorProps = this.constructor.props;
+      keys(props).forEach(k => k in ctorProps && (this[k] = props[k]));
+    }
 
-  constructor () {
-    super();
-    if (this[_constructed]) return;
-    this[_constructed] = true;
-    const { constructor } = this;
-    defineProps(constructor);
-    this[_updateDebounced] = debounce(this[_updateCallback]);
-  }
+    constructor () {
+      super();
+      if (this[_constructed]) return;
+      this[_constructed] = true;
+      const { constructor } = this;
+      defineProps(constructor);
+      this[_updateDebounced] = debounce(this[_updateCallback]);
+    }
 
-  connectedCallback () {
-    if (this[_connected]) return;
-    this[_connected] = true;
-    if (super.connectedCallback) super.connectedCallback();
+    connectedCallback () {
+      if (this[_connected]) return;
+      this[_connected] = true;
+      if (super.connectedCallback) super.connectedCallback();
+      // $FlowFixMe
+      this[_updateDebounced]();
+    }
+
+    disconnectedCallback () {
+      if (!this[_connected]) return;
+      this[_connected] = false;
+      if (super.disconnectedCallback) super.disconnectedCallback();
+    }
+
+    // Called when props actually change.
+    propsChangedCallback () {}
+
+    // Called whenever props are set, even if they don't change.
+    propsSetCallback () {}
+
+    // Called to see if the props changed.
+    propsUpdatedCallback (next: Object, prev: Object) {
+      return !prev || keys(prev).every(k => prev[k] === next[k]);
+    }
+
+    attributeChangedCallback (name: string, oldValue: string | null, newValue: string | null) {
+      if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
+      syncAttributeToProperty(this, name, newValue);
+    }
+
+    // Invokes the complete render lifecycle.
     // $FlowFixMe
-    this[_updateDebounced]();
-  }
+    [_updateCallback] = () => {
+      if (this[_updating] || !this[_connected]) {
+        return;
+      }
 
-  disconnectedCallback () {
-    if (!this[_connected]) return;
-    this[_connected] = false;
-    if (super.disconnectedCallback) super.disconnectedCallback();
-  }
+      // Flag as rendering. This prevents anything from trying to render - or
+      // queueing a render - while there is a pending render.
+      this[_updating] = true;
 
-  // Called when props actually change.
-  propsChangedCallback () {}
+      // Prev / next props for prop lifecycle callbacks.
+      const prev = this[_prevProps];
+      const next = this[_prevProps] = this.props;
 
-  // Called whenever props are set, even if they don't change.
-  propsSetCallback () {}
+      // Always call set, but only call changed if the props updated.
+      this.propsSetCallback(next, prev);
+      if (this.propsUpdatedCallback(next, prev)) {
+        this.propsChangedCallback(next, prev);
+      }
 
-  // Called to see if the props changed.
-  propsUpdatedCallback (next: Object, prev: Object) {
-    return !prev || keys(prev).every(k => prev[k] === next[k]);
-  }
-
-  attributeChangedCallback (name: string, oldValue: string | null, newValue: string | null) {
-    if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
-    syncAttributeToProperty(this, name, newValue);
-  }
-
-  // Invokes the complete render lifecycle.
-  // $FlowFixMe
-  [_updateCallback] = () => {
-    if (this[_updating] || !this[_connected]) {
-      return;
+      this[_updating] = false;
     }
-
-    // Flag as rendering. This prevents anything from trying to render - or
-    // queueing a render - while there is a pending render.
-    this[_updating] = true;
-
-    // Prev / next props for prop lifecycle callbacks.
-    const prev = this[_prevProps];
-    const next = this[_prevProps] = this.props;
-
-    // Always call set, but only call changed if the props updated.
-    this.propsSetCallback(next, prev);
-    if (this.propsUpdatedCallback(next, prev)) {
-      this.propsChangedCallback(next, prev);
-    }
-
-    this[_updating] = false;
-  }
-};
+  };
 
 // Props
 
 const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
-const createProp = obj => freeze({ ...{ attribute }, ...obj });
+const createProp = (obj: Object): Object => freeze({ ...{ attribute }, ...obj });
 const nullOrType = type => val => empty(val) ? null : type(val);
-const zeroOrNumber = val => (empty(val) ? 0 : Number(val));
+const zeroOrNumber = (val: number): number => (empty(val) ? 0 : Number(val));
 
-const array = createProp({
-  coerce: val => Array.isArray(val) ? val : (empty(val) ? null : [val]),
+const array: Object = createProp({
+  coerce: (val: any): Array<any> | null => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: freeze([]),
   deserialize: parse,
   serialize: stringify
 });
 
-const boolean = createProp({
+const boolean: Object = createProp({
   coerce: Boolean,
   default: false,
-  deserialize: val => !empty(val),
-  serialize: val => val ? '' : null
+  deserialize: (val: string): boolean => !empty(val),
+  serialize: (val: any): string | null => val ? '' : null
 });
 
-const number = createProp({
+const number: Object = createProp({
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
   serialize: nullOrType(Number)
 });
 
-const object = createProp({
+const object: Object = createProp({
   default: freeze({}),
   deserialize: parse,
   serialize: stringify
 });
 
-const string = createProp({
+const string: Object = createProp({
   default: '',
   coerce: String,
   serialize: nullOrType(String)

@@ -48,11 +48,12 @@
   "scripts": {
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "prepublish": "nwb build && node ../../treshugart/get-typed/lib/cli.js src/index.js --dest ./dist/",
+    "prepublish": "nwb build && npm run types",
     "release": "semantic-release pre && npm publish && semantic-release post",
     "test": "node umd/skatejs.js && semistandard && npm run test:ts && nwb test -- --ci",
     "test:ts": "tsfmt -r && tsc -p ./",
-    "test:watch": "nwb test --server"
+    "test:watch": "nwb test --server",
+    "types": "../../treshugart/get-typed/bin/get-typed.js src/index.js --dest umd/skatejs"
   },
   "config": {
     "commitizen": {
