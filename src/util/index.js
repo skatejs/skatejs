@@ -24,7 +24,7 @@ export { root };
 //   Node,
 //   Object
 // } = root;
-const customElements: Class<CustomElementRegistry> = root.customElements;
+const customElements: CustomElementRegistry = root.customElements;
 const Event: Class<Event> = root.Event;
 const HTMLElement: Class<HTMLElement> = root.HTMLElement;
 const MutationObserver: Class<MutationOberver> = root.MutationObserver;
