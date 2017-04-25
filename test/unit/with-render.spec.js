@@ -129,6 +129,49 @@ describe('withRender', () => {
         elem.foo = 'baz';
       });
     });
+
+    it('should be called if element creates its own shadowRoot', (done) => {
+      const Elem = define(class extends Component {
+        constructor () {
+          super();
+          this.attachShadow({ mode: 'open' });
+        }
+
+        renderCallback () {
+          return vdom('div');
+        }
+
+        renderedCallback () {
+          expect(this.shadowRoot.firstChild.localName).toBe('div');
+        }
+      });
+
+      const elem = new Elem();
+      fixture(elem);
+      afterMutations(done);
+    });
+  });
+
+  describe('renderRoot', () => {
+    it('allows rendering to somewhere else', (done) => {
+      const Elem = define(class extends Component {
+        get renderRoot () {
+          return this;
+        }
+
+        renderCallback () {
+          return vdom('div');
+        }
+
+        renderedCallback () {
+          expect(this.firstChild.localName).toBe('div');
+        }
+      });
+
+      const elem = new Elem();
+      fixture(elem);
+      afterMutations(done);
+    });
   });
 
   describe('attachShadow', () => {
