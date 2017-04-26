@@ -13,14 +13,14 @@ The following is a simple counter that increments the count for every second tha
 ```js
 /** @jsx h */
 
-import { Component, h, prop } from 'skatejs';
+import { Component, h, propNumber } from 'skatejs';
 
 const sym = Symbol();
 
 customElements.define('x-counter', class extends Component {
   static get props () {
     return {
-      count: prop.number
+      count: propNumber
     };
   }
   connectedCallback () {

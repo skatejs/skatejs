@@ -7,7 +7,7 @@
       };
     }
     renderCallback() {
-      return skate.h('div', `Hello, ${this.name}`);
+      return skate.h('div', {}, `Hello, ${this.name}`);
     }
   });
 }
@@ -17,7 +17,7 @@
       return {
         // By declaring the property an attribute, we can now pass an initial value
         // for the count as part of the HTML.
-        count: { ...skate.prop.number, ...{ attribute: true } }
+        count: { ...skate.propNumber, ...{ attribute: true } }
       };
     }
 
@@ -42,10 +42,8 @@
       }
     }
     renderCallback() {
-      // By separating the strings (and not using template literals or string
-      // concatenation) it ensures the strings are diffed indepenedently. If
-      // you select "Count" with your mouse, it will not deselect whenr endered.
-      return skate.h('div', 'Count ', this.count);
+
+      return skate.h('div', {}, `Count ${this.count}`);
     }
   });
 }
@@ -201,8 +199,8 @@
   class Elem extends skate.Component<ElemProps> {
     static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
-        str: skate.prop.string,
-        arr: skate.prop.array
+        str: skate.propString,
+        arr: skate.propArray
       }
     }
 
@@ -210,7 +208,7 @@
     arr: string[];
 
     renderCallback() {
-      return skate.h('div', 'testing');
+      return skate.h('div', {}, 'testing');
     }
   }
 
@@ -244,7 +242,7 @@
   customElements.define('my-component', class extends skate.Component<any> {
     static get props() {
       return {
-        name: skate.prop.string
+        name: skate.propString
       };
     }
 
@@ -260,16 +258,16 @@
 { // https://github.com/skatejs/skatejs#rendercallback---supersedes-static-render
   customElements.define('my-component', class extends skate.Component<any> {
     renderCallback() {
-      return skate.h('p', `My name is ${this.tagName}.`);
+      return skate.h('p', {}, `My name is ${this.tagName}.`);
     }
   });
 
   customElements.define('my-component', class extends skate.Component<any> {
     renderCallback() {
-      return [
+      return <span>
         skate.h('paragraph 1'),
         skate.h('paragraph 2'),
-      ];
+      </span>;
     }
   });
 }
@@ -297,7 +295,7 @@
     static get is() { return 'my-skate' }
     static get props() {
       return {
-        who: skate.prop.string
+        who: skate.propString
       }
     }
     who: string
@@ -310,7 +308,7 @@
   const SkateCtor2 = skate.define('my-skate', class SkateCmp2 extends skate.Component<{ who: string }>{
     static get props() {
       return {
-        who: skate.prop.string
+        who: skate.propString
       }
     }
     who: string
@@ -380,8 +378,8 @@
         skate.h('input', { name: 'someValue2', onChange: linkage, type: 'checkbox' }),
         skate.h('input', { name: 'someValue3', onChange: linkage, type: 'radio' }),
         skate.h('select', { name: 'someValue4', onChange: linkage },
-          skate.h('option', { value: 2 }, 'Option 2'),
-          skate.h('option', { value: 1 }, 'Option 1'),
+          skate.h('option', { value: '2' }, 'Option 2'),
+          skate.h('option', { value: '1' }, 'Option 1'),
         )
       ];
     }
@@ -392,14 +390,14 @@
 // @link https://skatejs.gitbooks.io/skatejs/content/docs/api/prop.html
 // ====================================================================
 {
-  skate.prop.boolean;
-  skate.prop.string;
-  skate.prop.number;
-  skate.prop.array;
-  skate.prop.object;
+  skate.propBoolean;
+  skate.propString;
+  skate.propNumber;
+  skate.propArray;
+  skate.propObject;
 
   const customProp = {
-    ...skate.prop.boolean, ...{
+    ...skate.propBoolean, ...{
       coerce() {
         // coerce it differently than the default way
         return false;
@@ -413,7 +411,7 @@
     static get props() {
       return {
         user: {
-          ...skate.prop.object, ...{
+          ...skate.propObject, ...{
             default: { id: -1, email: '' }
           }
         }
@@ -424,12 +422,11 @@
 
     renderCallback() {
       const { id, email } = this.user;
-      return [
+      return (
         <p>
           <div>ID: {id}</div>
           <div>Email: {email}</div>
-        </p>
-      ];
+        </p>);
     }
   }
 
@@ -437,7 +434,7 @@
     static get is() { return 'my-user-list' }
     static get props() {
       return {
-        users: skate.prop.array
+        users: skate.propArray
       }
     }
 
@@ -445,11 +442,11 @@
 
     renderCallback() {
       const { users } = this;
-      return [
+      return (
         <ul>
-          {users.map((user) => (<li><User user={user} /></li>))}
+          {users.map((user) => (<li>{skate.h('my-user', { user })}</li>))}
         </ul>
-      ];
+      );
     }
   }
 }
@@ -458,7 +455,7 @@
 // @link https://skatejs.gitbooks.io/skatejs/content/docs/api/props.html
 // ====================================================================
 {
-  const { define, props } = skate;
+  const { define, setProps, getProps } = skate;
 
   class Elem extends skate.Component<{ prop1?: string }> {
     static get props() {
@@ -474,7 +471,7 @@
 
   elem.prop2 = 'value 2';
   // Set any property you want.
-  props(elem, {
+  setProps(elem, {
     prop1: 'value 1',
     // in TS we wanna be explicit and set only "state" props which will trigger render,
     // so if you wanna set private props, update them via this.yourProp = newValue
@@ -484,7 +481,7 @@
 
   // Only returns props you've defined on your component.
   // { prop1: 'value 1' }
-  props(elem);
+  getProps(elem);
 }
 { // https://github.com/skatejs/skatejs#h
   customElements.define('my-component', class extends skate.Component<any> {
@@ -504,16 +501,17 @@
   customElements.define('my-component', class extends skate.Component<{ title: string; }> {
     static get props() {
       return {
-        title: skate.prop.string
+        title: skate.propString
       };
     }
     renderCallback() {
       return (
         <div>
           <h1>{this.title}</h1>
-          <slot name="description" />
+          {skate.h('slot', { name: 'description' })}
+
           <article>
-            <slot />
+            {skate.h('slot', {})}
           </article>
         </div>
       );
@@ -525,30 +523,30 @@
   customElements.define('my-element', MyElement);
 
   // Renders <my-element />
-  skate.h(MyElement);
+  skate.h('my-element', {});
 
   // for https://github.com/Microsoft/TypeScript/issues/7004
   const anyProps = {};
-  <MyElement {...anyProps} />;
+  skate.h('my-element', { ...anyProps });
 }
 { // https://github.com/skatejs/skatejs#function-helper
   {
-    const MyElement = () => skate.h('div', 'Hello, World!');
+    const MyElement = () => skate.h('div', {}, 'Hello, World!');
 
     // Renders <div>Hello, World!</div>
-    skate.h(MyElement);
+    skate.h('my-element', {});
   }
   {
-    const MyElement = (props: { name: string }) => skate.h('div', `Hello, ${props.name}!`);
+    const MyElement = (props: { name: string }) => skate.h('div', {}, `Hello, ${props.name}!`);
 
     // Renders <div>Hello, Bob!</div>
-    skate.h(MyElement, { name: 'Bob' });
+    skate.h('my-element', { name: 'Bob' });
   }
   {
-    const MyElement = (props: void, children: string) => skate.h('div', 'Hello, ', children, '!');
+    const MyElement = (props: void, children: string) => skate.h('div', {}, 'Hello, ', children, '!');
 
     // Renders <div>Hello, Mary!</div>
-    skate.h(MyElement, 'Mary');
+    skate.h('my-element', {}, 'Mary');
   }
   {
     const MyElement = (props: any, children: Node) => <div>Hello, {children}!</div>;
@@ -560,14 +558,14 @@
 { // https://github.com/skatejs/skatejs#special-attributes
   {
     skate.h('ul',
-      skate.h('li', { key: 0 }),
-      skate.h('li', { key: 1 }),
+      skate.h('li', { key: '0' }),
+      skate.h('li', { key: '1' }),
     );
 
     const ArrayCmp = () => (
       <ul>
-        <li key={0}></li>
-        <li key={1}></li>
+        <li key={'0'}></li>
+        <li key={'1'}></li>
       </ul>
     );
 
@@ -582,7 +580,7 @@
 
     const TestCmp = () => (
       <div>
-        <button onclick={onClick}></button>
+        <button onClick={onClick}></button>
         <button onClick={onClick}></button>
       </div>
     );
@@ -640,7 +638,7 @@
       renderCallback() {
         return <div
           ref={(e: HTMLElement) => (e.innerHTML = '<p>oh no you didn\'t</p>')}
-          skip
+        // skip
         ></div>
       }
     }
@@ -651,7 +649,8 @@
 
     class TestCmp extends skate.Component<any> {
       renderCallback() {
-        return <div statics={['attr1', 'prop2']}></div>
+        // return <div statics={['attr1', 'prop2']}></div>
+        return null;
       }
     }
   }
@@ -666,8 +665,8 @@
   }
   // anchor test so this https://github.com/Microsoft/TypeScript/issues/13345 is mitigated
   {
-    const Link: skate.SFC<{ to: string }> = ({ to }) => <a href={to}><slot /></a>;
-    const LinkH: skate.SFC<{ to: string }> = ({ to }) => skate.h('a', { href: to }, skate.h('slot'));
+    const Link: skate.SFC<{ to: string }> = ({ to }) => <a href={to}>{skate.h('slot', {})}</a>;
+    const LinkH: skate.SFC<{ to: string }> = ({ to }) => skate.h('a', { href: to }, skate.h('slot', {}));
   }
   // slot projection attributes on Component references via JSX
   {
@@ -677,6 +676,7 @@
     const Footer: SFCSlotRef<HTMLSpanElement> = (props) => (<span {...props}>Footer baby</span>)
 
     class Menu extends skate.Component<void>{
+      static get is() { return 'my-menu' }
       private menu = [{ link: 'home', name: 'Home' }, { link: 'about', name: 'About' }];
       renderCallback() {
         return (
@@ -699,10 +699,10 @@
       renderCallback() {
         return (
           <main>
-            <header><slot name={Page.slots.header} /></header>
-            <nav><slot name="menu" /></nav>
-            <section><slot name={Page.slots.body} /></section>
-            <footer><slot name="footer" /></footer>
+            <header>{skate.h('slot', { name: Page.slots.header })}</header>
+            <nav>{skate.h('slot', { name: 'menu' })}</nav>
+            <section>{skate.h('slot', { name: Page.slots.body })}</section>
+            <footer>{skate.h('slot', { name: 'footer' })}</footer>
           </main>
         )
       }
@@ -711,16 +711,12 @@
     class App extends skate.Component<void> {
       renderCallback() {
         return (
-          <Page>
-            <Menu slot={Page.slots.menu} ref={_e => console.log(_e)} />
-
-            {/* projection and refs doesn't work by default, because you cant ref,slot a function. Instead you need to manually propagate props */}
-            <Header slot={Page.slots.header} />
-            <Body slot={Page.slots.body} />
-            <Footer slot="footer" ref={_e => console.log(_e)} />
-
-          </Page>
-        );
+          skate.h('my-page', {},
+            skate.h('my-menu', { slot: Page.slots.menu, ref: _e => console.log(_e) }),
+            /* projection and refs doesn't work by default, because you cant ref,slot a function. Instead you need to manually propagate props */
+            <Header slot={Page.slots.header} />,
+            <Body slot={Page.slots.body} />,
+            <Footer slot="footer" ref={_e => console.log(_e)} />));
       }
     }
   }
