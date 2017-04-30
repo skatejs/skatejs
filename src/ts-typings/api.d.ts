@@ -60,10 +60,6 @@ export interface PropOptions {
 
 interface Define {
   <T extends Partial<HTMLElement>>(ctor: T): T;
-  /**
-   *  @Deprecated - will be removed in 5.0
-   */
-  <T extends Partial<HTMLElement>>(name: string, ctor: T): T;
 }
 /**
  * The define() function is syntactic sugar on top of customElements.define() that allows you to specify a static is property on your constructor that is the name of the component, or omit it altogether.
@@ -85,18 +81,10 @@ export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOp
 
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
-export const propString: PropOptions;
-export const propNumber: PropOptions;
-export const propBoolean: PropOptions;
-export const propArray: PropOptions;
-export const propObject: PropOptions;
-
-/**
- * The props function is a getter or setter depending on if you specify the second argument.
- * If you do not provide props, then the current state of the component is returned.
- * If you pass props, then the current state of the component is set.
- * When you set state, the component will re-render synchronously only if it needs to be re-rendered.
- */
-export function getProps<P>(elem: Component<P>): P;
-export function setProps<P>(elem: Component<P>, props: Pick<Component<P>, '_props'>['_props']): void;
-
+export const props: {
+  readonly array: PropOptions;
+  readonly boolean: PropOptions;
+  readonly number: PropOptions;
+  readonly object: PropOptions;
+  readonly string: PropOptions;
+};

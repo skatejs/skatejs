@@ -17,7 +17,7 @@
       return {
         // By declaring the property an attribute, we can now pass an initial value
         // for the count as part of the HTML.
-        count: { ...skate.propNumber, ...{ attribute: true } }
+        count: { ...skate.props.number, ...{ attribute: true } }
       };
     }
 
@@ -199,8 +199,8 @@
   class Elem extends skate.Component<ElemProps> {
     static get props(): skate.ComponentProps<Elem, ElemProps> {
       return {
-        str: skate.propString,
-        arr: skate.propArray
+        str: skate.props.string,
+        arr: skate.props.array
       }
     }
 
@@ -242,7 +242,7 @@
   customElements.define('my-component', class extends skate.Component<any> {
     static get props() {
       return {
-        name: skate.propString
+        name: skate.props.string
       };
     }
 
@@ -295,7 +295,7 @@
     static get is() { return 'my-skate' }
     static get props() {
       return {
-        who: skate.propString
+        who: skate.props.string
       }
     }
     who: string
@@ -303,17 +303,6 @@
 
   const skElementInst = new SkateCtor();
   console.log(skElementInst.who);
-
-  // @Deprecated
-  const SkateCtor2 = skate.define('my-skate', class SkateCmp2 extends skate.Component<{ who: string }>{
-    static get props() {
-      return {
-        who: skate.propString
-      }
-    }
-    who: string
-  });
-
 
 }
 { // https://github.com/skatejs/skatejs#emit-elem-eventname-eventoptions--
@@ -390,14 +379,14 @@
 // @link https://skatejs.gitbooks.io/skatejs/content/docs/api/prop.html
 // ====================================================================
 {
-  skate.propBoolean;
-  skate.propString;
-  skate.propNumber;
-  skate.propArray;
-  skate.propObject;
+  skate.props.boolean;
+  skate.props.string;
+  skate.props.number;
+  skate.props.array;
+  skate.props.object;
 
   const customProp = {
-    ...skate.propBoolean, ...{
+    ...skate.props.boolean, ...{
       coerce() {
         // coerce it differently than the default way
         return false;
@@ -411,7 +400,7 @@
     static get props() {
       return {
         user: {
-          ...skate.propObject, ...{
+          ...skate.props.object, ...{
             default: { id: -1, email: '' }
           }
         }
@@ -434,7 +423,7 @@
     static get is() { return 'my-user-list' }
     static get props() {
       return {
-        users: skate.propArray
+        users: skate.props.array
       }
     }
 
@@ -449,39 +438,6 @@
       );
     }
   }
-}
-
-// #props
-// @link https://skatejs.gitbooks.io/skatejs/content/docs/api/props.html
-// ====================================================================
-{
-  const { define, setProps, getProps } = skate;
-
-  class Elem extends skate.Component<{ prop1?: string }> {
-    static get props() {
-      return {
-        prop1: {}
-      };
-    }
-    prop1: string;
-    prop2: string;
-  }
-  customElements.define('my-element', Elem);
-  const elem = new Elem();
-
-  elem.prop2 = 'value 2';
-  // Set any property you want.
-  setProps(elem, {
-    prop1: 'value 1',
-    // in TS we wanna be explicit and set only "state" props which will trigger render,
-    // so if you wanna set private props, update them via this.yourProp = newValue
-    // - following line works just fine in plain JS but it's considered a mistake, TS will explicitly tell us that we are doing something wrong
-    // prop2: 'value 2'
-  });
-
-  // Only returns props you've defined on your component.
-  // { prop1: 'value 1' }
-  getProps(elem);
 }
 { // https://github.com/skatejs/skatejs#h
   customElements.define('my-component', class extends skate.Component<any> {
@@ -501,7 +457,7 @@
   customElements.define('my-component', class extends skate.Component<{ title: string; }> {
     static get props() {
       return {
-        title: skate.propString
+        title: skate.props.string
       };
     }
     renderCallback() {
