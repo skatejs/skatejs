@@ -12,10 +12,13 @@ function attachShadow (elem) {
 
 export const withRender = (Base?: Class<HTMLElement>): Class<HTMLElement> =>
   class extends (Base || HTMLElement) {
-    propsUpdatedCallback (next: Object, prev: Object) {
-      super.propsUpdatedCallback(next, prev);
-      this[_shadowRoot] = this[_shadowRoot] || (this[_shadowRoot] = attachShadow(this));
-      this.rendererCallback(this[_shadowRoot], () => this.renderCallback(this));
+    get renderRoot () {
+      this[_shadowRoot] = this[_shadowRoot] || (this[_shadowRoot] = (this.shadowRoot || attachShadow(this)));
+      return this[_shadowRoot];
+    }
+
+    propsChangedCallback () {
+      this.rendererCallback(this.renderRoot, () => this.renderCallback(this));
       this.renderedCallback();
     }
 

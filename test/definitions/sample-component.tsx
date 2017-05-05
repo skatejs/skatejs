@@ -28,20 +28,20 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
   static get props(): skate.ComponentProps<CountUpComponent, CountUpProps> {
     return {
       count: {
-        ...skate.propNumber, ...{
+        ...skate.props.number, ...{
           attribute: true,
           default(elem: HTMLElement, data: Object) {
             return 7;
           },
         }
       },
-      num: skate.propNumber,
-      numLiteral: skate.propNumber,
-      str: skate.propString,
-      strLiteral: skate.propString,
-      bool: skate.propBoolean,
-      arr: skate.propArray,
-      obj: skate.propObject,
+      num: skate.props.number,
+      numLiteral: skate.props.number,
+      str: skate.props.string,
+      strLiteral: skate.props.string,
+      bool: skate.props.boolean,
+      arr: skate.props.array,
+      obj: skate.props.object,
     }
   }
 
@@ -68,8 +68,8 @@ class SkatePark extends Component<SkateParkProps>{
   static get is() { return 'my-skate-park' }
   static get props(): skate.ComponentProps<SkatePark, SkateParkProps> {
     return {
-      year: skate.propNumber,
-      halfPipe: skate.propBoolean,
+      year: skate.props.number,
+      halfPipe: skate.props.boolean,
     }
   }
   renderCallback({ halfPipe, year }: SkateParkProps) {
@@ -98,8 +98,8 @@ export type ElmProps = { str: string; arr: any[]; };
 class Elem extends skate.Component<ElmProps> {
   static get props(): skate.ComponentProps<Elem, ElmProps> {
     return {
-      str: skate.propString,
-      arr: skate.propArray
+      str: skate.props.string,
+      arr: skate.props.array
     }
   }
 
