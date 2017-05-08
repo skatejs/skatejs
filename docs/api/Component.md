@@ -39,7 +39,7 @@ If you don't use ES6 yet, you may use the `skate.define` helper instead. Take a 
 
 #### Unmounting
 
-- [`disconnectedCallback()` /supersedes `static detached()/ ](#disconnectedcallback---supersedes-static-detached)
+- [`disconnectedCallback()` /supersedes `static detached()`/](#disconnectedcallback---supersedes-static-detached)
 
 ### Other APIs
 
