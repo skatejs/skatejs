@@ -126,42 +126,54 @@ export const withProps = (Base?: Class<HTMLElement>): Class<HTMLElement> =>
     }
   };
 
-// Props
+type PropOptionsAttributeBase = boolean | string;
+type PropOptionsAttribute = PropOptionsAttributeBase | {
+  source?: Boolean | String,
+  target?: Boolean | String
+};
+
+interface PropOptions {
+  attribute?: PropOptionsAttribute | Boolean,
+  coerce?: Function,
+  default?: any,
+  deserialize?: Function,
+  serialize?: Function
+}
 
 const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
-const createProp = (obj: Object): Object => freeze({ ...{ attribute }, ...obj });
+const createProp = (obj: PropOptions): PropOptions => freeze({ ...{ attribute }, ...obj });
 const nullOrType = type => val => empty(val) ? null : type(val);
 const zeroOrNumber = (val: number): number => (empty(val) ? 0 : Number(val));
 
-const array: Object = createProp({
+const array: PropOptions = createProp({
   coerce: (val: any): Array<any> | null => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: freeze([]),
   deserialize: parse,
   serialize: stringify
 });
 
-const boolean: Object = createProp({
+const boolean: PropOptions = createProp({
   coerce: Boolean,
   default: false,
   deserialize: (val: string): boolean => !empty(val),
   serialize: (val: any): string | null => val ? '' : null
 });
 
-const number: Object = createProp({
+const number: PropOptions = createProp({
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
   serialize: nullOrType(Number)
 });
 
-const object: Object = createProp({
+const object: PropOptions = createProp({
   default: freeze({}),
   deserialize: parse,
   serialize: stringify
 });
 
-const string: Object = createProp({
+const string: PropOptions = createProp({
   default: '',
   coerce: String,
   serialize: nullOrType(String)
