@@ -108,7 +108,7 @@ function Colored(Base) {
 
 
 // your component which will have color and disabled as props
-class Button extends Colors(Component) {
+class Button extends Colored(Component) {
   static get props () {
     return {
       // inherit from any mixin application so both mixed and our props will be applied
