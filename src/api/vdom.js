@@ -9,7 +9,13 @@ import {
   symbols,
   text
 } from 'incremental-dom';
-import { name as $name, ref as $ref } from '../util/symbols';
+import {
+    name as $name,
+    ref as $ref,
+    skip as $skip,
+    currentEventHandlers as $currentEventHandlers,
+    stackCurrentHelperProps as $stackCurrentHelperProps,
+} from '../util/symbols';
 import propContext from '../util/prop-context';
 import root from '../util/root';
 
@@ -19,10 +25,6 @@ const applyDefault = attributes[symbols.default];
 // A stack of children that corresponds to the current function helper being
 // executed.
 const stackChren = [];
-
-const $skip = '__skip';
-const $currentEventHandlers = '__events';
-const $stackCurrentHelperProps = '__props';
 
 // The current function helper in the stack.
 let stackCurrentHelper;

@@ -14,6 +14,7 @@ export const ctorCreateInitProps = '____skate_ctor_createInitProps';
 export const ctorObservedAttributes = '____skate_ctor_observedAttributes';
 export const ctorProps = '____skate_ctor_props';
 export const ctorPropsMap = '____skate_ctor_propsMap';
+export const stackCurrentHelperProps = '__props';
 
 // Used on the Element
 export const props = '____skate_props';
@@ -22,3 +23,5 @@ export const renderer = '____skate_renderer';
 export const rendering = '____skate_rendering';
 export const rendererDebounced = '____skate_rendererDebounced';
 export const updated = '____skate_updated';
+export const skip = '__skip';
+export const currentEventHandlers = '__events';
