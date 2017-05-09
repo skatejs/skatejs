@@ -1,3 +1,5 @@
+import { Object } from './util';
+
 const defs = {
   bubbles: true,
   cancelable: true,
