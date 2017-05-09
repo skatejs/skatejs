@@ -13,7 +13,8 @@ const {
 
 export {
   customElements,
-  HTMLElement
+  HTMLElement,
+  Object
 };
 
 export function dashCase (str) {

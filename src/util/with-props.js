@@ -1,4 +1,4 @@
-import { dashCase, keys, sym } from '.';
+import { dashCase, keys, Object, sym } from '.';
 
 const _definedProps = sym('_definedProps');
 const _normPropDef = sym('_normPropDef');
