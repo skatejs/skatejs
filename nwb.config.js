@@ -5,7 +5,10 @@ module.exports = {
   npm: {
     cjs: false,
     esModules: true,
-    umd: true
+    umd: {
+      externals: { preact: 'preact' },
+      global: 'skate'
+    }
   },
   karma: process.argv.indexOf('--ci') === -1 ? {
     browsers: [require('karma-chrome-launcher')]
