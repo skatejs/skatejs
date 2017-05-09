@@ -1,6 +1,6 @@
 // @flow
 
-import { Event, HTMLElement } from './util';
+import { Event, HTMLElement, Object } from './util';
 
 interface EventOptions {
   bubbles: boolean,

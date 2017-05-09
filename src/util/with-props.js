@@ -1,6 +1,6 @@
 // @flow
 
-import { dashCase, HTMLElement, keys, sym } from '.';
+import { dashCase, HTMLElement, keys, Object, sym } from '.';
 
 const _definedProps = sym('_definedProps');
 const _normPropDef = sym('_normPropDef');

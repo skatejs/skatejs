@@ -39,7 +39,8 @@ export {
   customElements,
   Event,
   HTMLElement,
-  Node
+  Node,
+  Object
 };
 
 export function dashCase (str: string): string {
