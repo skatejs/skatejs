@@ -3,8 +3,12 @@ const browsers = require('./test/browsers');
 module.exports = {
   type: 'web-module',
   npm: {
+    cjs: false,
     esModules: true,
-    umd: true
+    umd: {
+      externals: { preact: 'preact' },
+      global: 'skate'
+    }
   },
   karma: process.argv.indexOf('--ci') === -1 ? {
     browsers: [require('karma-chrome-launcher')]
