@@ -3,6 +3,7 @@ const browsers = require('./test/browsers');
 module.exports = {
   type: 'web-module',
   npm: {
+    cjs: false,
     esModules: true,
     umd: true
   },
