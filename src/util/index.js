@@ -1,6 +1,6 @@
 export const root = typeof window === 'undefined' ? global : window;
 export const { customElements, HTMLElement = null, MutationObserver } = root;
-export const { defineProperty, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
+export const { defineProperty, defineProperties, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
 
 export function dashCase (str) {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
