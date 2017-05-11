@@ -1,21 +1,6 @@
 export const root = typeof window === 'undefined' ? global : window;
-
-const {
-  customElements,
-  HTMLElement = null,
-  Object,
-  MutationObserver
-} = root;
-const {
-  getOwnPropertyNames,
-  getOwnPropertySymbols
-} = Object;
-
-export {
-  customElements,
-  HTMLElement,
-  Object
-};
+export const { customElements, HTMLElement = null, MutationObserver } = root;
+export const { defineProperty, defineProperties, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
 
 export function dashCase (str) {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
@@ -48,8 +33,8 @@ export function debounce (cbFunc) {
   };
 }
 
-export const empty = val => val == null;
-export const { freeze } = Object;
+export const empty = val =>
+  val == null;
 
 export function keys (obj = {}) {
   const names = getOwnPropertyNames(obj);

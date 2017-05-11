@@ -1,4 +1,4 @@
-import { Object } from './util';
+import { defineProperty } from './util';
 
 const defs = {
   bubbles: true,
@@ -10,6 +10,6 @@ export function emit (elem, name, opts) {
   opts = { ...defs, ...opts };
   const e = document.createEvent('CustomEvent');
   e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-  Object.defineProperty(e, 'composed', { value: opts.composed });
+  defineProperty(e, 'composed', { value: opts.composed });
   return elem.dispatchEvent(e);
 }
