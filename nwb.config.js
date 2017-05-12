@@ -1,4 +1,5 @@
 const browsers = require('./test/browsers');
+const externals = require('webpack-node-externals');
 
 module.exports = {
   type: 'web-module',
@@ -6,7 +7,6 @@ module.exports = {
     cjs: false,
     esModules: true,
     umd: {
-      externals: { preact: 'preact' },
       global: 'skate'
     }
   },
@@ -29,5 +29,10 @@ module.exports = {
   },
   babel: {
     plugins: ['transform-react-jsx']
+  },
+  webpack: {
+    extra: {
+      externals: [externals()]
+    }
   }
 };

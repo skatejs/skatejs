@@ -41,7 +41,8 @@
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
     "typescript": "^2.1.4",
-    "typescript-formatter": "^5.0.0"
+    "typescript-formatter": "^5.0.0",
+    "webpack-node-externals": "^1.6.0"
   },
   "peerDependencies": {
     "preact": "*"
