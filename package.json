@@ -23,7 +23,8 @@
   ],
   "files": [
     "es",
-    "lib",
+    "src/index.d.ts",
+    "src/ts-typings",
     "umd"
   ],
   "dependencies": {},
