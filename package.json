@@ -23,8 +23,7 @@
   ],
   "files": [
     "es",
-    "src/index.d.ts",
-    "src/ts-typings",
+    "src",
     "umd"
   ],
   "dependencies": {},
@@ -43,7 +42,8 @@
     "semistandard": "^9.0.0",
     "typescript": "^2.1.4",
     "typescript-formatter": "^5.0.0",
-    "webpack-node-externals": "^1.6.0"
+    "webpack-node-externals": "^1.6.0",
+    "yargs": "^8.0.1"
   },
   "peerDependencies": {
     "preact": "*"
