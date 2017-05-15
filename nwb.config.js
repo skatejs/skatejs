@@ -1,5 +1,6 @@
 const browsers = require('./test/browsers');
 const externals = require('webpack-node-externals');
+const [ cmd ] = require('yargs').argv._;
 
 module.exports = {
   type: 'web-module',
@@ -32,7 +33,7 @@ module.exports = {
   },
   webpack: {
     extra: {
-      externals: [externals()]
+      externals: cmd === 'build' ? [externals()] : []
     }
   }
 };
