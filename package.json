@@ -52,6 +52,7 @@
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
     "prepublish": "nwb build",
+    "prerelease": "npm run prerelease && git push && git push --tags && npm publish",
     "release": "semantic-release pre && npm publish && semantic-release post",
     "test": "node umd/skatejs.js && semistandard && npm run test:ts && nwb test -- --ci",
     "test:ts": "tsfmt -r && tsc -p ./",
