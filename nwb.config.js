@@ -12,7 +12,6 @@ const browsers = require('./test/browsers');
 const [ cmd ] = yargs.argv._;
 const isBuild = cmd === 'build';
 const babelConfig = {
-  babelrc: false,
   plugins: ['transform-react-jsx']
 };
 
@@ -28,7 +27,6 @@ if (isBuild) {
     mkdirp.sync(targetDir);
     fs.writeFileSync(target, code);
   });
-  process.exit(1);
 }
 
 module.exports = {
