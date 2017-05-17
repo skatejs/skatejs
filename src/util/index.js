@@ -1,6 +1,18 @@
 export const root = typeof window === 'undefined' ? global : window;
-export const { customElements, HTMLElement = null, MutationObserver } = root;
+export const { customElements, HTMLElement = null, MutationObserver: RealMutationObserver } = root;
 export const { defineProperty, defineProperties, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
+
+function FakeMutationObserver (func) {
+  this.func = func;
+}
+FakeMutationObserver.prototype.observe = function (node) {
+  const { func } = this;
+  defineProperty(node, 'textContent', {
+    set () { setTimeout(func); }
+  });
+};
+
+const MutationObserver = RealMutationObserver || FakeMutationObserver;
 
 export function dashCase (str) {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
