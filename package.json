@@ -9,7 +9,6 @@
     "url": "https://github.com/skatejs/skatejs"
   },
   "main": "umd/skatejs.js",
-  "module": "es/index.js",
   "types": "src/index.d.ts",
   "keywords": [
     "components",
