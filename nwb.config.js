@@ -1,12 +1,22 @@
-const browsers = require('./test/browsers');
 const externals = require('webpack-node-externals');
-const [ cmd ] = require('yargs').argv._;
+const yargs = require('yargs');
+
+const browsers = require('./test/browsers');
+
+const [ cmd ] = yargs.argv._;
+const isBuild = cmd === 'build';
 
 module.exports = {
   type: 'web-module',
   npm: {
+    // CJS is kinda useless if we have UMD.
     cjs: false,
-    esModules: true,
+
+    // We create a custom ES build using straight-up babel because we can't
+    // have different babel configs for different parts of NWB's builds.
+    esModules: false,
+
+    // Node and browsers.
     umd: {
       global: 'skate'
     }
@@ -33,7 +43,7 @@ module.exports = {
   },
   webpack: {
     extra: {
-      externals: cmd === 'build' ? [externals()] : []
+      externals: isBuild ? [externals()] : []
     }
   }
 };

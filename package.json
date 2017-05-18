@@ -9,7 +9,6 @@
     "url": "https://github.com/skatejs/skatejs"
   },
   "main": "umd/skatejs.js",
-  "module": "es/index.js",
   "types": "src/index.d.ts",
   "keywords": [
     "components",
@@ -30,7 +29,11 @@
   "devDependencies": {
     "@skatejs/web-components": "1.0.0",
     "@treshugart/nwb": "0.17.1",
+    "babel-cli": "6.24.1",
     "babel-eslint": "7.2.1",
+    "babel-preset-es2016": "6.24.1",
+    "babel-preset-es2017": "6.24.1",
+    "babel-preset-stage-0": "6.24.1",
     "bore": "1.1.0",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
@@ -43,8 +46,8 @@
     "semistandard": "10.0.0",
     "typescript": "2.2.2",
     "typescript-formatter": "5.1.2",
-    "webpack-node-externals": "1.6.0",
     "validate-commit-msg": "2.12.1",
+    "webpack-node-externals": "1.6.0",
     "yargs": "8.0.1"
   },
   "peerDependencies": {
@@ -53,7 +56,7 @@
   "scripts": {
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "prepublish": "nwb build",
+    "prepublish": "nwb build && babel src --out-dir es --presets=stage-0,es2017,es2016",
     "prerelease": "npm version prerelease && git push && git push --tags && npm publish",
     "release": "semantic-release pre && npm publish && semantic-release post",
     "pretest": "npm run style && npm run test:node && npm run test:ts",
