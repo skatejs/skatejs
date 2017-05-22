@@ -91,7 +91,7 @@ export const props: {
 
 
 // Mixins
-type Constructor<T> = new(...args: any[]) => T;
+type Constructor<T> = new (...args: any[]) => T;
 
 
 export function withComponent<T extends Constructor<HTMLElement>>(Base: T): typeof Component

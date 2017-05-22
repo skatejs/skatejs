@@ -1,19 +1,19 @@
 import * as skate from 'skatejs'
 import { h, define } from 'skatejs'
 
-import {ButtonComponent,InputComponent} from '../custom-base'
+import { ButtonComponent, InputComponent } from '../custom-base'
 
 export type ButtonProps = {
   raised?: boolean
 }
 export class MaterialButton extends ButtonComponent<ButtonProps> {
 
-static get props(){
-  return {
-    raised: ''
+  static get props() {
+    return {
+      raised: ''
+    }
   }
-}
-  foo(){
+  foo() {
     this.props.raised
     // @TODO this doesn't work
     // this.type
@@ -28,7 +28,7 @@ export type InputProps = {
 }
 export class MaterialInput extends InputComponent<InputProps> {
   // now our MaterialInput has all <input> default behaviours and props
-  foo(){
+  foo() {
     this.props.touched
     // this.type
   }
