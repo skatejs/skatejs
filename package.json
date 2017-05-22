@@ -44,8 +44,8 @@
     "preact": "*",
     "semantic-release": "6.3.2",
     "semistandard": "10.0.0",
-    "typescript": "2.2.2",
-    "typescript-formatter": "5.1.2",
+    "typescript": "2.3.3",
+    "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
     "webpack-node-externals": "1.6.0",
     "yargs": "8.0.1"
