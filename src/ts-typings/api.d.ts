@@ -22,13 +22,13 @@ export class Component<Props> extends HTMLElement {
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
-  _props: Props & ComponentDefaultProps;
-  // this is not possible yet? ... without this we have to duplicate props definition with class props definition
-  // [K in keyof Props]: Props[K],
+  props: Partial<Props> & ComponentDefaultProps;
 
   static readonly is: string;
   static readonly props: ComponentProps<any, any>;
   static readonly observedAttributes: string[];
+
+  readonly renderRoot?: this | JSX.Element
 
   // Custom Elements v1
   connectedCallback(): void;
@@ -88,3 +88,13 @@ export const props: {
   readonly object: PropOptions;
   readonly string: PropOptions;
 };
+
+
+// Mixins
+type Constructor<T> = new(...args: any[]) => T;
+
+
+export function withComponent<T extends Constructor<HTMLElement>>(Base: T): typeof Component
+export function withProps<T extends Constructor<HTMLElement>>(Base: T): T
+export function withRender<T extends Constructor<HTMLElement>>(Base: T): T
+export function withUnique<T extends Constructor<HTMLElement>>(Base: T): T
