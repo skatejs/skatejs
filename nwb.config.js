@@ -12,9 +12,9 @@ module.exports = {
     // CJS is kinda useless if we have UMD.
     cjs: false,
 
-    // We create a custom ES build using straight-up babel because we can't
+    // We also create a custom ES build using straight-up babel because we can't
     // have different babel configs for different parts of NWB's builds.
-    esModules: false,
+    esModules: true,
 
     // Node and browsers.
     umd: {
