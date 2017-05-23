@@ -38,6 +38,7 @@
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
     "gitbook-cli": "2.3.0",
+    "gzip-size-cli": "2.0.0",
     "husky": "0.13.3",
     "karma-chrome-launcher": "2.0.0",
     "karma-sauce-launcher": "1.1.0",
@@ -56,7 +57,7 @@
   "scripts": {
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "prepublish": "nwb build && babel src --out-dir es --presets=stage-0,es2017,es2016",
+    "prepublish": "nwb build && babel src --out-dir es --presets=stage-0,es2017,es2016 && npm run size",
     "prerelease": "npm version prerelease && git push && git push --tags && npm publish",
     "release": "semantic-release pre && npm publish && semantic-release post",
     "pretest": "npm run style && npm run test:node && npm run test:ts",
@@ -73,6 +74,7 @@
     "style:js": "semistandard",
     "style:js:fix": "semistandard --fix",
     "verify": "npm run style && npm test",
+    "size": "node -e \"process.stdout.write('gzip size: ')\" && gzip-size umd/skatejs.min.js",
     "commit": "git-cz",
     "commitmsg": "validate-commit-msg",
     "prepush": "npm run verify"
