@@ -13,10 +13,15 @@ export class MaterialButton extends ButtonComponent<ButtonProps> {
       raised: ''
     }
   }
+
+  type?: string
   foo() {
     this.props.raised
-    // @TODO this doesn't work
-    // this.type
+
+    console.log(
+      // we have to explicitly define HTMLBUttonProps as TS doesn't support Generic mixins ye https://github.com/Microsoft/TypeScript/pull/13743#issuecomment-277716812t
+      this.type
+    )
   }
   // now our MaterialButton has all <button> default behaviours and props
 }
@@ -28,9 +33,14 @@ export type InputProps = {
 }
 export class MaterialInput extends InputComponent<InputProps> {
   // now our MaterialInput has all <input> default behaviours and props
+
+  type?: string
   foo() {
     this.props.touched
-    // this.type
+
+    console.log(
+      this.type
+    )
   }
 }
 

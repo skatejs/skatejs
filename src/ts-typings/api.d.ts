@@ -1,3 +1,5 @@
+import { VNode } from 'preact'
+
 type Key = string | number;
 
 export type ComponentProps<El, T> = {
@@ -22,25 +24,35 @@ export class Component<Props> extends HTMLElement {
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
-  props: Partial<Props> & ComponentDefaultProps;
+  props: Partial<Props> & ComponentDefaultProps
 
-  static readonly is: string;
-  static readonly props: ComponentProps<any, any>;
-  static readonly observedAttributes: string[];
+  static readonly is: string
+  static readonly props: ComponentProps<any, any>
+  static readonly observedAttributes: string[]
 
   readonly renderRoot?: this | JSX.Element
 
   // Custom Elements v1
-  connectedCallback(): void;
-  disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
-  adoptedCallback(): void;
+  connectedCallback(): void
+  disconnectedCallback(): void
+  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void
+  adoptedCallback(): void
 
   // SkateJS life cycle
-  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
+
+  // Called whenever props are set, even if they don't change.
+  propsSetCallback(next: Props, prev: Props): void
+
+  // Called when props actually change.
+  propsChangedCallback(next: Props, prev: Props): void
+
+  // Called to see if the props changed.
+  propsUpdatedCallback(next: Props, prev: Props): boolean | void
+
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?: Props): JSX.Element | null;
-  renderedCallback(): void;
+  renderCallback(props?: Props): JSX.Element | null
+  renderedCallback(): void
+  rendererCallback(shadowRoot: Element, renderCallback: () => VNode): void
 }
 
 
