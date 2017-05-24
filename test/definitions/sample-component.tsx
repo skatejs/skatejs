@@ -1,13 +1,5 @@
-import * as skate from "skatejs";
+import * as skate from 'skatejs';
 import { Component } from 'skatejs';
-
-// @TODO this override is needed because of https://github.com/Microsoft/TypeScript/pull/12488 will be fixed in TS 2.2
-(window as any).__extends = function(d: any, b: any) {
-  Object.setPrototypeOf(d, b);
-  var __: any = function() { this.constructor = d; }
-  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
-
 
 export type NumLiteral = 123 | 124 | 125;
 export type StrLiteral = 'one' | 'two' | 'three';
@@ -51,7 +43,7 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
     this.count += 1;
   }
 
-  renderCallback(): any {
+  renderCallback() {
     return (
       <div>
         <CounterOutput count={this.count} />
@@ -83,7 +75,7 @@ class SkatePark extends Component<SkateParkProps>{
 }
 customElements.define(SkatePark.is, SkatePark);
 
-customElements.define("x-app", class extends skate.Component<{}> {
+customElements.define('x-app', class extends skate.Component<{}> {
   renderCallback() {
     return (
       <div>

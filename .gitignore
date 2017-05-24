@@ -7,3 +7,4 @@
 /umd
 npm-debug.log*
 /_book
+/ts-output

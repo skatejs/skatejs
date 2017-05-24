@@ -1,3 +1,5 @@
+import { VNode } from 'preact'
+
 type Key = string | number;
 
 export type ComponentProps<El, T> = {
@@ -22,25 +24,35 @@ export class Component<Props> extends HTMLElement {
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
-  _props: Props & ComponentDefaultProps;
-  // this is not possible yet? ... without this we have to duplicate props definition with class props definition
-  // [K in keyof Props]: Props[K],
+  props: Partial<Props> & ComponentDefaultProps
 
-  static readonly is: string;
-  static readonly props: ComponentProps<any, any>;
-  static readonly observedAttributes: string[];
+  static readonly is: string
+  static readonly props: ComponentProps<any, any>
+  static readonly observedAttributes: string[]
+
+  readonly renderRoot?: this | JSX.Element
 
   // Custom Elements v1
-  connectedCallback(): void;
-  disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
-  adoptedCallback(): void;
+  connectedCallback(): void
+  disconnectedCallback(): void
+  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void
+  adoptedCallback(): void
 
   // SkateJS life cycle
-  updatedCallback(previousProps: { [nameOrSymbol: string]: any }): boolean | void;
+
+  // Called whenever props are set, even if they don't change.
+  propsSetCallback(next: Props, prev: Props): void
+
+  // Called when props actually change.
+  propsChangedCallback(next: Props, prev: Props): void
+
+  // Called to see if the props changed.
+  propsUpdatedCallback(next: Props, prev: Props): boolean | void
+
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?: Props): JSX.Element | null;
-  renderedCallback(): void;
+  renderCallback(props?: Props): JSX.Element | null
+  renderedCallback(): void
+  rendererCallback(shadowRoot: Element, renderCallback: () => VNode): void
 }
 
 
@@ -88,3 +100,13 @@ export const props: {
   readonly object: PropOptions;
   readonly string: PropOptions;
 };
+
+
+// Mixins
+type Constructor<T> = new (...args: any[]) => T;
+
+
+export function withComponent<T extends Constructor<HTMLElement>>(Base: T): typeof Component
+export function withProps<T extends Constructor<HTMLElement>>(Base: T): T
+export function withRender<T extends Constructor<HTMLElement>>(Base: T): T
+export function withUnique<T extends Constructor<HTMLElement>>(Base: T): T
