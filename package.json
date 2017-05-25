@@ -23,6 +23,7 @@
     "virtual"
   ],
   "files": [
+    "es-latest",
     "es",
     "src",
     "umd"
