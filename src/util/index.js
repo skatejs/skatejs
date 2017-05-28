@@ -1,5 +1,5 @@
 export const root = typeof window === 'undefined' ? global : window;
-export const { customElements, HTMLElement = null, MutationObserver: RealMutationObserver } = root;
+export const { customElements, HTMLElement = null, MutationObserver: RealMutationObserver, Promise } = root;
 export const { defineProperty, defineProperties, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
 
 function FakeMutationObserver (func) {
@@ -8,7 +8,13 @@ function FakeMutationObserver (func) {
 FakeMutationObserver.prototype.observe = function (node) {
   const { func } = this;
   defineProperty(node, 'textContent', {
-    set () { setTimeout(func); }
+    set () {
+      if (Promise) {
+        new Promise(resolve => resolve()).then(func);
+      } else {
+        setTimeout(func);
+      }
+    }
   });
 };
 
