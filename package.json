@@ -64,7 +64,7 @@
     "semantic-release": "^6.3.2",
     "semistandard": "^9.0.0",
     "skatejs-web-components": "5.2.1",
-    "typescript": "^2.1.4",
+    "typescript": "^2.3.4",
     "typescript-formatter": "^5.0.0",
     "webpack": "2.2.1"
   },
