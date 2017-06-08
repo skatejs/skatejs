@@ -126,14 +126,13 @@ export const withProps = (Base?: Class<HTMLElement>): Class<HTMLElement> =>
     }
   };
 
-type PropOptionsAttributeBase = boolean | string;
-type PropOptionsAttribute = PropOptionsAttributeBase | {
-  source?: Boolean | String,
-  target?: Boolean | String
+type PropOptionsAttribute = boolean | string | {
+  source?: boolean | string,
+  target?: boolean | string
 };
 
 interface PropOptions {
-  attribute?: PropOptionsAttribute | Boolean,
+  attribute?: PropOptionsAttribute,
   coerce?: Function,
   default?: any,
   deserialize?: Function,

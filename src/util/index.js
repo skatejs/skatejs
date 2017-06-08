@@ -1,47 +1,55 @@
 // @flow
 
-// TODO (get-typed)
-//
-// Not support for a ternary or iife yet, so we must if / else and export let.
-let root: Object;
-if (typeof window === 'undefined') {
-  root = window;
-} else {
-  root = global;
+function _root () {
+  if (typeof window === 'undefined') {
+    return global;
+  }
+  return window;
 }
-export { root };
 
-// TODO (get-typed)
-//
-// There's no support for destructuring and exporting yet so we must do this
-// differently.
-//
-// const {
-//   customElements,
-//   Event,
-//   HTMLElement,
-//   MutationObserver,
-//   Node,
-//   Object
-// } = root;
-const customElements: CustomElementRegistry = root.customElements;
-const Event: Class<Event> = root.Event;
-const HTMLElement: Class<HTMLElement> = root.HTMLElement;
-const MutationObserver: Class<MutationOberver> = root.MutationObserver;
-const Node: Class<Node> = root.Node;
-const Object: Function = root.Object;
+const root: Object = _root();
+const HTMLElement: HTMLElement = root.HTMLElement;
 const {
+  customElements,
+  Event,
+  MutationObserver: RealMutationObserver,
+  Node
+} = root;
+
+const {
+  defineProperty,
+  defineProperties,
   getOwnPropertyNames,
   getOwnPropertySymbols
 } = Object;
 
 export {
   customElements,
+  defineProperty,
+  defineProperties,
   Event,
   HTMLElement,
   Node,
-  Object
+  root
 };
+
+function FakeMutationObserver (func: Function) {
+  this.func = func;
+}
+FakeMutationObserver.prototype.observe = function (node: Node) {
+  const { func } = this;
+  defineProperty(node, 'textContent', {
+    set () {
+      if (typeof Promise === 'undefined') {
+        setTimeout(func);
+      } else {
+        new Promise(resolve => resolve()).then(func);
+      }
+    }
+  });
+};
+
+const MutationObserver = RealMutationObserver || FakeMutationObserver;
 
 export function dashCase (str: string): string {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
@@ -77,7 +85,7 @@ export function debounce (cbFunc: Function): Function {
 export const empty = (val: any): boolean => val == null;
 export const { freeze } = Object;
 
-export function keys (obj: Object = {}): Array<string> {
+export function keys (obj: Object = {}): Array<any> {
   const names = getOwnPropertyNames(obj);
   return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
 }

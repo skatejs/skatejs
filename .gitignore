@@ -1,8 +1,10 @@
 /coverage
 /demo/dist
 /es
+/es-latest
 /lib
 /node_modules
 /umd
 npm-debug.log*
 /_book
+/ts-output

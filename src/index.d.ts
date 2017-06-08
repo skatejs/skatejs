@@ -7,11 +7,16 @@ export {
   ComponentProps,
   PropOptions,
   StatelessComponent,
+  ComponentClass,
   SFC,
   props,
   link,
   define,
-  emit
+  emit,
+  withComponent,
+  withProps,
+  withRender,
+  withUnique
 } from './ts-typings/api';
 
 export { h } from 'preact';

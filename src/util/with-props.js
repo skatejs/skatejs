@@ -1,6 +1,6 @@
 // @flow
 
-import { dashCase, HTMLElement, keys, Object, sym } from '.';
+import { dashCase, defineProperties, HTMLElement, keys, sym } from '.';
 
 const _definedProps = sym('_definedProps');
 const _normPropDef = sym('_normPropDef');
@@ -18,7 +18,7 @@ export function defineProps (Ctor: Function): void {
   const { prototype } = Ctor;
   const props = normPropDefs(Ctor);
 
-  Object.defineProperties(prototype, keys(props).reduce((prev, curr) => {
+  defineProperties(prototype, keys(props).reduce((prev, curr) => {
     const { attribute: { target }, coerce, default: def, serialize } = props[curr];
     const _value = sym(curr);
     prev[curr] = {

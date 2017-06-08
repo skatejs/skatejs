@@ -1,7 +1,12 @@
 [ignore]
+.*/\..*
+.*/docs/.*
 .*/es/.*
+.*/es-latest/.*
 .*/lib/.*
 .*/node_modules/.*
+.*/test/.*
+.*/umd/.*
 
 [include]
 ./src/
