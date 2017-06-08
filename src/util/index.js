@@ -8,7 +8,7 @@ function _root () {
 }
 
 const root: Object = _root();
-const HTMLElement: HTMLElement = root.HTMLElement;
+const HTMLElement = root.HTMLElement;
 const {
   customElements,
   Event,
