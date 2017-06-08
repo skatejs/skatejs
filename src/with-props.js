@@ -131,13 +131,13 @@ type PropOptionsAttribute = boolean | string | {
   target?: boolean | string
 };
 
-interface PropOptions {
+type PropOptions = {
   attribute?: PropOptionsAttribute,
   coerce?: Function,
   default?: any,
   deserialize?: Function,
   serialize?: Function
-}
+};
 
 const { parse, stringify } = JSON;
 const attribute = freeze({ source: true });
