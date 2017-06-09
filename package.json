@@ -11,6 +11,7 @@
   "main": "umd/skatejs.js",
   "module": "es/index.js",
   "es2015": "es-latest/index.js",
+  "esnext": "src/index.js",
   "types": "src/index.d.ts",
   "keywords": [
     "components",

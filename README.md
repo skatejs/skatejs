@@ -6,7 +6,7 @@
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
-[![OpenCollective](https://opencollective.com/skatejs/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/skatejs/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/skatejs/sponsors/badge.svg)](#sponsors)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
@@ -109,11 +109,17 @@ If you want finer grained control about which polyfills you use, you'll have to 
 
 *If you’re using Babel or some other tool to transpile to ES5, simply import `@skatejs/web-components` (or selectively include the polyfills) as needed and ignore the following.*
 
-Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
+Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js). More information can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
 
-When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain. If you want to deliever native classes you have to point to the non-transpiled Skate source: `import { ... } from 'skatejs/src';`. Currently this is not supported by our API versioning but we have an [issue](#992) to work around this.
+When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus, even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain.
 
-More information can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
+If you want to deliever native classes you have to point to the non-transpiled Skate source:
+
+```
+import { ... } from 'skatejs/src';
+```
+
+Alternatively, Skate supports the `esnext` approach detailed in [this blog post](http://2ality.com/2017/06/pkg-esnext.html).
 
 ## Browser Support
 
