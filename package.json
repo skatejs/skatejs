@@ -64,8 +64,9 @@
     "precommit": "semistandard",
     "commitmsg": "validate-commit-msg",
     "prepublish": "nwb build && babel src --out-dir es-latest --presets=stage-0,es2017,es2016,react",
-    "release": "git push && git push --tags && npm publish",
-    "test": "semistandard && test:ts && node umd/skatejs.js && nwb test -- --ci",
+    "release:manual": "git push && git push --tags && npm publish",
+    "release:semantic": "semantic-release pre && npm publish && semantic-release post",
+    "test": "semistandard && npm run test:ts && node umd/skatejs.js && nwb test -- --ci",
     "test:watch": "nwb test -- --server",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
