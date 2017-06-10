@@ -28,7 +28,7 @@ export function dashCase (str: string): string {
   });
 }
 
-export function debounce (cbFunc: Function): Function {
+export function debounce (cbFunc: () => void): Function {
   let scheduled = false;
   let i = 0;
   const elem = document.createElement('span');

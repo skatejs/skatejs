@@ -23,6 +23,9 @@ export interface CustomElement extends HTMLElement {
   disconnectedCallback(): void;
 }
 
+// To be able to recursively traverse into an object based on dot-notation.
+export type DeepObject = { [string]: Object };
+
 // Types are only defined for define().
 export interface FixedCustomElementRegistry extends CustomElementRegistry {
   get (name: string): HTMLElement | null;
@@ -43,6 +46,8 @@ export type PropOptions = {
   serialize?: (val: mixed) => null | string
 };
 
+export type PropDefinitions = { [string]: PropOptions };
+
 export type PropOptionsNormalized = {
   attribute: { source: string, target: string},
   coerce: (val: mixed) => mixed,
@@ -51,8 +56,9 @@ export type PropOptionsNormalized = {
   serialize: (val: mixed) => null | string
 }
 
-export interface WithLink extends EventTarget {
+export type WithLink = EventTarget & {
   checked?: boolean;
+  name?: string;
   type?: string;
   value?: string;
-}
+};

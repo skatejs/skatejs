@@ -11,7 +11,7 @@ install:
   - yarn install
 script:
   - npm run prepublish
-  - npm run test:ci
+  - npm test
 after_success:
   - npm run release
 branches:

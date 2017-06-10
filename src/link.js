@@ -1,6 +1,6 @@
 // @flow
 
-import type { ComposedCustomEvent, WithLink } from './types';
+import type { ComposedCustomEvent, DeepObject, WithLink } from './types';
 
 function getValue (elem: WithLink): boolean | string | void {
   const { checked, type, value } = elem;
@@ -10,14 +10,15 @@ function getValue (elem: WithLink): boolean | string | void {
   return value;
 }
 
-export function link (elem: WithLink, target: string): Function {
+export function link (elem: HTMLElement, target: string): Function {
   return (e: ComposedCustomEvent): void => {
+    // TODO revisit once all browsers have native support.
+    //
     // We fallback to checking the composed path. Unfortunately this behaviour
     // is difficult to impossible to reproduce as it seems to be a possible
     // quirk in the shadydom polyfill that incorrectly returns null for the
     // target but has the target as the first point in the path.
-    // TODO revisit once all browsers have native support.
-    const localTarget: Object = e.target || (e.composedPath && e.composedPath()[0]);
+    const localTarget: WithLink = e.target || (e.composedPath && e.composedPath()[0]);
     const value = getValue(localTarget);
     const localTargetName: string = target || localTarget.name || 'value';
 
@@ -25,7 +26,7 @@ export function link (elem: WithLink, target: string): Function {
       const parts = localTargetName.split('.');
       const firstPart = parts[0];
       const propName = parts.pop();
-      const obj = parts.reduce((prev: Object, curr: string): Object => prev[curr], elem);
+      const obj = parts.reduce((prev: DeepObject, curr: string): DeepObject => prev[curr], elem);
 
       (obj: any)[propName || localTarget.name] = value;
       (elem: any)[firstPart] = (elem: any)[firstPart];

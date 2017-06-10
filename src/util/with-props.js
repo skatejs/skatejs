@@ -1,6 +1,6 @@
 // @flow
 
-import type { PropOptions, PropOptionsNormalized } from '../types';
+import type { PropDefinitions, PropOptions, PropOptionsNormalized } from '../types';
 
 import { dashCase, keys, sym } from '.';
 
@@ -8,7 +8,7 @@ interface CanDefineProps extends HTMLElement {
   static _definedProps: boolean;
   static _normalizedProps: PropOptions;
   static prototype: Object;
-  static props: { [string]: PropOptions };
+  static props: PropDefinitions;
 
   _syncingAttributeToProperty: string | null;
   _syncingPropertyToAttribute: boolean;
@@ -17,11 +17,9 @@ interface CanDefineProps extends HTMLElement {
 export function defineProps (Ctor: Class<CanDefineProps>): void {
   if (Ctor._definedProps) return;
   Ctor._definedProps = true;
+  const props: PropOptionsNormalized = normPropDefs(Ctor);
 
-  const { prototype } = Ctor;
-  const props = normPropDefs(Ctor);
-
-  Object.defineProperties(prototype, keys(props).reduce((prev, curr) => {
+  Object.defineProperties(Ctor.prototype, keys(props).reduce((prev: PropDefinitions, curr: string): Object => {
     const { attribute: { target }, coerce, default: def, serialize } = props[curr];
     const _value = sym(curr);
     prev[curr] = {
