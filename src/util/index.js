@@ -1,6 +1,6 @@
 // @flow
 
-const Mo = MutationObserver || class {
+const Mo = typeof MutationObserver === 'function' ? MutationObserver : class {
   func: Function;
   constructor (func) {
     this.func = func;
