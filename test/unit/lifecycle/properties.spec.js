@@ -6,7 +6,6 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { HTMLElement } from 'src/util';
 import { define, props, withProps, withUnique } from 'src';
 
 function withPropsUnique (Base = HTMLElement) {

@@ -1,13 +1,6 @@
 // @flow
 
-import { defineProperty, Event, HTMLElement } from './util';
-
-interface EventOptions {
-  bubbles: boolean,
-  cancelable: boolean,
-  composed: boolean,
-  detail?: any
-}
+import { ComposedCustomEvent, EventOptions } from './types';
 
 const defs: EventOptions = {
   bubbles: true,
@@ -17,8 +10,8 @@ const defs: EventOptions = {
 
 export function emit (elem: HTMLElement, name: string, opts: EventOptions): boolean {
   opts = { ...defs, ...opts };
-  const e: Event = document.createEvent('CustomEvent');
+  const e: ComposedCustomEvent = document.createEvent('CustomEvent');
   e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-  defineProperty(e, 'composed', { value: opts.composed });
+  Object.defineProperty(e, 'composed', { value: opts.composed });
   return elem.dispatchEvent(e);
 }

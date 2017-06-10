@@ -3,9 +3,6 @@
 import expect from 'expect';
 
 import { withComponent } from 'src';
-import root from 'src/util/root';
-
-const { HTMLElement } = root;
 
 describe('withComponent', () => {
   it('should extend custom classes', () => {

@@ -1,11 +1,13 @@
 // @flow
 
-import { customElements } from './util';
+import type { FixedCustomElementRegistry, CustomElement } from './types';
 
-export function define (Ctor: Function): Function {
-  const { is } = Ctor;
-  if (!customElements.get(is)) {
-    customElements.define(is, Ctor);
+const registry: FixedCustomElementRegistry = customElements;
+
+export function define (Ctor: Class<CustomElement>): Class<CustomElement> {
+  const is = Ctor.is;
+  if (!registry.get(is)) {
+    registry.define(is, Ctor);
   }
   return Ctor;
 }

@@ -39,18 +39,6 @@ describe('utils', () => {
         done();
       }, 1);
     });
-
-    it('should be called with the correct arguments', (done) => {
-      let arg;
-      const debounced = debounce((x) => (arg = x));
-      debounced(1);
-      debounced(2);
-      debounced(3);
-      setTimeout(() => {
-        expect(arg).toEqual(3, 'debounce is called with the last argument');
-        done();
-      }, 1);
-    });
   });
 
   describe('{ keys }', () => {

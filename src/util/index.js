@@ -1,55 +1,24 @@
 // @flow
 
-function _root () {
-  if (typeof window === 'undefined') {
-    return global;
+const Mo = MutationObserver || class {
+  func: Function;
+  constructor (func) {
+    this.func = func;
   }
-  return window;
-}
-
-const root: Object = _root();
-const HTMLElement = root.HTMLElement;
-const {
-  customElements,
-  Event,
-  MutationObserver: RealMutationObserver,
-  Node
-} = root;
-
-const {
-  defineProperty,
-  defineProperties,
-  getOwnPropertyNames,
-  getOwnPropertySymbols
-} = Object;
-
-export {
-  customElements,
-  defineProperty,
-  defineProperties,
-  Event,
-  HTMLElement,
-  Node,
-  root
-};
-
-function FakeMutationObserver (func: Function) {
-  this.func = func;
-}
-FakeMutationObserver.prototype.observe = function (node: Node) {
-  const { func } = this;
-  defineProperty(node, 'textContent', {
-    set () {
-      if (typeof Promise === 'undefined') {
-        setTimeout(func);
-      } else {
-        new Promise(resolve => resolve()).then(func);
+  observe (node: HTMLElement) {
+    const { func } = this;
+    const prop: Object = {
+      set () {
+        if (typeof Promise === 'undefined') {
+          setTimeout(func);
+        } else {
+          new Promise(resolve => resolve()).then(func);
+        }
       }
-    }
-  });
+    };
+    Object.defineProperty(node, 'textContent', prop);
+  }
 };
-
-const MutationObserver = RealMutationObserver || FakeMutationObserver;
 
 export function dashCase (str: string): string {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
@@ -62,18 +31,15 @@ export function dashCase (str: string): string {
 export function debounce (cbFunc: Function): Function {
   let scheduled = false;
   let i = 0;
-  let cbArgs = [];
   const elem = document.createElement('span');
-  const observer = new MutationObserver(() => {
-    cbFunc(...cbArgs);
+  const observer = new Mo(() => {
+    cbFunc();
     scheduled = false;
-    cbArgs = null;
   });
 
   observer.observe(elem, { childList: true });
 
-  return (...args: Array<any>): void => {
-    cbArgs = args;
+  return (): void => {
     if (!scheduled) {
       scheduled = true;
       elem.textContent = `${i}`;
@@ -82,12 +48,11 @@ export function debounce (cbFunc: Function): Function {
   };
 }
 
-export const empty = (val: any): boolean => val == null;
-export const { freeze } = Object;
+export const empty = <T> (val: T): boolean => val == null;
 
 export function keys (obj: Object = {}): Array<any> {
-  const names = getOwnPropertyNames(obj);
-  return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
+  const names = Object.getOwnPropertyNames(obj);
+  return Object.getOwnPropertySymbols ? names.concat(Object.getOwnPropertySymbols(obj)) : names;
 }
 
 export function sym (description?: string): Symbol | string {
