@@ -113,13 +113,7 @@ Native custom element support requires that you load a shim if you're not delive
 
 When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus, even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain.
 
-If you want to deliever native classes you have to point to the non-transpiled Skate source:
-
-```
-import { ... } from 'skatejs/src';
-```
-
-Alternatively, Skate supports the `esnext` approach detailed in [this blog post](http://2ality.com/2017/06/pkg-esnext.html).
+If you want to deliver native classes, you can configure Webpack to pull in a version of Skate that's been transpiled to the latest ES specification. More about this approach is detailed in [this blog post](http://2ality.com/2017/06/pkg-esnext.html).
 
 ## Browser Support
 
