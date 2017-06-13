@@ -22,7 +22,7 @@
     }
 
     count: number;
-    intervalID?: number;
+    intervalID?: NodeJS.Timer;
 
     connectedCallback() {
       // Ensure we call the parent.
