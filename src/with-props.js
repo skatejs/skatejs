@@ -17,8 +17,8 @@ import {
   syncAttributeToProperty
 } from './util/with-props';
 
-export const withProps = (Base?: Class<HTMLElement>): Class<HTMLElement> =>
-  class extends (Base || HTMLElement) {
+export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLElement> =>
+  class extends Base {
     static _definedProps: boolean;
     static _normalizedProps: { [string]: PropOptions };
     static _observedAttributes: Array<string>;

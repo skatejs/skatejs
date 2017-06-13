@@ -1,12 +1,10 @@
-/* eslint-env mocha */
-
-import expect from 'expect';
+/* eslint-env jest */
 
 import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, props, withProps, withUnique } from 'src';
+import { define, props, withProps, withUnique } from '../../../src';
 
 function withPropsUnique (Base = HTMLElement) {
   return withProps(withUnique(Base));
@@ -30,7 +28,7 @@ describe('lifecycle/properties', () => {
   describe('props declared as attributes with ES2015 classes are linked', () => {
     const skip = !classStaticsInheritance();
 
-    it('uses the same attribute and property name for lower-case names', function test (done) {
+    it('uses the same attribute and property name for lower-case names', (done) => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
@@ -46,7 +44,7 @@ describe('lifecycle/properties', () => {
       );
     });
 
-    it('uses the same attribute and property name for dashed-names names', function test (done) {
+    it('uses the same attribute and property name for dashed-names names', (done) => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
@@ -62,7 +60,7 @@ describe('lifecycle/properties', () => {
       );
     });
 
-    it('uses a dash-cased attribute name for camel-case property names', function test (done) {
+    it('uses a dash-cased attribute name for camel-case property names', (done) => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
@@ -267,7 +265,7 @@ describe('lifecycle/properties', () => {
               expect(elem.testName).toEqual('test');
               elem.removeAttribute('test-name');
               afterMutations(() => {
-                expect(elem.testName).toEqual(null);
+                expect(elem.testName).toEqual(undefined);
                 fixtureArea.removeChild(elem);
                 done();
               }, 1);
@@ -294,7 +292,7 @@ describe('lifecycle/properties', () => {
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
-            () => expect(elem.testName).toBeAn('array'),
+            () => expect(typeof elem.testName).toBe('object'),
             () => expect(elem.testName.length).toBe(3),
             () => expect(elem.testName[0]).toEqual(1),
             () => expect(elem.testName[1]).toEqual(2),
@@ -311,7 +309,7 @@ describe('lifecycle/properties', () => {
           });
           elem.setAttribute('test-name', '1:2:3');
           afterMutations(
-            () => expect(elem.testName).toBeAn('array'),
+            () => expect(typeof elem.testName).toBe('object'),
             () => expect(elem.testName.length).toBe(3),
             () => expect(elem.testName[0]).toEqual(1),
             () => expect(elem.testName[1]).toEqual(2),
@@ -385,7 +383,7 @@ describe('lifecycle/properties', () => {
     describe('default', () => {
       it('null by default', () => {
         const elem = create();
-        expect(elem.testName).toEqual(null);
+        expect(elem.testName).toEqual(undefined);
       });
 
       it('should accept a value', () => {
@@ -558,7 +556,7 @@ describe('lifecycle/properties', () => {
       afterMutations(() => {
         expect(elem.getAttribute('in')).toEqual('val', 'attr in');
         expect(elem.prop).toEqual('val', 'prop out');
-        expect(elem.getAttribute('out')).toEqual('val', 'attr out');
+        expect(elem.getAttribute('out')).toEqual('abc', 'attr out');
         elem.prop = 'val1';
         afterMutations(() => {
           expect(elem.getAttribute('in')).toEqual('val', 'attr in');
@@ -615,11 +613,11 @@ describe('lifecycle/properties', () => {
       });
       const elem = fixture(`<${Elem.is} out="abc"/>`).firstChild;
       afterMutations(() => {
-        expect(elem.prop).toEqual(null);
+        expect(elem.prop).toEqual(undefined);
         expect(elem.getAttribute('out')).toEqual('abc');
         elem.setAttribute('out', 'val');
         afterMutations(() => {
-          expect(elem.prop).toEqual(null);
+          expect(elem.prop).toEqual(undefined);
           expect(elem.getAttribute('out')).toEqual('val');
           done();
         });

@@ -30,28 +30,30 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@skatejs/web-components": "1.0.0",
+    "@skatejs/bore": "4.0.0",
+    "@skatejs/ssr": "0.4.1",
+    "@skatejs/val": "0.3.1",
     "@treshugart/nwb": "0.17.1",
     "babel-cli": "6.24.1",
     "babel-eslint": "7.2.3",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "babel-preset-es2016": "6.24.1",
     "babel-preset-es2017": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
-    "bore": "1.1.0",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
     "gitbook-cli": "2.3.0",
     "husky": "0.13.3",
-    "karma-chrome-launcher": "2.0.0",
-    "karma-sauce-launcher": "1.1.0",
+    "jest": "20.0.4",
     "preact": "*",
     "semantic-release": "6.3.2",
     "semistandard": "10.0.0",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
+    "watchman": "0.1.8",
     "webpack-node-externals": "1.6.0",
     "yargs": "8.0.1"
   },
@@ -75,6 +77,25 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ],
+    "presets": [
+      "react",
+      "stage-0"
+    ]
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ],
+    "setupFiles": [
+      "./test/unit/setup"
+    ],
+    "setupTestFrameworkScriptFile": "./test/unit/setup-test",
+    "testEnvironment": "@skatejs/ssr/jest"
   },
   "semistandard": {
     "globals": [

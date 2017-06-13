@@ -1,8 +1,6 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import expect from 'expect';
-
-import { formatName } from 'src/util/with-unique';
+import { formatName } from '../../../src/util/with-unique';
 
 describe('{ formatName }', () => {
   it('should choose a default name', () => {
