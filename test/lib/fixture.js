@@ -1,11 +1,5 @@
-export default function (html, tagName) {
-  var fixture = document.getElementById('fixture');
-
-  if (!fixture) {
-    fixture = document.createElement('div');
-    fixture.id = 'fixture';
-    document.body.appendChild(fixture);
-  }
+module.exports = function (html, tagName) {
+  var fixture = document.body;
 
   if (arguments.length) {
     if (typeof html === 'string') {
@@ -26,4 +20,4 @@ export default function (html, tagName) {
   }
 
   return fixture;
-}
+};

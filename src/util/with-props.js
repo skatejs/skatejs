@@ -1,22 +1,25 @@
-import { dashCase, defineProperties, keys, sym } from '.';
+// @flow
 
-const _definedProps = sym('_definedProps');
-const _normPropDef = sym('_normPropDef');
-const _syncingAttributeToProperty = sym('_syncingAttributeToProperty');
-const _syncingPropertyToAttribute = sym('_syncingPropertyToAttribute');
+import type { PropDefinitions, PropOptions, PropOptionsNormalized } from '../types';
 
-export const _updateDebounced = sym('_updateDebounced');
+import { dashCase, keys, sym } from '.';
 
-export function defineProps (Ctor) {
-  if (Ctor[_definedProps]) {
-    return;
-  }
-  Ctor[_definedProps] = true;
+interface CanDefineProps extends HTMLElement {
+  static _definedProps: boolean;
+  static _normalizedProps: PropOptions;
+  static prototype: Object;
+  static props: PropDefinitions;
 
-  const { prototype } = Ctor;
-  const props = normPropDefs(Ctor);
+  _syncingAttributeToProperty: string | null;
+  _syncingPropertyToAttribute: boolean;
+}
 
-  defineProperties(prototype, keys(props).reduce((prev, curr) => {
+export function defineProps (Ctor: Class<CanDefineProps>): void {
+  if (Ctor._definedProps) return;
+  Ctor._definedProps = true;
+  const props: PropOptionsNormalized = normPropDefs(Ctor);
+
+  Object.defineProperties(Ctor.prototype, keys(props).reduce((prev: PropDefinitions, curr: string): Object => {
     const { attribute: { target }, coerce, default: def, serialize } = props[curr];
     const _value = sym(curr);
     prev[curr] = {
@@ -28,14 +31,14 @@ export function defineProps (Ctor) {
       set (val) {
         this[_value] = coerce(val);
         syncPropertyToAttribute(this, target, serialize, val);
-        this[_updateDebounced]();
+        this._updateDebounced();
       }
     };
     return prev;
   }, {}));
 }
 
-export function normAttribute (name, prop) {
+export function normAttribute (name: string, prop: PropOptions): Object {
   const { attribute } = prop;
   const obj = typeof attribute === 'object' ? { ...attribute } : {
     source: attribute,
@@ -50,51 +53,51 @@ export function normAttribute (name, prop) {
   return obj;
 }
 
-export function normPropDef (name, prop) {
+export function normPropDef (name: string, prop: PropOptions): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
     attribute: normAttribute(name, prop),
-    coerce: coerce || (v => v),
+    coerce: coerce || ((v: mixed) => v),
     default: def,
-    deserialize: deserialize || (v => v),
-    serialize: serialize || (v => v)
+    deserialize: deserialize || ((v: mixed) => v),
+    serialize: serialize || ((v: mixed) => v)
   };
 }
 
-export function normPropDefs (Ctor) {
-  return Ctor[_normPropDef] || (
-    Ctor[_normPropDef] = keys(Ctor.props)
-      .reduce((prev, curr) => {
+export function normPropDefs (Ctor: Class<CanDefineProps>): Object {
+  return Ctor._normalizedProps || (
+    Ctor._normalizedProps = keys(Ctor.props)
+      .reduce((prev: Object, curr: string) => {
         prev[curr] = normPropDef(curr, Ctor.props[curr] || {});
         return prev;
       }, {})
   );
 }
 
-export function syncAttributeToProperty (elem, name, value) {
-  if (elem[_syncingPropertyToAttribute]) {
+export function syncAttributeToProperty (elem: CanDefineProps, name: string, value: mixed): void {
+  if (elem._syncingPropertyToAttribute) {
     return;
   }
-  const propDefs = normPropDefs(elem.constructor);
+  const propDefs: { [string]: PropOptionsNormalized } = normPropDefs(elem.constructor);
   for (let propName in propDefs) {
     const { attribute: { source }, deserialize } = propDefs[propName];
     if (source === name) {
-      elem[_syncingAttributeToProperty] = propName;
-      elem[propName] = value == null ? value : deserialize(value);
-      elem[_syncingAttributeToProperty] = null;
+      elem._syncingAttributeToProperty = propName;
+      (elem: any)[propName] = value == null ? value : deserialize(value);
+      elem._syncingAttributeToProperty = null;
     }
   }
 }
 
-export function syncPropertyToAttribute (elem, target, serialize, val) {
-  if (target && elem[_syncingAttributeToProperty] !== target) {
+export function syncPropertyToAttribute (elem: CanDefineProps, target: string, serialize: (val: mixed) => string, val: mixed): void {
+  if (target && elem._syncingAttributeToProperty !== target) {
     const serialized = serialize(val);
-    elem[_syncingPropertyToAttribute] = true;
+    elem._syncingPropertyToAttribute = true;
     if (serialized == null) {
       elem.removeAttribute(target);
     } else {
       elem.setAttribute(target, serialized);
     }
-    elem[_syncingPropertyToAttribute] = false;
+    elem._syncingPropertyToAttribute = false;
   }
 }

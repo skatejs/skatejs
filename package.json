@@ -30,26 +30,30 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@skatejs/web-components": "1.0.0",
+    "@skatejs/bore": "4.0.0",
+    "@skatejs/ssr": "0.4.1",
+    "@skatejs/val": "0.3.1",
     "@treshugart/nwb": "0.17.1",
     "babel-cli": "6.24.1",
-    "babel-eslint": "7.2.1",
+    "babel-eslint": "7.2.3",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.24.1",
     "babel-preset-es2016": "6.24.1",
     "babel-preset-es2017": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
-    "bore": "1.1.0",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
+    "eslint-plugin-flowtype": "2.34.0",
+    "get-typed": "1.0.0-beta.1",
     "gitbook-cli": "2.3.0",
     "husky": "0.13.3",
-    "karma-chrome-launcher": "2.0.0",
-    "karma-sauce-launcher": "1.1.0",
+    "jest": "20.0.4",
     "preact": "*",
     "semantic-release": "6.3.2",
     "semistandard": "10.0.0",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
+    "watchman": "0.1.8",
     "webpack-node-externals": "1.6.0",
     "yargs": "8.0.1"
   },
@@ -59,33 +63,57 @@
   "scripts": {
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "prepublish": "nwb build && babel src --out-dir es-latest --presets=stage-0,es2017,es2016",
-    "prerelease": "npm version prerelease && git push && git push --tags && npm publish",
-    "release": "semantic-release pre && npm publish && semantic-release post",
-    "pretest": "npm run style && npm run test:node && npm run test:ts",
-    "test": "nwb test",
-    "test:watch": "npm test -- --server",
-    "test:coverage": "npm test -- --coverage",
-    "test:ci": "npm test -- --ci",
-    "test:node": "node umd/skatejs.js",
-    "test:ts": "tsc -p ./",
-    "style": "npm run style:ts && npm run style:js",
-    "style:fix": "npm run style:ts:fix && npm run style:js:fix",
-    "style:ts": "tsfmt --verify",
-    "style:ts:fix": "tsfmt -r",
-    "style:js": "semistandard",
-    "style:js:fix": "semistandard --fix",
-    "verify": "npm run style && npm test",
-    "commit": "git-cz",
+    "precommit": "semistandard",
     "commitmsg": "validate-commit-msg",
-    "prepush": "npm run verify"
+    "prepublish": "nwb build && babel src --out-dir es-latest --presets=stage-0,es2017,es2016,react",
+    "release": "git push && git push --tags && npm publish",
+    "test": "semistandard && npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
+    "test:watch": "jest --watch",
+    "test:ts": "tsc -p ./",
+    "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs"
+    ],
+    "presets": [
+      "react",
+      "stage-0"
+    ]
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ],
+    "setupFiles": [
+      "./test/unit/setup"
+    ],
+    "setupTestFrameworkScriptFile": "./test/unit/setup-test",
+    "testEnvironment": "@skatejs/ssr/jest"
+  },
   "semistandard": {
-    "parser": "babel-eslint"
+    "globals": [
+      "Class",
+      "CustomEvent",
+      "customElements",
+      "CustomElementRegistry",
+      "Event",
+      "EventTarget",
+      "HTMLElement",
+      "MutationObserver",
+      "Node"
+    ],
+    "ignore": [
+      "flow-typed"
+    ],
+    "parser": "babel-eslint",
+    "plugins": [
+      "flowtype"
+    ]
   }
 }

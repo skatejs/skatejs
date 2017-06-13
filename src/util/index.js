@@ -1,26 +1,26 @@
-export const root = typeof window === 'undefined' ? global : window;
-export const { customElements, HTMLElement = null, MutationObserver: RealMutationObserver } = root;
-export const { defineProperty, defineProperties, getOwnPropertyNames, getOwnPropertySymbols, freeze } = root.Object;
+// @flow
 
-function FakeMutationObserver (func) {
-  this.func = func;
-}
-FakeMutationObserver.prototype.observe = function (node) {
-  const { func } = this;
-  defineProperty(node, 'textContent', {
-    set () {
-      if (typeof Promise === 'undefined') {
-        setTimeout(func);
-      } else {
-        new Promise(resolve => resolve()).then(func);
+const Mo = typeof MutationObserver === 'function' ? MutationObserver : class {
+  func: Function;
+  constructor (func) {
+    this.func = func;
+  }
+  observe (node: HTMLElement) {
+    const { func } = this;
+    const prop: Object = {
+      set () {
+        if (typeof Promise === 'undefined') {
+          setTimeout(func);
+        } else {
+          new Promise(resolve => resolve()).then(func);
+        }
       }
-    }
-  });
+    };
+    Object.defineProperty(node, 'textContent', prop);
+  }
 };
 
-const MutationObserver = RealMutationObserver || FakeMutationObserver;
-
-export function dashCase (str) {
+export function dashCase (str: string): string {
   return str.split(/([_A-Z])/).reduce((one, two, idx) => {
     const dash = !one || idx % 2 === 0 ? '' : '-';
     two = two === '_' ? '' : two;
@@ -28,21 +28,18 @@ export function dashCase (str) {
   });
 }
 
-export function debounce (cbFunc) {
+export function debounce (cbFunc: () => void): Function {
   let scheduled = false;
   let i = 0;
-  let cbArgs = [];
   const elem = document.createElement('span');
-  const observer = new MutationObserver(() => {
-    cbFunc(...cbArgs);
+  const observer = new Mo(() => {
+    cbFunc();
     scheduled = false;
-    cbArgs = null;
   });
 
   observer.observe(elem, { childList: true });
 
-  return (...args) => {
-    cbArgs = args;
+  return (): void => {
     if (!scheduled) {
       scheduled = true;
       elem.textContent = `${i}`;
@@ -51,21 +48,20 @@ export function debounce (cbFunc) {
   };
 }
 
-export const empty = val =>
-  val == null;
+export const empty = <T> (val: T): boolean => val == null;
 
-export function keys (obj = {}) {
-  const names = getOwnPropertyNames(obj);
-  return getOwnPropertySymbols ? names.concat(getOwnPropertySymbols(obj)) : names;
+export function keys (obj: Object = {}): Array<any> {
+  const names = Object.getOwnPropertyNames(obj);
+  return Object.getOwnPropertySymbols ? names.concat(Object.getOwnPropertySymbols(obj)) : names;
 }
 
-export function sym (description) {
+export function sym (description?: string): Symbol | string {
   return typeof Symbol === 'function'
     ? Symbol(description ? String(description) : undefined)
     : uniqueId(description);
 }
 
-export function uniqueId (description) {
+export function uniqueId (description?: string): string {
   return (description ? String(description) : '') + 'xxxxxxxx'.replace(/[xy]/g, (c) => {
     const r = Math.random() * 16 | 0;
     const v = c === 'x' ? r : (r & 0x3 | 0x8);

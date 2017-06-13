@@ -1,8 +1,6 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import expect from 'expect';
-
-import { dashCase, debounce, keys, sym, uniqueId } from 'src/util';
+import { dashCase, debounce, keys, sym, uniqueId } from '../../../src/util';
 
 describe('utils', () => {
   describe('{ dashCase }', () => {
@@ -39,18 +37,6 @@ describe('utils', () => {
         done();
       }, 1);
     });
-
-    it('should be called with the correct arguments', (done) => {
-      let arg;
-      const debounced = debounce((x) => (arg = x));
-      debounced(1);
-      debounced(2);
-      debounced(3);
-      setTimeout(() => {
-        expect(arg).toEqual(3, 'debounce is called with the last argument');
-        done();
-      }, 1);
-    });
   });
 
   describe('{ keys }', () => {
@@ -66,9 +52,9 @@ describe('utils', () => {
     it('should return a new symbol when supported', () => {
       const _sym = sym('test');
       if (typeof Symbol === 'function') {
-        expect(_sym).toBeA('symbol');
+        expect(typeof _sym).toBe('symbol');
       } else {
-        expect(_sym).toBeA('string');
+        expect(typeof _sym).toBe('string');
       }
     });
   });

@@ -1,8 +1,12 @@
-import { customElements, dashCase } from '.';
+// @flow
 
-let suffix = 0;
+import type { FixedCustomElementRegistry } from '../types';
 
-export function formatName (prefix, suffix) {
+import { dashCase } from '.';
+
+let suffix: number = 0;
+
+export function formatName (prefix: string, suffix: number): string {
   prefix = prefix || 'element';
   return (
     prefix.indexOf('-') === -1 ? `x-${prefix}` : prefix
@@ -11,9 +15,10 @@ export function formatName (prefix, suffix) {
   );
 }
 
-export function generateName (Ctor) {
+export function generateName (Ctor: Function): string {
+  const registry: FixedCustomElementRegistry = customElements;
   const prefix = dashCase(Ctor.name);
-  while (customElements.get(formatName(prefix, suffix))) {
+  while (registry.get(formatName(prefix, suffix))) {
     suffix++;
   }
   return formatName(prefix, suffix++);

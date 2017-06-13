@@ -1,11 +1,6 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import expect from 'expect';
-
-import { withComponent } from 'src';
-import root from 'src/util/root';
-
-const { HTMLElement } = root;
+import { withComponent } from '../../src';
 
 describe('withComponent', () => {
   it('should extend custom classes', () => {

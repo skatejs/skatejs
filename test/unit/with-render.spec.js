@@ -1,10 +1,9 @@
 /** @jsx h */
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import expect from 'expect';
-import { h, mount } from 'bore';
-
-import { Component, define, h as vdom } from 'src';
+import { mount } from '@skatejs/bore';
+import { h } from '@skatejs/val';
+import { Component, define, h as vdom } from '../../src';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';

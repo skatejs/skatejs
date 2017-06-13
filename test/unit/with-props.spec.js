@@ -1,16 +1,14 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import expect from 'expect';
-
+import { h as preactH } from 'preact';
 import {
   define,
   h,
   props,
   withProps,
   withUnique
-} from 'src';
-import { h as preactH } from 'preact';
-import { sym } from 'src/util';
+} from '../../src';
+import { sym } from '../../src/util';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
@@ -54,7 +52,7 @@ describe('withProps', () => {
     it('default', () => {
       const elem2 = create(props.array);
 
-      expect(elem.test).toBeAn('array');
+      expect(typeof elem.test).toBe('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
       expect(elem.test.length).toEqual(0, 'should not contain any items');
@@ -70,7 +68,7 @@ describe('withProps', () => {
 
       it('set non-array', () => {
         elem.test = 'something';
-        expect(elem.test).toBeAn('array');
+        expect(typeof elem.test).toBe('object');
         expect(elem.test.length).toEqual(1);
         expect(elem.test[0]).toEqual('something');
       });
@@ -79,7 +77,7 @@ describe('withProps', () => {
     it('deserialize', (done) => {
       elem.setAttribute('test', '["val1","val2"]');
       afterMutations(
-        () => expect(elem.test).toBeAn('array'),
+        () => expect(typeof elem.test).toBe('object'),
         () => expect(elem.test.length).toBe(2),
         () => expect(elem.test[0]).toEqual('val1'),
         () => expect(elem.test[1]).toEqual('val2'),
@@ -147,7 +145,7 @@ describe('withProps', () => {
     });
 
     it('default', () => {
-      expect(elem.test).toBeA('number');
+      expect(typeof elem.test).toBe('number');
       expect(elem.test).toEqual(0);
       expect(elem.getAttribute('test')).toEqual(null);
     });
@@ -188,7 +186,7 @@ describe('withProps', () => {
     it('default', () => {
       const elem2 = create(props.object);
 
-      expect(elem.test).toBeAn('object');
+      expect(typeof elem.test).toBe('object');
       expect(elem.test).toEqual(elem2.test, 'should be shared');
       expect(Object.isFrozen(elem.test)).toEqual(true, 'should be frozen');
       expect(elem.getAttribute('test')).toEqual(null, 'should not set the attribute');
@@ -197,7 +195,7 @@ describe('withProps', () => {
     it('deserialize', (done) => {
       elem.setAttribute('test', '{"one": 1, "two": 2}');
       afterMutations(
-        () => expect(elem.test).toBeAn('object'),
+        () => expect(typeof elem.test).toBe('object'),
         () => expect(elem.test.one).toEqual(1),
         () => expect(elem.test.two).toEqual(2),
         done
@@ -206,7 +204,7 @@ describe('withProps', () => {
 
     it('serialize', () => {
       elem.test = {one: 1, two: 2};
-      expect(elem.getAttribute('test')).toBeA('string');
+      expect(typeof elem.getAttribute('test')).toBe('string');
       expect(elem.getAttribute('test')).toEqual('{"one":1,"two":2}');
     });
   });
@@ -235,7 +233,7 @@ describe('withProps', () => {
       const attribute = { source: true };
       types.forEach(type => {
         it(type, () => {
-          expect(props[type].attribute).toContain(attribute);
+          expect(props[type].attribute).toMatchObject(attribute);
         });
       });
     });
@@ -287,8 +285,8 @@ describe('withProps', () => {
         class Two extends One {
           static props = { two }
         }
-        expect(One.props).toContain({ one });
-        expect(Two.props).toContain({ two });
+        expect(One.props).toMatchObject({ one });
+        expect(Two.props).toMatchObject({ two });
       });
     });
 

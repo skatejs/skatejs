@@ -1,6 +1,4 @@
-import { HTMLElement, sym } from './util';
-
-const _shadowRoot = sym();
+// @flow
 
 const attachShadowOptions = { mode: 'open' };
 
@@ -8,20 +6,21 @@ function attachShadow (elem) {
   return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
 }
 
-export const withRender = (Base = HTMLElement) => class extends Base {
-  get renderRoot () {
-    this[_shadowRoot] = this[_shadowRoot] || (this[_shadowRoot] = (this.shadowRoot || attachShadow(this)));
-    return this[_shadowRoot];
-  }
+export const withRender = (Base: Class<HTMLElement> = HTMLElement): Class<HTMLElement> =>
+  class extends Base {
+    _shadowRoot: Node;
 
-  propsChangedCallback () {
-    this.rendererCallback(this.renderRoot, () => this.renderCallback(this));
-    this.renderedCallback();
-  }
+    get renderRoot () {
+      this._shadowRoot = this._shadowRoot || (this._shadowRoot = (this.shadowRoot || attachShadow(this)));
+      return this._shadowRoot;
+    }
 
-  // Called to render the component.
-  renderCallback () {}
+    propsChangedCallback () {
+      this.rendererCallback(this.renderRoot, () => this.renderCallback(this));
+      this.renderedCallback();
+    }
 
-  // Called after the component has rendered.
-  renderedCallback () {}
-};
+    renderCallback () {}
+    renderedCallback () {}
+    rendererCallback () {}
+  };
