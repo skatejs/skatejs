@@ -10,7 +10,7 @@ const defs: EventOptions = {
 
 const hasNativeSupport = verifyNativeEventSupport();
 
-function verifyNativeEventSupport() {
+function verifyNativeEventSupport () {
   try {
     const detail = {};
     const test = new CustomEvent('testEvent', { composed: true, detail });
@@ -28,7 +28,7 @@ export function emit (elem: HTMLElement, name: string, opts: EventOptions): bool
   } else {
     e = document.createEvent('CustomEvent');
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    Object.defineProperty(e, 'composed', { value: opts.composed }); 
+    Object.defineProperty(e, 'composed', { value: opts.composed });
   }
   return elem.dispatchEvent(e);
 }
