@@ -26,7 +26,7 @@ export function emit (elem: HTMLElement, name: string, opts: EventOptions): bool
   if(hasNativeSupport){
     e = new CustomEvent(name, opts);
   } else {
-    e: ComposedCustomEvent = document.createEvent('CustomEvent');
+    e = document.createEvent('CustomEvent');
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
     Object.defineProperty(e, 'composed', { value: opts.composed }); 
   }
