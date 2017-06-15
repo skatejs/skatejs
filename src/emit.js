@@ -8,15 +8,6 @@ const defs: EventOptions = {
   composed: false
 };
 
-declare global{
-    interface CustomEventInit {
-        composed: boolean;
-    }
-    interface CustomEvent {
-        composed: boolean;
-    }
-}
-
 const hasNativeSupport = verifyNativeEventSupport();
 
 function verifyNativeEventSupport() {
