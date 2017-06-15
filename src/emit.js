@@ -11,19 +11,19 @@ const defs: EventOptions = {
 const hasNativeSupport = verifyNativeEventSupport();
 
 function verifyNativeEventSupport() {
-    try {
-        const detail = {};
-        const test = new CustomEvent('testEvent', { composed: true, detail });
-        return test.composed === true && test.detail === detail;
-    } catch (error) {
-        return false;
-    }
+  try {
+    const detail = {};
+    const test = new CustomEvent('testEvent', { composed: true, detail });
+    return test.composed === true && test.detail === detail;
+  } catch (error) {
+    return false;
+  }
 }
 
 export function emit (elem: HTMLElement, name: string, opts: EventOptions): boolean {
   opts = { ...defs, ...opts };
   let e: ComposedCustomEvent;
-  if(hasNativeSupport){
+  if (hasNativeSupport) {
     e = new CustomEvent(name, opts);
   } else {
     e = document.createEvent('CustomEvent');
