@@ -1,13 +1,15 @@
-import { HTMLElement, sym } from './util';
+// @flow
+
 import { generateName } from './util/with-unique';
 
-const _is = sym('_is');
+export const withUnique = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLElement> =>
+  class extends Base {
+    static _is: string;
 
-export const withUnique = (Base = HTMLElement) => class extends Base {
-  static get is () {
-    return this[_is] || (this[_is] = generateName(this));
-  }
-  static set is (is) {
-    this[_is] = is;
-  }
-};
+    static get is () {
+      return this._is || (this._is = generateName(this));
+    }
+    static set is (is: string) {
+      this._is = is;
+    }
+  };

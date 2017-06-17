@@ -1,8 +1,7 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import { emit } from 'src';
+import { emit } from '../../src';
 import fixture from '../lib/fixture';
-import expect from 'expect';
 
 describe('api/emit', () => {
   it('default event options', done => {

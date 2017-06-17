@@ -1,6 +1,4 @@
-/* eslint-env mocha */
-
-import expect from 'expect';
+/* eslint-env jest */
 
 describe('util/with-props', () => {
   it('', () => {

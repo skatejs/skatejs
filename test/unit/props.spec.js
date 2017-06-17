@@ -1,11 +1,9 @@
-/* eslint-env mocha */
-
-import expect from 'expect';
+/* eslint-env jest */
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-import { define, withProps, withUnique } from 'src';
+import { define, withProps, withUnique } from '../../src';
 
 describe('api/props', () => {
   let elem;

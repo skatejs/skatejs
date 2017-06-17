@@ -1,9 +1,12 @@
-import { customElements } from './util';
+// @flow
 
-export function define (Ctor) {
-  const { is } = Ctor;
-  if (!customElements.get(is)) {
-    customElements.define(is, Ctor);
+import type { FixedCustomElementRegistry, CustomElement } from './types';
+
+export function define (Ctor: Class<CustomElement>): Class<CustomElement> {
+  const registry: FixedCustomElementRegistry = customElements;
+  const is = Ctor.is;
+  if (!registry.get(is)) {
+    registry.define(is, Ctor);
   }
   return Ctor;
 }

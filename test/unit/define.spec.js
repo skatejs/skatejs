@@ -1,7 +1,6 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import { define } from 'src';
-import expect from 'expect';
+import { define } from '../../src';
 
 const { customElements, HTMLElement } = window;
 

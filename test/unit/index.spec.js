@@ -1,44 +1,43 @@
-/* eslint-env mocha */
+/* eslint-env jest */
 
-import * as api from 'src';
-import expect from 'expect';
+import * as api from '../../src';
 
 describe('exports', () => {
   it('skate', () => {
-    expect(api).toBeAn('object');
+    expect(typeof api).toBe('object');
   });
 
   it('skate.Component', () => {
-    expect(api.Component).toBeA('function');
+    expect(typeof api.Component).toBe('function');
   });
 
   it('skate.define', () => {
-    expect(api.define).toBeA('function');
+    expect(typeof api.define).toBe('function');
   });
 
   it('skate.emit', () => {
-    expect(api.emit).toBeA('function');
+    expect(typeof api.emit).toBe('function');
   });
 
   it('skate.link', () => {
-    expect(api.link).toBeA('function');
+    expect(typeof api.link).toBe('function');
   });
 
   it('skate.with*', () => {
-    expect(api.withComponent).toBeA('function', 'withComponent');
-    expect(api.withProps).toBeA('function', 'withProps');
-    expect(api.withRender).toBeA('function', 'withRender');
+    expect(typeof api.withComponent).toBe('function', 'withComponent');
+    expect(typeof api.withProps).toBe('function', 'withProps');
+    expect(typeof api.withRender).toBe('function', 'withRender');
   });
 
   it('skate.props.*', () => {
-    expect(api.props.array).toBeAn('object', 'array');
-    expect(api.props.boolean).toBeAn('object', 'boolean');
-    expect(api.props.number).toBeAn('object', 'number');
-    expect(api.props.object).toBeAn('object', 'object');
-    expect(api.props.string).toBeAn('object', 'string');
+    expect(typeof api.props.array).toBe('object', 'array');
+    expect(typeof api.props.boolean).toBe('object', 'boolean');
+    expect(typeof api.props.number).toBe('object', 'number');
+    expect(typeof api.props.object).toBe('object', 'object');
+    expect(typeof api.props.string).toBe('object', 'string');
   });
 
   it('skate.h', () => {
-    expect(api.h).toBeA('function');
+    expect(typeof api.h).toBe('function');
   });
 });
