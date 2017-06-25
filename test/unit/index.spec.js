@@ -30,11 +30,11 @@ describe('exports', () => {
   });
 
   it('skate.props.*', () => {
-    expect(typeof api.props.array).toBe('object', 'array');
-    expect(typeof api.props.boolean).toBe('object', 'boolean');
-    expect(typeof api.props.number).toBe('object', 'number');
-    expect(typeof api.props.object).toBe('object', 'object');
-    expect(typeof api.props.string).toBe('object', 'string');
+    expect(typeof api.props.array).toBe('function', 'array');
+    expect(typeof api.props.boolean).toBe('function', 'boolean');
+    expect(typeof api.props.number).toBe('function', 'number');
+    expect(typeof api.props.object).toBe('function', 'object');
+    expect(typeof api.props.string).toBe('function', 'string');
   });
 
   it('skate.h', () => {

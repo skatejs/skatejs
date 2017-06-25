@@ -40,6 +40,15 @@ describe('utils', () => {
   });
 
   describe('{ keys }', () => {
+    it('should accept falsy arguments', () => {
+      const empty = [];
+      expect(keys()).toMatchObject(empty);
+      expect(keys('')).toMatchObject(empty);
+      expect(keys(0)).toMatchObject(empty);
+      expect(keys(null)).toMatchObject(empty);
+      expect(keys(undefined)).toMatchObject(empty);
+    });
+
     it('should return both normal keys and symbol keys from an object', () => {
       const _sym = sym('_sym');
       const names = keys({ foo: 1, [_sym]: 2 });

@@ -1,44 +1,21 @@
 // @flow
 
-import type { PropDefinitions, PropOptions, PropOptionsNormalized } from '../types';
+import type {
+  PropOptions,
+  PropsOptionsNormalized
+} from '../types';
 
-import { dashCase, keys, sym } from '.';
+import { dashCase } from '.';
 
 interface CanDefineProps extends HTMLElement {
-  static _definedProps: boolean;
-  static _normalizedProps: PropOptions;
   static prototype: Object;
-  static props: PropDefinitions;
+  static props: PropsOptionsNormalized;
 
   _syncingAttributeToProperty: string | null;
   _syncingPropertyToAttribute: boolean;
 }
 
-export function defineProps (Ctor: Class<CanDefineProps>): void {
-  if (Ctor._definedProps) return;
-  Ctor._definedProps = true;
-  const props: PropOptionsNormalized = normPropDefs(Ctor);
-
-  Object.defineProperties(Ctor.prototype, keys(props).reduce((prev: PropDefinitions, curr: string): Object => {
-    const { attribute: { target }, coerce, default: def, serialize } = props[curr];
-    const _value = sym(curr);
-    prev[curr] = {
-      configurable: true,
-      get () {
-        const val = this[_value];
-        return val == null ? def : val;
-      },
-      set (val) {
-        this[_value] = coerce(val);
-        syncPropertyToAttribute(this, target, serialize, val);
-        this._updateDebounced();
-      }
-    };
-    return prev;
-  }, {}));
-}
-
-export function normAttribute (name: string, prop: PropOptions): Object {
+export function normaliseAttributeDefinition (name: string, prop: PropOptions): Object {
   const { attribute } = prop;
   const obj = typeof attribute === 'object' ? { ...attribute } : {
     source: attribute,
@@ -53,10 +30,10 @@ export function normAttribute (name: string, prop: PropOptions): Object {
   return obj;
 }
 
-export function normPropDef (name: string, prop: PropOptions): Object {
+export function normalisePropertyDefinition (name: string, prop: PropOptions): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
-    attribute: normAttribute(name, prop),
+    attribute: normaliseAttributeDefinition(name, prop),
     coerce: coerce || ((v: mixed) => v),
     default: def,
     deserialize: deserialize || ((v: mixed) => v),
@@ -64,21 +41,11 @@ export function normPropDef (name: string, prop: PropOptions): Object {
   };
 }
 
-export function normPropDefs (Ctor: Class<CanDefineProps>): Object {
-  return Ctor._normalizedProps || (
-    Ctor._normalizedProps = keys(Ctor.props)
-      .reduce((prev: Object, curr: string) => {
-        prev[curr] = normPropDef(curr, Ctor.props[curr] || {});
-        return prev;
-      }, {})
-  );
-}
-
 export function syncAttributeToProperty (elem: CanDefineProps, name: string, value: mixed): void {
   if (elem._syncingPropertyToAttribute) {
     return;
   }
-  const propDefs: { [string]: PropOptionsNormalized } = normPropDefs(elem.constructor);
+  const propDefs: PropsOptionsNormalized = elem.constructor.props;
   for (let propName in propDefs) {
     const { attribute: { source }, deserialize } = propDefs[propName];
     if (source === name) {

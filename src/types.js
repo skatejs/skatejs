@@ -46,8 +46,6 @@ export type PropOptions = {
   serialize?: (val: mixed) => null | string
 };
 
-export type PropDefinitions = { [string]: PropOptions };
-
 export type PropOptionsNormalized = {
   attribute: { source: string, target: string},
   coerce: (val: mixed) => mixed,
@@ -56,9 +54,16 @@ export type PropOptionsNormalized = {
   serialize: (val: mixed) => null | string
 }
 
+export type PropsOptions = { [string]: PropOptions };
+export type PropsOptionsNormalized = { [string]: PropOptionsNormalized };
+
 export type WithLink = EventTarget & {
   checked?: boolean;
   name?: string;
   type?: string;
   value?: string;
+};
+
+export type HasConstructor = {
+  constructor: Function
 };

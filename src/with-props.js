@@ -1,29 +1,63 @@
 // @flow
 
 import type {
+  HasConstructor,
   PropOptions,
-  PropOptionsAttribute
+  PropsOptionsNormalized
 } from './types';
 
 import {
   debounce,
   empty,
-  keys
+  keys,
+  sym
 } from './util';
 
 import {
-  defineProps,
-  normPropDefs,
-  syncAttributeToProperty
+  normalisePropertyDefinition,
+  syncAttributeToProperty,
+  syncPropertyToAttribute
 } from './util/with-props';
+
+export function prop (definition: PropOptions | void): Function {
+  const propertyDefinition: PropOptions = definition || {};
+
+  // Allows decorators, or imperative definitions.
+  const func = function ({ constructor }: HasConstructor, name: string): void {
+    const normalised = normalisePropertyDefinition(name, propertyDefinition);
+    const _value = sym(name);
+
+    // Cache the value so we can reference when syncing the attribute to the property.
+    constructor._props[name] = normalised;
+
+    if (normalised.attribute.source) {
+      constructor.observedAttributes = normalised.attribute.source;
+    }
+
+    Object.defineProperty(constructor.prototype, name, {
+      configurable: true,
+      get () {
+        const val = this[_value];
+        return val == null ? normalised.default : val;
+      },
+      set (val) {
+        this[_value] = normalised.coerce(val);
+        syncPropertyToAttribute(this, normalised.attribute.target, normalised.serialize, val);
+        this._updateDebounced();
+      }
+    });
+  };
+
+  // Allows easy extension of pre-defined props { ...prop(), ...{} }.
+  keys(propertyDefinition).forEach(key => (func[key] = propertyDefinition[key]));
+
+  return func;
+}
 
 export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLElement> =>
   class extends Base {
-    static _definedProps: boolean;
-    static _normalizedProps: { [string]: PropOptions };
-    static _observedAttributes: Array<string>;
-
-    static props: { [string]: PropOptions };
+    static _observedAttributes: Array<string> = [];
+    static _props: PropsOptionsNormalized = {};
 
     _connected: boolean;
     _constructed: boolean;
@@ -34,17 +68,23 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
     _updating: boolean;
 
     static get observedAttributes (): Array<string> {
-      const props: { [string]: PropOptions } = normPropDefs(this);
-      return keys(props)
-        .map((k: string): ?PropOptionsAttribute => props[k].attribute)
-        .filter(Boolean)
-        // $FlowFixMe - find out how to do a.source while accepting non-object primitives.
-        .map((a: PropOptionsAttribute) => a.source)
-        .concat(this._observedAttributes || []);
+      return this._observedAttributes;
     }
 
-    static set observedAttributes (attrs: Array<string>) {
-      this._observedAttributes = attrs;
+    static set observedAttributes (attrs: string | Array<string>) {
+      this._observedAttributes = this.observedAttributes.concat(attrs);
+    }
+
+    static get props (): PropsOptionsNormalized {
+      return this._props;
+    }
+
+    static set props (props: PropOptions): void {
+      keys(props).forEach(name => {
+        let func = props[name];
+        if (typeof func !== 'function') func = prop(func);
+        func({ constructor: this }, name);
+      });
     }
 
     get props (): Object {
@@ -63,7 +103,6 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
       super();
       if (this._constructed) return;
       this._constructed = true;
-      defineProps(this.constructor);
       this._updateDebounced = debounce(this._updateCallback);
     }
 
@@ -78,7 +117,7 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
     disconnectedCallback () {
       if (!this._connected) return;
       this._connected = false;
-      // $FlowFixMe - HTMLElement doesn't implement disConnectedCallback.
+      // $FlowFixMe - HTMLElement doesn't implement disconnectedCallback.
       if (super.disconnectedCallback) super.disconnectedCallback();
     }
 
@@ -125,43 +164,52 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
 
 const { parse, stringify } = JSON;
 const attribute = Object.freeze({ source: true });
-const createProp = (obj: PropOptions): PropOptions => Object.freeze({ ...{ attribute }, ...obj });
 const zeroOrNumber = (val: string): number => (empty(val) ? 0 : Number(val));
 
-const array: PropOptions = createProp({
+const any: Function = prop({
+  attribute
+});
+
+const array: Function = prop({
+  attribute,
   coerce: <T>(val: Array<T> | T): Array<T> | null => Array.isArray(val) ? val : (empty(val) ? null : [val]),
   default: Object.freeze([]),
   deserialize: parse,
   serialize: stringify
 });
 
-const boolean: PropOptions = createProp({
+const boolean: Function = prop({
+  attribute,
   coerce: Boolean,
   default: false,
   deserialize: (val: string): boolean => !empty(val),
   serialize: (val: mixed): null | string => val ? '' : null
 });
 
-const number: PropOptions = createProp({
+const number: Function = prop({
+  attribute,
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
   serialize: (val: mixed): null | string => empty(val) ? null : String(Number(val))
 });
 
-const object: PropOptions = createProp({
+const object: Function = prop({
+  attribute,
   default: Object.freeze({}),
   deserialize: parse,
   serialize: stringify
 });
 
-const string: PropOptions = createProp({
+const string: Function = prop({
+  attribute,
   default: '',
   coerce: String,
   serialize: (val: mixed): null | string => empty(val) ? null : String(val)
 });
 
 export const props = {
+  any,
   array,
   boolean,
   number,

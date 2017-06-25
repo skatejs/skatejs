@@ -16,11 +16,9 @@ import hasSymbol from '../lib/has-symbol';
 
 function create (propLocal) {
   const el = new (define(class extends withUnique(withProps()) {
-    static get props () {
-      return {
-        test: { ...propLocal, ...{ attribute: true } }
-      };
-    }
+    static props = {
+      test: { ...propLocal, ...{ attribute: true } }
+    };
   }))();
   document.body.appendChild(el);
   return el;
@@ -250,14 +248,12 @@ describe('withProps', () => {
 
     beforeEach(done => {
       elem = new (define(class extends withUnique(withProps()) {
-        static get props () {
-          return {
-            [secret1]: null,
-            [secret2]: null,
-            public1: null,
-            public2: null
-          };
-        }
+        static props = {
+          [secret1]: null,
+          [secret2]: null,
+          public1: null,
+          public2: null
+        };
         constructor () {
           super();
           this._rendered = 0;

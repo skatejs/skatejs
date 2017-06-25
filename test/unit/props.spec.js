@@ -11,13 +11,11 @@ describe('api/props', () => {
 
   beforeEach(done => {
     ElemClass = define(class extends withUnique(withProps()) {
-      static get props () {
-        return {
-          prop1: null,
-          prop2: null,
-          prop3: null
-        };
-      }
+      static props = {
+        prop1: null,
+        prop2: null,
+        prop3: null
+      };
       constructor () {
         super();
         this._rendered = 0;

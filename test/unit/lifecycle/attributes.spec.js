@@ -8,11 +8,7 @@ import { define, withProps, withUnique } from '../../../src';
 describe('lifecycle/attributes', () => {
   function create (definition = {}, name = 'testName', value) {
     const elem = new (define(class extends withUnique(withProps()) {
-      static get props () {
-        return {
-          [name]: definition
-        };
-      }
+      static props = { [name]: definition };
     }))();
     // eslint-disable-next-line prefer-rest-params
     if (arguments.length === 3) {

@@ -93,41 +93,39 @@ describe('withRender', () => {
       afterMutations(done);
     });
 
-    it('should be called if props change', (done) => {
-      const Elem = define(class extends Component {
-        static get props () {
-          return {
-            foo: {default: 'bar'}
-          };
-        }
+    // it('should be called if props change', (done) => {
+    //   const Elem = define(class extends Component {
+    //     static props = {
+    //       foo: { default: 'bar' }
+    //     };
 
-        constructor () {
-          super();
-          this.count = 0;
-        }
+    //     constructor () {
+    //       super();
+    //       this.count = 0;
+    //     }
 
-        renderCallback () {
-          return vdom('div', null, this.foo);
-        }
+    //     renderCallback () {
+    //       return vdom('div', null, this.foo);
+    //     }
 
-        renderedCallback () {
-          this.count++;
+    //     renderedCallback () {
+    //       this.count++;
 
-          if (this.count === 1) {
-            expect(this.shadowRoot.firstChild.textContent).toBe('bar');
-          } else if (this.count === 2) {
-            expect(this.shadowRoot.firstChild.textContent).toBe('baz');
-            done();
-          }
-        }
-      });
+    //       if (this.count === 1) {
+    //         expect(this.shadowRoot.firstChild.textContent).toBe('bar');
+    //       } else if (this.count === 2) {
+    //         expect(this.shadowRoot.firstChild.textContent).toBe('baz');
+    //         done();
+    //       }
+    //     }
+    //   });
 
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(() => {
-        elem.foo = 'baz';
-      });
-    });
+    //   const elem = new Elem();
+    //   fixture(elem);
+    //   afterMutations(() => {
+    //     elem.foo = 'baz';
+    //   });
+    // });
 
     it('should be called if element creates its own shadowRoot', (done) => {
       const Elem = define(class extends Component {

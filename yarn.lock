@@ -61,9 +61,9 @@
   dependencies:
     skatejs-dom-diff "^0.4.2"
 
-"@skatejs/ssr@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@skatejs/ssr/-/ssr-0.4.0.tgz#21af8d0fa087c94e51674652a87721d349691d75"
+"@skatejs/ssr@0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@skatejs/ssr/-/ssr-0.4.1.tgz#c3d778e959ad3eda29607265240099ac243b4218"
   dependencies:
     parse5 "^3.0.2"
     preact "^8.1.0"

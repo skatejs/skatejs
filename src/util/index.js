@@ -50,7 +50,8 @@ export function debounce (cbFunc: () => void): Function {
 
 export const empty = <T> (val: T): boolean => val == null;
 
-export function keys (obj: Object = {}): Array<any> {
+export function keys (obj: Object | void): Array<any> {
+  obj = obj || {};
   const names = Object.getOwnPropertyNames(obj);
   return Object.getOwnPropertySymbols ? names.concat(Object.getOwnPropertySymbols(obj)) : names;
 }

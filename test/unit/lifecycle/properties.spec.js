@@ -13,11 +13,7 @@ function withPropsUnique (Base = HTMLElement) {
 describe('lifecycle/properties', () => {
   function create (definition = {}, name = 'testName', value) {
     const elem = new (define(class extends withPropsUnique() {
-      static get props () {
-        return {
-          [name]: definition
-        };
-      }
+      static props = { [name]: definition };
     }))();
     if (arguments.length === 3) { // eslint-disable-line prefer-rest-params
       elem[name] = value;
@@ -32,9 +28,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return { testprop: { attribute: true } };
-        }
+        static props = { testprop: { attribute: true } };
       }))();
 
       afterMutations(
@@ -48,9 +42,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return { 'test-prop': { attribute: true } };
-        }
+        static props = { 'test-prop': { attribute: true } };
       }))();
 
       afterMutations(
@@ -64,9 +56,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return { testProp: { attribute: true } };
-        }
+        static props = { testProp: { attribute: true } };
       }))();
 
       afterMutations(
@@ -80,11 +70,7 @@ describe('lifecycle/properties', () => {
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', (done) => {
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return {
-            testprop: { attribute: true }
-          };
-        }
+        static props = { testprop: { attribute: true } };
       }))();
 
       afterMutations(
@@ -96,11 +82,7 @@ describe('lifecycle/properties', () => {
 
     it('uses the same attribute and property name for dashed-names names', (done) => {
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return {
-            'test-prop': { attribute: true }
-          };
-        }
+        static props = { 'test-prop': { attribute: true } };
       }))();
 
       afterMutations(
@@ -112,11 +94,7 @@ describe('lifecycle/properties', () => {
 
     it('uses a dash-cased attribute name for camel-case property names', (done) => {
       const elem = new (define(class extends withPropsUnique() {
-        static get props () {
-          return {
-            testProp: { attribute: true }
-          };
-        }
+        static props = { testProp: { attribute: true } };
       }))();
 
       afterMutations(
@@ -129,22 +107,20 @@ describe('lifecycle/properties', () => {
 
   it('should not leak options to other definitions', () => {
     const elem = new (define(class extends withPropsUnique() {
-      static get props () {
-        return {
-          test1: {
-            attribute: true,
-            default: 'test1',
-            deserialize: () => 'test1',
-            serialize: () => 'test1'
-          },
-          test2: {
-            attribute: true,
-            default: 'test2',
-            deserialize: () => 'test2',
-            serialize: () => 'test2'
-          }
-        };
-      }
+      static props = {
+        test1: {
+          attribute: true,
+          default: 'test1',
+          deserialize: () => 'test1',
+          serialize: () => 'test1'
+        },
+        test2: {
+          attribute: true,
+          default: 'test2',
+          deserialize: () => 'test2',
+          serialize: () => 'test2'
+        }
+      };
     }))();
 
     ['test1', 'test2'].forEach((value) => {
