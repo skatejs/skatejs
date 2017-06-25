@@ -49,7 +49,7 @@ export function prop (definition: PropOptions | void): Function {
   };
 
   // Allows easy extension of pre-defined props { ...prop(), ...{} }.
-  keys(propertyDefinition).forEach(key => (func[key] = propertyDefinition[key]));
+  Object.keys(propertyDefinition).forEach(key => (func[key] = propertyDefinition[key]));
 
   return func;
 }

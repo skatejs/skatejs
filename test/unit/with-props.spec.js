@@ -4,6 +4,7 @@ import { h as preactH } from 'preact';
 import {
   define,
   h,
+  prop,
   props,
   withProps,
   withUnique
@@ -329,5 +330,21 @@ describe('withProps', () => {
 
   it('should directly export h from preact', () => {
     expect(h).toEqual(preactH);
+  });
+
+  describe('{ prop }', function () {
+    it('should define a property on an element', () => {
+      const elem = new (class extends withProps() {})();
+
+      prop({ ...props.string, ...{ attribute: true } })(elem, 'test');
+
+      expect(elem.test).toBe('');
+      expect(elem.hasAttribute('test')).toEqual(false);
+
+      elem.test = true;
+
+      expect(elem.test).toBe('true');
+      expect(elem.hasAttribute('test')).toEqual(true);
+    });
   });
 });
