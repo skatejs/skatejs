@@ -9,7 +9,7 @@ export const withComponent = (Base?: Class<any> = HTMLElement): Class<HTMLElemen
   class extends withRender(withUnique(withProps(Base))) {
     _preactDom: Object;
     rendererCallback (shadowRoot: Node, renderCallback: () => Object) {
-      this._preactDom = render(renderCallback(), shadowRoot, this._preactDom);
+      this._preactDom = render(renderCallback(), shadowRoot, this._preactDom || shadowRoot.children[0]);
     }
   };
 
