@@ -196,4 +196,37 @@ describe('withRender', () => {
       return mount(<Elem />).waitFor(w => w.has(<div>testing</div>));
     });
   });
+
+  describe('should progressive enhance exiting markup', () => {
+    it('on shadow dom', () => {
+      customElements.define('x-c', class extends Component {
+        renderCallback () {
+          return vdom('div', {}, 'Hello2');
+        }
+      });
+      const elem = document.createElement('div');
+      fixture(elem);
+      const elem2 = document.createElement('x-c');
+      let sR = elem2.attachShadow({mode: 'open'});
+      sR.innerHTML = '<div>Hello</div>';
+      elem.appendChild(elem2);
+      return mount(elem).waitFor(() => elem.children[0].shadowRoot.innerHTML === '<div>Hello2</div>');
+    });
+
+    it('on light dom', () => {
+      customElements.define('x-c', class extends Component {
+        get renderRoot () {
+          return this;
+        }
+
+        renderCallback () {
+          return vdom('div', {}, 'Hello2');
+        }
+      });
+      const elem = document.createElement('div');
+      fixture(elem);
+      elem.innerHTML = '<x-c><div>Hello</div></x-c>';
+      return mount(elem).waitFor(() => elem.innerHTML === '<x-c><div>Hello2</div></x-c>');
+    });
+  });
 });
