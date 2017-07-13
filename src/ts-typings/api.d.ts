@@ -24,13 +24,13 @@ export class Component<Props> extends HTMLElement {
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
   //               and https://github.com/skatejs/skatejs/pull/952#issuecomment-264500153
-  props: Partial<Props> & ComponentDefaultProps
+  props: Partial<Props> & ComponentDefaultProps;
 
-  static readonly is: string
-  static readonly props: ComponentProps<any, any>
-  static readonly observedAttributes: string[]
+  static is: string;
+  static props: ComponentProps<any, any>;
+  static readonly observedAttributes: string[];
 
-  readonly renderRoot?: this | JSX.Element
+  readonly renderRoot?: this | JSX.Element;
 
   // Custom Elements v1
   connectedCallback(): void
@@ -94,13 +94,15 @@ export function emit(elem: EventTarget, eventName: string, eventOptions?: EmitOp
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export const props: {
-  readonly array: PropOptions;
-  readonly boolean: PropOptions;
-  readonly number: PropOptions;
-  readonly object: PropOptions;
-  readonly string: PropOptions;
+  readonly any: PropOptions & PropertyDecorator;
+  readonly array: PropOptions & PropertyDecorator;
+  readonly boolean: PropOptions & PropertyDecorator;
+  readonly number: PropOptions & PropertyDecorator;
+  readonly object: PropOptions & PropertyDecorator;
+  readonly string: PropOptions & PropertyDecorator;
 };
 
+export const prop: (ops?: PropOptions) => (PropertyDecorator & PropOptions);
 
 // Mixins
 type Constructor<T> = new (...args: any[]) => T;

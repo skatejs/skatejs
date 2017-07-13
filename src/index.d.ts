@@ -9,6 +9,7 @@ export {
   StatelessComponent,
   ComponentClass,
   SFC,
+  prop,
   props,
   link,
   define,
