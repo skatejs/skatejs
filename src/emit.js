@@ -1,6 +1,6 @@
 // @flow
 
-import { ComposedCustomEvent, EventOptions } from './types';
+import type { ComposedCustomEvent, EventOptions } from './types';
 
 const defs: EventOptions = {
   bubbles: true,
