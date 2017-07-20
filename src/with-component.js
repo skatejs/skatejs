@@ -1,9 +1,19 @@
 // @flow
 
-import { h, render } from 'preact';
+import { h, render, options } from 'preact';
 import { withProps } from './with-props';
 import { withRender } from './with-render';
 import { withUnique } from './with-unique';
+import { isDefined } from './define';
+
+let oldVnodeHook = options.vnode;
+options.vnode = (vnode) => {
+  if (oldVnodeHook) oldVnodeHook(vnode);
+  vnode.skipChildren =
+    typeof vnode.nodeName === 'string' &&
+    vnode.nodeName.indexOf('-') > 0 &&
+    isDefined(vnode.nodeName);
+};
 
 export const withComponent = (Base?: Class<any> = HTMLElement): Class<HTMLElement> =>
   class extends withRender(withUnique(withProps(Base))) {

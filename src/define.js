@@ -10,3 +10,8 @@ export function define (Ctor: Class<CustomElement>): Class<CustomElement> {
   }
   return Ctor;
 }
+
+export function isDefined (name) {
+  const registry: FixedCustomElementRegistry = customElements;
+  return !!registry.get(name);
+}

@@ -229,4 +229,36 @@ describe('withRender', () => {
       return mount(elem).waitFor(() => elem.innerHTML === '<x-c><div>Hello2</div></x-c>');
     });
   });
+
+  it('rendering parent component should not remove content from nested custom-element when rendering in light dom', (done) => {
+    define(class extends Component {
+      static is = 'x-child';
+      get renderRoot () { return this; }
+      renderCallback () {
+        return 'Child';
+      }
+    });
+
+    customElements.define('x-parent', class extends Component {
+      static props = { 'name': { attribute: true } };
+      get renderRoot () { return this; }
+      name = 'Foo';
+      renderCallback () {
+        return vdom('div', {},
+          vdom('span', {}, this.name),
+          vdom('x-child', {})
+        );
+      }
+    });
+
+    let fix = fixture('<x-parent/>');
+
+    afterMutations(
+      () => expect(fix.firstChild.firstChild.children[1].innerHTML).toBe('Child'),
+      () => expect(fix.firstChild.firstChild.children[0].innerHTML).toBe('Foo'),
+      () => { fix.children[0].name = 'Boo'; },
+      () => expect(fix.firstChild.firstChild.children[1].innerHTML).toBe('Child'),
+      () => expect(fix.firstChild.firstChild.children[0].innerHTML).toBe('Boo'),
+      done);
+  });
 });
