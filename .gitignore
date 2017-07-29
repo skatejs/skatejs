@@ -3,6 +3,7 @@
 /es
 /esnext
 /lib
+/node
 /node_modules
 /umd
 npm-debug.log*

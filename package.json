@@ -8,7 +8,8 @@
     "type": "git",
     "url": "https://github.com/skatejs/skatejs"
   },
-  "main": "umd/skatejs.js",
+  "browser": "umd/skatejs.js",
+  "main": "node/index.js",
   "module": "es/index.js",
   "esnext": "esnext/index.js",
   "types": "src/index.d.ts",
@@ -22,12 +23,7 @@
     "vdom",
     "virtual"
   ],
-  "files": [
-    "esnext",
-    "es",
-    "src",
-    "umd"
-  ],
+  "files": ["esnext", "es", "node", "src", "umd"],
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
@@ -38,6 +34,7 @@
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.0",
+    "babel-preset-env": "1.6.0",
     "babel-preset-es2016": "6.24.1",
     "babel-preset-es2017": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
@@ -50,7 +47,6 @@
     "jest": "20.0.4",
     "preact": "*",
     "semantic-release": "6.3.2",
-    "semistandard": "10.0.0",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
@@ -62,14 +58,14 @@
     "preact": "*"
   },
   "scripts": {
+    "build:esnext": "babel src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
+    "build:node": "babel src --out-dir node --presets=$(pwd)/config/babel.node",
     "commitmsg": "validate-commit-msg",
     "docs:build": "gitbook install && gitbook build",
     "docs:watch": "gitbook install && gitbook serve",
-    "precommit": "semistandard",
-    "build:esnext": "babel src --out-dir esnext --no-babelrc --presets=stage-0,es2017,es2016,react,$(pwd)/config/esnext.babel",
-    "prepublish": "nwb build && npm run build:esnext",
+    "prepublish": "nwb build && npm run build:esnext && npm run build:node",
     "release": "git push && git push --tags && npm publish",
-    "test": "semistandard && npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
+    "test": "npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
@@ -80,42 +76,13 @@
     }
   },
   "babel": {
-    "plugins": [
-      "transform-es2015-modules-commonjs"
-    ],
-    "presets": [
-      "react",
-      "stage-0"
-    ]
+    "plugins": ["transform-es2015-modules-commonjs"],
+    "presets": ["react", "stage-0"]
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
-  },
-  "semistandard": {
-    "globals": [
-      "Class",
-      "CustomEvent",
-      "customElements",
-      "CustomElementRegistry",
-      "Event",
-      "EventTarget",
-      "HTMLElement",
-      "MutationObserver",
-      "Node"
-    ],
-    "ignore": [
-      "flow-typed"
-    ],
-    "parser": "babel-eslint",
-    "plugins": [
-      "flowtype"
-    ]
   }
 }
