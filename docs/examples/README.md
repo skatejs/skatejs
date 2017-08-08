@@ -38,8 +38,8 @@ customElements.define('x-counter', class extends skate.Component {
   }
   renderCallback () {
     // By separating the strings (and not using template literals or string
-    // concatenation) it ensures the strings are diffed indepenedently. If
-    // you select "Count" with your mouse, it will not deselect whenr endered.
+    // concatenation) it ensures the strings are diffed independently. If
+    // you select "Count" with your mouse, it will not deselect when rendered.
     return skate.h('div', 'Count ', this.count);
   }
 });
