@@ -64,7 +64,7 @@
     "prepublish": "nwb build && npm run build:esnext && npm run build:node",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
-    "site": "ssr --out public --src site/**",
+    "site": "./node_modules/.bin/ssr --out public --src site/**",
     "test": "npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
