@@ -5,7 +5,7 @@
 /lib
 /node
 /node_modules
+/public
+/ts-output
 /umd
 npm-debug.log*
-/_book
-/ts-output

@@ -27,7 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
-    "@skatejs/ssr": "0.4.1",
+    "@skatejs/ssr": "0.9.0",
     "@skatejs/val": "0.3.1",
     "@treshugart/nwb": "0.17.1",
     "babel-cli": "6.24.1",
@@ -64,6 +64,7 @@
     "prepublish": "nwb build && npm run build:esnext && npm run build:node",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
+    "site": "ssr --out public --src site/**",
     "test": "npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
