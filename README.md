@@ -1,4 +1,4 @@
-# [Skate][gitbook]
+# Skate
 
 [![Downloads per month](https://img.shields.io/npm/dm/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
@@ -122,8 +122,6 @@ Skate supports all evergreens and IE11. We recommend using the following polyfil
 - Custom Elements: https://github.com/webcomponents/custom-elements
 - Shadow DOM: https://github.com/webcomponents/shadydom
 - Shadow DOM CSS fills: https://github.com/webcomponents/shadycss
-
-[gitbook]: https://skatejs.gitbooks.io/skatejs/content/
 
 ## Backers
 Support us with a monthly donation and help us continue our activities. [[Become a backer](https://opencollective.com/skatejs#backer)]

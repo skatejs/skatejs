@@ -23,13 +23,7 @@
     "vdom",
     "virtual"
   ],
-  "files": [
-    "esnext",
-    "es",
-    "node",
-    "src",
-    "umd"
-  ],
+  "files": ["esnext", "es", "node", "src", "umd"],
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
@@ -48,7 +42,6 @@
     "cz-conventional-changelog": "2.0.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
-    "gitbook-cli": "2.3.0",
     "husky": "0.13.3",
     "jest": "20.0.4",
     "lint-staged": "4.0.2",
@@ -68,8 +61,6 @@
     "build:esnext": "babel src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
     "build:node": "babel src --out-dir node --presets=$(pwd)/config/babel.node",
     "commitmsg": "validate-commit-msg",
-    "docs:build": "gitbook install && gitbook build",
-    "docs:watch": "gitbook install && gitbook serve",
     "prepublish": "nwb build && npm run build:esnext && npm run build:node",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
@@ -79,10 +70,7 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.(js|json)": ["prettier --write", "git add"]
   },
   "config": {
     "commitizen": {
@@ -90,21 +78,12 @@
     }
   },
   "babel": {
-    "plugins": [
-      "transform-es2015-modules-commonjs"
-    ],
-    "presets": [
-      "react",
-      "stage-0"
-    ]
+    "plugins": ["transform-es2015-modules-commonjs"],
+    "presets": ["react", "stage-0"]
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }
