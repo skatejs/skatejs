@@ -10,6 +10,7 @@ export default define(
       return (
         <div>
           <Heading>SkateJS</Heading>
+          <p>Basic usage:</p>
           <Code
             src={`
             /** @jsx h */
@@ -23,6 +24,15 @@ export default define(
             }
           `}
           />
+          <p>Would render:</p>
+          <Code src={`Hello, World!`} />
+          <p>To install Skate, all you have to do is run:</p>
+          <Code src={`npm install skatejs preact`} />
+          <p>
+            Skate uses Preact as its default renderer when you extend{" "}
+            <code>Component</code>. You don't have to do this if you're using a
+            custom renderer.
+          </p>
         </div>
       );
     }
