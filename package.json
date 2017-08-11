@@ -65,7 +65,7 @@
     "preact": "*"
   },
   "scripts": {
-    "build:esnext": "babel src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
+    "build:esnext": "babel src --no-babelrc --out-dir esnext --presets=$(pwd)/config/babel.esnext",
     "build:node": "babel src --out-dir node --presets=$(pwd)/config/babel.node",
     "commitmsg": "validate-commit-msg",
     "docs:build": "gitbook install && gitbook build",
