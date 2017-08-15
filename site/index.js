@@ -25,10 +25,10 @@ export default define(
             `}
             />
             <p>Would render:</p>
-            <Code src={`Hello, World!`} />
+            <Code lang="html" src={`Hello, World!`} />
           </Hero>
           <p>To install Skate, all you have to do is run:</p>
-          <Code src={`npm install skatejs preact`} />
+          <Code lang="sh" src={`npm install skatejs preact`} />
           <p>
             Skate uses Preact as its default renderer when you extend{" "}
             <code>Component</code>. You don't have to do this if you're using a

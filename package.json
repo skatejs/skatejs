@@ -48,6 +48,7 @@
     "cz-conventional-changelog": "2.0.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
+    "highlight.js": "9.12.0",
     "husky": "0.13.3",
     "jest": "20.0.4",
     "lint-staged": "4.0.2",
