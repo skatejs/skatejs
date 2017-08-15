@@ -1,32 +1,32 @@
 /** @jsx h */
 
 import { Component, define } from "../src";
-import { Code } from "./components/code";
-import { Heading } from "./components/heading";
-import { h } from "./components/_";
+import { Code, Heading, Hero, Layout, h } from "./components/_";
 
 export default define(
   class extends Component {
     renderCallback() {
       return (
-        <div>
-          <Heading>SkateJS</Heading>
-          <p>Basic usage:</p>
-          <Code
-            src={`
-            /** @jsx h */
+        <Layout>
+          <Hero>
+            <Heading>SkateJS</Heading>
+            <p>Basic usage:</p>
+            <Code
+              src={`
+              /** @jsx h */
 
-            import { Component, h } from 'skatejs';
+              import { Component, h } from 'skatejs';
 
-            class MyComponent extends Component {
-              renderCallback () {
-                return <div>Hello, <slot />!</div>;
+              class MyComponent extends Component {
+                renderCallback () {
+                  return <div>Hello, <slot />!</div>;
+                }
               }
-            }
-          `}
-          />
-          <p>Would render:</p>
-          <Code src={`Hello, World!`} />
+            `}
+            />
+            <p>Would render:</p>
+            <Code src={`Hello, World!`} />
+          </Hero>
           <p>To install Skate, all you have to do is run:</p>
           <Code src={`npm install skatejs preact`} />
           <p>
@@ -34,7 +34,7 @@ export default define(
             <code>Component</code>. You don't have to do this if you're using a
             custom renderer.
           </p>
-        </div>
+        </Layout>
       );
     }
   }
