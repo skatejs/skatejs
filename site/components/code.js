@@ -1,6 +1,7 @@
 /** @jsx h */
 
-import { h } from "../../src";
+import { Component, define, props } from "../../src";
+import { h } from "./_";
 
 function format(src) {
   // Format HTML so it displays.
@@ -20,11 +21,22 @@ function format(src) {
   return src.join("\n");
 }
 
-export const Code = ({ src }) =>
-  <div>
-    <pre>
-      <code>
-        {format(src)}
-      </code>
-    </pre>
-  </div>;
+export const Code = define(
+  class extends Component {
+    static props = {
+      src: props.string
+    };
+    renderCallback({ src }) {
+      return (
+        <pre>
+          <style>{`
+            :host { display: block }
+          `}</style>
+          <code>
+            {format(src)}
+          </code>
+        </pre>
+      );
+    }
+  }
+);

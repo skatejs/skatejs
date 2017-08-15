@@ -1,4 +1,5 @@
 module.exports = {
+  babelrc: false,
   plugins: [
     [
       require("babel-plugin-modules-map"),

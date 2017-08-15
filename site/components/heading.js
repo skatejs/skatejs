@@ -1,6 +1,6 @@
 /** @jsx h */
 
-import { h } from "../../src";
+import { h } from "./_";
 
 export const Heading = ({ children }) =>
   <h1>

@@ -1,8 +1,9 @@
 /** @jsx h */
 
-import { Component, define, h } from "../src";
+import { Component, define } from "../src";
 import { Code } from "./components/code";
 import { Heading } from "./components/heading";
+import { h } from "./components/_";
 
 export default define(
   class extends Component {
