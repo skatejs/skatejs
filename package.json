@@ -72,7 +72,7 @@
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
     "site": "./node_modules/@skatejs/ssr/bin/index --out public --src site/*.js --babel config/babel.node",
-    "test": "npm run prepublish && npm run test:ts && node umd/skatejs.js && jest",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
