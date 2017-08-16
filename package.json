@@ -23,13 +23,7 @@
     "vdom",
     "virtual"
   ],
-  "files": [
-    "esnext",
-    "es",
-    "node",
-    "src",
-    "umd"
-  ],
+  "files": ["esnext", "es", "node", "src", "umd"],
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
@@ -68,9 +62,9 @@
     "preact": "*"
   },
   "scripts": {
-    "build:es": "babel src --out-dir es --presets=$(pwd)/config/babel.es",
-    "build:esnext": "babel src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
-    "build:node": "babel src --out-dir node --presets=$(pwd)/config/babel.node",
+    "build:es": "babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es",
+    "build:esnext": "babel --no-babelrc src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
+    "build:node": "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
     "build:umd": "rollup -c && rollup -c --min",
     "commitmsg": "validate-commit-msg",
     "dev": "nodemon --exec 'npm run site' --watch site --watch src",
@@ -84,10 +78,7 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.(js|json)": ["prettier --write", "git add"]
   },
   "config": {
     "commitizen": {
@@ -95,19 +86,11 @@
     }
   },
   "babel": {
-    "presets": [
-      "latest",
-      "react",
-      "stage-0"
-    ]
+    "presets": ["latest", "react", "stage-0"]
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }

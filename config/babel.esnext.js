@@ -1,5 +1,4 @@
 module.exports = {
-  babelrc: false,
   plugins: [
     [
       require("babel-plugin-modules-map"),
@@ -14,5 +13,5 @@ module.exports = {
       }
     ]
   ],
-  presets: ["latest", "react", "stage-0"]
+  presets: [["latest", { es2015: false }], "react", "stage-0"]
 };
