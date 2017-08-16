@@ -1,6 +1,6 @@
 {
   "name": "skatejs",
-  "version": "5.0.0-alpha.13",
+  "version": "5.0.0-alpha.14",
   "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
@@ -23,7 +23,13 @@
     "vdom",
     "virtual"
   ],
-  "files": ["esnext", "es", "node", "src", "umd"],
+  "files": [
+    "esnext",
+    "es",
+    "node",
+    "src",
+    "umd"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
@@ -78,7 +84,10 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": ["prettier --write", "git add"]
+    "*.(js|json)": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "config": {
     "commitizen": {
@@ -86,11 +95,19 @@
     }
   },
   "babel": {
-    "presets": ["latest", "react", "stage-0"]
+    "presets": [
+      "latest",
+      "react",
+      "stage-0"
+    ]
   },
   "jest": {
-    "modulePathIgnorePatterns": ["./node_modules"],
-    "setupFiles": ["./test/unit/setup"],
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ],
+    "setupFiles": [
+      "./test/unit/setup"
+    ],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }
