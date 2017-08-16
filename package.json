@@ -85,6 +85,9 @@
       "path": "cz-conventional-changelog"
     }
   },
+  "babel": {
+    "presets": ["latest", "react", "stage-0"]
+  },
   "jest": {
     "modulePathIgnorePatterns": ["./node_modules"],
     "setupFiles": ["./test/unit/setup"],
