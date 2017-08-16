@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/skatejs/skatejs"
   },
-  "browser": "umd/skatejs.js",
+  "browser": "umd/index.js",
   "main": "node/index.js",
   "module": "es/index.js",
   "esnext": "esnext/index.js",
@@ -23,26 +23,20 @@
     "vdom",
     "virtual"
   ],
-  "files": [
-    "esnext",
-    "es",
-    "node",
-    "src",
-    "umd"
-  ],
+  "files": ["esnext", "es", "node", "src", "umd"],
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
     "@skatejs/ssr": "0.10.0",
     "@skatejs/val": "0.3.1",
-    "@treshugart/nwb": "0.17.1",
     "babel-cli": "6.24.1",
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.0",
     "babel-preset-env": "1.6.0",
-    "babel-preset-es2016": "6.24.1",
-    "babel-preset-es2017": "6.24.1",
+    "babel-preset-es2015-rollup": "3.0.0",
+    "babel-preset-latest": "6.24.1",
+    "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
@@ -54,23 +48,27 @@
     "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
     "preact": "*",
+    "rollup": "0.47.4",
+    "rollup-plugin-babel": "3.0.2",
+    "rollup-plugin-uglify": "2.0.1",
     "semantic-release": "6.3.2",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
     "watchman": "0.1.8",
-    "webpack-node-externals": "1.6.0",
     "yargs": "8.0.1"
   },
   "peerDependencies": {
     "preact": "*"
   },
   "scripts": {
+    "build:es": "babel src --out-dir es --presets=$(pwd)/config/babel.es",
     "build:esnext": "babel src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
     "build:node": "babel src --out-dir node --presets=$(pwd)/config/babel.node",
+    "build:umd": "rollup -c && rollup -c --min",
     "commitmsg": "validate-commit-msg",
     "dev": "nodemon --exec 'npm run site' --watch site --watch src",
-    "prepublish": "nwb build && npm run build:esnext && npm run build:node",
+    "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
     "site": "./node_modules/@skatejs/ssr/bin/index --out public --src site/*.js --babel config/babel.node",
@@ -80,32 +78,16 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.(js|json)": ["prettier --write", "git add"]
   },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
-  "babel": {
-    "plugins": [
-      "transform-es2015-modules-commonjs"
-    ],
-    "presets": [
-      "react",
-      "stage-0"
-    ]
-  },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }

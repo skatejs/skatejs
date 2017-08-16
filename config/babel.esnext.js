@@ -14,5 +14,5 @@ module.exports = {
       }
     ]
   ],
-  presets: ["es2016", "es2017", "react", "stage-0"]
+  presets: ["latest", "react", "stage-0"]
 };

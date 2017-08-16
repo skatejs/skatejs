@@ -4,26 +4,21 @@ import type {
   HasConstructor,
   PropOptions,
   PropsOptionsNormalized
-} from './types';
+} from "./types";
 
-import {
-  debounce,
-  empty,
-  keys,
-  sym
-} from './util';
+import { debounce, empty, keys, sym } from "./util/index";
 
 import {
   normalisePropertyDefinition,
   syncAttributeToProperty,
   syncPropertyToAttribute
-} from './util/with-props';
+} from "./util/with-props";
 
-export function prop (definition: PropOptions | void): Function {
+export function prop(definition: PropOptions | void): Function {
   const propertyDefinition: PropOptions = definition || {};
 
   // Allows decorators, or imperative definitions.
-  const func = function ({ constructor }: HasConstructor, name: string): void {
+  const func = function({ constructor }: HasConstructor, name: string): void {
     const normalised = normalisePropertyDefinition(name, propertyDefinition);
     const _value = sym(name);
 
@@ -36,25 +31,34 @@ export function prop (definition: PropOptions | void): Function {
 
     Object.defineProperty(constructor.prototype, name, {
       configurable: true,
-      get () {
+      get() {
         const val = this[_value];
         return val == null ? normalised.default : val;
       },
-      set (val) {
+      set(val) {
         this[_value] = normalised.coerce(val);
-        syncPropertyToAttribute(this, normalised.attribute.target, normalised.serialize, val);
+        syncPropertyToAttribute(
+          this,
+          normalised.attribute.target,
+          normalised.serialize,
+          val
+        );
         this._updateDebounced();
       }
     });
   };
 
   // Allows easy extension of pre-defined props { ...prop(), ...{} }.
-  Object.keys(propertyDefinition).forEach(key => (func[key] = propertyDefinition[key]));
+  Object.keys(propertyDefinition).forEach(
+    key => (func[key] = propertyDefinition[key])
+  );
 
   return func;
 }
 
-export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLElement> =>
+export const withProps = (
+  Base?: Class<HTMLElement> = HTMLElement
+): Class<HTMLElement> =>
   class extends Base {
     static _observedAttributes: Array<string> = [];
     static _props: PropsOptionsNormalized = {};
@@ -67,46 +71,48 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
     _updateDebounced: () => mixed;
     _updating: boolean;
 
-    static get observedAttributes (): Array<string> {
+    static get observedAttributes(): Array<string> {
       return this._observedAttributes;
     }
 
-    static set observedAttributes (attrs: string | Array<string>) {
+    static set observedAttributes(attrs: string | Array<string>) {
       this._observedAttributes = this.observedAttributes.concat(attrs);
     }
 
-    static get props (): PropsOptionsNormalized {
+    static get props(): PropsOptionsNormalized {
       return this._props;
     }
 
-    static set props (props: PropOptions): void {
+    static set props(props: PropOptions): void {
       keys(props).forEach(name => {
         let func = props[name];
-        if (typeof func !== 'function') func = prop(func);
+        if (typeof func !== "function") func = prop(func);
         func({ constructor: this }, name);
       });
     }
 
-    get props (): Object {
-      return keys(this.constructor.props).reduce((prev: Object, curr: string) => {
+    get props(): Object {
+      return keys(
+        this.constructor.props
+      ).reduce((prev: Object, curr: string) => {
         prev[curr] = (this: any)[curr];
         return prev;
       }, {});
     }
 
-    set props (props: Object) {
+    set props(props: Object) {
       const ctorProps = this.constructor.props;
       keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
     }
 
-    constructor () {
+    constructor() {
       super();
       if (this._constructed) return;
       this._constructed = true;
       this._updateDebounced = debounce(this._updateCallback);
     }
 
-    connectedCallback () {
+    connectedCallback() {
       if (this._connected) return;
       this._connected = true;
       // $FlowFixMe - HTMLElement doesn't implement connectedCallback.
@@ -114,7 +120,7 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
       this._updateDebounced();
     }
 
-    disconnectedCallback () {
+    disconnectedCallback() {
       if (!this._connected) return;
       this._connected = false;
       // $FlowFixMe - HTMLElement doesn't implement disconnectedCallback.
@@ -122,19 +128,24 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
     }
 
     // Called when props actually change.
-    propsChangedCallback () {}
+    propsChangedCallback() {}
 
     // Called whenever props are set, even if they don't change.
-    propsSetCallback () {}
+    propsSetCallback() {}
 
     // Called to see if the props changed.
-    propsUpdatedCallback (next: Object, prev: Object) {
+    propsUpdatedCallback(next: Object, prev: Object) {
       return !prev || keys(prev).some(k => prev[k] !== next[k]);
     }
 
-    attributeChangedCallback (name: string, oldValue: string | null, newValue: string | null) {
+    attributeChangedCallback(
+      name: string,
+      oldValue: string | null,
+      newValue: string | null
+    ) {
       // $FlowFixMe - HTMLElement doesn't implement attributeChangedCallback.
-      if (super.attributeChangedCallback) super.attributeChangedCallback(name, oldValue, newValue);
+      if (super.attributeChangedCallback)
+        super.attributeChangedCallback(name, oldValue, newValue);
       syncAttributeToProperty(this, name, newValue);
     }
 
@@ -150,7 +161,7 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
 
       // Prev / next props for prop lifecycle callbacks.
       const prev = this._prevProps;
-      const next = this._prevProps = this.props;
+      const next = (this._prevProps = this.props);
 
       // Always call set, but only call changed if the props updated.
       this.propsSetCallback(next, prev);
@@ -159,7 +170,7 @@ export const withProps = (Base?: Class<HTMLElement> = HTMLElement): Class<HTMLEl
       }
 
       this._updating = false;
-    }
+    };
   };
 
 const { parse, stringify } = JSON;
@@ -172,7 +183,8 @@ const any: Function = prop({
 
 const array: Function = prop({
   attribute,
-  coerce: <T>(val: Array<T> | T): Array<T> | null => Array.isArray(val) ? val : (empty(val) ? null : [val]),
+  coerce: <T>(val: Array<T> | T): Array<T> | null =>
+    Array.isArray(val) ? val : empty(val) ? null : [val],
   default: Object.freeze([]),
   deserialize: parse,
   serialize: stringify
@@ -183,7 +195,7 @@ const boolean: Function = prop({
   coerce: Boolean,
   default: false,
   deserialize: (val: string): boolean => !empty(val),
-  serialize: (val: mixed): null | string => val ? '' : null
+  serialize: (val: mixed): null | string => (val ? "" : null)
 });
 
 const number: Function = prop({
@@ -191,7 +203,8 @@ const number: Function = prop({
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
-  serialize: (val: mixed): null | string => empty(val) ? null : String(Number(val))
+  serialize: (val: mixed): null | string =>
+    empty(val) ? null : String(Number(val))
 });
 
 const object: Function = prop({
@@ -203,9 +216,9 @@ const object: Function = prop({
 
 const string: Function = prop({
   attribute,
-  default: '',
+  default: "",
   coerce: String,
-  serialize: (val: mixed): null | string => empty(val) ? null : String(val)
+  serialize: (val: mixed): null | string => (empty(val) ? null : String(val))
 });
 
 export const props = {

@@ -1,26 +1,29 @@
 // @flow
 
-import type {
-  PropOptions,
-  PropsOptionsNormalized
-} from '../types';
+import type { PropOptions, PropsOptionsNormalized } from "../types";
 
-import { dashCase } from '.';
+import { dashCase } from "./index";
 
 interface CanDefineProps extends HTMLElement {
-  static prototype: Object;
-  static props: PropsOptionsNormalized;
+  static prototype: Object,
+  static props: PropsOptionsNormalized,
 
-  _syncingAttributeToProperty: string | null;
-  _syncingPropertyToAttribute: boolean;
+  _syncingAttributeToProperty: string | null,
+  _syncingPropertyToAttribute: boolean
 }
 
-export function normaliseAttributeDefinition (name: string, prop: PropOptions): Object {
+export function normaliseAttributeDefinition(
+  name: string,
+  prop: PropOptions
+): Object {
   const { attribute } = prop;
-  const obj = typeof attribute === 'object' ? { ...attribute } : {
-    source: attribute,
-    target: attribute
-  };
+  const obj =
+    typeof attribute === "object"
+      ? { ...attribute }
+      : {
+          source: attribute,
+          target: attribute
+        };
   if (obj.source === true) {
     obj.source = dashCase(name);
   }
@@ -30,7 +33,10 @@ export function normaliseAttributeDefinition (name: string, prop: PropOptions): 
   return obj;
 }
 
-export function normalisePropertyDefinition (name: string, prop: PropOptions): Object {
+export function normalisePropertyDefinition(
+  name: string,
+  prop: PropOptions
+): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
     attribute: normaliseAttributeDefinition(name, prop),
@@ -41,7 +47,11 @@ export function normalisePropertyDefinition (name: string, prop: PropOptions): O
   };
 }
 
-export function syncAttributeToProperty (elem: CanDefineProps, name: string, value: mixed): void {
+export function syncAttributeToProperty(
+  elem: CanDefineProps,
+  name: string,
+  value: mixed
+): void {
   if (elem._syncingPropertyToAttribute) {
     return;
   }
@@ -56,7 +66,12 @@ export function syncAttributeToProperty (elem: CanDefineProps, name: string, val
   }
 }
 
-export function syncPropertyToAttribute (elem: CanDefineProps, target: string, serialize: (val: mixed) => string, val: mixed): void {
+export function syncPropertyToAttribute(
+  elem: CanDefineProps,
+  target: string,
+  serialize: (val: mixed) => string,
+  val: mixed
+): void {
   if (target && elem._syncingAttributeToProperty !== target) {
     const serialized = serialize(val);
     elem._syncingPropertyToAttribute = true;
