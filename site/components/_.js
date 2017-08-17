@@ -9,6 +9,10 @@ const fs = require("fs");
 export const h = val(preactH);
 
 function format(src) {
+  // For some reason we can't do this after formatting so it loses syntax
+  // highlighting.
+  src = src.replace(/</gm, "&lt;").replace(/>/gm, "&gt;");
+
   // Remove leading newlines and only allow up to two newlines in code.
   src = src.split("\n").filter((v, i, a) => a[i - 1] || v.trim().length);
 
@@ -23,7 +27,7 @@ function format(src) {
 }
 
 export const Code = define(
-  class extends Component {
+  class Code extends Component {
     static props = {
       lang: { ...props.string, ...{ default: "js" } },
       src: props.string,
@@ -33,19 +37,22 @@ export const Code = define(
       return (
         <pre>
           <style>{`
-            :host {
+            .host {
               background-color: #222;
               color: white;
               display: block;
-              padding: 10px 20px;
+              padding: 10px;
             }
             ${fs.readFileSync(
               `./node_modules/highlight.js/styles/${theme}.css`
             )}
           `}</style>
-          <code class="hljs ${lang}">
-            {format(src)}
-          </code>
+          <div className="host">
+            <code
+              className={`hljs ${lang}`}
+              ref={e => e && (e.innerHTML = format(src))}
+            />
+          </div>
         </pre>
       );
     }
@@ -58,13 +65,10 @@ export const Heading = ({ children }) =>
   </h1>;
 
 export const Hero = define(
-  class extends Component {
+  class Hero extends Component {
     renderCallback() {
       return (
         <div>
-          <style>{`
-
-          `}</style>
           <slot />
         </div>
       );
@@ -73,7 +77,7 @@ export const Hero = define(
 );
 
 export const Layout = define(
-  class extends Component {
+  class Layout extends Component {
     renderCallback() {
       return <slot />;
     }

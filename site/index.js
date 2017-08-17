@@ -4,7 +4,7 @@ import { Component, define } from "../src";
 import { Code, Heading, Hero, Layout, h } from "./components/_";
 
 export default define(
-  class extends Component {
+  class Index extends Component {
     renderCallback() {
       return (
         <Layout>
