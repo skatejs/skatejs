@@ -32,7 +32,7 @@
     "babel-cli": "6.24.1",
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
-    "babel-plugin-modules-web-compat": "1.1.0",
+    "babel-plugin-modules-web-compat": "1.1.1",
     "babel-preset-env": "1.6.0",
     "babel-preset-es2015-rollup": "3.0.0",
     "babel-preset-latest": "6.24.1",
