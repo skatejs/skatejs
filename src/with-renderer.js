@@ -6,7 +6,7 @@ function attachShadow(elem) {
   return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
 }
 
-export const withRender = (
+export const withRenderer = (
   Base: Class<HTMLElement> = HTMLElement
 ): Class<HTMLElement> =>
   class extends Base {

@@ -16,8 +16,6 @@ export {
   emit,
   withComponent,
   withProps,
-  withRender,
+  withRenderer,
   withUnique
-} from './ts-typings/api';
-
-export { h } from 'preact';
+} from "./ts-typings/api";
