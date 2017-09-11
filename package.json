@@ -24,13 +24,20 @@
     "vdom",
     "virtual"
   ],
-  "files": ["esnext", "es", "node", "src", "umd"],
+  "files": [
+    "esnext",
+    "es",
+    "node",
+    "src",
+    "umd"
+  ],
+  "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
     "@skatejs/renderer-preact": "file:../renderer-preact",
     "@skatejs/ssr": "0.12.2",
     "@skatejs/val": "0.3.1",
-    "babel-cli": "6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
@@ -46,6 +53,7 @@
     "highlight.js": "9.12.0",
     "husky": "0.13.3",
     "jest": "20.0.4",
+    "jest-cli": "^21.0.2",
     "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
     "preact": "*",
@@ -57,7 +65,7 @@
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
     "watchman": "0.1.8",
-    "yargs": "8.0.1"
+    "yargs": "^8.0.2"
   },
   "peerDependencies": {
     "preact": "*"
@@ -84,7 +92,10 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": ["prettier --write", "git add"]
+    "*.(js|json)": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "config": {
     "commitizen": {
@@ -92,11 +103,19 @@
     }
   },
   "babel": {
-    "presets": ["latest", "react", "stage-0"]
+    "presets": [
+      "latest",
+      "react",
+      "stage-0"
+    ]
   },
   "jest": {
-    "modulePathIgnorePatterns": ["./node_modules"],
-    "setupFiles": ["./test/unit/setup"],
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ],
+    "setupFiles": [
+      "./test/unit/setup"
+    ],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }
