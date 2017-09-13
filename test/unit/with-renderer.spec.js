@@ -1,111 +1,80 @@
 /** @jsx h */
 /* eslint-env jest */
 
-import { h as vdom } from "preact";
-import { mount } from "@skatejs/bore";
-import { h } from "@skatejs/val";
-import { define, withComponent } from "../../src";
-import { withPreact } from "@skatejs/renderer-preact";
-import afterMutations from "../lib/after-mutations";
-import fixture from "../lib/fixture";
+import { mount } from '@skatejs/bore';
+import { h } from '@skatejs/val';
+import { define, withComponent } from '../../src';
+import afterMutations from '../lib/after-mutations';
 
-const Component = withComponent(withPreact());
+const Component = withComponent(
+  class extends HTMLElement {
+    rendererCallback(renderRoot, renderCallback) {
+      if (renderRoot.childNodes.length) {
+        renderRoot.replaceChild(renderCallback(), renderRoot.firstChild);
+      } else {
+        renderRoot.appendChild(renderCallback());
+      }
+    }
+  }
+);
 
-describe("withRenderer", () => {
-  describe("renderCallback()", () => {
-    it("should be called", done => {
-      const Elem = define(
-        class extends Component {
-          renderCallback() {
-            done();
-          }
-        }
-      );
-      mount(<Elem />);
+describe('withRenderer', () => {
+  describe('renderCallback()', () => {
+    it('should be called', () => {
+      const Elem = define(class extends Component {});
+      return mount(<Elem />).wait();
     });
 
-    it("should get called before descendants are initialised", done => {
-      const called = [];
-      const Elem1 = define(
-        class extends Component {
-          constructor() {
-            super();
-            called.push("elem1");
-          }
-        }
-      );
-      const Elem2 = define(
-        class extends Component {
-          constructor() {
-            super();
-            called.push("elem2");
-          }
-        }
-      );
-
-      fixture(`<${Elem1.is}><${Elem2.is}></${Elem2.is}></${Elem1.is}>`);
-      afterMutations(
-        () => expect(called[0]).toEqual("elem1"),
-        () => expect(called[1]).toEqual("elem2"),
-        done
-      );
-    });
-
-    it("should pass in the element as the only argument", done => {
+    it('should pass in the element as the only argument', () => {
       const Elem = define(
         class extends Component {
           renderCallback(elem) {
             expect(this).toBe(elem);
-            return vdom("div", null, "called");
+            return h('div', null, 'called');
           }
         }
       );
 
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(
-        () => expect(elem.shadowRoot.firstChild.textContent).toBe("called"),
-        done
-      );
+      return mount(new Elem()).wait(e => {
+        expect(e.shadowRoot.firstChild.textContent).toBe('called');
+      });
     });
   });
 
-  describe("renderedCallback()", () => {
-    it("should be called after rendering", done => {
+  describe('renderedCallback()', () => {
+    it('should be called after rendering', () => {
       const Elem = define(
         class extends Component {
           renderCallback() {
-            return vdom("div");
+            return h('div');
           }
           renderedCallback() {
-            expect(this.shadowRoot.firstChild.localName).toBe("div");
+            expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
       );
 
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(done);
+      return mount(new Elem()).wait();
     });
 
-    it("should not be called if rendering is prevented", done => {
+    it('should not be called if rendering is prevented', () => {
       const Elem = define(
         class extends Component {
           propsUpdatedCallback() {
+            setTimeout(() => (this.called = true), 1);
             return false;
           }
           renderCallback() {
-            return vdom("div");
+            return h('div');
           }
           renderedCallback() {
-            throw new Error("should not have been called");
+            throw new Error('should not have been called');
           }
         }
       );
-
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(done);
+      return mount(new Elem()).waitFor(w => {
+        return w.node.called;
+      });
     });
 
     // it('should be called if props change', (done) => {
@@ -120,7 +89,7 @@ describe("withRenderer", () => {
     //     }
 
     //     renderCallback () {
-    //       return vdom('div', null, this.foo);
+    //       return h('div', null, this.foo);
     //     }
 
     //     renderedCallback () {
@@ -142,79 +111,71 @@ describe("withRenderer", () => {
     //   });
     // });
 
-    it("should be called if element creates its own shadowRoot", done => {
+    it('should be called if element creates its own shadowRoot', () => {
       const Elem = define(
         class extends Component {
           constructor() {
             super();
-            this.attachShadow({ mode: "open" });
+            this.attachShadow({ mode: 'open' });
           }
-
           renderCallback() {
-            return vdom("div");
+            return h('div');
           }
-
           renderedCallback() {
-            expect(this.shadowRoot.firstChild.localName).toBe("div");
+            expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
       );
 
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(done);
+      return mount(new Elem()).wait();
     });
   });
 
-  describe("renderRoot", () => {
-    it("allows rendering to somewhere else", done => {
+  describe('renderRoot', () => {
+    it('allows rendering to somewhere else', () => {
       const Elem = define(
         class extends Component {
           get renderRoot() {
             return this;
           }
-
           renderCallback() {
-            return vdom("div");
+            return h('div');
           }
-
           renderedCallback() {
-            expect(this.firstChild.localName).toBe("div");
+            expect(this.firstChild.localName).toBe('div');
           }
         }
       );
 
-      const elem = new Elem();
-      fixture(elem);
-      afterMutations(done);
+      return mount(new Elem()).waitFor(w => w.has(<div />));
     });
   });
 
-  describe("attachShadow", () => {
-    it("should render to the host node if attachShadow is falsy", () => {
+  describe('attachShadow', () => {
+    it('should render to the host node if attachShadow is falsy', () => {
       const Elem = define(
         class extends Component {
-          attachShadow = false;
+          get renderRoot() {
+            return this;
+          }
           renderCallback() {
-            return "testing";
+            return h('div', null, 'testing');
           }
         }
       );
-      return mount(<Elem />).waitFor(
-        ({ node }) => node.textContent === "testing"
-      );
+      return mount(<Elem />).waitFor(w => w.has(<div>testing</div>));
     });
 
-    it("should render to the return value of attachShadow if provided", () => {
+    it('should render to the return value of attachShadow if provided', () => {
       const Elem = define(
         class extends Component {
           attachShadow() {
-            const div = document.createElement("div");
+            const div = document.createElement('div');
             this.appendChild(div);
-            return div;
+            return (this.shadowRoot = div);
           }
           renderCallback() {
-            return "testing";
+            return h('div', null, 'testing');
           }
         }
       );
@@ -222,46 +183,53 @@ describe("withRenderer", () => {
     });
   });
 
-  describe("should progressive enhance exiting markup", () => {
-    it("on shadow dom", () => {
+  describe('should progressive enhance exiting markup', async () => {
+    it('on shadow dom', () => {
       customElements.define(
-        "x-c",
+        'x-c',
         class extends Component {
           renderCallback() {
-            return vdom("div", {}, "Hello2");
+            return h('div', null, 'Hello2');
           }
         }
       );
-      const elem = document.createElement("div");
-      fixture(elem);
-      const elem2 = document.createElement("x-c");
-      let sR = elem2.attachShadow({ mode: "open" });
-      sR.innerHTML = "<div>Hello</div>";
-      elem.appendChild(elem2);
-      return mount(elem).waitFor(
-        () => elem.children[0].shadowRoot.innerHTML === "<div>Hello2</div>"
-      );
+
+      const elem1 = <div />;
+      mount(elem1);
+
+      const elem2 = <x-c />;
+      const root2 = elem2.attachShadow({ mode: 'open' });
+      root2.innerHTML = '<div>Hello</div>';
+      elem1.appendChild(elem2);
+
+      return mount(elem1).waitFor(() => {
+        return elem1.children[0].shadowRoot.innerHTML === '<div>Hello2</div>';
+      });
     });
 
-    it("on light dom", () => {
+    it('on light dom', () => {
       customElements.define(
-        "x-c",
+        'x-c',
         class extends Component {
           get renderRoot() {
             return this;
           }
-
           renderCallback() {
-            return vdom("div", {}, "Hello2");
+            return h('div', null, 'Hello2');
           }
         }
       );
-      const elem = document.createElement("div");
-      fixture(elem);
-      elem.innerHTML = "<x-c><div>Hello</div></x-c>";
-      return mount(elem).waitFor(
-        () => elem.innerHTML === "<x-c><div>Hello2</div></x-c>"
-      );
+      return mount(
+        <x-c>
+          <div>Hello</div>
+        </x-c>
+      )
+        .waitFor(w => {
+          return w.node.hasChildNodes();
+        })
+        .then(w => {
+          expect(w.node.outerHTML).toBe('<x-c><div>Hello2</div></x-c>');
+        });
     });
   });
 });
