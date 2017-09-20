@@ -32,6 +32,7 @@
   ],
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
+    "@skatejs/renderer-preact": "0.0.1",
     "@skatejs/ssr": "0.12.2",
     "@skatejs/val": "0.3.1",
     "babel-cli": "^6.26.0",
@@ -53,6 +54,7 @@
     "jest-cli": "^21.0.2",
     "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
+    "preact": "^8.2.5",
     "rollup": "0.47.4",
     "rollup-plugin-babel": "3.0.2",
     "rollup-plugin-uglify": "2.0.1",

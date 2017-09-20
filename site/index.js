@@ -1,7 +1,7 @@
 /** @jsx h */
 
-import { Component, define } from "../src";
-import { Code, Heading, Hero, Layout, h } from "./components/_";
+import { define } from "../src";
+import { Code, Component, Heading, Hero, Layout, h } from "./components/_";
 
 export default define(
   class Index extends Component {
