@@ -71,6 +71,9 @@ export const withProps = (
     _updateDebounced: () => mixed;
     _updating: boolean;
 
+    propsChangedCallback: Function | void;
+    propsSetCallback: Function | void;
+
     static get observedAttributes(): Array<string> {
       return this._observedAttributes;
     }
@@ -127,12 +130,6 @@ export const withProps = (
       if (super.disconnectedCallback) super.disconnectedCallback();
     }
 
-    // Called when props actually change.
-    propsChangedCallback() {}
-
-    // Called whenever props are set, even if they don't change.
-    propsSetCallback() {}
-
     // Called to see if the props changed.
     propsUpdatedCallback(next: Object, prev: Object) {
       return !prev || keys(prev).some(k => prev[k] !== next[k]);
@@ -143,8 +140,8 @@ export const withProps = (
       oldValue: string | null,
       newValue: string | null
     ) {
-      // $FlowFixMe - HTMLElement doesn't implement attributeChangedCallback.
       if (super.attributeChangedCallback)
+        // $FlowFixMe - HTMLElement doesn't implement attributeChangedCallback.
         super.attributeChangedCallback(name, oldValue, newValue);
       syncAttributeToProperty(this, name, newValue);
     }
@@ -164,8 +161,13 @@ export const withProps = (
       const next = (this._prevProps = this.props);
 
       // Always call set, but only call changed if the props updated.
-      this.propsSetCallback(next, prev);
-      if (this.propsUpdatedCallback(next, prev)) {
+      if (this.propsSetCallback) {
+        this.propsSetCallback(next, prev);
+      }
+
+      // We only need to check if props have updated if we need to call the
+      // changed callback.
+      if (this.propsChangedCallback && this.propsUpdatedCallback(next, prev)) {
         this.propsChangedCallback(next, prev);
       }
 
