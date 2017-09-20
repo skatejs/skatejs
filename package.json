@@ -1,8 +1,7 @@
 {
   "name": "skatejs",
   "version": "5.0.0-alpha.16",
-  "description":
-    "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
+  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": {
@@ -24,10 +23,15 @@
     "vdom",
     "virtual"
   ],
-  "files": ["esnext", "es", "node", "src", "umd"],
+  "files": [
+    "esnext",
+    "es",
+    "node",
+    "src",
+    "umd"
+  ],
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
-    "@skatejs/renderer-preact": "file:../renderer-preact",
     "@skatejs/ssr": "0.12.2",
     "@skatejs/val": "0.3.1",
     "babel-cli": "6.24.1",
@@ -48,7 +52,6 @@
     "jest": "20.0.4",
     "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
-    "preact": "*",
     "rollup": "0.47.4",
     "rollup-plugin-babel": "3.0.2",
     "rollup-plugin-uglify": "2.0.1",
@@ -59,32 +62,27 @@
     "watchman": "0.1.8",
     "yargs": "8.0.1"
   },
-  "peerDependencies": {
-    "preact": "*"
-  },
   "scripts": {
-    "build:es":
-      "babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es",
-    "build:esnext":
-      "babel --no-babelrc src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
-    "build:node":
-      "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
+    "build:es": "babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es",
+    "build:esnext": "babel --no-babelrc src --out-dir esnext --presets=$(pwd)/config/babel.esnext",
+    "build:node": "babel --no-babelrc src --out-dir node --presets=$(pwd)/config/babel.node",
     "build:umd": "rollup -c && rollup -c --min",
     "commitmsg": "validate-commit-msg",
     "dev": "nodemon --exec 'npm run site' --watch site --watch src",
-    "prepublish":
-      "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
+    "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
-    "site":
-      "./node_modules/@skatejs/ssr/bin/index --babel config/babel.node --out public --no-rehydrate --src site/*.js",
+    "site": "./node_modules/@skatejs/ssr/bin/index --babel config/babel.node --out public --no-rehydrate --src site/*.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "lint-staged": {
-    "*.(js|json)": ["prettier --write", "git add"]
+    "*.(js|json)": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "config": {
     "commitizen": {
@@ -92,11 +90,19 @@
     }
   },
   "babel": {
-    "presets": ["latest", "react", "stage-0"]
+    "presets": [
+      "latest",
+      "react",
+      "stage-0"
+    ]
   },
   "jest": {
-    "modulePathIgnorePatterns": ["./node_modules"],
-    "setupFiles": ["./test/unit/setup"],
+    "modulePathIgnorePatterns": [
+      "./node_modules"
+    ],
+    "setupFiles": [
+      "./test/unit/setup"
+    ],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   }
