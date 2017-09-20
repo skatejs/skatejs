@@ -34,7 +34,7 @@
     "@skatejs/bore": "4.0.0",
     "@skatejs/ssr": "0.12.2",
     "@skatejs/val": "0.3.1",
-    "babel-cli": "6.24.1",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
@@ -50,6 +50,7 @@
     "highlight.js": "9.12.0",
     "husky": "0.13.3",
     "jest": "20.0.4",
+    "jest-cli": "^21.0.2",
     "lint-staged": "4.0.2",
     "nodemon": "1.11.0",
     "rollup": "0.47.4",
@@ -60,7 +61,7 @@
     "typescript-formatter": "5.2.0",
     "validate-commit-msg": "2.12.1",
     "watchman": "0.1.8",
-    "yargs": "8.0.1"
+    "yargs": "^8.0.2"
   },
   "scripts": {
     "build:es": "babel --no-babelrc src --out-dir es --presets=$(pwd)/config/babel.es",

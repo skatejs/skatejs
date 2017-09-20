@@ -9,3 +9,4 @@
 /ts-output
 /umd
 npm-debug.log*
+yarn.lock

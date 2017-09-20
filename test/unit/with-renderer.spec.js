@@ -21,11 +21,6 @@ const Component = withComponent(
 describe('withRenderer', () => {
   describe('renderCallback()', () => {
     it('should be called', () => {
-      const Elem = define(class extends Component {});
-      return mount(<Elem />).wait();
-    });
-
-    it('should pass in the element as the only argument', () => {
       const Elem = define(
         class extends Component {
           renderCallback(elem) {
