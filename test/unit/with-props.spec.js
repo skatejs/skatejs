@@ -6,7 +6,6 @@ import { sym } from "../../src/util";
 
 import afterMutations from "../lib/after-mutations";
 import fixture from "../lib/fixture";
-import hasSymbol from "../lib/has-symbol";
 
 function create(propLocal) {
   const el = new (define(
@@ -257,7 +256,7 @@ describe("withProps", () => {
   });
 
   describe("*Props()", () => {
-    if (!hasSymbol()) {
+    if (typeof Symbol === 'undefined') {
       return;
     }
 
