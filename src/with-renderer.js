@@ -16,10 +16,7 @@ export const withRenderer = (
     rendererCallback: Function | void;
 
     get renderRoot() {
-      this._shadowRoot =
-        this._shadowRoot ||
-        (this._shadowRoot = this.shadowRoot || attachShadow(this));
-      return this._shadowRoot;
+      return this._shadowRoot || (this._shadowRoot = (this.shadowRoot || attachShadow(this)));
     }
 
     propsChangedCallback() {
