@@ -1,6 +1,6 @@
 // @flow
 
-const attachShadowOptions = { mode: "open" };
+const attachShadowOptions = { mode: 'open' };
 
 function attachShadow(elem) {
   return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
@@ -16,7 +16,10 @@ export const withRenderer = (
     rendererCallback: Function | void;
 
     get renderRoot() {
-      return this._shadowRoot || (this._shadowRoot = (this.shadowRoot || attachShadow(this)));
+      return (
+        this._shadowRoot ||
+        (this._shadowRoot = this.shadowRoot || attachShadow(this))
+      );
     }
 
     propsChangedCallback() {
