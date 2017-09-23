@@ -66,9 +66,9 @@
   },
   "babel": {
     "presets": [
-      "latest",
+      "env",
+      "flow",
       "react",
-      "stage-0",
       "stage-0"
     ]
   },
