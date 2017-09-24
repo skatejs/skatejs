@@ -22,6 +22,12 @@ export function prop(definition: PropOptions | void): Function {
     const normalised = normalisePropertyDefinition(name, propertyDefinition);
     const _value = sym(name);
 
+    // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
+    // classes or share the instance anywhere where it's not intended to be shared explicitly in userland code.
+    if (!constructor.hasOwnProperty('_props')) {
+      constructor._props = {};
+    }
+
     // Cache the value so we can reference when syncing the attribute to the property.
     constructor._props[name] = normalised;
 
@@ -60,9 +66,6 @@ export const withProps = (
   Base?: Class<HTMLElement> = HTMLElement
 ): Class<HTMLElement> =>
   class extends Base {
-    static _observedAttributes: Array<string> = [];
-    static _props: PropsOptionsNormalized = {};
-
     _connected: boolean;
     _constructed: boolean;
     _prevProps: Object;
@@ -75,15 +78,18 @@ export const withProps = (
     propsSetCallback: Function | void;
 
     static get observedAttributes(): Array<string> {
-      return this._observedAttributes;
+      return this._observedAttributes || [];
     }
 
     static set observedAttributes(attrs: string | Array<string>) {
+      if (!this.hasOwnProperty('_observedAttributes')) {
+        this._observedAttributes = [];
+      }
       this._observedAttributes = this.observedAttributes.concat(attrs);
     }
 
     static get props(): PropsOptionsNormalized {
-      return this._props;
+      return this._props || {};
     }
 
     static set props(props: PropOptions): void {
