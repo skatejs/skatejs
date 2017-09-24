@@ -4,15 +4,15 @@ import type {
   HasConstructor,
   PropOptions,
   PropsOptionsNormalized
-} from "./types";
+} from './types';
 
-import { debounce, empty, keys, sym } from "./util/index";
+import { debounce, empty, keys, sym } from './util/index';
 
 import {
   normalisePropertyDefinition,
   syncAttributeToProperty,
   syncPropertyToAttribute
-} from "./util/with-props";
+} from './util/with-props';
 
 export function prop(definition: PropOptions | void): Function {
   const propertyDefinition: PropOptions = definition || {};
@@ -89,7 +89,7 @@ export const withProps = (
     static set props(props: PropOptions): void {
       keys(props).forEach(name => {
         let func = props[name];
-        if (typeof func !== "function") func = prop(func);
+        if (typeof func !== 'function') func = prop(func);
         func({ constructor: this }, name);
       });
     }
@@ -197,7 +197,7 @@ const boolean: Function = prop({
   coerce: Boolean,
   default: false,
   deserialize: (val: string): boolean => !empty(val),
-  serialize: (val: mixed): null | string => (val ? "" : null)
+  serialize: (val: mixed): null | string => (val ? '' : null)
 });
 
 const number: Function = prop({
@@ -218,7 +218,7 @@ const object: Function = prop({
 
 const string: Function = prop({
   attribute,
-  default: "",
+  default: '',
   coerce: String,
   serialize: (val: mixed): null | string => (empty(val) ? null : String(val))
 });
