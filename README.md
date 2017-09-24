@@ -12,7 +12,7 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
-Skate is high level, functional abstraction over the web component [specs](https://github.com/w3c/webcomponents) that:
+Skate is a functional abstraction over [the web component standards](https://github.com/w3c/webcomponents) that:
 
 - Produces cross-framework compatible components
 - Abstracts away common attribute / property semantics via `props`, such as attribute reflection and coercion
@@ -52,10 +52,10 @@ JavaScript (using the Preact renderer)
 /** @jsx h */
 
 import { props, withComponent } from 'skatejs';
-import withPreact from '@skatejs/renderer-preact';
+import withRenderer from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
-const Component = withComponent(withPreact());
+const Component = withComponent(withRenderer());
 
 customElements.define('x-hello', class extends Component {
   static props = {
@@ -76,13 +76,20 @@ Result
 </x-hello>
 ```
 
-Whenever you change the `name` property - or attribute - the component will re-render, only changing the part of the DOM that requires updating.
+Whenever you change the `name` property or attribute, the component will re-render,
+only changing the part of the DOM that requires updating.
 
 ## Polyfills
 
-Skate uses both Custom Elements and Shadow DOM, but is capable of operating without Shadow DOM, you just don't get any encapsulation.
+At its core, Skate is about creating [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/).
+Skate also works with [the Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/), but is
+capable of operating without it -- you just don't get any encapsulation of your component's HTML or styles.
 
-For more information on the polyfills, see [their docs](https://github.com/webcomponents/webcomponentsjs).
+Though most modern browsers support these standards, some still need polyfills to implement missing or inconsistent
+behaviours for them.
+
+For more information on the polyfills, see
+[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs).
 
 ## Browser Support
 
