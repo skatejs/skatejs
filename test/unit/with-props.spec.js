@@ -55,6 +55,7 @@ describe("withProps", () => {
         ...{ test3: {} }
       }
     }
+    class Test4 extends Test1 {}
 
     expect(typeof Test1.props.test1).toBe('object');
     expect(typeof Test1.props.test2).toBe('undefined');
@@ -65,6 +66,9 @@ describe("withProps", () => {
     expect(typeof Test3.props.test1).toBe('object');
     expect(typeof Test3.props.test2).toBe('undefined');
     expect(typeof Test3.props.test3).toBe('object');
+    expect(typeof Test4.props.test1).toBe('object');
+    expect(typeof Test4.props.test2).toBe('undefined');
+    expect(typeof Test4.props.test3).toBe('undefined');
   });
 
   describe("array", () => {
