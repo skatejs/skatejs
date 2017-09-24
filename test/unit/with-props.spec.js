@@ -38,6 +38,39 @@ function testTypeValues(type, values, done) {
 }
 
 describe("withProps", () => {
+  it('should not share _props instance', () => {
+    class Test1 extends withProps() {
+      static props = {
+        test1: {}
+      }
+    }
+    class Test2 extends Test1 {
+      static props = {
+        test2: {}
+      }
+    }
+    class Test3 extends Test1 {
+      static props = {
+        ...Test1.props,
+        ...{ test3: {} }
+      }
+    }
+    class Test4 extends Test1 {}
+
+    expect(typeof Test1.props.test1).toBe('object');
+    expect(typeof Test1.props.test2).toBe('undefined');
+    expect(typeof Test1.props.test3).toBe('undefined');
+    expect(typeof Test2.props.test1).toBe('undefined');
+    expect(typeof Test2.props.test2).toBe('object');
+    expect(typeof Test2.props.test3).toBe('undefined');
+    expect(typeof Test3.props.test1).toBe('object');
+    expect(typeof Test3.props.test2).toBe('undefined');
+    expect(typeof Test3.props.test3).toBe('object');
+    expect(typeof Test4.props.test1).toBe('object');
+    expect(typeof Test4.props.test2).toBe('undefined');
+    expect(typeof Test4.props.test3).toBe('undefined');
+  });
+
   describe("array", () => {
     let elem;
 
