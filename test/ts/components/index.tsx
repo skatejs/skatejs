@@ -1,5 +1,4 @@
-import * as skate from 'skatejs'
-import { h, define } from 'skatejs'
+import { define } from 'skatejs'
 
 import { ButtonComponent, InputComponent } from '../custom-base'
 
@@ -7,11 +6,8 @@ export type ButtonProps = {
   raised?: boolean
 }
 export class MaterialButton extends ButtonComponent<ButtonProps> {
-
-  static get props() {
-    return {
-      raised: ''
-    }
+  static readonly props = {
+    raised: '',
   }
 
   type?: string
@@ -27,7 +23,6 @@ export class MaterialButton extends ButtonComponent<ButtonProps> {
 }
 define(MaterialButton)
 
-
 export type InputProps = {
   touched?: boolean
 }
@@ -38,11 +33,8 @@ export class MaterialInput extends InputComponent<InputProps> {
   foo() {
     this.props.touched
 
-    console.log(
-      this.type
-    )
+    console.log(this.type)
   }
 }
 
 define(MaterialInput)
-//
