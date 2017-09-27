@@ -1,4 +1,66 @@
 {
+  "babel": {
+    "env": {
+      "es": {
+        "presets": [
+          [
+            "env",
+            {
+              "modules": false
+            }
+          ],
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      },
+      "esnext": {
+        "presets": [
+          "es2016",
+          "es2017",
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      },
+      "node": {
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "6.0.0"
+              }
+            }
+          ],
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      },
+      "test": {
+        "presets": [
+          "env",
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      },
+      "rollup": {
+        "presets": [
+          [
+            "env",
+            {
+              "modules": false
+            }
+          ],
+          "flow",
+          "react",
+          "stage-0"
+        ]
+      }
+    }
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "1.6.0",
@@ -8,7 +70,6 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "jest": "20.0.4",
-    "babel-preset-es2015-rollup": "^3.0.0",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
@@ -19,9 +80,10 @@
     "babel-eslint": "7.2.3",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
+    "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-latest": "6.24.1",
     "commitizen": "2.9.6",
-    "conartist": "^0.10.0",
+    "conartist": "^0.12.0",
     "cz-conventional-changelog": "2.0.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
@@ -39,6 +101,10 @@
     "yargs": "^8.0.2"
   },
   "files": [
+    "es/",
+    "esnext/",
+    "node/",
+    "umd/",
     "esnext",
     "es",
     "node",
@@ -63,14 +129,6 @@
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
-  },
-  "babel": {
-    "presets": [
-      "env",
-      "flow",
-      "react",
-      "stage-0"
-    ]
   },
   "jest": {
     "modulePathIgnorePatterns": [
