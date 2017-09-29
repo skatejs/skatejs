@@ -34,9 +34,9 @@ For example, to create a simple greeting component:
 We could define a Skate component that renders the contents of our Custom Element:
 
 ```js
-import { withComponent, withRenderer } from 'skatejs';
+import { withComponent } from 'skatejs';
 
-const Component = withComponent(withRenderer());
+const Component = withComponent();
 
 class GreetingComponent extends Component {
   rendererCallback (renderRoot, renderCallback) {
@@ -71,9 +71,9 @@ This is the utility that web components provide when using Custom Elements and t
 We can create a Skate component that watches for HTML attribute changes on itself:
 
 ```js
-import { props, withComponent, withRenderer, withProps } from 'skatejs';
+import { props, withComponent } from 'skatejs';
 
-const Component = withComponent(withProps(withRenderer()));
+const Component = withComponent();
 
 class GreetingComponent extends Component {
   static props = {
@@ -84,7 +84,9 @@ class GreetingComponent extends Component {
     renderRoot.appendChild(renderCallback());
   }
   renderCallback ({ name }) {
-    return <span>Hello, {name}!</span>;
+      let el = document.createElement('span');
+      el.innerHTML = `Hello, ${name}!`;
+      return el;
   }
 });
 
@@ -116,7 +118,7 @@ check the [Installing](#installing) section.
 #### Using Skate with Preact
 
 Instead of writing our own `rendererCallback`, we could use a library like
-[Preact]() to do the work for us. Skate provides a ready-made renderer for Preact;
+[Preact](https://preactjs.com/) to do the work for us. Skate provides a ready-made renderer for Preact;
 here's how we would update our previous greeting component to use it:
 
 ```js

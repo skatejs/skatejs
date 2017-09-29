@@ -1,10 +1,10 @@
 /** @jsx h */
 
-import { props, withProps, withComponent } from '../../../src';
+import { props, withComponent } from '../../../src';
 import withRenderer from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
-const Component = withComponent(withProps(withRenderer()));
+const Component = withComponent(withRenderer());
 
 customElements.define('hello-withpreact', class MyPreactHello extends Component {
   static props = {

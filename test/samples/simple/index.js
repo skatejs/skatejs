@@ -1,6 +1,6 @@
-import { withComponent, withRenderer } from '../../../src';
+import { withComponent } from '../../../src';
 
-let Component = withComponent(withRenderer());
+let Component = withComponent();
 
 class MyComponent extends Component {
     rendererCallback (renderRoot, renderCallback) {

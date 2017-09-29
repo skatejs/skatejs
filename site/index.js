@@ -14,9 +14,9 @@ export default define(
             <Code
               lang="js"
               src={`
-              import { withComponent, withRenderer } from 'skatejs';
+              import { withComponent } from 'skatejs';
 
-              let Component = withComponent(withRenderer());
+              let Component = withComponent();
 
               class MyComponent extends Component {
                   rendererCallback (renderRoot, renderCallback) {
