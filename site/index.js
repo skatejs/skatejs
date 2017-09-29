@@ -2,6 +2,9 @@
 
 import { define } from "../src";
 import { Code, Component, Heading, Hero, Layout, h } from "./components/_";
+import loadSample from "./utils/load-sample";
+
+const simple = loadSample('simple');
 
 export default define(
   class Index extends Component {
@@ -13,34 +16,14 @@ export default define(
             <p>Basic usage:</p>
             <Code
               lang="js"
-              src={`
-              import { withComponent } from 'skatejs';
-
-              let Component = withComponent();
-
-              class MyComponent extends Component {
-                  rendererCallback (renderRoot, renderCallback) {
-                    renderRoot.innerHtml = '';
-                    renderRoot.appendChild(renderCallback());
-                  }
-                  renderCallback () {
-                      let el = document.createElement('div');
-                      el.innerHTML = 'Hello, <slot></slot>!';
-                      return el;
-                  }
-              }
-
-              customElements.define('my-component', MyComponent);
-              `}
+              src={simple.source}
             />
             <Code
               lang="html"
-              src={`
-                <my-component>World</my-component>
-              `}
+              src={simple.html}
             />
             <p>Would render:</p>
-            <Code lang="html" src={`Hello, World!`} />
+            <Code lang="html" src={simple.result} />
           </Hero>
           <p>To install Skate, all you have to do is run:</p>
           <Code lang="sh" src={`npm install skatejs`} />
