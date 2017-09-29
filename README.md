@@ -25,13 +25,30 @@ At its core, Skate is about creating [Custom Elements](https://w3c.github.io/web
 Skate provides a series of [mixin functions](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
 that enable you to control what your component can do.
 
-For example, to create a simple greeting component:
+For instance, Skate's main mixin, `withComponent`, is just a composition of all of Skate's other mixin behaviours:
+
+* `withProps` -- the generated element will react to changes on their props or HTML attributes.
+* `withChildren` -- the generated element will react to changes to its child elements.
+* `withRenderer` -- the element can generate its own DOM and output it to a `renderRoot` (a `ShadowRoot` node by default).
+* `withUnique` -- allows for naming the custom element through `is`.
+
+Calling `withComponent()` gives you a Custom Element class constructor, which you can then extend to
+define your own elements.
+
+Every mixin accepts an optional `Element` constructor as its only parameter, which
+allows you to extend virtually any element type in HTML!
+
+### Rendering an element
+
+As an example, let's create a simple greeting component...
 
 ```html
 <x-hello>Bob</x-hello>
 ```
 
-We could define a Skate component that renders the contents of our Custom Element:
+...such that when this element is rendered, the end-user will see `Hello, Bob!`.
+
+We can define a Skate component that renders the contents of our Custom Element:
 
 ```js
 import { withComponent } from 'skatejs';
@@ -53,8 +70,7 @@ class GreetingComponent extends Component {
 customElements.define('x-hello', GreetingComponent);
 ```
 
-When this element is rendered, the end-user will see `Hello, Bob!`,
-though the DOM will look something like the following:
+When this element is rendered, the DOM will look something like the following:
 
 ```html
 <x-hello>
@@ -104,6 +120,37 @@ The resulting HTML when the element is rendered would look like this:
 
 Now, whenever the `name` property or attribute on the greeting component changes,
 the component will re-render.
+
+### Making your own mixins
+
+In the previous exampless, each component implements its own rendering behaviour.
+Rather than re-defining it all the time, we can write a mixin and take advantage of
+prototypal inheritance:
+
+```js
+import { props, withComponent } from 'skatejs';
+
+const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
+  return class extends Base {
+      rendererCallback (renderRoot, renderCallback) {
+        renderRoot.innerHtml = renderCallback();
+      }
+  }
+};
+
+const Component = withComponent(withDangerouslyNaiveRenderer());
+
+class GreetingComponent extends Component {
+  static props = {
+    name: props.string
+  }
+  renderCallback ({ name }) {
+    return `<span>Hello, {name}!</span>`;
+  }
+});
+
+customElements.define('x-hello', GreetingComponent);
+```
 
 ### Rendering using other front-end libraries
 
