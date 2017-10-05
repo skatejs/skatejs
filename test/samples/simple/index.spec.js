@@ -8,16 +8,17 @@ describe('samples/simple', () => {
         let el = document.createElement('hello-simple');
         mount( el ).wait(e => {
             expect(e.shadowRoot.firstChild.textContent).toBe('Hello, !');
+            expect(e.node.textContent).toBe('');
             done();
         });
     });
 
-    xit('renders slot contents', (done) => {
+    it('renders slot contents', (done) => {
         let el = document.createElement('hello-simple');
         el.textContent = 'World';
         mount( el ).wait(e => {
             expect(e.shadowRoot.firstChild.textContent).toBe('Hello, !');
-            expect(e.textContent).toBe('World');
+            expect(e.node.textContent).toBe('World');
             done();
         });
     });
