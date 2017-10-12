@@ -1,5 +1,5 @@
 **Please check if the PR fulfills these requirements**
-- [ ] The commit message follows [our guidelines](https://github.com/skatej/skatej/blob/master/docs/CONTRIBUTING.md#commit)
+- [ ] The commit message follows [our guidelines](https://github.com/skatejs/skatejs/blob/5.x/CONTRIBUTING.md#committing)
 - [ ] Tests for the changes have been added (for bug fixes / features)
 - [ ] Docs have been added / updated (for bug fixes / features)
 - [ ] Updated TypeScript definitions, if applicable
