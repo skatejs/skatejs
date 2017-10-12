@@ -13,7 +13,7 @@ interface CanDefineProps extends HTMLElement {
 }
 
 export function normaliseAttributeDefinition(
-  name: string,
+  name: string | Symbol,
   prop: PropOptions
 ): Object {
   const { attribute } = prop;
@@ -25,10 +25,10 @@ export function normaliseAttributeDefinition(
           target: attribute
         };
   if (obj.source === true) {
-    obj.source = dashCase(name);
+    obj.source = typeof name === 'symbol' ? name : dashCase(name);
   }
   if (obj.target === true) {
-    obj.target = dashCase(name);
+    obj.target = typeof name === 'symbol' ? name : dashCase(name);
   }
   return obj;
 }
