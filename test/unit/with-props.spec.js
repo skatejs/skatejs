@@ -302,7 +302,7 @@ describe("withProps", () => {
         class extends withUnique(withProps()) {
           static props = {
             [secret1]: null,
-            [secret2]: null,
+            [secret2]: props.any,
             public1: null,
             public2: null
           };
