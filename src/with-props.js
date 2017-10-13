@@ -49,7 +49,7 @@ export function prop(definition: PropOptions | void): Function {
           normalised.serialize,
           val
         );
-        this._updateDebounced();
+        this.triggerUpdateBatched();
       }
     });
   };
@@ -74,18 +74,19 @@ export const withProps = (
     _prevProps: Object;
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
-    _updateDebounced: () => mixed;
     _updating: boolean;
 
     propsChangedCallback: Function | void;
     propsSetCallback: Function | void;
+    triggerUpdate: Function;
+    triggerUpdateBatched: Function;
 
     static get observedAttributes(): Array<string> {
       return this._observedAttributes || [];
     }
 
     static set observedAttributes(attrs: string | Array<string>) {
-      if (!this.hasOwnProperty('_observedAttributes')) {
+      if (!this._observedAttributes) {
         this._observedAttributes = [];
       }
       this._observedAttributes = this.observedAttributes.concat(attrs);
@@ -121,7 +122,7 @@ export const withProps = (
       super();
       if (this._constructed) return;
       this._constructed = true;
-      this._updateDebounced = debounce(this._updateCallback);
+      this.triggerUpdateBatched = debounce(this.triggerUpdate.bind(this));
     }
 
     connectedCallback() {
@@ -129,7 +130,7 @@ export const withProps = (
       this._connected = true;
       // $FlowFixMe - HTMLElement doesn't implement connectedCallback.
       if (super.connectedCallback) super.connectedCallback();
-      this._updateDebounced();
+      this.triggerUpdateBatched();
     }
 
     disconnectedCallback() {
@@ -156,7 +157,7 @@ export const withProps = (
     }
 
     // Invokes the complete render lifecycle.
-    _updateCallback = () => {
+    triggerUpdate() {
       if (this._updating || !this._connected) {
         return;
       }
@@ -181,7 +182,7 @@ export const withProps = (
       }
 
       this._updating = false;
-    };
+    }
   };
 
 const { parse, stringify } = JSON;
