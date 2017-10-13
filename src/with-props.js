@@ -69,8 +69,6 @@ export const withProps = (
     static _observedAttributes: Array<string>;
     static _props: Object;
 
-    _connected: boolean;
-    _constructed: boolean;
     _prevProps: Object;
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
@@ -120,24 +118,15 @@ export const withProps = (
 
     constructor() {
       super();
-      if (this._constructed) return;
-      this._constructed = true;
       this.triggerUpdateBatched = debounce(this.triggerUpdate.bind(this));
     }
 
     connectedCallback() {
-      if (this._connected) return;
-      this._connected = true;
-      // $FlowFixMe - HTMLElement doesn't implement connectedCallback.
-      if (super.connectedCallback) super.connectedCallback();
+      if (super.connectedCallback) {
+        // $FlowFixMe - not in HTMLElement.
+        super.connectedCallback();
+      }
       this.triggerUpdateBatched();
-    }
-
-    disconnectedCallback() {
-      if (!this._connected) return;
-      this._connected = false;
-      // $FlowFixMe - HTMLElement doesn't implement disconnectedCallback.
-      if (super.disconnectedCallback) super.disconnectedCallback();
     }
 
     // Called to see if the props changed.
@@ -158,7 +147,7 @@ export const withProps = (
 
     // Invokes the complete render lifecycle.
     triggerUpdate() {
-      if (this._updating || !this._connected) {
+      if (this._updating) {
         return;
       }
 

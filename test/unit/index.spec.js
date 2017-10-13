@@ -24,6 +24,7 @@ describe('exports', () => {
     expect(typeof api.withComponent).toBe('function', 'withComponent');
     expect(typeof api.withProps).toBe('function', 'withProps');
     expect(typeof api.withRenderer).toBe('function', 'withRenderer');
+    expect(typeof api.withState).toBe('function', 'withState');
     expect(typeof api.withUnique).toBe('function', 'withUnique');
   });
 
