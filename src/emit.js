@@ -8,7 +8,11 @@ const defs: EventOptions = {
   composed: false
 };
 
-export function emit (elem: HTMLElement, name: string, opts: EventOptions): boolean {
+export function emit(
+  elem: HTMLElement,
+  name: string,
+  opts: EventOptions
+): boolean {
   opts = { ...defs, ...opts };
   let e: ComposedCustomEvent;
   if ('composed' in CustomEvent.prototype) {
@@ -16,6 +20,7 @@ export function emit (elem: HTMLElement, name: string, opts: EventOptions): bool
   } else {
     e = document.createEvent('CustomEvent');
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
+    // $FlowFixMe: composed not in CustomEvent
     Object.defineProperty(e, 'composed', { value: opts.composed });
   }
   return elem.dispatchEvent(e);

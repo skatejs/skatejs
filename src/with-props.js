@@ -66,6 +66,9 @@ export const withProps = (
   Base?: Class<HTMLElement> = HTMLElement
 ): Class<HTMLElement> =>
   class extends Base {
+    static _observedAttributes: Array<string>;
+    static _props: Object;
+
     _connected: boolean;
     _constructed: boolean;
     _prevProps: Object;

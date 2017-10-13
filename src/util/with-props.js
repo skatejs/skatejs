@@ -1,15 +1,15 @@
 // @flow
 
-import type { PropOptions, PropsOptionsNormalized } from "../types";
+import type { PropOptions, PropsOptionsNormalized } from '../types';
 
-import { dashCase } from "./index";
+import { dashCase } from './index';
 
 interface CanDefineProps extends HTMLElement {
-  static prototype: Object,
-  static props: PropsOptionsNormalized,
+  static prototype: Object;
+  static props: PropsOptionsNormalized;
 
-  _syncingAttributeToProperty: string | null,
-  _syncingPropertyToAttribute: boolean
+  _syncingAttributeToProperty: string | null;
+  _syncingPropertyToAttribute: boolean;
 }
 
 export function normaliseAttributeDefinition(
@@ -18,17 +18,17 @@ export function normaliseAttributeDefinition(
 ): Object {
   const { attribute } = prop;
   const obj =
-    typeof attribute === "object"
+    typeof attribute === 'object'
       ? { ...attribute }
       : {
           source: attribute,
           target: attribute
         };
   if (obj.source === true) {
-    obj.source = typeof name === 'symbol' ? name : dashCase(name);
+    obj.source = dashCase(name);
   }
   if (obj.target === true) {
-    obj.target = typeof name === 'symbol' ? name : dashCase(name);
+    obj.target = dashCase(name);
   }
   return obj;
 }
