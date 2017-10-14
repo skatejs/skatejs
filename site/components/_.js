@@ -5,7 +5,7 @@ import val from '@skatejs/val';
 import hljs from 'highlight.js';
 import { h as preactH } from 'preact';
 
-import { define, props, withComponent } from '../..';
+import { define, props, withComponent } from '../../src';
 
 const fs = require('fs');
 
