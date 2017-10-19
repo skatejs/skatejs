@@ -12,50 +12,170 @@
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
-Skate is high level, functional abstraction over the web component [specs](https://github.com/w3c/webcomponents) that:
+Skate is a functional abstraction over [the web component standards](https://github.com/w3c/webcomponents) that:
 
 - Produces cross-framework compatible components
 - Abstracts away common attribute / property semantics via `props`, such as attribute reflection and coercion
 - Adds several lifecycle callbacks for responding to prop updates, rendering and more
 - Provides a base set of [mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/) that hook into renderers such as [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact).
 
-## Installing
+## Anatomy of a Skate web component
 
-```sh
-npm install skatejs
-```
+At its core, Skate is about creating [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/).
+Skate provides a series of [mixin functions](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
+that enable you to control what your component can do.
 
-To use Skate with a renderer, you'll want to install one of them:
+For instance, Skate's main mixin, `withComponent`, is just a composition of all of Skate's other mixin behaviours:
 
-```sh
-npm install skatejs @skatejs/renderer-[renderer]
-```
+* `withProps` -- the generated element will react to changes on their props or HTML attributes.
+* `withChildren` -- the generated element will react to changes to its child elements.
+* `withRenderer` -- the element can generate its own DOM and output it to a `renderRoot` (a `ShadowRoot` node by default).
+* `withUnique` -- allows for naming the custom element through `is`.
 
-Where `[renderer]` is one of:
+Calling `withComponent()` gives you a Custom Element class constructor, which you can then extend to
+define your own elements.
 
-- [@skatejs/renderer-lit-html](https://github.com/skatejs/renderer-lit-html)
-- [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact)
-- [@skatejs/renderer-react](https://github.com/skatejs/renderer-react)
-- Or any custom renderer!
+Every mixin accepts an optional `Element` constructor as its only parameter, which
+allows you to extend virtually any element type in HTML!
 
-## Basic usage
+### Rendering an element
 
-HTML
+As an example, let's create a simple greeting component...
 
 ```html
-<x-hello name="Bob"></x-hello>
+<x-hello>Bob</x-hello>
 ```
 
-JavaScript (using the Preact renderer)
+...such that when this element is rendered, the end-user will see `Hello, Bob!`.
+
+We can define a Skate component that renders the contents of our Custom Element:
+
+```js
+import { withComponent } from 'skatejs';
+
+const Component = withComponent();
+
+class GreetingComponent extends Component {
+  rendererCallback (renderRoot, renderCallback) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(renderCallback());
+  }
+  renderCallback () {
+      let el = document.createElement('span');
+      el.innerHTML = 'Hello, <slot></slot>!';
+      return el;
+  }
+});
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+When this element is rendered, the DOM will look something like the following:
+
+```html
+<x-hello>
+  #shadow-root
+    <span>Hello, <slot></slot>!</span>
+  Bob
+</x-hello>
+```
+
+This is the utility that web components provide when using Custom Elements and the Shadow DOM.
+
+### Watching element properties and attributes
+
+We can create a Skate component that watches for HTML attribute changes on itself:
+
+```js
+import { props, withComponent } from 'skatejs';
+
+const Component = withComponent();
+
+class GreetingComponent extends Component {
+  static props = {
+    name: props.string
+  }
+  rendererCallback (renderRoot, renderCallback) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(renderCallback());
+  }
+  renderCallback ({ name }) {
+      let el = document.createElement('span');
+      el.innerHTML = `Hello, ${name}!`;
+      return el;
+  }
+});
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+The resulting HTML when the element is rendered would look like this:
+
+```html
+<x-hello name="Bob">
+  #shadow-root
+    <span>Hello, Bob!</span>
+</x-hello>
+```
+
+Now, whenever the `name` property or attribute on the greeting component changes,
+the component will re-render.
+
+### Making your own mixins
+
+In the previous exampless, each component implements its own rendering behaviour.
+Rather than re-defining it all the time, we can write a mixin and take advantage of
+prototypal inheritance:
+
+```js
+import { props, withComponent } from 'skatejs';
+
+const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
+  return class extends Base {
+      rendererCallback (renderRoot, renderCallback) {
+        renderRoot.innerHtml = renderCallback();
+      }
+  }
+};
+
+const Component = withComponent(withDangerouslyNaiveRenderer());
+
+class GreetingComponent extends Component {
+  static props = {
+    name: props.string
+  }
+  renderCallback ({ name }) {
+    return `<span>Hello, {name}!</span>`;
+  }
+});
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+### Rendering using other front-end libraries
+
+Because Skate provides a hook for the renderer, it can support just about
+every modern component-based front-end library &mdash; React, Preact, Vue...
+just provide a `renderCallback` to stamp out your component's HTML,
+a `rendererCallback` to update the DOM with your HTML, and then it's all the same to Skate!
+
+The Skate team have provided a few renderers for popular front-end libraries;
+check the [Installing](#installing) section.
+
+#### Using Skate with Preact
+
+Instead of writing our own `rendererCallback`, we could use a library like
+[Preact](https://preactjs.com/) to do the work for us. Skate provides a ready-made renderer for Preact;
+here's how we would update our previous greeting component to use it:
 
 ```js
 /** @jsx h */
 
 import { props, withComponent } from 'skatejs';
-import withPreact from '@skatejs/renderer-preact';
+import withRenderer from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
-const Component = withComponent(withPreact());
+const Component = withComponent(withRenderer());
 
 customElements.define('x-hello', class extends Component {
   static props = {
@@ -67,22 +187,43 @@ customElements.define('x-hello', class extends Component {
 });
 ```
 
-Result
+Now that the greeting component is rendered via Preact, when it renders,
+it only changes the part of the DOM that requires updating.
 
-```html
-<x-hello name="Bob">
-  #shadow-root
-    <span>Hello, Bob!</span>
-</x-hello>
+## Installing Skate
+
+To use Skate on its own, just add it to your `package.json`:
+
+```sh
+npm install skatejs
 ```
 
-Whenever you change the `name` property - or attribute - the component will re-render, only changing the part of the DOM that requires updating.
+To use Skate with another front-end library, you'll want to install that library itself,
+along with a Skate renderer for it.
+
+```sh
+npm install skatejs @skatejs/renderer-[renderer] [renderer]
+```
+
+Where `[renderer]` is one of:
+
+- [@skatejs/renderer-lit-html](https://github.com/skatejs/renderer-lit-html)
+- [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact)
+- [@skatejs/renderer-react](https://github.com/skatejs/renderer-react)
+- Or any custom renderer!
 
 ## Polyfills
 
-Skate uses both Custom Elements and Shadow DOM, but is capable of operating without Shadow DOM, you just don't get any encapsulation.
+Skate builds upon the [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and
+[the Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards. Skate is
+capable of operating without the Shadow DOM &mdash; it just means you don't get any
+encapsulation of your component's HTML or styles.
 
-For more information on the polyfills, see [their docs](https://github.com/webcomponents/webcomponentsjs).
+Though most modern browsers support these standards, some still need polyfills to implement missing or inconsistent
+behaviours for them.
+
+For more information on the polyfills, see
+[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs).
 
 ## Browser Support
 
