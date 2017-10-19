@@ -10,7 +10,7 @@ export default define(
       return (
         <Layout>
           <Hero />
-          <Code {...loadSample('simple')} />
+          <Code {...loadSample('with-react')} />
           <p>
             Because Skate provides a hook for renderers, it can support any view
             library such as React, Preact, Vue and more.

@@ -4,7 +4,7 @@ const path = require('path');
 const sampleRoot = path.resolve(__dirname, '..', '..', 'test', 'samples');
 
 function filterSource(src) {
-  return String(src).replace('../../../src', 'skatejs');
+  return String(src).replace('../../..', 'skatejs');
 }
 
 export default function loadSample(sampleName) {

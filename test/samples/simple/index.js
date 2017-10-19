@@ -1,4 +1,4 @@
-import { withComponent } from '../../../src';
+import { withComponent } from '../../..';
 
 class MyComponent extends withComponent() {
   rendererCallback(renderRoot, renderCallback) {
