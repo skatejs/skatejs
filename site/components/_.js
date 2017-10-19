@@ -91,6 +91,25 @@ export const Hero = define(
   }
 );
 
+export const Hr = define(
+  class Hr extends Component {
+    renderCallback() {
+      return (
+        <div className="hr">
+          <style>{`
+            .hr {
+              letter-spacing: 10px;
+              margin: 50px 0;
+              text-align: center;
+            }
+          `}</style>
+          &mdash;&mdash;&mdash;
+        </div>
+      )
+    }
+  }
+);
+
 export const Layout = define(
   class Layout extends Component {
     renderCallback() {

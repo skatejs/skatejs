@@ -1,7 +1,7 @@
 /** @jsx h */
 
 import { define } from '../src';
-import { Code, Component, Heading, Hero, Layout, h } from './components/_';
+import { Code, Component, Heading, Hero, Hr, Layout, h } from './components/_';
 import loadSample from './utils/load-sample';
 
 export default define(
@@ -11,6 +11,7 @@ export default define(
         <Layout>
           <Hero />
           <Code {...loadSample('with-react')} />
+          <Hr />
           <p>
             Because Skate provides a hook for renderers, it can support any view
             library such as React, Preact, Vue and more.
