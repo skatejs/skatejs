@@ -10,7 +10,9 @@ export const withRenderer = (
   Base: Class<HTMLElement> = HTMLElement
 ): Class<HTMLElement> =>
   class extends Base {
+    _connected: boolean;
     _shadowRoot: Node;
+
     renderCallback: Function | void;
     renderedCallback: Function | void;
     rendererCallback: Function | void;
@@ -22,14 +24,28 @@ export const withRenderer = (
       );
     }
 
+    connectedCallback() {
+      if (super.connectedCallback) {
+        // $FlowFixMe - not in HTMLElement.
+        super.connectedCallback();
+      }
+      this._connected = true;
+    }
+
     propsChangedCallback() {
+      if (super.propsChangedCallback) {
+        // $FlowFixMe - not in HTMLElement.
+        super.propsChangedCallback();
+      }
+      if (!this._connected) {
+        return;
+      }
       if (this.rendererCallback) {
         this.rendererCallback(
           this.renderRoot,
           () => this.renderCallback && this.renderCallback(this)
         );
       }
-
       if (this.renderedCallback) {
         this.renderedCallback();
       }
