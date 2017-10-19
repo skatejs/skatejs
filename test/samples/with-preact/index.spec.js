@@ -4,22 +4,18 @@ import { mount } from '@skatejs/bore';
 import './';
 
 describe('samples/with-preact', () => {
-    it('renders what we expect', (done) => {
-        let el = document.createElement('hello-withpreact');
-        mount( el ).wait(e => {
-            expect(e.shadowRoot.firstChild.textContent).toBe('Hello, !');
-            expect(e.node.textContent).toBe('');
-            done();
-        });
+  it('renders what we expect', () => {
+    let el = document.createElement('with-preact');
+    mount(el).wait(e => {
+      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, !</span>');
     });
+  });
 
-    it('renders props contents', (done) => {
-        let el = document.createElement('hello-withpreact');
-        el.name = 'World';
-        mount( el ).wait(e => {
-            expect(e.shadowRoot.firstChild.textContent).toBe('Hello, World!');
-            expect(e.node.textContent).toBe('');
-            done();
-        });
+  it('renders props contents', () => {
+    const el = document.createElement('with-preact');
+    el.name = 'World';
+    mount(el).wait(e => {
+      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, World!</span>');
     });
+  });
 });

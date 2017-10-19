@@ -6,11 +6,14 @@ import { h } from 'preact';
 
 const Component = withComponent(withRenderer());
 
-customElements.define('hello-withpreact', class MyPreactHello extends Component {
-  static props = {
-    name: props.string
+customElements.define(
+  'with-preact',
+  class MyPreactHello extends Component {
+    static props = {
+      name: props.string
+    };
+    renderCallback({ name }) {
+      return <span>Hello, {name}!</span>;
+    }
   }
-  renderCallback ({ name }) {
-    return <span>Hello, {name}!</span>;
-  }
-});
+);
