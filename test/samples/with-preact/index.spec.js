@@ -7,7 +7,7 @@ describe('samples/with-preact', () => {
   it('renders what we expect', () => {
     let el = document.createElement('with-preact');
     mount(el).wait(e => {
-      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, !</span>');
+      expect(e.shadowRoot.innerHTML).toMatchSnapshot();
     });
   });
 
@@ -15,7 +15,7 @@ describe('samples/with-preact', () => {
     const el = document.createElement('with-preact');
     el.name = 'World';
     mount(el).wait(e => {
-      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, World!</span>');
+      expect(e.shadowRoot.innerHTML).toMatchSnapshot();
     });
   });
 });

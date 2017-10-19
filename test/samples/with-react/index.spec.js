@@ -7,7 +7,7 @@ describe('samples/with-react', () => {
   it('renders what we expect', () => {
     let el = document.createElement('with-react');
     mount(el).wait(e => {
-      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, !</span>');
+      expect(e.shadowRoot.innerHTML).toMatchSnapshot();
     });
   });
 
@@ -15,7 +15,7 @@ describe('samples/with-react', () => {
     const el = document.createElement('with-react');
     el.name = 'World';
     mount(el).wait(e => {
-      expect(e.shadowRoot.innerHTML).toBe('<span>Hello, World!</span>');
+      expect(e.shadowRoot.innerHTML).toMatchSnapshot();
     });
   });
 });

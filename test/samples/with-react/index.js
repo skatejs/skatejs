@@ -1,4 +1,4 @@
-import { props, withComponent } from 'skatejs';
+import { props, withComponent } from '../../..';
 import withReact from '@skatejs/renderer-react/umd';
 import React from 'react';
 
@@ -6,7 +6,7 @@ class WithReact extends withComponent(withReact()) {
   static props = {
     name: props.string
   };
-  render() {
+  renderCallback({ name }) {
     return <span>Hello, {name}!</span>;
   }
 }
