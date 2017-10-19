@@ -42,7 +42,8 @@ export const Code = define(
         <pre>
           <style>{`
             .host {
-              background-color: #222;
+              background-color: #333;
+              border-radius: 3px;
               color: white;
               display: block;
               padding: 10px;
@@ -119,16 +120,22 @@ export const Layout = define(
             body {
               background-color: #F2F5EB;
               font-family: Helvetica;
+              font-size: 1.2em;
+              font-style: normal;
+              font-weight: lighter;
               margin: 0;
               padding: 0;
             }
             h1 {
-              font-size: 3em;
+              font-size: 2.5em;
+              font-style: normal;
+              font-weight: normal;
               margin: 10px 0;
             }
             h2 {
-              font-size: 2em;
-              font-weight: 100;
+              font-size: 1.5em;
+              font-style: normal;
+              font-weight: lighter;
               margin: 10px 0;
             }
             .outer {

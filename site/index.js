@@ -12,12 +12,23 @@ export default define(
           <Hero />
           <Code {...loadSample('with-react')} />
           <Hr />
+          <h2>Why Skate?</h2>
+          <p>The purpose of Skate is to:</p>
+          <ul>
+            <li>Be a set of mixins for all the common things you'd end up having to write yourself.</li>
+            <li>Provide an abstract functional - as in FRP - rendering pattern that can hook into <strong>any</strong> view library.</li>
+            <li>Stay small, focused and compatible with any library / framework.</li>
+          </ul>
+          <Hr />
+          <h2>Common mixins</h2>
+          <Hr />
+          <h2>Renderers</h2>
           <p>
             Because Skate provides a hook for renderers, it can support any view
             library such as React, Preact, Vue and more.
           </p>
           <p>
-            The Skate team have provided a few renderers for popular front-end
+            We've already provided a few renderers for popular front-end
             libraries:
             <ul>
               <li>
