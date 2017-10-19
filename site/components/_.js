@@ -63,17 +63,28 @@ export const Code = define(
   }
 );
 
-export const Heading = ({ children }) =>
-  <h1>
-    {children}
-  </h1>;
-
 export const Hero = define(
   class Hero extends Component {
     renderCallback() {
       return (
-        <div>
-          <slot />
+        <div className="hero">
+          <style>{`
+            .hero {
+              margin: 50px 0;
+              text-align: center;
+            }
+            .title {
+              margin-bottom: 50px;
+            }
+          `}</style>
+          <img
+            attrs={{
+              height: 100,
+              src: 'https://cdn.rawgit.com/skatejs/branding/1efc884e/icon.png'
+            }}
+          />
+          <h1 className="title">SkateJS</h1>
+          <h2>Web components for all your favourite view libraries.</h2>
         </div>
       );
     }
@@ -83,7 +94,38 @@ export const Hero = define(
 export const Layout = define(
   class Layout extends Component {
     renderCallback() {
-      return <slot />;
+      return (
+        <div className="outer">
+          <style>{`
+            body {
+              background-color: #F2F5EB;
+              font-family: Helvetica;
+              margin: 0;
+              padding: 0;
+            }
+            h1 {
+              font-size: 3em;
+              margin: 10px 0;
+            }
+            h2 {
+              font-size: 2em;
+              font-weight: 100;
+              margin: 10px 0;
+            }
+            .outer {
+              border-top: 5px solid #F2567C;
+              padding: 25px;
+            }
+            .inner {
+              max-width: 800px;
+              margin: 0 auto;
+            }
+          `}</style>
+          <div className="inner">
+            <slot />
+          </div>
+        </div>
+      );
     }
   }
 );

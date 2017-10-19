@@ -8,19 +8,12 @@ function filterSource(src) {
 }
 
 export default function loadSample(sampleName) {
-  let filePath = path.join(sampleRoot, sampleName);
-  let sourceFile = path.join(filePath, 'index.js');
+  const filePath = path.join(sampleRoot, sampleName);
+  const sourceFile = path.join(filePath, 'index.js');
   if (fs.existsSync(sourceFile)) {
-    let source = fs.readFileSync(sourceFile, 'utf8');
-    let html = fs.readFileSync(path.join(filePath, 'index.html.js'), 'utf8');
-    let result = fs.readFileSync(
-      path.join(filePath, 'index.result.js'),
-      'utf8'
-    );
+    const source = fs.readFileSync(sourceFile, 'utf8');
     return {
-      source: filterSource(source),
-      html,
-      result
+      src: filterSource(source)
     };
   }
   throw new Error(`could not find sample ${sampleName} in ${sampleRoot}`);
