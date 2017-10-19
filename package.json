@@ -78,9 +78,7 @@
     "babel-preset-latest": "6.24.1",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
-    "commitizen": "2.9.6",
     "conartist": "^0.12.0",
-    "cz-conventional-changelog": "2.0.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
     "highlight.js": "9.12.0",
@@ -98,7 +96,6 @@
     "semantic-release": "6.3.2",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
-    "validate-commit-msg": "2.12.1",
     "watchman": "0.1.8",
     "yargs": "^8.0.2"
   },
@@ -106,12 +103,7 @@
     "es/",
     "esnext/",
     "node/",
-    "umd/",
-    "esnext",
-    "es",
-    "node",
-    "src",
-    "umd"
+    "umd/"
   ],
   "main": "node/index.js",
   "module": "es/index.js",
@@ -122,7 +114,6 @@
     "build:node": "BABEL_ENV=node babel src --out-dir node",
     "test": "jest",
     "build:umd": "BABEL_ENV=rollup rollup -c && BABEL_ENV=rollup rollup -c --min",
-    "commitmsg": "validate-commit-msg",
     "dev": "nodemon --exec 'npm run site' --watch site --watch src",
     "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
@@ -159,7 +150,6 @@
     "dom",
     "elements",
     "web",
-    "components",
     "vdom",
     "virtual"
   ],
@@ -168,10 +158,5 @@
       "prettier --write",
       "git add"
     ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
   }
 }
