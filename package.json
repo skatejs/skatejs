@@ -53,7 +53,32 @@
           "stage-0"
         ],
         "plugins": [
-          "babel-plugin-transform-skate-flow-props"
+          "transform-skate-flow-props",
+          [
+            "transform-react-jsx",
+            {
+              "pragma": "h"
+            }
+          ]
+        ]
+      },
+      "site-public": {
+        "presets": [
+          [
+            "env"
+          ],
+          "flow",
+          "react",
+          "stage-0"
+        ],
+        "plugins": [
+          "transform-skate-flow-props",
+          [
+            "transform-react-jsx",
+            {
+              "pragma": "h"
+            }
+          ]
         ]
       },
       "test": {
@@ -83,12 +108,14 @@
     "@skatejs/bore": "4.0.0",
     "@skatejs/renderer-preact": "0.0.1",
     "@skatejs/renderer-react": "0.0.0",
-    "@skatejs/ssr": "^0.14.0",
+    "@skatejs/ssr": "^0.15.3",
     "@skatejs/val": "0.3.1",
     "babel-cli": "^6.26.0",
     "babel-eslint": "7.2.3",
+    "babel-loader": "^7.1.2",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
+    "babel-plugin-transform-custom-element-classes": "^0.1.0",
     "babel-plugin-transform-skate-flow-props": "0.0.0",
     "babel-preset-env": "1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
@@ -119,6 +146,7 @@
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
     "watchman": "0.1.8",
+    "webpack": "^3.8.1",
     "yargs": "^8.0.2"
   },
   "files": [
@@ -140,7 +168,7 @@
     "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
     "release": "git push && git push --tags && npm publish",
-    "site": "BABEL_ENV=site ./node_modules/@skatejs/ssr/bin/index --out public --no-rehydrate --src site/*.js",
+    "site": "BABEL_ENV=site ./node_modules/@skatejs/ssr/bin/index --out public --no-rehydrate --src site/*.js && BABEL_ENV=site-public webpack",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"
