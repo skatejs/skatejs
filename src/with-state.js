@@ -3,8 +3,9 @@ export const withState = (
 ): Class<HTMLElement> =>
   class extends Base {
     triggerUpdate: Function | void;
+    _state = {};
     get state() {
-      return this._state || {};
+      return this._state;
     }
     set state(state: Object) {
       this._state = state;

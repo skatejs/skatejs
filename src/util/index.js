@@ -1,28 +1,5 @@
 // @flow
 
-const Mo =
-  typeof MutationObserver === 'function'
-    ? MutationObserver
-    : class {
-        func: Function;
-        constructor(func) {
-          this.func = func;
-        }
-        observe(node: HTMLElement) {
-          const { func } = this;
-          const prop: Object = {
-            set() {
-              if (typeof Promise === 'undefined') {
-                setTimeout(func);
-              } else {
-                new Promise(resolve => resolve()).then(func);
-              }
-            }
-          };
-          Object.defineProperty(node, 'textContent', prop);
-        }
-      };
-
 export function dashCase<T>(str: T): T {
   return typeof str === 'string'
     ? str.split(/([_A-Z])/).reduce((one, two, idx) => {
@@ -31,26 +8,6 @@ export function dashCase<T>(str: T): T {
         return `${one}${dash}${two.toLowerCase()}`;
       })
     : str;
-}
-
-export function debounce(cbFunc: () => void): Function {
-  let scheduled = false;
-  let i = 0;
-  const elem = document.createElement('span');
-  const observer = new Mo(() => {
-    cbFunc();
-    scheduled = false;
-  });
-
-  observer.observe(elem, { childList: true });
-
-  return (): void => {
-    if (!scheduled) {
-      scheduled = true;
-      elem.textContent = `${i}`;
-      i += 1;
-    }
-  };
 }
 
 export const empty = <T>(val: T): boolean => val == null;

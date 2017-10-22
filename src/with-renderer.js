@@ -25,29 +25,18 @@ export const withRenderer = (
     }
 
     connectedCallback() {
-      if (super.connectedCallback) {
-        // $FlowFixMe - not in HTMLElement.
-        super.connectedCallback();
-      }
+      super.connectedCallback && super.connectedCallback();
       this._connected = true;
     }
 
-    propsChangedCallback() {
-      if (super.propsChangedCallback) {
-        // $FlowFixMe - not in HTMLElement.
-        super.propsChangedCallback();
-      }
-      if (!this._connected) {
-        return;
-      }
-      if (this.rendererCallback) {
+    propsUpdatedCallback() {
+      super.propsUpdatedCallback && super.propsUpdatedCallback();
+      if (!this._connected) return;
+      this.rendererCallback &&
         this.rendererCallback(
           this.renderRoot,
           () => this.renderCallback && this.renderCallback(this)
         );
-      }
-      if (this.renderedCallback) {
-        this.renderedCallback();
-      }
+      this.renderedCallback && this.renderedCallback();
     }
   };

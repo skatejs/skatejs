@@ -6,7 +6,7 @@ import type {
   PropsOptionsNormalized
 } from './types';
 
-import { debounce, empty, keys, sym } from './util/index';
+import { empty, keys, sym } from './util/index';
 
 import {
   normalisePropertyDefinition,
@@ -49,7 +49,7 @@ export function prop(definition: PropOptions | void): Function {
           normalised.serialize,
           val
         );
-        this.triggerUpdateBatched();
+        this.triggerUpdate();
       }
     });
   };
@@ -74,20 +74,16 @@ export const withProps = (
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
 
-    propsChangedCallback: Function | void;
     propsSetCallback: Function | void;
+    propsUpdatedCallback: Function | void;
     triggerUpdate: Function;
-    triggerUpdateBatched: Function;
 
     static get observedAttributes(): Array<string> {
       return this._observedAttributes || [];
     }
 
     static set observedAttributes(attrs: string | Array<string>) {
-      if (!this._observedAttributes) {
-        this._observedAttributes = [];
-      }
-      this._observedAttributes = this.observedAttributes.concat(attrs);
+      this._observedAttributes = (this.observedAttributes || []).concat(attrs);
     }
 
     static get props(): PropsOptionsNormalized {
@@ -116,22 +112,13 @@ export const withProps = (
       keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
     }
 
-    constructor() {
-      super();
-      this.triggerUpdateBatched = debounce(this.triggerUpdate.bind(this));
-    }
-
     connectedCallback() {
-      if (super.connectedCallback) {
-        // $FlowFixMe - not in HTMLElement.
-        super.connectedCallback();
-      }
-      this.triggerUpdateBatched();
+      super.connectedCallback && super.connectedCallback();
+      this.triggerUpdate();
     }
 
-    // Called to see if the props changed.
-    propsUpdatedCallback(next: Object, prev: Object) {
-      return !prev || keys(prev).some(k => prev[k] !== next[k]);
+    propsChangedCallback() {
+      return true;
     }
 
     attributeChangedCallback(
@@ -139,37 +126,26 @@ export const withProps = (
       oldValue: string | null,
       newValue: string | null
     ) {
-      if (super.attributeChangedCallback)
-        // $FlowFixMe - HTMLElement doesn't implement attributeChangedCallback.
+      super.attributeChangedCallback &&
         super.attributeChangedCallback(name, oldValue, newValue);
       syncAttributeToProperty(this, name, newValue);
     }
 
-    // Invokes the complete render lifecycle.
     triggerUpdate() {
-      if (this._updating) {
-        return;
-      }
-
-      // Flag as rendering. This prevents anything from trying to render - or
-      // queueing a render - while there is a pending render.
+      if (this._updating) return;
       this._updating = true;
 
-      // Prev / next props for prop lifecycle callbacks.
       const prev = this._prevProps;
-      const next = (this._prevProps = this.props);
 
-      // Always call set, but only call changed if the props updated.
       if (this.propsSetCallback) {
-        this.propsSetCallback(next, prev);
+        this.propsSetCallback(prev);
       }
 
-      // We only need to check if props have updated if we need to call the
-      // changed callback.
-      if (this.propsChangedCallback && this.propsUpdatedCallback(next, prev)) {
-        this.propsChangedCallback(next, prev);
+      if (this.propsUpdatedCallback && this.propsChangedCallback(prev)) {
+        this.propsUpdatedCallback(prev);
       }
 
+      this._prevProps = this.props;
       this._updating = false;
     }
   };

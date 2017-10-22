@@ -406,13 +406,4 @@ describe('withProps', () => {
     elem.triggerUpdate();
     expect(updated).toBe(true);
   });
-
-  it('triggerUpdateBatched', done => {
-    const elem = new class extends withProps() {
-      propsSetCallback() {
-        done();
-      }
-    }();
-    elem.triggerUpdateBatched();
-  });
 });
