@@ -4,8 +4,8 @@ import { define, props } from '../../src';
 import { Component, h } from '../utils';
 
 function format(src) {
-  // Fix Skate imports.
-  src = src.replace('../../../src', 'skatejs');
+  // Fix imports.
+  src = src.replace('../../../src', 'skatejs').replace(/\/umd/, '');
 
   // Remove leading newlines and only allow up to two newlines in code.
   src = src.split('\n').filter((v, i, a) => a[i - 1] || v.trim().length);
