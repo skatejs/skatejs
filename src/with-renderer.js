@@ -29,8 +29,8 @@ export const withRenderer = (
       this._connected = true;
     }
 
-    propsUpdatedCallback() {
-      super.propsUpdatedCallback && super.propsUpdatedCallback();
+    componentUpdatedCallback() {
+      super.componentUpdatedCallback && super.componentUpdatedCallback();
       if (!this._connected) return;
       this.rendererCallback &&
         this.rendererCallback(

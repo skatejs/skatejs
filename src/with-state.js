@@ -9,8 +9,8 @@ export const withState = (
     }
     set state(state: Object) {
       this._state = state;
-      if (this.triggerUpdate) {
-        this.triggerUpdate();
+      if (this.triggerUpdateCallback) {
+        this.triggerUpdateCallback();
       }
     }
   };

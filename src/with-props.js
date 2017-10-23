@@ -49,7 +49,7 @@ export function prop(definition: PropOptions | void): Function {
           normalised.serialize,
           val
         );
-        this.triggerUpdate();
+        this.triggerUpdateCallback();
       }
     });
   };
@@ -75,8 +75,8 @@ export const withProps = (
     _updating: boolean;
 
     propsSetCallback: Function | void;
-    propsUpdatedCallback: Function | void;
-    triggerUpdate: Function;
+    componentUpdatedCallback: Function | void;
+    triggerUpdateCallback: Function;
 
     static get observedAttributes(): Array<string> {
       return this._observedAttributes || [];
@@ -112,15 +112,6 @@ export const withProps = (
       keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
     }
 
-    connectedCallback() {
-      super.connectedCallback && super.connectedCallback();
-      this.triggerUpdate();
-    }
-
-    propsChangedCallback() {
-      return true;
-    }
-
     attributeChangedCallback(
       name: string,
       oldValue: string | null,
@@ -131,7 +122,16 @@ export const withProps = (
       syncAttributeToProperty(this, name, newValue);
     }
 
-    triggerUpdate() {
+    connectedCallback() {
+      super.connectedCallback && super.connectedCallback();
+      this.triggerUpdateCallback();
+    }
+
+    componentShouldUpdateCallback() {
+      return true;
+    }
+
+    triggerUpdateCallback() {
       if (this._updating) return;
       this._updating = true;
 
@@ -141,8 +141,11 @@ export const withProps = (
         this.propsSetCallback(prev);
       }
 
-      if (this.propsUpdatedCallback && this.propsChangedCallback(prev)) {
-        this.propsUpdatedCallback(prev);
+      if (
+        this.componentUpdatedCallback &&
+        this.componentShouldUpdateCallback(prev)
+      ) {
+        this.componentUpdatedCallback(prev);
       }
 
       this._prevProps = this.props;
