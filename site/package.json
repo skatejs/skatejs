@@ -16,7 +16,6 @@
     "babel-preset-stage-0": "^6.24.1",
     "file-loader": "^1.1.5",
     "raw-loader": "^0.5.1",
-    "serve": "^6.3.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3"
   }
