@@ -94,8 +94,7 @@
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
     "typescript": "2.3.3",
-    "typescript-formatter": "5.2.0",
-    "yargs": "^8.0.2"
+    "typescript-formatter": "5.2.0"
   },
   "files": [
     "es/",
