@@ -4,6 +4,9 @@ import { define, props } from '../../src';
 import { Component, h } from '../utils';
 
 function format(src) {
+  // Fix Skate imports.
+  src = src.replace('../../../src', 'skatejs');
+
   // Remove leading newlines and only allow up to two newlines in code.
   src = src.split('\n').filter((v, i, a) => a[i - 1] || v.trim().length);
 
@@ -21,7 +24,7 @@ export const Code = define(
   class Code extends Component {
     static props = {
       code: props.string,
-      lang: props.string,
+      lang: props.string
     };
     props = {
       code: '',

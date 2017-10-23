@@ -4,7 +4,30 @@ import { Code, Example, Runnable } from '../components/code';
 import { Hr } from '../components/primitives';
 import { Tabs } from '../components/tabs';
 
+import '../../test/samples/with-children';
 import codeWithChildren from '!raw-loader!../../test/samples/with-children';
+import codeWithChildrenHtml from '!raw-loader!../../test/samples/with-children/index.html';
+
+import '../../test/samples/with-component';
+import codeWithComponent from '!raw-loader!../../test/samples/with-component';
+import codeWithComponentHtml from '!raw-loader!../../test/samples/with-component/index.html';
+
+import '../../test/samples/with-props';
+import codeWithProps from '!raw-loader!../../test/samples/with-props';
+import codeWithPropsHtml from '!raw-loader!../../test/samples/with-props/index.html';
+
+import '../../test/samples/with-renderer';
+import codeWithRenderer from '!raw-loader!../../test/samples/with-renderer';
+import codeWithRendererHtml from '!raw-loader!../../test/samples/with-renderer/index.html';
+
+import '../../test/samples/with-state';
+import codeWithState from '!raw-loader!../../test/samples/with-state';
+import codeWithStateHtml from '!raw-loader!../../test/samples/with-state/index.html';
+
+import '../../test/samples/with-unique';
+import codeWithUnique from '!raw-loader!../../test/samples/with-unique';
+import codeWithUniqueHtml from '!raw-loader!../../test/samples/with-unique/index.html';
+
 import codeWithReact from '!raw-loader!../../test/samples/with-react';
 
 const examples = [
@@ -16,7 +39,7 @@ const examples = [
         your component's <code>children</code> by implementing a{' '}
         <code>childrenChangedCallback</code>.
       </p>,
-      <Runnable.is code={codeWithChildren} />
+      <Runnable.is code={codeWithChildren} html={codeWithChildrenHtml} />
     ]
   },
   {
@@ -28,7 +51,7 @@ const examples = [
         mixin you'll pair with renderers when authoring components, unless you
         prefer to be selective about exactly which mixins you piece together.
       </p>,
-      <Runnable.is />
+      <Runnable.is code={codeWithComponent} html={codeWithComponentHtml} />
     ]
   },
   {
@@ -44,7 +67,7 @@ const examples = [
         single set of functions that are called so that you can update your
         component in a functional manner.
       </p>,
-      <Runnable.is />
+      <Runnable.is code={codeWithProps} html={codeWithPropsHtml} />
     ]
   },
   {
@@ -62,7 +85,7 @@ const examples = [
         mixin, look at the <code>withComponent</code> or <code>withProps</code>{' '}
         minxins.
       </p>,
-      <Runnable.is />
+      <Runnable.is code={codeWithRenderer} html={codeWithRendererHtml} />
     ]
   },
   {
@@ -74,7 +97,7 @@ const examples = [
         state is updated, it calls a method on the instance called{' '}
         <code>triggerUpdate</code> if it's defined.
       </p>,
-      <Runnable.is />
+      <Runnable.is code={codeWithState} html={codeWithStateHtml} />
     ]
   },
   {
@@ -85,7 +108,7 @@ const examples = [
         without having to specify a name. It defines a static <code>is</code>{' '}
         property that will return a unique name for the element.
       </p>,
-      <Runnable.is />
+      <Runnable.is code={codeWithUnique} html={codeWithUniqueHtml} />
     ]
   }
 ];
