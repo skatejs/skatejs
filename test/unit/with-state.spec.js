@@ -12,11 +12,11 @@ describe('withState', () => {
     expect(test.state).toMatchObject(newState);
   });
 
-  it('should call triggerUpdate', () => {
+  it('should call triggerUpdateCallback', () => {
     let updated;
     const Test = define(
       class extends Base {
-        triggerUpdate() {
+        triggerUpdateCallback() {
           updated = true;
         }
       }

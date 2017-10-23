@@ -55,7 +55,7 @@ describe('withRenderer', () => {
     it('should not be called if rendering is prevented', () => {
       const Elem = define(
         class extends Component {
-          propsUpdatedCallback() {
+          componentUpdatedCallback() {
             setTimeout(() => (this.called = true), 1);
             return false;
           }

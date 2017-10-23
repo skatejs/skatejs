@@ -396,14 +396,14 @@ describe('withProps', () => {
     });
   });
 
-  it('triggerUpdate', () => {
+  it('triggerUpdateCallback', () => {
     let updated;
     const elem = new class extends withProps() {
       propsSetCallback() {
         updated = true;
       }
     }();
-    elem.triggerUpdate();
+    elem.triggerUpdateCallback();
     expect(updated).toBe(true);
   });
 });
