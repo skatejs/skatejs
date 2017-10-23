@@ -1,8 +1,8 @@
-import { Component, h, style, withRehydration } from '../utils';
 import { define, props } from '../../src';
+import { Component, h } from '../utils';
 
 export const Tabs = define(
-  class Tabs extends withRehydration(Component) {
+  class Tabs extends Component {
     static props = {
       items: props.array,
       selected: props.number
@@ -18,9 +18,7 @@ export const Tabs = define(
       const { selected } = state;
       return (
         <div>
-          {style(
-            this,
-            `
+          <style>{`
             .pane {
               display: none;
             }
@@ -39,6 +37,7 @@ export const Tabs = define(
               padding: 0;
             }
             .tabs a {
+              border-bottom: 3px solid transparent;
               color: #333;
               display: inline-block;
               padding: 15px 20px 18px 20px;
@@ -51,8 +50,7 @@ export const Tabs = define(
               border-bottom: 3px solid #F2567C;
               color: F2567C;
             }
-          `
-          )}
+          `}</style>
           <ul class="tabs">
             {items.map(({ name }, i) => (
               <li class="tab">

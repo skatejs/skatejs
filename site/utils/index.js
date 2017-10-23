@@ -1,11 +1,36 @@
+import { h as preactH } from 'preact';
+import { define, props, withComponent } from '../../src';
 import withPreact from '@skatejs/renderer-preact/umd';
-import val from '@skatejs/val';
-import { withComponent } from '../../src';
 
-export const Component = withComponent(withPreact());
+export const Component = class extends withComponent(withPreact()) {
+  propsChangedCallback(...args) {
+    return this.componentShouldUpdateCallback(...args);
+  }
+  propsUpdatedCallback(...args) {
+    return this.componentUpdatedCallback(...args);
+  }
+};
 
-export { h } from 'preact';
-export * from './sample';
-export * from './script';
-export * from './style';
-export * from './with-rehydration';
+function args(fn) {
+  return fn
+    .toString()
+    .match(/\(([^)]*)\)/)[1]
+    .split(',')
+    .map(name => name.split('=')[0].trim());
+}
+
+export function component(renderCallback) {
+  return define(
+    class extends Component {
+      static props = args(renderCallback).reduce((prev, curr) => {
+        prev[curr] = null;
+        return prev;
+      }, {});
+      renderCallback() {
+        return renderCallback(this);
+      }
+    }
+  );
+}
+
+export const h = preactH;

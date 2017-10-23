@@ -1,16 +1,15 @@
 // Special thanks to Jason Miller (@_developit) for this idea.
 // Link: https://jsfiddle.net/developit/vLzdhcg0/
 
-import { h } from '.';
+import { h } from './component';
+import { isBrowser } from './env';
 
 const _mo = Symbol();
 const _scopeExists = Symbol();
 const _scopeName = Symbol();
 const _scopes = Symbol();
 
-const inHead = {};
 const scopes = {};
-const isBrowser = typeof process === 'object' && process.browser;
 
 function walk(root, call) {
   const chs = root.children;
@@ -97,8 +96,7 @@ export function style(host, css) {
   // Simply return if running client side or dedupe head styles and only scope if not global if on the server.
   if (host && isBrowser) {
     return <style>{css}</style>;
-  } else if (!inHead[css]) {
-    inHead[css] = true;
+  } else {
     const newStyle = document.createElement('style');
     newStyle.textContent = host ? scopeCss(host, css) : css;
     document.head.appendChild(newStyle);

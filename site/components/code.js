@@ -1,6 +1,7 @@
 import hljs from 'highlight.js';
-import { Component, h, style, withRehydration } from '../utils';
+import theme from 'raw-loader!highlight.js/styles/monokai.css';
 import { define, props } from '../../src';
+import { Component, h } from '../utils';
 
 function format(src) {
   // Remove leading newlines and only allow up to two newlines in code.
@@ -17,31 +18,26 @@ function format(src) {
 }
 
 export const Code = define(
-  class Code extends withRehydration(Component) {
+  class Code extends Component {
     static props = {
       code: props.string,
       lang: props.string,
-      theme: props.string,
-      themePath: props.string
     };
     props = {
       code: '',
-      lang: 'js',
-      theme: 'monokai',
-      themePath: '../node_modules/highlight.js/styles'
+      lang: 'js'
     };
-    renderCallback({ code, lang, theme, themePath }) {
+    renderCallback({ code, lang, themePath }) {
       return (
         <pre>
-          <link rel="stylesheet" href={`${themePath}/${theme}.css`} />
-          {style(
-            this,
-            `
+          <style>{`
+            ${theme}
             :host {
               background-color: #333;
               color: white;
               display: block;
               margin: 0;
+              overflow: auto;
               padding: 1px 20px;
             }
             .hljs {
@@ -49,13 +45,71 @@ export const Code = define(
               line-height: 1.2em;
               font-size: 1em;
             }
-          `
-          )}
+          `}</style>
           <code
             class={`hljs ${lang}`}
             ref={e => e && (e.innerHTML = format(code))}
           />
         </pre>
+      );
+    }
+  }
+);
+
+export const Example = define(
+  class Example extends Component {
+    static props = {
+      html: props.string
+    };
+    rendererCallback(renderRoot) {
+      renderRoot.innerHTML = `
+        <style>
+          :host {
+            background-color: #333;
+            color: white;
+            display: block;
+            margin: 0;
+            overflow: auto;
+            padding: 20px 28px;
+          }
+        </style>
+        ${this.html}
+      `;
+    }
+  }
+);
+
+export const Runnable = define(
+  class Runnable extends Component {
+    static props = {
+      code: null,
+      html: null
+    };
+    renderCallback({ code, html }) {
+      return (
+        <div class="edge">
+          <style>{`
+            :host {
+              display: block;
+            }
+            .edge {
+              border-radius: 3px;
+              overflow: hidden;
+            }
+            .hr {
+              border-bottom: 1px solid #555;
+            }
+          `}</style>
+          <Code.is code={code} lang="js" />
+          {html
+            ? [
+                <div class="hr" />,
+                <Code.is code={html} lang="html" />,
+                <div class="hr" />,
+                <Example.is html={html} />
+              ]
+            : ''}
+        </div>
       );
     }
   }

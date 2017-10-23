@@ -38,49 +38,6 @@
           "stage-0"
         ]
       },
-      "site": {
-        "presets": [
-          [
-            "env",
-            {
-              "targets": {
-                "node": "6.0.0"
-              }
-            }
-          ],
-          "flow",
-          "react",
-          "stage-0"
-        ],
-        "plugins": [
-          "transform-skate-flow-props",
-          [
-            "transform-react-jsx",
-            {
-              "pragma": "h"
-            }
-          ]
-        ]
-      },
-      "site-public": {
-        "presets": [
-          [
-            "env"
-          ],
-          "flow",
-          "react",
-          "stage-0"
-        ],
-        "plugins": [
-          "transform-skate-flow-props",
-          [
-            "transform-react-jsx",
-            {
-              "pragma": "h"
-            }
-          ]
-        ]
-      },
       "test": {
         "presets": [
           "env",
@@ -115,8 +72,6 @@
     "babel-loader": "^7.1.2",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
-    "babel-plugin-transform-custom-element-classes": "^0.1.0",
-    "babel-plugin-transform-skate-flow-props": "0.0.0",
     "babel-preset-env": "1.6.0",
     "babel-preset-es2015-rollup": "^3.0.0",
     "babel-preset-es2016": "^6.24.1",
@@ -128,25 +83,17 @@
     "conartist": "^0.12.0",
     "eslint-plugin-flowtype": "2.34.0",
     "get-typed": "1.0.0-beta.1",
-    "highlight.js": "9.12.0",
     "husky": "0.13.3",
     "jest": "20.0.4",
     "jest-cli": "^21.0.2",
     "lint-staged": "4.0.2",
-    "nodemon": "1.11.0",
-    "preact": "^8.2.5",
     "prettier": "^1.7.4",
     "prettier-eslint": "^8.2.1",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
-    "semantic-release": "6.3.2",
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0",
-    "watchman": "0.1.8",
-    "webpack": "^3.8.1",
     "yargs": "^8.0.2"
   },
   "files": [
@@ -162,13 +109,14 @@
     "build:es": "BABEL_ENV=es babel src --out-dir es",
     "build:esnext": "BABEL_ENV=esnext babel src --out-dir esnext",
     "build:node": "BABEL_ENV=node babel src --out-dir node",
-    "test": "jest",
     "build:umd": "BABEL_ENV=rollup rollup -c && BABEL_ENV=rollup rollup -c --min",
-    "dev": "nodemon --exec 'npm run site' --watch site --watch src",
+    "postinstall": "cd site && npm install",
     "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
-    "release": "git push && git push --tags && npm publish",
-    "site": "BABEL_ENV=site ./node_modules/@skatejs/ssr/bin/index --out public --no-rehydrate --src site/*.js && BABEL_ENV=site-public webpack",
+    "release": "git push --follow-tags && npm publish",
+    "site": "cd site && webpack",
+    "site-dev": "cd site && webpack-dev-server",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs"

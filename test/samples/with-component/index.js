@@ -1,12 +1,20 @@
-import { props, withComponent } from '../../..';
+import { props, withComponent } from '../../../src';
 
-class Hello extends withComponent() {
+const myRenderer = (Base = HTMLElement) =>
+  class extends Base {
+    rendererCallback(renderRoot, renderCallback) {
+      renderRoot.innerHTML = renderCallback();
+    }
+  };
+
+class WithComponent extends withComponent(myRenderer()) {
   static props = {
     name: props.string
   };
-  rendererCallback(renderRoot) {
-    renderRoot.innerHTML = `Hello, ${this.name}!`;
+
+  renderCallback({ name }) {
+    return `Hello, ${this.name}!`;
   }
 }
 
-customElements.define('x-hello', Hello);
+customElements.define('with-component', WithComponent);

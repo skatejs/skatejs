@@ -1,4 +1,4 @@
-import { props, withComponent } from '../../..';
+import { props, withComponent } from '../../../src';
 import withReact from '@skatejs/renderer-react/umd';
 import React from 'react';
 
