@@ -24,36 +24,54 @@ export const Code = define(
   class Code extends Component {
     static props = {
       code: props.string,
-      lang: props.string
+      lang: props.string,
+      title: props.string
     };
     props = {
       code: '',
       lang: 'js'
     };
-    renderCallback({ code, lang, themePath }) {
+    renderCallback({ code, lang, title }) {
       return (
-        <pre>
+        <div>
           <style>{`
             ${theme}
             :host {
-              background-color: #333;
-              color: white;
               display: block;
+            }
+            .code {
+              background-color: #292D34;
               margin: 0;
               overflow: auto;
-              padding: 1px 20px;
+              padding: 10px 14px;
             }
             .hljs {
               background-color: transparent;
-              line-height: 1.2em;
               font-size: 1em;
+              line-height: 1.2em;
+            }
+            .title {
+              background-color: #20232A;
+              font-size: .8em;
+              padding: 10px 20px;
+            }
+            .code, .title {
+              color: #eee;
+            }
+            pre {
+              margin: 0;
             }
           `}</style>
-          <code
-            class={`hljs ${lang}`}
-            ref={e => e && (e.innerHTML = format(code))}
-          />
-        </pre>
+          {title ? <div class="title">{title}</div> : null}
+          <div class="code">
+            <pre>
+              <code
+                class={`hljs ${lang}`}
+                ref={e => e && (e.innerHTML = format(code))}
+              />
+            </pre>
+          </div>
+        </div>
       );
     }
   }
@@ -62,21 +80,31 @@ export const Code = define(
 export const Example = define(
   class Example extends Component {
     static props = {
-      html: props.string
+      html: props.string,
+      title: props.string
     };
     rendererCallback(renderRoot) {
       renderRoot.innerHTML = `
         <style>
           :host {
+            display: block;
+          }
+          .code {
             background-color: #333;
             color: white;
-            display: block;
             margin: 0;
             overflow: auto;
             padding: 20px 28px;
           }
+          .title {
+            background-color: #20232A;
+            color: #eee;
+            font-size: .8em;
+            padding: 10px 20px;
+          }
         </style>
-        ${this.html}
+        <div class="title">${this.title}</div>
+        <div class="code">${this.html}</div>
       `;
     }
   }
@@ -99,17 +127,12 @@ export const Runnable = define(
               border-radius: 3px;
               overflow: hidden;
             }
-            .hr {
-              border-bottom: 1px solid #555;
-            }
           `}</style>
           <Code.is code={code} lang="js" />
           {html
             ? [
-                <div class="hr" />,
-                <Code.is code={html} lang="html" />,
-                <div class="hr" />,
-                <Example.is html={html} />
+                <Code.is code={html} lang="html" title="HTML" />,
+                <Example.is html={html} title="Result" />
               ]
             : ''}
         </div>

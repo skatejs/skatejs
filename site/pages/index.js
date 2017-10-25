@@ -1,166 +1,152 @@
 import { component, h } from '../utils';
-
 import { Code, Example, Runnable } from '../components/code';
-import { Hr } from '../components/primitives';
-import { Tabs } from '../components/tabs';
-
-import '../../test/samples/with-children';
-import codeWithChildren from '!raw-loader!../../test/samples/with-children';
-import codeWithChildrenHtml from '!raw-loader!../../test/samples/with-children/index.html';
-
-import '../../test/samples/with-component';
-import codeWithComponent from '!raw-loader!../../test/samples/with-component';
-import codeWithComponentHtml from '!raw-loader!../../test/samples/with-component/index.html';
-
-import '../../test/samples/with-props';
-import codeWithProps from '!raw-loader!../../test/samples/with-props';
-import codeWithPropsHtml from '!raw-loader!../../test/samples/with-props/index.html';
-
-import '../../test/samples/with-renderer';
-import codeWithRenderer from '!raw-loader!../../test/samples/with-renderer';
-import codeWithRendererHtml from '!raw-loader!../../test/samples/with-renderer/index.html';
-
-import '../../test/samples/with-state';
-import codeWithState from '!raw-loader!../../test/samples/with-state';
-import codeWithStateHtml from '!raw-loader!../../test/samples/with-state/index.html';
-
-import '../../test/samples/with-unique';
-import codeWithUnique from '!raw-loader!../../test/samples/with-unique';
-import codeWithUniqueHtml from '!raw-loader!../../test/samples/with-unique/index.html';
+import { Hr, Link } from '../components/primitives';
+import logo from '../img/logo.png';
 
 import codeWithReact from '!raw-loader!../../test/samples/with-react';
 
-const examples = [
-  {
-    name: 'withChildren',
-    pane: [
+export default component(function index() {
+  return (
+    <div>
+      <style>{`
+        ${this.context.style}
+        .code {
+          margin: 0 auto;
+          width: 600px;
+        }
+        .hero {
+          margin: 50px 0;
+          text-align: center;
+        }
+        .title {
+          margin-bottom: 30px;
+        }
+      `}</style>
+      <div class="hero">
+        <img height={100} src={logo} />
+        <h1 class="title">SkateJS</h1>
+        <h2>Effortless custom elements for modern view libraries.</h2>
+      </div>
+      <Runnable.is code={codeWithReact} class="code" />
+      <Hr.is />
+      <h2>Mixins</h2>
       <p>
-        The <code>withChildren</code> mixin allows you to react to changes to
-        your component's <code>children</code> by implementing a{' '}
-        <code>childrenChangedCallback</code>.
-      </p>,
-      <Runnable.is code={codeWithChildren} html={codeWithChildrenHtml} />
-    ]
-  },
-  {
-    name: 'withComponent',
-    pane: [
-      <p>
-        The <code>withComponent</code> mixin combines all of Skate's mixins into
-        a single one for easy use. It's likely that this will be the most common
-        mixin you'll pair with renderers when authoring components, unless you
-        prefer to be selective about exactly which mixins you piece together.
-      </p>,
-      <Runnable.is code={codeWithComponent} html={codeWithComponentHtml} />
-    ]
-  },
-  {
-    name: 'withProps',
-    pane: [
-      <p>
-        The <code>withProps</code> mixin is the heart of Skate and is what makes
-        attribute / property linkage and reflection manageable by enforcing a
-        convention that follows best-practices. It also exports several
-        pre-defined property types that handle serialisation and deserialisation
-        to / from attributes when they're set, as well as coercion when the
-        property is set. When properties update, everything funnels into a
-        single set of functions that are called so that you can update your
-        component in a functional manner.
-      </p>,
-      <Runnable.is code={codeWithProps} html={codeWithPropsHtml} />
-    ]
-  },
-  {
-    name: 'withRenderer',
-    pane: [
-      <p>
-        The <code>withRenderer</code> mixin is what connects view libraries such
-        as React, Preact and Lit HTML to the rest of Skate. It implements a{' '}
-        <code>propsUpdatedCallback</code> so it can be paired up with the{' '}
-        <code>withProps</code> mixin, or you can call it imperatively yourself
-        if not.
-      </p>,
-      <p>
-        To see the stark difference when paired with the <code>withProps</code>{' '}
-        mixin, look at the <code>withComponent</code> or <code>withProps</code>{' '}
-        minxins.
-      </p>,
-      <Runnable.is code={codeWithRenderer} html={codeWithRendererHtml} />
-    ]
-  },
-  {
-    name: 'withState',
-    pane: [
-      <p>
-        The <code>withState</code> mixin enables the idea of internal state,
-        much like the idea of state in React and other similar libraries. When
-        state is updated, it calls a method on the instance called{' '}
-        <code>triggerUpdate</code> if it's defined.
-      </p>,
-      <Runnable.is code={codeWithState} html={codeWithStateHtml} />
-    ]
-  },
-  {
-    name: 'withUnique',
-    pane: [
-      <p>
-        The <code>withUnique</code> mixin allows you to define custom elements
-        without having to specify a name. It defines a static <code>is</code>{' '}
-        property that will return a unique name for the element.
-      </p>,
-      <Runnable.is code={codeWithUnique} html={codeWithUniqueHtml} />
-    ]
-  }
-];
-
-export default component(host => (
-  <div>
-    <style>{`
-      .code {
-        margin: 0 auto;
-        width: 600px;
-      }
-    `}</style>
-    <Runnable.is code={codeWithReact} class="code" />
-    <Hr.is />
-    <h2>Mixins</h2>
-    <p>
-      The{' '}
-      <a href="http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/">
-        mixin
-      </a>{' '}
-      pattern is a way to compose functionality from several abstract classes
-      into a single one. Skate is a collection of mixins designed to augment{' '}
-      <code>HTMLElement</code> to serve 90% of use cases for 90% of components.
-      It can be paired with other mixins, such as those found in{' '}
-      <a href="https://www.polymer-project.org/">Polymer</a>.
-    </p>
-    <Tabs.is items={examples} />
-    <Hr.is />
-    <h2>Renderers</h2>
-    <p>
-      Because Skate provides a hook for renderers, it can support any view
-      library such as React, Preact, Vue and more.
-    </p>
-    <p>
-      We've already provided a few renderers for popular front-end libraries:
+        The{' '}
+        <a href="http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/">
+          mixin
+        </a>{' '}
+        pattern is a way to compose functionality from several abstract classes
+        into a single one. Skate is a{' '}
+        <Link.is href="/mixins">collection of mixins</Link.is> designed to
+        augment <code>HTMLElement</code> to serve 90% of use cases for 90% of
+        components. It can be paired with other mixins, such as those found in{' '}
+        <a href="https://www.polymer-project.org/">Polymer</a>.
+      </p>
+      <p>Our mixins include:</p>
       <ul>
         <li>
-          <a href="https://github.com/skatejs/renderer-react">
-            <code>@skatejs/renderer-react</code>
-          </a>
+          <Link.is href="/mixins/with-children">
+            <code>withChildren()</code>
+          </Link.is>{' '}
+          - react to changes in child content.
         </li>
         <li>
-          <a href="https://github.com/skatejs/renderer-preact">
-            <code>@skatejs/renderer-preact</code>
-          </a>
+          <Link.is href="/mixins/with-component">
+            <code>withComponent()</code>
+          </Link.is>{' '}
+          - all the mixins in one.
         </li>
         <li>
-          <a href="https://github.com/skatejs/renderer-lit-html">
-            <code>@skatejs/renderer-lit-html</code>
-          </a>
+          <Link.is href="/mixins/with-context">
+            <code>withContext()</code>
+          </Link.is>{' '}
+          - inherit context from components up the tree, like in React.
+        </li>
+        <li>
+          <Link.is href="/mixins/with-props">
+            <code>withProps()</code>
+          </Link.is>{' '}
+          - react to property and attribute updates.
+        </li>
+        <li>
+          <Link.is href="/mixins/with-renderer">
+            <code>withRenderer()</code>
+          </Link.is>{' '}
+          - easily write renderers for your favourite view library or templating
+          language.
+        </li>
+        <li>
+          <Link.is href="/mixins/with-state">
+            <code>withState()</code>
+          </Link.is>{' '}
+          - maintain internal state and react to updates.
+        </li>
+        <li>
+          <Link.is href="/mixins/with-unique">
+            <code>withUnique()</code>
+          </Link.is>{' '}
+          - derive the custom element name from its class name, and generate
+          non-conflicting custom element names.
         </li>
       </ul>
-    </p>
-  </div>
-));
+      <p>
+        See the <Link.is href="/mixins">mixin docs</Link.is> for more info.
+      </p>
+      <Hr.is />
+      <h2>Renderers</h2>
+      <p>
+        Because Skate provides a hook for renderers, it can support any view
+        library such as React, Preact, Vue and more.
+      </p>
+      <p>
+        We've provided a few renderers for popular front-end libraries:
+        <ul>
+          <li>
+            <a href="/renderers/react">React</a>
+          </li>
+          <li>
+            <a href="/renderers/preact">Preact</a>
+          </li>
+          <li>
+            <a href="/renderers/lit-html">LitHTML</a>
+          </li>
+        </ul>
+      </p>
+      <p>
+        See the <Link.is href="/renderers">renderer docs</Link.is> for more
+        info.
+      </p>
+      <Hr.is />
+      <h2>Utilities</h2>
+      <p>
+        On top of the core concepts of mixins and renderers, Skate also provides
+        some utilities for common patterns within your components. Some of these
+        include:
+      </p>
+      <ul>
+        <li>
+          <Link.is href="/utilities/define">
+            <code>define()</code>
+          </Link.is>{' '}
+          - Creating and defining custom elements all at once.
+        </li>
+        <li>
+          <Link.is href="/utilities/emit">
+            <code>emit()</code>
+          </Link.is>{' '}
+          - Streamlined event emitting.
+        </li>
+        <li>
+          <Link.is href="/utilities/link">
+            <code>link()</code>
+          </Link.is>{' '}
+          - linking UI elements back to component state.
+        </li>
+      </ul>
+      <p>
+        See the <Link.is href="/utilities">utility docs</Link.is> fore more
+        info.
+      </p>
+    </div>
+  );
+});

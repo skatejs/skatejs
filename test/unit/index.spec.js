@@ -21,6 +21,7 @@ describe('exports', () => {
 
   it('skate.with*', () => {
     expect(typeof api.withChildren).toBe('function', 'withChildren');
+    expect(typeof api.withContext).toBe('function', 'withContext');
     expect(typeof api.withComponent).toBe('function', 'withComponent');
     expect(typeof api.withProps).toBe('function', 'withProps');
     expect(typeof api.withRenderer).toBe('function', 'withRenderer');
