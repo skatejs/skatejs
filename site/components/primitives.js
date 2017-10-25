@@ -1,5 +1,6 @@
 import { Link as SkLink } from '@skatejs/sk-router';
 import { component, h } from '../utils';
+import logoSrc from '../img/logo.png';
 
 export const Hr = component(function hr() {
   return (

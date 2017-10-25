@@ -1,7 +1,7 @@
 import { component, h } from '../../utils';
-// import { Runnable } from '../../components/code';
-// import { Link } from '../components/primitives';
-//
+import { Runnable } from '../../components/code';
+import { Link } from '../../components/primitives';
+
 // import '../../test/samples/with-children';
 // import codeWithChildren from '!raw-loader!../../test/samples/with-children';
 // import codeWithChildrenHtml from '!raw-loader!../../test/samples/with-children/index.html';
@@ -111,11 +111,74 @@ import { component, h } from '../../utils';
 //   }
 // ];
 
+const Spec = ({ children: [spec, link] }) => (
+  <span>
+    <code>{spec}</code> &rarr;{' '}
+    <Link.is href={`/mixins/with-${link}`}>
+      with{link[0].toUpperCase() + link.substring(1)}
+    </Link.is>
+  </span>
+);
+
 export default component(function mixins() {
   return (
     <div>
       <style>{this.context.style}</style>
       <h2>Mixins</h2>
+      <p>
+        As stated previously, the mixin pattern is a way to take several class
+        definitions and compose them into one. It works well for custom elements
+        because every element has a different purpose and it allows you to pick
+        and choose what goes into it.
+      </p>
+      <p>
+        Skate's mixins follow a common component lifecycle specification, which
+        enables it to interop with not only itself, but also other libraries.
+        The specification is described as follows and is what you get if you
+        combine all of the mixins together, or use the{' '}
+        <code>withComponent</code> mixin.
+      </p>
+      <ul>
+        <li>
+          <Spec>{['static is', 'unique']}</Spec>
+        </li>
+        <li>
+          <Spec>{['static props', 'props']}</Spec>
+        </li>
+        <li>
+          <Spec>{['context', 'context']}</Spec>
+        </li>
+        <li>
+          <Spec>{['props', 'props']}</Spec>
+        </li>
+        <li>
+          <Spec>{['state', 'state']}</Spec>
+        </li>
+        <li>
+          <Spec>{['childrenChangedCallback()', 'children']}</Spec>
+        </li>
+        <li>
+          <Spec>{['componentShouldUpdateCallback()', 'props']}</Spec>
+        </li>
+        <li>
+          <Spec>{['componentUpdatedCallback()', 'props']}</Spec>
+        </li>
+        <li>
+          <Spec>{['propsSetCallback()', 'props']}</Spec>
+        </li>
+        <li>
+          <Spec>{['renderCallback()', 'renderer']}</Spec>
+        </li>
+        <li>
+          <Spec>{['renderedCallback()', 'renderer']}</Spec>
+        </li>
+        <li>
+          <Spec>{['rendererCallback()', 'renderer']}</Spec>
+        </li>
+        <li>
+          <Spec>{['triggerUpdateCallback()', 'props']}</Spec>
+        </li>
+      </ul>
     </div>
   );
 });

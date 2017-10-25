@@ -1,7 +1,6 @@
 import { component, h } from '../utils';
 import { Code, Example, Runnable } from '../components/code';
 import { Hr, Link } from '../components/primitives';
-import logo from '../img/logo.png';
 
 import codeWithReact from '!raw-loader!../../test/samples/with-react';
 
@@ -23,7 +22,6 @@ export default component(function index() {
         }
       `}</style>
       <div class="hero">
-        <img height={100} src={logo} />
         <h1 class="title">SkateJS</h1>
         <h2>Effortless custom elements for modern view libraries.</h2>
       </div>
