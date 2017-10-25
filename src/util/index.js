@@ -20,19 +20,10 @@ export function keys(obj: Object | void): Array<any> {
     : names;
 }
 
+let symbolCount = 0;
 export function sym(description?: string): Symbol | string {
+  description = String(description || ++symbolCount);
   return typeof Symbol === 'function'
-    ? Symbol(description ? String(description) : undefined)
-    : uniqueId(description);
-}
-
-export function uniqueId(description?: string): string {
-  return (
-    (description ? String(description) : '') +
-    'xxxxxxxx'.replace(/[xy]/g, c => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    })
-  );
+    ? Symbol(description)
+    : `__skate_${description}`;
 }
