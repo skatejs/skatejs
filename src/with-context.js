@@ -1,4 +1,4 @@
-import { sym } from './util';
+import { sym } from './util/index';
 
 const _context = sym('context');
 
