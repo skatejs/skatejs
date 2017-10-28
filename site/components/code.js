@@ -43,12 +43,14 @@ export const Code = define(
               background-color: #292D34;
               margin: 0;
               overflow: auto;
-              padding: 10px 14px;
+              padding: 10px 12px;
             }
             .hljs {
               background-color: transparent;
-              font-size: 1em;
-              line-height: 1.2em;
+              font-family: monaco;
+              font-size: .8em;
+              font-weight: lighter;
+              line-height: 1.6em;
             }
             .title {
               background-color: #20232A;

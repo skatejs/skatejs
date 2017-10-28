@@ -23,8 +23,12 @@ export default define(
           text-decoration: none;
         }
         code {
+          background-color: #dce4c9;
+          border-radius: 3px;
+          display: inline-block;
           font-family: monaco;
           font-size: .8em;
+          padding: 0 8px;
         }
         h1 {
           font-size: 2.5em;

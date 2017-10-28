@@ -145,26 +145,28 @@ export default component(function mixins() {
             childrenDidUpdate(): void;
 
             // withContext
-            context: { [string]: any } | null;
+            context: Object;
 
             // withLifecycle
+            willMount(): void;
             didMount(): void;
+            willUnmount(): void;
             didUnmount(): void;
+
+            // withRenderer
+            willRender(): void;
+            render(props: Object, state: Object): any;
+            didRender(): void;
+            renderer(root: Node, render: Render): void;
 
             // withUpdate
             static props: PropTypes;
-            props: Props;
-            state: State;
-            willUpdate(prevProps: Props, prevState: State): void;
-            shouldUpdate(prevProps: Props, prevState: State): boolean;
-            didUpdate(prevProps: Props, prevState: State): void;
+            props: Object;
+            state: Object;
+            willUpdate(prevProps: Object, prevState: Object): void;
+            shouldUpdate(prevProps: Object, prevState: Object): boolean;
+            didUpdate(prevProps: Object, prevState: Object): void;
             triggerUpdate(): void;
-
-            // withRender
-            willRender(): void;
-            render(props: Props, state: State): any;
-            didRender(): void;
-            renderer(root: Node, render: Render): void;
 
             // withUnique
             static is: string;

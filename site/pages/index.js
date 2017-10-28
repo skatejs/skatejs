@@ -52,45 +52,45 @@ export default component(function index() {
           <Link.is href="/mixins/with-children">
             <code>withChildren()</code>
           </Link.is>{' '}
-          - react to changes in child content.
+          react to changes in child content.
         </li>
         <li>
           <Link.is href="/mixins/with-component">
             <code>withComponent()</code>
           </Link.is>{' '}
-          - all the mixins in one.
+          all the mixins in one.
         </li>
         <li>
           <Link.is href="/mixins/with-context">
             <code>withContext()</code>
           </Link.is>{' '}
-          - inherit context from components up the tree, like in React.
+          inherit context from components up the tree, like in React.
         </li>
         <li>
-          <Link.is href="/mixins/with-update">
-            <code>withUpdate()</code>
+          <Link.is href="/mixins/with-lifecycle">
+            <code>withLifecycle()</code>
           </Link.is>{' '}
-          - react to property and attribute updates.
+          adds sugar on top of the built-in lifecycle callbacks.
         </li>
         <li>
           <Link.is href="/mixins/with-renderer">
             <code>withRenderer()</code>
           </Link.is>{' '}
-          - easily write renderers for your favourite view library or templating
+          easily write renderers for your favourite view library or templating
           language.
-        </li>
-        <li>
-          <Link.is href="/mixins/with-state">
-            <code>withState()</code>
-          </Link.is>{' '}
-          - maintain internal state and react to updates.
         </li>
         <li>
           <Link.is href="/mixins/with-unique">
             <code>withUnique()</code>
           </Link.is>{' '}
-          - derive the custom element name from its class name, and generate
+          derive the custom element name from its class name, and generate
           non-conflicting custom element names.
+        </li>
+        <li>
+          <Link.is href="/mixins/with-update">
+            <code>withUpdate()</code>
+          </Link.is>{' '}
+          react to property and attribute updates.
         </li>
       </ul>
       <p>
