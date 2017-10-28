@@ -14,7 +14,7 @@ export const Tabs = define(
       e.preventDefault();
       this.state = { selected: i };
     }
-    renderCallback({ items, onClick, state }) {
+    render({ items, onClick, state }) {
       const { selected } = state;
       return (
         <div>

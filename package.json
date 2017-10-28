@@ -15,13 +15,7 @@
         ]
       },
       "esnext": {
-        "presets": [
-          "es2016",
-          "es2017",
-          "flow",
-          "react",
-          "stage-0"
-        ]
+        "presets": ["es2016", "es2017", "flow", "react", "stage-0"]
       },
       "node": {
         "presets": [
@@ -39,12 +33,7 @@
         ]
       },
       "test": {
-        "presets": [
-          "env",
-          "flow",
-          "react",
-          "stage-0"
-        ]
+        "presets": ["env", "flow", "react", "stage-0"]
       },
       "rollup": {
         "presets": [
@@ -96,12 +85,7 @@
     "typescript": "2.3.3",
     "typescript-formatter": "5.2.0"
   },
-  "files": [
-    "es/",
-    "esnext/",
-    "node/",
-    "umd/"
-  ],
+  "files": ["es/", "esnext/", "node/", "umd/"],
   "main": "node/index.js",
   "module": "es/index.js",
   "esnext": "esnext/index.js",
@@ -109,9 +93,12 @@
     "build:es": "BABEL_ENV=es babel src --out-dir es",
     "build:esnext": "BABEL_ENV=esnext babel src --out-dir esnext",
     "build:node": "BABEL_ENV=node babel src --out-dir node",
-    "build:umd": "BABEL_ENV=rollup rollup -c && BABEL_ENV=rollup rollup -c --min",
+    "build:umd":
+      "BABEL_ENV=rollup rollup -c && BABEL_ENV=rollup rollup -c --min",
+    "dev": "cd site && webpack-dev-server --hot",
     "postinstall": "cd site && npm install",
-    "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
+    "prepublish":
+      "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
     "release": "git push --follow-tags && npm publish",
     "site": "cd site && ./node_modules/.bin/webpack",
@@ -121,19 +108,16 @@
     "types": "get-typed src/index.js --dest umd/skatejs"
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
+    "modulePathIgnorePatterns": ["./node_modules"],
+    "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   },
   "browser": "umd/index.js",
   "name": "skatejs",
   "version": "5.0.0-beta.3",
-  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
+  "description":
+    "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
   "license": "MIT",
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
   "repository": {
@@ -151,9 +135,6 @@
     "virtual"
   ],
   "lint-staged": {
-    "*.(js|json)": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.(js|json)": ["prettier --write", "git add"]
   }
 }

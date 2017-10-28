@@ -14,16 +14,22 @@ export default component(function index() {
           width: 600px;
         }
         .hero {
-          margin: 50px 0;
+          margin: 60px 0;
           text-align: center;
         }
         .title {
           margin-bottom: 30px;
         }
+        .subtitle {
+          font-size: 1.4em;
+          margin-tom: 30px;
+        }
       `}</style>
       <div class="hero">
         <h1 class="title">SkateJS</h1>
-        <h2>Effortless custom elements for modern view libraries.</h2>
+        <h2 class="subtitle">
+          Effortless custom elements for modern view libraries.
+        </h2>
       </div>
       <Runnable.is code={codeWithReact} class="code" />
       <Hr.is />
@@ -90,7 +96,6 @@ export default component(function index() {
       <p>
         See the <Link.is href="/mixins">mixin docs</Link.is> for more info.
       </p>
-      <Hr.is />
       <h2>Renderers</h2>
       <p>
         Because Skate provides a hook for renderers, it can support any view
@@ -114,7 +119,6 @@ export default component(function index() {
         See the <Link.is href="/renderers">renderer docs</Link.is> for more
         info.
       </p>
-      <Hr.is />
       <h2>Utilities</h2>
       <p>
         On top of the core concepts of mixins and renderers, Skate also provides

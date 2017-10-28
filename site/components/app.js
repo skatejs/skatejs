@@ -32,6 +32,8 @@ export default define(
         }
         h2 {
           font-weight: lighter;
+          font-size: 1.8em;
+          margin: 60px 0 30px 0;
         }
         .logo {
           display: block;
@@ -42,14 +44,13 @@ export default define(
     onHistory = () => {
       this.state = { href: window.location.pathname };
     };
-    connectedCallback() {
-      super.connectedCallback();
+    willMount() {
       this.onHistory();
       window.addEventListener('popstate', this.onHistory);
       window.addEventListener('pushstate', this.onHistory);
       window.addEventListener('replaceState', this.onHistory);
     }
-    renderCallback({ context, state }) {
+    render({ context, state }) {
       return (
         <div class="outer">
           <style>{`

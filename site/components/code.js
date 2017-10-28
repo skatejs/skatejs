@@ -31,7 +31,7 @@ export const Code = define(
       code: '',
       lang: 'js'
     };
-    renderCallback({ code, lang, title }) {
+    render({ code, lang, title }) {
       return (
         <div>
           <style>{`
@@ -83,8 +83,8 @@ export const Example = define(
       html: props.string,
       title: props.string
     };
-    rendererCallback(renderRoot) {
-      renderRoot.innerHTML = `
+    renderer(root) {
+      root.innerHTML = `
         <style>
           :host {
             display: block;
@@ -116,7 +116,7 @@ export const Runnable = define(
       code: null,
       html: null
     };
-    renderCallback({ code, html }) {
+    render({ code, html }) {
       return (
         <div class="edge">
           <style>{`

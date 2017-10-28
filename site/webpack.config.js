@@ -1,7 +1,8 @@
 module.exports = {
   devServer: {
     contentBase: '../public',
-    historyApiFallback: true
+    historyApiFallback: true,
+    open: true
   },
   devtool: 'source-map',
   entry: './index.js',

@@ -138,47 +138,39 @@ export default component(function mixins() {
         combine all of the mixins together, or use the{' '}
         <code>withComponent</code> mixin.
       </p>
-      <ul>
-        <li>
-          <Spec>{['static is', 'unique']}</Spec>
-        </li>
-        <li>
-          <Spec>{['static props', 'props']}</Spec>
-        </li>
-        <li>
-          <Spec>{['context', 'context']}</Spec>
-        </li>
-        <li>
-          <Spec>{['props', 'props']}</Spec>
-        </li>
-        <li>
-          <Spec>{['state', 'state']}</Spec>
-        </li>
-        <li>
-          <Spec>{['childrenChangedCallback()', 'children']}</Spec>
-        </li>
-        <li>
-          <Spec>{['componentShouldUpdateCallback()', 'props']}</Spec>
-        </li>
-        <li>
-          <Spec>{['componentUpdatedCallback()', 'props']}</Spec>
-        </li>
-        <li>
-          <Spec>{['propsSetCallback()', 'props']}</Spec>
-        </li>
-        <li>
-          <Spec>{['renderCallback()', 'renderer']}</Spec>
-        </li>
-        <li>
-          <Spec>{['renderedCallback()', 'renderer']}</Spec>
-        </li>
-        <li>
-          <Spec>{['rendererCallback()', 'renderer']}</Spec>
-        </li>
-        <li>
-          <Spec>{['triggerUpdateCallback()', 'props']}</Spec>
-        </li>
-      </ul>
+      <Runnable.is
+        code={`
+          interface Component {
+            // withChildren
+            childrenDidUpdate(): void;
+
+            // withContext
+            context: { [string]: any } | null;
+
+            // withLifecycle
+            didMount(): void;
+            didUnmount(): void;
+
+            // withUpdate
+            static props: PropTypes;
+            props: Props;
+            state: State;
+            willUpdate(prevProps: Props, prevState: State): void;
+            shouldUpdate(prevProps: Props, prevState: State): boolean;
+            didUpdate(prevProps: Props, prevState: State): void;
+            triggerUpdate(): void;
+
+            // withRender
+            willRender(): void;
+            render(props: Props, state: State): any;
+            didRender(): void;
+            renderer(root: Node, render: Render): void;
+
+            // withUnique
+            static is: string;
+          }
+        `}
+      />
     </div>
   );
 });

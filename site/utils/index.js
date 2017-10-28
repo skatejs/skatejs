@@ -2,14 +2,71 @@ import { h as preactH } from 'preact';
 import { define, props, withComponent } from '../../src';
 import withPreact from '@skatejs/renderer-preact/umd';
 
+// Compatiblity layer for renames.
 export const Component = class extends withComponent(withPreact()) {
-  // Fix API change for renderers.
-  propsChangedCallback(...args) {
-    return this.componentShouldUpdateCallback(...args);
+  childrenDidUpdate() {
+    if (this.childrenChangedCallback) {
+      return this.childrenChangedCallback(...args);
+    }
+    if (super.childrenDidUpdate) {
+      return super.childrenDidUpdate(...args);
+    }
   }
-  // Fix API change for renderers.
-  propsUpdatedCallback(...args) {
-    return this.componentUpdatedCallback(...args);
+  willUpdate(...args) {
+    if (this.propsSetCallback) {
+      return this.propsSetCallback(...args);
+    }
+    if (super.willUpdate) {
+      return super.willUpdate(...args);
+    }
+  }
+  shouldUpdate(...args) {
+    if (this.propsUpdatedCallback) {
+      return this.propsUpdatedCallback(...args);
+    }
+    if (super.shouldUpdate) {
+      return super.shouldUpdate(...args);
+    }
+  }
+  didUpdate(...args) {
+    if (this.propsChangedCallback) {
+      return this.propsChangedCallback(...args);
+    }
+    if (super.didUpdate) {
+      return super.didUpdate(...args);
+    }
+  }
+  render(...args) {
+    if (this.renderCallback) {
+      return this.renderCallback(...args);
+    }
+    if (super.render) {
+      return super.render(...args);
+    }
+  }
+  renderCallback(...args) {
+    if (super.renderCallback) {
+      return super.renderCallback(...args);
+    }
+    if (super.render) {
+      return super.render(...args);
+    }
+  }
+  renderer(...args) {
+    if (this.rendererCallback) {
+      return this.rendererCallback(...args);
+    }
+    if (super.renderer) {
+      return super.renderer(...args);
+    }
+  }
+  didRender(...args) {
+    if (this.renderedCallback) {
+      return this.renderedCallback(...args);
+    }
+    if (super.didRender) {
+      return super.didRender(...args);
+    }
   }
 };
 
@@ -21,15 +78,15 @@ function args(fn) {
     .map(name => name.split('=')[0].trim());
 }
 
-export function component(renderCallback) {
-  const fnArgs = args(renderCallback);
+export function component(render) {
+  const fnArgs = args(render);
   class Comp extends Component {
     static props = fnArgs.reduce((prev, curr) => {
       prev[curr] = { attribute: { source: true } };
       return prev;
     }, {});
-    renderCallback() {
-      return renderCallback.call(this, ...fnArgs.map(n => this[n]));
+    render() {
+      return render.call(this, ...fnArgs.map(n => this[n]));
     }
   }
 
@@ -37,7 +94,7 @@ export function component(renderCallback) {
   // name.
   Object.defineProperty(Comp, 'name', {
     configurable: true,
-    value: renderCallback.name
+    value: render.name
   });
 
   return define(Comp);
