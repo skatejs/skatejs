@@ -2,7 +2,7 @@
 
 import type { WithLifecycle } from './types';
 
-import { prop } from './util';
+import { prop } from './util/index';
 
 export const withLifecycle = (
   Base: Class<any> = HTMLElement
