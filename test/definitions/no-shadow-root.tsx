@@ -7,7 +7,7 @@ export class MyComponent extends Component<Props> {
   get renderRoot() {
     return this
   }
-  renderCallback() {
+  render() {
     return (
       <div>
         <h1>Hello World</h1>

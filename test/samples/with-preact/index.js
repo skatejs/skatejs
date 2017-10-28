@@ -8,7 +8,7 @@ class WithPreact extends withComponent(withPreact()) {
   static props = {
     name: props.string
   };
-  renderCallback({ name }) {
+  render({ name }) {
     return <span>Hello, {name}!</span>;
   }
 }

@@ -4,6 +4,6 @@
 <my-element></my-element>
 
 <script type="module">
-  import { withComponent } from '../esnext/index.js'; class MyEl extends withComponent() { renderCallback() { return h('div',
+  import { withComponent } from '../esnext/index.js'; class MyEl extends withComponent() { render() { return h('div',
   null, 'Hello world!'); } } customElements.define('my-element', MyEl);
 </script>

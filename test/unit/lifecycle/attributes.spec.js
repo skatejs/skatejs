@@ -1,15 +1,15 @@
 /* eslint-env jest */
 
-import afterMutations from '../../lib/after-mutations';
-import fixture from '../../lib/fixture';
-
+import { mount } from '@skatejs/bore';
 import { define, withProps, withUnique } from '../../../src';
 
 describe('lifecycle/attributes', () => {
-  function create (definition = {}, name = 'testName', value) {
-    const elem = new (define(class extends withUnique(withProps()) {
-      static props = { [name]: definition };
-    }))();
+  function create(definition = {}, name = 'testName', value) {
+    const elem = new (define(
+      class extends withUnique(withProps()) {
+        static props = { [name]: definition };
+      }
+    ))();
     // eslint-disable-next-line prefer-rest-params
     if (arguments.length === 3) {
       elem[name] = value;
@@ -18,41 +18,38 @@ describe('lifecycle/attributes', () => {
   }
 
   describe('attribute set after attach', () => {
-    it('with prop already set', (done) => {
+    it('with prop already set', () => {
       const elem = create({ attribute: true }, 'testName', 'something');
       expect(elem.getAttribute('test-name')).toEqual('something');
-      fixture(elem);
-      afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual('something');
-        done();
-      });
+      return mount(elem).waitFor(
+        w => w.node.getAttribute('test-name') === 'something'
+      );
     });
 
-    it('with prop set via default', (done) => {
-      const elem = create({ attribute: true, default: 'something' }, 'testName');
+    it('with prop set via default', () => {
+      const elem = create(
+        { attribute: true, default: 'something' },
+        'testName'
+      );
       expect(elem.getAttribute('test-name')).toEqual(null);
-      fixture(elem);
-      afterMutations(() => {
-        expect(elem.getAttribute('test-name')).toEqual(null);
-        done();
-      });
+      return mount(elem).waitFor(
+        w => w.node.getAttribute('test-name') === null
+      );
     });
   });
 
   describe('attribute set before attach', () => {
-    it('should retain pre-attach attribute value when attached even if prop set', (done) => {
+    it('should retain pre-attach attribute value when attached even if prop set', done => {
       const elem = create({ attribute: true }, 'testName', 'prop-value');
       expect(elem.testName).toEqual('prop-value', 'prop before attr');
       elem.setAttribute('test-name', 'attr-value');
-      afterMutations(() => {
+      setTimeout(() => {
         expect(elem.testName).toEqual('attr-value', 'prop after attr');
         expect(elem.getAttribute('test-name')).toEqual('attr-value');
-        fixture(elem);
-        afterMutations(() => {
-          expect(elem.getAttribute('test-name')).toEqual('attr-value');
-          done();
-        });
-      });
+        mount(elem)
+          .waitFor(w => w.node.getAttribute('test-name') === 'attr-value')
+          .then(() => done());
+      }, 1);
     });
   });
 });

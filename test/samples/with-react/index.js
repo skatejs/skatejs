@@ -6,7 +6,7 @@ class WithReact extends withComponent(withReact()) {
   static props = {
     name: props.string
   };
-  renderCallback({ name }) {
+  render({ name }) {
     return <span>Hello, {name}!</span>;
   }
 }

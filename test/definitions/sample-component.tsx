@@ -43,7 +43,7 @@ export class CountUpComponent extends skate.Component<CountUpProps> {
     this.count += 1;
   }
 
-  renderCallback() {
+  render() {
     return (
       <div>
         <CounterOutput count={this.count} />
@@ -64,7 +64,7 @@ class SkatePark extends Component<SkateParkProps>{
       halfPipe: skate.props.boolean,
     }
   }
-  renderCallback({ halfPipe, year }: SkateParkProps) {
+  render({ halfPipe, year }: SkateParkProps) {
     const halfPipeInfo = <span>{halfPipe ? 'has' : 'doesnt have'}</span>;
     return (
       <div>
@@ -76,7 +76,7 @@ class SkatePark extends Component<SkateParkProps>{
 customElements.define(SkatePark.is, SkatePark);
 
 customElements.define('x-app', class extends skate.Component<{}> {
-  renderCallback() {
+  render() {
     return (
       <div>
         <h1>app</h1>
@@ -98,7 +98,7 @@ class Elem extends skate.Component<ElmProps> {
   str: string;
   arr: string[];
 
-  renderCallback() {
+  render() {
     return skate.h('div', {}, 'testing');
   }
 }

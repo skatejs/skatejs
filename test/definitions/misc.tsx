@@ -8,7 +8,7 @@
           name: { attribute: true }
         };
       }
-      renderCallback() {
+      render() {
         return skate.h("div", {}, `Hello, ${this.name}`);
       }
     }
@@ -47,7 +47,7 @@
           clearInterval(this.intervalID);
         }
       }
-      renderCallback() {
+      render() {
         return skate.h("div", {}, `Count ${this.count}`);
       }
     }
@@ -266,7 +266,7 @@
     str: string;
     arr: string[];
 
-    renderCallback() {
+    render() {
       return skate.h("div", {}, "testing");
     }
   }
@@ -322,7 +322,7 @@
   customElements.define(
     "my-component",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return skate.h("p", {}, `My name is ${this.tagName}.`);
       }
     }
@@ -331,7 +331,7 @@
   customElements.define(
     "my-component",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return <span>skate.h('paragraph 1'), skate.h('paragraph 2'),</span>;
       }
     }
@@ -386,7 +386,7 @@
   customElements.define(
     "x-tabs",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return skate.h("x-tab", { onSelect: () => {} });
       }
     }
@@ -395,7 +395,7 @@
   customElements.define(
     "x-tab",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return skate.h("a", { onClick: () => skate.emit(this, "select") });
       }
     }
@@ -429,7 +429,7 @@
           value: { attribute: true }
         };
       }
-      renderCallback(): any {
+      render(): any {
         return skate.h("input", { onChange: skate.link(this), type: "text" });
       }
     }
@@ -443,7 +443,7 @@
           value: { attribute: true }
         };
       }
-      renderCallback(): any {
+      render(): any {
         const linkedInput = skate.h("input", {
           name: "someValue",
           onChange: skate.link(this),
@@ -529,7 +529,7 @@
 
     user: UserModel;
 
-    renderCallback() {
+    render() {
       const { id, email } = this.user;
       return (
         <p>
@@ -556,7 +556,7 @@
 
     users: UserModel[];
 
-    renderCallback() {
+    render() {
       const { users } = this;
       return (
         <ul>
@@ -575,7 +575,7 @@
   customElements.define(
     "my-component",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return skate.h("p", { style: { fontWeight: "bold" } }, "Hello!");
       }
     }
@@ -586,7 +586,7 @@
   customElements.define(
     "my-component",
     class extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return <p>Hello!</p>;
       }
     }
@@ -602,7 +602,7 @@
           title: skate.props.string
         };
       }
-      renderCallback() {
+      render() {
         return (
           <div>
             <h1>
@@ -718,14 +718,14 @@
     customElements.define(
       "my-element",
       class extends skate.Component<any> {
-        renderCallback() {
+        render() {
           return skate.h("div", { ref });
         }
       }
     );
 
     class TestCmp extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return <div ref={ref} />;
       }
     }
@@ -734,7 +734,7 @@
     customElements.define(
       "my-element",
       class extends skate.Component<any> {
-        renderCallback() {
+        render() {
           const ref = console.log;
           return skate.h("div", { ref });
         }
@@ -748,7 +748,7 @@
     });
 
     class TestCmp extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return (
           <div
             ref={(e: HTMLElement) => (e.innerHTML = "<p>oh no you didn't</p>")}
@@ -762,7 +762,7 @@
     skate.h("div", { statics: ["attr1", "prop2"] });
 
     class TestCmp extends skate.Component<any> {
-      renderCallback() {
+      render() {
         // return <div statics={['attr1', 'prop2']}></div>
         return null;
       }
@@ -772,7 +772,7 @@
     skate.h("div", { class: "c-button c-button--block" });
 
     class TestCmp extends skate.Component<any> {
-      renderCallback() {
+      render() {
         return <div class="c-button c-button--block" />;
       }
     }
@@ -807,7 +807,7 @@
         { link: "home", name: "Home" },
         { link: "about", name: "About" }
       ];
-      renderCallback() {
+      render() {
         return (
           <ul>
             {this.menu.map(menuItem =>
@@ -833,7 +833,7 @@
           menu: "menu"
         };
       }
-      renderCallback() {
+      render() {
         return (
           <main>
             <header>
@@ -854,7 +854,7 @@
     }
 
     class App extends skate.Component<void> {
-      renderCallback() {
+      render() {
         return skate.h(
           "my-page",
           {},

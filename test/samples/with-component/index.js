@@ -2,8 +2,8 @@ import { props, withComponent } from '../../../src';
 
 const myRenderer = (Base = HTMLElement) =>
   class extends Base {
-    rendererCallback(renderRoot, renderCallback) {
-      renderRoot.innerHTML = renderCallback();
+    renderer(renderRoot, render) {
+      renderRoot.innerHTML = render();
     }
   };
 
@@ -12,7 +12,7 @@ class WithComponent extends withComponent(myRenderer()) {
     name: props.string
   };
 
-  renderCallback({ name }) {
+  render({ name }) {
     return `Hello, ${this.name}!`;
   }
 }

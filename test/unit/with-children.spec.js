@@ -25,7 +25,7 @@ global.MutationObserver = class {
 
 const Elem = define(
   class extends withChildren(withUnique()) {
-    childrenChangedCallback() {
+    childrenDidUpdate() {
       ++this.called;
     }
   }

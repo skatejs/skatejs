@@ -2,8 +2,8 @@ import { withRenderer } from '../../../src';
 
 const myRenderer = (Base = HTMLElement) =>
   class extends Base {
-    rendererCallback(renderRoot, renderCallback) {
-      renderRoot.innerHTML = renderCallback();
+    renderer(renderRoot, render) {
+      renderRoot.innerHTML = render();
     }
   };
 
@@ -25,7 +25,7 @@ class WithRenderer extends withRenderer(myRenderer()) {
     this.triggerUpdate();
   }
 
-  renderCallback({ name }) {
+  render({ name }) {
     return `Hello, ${this.name}!`;
   }
 }

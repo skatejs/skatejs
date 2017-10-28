@@ -18,7 +18,7 @@ export class MyComponent extends Component<Props> {
   myArray: string[]
   private someNonPublicApiProp = 'Who are you?'
 
-  renderCallback() {
+  render() {
     return <button onClick={_ => this._changeProps()}>Hello World</button>
   }
 

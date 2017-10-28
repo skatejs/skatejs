@@ -1,10 +1,10 @@
-import { withComponent } from '../../..';
+import { withComponent } from '../../../src';
 
 class MyComponent extends withComponent() {
-  rendererCallback(renderRoot, renderCallback) {
-    renderRoot.innerHTML = renderCallback();
+  renderer(renderRoot, render) {
+    renderRoot.innerHTML = render();
   }
-  renderCallback() {
+  render() {
     return 'Hello, <slot></slot>!';
   }
 }

@@ -315,7 +315,7 @@ describe('withProps', () => {
             this.public2 = 'publicKey2';
             this.undeclaredProp = 'undeclaredKey1';
           }
-          propsSetCallback() {
+          willUpdate() {
             this._rendered++;
           }
         }
@@ -396,14 +396,14 @@ describe('withProps', () => {
     });
   });
 
-  it('triggerUpdateCallback', () => {
+  it('triggerUpdate', () => {
     let updated;
     const elem = new class extends withProps() {
-      propsSetCallback() {
+      willUpdate() {
         updated = true;
       }
     }();
-    elem.triggerUpdateCallback();
+    elem.triggerUpdate();
     expect(updated).toBe(true);
   });
 });

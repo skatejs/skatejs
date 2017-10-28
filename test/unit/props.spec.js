@@ -10,22 +10,24 @@ describe('api/props', () => {
   let ElemClass;
 
   beforeEach(done => {
-    ElemClass = define(class extends withUnique(withProps()) {
-      static props = {
-        prop1: null,
-        prop2: null,
-        prop3: null
-      };
-      constructor () {
-        super();
-        this._rendered = 0;
-        this.prop1 = 'test1';
-        this.prop2 = 'test2';
+    ElemClass = define(
+      class extends withUnique(withProps()) {
+        static props = {
+          prop1: null,
+          prop2: null,
+          prop3: null
+        };
+        constructor() {
+          super();
+          this._rendered = 0;
+          this.prop1 = 'test1';
+          this.prop2 = 'test2';
+        }
+        willUpdate() {
+          this._rendered++;
+        }
       }
-      propsSetCallback () {
-        this._rendered++;
-      }
-    });
+    );
     elem = new ElemClass();
     fixture(elem);
     afterMutations(done);
@@ -51,7 +53,10 @@ describe('api/props', () => {
       expect('prop3' in curr).toEqual(true);
       expect(curr.undeclaredProp).toEqual(undefined);
 
-      expect(elem2.props.prop1).toEqual(curr.prop1, 'compare value on both instances');
+      expect(elem2.props.prop1).toEqual(
+        curr.prop1,
+        'compare value on both instances'
+      );
     });
   });
 });

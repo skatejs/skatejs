@@ -4,26 +4,25 @@
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { define, withComponent } from '../../src';
-import afterMutations from '../lib/after-mutations';
 
 const Component = withComponent(
   class extends HTMLElement {
-    rendererCallback(renderRoot, renderCallback) {
+    renderer(renderRoot, render) {
       if (renderRoot.childNodes.length) {
-        renderRoot.replaceChild(renderCallback(), renderRoot.firstChild);
+        renderRoot.replaceChild(render(), renderRoot.firstChild);
       } else {
-        renderRoot.appendChild(renderCallback());
+        renderRoot.appendChild(render());
       }
     }
   }
 );
 
 describe('withRenderer', () => {
-  describe('renderCallback()', () => {
+  describe('render()', () => {
     it('should be called', () => {
       const Elem = define(
         class extends Component {
-          renderCallback(elem) {
+          render(elem) {
             expect(this).toBe(elem);
             return h('div', null, 'called');
           }
@@ -36,14 +35,14 @@ describe('withRenderer', () => {
     });
   });
 
-  describe('renderedCallback()', () => {
+  describe('didRender()', () => {
     it('should be called after rendering', () => {
       const Elem = define(
         class extends Component {
-          renderCallback() {
+          render() {
             return h('div');
           }
-          renderedCallback() {
+          didRender() {
             expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
@@ -55,14 +54,14 @@ describe('withRenderer', () => {
     it('should not be called if rendering is prevented', () => {
       const Elem = define(
         class extends Component {
-          componentUpdatedCallback() {
+          shouldUpdate() {
             setTimeout(() => (this.called = true), 1);
             return false;
           }
-          renderCallback() {
+          render() {
             return h('div');
           }
-          renderedCallback() {
+          didRender() {
             throw new Error('should not have been called');
           }
         }
@@ -72,40 +71,6 @@ describe('withRenderer', () => {
       });
     });
 
-    // it('should be called if props change', (done) => {
-    //   const Elem = define(class extends Component {
-    //     static props = {
-    //       foo: { default: 'bar' }
-    //     };
-
-    //     constructor () {
-    //       super();
-    //       this.count = 0;
-    //     }
-
-    //     renderCallback () {
-    //       return h('div', null, this.foo);
-    //     }
-
-    //     renderedCallback () {
-    //       this.count++;
-
-    //       if (this.count === 1) {
-    //         expect(this.shadowRoot.firstChild.textContent).toBe('bar');
-    //       } else if (this.count === 2) {
-    //         expect(this.shadowRoot.firstChild.textContent).toBe('baz');
-    //         done();
-    //       }
-    //     }
-    //   });
-
-    //   const elem = new Elem();
-    //   fixture(elem);
-    //   afterMutations(() => {
-    //     elem.foo = 'baz';
-    //   });
-    // });
-
     it('should be called if element creates its own shadowRoot', () => {
       const Elem = define(
         class extends Component {
@@ -113,10 +78,10 @@ describe('withRenderer', () => {
             super();
             this.attachShadow({ mode: 'open' });
           }
-          renderCallback() {
+          render() {
             return h('div');
           }
-          renderedCallback() {
+          didRender() {
             expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
@@ -133,10 +98,10 @@ describe('withRenderer', () => {
           get renderRoot() {
             return this;
           }
-          renderCallback() {
+          render() {
             return h('div');
           }
-          renderedCallback() {
+          didRender() {
             expect(this.firstChild.localName).toBe('div');
           }
         }
@@ -153,7 +118,7 @@ describe('withRenderer', () => {
           get renderRoot() {
             return this;
           }
-          renderCallback() {
+          render() {
             return h('div', null, 'testing');
           }
         }
@@ -169,7 +134,7 @@ describe('withRenderer', () => {
             this.appendChild(div);
             return (this.shadowRoot = div);
           }
-          renderCallback() {
+          render() {
             return h('div', null, 'testing');
           }
         }
@@ -183,7 +148,7 @@ describe('withRenderer', () => {
       customElements.define(
         'x-c',
         class extends Component {
-          renderCallback() {
+          render() {
             return h('div', null, 'Hello2');
           }
         }
@@ -209,7 +174,7 @@ describe('withRenderer', () => {
           get renderRoot() {
             return this;
           }
-          renderCallback() {
+          render() {
             return h('div', null, 'Hello2');
           }
         }

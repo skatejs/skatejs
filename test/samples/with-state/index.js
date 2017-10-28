@@ -8,7 +8,7 @@ class WithState extends withState() {
   connectedCallback() {
     this.state = { name: 'You' };
   }
-  triggerUpdateCallback() {
+  triggerUpdate() {
     this.shadowRoot.innerHTML = `Hey, ${this.state.name}!`;
   }
 }
