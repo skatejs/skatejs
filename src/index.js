@@ -7,7 +7,6 @@ export * from './with-children';
 export * from './with-context';
 export * from './with-component';
 export * from './with-lifecycle';
-export * from './with-props';
+export * from './with-update';
 export * from './with-renderer';
-export * from './with-state';
 export * from './with-unique';

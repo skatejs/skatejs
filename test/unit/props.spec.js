@@ -3,7 +3,7 @@
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
-import { define, withProps, withUnique } from '../../src';
+import { define, withUpdate, withUnique } from '../../src';
 
 describe('api/props', () => {
   let elem;
@@ -11,7 +11,7 @@ describe('api/props', () => {
 
   beforeEach(done => {
     ElemClass = define(
-      class extends withUnique(withProps()) {
+      class extends withUnique(withUpdate()) {
         static props = {
           prop1: null,
           prop2: null,

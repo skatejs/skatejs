@@ -23,10 +23,10 @@ describe('exports', () => {
     expect(typeof api.withChildren).toBe('function', 'withChildren');
     expect(typeof api.withContext).toBe('function', 'withContext');
     expect(typeof api.withComponent).toBe('function', 'withComponent');
-    expect(typeof api.withProps).toBe('function', 'withProps');
+    expect(typeof api.withLifecycle).toBe('function', 'withLifecycle');
     expect(typeof api.withRenderer).toBe('function', 'withRenderer');
-    expect(typeof api.withState).toBe('function', 'withState');
     expect(typeof api.withUnique).toBe('function', 'withUnique');
+    expect(typeof api.withUpdate).toBe('function', 'withUpdate');
   });
 
   it('skate.props.*', () => {

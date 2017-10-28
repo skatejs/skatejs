@@ -4,16 +4,16 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, props, withProps, withUnique } from '../../../src';
+import { define, props, withUpdate, withUnique } from '../../../src';
 
-function withPropsUnique(Base = HTMLElement) {
-  return withProps(withUnique(Base));
+function withUpdateUnique(Base = HTMLElement) {
+  return withUpdate(withUnique(Base));
 }
 
 describe('lifecycle/properties', () => {
   function create(definition = {}, name = 'testName', value) {
     const elem = new (define(
-      class extends withPropsUnique() {
+      class extends withUpdateUnique() {
         static props = { [name]: definition };
       }
     ))();
@@ -31,7 +31,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { testprop: { attribute: true } };
         }
       ))();
@@ -47,7 +47,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { 'test-prop': { attribute: true } };
         }
       ))();
@@ -63,7 +63,7 @@ describe('lifecycle/properties', () => {
       if (skip) this.skip();
 
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { testProp: { attribute: true } };
         }
       ))();
@@ -79,7 +79,7 @@ describe('lifecycle/properties', () => {
   describe('props declared as attributes with object are linked', () => {
     it('uses the same attribute and property name for lower-case names', done => {
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { testprop: { attribute: true } };
         }
       ))();
@@ -93,7 +93,7 @@ describe('lifecycle/properties', () => {
 
     it('uses the same attribute and property name for dashed-names names', done => {
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { 'test-prop': { attribute: true } };
         }
       ))();
@@ -107,7 +107,7 @@ describe('lifecycle/properties', () => {
 
     it('uses a dash-cased attribute name for camel-case property names', done => {
       const elem = new (define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = { testProp: { attribute: true } };
         }
       ))();
@@ -122,7 +122,7 @@ describe('lifecycle/properties', () => {
 
   it('should not leak options to other definitions', () => {
     const elem = new (define(
-      class extends withPropsUnique() {
+      class extends withUpdateUnique() {
         static props = {
           test1: {
             attribute: true,
@@ -179,7 +179,7 @@ describe('lifecycle/properties', () => {
 
       it('1st mutation updates prop', done => {
         const Elem = define(
-          class extends withPropsUnique() {
+          class extends withUpdateUnique() {
             static props = {
               foo: {
                 attribute: true
@@ -199,7 +199,7 @@ describe('lifecycle/properties', () => {
 
       it('2nd mutation updates prop', done => {
         const Elem = define(
-          class extends withPropsUnique() {
+          class extends withUpdateUnique() {
             static props = {
               foo: {
                 attribute: true
@@ -513,7 +513,7 @@ describe('lifecycle/properties', () => {
   describe('attribute one-way', () => {
     it('source is not updated', done => {
       const Elem = define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = {
             prop: {
               attribute: { source: 'in' }
@@ -536,7 +536,7 @@ describe('lifecycle/properties', () => {
 
     it('source change, updates prop', done => {
       const Elem = define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = {
             prop: {
               attribute: { source: 'in' }
@@ -557,7 +557,7 @@ describe('lifecycle/properties', () => {
 
     it('prop change, updates target', done => {
       const Elem = define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = {
             prop: {
               attribute: { source: 'in', target: 'out' }
@@ -582,7 +582,7 @@ describe('lifecycle/properties', () => {
 
     it('source change, updates target', done => {
       const Elem = define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = {
             prop: {
               attribute: { source: 'in', target: 'out' },
@@ -620,7 +620,7 @@ describe('lifecycle/properties', () => {
 
     it('target change is ignored', done => {
       const Elem = define(
-        class extends withPropsUnique() {
+        class extends withUpdateUnique() {
           static props = {
             prop: {
               attribute: { source: 'in', target: 'out' }

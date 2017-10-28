@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
 import { h as preactH } from 'preact';
-import { define, prop, props, withProps, withUnique } from '../../src';
+import { define, prop, props, withUpdate, withUnique } from '../../src';
 import { sym } from '../../src/util';
 
 import afterMutations from '../lib/after-mutations';
@@ -9,7 +9,7 @@ import fixture from '../lib/fixture';
 
 function create(propLocal) {
   const el = new (define(
-    class extends withUnique(withProps()) {
+    class extends withUnique(withUpdate()) {
       static props = {
         test: { ...propLocal, ...{ attribute: true } }
       };
@@ -37,9 +37,9 @@ function testTypeValues(type, values, done) {
   }, 1);
 }
 
-describe('withProps', () => {
+describe('withUpdate', () => {
   it('should not share _props instance', () => {
-    class Test1 extends withProps() {
+    class Test1 extends withUpdate() {
       static props = {
         test1: {}
       };
@@ -299,7 +299,7 @@ describe('withProps', () => {
 
     beforeEach(done => {
       elem = new (define(
-        class extends withUnique(withProps()) {
+        class extends withUnique(withUpdate()) {
           static props = {
             [secret1]: null,
             [secret2]: props.any,
@@ -328,7 +328,7 @@ describe('withProps', () => {
       it('should not merge super props', () => {
         const one = {};
         const two = {};
-        class One extends withProps() {
+        class One extends withUpdate() {
           static props = { one };
         }
         class Two extends One {
@@ -382,7 +382,7 @@ describe('withProps', () => {
 
   describe('{ prop }', function() {
     it('should define a property on an element', () => {
-      const elem = new class extends withProps() {}();
+      const elem = new class extends withUpdate() {}();
 
       prop({ ...props.string, ...{ attribute: true } })(elem, 'test');
 
@@ -398,12 +398,39 @@ describe('withProps', () => {
 
   it('triggerUpdate', () => {
     let updated;
-    const elem = new class extends withProps() {
+    const elem = new class extends withUpdate() {
       willUpdate() {
         updated = true;
       }
     }();
     elem.triggerUpdate();
+    expect(updated).toBe(true);
+  });
+});
+
+describe('state', () => {
+  const Base = withUpdate(withUnique());
+
+  it('should set state', () => {
+    const Test = define(class extends Base {});
+    const test = new Test();
+    const newState = { test1: true, test2: false };
+    expect(test.state).toMatchObject({});
+    test.state = newState;
+    expect(test.state).toMatchObject(newState);
+  });
+
+  it('should call triggerUpdate', () => {
+    let updated;
+    const Test = define(
+      class extends Base {
+        triggerUpdate() {
+          updated = true;
+        }
+      }
+    );
+    const test = new Test();
+    test.state = {};
     expect(updated).toBe(true);
   });
 });

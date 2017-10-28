@@ -27,7 +27,7 @@ that enable you to control what your component can do.
 
 For instance, Skate's main mixin, `withComponent`, is just a composition of all of Skate's other mixin behaviours:
 
-* `withProps` -- the generated element will react to changes on their props or HTML attributes.
+* `withUpdate` -- the generated element will react to changes on their props or HTML attributes.
 * `withChildren` -- the generated element will react to changes to its child elements.
 * `withRenderer` -- the element can generate its own DOM and output it to a `renderRoot` (a `ShadowRoot` node by default).
 * `withUnique` -- allows for naming the custom element through `is`.

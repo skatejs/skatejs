@@ -117,6 +117,6 @@ type Constructor<T> = new (...args: any[]) => T;
 export function withComponent<T extends Constructor<HTMLElement>>(
   Base: T
 ): typeof Component;
-export function withProps<T extends Constructor<HTMLElement>>(Base: T): T;
+export function withUpdate<T extends Constructor<HTMLElement>>(Base: T): T;
 export function withRenderer<T extends Constructor<HTMLElement>>(Base: T): T;
 export function withUnique<T extends Constructor<HTMLElement>>(Base: T): T;

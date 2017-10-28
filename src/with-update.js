@@ -8,7 +8,7 @@ import {
   normalisePropertyDefinition,
   syncAttributeToProperty,
   syncPropertyToAttribute
-} from './util/with-props';
+} from './util/with-update';
 
 export function prop(definition: PropType | void): Function {
   const propertyDefinition: PropType = definition || {};
@@ -58,12 +58,13 @@ export function prop(definition: PropType | void): Function {
   return func;
 }
 
-export const withProps = (Base?: Class<any> = HTMLElement): Class<WithProps> =>
+export const withUpdate = (Base?: Class<any> = HTMLElement): Class<WithProps> =>
   class extends Base {
     static _observedAttributes: Array<string>;
     static _props: Object;
 
     _prevProps: Object;
+    _state = {};
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
@@ -100,6 +101,15 @@ export const withProps = (Base?: Class<any> = HTMLElement): Class<WithProps> =>
     set props(props: Object) {
       const ctorProps = this.constructor.props;
       keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
+    }
+
+    get state() {
+      return this._state;
+    }
+
+    set state(state: Object) {
+      this._state = state;
+      this.triggerUpdate && this.triggerUpdate();
     }
 
     attributeChangedCallback(

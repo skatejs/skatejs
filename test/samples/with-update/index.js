@@ -1,6 +1,6 @@
-import { props, withProps } from '../../../src';
+import { props, withUpdate } from '../../../src';
 
-class WithProps extends withProps() {
+class WithProps extends withUpdate() {
   // This is where you declare your props.
   static props = {
     // This will define a handler for the name attribute that will set the name
@@ -29,4 +29,4 @@ class WithProps extends withProps() {
   }
 }
 
-customElements.define('with-props', WithProps);
+customElements.define('with-update', WithProps);

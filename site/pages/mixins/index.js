@@ -10,9 +10,9 @@ import { Link } from '../../components/primitives';
 // import codeWithComponent from '!raw-loader!../../test/samples/with-component';
 // import codeWithComponentHtml from '!raw-loader!../../test/samples/with-component/index.html';
 //
-// import '../../test/samples/with-props';
-// import codeWithProps from '!raw-loader!../../test/samples/with-props';
-// import codeWithPropsHtml from '!raw-loader!../../test/samples/with-props/index.html';
+// import '../../test/samples/with-update';
+// import codeWithProps from '!raw-loader!../../test/samples/with-update';
+// import codeWithPropsHtml from '!raw-loader!../../test/samples/with-update/index.html';
 //
 // import '../../test/samples/with-renderer';
 // import codeWithRenderer from '!raw-loader!../../test/samples/with-renderer';
@@ -53,10 +53,10 @@ import { Link } from '../../components/primitives';
 //     ]
 //   },
 //   {
-//     name: 'withProps',
+//     name: 'withUpdate',
 //     pane: [
 //       <p>
-//         The <code>withProps</code> mixin is the heart of Skate and is what makes
+//         The <code>withUpdate</code> mixin is the heart of Skate and is what makes
 //         attribute / property linkage and reflection manageable by enforcing a
 //         convention that follows best-practices. It also exports several
 //         pre-defined property types that handle serialisation and deserialisation
@@ -75,12 +75,12 @@ import { Link } from '../../components/primitives';
 //         The <code>withRenderer</code> mixin is what connects view libraries such
 //         as React, Preact and Lit HTML to the rest of Skate. It implements a{' '}
 //         <code>propsUpdatedCallback</code> so it can be paired up with the{' '}
-//         <code>withProps</code> mixin, or you can call it imperatively yourself
+//         <code>withUpdate</code> mixin, or you can call it imperatively yourself
 //         if not.
 //       </p>,
 //       <p>
-//         To see the stark difference when paired with the <code>withProps</code>{' '}
-//         mixin, look at the <code>withComponent</code> or <code>withProps</code>{' '}
+//         To see the stark difference when paired with the <code>withUpdate</code>{' '}
+//         mixin, look at the <code>withComponent</code> or <code>withUpdate</code>{' '}
 //         minxins.
 //       </p>,
 //       <Runnable.is code={codeWithRenderer} html={codeWithRendererHtml} />

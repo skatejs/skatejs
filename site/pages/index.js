@@ -67,8 +67,8 @@ export default component(function index() {
           - inherit context from components up the tree, like in React.
         </li>
         <li>
-          <Link.is href="/mixins/with-props">
-            <code>withProps()</code>
+          <Link.is href="/mixins/with-update">
+            <code>withUpdate()</code>
           </Link.is>{' '}
           - react to property and attribute updates.
         </li>

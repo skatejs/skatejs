@@ -15,7 +15,7 @@ export {
   define,
   emit,
   withComponent,
-  withProps,
+  withUpdate,
   withRenderer,
   withUnique
 } from "./ts-typings/api";
