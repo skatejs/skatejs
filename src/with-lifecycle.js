@@ -1,12 +1,8 @@
 // @flow
 
-import type { WithLifecycle } from './types';
-
 import { prop } from './util/index';
 
-export const withLifecycle = (
-  Base: Class<any> = HTMLElement
-): Class<WithLifecycle> =>
+export const withLifecycle = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     connectedCallback() {
       this.willMount && this.willMount();

@@ -4,14 +4,6 @@ import type { PropType, PropTypesNormalized } from '../types';
 
 import { dashCase } from './index';
 
-interface CanDefineProps extends HTMLElement {
-  static prototype: Object;
-  static props: PropTypesNormalized;
-
-  _syncingAttributeToProperty: string | null;
-  _syncingPropertyToAttribute: boolean;
-}
-
 export function normaliseAttributeDefinition(
   name: string | Symbol,
   prop: PropType
@@ -48,7 +40,7 @@ export function normalisePropertyDefinition(
 }
 
 export function syncAttributeToProperty(
-  elem: CanDefineProps,
+  elem: any,
   name: string,
   value: mixed
 ): void {
@@ -67,7 +59,7 @@ export function syncAttributeToProperty(
 }
 
 export function syncPropertyToAttribute(
-  elem: CanDefineProps,
+  elem: any,
   target: string,
   serialize: (val: mixed) => string,
   val: mixed

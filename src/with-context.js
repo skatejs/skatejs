@@ -1,10 +1,6 @@
 // @flow
 
-import type { WithContext } from './types';
-
-export const withContext = (
-  Base: Class<any> = HTMLElement
-): Class<WithContext> =>
+export const withContext = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     get context(): Object {
       if (this._context) return this._context;

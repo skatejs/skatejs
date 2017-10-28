@@ -3,20 +3,7 @@
 // Generic
 export type DeepObject = { [string]: Object };
 
-// Custom elements
-export type CustomElement = HTMLElement & {
-  is?: string,
-  observedAttributes?: Array<string>,
-  prototype: {
-    attributeChangedCallback?: (
-      name: string,
-      oldValue: any,
-      newValue: any
-    ) => void,
-    connectedCallback?: () => void,
-    disconnectedCallback?: () => void
-  }
-};
+// Fixing EventTarget for covariant element types.
 export type CustomElementLink = EventTarget & {
   checked?: boolean,
   name?: string,
@@ -60,58 +47,3 @@ export type PropTypeNormalized = {
 };
 export type PropTypes = { [string]: PropType };
 export type PropTypesNormalized = { [string]: PropTypeNormalized };
-
-// Mixins
-export type WithChildren = CustomElement & {
-  prototype: {
-    childrenDidUpdate?: ?Function
-  }
-};
-export type WithContext = CustomElement & {
-  prototype: {
-    context: any
-  }
-};
-export type WithLifecycle = CustomElement & {
-  prototype: {
-    didMount?: ?Function,
-    didUnmount?: ?Function,
-    willMount?: ?Function,
-    willUnmount?: ?Function
-  }
-};
-export type WithRenderer = CustomElement & {
-  prototype: {
-    didRender?: ?Function,
-    didUpdate: Function,
-    render?: ?Function,
-    renderer?: ?Function,
-    willRender?: ?Function
-  }
-};
-export type WithState = CustomElement & {
-  prototype: {
-    state: Object
-  }
-};
-export type WithUnique = CustomElement & {
-  is?: ?string
-};
-export type WithUpdate = CustomElement & {
-  props: PropTypes,
-  prototype: {
-    didUpdate?: ?Function,
-    props: Object,
-    shouldUpdate: (props: Object) => boolean,
-    triggerUpdate: Function,
-    willUpdate?: ?(props: Object) => void
-  }
-};
-export type WithComponent =
-  | WithChildren
-  | WithContext
-  | WithLifecycle
-  | WithRenderer
-  | WithState
-  | WithUnique
-  | WithUpdate;

@@ -1,10 +1,6 @@
 // @flow
 
-import type { WithChildren } from './types';
-
-export const withChildren = (
-  Base: Class<any> = HTMLElement
-): Class<WithChildren> =>
+export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     childrenDidUpdate: Function | void;
 

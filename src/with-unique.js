@@ -1,12 +1,8 @@
 // @flow
 
-import type { WithUnique } from './types';
-
 import { generateName } from './util/with-unique';
 
-export const withUnique = (
-  Base?: Class<any> = HTMLElement
-): Class<WithUnique> =>
+export const withUnique = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     static _is: string;
     static get is() {

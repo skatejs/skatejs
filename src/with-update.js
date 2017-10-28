@@ -1,6 +1,6 @@
 // @flow
 
-import type { PropType, PropTypesNormalized, WithUpdate } from './types';
+import type { PropType, PropTypes, PropTypesNormalized } from './types';
 
 import { empty, keys, sym } from './util/index';
 
@@ -58,14 +58,13 @@ export function prop(definition: PropType | void): Function {
   return func;
 }
 
-export const withUpdate = (
-  Base?: Class<any> = HTMLElement
-): Class<WithUpdate> =>
+export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     static _observedAttributes: Array<string>;
     static _props: Object;
 
     _prevProps: Object;
+    _prevState: Object;
     _state = {};
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
@@ -83,7 +82,7 @@ export const withUpdate = (
       return this._props || {};
     }
 
-    static set props(props: PropType): void {
+    static set props(props: PropTypes): void {
       keys(props).forEach(name => {
         let func = props[name];
         if (typeof func !== 'function') func = prop(func);
@@ -111,35 +110,44 @@ export const withUpdate = (
 
     set state(state: Object) {
       this._state = state;
-      this.triggerUpdate && this.triggerUpdate();
+      this.triggerUpdate();
     }
 
     attributeChangedCallback(
       name: string,
       oldValue: string | null,
       newValue: string | null
-    ) {
-      super.attributeChangedCallback &&
+    ): void {
+      if (super.attributeChangedCallback) {
         super.attributeChangedCallback(name, oldValue, newValue);
+      }
       syncAttributeToProperty(this, name, newValue);
     }
 
     connectedCallback() {
-      super.connectedCallback && super.connectedCallback();
+      if (super.connectedCallback) {
+        super.connectedCallback();
+      }
       this.triggerUpdate();
     }
 
-    shouldUpdate() {
-      return true;
-    }
-
     triggerUpdate() {
-      if (this._updating) return;
+      if (this._updating) {
+        return;
+      }
       this._updating = true;
-      const prev = this._prevProps;
-      this.willUpdate && this.willUpdate(prev);
-      this.didUpdate && this.shouldUpdate(prev) && this.didUpdate(prev);
+      const { _prevProps, _prevState } = this;
+      if (this.willUpdate) {
+        this.willUpdate(_prevProps, _prevState);
+      }
+      if (
+        this.didUpdate &&
+        (!this.shouldUpdate || this.shouldUpdate(_prevProps, _prevState))
+      ) {
+        this.didUpdate(_prevProps, _prevState);
+      }
       this._prevProps = this.props;
+      this._prevState = this.state;
       this._updating = false;
     }
   };

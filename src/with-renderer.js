@@ -1,16 +1,12 @@
 // @flow
 
-import type { WithRenderer } from './types';
-
 const attachShadowOptions = { mode: 'open' };
 
 function attachShadow(elem) {
   return elem.attachShadow ? elem.attachShadow(attachShadowOptions) : elem;
 }
 
-export const withRenderer = (
-  Base: Class<any> = HTMLElement
-): Class<WithRenderer> =>
+export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     _connected: boolean;
     _shadowRoot: Node;

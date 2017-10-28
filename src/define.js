@@ -1,8 +1,6 @@
 // @flow
 
-import type { CustomElement } from './types';
-
-export function define<T: Class<CustomElement>>(Ctor: T): T {
+export function define<T: Class<any>>(Ctor: T): T {
   const registry = customElements;
   const is = Ctor.is;
   if (is && !registry.get(is)) {
