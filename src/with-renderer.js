@@ -19,16 +19,27 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
     }
 
     connectedCallback() {
-      super.connectedCallback && super.connectedCallback();
+      if (super.connectedCallback) {
+        super.connectedCallback();
+      }
       this._connected = true;
     }
 
     didUpdate(...args) {
-      super.didUpdate && super.didUpdate(...args);
-      if (!this._connected) return;
-      this.willRender && this.willRender();
-      this.renderer &&
+      if (super.didUpdate) {
+        super.didUpdate(...args);
+      }
+      if (!this._connected) {
+        return;
+      }
+      if (this.renderer) {
+        if (this.willRender) {
+          this.willRender();
+        }
         this.renderer(this.renderRoot, () => this.render && this.render(this));
-      this.didRender && this.didRender();
+        if (this.didRender) {
+          this.didRender();
+        }
+      }
     }
   };

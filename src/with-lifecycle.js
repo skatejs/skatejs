@@ -5,13 +5,25 @@ import { prop } from './util/index';
 export const withLifecycle = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     connectedCallback() {
-      this.willMount && this.willMount();
-      super.connectedCallback && super.connectedCallback();
-      this.didMount && this.didMount();
+      if (this.willMount) {
+        this.willMount();
+      }
+      if (super.connectedCallback) {
+        super.connectedCallback();
+      }
+      if (this.didMount) {
+        this.didMount();
+      }
     }
     disconnectedCallback() {
-      this.willUnmount && this.willUnmount();
-      super.disconnectedCallback && super.disconnectedCallback();
-      this.didUnmount && this.didUnmount();
+      if (this.willUnmount) {
+        this.willUnmount();
+      }
+      if (super.disconnectedCallback) {
+        super.disconnectedCallback();
+      }
+      if (this.didUnmount) {
+        this.didUnmount();
+      }
     }
   };

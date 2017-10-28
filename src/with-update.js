@@ -65,10 +65,17 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
     _prevProps: Object;
     _prevState: Object;
-    _state = {};
+    _state: Object;
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
+
+    didUpdate: ?(props: Object, state: Object) => void;
+    shouldUpdate: (props: Object, state: Object) => void;
+    triggerUpdate: () => void;
+    willUpdate: ?(props: Object, state: Object) => void;
+
+    _state = {};
 
     static get observedAttributes(): Array<string> {
       return this._observedAttributes || [];
@@ -131,6 +138,10 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       this.triggerUpdate();
     }
 
+    shouldUpdate() {
+      return true;
+    }
+
     triggerUpdate() {
       if (this._updating) {
         return;
@@ -140,10 +151,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       if (this.willUpdate) {
         this.willUpdate(_prevProps, _prevState);
       }
-      if (
-        this.didUpdate &&
-        (!this.shouldUpdate || this.shouldUpdate(_prevProps, _prevState))
-      ) {
+      if (this.didUpdate && this.shouldUpdate(_prevProps, _prevState)) {
         this.didUpdate(_prevProps, _prevState);
       }
       this._prevProps = this.props;

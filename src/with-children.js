@@ -5,7 +5,9 @@ export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
     childrenDidUpdate: Function | void;
 
     connectedCallback() {
-      super.connectedCallback && super.connectedCallback();
+      if (super.connectedCallback) {
+        super.connectedCallback();
+      }
       if (this.childrenDidUpdate) {
         const fn = this.childrenDidUpdate.bind(this);
         const mo = new MutationObserver(fn);

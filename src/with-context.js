@@ -3,7 +3,9 @@
 export const withContext = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     get context(): Object {
-      if (this._context) return this._context;
+      if (this._context) {
+        return this._context;
+      }
       let node = this;
       while ((node = node.parentNode || node.host)) {
         if ('context' in node) {
