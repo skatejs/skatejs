@@ -20,6 +20,13 @@ export function keys(obj: Object | void): Array<any> {
     : names;
 }
 
+export function prop(obj: Object, key: String, value: any) {
+  Object.defineProperty(obj, key, {
+    configurable: true,
+    value
+  });
+}
+
 let symbolCount = 0;
 export function sym(description?: string): Symbol | string {
   description = String(description || ++symbolCount);

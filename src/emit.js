@@ -1,8 +1,8 @@
 // @flow
 
-import type { ComposedCustomEvent, EventOptions } from './types';
+import type { CustomElementEvent, CustomElementEventOptions } from './types';
 
-const defs: EventOptions = {
+const defs: CustomElementEventOptions = {
   bubbles: true,
   cancelable: true,
   composed: false
@@ -11,16 +11,15 @@ const defs: EventOptions = {
 export function emit(
   elem: HTMLElement,
   name: string,
-  opts: EventOptions
+  opts: CustomElementEventOptions
 ): boolean {
   opts = { ...defs, ...opts };
-  let e: ComposedCustomEvent;
+  let e: CustomElementEvent;
   if ('composed' in CustomEvent.prototype) {
     e = new CustomEvent(name, opts);
   } else {
-    e = document.createEvent('CustomEvent');
+    e = (document.createEvent('CustomEvent'): CustomElementEvent);
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
-    // $FlowFixMe: composed not in CustomEvent
     Object.defineProperty(e, 'composed', { value: opts.composed });
   }
   return elem.dispatchEvent(e);

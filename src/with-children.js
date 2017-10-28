@@ -1,21 +1,20 @@
 // @flow
 
+import type { WithChildren } from './types';
+
 export const withChildren = (
-  Base: Class<HTMLElement> = HTMLElement
-): Class<HTMLElement> =>
+  Base: Class<any> = HTMLElement
+): Class<WithChildren> =>
   class extends Base {
-    childrenChangedCallback: Function | void;
+    childrenDidUpdate: Function | void;
 
     connectedCallback() {
-      if (super.connectedCallback) {
-        // $FlowFixMe
-        super.connectedCallback();
-      }
-      if (this.childrenChangedCallback) {
-        const ccc = this.childrenChangedCallback.bind(this);
-        const mo = new MutationObserver(ccc);
+      super.connectedCallback && super.connectedCallback();
+      if (this.childrenDidUpdate) {
+        const fn = this.childrenDidUpdate.bind(this);
+        const mo = new MutationObserver(fn);
         mo.observe(this, { childList: true });
-        ccc();
+        fn();
       }
     }
   };

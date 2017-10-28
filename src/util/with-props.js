@@ -1,12 +1,12 @@
 // @flow
 
-import type { PropOptions, PropsOptionsNormalized } from '../types';
+import type { PropType, PropTypesNormalized } from '../types';
 
 import { dashCase } from './index';
 
 interface CanDefineProps extends HTMLElement {
   static prototype: Object;
-  static props: PropsOptionsNormalized;
+  static props: PropTypesNormalized;
 
   _syncingAttributeToProperty: string | null;
   _syncingPropertyToAttribute: boolean;
@@ -14,7 +14,7 @@ interface CanDefineProps extends HTMLElement {
 
 export function normaliseAttributeDefinition(
   name: string | Symbol,
-  prop: PropOptions
+  prop: PropType
 ): Object {
   const { attribute } = prop;
   const obj =
@@ -35,7 +35,7 @@ export function normaliseAttributeDefinition(
 
 export function normalisePropertyDefinition(
   name: string,
-  prop: PropOptions
+  prop: PropType
 ): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
@@ -55,7 +55,7 @@ export function syncAttributeToProperty(
   if (elem._syncingPropertyToAttribute) {
     return;
   }
-  const propDefs: PropsOptionsNormalized = elem.constructor.props;
+  const propDefs: PropTypesNormalized = elem.constructor.props;
   for (let propName in propDefs) {
     const { attribute: { source }, deserialize } = propDefs[propName];
     if (source === name) {

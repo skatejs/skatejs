@@ -5,7 +5,7 @@ export as namespace skate;
 export {
   Component,
   ComponentProps,
-  PropOptions,
+  PropType,
   StatelessComponent,
   ComponentClass,
   SFC,

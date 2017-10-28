@@ -2,7 +2,7 @@ import { VNode } from "preact";
 
 type Key = string | number;
 
-export type ComponentProps<El, T> = { [P in keyof T]: PropOptions };
+export type ComponentProps<El, T> = { [P in keyof T]: PropType };
 
 interface ComponentDefaultProps {
   children?: JSX.Element[];
@@ -43,18 +43,18 @@ export class Component<Props> extends HTMLElement {
   // SkateJS life cycle
 
   // Called whenever props are set, even if they don't change.
-  propsSetCallback(next: Props, prev: Props): void;
+  willUpdate(next: Props, prev: Props): void;
 
   // Called when props actually change.
-  propsChangedCallback(next: Props, prev: Props): void;
+  shouldUpdate(next: Props, prev: Props): void;
 
   // Called to see if the props changed.
-  propsUpdatedCallback(next: Props, prev: Props): boolean | void;
+  shouldUpdate(next: Props, prev: Props): boolean | void;
 
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
-  renderCallback(props?: Props): JSX.Element | null;
-  renderedCallback(): void;
-  rendererCallback(shadowRoot: Element, renderCallback: () => VNode): void;
+  render(props?: Props): JSX.Element | null;
+  didRender(): void;
+  renderer(shadowRoot: Element, render: () => VNode): void;
 }
 
 type AttributeReflectionBaseType = boolean | string;
@@ -64,7 +64,7 @@ type AttributeReflectionConfig =
       source?: AttributeReflectionBaseType;
       target?: AttributeReflectionBaseType;
     };
-export interface PropOptions {
+export interface PropType {
   attribute?: AttributeReflectionConfig;
   coerce?: <T>(value: any) => T | null | undefined;
   default?: any | ((elem: HTMLElement, data: { name: string }) => any);
@@ -101,15 +101,15 @@ export function emit(
 export function link(elem: Component<any>, target?: string): (e: Event) => void;
 
 export const props: {
-  readonly any: PropOptions & PropertyDecorator;
-  readonly array: PropOptions & PropertyDecorator;
-  readonly boolean: PropOptions & PropertyDecorator;
-  readonly number: PropOptions & PropertyDecorator;
-  readonly object: PropOptions & PropertyDecorator;
-  readonly string: PropOptions & PropertyDecorator;
+  readonly any: PropType & PropertyDecorator;
+  readonly array: PropType & PropertyDecorator;
+  readonly boolean: PropType & PropertyDecorator;
+  readonly number: PropType & PropertyDecorator;
+  readonly object: PropType & PropertyDecorator;
+  readonly string: PropType & PropertyDecorator;
 };
 
-export const prop: (ops?: PropOptions) => PropertyDecorator & PropOptions;
+export const prop: (ops?: PropType) => PropertyDecorator & PropType;
 
 // Mixins
 type Constructor<T> = new (...args: any[]) => T;

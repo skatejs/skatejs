@@ -1,5 +1,7 @@
 // @flow
 
+import type { WithRenderer } from './types';
+
 const attachShadowOptions = { mode: 'open' };
 
 function attachShadow(elem) {
@@ -7,15 +9,11 @@ function attachShadow(elem) {
 }
 
 export const withRenderer = (
-  Base: Class<HTMLElement> = HTMLElement
-): Class<HTMLElement> =>
+  Base: Class<any> = HTMLElement
+): Class<WithRenderer> =>
   class extends Base {
     _connected: boolean;
     _shadowRoot: Node;
-
-    renderCallback: Function | void;
-    renderedCallback: Function | void;
-    rendererCallback: Function | void;
 
     get renderRoot() {
       return (
@@ -29,14 +27,12 @@ export const withRenderer = (
       this._connected = true;
     }
 
-    componentUpdatedCallback() {
-      super.componentUpdatedCallback && super.componentUpdatedCallback();
+    didUpdate(...args) {
+      super.didUpdate && super.didUpdate(...args);
       if (!this._connected) return;
-      this.rendererCallback &&
-        this.rendererCallback(
-          this.renderRoot,
-          () => this.renderCallback && this.renderCallback(this)
-        );
-      this.renderedCallback && this.renderedCallback();
+      this.willRender && this.willRender();
+      this.renderer &&
+        this.renderer(this.renderRoot, () => this.render && this.render(this));
+      this.didRender && this.didRender();
     }
   };

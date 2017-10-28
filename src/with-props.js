@@ -1,10 +1,6 @@
 // @flow
 
-import type {
-  HasConstructor,
-  PropOptions,
-  PropsOptionsNormalized
-} from './types';
+import type { PropType, PropTypesNormalized, WithProps } from './types';
 
 import { empty, keys, sym } from './util/index';
 
@@ -14,11 +10,11 @@ import {
   syncPropertyToAttribute
 } from './util/with-props';
 
-export function prop(definition: PropOptions | void): Function {
-  const propertyDefinition: PropOptions = definition || {};
+export function prop(definition: PropType | void): Function {
+  const propertyDefinition: PropType = definition || {};
 
   // Allows decorators, or imperative definitions.
-  const func = function({ constructor }: HasConstructor, name: string): void {
+  const func = function({ constructor }, name: string): void {
     const normalised = normalisePropertyDefinition(name, propertyDefinition);
     const _value = sym(name);
 
@@ -49,7 +45,7 @@ export function prop(definition: PropOptions | void): Function {
           normalised.serialize,
           val
         );
-        this.triggerUpdateCallback();
+        this.triggerUpdate();
       }
     });
   };
@@ -62,9 +58,7 @@ export function prop(definition: PropOptions | void): Function {
   return func;
 }
 
-export const withProps = (
-  Base?: Class<HTMLElement> = HTMLElement
-): Class<HTMLElement> =>
+export const withProps = (Base?: Class<any> = HTMLElement): Class<WithProps> =>
   class extends Base {
     static _observedAttributes: Array<string>;
     static _props: Object;
@@ -74,10 +68,6 @@ export const withProps = (
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
 
-    propsSetCallback: Function | void;
-    componentUpdatedCallback: Function | void;
-    triggerUpdateCallback: Function;
-
     static get observedAttributes(): Array<string> {
       return this._observedAttributes || [];
     }
@@ -86,11 +76,11 @@ export const withProps = (
       this._observedAttributes = (this.observedAttributes || []).concat(attrs);
     }
 
-    static get props(): PropsOptionsNormalized {
+    static get props(): PropTypesNormalized {
       return this._props || {};
     }
 
-    static set props(props: PropOptions): void {
+    static set props(props: PropType): void {
       keys(props).forEach(name => {
         let func = props[name];
         if (typeof func !== 'function') func = prop(func);
@@ -124,30 +114,19 @@ export const withProps = (
 
     connectedCallback() {
       super.connectedCallback && super.connectedCallback();
-      this.triggerUpdateCallback();
+      this.triggerUpdate();
     }
 
-    componentShouldUpdateCallback() {
+    shouldUpdate() {
       return true;
     }
 
-    triggerUpdateCallback() {
+    triggerUpdate() {
       if (this._updating) return;
       this._updating = true;
-
       const prev = this._prevProps;
-
-      if (this.propsSetCallback) {
-        this.propsSetCallback(prev);
-      }
-
-      if (
-        this.componentUpdatedCallback &&
-        this.componentShouldUpdateCallback(prev)
-      ) {
-        this.componentUpdatedCallback(prev);
-      }
-
+      this.willUpdate && this.willUpdate(prev);
+      this.didUpdate && this.shouldUpdate(prev) && this.didUpdate(prev);
       this._prevProps = this.props;
       this._updating = false;
     }
