@@ -1,6 +1,6 @@
 // @flow
 
-import type { PropType, PropTypesNormalized, WithProps } from './types';
+import type { PropType, PropTypesNormalized, WithUpdate } from './types';
 
 import { empty, keys, sym } from './util/index';
 
@@ -58,7 +58,9 @@ export function prop(definition: PropType | void): Function {
   return func;
 }
 
-export const withUpdate = (Base?: Class<any> = HTMLElement): Class<WithProps> =>
+export const withUpdate = (
+  Base?: Class<any> = HTMLElement
+): Class<WithUpdate> =>
   class extends Base {
     static _observedAttributes: Array<string>;
     static _props: Object;

@@ -80,16 +80,6 @@ export type WithLifecycle = CustomElement & {
     willUnmount?: ?Function
   }
 };
-export type WithProps = CustomElement & {
-  props: PropTypes,
-  prototype: {
-    didUpdate?: ?Function,
-    props: Object,
-    shouldUpdate: (props: Object) => boolean,
-    triggerUpdate: Function,
-    willUpdate?: ?(props: Object) => void
-  }
-};
 export type WithRenderer = CustomElement & {
   prototype: {
     didRender?: ?Function,
@@ -107,11 +97,21 @@ export type WithState = CustomElement & {
 export type WithUnique = CustomElement & {
   is?: ?string
 };
+export type WithUpdate = CustomElement & {
+  props: PropTypes,
+  prototype: {
+    didUpdate?: ?Function,
+    props: Object,
+    shouldUpdate: (props: Object) => boolean,
+    triggerUpdate: Function,
+    willUpdate?: ?(props: Object) => void
+  }
+};
 export type WithComponent =
   | WithChildren
   | WithContext
   | WithLifecycle
-  | WithProps
   | WithRenderer
   | WithState
-  | WithUnique;
+  | WithUnique
+  | WithUpdate;
