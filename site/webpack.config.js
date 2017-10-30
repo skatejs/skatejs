@@ -1,5 +1,5 @@
 const path = require('path');
-const base = path.resolve(__dirname, 'public');
+const base = path.resolve(__dirname, '..', 'public');
 
 module.exports = {
   devServer: {
