@@ -2,8 +2,11 @@ import hljs from 'highlight.js';
 import theme from 'raw-loader!highlight.js/styles/monokai.css';
 import { define, props } from '../../src';
 import { Component, h } from '../utils';
+import { Tabs } from './tabs';
 
 function format(src) {
+  src = src || '';
+
   // Fix imports.
   src = src.replace('../../../src', 'skatejs').replace(/\/umd/, '');
 
@@ -22,10 +25,10 @@ function format(src) {
 
 export const Code = define(
   class Code extends Component {
-    static props = {
-      code: props.string,
-      lang: props.string,
-      title: props.string
+    props: {
+      code: string,
+      lang: string,
+      title: string
     };
     props = {
       code: '',
@@ -48,9 +51,10 @@ export const Code = define(
             .hljs {
               background-color: transparent;
               font-family: monaco;
-              font-size: .8em;
+              font-size: .7em;
               font-weight: lighter;
               line-height: 1.6em;
+              overflow: auto;
             }
             .title {
               background-color: #20232A;
@@ -66,12 +70,10 @@ export const Code = define(
           `}</style>
           {title ? <div class="title">{title}</div> : null}
           <div class="code">
-            <pre>
-              <code
-                class={`hljs ${lang}`}
-                ref={e => e && (e.innerHTML = format(code))}
-              />
-            </pre>
+            <pre
+              class={`hljs ${lang}`}
+              ref={e => e && (e.innerHTML = format(code))}
+            />
           </div>
         </div>
       );
@@ -81,9 +83,9 @@ export const Code = define(
 
 export const Example = define(
   class Example extends Component {
-    static props = {
-      html: props.string,
-      title: props.string
+    props: {
+      html: string,
+      title: string
     };
     renderer(root) {
       root.innerHTML = `
@@ -92,7 +94,7 @@ export const Example = define(
             display: block;
           }
           .code {
-            background-color: #333;
+            background-color: #292D34;
             color: white;
             margin: 0;
             overflow: auto;
@@ -105,7 +107,7 @@ export const Example = define(
             padding: 10px 20px;
           }
         </style>
-        <div class="title">${this.title}</div>
+        ${this.title ? `<div class="title">${this.title}</div>` : ''}
         <div class="code">${this.html}</div>
       `;
     }
@@ -120,24 +122,42 @@ export const Runnable = define(
     };
     render({ code, html }) {
       return (
-        <div class="edge">
+        <Tabs.is
+          css={`
+            .tabs {
+              border-bottom: none;
+            }
+            .tabs a {
+              border-bottom: none;
+            }
+            .tabs a[selected],
+            .tabs a:hover {
+              background-color: #292D34;
+              border-bottom: none;
+              color: #eee;
+            }
+          `}
+          items={[
+            {
+              name: 'Code',
+              pane: <Code.is code={code} lang="js" />
+            },
+            {
+              name: 'HTML',
+              pane: html ? <Code.is code={html} lang="html" /> : ''
+            },
+            {
+              name: 'Result',
+              pane: html ? <Example.is html={html} /> : ''
+            }
+          ]}
+        >
           <style>{`
             :host {
               display: block;
             }
-            .edge {
-              border-radius: 3px;
-              overflow: hidden;
-            }
           `}</style>
-          <Code.is code={code} lang="js" />
-          {html
-            ? [
-                <Code.is code={html} lang="html" title="HTML" />,
-                <Example.is html={html} title="Result" />
-              ]
-            : ''}
-        </div>
+        </Tabs.is>
       );
     }
   }

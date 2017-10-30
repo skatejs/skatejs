@@ -14,6 +14,44 @@ window.history.replaceState = function(...args) {
   emit(window, 'replacestate');
 };
 
+const router = (
+  <Router.is>
+    <Route.is page={() => import('../pages')} path="/" />
+    <Route.is
+      page={() => import('../pages/mixins/with-children')}
+      path="/mixins/with-children"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-component')}
+      path="/mixins/with-component"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-context')}
+      path="/mixins/with-context"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-lifecycle')}
+      path="/mixins/with-lifecycle"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-renderer')}
+      path="/mixins/with-renderer"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-update')}
+      path="/mixins/with-update"
+    />
+    <Route.is
+      page={() => import('../pages/mixins/with-unique')}
+      path="/mixins/with-unique"
+    />
+    <Route.is page={() => import('../pages/mixins')} path="/mixins" />
+    <Route.is page={() => import('../pages/renderers')} path="/renderers" />
+    <Route.is page={() => import('../pages/utilities')} path="/utilities" />
+    <Route.is page={() => import('../pages/404')} path="*" />
+  </Router.is>
+);
+
 export default define(
   class App extends Component {
     context = {
@@ -24,7 +62,6 @@ export default define(
         }
         code {
           background-color: #dce4c9;
-          border-radius: 3px;
           display: inline-block;
           font-family: monaco;
           font-size: .8em;
@@ -46,7 +83,8 @@ export default define(
       `
     };
     onHistory = () => {
-      this.state = { href: window.location.pathname };
+      window.scrollTo(0, 0);
+      this.state = { href: location.pathname };
     };
     willMount() {
       this.onHistory();
@@ -63,10 +101,6 @@ export default define(
               border-top: 5px solid #F2567C;
               padding: 25px;
             }
-            .inner {
-              max-width: 800px;
-              margin: 0 auto;
-            }
           `}</style>
           <div class="inner">
             <img
@@ -74,19 +108,7 @@ export default define(
               height={state.href === '/' ? 100 : 50}
               src={logoSrc}
             />
-            <Router.is>
-              <Route.is page={() => import('../pages')} path="/" />
-              <Route.is page={() => import('../pages/mixins')} path="/mixins" />
-              <Route.is
-                page={() => import('../pages/renderers')}
-                path="/renderers"
-              />
-              <Route.is
-                page={() => import('../pages/utilities')}
-                path="/utilities"
-              />
-              <Route.is page={() => import('../pages/404')} path="*" />
-            </Router.is>
+            {router}
           </div>
         </div>
       );

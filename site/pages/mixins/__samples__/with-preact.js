@@ -1,7 +1,7 @@
 /** @jsx h */
 
-import { props, withComponent } from '../../../src';
-import withPreact from '@skatejs/renderer-preact/umd';
+import { props, withComponent } from '../../../../src';
+import withPreact from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
 class WithPreact extends withComponent(withPreact()) {

@@ -3,9 +3,10 @@ import { Component, h } from '../utils';
 
 export const Tabs = define(
   class Tabs extends Component {
-    static props = {
-      items: props.array,
-      selected: props.number
+    props: {
+      css: string,
+      items: Array<Object>,
+      selected: number
     };
     state = {
       selected: 0
@@ -14,11 +15,14 @@ export const Tabs = define(
       e.preventDefault();
       this.state = { selected: i };
     }
-    render({ items, onClick, state }) {
+    render({ css, items, onClick, state }) {
       const { selected } = state;
       return (
         <div>
           <style>{`
+            :host {
+              display: block;
+            }
             .pane {
               display: none;
             }
@@ -48,27 +52,38 @@ export const Tabs = define(
             .tabs a[selected],
             .tabs a:hover {
               border-bottom: 3px solid #F2567C;
-              color: F2567C;
+              color: #F2567C;
             }
+            ${css}
           `}</style>
           <ul class="tabs">
-            {items.map(({ name }, i) => (
-              <li class="tab">
-                <a
-                  href="#"
-                  onClick={onClick.bind(this, i)}
-                  selected={i === selected ? '' : null}
-                >
-                  {name}
-                </a>
-              </li>
-            ))}
+            {items.map(
+              ({ name, pane }, i) =>
+                pane ? (
+                  <li class="tab">
+                    <a
+                      href="#"
+                      onClick={onClick.bind(this, i)}
+                      selected={i === selected ? '' : null}
+                    >
+                      {name}
+                    </a>
+                  </li>
+                ) : (
+                  ''
+                )
+            )}
           </ul>
-          {items.map(({ pane }, i) => (
-            <div class="pane" selected={i === selected ? '' : null}>
-              {pane}
-            </div>
-          ))}
+          {items.map(
+            ({ pane }, i) =>
+              pane ? (
+                <div class="pane" selected={i === selected ? '' : null}>
+                  {pane}
+                </div>
+              ) : (
+                ''
+              )
+          )}
         </div>
       );
     }

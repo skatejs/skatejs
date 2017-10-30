@@ -1,5 +1,5 @@
 import { props, withComponent } from '../../../src';
-import withReact from '@skatejs/renderer-react/umd';
+import withReact from '@skatejs/renderer-react';
 import React from 'react';
 
 class WithReact extends withComponent(withReact()) {

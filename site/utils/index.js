@@ -1,6 +1,6 @@
 import { h as preactH } from 'preact';
-import { define, props, withComponent } from '../../src';
-import withPreact from '@skatejs/renderer-preact/umd';
+import { define, props, withComponent, withUpdate } from '../../src';
+import withPreact from '@skatejs/renderer-preact';
 
 // Compatiblity layer for renames.
 export const Component = class extends withComponent(withPreact()) {

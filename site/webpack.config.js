@@ -1,6 +1,9 @@
+const path = require('path');
+const base = path.resolve(__dirname, 'public');
+
 module.exports = {
   devServer: {
-    contentBase: '../public',
+    contentBase: base,
     historyApiFallback: true,
     open: true
   },
@@ -13,8 +16,11 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['env', 'flow', 'react', 'stage-0'],
-            plugins: [['transform-react-jsx', { pragma: 'h' }]]
+            plugins: [
+              ['transform-react-jsx', { pragma: 'h' }],
+              'transform-skate-flow-props'
+            ],
+            presets: ['env', 'flow', 'react', 'stage-0']
           }
         }
       },
@@ -30,7 +36,9 @@ module.exports = {
     ]
   },
   output: {
-    filename: '../public/index.js',
-    path: `${__dirname}/../public`
+    chunkFilename: '[name].bundle.js',
+    filename: 'index.js',
+    path: base,
+    publicPath: '/'
   }
 };
