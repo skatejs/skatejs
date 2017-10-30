@@ -8,7 +8,6 @@ function attachShadow(elem) {
 
 export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
-    _connected: boolean;
     _shadowRoot: Node;
 
     get renderRoot() {
@@ -18,19 +17,9 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       );
     }
 
-    connectedCallback() {
-      if (super.connectedCallback) {
-        super.connectedCallback();
-      }
-      this._connected = true;
-    }
-
     didUpdate(...args) {
       if (super.didUpdate) {
         super.didUpdate(...args);
-      }
-      if (!this._connected) {
-        return;
       }
       if (this.renderer) {
         if (this.willRender) {
