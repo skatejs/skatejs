@@ -11,7 +11,7 @@
   "devDependencies": {
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-builtin-classes": "^0.4.0",
-    "babel-plugin-transform-skate-flow-props": "0.0.0",
+    "babel-plugin-transform-skate-flow-props": "^0.1.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
