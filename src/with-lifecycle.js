@@ -1,7 +1,5 @@
 // @flow
 
-import { prop } from './util/index';
-
 export const withLifecycle = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     connectedCallback() {
