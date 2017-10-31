@@ -36,7 +36,12 @@ const navItems = () => [
   },
   {
     href: '/renderers',
-    text: 'Renderers'
+    text: 'Renderers',
+    tree: [
+      { href: '/renderers/with-lit-html', text: 'LitHTML' },
+      { href: '/renderers/with-preact', text: 'Preact' },
+      { href: '/renderers/with-react', text: 'React' }
+    ]
   },
   {
     href: '/utilities',
@@ -90,7 +95,7 @@ export const Layout = define(
               display: flex;
               flex-wrap: wrap;
               margin: 0 auto;
-              max-width: 800px;
+              max-width: 1000px;
             }
             .flex-item {
               min-width: 0;
@@ -105,6 +110,7 @@ export const Layout = define(
               padding: 0;
             }
             nav {
+              flex-basis: 150px;
               flex-shrink: 0;
               margin: 104px 20px 0 0;
             }

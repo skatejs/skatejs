@@ -63,6 +63,7 @@
   },
   "devDependencies": {
     "@skatejs/bore": "4.0.0",
+    "@skatejs/renderer-lit-html": "0.0.0",
     "@skatejs/renderer-preact": "0.0.1",
     "@skatejs/renderer-react": "0.0.0",
     "@skatejs/ssr": "^0.15.3",
@@ -88,6 +89,7 @@
     "jest": "20.0.4",
     "jest-cli": "^21.0.2",
     "lint-staged": "4.0.2",
+    "lit-html": "^0.7.1",
     "prettier": "^1.7.4",
     "prettier-eslint": "^8.2.1",
     "react": "^15.0.0",

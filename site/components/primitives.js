@@ -23,3 +23,20 @@ export const Link = component(function link(css, href) {
     </SkLink.is>
   );
 });
+
+export const Note = component(function note() {
+  return (
+    <em>
+      <style>{`
+        em {
+          background-color: #DCE4CA;
+          border-left: 3px solid #c6d3a8;
+          display: block;
+          margin: 20px 0;
+          padding: 10px 15px;
+        }
+      `}</style>
+      <slot />
+    </em>
+  );
+});

@@ -46,6 +46,18 @@ const router = (
       path="/mixins/with-unique"
     />
     <Route.is page={() => import('../pages/mixins')} path="/mixins" />
+    <Route.is
+      page={() => import('../pages/renderers/with-lit-html')}
+      path="/renderers/with-lit-html"
+    />
+    <Route.is
+      page={() => import('../pages/renderers/with-preact')}
+      path="/renderers/with-preact"
+    />
+    <Route.is
+      page={() => import('../pages/renderers/with-react')}
+      path="/renderers/with-react"
+    />
     <Route.is page={() => import('../pages/renderers')} path="/renderers" />
     <Route.is page={() => import('../pages/utilities')} path="/utilities" />
     <Route.is page={() => import('../pages/404')} path="*" />
@@ -72,9 +84,19 @@ export default define(
           font-weight: normal;
         }
         h2 {
-          font-weight: lighter;
           font-size: 1.8em;
+          font-weight: lighter;
           margin: 60px 0 30px 0;
+        }
+        h3 {
+          font-size: 1.4em;
+          font-weight: lighter;
+          margin: 50px 0 25px 0;
+        }
+        h4 {
+          font-size: 1.3em;
+          font-weight: lighter;
+          margin: 40px 0 20px 0;
         }
         .logo {
           display: block;

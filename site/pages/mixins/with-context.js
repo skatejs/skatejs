@@ -14,7 +14,7 @@ export default component(function mixinsWithContext() {
       <style>{this.context.style}</style>
       <p>
         The <code>withContext</code> mixin allows you to use{' '}
-        <code>context</code> like in React.
+        <code>context</code> like in <a href="https://reactjs.org/">React</a>.
       </p>
       <Runnable.is code={codeWithComponent} html={codeWithComponentHtml} />
     </Layout.is>
