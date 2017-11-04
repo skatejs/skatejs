@@ -25,10 +25,10 @@ export default component(function mixinsWithLifecycle() {
       </p>
       <ul>
         <li>
-          <code>willUnmount()</code>
+          <code>disconnecting()</code>
         </li>
         <li>
-          <code>didUnmount()</code>
+          <code>disconnected()</code>
         </li>
       </ul>
     </Layout.is>

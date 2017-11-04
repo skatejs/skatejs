@@ -7,10 +7,10 @@ class Base extends HTMLElement {
 }
 
 class WithLifecycle extends withLifecycle(Base) {
-  willMount() {
+  connecting() {
     this.innerHTML += this._isConnected ? 'ray!' : 'Hoo';
   }
-  didMount() {
+  connected() {
     this.innerHTML += this._isConnected ? 'ray!' : 'Hoo';
   }
 }

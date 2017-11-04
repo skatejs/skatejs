@@ -23,7 +23,7 @@ describe('api/props', () => {
           this.prop1 = 'test1';
           this.prop2 = 'test2';
         }
-        willUpdate() {
+        updating() {
           this._rendered++;
         }
       }

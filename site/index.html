@@ -13,9 +13,16 @@
         padding: 0;
       }
     </style>
+    <script>
+    if (window.customElements) {
+  var script = document.createElement('script');
+  script.src = './ce-es5-shim.js';
+  document.head.appendChild(script);
+}
+</script>
   </head>
   <body>
     <div id="app"></div>
-    <script src="/index.js"></script>
+    <script src="/main.js"></script>
   </body>
 </html>

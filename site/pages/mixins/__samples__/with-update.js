@@ -15,7 +15,7 @@ class WithProps extends withUpdate() {
   }
 
   // Called when props have been set regardless of if they've changed.
-  willUpdate(props) {}
+  updating(props) {}
 
   // Called to check whether or not the component should call
   // shouldUpdate, much like React's shouldComponentUpdate.

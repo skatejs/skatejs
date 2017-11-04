@@ -35,14 +35,14 @@ describe('withRenderer', () => {
     });
   });
 
-  describe('didRender()', () => {
+  describe('rendered()', () => {
     it('should be called after rendering', () => {
       const Elem = define(
         class extends Component {
           render() {
             return h('div');
           }
-          didRender() {
+          rendered() {
             expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
@@ -61,7 +61,7 @@ describe('withRenderer', () => {
           render() {
             return h('div');
           }
-          didRender() {
+          rendered() {
             throw new Error('should not have been called');
           }
         }
@@ -81,7 +81,7 @@ describe('withRenderer', () => {
           render() {
             return h('div');
           }
-          didRender() {
+          rendered() {
             expect(this.shadowRoot.firstChild.localName).toBe('div');
           }
         }
@@ -101,7 +101,7 @@ describe('withRenderer', () => {
           render() {
             return h('div');
           }
-          didRender() {
+          rendered() {
             expect(this.firstChild.localName).toBe('div');
           }
         }

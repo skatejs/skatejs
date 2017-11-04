@@ -16,13 +16,16 @@ export const Hr = component(function hr() {
   );
 });
 
-export const Link = component(function link(css, href) {
-  return (
-    <SkLink.is css={this.context.style + css} href={href}>
-      <slot />
-    </SkLink.is>
-  );
-});
+export const Link = component(
+  function link(css, href) {
+    return (
+      <SkLink.is css={this.context.style + css} href={href}>
+        <slot />
+      </SkLink.is>
+    );
+  },
+  ['css', 'href']
+);
 
 export const Note = component(function note() {
   return (

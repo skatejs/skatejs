@@ -10,6 +10,14 @@ import {
   syncPropertyToAttribute
 } from './util/with-update';
 
+function delay(fn) {
+  if (typeof Promise === 'undefined') {
+    setTimeout(fn);
+  } else {
+    Promise.resolve().then(fn);
+  }
+}
+
 export function prop(definition: PropType | void): Function {
   const propertyDefinition: PropType = definition || {};
 
@@ -69,12 +77,15 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
+    _wasInitiallyRendered: boolean;
 
-    didUpdate: ?(props: Object, state: Object) => void;
+    updated: ?(props: Object, state: Object) => void;
     shouldUpdate: (props: Object, state: Object) => void;
     triggerUpdate: () => void;
-    willUpdate: ?(props: Object, state: Object) => void;
+    updating: ?(props: Object, state: Object) => void;
 
+    _prevProps = {};
+    _prevState = {};
     _state = {};
 
     static get observedAttributes(): Array<string> {
@@ -147,16 +158,18 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
         return;
       }
       this._updating = true;
-      const { _prevProps, _prevState } = this;
-      if (this.willUpdate) {
-        this.willUpdate(_prevProps, _prevState);
-      }
-      if (this.didUpdate && this.shouldUpdate(_prevProps, _prevState)) {
-        this.didUpdate(_prevProps, _prevState);
-      }
-      this._prevProps = this.props;
-      this._prevState = this.state;
-      this._updating = false;
+      delay(() => {
+        const { _prevProps, _prevState } = this;
+        if (this.updating) {
+          this.updating(_prevProps, _prevState);
+        }
+        if (this.updated && this.shouldUpdate(_prevProps, _prevState)) {
+          this.updated(_prevProps, _prevState);
+        }
+        this._prevProps = this.props;
+        this._prevState = this.state;
+        this._updating = false;
+      });
     }
   };
 

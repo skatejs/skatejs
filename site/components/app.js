@@ -1,66 +1,71 @@
-import { Component, h } from '../utils';
-import { define, emit, props } from '../../src';
+import { Component, h, withLoadable } from '../utils';
+import { define, props } from '../../src';
 import { Router, Route } from '@skatejs/sk-router';
 import logoSrc from '../img/logo.png';
 
-const oldPushState = window.history.pushState;
-const oldReplaceState = window.history.replaceState;
-window.history.pushState = function(...args) {
-  oldPushState.call(this, ...args);
-  emit(window, 'pushstate');
-};
-window.history.replaceState = function(...args) {
-  oldReplaceState.call(this, ...args);
-  emit(window, 'replacestate');
-};
+const Route404 = withLoadable({
+  loader: () => import('../pages/404')
+});
+const RouteIndex = withLoadable({
+  loader: () => import('../pages')
+});
+const RouteMixins = withLoadable({
+  loader: () => import('../pages/mixins')
+});
+const RouteRenderers = withLoadable({
+  loader: () => import('../pages/renderers')
+});
+const RouteUtilities = withLoadable({
+  loader: () => import('../pages/utilities')
+});
+const RouteWithChildren = withLoadable({
+  loader: () => import('../pages/mixins/with-children')
+});
+const RouteWithComponent = withLoadable({
+  loader: () => import('../pages/mixins/with-component')
+});
+const RouteWithContext = withLoadable({
+  loader: () => import('../pages/mixins/with-context')
+});
+const RouteWithLifecycle = withLoadable({
+  loader: () => import('../pages/mixins/with-lifecycle')
+});
+const RouteWithLitHtml = withLoadable({
+  loader: () => import('../pages/renderers/with-lit-html')
+});
+const RouteWithRenderer = withLoadable({
+  loader: () => import('../pages/mixins/with-renderer')
+});
+const RouteWithPreact = withLoadable({
+  loader: () => import('../pages/renderers/with-preact')
+});
+const RouteWithReact = withLoadable({
+  loader: () => import('../pages/renderers/with-react')
+});
+const RouteWithUpdate = withLoadable({
+  loader: () => import('../pages/mixins/with-update')
+});
+const RouteWithUnique = withLoadable({
+  loader: () => import('../pages/mixins/with-unique')
+});
 
 const router = (
   <Router.is>
-    <Route.is page={() => import('../pages')} path="/" />
-    <Route.is
-      page={() => import('../pages/mixins/with-children')}
-      path="/mixins/with-children"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-component')}
-      path="/mixins/with-component"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-context')}
-      path="/mixins/with-context"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-lifecycle')}
-      path="/mixins/with-lifecycle"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-renderer')}
-      path="/mixins/with-renderer"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-update')}
-      path="/mixins/with-update"
-    />
-    <Route.is
-      page={() => import('../pages/mixins/with-unique')}
-      path="/mixins/with-unique"
-    />
-    <Route.is page={() => import('../pages/mixins')} path="/mixins" />
-    <Route.is
-      page={() => import('../pages/renderers/with-lit-html')}
-      path="/renderers/with-lit-html"
-    />
-    <Route.is
-      page={() => import('../pages/renderers/with-preact')}
-      path="/renderers/with-preact"
-    />
-    <Route.is
-      page={() => import('../pages/renderers/with-react')}
-      path="/renderers/with-react"
-    />
-    <Route.is page={() => import('../pages/renderers')} path="/renderers" />
-    <Route.is page={() => import('../pages/utilities')} path="/utilities" />
-    <Route.is page={() => import('../pages/404')} path="*" />
+    <Route.is page={RouteIndex} path="/" />
+    <Route.is page={RouteWithChildren} path="/mixins/with-children" />
+    <Route.is page={RouteWithComponent} path="/mixins/with-component" />
+    <Route.is page={RouteWithContext} path="/mixins/with-context" />
+    <Route.is page={RouteWithLifecycle} path="/mixins/with-lifecycle" />
+    <Route.is page={RouteWithRenderer} path="/mixins/with-renderer" />
+    <Route.is page={RouteWithUpdate} path="/mixins/with-update" />
+    <Route.is page={RouteWithUnique} path="/mixins/with-unique" />
+    <Route.is page={RouteMixins} path="/mixins" />
+    <Route.is page={RouteWithReact} path="/renderers/with-lit-html" />
+    <Route.is page={RouteWithPreact} path="/renderers/with-preact" />
+    <Route.is page={RouteWithReact} path="/renderers/with-react" />
+    <Route.is page={RouteRenderers} path="/renderers" />
+    <Route.is page={RouteUtilities} path="/utilities" />
+    <Route.is page={Route404} path="*" />
   </Router.is>
 );
 
@@ -108,7 +113,7 @@ export default define(
       window.scrollTo(0, 0);
       this.state = { href: location.pathname };
     };
-    willMount() {
+    connecting() {
       this.onHistory();
       window.addEventListener('popstate', this.onHistory);
       window.addEventListener('pushstate', this.onHistory);

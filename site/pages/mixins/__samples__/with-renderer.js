@@ -10,7 +10,7 @@ const myRenderer = (Base = HTMLElement) =>
 class WithRenderer extends withRenderer(myRenderer()) {
   static observedAttributes = ['name'];
   attributeChangedCallback() {
-    this.didUpdate();
+    this.updated();
   }
   render() {
     return `Hello, ${this.getAttribute('name')}!`;

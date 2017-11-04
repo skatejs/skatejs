@@ -17,17 +17,17 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       );
     }
 
-    didUpdate(...args) {
-      if (super.didUpdate) {
-        super.didUpdate(...args);
+    updated(...args) {
+      if (super.updated) {
+        super.updated(...args);
       }
       if (this.renderer) {
-        if (this.willRender) {
-          this.willRender();
+        if (this.rendering) {
+          this.rendering();
         }
         this.renderer(this.renderRoot, () => this.render && this.render(this));
-        if (this.didRender) {
-          this.didRender();
+        if (this.rendered) {
+          this.rendered();
         }
       }
     }

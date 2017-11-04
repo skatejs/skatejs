@@ -35,30 +35,30 @@ export default component(function mixins() {
         code={`
           interface Component {
             // withChildren
-            childrenDidUpdate(): void;
+            childrenUpdated(): void;
 
             // withContext
             context: Object;
 
             // withLifecycle
-            willMount(): void;
-            didMount(): void;
-            willUnmount(): void;
-            didUnmount(): void;
+            connecting(): void;
+            connected(): void;
+            disconnecting(): void;
+            disconnected(): void;
 
             // withRenderer
-            willRender(): void;
+            rendering(): void;
             render(props: Object, state: Object): any;
-            didRender(): void;
+            rendered(): void;
             renderer(root: Node, render: Render): void;
 
             // withUpdate
             static props: PropTypes;
             props: Object;
             state: Object;
-            willUpdate(prevProps: Object, prevState: Object): void;
+            updating(prevProps: Object, prevState: Object): void;
             shouldUpdate(prevProps: Object, prevState: Object): boolean;
-            didUpdate(prevProps: Object, prevState: Object): void;
+            updated(prevProps: Object, prevState: Object): void;
             triggerUpdate(): void;
 
             // withUnique

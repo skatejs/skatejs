@@ -15,7 +15,7 @@ export default component(function mixinsWithChildren() {
       <p>
         The <code>withChildren</code> mixin allows you to react to changes to
         your component's <code>children</code> by implementing a{' '}
-        <code>childrenDidUpdate</code> lifecycle method.
+        <code>childrenUpdated</code> lifecycle method.
       </p>
       <Runnable.is code={codeWithChildren} html={codeWithChildrenHtml} />
     </Layout.is>

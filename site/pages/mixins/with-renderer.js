@@ -18,7 +18,7 @@ export default component(function mixinsWithRenderer() {
         as <Link.is href="/renderers/with-react">React</Link.is>,{' '}
         <Link.is href="/renderers/with-preact">Preact</Link.is> and{' '}
         <Link.is href="/renderers/with-lit-html">LitHTML</Link.is> to the rest
-        of Skate. It implements a <code>didUpdate</code> method so it can be
+        of Skate. It implements a <code>updated</code> method so it can be
         paired with the <code>withUpdate</code> mixin to automate renders, or
         you can call it imperatively yourself if not.
       </p>

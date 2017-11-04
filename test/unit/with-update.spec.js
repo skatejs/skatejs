@@ -315,7 +315,7 @@ describe('withUpdate', () => {
             this.public2 = 'publicKey2';
             this.undeclaredProp = 'undeclaredKey1';
           }
-          willUpdate() {
+          updating() {
             this._rendered++;
           }
         }
@@ -399,7 +399,7 @@ describe('withUpdate', () => {
   it('triggerUpdate', () => {
     let updated;
     const elem = new class extends withUpdate() {
-      willUpdate() {
+      updating() {
         updated = true;
       }
     }();

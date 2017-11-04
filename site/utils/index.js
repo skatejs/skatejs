@@ -1,23 +1,25 @@
-import { h as preactH } from 'preact';
+import { h } from 'preact';
 import { define, props, withComponent, withUpdate } from '../../src';
 import withPreact from '@skatejs/renderer-preact';
 
+export { h } from 'preact';
+
 // Compatiblity layer for renames.
 export const Component = class extends withComponent(withPreact()) {
-  childrenDidUpdate() {
+  childrenUpdated() {
     if (this.childrenChangedCallback) {
       return this.childrenChangedCallback(...args);
     }
-    if (super.childrenDidUpdate) {
-      return super.childrenDidUpdate(...args);
+    if (super.childrenUpdated) {
+      return super.childrenUpdated(...args);
     }
   }
-  willUpdate(...args) {
+  updating(...args) {
     if (this.propsSetCallback) {
       return this.propsSetCallback(...args);
     }
-    if (super.willUpdate) {
-      return super.willUpdate(...args);
+    if (super.updating) {
+      return super.updating(...args);
     }
   }
   shouldUpdate(...args) {
@@ -28,12 +30,12 @@ export const Component = class extends withComponent(withPreact()) {
       return super.shouldUpdate(...args);
     }
   }
-  didUpdate(...args) {
+  updated(...args) {
     if (this.propsChangedCallback) {
       return this.propsChangedCallback(...args);
     }
-    if (super.didUpdate) {
-      return super.didUpdate(...args);
+    if (super.updated) {
+      return super.updated(...args);
     }
   }
   render(...args) {
@@ -60,33 +62,24 @@ export const Component = class extends withComponent(withPreact()) {
       return super.renderer(...args);
     }
   }
-  didRender(...args) {
+  rendered(...args) {
     if (this.renderedCallback) {
       return this.renderedCallback(...args);
     }
-    if (super.didRender) {
-      return super.didRender(...args);
+    if (super.rendered) {
+      return super.rendered(...args);
     }
   }
 };
 
-function args(fn) {
-  return fn
-    .toString()
-    .match(/\(([^)]*)\)/)[1]
-    .split(',')
-    .map(name => name.split('=')[0].trim());
-}
-
-export function component(render) {
-  const fnArgs = args(render);
+export function component(render, props = []) {
   class Comp extends Component {
-    static props = fnArgs.reduce((prev, curr) => {
+    static props = props.reduce((prev, curr) => {
       prev[curr] = { attribute: { source: true } };
       return prev;
     }, {});
     render() {
-      return render.call(this, ...fnArgs.map(n => this[n]));
+      return render.call(this, ...props.map(n => this[n]));
     }
   }
 
@@ -100,4 +93,32 @@ export function component(render) {
   return define(Comp);
 }
 
-export const h = preactH;
+const LoadingDefault = component(() => <span>Loading...</span>);
+
+export const withLoadable = ({ loader, loading }) =>
+  define(
+    class Loadable extends Component {
+      props: {
+        loader: any,
+        Loading: any
+      };
+      props = {
+        loader,
+        Loading: loading || LoadingDefault
+      };
+      updating(props) {
+        if (!props || this.loader !== props.loader) {
+          this.loader().then(r => {
+            this.state = {
+              Loaded: r.default || r
+            };
+          });
+        }
+      }
+      render() {
+        const { Loading } = this.props;
+        const { Loaded } = this.state;
+        return Loaded ? <Loaded.is /> : <Loading.is />;
+      }
+    }
+  );

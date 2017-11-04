@@ -1,9 +1,11 @@
 const path = require('path');
-const base = path.resolve(__dirname, '..', 'public');
+const context = path.join(__dirname, 'site');
+const public = path.join(__dirname, 'public');
 
 module.exports = {
+  context,
   devServer: {
-    contentBase: base,
+    contentBase: public,
     historyApiFallback: true,
     open: true
   },
@@ -36,9 +38,8 @@ module.exports = {
     ]
   },
   output: {
-    chunkFilename: '[name].bundle.js',
-    filename: 'index.js',
-    path: base,
+    filename: '[name].js',
+    path: public,
     publicPath: '/'
   }
 };

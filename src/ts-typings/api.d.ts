@@ -43,7 +43,7 @@ export class Component<Props> extends HTMLElement {
   // SkateJS life cycle
 
   // Called whenever props are set, even if they don't change.
-  willUpdate(next: Props, prev: Props): void;
+  updating(next: Props, prev: Props): void;
 
   // Called when props actually change.
   shouldUpdate(next: Props, prev: Props): void;
@@ -53,7 +53,7 @@ export class Component<Props> extends HTMLElement {
 
   // NOTE: inferring generics work only on instances, not on implementation type. So this will not give you type safety, you still have to manually annotate those props in your code
   render(props?: Props): JSX.Element | null;
-  didRender(): void;
+  rendered(): void;
   renderer(shadowRoot: Element, render: () => VNode): void;
 }
 
