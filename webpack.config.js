@@ -1,6 +1,7 @@
 const path = require('path');
 const context = path.join(__dirname, 'site');
 const public = path.join(__dirname, 'public');
+const webpack = require('webpack');
 
 module.exports = {
   context,
@@ -41,5 +42,13 @@ module.exports = {
     filename: '[name].js',
     path: public,
     publicPath: '/'
-  }
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'main',
+      minChunks: 2,
+      children: true,
+      deepChildren: true
+    })
+  ]
 };
