@@ -16,13 +16,13 @@ export default component(function mixins() {
       </p>
       <ul>
         <li>
-          <Link.is href="/renderers/lit-html">LitHTML</Link.is>
+          <Link.is href="/renderers/with-lit-html">LitHTML</Link.is>
         </li>
         <li>
-          <Link.is href="/renderers/preact">Preact</Link.is>
+          <Link.is href="/renderers/with-preact">Preact</Link.is>
         </li>
         <li>
-          <Link.is href="/renderers/react">React</Link.is>
+          <Link.is href="/renderers/with-react">React</Link.is>
         </li>
       </ul>
       <h3>Writing a renderer</h3>

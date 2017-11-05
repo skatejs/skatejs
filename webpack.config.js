@@ -45,10 +45,10 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'main',
-      minChunks: 2,
       children: true,
-      deepChildren: true
+      deepChildren: true,
+      minChunks: 2,
+      name: 'main'
     })
   ]
 };
