@@ -127,31 +127,31 @@ export default component(function index() {
         <h2>Utilities</h2>
         <p>
           On top of the core concepts of mixins and renderers, Skate also
-          provides some utilities for common patterns within your components.
+          provides some utils for common patterns within your components.
           Some of these include:
         </p>
         <ul>
           <li>
-            <Link.is href="/utilities/define">
+            <Link.is href="/utils/define">
               <code>define()</code>
             </Link.is>{' '}
             - Creating and defining custom elements all at once.
           </li>
           <li>
-            <Link.is href="/utilities/emit">
+            <Link.is href="/utils/emit">
               <code>emit()</code>
             </Link.is>{' '}
             - Streamlined event emitting.
           </li>
           <li>
-            <Link.is href="/utilities/link">
+            <Link.is href="/utils/link">
               <code>link()</code>
             </Link.is>{' '}
             - linking UI elements back to component state.
           </li>
         </ul>
         <p>
-          See the <Link.is href="/utilities">utility docs</Link.is> fore more
+          See the <Link.is href="/utils">utility docs</Link.is> fore more
           info.
         </p>
       </Layout.is>

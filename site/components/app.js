@@ -1,53 +1,49 @@
+import { Loading } from './primitives';
 import { Component, h, withLoadable } from '../utils';
 import { define, props } from '../../src';
 import { Router, Route } from '@skatejs/sk-router';
 import logoSrc from '../img/logo.png';
 
-const Route404 = withLoadable({
-  loader: () => import('../pages/404')
-});
-const RouteIndex = withLoadable({
-  loader: () => import('../pages')
-});
-const RouteMixins = withLoadable({
-  loader: () => import('../pages/mixins')
-});
-const RouteRenderers = withLoadable({
-  loader: () => import('../pages/renderers')
-});
-const RouteUtilities = withLoadable({
-  loader: () => import('../pages/utilities')
-});
-const RouteWithChildren = withLoadable({
-  loader: () => import('../pages/mixins/with-children')
-});
-const RouteWithComponent = withLoadable({
-  loader: () => import('../pages/mixins/with-component')
-});
-const RouteWithContext = withLoadable({
-  loader: () => import('../pages/mixins/with-context')
-});
-const RouteWithLifecycle = withLoadable({
-  loader: () => import('../pages/mixins/with-lifecycle')
-});
-const RouteWithLitHtml = withLoadable({
-  loader: () => import('../pages/renderers/with-lit-html')
-});
-const RouteWithRenderer = withLoadable({
-  loader: () => import('../pages/mixins/with-renderer')
-});
-const RouteWithPreact = withLoadable({
-  loader: () => import('../pages/renderers/with-preact')
-});
-const RouteWithReact = withLoadable({
-  loader: () => import('../pages/renderers/with-react')
-});
-const RouteWithUpdate = withLoadable({
-  loader: () => import('../pages/mixins/with-update')
-});
-const RouteWithUnique = withLoadable({
-  loader: () => import('../pages/mixins/with-unique')
-});
+const withLoading = loader => withLoadable({ loader, loading: Loading });
+
+const Route404 = withLoading(() => import('../pages/404'));
+const RouteIndex = withLoading(() => import('../pages'));
+const RouteMixins = withLoading(() => import('../pages/mixins'));
+const RouteRenderers = withLoading(() => import('../pages/renderers'));
+const RouteUtils = withLoading(() => import('../pages/utils'));
+const RouteUtilsDefine = withLoading(() => import('../pages/utils/define'));
+const RouteUtilsEmit = withLoading(() => import('../pages/utils/emit'));
+const RouteUtilsLink = withLoading(() => import('../pages/utils/link'));
+const RouteWithChildren = withLoading(() =>
+  import('../pages/mixins/with-children')
+);
+const RouteWithComponent = withLoading(() =>
+  import('../pages/mixins/with-component')
+);
+const RouteWithContext = withLoading(() =>
+  import('../pages/mixins/with-context')
+);
+const RouteWithLifecycle = withLoading(() =>
+  import('../pages/mixins/with-lifecycle')
+);
+const RouteWithLitHtml = withLoading(() =>
+  import('../pages/renderers/with-lit-html')
+);
+const RouteWithRenderer = withLoading(() =>
+  import('../pages/mixins/with-renderer')
+);
+const RouteWithPreact = withLoading(() =>
+  import('../pages/renderers/with-preact')
+);
+const RouteWithReact = withLoading(() =>
+  import('../pages/renderers/with-react')
+);
+const RouteWithUpdate = withLoading(() =>
+  import('../pages/mixins/with-update')
+);
+const RouteWithUnique = withLoading(() =>
+  import('../pages/mixins/with-unique')
+);
 
 const router = (
   <Router.is>
@@ -64,7 +60,10 @@ const router = (
     <Route.is page={RouteWithPreact} path="/renderers/with-preact" />
     <Route.is page={RouteWithReact} path="/renderers/with-react" />
     <Route.is page={RouteRenderers} path="/renderers" />
-    <Route.is page={RouteUtilities} path="/utilities" />
+    <Route.is page={RouteUtilsDefine} path="/utils/define" />
+    <Route.is page={RouteUtilsEmit} path="/utils/emit" />
+    <Route.is page={RouteUtilsLink} path="/utils/link" />
+    <Route.is page={RouteUtils} path="/utils" />
     <Route.is page={Route404} path="*" />
   </Router.is>
 );

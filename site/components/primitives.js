@@ -1,5 +1,6 @@
 import { Link as SkLink } from '@skatejs/sk-router';
 import { component, h } from '../utils';
+import loaderImg from 'file-loader!../img/loader.svg';
 
 export const Hr = component(function hr() {
   return (
@@ -26,6 +27,21 @@ export const Link = component(
   },
   ['css', 'href']
 );
+
+export const Loading = component(function loader() {
+  return (
+    <div>
+      <style>{`
+      :host {
+        display: block;
+        margin: 60px auto 0 auto;
+        width: 44px;
+      }
+    `}</style>
+      <img src={loaderImg} />
+    </div>
+  );
+});
 
 export const Note = component(function note() {
   return (

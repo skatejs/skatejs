@@ -44,8 +44,13 @@ const navItems = () => [
     ]
   },
   {
-    href: '/utilities',
-    text: 'Utilities'
+    href: '/utils',
+    text: 'Utilities',
+    tree: [
+      { href: '/utils/define', text: 'define()' },
+      { href: '/utils/emit', text: 'emit()' },
+      { href: '/utils/link', text: 'link()' }
+    ]
   }
 ];
 

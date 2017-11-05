@@ -5,7 +5,7 @@ import { Layout } from '../../components/layout';
 
 export default component(function mixins() {
   return (
-    <Layout.is title="Utilities">
+    <Layout.is title="define()">
       <style>{this.context.style}</style>
       <p>Coming soon!</p>
     </Layout.is>
