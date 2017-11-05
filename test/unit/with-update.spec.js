@@ -1,5 +1,6 @@
 /* eslint-env jest */
 
+import { mount } from '@skatejs/bore';
 import { h as preactH } from 'preact';
 import { define, prop, props, withUpdate, withUnique } from '../../src';
 import { sym } from '../../src/util';
@@ -399,12 +400,12 @@ describe('withUpdate', () => {
   it('triggerUpdate', () => {
     let updated;
     const elem = new class extends withUpdate() {
-      updating() {
+      updated() {
         updated = true;
       }
     }();
     elem.triggerUpdate();
-    expect(updated).toBe(true);
+    return mount(elem).waitFor(() => updated);
   });
 });
 
