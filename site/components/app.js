@@ -19,6 +19,7 @@ const RouteUtils = withLoading(() => import('../pages/utils'));
 const RouteUtilsDefine = withLoading(() => import('../pages/utils/define'));
 const RouteUtilsEmit = withLoading(() => import('../pages/utils/emit'));
 const RouteUtilsLink = withLoading(() => import('../pages/utils/link'));
+const RouteUtilsShadow = withLoading(() => import('../pages/utils/shadow'));
 const RouteWithChildren = withLoading(() =>
   import('../pages/mixins/with-children')
 );
@@ -68,6 +69,7 @@ const router = (
     <Route.is page={RouteUtilsDefine} path="/utils/define" />
     <Route.is page={RouteUtilsEmit} path="/utils/emit" />
     <Route.is page={RouteUtilsLink} path="/utils/link" />
+    <Route.is page={RouteUtilsShadow} path="/utils/shadow" />
     <Route.is page={RouteUtils} path="/utils" />
     <Route.is page={Route404} path="*" />
   </Router.is>

@@ -23,6 +23,9 @@ export default component(function mixins() {
         <li>
           <Link.is href="/utils/link">link()</Link.is>
         </li>
+        <li>
+          <Link.is href="/utils/shadow">shadow()</Link.is>
+        </li>
       </ul>
     </Layout.is>
   );

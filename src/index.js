@@ -3,6 +3,7 @@
 export * from './define';
 export * from './emit';
 export * from './link';
+export * from './shadow';
 export * from './with-children';
 export * from './with-context';
 export * from './with-component';
