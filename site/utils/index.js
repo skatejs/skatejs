@@ -93,32 +93,49 @@ export function component(render, props = []) {
   return define(Comp);
 }
 
-const LoadingDefault = component(() => <span>Loading...</span>);
-
-export const withLoadable = ({ loader, loading }) =>
+export const withLoadable = opts =>
   define(
     class Loadable extends Component {
       props: {
+        format: any,
         loader: any,
-        Loading: any
+        loading: any,
+        useShadowRoot: boolean
       };
       props = {
-        loader,
-        Loading: loading || LoadingDefault
+        ...{ format: r => r },
+        ...opts
       };
+      get renderRoot() {
+        return this.useShadowRoot ? super.renderRoot : this;
+      }
+      connecting() {
+        const loaded = this.loading;
+        if (loaded) {
+          this.state = { loaded };
+        }
+      }
       updating(props) {
         if (!props || this.loader !== props.loader) {
           this.loader().then(r => {
-            this.state = {
-              Loaded: r.default || r
-            };
+            const loaded = r.default || r;
+            if (loaded) {
+              this.state = { loaded };
+            }
           });
         }
       }
       render() {
-        const { Loading } = this.props;
-        const { Loaded } = this.state;
-        return Loaded ? <Loaded.is /> : <Loading.is />;
+        const { loaded } = this.state;
+        if (loaded) {
+          return this.format(loaded);
+        }
       }
     }
   );
+
+export const withLoadablePreact = opts =>
+  withLoadable({ ...{ format: r => <r.is /> }, ...opts });
+
+export const withLoadableStyle = opts =>
+  withLoadable({ ...{ format: r => <style>{r}</style> }, ...opts });

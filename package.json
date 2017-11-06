@@ -72,9 +72,9 @@
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
+    "babel-plugin-dynamic-import-node": "^1.1.0",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "^1.1.1",
-    "babel-plugin-transform-builtin-classes": "^0.4.0",
     "babel-plugin-transform-skate-flow-props": "^0.1.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015-rollup": "^3.0.0",
@@ -96,6 +96,7 @@
     "preact": "^8.2.5",
     "prettier": "^1.7.4",
     "prettier-eslint": "^8.2.1",
+    "prismjs": "^1.8.4",
     "raw-loader": "^0.5.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
@@ -104,8 +105,10 @@
     "rollup-plugin-uglify": "^2.0.1",
     "typescript": "^2.3.3",
     "typescript-formatter": "^5.2.0",
+    "webp-loader": "^0.2.1",
     "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.3"
+    "webpack-dev-server": "^2.9.3",
+    "worker-loader": "^1.1.0"
   },
   "files": [
     "es/",

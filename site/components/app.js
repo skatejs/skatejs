@@ -1,13 +1,18 @@
 import { Loading } from './primitives';
-import { Component, h, withLoadable } from '../utils';
+import { Component, h, withLoadablePreact } from '../utils';
 import { define, props } from '../../src';
 import { Router, Route } from '@skatejs/sk-router';
-import logoSrc from '../img/logo.png';
+import logo50 from '../img/logo-50x50.png';
+import logo100 from '../img/logo-100x100.png';
+import RouteIndex from '../pages';
 
-const withLoading = loader => withLoadable({ loader, loading: Loading });
+const withLoading = loader =>
+  withLoadablePreact({
+    loader: loader,
+    loading: Loading
+  });
 
 const Route404 = withLoading(() => import('../pages/404'));
-const RouteIndex = withLoading(() => import('../pages'));
 const RouteMixins = withLoading(() => import('../pages/mixins'));
 const RouteRenderers = withLoading(() => import('../pages/renderers'));
 const RouteUtils = withLoading(() => import('../pages/utils'));
@@ -125,15 +130,11 @@ export default define(
             ${context.style}
             .outer {
               border-top: 5px solid #F2567C;
-              padding: 25px;
+              padding: 50px 25px 25px 25px;
             }
           `}</style>
           <div class="inner">
-            <img
-              class="logo"
-              height={state.href === '/' ? 100 : 50}
-              src={logoSrc}
-            />
+            <img class="logo" src={state.href === '/' ? logo100 : logo50} />
             {router}
           </div>
         </div>

@@ -1,12 +1,35 @@
 const path = require('path');
-const context = path.join(__dirname, 'site');
-const public = path.join(__dirname, 'public');
 const webpack = require('webpack');
 
+const contextPath = path.join(__dirname, 'site');
+const publicPath = path.join(__dirname, 'public');
+
+// require('@skatejs/ssr/register');
+// const render = require('@skatejs/ssr');
+// const fs = require('fs');
+// class WebpackPrerenderPlugin {
+//   getFile(name) {
+//     return fs.readFileSync(path.join(publicPath, name)).toString()
+//   }
+//   apply(compiler) {
+//     // if (process.env.NODE_ENV !== 'production') {
+//     //   return;
+//     // }
+//     compiler.plugin('after-emit', (comp, done) => {
+//       const indexHtml = this.getFile('index.html');
+//       const indexJs = this.getFile('main.js');
+//       document.body.innerHTML = indexHtml;
+//       eval(indexJs);
+//       done();
+//     });
+//   }
+// }
+
 module.exports = {
-  context,
+  context: contextPath,
   devServer: {
-    contentBase: public,
+    compress: true,
+    contentBase: publicPath,
     historyApiFallback: true,
     open: true
   },
@@ -28,19 +51,22 @@ module.exports = {
         }
       },
       {
-        test: /\.(html|png)/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[path][name].[ext]'
-          }
-        }
+        test: /\.(html)/,
+        loaders: 'file-loader?{ name: "[path][name].[ext]"}'
+      },
+      {
+        test: /\.(png)/,
+        loaders: ['file-loader', 'webp-loader']
+      },
+      {
+        test: /\.worker\.js$/,
+        loaders: 'worker-loader'
       }
     ]
   },
   output: {
     filename: '[name].js',
-    path: public,
+    path: publicPath,
     publicPath: '/'
   },
   plugins: [

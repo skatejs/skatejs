@@ -1,14 +1,12 @@
-import hljs from 'highlight.js';
-import theme from 'raw-loader!highlight.js/styles/monokai.css';
 import { define, props } from '../../src';
-import { Component, h } from '../utils';
+import { Component, h, withLoadableStyle } from '../utils';
 import { Tabs } from './tabs';
 
 function format(src) {
   src = src || '';
 
   // Fix imports.
-  src = src.replace('../../../src', 'skatejs').replace(/\/umd/, '');
+  src = src.replace(/(\.\.\/)*src/, 'skatejs').replace(/\/umd/, '');
 
   // Remove leading newlines and only allow up to two newlines in code.
   src = src.split('\n').filter((v, i, a) => a[i - 1] || v.trim().length);
@@ -20,8 +18,29 @@ function format(src) {
   src = src.map(s => s.substring(indent));
 
   // Re-instate newline formatting.
-  return hljs.highlightAuto(src.join('\n')).value;
+  src = src.join('\n');
+
+  return src;
 }
+
+function highlight(elem, code, language) {
+  import('worker-loader!prismjs').then(Prism => {
+    const prism = new Prism();
+    prism.onmessage = e => {
+      elem.innerHTML = e.data;
+    };
+    prism.postMessage(
+      JSON.stringify({
+        code,
+        language
+      })
+    );
+  });
+}
+
+const Theme = withLoadableStyle({
+  loader: () => import('raw-loader!prismjs/themes/prism-twilight.css')
+});
 
 export const Code = define(
   class Code extends Component {
@@ -37,8 +56,8 @@ export const Code = define(
     render({ code, lang, title }) {
       return (
         <div>
+          <Theme.is />
           <style>{`
-            ${theme}
             :host {
               display: block;
             }
@@ -47,14 +66,6 @@ export const Code = define(
               margin: 0;
               overflow: auto;
               padding: 10px 12px;
-            }
-            .hljs {
-              background-color: transparent;
-              font-family: monaco;
-              font-size: .7em;
-              font-weight: lighter;
-              line-height: 1.6em;
-              overflow: auto;
             }
             .title {
               background-color: #20232A;
@@ -71,8 +82,12 @@ export const Code = define(
           {title ? <div class="title">{title}</div> : null}
           <div class="code">
             <pre
-              class={`hljs ${lang}`}
-              ref={e => e && (e.innerHTML = format(code))}
+              ref={e => {
+                if (!e) return;
+                code = format(code);
+                e.innerHTML = code;
+                highlight(e, code, lang);
+              }}
             />
           </div>
         </div>

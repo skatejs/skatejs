@@ -18,13 +18,13 @@ class WithProps extends withUpdate() {
   updating(props) {}
 
   // Called to check whether or not the component should call
-  // shouldUpdate, much like React's shouldComponentUpdate.
-  componentShouldUpdateCallback(nextProps, prevProps) {
-    return !prevProps || nextProps.name !== prevProps.name;
+  // updated(), much like React's shouldComponentUpdate().
+  shouldUpdate(props, state) {
+    return true;
   }
 
   // Called if shouldUpdate returned true.
-  shouldUpdate() {
+  updated() {
     this.shadowRoot.innerHTML = `Hey, ${this.name}!`;
   }
 }
