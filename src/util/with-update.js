@@ -1,8 +1,8 @@
 // @flow
 
-import type { PropType, PropTypesNormalized } from '../types';
+import type { PropType, PropTypesNormalized } from '../types.js';
 
-import { dashCase } from './index';
+import { dashCase } from './index.js';
 
 export function normaliseAttributeDefinition(
   name: string | Symbol,

@@ -1,6 +1,6 @@
 // @flow
 
-import type { CustomElementEvent, CustomElementEventOptions } from './types';
+import type { CustomElementEvent, CustomElementEventOptions } from './types.js';
 
 const defs: CustomElementEventOptions = {
   bubbles: true,

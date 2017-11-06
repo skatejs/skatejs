@@ -4,7 +4,7 @@ import type {
   CustomElementEvent,
   CustomElementLink,
   DeepObject
-} from './types';
+} from './types.js';
 
 function getValue(elem): boolean | string | void {
   const { checked, type, value } = elem;

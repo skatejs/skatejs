@@ -1,14 +1,14 @@
 // @flow
 
-import type { PropType, PropTypes, PropTypesNormalized } from './types';
+import type { PropType, PropTypes, PropTypesNormalized } from './types.js';
 
-import { empty, keys, sym } from './util/index';
+import { empty, keys, sym } from './util/index.js';
 
 import {
   normalisePropertyDefinition,
   syncAttributeToProperty,
   syncPropertyToAttribute
-} from './util/with-update';
+} from './util/with-update.js';
 
 function delay(fn) {
   if (typeof Promise === 'undefined') {

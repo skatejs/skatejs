@@ -1,6 +1,6 @@
 // @flow
 
-import { generateName } from './util/with-unique';
+import { generateName } from './util/with-unique.js';
 
 export const withUnique = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {

@@ -1,6 +1,6 @@
 // @flow
 
-import { shadow } from './shadow';
+import { shadow } from './shadow.js';
 
 export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {

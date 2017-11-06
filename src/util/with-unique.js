@@ -1,6 +1,6 @@
 // @flow
 
-import { dashCase } from './index';
+import { dashCase } from './index.js';
 
 export function formatName(prefix: string, suffix: number): string {
   prefix = prefix || 'element';

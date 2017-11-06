@@ -1,13 +1,13 @@
 // @flow
 
-export * from './define';
-export * from './emit';
-export * from './link';
-export * from './shadow';
-export * from './with-children';
-export * from './with-context';
-export * from './with-component';
-export * from './with-lifecycle';
-export * from './with-update';
-export * from './with-renderer';
-export * from './with-unique';
+export * from './define.js';
+export * from './emit.js';
+export * from './link.js';
+export * from './shadow.js';
+export * from './with-children.js';
+export * from './with-context.js';
+export * from './with-component.js';
+export * from './with-lifecycle.js';
+export * from './with-update.js';
+export * from './with-renderer.js';
+export * from './with-unique.js';
