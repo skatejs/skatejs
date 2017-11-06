@@ -127,8 +127,8 @@ export default component(function index() {
         <h2>Utilities</h2>
         <p>
           On top of the core concepts of mixins and renderers, Skate also
-          provides some utils for common patterns within your components.
-          Some of these include:
+          provides some utils for common patterns within your components. Some
+          of these include:
         </p>
         <ul>
           <li>
@@ -149,10 +149,16 @@ export default component(function index() {
             </Link.is>{' '}
             - linking UI elements back to component state.
           </li>
+          <li>
+            <Link.is href="/utils/link">
+              <code>shadow()</code>
+            </Link.is>{' '}
+            - create a shadow root if it doesn't exist, but return it
+            regardless. Works with <code>closed</code> mode, too.
+          </li>
         </ul>
         <p>
-          See the <Link.is href="/utils">utility docs</Link.is> fore more
-          info.
+          See the <Link.is href="/utils">utility docs</Link.is> fore more info.
         </p>
       </Layout.is>
     </div>
