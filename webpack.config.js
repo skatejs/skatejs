@@ -56,7 +56,7 @@ module.exports = {
       },
       {
         test: /\.(png)/,
-        loaders: ['file-loader', 'webp-loader']
+        loaders: ['file-loader', 'img-loader']
       },
       {
         test: /\.worker\.js$/,

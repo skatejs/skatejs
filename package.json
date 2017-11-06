@@ -89,6 +89,7 @@
     "file-loader": "^1.1.5",
     "highlight.js": "^9.12.0",
     "husky": "^0.13.3",
+    "img-loader": "^2.0.0",
     "jest": "^20.0.4",
     "jest-cli": "^21.0.2",
     "lint-staged": "^4.0.2",
@@ -105,7 +106,6 @@
     "rollup-plugin-uglify": "^2.0.1",
     "typescript": "^2.3.3",
     "typescript-formatter": "^5.2.0",
-    "webp-loader": "^0.2.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3",
     "worker-loader": "^1.1.0"
