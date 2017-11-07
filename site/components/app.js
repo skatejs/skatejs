@@ -62,7 +62,7 @@ const router = (
     <Route.is page={RouteWithUpdate} path="/mixins/with-update" />
     <Route.is page={RouteWithUnique} path="/mixins/with-unique" />
     <Route.is page={RouteMixins} path="/mixins" />
-    <Route.is page={RouteWithReact} path="/renderers/with-lit-html" />
+    <Route.is page={RouteWithLitHtml} path="/renderers/with-lit-html" />
     <Route.is page={RouteWithPreact} path="/renderers/with-preact" />
     <Route.is page={RouteWithReact} path="/renderers/with-react" />
     <Route.is page={RouteRenderers} path="/renderers" />
