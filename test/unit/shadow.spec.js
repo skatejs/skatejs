@@ -10,7 +10,7 @@ test('should be a function', () => {
   expect(typeof shadow).toBe('function');
 });
 
-test.only('should create the shadow root', () => {
+test('should create the shadow root', () => {
   const el = <div />;
   shadow(el);
   expect(el.shadowRoot instanceof Node).toBe(true);
