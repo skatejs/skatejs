@@ -1,7 +1,7 @@
 import { withLifecycle, WithLifecycle } from 'skatejs';
 
 class Base extends HTMLElement {
-  protected _isConnected: boolean
+  protected _isConnected: boolean;
   connectedCallback() {
     this._isConnected = true;
   }

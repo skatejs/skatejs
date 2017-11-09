@@ -1,8 +1,8 @@
 import { props, withUpdate } from 'skatejs';
 
-type Props = {name: string}
-type State = void
-class WithProps extends withUpdate<Props,State>() {
+type Props = { name: string };
+type State = void;
+class WithProps extends withUpdate<Props, State>() {
   // This is where you declare your props.
   static props = {
     // This will define a handler for the name attribute that will set the name

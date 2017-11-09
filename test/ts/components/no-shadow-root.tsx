@@ -10,11 +10,13 @@ import {
   withUpdate,
   WithComponent,
   Constructor,
-  CustomElement,
+  CustomElement
 } from 'skatejs';
 
 // custom class definition needed to get Generics support for custom mixin composition
-interface CustomComponentBase<P = {}, S = {}> extends WithUpdate<P,S>, WithRenderer {}
+interface CustomComponentBase<P = {}, S = {}>
+  extends WithUpdate<P, S>,
+    WithRenderer {}
 declare class CustomComponentBase<P = {}, S = {}> extends HTMLElement {}
 
 // Explicitly defined renderer mixin interface type
@@ -34,12 +36,18 @@ export const withCustomRendererAsString = <T extends Constructor<HTMLElement>>(
   return CustomRendererAsString;
 };
 
-const customWithComponent = <T extends Constructor<HTMLElement>>(Base = HTMLElement as T): typeof WithComponent =>
+const customWithComponent = <T extends Constructor<HTMLElement>>(
+  Base = HTMLElement as T
+): typeof WithComponent =>
   withChildren(withUpdate(withRenderer(withUnique(Base)))) as any;
 
 const MComponent = customWithComponent(withCustomRendererAsString());
-const MComponent2 = withChildren(withUpdate(withRenderer(withUnique(withCustomRendererAsString()))));
-const MComponent3 = withRenderer(withUpdate(withCustomRendererAsString())) as typeof CustomComponentBase;
+const MComponent2 = withChildren(
+  withUpdate(withRenderer(withUnique(withCustomRendererAsString())))
+);
+const MComponent3 = withRenderer(
+  withUpdate(withCustomRendererAsString())
+) as typeof CustomComponentBase;
 
 export const Component = withComponent(withCustomRendererAsString());
 // @TODO this doesn't work :( I though this will extend base def and will restrict renderCallback return type
@@ -50,7 +58,7 @@ export const Component = withComponent(withCustomRendererAsString());
 export type Props = { greet: string };
 export type State = { count: number };
 
-class Mo extends MComponent<Props,State> {
+class Mo extends MComponent<Props, State> {
   foo() {
     this.props.greet;
     this.state.count;
@@ -64,7 +72,7 @@ class Mo2 extends MComponent2 {
   }
 }
 
-class Mo3 extends MComponent3<Props,State> {
+class Mo3 extends MComponent3<Props, State> {
   foo() {
     this.props.greet;
     this.state.count;
@@ -74,7 +82,7 @@ class Mo3 extends MComponent3<Props,State> {
     // this.props.greet = Martin'
 
     // update state
-    this.state = {count: this.state.count+1}
+    this.state = { count: this.state.count + 1 };
 
     // Following will error out, thanks TS ! nope prop is not defined on state ;)
     // this.state = {count: this.state.count+1, nope: false}

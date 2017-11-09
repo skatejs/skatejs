@@ -1,4 +1,4 @@
-module.exports = function (html, tagName) {
+module.exports = function(html, tagName) {
   var fixture = document.body;
 
   if (arguments.length) {

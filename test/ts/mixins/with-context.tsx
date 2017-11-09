@@ -1,14 +1,19 @@
-import { withContext, WithContext, withComponent, WithComponent } from 'skatejs';
+import {
+  withContext,
+  WithContext,
+  withComponent,
+  WithComponent
+} from 'skatejs';
 
 type Context = {
-  background: string
-  color: string
-  margin: string
-  padding: string
-}
+  background: string;
+  color: string;
+  margin: string;
+  padding: string;
+};
 
-const Base = withContext() as typeof WithContext
-const Component = withComponent()
+const Base = withContext() as typeof WithContext;
+const Component = withComponent();
 
 class WithContextRoot extends Base<Context> {
   context = {
@@ -48,10 +53,9 @@ class WithContextDescendant extends Base<Context> {
 customElements.define('with-context', WithContextRoot);
 customElements.define('with-context-descendant', WithContextDescendant);
 
-
 // showcase of full component With context
 
-class WithContextRootFull extends Component<{},{},Context> {
+class WithContextRootFull extends Component<{}, {}, Context> {
   context = {
     background: 'white',
     color: 'black',
@@ -68,7 +72,7 @@ class WithContextRootFull extends Component<{},{},Context> {
   }
 }
 
-class WithContextDescendantFull extends Component<{},{},Context> {
+class WithContextDescendantFull extends Component<{}, {}, Context> {
   connected() {
     const { background, color, margin, padding } = this.context;
     this.attachShadow({ mode: 'open' }).innerHTML = `

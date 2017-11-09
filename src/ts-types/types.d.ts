@@ -3,7 +3,9 @@ export type Maybe<T> = T | null | undefined;
 export type Constructor<T = Mixed> = new (...args: any[]) => T;
 export type HTMLElementClass = typeof HTMLElement;
 
-export type ComponentProps<T, E = HTMLElementClass> = { [P in keyof T]: PropOptions };
+export type ComponentProps<T, E = HTMLElementClass> = {
+  [P in keyof T]: PropOptions
+};
 
 // NOTE:
 // - all classes are just ambient definitions (opaque types like), so consumer cannot use them directly
@@ -18,7 +20,10 @@ export interface Renderer<O> {
   // called after render
   // rendered?(): void;
 
-  renderer(shadowRoot: Node | Element | ShadowRoot, render: (props?: Mixed) => O): void;
+  renderer(
+    shadowRoot: Node | Element | ShadowRoot,
+    render: (props?: Mixed) => O
+  ): void;
 }
 
 export interface WithComponent<P = Mixed, S = Mixed, C = Mixed>
@@ -30,16 +35,24 @@ export interface WithComponent<P = Mixed, S = Mixed, C = Mixed>
     WithUpdate<P, S>,
     WithContext<C> {}
 
-export declare class WithComponent<P = Mixed, S = Mixed, C = Mixed> extends HTMLElement {
-  static readonly observedAttributes: string[]
+export declare class WithComponent<
+  P = Mixed,
+  S = Mixed,
+  C = Mixed
+> extends HTMLElement {
+  static readonly observedAttributes: string[];
 }
 
 // Custom Elements v1
 export class CustomElement extends HTMLElement {
-  static readonly observedAttributes: string[]
+  static readonly observedAttributes: string[];
   connectedCallback(): void;
   disconnectedCallback(): void;
-  attributeChangedCallback(name: string, oldValue: null | string, newValue: null | string): void;
+  attributeChangedCallback(
+    name: string,
+    oldValue: null | string,
+    newValue: null | string
+  ): void;
   adoptedCallback?(): void;
 }
 
@@ -47,17 +60,18 @@ export declare class WithChildren extends HTMLElement {
   childrenUpdated(): void;
 }
 export declare class WithLifecycle extends HTMLElement {
-  connecting(): void
-  connected(): void
-  disconnecting(): void
-  disconnected(): void
+  connecting(): void;
+  connected(): void;
+  disconnecting(): void;
+  disconnected(): void;
 }
 
-export declare class WithContext<C=Mixed> extends HTMLElement {
-  context: C
+export declare class WithContext<C = Mixed> extends HTMLElement {
+  context: C;
 }
 
-export declare class WithRenderer<O = Mixed | null> extends HTMLElement implements Partial<Renderer<O>> {
+export declare class WithRenderer<O = Mixed | null> extends HTMLElement
+  implements Partial<Renderer<O>> {
   // getter for turning of ShadowDOM
   readonly renderRoot?: this | Mixed;
 
@@ -68,10 +82,10 @@ export declare class WithRenderer<O = Mixed | null> extends HTMLElement implemen
 
   renderer?(shadowRoot: Element, render: () => O): void;
 
-  updated(props?: Mixed, state?: Mixed): void
+  updated(props?: Mixed, state?: Mixed): void;
 }
 
-export declare class WithUpdate<P = Mixed,S = Mixed> extends HTMLElement {
+export declare class WithUpdate<P = Mixed, S = Mixed> extends HTMLElement {
   // Special hack for own components type checking.
   // It works in combination with ElementAttributesProperty. It placed in jsx.d.ts.
   // more detail, see: https://www.typescriptlang.org/docs/handbook/jsx.html
@@ -86,7 +100,7 @@ export declare class WithUpdate<P = Mixed,S = Mixed> extends HTMLElement {
   shouldUpdate(props?: P, state?: S): boolean;
 
   // Called if shouldUpdate returned true, much like React's componentWillUpdate()
-  updated(props?: Mixed, state?: Mixed): void
+  updated(props?: Mixed, state?: Mixed): void;
 }
 
 export declare class WithUnique extends HTMLElement {
@@ -102,7 +116,9 @@ export interface PropOptions {
   serialize?: <T>(value: Maybe<T>) => string | null;
 }
 
-export type PropOptionsAttribute = PropOptionsAttributeIdentifier | PropOptionsAttributeIdentifierMap;
+export type PropOptionsAttribute =
+  | PropOptionsAttributeIdentifier
+  | PropOptionsAttributeIdentifierMap;
 export type PropOptionsAttributeIdentifier = boolean | string;
 export type PropOptionsAttributeIdentifierMap = {
   source?: PropOptionsAttributeIdentifier;
