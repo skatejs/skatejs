@@ -116,13 +116,17 @@
     "site": "webpack -p",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
-    "types": "get-typed src/index.js --dest umd/skatejs"
+    "types": "get-typed src/index.js --dest umd/skatejs",
+    "format": "prettier --write {src,test}/**/*.{js,ts,tsx,json}"
   },
   "jest": {
     "modulePathIgnorePatterns": ["./node_modules"],
     "setupFiles": ["./test/unit/setup"],
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
+  },
+  "prettier": {
+    "singleQuote": true
   },
   "browser": "umd/index.js",
   "name": "skatejs",
@@ -137,6 +141,9 @@
   },
   "keywords": ["components", "custom", "dom", "elements", "web", "vdom", "virtual"],
   "lint-staged": {
-    "*.(js|json)": ["prettier --write", "git add"]
+    "*.(ts|tsx|js|json)": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
