@@ -10,7 +10,7 @@ export default component(function mixins() {
       <style>{this.context.style}</style>
       <p>
         Skate includes a few utilities that you'll end up needing when you build
-        complext components. They're minimal, opt-in and augment your building
+        complex components. They're minimal, opt-in and augment your building
         of web components, not required by it.
       </p>
       <ul>

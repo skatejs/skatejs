@@ -97,6 +97,7 @@ export default define(
         h2 {
           font-size: 1.8em;
           font-weight: lighter;
+          line-height: 1.2em;
           margin: 60px 0 30px 0;
         }
         h3 {

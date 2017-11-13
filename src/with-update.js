@@ -11,10 +11,12 @@ import {
 } from './util/with-update.js';
 
 function delay(fn) {
-  if (typeof Promise === 'undefined') {
-    setTimeout(fn);
-  } else {
+  if (window.requestIdleCallback) {
+    requestIdleCallback(fn);
+  } else if (window.Promise) {
     Promise.resolve().then(fn);
+  } else {
+    setTimeout(fn);
   }
 }
 

@@ -7,20 +7,21 @@ const publicPath = path.join(__dirname, 'public');
 // require('@skatejs/ssr/register');
 // const render = require('@skatejs/ssr');
 // const fs = require('fs');
+//
 // class WebpackPrerenderPlugin {
 //   getFile(name) {
-//     return fs.readFileSync(path.join(publicPath, name)).toString()
+//     return fs.readFileSync(path.join(publicPath, name)).toString();
 //   }
 //   apply(compiler) {
 //     // if (process.env.NODE_ENV !== 'production') {
 //     //   return;
 //     // }
-//     compiler.plugin('after-emit', (comp, done) => {
-//       const indexHtml = this.getFile('index.html');
-//       const indexJs = this.getFile('main.js');
-//       document.body.innerHTML = indexHtml;
-//       eval(indexJs);
-//       done();
+//     compiler.plugin('done', (comp, done) => {
+//       document.ssr.scriptBase = './public';
+//       document.body.innerHTML = this.getFile('index.html');
+//       render()
+//         .then(console.log)
+//         .then(done);
 //     });
 //   }
 // }
@@ -65,7 +66,7 @@ module.exports = {
     ]
   },
   output: {
-    filename: '[name].js',
+    filename: 'chunk.[name].js',
     path: publicPath,
     publicPath: '/'
   },
@@ -73,8 +74,10 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       children: true,
       deepChildren: true,
+      filename: 'entry.js',
       minChunks: 2,
       name: 'main'
     })
+    // new WebpackPrerenderPlugin()
   ]
 };

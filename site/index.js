@@ -13,8 +13,8 @@ function mount() {
 function script(src, done) {
   var scr = document.createElement('script');
   scr.async = false;
-  scr.src = src;
   scr.onload = done;
+  scr.src = src;
   document.head.appendChild(scr);
 }
 if (window.customElements) {

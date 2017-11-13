@@ -19,10 +19,3 @@ test('should create the shadow root', () => {
 test('should return the shadow root', () => {
   expect(shadow(<div />) instanceof Node).toBe(true);
 });
-
-test('should pass options to attachShadow', () => {
-  const el = <div />;
-  const sr = shadow(el, { mode: 'closed' });
-  expect(sr instanceof Node).toBe(true);
-  expect(!!el.shadowRoot).toBe(false);
-});

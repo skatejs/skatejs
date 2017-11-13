@@ -15,7 +15,7 @@ export default component(function index() {
           box-shadow: 0 5px 50px 0 rgba(0, 0, 0, .5);
           margin: 0 auto;
           overflow: hidden;
-          width: 600px;
+          max-width: 600px;
         }
         .hero {
           margin: 60px 0;

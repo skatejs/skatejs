@@ -30,12 +30,13 @@ export const Tabs = define(
               display: block;
             }
             .tab {
-              display: inline-block;
               margin: 0;
+              overflow: hidden;
               padding: 0;
             }
             .tabs {
               border-bottom: 3px solid #ddd;
+              display: flex;
               list-style: none;
               margin: 0;
               padding: 0;

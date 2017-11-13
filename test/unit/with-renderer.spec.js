@@ -143,7 +143,7 @@ describe('withRenderer', () => {
     });
   });
 
-  describe('should progressive enhance exiting markup', async () => {
+  describe('should progressive enhance existing markup', () => {
     it('on shadow dom', () => {
       customElements.define(
         'x-c',

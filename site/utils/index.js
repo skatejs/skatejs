@@ -114,9 +114,7 @@ export const withLoadable = opts =>
         if (loaded) {
           this.state = { loaded };
         }
-      }
-      updating(props) {
-        if (!props || this.loader !== props.loader) {
+        if (this.loader) {
           this.loader().then(r => {
             const loaded = r.default || r;
             if (loaded) {
@@ -135,7 +133,15 @@ export const withLoadable = opts =>
   );
 
 export const withLoadablePreact = opts =>
-  withLoadable({ ...{ format: r => <r.is /> }, ...opts });
+  withLoadable({
+    ...{
+      format: r => {
+        const R = r.is || r;
+        return <R />;
+      }
+    },
+    ...opts
+  });
 
 export const withLoadableStyle = opts =>
   withLoadable({ ...{ format: r => <style>{r}</style> }, ...opts });
