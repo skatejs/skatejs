@@ -48,7 +48,7 @@ export const props: Readonly<{
 
 export const prop: (ops?: PropOptions) => PropertyDecorator & PropOptions;
 
-export const shadow: (elem: CustomElement, opts?: ShadowRootInit) => ShadowRoot;
+export const shadow: (elem: CustomElement) => ShadowRoot;
 
 // Mixins
 export function withComponent<
