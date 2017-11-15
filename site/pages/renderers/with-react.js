@@ -11,7 +11,7 @@ import codeWithReactHtml from '!raw-loader!./__samples__/with-react.html';
 
 export default component(function mixins() {
   return (
-    <Layout.is title="LitHTML renderer">
+    <Layout.is title="React renderer">
       <style>{this.context.style}</style>
       <p>
         The{' '}

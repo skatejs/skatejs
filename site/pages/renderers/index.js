@@ -191,7 +191,7 @@ export default component(function mixins() {
         `}
       />
       <Note.is>
-        Your renderer can be composed into any point of your mixin chain, too!)
+        Your renderer can be composed into any point of your mixin chain, too!
       </Note.is>
       <p>Your component then can use it:</p>
       <Code.is
