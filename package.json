@@ -104,8 +104,7 @@
     "raw-loader": "^0.5.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "typescript": "^2.3.3",
-    "typescript-formatter": "^5.2.0",
+    "typescript": "2.6.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3",
     "worker-loader": "^1.1.0"
@@ -119,6 +118,7 @@
   "main": "node/index.js",
   "module": "es/index.js",
   "esnext": "esnext/index.js",
+  "types": "src/index.d.ts",
   "scripts": {
     "build:es": "BABEL_ENV=es babel src --out-dir es",
     "build:esnext": "BABEL_ENV=esnext babel src --out-dir esnext",
@@ -132,7 +132,8 @@
     "site": "webpack -p",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
-    "types": "get-typed src/index.js --dest umd/skatejs"
+    "types": "get-typed src/index.js --dest umd/skatejs",
+    "format": "prettier --write \"{src,test,site}/**/*.{js,ts,tsx,json}\""
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -144,6 +145,9 @@
     "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   },
+  "prettier": {
+    "singleQuote": true
+  },
   "browser": "umd/index.js",
   "name": "skatejs",
   "version": "5.0.0-beta.3",
@@ -154,18 +158,9 @@
     "type": "git",
     "url": "https://github.com/skatejs/skatejs"
   },
-  "types": "src/index.d.ts",
-  "keywords": [
-    "components",
-    "custom",
-    "dom",
-    "elements",
-    "web",
-    "vdom",
-    "virtual"
-  ],
+  "keywords": ["components", "custom", "dom", "elements", "web", "vdom", "virtual"],
   "lint-staged": {
-    "*.(js|json)": [
+    "*.{ts,tsx,js,json}": [
       "prettier --write",
       "git add"
     ]
