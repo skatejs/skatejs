@@ -1,17 +1,17 @@
+import css from 'yocss';
 import { Link as SkLink } from '@skatejs/sk-router';
 import { component, h } from '../utils';
 import loaderImg from 'file-loader!../img/loader.svg';
 
+const cssHr = css({
+  letterSpacing: '10px',
+  margin: '50px 0',
+  textAlign: 'center'
+});
 export const Hr = component(function hr() {
   return (
-    <div class="hr">
-      <style>{`
-        .hr {
-          letter-spacing: 10px;
-          margin: 50px 0;
-          text-align: center;
-        }
-      `}</style>
+    <div class={cssHr}>
+      <style>{cssHr()}</style>
       &mdash;&mdash;&mdash;
     </div>
   );
@@ -28,33 +28,33 @@ export const Link = component(
   ['css', 'href']
 );
 
+const cssLoading = css({
+  ':global(:host)': {
+    display: 'block',
+    margin: '60px auto 0 auto',
+    width: '44px'
+  }
+});
 export const Loading = component(function loader() {
   return (
     <div>
-      <style>{`
-      :host {
-        display: block;
-        margin: 60px auto 0 auto;
-        width: 44px;
-      }
-    `}</style>
+      <style>{cssLoading()}</style>
       <img src={loaderImg} />
     </div>
   );
 });
 
+const cssNote = css({
+  backgroundColor: '#DCE4CA',
+  borderLeft: '3px solid #c6d3a8',
+  display: 'block',
+  margin: '20px 0',
+  padding: '10px 15px'
+});
 export const Note = component(function note() {
   return (
-    <em>
-      <style>{`
-        em {
-          background-color: #DCE4CA;
-          border-left: 3px solid #c6d3a8;
-          display: block;
-          margin: 20px 0;
-          padding: 10px 15px;
-        }
-      `}</style>
+    <em class={cssNote}>
+      <style>{cssNote()}</style>
       <slot />
     </em>
   );

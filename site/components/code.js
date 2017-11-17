@@ -1,3 +1,4 @@
+import css from 'yocss';
 import { define, props } from '../../src';
 import { Component, h, withLoadableStyle } from '../utils';
 import { Tabs } from './tabs';
@@ -42,6 +43,29 @@ const Theme = withLoadableStyle({
   loader: () => import('raw-loader!prismjs/themes/prism-twilight.css')
 });
 
+const cssCode = {
+  code: css({
+    backgroundColor: '#292D34',
+    color: '#eee',
+    margin: 0,
+    overflow: 'auto',
+    padding: '10px 12px'
+  }),
+  host: css({
+    ':global(:host)': {
+      display: 'block'
+    }
+  }),
+  pre: css({
+    margin: 0
+  }),
+  title: css({
+    backgroundColor: '#20232A',
+    color: '#eee',
+    fontSize: '.8em',
+    padding: '10px 20px'
+  })
+};
 export const Code = define(
   class Code extends Component {
     props: {
@@ -57,31 +81,13 @@ export const Code = define(
       return (
         <div>
           <Theme.is />
-          <style>{`
-            :host {
-              display: block;
-            }
-            .code {
-              background-color: #292D34;
-              margin: 0;
-              overflow: auto;
-              padding: 10px 12px;
-            }
-            .title {
-              background-color: #20232A;
-              font-size: .8em;
-              padding: 10px 20px;
-            }
-            .code, .title {
-              color: #eee;
-            }
-            pre {
-              margin: 0;
-            }
-          `}</style>
-          {title ? <div class="title">{title}</div> : null}
-          <div class="code">
+          <style>
+            {cssCode.host() + cssCode.code() + cssCode.pre() + cssCode.title()}
+          </style>
+          {title ? <div class={cssCode.title}>{title}</div> : null}
+          <div class={cssCode.code}>
             <pre
+              class={cssCode.pre}
               ref={e => {
                 if (!e) return;
                 code = format(code);
@@ -96,6 +102,26 @@ export const Code = define(
   }
 );
 
+const cssExample = {
+  code: css({
+    backgroundColor: '#292D34',
+    color: 'white',
+    margin: 0,
+    overflow: 'auto',
+    padding: '20px 28px'
+  }),
+  host: css({
+    ':global(:host)': {
+      display: 'block'
+    }
+  }),
+  title: css({
+    backgroundColor: '#20232A',
+    color: '#eee',
+    fontSize: '.8em',
+    padding: '10px 20px'
+  })
+};
 export const Example = define(
   class Example extends Component {
     props: {
@@ -105,30 +131,26 @@ export const Example = define(
     renderer(root) {
       root.innerHTML = `
         <style>
-          :host {
-            display: block;
-          }
-          .code {
-            background-color: #292D34;
-            color: white;
-            margin: 0;
-            overflow: auto;
-            padding: 20px 28px;
-          }
-          .title {
-            background-color: #20232A;
-            color: #eee;
-            font-size: .8em;
-            padding: 10px 20px;
-          }
+          ${cssExample.code()}
+          ${cssExample.host()}
+          ${cssExample.title()}
         </style>
-        ${this.title ? `<div class="title">${this.title}</div>` : ''}
-        <div class="code">${this.html}</div>
+        ${this.title
+          ? `<div class="${cssExample.title}">${this.title}</div>`
+          : ''}
+        <div class="${cssExample.code}">${this.html}</div>
       `;
     }
   }
 );
 
+const cssRunnable = {
+  host: css({
+    ':global(:host)': {
+      display: 'block'
+    }
+  })
+};
 export const Runnable = define(
   class Runnable extends Component {
     static props = {
@@ -167,11 +189,7 @@ export const Runnable = define(
             }
           ]}
         >
-          <style>{`
-            :host {
-              display: block;
-            }
-          `}</style>
+          <style>{cssRunnable.host()}</style>
         </Tabs.is>
       );
     }

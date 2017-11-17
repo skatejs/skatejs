@@ -110,13 +110,13 @@ export default component(function index() {
           We've provided a few renderers for popular front-end libraries:
           <ul>
             <li>
-              <a href="/renderers/react">React</a>
+              <a href="/renderers/with-lit-html">LitHTML</a>
             </li>
             <li>
-              <a href="/renderers/preact">Preact</a>
+              <a href="/renderers/with-preact">Preact</a>
             </li>
             <li>
-              <a href="/renderers/lit-html">LitHTML</a>
+              <a href="/renderers/with-react">React</a>
             </li>
           </ul>
         </p>

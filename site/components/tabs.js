@@ -1,6 +1,8 @@
+import css from 'yocss';
 import { define, props } from '../../src';
 import { Component, h } from '../utils';
 
+const cssTabs = css({});
 export const Tabs = define(
   class Tabs extends Component {
     props: {

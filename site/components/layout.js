@@ -1,5 +1,6 @@
 // @flow
 
+import css from 'yocss';
 import { define, props } from '../../src';
 import { Component, h } from '../utils';
 import { Link } from './primitives';
@@ -80,6 +81,40 @@ function renderTree(items: ?Array<Object>, depth = 0) {
   );
 }
 
+const cssLayout = {
+  host: css({
+    ':global(:host)': {
+      display: 'block'
+    }
+  }),
+  flex: css({
+    display: 'flex',
+    flexWrap: 'wrap',
+    margin: '0 auto',
+    maxWidth: '1000px'
+  }),
+  flexItem: css({
+    minWidth: 0
+  }),
+  nav: css({
+    flexBasis: '150px',
+    flexShrink: 0,
+    margin: '104px 20px 0 0',
+    ' li': {
+      margin: '5px 0',
+      padding: 0
+    },
+    ' ul': {
+      listStyle: 'none',
+      margin: 0,
+      padding: 0
+    }
+  }),
+  section: css({
+    flexBasis: '300px',
+    flexGrow: 1
+  })
+};
 export const Layout = define(
   class Layout extends Component {
     props: {
@@ -91,42 +126,23 @@ export const Layout = define(
     };
     render({ nav, title }) {
       return (
-        <div class="flex">
+        <div class={cssLayout.flex}>
           <style>{`
             ${this.context.style}
-            :host {
-              display: block;
-            }
-            .flex {
-              display: flex;
-              flex-wrap: wrap;
-              margin: 0 auto;
-              max-width: 1000px;
-            }
-            .flex-item {
-              min-width: 0;
-            }
-            ul {
-              list-style: none;
-              margin: 0;
-              padding: 0;
-            }
-            li {
-              margin: 5px 0;
-              padding: 0;
-            }
-            nav {
-              flex-basis: 150px;
-              flex-shrink: 0;
-              margin: 104px 20px 0 0;
-            }
-            section {
-              flex-basis: 300px;
-              flex-grow: 1;
-            }
+            ${cssLayout.host()}
+            ${cssLayout.flex()}
+            ${cssLayout.flexItem()}
+            ${cssLayout.nav()}
+            ${cssLayout.section()}
           `}</style>
-          {nav ? <nav class="flex-item">{renderTree(navItems())}</nav> : ''}
-          <section class="flex-item">
+          {nav ? (
+            <nav class={[cssLayout.flexItem, cssLayout.nav].join(' ')}>
+              {renderTree(navItems())}
+            </nav>
+          ) : (
+            ''
+          )}
+          <section class={[cssLayout.flexItem, cssLayout.section].join(' ')}>
             {title ? <h2>{title}</h2> : ''}
             <slot />
           </section>
