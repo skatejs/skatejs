@@ -1,33 +1,36 @@
-*If there is a linked issue, mention it here.*
+_If there is a linked issue, mention it here._
 
-- [ ] Bug
-- [ ] Feature
+* [ ] Bug
+* [ ] Feature
 
 ## Requirements
 
-- [ ] Read the [contribution guidelines](https://github.com/skatejs/skatejs/blob/5.x/CONTRIBUTING.md).
-- [ ] Wrote tests.
-- [ ] Updated docs and upgrade instructions, if necessary.
-- [ ] Updated TS definitions, if necessary.
+* [ ] Read the
+      [contribution guidelines](https://github.com/skatejs/skatejs/blob/5.x/CONTRIBUTING.md).
+* [ ] Wrote tests.
+* [ ] Updated docs and upgrade instructions, if necessary.
+* [ ] Updated TS definitions, if necessary.
 
 ## Rationale
 
-*Why is this PR necessary?*
+_Why is this PR necessary?_
 
 ## Implementation
 
-*Why have you implemented it this way? Did you try any other methods?*
+_Why have you implemented it this way? Did you try any other methods?_
 
 ## Open questions
 
-*Are there any open questions about this implementation that need answers?*
+_Are there any open questions about this implementation that need answers?_
 
 ## Other
 
-*Is there anything else we should know? Delete this section if you don't need it.*
+_Is there anything else we should know? Delete this section if you don't need
+it._
 
 ## Tasks
 
-*List any tasks you need to do here, if any. Delete this section if you don't need it.*
+_List any tasks you need to do here, if any. Delete this section if you don't
+need it._
 
-- [ ] *Example task.*
+* [ ] _Example task._

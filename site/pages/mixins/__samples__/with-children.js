@@ -5,9 +5,9 @@ class WithChildren extends withChildren() {
     const len = this.children.length;
     this.attachShadow({
       mode: 'open'
-    }).innerHTML = `This element has ${len} ${len === 1
-      ? 'child'
-      : 'children'}!`;
+    }).innerHTML = `This element has ${len} ${
+      len === 1 ? 'child' : 'children'
+    }!`;
   }
 }
 

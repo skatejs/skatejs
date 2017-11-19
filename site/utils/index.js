@@ -1,3 +1,5 @@
+// @flow
+
 import { h } from 'preact';
 import { define, props, withComponent, withUpdate } from '../../src';
 import withPreact from '@skatejs/renderer-preact';

@@ -135,9 +135,11 @@ export const Example = define(
           ${cssExample.host()}
           ${cssExample.title()}
         </style>
-        ${this.title
-          ? `<div class="${cssExample.title}">${this.title}</div>`
-          : ''}
+        ${
+          this.title
+            ? `<div class="${cssExample.title}">${this.title}</div>`
+            : ''
+        }
         <div class="${cssExample.code}">${this.html}</div>
       `;
     }

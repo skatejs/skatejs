@@ -95,8 +95,8 @@
     "lint-staged": "^4.0.2",
     "lit-html": "^0.7.1",
     "preact": "^8.2.5",
-    "prettier": "^1.7.4",
-    "prettier-eslint": "^8.2.1",
+    "prettier": "1.8.2",
+    "prettier-eslint": "^8.2.2",
     "prismjs": "^1.8.4",
     "raw-loader": "^0.5.1",
     "react": "^15.0.0",
@@ -134,7 +134,7 @@
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
     "types": "get-typed src/index.js --dest umd/skatejs",
-    "format": "prettier --write \"{src,test,site}/**/*.{js,ts,tsx,json}\""
+    "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\""
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -169,7 +169,7 @@
     "virtual"
   ],
   "lint-staged": {
-    "*.{ts,tsx,js,json}": [
+    "*.{ts,tsx,js,json,md}": [
       "prettier --write",
       "git add"
     ]
