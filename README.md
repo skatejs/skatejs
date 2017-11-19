@@ -30,6 +30,8 @@ For instance, Skate's main mixin, `withComponent`, is just a composition of all 
 * `withUpdate` -- the generated element will react to changes on their props or HTML attributes.
 * `withChildren` -- the generated element will react to changes to its child elements.
 * `withRenderer` -- the element can generate its own DOM and output it to a `renderRoot` (a `ShadowRoot` node by default).
+* `withLifecycle` -- the element can use added sugar on top of the built-in lifecycle callbacks.
+* `withContext` --  the element will inherit context from components up the tree, like in React.
 * `withUnique` -- allows for naming the custom element through `is`.
 
 Calling `withComponent()` gives you a Custom Element class constructor, which you can then extend to
@@ -56,12 +58,12 @@ import { withComponent } from 'skatejs';
 const Component = withComponent();
 
 class GreetingComponent extends Component {
-  rendererCallback (renderRoot, renderCallback) {
+  renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
-    renderRoot.appendChild(renderCallback());
+    renderRoot.appendChild(render());
   }
-  renderCallback () {
-      let el = document.createElement('span');
+  render () {
+      const el = document.createElement('span');
       el.innerHTML = 'Hello, <slot></slot>!';
       return el;
   }
@@ -82,6 +84,52 @@ When this element is rendered, the DOM will look something like the following:
 
 This is the utility that web components provide when using Custom Elements and the Shadow DOM.
 
+Skate also allows **turning off Shadow DOM** if you don't wanna use it for various particular reasons. You can turn it off via `get renderRoot()` override:
+
+> NOTE: by turning off Shadow DOM you cannot use <slot/> content projection anymore by default, further tweaks needs to be applied
+
+```js
+import { withComponent, props } from 'skatejs';
+
+// define base class withouth Shadow DOM
+class NoShadowComponent = class extends withComponent() {
+  // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
+  get renderRoot(){ return this }
+}
+
+// use custom NoShadowComponent as a base class
+class GreetingComponent extends NoShadowComponent {
+  static props = {
+    name: props.string
+  }
+  renderer (renderRoot, render) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(render());
+  }
+  render ({name}) {
+      const el = document.createElement('span');
+      el.innerHTML = `Hello, ${name}!`;
+      return el;
+  }
+});
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+Now when you write:
+
+```html
+<x-hello name="Bob"></x-hello>
+```
+
+When this element is rendered, the DOM will look something like the following:
+
+```html
+<x-hello>
+  <span>Hello, Bob!</span>
+</x-hello>
+```
+
 ### Watching element properties and attributes
 
 We can create a Skate component that watches for HTML attribute changes on itself:
@@ -95,12 +143,12 @@ class GreetingComponent extends Component {
   static props = {
     name: props.string
   }
-  rendererCallback (renderRoot, renderCallback) {
+  renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
-    renderRoot.appendChild(renderCallback());
+    renderRoot.appendChild(render());
   }
-  renderCallback ({ name }) {
-      let el = document.createElement('span');
+  render ({ name }) {
+      const el = document.createElement('span');
       el.innerHTML = `Hello, ${name}!`;
       return el;
   }
@@ -127,13 +175,15 @@ In the previous exampless, each component implements its own rendering behaviour
 Rather than re-defining it all the time, we can write a mixin and take advantage of
 prototypal inheritance:
 
+> NOTE: the `with` prefix is not mandatory, just a common practice for naming HOCs and Mixins
+
 ```js
 import { props, withComponent } from 'skatejs';
 
 const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
   return class extends Base {
-      rendererCallback (renderRoot, renderCallback) {
-        renderRoot.innerHtml = renderCallback();
+      renderer (renderRoot, render) {
+        renderRoot.innerHtml = render();
       }
   }
 };
@@ -144,7 +194,7 @@ class GreetingComponent extends Component {
   static props = {
     name: props.string
   }
-  renderCallback ({ name }) {
+  render ({ name }) {
     return `<span>Hello, {name}!</span>`;
   }
 });
@@ -156,15 +206,15 @@ customElements.define('x-hello', GreetingComponent);
 
 Because Skate provides a hook for the renderer, it can support just about
 every modern component-based front-end library &mdash; React, Preact, Vue...
-just provide a `renderCallback` to stamp out your component's HTML,
-a `rendererCallback` to update the DOM with your HTML, and then it's all the same to Skate!
+just provide a `render` to stamp out your component's HTML,
+a `renderer` to update the DOM with your HTML, and then it's all the same to Skate!
 
 The Skate team have provided a few renderers for popular front-end libraries;
 check the [Installing](#installing) section.
 
 #### Using Skate with Preact
 
-Instead of writing our own `rendererCallback`, we could use a library like
+Instead of writing our own `renderer`, we could use a library like
 [Preact](https://preactjs.com/) to do the work for us. Skate provides a ready-made renderer for Preact;
 here's how we would update our previous greeting component to use it:
 
@@ -181,7 +231,7 @@ customElements.define('x-hello', class extends Component {
   static props = {
     name: props.string
   }
-  renderCallback ({ name }) {
+  render ({ name }) {
     return <span>Hello, {name}!</span>;
   }
 });
