@@ -7,3 +7,7 @@ exports[`renders 2`] = `"<div>Hello, World!</div>"`;
 exports[`renders 3`] = `"<div>Hello, Bob!</div>"`;
 
 exports[`wrapper - override render() 1`] = `"<div>Hello, <slot></slot>!</div>"`;
+
+exports[`wrappers cleanup 1`] = `"<div>Hello, <slot></slot>!</div>"`;
+
+exports[`wrappers cleanup 2`] = `""`;

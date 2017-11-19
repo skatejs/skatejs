@@ -3,7 +3,8 @@
   "browser": "dist/es/index.js",
   "description": "A SkateJS renderer for Preact.",
   "devDependencies": {
-    "preact": "8.2.7"
+    "preact": "8.2.7",
+    "skatejs": "^5.1.2"
   },
   "esnext": "dist/esnext/index.js",
   "files": [
