@@ -1,8 +1,43 @@
-import css from 'yocss';
+import css, { value } from 'yocss';
 import { define, props } from '../../src';
 import { Component, h } from '../utils';
 
-const cssTabs = css({});
+const cssTabs = css({
+  '* :host': {
+    display: 'block'
+  },
+  pane: {
+    display: 'none'
+  },
+  '.pane[selected]': {
+    display: 'block'
+  },
+  tab: {
+    margin: 0,
+    overflow: 'hidden',
+    padding: 0
+  },
+  tabs: {
+    display: 'flex',
+    listStyle: 'none',
+    margin: 0,
+    padding: 0
+  },
+  '.tabs a': {
+    borderBottom: '3px solid transparent',
+    color: '#333',
+    display: 'inline-block',
+    padding: '15px 20px 18px 20px',
+    position: 'relative',
+    textDecoration: 'none',
+    top: '3px'
+  },
+  '.tabs a[selected], .tabs a:hover': {
+    borderBottom: '3px solid #F2567C',
+    color: '#eee'
+  }
+});
+console.log(value(cssTabs));
 export const Tabs = define(
   class Tabs extends Component {
     props: {
@@ -20,45 +55,8 @@ export const Tabs = define(
     render({ css, items, onClick, state }) {
       const { selected } = state;
       return (
-        <div>
-          <style>{`
-            :host {
-              display: block;
-            }
-            .pane {
-              display: none;
-            }
-            .pane[selected] {
-              display: block;
-            }
-            .tab {
-              margin: 0;
-              overflow: hidden;
-              padding: 0;
-            }
-            .tabs {
-              border-bottom: 3px solid #ddd;
-              display: flex;
-              list-style: none;
-              margin: 0;
-              padding: 0;
-            }
-            .tabs a {
-              border-bottom: 3px solid transparent;
-              color: #333;
-              display: inline-block;
-              padding: 15px 20px 18px 20px;
-              position: relative;
-              text-decoration: none;
-              top: 3px;
-            }
-            .tabs a[selected],
-            .tabs a:hover {
-              border-bottom: 3px solid #F2567C;
-              color: #F2567C;
-            }
-            ${css}
-          `}</style>
+        <div class={cssTabs}>
+          <style>{css + value(cssTabs)}</style>
           <ul class="tabs">
             {items.map(
               ({ name, pane }, i) =>

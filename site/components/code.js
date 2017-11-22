@@ -1,4 +1,4 @@
-import css from 'yocss';
+import css, { value } from 'yocss';
 import { define, props } from '../../src';
 import { Component, h, withLoadableStyle } from '../utils';
 import { Tabs } from './tabs';
@@ -49,10 +49,10 @@ const cssCode = {
     color: '#eee',
     margin: 0,
     overflow: 'auto',
-    padding: '10px 12px'
+    padding: '20px'
   }),
   host: css({
-    ':global(:host)': {
+    '* :host': {
       display: 'block'
     }
   }),
@@ -81,9 +81,7 @@ export const Code = define(
       return (
         <div>
           <Theme.is />
-          <style>
-            {cssCode.host() + cssCode.code() + cssCode.pre() + cssCode.title()}
-          </style>
+          <style>{value(...Object.values(cssCode))}</style>
           {title ? <div class={cssCode.title}>{title}</div> : null}
           <div class={cssCode.code}>
             <pre
@@ -108,10 +106,10 @@ const cssExample = {
     color: 'white',
     margin: 0,
     overflow: 'auto',
-    padding: '20px 28px'
+    padding: '20px'
   }),
   host: css({
-    ':global(:host)': {
+    '* :host': {
       display: 'block'
     }
   }),
@@ -130,11 +128,7 @@ export const Example = define(
     };
     renderer(root) {
       root.innerHTML = `
-        <style>
-          ${cssExample.code()}
-          ${cssExample.host()}
-          ${cssExample.title()}
-        </style>
+        <style>${value(...Object.values(cssExample))}</style>
         ${
           this.title
             ? `<div class="${cssExample.title}">${this.title}</div>`
@@ -148,7 +142,7 @@ export const Example = define(
 
 const cssRunnable = {
   host: css({
-    ':global(:host)': {
+    '* :host': {
       display: 'block'
     }
   })
@@ -191,7 +185,7 @@ export const Runnable = define(
             }
           ]}
         >
-          <style>{cssRunnable.host()}</style>
+          <style>{value(...Object.values(cssRunnable))}</style>
         </Tabs.is>
       );
     }

@@ -39,6 +39,7 @@ module.exports = {
   module: {
     rules: [
       {
+        exclude: /(node_modules|yocss)/,
         test: /\.js$/,
         use: {
           loader: 'babel-loader',

@@ -1,6 +1,6 @@
 // @flow
 
-import css from 'yocss';
+import css, { names, value } from 'yocss';
 import { define, props } from '../../src';
 import { Component, h } from '../utils';
 import { Link } from './primitives';
@@ -83,7 +83,7 @@ function renderTree(items: ?Array<Object>, depth = 0) {
 
 const cssLayout = {
   host: css({
-    ':global(:host)': {
+    '* :host': {
       display: 'block'
     }
   }),
@@ -129,20 +129,16 @@ export const Layout = define(
         <div class={cssLayout.flex}>
           <style>{`
             ${this.context.style}
-            ${cssLayout.host()}
-            ${cssLayout.flex()}
-            ${cssLayout.flexItem()}
-            ${cssLayout.nav()}
-            ${cssLayout.section()}
+            ${value(...Object.values(cssLayout))}
           `}</style>
           {nav ? (
-            <nav class={[cssLayout.flexItem, cssLayout.nav].join(' ')}>
+            <nav class={names(cssLayout.flexItem, cssLayout.nav)}>
               {renderTree(navItems())}
             </nav>
           ) : (
             ''
           )}
-          <section class={[cssLayout.flexItem, cssLayout.section].join(' ')}>
+          <section class={names(cssLayout.flexItem, cssLayout.section)}>
             {title ? <h2>{title}</h2> : ''}
             <slot />
           </section>
