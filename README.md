@@ -111,7 +111,9 @@ import { withComponent, props } from 'skatejs';
 // define base class withouth Shadow DOM
 class NoShadowComponent = class extends withComponent() {
   // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
-  get renderRoot(){ return this }
+  get renderRoot() {
+    return this
+  }
 }
 
 // use custom NoShadowComponent as a base class
