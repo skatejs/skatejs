@@ -77,11 +77,11 @@ class GreetingComponent extends Component {
     renderRoot.appendChild(render());
   }
   render () {
-      const el = document.createElement('span');
-      el.innerHTML = 'Hello, <slot></slot>!';
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = 'Hello, <slot></slot>!';
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -118,17 +118,17 @@ class NoShadowComponent = class extends withComponent() {
 class GreetingComponent extends NoShadowComponent {
   static props = {
     name: props.string
-  }
+  };
   renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
     renderRoot.appendChild(render());
   }
   render ({name}) {
-      const el = document.createElement('span');
-      el.innerHTML = `Hello, ${name}!`;
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -160,17 +160,17 @@ const Component = withComponent();
 class GreetingComponent extends Component {
   static props = {
     name: props.string
-  }
+  };
   renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
     renderRoot.appendChild(render());
   }
   render ({ name }) {
-      const el = document.createElement('span');
-      el.innerHTML = `Hello, ${name}!`;
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -201,9 +201,9 @@ import { props, withComponent } from 'skatejs';
 
 const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
   return class extends Base {
-      renderer (renderRoot, render) {
-        renderRoot.innerHtml = render();
-      }
+    renderer (renderRoot, render) {
+      renderRoot.innerHtml = render();
+    }
   }
 };
 
@@ -212,11 +212,11 @@ const Component = withComponent(withDangerouslyNaiveRenderer());
 class GreetingComponent extends Component {
   static props = {
     name: props.string
-  }
+  };
   render ({ name }) {
     return `<span>Hello, {name}!</span>`;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
