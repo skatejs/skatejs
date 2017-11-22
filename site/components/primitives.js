@@ -1,4 +1,4 @@
-import css from 'yocss';
+import css, { value } from 'yocss';
 import { Link as SkLink } from '@skatejs/sk-router';
 import { component, h } from '../utils';
 import loaderImg from 'file-loader!../img/loader.svg';
@@ -11,7 +11,7 @@ const cssHr = css({
 export const Hr = component(function hr() {
   return (
     <div class={cssHr}>
-      <style>{cssHr()}</style>
+      <style>{value(cssHr)}</style>
       &mdash;&mdash;&mdash;
     </div>
   );
@@ -29,7 +29,7 @@ export const Link = component(
 );
 
 const cssLoading = css({
-  ':global(:host)': {
+  '* :host': {
     display: 'block',
     margin: '60px auto 0 auto',
     width: '44px'
@@ -38,7 +38,7 @@ const cssLoading = css({
 export const Loading = component(function loader() {
   return (
     <div>
-      <style>{cssLoading()}</style>
+      <style>{value(cssLoading)}</style>
       <img src={loaderImg} />
     </div>
   );
@@ -54,7 +54,7 @@ const cssNote = css({
 export const Note = component(function note() {
   return (
     <em class={cssNote}>
-      <style>{cssNote()}</style>
+      <style>{value(cssNote)}</style>
       <slot />
     </em>
   );

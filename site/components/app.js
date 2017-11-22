@@ -1,4 +1,4 @@
-import css from 'yocss';
+import css, { value } from 'yocss';
 import globalStyles from '../css';
 import { Loading } from './primitives';
 import { Component, h, withLoadablePreact } from '../utils';
@@ -77,10 +77,14 @@ const router = (
   </Router.is>
 );
 
+const cssApp = css({
+  borderTop: '5px solid #F2567C',
+  padding: '50px 25px 25px 25px'
+});
 export default define(
   class App extends Component {
     context = {
-      style: globalStyles()
+      style: value(globalStyles)
     };
     onHistory = () => {
       window.scrollTo(0, 0);
@@ -93,15 +97,11 @@ export default define(
       window.addEventListener('replaceState', this.onHistory);
     }
     render({ context, state }) {
-      const style = css({
-        borderTop: '5px solid #F2567C',
-        padding: '50px 25px 25px 25px'
-      });
       return (
-        <div class={style}>
+        <div class={cssApp}>
           <style>{`
             ${context.style}
-            ${style()}
+            ${value(cssApp)}
           `}</style>
           <img class="logo" src={state.href === '/' ? logo100 : logo50} />
           {router}

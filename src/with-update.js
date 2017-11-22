@@ -11,9 +11,7 @@ import {
 } from './util/with-update.js';
 
 function delay(fn) {
-  if (window.requestIdleCallback) {
-    requestIdleCallback(fn);
-  } else if (window.Promise) {
+  if (window.Promise) {
     Promise.resolve().then(fn);
   } else {
     setTimeout(fn);
