@@ -150,7 +150,7 @@ export default component(function index() {
             - linking UI elements back to component state.
           </li>
           <li>
-            <Link.is href="/utils/link">
+            <Link.is href="/utils/shadow">
               <code>shadow()</code>
             </Link.is>{' '}
             - create a shadow root if it doesn't exist, but return it

@@ -15,9 +15,7 @@ export default component(function mixins() {
       <style>{this.context.style}</style>
       <p>
         The{' '}
-        <a href="https://github.com/skatejs/renderer-react">
-          React renderer
-        </a>{' '}
+        <a href="https://github.com/skatejs/renderer-react">React renderer</a>{' '}
         allows you to render using <a href="https://reactjs.org/">React</a>.
       </p>
       <Runnable.is code={codeWithReact} html={codeWithReactHtml} />

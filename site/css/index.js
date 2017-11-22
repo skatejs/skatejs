@@ -8,7 +8,7 @@ export default css({
   '* code': {
     backgroundColor: '#dce4c9',
     display: 'inline-block',
-    fontFamily: 'monaco',
+    fontFamily: 'monaco, Consolas, "Lucida Console", monospace',
     fontSize: '.8em',
     padding: '0 8px'
   },

@@ -129,9 +129,11 @@ export const Example = define(
     renderer(root) {
       root.innerHTML = `
         <style>${value(...Object.values(cssExample))}</style>
-        ${this.title
-          ? `<div class="${cssExample.title}">${this.title}</div>`
-          : ''}
+        ${
+          this.title
+            ? `<div class="${cssExample.title}">${this.title}</div>`
+            : ''
+        }
         <div class="${cssExample.code}">${this.html}</div>
       `;
     }

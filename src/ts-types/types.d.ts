@@ -21,7 +21,7 @@ export interface Renderer<O> {
   // rendered?(): void;
 
   renderer(
-    shadowRoot: Node | Element | ShadowRoot,
+    renderRoot: Node | Element | ShadowRoot,
     render: (props?: Mixed) => O
   ): void;
 }
@@ -80,7 +80,7 @@ export declare class WithRenderer<O = Mixed | null> extends HTMLElement
   // called after render
   rendered(): void;
 
-  renderer?(shadowRoot: Element, render: () => O): void;
+  renderer?(renderRoot: Element, render: () => O): void;
 
   updated(props?: Mixed, state?: Mixed): void;
 }

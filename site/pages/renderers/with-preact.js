@@ -15,9 +15,7 @@ export default component(function mixins() {
       <style>{this.context.style}</style>
       <p>
         The{' '}
-        <a href="https://github.com/skatejs/renderer-preact">
-          Preact renderer
-        </a>{' '}
+        <a href="https://github.com/skatejs/renderer-preact">Preact renderer</a>{' '}
         allows you to render using{' '}
         <a href="https://github.com/developit/preact">Preact</a>.
       </p>
