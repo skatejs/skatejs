@@ -77,11 +77,11 @@ class GreetingComponent extends Component {
     renderRoot.appendChild(render());
   }
   render () {
-      const el = document.createElement('span');
-      el.innerHTML = 'Hello, <slot></slot>!';
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = 'Hello, <slot></slot>!';
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -111,24 +111,26 @@ import { withComponent, props } from 'skatejs';
 // define base class withouth Shadow DOM
 class NoShadowComponent = class extends withComponent() {
   // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
-  get renderRoot(){ return this }
+  get renderRoot() {
+    return this
+  }
 }
 
 // use custom NoShadowComponent as a base class
 class GreetingComponent extends NoShadowComponent {
   static props = {
     name: props.string
-  }
+  };
   renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
     renderRoot.appendChild(render());
   }
   render ({name}) {
-      const el = document.createElement('span');
-      el.innerHTML = `Hello, ${name}!`;
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -160,17 +162,17 @@ const Component = withComponent();
 class GreetingComponent extends Component {
   static props = {
     name: props.string
-  }
+  };
   renderer (renderRoot, render) {
     renderRoot.innerHtml = '';
     renderRoot.appendChild(render());
   }
   render ({ name }) {
-      const el = document.createElement('span');
-      el.innerHTML = `Hello, ${name}!`;
-      return el;
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
@@ -201,9 +203,9 @@ import { props, withComponent } from 'skatejs';
 
 const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
   return class extends Base {
-      renderer (renderRoot, render) {
-        renderRoot.innerHtml = render();
-      }
+    renderer (renderRoot, render) {
+      renderRoot.innerHtml = render();
+    }
   }
 };
 
@@ -212,11 +214,11 @@ const Component = withComponent(withDangerouslyNaiveRenderer());
 class GreetingComponent extends Component {
   static props = {
     name: props.string
-  }
+  };
   render ({ name }) {
     return `<span>Hello, {name}!</span>`;
   }
-});
+}
 
 customElements.define('x-hello', GreetingComponent);
 ```
