@@ -82,11 +82,6 @@ function renderTree(items: ?Array<Object>, depth = 0) {
 }
 
 const cssLayout = {
-  host: css({
-    '* :host': {
-      display: 'block'
-    }
-  }),
   flex: css({
     display: 'flex',
     flexWrap: 'wrap',
@@ -124,6 +119,10 @@ export const Layout = define(
     props = {
       nav: true
     };
+    connecting() {
+      super.connecting();
+      this.style.display = 'block';
+    }
     render({ nav, title }) {
       return (
         <div class={cssLayout.flex}>

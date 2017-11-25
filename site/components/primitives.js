@@ -29,15 +29,13 @@ export const Link = component(
 );
 
 const cssLoading = css({
-  '* :host': {
-    display: 'block',
-    margin: '60px auto 0 auto',
-    width: '44px'
-  }
+  display: 'block',
+  margin: '60px auto 0 auto',
+  width: '44px'
 });
 export const Loading = component(function loader() {
   return (
-    <div>
+    <div class={cssLoading}>
       <style>{value(cssLoading)}</style>
       <img src={loaderImg} />
     </div>

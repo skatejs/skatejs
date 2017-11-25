@@ -3,9 +3,6 @@ import { define, props } from '../../src';
 import { Component, h } from '../utils';
 
 const cssTabs = css({
-  '* :host': {
-    display: 'block'
-  },
   pane: {
     display: 'none'
   },
@@ -37,7 +34,6 @@ const cssTabs = css({
     color: '#eee'
   }
 });
-console.log(value(cssTabs));
 export const Tabs = define(
   class Tabs extends Component {
     props: {
@@ -48,6 +44,10 @@ export const Tabs = define(
     state = {
       selected: 0
     };
+    connecting() {
+      super.connecting();
+      this.style.display = 'block';
+    }
     onClick(i, e) {
       e.preventDefault();
       this.state = { selected: i };

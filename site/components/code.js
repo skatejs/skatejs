@@ -51,11 +51,6 @@ const cssCode = {
     overflow: 'auto',
     padding: '20px'
   }),
-  host: css({
-    '* :host': {
-      display: 'block'
-    }
-  }),
   pre: css({
     margin: 0
   }),
@@ -77,6 +72,10 @@ export const Code = define(
       code: '',
       lang: 'js'
     };
+    connecting() {
+      super.connecting();
+      this.style.display = 'block';
+    }
     render({ code, lang, title }) {
       return (
         <div>
@@ -108,11 +107,6 @@ const cssExample = {
     overflow: 'auto',
     padding: '20px'
   }),
-  host: css({
-    '* :host': {
-      display: 'block'
-    }
-  }),
   title: css({
     backgroundColor: '#20232A',
     color: '#eee',
@@ -126,33 +120,32 @@ export const Example = define(
       html: string,
       title: string
     };
+    connecting() {
+      super.connecting();
+      this.style.display = 'block';
+    }
     renderer(root) {
       root.innerHTML = `
         <style>${value(...Object.values(cssExample))}</style>
-        ${
-          this.title
-            ? `<div class="${cssExample.title}">${this.title}</div>`
-            : ''
-        }
+        ${this.title
+          ? `<div class="${cssExample.title}">${this.title}</div>`
+          : ''}
         <div class="${cssExample.code}">${this.html}</div>
       `;
     }
   }
 );
 
-const cssRunnable = {
-  host: css({
-    '* :host': {
-      display: 'block'
-    }
-  })
-};
 export const Runnable = define(
   class Runnable extends Component {
     static props = {
       code: null,
       html: null
     };
+    connecting() {
+      super.connecting();
+      this.style.display = 'block';
+    }
     render({ code, html }) {
       return (
         <Tabs.is
@@ -184,9 +177,7 @@ export const Runnable = define(
               pane: html ? <Example.is html={html} /> : ''
             }
           ]}
-        >
-          <style>{value(...Object.values(cssRunnable))}</style>
-        </Tabs.is>
+        />
       );
     }
   }
