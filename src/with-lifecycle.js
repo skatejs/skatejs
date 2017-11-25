@@ -2,26 +2,18 @@
 
 export const withLifecycle = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
+    connected() {}
+    connecting() {}
+    disconnected() {}
+    disconnecting() {}
     connectedCallback() {
-      if (this.connecting) {
-        this.connecting();
-      }
-      if (super.connectedCallback) {
-        super.connectedCallback();
-      }
-      if (this.connected) {
-        this.connected();
-      }
+      this.connecting();
+      super.connectedCallback && super.connectedCallback();
+      this.connected();
     }
     disconnectedCallback() {
-      if (this.disconnecting) {
-        this.disconnecting();
-      }
-      if (super.disconnectedCallback) {
-        super.disconnectedCallback();
-      }
-      if (this.disconnected) {
-        this.disconnected();
-      }
+      this.disconnecting();
+      super.disconnectedCallback && super.disconnectedCallback();
+      this.disconnected();
     }
   };
