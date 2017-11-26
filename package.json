@@ -67,7 +67,7 @@
     "@skatejs/renderer-preact": "^0.1.0",
     "@skatejs/renderer-react": "^0.0.0",
     "@skatejs/sk-router": "^0.1.0",
-    "@skatejs/ssr": "^0.15.4",
+    "@skatejs/ssr": "^0.16.0",
     "@skatejs/val": "^0.3.1",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",

@@ -60,6 +60,7 @@ export default component(function mixins() {
             triggerUpdate(): void;
 
             // withUnique
+            static defined: Function;
             static is: string;
           }
         `}

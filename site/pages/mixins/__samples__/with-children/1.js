@@ -1,4 +1,4 @@
-import { withChildren } from '../../../../src';
+import { withChildren } from '../../../../../src';
 
 class WithChildren extends withChildren() {
   childrenUpdated() {
@@ -11,4 +11,4 @@ class WithChildren extends withChildren() {
   }
 }
 
-customElements.define('with-children', WithChildren);
+customElements.define('with-children1', WithChildren);

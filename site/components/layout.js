@@ -5,17 +5,17 @@ import { define, props } from '../../src';
 import { Component, h } from '../utils';
 import { Link } from './primitives';
 
-const bgColor = '#DCE4CA';
-const linkCss = ({ depth, selected } = {}) => `
-  a {
-    ${selected ? `background-color: ${bgColor};` : ''}
-    display: block;
-    padding: 5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px;
-  }
-  a:hover {
-    background-color: ${bgColor};
-  }
-`;
+const linkCss = ({ depth, selected } = {}) =>
+  css({
+    ' a': {
+      backgroundColor: selected ? '#DCE4CA' : 'transparent',
+      display: 'block',
+      padding: `5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px`
+    },
+    ' a:hover': {
+      backgroundColor: '#DCE4CA'
+    }
+  });
 
 const navItems = () => [
   {
@@ -59,22 +59,22 @@ const navItems = () => [
 function renderTree(items: ?Array<Object>, depth = 0) {
   return items && items.length ? (
     <ul>
-      {items.map(n => (
-        <li>
-          <Link.is
-            css={linkCss({
-              depth,
-              selected: location.pathname === n.href
-            })}
-            href={n.href}
-          >
-            {n.text}
-          </Link.is>
-          {location.pathname.indexOf(n.href) === 0
-            ? renderTree(n.tree, depth + 1)
-            : ''}
-        </li>
-      ))}
+      {items.map(n => {
+        const styles = linkCss({
+          depth,
+          selected: location.pathname === n.href
+        });
+        return (
+          <li>
+            <Link.is class={styles} css={value(styles)} href={n.href}>
+              {n.text}
+            </Link.is>
+            {location.pathname.indexOf(n.href) === 0
+              ? renderTree(n.tree, depth + 1)
+              : ''}
+          </li>
+        );
+      })}
     </ul>
   ) : (
     ''

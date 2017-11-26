@@ -82,7 +82,7 @@ export default component(function index() {
               <code>withRenderer()</code>
             </Link.is>{' '}
             easily write renderers for your favourite view library or templating
-            language.
+            language but also provides a default `innerHTML` renderer.
           </li>
           <li>
             <Link.is href="/mixins/with-unique">
