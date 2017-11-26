@@ -10,18 +10,18 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       return shadow(this);
     }
 
+    renderer(root, html) {
+      if (super.renderer) {
+        super.renderer(root, html);
+      } else {
+        root.innerHTML = html();
+      }
+    }
+
     updated(...args) {
-      if (super.updated) {
-        super.updated(...args);
-      }
-      if (this.renderer) {
-        if (this.rendering) {
-          this.rendering();
-        }
-        this.renderer(this.renderRoot, () => this.render && this.render(this));
-        if (this.rendered) {
-          this.rendered();
-        }
-      }
+      super.updated && super.updated(...args);
+      this.rendering && this.rendering();
+      this.renderer(this.renderRoot, () => this.render && this.render(this));
+      this.rendered && this.rendered();
     }
   };
