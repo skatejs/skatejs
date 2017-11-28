@@ -2,48 +2,40 @@
 
 ## Technical overview
 
-Skate's source is kept in `src/`. It is written using the latest ES2017 version,
-with Flow type definitions.
+We use [Bolt](https://github.com/boltpkg/bolt) to manage our mono-repo. Please
+read their docs before proceeding.
 
-When Skate is built, it is transpiled in to various distribution formats, ready
-for use in the browser, on a server, or in a webpack build.
-
-The documentation for Skate is kept in `site/`, and is written using Skate with
-server-side rendering.
-
-Unit tests exist both for the source and for the documentation examples.
+* The site can be found in `site/`.
+* All packages can be found in `packages/`.
 
 ## Getting started
 
-Skate uses `npm` as its package manager. Ensure you're on `npm@5` at a minimum.
+To get started, run `bolt`.
 
-Here are the main commands you'll need while developing:
+### Documentation / website
 
-* Creating a bundle: `npm prepublish`
-* Developing with tests: `npm run test:watch`
-* Updating skate site: `npm run dev`
-* Fixing whole project code format via prettier: `npm run format`
-* Updating Typescript definitions ( if you've changed anything make sure all TS
-  test pass ): `npm run test:ts`
+To document a package or work on the website, run `bolt dev`. This will start up
+a `webpack-dev-server` and you can dev as normal.
 
-## Making a change
+### tests
 
-All changes to Skate should be include an accompanying test case to demonstrate
-the feature or bug being addressed.
+To run the tests for normal development, you'll want to do that in watch mode:
+`bolt test:watch`.
 
-## Committing
+### Other commands
 
-// @TODO
+Here are some other commands that you may need to run from time to time, for
+whatever reason:
 
-## Pull Requests
+* `bolt build` builds all distributions.
+* `bolt build:[type]` build the distribution for the corresponding `[type]`.
+* `bolt precommit` runs the pre-commit hook.
+* `bolt prepare` prepares the packages for publishing.
+* `bolt site` compiles the website.
+* `bolt test` runs all tests for all packages once.
+* `bolt test:ts` checks the typescript definitions.
 
-Pull requests should be issued for even the smallest change. Every pull request
-should have at least one corresponding issue.
+## Workflow
 
-## Releasing
-
-// @TODO
-
-## Notes
-
-* Default branch should always be the latest stable branch.
+You may develop how you like, but the code you write should have accompanying
+tests.

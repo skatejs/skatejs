@@ -134,7 +134,6 @@
     "dev": "cd site && webpack-dev-server --hot",
     "precommit": "lint-staged",
     "prepare": "npm run build",
-    "release": "npm publish && git push --follow-tags",
     "site": "cd site && webpack -p",
     "test:watch": "jest --watch",
     "test:ts": "bolt workspaces exec -- tsc --noEmit --project ./"
