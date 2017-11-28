@@ -3,7 +3,10 @@
 _Delete this section if this is a feature request._
 
 * Skate version: _x.x.x_
+  <!--(run `npm list skatejs` from a terminal/cmd prompt and paste output below): -->
 * Affected browsers (and versions): _IE 10_
+* Flow/Typescript version (if issue is related to type system): _Flow 0.59 / TS
+  2.6.1_
 
 ### Current behaviour
 
