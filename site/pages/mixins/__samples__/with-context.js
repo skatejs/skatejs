@@ -1,4 +1,4 @@
-import { withContext } from '../../../../src';
+import { withContext } from 'skatejs';
 
 class WithContext extends withContext() {
   context = {

@@ -1,4 +1,4 @@
-import { withLifecycle } from '../../../../src';
+import { withLifecycle } from 'skatejs';
 
 class Base extends HTMLElement {
   connectedCallback() {

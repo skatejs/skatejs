@@ -1,4 +1,4 @@
-import { withComponent } from '../../../../../src';
+import { withComponent } from 'skatejs';
 
 class WithChildren extends withComponent() {
   props = {

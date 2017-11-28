@@ -1,4 +1,4 @@
-import { props, withComponent } from '../../../../src';
+import { props, withComponent } from 'skatejs';
 import withLitHtml from '@skatejs/renderer-lit-html';
 import { html } from 'lit-html';
 

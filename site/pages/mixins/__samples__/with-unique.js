@@ -1,4 +1,4 @@
-import { withUnique } from '../../../../src';
+import { withUnique } from 'skatejs';
 
 const names = [];
 

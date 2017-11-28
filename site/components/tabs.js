@@ -1,5 +1,5 @@
 import css, { value } from 'yocss';
-import { define, props } from '../../src';
+import { define, props } from 'skatejs';
 import { Component, h } from '../utils';
 
 const cssTabs = css({

@@ -1,4 +1,4 @@
-import { props, withUpdate } from '../../../../src';
+import { props, withUpdate } from 'skatejs';
 
 class WithProps extends withUpdate() {
   // This is where you declare your props.

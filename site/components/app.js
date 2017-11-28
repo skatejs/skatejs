@@ -2,7 +2,7 @@ import css, { value } from 'yocss';
 import globalStyles from '../css';
 import { Loading } from './primitives';
 import { Component, h, withLoadablePreact } from '../utils';
-import { define, props } from '../../src';
+import { define, props } from 'skatejs';
 import { Router, Route } from '@skatejs/sk-router';
 import logo50 from '../img/logo-50x50.png';
 import logo100 from '../img/logo-100x100.png';

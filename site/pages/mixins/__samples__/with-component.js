@@ -1,4 +1,4 @@
-import { props, withComponent } from '../../../../src';
+import { props, withComponent } from 'skatejs';
 
 const myRenderer = (Base = HTMLElement) =>
   class extends Base {

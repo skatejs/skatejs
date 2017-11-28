@@ -61,12 +61,31 @@
       }
     }
   },
-  "devDependencies": {
-    "@skatejs/bore": "^4.0.0",
+  "bolt": {
+    "version": "^0.17.0",
+    "workspaces": [
+      "site",
+      "packages/*"
+    ],
+    "releases": {
+      "baseCommitUrl": "https://github.com/skatejs/skatejs/commits"
+    }
+  },
+  "dependencies": {
     "@skatejs/renderer-lit-html": "^0.0.0",
     "@skatejs/renderer-preact": "^0.1.0",
     "@skatejs/renderer-react": "^0.0.0",
     "@skatejs/sk-router": "^0.1.0",
+    "highlight.js": "^9.12.0",
+    "lit-html": "^0.7.1",
+    "preact": "^8.2.5",
+    "prismjs": "^1.8.4",
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
+    "yocss": "^0.5.1"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "^4.0.0",
     "@skatejs/ssr": "^0.16.0",
     "@skatejs/val": "^0.3.1",
     "babel-cli": "^6.26.0",
@@ -87,89 +106,50 @@
     "conartist": "^0.12.0",
     "eslint-plugin-flowtype": "^2.34.0",
     "file-loader": "^1.1.5",
-    "highlight.js": "^9.12.0",
     "husky": "^0.13.3",
     "img-loader": "^2.0.0",
     "jest": "^20.0.4",
     "jest-cli": "^21.0.2",
     "lint-staged": "^4.0.2",
-    "lit-html": "^0.7.1",
-    "preact": "^8.2.5",
     "prettier": "1.8.2",
     "prettier-eslint": "^8.2.2",
-    "prismjs": "^1.8.4",
     "raw-loader": "^0.5.1",
-    "react": "^15.0.0",
-    "react-dom": "^15.0.0",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
     "typescript": "2.6.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3",
-    "worker-loader": "^1.1.0",
-    "yocss": "^0.5.1"
+    "worker-loader": "^1.1.0"
   },
-  "files": [
-    "es/",
-    "esnext/",
-    "node/",
-    "umd/"
-  ],
-  "main": "node/index.js",
-  "module": "es/index.js",
-  "esnext": "esnext/index.js",
-  "types": "src/index.d.ts",
+  "name": "skatejs",
+  "private": true,
   "scripts": {
-    "build:es": "BABEL_ENV=es babel src --out-dir es",
-    "build:esnext": "BABEL_ENV=esnext babel src --out-dir esnext",
-    "build:node": "BABEL_ENV=node babel src --out-dir node",
+    "build": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
+    "build:es": "BABEL_ENV=es bolt workspaces exec --only-fs packages/* -- babel src --out-dir es",
+    "build:esnext": "BABEL_ENV=esnext bolt workspaces exec --only-fs packages/* -- babel src --out-dir esnext",
+    "build:node": "BABEL_ENV=node bolt workspaces exec --only-fs packages/* -- babel src --out-dir node",
+    "build:umd": "BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c && BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c --min",
     "test": "jest",
-    "build:umd": "BABEL_ENV=rollup rollup -c && BABEL_ENV=rollup rollup -c --min",
-    "dev": "webpack-dev-server --hot",
+    "dev": "cd site && webpack-dev-server --hot",
     "precommit": "lint-staged",
-    "prepare": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
+    "prepare": "npm run build",
     "release": "npm publish && git push --follow-tags",
-    "site": "webpack -p",
+    "site": "cd site && webpack -p",
     "test:watch": "jest --watch",
-    "test:ts": "tsc -p ./",
-    "types": "get-typed src/index.js --dest umd/skatejs",
-    "format": "prettier --write \"**/*.{js,ts,tsx,json,md}\""
+    "test:ts": "bolt workspaces exec -- tsc --noEmit --project ./"
   },
   "jest": {
     "modulePathIgnorePatterns": [
       "./node_modules"
     ],
-    "setupFiles": [
-      "./test/unit/setup"
-    ],
-    "setupTestFrameworkScriptFile": "./test/unit/setup-test",
     "testEnvironment": "@skatejs/ssr/jest"
   },
   "prettier": {
     "singleQuote": true
   },
-  "browser": "umd/index.js",
-  "name": "skatejs",
-  "version": "5.0.0-beta.4",
-  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
-  "license": "MIT",
-  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/skatejs/skatejs"
-  },
-  "keywords": [
-    "components",
-    "custom",
-    "dom",
-    "elements",
-    "web",
-    "vdom",
-    "virtual"
-  ],
   "lint-staged": {
-    "*.{ts,tsx,js,json,md}": [
+    "*.{js,json,md,ts}": [
       "prettier --write",
       "git add"
     ]

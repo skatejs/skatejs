@@ -1,4 +1,4 @@
-import { withRenderer } from '../../../../src';
+import { withRenderer } from 'skatejs';
 
 const myRenderer = (Base = HTMLElement) =>
   class extends Base {

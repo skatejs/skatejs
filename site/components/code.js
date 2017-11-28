@@ -1,5 +1,5 @@
 import css, { value } from 'yocss';
-import { define, props } from '../../src';
+import { define, props } from 'skatejs';
 import { Component, h, withLoadableStyle } from '../utils';
 import { Tabs } from './tabs';
 
@@ -127,9 +127,11 @@ export const Example = define(
     renderer(root) {
       root.innerHTML = `
         <style>${value(...Object.values(cssExample))}</style>
-        ${this.title
-          ? `<div class="${cssExample.title}">${this.title}</div>`
-          : ''}
+        ${
+          this.title
+            ? `<div class="${cssExample.title}">${this.title}</div>`
+            : ''
+        }
         <div class="${cssExample.code}">${this.html}</div>
       `;
     }

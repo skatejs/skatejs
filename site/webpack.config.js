@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const contextPath = path.join(__dirname, 'site');
+const contextPath = path.join(__dirname, '.');
 const publicPath = path.join(__dirname, 'public');
 
 // require('@skatejs/ssr/register');
