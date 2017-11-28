@@ -129,7 +129,7 @@
     "dev": "webpack-dev-server --hot",
     "prepublish": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
     "precommit": "lint-staged",
-    "release": "git push --follow-tags && npm publish",
+    "release": "npm publish && git push --follow-tags && ",
     "site": "webpack -p",
     "test:watch": "jest --watch",
     "test:ts": "tsc -p ./",
