@@ -111,6 +111,7 @@
     "yocss": "^0.5.1"
   },
   "files": [
+    "src/",
     "es/",
     "esnext/",
     "node/",
