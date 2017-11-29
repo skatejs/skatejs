@@ -4,7 +4,7 @@ import { Component, h } from 'preact';
 import withRenderer from '..';
 
 class MyElement extends withRenderer() {
-  renderCallback({ name }) {
+  render({ name }) {
     return <div>Hello, {name}!</div>;
   }
 }
@@ -17,9 +17,9 @@ test('renders', () => {
 
   const el = new MyElement();
   expect(el.innerHTML).toEqual('');
-  el.rendererCallback(el, el.renderCallback.bind(el, { name: 'World' }));
+  el.renderer(el, el.render.bind(el, { name: 'World' }));
   expect(el.innerHTML).toEqual(testContent('World'));
-  el.rendererCallback(el, el.renderCallback.bind(el, { name: 'Bob' }));
+  el.renderer(el, el.render.bind(el, { name: 'Bob' }));
   expect(el.innerHTML).toEqual(testContent('Bob'));
 });
 
@@ -35,7 +35,7 @@ test('wrappers', () => {
       super();
       this.attachShadow({ mode: 'open' });
     }
-    renderCallback() {
+    render() {
       return <PreactComponent {...this.props} />;
     }
   }
@@ -44,6 +44,6 @@ test('wrappers', () => {
 
   const el = new PreactComponentWrapper();
   const { shadowRoot } = el;
-  el.rendererCallback(shadowRoot, el.renderCallback.bind(el));
+  el.renderer(shadowRoot, el.render.bind(el));
   expect(shadowRoot.innerHTML).toEqual('<div>Hello, <slot></slot>!</div>');
 });

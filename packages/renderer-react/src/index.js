@@ -11,7 +11,7 @@ export default (Base = HTMLElement) =>
         ...{ children: <slot /> }
       };
     }
-    rendererCallback(renderRoot, renderCallback) {
-      render(renderCallback(), renderRoot);
+    renderer(root, call) {
+      render(call(), root);
     }
   };

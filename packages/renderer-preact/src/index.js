@@ -12,11 +12,11 @@ export default (Base = HTMLElement) =>
         ...{ children: <slot /> }
       };
     }
-    rendererCallback(renderRoot, renderCallback) {
+    renderer(root, call) {
       this._preactDom = render(
-        renderCallback(),
-        renderRoot,
-        this._preactDom || renderRoot.children[0]
+        call(),
+        root,
+        this._preactDom || root.children[0]
       );
     }
   };
