@@ -2,6 +2,10 @@
   "babel": {
     "env": {
       "es": {
+        "ignore": [
+          "__tests__",
+          "node_modules"
+        ],
         "presets": [
           [
             "env",
@@ -15,6 +19,10 @@
         ]
       },
       "esnext": {
+        "ignore": [
+          "__tests__",
+          "node_modules"
+        ],
         "presets": [
           "es2016",
           "es2017",
@@ -24,6 +32,10 @@
         ]
       },
       "node": {
+        "ignore": [
+          "__tests__",
+          "node_modules"
+        ],
         "presets": [
           [
             "env",
@@ -47,6 +59,10 @@
         ]
       },
       "rollup": {
+        "ignore": [
+          "__tests__",
+          "node_modules"
+        ],
         "presets": [
           [
             "env",
@@ -72,21 +88,28 @@
     }
   },
   "dependencies": {
-    "@skatejs/renderer-lit-html": "^0.0.0",
-    "@skatejs/renderer-preact": "^0.1.0",
-    "@skatejs/renderer-react": "^0.0.0",
     "@skatejs/sk-router": "^0.1.0",
+    "babel-register": "^6.26.0",
+    "glob": "^7.1.2",
     "highlight.js": "^9.12.0",
+    "jest-environment-node": "^21.1.0",
+    "js-beautify": "^1.7.3",
     "lit-html": "^0.7.1",
+    "mkdirp": "^0.5.1",
+    "outdent": "^0.4.1",
+    "parse5": "^3.0.2",
     "preact": "^8.2.5",
     "prismjs": "^1.8.4",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
+    "prettier": "^1.7.0",
+    "uglify-es": "^3.1.2",
+    "undom": "^0.3.3",
+    "yargs": "^9.0.1",
     "yocss": "^0.5.1"
   },
   "devDependencies": {
     "@skatejs/bore": "^4.0.0",
-    "@skatejs/ssr": "^0.16.0",
     "@skatejs/val": "^0.3.1",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
@@ -129,7 +152,7 @@
     "build:es": "BABEL_ENV=es bolt workspaces exec --only-fs packages/* -- babel src --out-dir es",
     "build:esnext": "BABEL_ENV=esnext bolt workspaces exec --only-fs packages/* -- babel src --out-dir esnext",
     "build:node": "BABEL_ENV=node bolt workspaces exec --only-fs packages/* -- babel src --out-dir node",
-    "build:umd": "BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c && BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c --min",
+    "build:umd": "BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c ../../rollup.config.js && BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c ../../rollup.config.js --min",
     "test": "jest",
     "dev": "cd site && webpack-dev-server --hot",
     "precommit": "lint-staged",
@@ -142,7 +165,8 @@
     "modulePathIgnorePatterns": [
       "./node_modules"
     ],
-    "testEnvironment": "@skatejs/ssr/jest"
+    "testEnvironment": "./packages/ssr/jest",
+    "transformIgnorePatterns": []
   },
   "prettier": {
     "singleQuote": true

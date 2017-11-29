@@ -1,0 +1,31 @@
+{
+  "bin": "./bin/index",
+  "dependencies": {
+    "babel-register": "^6.26.0",
+    "glob": "^7.1.2",
+    "jest-environment-node": "^21.1.0",
+    "js-beautify": "^1.7.3",
+    "mkdirp": "^0.5.1",
+    "outdent": "^0.4.1",
+    "parse5": "^3.0.2",
+    "preact": "^8.2.5",
+    "prettier": "^1.7.0",
+    "uglify-es": "^3.1.2",
+    "undom": "^0.3.3",
+    "yargs": "^9.0.1"
+  },
+  "description": "Server-side render your web components.",
+  "devDependencies": {
+    "@skatejs/val": "^0.3.1"
+  },
+  "files": [
+    "bin",
+    "perf",
+    "register",
+    "index.js",
+    "jest.js",
+    "utils.js"
+  ],
+  "name": "@skatejs/ssr",
+  "version": "0.16.0"
+}

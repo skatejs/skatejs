@@ -8,18 +8,6 @@
   dependencies:
     skatejs-dom-diff "^0.4.2"
 
-"@skatejs/renderer-lit-html@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@skatejs/renderer-lit-html/-/renderer-lit-html-0.0.0.tgz#8ab398b1fe81cc7a2ed6f3839a246a6b328dbe85"
-
-"@skatejs/renderer-preact@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@skatejs/renderer-preact/-/renderer-preact-0.1.0.tgz#6ca3b1aa9c46c2852078292621e489b0b96d97e6"
-
-"@skatejs/renderer-react@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@skatejs/renderer-react/-/renderer-react-0.0.0.tgz#daf52e2dfa026e3c876acf010a769ee5dd4795a1"
-
 "@skatejs/sk-router@^0.1.0":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@skatejs/sk-router/-/sk-router-0.1.1.tgz#556e08be9346a8bacf2b3905ce48dd933156f6e5"
@@ -27,24 +15,6 @@
     "@skatejs/val" "^0.3.1"
     page "^1.7.1"
     skatejs "^5.0.0-beta.3"
-
-"@skatejs/ssr@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@skatejs/ssr/-/ssr-0.16.0.tgz#843e10186ff05eba955be69504166d7b881c59cf"
-  dependencies:
-    babel-register "6.26.0"
-    glob "^7.1.2"
-    jest-environment-node "21.1.0"
-    js-beautify "1.7.3"
-    mkdirp "^0.5.1"
-    outdent "^0.4.1"
-    parse5 "^3.0.2"
-    preact "8.2.5"
-    prettier "1.7.0"
-    skatejs "5.0.0-beta.3"
-    uglify-es "3.1.2"
-    undom "^0.3.3"
-    yargs "9.0.1"
 
 "@skatejs/val@^0.3.1":
   version "0.3.1"
@@ -1122,7 +1092,7 @@ babel-preset-stage-3@^6.24.1:
     babel-plugin-transform-exponentiation-operator "^6.24.1"
     babel-plugin-transform-object-rest-spread "^6.22.0"
 
-babel-register@6.26.0, babel-register@^6.26.0:
+babel-register@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-register/-/babel-register-6.26.0.tgz#6ed021173e2fcb486d7acb45c6009a856f647071"
   dependencies:
@@ -1680,10 +1650,6 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
 commander@^2.11.0, commander@^2.9.0, commander@~2.12.1:
   version "2.12.2"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.12.2.tgz#0f5946c427ed9ec0d91a46bb9def53e54650e555"
-
-commander@~2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
 commander@~2.8.1:
   version "2.8.1"
@@ -4025,13 +3991,6 @@ jest-environment-jsdom@^21.2.1:
     jest-util "^21.2.1"
     jsdom "^9.12.0"
 
-jest-environment-node@21.1.0:
-  version "21.1.0"
-  resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-21.1.0.tgz#a11fd611e8ae6c3e02b785aa1b12a3009f4fd0f1"
-  dependencies:
-    jest-mock "^21.1.0"
-    jest-util "^21.1.0"
-
 jest-environment-node@^20.0.3:
   version "20.0.3"
   resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-20.0.3.tgz#d488bc4612af2c246e986e8ae7671a099163d403"
@@ -4039,7 +3998,7 @@ jest-environment-node@^20.0.3:
     jest-mock "^20.0.3"
     jest-util "^20.0.3"
 
-jest-environment-node@^21.2.1:
+jest-environment-node@^21.1.0, jest-environment-node@^21.2.1:
   version "21.2.1"
   resolved "https://registry.yarnpkg.com/jest-environment-node/-/jest-environment-node-21.2.1.tgz#98c67df5663c7fbe20f6e792ac2272c740d3b8c8"
   dependencies:
@@ -4143,7 +4102,7 @@ jest-mock@^20.0.3:
   version "20.0.3"
   resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-20.0.3.tgz#8bc070e90414aa155c11a8d64c869a0d5c71da59"
 
-jest-mock@^21.1.0, jest-mock@^21.2.0:
+jest-mock@^21.2.0:
   version "21.2.0"
   resolved "https://registry.yarnpkg.com/jest-mock/-/jest-mock-21.2.0.tgz#7eb0770e7317968165f61ea2a7281131534b3c0f"
 
@@ -4274,7 +4233,7 @@ jest-util@^20.0.3:
     leven "^2.1.0"
     mkdirp "^0.5.1"
 
-jest-util@^21.1.0, jest-util@^21.2.1:
+jest-util@^21.2.1:
   version "21.2.1"
   resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-21.2.1.tgz#a274b2f726b0897494d694a6c3d6a61ab819bb78"
   dependencies:
@@ -4316,9 +4275,9 @@ jest@^21.2.1:
   dependencies:
     jest-cli "^21.2.1"
 
-js-beautify@1.7.3:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.7.3.tgz#3f563067162cd0635c8611686d1fa0bb1448773a"
+js-beautify@^1.7.3:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/js-beautify/-/js-beautify-1.7.4.tgz#fa0dfa8fef594d6a6253755fe26af5d0a22cbd90"
   dependencies:
     config-chain "~1.1.5"
     editorconfig "^0.13.2"
@@ -5466,10 +5425,6 @@ portfinder@^1.0.9:
     debug "^2.2.0"
     mkdirp "0.5.x"
 
-preact@8.2.5:
-  version "8.2.5"
-  resolved "https://registry.yarnpkg.com/preact/-/preact-8.2.5.tgz#cbfa3962a8012768159f6d01d46f9c1eb3213c0a"
-
 preact@^8.2.5:
   version "8.2.6"
   resolved "https://registry.yarnpkg.com/preact/-/preact-8.2.6.tgz#0028b426ef98fcca741a3c617ff5b813b9a947c7"
@@ -5502,11 +5457,7 @@ prettier-eslint@^8.2.2:
     typescript "^2.5.1"
     typescript-eslint-parser "^8.0.0"
 
-prettier@1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.7.0.tgz#47481588f41f7c90f63938feb202ac82554e7150"
-
-prettier@1.8.2, prettier@^1.7.0, prettier@^1.7.1:
+prettier@^1.7.0, prettier@^1.7.1:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.2.tgz#bff83e7fd573933c607875e5ba3abbdffb96aeb8"
 
@@ -6198,10 +6149,6 @@ skatejs-dom-diff@^0.4.2:
   dependencies:
     object-assign "^4.0.1"
 
-skatejs@5.0.0-beta.3:
-  version "5.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/skatejs/-/skatejs-5.0.0-beta.3.tgz#430813f10669316d1269149828db697d2ae177e0"
-
 skatejs@^5.0.0-beta.3:
   version "5.0.0-beta.4"
   resolved "https://registry.yarnpkg.com/skatejs/-/skatejs-5.0.0-beta.4.tgz#ce9593d791e5acdb5c9023880b0b7374650a05a6"
@@ -6783,12 +6730,12 @@ ua-parser-js@^0.7.9:
   version "0.7.17"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.17.tgz#e9ec5f9498b9ec910e7ae3ac626a805c4d09ecac"
 
-uglify-es@3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.1.2.tgz#b22cfca950f0632092aff42bb46979d83b5ec6f5"
+uglify-es@^3.1.2:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.2.0.tgz#fbbfb9dc465ec7e5065701b9720d0de977d0bc24"
   dependencies:
-    commander "~2.11.0"
-    source-map "~0.5.1"
+    commander "~2.12.1"
+    source-map "~0.6.1"
 
 uglify-js@^2.6, uglify-js@^2.8.29:
   version "2.8.29"
@@ -7262,24 +7209,6 @@ yargs-parser@^7.0.0:
   dependencies:
     camelcase "^4.1.0"
 
-yargs@9.0.1, yargs@^9.0.0, yargs@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/yargs/-/yargs-9.0.1.tgz#52acc23feecac34042078ee78c0c007f5085db4c"
-  dependencies:
-    camelcase "^4.1.0"
-    cliui "^3.2.0"
-    decamelize "^1.1.1"
-    get-caller-file "^1.0.1"
-    os-locale "^2.0.0"
-    read-pkg-up "^2.0.0"
-    require-directory "^2.1.1"
-    require-main-filename "^1.0.1"
-    set-blocking "^2.0.0"
-    string-width "^2.0.0"
-    which-module "^2.0.0"
-    y18n "^3.2.1"
-    yargs-parser "^7.0.0"
-
 yargs@^6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-6.6.0.tgz#782ec21ef403345f830a808ca3d513af56065208"
@@ -7319,6 +7248,24 @@ yargs@^7.0.2:
 yargs@^8.0.2:
   version "8.0.2"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-8.0.2.tgz#6299a9055b1cefc969ff7e79c1d918dceb22c360"
+  dependencies:
+    camelcase "^4.1.0"
+    cliui "^3.2.0"
+    decamelize "^1.1.1"
+    get-caller-file "^1.0.1"
+    os-locale "^2.0.0"
+    read-pkg-up "^2.0.0"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^2.0.0"
+    which-module "^2.0.0"
+    y18n "^3.2.1"
+    yargs-parser "^7.0.0"
+
+yargs@^9.0.0, yargs@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-9.0.1.tgz#52acc23feecac34042078ee78c0c007f5085db4c"
   dependencies:
     camelcase "^4.1.0"
     cliui "^3.2.0"

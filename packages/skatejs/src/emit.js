@@ -19,6 +19,7 @@ export function emit(
     e = new CustomEvent(name, opts);
   } else {
     e = (document.createEvent('CustomEvent'): CustomElementEvent);
+    // $FlowFixMe
     e.initCustomEvent(name, opts.bubbles, opts.cancelable, opts.detail);
     Object.defineProperty(e, 'composed', { value: opts.composed });
   }
