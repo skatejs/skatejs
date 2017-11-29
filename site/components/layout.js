@@ -1,5 +1,3 @@
-// @flow
-
 import css, { names, value } from 'yocss';
 import { define, props } from 'skatejs';
 import { Component, h } from '../utils';

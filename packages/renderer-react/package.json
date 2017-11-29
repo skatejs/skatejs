@@ -1,6 +1,6 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "browser": "umd/index.js",
+  "browser": "es/index.js",
   "description": "A SkateJS renderer for React.",
   "esnext": "esnext/index.js",
   "devDependencies": {
@@ -10,8 +10,7 @@
   "files": [
     "es/",
     "esnext/",
-    "node/",
-    "umd/"
+    "node/"
   ],
   "license": "MIT",
   "keywords": [

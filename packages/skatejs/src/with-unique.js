@@ -13,8 +13,6 @@ export const withUnique = (Base: Class<any> = HTMLElement): Class<any> => {
     static set is(is: string) {
       this._is = is;
     }
-    static defined() {}
   }
-  customElements.whenDefined(Elem.is).then(() => Elem.defined());
   return Elem;
 };

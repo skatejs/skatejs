@@ -50,7 +50,6 @@ describe('render (serialisation)', () => {
     it('node', () => {
       const hello = new Hello();
       hello.appendChild(document.createTextNode('World'));
-
       return render(hello).then(r => {
         expect(r).toMatchSnapshot();
       });
@@ -59,8 +58,9 @@ describe('render (serialisation)', () => {
     it('document', () => {
       const hello = new Hello();
       hello.appendChild(document.createTextNode('World'));
+      document.body.innerHTML = '';
+      document.head.innerHTML = '';
       document.body.appendChild(hello);
-
       return render(document).then(r => {
         document.body.removeChild(hello);
         expect(r).toMatchSnapshot();

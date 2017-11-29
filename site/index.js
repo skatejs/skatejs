@@ -17,6 +17,7 @@ function script(src, done) {
   scr.src = src;
   document.head.appendChild(scr);
 }
+
 if (window.customElements) {
   script('/ce-es5-shim.js', mount);
 } else {

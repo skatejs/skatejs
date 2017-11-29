@@ -1,0 +1,34 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com>",
+  "description": "A web component router that's compatible with code-splitting out of the box.",
+  "dependencies": {
+    "@skatejs/val": "^0.3.1",
+    "page": "^1.7.1",
+    "skatejs": "^5.0.0-beta.4"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "^4.0.0",
+    "@skatejs/ssr": "^0.16.0",
+    "jest-in-case": "^1.0.2"
+  },
+  "browser": "umd/index.js",
+  "esnext": "esnext/index.js",
+  "files": [
+    "es/",
+    "esnext/",
+    "node/",
+    "umd/"
+  ],
+  "license": "MIT",
+  "main": "node/index.js",
+  "module": "es/index.js",
+  "name": "@skatejs/sk-router",
+  "repository": "https://github.com/skatejs/skatejs",
+  "keywords": [
+    "web",
+    "component",
+    "router",
+    "skatejs"
+  ],
+  "version": "0.1.1"
+}

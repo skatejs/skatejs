@@ -8,14 +8,6 @@
   dependencies:
     skatejs-dom-diff "^0.4.2"
 
-"@skatejs/sk-router@^0.1.0":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@skatejs/sk-router/-/sk-router-0.1.1.tgz#556e08be9346a8bacf2b3905ce48dd933156f6e5"
-  dependencies:
-    "@skatejs/val" "^0.3.1"
-    page "^1.7.1"
-    skatejs "^5.0.0-beta.3"
-
 "@skatejs/val@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@skatejs/val/-/val-0.3.1.tgz#1e043fdcd22ac3d1deab69ef7432314f38ce9f98"
@@ -4031,6 +4023,10 @@ jest-haste-map@^21.2.0:
     sane "^2.0.0"
     worker-farm "^1.3.1"
 
+jest-in-case@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/jest-in-case/-/jest-in-case-1.0.2.tgz#56744b5af33222bd0abab70cf919f1d170ab75cc"
+
 jest-jasmine2@^20.0.4:
   version "20.0.4"
   resolved "https://registry.yarnpkg.com/jest-jasmine2/-/jest-jasmine2-20.0.4.tgz#fcc5b1411780d911d042902ef1859e852e60d5e1"
@@ -6148,10 +6144,6 @@ skatejs-dom-diff@^0.4.2:
   resolved "https://registry.yarnpkg.com/skatejs-dom-diff/-/skatejs-dom-diff-0.4.2.tgz#9f0406a6d6839c5505d79e75207a0e6a62a7f285"
   dependencies:
     object-assign "^4.0.1"
-
-skatejs@^5.0.0-beta.3:
-  version "5.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/skatejs/-/skatejs-5.0.0-beta.4.tgz#ce9593d791e5acdb5c9023880b0b7374650a05a6"
 
 slash@^1.0.0:
   version "1.0.0"

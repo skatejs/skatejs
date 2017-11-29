@@ -88,7 +88,6 @@
     }
   },
   "dependencies": {
-    "@skatejs/sk-router": "^0.1.0",
     "babel-register": "^6.26.0",
     "glob": "^7.1.2",
     "highlight.js": "^9.12.0",
@@ -97,12 +96,13 @@
     "lit-html": "^0.7.1",
     "mkdirp": "^0.5.1",
     "outdent": "^0.4.1",
+    "page": "^1.7.1",
     "parse5": "^3.0.2",
     "preact": "^8.2.5",
+    "prettier": "^1.7.0",
     "prismjs": "^1.8.4",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "prettier": "^1.7.0",
     "uglify-es": "^3.1.2",
     "undom": "^0.3.3",
     "yargs": "^9.0.1",
@@ -133,6 +133,7 @@
     "img-loader": "^2.0.0",
     "jest": "^20.0.4",
     "jest-cli": "^21.0.2",
+    "jest-in-case": "^1.0.2",
     "lint-staged": "^4.0.2",
     "prettier": "1.8.2",
     "prettier-eslint": "^8.2.2",
@@ -145,26 +146,24 @@
     "webpack-dev-server": "^2.9.3",
     "worker-loader": "^1.1.0"
   },
-  "name": "skatejs",
+  "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "npm run build:es && npm run build:esnext && npm run build:node && npm run build:umd",
-    "build:es": "BABEL_ENV=es bolt workspaces exec --only-fs packages/* -- babel src --out-dir es",
-    "build:esnext": "BABEL_ENV=esnext bolt workspaces exec --only-fs packages/* -- babel src --out-dir esnext",
-    "build:node": "BABEL_ENV=node bolt workspaces exec --only-fs packages/* -- babel src --out-dir node",
-    "build:umd": "BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c ../../rollup.config.js && BABEL_ENV=rollup bolt workspaces exec --only-fs packages/* -- rollup -c ../../rollup.config.js --min",
-    "test": "jest",
+    "build": "npm run build:es && npm run build:esnext && npm run build:node",
+    "build:es": "BABEL_ENV=es bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir es",
+    "build:esnext": "BABEL_ENV=esnext bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir esnext",
+    "build:node": "BABEL_ENV=node bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir node",
+    "build:umd": "BABEL_ENV=rollup bolt ws exec --only-fs 'packages/!(ssr)' -- rollup -c ../../rollup.config.js && BABEL_ENV=rollup bolt ws exec --only-fs 'packages/*' -- rollup -c ../../rollup.config.js --min",
+    "del": "bolt ws exec -- rm -rf es/ esnext/ node/ node_modules/ public/ && rm -rf node_modules/",
     "dev": "cd site && webpack-dev-server --hot",
     "precommit": "lint-staged",
     "prepare": "npm run build",
     "site": "cd site && webpack -p",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "test:ts": "bolt workspaces exec -- tsc --noEmit --project ./"
+    "test:ts": "bolt ws exec -- tsc --noEmit --project ./"
   },
   "jest": {
-    "modulePathIgnorePatterns": [
-      "./node_modules"
-    ],
     "testEnvironment": "./packages/ssr/jest",
     "transformIgnorePatterns": []
   },
