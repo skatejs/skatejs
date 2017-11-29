@@ -1,4 +1,5 @@
 // @flow
+// @jsx h
 
 import { h } from 'preact';
 import { define, props, withComponent, withUpdate } from 'skatejs';
@@ -7,74 +8,9 @@ import withPreact from '@skatejs/renderer-preact';
 export { h } from 'preact';
 
 // Compatiblity layer for renames.
-export const Component = class extends withComponent(withPreact()) {
-  childrenUpdated() {
-    if (this.childrenChangedCallback) {
-      return this.childrenChangedCallback(...args);
-    }
-    if (super.childrenUpdated) {
-      return super.childrenUpdated(...args);
-    }
-  }
-  updating(...args) {
-    if (this.propsSetCallback) {
-      return this.propsSetCallback(...args);
-    }
-    if (super.updating) {
-      return super.updating(...args);
-    }
-  }
-  shouldUpdate(...args) {
-    if (this.propsUpdatedCallback) {
-      return this.propsUpdatedCallback(...args);
-    }
-    if (super.shouldUpdate) {
-      return super.shouldUpdate(...args);
-    }
-  }
-  updated(...args) {
-    if (this.propsChangedCallback) {
-      return this.propsChangedCallback(...args);
-    }
-    if (super.updated) {
-      return super.updated(...args);
-    }
-  }
-  render(...args) {
-    if (this.renderCallback) {
-      return this.renderCallback(...args);
-    }
-    if (super.render) {
-      return super.render(...args);
-    }
-  }
-  renderCallback(...args) {
-    if (super.renderCallback) {
-      return super.renderCallback(...args);
-    }
-    if (super.render) {
-      return super.render(...args);
-    }
-  }
-  renderer(...args) {
-    if (this.rendererCallback) {
-      return this.rendererCallback(...args);
-    }
-    if (super.renderer) {
-      return super.renderer(...args);
-    }
-  }
-  rendered(...args) {
-    if (this.renderedCallback) {
-      return this.renderedCallback(...args);
-    }
-    if (super.rendered) {
-      return super.rendered(...args);
-    }
-  }
-};
+export const Component = withComponent(withPreact());
 
-export function component(render, props = []) {
+export function component(render: Function, props: Array<string> = []) {
   class Comp extends Component {
     static props = props.reduce((prev, curr) => {
       prev[curr] = { attribute: { source: true } };
@@ -95,7 +31,7 @@ export function component(render, props = []) {
   return define(Comp);
 }
 
-export const withLoadable = opts =>
+export const withLoadable = (opts: Object) =>
   define(
     class Loadable extends Component {
       props: {
@@ -134,7 +70,7 @@ export const withLoadable = opts =>
     }
   );
 
-export const withLoadablePreact = opts =>
+export const withLoadablePreact = (opts: Object) =>
   withLoadable({
     ...{
       format: r => {
@@ -145,5 +81,5 @@ export const withLoadablePreact = opts =>
     ...opts
   });
 
-export const withLoadableStyle = opts =>
+export const withLoadableStyle = (opts: Object) =>
   withLoadable({ ...{ format: r => <style>{r}</style> }, ...opts });
