@@ -7,8 +7,6 @@ run their tests in a node environment.
 
 * Uses [`undom`](https://github.com/developit/undom) for a minimal DOM API in
   Node.
-* No polyfills necessary.
-* No client code required.
 * Great for rendering out static sites from components.
 * Run your tests in Jest!
 * Statically generate JS files to HTML files.

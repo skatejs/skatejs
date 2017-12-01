@@ -1,43 +1,37 @@
-/** @jsx vh */
+const { define, withComponent } = require('skatejs');
+const outdent = require('outdent');
 
-const { Component, define, h, withUnique } = require('skatejs');
-const vh = require('@skatejs/val').default(h);
+class Hello extends withComponent() {
+  render() {
+    return outdent`
+      <span class="test">
+        Hello,
+        <x-yell><slot></slot></x-yell>!
+      </span>
+    `;
+  }
+}
 
-class Yell extends withUnique() {
-  connectedCallback() {
-    this.attachShadow({ mode: 'open' }).innerHTML = `
+class Index extends withComponent() {
+  render() {
+    return outdent`
+      <div class="test">
+        <h1>SkateJS</h1>
+        <p><x-hello>World</x-hello></p>
+      </div>
+    `;
+  }
+}
+
+class Yell extends withComponent() {
+  render() {
+    return outdent`
       <style>.test { font-weight: bold; }</style>
       <span class="test"><slot></slot></span>
     `;
   }
 }
 
-class Hello extends Component {
-  renderCallback() {
-    return (
-      <span className="test">
-        Hello,{' '}
-        <Yell>
-          <slot />
-        </Yell>!
-      </span>
-    );
-  }
-}
+[Hello, Index, Yell].forEach(define);
 
-[Yell, Hello].forEach(define);
-
-module.exports = define(
-  class Index extends Component {
-    renderCallback() {
-      return (
-        <div className="test">
-          <h1>SkateJS</h1>
-          <p>
-            <Hello>World</Hello>
-          </p>
-        </div>
-      );
-    }
-  }
-);
+module.exports = Index;

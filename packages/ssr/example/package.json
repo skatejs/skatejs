@@ -9,8 +9,9 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.24.1",
     "hapi": "^16.1.1",
+    "outdent": "^0.4.1",
     "preact": "^8.1.0",
-    "skatejs": "^5.0.0-alpha.12",
+    "skatejs": "^5.0.0-beta.4",
     "undom": "^0.3.3"
   },
   "devDependencies": {},

@@ -1,6 +1,6 @@
 const { walk } = require('./register/util');
 
-const shadowRootScript = `<script>function __ssr(){var s=document.currentScript,r=s.previousElementSibling,h=r.parentNode;h.removeChild(s);h.removeChild(r);r.parentNode.attachShadow({mode:f.getAttribute('mode')||'open'}).innerHTML=r.innerHTML;}</script>`;
+const shadowRootScript = `<script>function __ssr() {var r,s=document.currentScript,f=s.parentNode;h=f.parentNode;f.removeChild(s);h.removeChild(f);r=h.attachShadow({mode:h.getAttribute('mode')||'open'});while(f&&f.firstChild)r.appendChild(f.firstChild);}</script>`;
 const shadowRootScriptCall = `<script>__ssr()</script>`;
 
 const defaultResolver = node => yup => setTimeout(() => yup(node));
@@ -26,9 +26,9 @@ function stringify(node) {
   }
 
   if (node.shadowRoot) {
-    str += `<shadowroot>${node.shadowRoot.childNodes
-      .map(stringify)
-      .join('')}</shadowroot>${shadowRootScriptCall}`;
+    str += `<shadowroot>${node.shadowRoot.childNodes.map(stringify).join('')}${
+      shadowRootScriptCall
+    }</shadowroot>`;
   }
 
   if (node.childNodes) {

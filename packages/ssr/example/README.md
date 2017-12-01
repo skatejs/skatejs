@@ -8,5 +8,5 @@
 
 Run:
 
-* `yarn` / `npm install`
+* `npm install`
 * `npm start`

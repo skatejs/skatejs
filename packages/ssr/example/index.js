@@ -27,9 +27,9 @@ server.route({
     const Page = fs.existsSync(page)
       ? require(page)
       : require('./pages/404.js');
-    return response(
-      render(Object.assign(new Page(), request.params), request.params)
-    );
+    document.body.innerHTML = '';
+    document.body.appendChild(Object.assign(new Page(), request.params));
+    return response(render());
   }
 });
 
