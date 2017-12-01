@@ -10,7 +10,9 @@
 [![OpenCollective](https://opencollective.com/skatejs/sponsors/badge.svg)](#sponsors)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
+> SkateJS is a web component library designed to give you an augmentation of the
+> web component specs focusing on a functional rendering pipeline, clean
+> property / attribute semantics and a small footprint.
 
 Skate is a functional abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) that:
