@@ -29,6 +29,7 @@ whatever reason:
 
 * `bolt build` builds all distributions.
 * `bolt build:[type]` build the distribution for the corresponding `[type]`.
+* `bolt flow` invokes the local `flow-bin` dependency.
 * `bolt precommit` runs the pre-commit hook.
 * `bolt prepare` prepares the packages for publishing.
 * `bolt site` compiles the website.

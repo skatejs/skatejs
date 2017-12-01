@@ -9,7 +9,6 @@
     "outdent": "^0.4.1",
     "parse5": "^3.0.2",
     "preact": "^8.2.5",
-    "prettier": "^1.7.0",
     "uglify-es": "^3.1.2",
     "undom": "^0.3.3",
     "yargs": "^9.0.1"
