@@ -139,6 +139,7 @@
     "build": "projector ./projector babel --envs es,esnext,node",
     "del": "bolt ws exec -- rm -rf dist node_modules public && rm -rf node_modules",
     "dev": "cd site && webpack-dev-server --hot",
+    "flow": "./node_modules/.bin/flow",
     "precommit": "lint-staged",
     "prepare": "bolt build",
     "site": "cd site && webpack -p",
