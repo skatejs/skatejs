@@ -934,7 +934,7 @@ babel-polyfill@^6.26.0:
     core-js "^2.5.0"
     regenerator-runtime "^0.10.5"
 
-babel-preset-env@^1.6.0, babel-preset-env@^1.6.1:
+babel-preset-env@^1.6.1:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/babel-preset-env/-/babel-preset-env-1.6.1.tgz#a18b564cc9b9afdf4aae57ae3c1b0d99188e6f48"
   dependencies:
@@ -1743,24 +1743,6 @@ compression@^1.5.2:
     on-headers "~1.0.1"
     safe-buffer "5.1.1"
     vary "~1.1.2"
-
-conartist@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/conartist/-/conartist-0.12.0.tgz#ba5a6b03b69910d46a6d108e9aa5a332f21a25f7"
-  dependencies:
-    babel-preset-env "^1.6.0"
-    babel-preset-es2015-rollup "^3.0.0"
-    babel-preset-react "^6.24.1"
-    babel-preset-stage-0 "^6.24.1"
-    deep-equal "^1.0.1"
-    lodash "^4.17.4"
-    mkdirp "^0.5.1"
-    outdent "^0.3.0"
-    prettier "^1.7.0"
-    rollup-plugin-babel "^3.0.2"
-    rollup-plugin-uglify "^2.0.1"
-    username "^3.0.0"
-    yargs "^9.0.1"
 
 concat-map@0.0.1:
   version "0.0.1"
@@ -5370,10 +5352,6 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-outdent@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/outdent/-/outdent-0.3.0.tgz#fad18a9c061a0938f38e8071d16c4024423f4323"
-
 outdent@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/outdent/-/outdent-0.4.1.tgz#92dd65ff729032770e375c943dfd120025beef7e"
@@ -5623,7 +5601,7 @@ prettier-eslint@^8.2.2:
     typescript "^2.5.1"
     typescript-eslint-parser "^8.0.0"
 
-prettier@1.8.2, prettier@^1.7.0, prettier@^1.7.1:
+prettier@1.8.2, prettier@^1.7.1:
   version "1.8.2"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.8.2.tgz#bff83e7fd573933c607875e5ba3abbdffb96aeb8"
 
@@ -7089,13 +7067,6 @@ url@^0.11.0:
 user-home@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/user-home/-/user-home-1.1.1.tgz#2b5be23a32b63a7c9deb8d0f28d485724a3df190"
-
-username@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/username/-/username-3.0.0.tgz#b3dba982a72b4ce59d52f159fa1aeba266af5fc8"
-  dependencies:
-    execa "^0.7.0"
-    mem "^1.1.0"
 
 util-deprecate@~1.0.1:
   version "1.0.2"
