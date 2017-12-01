@@ -28,15 +28,16 @@ async function babel({ envs }) {
       if ((w.config.files || []).indexOf(env) === -1) continue;
       const src = path.join(w.dir, 'src');
       const dst = path.join(w.dir, 'dist', env);
-      await exec('babel', [src, '--out-dir', dst], {
+      exec('babel', [src, '--out-dir', dst], {
         env: { BABEL_ENV: env }
-      });
-      await exec('flow-copy-source', [
-        '-i',
-        '**/__tests__/**',
-        'src',
-        `dist/${env}`
-      ]);
+      }).then(() =>
+        exec('flow-copy-source', [
+          '-i',
+          '**/__tests__/**',
+          'src',
+          `dist/${env}`
+        ])
+      );
     }
   }
 }
@@ -46,7 +47,7 @@ async function ts() {
     if ((w.config.files || []).indexOf('ts') === -1) continue;
     await copyTsConfig(w);
     await runTsc(w);
-    await rmrf(path.join(w.dir, 'tsconfig.json'));
+    rmrf(path.join(w.dir, 'tsconfig.json'));
   }
 }
 
