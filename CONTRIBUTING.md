@@ -12,15 +12,28 @@ read their docs before proceeding.
 
 To get started, run `bolt`.
 
+### Tests
+
+To run your tests in watch mode, run:
+
+```
+jest --watch
+```
+
+To narrow down the tests that are run, you can use the `--testPathPattern`
+option:
+
+```
+jest --watch --testPathPattern skatejs
+```
+
+The above would run only tests that have paths that match `skatejs`, for
+example.
+
 ### Documentation / website
 
 To document a package or work on the website, run `bolt dev`. This will start up
 a `webpack-dev-server` and you can dev as normal.
-
-### tests
-
-To run the tests for normal development, you'll want to do that in watch mode:
-`bolt test:watch`.
 
 ### Other commands
 
@@ -28,15 +41,10 @@ Here are some other commands that you may need to run from time to time, for
 whatever reason:
 
 * `bolt build` builds all distributions.
-* `bolt build:[type]` build the distribution for the corresponding `[type]`.
 * `bolt flow` invokes the local `flow-bin` dependency.
 * `bolt precommit` runs the pre-commit hook.
 * `bolt prepare` prepares the packages for publishing.
 * `bolt site` compiles the website.
 * `bolt test` runs all tests for all packages once.
-* `bolt test:ts` checks the typescript definitions.
-
-## Workflow
-
-You may develop how you like, but the code you write should have accompanying
-tests.
+* `bolt test:js` runs all the unit / integration tests.
+* `bolt test:ts` runs all of the TypeScript definition tests.

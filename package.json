@@ -142,7 +142,9 @@
     "precommit": "lint-staged",
     "prepare": "bolt build",
     "site": "cd site && webpack -p",
-    "test": "jest && projector ./projector ts"
+    "test": "bolt test:js && bolt test:ts",
+    "test:js": "jest",
+    "test:ts": "projector ./projector ts"
   },
   "jest": {
     "testEnvironment": "./packages/ssr/jest",
