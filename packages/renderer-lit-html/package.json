@@ -1,0 +1,31 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
+  "browser": "dist/es/index.js",
+  "description": "A SkateJS renderer for Lit HTML.",
+  "devDependencies": {
+    "lit-html": "^0.7.1"
+  },
+  "esnext": "dist/esnext/index.js",
+  "files": [
+    "es",
+    "esnext",
+    "node"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "components",
+    "custom",
+    "dom",
+    "elements",
+    "web",
+    "vdom",
+    "virtual"
+  ],
+  "main": "dist/node/index.js",
+  "module": "dist/es/index.js",
+  "name": "@skatejs/renderer-lit-html",
+  "peerDependencies": {
+    "lit-html": "^0.7.1"
+  },
+  "version": "0.0.0"
+}

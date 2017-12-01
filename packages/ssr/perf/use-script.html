@@ -1,0 +1,36 @@
+<script src="./index.js"></script>
+<script>
+  function __ssr () {
+    const script = document.currentScript;
+    const host = script.previousElementSibling;
+    const fakeShadowRoot = host.firstElementChild;
+
+    // Removing the script speeds up rendering by a few hundred ms when
+    // not optimised and only a few when optimised.
+    script.parentNode.removeChild(script);
+
+    // The fastest overall method is to simply use innerHTML. This seems to be
+    // faster when not optimised (by about 50%) but is slightly slower when
+    // optimised compared to traversing the fake shadow root and appending each
+    // element to the real one:
+    //
+    // const realShadowRoot = host.attachShadow({ mode: 'open' });
+    // while (fakeShadowRoot.firstChild) realShadowRoot.appendChild(fakeShadowRoot.firstChild);
+    host.attachShadow({ mode: 'open' }).innerHTML = fakeShadowRoot.innerHTML;
+  }
+</script>
+<script>
+  test(a => {
+    const frag = document.createDocumentFragment();
+    const div = document.createElement('div');
+    const script = document.createElement('script');
+
+    div.innerHTML = `<shadow-root><strong><slot></slot></strong></shadow-root>${a}`;
+    script.innerHTML = `__ssr();`;
+
+    frag.appendChild(div);
+    frag.appendChild(script);
+
+    return frag;
+  });
+</script>

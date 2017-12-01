@@ -1,0 +1,31 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
+  "browser": "dist/es/index.js",
+  "description": "A SkateJS renderer for Preact.",
+  "devDependencies": {
+    "preact": "^8.2.5"
+  },
+  "esnext": "dist/esnext/index.js",
+  "files": [
+    "es",
+    "esnext",
+    "node"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "components",
+    "custom",
+    "dom",
+    "elements",
+    "web",
+    "vdom",
+    "virtual"
+  ],
+  "main": "dist/node/index.js",
+  "module": "dist/es/index.js",
+  "name": "@skatejs/renderer-preact",
+  "peerDependencies": {
+    "preact": "^8.2.5"
+  },
+  "version": "0.1.0"
+}

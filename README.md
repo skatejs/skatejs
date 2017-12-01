@@ -1,4 +1,4 @@
-# [Skate][gitbook]
+# Skate
 
 [![Downloads per month](https://img.shields.io/npm/dm/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
@@ -6,163 +6,310 @@
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-%F0%9F%9A%80-ffffff.svg)](https://github.com/semantic-release/semantic-release)
-[![OpenCollective](https://opencollective.com/skatejs/backers/badge.svg)](#backers) 
+[![OpenCollective](https://opencollective.com/skatejs/backers/badge.svg)](#backers)
 [![OpenCollective](https://opencollective.com/skatejs/sponsors/badge.svg)](#sponsors)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/skatejs.svg)](https://saucelabs.com/u/skatejs)
 
-Skate is a library built on top of the [W3C web component specs](https://github.com/w3c/webcomponents) that enables you to write functional and performant web components with a very small footprint.
+Skate is a functional abstraction over
+[the web component standards](https://github.com/w3c/webcomponents) that:
 
-- Functional rendering pipeline backed by Google's [Incremental DOM](https://github.com/google/incremental-dom).
-- Inherently cross-framework compatible. For example, it works seamlessly with - and complements - React and other frameworks.
-- It's very fast.
-- It works with multiple versions of itself on the page.
+* Produces cross-framework compatible components
+* Abstracts away common attribute / property semantics via `props`, such as
+  attribute reflection and coercion
+* Adds several lifecycle callbacks for responding to prop updates, rendering and
+  more
+* Provides a base set of
+  [mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
+  that hook into renderers such as
+  [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact).
 
-HTML
+## Anatomy of a Skate web component
+
+At its core, Skate is about creating
+[Custom Elements](https://w3c.github.io/webcomponents/spec/custom/). Skate
+provides a series of
+[mixin functions](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
+that enable you to control what your component can do.
+
+For instance, Skate's main mixin, `withComponent`, is just a composition of all
+of Skate's other mixin behaviours:
+
+* `withUpdate` -- the generated element will react to changes on their props or
+  HTML attributes.
+* `withChildren` -- the generated element will react to changes to its child
+  elements.
+* `withRenderer` -- the element can generate its own DOM and output it to a
+  `renderRoot` (a `ShadowRoot` node by default).
+* `withLifecycle` -- the element can use added sugar on top of the built-in
+  lifecycle callbacks.
+* `withContext` -- the element will inherit context from components up the tree,
+  like in React.
+* `withUnique` -- allows for naming the custom element through `is`.
+
+Calling `withComponent()` gives you a Custom Element class constructor, which
+you can then extend to define your own elements.
+
+Every mixin accepts an optional `Element` constructor as its only parameter,
+which allows you to extend virtually any element type in HTML!
+
+### Rendering an element
+
+As an example, let's create a simple greeting component...
+
+```html
+<x-hello>Bob</x-hello>
+```
+
+...such that when this element is rendered, the end-user will see `Hello, Bob!`.
+
+We can define a Skate component that renders the contents of our Custom Element:
+
+```js
+import { withComponent } from 'skatejs';
+
+const Component = withComponent();
+
+class GreetingComponent extends Component {
+  renderer(renderRoot, render) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(render());
+  }
+  render() {
+    const el = document.createElement('span');
+    el.innerHTML = 'Hello, <slot></slot>!';
+    return el;
+  }
+}
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+When this element is rendered, the DOM will look something like the following:
+
+```html
+<x-hello>
+  #shadow-root
+    <span>Hello, <slot></slot>!</span>
+  Bob
+</x-hello>
+```
+
+This is the utility that web components provide when using Custom Elements and
+the Shadow DOM.
+
+Skate also allows **turning off Shadow DOM** if you don't wanna use it for
+various particular reasons. You can turn it off via `get renderRoot()` override:
+
+> NOTE: by turning off Shadow DOM you cannot use <slot/> content projection
+> anymore by default, further tweaks needs to be applied
+
+```js
+import { withComponent, props } from 'skatejs';
+
+// define base class withouth Shadow DOM
+class NoShadowComponent = class extends withComponent() {
+  // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
+  get renderRoot() {
+    return this
+  }
+}
+
+// use custom NoShadowComponent as a base class
+class GreetingComponent extends NoShadowComponent {
+  static props = {
+    name: props.string
+  };
+  renderer (renderRoot, render) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(render());
+  }
+  render ({name}) {
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
+  }
+}
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+Now when you write:
 
 ```html
 <x-hello name="Bob"></x-hello>
 ```
 
-JavaScript
-
-```js
-customElements.define('x-hello', class extends skate.Component {
-  static get props () {
-    return {
-      name: { attribute: true }
-    };
-  }
-  renderCallback () {
-    return skate.h('div', `Hello, ${this.name}`);
-  }
-});
-```
-
-Result
+When this element is rendered, the DOM will look something like the following:
 
 ```html
-<x-hello name="Bob">Hello, Bob!</x-hello>
+<x-hello>
+  <span>Hello, Bob!</span>
+</x-hello>
 ```
 
-Whenever you change the `name` property - or attribute - the component will re-render, only changing the part of the DOM that requires updating.
+### Watching element properties and attributes
 
+We can create a Skate component that watches for HTML attribute changes on
+itself:
 
+```js
+import { props, withComponent } from 'skatejs';
 
-## Documentation
+const Component = withComponent();
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+class GreetingComponent extends Component {
+  static props = {
+    name: props.string
+  };
+  renderer(renderRoot, render) {
+    renderRoot.innerHtml = '';
+    renderRoot.appendChild(render());
+  }
+  render({ name }) {
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, ${name}!`;
+    return el;
+  }
+}
 
-  - [Installing](#installing)
-    - [NPM](#npm)
-    - [Script Tag](#script-tag)
-  - [Dependencies](#dependencies)
-  - [Browser Support](#browser-support)
-  - [Recipes](https://skatejs.gitbooks.io/skatejs/content/docs/recipes)
-  - [Examples](https://skatejs.gitbooks.io/skatejs/content/docs/examples)
-  - [API](https://skatejs.gitbooks.io/skatejs/content/docs/api)
+customElements.define('x-hello', GreetingComponent);
+```
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+The resulting HTML when the element is rendered would look like this:
 
+```html
+<x-hello name="Bob">
+  #shadow-root
+    <span>Hello, Bob!</span>
+</x-hello>
+```
 
+Now, whenever the `name` property or attribute on the greeting component
+changes, the component will re-render.
 
-## Installing
+### Making your own mixins
 
-There's a couple ways to consume Skate.
+In the previous exampless, each component implements its own rendering
+behaviour. Rather than re-defining it all the time, we can write a mixin and
+take advantage of prototypal inheritance:
 
+> NOTE: the `with` prefix is not mandatory, just a common practice for naming
+> HOCs and Mixins
 
+```js
+import { props, withComponent } from 'skatejs';
 
-### NPM
+const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
+  return class extends Base {
+    renderer(renderRoot, render) {
+      renderRoot.innerHtml = render();
+    }
+  };
+};
+
+const Component = withComponent(withDangerouslyNaiveRenderer());
+
+class GreetingComponent extends Component {
+  static props = {
+    name: props.string
+  };
+  render({ name }) {
+    return `<span>Hello, {name}!</span>`;
+  }
+}
+
+customElements.define('x-hello', GreetingComponent);
+```
+
+### Rendering using other front-end libraries
+
+Because Skate provides a hook for the renderer, it can support just about every
+modern component-based front-end library &mdash; React, Preact, Vue... just
+provide a `render` to stamp out your component's HTML, a `renderer` to update
+the DOM with your HTML, and then it's all the same to Skate!
+
+The Skate team have provided a few renderers for popular front-end libraries;
+check the [Installing](#installing) section.
+
+#### Using Skate with Preact
+
+Instead of writing our own `renderer`, we could use a library like
+[Preact](https://preactjs.com/) to do the work for us. Skate provides a
+ready-made renderer for Preact; here's how we would update our previous greeting
+component to use it:
+
+```js
+/** @jsx h */
+
+import { props, withComponent } from 'skatejs';
+import withRenderer from '@skatejs/renderer-preact';
+import { h } from 'preact';
+
+const Component = withComponent(withRenderer());
+
+customElements.define(
+  'x-hello',
+  class extends Component {
+    static props = {
+      name: props.string
+    };
+    render({ name }) {
+      return <span>Hello, {name}!</span>;
+    }
+  }
+);
+```
+
+Now that the greeting component is rendered via Preact, when it renders, it only
+changes the part of the DOM that requires updating.
+
+## Installing Skate
+
+To use Skate on its own, just add it to your `package.json`:
 
 ```sh
 npm install skatejs
 ```
 
-Skate exports a UMD definition so you can:
-
-```js
-import * as skate from 'skatejs';
-const skate = require('skatejs');
-require(['skatejs'], function (skate) {});
-```
-
-There's three files in `dist/`. Each has a UMD definition and a corresponding sourcemap file:
-
-1. `index.js` - This is the `main` entry point in the `package.json` without dependencies.
-2. `index-with-deps.js` - Unminified with dependencies.
-3. `index-with-deps.min.js` - Minified with dependencies.
-
-
-
-### Script Tag
-
-```html
-<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
-```
-
-Since Skate exports a UMD definition, you can then access it via the global:
-
-```js
-const { skate } = window;
-```
-
-
-
-## Dependencies
-
-Skate doesn't require you provide any external dependencies, but recommends you provide some web component polyfills depending on what browsers you require support for. **Skate requires both Custom Elements and Shadow DOM v1.**
-
-To get up and running quickly with our recommended configuration, we've created a single package called [`skatejs-web-components`](https://github.com/skatejs/web-components) where all you have to do is *load it before your definitions*.
+To use Skate with another front-end library, you'll want to install that library
+itself, along with a Skate renderer for it.
 
 ```sh
-npm install skatejs skatejs-web-components
+npm install skatejs @skatejs/renderer-[renderer] [renderer]
 ```
 
-And then you can import it:
+Where `[renderer]` is one of:
 
-```js
-import 'skatejs-web-components';
-import { define, vdom } from 'skatejs';
-```
+* [@skatejs/renderer-lit-html](https://github.com/skatejs/renderer-lit-html)
+* [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact)
+* [@skatejs/renderer-react](https://github.com/skatejs/renderer-react)
+* Or any custom renderer!
 
-Or you can use script tags:
+## Polyfills
 
-```html
-<script src="https://unpkg.com/skatejs-web-components/dist/index.min.js"></script>
-<script src="https://unpkg.com/skatejs/dist/index-with-deps.min.js"></script>
-```
+Skate builds upon the
+[Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and
+[the Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards.
+Skate is capable of operating without the Shadow DOM &mdash; it just means you
+don't get any encapsulation of your component's HTML or styles.
 
-If you want finer grained control about which polyfills you use, you'll have to BYO Custom Element and Shadow DOM polyfills.
+Though most modern browsers support these standards, some still need polyfills
+to implement missing or inconsistent behaviours for them.
 
-
-
-### Transpilation and native custom element gotchas
-
-*If you’re using Babel or some other tool to transpile your ES2015 code to ES5, simply import `skatejs` and `skatejs-web-components` (or selectively include the polyfills) as needed and ignore the following.*
-
-Native custom element support requires that you load a shim if you're not delivering native ES2015 classes to the browser. If you're transpiling to ES5, you must - at the very least - load the [native shim](https://github.com/webcomponents/custom-elements/blob/master/src/native-shim.js):
-
-When you load Skate by module name (`import { ... } from 'skatejs';` or `require('skatejs');`), you'll be getting the transpiled source. Thus even if you author your components in ES2015, you'll still be getting ES5 base-classes and the native custom elements implementation will complain. If you want to deliever native classes you have to point to the non-transpiled Skate source: `import { ... } from 'skatejs/src';`. Currently this is not supported by our API versioning but we have an [issue](#992) to work around this.
-
-More information can be found in the [webcomponents/custom-elements](https://github.com/webcomponents/custom-elements#known-issues) repo.
-
-
+For more information on the polyfills, see
+[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs).
 
 ## Browser Support
 
-Skate supports all evergreens and IE11. We recommend using the following polyfills:
-
-- Custom Elements: https://github.com/webcomponents/custom-elements
-- Shadow DOM: https://github.com/webcomponents/shadydom
-- Shadow DOM (CSS fills): https://github.com/webcomponents/shadycss
-
-
-[gitbook]: https://skatejs.gitbooks.io/skatejs/content/
+Skate supports all evergreens and IE11, and is subject to the browser support
+matrix of the polyfills.
 
 ## Backers
-Support us with a monthly donation and help us continue our activities. [[Become a backer](https://opencollective.com/skatejs#backer)]
+
+Support us with a monthly donation and help us continue our activities.
+[[Become a backer](https://opencollective.com/skatejs#backer)]
 
 <a href="https://opencollective.com/skatejs/backer/0/website" target="_blank"><img src="https://opencollective.com/skatejs/backer/0/avatar.svg"></a>
 <a href="https://opencollective.com/skatejs/backer/1/website" target="_blank"><img src="https://opencollective.com/skatejs/backer/1/avatar.svg"></a>
@@ -196,7 +343,9 @@ Support us with a monthly donation and help us continue our activities. [[Become
 <a href="https://opencollective.com/skatejs/backer/29/website" target="_blank"><img src="https://opencollective.com/skatejs/backer/29/avatar.svg"></a>
 
 ## Sponsors
-Become a sponsor and get your logo on our README on Github with a link to your site. [[Become a sponsor](https://opencollective.com/skatejs#sponsor)]
+
+Become a sponsor and get your logo on our README on Github with a link to your
+site. [[Become a sponsor](https://opencollective.com/skatejs#sponsor)]
 
 <a href="https://opencollective.com/skatejs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/skatejs/sponsor/0/avatar.svg"></a>
 <a href="https://opencollective.com/skatejs/sponsor/1/website" target="_blank"><img src="https://opencollective.com/skatejs/sponsor/1/avatar.svg"></a>
