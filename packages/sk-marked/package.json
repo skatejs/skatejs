@@ -1,0 +1,33 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com>",
+  "browser": "dist/es/index.js",
+  "dependencies": {
+    "marked": "^0.3.7",
+    "skatejs": "^5.0.0-beta.4"
+  },
+  "description": "A web component for rendering Markdown using Marked.",
+  "devDependencies": {
+    "@skatejs/bore": "^4.0.0",
+    "@skatejs/ssr": "^0.16.0",
+    "jest-in-case": "^1.0.2"
+  },
+  "esnext": "dist/esnext/index.js",
+  "files": [
+    "es",
+    "esnext",
+    "node"
+  ],
+  "keywords": [
+    "web",
+    "component",
+    "marked",
+    "markdown",
+    "skatejs"
+  ],
+  "license": "MIT",
+  "main": "dist/node/index.js",
+  "module": "dist/es/index.js",
+  "name": "@skatejs/sk-marked",
+  "repository": "https://github.com/skatejs/skatejs",
+  "version": "0.0.0"
+}
