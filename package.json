@@ -110,7 +110,6 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "bolt": "^0.17.6",
-    "conartist": "^0.12.0",
     "eslint-plugin-flowtype": "^2.34.0",
     "file-loader": "^1.1.5",
     "flow-bin": "^0.59.0",
