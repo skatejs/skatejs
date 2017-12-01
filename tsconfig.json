@@ -1,19 +1,12 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "baseUrl": "./",
-    "paths": {
-      "skatejs": ["./src/index.d.ts"]
-    },
-    "strict": true,
-    "sourceMap": true,
-    "moduleResolution": "node",
     "jsx": "react",
     "jsxFactory": "h",
+    "moduleResolution": "node",
+    "noEmit": true,
     "pretty": true,
-    "outDir": "ts-output",
-    "declaration": true,
-    "noEmit": true
+    "strict": true,
+    "target": "esnext"
   },
-  "include": ["test/ts"]
+  "include": ["ts"]
 }

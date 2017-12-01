@@ -1,4 +1,4 @@
-import { withChildren } from 'skatejs';
+import { withChildren } from '../..';
 
 class WithChildren extends withChildren() {
   childrenUpdated() {

@@ -3,7 +3,7 @@ import {
   FunctionalComponent as SFC,
   ComponentProps as PreactComponentProps
 } from 'preact';
-import { props, withComponent, ComponentProps, WithComponent } from 'skatejs';
+import { props, withComponent, ComponentProps, WithComponent } from '../..';
 
 export const Component = withComponent();
 

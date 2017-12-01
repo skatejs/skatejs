@@ -1,4 +1,4 @@
-import { withUnique } from 'skatejs';
+import { withUnique } from '../..';
 
 const names: Array<string> = [];
 

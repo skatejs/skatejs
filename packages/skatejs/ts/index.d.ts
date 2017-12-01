@@ -14,10 +14,10 @@ export {
   withUpdate,
   withRenderer,
   withUnique
-} from './ts-types/api';
+} from './api';
 
 // Public API: utils
-export { prop, props, link, define, emit, shadow } from './ts-types/api';
+export { prop, props, link, define, emit, shadow } from './api';
 
 // Public types ( Unfortunately TS doesn't have Opaque Types like Flow )
 export {
@@ -33,4 +33,4 @@ export {
   WithUpdate,
   WithRenderer,
   WithUnique
-} from './ts-types/types';
+} from './types';

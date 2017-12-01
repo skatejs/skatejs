@@ -1,4 +1,4 @@
-import { props, withUpdate } from 'skatejs';
+import { props, withUpdate } from '../..';
 
 type Props = { name: string };
 type State = void;

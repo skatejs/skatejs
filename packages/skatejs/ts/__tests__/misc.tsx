@@ -1,7 +1,7 @@
 // @TODO remove this in the future ( those examples are taken from old skate 4.x docs )
 
 const h = preact.h;
-import * as skate from 'skatejs';
+import * as skate from '..';
 
 const { withComponent, emit, link, define, props } = skate;
 type ComponentProps<E, T> = skate.ComponentProps<E, T>;

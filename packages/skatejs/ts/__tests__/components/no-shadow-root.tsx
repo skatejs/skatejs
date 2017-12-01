@@ -11,7 +11,7 @@ import {
   WithComponent,
   Constructor,
   CustomElement
-} from 'skatejs';
+} from '../..';
 
 // custom class definition needed to get Generics support for custom mixin composition
 interface CustomComponentBase<P = {}, S = {}>

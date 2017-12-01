@@ -1,4 +1,4 @@
-import { withComponent, Renderer, define } from 'skatejs';
+import { withComponent, Renderer, define } from '../..';
 
 const withRenderer = () =>
   class extends HTMLElement implements Renderer<Element> {

@@ -1,10 +1,7 @@
 coverage
-es
-esnext
-node
+dist
 node_modules
 npm-debug.log*
 package-lock.json
 public
-umd
 ts-output

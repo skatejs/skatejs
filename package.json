@@ -57,23 +57,6 @@
           "react",
           "stage-0"
         ]
-      },
-      "rollup": {
-        "ignore": [
-          "__tests__",
-          "node_modules"
-        ],
-        "presets": [
-          [
-            "env",
-            {
-              "modules": false
-            }
-          ],
-          "flow",
-          "react",
-          "stage-0"
-        ]
       }
     }
   },
@@ -89,6 +72,7 @@
   },
   "dependencies": {
     "babel-register": "^6.26.0",
+    "execa": "^0.8.0",
     "glob": "^7.1.2",
     "highlight.js": "^9.12.0",
     "jest-environment-node": "^21.1.0",
@@ -125,10 +109,12 @@
     "babel-preset-latest": "6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "bolt": "^0.17.6",
     "conartist": "^0.12.0",
     "eslint-plugin-flowtype": "^2.34.0",
     "file-loader": "^1.1.5",
     "flow-bin": "^0.59.0",
+    "flow-copy-source": "^1.2.1",
     "husky": "^0.13.3",
     "img-loader": "^2.0.0",
     "jest": "^20.0.4",
@@ -137,7 +123,9 @@
     "lint-staged": "^4.0.2",
     "prettier": "1.8.2",
     "prettier-eslint": "^8.2.2",
+    "projector-cli": "^3.0.1",
     "raw-loader": "^0.5.1",
+    "rimraf": "^2.6.2",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
@@ -149,19 +137,13 @@
   "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "npm run build:es && npm run build:esnext && npm run build:node",
-    "build:es": "BABEL_ENV=es bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir es",
-    "build:esnext": "BABEL_ENV=esnext bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir esnext",
-    "build:node": "BABEL_ENV=node bolt ws exec --only-fs 'packages/!(ssr)' -- babel src --out-dir node",
-    "build:umd": "BABEL_ENV=rollup bolt ws exec --only-fs 'packages/!(ssr)' -- rollup -c ../../rollup.config.js && BABEL_ENV=rollup bolt ws exec --only-fs 'packages/*' -- rollup -c ../../rollup.config.js --min",
-    "del": "bolt ws exec -- rm -rf es/ esnext/ node/ node_modules/ public/ && rm -rf node_modules/",
+    "build": "projector ./projector babel --envs es,esnext,node",
+    "del": "bolt ws exec -- rm -rf dist node_modules public && rm -rf node_modules",
     "dev": "cd site && webpack-dev-server --hot",
     "precommit": "lint-staged",
-    "prepare": "npm run build",
+    "prepare": "bolt build",
     "site": "cd site && webpack -p",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ts": "bolt ws exec -- tsc --noEmit --project ./"
+    "test": "jest && projector ./projector ts"
   },
   "jest": {
     "testEnvironment": "./packages/ssr/jest",
@@ -171,7 +153,7 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "*.{js,json,md,ts}": [
+    "*.{js,json,md,ts,tsx}": [
       "prettier --write",
       "git add"
     ]

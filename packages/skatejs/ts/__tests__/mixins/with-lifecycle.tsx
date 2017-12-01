@@ -1,4 +1,4 @@
-import { withLifecycle, WithLifecycle } from 'skatejs';
+import { withLifecycle, WithLifecycle } from '../..';
 
 class Base extends HTMLElement {
   protected _isConnected: boolean;

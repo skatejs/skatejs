@@ -1,16 +1,16 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "browser": "es/index.js",
+  "browser": "dist/es/index.js",
   "description": "A SkateJS renderer for React.",
-  "esnext": "esnext/index.js",
   "devDependencies": {
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   },
+  "esnext": "dist/esnext/index.js",
   "files": [
-    "es/",
-    "esnext/",
-    "node/"
+    "es",
+    "esnext",
+    "node"
   ],
   "license": "MIT",
   "keywords": [
@@ -22,8 +22,8 @@
     "vdom",
     "virtual"
   ],
-  "main": "src/index.js",
-  "module": "es/index.js",
+  "main": "dist/node/index.js",
+  "module": "dist/es/index.js",
   "name": "@skatejs/renderer-react",
   "peerDependencies": {
     "react": "^15.0.0",

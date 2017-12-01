@@ -1,4 +1,4 @@
-import { withComponent, WithComponent } from 'skatejs';
+import { withComponent, WithComponent } from '../..';
 
 export const ButtonComponent = withComponent(HTMLButtonElement);
 export const InputComponent = withComponent(HTMLInputElement);

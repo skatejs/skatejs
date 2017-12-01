@@ -1,4 +1,4 @@
-import { define } from 'skatejs';
+import { define } from '../..';
 
 import { ButtonComponent, InputComponent } from './custom-base';
 

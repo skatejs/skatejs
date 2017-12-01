@@ -5,7 +5,7 @@ import {
   define,
   PropOptions,
   WithComponent
-} from 'skatejs';
+} from '../..';
 
 export const Component = withComponent();
 
