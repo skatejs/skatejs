@@ -25,6 +25,12 @@ export default component(function mixins() {
           <Link.is href="/renderers/with-react">React</Link.is>
         </li>
       </ul>
+      <p>
+        Skate also ships with a super-simple{' '}
+        <Link.is href="/renderers/default">default renderer</Link.is> that
+        simply sets <code>innerHTML</code>. It's a fantastic way to mock up and
+        write simple components without requiring a UI library.
+      </p>
       <h3>Writing a renderer</h3>
       <p>
         The best way to write a renderer is to base it on the{' '}
@@ -44,9 +50,11 @@ export default component(function mixins() {
       <h4>A simple implementation</h4>
       <p>
         An example of a simple, concrete implementation of this might be to
-        write a renderer that simply sets <code>innerHTML</code>. In practice
-        this can prove to be too naive an implementation for complex components,
-        but is a great way to show how to write a simple renderer.
+        write a renderer that simply sets <code>innerHTML</code>. This is the
+        default behaviour provided by the default `renderer()` function and is
+        great for mockups, simple or static components. It's probably too naive
+        for complex components that re-render a lot. However, it also serves as
+        a fine example to show how to use the renderer API.
       </p>
       <Code.is
         code={`

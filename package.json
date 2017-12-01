@@ -78,6 +78,7 @@
     "jest-environment-node": "^21.1.0",
     "js-beautify": "^1.7.3",
     "lit-html": "^0.7.1",
+    "marked": "^0.3.7",
     "mkdirp": "^0.5.1",
     "outdent": "^0.4.1",
     "page": "^1.7.1",

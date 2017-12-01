@@ -23,6 +23,7 @@ class Component extends withComponent() {
 export const Link = define(
   class Link extends Component {
     static props = {
+      classNames: props.object,
       css: props.string,
       href: props.string
     };
@@ -30,9 +31,9 @@ export const Link = define(
       e.preventDefault();
       page.show(this.href);
     };
-    render({ css, href }) {
+    render({ classNames, css, href }) {
       return (
-        <a href={href} events={{ click: this.go }}>
+        <a className={classNames.a} href={href} events={{ click: this.go }}>
           <style>{css}</style>
           <slot />
         </a>

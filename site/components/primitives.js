@@ -18,14 +18,18 @@ export const Hr = component(function hr() {
 });
 
 export const Link = component(
-  function link(css, href) {
+  function link(classNames, css, href) {
     return (
-      <SkLink.is css={this.context.style + css} href={href}>
+      <SkLink.is
+        classNames={classNames}
+        css={this.context.style + css}
+        href={href}
+      >
         <slot />
       </SkLink.is>
     );
   },
-  ['css', 'href']
+  ['classNames', 'css', 'href']
 );
 
 const cssLoading = css({

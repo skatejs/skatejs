@@ -5,12 +5,10 @@ import { Link } from './primitives';
 
 const linkCss = ({ depth, selected } = {}) =>
   css({
-    ' a': {
-      backgroundColor: selected ? '#DCE4CA' : 'transparent',
-      display: 'block',
-      padding: `5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px`
-    },
-    ' a:hover': {
+    backgroundColor: selected ? '#DCE4CA' : 'transparent',
+    display: 'block',
+    padding: `5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px`,
+    '&:hover': {
       backgroundColor: '#DCE4CA'
     }
   });
@@ -37,6 +35,7 @@ const navItems = () => [
     href: '/renderers',
     text: 'Renderers',
     tree: [
+      { href: '/renderers/default', text: 'Default' },
       { href: '/renderers/with-lit-html', text: 'LitHTML' },
       { href: '/renderers/with-preact', text: 'Preact' },
       { href: '/renderers/with-react', text: 'React' }
@@ -64,7 +63,11 @@ function renderTree(items: ?Array<Object>, depth = 0) {
         });
         return (
           <li>
-            <Link.is class={styles} css={value(styles)} href={n.href}>
+            <Link.is
+              classNames={{ a: styles }}
+              css={value(styles)}
+              href={n.href}
+            >
               {n.text}
             </Link.is>
             {location.pathname.indexOf(n.href) === 0

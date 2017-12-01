@@ -16,6 +16,9 @@ const withLoading = loader =>
 
 const Route404 = withLoading(() => import('../pages/404'));
 const RouteMixins = withLoading(() => import('../pages/mixins'));
+const RouteRendererDefault = withLoading(() =>
+  import('../pages/renderers/default')
+);
 const RouteRenderers = withLoading(() => import('../pages/renderers'));
 const RouteUtils = withLoading(() => import('../pages/utils'));
 const RouteUtilsDefine = withLoading(() => import('../pages/utils/define'));
@@ -64,6 +67,7 @@ const router = (
     <Route.is page={RouteWithUpdate} path="/mixins/with-update" />
     <Route.is page={RouteWithUnique} path="/mixins/with-unique" />
     <Route.is page={RouteMixins} path="/mixins" />
+    <Route.is page={RouteRendererDefault} path="/renderers/default" />
     <Route.is page={RouteWithLitHtml} path="/renderers/with-lit-html" />
     <Route.is page={RouteWithPreact} path="/renderers/with-preact" />
     <Route.is page={RouteWithReact} path="/renderers/with-react" />
