@@ -33,7 +33,11 @@ export const Link = define(
     };
     render({ classNames, css, href }) {
       return (
-        <a className={classNames.a} href={href} events={{ click: this.go }}>
+        <a
+          className={classNames.a || ''}
+          href={href}
+          events={{ click: this.go }}
+        >
           <style>{css}</style>
           <slot />
         </a>

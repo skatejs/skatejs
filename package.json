@@ -140,6 +140,7 @@
     "build": "projector ./projector babel --envs es,esnext,node",
     "dev": "cd site && webpack-dev-server --hot",
     "flow": "./node_modules/.bin/flow",
+    "netlify": "npm install -g bolt && bolt && bolt site",
     "precommit": "lint-staged",
     "prepare": "bolt build",
     "site": "cd site && webpack -p",
