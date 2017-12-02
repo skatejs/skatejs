@@ -125,7 +125,6 @@
     "prettier-eslint": "^8.2.2",
     "projector-cli": "^3.0.1",
     "raw-loader": "^0.5.1",
-    "rimraf": "^2.6.2",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-uglify": "^2.0.1",
@@ -143,9 +142,7 @@
     "precommit": "lint-staged",
     "prepare": "bolt build",
     "site": "cd site && webpack -p",
-    "test": "bolt test:js && bolt test:ts",
-    "test:js": "jest",
-    "test:ts": "projector ./projector ts"
+    "test": "jest"
   },
   "jest": {
     "testEnvironment": "./packages/ssr/jest",
@@ -155,7 +152,7 @@
     "singleQuote": true
   },
   "lint-staged": {
-    "*.{js,json,md,ts,tsx}": [
+    "*.{js,json,md}": [
       "prettier --write",
       "git add"
     ]
