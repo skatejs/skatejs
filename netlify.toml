@@ -1,6 +1,6 @@
 [build]
-  command = "npm install -g bolt process-nextick-args && bolt && bolt site"
+  command = "npm install -g bolt && bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]
-  YARN_VERSION = "1.1.0"
+  YARN_VERSION = "1.3.2"
