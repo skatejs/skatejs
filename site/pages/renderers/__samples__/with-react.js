@@ -4,7 +4,7 @@ import { props, withComponent } from 'skatejs';
 import withReact from '@skatejs/renderer-react';
 import React from 'react';
 
-class WithReact extends withComponent(withReact(Component)) {
+class WithReact extends withComponent(withReact()) {
   static props = {
     name: props.string
   };

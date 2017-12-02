@@ -4,7 +4,7 @@ import { props, withComponent } from 'skatejs';
 import withPreact from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
-class WithPreact extends withComponent(withPreact(Component)) {
+class WithPreact extends withComponent(withPreact()) {
   static props = {
     name: props.string
   };

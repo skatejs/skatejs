@@ -2,7 +2,7 @@ import { props, withComponent } from 'skatejs';
 import withLitHtml from '@skatejs/renderer-lit-html';
 import { html } from 'lit-html';
 
-class WithLitHtml extends withComponent(withLitHtml(Component)) {
+class WithLitHtml extends withComponent(withLitHtml()) {
   static props = {
     name: props.string
   };
