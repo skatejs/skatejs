@@ -3,4 +3,4 @@
   publish = "site/public"
 
 [context.production.environment]
-  YARN_VERSION = "1.3.2"
+  YARN_VERSION = "1.2.1"
