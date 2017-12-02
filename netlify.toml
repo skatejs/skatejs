@@ -1,5 +1,4 @@
 [build]
-  base = "site"
   command = "bolt netlify"
-  publish = "public"
+  publish = "site/public"
   YARN_VERSION = "1.3.2"
