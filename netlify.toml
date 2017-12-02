@@ -1,5 +1,5 @@
 [build]
-  command = "npm install -g bolt && bolt && bolt site"
+  command = "npm i -g bolt && bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]
