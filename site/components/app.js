@@ -14,70 +14,90 @@ const withLoading = loader =>
     loading: Loading
   });
 
-const Route404 = withLoading(() => import('../pages/404'));
-const RouteMixins = withLoading(() => import('../pages/mixins'));
-const RouteRendererDefault = withLoading(() =>
-  import('../pages/renderers/default')
-);
-const RouteRenderers = withLoading(() => import('../pages/renderers'));
-const RouteUtils = withLoading(() => import('../pages/utils'));
-const RouteUtilsDefine = withLoading(() => import('../pages/utils/define'));
-const RouteUtilsEmit = withLoading(() => import('../pages/utils/emit'));
-const RouteUtilsLink = withLoading(() => import('../pages/utils/link'));
-const RouteUtilsShadow = withLoading(() => import('../pages/utils/shadow'));
-const RouteWithChildren = withLoading(() =>
-  import('../pages/mixins/with-children')
-);
-const RouteWithComponent = withLoading(() =>
-  import('../pages/mixins/with-component')
-);
-const RouteWithContext = withLoading(() =>
-  import('../pages/mixins/with-context')
-);
-const RouteWithLifecycle = withLoading(() =>
-  import('../pages/mixins/with-lifecycle')
-);
-const RouteWithLitHtml = withLoading(() =>
-  import('../pages/renderers/with-lit-html')
-);
-const RouteWithRenderer = withLoading(() =>
-  import('../pages/mixins/with-renderer')
-);
-const RouteWithPreact = withLoading(() =>
-  import('../pages/renderers/with-preact')
-);
-const RouteWithReact = withLoading(() =>
-  import('../pages/renderers/with-react')
-);
-const RouteWithUpdate = withLoading(() =>
-  import('../pages/mixins/with-update')
-);
-const RouteWithUnique = withLoading(() =>
-  import('../pages/mixins/with-unique')
-);
-
 const router = (
   <Router.is>
     <Route.is page={RouteIndex} path="/" />
-    <Route.is page={RouteWithChildren} path="/mixins/with-children" />
-    <Route.is page={RouteWithComponent} path="/mixins/with-component" />
-    <Route.is page={RouteWithContext} path="/mixins/with-context" />
-    <Route.is page={RouteWithLifecycle} path="/mixins/with-lifecycle" />
-    <Route.is page={RouteWithRenderer} path="/mixins/with-renderer" />
-    <Route.is page={RouteWithUpdate} path="/mixins/with-update" />
-    <Route.is page={RouteWithUnique} path="/mixins/with-unique" />
-    <Route.is page={RouteMixins} path="/mixins" />
-    <Route.is page={RouteRendererDefault} path="/renderers/default" />
-    <Route.is page={RouteWithLitHtml} path="/renderers/with-lit-html" />
-    <Route.is page={RouteWithPreact} path="/renderers/with-preact" />
-    <Route.is page={RouteWithReact} path="/renderers/with-react" />
-    <Route.is page={RouteRenderers} path="/renderers" />
-    <Route.is page={RouteUtilsDefine} path="/utils/define" />
-    <Route.is page={RouteUtilsEmit} path="/utils/emit" />
-    <Route.is page={RouteUtilsLink} path="/utils/link" />
-    <Route.is page={RouteUtilsShadow} path="/utils/shadow" />
-    <Route.is page={RouteUtils} path="/utils" />
-    <Route.is page={Route404} path="*" />
+    <Route.is
+      page={withLoading(() => import('../pages/guides'))}
+      path="/guides"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/guides/flowtype'))}
+      path="/guides/flowtype"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-children'))}
+      path="/mixins/with-children"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-component'))}
+      path="/mixins/with-component"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-context'))}
+      path="/mixins/with-context"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-lifecycle'))}
+      path="/mixins/with-lifecycle"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-renderer'))}
+      path="/mixins/with-renderer"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-update'))}
+      path="/mixins/with-update"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins/with-unique'))}
+      path="/mixins/with-unique"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/mixins'))}
+      path="/mixins"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/renderers/default'))}
+      path="/renderers/default"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/renderers/with-lit-html'))}
+      path="/renderers/with-lit-html"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/renderers/with-preact'))}
+      path="/renderers/with-preact"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/renderers/with-react'))}
+      path="/renderers/with-react"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/renderers'))}
+      path="/renderers"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/utils/define'))}
+      path="/utils/define"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/utils/emit'))}
+      path="/utils/emit"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/utils/link'))}
+      path="/utils/link"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/utils/shadow'))}
+      path="/utils/shadow"
+    />
+    <Route.is
+      page={withLoading(() => import('../pages/utils'))}
+      path="/utils"
+    />
+    <Route.is page={withLoading(() => import('../pages/404'))} path="*" />
   </Router.is>
 );
 

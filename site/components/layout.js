@@ -19,6 +19,11 @@ const navItems = () => [
     text: 'Home'
   },
   {
+    href: '/guides',
+    text: 'Guides',
+    tree: [{ href: '/guides/flowtype', text: 'Flowtype' }]
+  },
+  {
     href: '/mixins',
     text: 'Mixins',
     tree: [
