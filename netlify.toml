@@ -1,5 +1,5 @@
 [build]
-  command = "bolt netlify"
+  command = "npm install -g bolt process-nextick-args && bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]
