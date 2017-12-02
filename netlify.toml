@@ -1,4 +1,5 @@
-base = "site"
-command = "bolt netlify"
-publish = "public"
-YARN_VERSION = "1.3.2"
+[build]
+  base = "site"
+  command = "bolt netlify"
+  publish = "public"
+  YARN_VERSION = "1.3.2"
