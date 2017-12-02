@@ -1,13 +1,6 @@
 import { withRenderer } from 'skatejs';
 
-const myRenderer = (Base = HTMLElement) =>
-  class extends Base {
-    renderer(root, render) {
-      root.innerHTML = render();
-    }
-  };
-
-class WithRenderer extends withRenderer(myRenderer()) {
+class WithRenderer extends withRenderer() {
   static observedAttributes = ['name'];
   attributeChangedCallback() {
     this.updated();

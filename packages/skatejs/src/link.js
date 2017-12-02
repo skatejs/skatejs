@@ -14,7 +14,7 @@ function getValue(elem): boolean | string | void {
   return value;
 }
 
-export function link(elem: HTMLElement, target: string): Function {
+export function link(elem: HTMLElement, target: string = 'state.'): Function {
   return (e: CustomElementEvent): void => {
     // TODO revisit once all browsers have native support.
     //

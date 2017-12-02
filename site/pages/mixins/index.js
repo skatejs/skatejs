@@ -1,4 +1,5 @@
 // @flow
+// @jsx h
 
 import { component, h } from '../../utils';
 import { Code } from '../../components/code';

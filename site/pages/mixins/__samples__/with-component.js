@@ -1,13 +1,6 @@
 import { props, withComponent } from 'skatejs';
 
-const myRenderer = (Base = HTMLElement) =>
-  class extends Base {
-    renderer(root, render) {
-      root.innerHTML = render();
-    }
-  };
-
-class WithComponent extends withComponent(myRenderer()) {
+class WithComponent extends withComponent() {
   static props = {
     name: props.string
   };

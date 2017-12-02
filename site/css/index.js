@@ -5,6 +5,22 @@ export default css({
     color: '#F2567C',
     textDecoration: 'none'
   },
+  '* blockquote': {
+    backgroundColor: '#DCE4CA',
+    borderLeft: '3px solid #c6d3a8',
+    fontSize: 'smaller',
+    fontStyle: 'italic',
+    margin: '20px 0',
+    padding: '10px 15px'
+  },
+  '* blockquote code': {
+    backgroundColor: 'transparent',
+    display: 'inline',
+    padding: 0
+  },
+  '* blockquote p': {
+    margin: 0
+  },
   '* code': {
     backgroundColor: '#dce4c9',
     display: 'inline-block',

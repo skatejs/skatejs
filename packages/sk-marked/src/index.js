@@ -2,6 +2,8 @@ import { define, props, withComponent } from 'skatejs';
 import marked from 'marked';
 
 function format(src) {
+  src = src.replace(/"/g, '&quot;');
+
   // Remove leading newlines.
   src = src.split('\n');
 
