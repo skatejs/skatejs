@@ -74,14 +74,8 @@ import { withComponent } from 'skatejs';
 const Component = withComponent();
 
 class GreetingComponent extends Component {
-  renderer(renderRoot, render) {
-    renderRoot.innerHtml = '';
-    renderRoot.appendChild(render());
-  }
   render() {
-    const el = document.createElement('span');
-    el.innerHTML = 'Hello, <slot></slot>!';
-    return el;
+    return 'Hello, <slot></slot>!';
   }
 }
 
@@ -93,7 +87,7 @@ When this element is rendered, the DOM will look something like the following:
 ```html
 <x-hello>
   #shadow-root
-    <span>Hello, <slot></slot>!</span>
+    Hello, <slot></slot>!
   Bob
 </x-hello>
 ```
@@ -111,26 +105,20 @@ various particular reasons. You can turn it off via `get renderRoot()` override:
 import { withComponent, props } from 'skatejs';
 
 // define base class withouth Shadow DOM
-class NoShadowComponent = class extends withComponent() {
+const NoShadowComponent = class extends withComponent() {
   // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
   get renderRoot() {
-    return this
+    return this;
   }
-}
+};
 
 // use custom NoShadowComponent as a base class
 class GreetingComponent extends NoShadowComponent {
   static props = {
     name: props.string
   };
-  renderer (renderRoot, render) {
-    renderRoot.innerHtml = '';
-    renderRoot.appendChild(render());
-  }
-  render ({name}) {
-    const el = document.createElement('span');
-    el.innerHTML = `Hello, ${name}!`;
-    return el;
+  render({ name }) {
+    return `Hello, ${name}!`;
   }
 }
 
@@ -147,7 +135,7 @@ When this element is rendered, the DOM will look something like the following:
 
 ```html
 <x-hello>
-  <span>Hello, Bob!</span>
+  Hello, Bob!
 </x-hello>
 ```
 
@@ -165,14 +153,8 @@ class GreetingComponent extends Component {
   static props = {
     name: props.string
   };
-  renderer(renderRoot, render) {
-    renderRoot.innerHtml = '';
-    renderRoot.appendChild(render());
-  }
   render({ name }) {
-    const el = document.createElement('span');
-    el.innerHTML = `Hello, ${name}!`;
-    return el;
+    return `Hello, ${name}!`;
   }
 }
 
@@ -184,7 +166,7 @@ The resulting HTML when the element is rendered would look like this:
 ```html
 <x-hello name="Bob">
   #shadow-root
-    <span>Hello, Bob!</span>
+    Hello, Bob!
 </x-hello>
 ```
 
@@ -193,9 +175,11 @@ changes, the component will re-render.
 
 ### Making your own mixins
 
-In the previous exampless, each component implements its own rendering
-behaviour. Rather than re-defining it all the time, we can write a mixin and
-take advantage of prototypal inheritance:
+In the previous exampless, each component implements `render` method which
+returns a string. This is default "renderer" behaviour provided by Skate. You
+can define custom renderer as well by re-defining `renderer` all the thime for
+every component or rather we can write a mixin and take advantage of prototypal
+inheritance:
 
 > NOTE: the `with` prefix is not mandatory, just a common practice for naming
 > HOCs and Mixins
@@ -206,7 +190,8 @@ import { props, withComponent } from 'skatejs';
 const withDangerouslyNaiveRenderer = (Base = HTMLElement) => {
   return class extends Base {
     renderer(renderRoot, render) {
-      renderRoot.innerHtml = render();
+      renderRoot.innerHtml = '';
+      renderRoot.appendChild(render());
     }
   };
 };
@@ -218,7 +203,9 @@ class GreetingComponent extends Component {
     name: props.string
   };
   render({ name }) {
-    return `<span>Hello, {name}!</span>`;
+    const el = document.createElement('span');
+    el.innerHTML = `Hello, {name}!`;
+    return el;
   }
 }
 
@@ -227,10 +214,13 @@ customElements.define('x-hello', GreetingComponent);
 
 ### Rendering using other front-end libraries
 
-Because Skate provides a hook for the renderer, it can support just about every
-modern component-based front-end library &mdash; React, Preact, Vue... just
-provide a `render` to stamp out your component's HTML, a `renderer` to update
-the DOM with your HTML, and then it's all the same to Skate!
+Skate provides default renderer by setting return string of `render` method to
+your coponent root ( ShadowRoot by default ) via `innerHTML`. Besides that it
+allows you to hook to the renderer ( by defining custom renderer ), which gives
+you options to support just about every modern component-based front-end library
+&mdash; React, Preact, Vue... just provide a `render` to stamp out your
+component's HTML, a `renderer` to update the DOM with your HTML, and then it's
+all the same to Skate!
 
 The Skate team have provided a few renderers for popular front-end libraries;
 check the [Installing](#installing) section.
