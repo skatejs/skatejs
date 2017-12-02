@@ -276,7 +276,7 @@ Where `[renderer]` is one of:
 
 * [lit-html](https://github.com/skatejs/renderer-lit-html)
 * [preact](https://github.com/skatejs/renderer-preact)
-* [preact](https://github.com/skatejs/renderer-react)
+* [react](https://github.com/skatejs/renderer-react)
 * Or any custom renderer!
 
 ## Polyfills
