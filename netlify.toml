@@ -1,5 +1,5 @@
 [build]
-  command = "npm i -g bolt && bolt && bolt site"
+  command = "npm i -g bolt && npm install deep-extend process-nextick-args util-deprecate --ignore-scripts && bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]

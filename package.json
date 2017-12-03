@@ -136,14 +136,13 @@
   "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "npx projector ./projector babel --envs es,esnext,node",
-    "dev": "cd site && npx webpack-dev-server --hot",
-    "flow": "npx flow",
-    "precommit": "npx lint-staged",
-    "preinstall": "echo 'Fixing Netlify...' && npm install deep-extend process-nextick-args util-deprecate --ignore-scripts",
+    "build": "projector ./projector babel --envs es,esnext,node",
+    "dev": "cd site && webpack-dev-server --hot",
+    "flow": "flow",
+    "precommit": "lint-staged",
     "prepare": "bolt build",
-    "site": "cd site && npx webpack -p",
-    "test": "npx jest"
+    "site": "cd site && webpack -p",
+    "test": "jest"
   },
   "jest": {
     "testEnvironment": "./packages/ssr/jest",
