@@ -1,5 +1,5 @@
 [build]
-  command = "bolt && bolt site"
+  command = "git clean -dfx && npm i -g bolt && bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]
