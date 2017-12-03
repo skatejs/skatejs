@@ -140,6 +140,7 @@
     "dev": "cd site && webpack-dev-server --hot",
     "flow": "./node_modules/.bin/flow",
     "precommit": "lint-staged",
+    "preinstall": "npm install process-nextick-args",
     "prepare": "bolt build",
     "site": "cd site && webpack -p",
     "test": "jest"
