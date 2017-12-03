@@ -136,9 +136,9 @@
   "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "projector ./projector babel --envs es,esnext,node",
-    "dev": "cd site && webpack-dev-server --hot",
-    "flow": "./node_modules/.bin/flow",
+    "build": "npx projector ./projector babel --envs es,esnext,node",
+    "dev": "cd site && npx webpack-dev-server --hot",
+    "flow": "npx flow",
     "precommit": "lint-staged",
     "preinstall": "echo 'Fixing Netlify...' && npm install deep-extend process-nextick-args util-deprecate",
     "prepare": "bolt build",
