@@ -5,9 +5,7 @@ import '!file-loader?name=404.html!./index.html';
 import './fills/history';
 
 function mount() {
-  import('./components/app').then(App => {
-    document.getElementById('app').appendChild(new App.default());
-  });
+  import('./components/app');
 }
 
 function script(src, done) {

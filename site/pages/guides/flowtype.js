@@ -1,15 +1,15 @@
 // @flow
-// @jsx h
 
-import { component, h } from '../../utils';
-import { Layout } from '../../components/layout';
-import { Marked } from '../../components/marked';
+import '../../components/layout';
+import '../../components/marked';
+
+import { component } from '../../utils';
 
 export default component(function mixins() {
-  return (
-    <Layout.is title="Flowtype">
-      <Marked.is
-        src={`
+  return this.$`
+    <x-layout title="Flowtype">
+      <x-marked
+        src="${`
           In this section, you'll find out how to use Flowtype to augment your component workflow. To learn more about Flow and how to get started, read more [here](https://flow.org/en/docs/getting-started/).
 
           ### Auto-defining Skate props using Flow types
@@ -54,8 +54,8 @@ export default component(function mixins() {
           If you're using the [React renderer](http://localhost:8080/renderers/with-react) to render your components, and you're using Flow, you may find that you're duplicating your props in your React component and your Skate component.
 
           The good news is, that you can share these types, so long as the names and types are the same. For more information on this, see the [docs](https://github.com/skatejs/renderer-react#using-flow-to-share-prop-types) for the renderer.
-        `}
-      />
-    </Layout.is>
-  );
+        `}"
+      ></x-marked>
+    </x-layout>
+  `;
 });

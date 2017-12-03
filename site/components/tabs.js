@@ -1,12 +1,15 @@
+// @flow
+
 import css, { value } from 'yocss';
 import { define, props } from 'skatejs';
-import { Component, h } from '../utils';
+
+import { Component, style } from '../utils';
 
 const cssTabs = css({
   pane: {
     display: 'none'
   },
-  '.pane[selected]': {
+  '.pane.selected': {
     display: 'block'
   },
   tab: {
@@ -29,7 +32,7 @@ const cssTabs = css({
     textDecoration: 'none',
     top: '3px'
   },
-  '.tabs a[selected], .tabs a:hover': {
+  '.tabs a.selected, .tabs a:hover': {
     borderBottom: '3px solid #F2567C',
     color: '#eee'
   }
@@ -54,39 +57,39 @@ export const Tabs = define(
     }
     render({ css, items, onClick, state }) {
       const { selected } = state;
-      return (
-        <div class={cssTabs}>
-          <style>{css + value(cssTabs)}</style>
+      return this.$`
+        ${style(css, value(cssTabs))}
+        <div className="${cssTabs}">
           <ul class="tabs">
-            {items.map(
+            ${items.map(
               ({ name, pane }, i) =>
-                pane ? (
-                  <li class="tab">
-                    <a
-                      href="#"
-                      onClick={onClick.bind(this, i)}
-                      selected={i === selected ? '' : null}
-                    >
-                      {name}
-                    </a>
-                  </li>
-                ) : (
-                  ''
-                )
+                pane
+                  ? this.$`
+                      <li class="tab">
+                        <a
+                          className="${i === selected ? 'selected' : ''}"
+                          href="#"
+                          on-click="${onClick.bind(this, i)}"
+                        >
+                          ${name}
+                        </a>
+                      </li>
+                    `
+                  : ''
             )}
           </ul>
-          {items.map(
+          ${items.map(
             ({ pane }, i) =>
-              pane ? (
-                <div class="pane" selected={i === selected ? '' : null}>
-                  {pane}
-                </div>
-              ) : (
-                ''
-              )
+              pane
+                ? this.$`
+                    <div className="pane ${i === selected ? 'selected' : ''}">
+                      ${pane}
+                    </div>
+                  `
+                : ''
           )}
         </div>
-      );
+      `;
     }
   }
 );

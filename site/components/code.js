@@ -1,7 +1,10 @@
+import './tabs';
+
+import { html } from 'lit-html/lib/lit-extended';
 import css, { value } from 'yocss';
 import { define, props } from 'skatejs';
-import { Component, h, withLoadableStyle } from '../utils';
-import { Tabs } from './tabs';
+
+import { Component, h, withLoadable } from '../utils';
 
 function format(src) {
   src = src || '';
@@ -39,7 +42,9 @@ function highlight(elem, code, language) {
   });
 }
 
-const Theme = withLoadableStyle({
+withLoadable({
+  is: 'code-style',
+  format: r => html`<style textContent="${r}"></style>`,
   loader: () => import('raw-loader!prismjs/themes/prism-twilight.css')
 });
 
@@ -61,6 +66,7 @@ const cssCode = {
     padding: '10px 20px'
   })
 };
+
 export const Code = define(
   class Code extends Component {
     props: {
@@ -77,24 +83,23 @@ export const Code = define(
       this.style.display = 'block';
     }
     render({ code, lang, title }) {
-      return (
+      const src = document.createElement('div');
+      src.textContent = format(code);
+      highlight(src, code, lang);
+      return this.$`
         <div>
-          <Theme.is />
-          <style>{value(...Object.values(cssCode))}</style>
-          {title ? <div class={cssCode.title}>{title}</div> : null}
-          <div class={cssCode.code}>
-            <pre
-              class={cssCode.pre}
-              ref={e => {
-                if (!e) return;
-                code = format(code);
-                e.innerHTML = code;
-                highlight(e, code, lang);
-              }}
-            />
+          <code-style></code-style>
+          <style textContent="${value(...Object.values(cssCode))}"></style>
+          ${
+            title
+              ? this.$`<div className="${cssCode.title}">${title}</div>`
+              : null
+          }
+          <div className="${cssCode.code}">
+            <pre className="${cssCode.pre}">${src}</pre>
           </div>
         </div>
-      );
+      `;
     }
   }
 );
@@ -149,38 +154,40 @@ export const Runnable = define(
       this.style.display = 'block';
     }
     render({ code, html }) {
-      return (
-        <Tabs.is
-          css={`
+      return this.$`
+        <x-tabs
+          css="${`
             .tabs {
               border-bottom: none;
             }
             .tabs a {
               border-bottom: none;
             }
-            .tabs a[selected],
+            .tabs a.selected,
             .tabs a:hover {
               background-color: #292D34;
               border-bottom: none;
               color: #eee;
             }
-          `}
-          items={[
+          `}"
+          items="${[
             {
               name: 'Code',
-              pane: <Code.is code={code} lang="js" />
+              pane: this.$`<x-code code="${code}" lang="js"></x-code>`
             },
             {
               name: 'HTML',
-              pane: html ? <Code.is code={html} lang="html" /> : ''
+              pane: html
+                ? this.$`<x-code code="${html}" lang="html"></x-code>`
+                : ''
             },
             {
               name: 'Result',
-              pane: html ? <Example.is html={html} /> : ''
+              pane: html ? this.$`<x-example html="${html}"></x-example>` : ''
             }
-          ]}
-        />
-      );
+          ]}"
+        ></x-tabs>
+      `;
     }
   }
 );

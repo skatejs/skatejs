@@ -1,17 +1,11 @@
 // @jsx h
 
-import { define, props } from 'skatejs';
-import SkMarked from '@skatejs/sk-marked';
-import { Component, h } from '../utils';
-import { Code } from './code';
-import { Link } from './primitives';
+import '@skatejs/sk-marked';
+import './code';
+import './primitives';
 
-function tag(ctor, attr, html) {
-  return `<${ctor.is}${Object.keys(attr).reduce(
-    (p, c) => p + ` ${c}="${attr[c]}"`,
-    ''
-  )}>${html}</${ctor.is}>`;
-}
+import { define, props } from 'skatejs';
+import { Component } from '../utils';
 
 export const Marked = define(
   class Marked extends Component {
@@ -19,20 +13,20 @@ export const Marked = define(
       src: props.string
     };
     render({ src }) {
-      return (
-        <SkMarked.is
-          css={this.context.style}
-          renderers={{
+      return this.$`
+        <sk-marked
+          css="${this.context.style}"
+          renderers="${{
             code(code, lang) {
-              return tag(Code, { code, lang });
+              return `<x-code code="${code}" lang="${lang}"></x-code>`;
             },
             link(href, title, text) {
-              return tag(Link, { href, title }, text);
+              return `<x-link href="${href}" title="${title}">${text}</x-link>`;
             }
-          }}
-          src={src}
-        />
-      );
+          }}"
+          src="${src}"
+        ></sk-marked>
+      `;
     }
   }
 );

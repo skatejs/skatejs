@@ -21,7 +21,7 @@ class Component extends withComponent() {
 }
 
 export const Link = define(
-  class Link extends Component {
+  class SkLink extends Component {
     static props = {
       classNames: props.object,
       css: props.string,
@@ -47,7 +47,7 @@ export const Link = define(
 );
 
 export const Route = define(
-  class Route extends Component {
+  class SkRoute extends Component {
     static props = {
       page: null,
       PageToRender: null,
@@ -79,7 +79,7 @@ export const Route = define(
 );
 
 export const Router = define(
-  class Router extends Component {
+  class SkRouter extends Component {
     static props = {
       options: props.object
     };

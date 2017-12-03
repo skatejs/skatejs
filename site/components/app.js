@@ -1,105 +1,111 @@
-import css, { value } from 'yocss';
-import globalStyles from '../css';
-import { Loading } from './primitives';
-import { Component, h, withLoadablePreact } from '../utils';
+import './primitives';
+import '@skatejs/sk-router';
+
+import { html } from 'lit-html/lib/lit-extended';
 import { define, props } from 'skatejs';
-import { Router, Route } from '@skatejs/sk-router';
+import css, { value } from 'yocss';
+
+import { Component, style, withLoadable } from '../utils';
+import globalStyles from '../css';
 import logo50 from '../img/logo-50x50.png';
 import logo100 from '../img/logo-100x100.png';
 import RouteIndex from '../pages';
 
 const withLoading = loader =>
-  withLoadablePreact({
+  withLoadable({
     loader: loader,
-    loading: Loading
+    loading: html`<x-loading></x-loading>`
   });
 
-const router = (
-  <Router.is>
-    <Route.is page={RouteIndex} path="/" />
-    <Route.is
-      page={withLoading(() => import('../pages/guides'))}
+const router = html`
+  <sk-router>
+    <sk-route page="${RouteIndex}" path="/"></sk-route>
+    <sk-route
+      page="${import('../pages/guides')}"
       path="/guides"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/guides/flowtype'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/guides/flowtype')}"
       path="/guides/flowtype"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-children'))}
-      path="/mixins/with-children"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-component'))}
-      path="/mixins/with-component"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-context'))}
-      path="/mixins/with-context"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-lifecycle'))}
-      path="/mixins/with-lifecycle"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-renderer'))}
-      path="/mixins/with-renderer"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-update'))}
-      path="/mixins/with-update"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins/with-unique'))}
-      path="/mixins/with-unique"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/mixins'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins')}"
       path="/mixins"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/renderers/default'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-children')}"
+      path="/mixins/with-children"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-component')}"
+      path="/mixins/with-component"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-context')}"
+      path="/mixins/with-context"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-lifecycle')}"
+      path="/mixins/with-lifecycle"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-renderer')}"
+      path="/mixins/with-renderer"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-update')}"
+      path="/mixins/with-update"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/mixins/with-unique')}"
+      path="/mixins/with-unique"
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/renderers/default')}"
       path="/renderers/default"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/renderers/with-lit-html'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/renderers/with-lit-html')}"
       path="/renderers/with-lit-html"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/renderers/with-preact'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/renderers/with-preact')}"
       path="/renderers/with-preact"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/renderers/with-react'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/renderers/with-react')}"
       path="/renderers/with-react"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/renderers'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/renderers')}"
       path="/renderers"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/utils/define'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/utils/define')}"
       path="/utils/define"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/utils/emit'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/utils/emit')}"
       path="/utils/emit"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/utils/link'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/utils/link')}"
       path="/utils/link"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/utils/shadow'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/utils/shadow')}"
       path="/utils/shadow"
-    />
-    <Route.is
-      page={withLoading(() => import('../pages/utils'))}
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/utils')}"
       path="/utils"
-    />
-    <Route.is page={withLoading(() => import('../pages/404'))} path="*" />
-  </Router.is>
-);
+    ></sk-route>
+    <sk-route
+      page="${import('../pages/404')}"
+      path="*"
+    ></sk-route>
+  </sk-router>
+`;
 
 const cssApp = css({
   borderTop: '5px solid #F2567C',
@@ -121,16 +127,13 @@ export default define(
       window.addEventListener('replaceState', this.onHistory);
     }
     render({ context, state }) {
-      return (
-        <div class={cssApp}>
-          <style>{`
-            ${context.style}
-            ${value(cssApp)}
-          `}</style>
-          <img class="logo" src={state.href === '/' ? logo100 : logo50} />
-          {router}
+      return this.$`
+        <div className="${cssApp}">
+          ${style(context.style, value(cssApp))}
+          <img class="logo">
+          ${router}
         </div>
-      );
+      `;
     }
   }
 );

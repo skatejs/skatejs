@@ -1,6 +1,8 @@
+import '@skatejs/sk-router';
+
 import css, { value } from 'yocss';
-import { Link as SkLink } from '@skatejs/sk-router';
-import { component, h } from '../utils';
+
+import { component, style } from '../utils';
 import loaderImg from 'file-loader!../img/loader.svg';
 
 const cssHr = css({
@@ -9,25 +11,25 @@ const cssHr = css({
   textAlign: 'center'
 });
 export const Hr = component(function hr() {
-  return (
-    <div class={cssHr}>
-      <style>{value(cssHr)}</style>
+  return this.$`
+    <div className="${cssHr}">
+      ${style(value(cssHr))}
       &mdash;&mdash;&mdash;
     </div>
-  );
+  `;
 });
 
 export const Link = component(
   function link(classNames, css, href) {
-    return (
-      <SkLink.is
-        classNames={classNames}
-        css={this.context.style + css}
-        href={href}
+    return this.$`
+      <sk-link
+        classNames="${classNames}"
+        css="${this.context.style + css}"
+        href="${href}"
       >
-        <slot />
-      </SkLink.is>
-    );
+        <slot></slot>
+      </sk-link>
+    `;
   },
   ['classNames', 'css', 'href']
 );
@@ -38,12 +40,12 @@ const cssLoading = css({
   width: '44px'
 });
 export const Loading = component(function loader() {
-  return (
-    <div class={cssLoading}>
-      <style>{value(cssLoading)}</style>
-      <img src={loaderImg} />
+  return this.$`
+    <div className="${cssLoading}">
+      ${style(value(cssLoading))}
+      <img src="${loaderImg}">
     </div>
-  );
+  `;
 });
 
 const cssNote = css({
@@ -54,10 +56,10 @@ const cssNote = css({
   padding: '10px 15px'
 });
 export const Note = component(function note() {
-  return (
-    <em class={cssNote}>
-      <style>{value(cssNote)}</style>
-      <slot />
+  return this.$`
+    <em className="${cssNote}">
+      ${style(value(cssNote))}
+      <slot></slot>
     </em>
-  );
+  `;
 });

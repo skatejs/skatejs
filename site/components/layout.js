@@ -1,6 +1,8 @@
-import css, { names, value } from 'yocss';
+import { html } from 'lit-html/lib/lit-extended';
 import { define, props } from 'skatejs';
-import { Component, h } from '../utils';
+import css, { names, value } from 'yocss';
+
+import { Component, style } from '../utils';
 import { Link } from './primitives';
 
 const linkCss = ({ depth, selected } = {}) =>
@@ -59,32 +61,34 @@ const navItems = () => [
 ];
 
 function renderTree(items: ?Array<Object>, depth = 0) {
-  return items && items.length ? (
-    <ul>
-      {items.map(n => {
-        const styles = linkCss({
-          depth,
-          selected: location.pathname === n.href
-        });
-        return (
-          <li>
-            <Link.is
-              classNames={{ a: styles }}
-              css={value(styles)}
-              href={n.href}
-            >
-              {n.text}
-            </Link.is>
-            {location.pathname.indexOf(n.href) === 0
-              ? renderTree(n.tree, depth + 1)
-              : ''}
-          </li>
-        );
-      })}
-    </ul>
-  ) : (
-    ''
-  );
+  return items && items.length
+    ? html`
+        <ul>
+          ${items.map(n => {
+            const styles = linkCss({
+              depth,
+              selected: location.pathname === n.href
+            });
+            return html`
+              <li>
+                <x-link
+                  classNames="${{ a: styles }}"
+                  css="${value(styles)}"
+                  href="${n.href}"
+                >
+                  ${n.text}
+                </x-link>
+                ${
+                  location.pathname.indexOf(n.href) === 0
+                    ? renderTree(n.tree, depth + 1)
+                    : ''
+                }
+              </li>
+            `;
+          })}
+        </ul>
+      `
+    : '';
 }
 
 const cssLayout = {
@@ -130,25 +134,24 @@ export const Layout = define(
       this.style.display = 'block';
     }
     render({ nav, title }) {
-      return (
-        <div class={cssLayout.flex}>
-          <style>{`
-            ${this.context.style}
-            ${value(...Object.values(cssLayout))}
-          `}</style>
-          {nav ? (
-            <nav class={names(cssLayout.flexItem, cssLayout.nav)}>
-              {renderTree(navItems())}
-            </nav>
-          ) : (
-            ''
-          )}
-          <section class={names(cssLayout.flexItem, cssLayout.section)}>
-            {title ? <h2>{title}</h2> : ''}
-            <slot />
+      return this.$`
+        <div className="${cssLayout.flex}">
+          ${style(this.context.style, value(...Object.values(cssLayout)))}
+          ${
+            nav
+              ? this.$`
+                  <nav className="${names(cssLayout.flexItem, cssLayout.nav)}">
+                    ${renderTree(navItems())}
+                  </nav>
+                `
+              : ''
+          }
+          <section className="${names(cssLayout.flexItem, cssLayout.section)}">
+            ${title ? this.$`<h2>${title}</h2>` : ''}
+            <slot></slot>
           </section>
         </div>
-      );
+      `;
     }
   }
 );

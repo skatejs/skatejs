@@ -1,14 +1,16 @@
 // @flow
-// @jsx h
 
-import { h } from 'preact';
-import { define, props, withComponent, withUpdate } from 'skatejs';
-import withPreact from '@skatejs/renderer-preact';
+import { html } from 'lit-html/lib/lit-extended';
+import { define, props, withComponent } from 'skatejs';
+import withLitHtml from '@skatejs/renderer-lit-html';
 
-export { h } from 'preact';
+export class Component extends withComponent(withLitHtml()) {
+  $ = html;
+}
 
-// Compatiblity layer for renames.
-export const Component = withComponent(withPreact());
+export function style(...css) {
+  return html`<style textContent="${css.join('')}"></style>`;
+}
 
 export function component(render: Function, props: Array<string> = []) {
   class Comp extends Component {
@@ -34,6 +36,7 @@ export function component(render: Function, props: Array<string> = []) {
 export const withLoadable = (opts: Object) =>
   define(
     class Loadable extends Component {
+      static is = opts.is;
       props: {
         format: any,
         loader: any,
@@ -63,23 +66,7 @@ export const withLoadable = (opts: Object) =>
       }
       render() {
         const { loaded } = this.state;
-        if (loaded) {
-          return this.format(loaded);
-        }
+        return loaded ? this.format(loaded) : this.$``;
       }
     }
   );
-
-export const withLoadablePreact = (opts: Object) =>
-  withLoadable({
-    ...{
-      format: r => {
-        const R = r.is || r;
-        return <R />;
-      }
-    },
-    ...opts
-  });
-
-export const withLoadableStyle = (opts: Object) =>
-  withLoadable({ ...{ format: r => <style>{r}</style> }, ...opts });

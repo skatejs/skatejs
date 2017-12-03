@@ -1,23 +1,25 @@
 // @flow
-// @jsx h
 
-import { component, h } from '../../utils';
-import { Runnable } from '../../components/code';
-import { Layout } from '../../components/layout';
+import '../../components/code';
+import '../../components/layout';
+
+import { component, style } from '../../utils';
 
 import './__samples__/with-context';
 import codeWithComponent from '!raw-loader!./__samples__/with-context';
 import codeWithComponentHtml from '!raw-loader!./__samples__/with-context.html';
 
 export default component(function mixinsWithContext() {
-  return (
-    <Layout.is title="Context">
-      <style>{this.context.style}</style>
+  return this.$`
+    <x-layout title="Context">
+      ${style(this.context.style)}
       <p>
-        The <code>withContext</code> mixin allows you to use{' '}
+        The <code>withContext</code> mixin allows you to use
         <code>context</code> like in <a href="https://reactjs.org/">React</a>.
       </p>
-      <Runnable.is code={codeWithComponent} html={codeWithComponentHtml} />
-    </Layout.is>
-  );
+      <x-runnable code="${
+        codeWithComponent
+      }" html="${codeWithComponentHtml}"></x-runnable>
+    </x-layout>
+  `;
 });
