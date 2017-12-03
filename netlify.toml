@@ -1,5 +1,5 @@
 [build]
-  command = ""
+  command = "bolt && bolt site"
   publish = "site/public"
 
 [context.production.environment]
