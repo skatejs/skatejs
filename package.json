@@ -139,11 +139,11 @@
     "build": "npx projector ./projector babel --envs es,esnext,node",
     "dev": "cd site && npx webpack-dev-server --hot",
     "flow": "npx flow",
-    "precommit": "lint-staged",
-    "preinstall": "echo 'Fixing Netlify...' && npm install deep-extend process-nextick-args util-deprecate",
+    "precommit": "npx lint-staged",
+    "preinstall": "echo 'Fixing Netlify...' && npm install deep-extend process-nextick-args util-deprecate --ignore-scripts",
     "prepare": "bolt build",
-    "site": "cd site && webpack -p",
-    "test": "jest"
+    "site": "cd site && npx webpack -p",
+    "test": "npx jest"
   },
   "jest": {
     "testEnvironment": "./packages/ssr/jest",
