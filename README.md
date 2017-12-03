@@ -104,7 +104,7 @@ various particular reasons. You can turn it off via `get renderRoot()` override:
 ```js
 import { withComponent, props } from 'skatejs';
 
-// define base class withouth Shadow DOM
+// define base class without Shadow DOM
 const NoShadowComponent = class extends withComponent() {
   // you need to return where you want to render your content, in our case we wanna render directly to our custom element children
   get renderRoot() {
@@ -175,10 +175,10 @@ changes, the component will re-render.
 
 ### Making your own mixins
 
-In the previous exampless, each component implements `render` method which
+In the previous examples, each component implements `render` method which
 returns a string. This is default "renderer" behaviour provided by Skate. You
-can define custom renderer as well by re-defining `renderer` all the thime for
-every component or rather we can write a mixin and take advantage of prototypal
+can define custom renderer as well by re-defining `renderer` all the time for
+every component or rather we can write a mixin and take advantage of prototype
 inheritance:
 
 > NOTE: the `with` prefix is not mandatory, just a common practice for naming
@@ -204,7 +204,7 @@ class GreetingComponent extends Component {
   };
   render({ name }) {
     const el = document.createElement('span');
-    el.innerHTML = `Hello, {name}!`;
+    el.innerHTML = `Hello, ${name}!`;
     return el;
   }
 }
@@ -215,7 +215,7 @@ customElements.define('x-hello', GreetingComponent);
 ### Rendering using other front-end libraries
 
 Skate provides default renderer by setting return string of `render` method to
-your coponent root ( ShadowRoot by default ) via `innerHTML`. Besides that it
+your component root ( ShadowRoot by default ) via `innerHTML`. Besides that it
 allows you to hook to the renderer ( by defining custom renderer ), which gives
 you options to support just about every modern component-based front-end library
 &mdash; React, Preact, Vue... just provide a `render` to stamp out your
@@ -223,7 +223,7 @@ component's HTML, a `renderer` to update the DOM with your HTML, and then it's
 all the same to Skate!
 
 The Skate team have provided a few renderers for popular front-end libraries;
-check the [Installing](#installing) section.
+check the [Installing](#installing-skate) section.
 
 #### Using Skate with Preact
 
@@ -274,9 +274,9 @@ npm install skatejs @skatejs/renderer-[renderer] [renderer]
 
 Where `[renderer]` is one of:
 
-* [@skatejs/renderer-lit-html](https://github.com/skatejs/renderer-lit-html)
-* [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact)
-* [@skatejs/renderer-react](https://github.com/skatejs/renderer-react)
+* [lit-html](https://github.com/skatejs/renderer-lit-html)
+* [preact](https://github.com/skatejs/renderer-preact)
+* [react](https://github.com/skatejs/renderer-react)
 * Or any custom renderer!
 
 ## Polyfills
