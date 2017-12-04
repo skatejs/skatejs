@@ -38,7 +38,8 @@ const cssTabs = css({
   }
 });
 export const Tabs = define(
-  class Tabs extends Component {
+  class extends Component {
+    static is = 'x-tabs';
     props: {
       css: string,
       items: Array<Object>,
@@ -48,7 +49,6 @@ export const Tabs = define(
       selected: 0
     };
     connecting() {
-      super.connecting();
       this.style.display = 'block';
     }
     onClick(i, e) {
@@ -58,6 +58,7 @@ export const Tabs = define(
     render({ css, items, onClick, state }) {
       const { selected } = state;
       return this.$`
+        ${this.$style}
         ${style(css, value(cssTabs))}
         <div className="${cssTabs}">
           <ul class="tabs">

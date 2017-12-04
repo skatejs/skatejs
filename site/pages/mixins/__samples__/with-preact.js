@@ -1,5 +1,3 @@
-/** @jsx h */
-
 import { props, withComponent } from 'skatejs';
 import withPreact from '@skatejs/renderer-preact';
 import { h } from 'preact';

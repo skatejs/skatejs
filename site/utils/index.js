@@ -3,39 +3,22 @@
 import { html } from 'lit-html/lib/lit-extended';
 import { define, props, withComponent } from 'skatejs';
 import withLitHtml from '@skatejs/renderer-lit-html';
+import { value } from 'yocss';
 
-export class Component extends withComponent(withLitHtml()) {
+export const Component = class extends withComponent(withLitHtml()) {
   $ = html;
-}
+  get $style() {
+    return style(this.context.style, value(...Object.values(this.css || {})));
+  }
+};
 
 export function style(...css) {
   return html`<style textContent="${css.join('')}"></style>`;
 }
 
-export function component(render: Function, props: Array<string> = []) {
-  class Comp extends Component {
-    static props = props.reduce((prev, curr) => {
-      prev[curr] = { attribute: { source: true } };
-      return prev;
-    }, {});
-    render() {
-      return render.call(this, ...props.map(n => this[n]));
-    }
-  }
-
-  // Allows the component to have a tag name hint based off the render function
-  // name.
-  Object.defineProperty(Comp, 'name', {
-    configurable: true,
-    value: render.name
-  });
-
-  return define(Comp);
-}
-
 export const withLoadable = (opts: Object) =>
   define(
-    class Loadable extends Component {
+    class extends Component {
       static is = opts.is;
       props: {
         format: any,
@@ -48,7 +31,7 @@ export const withLoadable = (opts: Object) =>
         ...opts
       };
       get renderRoot() {
-        return this.useShadowRoot ? super.renderRoot : this;
+        return opts.useShadowRoot ? super.renderRoot : this;
       }
       connecting() {
         const loaded = this.loading;

@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const yargs = require('yargs');
 
+const args = yargs.argv;
 const contextPath = path.join(__dirname, '.');
 const publicPath = path.join(__dirname, 'public');
 
@@ -34,7 +36,7 @@ module.exports = {
     historyApiFallback: true,
     open: true
   },
-  devtool: 'source-map',
+  devtool: args.p ? false : 'source-map',
   entry: './index.js',
   module: {
     rules: [

@@ -1,4 +1,4 @@
-/** @jsx h */
+// @jsx h
 
 import { props, withComponent } from 'skatejs';
 import withPreact from '@skatejs/renderer-preact';

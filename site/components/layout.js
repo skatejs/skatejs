@@ -34,8 +34,7 @@ const navItems = () => [
       { href: '/mixins/with-context', text: 'Context' },
       { href: '/mixins/with-lifecycle', text: 'Lifecycle' },
       { href: '/mixins/with-renderer', text: 'Renderer' },
-      { href: '/mixins/with-update', text: 'Update' },
-      { href: '/mixins/with-unique', text: 'Unique' }
+      { href: '/mixins/with-update', text: 'Update' }
     ]
   },
   {
@@ -121,7 +120,8 @@ const cssLayout = {
   })
 };
 export const Layout = define(
-  class Layout extends Component {
+  class extends Component {
+    static is = 'x-layout';
     props: {
       nav: boolean,
       title: string
@@ -130,13 +130,13 @@ export const Layout = define(
       nav: true
     };
     connecting() {
-      super.connecting();
       this.style.display = 'block';
     }
     render({ nav, title }) {
       return this.$`
+        ${this.$style}
+        ${style(value(...Object.values(cssLayout)))}
         <div className="${cssLayout.flex}">
-          ${style(this.context.style, value(...Object.values(cssLayout)))}
           ${
             nav
               ? this.$`

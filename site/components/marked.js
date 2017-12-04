@@ -1,5 +1,3 @@
-// @jsx h
-
 import '@skatejs/sk-marked';
 import './code';
 import './primitives';
@@ -8,7 +6,8 @@ import { define, props } from 'skatejs';
 import { Component } from '../utils';
 
 export const Marked = define(
-  class Marked extends Component {
+  class extends Component {
+    static is = 'x-marked';
     static props = {
       src: props.string
     };

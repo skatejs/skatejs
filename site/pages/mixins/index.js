@@ -4,61 +4,64 @@ import '../../components/code';
 import '../../components/layout';
 import '../../components/primitives';
 
-import { component, style } from '../../utils';
+import { define } from 'skatejs';
 
-export default component(function mixinsIndex() {
-  return this.$`
-    <x-layout title="Mixins">
-      <x-marked src="${`
-        As stated previously, the mixin pattern is a way to take several class
-        definitions and compose them into one. It works well for custom elements
-        because every element has a different purpose and it allows you to pick
-        and choose what goes into it. It's also what lets you render one
-        component with <x-link href="/renderers/with-preact">Preact</x-link>
-        and maybe another with [LitHTML](/renderers/with-lit-html). Each
-        component is self-contained.
+import { Component } from '../../utils';
 
-        Skate's mixins follow a common component lifecycle specification, which
-        enables it to interop with not only itself, but also other libraries.
-        The specification is described as follows and is what you get if you
-        combine all of the mixins together, or use the [\`withComponent\`](/mixins/with-component)
-        mixin.
+export default define(
+  class extends Component {
+    static is = 'x-pages-mixins';
+    render() {
+      return this.$`
+        <x-layout title="Mixins">
+          <x-marked src="${`
+            As stated previously, the mixin pattern is a way to take several class
+            definitions and compose them into one. It works well for custom elements
+            because every element has a different purpose and it allows you to pick
+            and choose what goes into it. It's also what lets you render one
+            component with <x-link href="/renderers/with-preact">Preact</x-link>
+            and maybe another with [LitHTML](/renderers/with-lit-html). Each
+            component is self-contained.
 
-        \`\`\`js
-        interface Component {
-          // withChildren
-          childrenUpdated(): void;
+            Skate's mixins follow a common component lifecycle specification, which
+            enables it to interop with not only itself, but also other libraries.
+            The specification is described as follows and is what you get if you
+            combine all of the mixins together, or use the [\`withComponent\`](/mixins/with-component)
+            mixin.
 
-          // withContext
-          context: Object;
+            \`\`\`js
+            interface Component {
+              // withChildren
+              childrenUpdated(): void;
 
-          // withLifecycle
-          connecting(): void;
-          connected(): void;
-          disconnecting(): void;
-          disconnected(): void;
+              // withContext
+              context: Object;
 
-          // withRenderer
-          rendering(): void;
-          render(props: Object, state: Object): any;
-          rendered(): void;
-          renderer(root: Node, render: Render): void;
+              // withLifecycle
+              connecting(): void;
+              connected(): void;
+              disconnecting(): void;
+              disconnected(): void;
 
-          // withUpdate
-          static props: PropTypes;
-          props: Object;
-          state: Object;
-          updating(prevProps: Object, prevState: Object): void;
-          shouldUpdate(prevProps: Object, prevState: Object): boolean;
-          updated(prevProps: Object, prevState: Object): void;
-          triggerUpdate(): void;
+              // withRenderer
+              rendering(): void;
+              render(props: Object, state: Object): any;
+              rendered(): void;
+              renderer(root: Node, render: Render): void;
 
-          // withUnique
-          static defined: Function;
-          static is: string;
-        }
-        \`\`\`
-      `}"</x-marked>
-    </x-layout>
-  `;
-});
+              // withUpdate
+              static props: PropTypes;
+              props: Object;
+              state: Object;
+              updating(prevProps: Object, prevState: Object): void;
+              shouldUpdate(prevProps: Object, prevState: Object): boolean;
+              updated(prevProps: Object, prevState: Object): void;
+              triggerUpdate(): void;
+            }
+            \`\`\`
+          `}"</x-marked>
+        </x-layout>
+      `;
+    }
+  }
+);

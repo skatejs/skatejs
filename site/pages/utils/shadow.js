@@ -3,42 +3,49 @@
 import '../../components/layout';
 import '../../components/marked';
 
-import { component } from '../../utils';
+import { define } from 'skatejs';
 
-export default component(function utilsShadow() {
-  return this.$`
-    <x-layout title="shadow()">
-      <x-marked src="${`
-        The \`shadow()\` function will create a \`shadowRoot\`, if one does not exist, and return it. Subsequent calls simply return the existing shadow root to prevent errors related to calling \`attachShadow()\` more than once.
+import { Component } from '../../utils';
 
-        Normally, when you're writing custom elements without any tools, you'd want to attach your root in the \`constructor()\` and then do your rendering work in \`connectedCallback()\`. This is because the \`connectedCallback\` can get called more than once. For example:
+export default define(
+  class extends Component {
+    static is = 'x-pages-utils-shadow';
+    render() {
+      return this.$`
+        <x-layout title="shadow()">
+          <x-marked src="${`
+            The \`shadow()\` function will create a \`shadowRoot\`, if one does not exist, and return it. Subsequent calls simply return the existing shadow root to prevent errors related to calling \`attachShadow()\` more than once.
 
-        \`\`\`js
-        class CustomElement extends HTMLElement {
-          constructor() {
-            super();
-            this.attachShadow({ mode: 'open' });
-          }
-          connectedCallback() {
-            this.shadowRoot.innerHTML = 'Hello, World!';
-          }
-        }
-        \`\`\`
+            Normally, when you're writing custom elements without any tools, you'd want to attach your root in the \`constructor()\` and then do your rendering work in \`connectedCallback()\`. This is because the \`connectedCallback\` can get called more than once. For example:
 
-        If you're using the \`shadow()\` function, you can just put everything into the \`connectedCallback()\`.
+            \`\`\`js
+            class CustomElement extends HTMLElement {
+              constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+              }
+              connectedCallback() {
+                this.shadowRoot.innerHTML = 'Hello, World!';
+              }
+            }
+            \`\`\`
 
-        \`\`\`js
-        import { shadow } from 'skatejs';
+            If you're using the \`shadow()\` function, you can just put everything into the \`connectedCallback()\`.
 
-        class CustomElement extends HTMLElement {
-          connectedCallback() {
-            shadow(this).innerHTML = 'Hello, World!';
-          }
-        }
-        \`\`\`
+            \`\`\`js
+            import { shadow } from 'skatejs';
 
-        > Skate uses this function internally in the \`withRenderer()\` mixin as the default return value from \`renderRoot\`.
-      `}"></x-marked>
-    </x-layout>
-  `;
-});
+            class CustomElement extends HTMLElement {
+              connectedCallback() {
+                shadow(this).innerHTML = 'Hello, World!';
+              }
+            }
+            \`\`\`
+
+            > Skate uses this function internally in the \`withRenderer()\` mixin as the default return value from \`renderRoot\`.
+          `}"></x-marked>
+        </x-layout>
+      `;
+    }
+  }
+);

@@ -2,9 +2,9 @@ import './tabs';
 
 import { html } from 'lit-html/lib/lit-extended';
 import css, { value } from 'yocss';
-import { define, props } from 'skatejs';
+import { define, props, withComponent } from 'skatejs';
 
-import { Component, h, withLoadable } from '../utils';
+import { Component, withLoadable } from '../utils';
 
 function format(src) {
   src = src || '';
@@ -68,7 +68,8 @@ const cssCode = {
 };
 
 export const Code = define(
-  class Code extends Component {
+  class extends Component {
+    static is = 'x-code';
     props: {
       code: string,
       lang: string,
@@ -79,7 +80,6 @@ export const Code = define(
       lang: 'js'
     };
     connecting() {
-      super.connecting();
       this.style.display = 'block';
     }
     render({ code, lang, title }) {
@@ -120,13 +120,13 @@ const cssExample = {
   })
 };
 export const Example = define(
-  class Example extends Component {
+  class extends withComponent() {
+    static is = 'x-example';
     props: {
       html: string,
       title: string
     };
     connecting() {
-      super.connecting();
       this.style.display = 'block';
     }
     renderer(root) {
@@ -144,13 +144,13 @@ export const Example = define(
 );
 
 export const Runnable = define(
-  class Runnable extends Component {
+  class extends Component {
+    static is = 'x-runnable';
     static props = {
       code: null,
       html: null
     };
     connecting() {
-      super.connecting();
       this.style.display = 'block';
     }
     render({ code, html }) {

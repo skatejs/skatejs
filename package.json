@@ -72,7 +72,6 @@
   },
   "dependencies": {
     "babel-register": "^6.26.0",
-    "execa": "^0.8.0",
     "glob": "^7.1.2",
     "highlight.js": "^9.12.0",
     "jest-environment-node": "^21.1.0",
@@ -89,8 +88,8 @@
     "react-dom": "^15.0.0",
     "uglify-es": "^3.1.2",
     "undom": "^0.3.3",
-    "yargs": "^9.0.1",
-    "yocss": "^0.5.1"
+    "yocss": "^0.5.1",
+    "yargs": "^9.0.1"
   },
   "devDependencies": {
     "@skatejs/bore": "^4.0.0",
@@ -112,6 +111,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "bolt": "^0.17.6",
     "eslint-plugin-flowtype": "^2.34.0",
+    "execa": "^0.8.0",
     "file-loader": "^1.1.5",
     "flow-bin": "^0.59.0",
     "flow-copy-source": "^1.2.1",
@@ -121,14 +121,11 @@
     "jest-cli": "^21.0.2",
     "jest-in-case": "^1.0.2",
     "lint-staged": "^4.0.2",
+    "now": "^8.5.4",
     "prettier": "1.8.2",
     "prettier-eslint": "^8.2.2",
     "projector-cli": "^3.0.1",
     "raw-loader": "^0.5.1",
-    "rollup": "^0.49.3",
-    "rollup-plugin-babel": "^3.0.2",
-    "rollup-plugin-uglify": "^2.0.1",
-    "typescript": "2.6.1",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.3",
     "worker-loader": "^1.1.0"

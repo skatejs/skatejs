@@ -17,20 +17,21 @@ function format(src) {
   return src.join('\n');
 }
 
-class SkMarked extends withComponent() {
-  static props = {
-    css: props.string,
-    renderers: props.object,
-    src: props.string
-  };
-  render({ css, renderers, src }) {
-    const renderer = new marked.Renderer();
-    Object.assign(renderer, renderers);
-    return `
+export default define(
+  class extends withComponent() {
+    static is = 'sk-marked';
+    static props = {
+      css: props.string,
+      renderers: props.object,
+      src: props.string
+    };
+    render({ css, renderers, src }) {
+      const renderer = new marked.Renderer();
+      Object.assign(renderer, renderers);
+      return `
       <style>${css}></style>
       ${marked(format(src), { renderer })}
     `;
+    }
   }
-}
-
-export default define(SkMarked);
+);

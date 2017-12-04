@@ -11,6 +11,7 @@ import logo50 from '../img/logo-50x50.png';
 import logo100 from '../img/logo-100x100.png';
 import RouteIndex from '../pages';
 
+// TODO wrap all routes with this again.
 const withLoading = loader =>
   withLoadable({
     loader: loader,
@@ -55,10 +56,6 @@ const router = html`
     <sk-route
       page="${import('../pages/mixins/with-update')}"
       path="/mixins/with-update"
-    ></sk-route>
-    <sk-route
-      page="${import('../pages/mixins/with-unique')}"
-      path="/mixins/with-unique"
     ></sk-route>
     <sk-route
       page="${import('../pages/renderers/default')}"
@@ -112,7 +109,8 @@ const cssApp = css({
   padding: '50px 25px 25px 25px'
 });
 export default define(
-  class App extends Component {
+  class extends Component {
+    static is = 'x-app';
     context = {
       style: value(globalStyles)
     };
@@ -126,10 +124,11 @@ export default define(
       window.addEventListener('pushstate', this.onHistory);
       window.addEventListener('replaceState', this.onHistory);
     }
-    render({ context, state }) {
+    render() {
       return this.$`
+        ${this.$style}
         <div className="${cssApp}">
-          ${style(context.style, value(cssApp))}
+          ${style(value(cssApp))}
           <img class="logo">
           ${router}
         </div>

@@ -1,4 +1,4 @@
-/** @jsx React.createElement */
+// @jsx React.createElement
 
 import { props, withComponent } from 'skatejs';
 import withReact from '@skatejs/renderer-react';

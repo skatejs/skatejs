@@ -1,9 +1,15 @@
-import { component, style } from '../utils';
+import { define } from 'skatejs';
 
-export default component(function notFound() {
-  return this.$`
-    ${style(this.context.style)}
-    <h2>Not found!</h2>
-    <p>The requested page couldn't be found.</p>
-  `;
-});
+import { Component } from '../utils';
+
+export default define(
+  class extends Component {
+    static is = 'x-notfound';
+    render() {
+      return this.$`
+        <h2>Not found!</h2>
+        <p>The requested page couldn't be found.</p>
+      `;
+    }
+  }
+);
