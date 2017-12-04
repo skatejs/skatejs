@@ -5,7 +5,7 @@
 
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
-import { define, withChildren, withUnique } from '../../src';
+import { define, name, withChildren } from '../../src';
 
 // Very basic implementation so that the withChildren() mixin works.
 global.MutationObserver = class {
@@ -24,7 +24,8 @@ global.MutationObserver = class {
 };
 
 const Elem = define(
-  class extends withChildren(withUnique()) {
+  class extends withChildren() {
+    static is = name();
     childrenUpdated() {
       ++this.called;
     }

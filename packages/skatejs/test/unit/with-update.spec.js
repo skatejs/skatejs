@@ -2,7 +2,7 @@
 
 import { mount } from '@skatejs/bore';
 import { h as preactH } from 'preact';
-import { define, prop, props, withUpdate, withUnique } from '../../src';
+import { define, name, prop, props, withUpdate } from '../../src';
 import { sym } from '../../src/util';
 
 import afterMutations from '../lib/after-mutations';
@@ -10,7 +10,8 @@ import fixture from '../lib/fixture';
 
 function create(propLocal) {
   const el = new (define(
-    class extends withUnique(withUpdate()) {
+    class extends withUpdate() {
+      static is = name();
       static props = {
         test: { ...propLocal, ...{ attribute: true } }
       };
@@ -300,7 +301,8 @@ describe('withUpdate', () => {
 
     beforeEach(done => {
       elem = new (define(
-        class extends withUnique(withUpdate()) {
+        class extends withUpdate() {
+          static is = name();
           static props = {
             [secret1]: null,
             [secret2]: props.any,
@@ -410,7 +412,9 @@ describe('withUpdate', () => {
 });
 
 describe('state', () => {
-  const Base = withUpdate(withUnique());
+  const Base = class extends withUpdate() {
+    static is = name();
+  };
 
   it('should set state', () => {
     const Test = define(class extends Base {});

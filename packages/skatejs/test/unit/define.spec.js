@@ -1,13 +1,15 @@
 /* eslint-env jest */
 
-import { define, withUnique } from '../../src';
-
-const { customElements, HTMLElement } = window;
+import { define, name } from '../../src';
 
 describe('api/define', () => {
   describe('`static is`', () => {
     it('should be used as the element name', () => {
-      const Elem = define(class extends withUnique() {});
+      const Elem = define(
+        class extends HTMLElement {
+          static is = name();
+        }
+      );
       expect(Elem.is).toBeDefined();
       expect(customElements.get(Elem.is)).toEqual(Elem);
     });

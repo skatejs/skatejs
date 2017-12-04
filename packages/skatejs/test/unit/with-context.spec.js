@@ -1,11 +1,19 @@
 // @flow
 
-import { withContext, withUnique } from '../../src';
+import { define, name, withContext } from '../../src';
 
-const Base = withContext(withUnique());
+const Base = withContext();
 
-class Test1 extends Base {}
-class Test2 extends Base {}
+const Test1 = define(
+  class extends Base {
+    static is = name();
+  }
+);
+const Test2 = define(
+  class extends Base {
+    static is = name();
+  }
+);
 
 let test1, test2;
 beforeEach(() => {

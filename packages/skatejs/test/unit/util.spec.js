@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { dashCase, debounce, keys, sym } from '../../../src/util';
+import { dashCase, debounce, keys, sym } from '../../src/util';
 
 describe('utils', () => {
   describe('{ dashCase }', () => {

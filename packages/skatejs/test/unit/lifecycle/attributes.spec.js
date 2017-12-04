@@ -1,12 +1,13 @@
 /* eslint-env jest */
 
 import { mount } from '@skatejs/bore';
-import { define, withUpdate, withUnique } from '../../../src';
+import { define, name as generateUniqueName, withUpdate } from '../../../src';
 
 describe('lifecycle/attributes', () => {
   function create(definition = {}, name = 'testName', value) {
     const elem = new (define(
-      class extends withUnique(withUpdate()) {
+      class extends withUpdate() {
+        static is = generateUniqueName();
         static props = { [name]: definition };
       }
     ))();

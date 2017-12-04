@@ -4,10 +4,12 @@ import { classStaticsInheritance } from '../../lib/support';
 import afterMutations from '../../lib/after-mutations';
 import fixture from '../../lib/fixture';
 
-import { define, props, withUpdate, withUnique } from '../../../src';
+import { define, name, props, withUpdate } from '../../../src';
 
 function withUpdateUnique(Base = HTMLElement) {
-  return withUpdate(withUnique(Base));
+  return class extends withUpdate(Base) {
+    static is = name();
+  };
 }
 
 describe('lifecycle/properties', () => {

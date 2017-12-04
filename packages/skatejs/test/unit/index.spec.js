@@ -11,6 +11,10 @@ describe('exports', () => {
     expect(typeof api.define).toBe('function');
   });
 
+  it('skate.name', () => {
+    expect(typeof api.name).toBe('function');
+  });
+
   it('skate.emit', () => {
     expect(typeof api.emit).toBe('function');
   });
@@ -25,7 +29,6 @@ describe('exports', () => {
     expect(typeof api.withComponent).toBe('function', 'withComponent');
     expect(typeof api.withLifecycle).toBe('function', 'withLifecycle');
     expect(typeof api.withRenderer).toBe('function', 'withRenderer');
-    expect(typeof api.withUnique).toBe('function', 'withUnique');
     expect(typeof api.withUpdate).toBe('function', 'withUpdate');
   });
 

@@ -10,7 +10,7 @@ export function dashCase<T>(str: T): T {
     : str;
 }
 
-export const empty = <T>(val: T): boolean => val == null;
+export const empty = (val: any): boolean => val == null;
 
 export function keys(obj: Object | void): Array<any> {
   obj = obj || {};

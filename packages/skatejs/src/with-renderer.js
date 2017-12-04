@@ -7,7 +7,7 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
     _shadowRoot: Node;
 
     get renderRoot() {
-      return shadow(this);
+      return super.renderRoot || shadow(this);
     }
 
     renderer(root, html) {

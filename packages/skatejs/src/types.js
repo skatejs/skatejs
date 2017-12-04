@@ -3,6 +3,9 @@
 // Generic
 export type DeepObject = { [string]: Object };
 
+// Adding to the HTMLElemeht type.
+export type CustomElement = Class<HTMLElement> & { is: string };
+
 // Fixing EventTarget for covariant element types.
 export type CustomElementLink = EventTarget & {
   checked?: boolean,
