@@ -1,23 +1,23 @@
 webpackJsonp([14], {
-  270: function(e, t, n) {
+  271: function(e, n, t) {
     'use strict';
-    function o(e, t) {
-      if (!(e instanceof t))
+    function a(e, n) {
+      if (!(e instanceof n))
         throw new TypeError('Cannot call a class as a function');
     }
-    function i(e, t) {
+    function o(e, n) {
       if (!e)
         throw new ReferenceError(
           "this hasn't been initialised - super() hasn't been called"
         );
-      return !t || ('object' != typeof t && 'function' != typeof t) ? e : t;
+      return !n || ('object' != typeof n && 'function' != typeof n) ? e : n;
     }
-    function a(e, t) {
-      if ('function' != typeof t && null !== t)
+    function r(e, n) {
+      if ('function' != typeof n && null !== n)
         throw new TypeError(
-          'Super expression must either be null or a function, not ' + typeof t
+          'Super expression must either be null or a function, not ' + typeof n
         );
-      (e.prototype = Object.create(t && t.prototype, {
+      (e.prototype = Object.create(n && n.prototype, {
         constructor: {
           value: e,
           enumerable: !1,
@@ -25,55 +25,55 @@ webpackJsonp([14], {
           configurable: !0
         }
       })),
-        t &&
+        n &&
           (Object.setPrototypeOf
-            ? Object.setPrototypeOf(e, t)
-            : (e.__proto__ = t));
+            ? Object.setPrototypeOf(e, n)
+            : (e.__proto__ = n));
     }
-    Object.defineProperty(t, '__esModule', { value: !0 }), (t.default = void 0);
-    var r,
+    Object.defineProperty(n, '__esModule', { value: !0 }), (n.default = void 0);
+    var i,
       s,
-      l,
-      u = (function() {
-        function e(e, t) {
-          for (var n = 0; n < t.length; n++) {
-            var o = t[n];
-            (o.enumerable = o.enumerable || !1),
-              (o.configurable = !0),
-              'value' in o && (o.writable = !0),
-              Object.defineProperty(e, o.key, o);
+      u,
+      c = (function() {
+        function e(e, n) {
+          for (var t = 0; t < n.length; t++) {
+            var a = n[t];
+            (a.enumerable = a.enumerable || !1),
+              (a.configurable = !0),
+              'value' in a && (a.writable = !0),
+              Object.defineProperty(e, a.key, a);
           }
         }
-        return function(t, n, o) {
-          return n && e(t.prototype, n), o && e(t, o), t;
+        return function(n, t, a) {
+          return t && e(n.prototype, t), a && e(n, a), n;
         };
       })(),
-      p = (function(e, t) {
+      f = (function(e, n) {
         return Object.freeze(
-          Object.defineProperties(e, { raw: { value: Object.freeze(t) } })
+          Object.defineProperties(e, { raw: { value: Object.freeze(n) } })
         );
       })(
         [
-          '\n      <x-layout title="link()">\n        <x-marked src="',
+          '\n      <x-layout title="name()">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ],
         [
-          '\n      <x-layout title="link()">\n        <x-marked src="',
+          '\n      <x-layout title="name()">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ]
       );
-    n(27), n(32);
-    var f = n(7),
-      c = n(24),
-      h =
-        (0, f.define)(
-          ((l = s = (function(e) {
-            function t() {
+    t(26), t(30);
+    var l = t(7),
+      m = t(24),
+      p =
+        (0, l.define)(
+          ((u = s = (function(e) {
+            function n() {
               return (
-                o(this, t),
-                i(
+                a(this, n),
+                o(
                   this,
-                  (t.__proto__ || Object.getPrototypeOf(t)).apply(
+                  (n.__proto__ || Object.getPrototypeOf(n)).apply(
                     this,
                     arguments
                   )
@@ -81,24 +81,24 @@ webpackJsonp([14], {
               );
             }
             return (
-              a(t, e),
-              u(t, [
+              r(n, e),
+              c(n, [
                 {
                   key: 'render',
                   value: function() {
                     return this.$(
-                      p,
-                      "\n          The `link()` function automatically links any element that has a `value` property, using an event, back to your component's state, or any other object.\n\n          For example, if I have an input element that I want to link back to some internal state, I can do so in a couple lines of code. Let's first build out our component, then we'll link it up. We'll use [LitHTML](https://github.com/PolymerLabs/lit-html) for this example.\n\n          ```js\n          import { html } from 'lit-html/lib/lit-extended';\n          import { link, withComponent } from 'skatejs';\n          import withLitHtml from '@skatejs/renderer-lit-html';\n\n          export default class extends withComponent(withLitHtml()) {\n            render({ state }) {\n              return html`\n                <input\n                  name=\"email\"\n                  on-change=\"${link(this)}\"\n                  type=\"email\"\n                  value=\"${state.email}\"\n                >\n              `;\n            }\n          }\n          ```\n\n          If we look at the above example, we'll notice a few things. First, you must pass in the element as the first argument to `link()`. This is so that it can update the corresponding identifier you specify as the second argument, if you do. If you don't specify the second argument, it defaults to \"state.\", which means:\n\n          > Update `state` on the element using the name of the input as the key for `state`. So: update `state.email`.\n\n          The `link()` function will update the `state` property on the element so that it triggers an update, as opposed to reaching into `state` and updating the corresponding key directly.\n\n          ### Using a different name\n\n          If you want to use a different name for your `state` key, all you have to do is specify it after the dot separator. For example:\n\n          ```js\n          link(this, 'state.customName');\n          ```\n\n          ### Using a completely different property\n\n          As seen above, if you want a custom name, you've got to specify the `state` prefix. So all we need to do if we want to target a different property, or sub property is to do something like:\n\n          ```js\n          link(this, 'someProp');\n          link(this, 'props.someProp');\n          ```\n        "
+                      f,
+                      "\n          The `name()` function generates a unique custom element name that you can use when you define your component.\n\n          ```js\n          import { name } from 'skatejs';\n\n          // x-element\n          name();\n\n          // x-element-1\n          name();\n          ```\n\n          You can also specify a \"hint\" that `name()` will use instead of `element`.\n\n          ```js\n          // x-tabs\n          name('tabs');\n\n          // my-tabs\n          name('my-tabs');\n\n          // my-tabs-1\n          name('my-tabs');\n          ```\n\n          Name doesn't manage an internal cache of names, it uses `customElements.get()` to check to see if a name already exists. If it does, it increments the counter and repeats that until it finds a unique name. This means it will work with any number of custom elemetns from other sources that may have conflicting names.\n        "
                     );
                   }
                 }
               ]),
-              t
+              n
             );
-          })(c.Component)),
-          (s.is = 'x-pages-utils-link'),
-          (r = l))
-        ) || r;
-    t.default = h;
+          })(m.Component)),
+          (s.is = 'x-pages-utils-name'),
+          (i = u))
+        ) || i;
+    n.default = p;
   }
 });

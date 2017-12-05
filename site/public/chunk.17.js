@@ -1,5 +1,5 @@
 webpackJsonp([17], {
-  268: function(e, t, n) {
+  269: function(e, t, n) {
     'use strict';
     function o(e, t) {
       if (!(e instanceof t))
@@ -32,9 +32,9 @@ webpackJsonp([17], {
     }
     Object.defineProperty(t, '__esModule', { value: !0 }), (t.default = void 0);
     var a,
-      u,
       s,
-      f = (function() {
+      u,
+      l = (function() {
         function e(e, t) {
           for (var n = 0; n < t.length; n++) {
             var o = t[n];
@@ -54,20 +54,20 @@ webpackJsonp([17], {
         );
       })(
         [
-          '\n      <x-layout title="define()">\n        <x-marked src="',
+          '\n      <x-layout title="emit()">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ],
         [
-          '\n      <x-layout title="define()">\n        <x-marked src="',
+          '\n      <x-layout title="emit()">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ]
       );
-    n(27), n(32);
-    var l = n(7),
+    n(26), n(30);
+    var f = n(7),
       p = n(24),
-      d =
-        (0, l.define)(
-          ((s = u = (function(e) {
+      m =
+        (0, f.define)(
+          ((u = s = (function(e) {
             function t() {
               return (
                 o(this, t),
@@ -82,13 +82,13 @@ webpackJsonp([17], {
             }
             return (
               i(t, e),
-              f(t, [
+              l(t, [
                 {
                   key: 'render',
                   value: function() {
                     return this.$(
                       c,
-                      "\n          The `define()` function takes a custom element constructor and defines it using the value of the `static is` class property that you define on your element.\n\n          ```js\n          import { define } from 'skatejs';\n\n          export default define(\n            class extends HTMLElement {\n              static is = 'my-element';\n            }\n          );\n          ```\n\n          If you're into the whole decorator thing, you can also use it like one:\n\n          ```js\n          @define\n          export default class extends HTMLElement {\n            static is = 'my-element';\n          }\n          ```\n        "
+                      "\n          The `emit()` function dispatches an event on the specified element with the most common behaviour one will probably want from a DOM event, while still remaining just as customisable as doing it the longer, built-in way. By default it:\n\n          1. Bubbles\n          2. Is cancelable\n          3. Does not propagate through shadow boundaries.\n\n          It's designed to take a lot of the ceremony out of dispatching events. Also, the `CustomEvent` constructor isn't usable as a constructor in environments where custom elements aren't supported, so you'd have to take that into account, too.\n\n          The Skate example is short, sweet and to the point:\n\n          ```js\n          import { emit } from 'skatejs';\n\n          emit(elem, 'myevent', {\n            detail: {}\n          });\n          ```\n\n          > You can leave out `detail` if you don't need it.\n\n          Compare this to the following, longer forms.\n\n          ### Modern browsers\n\n          ```js\n          elem.dispatchEvent(new CustomEvent('myevent', {\n            bubbles: true,\n            cancelable: true,\n            composed: false,\n            detail: {}\n          }));\n          ```\n\n          ### Non-native environments\n\n          ```js\n          const e = document.createEvent('CustomEvent');\n          e.initCustomEvent('myevent', true, true, {});\n          Object.defineProperty(e, 'composed', { value: false });\n          elem.dispatchEvent(e);\n          ```\n        "
                     );
                   }
                 }
@@ -96,9 +96,9 @@ webpackJsonp([17], {
               t
             );
           })(p.Component)),
-          (u.is = 'x-pages-utils-define'),
-          (a = s))
+          (s.is = 'x-pages-utils-emit'),
+          (a = u))
         ) || a;
-    t.default = d;
+    t.default = m;
   }
 });

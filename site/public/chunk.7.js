@@ -69,7 +69,7 @@ webpackJsonp([7], {
           '"\n        ></x-runnable>\n        <p>\n          For more information on how to write renderers, see the\n          <x-link href="/renderers">Renderers</x-link> section.\n        </p>\n      </x-layout>\n    '
         ]
       );
-    n(29), n(27), n(34);
+    n(29), n(26), n(34);
     var d = n(7),
       h = n(24);
     n(150);

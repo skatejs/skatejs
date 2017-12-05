@@ -69,7 +69,7 @@ webpackJsonp([8], {
           '"\n        ></x-runnable>\n        <p>\n          The example above shows the methods that get called when mounted. When\n          unmounted from the DOM, their counterparts are also called:\n        </p>\n        <ul>\n          <li>\n            <code>disconnecting()</code>\n          </li>\n          <li>\n            <code>disconnected()</code>\n          </li>\n        </ul>\n      </x-layout>\n    '
         ]
       );
-    t(29), t(27);
+    t(29), t(26);
     var h = t(7),
       d = t(24);
     t(146);

@@ -829,7 +829,7 @@ webpackJsonp([1], {
           '"></x-marked>\n      </x-layout>\n    '
         ]
       );
-    n(29), n(27), n(32), n(34);
+    n(29), n(26), n(30), n(34);
     var h = n(7),
       f = n(37),
       d = r(f),
@@ -2131,6 +2131,7 @@ webpackJsonp([1], {
           '"\n      path="/utils/define"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/emit"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/link"\n    ></sk-route>\n    <sk-route\n      page="',
+          '"\n      path="/utils/name"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/shadow"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="*"\n    ></sk-route>\n  </sk-router>\n'
@@ -2155,6 +2156,7 @@ webpackJsonp([1], {
           '"\n      path="/utils/define"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/emit"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/link"\n    ></sk-route>\n    <sk-route\n      page="',
+          '"\n      path="/utils/name"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils/shadow"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/utils"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="*"\n    ></sk-route>\n  </sk-router>\n'
@@ -2165,14 +2167,16 @@ webpackJsonp([1], {
           '\n      ',
           '\n      <div className="',
           '">\n        ',
-          '\n        <img class="logo">\n        ',
+          '\n        <img class="logo" src="',
+          '">\n        ',
           '\n      </div>\n    '
         ],
         [
           '\n      ',
           '\n      <div className="',
           '">\n        ',
-          '\n        <img class="logo">\n        ',
+          '\n        <img class="logo" src="',
+          '">\n        ',
           '\n      </div>\n    '
         ]
       );
@@ -2185,85 +2189,90 @@ webpackJsonp([1], {
       k = n(115),
       w = r(k),
       x = n(116),
-      _ = (r(x), n(117)),
-      j = (r(_), n(118)),
+      _ = r(x),
+      j = n(117),
       O = r(j),
-      S = function(e) {
+      S = n(118),
+      C = r(S),
+      P = function(e) {
         return (0, y.withLoadable)({
           is: (0, g.name)(),
           loader: e,
           loading: (0, m.html)(h)
         });
       },
-      C = (0, m.html)(
+      E = (0, m.html)(
         f,
-        O.default,
-        S(function() {
-          return n.e(20).then(n.bind(null, 127));
+        C.default,
+        P(function() {
+          return n.e(21).then(n.bind(null, 127));
         }),
-        S(function() {
-          return n.e(21).then(n.bind(null, 128));
+        P(function() {
+          return n.e(22).then(n.bind(null, 128));
         }),
-        S(function() {
-          return n.e(19).then(n.bind(null, 129));
+        P(function() {
+          return n.e(20).then(n.bind(null, 129));
         }),
-        S(function() {
+        P(function() {
           return n.e(2).then(n.bind(null, 130));
         }),
-        S(function() {
+        P(function() {
           return n.e(10).then(n.bind(null, 137));
         }),
-        S(function() {
+        P(function() {
           return n.e(9).then(n.bind(null, 141));
         }),
-        S(function() {
+        P(function() {
           return n.e(8).then(n.bind(null, 145));
         }),
-        S(function() {
+        P(function() {
           return n.e(7).then(n.bind(null, 149));
         }),
-        S(function() {
+        P(function() {
           return n.e(6).then(n.bind(null, 153));
         }),
-        S(function() {
+        P(function() {
           return n.e(5).then(n.bind(null, 157));
         }),
-        S(function() {
+        P(function() {
           return n.e(4).then(n.bind(null, 161));
         }),
-        S(function() {
+        P(function() {
           return n.e(3).then(n.bind(null, 165));
         }),
-        S(function() {
+        P(function() {
           return n.e(0).then(n.bind(null, 170));
         }),
-        S(function() {
-          return n.e(18).then(n.bind(null, 267));
+        P(function() {
+          return n.e(19).then(n.bind(null, 267));
         }),
-        S(function() {
-          return n.e(17).then(n.bind(null, 268));
+        P(function() {
+          return n.e(18).then(n.bind(null, 268));
         }),
-        S(function() {
-          return n.e(16).then(n.bind(null, 269));
+        P(function() {
+          return n.e(17).then(n.bind(null, 269));
         }),
-        S(function() {
-          return n.e(14).then(n.bind(null, 270));
+        P(function() {
+          return n.e(15).then(n.bind(null, 270));
         }),
-        S(function() {
-          return n.e(13).then(n.bind(null, 271));
+        P(function() {
+          return n.e(14).then(n.bind(null, 271));
         }),
-        S(function() {
-          return n.e(15).then(n.bind(null, 272));
+        P(function() {
+          return n.e(13).then(n.bind(null, 272));
         }),
-        S(function() {
-          return n.e(22).then(n.bind(null, 273));
+        P(function() {
+          return n.e(16).then(n.bind(null, 273));
+        }),
+        P(function() {
+          return n.e(23).then(n.bind(null, 274));
         })
       ),
-      P = (0, v.default)({
+      T = (0, v.default)({
         borderTop: '5px solid #F2567C',
         padding: '50px 25px 25px 25px'
       }),
-      E =
+      N =
         (0, g.define)(
           ((u = c = (function(e) {
             function t() {
@@ -2302,13 +2311,15 @@ webpackJsonp([1], {
                 },
                 {
                   key: 'render',
-                  value: function() {
+                  value: function(e) {
+                    var t = e.state;
                     return this.$(
                       d,
                       this.$style,
-                      P,
-                      (0, y.style)((0, b.value)(P)),
-                      C
+                      T,
+                      (0, y.style)((0, b.value)(T)),
+                      '/' === t.href ? O.default : _.default,
+                      E
                     );
                   }
                 }
@@ -2319,7 +2330,7 @@ webpackJsonp([1], {
           (c.is = 'x-app'),
           (l = u))
         ) || l;
-    t.default = E;
+    t.default = N;
   },
   24: function(e, t, n) {
     'use strict';
@@ -2517,7 +2528,7 @@ webpackJsonp([1], {
       );
     };
   },
-  27: function(e, t, n) {
+  26: function(e, t, n) {
     'use strict';
     function r(e) {
       if (Array.isArray(e)) {
@@ -2710,6 +2721,7 @@ webpackJsonp([1], {
               { href: '/utils/define', text: 'define()' },
               { href: '/utils/emit', text: 'emit()' },
               { href: '/utils/link', text: 'link()' },
+              { href: '/utils/name', text: 'name()' },
               { href: '/utils/shadow', text: 'shadow()' }
             ]
           }
@@ -3135,7 +3147,7 @@ webpackJsonp([1], {
           (g = v))
         ) || g);
   },
-  32: function(e, t, n) {
+  30: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))

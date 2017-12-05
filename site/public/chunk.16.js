@@ -1,5 +1,5 @@
 webpackJsonp([16], {
-  269: function(e, t, n) {
+  273: function(e, t, n) {
     'use strict';
     function o(e, t) {
       if (!(e instanceof t))
@@ -31,10 +31,10 @@ webpackJsonp([16], {
             : (e.__proto__ = t));
     }
     Object.defineProperty(t, '__esModule', { value: !0 }), (t.default = void 0);
-    var a,
-      s,
-      u,
-      l = (function() {
+    var u,
+      a,
+      l,
+      c = (function() {
         function e(e, t) {
           for (var n = 0; n < t.length; n++) {
             var o = t[n];
@@ -48,26 +48,26 @@ webpackJsonp([16], {
           return n && e(t.prototype, n), o && e(t, o), t;
         };
       })(),
-      c = (function(e, t) {
+      f = (function(e, t) {
         return Object.freeze(
           Object.defineProperties(e, { raw: { value: Object.freeze(t) } })
         );
       })(
         [
-          '\n      <x-layout title="emit()">\n        <x-marked src="',
+          '\n      <x-layout title="Utilities">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ],
         [
-          '\n      <x-layout title="emit()">\n        <x-marked src="',
+          '\n      <x-layout title="Utilities">\n        <x-marked src="',
           '"></x-marked>\n      </x-layout>\n    '
         ]
       );
-    n(27), n(32);
-    var f = n(7),
+    n(26), n(30);
+    var s = n(7),
       p = n(24),
-      m =
-        (0, f.define)(
-          ((u = s = (function(e) {
+      d =
+        (0, s.define)(
+          ((l = a = (function(e) {
             function t() {
               return (
                 o(this, t),
@@ -82,13 +82,13 @@ webpackJsonp([16], {
             }
             return (
               i(t, e),
-              l(t, [
+              c(t, [
                 {
                   key: 'render',
                   value: function() {
                     return this.$(
-                      c,
-                      "\n          The `emit()` function dispatches an event on the specified element with the most common behaviour one will probably want from a DOM event, while still remaining just as customisable as doing it the longer, built-in way. By default it:\n\n          1. Bubbles\n          2. Is cancelable\n          3. Does not propagate through shadow boundaries.\n\n          It's designed to take a lot of the ceremony out of dispatching events. Also, the `CustomEvent` constructor isn't usable as a constructor in environments where custom elements aren't supported, so you'd have to take that into account, too.\n\n          The Skate example is short, sweet and to the point:\n\n          ```js\n          import { emit } from 'skatejs';\n\n          emit(elem, 'myevent', {\n            detail: {}\n          });\n          ```\n\n          > You can leave out `detail` if you don't need it.\n\n          Compare this to the following, longer forms.\n\n          ### Modern browsers\n\n          ```js\n          elem.dispatchEvent(new CustomEvent('myevent', {\n            bubbles: true,\n            cancelable: true,\n            composed: false,\n            detail: {}\n          }));\n          ```\n\n          ### Non-native environments\n\n          ```js\n          const e = document.createEvent('CustomEvent');\n          e.initCustomEvent('myevent', true, true, {});\n          Object.defineProperty(e, 'composed', { value: false });\n          elem.dispatchEvent(e);\n          ```\n        "
+                      f,
+                      "\n          Skate includes a few utilities that you'll end up needing when you build\n          complex components. They're minimal, opt-in and augment your building of\n          web components, not required by it.\n\n          - [define()](/utils/define)\n          - [emit()](/utils/emit)\n          - [link()](/utils/link)\n          - [shadow()](/utils/shadow)\n        "
                     );
                   }
                 }
@@ -96,9 +96,9 @@ webpackJsonp([16], {
               t
             );
           })(p.Component)),
-          (s.is = 'x-pages-utils-emit'),
-          (a = u))
-        ) || a;
-    t.default = m;
+          (a.is = 'x-pages-utils-index'),
+          (u = l))
+        ) || u;
+    t.default = d;
   }
 });
