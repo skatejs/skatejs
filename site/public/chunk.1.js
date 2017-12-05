@@ -2978,21 +2978,15 @@ webpackJsonp([1], {
         (0, P.define)(
           ((h = p = (function(e) {
             function t() {
-              var e, n, r, o;
-              s(this, t);
-              for (var a = arguments.length, l = Array(a), c = 0; c < a; c++)
-                l[c] = arguments[c];
               return (
-                (n = r = i(
+                s(this, t),
+                i(
                   this,
-                  (e = t.__proto__ || Object.getPrototypeOf(t)).call.apply(
-                    e,
-                    [this].concat(l)
+                  (t.__proto__ || Object.getPrototypeOf(t)).apply(
+                    this,
+                    arguments
                   )
-                )),
-                (r.props = { code: '', lang: 'js' }),
-                (o = n),
-                i(r, o)
+                )
               );
             }
             return (
@@ -3013,7 +3007,7 @@ webpackJsonp([1], {
                       s = document.createElement('div');
                     return (
                       (s.textContent = l(t)),
-                      c(s, t, n),
+                      c(s, t, n || 'js'),
                       this.$(
                         k,
                         S.value.apply(void 0, r(Object.values(T))),

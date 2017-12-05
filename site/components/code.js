@@ -75,17 +75,13 @@ export class Code extends Component {
     lang: string,
     title: string
   };
-  props = {
-    code: '',
-    lang: 'js'
-  };
   connecting() {
     this.style.display = 'block';
   }
   render({ code, lang, title }) {
     const src = document.createElement('div');
     src.textContent = format(code);
-    highlight(src, code, lang);
+    highlight(src, code, lang || 'js');
     return this.$`
       <div>
         <code-style></code-style>
