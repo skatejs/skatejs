@@ -2,7 +2,7 @@ import './primitives';
 import '@skatejs/sk-router';
 
 import { html } from 'lit-html/lib/lit-extended';
-import { define, props } from 'skatejs';
+import { define, name, props } from 'skatejs';
 import css, { value } from 'yocss';
 
 import { Component, style, withLoadable } from '../utils';
@@ -12,17 +12,20 @@ import logo100 from '../img/logo-100x100.png';
 import RouteIndex from '../pages';
 
 // TODO wrap all routes with this again.
+let withLoadingCount = 0;
 const withLoading = loader =>
   withLoadable({
+    is: name(),
     loader: loader,
-    loading: html`<x-loading></x-loading>`
+    loading: html`<x-loading></x-loading>`,
+    useShadowRoot: true
   });
 
 const router = html`
   <sk-router>
     <sk-route page="${RouteIndex}" path="/"></sk-route>
     <sk-route
-      page="${import('../pages/guides')}"
+      page="${withLoading(() => import('../pages/guides'))}"
       path="/guides"
     ></sk-route>
     <sk-route

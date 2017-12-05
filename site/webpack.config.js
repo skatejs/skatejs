@@ -46,6 +46,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             plugins: [
+              'transform-decorators',
               ['transform-react-jsx', { pragma: 'h' }],
               'transform-skate-flow-props'
             ],

@@ -88,8 +88,8 @@
     "react-dom": "^15.0.0",
     "uglify-es": "^3.1.2",
     "undom": "^0.3.3",
-    "yocss": "^0.5.1",
-    "yargs": "^9.0.1"
+    "yargs": "^9.0.1",
+    "yocss": "^0.5.1"
   },
   "devDependencies": {
     "@skatejs/bore": "^4.0.0",
@@ -100,6 +100,7 @@
     "babel-plugin-dynamic-import-node": "^1.1.0",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "^1.1.1",
+    "babel-plugin-transform-decorators": "^6.24.1",
     "babel-plugin-transform-skate-flow-props": "^0.1.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-es2015-rollup": "^3.0.0",

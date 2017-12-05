@@ -16,22 +16,19 @@ export function style(...css) {
   return html`<style textContent="${css.join('')}"></style>`;
 }
 
-export const withLoadable = (opts: Object) =>
+export const withLoadable = (props: Object) =>
   define(
     class extends Component {
-      static is = opts.is;
+      static is = props.is;
       props: {
         format: any,
         loader: any,
         loading: any,
         useShadowRoot: boolean
       };
-      props = {
-        ...{ format: r => r },
-        ...opts
-      };
+      props = props;
       get renderRoot() {
-        return opts.useShadowRoot ? super.renderRoot : this;
+        return props.useShadowRoot ? super.renderRoot : this;
       }
       connecting() {
         const loaded = this.loading;
@@ -49,7 +46,7 @@ export const withLoadable = (opts: Object) =>
       }
       render() {
         const { loaded } = this.state;
-        return loaded ? this.format(loaded) : this.$``;
+        return this.$`${typeof loaded === 'function' ? new loaded() : loaded}`;
       }
     }
   );

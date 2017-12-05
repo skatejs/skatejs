@@ -4,7 +4,7 @@ import { html } from 'lit-html/lib/lit-extended';
 import css, { value } from 'yocss';
 import { define, props, withComponent } from 'skatejs';
 
-import { Component, withLoadable } from '../utils';
+import { Component, style, withLoadable } from '../utils';
 
 function format(src) {
   src = src || '';
@@ -44,8 +44,8 @@ function highlight(elem, code, language) {
 
 withLoadable({
   is: 'code-style',
-  format: r => html`<style textContent="${r}"></style>`,
-  loader: () => import('raw-loader!prismjs/themes/prism-twilight.css')
+  loader: () =>
+    import('raw-loader!prismjs/themes/prism-twilight.css').then(style)
 });
 
 const cssCode = {
