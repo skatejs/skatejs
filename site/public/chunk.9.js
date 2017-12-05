@@ -1,5 +1,5 @@
 webpackJsonp([9], {
-  141: function(n, t, e) {
+  142: function(n, t, e) {
     'use strict';
     function o(n) {
       return n && n.__esModule ? n : { default: n };
@@ -71,11 +71,11 @@ webpackJsonp([9], {
       );
     e(29), e(26);
     var f = e(7),
-      p = e(24);
-    e(142);
-    var h = e(143),
+      p = e(22);
+    e(143);
+    var h = e(144),
       b = o(h),
-      x = e(144),
+      x = e(145),
       y = o(x),
       w =
         (0, f.define)(
@@ -110,7 +110,7 @@ webpackJsonp([9], {
         ) || a;
     t.default = w;
   },
-  142: function(n, t, e) {
+  143: function(n, t, e) {
     'use strict';
     function o(n, t) {
       if (!(n instanceof t))
@@ -234,11 +234,11 @@ webpackJsonp([9], {
     customElements.define('with-context', l),
       customElements.define('with-context-descendant', s);
   },
-  143: function(n, t) {
+  144: function(n, t) {
     n.exports =
       "import { withContext } from 'skatejs';\n\nclass WithContext extends withContext() {\n  context = {\n    background: 'white',\n    color: 'black',\n    margin: '10px 0',\n    padding: '10px'\n  };\n  connectedCallback() {\n    this.attachShadow({ mode: 'open' }).innerHTML = `\n      <slot></slot>\n      <with-context-descendant>\n        ...and shadow DOM!\n      </with-context-descendant>\n    `;\n  }\n}\n\nclass WithContextDescendant extends withContext() {\n  connectedCallback() {\n    const { background, color, margin, padding } = this.context;\n    this.attachShadow({ mode: 'open' }).innerHTML = `\n      <style>\n        :host {\n          background: ${background};\n          color: ${color};\n          display: block;\n          margin: ${margin};\n          padding: ${padding};\n        }\n      </style>\n      <slot></slot>\n    `;\n  }\n}\n\ncustomElements.define('with-context', WithContext);\ncustomElements.define('with-context-descendant', WithContextDescendant);\n";
   },
-  144: function(n, t) {
+  145: function(n, t) {
     n.exports =
       '<with-context>\n  <with-context-descendant>\n    Works with light DOM...\n  </with-context-descendant>\n</with-context>\n';
   }

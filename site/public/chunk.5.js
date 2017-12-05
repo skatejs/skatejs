@@ -1,5 +1,5 @@
 webpackJsonp([5], {
-  157: function(e, t, n) {
+  158: function(e, t, n) {
     'use strict';
     function o(e) {
       return e && e.__esModule ? e : { default: e };
@@ -71,11 +71,11 @@ webpackJsonp([5], {
       );
     n(29), n(26), n(34);
     var d = n(7),
-      p = n(24);
-    n(158);
-    var h = n(159),
+      p = n(22);
+    n(159);
+    var h = n(160),
       y = o(h),
-      b = n(160),
+      b = n(161),
       w = o(b),
       m =
         (0, d.define)(
@@ -110,7 +110,7 @@ webpackJsonp([5], {
         ) || a;
     t.default = m;
   },
-  158: function(e, t, n) {
+  159: function(e, t, n) {
     'use strict';
     function o(e, t) {
       if (!(e instanceof t))
@@ -185,11 +185,11 @@ webpackJsonp([5], {
       a);
     customElements.define('with-default', l);
   },
-  159: function(e, t) {
+  160: function(e, t) {
     e.exports =
       "import { props, withComponent } from 'skatejs';\n\nclass WithDefault extends withComponent() {\n  static props = {\n    name: props.string\n  };\n  render({ name }) {\n    return `Hello, ${name}!`;\n  }\n}\n\ncustomElements.define('with-default', WithDefault);\n";
   },
-  160: function(e, t) {
+  161: function(e, t) {
     e.exports = '<with-default name="World"></with-default>\n';
   }
 });

@@ -1,5 +1,5 @@
 webpackJsonp([8], {
-  145: function(e, n, t) {
+  146: function(e, n, t) {
     'use strict';
     function o(e) {
       return e && e.__esModule ? e : { default: e };
@@ -71,11 +71,11 @@ webpackJsonp([8], {
       );
     t(29), t(26);
     var h = t(7),
-      d = t(24);
-    t(146);
-    var p = t(147),
+      d = t(22);
+    t(147);
+    var p = t(148),
       y = o(p),
-      b = t(148),
+      b = t(149),
       w = o(b),
       m =
         (0, h.define)(
@@ -110,7 +110,7 @@ webpackJsonp([8], {
         ) || l;
     n.default = m;
   },
-  146: function(e, n, t) {
+  147: function(e, n, t) {
     'use strict';
     function o(e, n) {
       if (!(e instanceof n))
@@ -210,11 +210,11 @@ webpackJsonp([8], {
       })((0, l.withLifecycle)(a));
     customElements.define('with-lifecycle', u);
   },
-  147: function(e, n) {
+  148: function(e, n) {
     e.exports =
       "import { withLifecycle } from 'skatejs';\n\nclass Base extends HTMLElement {\n  connectedCallback() {\n    this._isConnected = true;\n  }\n}\n\nclass WithLifecycle extends withLifecycle(Base) {\n  connecting() {\n    this.innerHTML += this._isConnected ? 'ray!' : 'Hoo';\n  }\n  connected() {\n    this.innerHTML += this._isConnected ? 'ray!' : 'Hoo';\n  }\n}\n\ncustomElements.define('with-lifecycle', WithLifecycle);\n";
   },
-  148: function(e, n) {
+  149: function(e, n) {
     e.exports = '<with-lifecycle></with-lifecycle>\n';
   }
 });

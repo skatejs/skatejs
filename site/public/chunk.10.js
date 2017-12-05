@@ -1,5 +1,5 @@
 webpackJsonp([10], {
-  137: function(e, n, t) {
+  138: function(e, n, t) {
     'use strict';
     function o(e) {
       return e && e.__esModule ? e : { default: e };
@@ -71,11 +71,11 @@ webpackJsonp([10], {
       );
     t(29), t(26);
     var f = t(7),
-      h = t(24);
-    t(138);
-    var m = t(139),
+      h = t(22);
+    t(139);
+    var m = t(140),
       b = o(m),
-      y = t(140),
+      y = t(141),
       w = o(y),
       d =
         (0, f.define)(
@@ -110,7 +110,7 @@ webpackJsonp([10], {
         ) || a;
     n.default = d;
   },
-  138: function(e, n, t) {
+  139: function(e, n, t) {
     'use strict';
     function o(e, n) {
       if (!(e instanceof n))
@@ -186,11 +186,11 @@ webpackJsonp([10], {
       a);
     customElements.define('with-component', l);
   },
-  139: function(e, n) {
+  140: function(e, n) {
     e.exports =
       "import { props, withComponent } from 'skatejs';\n\nclass WithComponent extends withComponent() {\n  static props = {\n    name: props.string\n  };\n  render({ name }) {\n    return `Hello, ${this.name}!`;\n  }\n}\n\ncustomElements.define('with-component', WithComponent);\n";
   },
-  140: function(e, n) {
+  141: function(e, n) {
     e.exports = '<with-component name="Bobbo"></with-component>\n';
   }
 });

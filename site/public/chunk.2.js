@@ -1,5 +1,5 @@
 webpackJsonp([2], {
-  130: function(e, n, t) {
+  131: function(e, n, t) {
     'use strict';
     function r(e) {
       return e && e.__esModule ? e : { default: e };
@@ -75,16 +75,16 @@ webpackJsonp([2], {
       );
     t(29), t(26);
     var s = t(7),
-      p = t(24);
-    t(131);
-    var f = t(132),
+      p = t(22);
+    t(132);
+    var f = t(133),
       y = r(f),
-      b = t(133),
+      b = t(134),
       w = r(b);
-    t(134);
-    var m = t(135),
+    t(135);
+    var m = t(136),
       v = r(m),
-      g = t(136),
+      g = t(137),
       x = r(g),
       O =
         (0, s.define)(
@@ -126,7 +126,7 @@ webpackJsonp([2], {
         ) || c;
     n.default = O;
   },
-  131: function(e, n, t) {
+  132: function(e, n, t) {
     'use strict';
     function r(e, n) {
       if (!(e instanceof n))
@@ -203,15 +203,15 @@ webpackJsonp([2], {
       })((0, c.withChildren)());
     customElements.define('with-children1', h);
   },
-  132: function(e, n) {
+  133: function(e, n) {
     e.exports =
       "import { withChildren } from 'skatejs';\n\nclass WithChildren extends withChildren() {\n  childrenUpdated() {\n    const len = this.children.length;\n    this.attachShadow({\n      mode: 'open'\n    }).innerHTML = `This element has ${len} ${\n      len === 1 ? 'child' : 'children'\n    }!`;\n  }\n}\n\ncustomElements.define('with-children1', WithChildren);\n";
   },
-  133: function(e, n) {
+  134: function(e, n) {
     e.exports =
       '<with-children1>\n  <div>1</div>\n  <div>2</div>\n</with-children1>\n';
   },
-  134: function(e, n, t) {
+  135: function(e, n, t) {
     'use strict';
     function r(e, n) {
       if (!(e instanceof n))
@@ -298,11 +298,11 @@ webpackJsonp([2], {
       })((0, c.withComponent)());
     customElements.define('with-children2', h);
   },
-  135: function(e, n) {
+  136: function(e, n) {
     e.exports =
       "import { withComponent } from 'skatejs';\n\nclass WithChildren extends withComponent() {\n  props = {\n    children: null\n  };\n  render() {\n    const len = this.children.length;\n    return `This element has ${len} ${len === 1 ? 'child' : 'children'}!`;\n  }\n}\n\ncustomElements.define('with-children2', WithChildren);\n";
   },
-  136: function(e, n) {
+  137: function(e, n) {
     e.exports =
       '<with-children2>\n  <div>1</div>\n  <div>2</div>\n</with-children2>\n';
   }

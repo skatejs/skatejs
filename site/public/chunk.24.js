@@ -1,5 +1,5 @@
-webpackJsonp([22], {
-  127: function(e, t, n) {
+webpackJsonp([24], {
+  275: function(e, t, n) {
     'use strict';
     function o(e, t) {
       if (!(e instanceof t))
@@ -12,7 +12,7 @@ webpackJsonp([22], {
         );
       return !t || ('object' != typeof t && 'function' != typeof t) ? e : t;
     }
-    function i(e, t) {
+    function u(e, t) {
       if ('function' != typeof t && null !== t)
         throw new TypeError(
           'Super expression must either be null or a function, not ' + typeof t
@@ -31,10 +31,10 @@ webpackJsonp([22], {
             : (e.__proto__ = t));
     }
     Object.defineProperty(t, '__esModule', { value: !0 }), (t.default = void 0);
-    var u,
-      a,
+    var f,
+      i,
       c,
-      f = (function() {
+      a = (function() {
         function e(e, t) {
           for (var n = 0; n < t.length; n++) {
             var o = t[n];
@@ -48,26 +48,23 @@ webpackJsonp([22], {
           return n && e(t.prototype, n), o && e(t, o), t;
         };
       })(),
-      s = (function(e, t) {
+      p = (function(e, t) {
         return Object.freeze(
           Object.defineProperties(e, { raw: { value: Object.freeze(t) } })
         );
       })(
         [
-          '\n      <x-layout title="Guides">\n        <x-marked src="',
-          '"></x-marked>\n      </x-layout>\n    '
+          "\n      <h2>Not found!</h2>\n      <p>The requested page couldn't be found.</p>\n    "
         ],
         [
-          '\n      <x-layout title="Guides">\n        <x-marked src="',
-          '"></x-marked>\n      </x-layout>\n    '
+          "\n      <h2>Not found!</h2>\n      <p>The requested page couldn't be found.</p>\n    "
         ]
-      );
-    n(26), n(30);
-    var l = n(7),
-      p = n(22),
-      y =
+      ),
+      l = n(7),
+      s = n(22),
+      b =
         (0, l.define)(
-          ((c = a = (function(e) {
+          ((c = i = (function(e) {
             function t() {
               return (
                 o(this, t),
@@ -81,24 +78,21 @@ webpackJsonp([22], {
               );
             }
             return (
-              i(t, e),
-              f(t, [
+              u(t, e),
+              a(t, [
                 {
                   key: 'render',
                   value: function() {
-                    return this.$(
-                      s,
-                      '\n          The "Guides" section is aimed at exposing you to patterns, tooling and other useful aspects of being a SkateJS consumer. For example, if you want to know how to automatically define Skate `props` using your Flow props, you\'d find it here.\n        '
-                    );
+                    return this.$(p);
                   }
                 }
               ]),
               t
             );
-          })(p.Component)),
-          (a.is = 'x-pages-guides'),
-          (u = c))
-        ) || u;
-    t.default = y;
+          })(s.Component)),
+          (i.is = 'x-notfound'),
+          (f = c))
+        ) || f;
+    t.default = b;
   }
 });

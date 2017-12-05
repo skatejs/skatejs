@@ -833,7 +833,7 @@ webpackJsonp([1], {
     var h = n(7),
       f = n(37),
       d = r(f),
-      m = n(24),
+      m = n(22),
       g = n(125),
       b = r(g),
       v = n(126),
@@ -1012,7 +1012,7 @@ webpackJsonp([1], {
         return e && e.__esModule ? e : { default: e };
       })(d),
       g = n(7),
-      b = n(24),
+      b = n(22),
       v = (0, m.default)({
         pane: { display: 'none' },
         '.pane.selected': { display: 'block' },
@@ -2116,6 +2116,7 @@ webpackJsonp([1], {
           '" path="/"></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/guides"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/guides/flowtype"\n    ></sk-route>\n    <sk-route\n      page="',
+          '"\n      path="/migrating"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins/with-children"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins/with-component"\n    ></sk-route>\n    <sk-route\n      page="',
@@ -2141,6 +2142,7 @@ webpackJsonp([1], {
           '" path="/"></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/guides"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/guides/flowtype"\n    ></sk-route>\n    <sk-route\n      page="',
+          '"\n      path="/migrating"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins/with-children"\n    ></sk-route>\n    <sk-route\n      page="',
           '"\n      path="/mixins/with-component"\n    ></sk-route>\n    <sk-route\n      page="',
@@ -2185,7 +2187,7 @@ webpackJsonp([1], {
       g = n(7),
       b = n(37),
       v = r(b),
-      y = n(24),
+      y = n(22),
       k = n(115),
       w = r(k),
       x = n(116),
@@ -2205,67 +2207,70 @@ webpackJsonp([1], {
         f,
         C.default,
         P(function() {
-          return n.e(21).then(n.bind(null, 127));
+          return n.e(22).then(n.bind(null, 127));
         }),
         P(function() {
-          return n.e(22).then(n.bind(null, 128));
+          return n.e(23).then(n.bind(null, 128));
         }),
         P(function() {
-          return n.e(20).then(n.bind(null, 129));
+          return n.e(21).then(n.bind(null, 129));
         }),
         P(function() {
-          return n.e(2).then(n.bind(null, 130));
+          return n.e(20).then(n.bind(null, 130));
         }),
         P(function() {
-          return n.e(10).then(n.bind(null, 137));
+          return n.e(2).then(n.bind(null, 131));
         }),
         P(function() {
-          return n.e(9).then(n.bind(null, 141));
+          return n.e(10).then(n.bind(null, 138));
         }),
         P(function() {
-          return n.e(8).then(n.bind(null, 145));
+          return n.e(9).then(n.bind(null, 142));
         }),
         P(function() {
-          return n.e(7).then(n.bind(null, 149));
+          return n.e(8).then(n.bind(null, 146));
         }),
         P(function() {
-          return n.e(6).then(n.bind(null, 153));
+          return n.e(7).then(n.bind(null, 150));
         }),
         P(function() {
-          return n.e(5).then(n.bind(null, 157));
+          return n.e(6).then(n.bind(null, 154));
         }),
         P(function() {
-          return n.e(4).then(n.bind(null, 161));
+          return n.e(5).then(n.bind(null, 158));
         }),
         P(function() {
-          return n.e(3).then(n.bind(null, 165));
+          return n.e(4).then(n.bind(null, 162));
         }),
         P(function() {
-          return n.e(0).then(n.bind(null, 170));
+          return n.e(3).then(n.bind(null, 166));
         }),
         P(function() {
-          return n.e(19).then(n.bind(null, 267));
+          return n.e(0).then(n.bind(null, 171));
         }),
         P(function() {
-          return n.e(18).then(n.bind(null, 268));
+          return n.e(19).then(n.bind(null, 268));
         }),
         P(function() {
-          return n.e(17).then(n.bind(null, 269));
+          return n.e(18).then(n.bind(null, 269));
         }),
         P(function() {
-          return n.e(15).then(n.bind(null, 270));
+          return n.e(17).then(n.bind(null, 270));
         }),
         P(function() {
-          return n.e(14).then(n.bind(null, 271));
+          return n.e(15).then(n.bind(null, 271));
         }),
         P(function() {
-          return n.e(13).then(n.bind(null, 272));
+          return n.e(14).then(n.bind(null, 272));
         }),
         P(function() {
-          return n.e(16).then(n.bind(null, 273));
+          return n.e(13).then(n.bind(null, 273));
         }),
         P(function() {
-          return n.e(23).then(n.bind(null, 274));
+          return n.e(16).then(n.bind(null, 274));
+        }),
+        P(function() {
+          return n.e(24).then(n.bind(null, 275));
         })
       ),
       T = (0, v.default)({
@@ -2332,7 +2337,7 @@ webpackJsonp([1], {
         ) || l;
     t.default = N;
   },
-  24: function(e, t, n) {
+  22: function(e, t, n) {
     'use strict';
     function r(e, t) {
       return Object.freeze(
@@ -2670,7 +2675,7 @@ webpackJsonp([1], {
       w = (function(e) {
         return e && e.__esModule ? e : { default: e };
       })(k),
-      x = n(24),
+      x = n(22),
       _ = (n(34),
       function() {
         var e =
@@ -2692,6 +2697,7 @@ webpackJsonp([1], {
             text: 'Guides',
             tree: [{ href: '/guides/flowtype', text: 'Flowtype' }]
           },
+          { href: '/migrating', text: 'Migrating' },
           {
             href: '/mixins',
             text: 'Mixins',
@@ -2948,7 +2954,7 @@ webpackJsonp([1], {
         return e && e.__esModule ? e : { default: e };
       })(S),
       P = n(7),
-      E = n(24);
+      E = n(22);
     (0, E.withLoadable)({
       is: 'code-style',
       loader: function() {
@@ -3220,7 +3226,7 @@ webpackJsonp([1], {
       );
     n(122), n(29), n(34);
     var h = n(7),
-      f = n(24),
+      f = n(22),
       d = {
         code: function(e, t) {
           return '<x-code code="' + e + '" lang="' + t + '"></x-code>';
@@ -3386,7 +3392,7 @@ webpackJsonp([1], {
     var O = n(7),
       S = n(37),
       C = r(S),
-      P = n(24),
+      P = n(22),
       E = n(114),
       T = r(E),
       N = (0, C.default)({

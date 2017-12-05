@@ -1,5 +1,5 @@
 webpackJsonp([7], {
-  149: function(e, t, n) {
+  150: function(e, t, n) {
     'use strict';
     function r(e) {
       return e && e.__esModule ? e : { default: e };
@@ -71,11 +71,11 @@ webpackJsonp([7], {
       );
     n(29), n(26), n(34);
     var d = n(7),
-      h = n(24);
-    n(150);
-    var p = n(151),
+      h = n(22);
+    n(151);
+    var p = n(152),
       b = r(p),
-      w = n(152),
+      w = n(153),
       y = r(w),
       m =
         (0, d.define)(
@@ -110,7 +110,7 @@ webpackJsonp([7], {
         ) || u;
     t.default = m;
   },
-  150: function(e, t, n) {
+  151: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -191,11 +191,11 @@ webpackJsonp([7], {
       u);
     customElements.define('with-renderer', s);
   },
-  151: function(e, t) {
+  152: function(e, t) {
     e.exports =
       "import { withRenderer } from 'skatejs';\n\nclass WithRenderer extends withRenderer() {\n  static observedAttributes = ['name'];\n  attributeChangedCallback() {\n    this.updated();\n  }\n  render() {\n    return `Hello, ${this.getAttribute('name')}!`;\n  }\n}\n\ncustomElements.define('with-renderer', WithRenderer);\n";
   },
-  152: function(e, t) {
+  153: function(e, t) {
     e.exports = '<with-renderer name="Bobbo"></with-renderer>\n';
   }
 });

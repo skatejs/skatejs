@@ -1,5 +1,5 @@
 webpackJsonp([3], {
-  165: function(e, t, n) {
+  166: function(e, t, n) {
     'use strict';
     function r(e) {
       return e && e.__esModule ? e : { default: e };
@@ -71,11 +71,11 @@ webpackJsonp([3], {
       );
     n(29), n(26), n(34);
     var f = n(7),
-      d = n(24);
-    n(166);
-    var h = n(168),
+      d = n(22);
+    n(167);
+    var h = n(169),
       m = r(h),
-      y = n(169),
+      y = n(170),
       v = r(y),
       _ =
         (0, f.define)(
@@ -110,7 +110,7 @@ webpackJsonp([3], {
         ) || l;
     t.default = _;
   },
-  166: function(e, t, n) {
+  167: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -158,7 +158,7 @@ webpackJsonp([3], {
         };
       })(),
       c = n(7),
-      p = n(167),
+      p = n(168),
       s = (function(e) {
         return e && e.__esModule ? e : { default: e };
       })(p),
@@ -191,7 +191,7 @@ webpackJsonp([3], {
       l);
     customElements.define('with-preact', d);
   },
-  167: function(e, t, n) {
+  168: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -325,11 +325,11 @@ webpackJsonp([3], {
       })(e);
     };
   },
-  168: function(e, t) {
+  169: function(e, t) {
     e.exports =
       "// @jsx h\n\nimport { props, withComponent } from 'skatejs';\nimport withPreact from '@skatejs/renderer-preact';\nimport { h } from 'preact';\n\nclass WithPreact extends withComponent(withPreact()) {\n  static props = {\n    name: props.string\n  };\n  render({ name }) {\n    return <span>Hello, {name}!</span>;\n  }\n}\n\ncustomElements.define('with-preact', WithPreact);\n";
   },
-  169: function(e, t) {
+  170: function(e, t) {
     e.exports = '<with-preact name="World"></with-preact>\n';
   },
   77: function(e, t, n) {
