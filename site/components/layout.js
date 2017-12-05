@@ -101,9 +101,9 @@ const cssLayout = {
     minWidth: 0
   }),
   nav: css({
-    flexBasis: '150px',
+    flexBasis: '200px',
     flexShrink: 0,
-    margin: '104px 20px 0 0',
+    margin: '10px 20px 0 0',
     ' li': {
       margin: '5px 0',
       padding: 0
@@ -119,39 +119,44 @@ const cssLayout = {
     flexGrow: 1
   })
 };
-export const Layout = define(
-  class extends Component {
-    static is = 'x-layout';
-    props: {
-      nav: boolean,
-      title: string
-    };
-    props = {
-      nav: true
-    };
-    connecting() {
-      this.style.display = 'block';
-    }
-    render({ nav, title }) {
-      return this.$`
-        ${this.$style}
-        ${style(value(...Object.values(cssLayout)))}
-        <div className="${cssLayout.flex}">
-          ${
-            nav
-              ? this.$`
-                  <nav className="${names(cssLayout.flexItem, cssLayout.nav)}">
-                    ${renderTree(navItems())}
-                  </nav>
-                `
-              : ''
-          }
-          <section className="${names(cssLayout.flexItem, cssLayout.section)}">
-            ${title ? this.$`<h2>${title}</h2>` : ''}
-            <slot></slot>
-          </section>
-        </div>
-      `;
-    }
+
+@define
+export class Layout extends Component {
+  static is = 'x-layout';
+  props: {
+    nav: boolean,
+    title: string
+  };
+  props = {
+    nav: true
+  };
+  connecting() {
+    this.style.display = 'block';
   }
-);
+  render({ nav, title }) {
+    return this.$`
+      ${this.$style}
+      ${style(value(...Object.values(cssLayout)))}
+      <div className="${cssLayout.flex}">
+        <div className="${names(cssLayout.flexItem, cssLayout.nav)}"></div>
+        <section className="${names(cssLayout.flexItem, cssLayout.section)}">
+          ${title ? this.$`<h2>${title}</h2>` : ''}
+        </section>
+      </div>
+      <div className="${cssLayout.flex}">
+        ${
+          nav
+            ? this.$`
+                <nav className="${names(cssLayout.flexItem, cssLayout.nav)}">
+                  ${renderTree(navItems())}
+                </nav>
+              `
+            : ''
+        }
+        <section className="${names(cssLayout.flexItem, cssLayout.section)}">
+          <slot></slot>
+        </section>
+      </div>
+    `;
+  }
+}

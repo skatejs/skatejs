@@ -11,14 +11,12 @@ import logo50 from '../img/logo-50x50.png';
 import logo100 from '../img/logo-100x100.png';
 import RouteIndex from '../pages';
 
-// TODO wrap all routes with this again.
 let withLoadingCount = 0;
 const withLoading = loader =>
   withLoadable({
     is: name(),
     loader: loader,
-    loading: html`<x-loading></x-loading>`,
-    useShadowRoot: true
+    loading: html`<x-loading></x-loading>`
   });
 
 const router = html`
@@ -29,79 +27,79 @@ const router = html`
       path="/guides"
     ></sk-route>
     <sk-route
-      page="${import('../pages/guides/flowtype')}"
+      page="${withLoading(() => import('../pages/guides/flowtype'))}"
       path="/guides/flowtype"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins')}"
+      page="${withLoading(() => import('../pages/mixins'))}"
       path="/mixins"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-children')}"
+      page="${withLoading(() => import('../pages/mixins/with-children'))}"
       path="/mixins/with-children"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-component')}"
+      page="${withLoading(() => import('../pages/mixins/with-component'))}"
       path="/mixins/with-component"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-context')}"
+      page="${withLoading(() => import('../pages/mixins/with-context'))}"
       path="/mixins/with-context"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-lifecycle')}"
+      page="${withLoading(() => import('../pages/mixins/with-lifecycle'))}"
       path="/mixins/with-lifecycle"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-renderer')}"
+      page="${withLoading(() => import('../pages/mixins/with-renderer'))}"
       path="/mixins/with-renderer"
     ></sk-route>
     <sk-route
-      page="${import('../pages/mixins/with-update')}"
+      page="${withLoading(() => import('../pages/mixins/with-update'))}"
       path="/mixins/with-update"
     ></sk-route>
     <sk-route
-      page="${import('../pages/renderers/default')}"
+      page="${withLoading(() => import('../pages/renderers/default'))}"
       path="/renderers/default"
     ></sk-route>
     <sk-route
-      page="${import('../pages/renderers/with-lit-html')}"
+      page="${withLoading(() => import('../pages/renderers/with-lit-html'))}"
       path="/renderers/with-lit-html"
     ></sk-route>
     <sk-route
-      page="${import('../pages/renderers/with-preact')}"
+      page="${withLoading(() => import('../pages/renderers/with-preact'))}"
       path="/renderers/with-preact"
     ></sk-route>
     <sk-route
-      page="${import('../pages/renderers/with-react')}"
+      page="${withLoading(() => import('../pages/renderers/with-react'))}"
       path="/renderers/with-react"
     ></sk-route>
     <sk-route
-      page="${import('../pages/renderers')}"
+      page="${withLoading(() => import('../pages/renderers'))}"
       path="/renderers"
     ></sk-route>
     <sk-route
-      page="${import('../pages/utils/define')}"
+      page="${withLoading(() => import('../pages/utils/define'))}"
       path="/utils/define"
     ></sk-route>
     <sk-route
-      page="${import('../pages/utils/emit')}"
+      page="${withLoading(() => import('../pages/utils/emit'))}"
       path="/utils/emit"
     ></sk-route>
     <sk-route
-      page="${import('../pages/utils/link')}"
+      page="${withLoading(() => import('../pages/utils/link'))}"
       path="/utils/link"
     ></sk-route>
     <sk-route
-      page="${import('../pages/utils/shadow')}"
+      page="${withLoading(() => import('../pages/utils/shadow'))}"
       path="/utils/shadow"
     ></sk-route>
     <sk-route
-      page="${import('../pages/utils')}"
+      page="${withLoading(() => import('../pages/utils'))}"
       path="/utils"
     ></sk-route>
     <sk-route
-      page="${import('../pages/404')}"
+      page="${withLoading(() => import('../pages/404'))}"
       path="*"
     ></sk-route>
   </sk-router>
@@ -111,31 +109,31 @@ const cssApp = css({
   borderTop: '5px solid #F2567C',
   padding: '50px 25px 25px 25px'
 });
-export default define(
-  class extends Component {
-    static is = 'x-app';
-    context = {
-      style: value(globalStyles)
-    };
-    onHistory = () => {
-      window.scrollTo(0, 0);
-      this.state = { href: location.pathname };
-    };
-    connecting() {
-      this.onHistory();
-      window.addEventListener('popstate', this.onHistory);
-      window.addEventListener('pushstate', this.onHistory);
-      window.addEventListener('replaceState', this.onHistory);
-    }
-    render() {
-      return this.$`
-        ${this.$style}
-        <div className="${cssApp}">
-          ${style(value(cssApp))}
-          <img class="logo">
-          ${router}
-        </div>
-      `;
-    }
+
+@define
+export default class extends Component {
+  static is = 'x-app';
+  context = {
+    style: value(globalStyles)
+  };
+  onHistory = () => {
+    window.scrollTo(0, 0);
+    this.state = { href: location.pathname };
+  };
+  connecting() {
+    this.onHistory();
+    window.addEventListener('popstate', this.onHistory);
+    window.addEventListener('pushstate', this.onHistory);
+    window.addEventListener('replaceState', this.onHistory);
   }
-);
+  render() {
+    return this.$`
+      ${this.$style}
+      <div className="${cssApp}">
+        ${style(value(cssApp))}
+        <img class="logo">
+        ${router}
+      </div>
+    `;
+  }
+}

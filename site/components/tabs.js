@@ -37,60 +37,60 @@ const cssTabs = css({
     color: '#eee'
   }
 });
-export const Tabs = define(
-  class extends Component {
-    static is = 'x-tabs';
-    props: {
-      css: string,
-      items: Array<Object>,
-      selected: number
-    };
-    state = {
-      selected: 0
-    };
-    connecting() {
-      this.style.display = 'block';
-    }
-    onClick(i, e) {
-      e.preventDefault();
-      this.state = { selected: i };
-    }
-    render({ css, items, onClick, state }) {
-      const { selected } = state;
-      return this.$`
-        ${this.$style}
-        ${style(css, value(cssTabs))}
-        <div className="${cssTabs}">
-          <ul class="tabs">
-            ${items.map(
-              ({ name, pane }, i) =>
-                pane
-                  ? this.$`
-                      <li class="tab">
-                        <a
-                          className="${i === selected ? 'selected' : ''}"
-                          href="#"
-                          on-click="${onClick.bind(this, i)}"
-                        >
-                          ${name}
-                        </a>
-                      </li>
-                    `
-                  : ''
-            )}
-          </ul>
+
+@define
+export class Tabs extends Component {
+  static is = 'x-tabs';
+  props: {
+    css: string,
+    items: Array<Object>,
+    selected: number
+  };
+  state = {
+    selected: 0
+  };
+  connecting() {
+    this.style.display = 'block';
+  }
+  onClick(i, e) {
+    e.preventDefault();
+    this.state = { selected: i };
+  }
+  render({ css, items, onClick, state }) {
+    const { selected } = state;
+    return this.$`
+      ${this.$style}
+      ${style(css, value(cssTabs))}
+      <div className="${cssTabs}">
+        <ul class="tabs">
           ${items.map(
-            ({ pane }, i) =>
+            ({ name, pane }, i) =>
               pane
                 ? this.$`
-                    <div className="pane ${i === selected ? 'selected' : ''}">
-                      ${pane}
-                    </div>
+                    <li class="tab">
+                      <a
+                        className="${i === selected ? 'selected' : ''}"
+                        href="#"
+                        on-click="${onClick.bind(this, i)}"
+                      >
+                        ${name}
+                      </a>
+                    </li>
                   `
                 : ''
           )}
-        </div>
-      `;
-    }
+        </ul>
+        ${items.map(
+          ({ pane }, i) =>
+            pane
+              ? this.$`
+                  <div className="pane ${i === selected ? 'selected' : ''}">
+                    ${pane}
+                  </div>
+                `
+              : ''
+        )}
+      </div>
+    `;
   }
-);
+}
