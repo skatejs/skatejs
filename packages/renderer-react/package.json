@@ -8,9 +8,9 @@
   },
   "esnext": "dist/esnext/index.js",
   "files": [
-    "es",
-    "esnext",
-    "node"
+    "dist/es",
+    "dist/esnext",
+    "dist/node"
   ],
   "license": "MIT",
   "keywords": [

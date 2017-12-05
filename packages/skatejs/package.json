@@ -4,10 +4,9 @@
   "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
   "esnext": "dist/esnext/index.js",
   "files": [
-    "es",
-    "esnext",
-    "node",
-    "ts"
+    "dist/es",
+    "dist/esnext",
+    "dist/node"
   ],
   "license": "MIT",
   "keywords": [

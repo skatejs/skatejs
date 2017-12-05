@@ -7,9 +7,9 @@
   },
   "esnext": "dist/esnext/index.js",
   "files": [
-    "es",
-    "esnext",
-    "node"
+    "dist/es",
+    "dist/esnext",
+    "dist/node"
   ],
   "license": "MIT",
   "keywords": [
@@ -27,5 +27,5 @@
   "peerDependencies": {
     "lit-html": "^0.7.1"
   },
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
