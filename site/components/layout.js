@@ -54,6 +54,7 @@ const navItems = () => [
       { href: '/utils/define', text: 'define()' },
       { href: '/utils/emit', text: 'emit()' },
       { href: '/utils/link', text: 'link()' },
+      { href: '/utils/name', text: 'name()' },
       { href: '/utils/shadow', text: 'shadow()' }
     ]
   }

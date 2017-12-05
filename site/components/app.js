@@ -91,6 +91,10 @@ const router = html`
       path="/utils/link"
     ></sk-route>
     <sk-route
+      page="${withLoading(() => import('../pages/utils/name'))}"
+      path="/utils/name"
+    ></sk-route>
+    <sk-route
       page="${withLoading(() => import('../pages/utils/shadow'))}"
       path="/utils/shadow"
     ></sk-route>
@@ -126,12 +130,12 @@ export default class extends Component {
     window.addEventListener('pushstate', this.onHistory);
     window.addEventListener('replaceState', this.onHistory);
   }
-  render() {
+  render({ state }) {
     return this.$`
       ${this.$style}
       <div className="${cssApp}">
         ${style(value(cssApp))}
-        <img class="logo">
+        <img class="logo" src="${state.href === '/' ? logo100 : logo50}">
         ${router}
       </div>
     `;
