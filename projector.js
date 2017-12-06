@@ -11,7 +11,7 @@ function exec(...args) {
 async function babel({ envs }) {
   for (const w of await getWorkspaces()) {
     for (const env of envs.split(',')) {
-      if ((w.config.files || []).indexOf(env) === -1) continue;
+      if ((w.config.files || []).indexOf(`dist/${env}`) === -1) continue;
       const src = path.join(w.dir, 'src');
       const dst = path.join(w.dir, 'dist', env);
       exec('babel', [src, '--out-dir', dst], {
