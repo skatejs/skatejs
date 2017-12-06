@@ -211,7 +211,7 @@ export default class extends Component {
             define(MyElement);
           \`\`\`
 
-          > If you decide to use the [LitHTML renderer](/renderers/lit-html) you can return a fragment of nodes by simply omitting a wrapper.
+          > If you decide to use the [LitHTML renderer](/renderers/with-lit-html) you can return a fragment of nodes by simply omitting a wrapper.
         `}"></x-marked>
       </x-layout>
     `;
