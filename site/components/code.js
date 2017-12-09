@@ -6,6 +6,8 @@ import { define, props, withComponent } from 'skatejs';
 
 import { Component, style, withLoadable } from '../utils';
 
+const mapLang = {};
+
 function format(src) {
   src = src || '';
 
@@ -81,7 +83,7 @@ export class Code extends Component {
   render({ code, lang, title }) {
     const src = document.createElement('div');
     src.textContent = format(code);
-    highlight(src, code, lang || 'js');
+    highlight(src, code, mapLang[lang] || 'js');
     return this.$`
       <div>
         <code-style></code-style>
