@@ -1,6 +1,9 @@
 import { html as lit } from 'lit-html/lib/lit-extended';
 
-export function html(parts, ...args) {
+// This extends Lit to provide constructors as tag names. However, it's not
+// fully working yet as there's some kings to work out, so we still export the
+// standard html tagged literal for now.
+export function htmlExtended(parts, ...args) {
   const newArgs = [];
   const newParts = parts.concat();
   const joinIndicies = [];
@@ -20,3 +23,5 @@ export function html(parts, ...args) {
   }
   return lit(newParts, ...newArgs);
 }
+
+export { html } from 'lit-html/lib/lit-extended';
