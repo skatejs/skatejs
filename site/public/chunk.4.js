@@ -1,5 +1,5 @@
 webpackJsonp([4], {
-  162: function(e, t, n) {
+  166: function(e, t, n) {
     'use strict';
     function r(e) {
       return e && e.__esModule ? e : { default: e };
@@ -72,10 +72,10 @@ webpackJsonp([4], {
     n(29), n(26), n(34);
     var p = n(7),
       h = n(22);
-    n(163);
-    var m = n(164),
+    n(167);
+    var m = n(168),
       b = r(m),
-      y = n(165),
+      y = n(169),
       d = r(y),
       w =
         (0, p.define)(
@@ -110,7 +110,7 @@ webpackJsonp([4], {
         ) || u;
     t.default = w;
   },
-  163: function(e, t, n) {
+  167: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -163,11 +163,11 @@ webpackJsonp([4], {
         );
       })(['Hello, ', '!'], ['Hello, ', '!']),
       s = n(7),
-      c = n(76),
+      c = n(77),
       p = (function(e) {
         return e && e.__esModule ? e : { default: e };
       })(c),
-      h = n(75),
+      h = n(78),
       m = ((u = l = (function(e) {
         function t() {
           return (
@@ -196,11 +196,11 @@ webpackJsonp([4], {
       u);
     customElements.define('with-lit-html', m);
   },
-  164: function(e, t) {
+  168: function(e, t) {
     e.exports =
       "import { props, withComponent } from 'skatejs';\nimport withLitHtml from '@skatejs/renderer-lit-html';\nimport { html } from 'lit-html';\n\nclass WithLitHtml extends withComponent(withLitHtml()) {\n  static props = {\n    name: props.string\n  };\n  render({ name }) {\n    return html`Hello, ${name}!`;\n  }\n}\n\ncustomElements.define('with-lit-html', WithLitHtml);\n";
   },
-  165: function(e, t) {
+  169: function(e, t) {
     e.exports = '<with-lit-html name="World"></with-lit-html>\n';
   }
 });

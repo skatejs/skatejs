@@ -1,5 +1,5 @@
 webpackJsonp([6], {
-  154: function(e, t, n) {
+  158: function(e, t, n) {
     'use strict';
     function o(e) {
       return e && e.__esModule ? e : { default: e };
@@ -72,10 +72,10 @@ webpackJsonp([6], {
     n(29), n(26);
     var f = n(7),
       h = n(22);
-    n(155);
-    var d = n(156),
+    n(159);
+    var d = n(160),
       y = o(d),
-      b = n(157),
+      b = n(161),
       w = o(b),
       m =
         (0, f.define)(
@@ -110,7 +110,7 @@ webpackJsonp([6], {
         ) || s;
     t.default = m;
   },
-  155: function(e, t, n) {
+  159: function(e, t, n) {
     'use strict';
     function o(e, t) {
       if (!(e instanceof t))
@@ -188,11 +188,11 @@ webpackJsonp([6], {
       s);
     customElements.define('with-update', l);
   },
-  156: function(e, t) {
+  160: function(e, t) {
     e.exports =
       "import { props, withUpdate } from 'skatejs';\n\nclass WithProps extends withUpdate() {\n  // This is where you declare your props.\n  static props = {\n    // This will define a handler for the name attribute that will set the name\n    // prop. When the name prop is set, it will trigger an update allowing you\n    // to react to the changes in shouldUpdate.\n    name: props.string\n  };\n\n  constructor() {\n    super();\n    this.attachShadow({ mode: 'open' });\n  }\n\n  // Called when props have been set regardless of if they've changed.\n  updating(props) {}\n\n  // Called to check whether or not the component should call\n  // updated(), much like React's shouldComponentUpdate().\n  shouldUpdate(props, state) {\n    return true;\n  }\n\n  // Called if shouldUpdate returned true.\n  updated() {\n    this.shadowRoot.innerHTML = `Hey, ${this.name}!`;\n  }\n}\n\ncustomElements.define('with-update', WithProps);\n";
   },
-  157: function(e, t) {
+  161: function(e, t) {
     e.exports = '<with-update name="You"></with-update>\n';
   }
 });

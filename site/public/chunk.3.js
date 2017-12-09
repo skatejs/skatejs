@@ -1,5 +1,5 @@
 webpackJsonp([3], {
-  166: function(e, t, n) {
+  170: function(e, t, n) {
     'use strict';
     function r(e) {
       return e && e.__esModule ? e : { default: e };
@@ -72,10 +72,10 @@ webpackJsonp([3], {
     n(29), n(26), n(34);
     var f = n(7),
       d = n(22);
-    n(167);
-    var h = n(169),
+    n(171);
+    var h = n(173),
       m = r(h),
-      y = n(170),
+      y = n(174),
       v = r(y),
       _ =
         (0, f.define)(
@@ -110,7 +110,7 @@ webpackJsonp([3], {
         ) || l;
     t.default = _;
   },
-  167: function(e, t, n) {
+  171: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -158,11 +158,11 @@ webpackJsonp([3], {
         };
       })(),
       c = n(7),
-      p = n(168),
+      p = n(172),
       s = (function(e) {
         return e && e.__esModule ? e : { default: e };
       })(p),
-      f = n(77),
+      f = n(80),
       d = ((l = a = (function(e) {
         function t() {
           return (
@@ -191,7 +191,7 @@ webpackJsonp([3], {
       l);
     customElements.define('with-preact', d);
   },
-  168: function(e, t, n) {
+  172: function(e, t, n) {
     'use strict';
     function r(e, t) {
       if (!(e instanceof t))
@@ -241,7 +241,7 @@ webpackJsonp([3], {
                 ? 'symbol'
                 : typeof e;
             },
-      l = n(77),
+      l = n(80),
       u =
         Object.assign ||
         function(e) {
@@ -325,14 +325,14 @@ webpackJsonp([3], {
       })(e);
     };
   },
-  169: function(e, t) {
+  173: function(e, t) {
     e.exports =
       "// @jsx h\n\nimport { props, withComponent } from 'skatejs';\nimport withPreact from '@skatejs/renderer-preact';\nimport { h } from 'preact';\n\nclass WithPreact extends withComponent(withPreact()) {\n  static props = {\n    name: props.string\n  };\n  render({ name }) {\n    return <span>Hello, {name}!</span>;\n  }\n}\n\ncustomElements.define('with-preact', WithPreact);\n";
   },
-  170: function(e, t) {
+  174: function(e, t) {
     e.exports = '<with-preact name="World"></with-preact>\n';
   },
-  77: function(e, t, n) {
+  80: function(e, t, n) {
     'use strict';
     function r() {}
     function o(e, t) {
