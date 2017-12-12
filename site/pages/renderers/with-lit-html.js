@@ -27,6 +27,14 @@ export default class extends Component {
           allows you to render using
           <a href="https://github.com/PolymerLabs/lit-html">LitHTML</a>.
         </p>
+
+        <p>
+          Please note this renderer uses Lit HTML's extended renderer by default. This provides slightly different
+          than default, and enhanced, functionality as described
+          <a href="https://github.com/PolymerLabs/lit-html/blob/master/src/lib/lit-extended.ts#L25">
+            here
+          </a>.
+        </p>
         <x-runnable
           code="${codeWithLitHtml}"
           html="${codeWithLitHtmlHtml}"></x-runnable>
