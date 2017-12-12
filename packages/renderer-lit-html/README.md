@@ -2,6 +2,10 @@
 
 SkateJS renderer for [Lit HTML](https://github.com/PolymerLabs/lit-html).
 
+Please note `renderer-lit-html` uses Lit HTML's extended renderer by default. This provides slightly different
+than default, and enhanced, functionality as described
+[here](https://github.com/PolymerLabs/lit-html/blob/master/src/lib/lit-extended.ts#L25).
+
 ## Install
 
 ```sh
