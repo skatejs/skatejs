@@ -23,7 +23,7 @@ Skate is a functional abstraction over
 * Provides a base set of
   [mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
   that hook into renderers such as
-  [@skatejs/renderer-preact](https://github.com/skatejs/renderer-preact).
+  [@skatejs/renderer-preact](https://github.com/skatejs/skatejs/tree/master/packages/renderer-preact).
 
 ## Anatomy of a Skate web component
 
@@ -276,9 +276,9 @@ npm install skatejs @skatejs/renderer-[renderer] [renderer]
 
 Where `[renderer]` is one of:
 
-* [lit-html](https://github.com/skatejs/renderer-lit-html)
-* [preact](https://github.com/skatejs/renderer-preact)
-* [react](https://github.com/skatejs/renderer-react)
+* [lit-html](https://github.com/skatejs/skatejs/tree/master/packages/renderer-lit-html)
+* [preact](https://github.com/skatejs/skatejs/tree/master/packages/renderer-preact)
+* [react](https://github.com/skatejs/skatejs/tree/master/packages/renderer-react)
 * Or any custom renderer!
 
 ## Polyfills
