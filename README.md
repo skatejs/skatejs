@@ -36,17 +36,16 @@ that enable you to control what your component can do.
 For instance, Skate's main mixin, `withComponent`, is just a composition of all
 of Skate's other mixin behaviours:
 
-* `withUpdate` -- the generated element will react to changes on their props or
-  HTML attributes.
 * `withChildren` -- the generated element will react to changes to its child
   elements.
-* `withRenderer` -- the element can generate its own DOM and output it to a
-  `renderRoot` (a `ShadowRoot` node by default).
-* `withLifecycle` -- the element can use added sugar on top of the built-in
-  lifecycle callbacks.
 * `withContext` -- the element will inherit context from components up the tree,
   like in React.
-* `withUnique` -- allows for naming the custom element through `is`.
+* `withLifecycle` -- the element can use added sugar on top of the built-in
+  lifecycle callbacks.
+* `withRenderer` -- the element can generate its own DOM and output it to a
+  `renderRoot` (a `ShadowRoot` node by default).
+* `withUpdate` -- the generated element will react to changes on their props or
+  HTML attributes.
 
 Calling `withComponent()` gives you a Custom Element class constructor, which
 you can then extend to define your own elements.
@@ -79,6 +78,11 @@ class GreetingComponent extends Component {
 
 customElements.define('x-hello', GreetingComponent);
 ```
+
+_It's worth noting that while withRenderer() provides a very basic renderer that
+sets innerHTML using the return value of render(), it's not intended for complex
+usage. If you need events / props / efficient updates, you should use something
+like @skatejs/renderer-preact._
 
 When this element is rendered, the DOM will look something like the following:
 
