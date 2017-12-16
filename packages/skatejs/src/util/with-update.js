@@ -1,6 +1,6 @@
 // @flow
 
-import type { PropType, PropTypesNormalized } from '../types.js';
+import type { CustomElement, PropType, PropTypesNormalized } from '../types.js';
 
 import { dashCase } from './index.js';
 

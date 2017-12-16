@@ -39,6 +39,52 @@ function testTypeValues(type, values, done) {
   }, 1);
 }
 
+test('static props = {}', () => {
+  @define
+  class Test extends withUpdate() {
+    static props = {
+      test: props.string
+    };
+  }
+  const test = new Test();
+  expect('test' in test).toBe(true);
+});
+
+test('static props = {} should define observedAttributes', () => {
+  @define
+  class Test extends withUpdate() {
+    static props = {
+      test: props.string
+    };
+  }
+  expect(Test.observedAttributes.indexOf('test')).toBe(0);
+});
+
+test('static get props() {} should define props', () => {
+  @define
+  class Test extends withUpdate() {
+    static get props() {
+      return {
+        test: props.string
+      };
+    }
+  }
+  const test = new Test();
+  expect('test' in test).toBe(true);
+});
+
+test('static get props() {} should define observedAttributes', () => {
+  @define
+  class Test extends withUpdate() {
+    static get props() {
+      return {
+        test: props.string
+      };
+    }
+  }
+  expect(Test.observedAttributes.indexOf('test')).toBe(0);
+});
+
 describe('withUpdate', () => {
   it('should not share _props instance', () => {
     class Test1 extends withUpdate() {

@@ -10,6 +10,17 @@ import {
   syncPropertyToAttribute
 } from './util/with-update.js';
 
+function defineProps(constructor) {
+  if (!('_props' in constructor)) {
+    const { props } = constructor;
+    keys(props).forEach(name => {
+      let func = props[name];
+      if (typeof func !== 'function') func = prop((func: any));
+      func({ constructor }, name);
+    });
+  }
+}
+
 function delay(fn) {
   if (window.Promise) {
     Promise.resolve().then(fn);
@@ -89,6 +100,10 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _state = {};
 
     static get observedAttributes(): Array<string> {
+      // We have to define props here because observedAttributes are retrieved
+      // only once when the custom element is defined. If we did this only in
+      // the constructor, then props would not link to attributes.
+      defineProps(this);
       return this._observedAttributes || [];
     }
 
