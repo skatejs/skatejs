@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { define } from 'skatejs';
-import withRenderer from '..';
+import withRenderer, { asCustomElement } from '..';
 
 function render(Comp) {
   const el = new Comp();
@@ -39,11 +39,9 @@ test('wrapper - empty', () => {
 });
 
 test('wrapper - static component', () => {
-  @define
-  class ReactComponentWrapper extends withRenderer() {
-    static component = ReactComponent;
-  }
+  const ReactComponentWrapper = asCustomElement(ReactComponent);
 
+  define(ReactComponentWrapper);
   const el = render(ReactComponentWrapper);
   expect(el.innerHTML).toMatchSnapshot();
 });
