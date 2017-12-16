@@ -80,7 +80,7 @@ you to simply do:
 ```js
 class WcHello extends withReact(withComponent()) {
   static props = { yell: props.boolean };
-  static reactComponent = ReactHello;
+  static component = ReactHello;
 }
 ```
 
