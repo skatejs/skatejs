@@ -1,51 +1,62 @@
 import React, { Component } from 'react';
+import { define } from 'skatejs';
 import withRenderer from '..';
 
-class MyElement extends withRenderer() {
-  render({ name }) {
-    return <div>Hello, {name}!</div>;
+function render(Comp) {
+  const el = new Comp();
+  el.renderer(el, el.render.bind(el));
+  return el;
+}
+
+class ReactComponent extends Component {
+  render() {
+    return <div>Hello, {this.props.children}!</div>;
   }
 }
-customElements.define('my-element', MyElement);
 
 test('renders', () => {
-  function testContent(text) {
-    return `<div data-reactroot=\"\"><!-- react-text: 2 -->Hello, <!-- /react-text --><!-- react-text: 3 -->${
-      text
-    }<!-- /react-text --><!-- react-text: 4 -->!<!-- /react-text --></div>`;
+  @define
+  class MyElement extends withRenderer() {
+    render({ name }) {
+      return <div>Hello, {name}!</div>;
+    }
   }
 
   const el = new MyElement();
-  expect(el.innerHTML).toEqual('');
+  expect(el.innerHTML).toMatchSnapshot();
   el.renderer(el, el.render.bind(el, { name: 'World' }));
-  expect(el.innerHTML).toEqual(testContent('World'));
+  expect(el.innerHTML).toMatchSnapshot();
   el.renderer(el, el.render.bind(el, { name: 'Bob' }));
-  expect(el.innerHTML).toEqual(testContent('Bob'));
+  expect(el.innerHTML).toMatchSnapshot();
 });
 
-test('wrappers', () => {
-  class ReactComponent extends Component {
-    render() {
-      return <div>Hello, {this.props.children}!</div>;
-    }
+test('wrapper - empty', () => {
+  @define
+  class ReactComponentWrapper extends withRenderer() {}
+
+  const el = render(ReactComponentWrapper);
+  expect(el.innerHTML).toMatchSnapshot();
+});
+
+test('wrapper - static component', () => {
+  @define
+  class ReactComponentWrapper extends withRenderer() {
+    static component = ReactComponent;
   }
 
+  const el = render(ReactComponentWrapper);
+  expect(el.innerHTML).toMatchSnapshot();
+});
+
+test('wrapper - override render()', () => {
+  @define
   class ReactComponentWrapper extends withRenderer() {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
     render() {
       return <ReactComponent {...this.props} />;
     }
   }
 
-  customElements.define('react-component-wrapper', ReactComponentWrapper);
-
   const el = new ReactComponentWrapper();
-  const { shadowRoot } = el;
-  el.renderer(shadowRoot, el.render.bind(el));
-  expect(shadowRoot.innerHTML).toEqual(
-    '<div data-reactroot=""><!-- react-text: 2 -->Hello, <!-- /react-text --><slot></slot><!-- react-text: 4 -->!<!-- /react-text --></div>'
-  );
+  el.renderer(el, el.render.bind(el));
+  expect(el.innerHTML).toMatchSnapshot();
 });

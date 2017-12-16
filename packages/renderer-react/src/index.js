@@ -11,6 +11,10 @@ export default (Base = HTMLElement) =>
         ...{ children: <slot /> }
       };
     }
+    render() {
+      const Component = this.constructor.component;
+      return Component ? <Component {...this.props} /> : <span />;
+    }
     renderer(root, call) {
       render(call(), root);
     }
