@@ -25,6 +25,8 @@ export class Hr extends Component {
   }
 }
 
+const publicUrl = 'skatejs.netlify.com';
+
 @define
 export class Link extends Component {
   static is = 'x-link';
@@ -34,6 +36,9 @@ export class Link extends Component {
     href: props.string
   };
   render({ classNames, context, css, href }) {
+    if (href.indexOf(publicUrl) > -1) {
+      href = href.split(publicUrl)[1];
+    }
     return href.indexOf('://') > -1
       ? this.$`
       ${style(context.style, css)}

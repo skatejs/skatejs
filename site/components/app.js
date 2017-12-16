@@ -31,6 +31,10 @@ const router = html`
       path="/guides/flowtype"
     ></sk-route>
     <sk-route
+      page="${withLoading(() => import('../pages/guides/getting-started'))}"
+      path="/guides/getting-started"
+    ></sk-route>
+    <sk-route
       page="${withLoading(() => import('../pages/migrating'))}"
       path="/migrating"
     ></sk-route>

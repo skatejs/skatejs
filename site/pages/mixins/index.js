@@ -14,7 +14,7 @@ export default class extends Component {
     return this.$`
       <x-layout title="Mixins">
         <x-marked src="${`
-          As stated previously, the mixin pattern is a way to take several class
+          [Mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/) are a way to take several class
           definitions and compose them into one. It works well for custom elements
           because every element has a different purpose and it allows you to pick
           and choose what goes into it. It's also what lets you render one

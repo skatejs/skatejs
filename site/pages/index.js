@@ -8,7 +8,9 @@ import css from 'yocss';
 
 import { Component, style } from '../utils';
 
-import codeWithReact from '!raw-loader!./__samples__';
+import './renderers/__samples__/with-preact';
+import codeWithPreact from '!raw-loader!./renderers/__samples__/with-preact';
+import codeWithPreactHtml from '!raw-loader!./renderers/__samples__/with-preact.html';
 import README from '!raw-loader!../../README.md';
 
 const renderers = {
@@ -22,8 +24,6 @@ export default class extends Component {
   static is = 'x-pages-index';
   css = {
     code: css({
-      borderRadius: '3px',
-      boxShadow: '0 5px 50px 0 rgba(0, 0, 0, .5)',
       margin: '0 auto',
       overflow: 'hidden',
       maxWidth: '600px'
@@ -49,7 +49,10 @@ export default class extends Component {
           Effortless custom elements for modern view libraries.
         </h2>
       </div>
-      <x-code code="${codeWithReact}" className="${this.css.code}"></x-code>
+      <x-runnable
+        className="${this.css.code}"
+        code="${codeWithPreact}"
+        html="${codeWithPreactHtml}"></x-runnable>
       <x-hr></x-hr>
       <x-layout>
         <x-marked renderers="${renderers}" src="${README}"></x-marked>
