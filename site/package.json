@@ -4,7 +4,7 @@
   "dependencies": {
     "@skatejs/renderer-lit-html": "^0.1.1",
     "@skatejs/renderer-preact": "^0.2.0",
-    "@skatejs/renderer-react": "^0.1.0",
+    "@skatejs/renderer-react": "^0.2.0",
     "@skatejs/sk-marked": "^0.0.0",
     "@skatejs/sk-router": "^0.2.0",
     "highlight.js": "^9.12.0",
