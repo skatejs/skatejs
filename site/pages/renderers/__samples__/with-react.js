@@ -5,9 +5,11 @@ import withReact from '@skatejs/renderer-react';
 import React from 'react';
 
 class WithReact extends withComponent(withReact()) {
-  static props = {
-    name: props.string
-  };
+  static get props() {
+    return {
+      name: props.string
+    };
+  }
   render({ name }) {
     return <span>Hello, {name}!</span>;
   }

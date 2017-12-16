@@ -3,9 +3,11 @@ import withLitHtml from '@skatejs/renderer-lit-html';
 import { html } from 'lit-html';
 
 class WithLitHtml extends withComponent(withLitHtml()) {
-  static props = {
-    name: props.string
-  };
+  static get props() {
+    return {
+      name: props.string
+    };
+  }
   render({ name }) {
     return html`Hello, ${name}!`;
   }
