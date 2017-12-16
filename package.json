@@ -51,6 +51,9 @@
         ]
       },
       "test": {
+        "plugins": [
+          "transform-decorators-legacy"
+        ],
         "presets": [
           "env",
           "flow",
