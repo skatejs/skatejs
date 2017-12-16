@@ -40,7 +40,7 @@ test('wrapper - static component', () => {
 
 test('wrapper - override render()', () => {
   @define
-  class ReactComponentWrapper extends withRenderer() {
+  class ReactComponentWrapper extends asCustomElement(ReactComponent) {
     render() {
       return <ReactComponent {...this.props} />;
     }
