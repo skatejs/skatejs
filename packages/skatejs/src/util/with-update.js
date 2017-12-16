@@ -47,7 +47,7 @@ export function syncAttributeToProperty(
   if (elem._syncingPropertyToAttribute) {
     return;
   }
-  const propDefs: PropTypesNormalized = elem.constructor.props;
+  const propDefs: PropTypesNormalized = elem.constructor._propsNormalised;
   for (let propName in propDefs) {
     const { attribute: { source }, deserialize } = propDefs[propName];
     if (source === name) {

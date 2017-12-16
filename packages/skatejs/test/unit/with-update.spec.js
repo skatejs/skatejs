@@ -63,6 +63,7 @@ test('static props = {} should define observedAttributes', () => {
 test('static get props() {} should define props', () => {
   @define
   class Test extends withUpdate() {
+    static is = 'omg-yay';
     static get props() {
       return {
         test: props.string
@@ -71,6 +72,8 @@ test('static get props() {} should define props', () => {
   }
   const test = new Test();
   expect('test' in test).toBe(true);
+  test.setAttribute('test', 'yay');
+  expect(test.test).toBe('yay');
 });
 
 test('static get props() {} should define observedAttributes', () => {

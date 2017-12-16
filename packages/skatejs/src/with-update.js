@@ -11,14 +11,13 @@ import {
 } from './util/with-update.js';
 
 function defineProps(constructor) {
-  if (!('_props' in constructor)) {
-    const { props } = constructor;
-    keys(props).forEach(name => {
-      let func = props[name];
-      if (typeof func !== 'function') func = prop((func: any));
-      func({ constructor }, name);
-    });
-  }
+  if (constructor.hasOwnProperty('_propsNormalised')) return;
+  const { props } = constructor;
+  keys(props).forEach(name => {
+    let func = props[name];
+    if (typeof func !== 'function') func = prop((func: any));
+    func({ constructor }, name);
+  });
 }
 
 function delay(fn) {
@@ -39,15 +38,15 @@ export function prop(definition: PropType | void): Function {
 
     // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
     // classes or share the instance anywhere where it's not intended to be shared explicitly in userland code.
-    if (!constructor.hasOwnProperty('_props')) {
-      constructor._props = {};
+    if (!constructor.hasOwnProperty('_propsNormalised')) {
+      constructor._propsNormalised = {};
     }
 
     // Cache the value so we can reference when syncing the attribute to the property.
-    constructor._props[name] = normalised;
+    constructor._propsNormalised[name] = normalised;
 
     if (normalised.attribute.source) {
-      constructor.observedAttributes = normalised.attribute.source;
+      constructor._observedAttributes.push(normalised.attribute.source);
     }
 
     Object.defineProperty(constructor.prototype, name, {
@@ -95,6 +94,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     triggerUpdate: () => void;
     updating: ?(props: Object, state: Object) => void;
 
+    static _observedAttributes = [];
     _prevProps = {};
     _prevState = {};
     _state = {};
@@ -104,23 +104,15 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       // only once when the custom element is defined. If we did this only in
       // the constructor, then props would not link to attributes.
       defineProps(this);
-      return this._observedAttributes || [];
-    }
-
-    static set observedAttributes(attrs: string | Array<string>) {
-      this._observedAttributes = (this.observedAttributes || []).concat(attrs);
+      return this._observedAttributes;
     }
 
     static get props(): PropTypesNormalized {
-      return this._props || {};
+      return this._props;
     }
 
     static set props(props: PropTypes): void {
-      keys(props).forEach(name => {
-        let func = props[name];
-        if (typeof func !== 'function') func = prop(func);
-        func({ constructor: this }, name);
-      });
+      this._props = props;
     }
 
     get props(): Object {
