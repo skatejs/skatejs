@@ -212,8 +212,8 @@ export default class extends Component {
             component's HTML, a \`renderer\` to update the DOM with your HTML, and then it's
             all the same to Skate!
 
-            The Skate team have provided a few renderers for popular front-end libraries;
-            check the [Installing](#installing-skate) section.
+            The Skate team have provided a few renderers for popular front-end libraries.
+            See the section on [renderers](/renderers) for more info.
 
             #### Using Skate with Preact
 
