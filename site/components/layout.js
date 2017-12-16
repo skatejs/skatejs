@@ -142,6 +142,7 @@ export class Layout extends Component {
     this.style.display = 'block';
   }
   render({ nav, title }) {
+    document.title = `SkateJS${title ? ` - ${title}` : ''}`;
     return this.$`
       ${this.$style}
       ${style(value(...Object.values(cssLayout)))}
