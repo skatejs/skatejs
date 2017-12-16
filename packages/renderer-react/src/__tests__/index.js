@@ -30,14 +30,6 @@ test('renders', () => {
   expect(el.innerHTML).toMatchSnapshot();
 });
 
-test('wrapper - empty', () => {
-  @define
-  class ReactComponentWrapper extends withRenderer() {}
-
-  const el = render(ReactComponentWrapper);
-  expect(el.innerHTML).toMatchSnapshot();
-});
-
 test('wrapper - static component', () => {
   const ReactComponentWrapper = asCustomElement(ReactComponent);
 
