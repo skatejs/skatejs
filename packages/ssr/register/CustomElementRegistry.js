@@ -7,6 +7,10 @@ class CustomElementRegistry {
     this.registry = {};
   }
   define(name, func) {
+    // We must invoke the getter for observedAttributes to mimic the spec'd
+    // behaviour just in case consumer getters require side-effects happen
+    // within it.
+    func.observedAttributes;
     prop(func.prototype, 'nodeName', { value: name });
     this.registry[name] = func;
     if (this.promises[name]) {
