@@ -152,9 +152,11 @@ export default class extends Component {
           import myRenderer from './my-renderer';
 
           export default class extends withRenderer(withUpdate(myRenderer())) {
-            static props = {
-              name: props.string
-            };
+            static get props() {
+              return {
+                name: props.string
+              };
+            }
             render({ name }) {
               return \`Hello, \${name}!\`;
             }
@@ -189,9 +191,11 @@ export default class extends Component {
           import MyBase from './my-base';
 
           class MyComponent extends MyBase {
-            static props = {
-              name: props.string
-            };
+            static get props() {
+              return {
+                name: props.string
+              };
+            }
             render({ name }) {
               return \`Hello, \${name}!\`;
             }

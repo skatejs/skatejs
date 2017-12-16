@@ -39,9 +39,11 @@ export default class extends Component {
 
           \`\`\`js
           class WithUpdate extends withComponent() {
-            static props = {
-              name: props.string
-            };
+            static get props() {
+              return {
+                name: props.string
+              };
+            }
             render() {
               return \`Hello, \${this.name}!\`;
             }

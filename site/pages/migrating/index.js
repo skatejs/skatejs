@@ -40,20 +40,21 @@ export default class extends Component {
 
           ### Props API
 
-          **NOTE: ES language changes.**
+          ___The ability to use a static getter for props is now back in 5.1!___
 
-          - If you used getters before for defining props or is, that won't work anymore.
-          - You have to provide just static class properties for \`props\`. We're working on possibly brining this back.
-          - The \`is\` static property can still be specified as a getter.
+          - In 5.0, you must explicitly set the static props property.
+          - The ability to use a getter has been restored in 5.1.
 
           \`\`\`js
             class Hello extends Component {
-              static is = 'x-hello';
+              // This doesn't work in 5.0, but does in 5.1.
           -   static get props() {
-          -    return {
-          -      who: prop.string()
+          -     return {
+          -       who: prop.string()
           -     }
           -   }
+
+              // You can do this in both 5.0 and 5.1.
           +   static props = {
           +     who: props.string
           +   };
@@ -87,6 +88,8 @@ export default class extends Component {
 
           #### Overriding pre-defined props
 
+          Built-in props used to be exposed as functions that would mix in whatever object you gave it. Now, it's just an object and if you want to merge objects, you can use the built-in object spread operator, or \`Object.assign()\`.
+
           \`\`\`js
           - import { define, Component, prop } from 'skatejs';
           + import { withComponent, props } from 'skatejs';
@@ -99,7 +102,7 @@ export default class extends Component {
               static is = 'x-hello';
               static props = {
           -     who: prop.string({ attributes:true })
-          +     who: { ...props.string, attributes: true }
+          +     who: { ...props.string, ...{ attributes: true } }
               };
               render() {
                 return <div>Hello {this.who}</div>;

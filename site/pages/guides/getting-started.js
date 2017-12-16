@@ -104,9 +104,11 @@ export default class extends Component {
 
             // use custom NoShadowComponent as a base class
             class GreetingComponent extends NoShadowComponent {
-              static props = {
-                name: props.string
-              };
+              static get props() {
+                return {
+                  name: props.string
+                };
+              }
               render({ name }) {
                 return \`Hello, ${name}!\`;
               }
@@ -140,9 +142,11 @@ export default class extends Component {
             const Component = withComponent();
 
             class GreetingComponent extends Component {
-              static props = {
-                name: props.string
-              };
+              static get props() {
+                return {
+                  name: props.string
+                };
+              }
               render({ name }) {
                 return \`Hello, ${name}!\`;
               }
@@ -189,9 +193,11 @@ export default class extends Component {
             const Component = withComponent(withDangerouslyNaiveRenderer());
 
             class GreetingComponent extends Component {
-              static props = {
-                name: props.string
-              };
+              static get props() {
+                return {
+                  name: props.string
+                };
+              }
               render({ name }) {
                 const el = document.createElement('span');
                 el.innerHTML = \`Hello, ${name}!\`;
@@ -234,9 +240,11 @@ export default class extends Component {
             customElements.define(
               'x-hello',
               class extends Component {
-                static props = {
-                  name: props.string
-                };
+                static get props() {
+                  return {
+                    name: props.string
+                  };
+                }
                 render({ name }) {
                   return <span>Hello, {name}!</span>;
                 }
