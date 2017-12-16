@@ -74,6 +74,16 @@ For either example, you can now just write HTML:
 <wc-hello yell>World</wc-hello>
 ```
 
+To simplify wrapping, there's a default `render()` implementation that allows
+you to simply do:
+
+```js
+class WcHello extends withReact(withComponent()) {
+  static props = { yell: props.boolean };
+  static reactComponent = ReactHello;
+}
+```
+
 It's important to note that it's a best practice to provide an attribute API, so
 we must specify `props` that will auto-link props to attributes. This is also
 required because the component needs to know which props cause a re-render.
@@ -115,18 +125,4 @@ class WcHello extends withReact(withComponent()) {
 }
 
 customElements.define('wc-hello', WcHello);
-```
-
-## Future plans
-
-One of the major use cases of this renderer would be to wrap React components.
-Therefore it would make sense to provide a conventional implementation of
-`renderCallback`, instead of having to specify it every time. Maybe something
-like the following:
-
-```js
-class WcHello extends withReact(withComponent()) {
-  props: Props;
-  static reactComponent = ReactHello;
-}
 ```
