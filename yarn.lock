@@ -197,7 +197,7 @@ array-flatten@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-1.1.1.tgz#9a5f699051b1e7073328f2a008968b64ea2955d2"
 
-array-flatten@^2.1.0:
+array-flatten@^2.1.0, array-flatten@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-2.1.1.tgz#426bb9da84090c1838d812c8150af20a8331e296"
 
@@ -1265,9 +1265,9 @@ body-parser@1.18.2:
     raw-body "2.3.2"
     type-is "~1.6.15"
 
-bolt@^0.17.6:
-  version "0.17.6"
-  resolved "https://registry.yarnpkg.com/bolt/-/bolt-0.17.6.tgz#4b45dc879191b02ac6121a0d385e4e34fdd4b15e"
+bolt@^0.18.0:
+  version "0.18.0"
+  resolved "https://registry.yarnpkg.com/bolt/-/bolt-0.18.0.tgz#5b49ef73d1e23e1315549db0d087150859d898b5"
   dependencies:
     array-includes "^3.0.3"
     babel-runtime "^6.25.0"
@@ -1278,19 +1278,24 @@ bolt@^0.17.6:
     detect-indent "^5.0.0"
     find-up "^2.1.0"
     globby "^6.1.0"
+    graph-sequencer "^2.0.0"
+    is-glob "^4.0.0"
     make-dir "^1.0.0"
     meow sindresorhus/meow#43401c3
+    minimatch "^3.0.4"
     multimatch "^2.1.0"
     p-limit "^1.1.0"
     parse-json "^2.2.0"
     path-is-inside "^1.0.2"
     pkg-up "^2.0.0"
+    project-bin-path "^1.1.0"
     read-cmd-shim "^1.0.1"
     read-pkg "^2.0.0"
     rimraf "^2.6.1"
     semver "^5.4.1"
     sort-object "^3.0.2"
     typeable-promisify "^2.0.1"
+    yarn "^1.3.2"
 
 bonjour@^3.5.0:
   version "3.5.0"
@@ -3150,6 +3155,13 @@ graceful-fs@^4.0.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.4,
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
+graph-sequencer@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/graph-sequencer/-/graph-sequencer-2.0.0.tgz#bfb809b8af584f6f5287cdce507a30d4aea6ee70"
+  dependencies:
+    array-flatten "^2.1.1"
+    array-includes "^3.0.3"
+
 growly@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/growly/-/growly-1.3.0.tgz#f10748cbe76af964b7c96c93c6bcc28af120c081"
@@ -4999,17 +5011,13 @@ minimist-options@^3.0.1:
     arrify "^1.0.1"
     is-plain-obj "^1.1.0"
 
-minimist@0.0.8:
+minimist@0.0.8, minimist@~0.0.1:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
 minimist@^1.1.0, minimist@^1.1.1, minimist@^1.1.3, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
-
-minimist@~0.0.1:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
 mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   version "0.5.1"
@@ -5652,6 +5660,12 @@ process@^0.11.10:
 progress@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
+
+project-bin-path@^1.1.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/project-bin-path/-/project-bin-path-1.1.1.tgz#7a8b3817f54c41a14cd5a6e904ca5400c34fc17b"
+  dependencies:
+    find-up "^2.1.0"
 
 projector-cli@^3.0.1:
   version "3.0.1"
@@ -6485,11 +6499,7 @@ stat-mode@^0.2.0:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/stat-mode/-/stat-mode-0.2.2.tgz#e6c80b623123d7d80cf132ce538f346289072502"
 
-"statuses@>= 1.3.1 < 2":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.4.0.tgz#bb73d446da2796106efcc1b601a253d6c46bd087"
-
-statuses@~1.3.1:
+"statuses@>= 1.3.1 < 2", statuses@~1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.3.1.tgz#faf51b9eb74aaef3b3acf4ad5f61abf24cb7b93e"
 
@@ -7503,6 +7513,10 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yarn@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.3.2.tgz#5939762581b5b4ddcd3418c0f6be42df3aee195f"
 
 yauzl@^2.2.1:
   version "2.9.1"

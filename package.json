@@ -64,7 +64,7 @@
     }
   },
   "bolt": {
-    "version": "^0.17.0",
+    "version": "^0.18.0",
     "workspaces": [
       "site",
       "packages/*"
@@ -113,7 +113,7 @@
     "babel-preset-latest": "6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "bolt": "^0.17.6",
+    "bolt": "^0.18.0",
     "eslint-plugin-flowtype": "^2.34.0",
     "execa": "^0.8.0",
     "file-loader": "^1.1.5",
