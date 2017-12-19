@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { define } from 'skatejs';
-import withRenderer, { asCustomElement } from '..';
+import withRenderer, { wrap } from '..';
 
 function render(Comp) {
   const el = new Comp();
@@ -31,7 +31,7 @@ test('renders', () => {
 });
 
 test('wrapper - static component', () => {
-  const ReactComponentWrapper = asCustomElement(ReactComponent);
+  const ReactComponentWrapper = wrap(ReactComponent);
 
   define(ReactComponentWrapper);
   const el = render(ReactComponentWrapper);
@@ -40,7 +40,7 @@ test('wrapper - static component', () => {
 
 test('wrapper - override render()', () => {
   @define
-  class ReactComponentWrapper extends asCustomElement(ReactComponent) {
+  class ReactComponentWrapper extends wrap(ReactComponent) {
     render() {
       return <ReactComponent {...this.props} />;
     }

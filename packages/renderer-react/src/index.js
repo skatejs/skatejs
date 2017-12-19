@@ -19,7 +19,7 @@ const withReact = (Base = HTMLElement) =>
 
 export default withReact;
 
-export const asCustomElement = Component =>
+export const wrap = Component =>
   class extends withReact() {
     render() {
       return <Component {...this.props} />;
