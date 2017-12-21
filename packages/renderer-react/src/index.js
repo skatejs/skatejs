@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { withRenderer } from 'skatejs';
 
-export default (Base = HTMLElement) =>
+const withReact = (Base = HTMLElement) =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use
@@ -11,11 +12,16 @@ export default (Base = HTMLElement) =>
         ...{ children: <slot /> }
       };
     }
-    render() {
-      const Component = this.constructor.component;
-      return Component ? <Component {...this.props} /> : <span />;
-    }
     renderer(root, call) {
       render(call(), root);
+    }
+  };
+
+export default withReact;
+
+export const wrap = Component =>
+  class extends withReact() {
+    render() {
+      return <Component {...this.props} />;
     }
   };
