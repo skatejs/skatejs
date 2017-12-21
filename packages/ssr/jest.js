@@ -9,4 +9,10 @@ module.exports = class extends NodeEnvironment {
     Object.getOwnPropertyNames(global).forEach(n => (window[n] = global[n]));
     Object.assign(this.context, window, { window });
   }
+  setup() {
+    return Promise.resolve();
+  }
+  teardown() {
+    return Promise.resolve();
+  }
 };
