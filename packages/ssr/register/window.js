@@ -22,8 +22,10 @@ window.history = new History();
 // Not order dependent.
 window.__handlers = {};
 window.addEventListener = ElPr.addEventListener.bind(window);
+window.cancelAnimationFrame = id => clearTimeout(id);
 window.customElements = new CustomElementRegistry();
 window.dispatchEvent = ElPr.dispatchEvent.bind(window);
 window.navigator = new Navigator();
 window.removeEventListener = ElPr.removeEventListener.bind(window);
+window.requestAnimationFrame = fn => setTimeout(fn);
 window.scrollTo = () => {};
