@@ -12,6 +12,10 @@ import './__samples__/with-react';
 import codeWithReact from '!raw-loader!./__samples__/with-react';
 import codeWithReactHtml from '!raw-loader!./__samples__/with-react.html';
 
+import './__samples__/wrap-react';
+import codeWrapReact from '!raw-loader!./__samples__/wrap-react';
+import codeWrapReactHtml from '!raw-loader!./__samples__/wrap-react.html';
+
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-react';
@@ -27,6 +31,15 @@ export default class extends Component {
         <x-runnable
           code="${codeWithReact}"
           html="${codeWithReactHtml}"></x-runnable>
+
+        <p>
+          The React renderer also exports a <code>wrap</code> function
+          which takes a React component and returns a Custom Element which renders
+          the given React component on <code>render</code>
+        </p>
+        <x-runnable
+          code="${codeWrapReact}"
+          html="${codeWrapReactHtml}"></x-runnable>
       </x-layout>
     `;
   }
