@@ -35,4 +35,54 @@ describe('Node', () => {
 
     it('should connect a fragment of elements', () => {});
   });
+
+  describe('cloneNode', () => {
+    function testCloneEquality(source, clone, deeplyCloned) {
+      expect(clone.nodeName).toEqual(source.nodeName);
+
+      if (clone.attributes) {
+        clone.attributes.forEach(({ name, value }) =>
+          expect(value).toEqual(source.getAttribute(name))
+        );
+      }
+
+      expect(clone.nodeType).toEqual(source.nodeType);
+
+      if (deeplyCloned) {
+        expect(clone.textContent).toEqual(source.textContent);
+
+        expect(clone.childNodes.length).toEqual(source.childNodes.length);
+        if (clone.childNodes) {
+          clone.childNodes.forEach((child, i) => {
+            testCloneEquality(source.childNodes[i], child, true);
+          });
+        }
+      } else {
+        expect(clone.childNodes.length).toEqual(0);
+      }
+    }
+
+    beforeEach(() => {
+      const child = document.createElement('span');
+      child.setAttribute('clone-this', 'test');
+      child.appendChild(document.createTextNode('example text child'));
+      const grandchild = document.createElement('div');
+      grandchild.setAttribute('id', '42');
+      grandchild.appendChild(document.createTextNode('grandchild text node'));
+      child.appendChild(grandchild);
+
+      host.appendChild(child);
+      host.setAttribute('clone-this', 'test');
+    });
+
+    it('clones an element shallowly', () => {
+      const clone = host.cloneNode();
+      testCloneEquality(host, clone, false);
+    });
+
+    it('clones an element deeply', () => {
+      const clone = host.cloneNode(true);
+      testCloneEquality(host, clone, true);
+    });
+  });
 });
