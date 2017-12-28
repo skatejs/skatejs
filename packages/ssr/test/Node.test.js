@@ -85,4 +85,19 @@ describe('Node', () => {
       testCloneEquality(host, clone, true);
     });
   });
+
+  describe('content', () => {
+    it('should return a documentFragment containing all children', () => {
+      for (let i = 0; i < 10; i++) {
+        const child = document.createElement('span');
+        child.innerText = i;
+        host.appendChild(child);
+      }
+      const content = host.content;
+      expect(content.childNodes.length).toEqual(10);
+      for (let i = 0; i < 10; i++) {
+        expect(content.childNodes[i].innerText).toEqual(i);
+      }
+    });
+  });
 });

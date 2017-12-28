@@ -31,7 +31,11 @@ Object.defineProperty(NodeProto, 'content', {
   get() {
     if (!this._content) {
       this._content = new DocumentFragment();
-      this.childNodes.forEach(node => this._content.appendChild(node));
+      this.childNodes.forEach(node => {
+        node = node.cloneNode(true);
+        node.parentNode = this._content;
+        this._content.childNodes.push(node);
+      });
     }
     return this._content;
   }
@@ -71,7 +75,7 @@ Object.defineProperty(NodeProto, 'textContent', {
 
 NodeProto.cloneNode = function(deep) {
   let clone;
-  switch(this.nodeType) {
+  switch (this.nodeType) {
     case Node.ELEMENT_NODE:
       clone = document.createElement(this.nodeName);
       clone.attributes = this.attributes.slice();
@@ -95,7 +99,7 @@ NodeProto.cloneNode = function(deep) {
   clone.innerText = this.innerText;
 
   return clone;
-}
+};
 
 NodeProto.contains = function(node) {
   if (this === node) {
