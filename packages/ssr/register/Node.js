@@ -31,7 +31,11 @@ Object.defineProperty(NodeProto, 'content', {
   get() {
     if (!this._content) {
       this._content = new DocumentFragment();
-      this.childNodes.forEach(node => this._content.appendChild(node));
+      this.childNodes.forEach(node => {
+        node = node.cloneNode(true);
+        node.parentNode = this._content;
+        this._content.childNodes.push(node);
+      });
     }
     return this._content;
   }
@@ -68,6 +72,34 @@ Object.defineProperty(NodeProto, 'textContent', {
     }
   }
 });
+
+NodeProto.cloneNode = function(deep) {
+  let clone;
+  switch (this.nodeType) {
+    case Node.ELEMENT_NODE:
+      clone = document.createElement(this.nodeName);
+      clone.attributes = this.attributes.slice();
+      break;
+    case Node.DOCUMENT_FRAGMENT_NODE:
+      clone = document.createDocumentFragment();
+      break;
+    case Node.TEXT_NODE:
+      clone = document.createTextNode(this.textContent);
+      break;
+  }
+
+  if (!deep) {
+    return clone;
+  }
+
+  for (let childNode of this.childNodes) {
+    clone.childNodes.push(childNode.cloneNode(true));
+  }
+
+  clone.innerText = this.innerText;
+
+  return clone;
+};
 
 NodeProto.contains = function(node) {
   if (this === node) {
