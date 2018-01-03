@@ -47,10 +47,11 @@ async function release({ packages, type }) {
     await exec('npm', ['--no-git-tag-version', 'version', type], { cwd });
     const ver = require(path.join(cwd, 'package.json')).version;
     const tag = `${name}-${ver}`;
-    await exec('git', ['commit', '-am', tag]);
-    await exec('git', ['tag', '-am', tag]);
+    await exec('git', ['commit', '-am', tag], { cwd });
+    await exec('git', ['tag', '-a', tag, '-m', tag], { cwd });
+    await exec('npm', ['publish'], { cwd });
   }
-  await exect('git', ['push']);
+  await exec('git', ['push']);
 }
 
 module.exports = {
