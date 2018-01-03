@@ -12,7 +12,14 @@ module.exports = class extends NodeEnvironment {
   setup() {
     return Promise.resolve();
   }
+
+  // Jest@21 uses `dispose` Jest@22 uses `teardown`.
+  // To support both we provide both.
+  // See the Jest@22 Changelog: https://github.com/facebook/jest/blob/master/CHANGELOG.md#features-3
   teardown() {
     return Promise.resolve();
+  }
+  dispose() {
+    return this.teardown();
   }
 };
