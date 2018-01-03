@@ -1,5 +1,6 @@
 const { getWorkspaces } = require('bolt');
 const execa = require('execa');
+const fs = require('fs-extra');
 const path = require('path');
 
 function exec(...args) {
@@ -28,6 +29,31 @@ async function babel({ envs }) {
   }
 }
 
+const need = (val, msg) => {
+  if (!val) {
+    throw new Error(msg);
+  }
+};
+
+async function release({ packages, type }) {
+  need(packages, 'Please specify at least one package.');
+  need(type, 'Please specify a release type (or version number).');
+  const ws = await getWorkspaces();
+  for (const pkg of packages.split(',')) {
+    const name = pkg.trim();
+    const w = ws.filter(w => w.name === name)[0];
+    if (!w) continue;
+    const cwd = w.dir;
+    await exec('npm', ['--no-git-tag-version', 'version', type], { cwd });
+    const ver = require(path.join(cwd, 'package.json')).version;
+    const tag = `${name}-${ver}`;
+    await exec('git', ['commit', '-am', tag]);
+    await exec('git', ['tag', '-am', tag]);
+  }
+  await exect('git', ['push']);
+}
+
 module.exports = {
-  babel
+  babel,
+  release
 };
