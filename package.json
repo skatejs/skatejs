@@ -95,7 +95,7 @@
     "yocss": "^0.5.1"
   },
   "devDependencies": {
-    "@skatejs/bore": "^4.0.0",
+    "@skatejs/bore": "^4.0.3",
     "@skatejs/val": "^0.3.1",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",

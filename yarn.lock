@@ -10,9 +10,9 @@
     esutils "^2.0.2"
     js-tokens "^3.0.0"
 
-"@skatejs/bore@^4.0.0":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@skatejs/bore/-/bore-4.0.1.tgz#8e101ac73bcc4df48f338e99ea7f40767768ca0f"
+"@skatejs/bore@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@skatejs/bore/-/bore-4.0.3.tgz#c4a3b114431c9315d5061da9babd7796c7057fa2"
   dependencies:
     skatejs-dom-diff "^0.4.2"
 
