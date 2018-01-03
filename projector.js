@@ -9,7 +9,14 @@ function exec(...args) {
     .catch(console.log);
 }
 
+function need(val, msg) {
+  if (!val) {
+    throw new Error(msg);
+  }
+}
+
 async function babel({ envs }) {
+  need(envs, 'Please specify at least one environment.');
   for (const w of await getWorkspaces()) {
     for (const env of envs.split(',')) {
       if ((w.config.files || []).indexOf(`dist/${env}`) === -1) continue;
@@ -28,12 +35,6 @@ async function babel({ envs }) {
     }
   }
 }
-
-const need = (val, msg) => {
-  if (!val) {
-    throw new Error(msg);
-  }
-};
 
 async function release({ packages, type }) {
   need(packages, 'Please specify at least one package.');
