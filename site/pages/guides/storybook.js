@@ -90,7 +90,7 @@ export default class extends Component {
                just work. Using this along with Skate's [\`define()\`](http://localhost:8080/utils/define) utility makes HMR
                work out of the box.
 
-            To do this, we can use [\`@skatjes/val\`](https://github.com/skatejs/val). First install it:
+            To do this, we can use [\`@skatejs/val\`](https://github.com/skatejs/val). First install it:
 
             \`\`\`
             npm i @skatejs/val
