@@ -25,7 +25,8 @@ const navItems = () => [
     text: 'Guides',
     tree: [
       { href: '/guides/getting-started', text: 'Getting started' },
-      { href: '/guides/flowtype', text: 'Flowtype' }
+      { href: '/guides/flowtype', text: 'Flowtype' },
+      { href: '/guides/storybook', text: 'Storybook' }
     ]
   },
   {
