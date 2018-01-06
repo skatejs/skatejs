@@ -19,7 +19,7 @@ export default class extends Component {
 
             ### Getting set up
 
-            You'll want to install React first so that the \`getstorybook\` command works.
+            You'll want to install React (or one of the other supported frameworks) first so that the \`getstorybook\` command works.
 
             \`\`\`
             npm i react react-dom
