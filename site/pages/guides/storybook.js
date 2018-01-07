@@ -15,7 +15,7 @@ export default class extends Component {
       <x-layout title="Using Storybook">
         <x-marked
           src="${`
-            If you're building UI components, it's likely you want to have a development environment to test different permutations of your components by actually using them. The React ecosystem came up with a fantastic tool called [Storybook](https://storybook.js.org). If you haven't heard of it, you should check it out. However, if you're here, it's likely you have.
+            If you're building UI components, it's likely you want to have a development environment to test different permutations of your components by actually using them. The React ecosystem came up with a fantastic tool called [Storybook](https://storybook.js.org). If you haven't heard of it, you should check it out. However, if you're here, it's likely you have, but you might be wondering how you can use it with web components.
 
             ### Getting set up
 
@@ -146,6 +146,41 @@ export default class extends Component {
             \`\`\`
 
             You should now have a fully functional Storybook dev environment that you can use to develop your custom elements.
+
+            From here, you'd probably want to pull the component out into its own file and import it into your story. You'd probably also want to pull the patching of \`React.createElement\` out into it's own module, as well.
+
+            ### Using Storybook without Skate (vanilla custom elements)
+
+            What's interesting about this is you could remove the Skate parts and everything would still just work because all Skate does is make it easier to write a vanilla custom element. Removing Skate and replacing the test component with a vanilla custom element would look something like this:
+
+            \`\`\`js
+            // @jsx h
+
+            import React from 'react';
+            import { storiesOf } from '@storybook/react';
+
+            import val from '@skatejs/val';
+
+            const h = val(React.createElement);
+
+            class Hello extends HTMLElement {
+              constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+              }
+              connectedCallback() {
+                this.shadowRoot.innerHTML = \`Hello, <strong><slot>World</slot></strong>!\`;
+              }
+            }
+
+            customElements.define('x-hello', Hello);
+
+            storiesOf('Hello', module)
+              .add('with no name', () => <Hello />)
+              .add('with a name', () => <Hello>You</Hello>);
+            \`\`\`
+
+            You lose some possibly important features, such as HMR support because you can only register a custom element with the same name once, and this would try to do it multiple times. However, this goes to show that custom elements are the glue that allows you to share components across frameworks; the DOM is your abstraction layer.
           `}"
         ></x-marked>
       </x-layout>
