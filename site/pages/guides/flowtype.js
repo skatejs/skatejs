@@ -30,9 +30,11 @@ export default class extends Component {
 
             class MyComponent extends withComponent() {
               props: Props;
-              static props = {
-                name: props.string
-              };
+              static get props() {
+                return {
+                  name: props.string
+                };
+              }
             }
             \`\`\`
 
