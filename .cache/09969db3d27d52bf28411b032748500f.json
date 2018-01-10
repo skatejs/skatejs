@@ -1,8 +1,8 @@
 {
-  "dependencies": [{ "name": "./../../../../../../entry.js", "dynamic": true }],
+  "dependencies": [{ "name": "./index.js", "dynamic": true }],
   "generated": {
     "html":
-      "<!doctype html>\n<html>\n  <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <style>\n      body {\n        background-color: #F2F5EB;\n        color: #333;\n        font-family: Helvetica;\n        font-size: 1.2em;\n        font-weight: lighter;\n        line-height: 1.3em;\n        margin: 0;\n        padding: 0;\n      }\n    </style>\n  </head>\n  <body>\n    <x-app></x-app>\n    <script src=\"/dist/d29790c9824df6b29480859d358bcd96.js\"></script>\n  </body>\n</html>\n"
+      "<!doctype html>\n<html>\n\n<head>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <style>\n    body {\n      background-color: #F2F5EB;\n      color: #333;\n      font-family: Helvetica;\n      font-size: 1.2em;\n      font-weight: lighter;\n      line-height: 1.3em;\n      margin: 0;\n      padding: 0;\n    }\n  </style>\n</head>\n\n<body>\n  <x-app></x-app>\n  <script src=\"/dist/2ec7609a5bf967904a694ee6e1760ebe.js\"></script>\n</body>\n\n</html>"
   },
-  "hash": "ea0cc440a3606660c704719746776e91"
+  "hash": "15cdff2aa1ae1d88331a9fed79e1c478"
 }
