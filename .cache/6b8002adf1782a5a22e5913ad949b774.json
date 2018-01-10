@@ -1,0 +1,8 @@
+{
+  "dependencies": [{ "name": "./../../../../../../entry.js", "dynamic": true }],
+  "generated": {
+    "html":
+      "<!doctype html> <html> <head> <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> <style>body{background-color:#f2f5eb;color:#333;font-family:Helvetica;font-size:1.2em;font-weight:lighter;line-height:1.3em;margin:0;padding:0}</style> </head> <body> <x-app></x-app> <script src=\"/dist/d29790c9824df6b29480859d358bcd96.js\"></script> </body> </html> "
+  },
+  "hash": "6e872edfe5742ae35c15d43c325f8be3"
+}

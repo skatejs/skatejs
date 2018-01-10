@@ -1,2 +1,2 @@
 [build]
-  publish = "site/public"
+  publish = "dist"
