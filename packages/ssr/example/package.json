@@ -8,7 +8,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.24.1",
-    "hapi": "^16.1.1",
+    "hapi": "^17.0.0",
     "outdent": "^0.4.1",
     "preact": "^8.1.0",
     "skatejs": "^5.0.0-beta.4",
