@@ -1,4 +1,4 @@
 language: node_js
 install:
-  - npm install -g bolt
+  - npm install -g bolt@^0.19.0
   - bolt
