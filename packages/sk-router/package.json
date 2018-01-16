@@ -2,8 +2,8 @@
   "author": "Trey Shugart <treshugart@gmail.com>",
   "browser": "dist/es/index.js",
   "dependencies": {
-    "@skatejs/val": "^0.3.1",
-    "page": "^1.7.1",
+    "@skatejs/val": "0.3.1",
+    "page": "1.7.3",
     "skatejs": "^5.0.0-beta.4"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
