@@ -5827,9 +5827,9 @@ p-pipe@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/p-pipe/-/p-pipe-1.2.0.tgz#4b1a11399a11520a67790ee5a0c1d5881d6befe9"
 
-page@1.7.3:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/page/-/page-1.7.3.tgz#fc19b16ba486f3797479a500854c323ac155713b"
+page@1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/page/-/page-1.8.0.tgz#ffba61d2b32a7ce79a23e7d9a2b8a17a9ca437a2"
   dependencies:
     path-to-regexp "~1.2.1"
 
