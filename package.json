@@ -98,7 +98,7 @@
     "@skatejs/bore": "4.0.3",
     "@skatejs/val": "0.3.1",
     "babel-cli": "6.26.0",
-    "babel-eslint": "7.2.3",
+    "babel-eslint": "8.2.1",
     "babel-loader": "7.1.2",
     "babel-plugin-dynamic-import-node": "1.2.0",
     "babel-plugin-modules-map": "1.0.0",
