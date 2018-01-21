@@ -1318,9 +1318,9 @@ body-parser@1.18.2:
     raw-body "2.3.2"
     type-is "~1.6.15"
 
-bolt@0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/bolt/-/bolt-0.19.0.tgz#9703ad3b2aa37c3b572ff4dd2ef35ecd723f6011"
+bolt@0.19.2:
+  version "0.19.2"
+  resolved "https://registry.yarnpkg.com/bolt/-/bolt-0.19.2.tgz#3dd88287b2a4129225c7c8efc6ffdd1518370d0a"
   dependencies:
     array-includes "^3.0.3"
     babel-runtime "^6.25.0"
