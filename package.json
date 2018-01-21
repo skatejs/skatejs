@@ -128,7 +128,7 @@
     "lint-staged": "4.3.0",
     "now": "8.5.4",
     "prettier": "1.8.2",
-    "prettier-eslint": "8.7.4",
+    "prettier-eslint": "8.8.1",
     "projector-cli": "3.0.1",
     "raw-loader": "0.5.1",
     "webpack": "3.10.0",
