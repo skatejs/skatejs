@@ -3,7 +3,7 @@
   "dependencies": {
     "babel-register": "6.26.0",
     "glob": "7.1.2",
-    "jest-environment-node": "22.1.0",
+    "jest-environment-node": "22.1.4",
     "js-beautify": "1.7.5",
     "mkdirp": "0.5.1",
     "outdent": "0.4.1",
