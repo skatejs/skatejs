@@ -120,7 +120,7 @@
     "flow-bin": "0.63.1",
     "flow-copy-source": "1.2.1",
     "fs-extra": "5.0.0",
-    "husky": "0.13.4",
+    "husky": "0.14.3",
     "img-loader": "2.0.0",
     "jest": "22.1.4",
     "jest-cli": "22.1.4",
