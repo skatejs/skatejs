@@ -14,7 +14,7 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       if (super.renderer) {
         super.renderer(root, html);
       } else {
-        root.innerHTML = html();
+        root.innerHTML = html() || '';
       }
     }
 
