@@ -36,6 +36,12 @@ export default class extends Component {
           For more information on how to write renderers, see the
           <x-link href="/renderers">Renderers</x-link> section.
         </p>
+        <p>
+          If you're using <code>withRenderer</code> along with <code>withUpdate</code>
+          and you give your class an <code>updated</code> method, you may want to call
+          <code>super.updated</code> last, so that you can process <code>this.props</code>
+          and <code>this.state</code> before rendering happens in the super call.
+        </p>
       </x-layout>
     `;
   }
