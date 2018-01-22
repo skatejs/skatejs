@@ -3,7 +3,7 @@
   "browser": "dist/es/index.js",
   "dependencies": {
     "@skatejs/val": "0.4.0",
-    "page": "1.8.0",
+    "page": "1.8.2",
     "skatejs": "^5.0.0-beta.4"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
