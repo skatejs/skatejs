@@ -11,11 +11,11 @@
     "preact": "8.2.7",
     "uglify-es": "3.3.8",
     "undom": "0.3.3",
-    "yargs": "10.1.1"
+    "yargs": "9.0.1"
   },
   "description": "Server-side render your web components.",
   "devDependencies": {
-    "@skatejs/val": "0.3.1"
+    "@skatejs/val": "0.4.0"
   },
   "files": [
     "bin",
