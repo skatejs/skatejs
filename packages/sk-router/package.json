@@ -2,7 +2,7 @@
   "author": "Trey Shugart <treshugart@gmail.com>",
   "browser": "dist/es/index.js",
   "dependencies": {
-    "@skatejs/val": "0.3.1",
+    "@skatejs/val": "0.4.0",
     "page": "1.8.0",
     "skatejs": "^5.0.0-beta.4"
   },

@@ -91,12 +91,12 @@
     "react-dom": "15.6.2",
     "uglify-es": "3.3.8",
     "undom": "0.3.3",
-    "yargs": "10.1.1",
+    "yargs": "9.0.1",
     "yocss": "0.5.1"
   },
   "devDependencies": {
     "@skatejs/bore": "4.0.3",
-    "@skatejs/val": "0.3.1",
+    "@skatejs/val": "0.4.0",
     "babel-cli": "6.26.0",
     "babel-eslint": "8.2.1",
     "babel-loader": "7.1.2",
