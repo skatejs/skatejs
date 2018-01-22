@@ -3,7 +3,7 @@
   "browser": "dist/es/index.js",
   "description": "A SkateJS renderer for Lit HTML.",
   "devDependencies": {
-    "lit-html": "0.7.1"
+    "lit-html": "0.8.0"
   },
   "esnext": "dist/esnext/index.js",
   "files": [
