@@ -13,8 +13,8 @@ describe('@skatejs/renderer-lit-html', () => {
     const el = new MyElement();
     expect(el.innerHTML).toEqual('');
     el.renderer(el, el.render.bind(el, { name: 'World' }));
-    expect(el.innerHTML).toEqual('Hello, World!');
+    expect(el.innerHTML).toEqual('Hello, <!---->!');
     el.renderer(el, el.render.bind(el, { name: 'Bob' }));
-    expect(el.innerHTML).toEqual('Hello, Bob!');
+    expect(el.innerHTML).toEqual('Hello, <!---->!');
   });
 });

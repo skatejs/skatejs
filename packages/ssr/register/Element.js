@@ -34,7 +34,9 @@ function translateParsed(parsed) {
     node = document.createTextNode(value);
   } else {
     node = document.createElement(nodeName);
-    attrs.forEach(({ name, value }) => node.setAttribute(name, value));
+    if (attrs) {
+      attrs.forEach(({ name, value }) => node.setAttribute(name, value));
+    }
   }
 
   if (childNodes) {
@@ -190,6 +192,7 @@ prop(ElementProto, 'nextElementSibling', {
         return sib;
       }
     }
+    return null;
   }
 });
 
@@ -218,6 +221,9 @@ prop(ElementProto, 'onload', {
 prop(ElementProto, 'outerHTML', {
   get() {
     const { localName } = this;
+    if (localName === '#comment') {
+      return `<!--${this.innerHTML}-->`;
+    }
     return `<${localName}${this.attributes.reduce(
       (prev, { name, value }) => prev + ` ${name}="${value}"`,
       ''
@@ -236,6 +242,7 @@ prop(ElementProto, 'previousElementSibling', {
         return sib;
       }
     }
+    return null;
   }
 });
 

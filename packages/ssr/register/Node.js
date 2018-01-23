@@ -1,7 +1,7 @@
 const vm = require('vm');
 
 const { triggerMutation } = require('./MutationObserver');
-const { each, execCode, nodeName } = require('./util');
+const { each, execCode, nodeName, prop } = require('./util');
 
 Node.DOCUMENT_FRAGMENT_NODE = 11;
 Node.ELEMENT_NODE = 1;
@@ -10,6 +10,15 @@ Node.TEXT_NODE = 3;
 const isConnected = Symbol('isConnected');
 const NodeProto = Node.prototype;
 const { insertBefore, removeChild } = NodeProto;
+
+// Properties we need to patch.
+const firstChild = Object.getOwnPropertyDescriptor(NodeProto, 'firstChild');
+const lastChild = Object.getOwnPropertyDescriptor(NodeProto, 'lastChild');
+const nextSibling = Object.getOwnPropertyDescriptor(NodeProto, 'nextSibling');
+const prevSibling = Object.getOwnPropertyDescriptor(
+  NodeProto,
+  'previousSibling'
+);
 
 function connectNode(node) {
   if (node.connectedCallback && !node[isConnected]) {
@@ -27,7 +36,7 @@ function disconnectNode(node) {
   triggerMutation('remove', node);
 }
 
-Object.defineProperty(NodeProto, 'content', {
+prop(NodeProto, 'content', {
   get() {
     if (!this._content) {
       this._content = new DocumentFragment();
@@ -41,13 +50,25 @@ Object.defineProperty(NodeProto, 'content', {
   }
 });
 
-Object.defineProperty(NodeProto, 'ownerDocument', {
+prop(NodeProto, 'firstChild', {
   get() {
-    return document;
+    return firstChild.get.call(this) || null;
   }
 });
 
-Object.defineProperty(NodeProto, 'nodeType', {
+prop(NodeProto, 'lastChild', {
+  get() {
+    return lastChild.get.call(this) || null;
+  }
+});
+
+prop(NodeProto, 'nextSibling', {
+  get() {
+    return nextSibling.get.call(this) || null;
+  }
+});
+
+prop(NodeProto, 'nodeType', {
   get() {
     if (this instanceof Element) {
       return 1;
@@ -61,7 +82,19 @@ Object.defineProperty(NodeProto, 'nodeType', {
   }
 });
 
-Object.defineProperty(NodeProto, 'textContent', {
+prop(NodeProto, 'ownerDocument', {
+  get() {
+    return document;
+  }
+});
+
+prop(NodeProto, 'previousSibling', {
+  get() {
+    return prevSibling.get.call(this) || null;
+  }
+});
+
+prop(NodeProto, 'textContent', {
   get() {
     return this.childNodes.map(c => c.nodeValue).join('');
   },
