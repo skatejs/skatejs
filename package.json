@@ -91,7 +91,7 @@
     "react-dom": "15.6.2",
     "uglify-es": "3.3.8",
     "undom": "0.3.3",
-    "yargs": "10.1.1",
+    "yargs": "10.1.2",
     "yocss": "0.5.1"
   },
   "devDependencies": {
