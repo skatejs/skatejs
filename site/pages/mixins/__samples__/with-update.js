@@ -7,7 +7,7 @@ class WithUpdate extends withUpdate() {
     };
   }
   updated() {
-    return (shadow(this).innerHTML = `Hello, ${this.name}!`);
+    shadow(this).innerHTML = `Hello, ${this.name}!`;
   }
 }
 
