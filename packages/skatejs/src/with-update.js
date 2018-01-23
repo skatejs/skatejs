@@ -82,6 +82,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     static _props: Object;
 
     _prevProps: Object;
+    _changedProps: Set<string>;
     _prevState: Object;
     _state: Object;
     _syncingAttributeToProperty: null | string;
@@ -96,6 +97,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
     static _observedAttributes = [];
     _prevProps = {};
+    _changedProps = new Set;
     _prevState = {};
     _state = {};
 
@@ -147,6 +149,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       if (super.attributeChangedCallback) {
         super.attributeChangedCallback(name, oldValue, newValue);
       }
+      this._changedProps.add(name)
       syncAttributeToProperty(this, name, newValue);
     }
 
@@ -167,15 +170,16 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       }
       this._updating = true;
       delay(() => {
-        const { _prevProps, _prevState } = this;
+        const { _prevProps, _prevState, _changedProps } = this;
         if (this.updating) {
-          this.updating(_prevProps, _prevState);
+          this.updating(_prevProps, _prevState, _changedProps);
         }
-        if (this.updated && this.shouldUpdate(_prevProps, _prevState)) {
-          this.updated(_prevProps, _prevState);
+        if (this.updated && this.shouldUpdate(_prevProps, _prevState, _changedProps)) {
+          this.updated(_prevProps, _prevState, _changedProps);
         }
         this._prevProps = this.props;
         this._prevState = this.state;
+        this._changedProps.clear();
         this._updating = false;
       });
     }
