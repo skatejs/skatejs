@@ -1,14 +1,47 @@
 // @flow
 
-import type { PropType, PropTypes, PropTypesNormalized } from './types.js';
+import type {
+  CustomElement,
+  PropType,
+  PropTypes,
+  PropTypesNormalized
+} from './types.js';
+import { dashCase, empty, keys, sym } from './util.js';
 
-import { empty, keys, sym } from './util/index.js';
+export function normaliseAttributeDefinition(
+  name: string | Symbol,
+  prop: PropType
+): Object {
+  const { attribute } = prop;
+  const obj =
+    typeof attribute === 'object'
+      ? { ...attribute }
+      : {
+          source: attribute,
+          target: attribute
+        };
+  if (obj.source === true) {
+    obj.source = dashCase(name);
+  }
+  if (obj.target === true) {
+    obj.target = dashCase(name);
+  }
+  return obj;
+}
 
-import {
-  normalisePropertyDefinition,
-  syncAttributeToProperty,
-  syncPropertyToAttribute
-} from './util/with-update.js';
+export function normalisePropertyDefinition(
+  name: string,
+  prop: PropType
+): Object {
+  const { coerce, default: def, deserialize, serialize } = prop;
+  return {
+    attribute: normaliseAttributeDefinition(name, prop),
+    coerce: coerce || ((v: mixed) => v),
+    default: def,
+    deserialize: deserialize || ((v: mixed) => v),
+    serialize: serialize || ((v: mixed) => v)
+  };
+}
 
 function defineProps(constructor) {
   if (constructor.hasOwnProperty('_propsNormalised')) return;
@@ -34,7 +67,6 @@ export function prop(definition: PropType | void): Function {
   // Allows decorators, or imperative definitions.
   const func = function({ constructor }, name: string): void {
     const normalised = normalisePropertyDefinition(name, propertyDefinition);
-    const _value = sym(name);
 
     // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
     // classes or share the instance anywhere where it's not intended to be shared explicitly in userland code.
@@ -44,25 +76,33 @@ export function prop(definition: PropType | void): Function {
 
     // Cache the value so we can reference when syncing the attribute to the property.
     constructor._propsNormalised[name] = normalised;
+    const { attribute: { source, target } } = normalised;
 
-    if (normalised.attribute.source) {
-      constructor._observedAttributes.push(normalised.attribute.source);
+    if (source) {
+      constructor._observedAttributes.push(source);
+      constructor._attributeToPropertyMap[source] = name;
+      if (source !== target) {
+        constructor._attributeToAttributeMap[source] = target;
+      }
     }
 
     Object.defineProperty(constructor.prototype, name, {
       configurable: true,
       get() {
-        const val = this[_value];
+        const val = this._props[name];
         return val == null ? normalised.default : val;
       },
       set(val) {
-        this[_value] = normalised.coerce(val);
-        syncPropertyToAttribute(
-          this,
-          normalised.attribute.target,
-          normalised.serialize,
-          val
-        );
+        const { attribute: { target }, serialize } = normalised;
+        if (target) {
+          const serializedVal = serialize ? serialize(val) : val;
+          if (serializedVal == null) {
+            this.removeAttribute(target);
+          } else {
+            this.setAttribute(target, serializedVal);
+          }
+        }
+        this._props[name] = normalised.coerce(val);
         this.triggerUpdate();
       }
     });
@@ -78,11 +118,14 @@ export function prop(definition: PropType | void): Function {
 
 export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
+    static _attributeToAttributeMap: Object;
+    static _attributeToPropertyMap: Object;
     static _observedAttributes: Array<string>;
     static _props: Object;
 
     _prevProps: Object;
     _prevState: Object;
+    _props: Object;
     _state: Object;
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
@@ -94,9 +137,14 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     triggerUpdate: () => void;
     updating: ?(props: Object, state: Object) => void;
 
+    static _attributeToAttributeMap = {};
+    static _attributeToPropertyMap = {};
     static _observedAttributes = [];
+    static _props = {};
+
     _prevProps = {};
     _prevState = {};
+    _props = {};
     _state = {};
 
     static get observedAttributes(): Array<string> {
@@ -144,10 +192,35 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       oldValue: string | null,
       newValue: string | null
     ): void {
+      const {
+        _attributeToAttributeMap,
+        _attributeToPropertyMap,
+        props
+      } = this.constructor;
+
       if (super.attributeChangedCallback) {
         super.attributeChangedCallback(name, oldValue, newValue);
       }
-      syncAttributeToProperty(this, name, newValue);
+
+      const propertyName = _attributeToPropertyMap[name];
+      if (propertyName) {
+        const propertyDefinition = props[propertyName];
+        if (propertyDefinition) {
+          const { default: defaultValue, deserialize } = propertyDefinition;
+          const propertyValue = deserialize ? deserialize(newValue) : newValue;
+          this._props[propertyName] =
+            propertyValue == null ? defaultValue : propertyValue;
+        }
+      }
+
+      const targetAttributeName = _attributeToAttributeMap[name];
+      if (targetAttributeName) {
+        if (newValue == null) {
+          this.removeAttribute(targetAttributeName);
+        } else {
+          this.setAttribute(targetAttributeName, newValue);
+        }
+      }
     }
 
     connectedCallback() {
