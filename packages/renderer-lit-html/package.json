@@ -25,7 +25,7 @@
   "module": "dist/es/index.js",
   "name": "@skatejs/renderer-lit-html",
   "peerDependencies": {
-    "lit-html": "^0.7.1"
+    "lit-html": "^0.8.0"
   },
   "version": "0.2.0"
 }
