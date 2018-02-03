@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "file-loader": "1.1.6",
-    "img-loader": "2.0.0",
+    "img-loader": "2.0.1",
     "raw-loader": "0.5.1",
     "webpack": "3.10.0",
     "webpack-dev-server": "2.11.1",
