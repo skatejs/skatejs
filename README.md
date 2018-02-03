@@ -48,7 +48,7 @@ There are renderers for many popular view libraries:
 
 ## Usage
 
-This is how you might write a web component usinge Skate and Preact:
+This is how you might write a web component using Skate and Preact:
 
 ```js
 // @jsx h
