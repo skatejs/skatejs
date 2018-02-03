@@ -33,7 +33,28 @@ export default class extends Component {
           html="${codeWithUpdateHtml}"
         ></x-runnable>
         <x-marked src="${`
-          In the above example, we use the bare minimum setup and use the \`updated()\` callback to implement a very simple renderer. We've done this for the sake of example. If you want to implement your own renderer, you should use the \`withRenderer\` mixin.
+          In the above example, we use the bare minimum setup and use the \`updated()\` callback to implement a very simple renderer. We've done this for the sake of example.
+
+          If we query the DOM for an instance of the element that we defined in the above example, we can update its props and the content will update. Suppose we have the following HTML using the above example's `with-update` element:
+
+          \`\`\`html
+          <with-update name="world"></with-update>
+          \`\`\`
+
+          We can update the \`name\` prop in several ways to make the content update:
+
+          \`\`\`js
+          // first get a reference:
+          const element = document.querySelector('with-update')
+
+
+          // then do one of the following:
+          element.name = 'Joe';
+          element.props = { name: 'Joe' };
+          element.setAttribute('name', 'Joe');
+          \`\`\`
+
+          If you want to implement your own renderer, you should use the \`withRenderer\` mixin.
 
           That's why when you use the \`withComponent\` mixin, you get both \`withRenderer\` and \`withUpdate\` and can just do something like:
 
