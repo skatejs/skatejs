@@ -434,7 +434,8 @@ describe('withUpdate', () => {
 
   describe('{ prop }', function() {
     it('should define a property on an element', () => {
-      const elem = new class extends withUpdate() {}();
+      class Elem extends withUpdate() {}
+      const elem = new Elem();
 
       prop({ ...props.string, ...{ attribute: true } })(elem, 'test');
 
