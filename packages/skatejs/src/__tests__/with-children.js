@@ -1,5 +1,5 @@
-// @flow
-// @jsx h
+/* @flow */
+/* @jsx h */
 
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';

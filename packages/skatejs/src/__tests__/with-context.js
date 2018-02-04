@@ -1,4 +1,4 @@
-// @flow
+/* @flow */
 
 import { define, name, withContext } from '..';
 

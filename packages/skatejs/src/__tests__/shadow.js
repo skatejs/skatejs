@@ -1,5 +1,5 @@
-// @flow
-// @jsx h
+/* @flow */
+/* @jsx h */
 
 import { h } from '@skatejs/val';
 import { shadow } from '..';

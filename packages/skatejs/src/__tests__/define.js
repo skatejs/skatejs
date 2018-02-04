@@ -1,8 +1,8 @@
-// @flow
+/* @flow */
 
 import { define, name } from '..';
 
-it('should use `static is` as the element name', () => {
+test('should use `static is` as the element name', () => {
   @define
   class Elem extends HTMLElement {
     static is = name();
@@ -11,7 +11,7 @@ it('should use `static is` as the element name', () => {
   expect(customElements.get(Elem.is)).toEqual(Elem);
 });
 
-it('should use `name()` to define a name if `static is` is not defined', () => {
+test('should use `name()` to define a name if `static is` is not defined', () => {
   @define
   class Elem extends HTMLElement {}
   expect(Elem.is).not.toBeDefined();
