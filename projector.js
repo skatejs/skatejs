@@ -50,7 +50,7 @@ async function release({ packages, type }) {
     const tag = `${name}-${ver}`;
     await exec('git', ['commit', '-am', tag], { cwd });
     await exec('git', ['tag', '-a', tag, '-m', tag], { cwd });
-    await exec('npm', ['publish'], { cwd });
+    await exec('npm', ['publish', '--access', 'public'], { cwd });
   }
   await exec('git', ['push']);
 }
