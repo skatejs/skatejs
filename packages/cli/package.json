@@ -1,0 +1,16 @@
+{
+  "name": "@skatejs/cli",
+  "description": "A starter kit for SkateJS.",
+  "bin": {
+    "skatejs": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "conartist": "^0.15.1",
+    "fs-extra": "5.0.0",
+    "inquirer": "^5.0.1",
+    "outdent": "0.4.1",
+    "spawndamnit": "^1.0.0",
+    "yargs": "10.1.1"
+  }
+}
