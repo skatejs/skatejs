@@ -1,16 +1,16 @@
 # SkateJS CLI
 
-> Start building a SkateJS app / lib in seconds.
+> Hit the ground skating!
 
 ## Installing
 
 ```
-npm install @skatejs/starter
+npm install @skatejs/cli
 ```
 
 ## Using
 
-You can run the starter simply by running `skatejs`.
+You can run the CLI simply by running `skatejs`.
 
 ```
 $ skatejs
