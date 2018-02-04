@@ -6,7 +6,6 @@ import type {
   PropTypes,
   PropTypesNormalized
 } from './types.js';
-import { dashCase, empty, keys, sym } from './util.js';
 
 export function normalisePropertyDefinition(
   name: string,
@@ -28,7 +27,7 @@ export function normalisePropertyDefinition(
 function defineProps(constructor) {
   if (constructor.hasOwnProperty('_propsNormalised')) return;
   const { props } = constructor;
-  keys(props).forEach(name => {
+  Object.keys(props).forEach(name => {
     let func = props[name];
     if (typeof func !== 'function') func = prop((func: any));
     func({ constructor }, name);
@@ -133,7 +132,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     }
 
     get props(): Object {
-      return keys(this.constructor.props).reduce(
+      return Object.keys(this.constructor.props).reduce(
         (prev: Object, curr: string) => {
           prev[curr] = (this: any)[curr];
           return prev;
@@ -144,7 +143,9 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
     set props(props: Object) {
       const ctorProps = this.constructor.props;
-      keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
+      Object.keys(props).forEach(
+        k => k in ctorProps && ((this: any)[k] = props[k])
+      );
     }
 
     get state() {
@@ -213,7 +214,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
 const { parse, stringify } = JSON;
 const attr = true;
-const zeroOrNumber = (val: string): number => (empty(val) ? 0 : Number(val));
+const zeroOrNumber = (val: string): number => (val == null ? 0 : Number(val));
 
 const any: Function = prop({
   attr
@@ -222,7 +223,7 @@ const any: Function = prop({
 const array: Function = prop({
   attr,
   coerce: <T>(val: Array<T> | T): Array<T> | null =>
-    Array.isArray(val) ? val : empty(val) ? null : [val],
+    Array.isArray(val) ? val : val == null ? null : [val],
   default: Object.freeze([]),
   deserialize: parse,
   serialize: stringify
@@ -232,7 +233,7 @@ const boolean: Function = prop({
   attr,
   coerce: Boolean,
   default: false,
-  deserialize: (val: string): boolean => !empty(val),
+  deserialize: (val: string): boolean => val != null,
   serialize: (val: mixed): null | string => (val ? '' : null)
 });
 
@@ -242,7 +243,7 @@ const number: Function = prop({
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
   serialize: (val: mixed): null | string =>
-    empty(val) ? null : String(Number(val))
+    val == null ? null : String(Number(val))
 });
 
 const object: Function = prop({
@@ -256,7 +257,7 @@ const string: Function = prop({
   attr,
   default: '',
   coerce: String,
-  serialize: (val: mixed): null | string => (empty(val) ? null : String(val))
+  serialize: (val: mixed): null | string => (val == null ? null : String(val))
 });
 
 export const props = {
