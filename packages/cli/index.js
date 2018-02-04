@@ -13,11 +13,6 @@ const { log } = console;
 (async () => {
   log();
 
-  if (!await exists('package.json')) {
-    log(chalk`Generating {italic package.json}.`);
-    await spawn('npm', ['init', '-f']);
-  }
-
   const { type, renderer } = await prompt([
     {
       choices: ['app', 'lib'],
@@ -34,6 +29,11 @@ const { log } = console;
   ]);
 
   log();
+  if (!await exists('package.json')) {
+    log(chalk`Generating {italic package.json}...`);
+    await spawn('npm', ['init', '-f']);
+  }
+
   log(chalk`Writing files...`);
   await spawn('npm', ['i', 'conartist', '--save-dev']);
   await writeFile(
