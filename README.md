@@ -46,6 +46,10 @@ There are renderers for many popular view libraries:
 * [React](https://skatejs.netlify.com/renderers/with-react)
 * Or a [custom renderer](https://skatejs.netlify.com/renderers)!
 
+## Getting started
+
+There's a [@skatejs/cli](https://github.com/skatejs/skatejs/tree/v6/packages/cli) package that will let you hit the ground running. Feel free to fire it up while reading these docs!
+
 ## Usage
 
 This is how you might write a web component usinge Skate and Preact:
