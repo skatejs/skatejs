@@ -8,34 +8,16 @@ import type {
 } from './types.js';
 import { dashCase, empty, keys, sym } from './util.js';
 
-export function normaliseAttributeDefinition(
-  name: string | Symbol,
-  prop: PropType
-): Object {
-  const { attribute } = prop;
-  const obj =
-    typeof attribute === 'object'
-      ? { ...attribute }
-      : {
-          source: attribute,
-          target: attribute
-        };
-  if (obj.source === true) {
-    obj.source = dashCase(name);
-  }
-  if (obj.target === true) {
-    obj.target = dashCase(name);
-  }
-  return obj;
-}
-
 export function normalisePropertyDefinition(
   name: string,
   prop: PropType
 ): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
+  const resolvedAttr = 'attr' in prop ? prop.attr : prop.attribute;
+  const normalisedAttr =
+    attr === true ? name.toLowerCase() : attr ? attr : null;
   return {
-    attribute: normaliseAttributeDefinition(name, prop),
+    attr: normalisedAttr,
     coerce: coerce || ((v: mixed) => v),
     default: def,
     deserialize: deserialize || ((v: mixed) => v),
@@ -68,22 +50,22 @@ export function prop(definition: PropType | void): Function {
   const func = function({ constructor }, name: string): void {
     const normalised = normalisePropertyDefinition(name, propertyDefinition);
 
-    // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
-    // classes or share the instance anywhere where it's not intended to be shared explicitly in userland code.
+    // Ensure that we can cache properties. We have to do this so the _props
+    // object literal doesn't modify parent classes or share the instance
+    // anywhere where it's not intended to be shared explicitly in userland
+    // code.
     if (!constructor.hasOwnProperty('_propsNormalised')) {
       constructor._propsNormalised = {};
     }
 
-    // Cache the value so we can reference when syncing the attribute to the property.
+    // Cache the value so we can reference when syncing the attribute to the
+    // property.
     constructor._propsNormalised[name] = normalised;
-    const { attribute: { source, target } } = normalised;
+    const { attr } = normalised;
 
-    if (source) {
-      constructor._observedAttributes.push(source);
-      constructor._attributeToPropertyMap[source] = name;
-      if (source !== target) {
-        constructor._attributeToAttributeMap[source] = target;
-      }
+    if (attr) {
+      constructor._observedAttributes.push(attr);
+      constructor._attributeToPropertyMap[attr] = name;
     }
 
     Object.defineProperty(constructor.prototype, name, {
@@ -118,7 +100,6 @@ export function prop(definition: PropType | void): Function {
 
 export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
-    static _attributeToAttributeMap: Object;
     static _attributeToPropertyMap: Object;
     static _observedAttributes: Array<string>;
     static _props: Object;
@@ -127,17 +108,13 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _prevState: Object;
     _props: Object;
     _state: Object;
-    _syncingAttributeToProperty: null | string;
-    _syncingPropertyToAttribute: boolean;
     _updating: boolean;
-    _wasInitiallyRendered: boolean;
 
     updated: ?(props: Object, state: Object) => void;
     shouldUpdate: (props: Object, state: Object) => void;
     triggerUpdate: () => void;
     updating: ?(props: Object, state: Object) => void;
 
-    static _attributeToAttributeMap = {};
     static _attributeToPropertyMap = {};
     static _observedAttributes = [];
     static _props = {};
@@ -193,9 +170,9 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       newValue: string | null
     ): void {
       const {
-        _attributeToAttributeMap,
         _attributeToPropertyMap,
-        props
+        props,
+        _propsNormalised
       } = this.constructor;
 
       if (super.attributeChangedCallback) {
@@ -204,21 +181,12 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
       const propertyName = _attributeToPropertyMap[name];
       if (propertyName) {
-        const propertyDefinition = props[propertyName];
+        const propertyDefinition = _propsNormalised[propertyName];
         if (propertyDefinition) {
           const { default: defaultValue, deserialize } = propertyDefinition;
-          const propertyValue = deserialize ? deserialize(newValue) : newValue;
+          const propertyValue = deserialize(newValue);
           this._props[propertyName] =
             propertyValue == null ? defaultValue : propertyValue;
-        }
-      }
-
-      const targetAttributeName = _attributeToAttributeMap[name];
-      if (targetAttributeName) {
-        if (newValue == null) {
-          this.removeAttribute(targetAttributeName);
-        } else {
-          this.setAttribute(targetAttributeName, newValue);
         }
       }
     }
@@ -255,15 +223,15 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   };
 
 const { parse, stringify } = JSON;
-const attribute = Object.freeze({ source: true });
+const attr = true;
 const zeroOrNumber = (val: string): number => (empty(val) ? 0 : Number(val));
 
 const any: Function = prop({
-  attribute
+  attr
 });
 
 const array: Function = prop({
-  attribute,
+  attr,
   coerce: <T>(val: Array<T> | T): Array<T> | null =>
     Array.isArray(val) ? val : empty(val) ? null : [val],
   default: Object.freeze([]),
@@ -272,7 +240,7 @@ const array: Function = prop({
 });
 
 const boolean: Function = prop({
-  attribute,
+  attr,
   coerce: Boolean,
   default: false,
   deserialize: (val: string): boolean => !empty(val),
@@ -280,7 +248,7 @@ const boolean: Function = prop({
 });
 
 const number: Function = prop({
-  attribute,
+  attr,
   default: 0,
   coerce: zeroOrNumber,
   deserialize: zeroOrNumber,
@@ -289,14 +257,14 @@ const number: Function = prop({
 });
 
 const object: Function = prop({
-  attribute,
+  attr,
   default: Object.freeze({}),
   deserialize: parse,
   serialize: stringify
 });
 
 const string: Function = prop({
-  attribute,
+  attr,
   default: '',
   coerce: String,
   serialize: (val: mixed): null | string => (empty(val) ? null : String(val))
