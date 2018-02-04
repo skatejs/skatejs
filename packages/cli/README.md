@@ -1,4 +1,4 @@
-# SkateJS starter
+# SkateJS CLI
 
 > Start building a SkateJS app / lib in seconds.
 
