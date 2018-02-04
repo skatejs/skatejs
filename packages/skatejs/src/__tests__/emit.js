@@ -1,31 +1,31 @@
-/* eslint-env jest */
+// @flow
+// @jsx h
 
-import { emit } from '../../src';
-import fixture from '../lib/fixture';
+import { mount } from '@skatejs/bore';
+import { h } from '@skatejs/val';
+import { emit } from '..';
 
 describe('api/emit', () => {
   it('default event options', done => {
-    const elem = document.createElement('div');
-    fixture(elem);
-    elem.addEventListener('test', e => {
+    const { node } = mount(<div />);
+    node.addEventListener('test', e => {
       expect(e.bubbles).toEqual(true);
       expect(e.cancelable).toEqual(true);
       expect(e.composed).toEqual(false);
       done();
     });
-    emit(elem, 'test');
+    emit(node, 'test');
   });
 
   it('custom event options', done => {
-    const elem = document.createElement('div');
-    fixture(elem);
-    elem.addEventListener('test', e => {
+    const { node } = mount(<div />);
+    node.addEventListener('test', e => {
       expect(e.bubbles).toEqual(false);
       expect(e.cancelable).toEqual(false);
       expect(e.composed).toEqual(true);
       done();
     });
-    emit(elem, 'test', {
+    emit(node, 'test', {
       bubbles: false,
       cancelable: false,
       composed: true
@@ -33,13 +33,12 @@ describe('api/emit', () => {
   });
 
   it('detail', done => {
-    const elem = document.createElement('div');
-    fixture(elem);
+    const { node } = mount(<div />);
     const detail = {};
-    elem.addEventListener('test', e => {
+    node.addEventListener('test', e => {
       expect(e.detail).toEqual(detail);
       done();
     });
-    emit(elem, 'test', { detail });
+    emit(node, 'test', { detail });
   });
 });

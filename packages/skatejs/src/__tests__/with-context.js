@@ -1,6 +1,6 @@
 // @flow
 
-import { define, name, withContext } from '../../src';
+import { define, name, withContext } from '..';
 
 const Base = withContext();
 

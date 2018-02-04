@@ -3,7 +3,7 @@ const { slice } = [];
 const { customElements, HTMLElement } = window;
 const { body } = document;
 const { attachShadow } = HTMLElement.prototype;
-const { diff } = require('skatejs-dom-diff').default;
+const { diff } = require('skatejs-dom-diff');
 
 // Ensure we can force sync operations in the polyfill.
 if (customElements) {

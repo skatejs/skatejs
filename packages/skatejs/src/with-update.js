@@ -65,7 +65,7 @@ export function prop(definition: PropType | void): Function {
 
     if (attr) {
       constructor._observedAttributes.push(attr);
-      constructor._attributeToPropertyMap[attr] = name;
+      constructor._attrToPropMap[attr] = name;
     }
 
     Object.defineProperty(constructor.prototype, name, {
@@ -75,15 +75,7 @@ export function prop(definition: PropType | void): Function {
         return val == null ? normalised.default : val;
       },
       set(val) {
-        const { attribute: { target }, serialize } = normalised;
-        if (target) {
-          const serializedVal = serialize ? serialize(val) : val;
-          if (serializedVal == null) {
-            this.removeAttribute(target);
-          } else {
-            this.setAttribute(target, serializedVal);
-          }
-        }
+        const { attr, serialize } = normalised;
         this._props[name] = normalised.coerce(val);
         this.triggerUpdate();
       }
@@ -100,7 +92,7 @@ export function prop(definition: PropType | void): Function {
 
 export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
-    static _attributeToPropertyMap: Object;
+    static _attrToPropMap: Object;
     static _observedAttributes: Array<string>;
     static _props: Object;
 
@@ -115,7 +107,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     triggerUpdate: () => void;
     updating: ?(props: Object, state: Object) => void;
 
-    static _attributeToPropertyMap = {};
+    static _attrToPropMap = {};
     static _observedAttributes = [];
     static _props = {};
 
@@ -169,17 +161,13 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       oldValue: string | null,
       newValue: string | null
     ): void {
-      const {
-        _attributeToPropertyMap,
-        props,
-        _propsNormalised
-      } = this.constructor;
+      const { _attrToPropMap, props, _propsNormalised } = this.constructor;
 
       if (super.attributeChangedCallback) {
         super.attributeChangedCallback(name, oldValue, newValue);
       }
 
-      const propertyName = _attributeToPropertyMap[name];
+      const propertyName = _attrToPropMap[name];
       if (propertyName) {
         const propertyDefinition = _propsNormalised[propertyName];
         if (propertyDefinition) {
@@ -187,6 +175,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
           const propertyValue = deserialize(newValue);
           this._props[propertyName] =
             propertyValue == null ? defaultValue : propertyValue;
+          this.triggerUpdate();
         }
       }
     }

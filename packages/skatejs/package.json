@@ -22,5 +22,8 @@
     "dist/es",
     "dist/esnext",
     "dist/node"
-  ]
+  ],
+  "devDependencies": {
+    "@skatejs/bore": "4.0.3"
+  }
 }

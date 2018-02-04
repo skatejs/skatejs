@@ -1,10 +1,8 @@
 // @flow
-
-/** @jsx h */
-/* eslint-env jest */
+// @jsx h
 
 import { h } from '@skatejs/val';
-import { shadow } from '../../src';
+import { shadow } from '..';
 
 test('should be a function', () => {
   expect(typeof shadow).toBe('function');

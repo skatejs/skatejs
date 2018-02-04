@@ -1,6 +1,6 @@
-/* eslint-env jest */
+// @flow
 
-import { define, name } from '../../src';
+import { define, name } from '..';
 
 it('should use `static is` as the element name', () => {
   @define

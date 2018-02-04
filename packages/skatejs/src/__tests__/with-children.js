@@ -1,11 +1,9 @@
 // @flow
-
-/** @jsx h */
-/* eslint-env jest */
+// @jsx h
 
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
-import { define, name, withChildren } from '../../src';
+import { define, name, withChildren } from '..';
 
 // Very basic implementation so that the withChildren() mixin works.
 global.MutationObserver = class {
@@ -32,28 +30,26 @@ const Elem = define(
   }
 );
 
-describe('withChildren', () => {
-  it('should be called when first connected', done => {
-    const node = <Elem />;
-    node.called = 0;
-    node.appendChild(<div />);
-    node.appendChild(<div />);
-    mount(node);
-    setTimeout(() => {
-      expect(node.called).toBe(1);
-      done();
-    });
+test('should be called when first connected', done => {
+  const node = <Elem />;
+  node.called = 0;
+  node.appendChild(<div />);
+  node.appendChild(<div />);
+  mount(node);
+  setTimeout(() => {
+    expect(node.called).toBe(1);
+    done();
   });
+});
 
-  it('should be when children are modified', done => {
-    const node = <Elem />;
-    node.called = 0;
-    mount(node);
-    node.appendChild(<div />);
-    node.appendChild(<div />);
-    setTimeout(() => {
-      expect(node.called).toBe(2);
-      done();
-    });
+test('should be when children are modified', done => {
+  const node = <Elem />;
+  node.called = 0;
+  mount(node);
+  node.appendChild(<div />);
+  node.appendChild(<div />);
+  setTimeout(() => {
+    expect(node.called).toBe(2);
+    done();
   });
 });

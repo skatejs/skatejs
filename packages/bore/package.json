@@ -28,6 +28,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@skatejs/val": "0.4.0",
     "skatejs-dom-diff": "1.0.0"
   },
   "devDependencies": {
