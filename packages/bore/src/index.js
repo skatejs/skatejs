@@ -95,12 +95,14 @@ class Wrapper {
     let temp = [];
 
     if (query.nodeType === Node.ELEMENT_NODE) {
-      walkTree(
-        shadowRoot,
-        node =>
-          diff({ destination: query, source: node, root: true }).length === 0 &&
-          temp.push(node)
-      );
+      walkTree(shadowRoot, node => {
+        if (
+          node.nodeType === query.nodeType &&
+          diff(node, query).length === 0
+        ) {
+          temp.push(node);
+        }
+      });
     } else if (query.prototype instanceof HTMLElement) {
       walkTree(shadowRoot, node => node instanceof query && temp.push(node));
     } else if (type === 'function') {
@@ -164,14 +166,10 @@ function mount(elem) {
   return new Wrapper(elem);
 }
 
-function walk(elem, call) {
-  call(elem);
-  return walkTree(elem, call);
-}
-
 function walkTree({ childNodes }, call) {
   for (const node of childNodes) {
-    if (walk(node, call) === false) {
+    call(node);
+    if (walkTree(node, call) === false) {
       return false;
     }
   }
