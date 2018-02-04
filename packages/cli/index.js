@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk');
 const { sync } = require('conartist');
 const { exists, writeFile, unlink } = require('fs-extra');
