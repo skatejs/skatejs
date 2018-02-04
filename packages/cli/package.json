@@ -12,5 +12,6 @@
     "outdent": "0.4.1",
     "spawndamnit": "^1.0.0",
     "yargs": "10.1.1"
-  }
+  },
+  "version": "0.0.0"
 }
