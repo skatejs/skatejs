@@ -13,10 +13,9 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
-      this._preactDom = render(
-        call(),
-        root,
-        this._preactDom || root.children[0]
-      );
+      const children =
+        root.children ||
+        [].map.call(root.childNodes, node => node.nodeType === 1);
+      this._preactDom = render(call(), root, this._preactDom || children[0]);
     }
   };
