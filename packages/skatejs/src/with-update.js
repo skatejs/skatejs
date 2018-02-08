@@ -89,7 +89,7 @@ export function prop(definition: PropType | void): Function {
   return func;
 }
 
-export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
+export const withUpdate = (Base: Class<any>): Class<any> =>
   class extends Base {
     static _attrToPropMap: Object;
     static _observedAttributes: Array<string>;

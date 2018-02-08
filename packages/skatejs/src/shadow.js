@@ -1,3 +1,5 @@
+// @flow
+
 export function shadow(elem) {
   return (
     elem._shadowRoot ||

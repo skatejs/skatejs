@@ -1,8 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { withRenderer } from 'skatejs';
 
-const withReact = (Base = HTMLElement) =>
+const withReact = Base =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use
@@ -18,10 +17,3 @@ const withReact = (Base = HTMLElement) =>
   };
 
 export default withReact;
-
-export const wrap = Component =>
-  class extends withReact() {
-    render() {
-      return <Component {...this.props} />;
-    }
-  };

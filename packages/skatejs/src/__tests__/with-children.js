@@ -22,7 +22,7 @@ global.MutationObserver = class {
 };
 
 const Elem = define(
-  class extends withChildren() {
+  class extends withChildren(HTMLElement) {
     static is = name();
     childrenUpdated() {
       ++this.called;

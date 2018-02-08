@@ -5,7 +5,7 @@ import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { props, withUpdate } from '..';
 
-class Elem extends withUpdate() {
+class Elem extends withUpdate(HTMLElement) {
   static props = {
     testProp: props.string
   };

@@ -2,7 +2,11 @@ const outdent = require('outdent');
 
 module.exports = {
   '.babelrc': {
-    plugins: ['transform-decorators-legacy'],
+    plugins: [
+      ['transform-builtin-classes', { globals: ['HTMLElement'] }],
+      'transform-decorators-legacy',
+      'transform-skate-flow-props'
+    ],
     presets: ['env', 'flow', 'react', 'stage-0']
   },
   'package.json': {
@@ -15,7 +19,9 @@ module.exports = {
       '@skatejs/ssr': '*',
       '@skatejs/val': '*',
       'babel-jest': '*',
+      'babel-plugin-transform-builtin-classes': '^*',
       'babel-plugin-transform-decorators-legacy': '*',
+      'babel-plugin-transform-skate-flow-props': '*',
       'babel-polyfill': '*',
       'babel-preset-env': '*',
       'babel-preset-flow': '*',

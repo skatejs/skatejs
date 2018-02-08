@@ -1,10 +1,10 @@
 // @jsx h
 
 import page from 'page';
-import { define, props, withComponent } from 'skatejs';
+import { Component, define, props } from 'skatejs';
 import { h } from '@skatejs/val';
 
-class Component extends withComponent() {
+class Base extends Component {
   renderer(renderRoot, render) {
     const { firstChild } = renderRoot;
     const dom = render();
@@ -20,7 +20,7 @@ class Component extends withComponent() {
   }
 }
 
-export class Link extends Component {
+export class Link extends Base {
   static is = 'sk-link';
   static props = {
     classNames: props.object,
@@ -41,7 +41,7 @@ export class Link extends Component {
   }
 }
 
-export class Route extends Component {
+export class Route extends Base {
   static is = 'sk-route';
   static props = {
     page: null,
@@ -72,7 +72,7 @@ export class Route extends Component {
   }
 }
 
-export class Router extends Component {
+export class Router extends Base {
   static is = 'sk-router';
   static props = {
     options: props.object

@@ -2,7 +2,7 @@
 
 import { define, name, withContext } from '..';
 
-const Base = withContext();
+const Base = withContext(HTMLElement);
 
 const Test1 = define(
   class extends Base {

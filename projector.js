@@ -1,12 +1,14 @@
+// @flow
+
 const { getWorkspaces } = require('bolt');
+const chalk = require('chalk');
+const charm = require('charm')(process.stdin, process.stdout);
 const execa = require('execa');
 const fs = require('fs-extra');
 const path = require('path');
 
 function exec(...args) {
-  return execa(...args)
-    .then(r => console.log(r.stdout))
-    .catch(console.log);
+  return execa(...args).catch(console.log);
 }
 
 function need(val, msg) {
@@ -15,25 +17,68 @@ function need(val, msg) {
   }
 }
 
+charm.goto = function(pos /*: 'start' | 'end' */) {
+  return this[pos === 'start' ? 'left' : 'right'](100000);
+};
+
 async function babel({ envs }) {
   need(envs, 'Please specify at least one environment.');
-  for (const w of await getWorkspaces()) {
-    for (const env of envs.split(',')) {
-      if ((w.config.files || []).indexOf(`dist/${env}`) === -1) continue;
+
+  const envArr = envs
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+  const ws = await getWorkspaces();
+  ws.sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const w of ws) {
+    const files = w.config.files || [];
+    const wname = w.name.replace('@', '');
+
+    charm.write(chalk`\n{white ${wname}}`);
+
+    if (!envArr.every(e => files.some(f => f.match(e)))) {
+      charm.goto('start').write(chalk`{gray ${wname}}`);
+      continue;
+    }
+
+    // Clean up any old build.
+    await fs.remove(path.join(w.dir, 'dist'));
+
+    for (const env of envArr) {
+      charm.write(chalk` {yellow ${env}...}`);
+
+      if (!files.some(f => f.match(env))) {
+        charm
+          .left(env.length + 3)
+          .write(chalk`{cyan ${env}}`)
+          .right(3)
+          .erase('end');
+        continue;
+      }
+
       const src = path.join(w.dir, 'src');
       const dst = path.join(w.dir, 'dist', env);
-      exec('babel', [src, '--out-dir', dst], {
-        env: { BABEL_ENV: env }
-      }).then(() =>
+
+      await Promise.all([
         exec('flow-copy-source', [
           '-i',
           '**/__tests__/**',
           'src',
           `dist/${env}`
-        ])
-      );
+        ]),
+        exec('babel', [src, '--out-dir', dst], {
+          env: { BABEL_ENV: env }
+        })
+      ]);
+
+      charm
+        .left(env.length + 3)
+        .write(chalk`{green ${env}}`)
+        .erase('end');
     }
   }
+  charm.write('\n\n').end();
 }
 
 async function release({ packages, type }) {

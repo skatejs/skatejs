@@ -36,8 +36,8 @@ example.
 
 ### Documentation / website
 
-To document a package or work on the website, run `bolt dev`. This will start up
-a `webpack-dev-server` and you can dev as normal.
+To document a package or work on the website, run `bolt start`. This will
+startup a `webpack-dev-server` and you can dev as normal.
 
 ### Other commands
 

@@ -1,7 +1,9 @@
 import { html } from 'lit-html';
 import withRenderer from '..';
 
-class MyElement extends withRenderer() {
+const Component = withRenderer(HTMLElement);
+
+class MyElement extends Component {
   render({ name }) {
     return html`Hello, ${name}!`;
   }

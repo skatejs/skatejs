@@ -1,6 +1,5 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com>",
-  "browser": "dist/es/index.js",
   "dependencies": {
     "@skatejs/val": "0.4.0",
     "page": "1.8.2",
@@ -12,12 +11,13 @@
     "@skatejs/ssr": "0.19.1",
     "jest-in-case": "1.0.2"
   },
-  "esnext": "dist/esnext/index.js",
   "files": [
-    "dist/es",
-    "dist/esnext",
-    "dist/node"
+    "dist/cjs",
+    "dist/esm"
   ],
+  "browser": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "keywords": [
     "web",
     "component",
@@ -25,8 +25,6 @@
     "skatejs"
   ],
   "license": "MIT",
-  "main": "dist/node/index.js",
-  "module": "dist/es/index.js",
   "name": "@skatejs/sk-router",
   "repository": "https://github.com/skatejs/skatejs",
   "version": "0.2.0"

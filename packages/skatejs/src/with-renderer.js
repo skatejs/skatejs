@@ -2,7 +2,7 @@
 
 import { shadow } from './shadow.js';
 
-export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
+export const withRenderer = (Base: Class<any>): Class<any> =>
   class extends Base {
     _shadowRoot: Node;
 

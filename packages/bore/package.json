@@ -15,15 +15,13 @@
     "vdom",
     "virtual"
   ],
-  "browser": "dist/es/index.js",
-  "main": "dist/node/index.js",
-  "module": "dist/es/index.js",
-  "esnext": "dist/esnext/index.js",
   "files": [
-    "dist/es",
-    "dist/esnext",
-    "dist/node"
+    "dist/cjs",
+    "dist/esm"
   ],
+  "browser": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
     "test": "jest"
   },

@@ -1,0 +1,40 @@
+{
+  "env": {
+    "cjs": {
+      "ignore": ["__tests__", "node_modules"],
+      "plugins": [
+        "transform-class-properties",
+        "transform-custom-element-classes",
+        "transform-es2015-classes",
+        "transform-decorators-legacy",
+        "transform-skate-flow-props"
+      ],
+      "presets": [
+        ["env", { "exclude": ["transform-es2015-classes"] }],
+        "flow",
+        "react",
+        "stage-0"
+      ]
+    },
+    "esm": {
+      "ignore": ["__tests__", "node_modules"],
+      "plugins": [
+        "transform-class-properties",
+        "transform-custom-element-classes",
+        "transform-es2015-classes",
+        "transform-decorators-legacy",
+        "transform-skate-flow-props"
+      ],
+      "presets": [
+        ["env", { "exclude": ["transform-es2015-classes"], "modules": false }],
+        "flow",
+        "react",
+        "stage-0"
+      ]
+    },
+    "test": {
+      "plugins": ["transform-decorators-legacy", "transform-skate-flow-props"],
+      "presets": ["env", "flow", "react", "stage-0"]
+    }
+  }
+}

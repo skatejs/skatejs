@@ -1,14 +1,17 @@
 /** @jsx h */
 
 import { Component, h } from 'preact';
+import { define } from 'skatejs';
 import withRenderer from '..';
 
-class MyElement extends withRenderer() {
+const WebComponent = withRenderer(HTMLElement);
+
+@define
+class MyElement extends WebComponent {
   render({ name }) {
     return <div>Hello, {name}!</div>;
   }
 }
-customElements.define('my-element', MyElement);
 
 test('renders', () => {
   function testContent(text) {
@@ -30,7 +33,8 @@ test('wrappers', () => {
     }
   }
 
-  class PreactComponentWrapper extends withRenderer() {
+  @define
+  class PreactComponentWrapper extends WebComponent {
     constructor() {
       super();
       this.attachShadow({ mode: 'open' });
@@ -39,8 +43,6 @@ test('wrappers', () => {
       return <PreactComponent {...this.props} />;
     }
   }
-
-  customElements.define('preact-component-wrapper', PreactComponentWrapper);
 
   const el = new PreactComponentWrapper();
   const { shadowRoot } = el;

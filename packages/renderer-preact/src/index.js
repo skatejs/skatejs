@@ -2,7 +2,7 @@
 
 import { h, render } from 'preact';
 
-export default (Base = HTMLElement) =>
+export default Base =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use
