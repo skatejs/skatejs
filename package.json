@@ -89,7 +89,7 @@
     "prismjs": "1.10.0",
     "react": "15.6.2",
     "react-dom": "15.6.2",
-    "uglify-es": "3.3.9",
+    "uglify-es": "3.3.10",
     "undom": "0.3.3",
     "yargs": "11.0.0",
     "yocss": "0.5.1"
