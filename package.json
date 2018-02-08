@@ -19,6 +19,7 @@
     "jest-environment-node": "22.1.4",
     "js-beautify": "1.7.5",
     "lit-html": "0.8.0",
+    "hyperhtml": "^2.5.10",
     "marked": "0.3.12",
     "mkdirp": "0.5.1",
     "outdent": "0.4.1",

@@ -1,6 +1,6 @@
 # skatejs/renderer-lit-html
 
-SkateJS renderer for [Lit HTML](https://github.com/PolymerLabs/lit-html).
+SkateJS renderer for [LitHTML](https://github.com/PolymerLabs/lit-html).
 
 Please note `renderer-lit-html` uses Lit HTML's extended renderer by default. This provides slightly different
 than default, and enhanced, functionality as described
@@ -18,12 +18,12 @@ This assumes knowledge of SkateJS.
 
 ```js
 import { html } from 'lit-html';
-import { withComponent } from 'skatejs';
-import withLitHtml from '@skatejs/renderer-lit-html';
+import { Component } from 'skatejs';
+import withRenderer from '@skatejs/renderer-lit-html';
 
-class MyComponent extends withComponent(withLitHtml()) {
+class MyComponent extends withRenderer(Component) {
   render() {
-    return html`Hello, <slot />!`;
+    return html`Hello, <slot></slot>!`;
   }
 }
 ```

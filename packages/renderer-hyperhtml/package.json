@@ -1,8 +1,8 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "description": "A SkateJS renderer for LitHTML.",
+  "description": "A SkateJS renderer for HyperHTML.",
   "devDependencies": {
-    "lit-html": "0.8.0",
+    "hyperhtml": "^2.5.10",
     "skatejs": "^5.1.0"
   },
   "files": [
@@ -22,10 +22,10 @@
     "vdom",
     "virtual"
   ],
-  "name": "@skatejs/renderer-lit-html",
+  "name": "@skatejs/renderer-hyperhtml",
   "peerDependencies": {
-    "lit-html": "^0.7.1",
+    "hyperhtml": "^2.5.10",
     "skatejs": "^5.1.0"
   },
-  "version": "0.2.0"
+  "version": "0.0.0"
 }

@@ -3795,6 +3795,12 @@ husky@0.14.3:
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
 
+hyperhtml@^2.5.10:
+  version "2.5.10"
+  resolved "https://registry.yarnpkg.com/hyperhtml/-/hyperhtml-2.5.10.tgz#d52eac4fd07b73e7b06dbf5a4c8e354208cb0131"
+  dependencies:
+    lightercollective "^0.0.3"
+
 iconv-lite@0.4.19, iconv-lite@^0.4.17, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
@@ -5092,6 +5098,10 @@ levn@^0.3.0, levn@~0.3.0:
   dependencies:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
+
+lightercollective@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/lightercollective/-/lightercollective-0.0.3.tgz#c58f01fde36f4d9432eda354c635a192fc291b2b"
 
 lint-staged@6.0.1:
   version "6.0.1"
