@@ -3,6 +3,10 @@ import withRenderer from '..';
 
 const Component = withRenderer(HTMLElement);
 
+function regexContent(text) {
+  return new RegExp(`Hello, ${text}<!--_hyper: -?\\d+;-->!`);
+}
+
 @define
 class MyElement extends Component {
   render({ name }) {
@@ -13,8 +17,8 @@ class MyElement extends Component {
 it('renders', () => {
   const el = new MyElement();
   expect(el.innerHTML).toEqual('');
-  // el.renderer(el, el.render.bind(el, { name: 'World' }));
-  // expect(el.innerHTML).toEqual('Hello, <!---->!');
-  // el.renderer(el, el.render.bind(el, { name: 'Bob' }));
-  // expect(el.innerHTML).toEqual('Hello, <!---->!');
+  el.renderer(el, el.render.bind(el, { name: 'World' }));
+  expect(el.innerHTML).toMatch(regexContent('World'));
+  el.renderer(el, el.render.bind(el, { name: 'Bob' }));
+  expect(el.innerHTML).toMatch(regexContent('Bob'));
 });
