@@ -7,7 +7,7 @@ import { props, withUpdate } from '..';
 
 class Elem extends withUpdate(HTMLElement) {
   static props = {
-    testProp: props.string
+    testProp: String
   };
   updating() {}
 }

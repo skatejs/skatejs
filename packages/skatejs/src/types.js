@@ -25,28 +25,3 @@ export interface CustomElementEventOptions {
   composed: boolean;
   detail?: void | Object;
 }
-
-// Props
-type PropTypeAttributeIdentifier = boolean | string;
-type PropTypeAttribute =
-  | PropTypeAttributeIdentifier
-  | {
-      source?: PropTypeAttributeIdentifier,
-      target?: PropTypeAttributeIdentifier
-    };
-export type PropType = {
-  attribute?: PropTypeAttribute,
-  coerce?: Function,
-  default?: any,
-  deserialize?: (val: string) => mixed,
-  serialize?: (val: mixed) => null | string
-};
-export type PropTypeNormalized = {
-  attribute: { source: string, target: string },
-  coerce: (val: mixed) => mixed,
-  default: mixed,
-  deserialize: (val: mixed) => mixed,
-  serialize: (val: mixed) => null | string
-};
-export type PropTypes = { [string]: PropType };
-export type PropTypesNormalized = { [string]: PropTypeNormalized };
