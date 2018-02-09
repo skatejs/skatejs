@@ -3,10 +3,12 @@ const vm = require('vm');
 const { triggerMutation } = require('./MutationObserver');
 const { each, execCode, nodeName, prop } = require('./util');
 
-Node.DOCUMENT_FRAGMENT_NODE = 11;
-Node.ELEMENT_NODE = 1;
-Node.TEXT_NODE = 3;
-
+const nodeTypes = {
+  COMMENT_NODE: 8,
+  DOCUMENT_FRAGMENT_NODE: 11,
+  ELEMENT_NODE: 1,
+  TEXT_NODE: 3
+};
 const isConnected = Symbol('isConnected');
 const NodeProto = Node.prototype;
 const { insertBefore, removeChild } = NodeProto;
@@ -34,6 +36,11 @@ function disconnectNode(node) {
   }
   node[isConnected] = false;
   triggerMutation('remove', node);
+}
+
+// Copy node type constants over to both statics and the prototype.
+for (const key in nodeTypes) {
+  Node[key] = NodeProto[key] = nodeTypes[key];
 }
 
 prop(NodeProto, 'content', {
@@ -68,20 +75,6 @@ prop(NodeProto, 'nextSibling', {
   }
 });
 
-prop(NodeProto, 'nodeType', {
-  get() {
-    if (this instanceof Element) {
-      return 1;
-    }
-    if (this instanceof Text) {
-      return 3;
-    }
-    if (this instanceof DocumentFragment) {
-      return 11;
-    }
-  }
-});
-
 prop(NodeProto, 'ownerDocument', {
   get() {
     return document;
@@ -109,12 +102,15 @@ prop(NodeProto, 'textContent', {
 NodeProto.cloneNode = function(deep) {
   let clone;
   switch (this.nodeType) {
-    case Node.ELEMENT_NODE:
-      clone = document.createElement(this.nodeName);
-      clone.attributes = this.attributes.slice();
+    case Node.COMMENT_NODE:
+      clone = document.createComment(this.textContent);
       break;
     case Node.DOCUMENT_FRAGMENT_NODE:
       clone = document.createDocumentFragment();
+      break;
+    case Node.ELEMENT_NODE:
+      clone = document.createElement(this.nodeName);
+      clone.attributes = this.attributes.slice();
       break;
     case Node.TEXT_NODE:
       clone = document.createTextNode(this.textContent);
@@ -128,8 +124,6 @@ NodeProto.cloneNode = function(deep) {
   for (let childNode of this.childNodes) {
     clone.childNodes.push(childNode.cloneNode(true));
   }
-
-  clone.innerText = this.innerText;
 
   return clone;
 };
