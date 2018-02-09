@@ -5,8 +5,9 @@ const { parseFragment } = require('parse5');
 
 const { execFile, nodeName, prop } = require('./util');
 const { ClassList } = require('./ClassList');
-const { CSSStyleSheet } = require('./StyleSheet');
+const { Node } = require('./Node');
 const { triggerMutation } = require('./MutationObserver');
+const { CSSStyleSheet } = require('./StyleSheet');
 
 const ElementProto = Element.prototype;
 const {
@@ -26,9 +27,12 @@ const attrToPropMap = {
 
 function translateParsed(parsed) {
   let node;
-  const { attrs, childNodes, nodeName, value } = parsed;
+  const { attrs, childNodes, data, nodeName, value } = parsed;
 
-  if (nodeName === '#document-fragment') {
+  // Parse5 doesn't give nodeType, so we have to use the node name.
+  if (nodeName === '#comment') {
+    node = document.createComment(data);
+  } else if (nodeName === '#document-fragment') {
     node = document.createDocumentFragment();
   } else if (nodeName === '#text') {
     node = document.createTextNode(value);
@@ -44,6 +48,11 @@ function translateParsed(parsed) {
   }
 
   return node;
+}
+
+// Copy inherited stuff from Node statics.
+for (const key in Node) {
+  Element[key] = Node[key];
 }
 
 ElementProto.dispatchEvent = function(evnt) {
@@ -165,7 +174,13 @@ prop(ElementProto, 'className', {
 
 prop(ElementProto, 'innerHTML', {
   get() {
-    return this.childNodes.map(c => c.outerHTML || c.textContent).join('');
+    return this.childNodes
+      .map(c => {
+        return c.nodeType === Node.COMMENT_NODE
+          ? `<!--${c.textContent}-->`
+          : c.outerHTML || c.textContent;
+      })
+      .join('');
   },
   set(val) {
     if (this.nodeName === 'SCRIPT') {
@@ -200,8 +215,22 @@ prop(ElementProto, 'nodeName', {
   get() {
     return this._nodeName || customElements.__fixLostNodeNameForElement(this);
   },
+
+  // TODO check to see if this is necessary anymore. This shouldn't be settable.
   set(val) {
     this._nodeName = val;
+  }
+});
+
+prop(ElementProto, 'nodeType', {
+  get() {
+    return Node.ELEMENT_NODE;
+  }
+});
+
+prop(ElementProto, 'nodeValue', {
+  get() {
+    return null;
   }
 });
 
@@ -281,6 +310,18 @@ prop(ElementProto, 'src', {
 prop(ElementProto, 'tagName', {
   get() {
     return this.nodeName;
+  }
+});
+
+prop(ElementProto, 'textContent', {
+  get() {
+    return this.childNodes.map(c => c.textContent).join('');
+  },
+  set(textContent) {
+    while (this.hasChildNodes()) {
+      this.removeChild(this.firstChild);
+    }
+    this.appendChild(document.createTextNode(textContent));
   }
 });
 
