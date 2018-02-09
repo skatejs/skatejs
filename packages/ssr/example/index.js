@@ -9,8 +9,7 @@ const Hapi = require('hapi');
 const fs = require('fs');
 const path = require('path');
 
-const server = new Hapi.Server();
-server.connection({
+const server = new Hapi.server({
   host: 'localhost',
   port: 8000
 });
@@ -29,11 +28,10 @@ server.route({
       : require('./pages/404.js');
     document.body.innerHTML = '';
     document.body.appendChild(Object.assign(new Page(), request.params));
-    return response(render());
+    return render();
   }
 });
 
-server.start(err => {
-  if (err) throw err;
+server.start().then(() => {
   console.log('Server running at:', server.info.uri);
 });
