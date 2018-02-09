@@ -1,17 +1,20 @@
 const { Comment } = require('./Comment');
 const { DocumentFragment } = require('./DocumentFragment');
 const { NodeFilter } = require('./NodeFilter');
+const { Text } = require('./Text');
 const { find, nodeName } = require('./util');
 
 const createElement = document.createElement.bind(document);
 
-document.createComment = function(textContent) {
+document.createComment = function(nodeValue = '') {
   const comment = new Comment();
-  comment.textContent = textContent;
+  comment.nodeValue = nodeValue;
   return comment;
 };
 
-document.createDocumentFragment = () => new DocumentFragment();
+document.createDocumentFragment = function() {
+  return new DocumentFragment();
+};
 
 document.createElement = function(name) {
   const Ctor = window.customElements.get(name);
@@ -20,6 +23,12 @@ document.createElement = function(name) {
 
 document.createEvent = function(name) {
   return new window[name]();
+};
+
+document.createTextNode = function(nodeValue = '') {
+  const text = new Text();
+  text.nodeValue = nodeValue;
+  return text;
 };
 
 document.createTreeWalker = function(
