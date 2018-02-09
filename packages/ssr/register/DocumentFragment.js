@@ -1,8 +1,13 @@
-const { Node } = require('./Node');
+const { Element } = require('./Element');
 
-const DocumentFragment = class extends Node {
+// TODO split out Element into a common base since this shouldn't be
+// inheriting all of it.
+const DocumentFragment = class extends Element {
   get nodeName() {
     return '#document-fragment';
+  }
+  get nodeType() {
+    return Node.DOCUMENT_FRAGMENT_NODE;
   }
 };
 
