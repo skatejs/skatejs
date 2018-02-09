@@ -17,7 +17,7 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
 
     _prevProps: { [string]: any } = {};
     _prevState: { [string]: any } = {};
-    _props: { [string]: (any) => any } = {};
+    _props: { [string]: (any) => any | void } = {};
     _state: { [string]: any } = {};
     _updating: boolean = false;
 
