@@ -13,11 +13,11 @@ function delay(fn) {
 export const withUpdate = (Base: Class<any>): Class<any> =>
   class extends Base {
     static _attrToPropMap: { [string]: string } = {};
-    static props: { [string]: any } = {};
+    static props: { [string]: (any) => any | void } = {};
 
     _prevProps: { [string]: any } = {};
     _prevState: { [string]: any } = {};
-    _props: { [string]: (any) => any | void } = {};
+    _props: { [string]: any } = {};
     _state: { [string]: any } = {};
     _updating: boolean = false;
 
