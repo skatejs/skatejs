@@ -2,6 +2,8 @@
 
 import { name } from '..';
 
+const { expect, test } = global;
+
 test('should choose a default name', () => {
   expect(name()).toMatch('x-element');
 });

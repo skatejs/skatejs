@@ -5,6 +5,8 @@ import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { emit } from '..';
 
+const { expect, test } = global;
+
 test('default event options', done => {
   const { node } = mount(<div />);
   node.addEventListener('test', e => {

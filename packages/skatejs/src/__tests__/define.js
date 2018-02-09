@@ -2,6 +2,8 @@
 
 import { define, name } from '..';
 
+const { expect, test } = global;
+
 test('should use `static is` as the element name', () => {
   @define
   class Elem extends HTMLElement {

@@ -5,15 +5,19 @@ import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { props, withUpdate } from '..';
 
+const { expect, test } = global;
+
 class Elem extends withUpdate(HTMLElement) {
   static props = {
-    testProp: String
+    testProp: String,
+    testPropDoNotSet: null
   };
   updating() {}
 }
 
 async function createElemAwaitTrigger() {
   const elem = new Elem();
+  // $FlowFixMe - jest is not defined.
   elem.triggerUpdate = jest.fn();
   return mount(elem).waitFor(w => elem.triggerUpdate.mock.calls.length === 1);
 }
@@ -46,6 +50,12 @@ test('undefined props do not call triggerUpdate()', async () => {
   expect(elem.node.triggerUpdate.mock.calls).toHaveLength(1);
 });
 
+test('props that do not have an attribute handler are not set from attributes', async () => {
+  const elem = await createElemAwaitTrigger();
+  elem.node.setAttribute('testpropdonotset', '');
+  expect(elem.node.triggerUpdate.mock.calls).toHaveLength(1);
+});
+
 test('attr should set prop', () => {
   const { node } = mount(<Elem />);
   node.setAttribute('testprop', 'test');
@@ -54,6 +64,7 @@ test('attr should set prop', () => {
 
 test('triggerUpdate() should be batched', done => {
   const { node } = mount(<Elem />);
+  // $FlowFixMe - jest is not defined.
   node.updating = jest.fn();
   node.triggerUpdate();
   node.triggerUpdate();

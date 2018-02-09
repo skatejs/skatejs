@@ -25,8 +25,18 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
     // link props to attrs here as opposed to doing it in the constructor.
     static get observedAttributes(): Array<string> {
       return Object.keys(this.props).reduce((observedAttrs, propName) => {
+        // We're opinionated about the propName -> propname (attribute)
+        // convention.
         const attrName = propName.toLowerCase();
-        this._attrToPropMap[attrName] = propName;
+
+        // Don't set props from attributes if there is no handler. This also
+        // means we don't need to observe them at all.
+        if (this.props[propName]) {
+          this._attrToPropMap[attrName] = propName;
+          observedAttrs = observedAttrs.concat(attrName);
+        }
+
+        // Defines a property to ensure it triggers an update.
         Object.defineProperty(this.prototype, propName, {
           configurable: true,
           get() {
@@ -37,12 +47,14 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
             this.triggerUpdate();
           }
         });
-        return observedAttrs.concat(attrName);
+
+        return observedAttrs;
       }, []);
     }
 
     get props(): Object {
       return Object.keys(this.constructor.props).reduce(
+        // $FlowFixMe - no idea what's up here.
         (prev: Object, curr: string) => {
           prev[curr] = this[curr];
           return prev;
@@ -90,7 +102,7 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
       this.triggerUpdate();
     }
 
-    shouldUpdate(props: Object, state: Object): Boolean {
+    shouldUpdate(props: Object, state: Object): boolean {
       return true;
     }
 
@@ -101,8 +113,10 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
       this._updating = true;
       delay(() => {
         const { _prevProps, _prevState } = this;
-        this.updating(_prevProps, _prevState);
-        if (this.shouldUpdate(_prevProps, _prevState)) {
+        if (this.updating) {
+          this.updating(_prevProps, _prevState);
+        }
+        if (this.updated && this.shouldUpdate(_prevProps, _prevState)) {
           this.updated(_prevProps, _prevState);
         }
         this._prevProps = this.props;
@@ -110,23 +124,13 @@ export const withUpdate = (Base: Class<any>): Class<any> =>
         this._updating = false;
       });
     }
-
-    updated(props: Obejct, state: Object): void {}
-    updating(props: Object, state: Object): void {}
   };
 
-const any = v => v;
-const array = JSON.parse;
-const boolean = Boolean;
-const number = Number;
-const object = JSON.parse;
-const string = String;
-
 export const props = {
-  any,
-  array,
-  boolean,
-  number,
-  object,
-  string
+  any: (v: any): any => v,
+  array: JSON.parse,
+  boolean: Boolean,
+  number: Number,
+  object: JSON.parse,
+  string: String
 };

@@ -5,8 +5,11 @@ import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { define, name, withChildren } from '..';
 
+const { expect, test } = global;
+
 // Very basic implementation so that the withChildren() mixin works.
 global.MutationObserver = class {
+  callback: Function;
   constructor(callback: Function) {
     this.callback = callback;
   }

@@ -2,18 +2,21 @@
 
 import { define, name, withContext } from '..';
 
+const { beforeEach, expect, test } = global;
+
 const Base = withContext(HTMLElement);
 
-const Test1 = define(
-  class extends Base {
-    static is = name();
-  }
-);
-const Test2 = define(
-  class extends Base {
-    static is = name();
-  }
-);
+// $FlowFixMe
+@define
+class Test1 extends Base {
+  static is = name();
+}
+
+// $FlowFixMe
+@define
+class Test2 extends Base {
+  static is = name();
+}
 
 let test1, test2;
 beforeEach(() => {

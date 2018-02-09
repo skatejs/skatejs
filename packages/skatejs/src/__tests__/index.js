@@ -2,6 +2,8 @@
 
 import * as api from '..';
 
+const { expect, test } = global;
+
 test('skate', () => {
   expect(typeof api).toBe('object');
 });
