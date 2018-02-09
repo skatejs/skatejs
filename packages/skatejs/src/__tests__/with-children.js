@@ -45,7 +45,7 @@ test('should be called when first connected', done => {
   });
 });
 
-test('should be when children are modified', done => {
+test('should be called when children are modified', done => {
   const node = <Elem />;
   node.called = 0;
   mount(node);
