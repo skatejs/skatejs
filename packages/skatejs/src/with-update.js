@@ -10,7 +10,7 @@ function delay(fn) {
   }
 }
 
-export const withUpdate = (Base: Class<any>): Class<any> =>
+export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     static _attrToPropMap: { [string]: string } = {};
     static props: { [string]: (any) => any | void } = {};

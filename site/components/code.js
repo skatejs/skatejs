@@ -2,7 +2,7 @@ import './tabs';
 
 import { html } from 'lit-html/lib/lit-extended';
 import css, { value } from 'yocss';
-import { define, props, withComponent } from 'skatejs';
+import { define, withComponent } from 'skatejs';
 
 import { Component, style, withLoadable } from '../utils';
 
@@ -118,7 +118,7 @@ const cssExample = {
 };
 
 @define
-export class Example extends withComponent() {
+export class Example extends withComponent(HTMLElement) {
   static is = 'x-example';
   props: {
     html: string,

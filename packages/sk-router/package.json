@@ -18,6 +18,7 @@
   "browser": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
+  "src": "src",
   "keywords": [
     "web",
     "component",

@@ -1,6 +1,6 @@
 // @flow
 
-export const withLifecycle = (Base: Class<any>): Class<any> =>
+export const withLifecycle = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     connectedCallback() {
       this.connecting && this.connecting();

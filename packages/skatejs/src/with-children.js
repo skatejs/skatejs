@@ -1,6 +1,6 @@
 // @flow
 
-export const withChildren = (Base: Class<any>): Class<any> =>
+export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     childrenUpdated: Function | void;
 

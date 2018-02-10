@@ -11,12 +11,13 @@
     "lit-html": "0.8.0",
     "preact": "8.2.7",
     "prismjs": "1.10.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "16.2.0",
+    "react-dom": "16.2.0",
     "skatejs": "5.1.1",
     "yocss": "0.5.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-skate-flow-props": "0.1.0",
     "file-loader": "1.1.6",
     "img-loader": "2.0.0",
     "raw-loader": "0.5.1",

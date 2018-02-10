@@ -2,7 +2,7 @@ import './primitives';
 import '@skatejs/sk-router';
 
 import { html } from 'lit-html/lib/lit-extended';
-import { define, name, props } from 'skatejs';
+import { define, name } from 'skatejs';
 import css, { value } from 'yocss';
 
 import { Component, style, withLoadable } from '../utils';

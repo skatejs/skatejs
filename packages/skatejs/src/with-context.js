@@ -1,6 +1,6 @@
 // @flow
 
-export const withContext = (Base: Class<any>): Class<any> =>
+export const withContext = (Base: Class<any> = HTMLElement): Class<any> =>
   class extends Base {
     get context(): Object {
       if (this._context) {

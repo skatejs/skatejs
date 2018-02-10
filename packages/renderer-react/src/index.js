@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-const withReact = Base =>
+const withReact = (Base = HTMLElement) =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use

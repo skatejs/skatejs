@@ -4,7 +4,7 @@ import { value } from 'yocss';
 import { html } from './html';
 import { style } from './style';
 
-export const Component = class extends withComponent(withLitHtml()) {
+export const Component = class extends withComponent(withLitHtml(HTMLElement)) {
   $ = html;
   get $style() {
     return style(this.context.style, value(...Object.values(this.css || {})));

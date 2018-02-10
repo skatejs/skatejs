@@ -82,5 +82,8 @@ module.exports = {
       name: 'main'
     })
     // new WebpackPrerenderPlugin()
-  ]
+  ],
+  resolve: {
+    mainFields: ['src', 'module', 'main', 'browser']
+  }
 };

@@ -1,10 +1,10 @@
 // @jsx h
 
 import page from 'page';
-import { Component, define, props } from 'skatejs';
+import { define, props, withComponent } from 'skatejs';
 import { h } from '@skatejs/val';
 
-class Base extends Component {
+class Base extends withComponent() {
   renderer(renderRoot, render) {
     const { firstChild } = renderRoot;
     const dom = render();

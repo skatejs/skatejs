@@ -7,7 +7,7 @@
         "transform-custom-element-classes",
         "transform-es2015-classes",
         "transform-decorators-legacy",
-        "transform-skate-flow-props"
+        "./packages/babel-plugin-transform-skate-flow-props"
       ],
       "presets": [
         ["env", { "exclude": ["transform-es2015-classes"] }],
@@ -23,7 +23,7 @@
         "transform-custom-element-classes",
         "transform-es2015-classes",
         "transform-decorators-legacy",
-        "transform-skate-flow-props"
+        "./packages/babel-plugin-transform-skate-flow-props"
       ],
       "presets": [
         ["env", { "exclude": ["transform-es2015-classes"], "modules": false }],
@@ -33,7 +33,10 @@
       ]
     },
     "test": {
-      "plugins": ["transform-decorators-legacy", "transform-skate-flow-props"],
+      "plugins": [
+        "transform-decorators-legacy",
+        "./packages/babel-plugin-transform-skate-flow-props"
+      ],
       "presets": ["env", "flow", "react", "stage-0"]
     }
   }
