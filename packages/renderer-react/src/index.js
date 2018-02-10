@@ -1,7 +1,9 @@
+/* @jsx React.createElement */
+
 import React from 'react';
 import { render } from 'react-dom';
 
-const withReact = (Base = HTMLElement) =>
+const withReactLike = (Base = HTMLElement) =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use
@@ -16,4 +18,12 @@ const withReact = (Base = HTMLElement) =>
     }
   };
 
-export default withReact;
+export default withReactLike;
+
+export function wrap(ReactLikeComponent, Base = HTMLElement) {
+  return class extends withReactLike(Base) {
+    render({ props }) {
+      return <ReactLikeComponent {...props} />;
+    }
+  };
+}

@@ -27,6 +27,10 @@ export class Link extends Base {
     css: props.string,
     href: props.string
   };
+  props = {
+    classNames: {},
+    css: ''
+  };
   go = e => {
     e.preventDefault();
     page.show(this.href);
@@ -67,7 +71,7 @@ export class Route extends Base {
       PageToRender.prototype &&
       PageToRender.prototype.render
     ) {
-      return <PageToRender />;
+      return <PageToRender {...propsToRender} />;
     }
   }
 }
@@ -76,6 +80,9 @@ export class Router extends Base {
   static is = 'sk-router';
   static props = {
     options: props.object
+  };
+  props = {
+    options: {}
   };
   childrenUpdated() {
     [...this.children].forEach(route => {

@@ -48,7 +48,7 @@ module.exports = {
             plugins: [
               'transform-decorators-legacy',
               ['transform-react-jsx', { pragma: 'h' }],
-              'transform-skate-flow-props'
+              require('babel-plugin-transform-skate-flow-props')
             ],
             presets: ['env', 'flow', 'react', 'stage-0']
           }

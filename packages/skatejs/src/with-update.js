@@ -125,12 +125,3 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       });
     }
   };
-
-export const props = {
-  any: (v: any): any => v,
-  array: JSON.parse,
-  boolean: Boolean,
-  number: Number,
-  object: JSON.parse,
-  string: String
-};

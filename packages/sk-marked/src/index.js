@@ -25,13 +25,18 @@ export default define(
       renderers: props.object,
       src: props.string
     };
+    props = {
+      css: '',
+      renderers: {},
+      src: ''
+    };
     render({ css, renderers, src }) {
       const renderer = new marked.Renderer();
       Object.assign(renderer, renderers);
       return `
-      <style>${css}></style>
-      ${marked(format(src), { renderer })}
-    `;
+        <style>${css}></style>
+        ${marked(format(src), { renderer })}
+      `;
     }
   }
 );

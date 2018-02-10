@@ -35,15 +35,19 @@ export class Link extends Component {
     css: props.string,
     href: props.string
   };
+  props = {
+    classNames: {},
+    css: ''
+  };
   render({ classNames, context, css, href }) {
     if (href.indexOf(publicUrl) > -1) {
       href = href.split(publicUrl)[1];
     }
     return href.indexOf('://') > -1
       ? this.$`
-      ${style(context.style, css)}
-      <a className=${classNames.a} href="${href}"><slot></slot></a>
-    `
+        ${style(context.style, css)}
+        <a className=${classNames.a} href="${href}"><slot></slot></a>
+      `
       : this.$`
       <sk-link
         classNames="${classNames}"

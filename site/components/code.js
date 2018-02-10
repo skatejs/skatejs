@@ -2,7 +2,7 @@ import './tabs';
 
 import { html } from 'lit-html/lib/lit-extended';
 import css, { value } from 'yocss';
-import { define, withComponent } from 'skatejs';
+import { define, props, withComponent } from 'skatejs';
 
 import { Component, style, withLoadable } from '../utils';
 

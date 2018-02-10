@@ -21,6 +21,10 @@ export class Marked extends Component {
     renderers: props.object,
     src: props.string
   };
+  props = {
+    renderers: defaultRenderers,
+    src: ''
+  };
   render({ renderers, src }) {
     return this.$`
       <sk-marked

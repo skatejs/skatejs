@@ -5,6 +5,7 @@ export * from './define.js';
 export * from './emit.js';
 export * from './link.js';
 export * from './name.js';
+export * from './props.js';
 export * from './shadow.js';
 export * from './with-children.js';
 export * from './with-context.js';

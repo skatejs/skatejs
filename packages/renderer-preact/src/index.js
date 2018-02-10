@@ -1,8 +1,8 @@
-/** @jsx h */
+/* @jsx h */
 
 import { h, render } from 'preact';
 
-export default (Base = HTMLElement) =>
+const withReactLike = (Base = HTMLElement) =>
   class extends Base {
     get props() {
       // We override props so that we can satisfy most use
@@ -13,10 +13,16 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
-      this._preactDom = render(
-        call(),
-        root,
-        this._preactDom || root.children[0]
-      );
+      render(call(), root);
     }
   };
+
+export default withReactLike;
+
+export function wrap(ReactLikeComponent, Base = HTMLElement) {
+  return class extends withReactLike(Base) {
+    render({ props }) {
+      return <ReactLikeComponent {...props} />;
+    }
+  };
+}
