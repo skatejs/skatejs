@@ -13,6 +13,10 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
-      this._preactDom = render(call(), root, this._preactDom || root.childNodes[0]);
+      this._preactDom = render(
+        call(),
+        root,
+        this._preactDom || root.childNodes[0]
+      );
     }
   };
