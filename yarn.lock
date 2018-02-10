@@ -5917,9 +5917,9 @@ normalize-space-x@^3.0.0:
     trim-x "^3.0.0"
     white-space-x "^3.0.0"
 
-now@9.2.7:
-  version "9.2.7"
-  resolved "https://registry.yarnpkg.com/now/-/now-9.2.7.tgz#46e68cb606feb9c80d9d6b380fcddfaaa093c3a3"
+now@9.3.0:
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/now/-/now-9.3.0.tgz#4d9e5ae58d8b7a0ae950ad59316a22e59eb049a5"
 
 npm-path@^2.0.2:
   version "2.0.3"
