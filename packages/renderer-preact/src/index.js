@@ -13,8 +13,6 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
-      const children = root.children ||
-        [].map.call(root.childNodes, node => node.nodeType === 1);
-      this._preactDom = render(call(), root, this._preactDom || children[0]);
+      this._preactDom = render(call(), root, this._preactDom || root.childNodes[0]);
     }
   };
