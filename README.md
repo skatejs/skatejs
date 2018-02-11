@@ -12,14 +12,11 @@ Skate is a functional abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) that:
 
 * Produces cross-framework compatible components.
-* Abstracts away common attribute / property semantics via `props`, such as
-  attribute reflection and coercion.
-* Adds several lifecycle callbacks for responding to prop updates, rendering and
-  updating, as well as a way to manage internal component state.
-* Provides a base set of
-  [mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
-  that hook into renderers such as
-  [@skatejs/renderer-preact](https://github.com/skatejs/skatejs/tree/master/packages/renderer-preact).
+* Guides you to follow [best practices](https://developers.google.com/web/fundamentals/web-components/best-practices) while still being flexible enough to opt-out for edge cases.
+* Augments the standard lifecycle callbacks to add hooks for property updates and functional rendering.
+* Based on the
+  [mixin](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/) pattern which allows you to use all of Skate, or only the exact pieces that you need.
+* Effortlessly drop in libraries like [Preact](https://github.com/developit/preact) to do your rendering work using the concept of [renderers](http://skatejs.netlify.com/renderers).
 
 ## Installing
 
