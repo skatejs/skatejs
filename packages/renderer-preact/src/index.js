@@ -16,7 +16,7 @@ export default (Base = HTMLElement) =>
       this._preactDom = render(
         call(),
         root,
-        this._preactDom || root.children[0]
+        this._preactDom || root.childNodes[0]
       );
     }
   };
