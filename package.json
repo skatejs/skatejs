@@ -142,7 +142,7 @@
     "dev": "cd site && webpack-dev-server --hot",
     "flow": "flow",
     "precommit": "lint-staged",
-    "prepare": "bolt build",
+    "prepublish": "bolt build",
     "site": "cd site && webpack -p",
     "test": "jest"
   },
