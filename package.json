@@ -125,7 +125,7 @@
     "jest": "22.3.0",
     "jest-cli": "22.3.0",
     "jest-in-case": "1.0.2",
-    "lint-staged": "6.1.0",
+    "lint-staged": "6.1.1",
     "now": "9.3.0",
     "prettier": "1.10.2",
     "prettier-eslint": "8.8.1",
