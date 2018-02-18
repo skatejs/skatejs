@@ -114,7 +114,7 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "bolt": "0.19.3",
-    "eslint-plugin-flowtype": "2.44.0",
+    "eslint-plugin-flowtype": "2.45.0",
     "execa": "0.9.0",
     "file-loader": "1.1.6",
     "flow-bin": "0.65.0",
