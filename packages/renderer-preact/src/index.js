@@ -13,7 +13,11 @@ const withReactLike = (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
-      render(call(), root);
+      this._preactDom = render(
+        call(),
+        root,
+        this._preactDom || root.childNodes[0]
+      );
     }
   };
 

@@ -84,6 +84,7 @@ async function babel({ envs }) {
 async function release({ packages, type }) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');
+  await exec('bolt', ['build']);
   const ws = await getWorkspaces();
   for (const pkg of packages.split(',')) {
     const name = pkg.trim();

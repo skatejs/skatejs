@@ -49,7 +49,7 @@ There's a [@skatejs/cli](https://github.com/skatejs/skatejs/tree/v6/packages/cli
 
 ## Usage
 
-This is how you might write a web component usinge Skate and Preact:
+This is how you might write a web component using Skate and Preact:
 
 ```js
 // @jsx h
