@@ -11,7 +11,7 @@
     "inquirer": "5.0.1",
     "outdent": "0.4.1",
     "spawndamnit": "1.0.0",
-    "yargs": "10.1.1"
+    "yargs": "11.0.0"
   },
   "version": "0.0.2"
 }

@@ -79,7 +79,7 @@
     "build": "projector ./projector babel --envs cjs,esm",
     "flow": "flow",
     "precommit": "lint-staged",
-    "prepublish": "bolt build",
+    "prepublishOnly": "bolt build",
     "site": "cd site && webpack -p",
     "start": "cd site && webpack-dev-server --hot",
     "test": "jest"
