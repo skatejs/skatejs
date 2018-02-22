@@ -1,7 +1,7 @@
 // @flow
 
 import { mount } from '@skatejs/bore';
-import { define, name, withInitializer } from '../../src';
+import { define, name, props, withInitializer, withUpdate } from '../../src';
 
 const UnnamedTest = define(class extends withInitializer() {});
 const NamedTest = define(
@@ -49,6 +49,23 @@ describe('withInitializer', () => {
 
       it('is called when an element definition is registered', () => {
         define(Elem);
+        expect(counter).toEqual(1);
+      });
+    });
+
+    describe('implementation details', () => {
+      it('works with the withUpdate mixin', () => {
+        const UpdatingElem = class extends withUpdate(Elem) {
+          static get props() {
+            return {
+              name: props.string
+            };
+          }
+          updated() {
+            return (shadow(this).innerHTML = `Hello, ${this.name}!`);
+          }
+        };
+        define(UpdatingElem);
         expect(counter).toEqual(1);
       });
     });

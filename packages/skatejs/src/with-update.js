@@ -148,6 +148,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _state = {};
 
     static get observedAttributes(): Array<string> {
+      super.observedAttributes && super.observedAttributes();
       // We have to define props here because observedAttributes are retrieved
       // only once when the custom element is defined. If we did this only in
       // the constructor, then props would not link to attributes.
