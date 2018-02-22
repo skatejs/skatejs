@@ -12,18 +12,44 @@ const NamedTest = define(
 
 describe('withInitializer', () => {
   describe('initializeCallback()', () => {
-    const Elem = define(
-      class extends UnnamedTest {
-        initializeCallback() {}
-      }
-    );
+    let counter;
+    let Elem;
 
-    it('is called when an element is created', done => {
-      const spy = jest.spyOn(Elem.prototype, 'initializeCallback');
+    beforeEach(() => {
+      counter = 0;
+      Elem = class extends UnnamedTest {
+        static initializeCallback() {
+          ++counter;
+        }
+      };
+    });
+
+    it('is called when an element definition is registered', () => {
+      expect(counter).toEqual(0);
+      define(Elem);
+      expect(counter).toEqual(1);
+    });
+
+    it('is not called when an individual element is constructed', () => {
+      define(Elem);
+      expect(counter).toEqual(1);
       mount(new Elem());
-      setTimeout(() => {
-        expect(spy).toBeCalled();
-        done();
+      mount(new Elem());
+      expect(counter).toEqual(1);
+    });
+
+    describe('on named elements', () => {
+      beforeEach(() => {
+        Elem = class extends NamedTest {
+          static initializeCallback() {
+            ++counter;
+          }
+        };
+      });
+
+      it('is called when an element definition is registered', () => {
+        define(Elem);
+        expect(counter).toEqual(1);
       });
     });
   });
