@@ -2773,9 +2773,9 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-plugin-flowtype@2.45.0:
-  version "2.45.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.45.0.tgz#20d8b15d1e1e71ea4e9498e8be3fc62c0752fcbf"
+eslint-plugin-flowtype@2.46.1:
+  version "2.46.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.46.1.tgz#c4f81d580cd89c82bc3a85a1ccf4ae3a915143a4"
   dependencies:
     lodash "^4.15.0"
 
