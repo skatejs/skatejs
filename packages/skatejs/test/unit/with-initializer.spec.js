@@ -3,24 +3,17 @@
 import { mount } from '@skatejs/bore';
 import { define, name, props, withInitializer, withUpdate } from '../../src';
 
-const UnnamedTest = define(class extends withInitializer() {});
-const NamedTest = define(
-  class extends withInitializer() {
-    static is = name();
-  }
-);
-
 describe('withInitializer', () => {
+  let counter;
+  let inc = () => ++counter;
+  beforeEach(() => (counter = 0));
+
   describe('initializeCallback()', () => {
-    let counter;
     let Elem;
 
     beforeEach(() => {
-      counter = 0;
-      Elem = class extends UnnamedTest {
-        static initializeCallback() {
-          ++counter;
-        }
+      Elem = class extends withInitializer() {
+        static initializeCallback = inc;
       };
     });
 
@@ -40,7 +33,8 @@ describe('withInitializer', () => {
 
     describe('on named elements', () => {
       beforeEach(() => {
-        Elem = class extends NamedTest {
+        Elem = class extends withInitializer() {
+          static is = name();
           static initializeCallback() {
             ++counter;
           }
@@ -53,20 +47,20 @@ describe('withInitializer', () => {
       });
     });
 
-    describe('implementation details', () => {
-      it('works with the withUpdate mixin', () => {
-        const UpdatingElem = class extends withUpdate(Elem) {
+    describe('implementation', () => {
+      it('works when wrapped with withUpdate()', () => {
+        const UpdatingElem = class extends withUpdate(withInitializer()) {
+          static initializeCallback = inc;
           static get props() {
             return {
               name: props.string
             };
           }
-          updated() {
-            return (shadow(this).innerHTML = `Hello, ${this.name}!`);
-          }
         };
+        expect(counter).toEqual(0);
         define(UpdatingElem);
         expect(counter).toEqual(1);
+        expect(UpdatingElem.observedAttributes).toContain('name');
       });
     });
   });
