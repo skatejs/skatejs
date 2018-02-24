@@ -62,6 +62,21 @@ describe('withInitializer', () => {
         expect(counter).toEqual(1);
         expect(UpdatingElem.observedAttributes).toContain('name');
       });
+
+      it('works when withUpdate() wraps it', () => {
+        const UpdatingElem = class extends withInitializer(withUpdate()) {
+          static initializeCallback = inc;
+          static get props() {
+            return {
+              name: props.string
+            };
+          }
+        };
+        expect(counter).toEqual(0);
+        define(UpdatingElem);
+        expect(counter).toEqual(1);
+        expect(UpdatingElem.observedAttributes).toContain('name');
+      });
     });
   });
 });
