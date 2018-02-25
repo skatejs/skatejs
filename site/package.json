@@ -21,7 +21,7 @@
     "img-loader": "2.0.1",
     "raw-loader": "0.5.1",
     "webpack": "3.11.0",
-    "webpack-dev-server": "2.11.1",
+    "webpack-dev-server": "3.0.0",
     "worker-loader": "1.1.0"
   }
 }
