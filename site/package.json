@@ -17,7 +17,7 @@
     "yocss": "0.5.1"
   },
   "devDependencies": {
-    "file-loader": "1.1.9",
+    "file-loader": "1.1.10",
     "img-loader": "2.0.1",
     "raw-loader": "0.5.1",
     "webpack": "3.11.0",
