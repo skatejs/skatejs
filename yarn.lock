@@ -6410,9 +6410,9 @@ p-pipe@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/p-pipe/-/p-pipe-1.2.0.tgz#4b1a11399a11520a67790ee5a0c1d5881d6befe9"
 
-page@1.8.3:
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/page/-/page-1.8.3.tgz#cc46fd6e614f5a60ebc68d0e0e3570301dae7c0e"
+page@1.8.4:
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/page/-/page-1.8.4.tgz#9fbe17b5ff718b5c8a22c453958b6d77dfa2c2d9"
   dependencies:
     path-to-regexp "~1.2.1"
 
