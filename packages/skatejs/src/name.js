@@ -1,6 +1,6 @@
 // @flow
 
-import { dashCase } from './util';
+import { dashCase } from './util.js';
 
 function format(prefix: string, suffix: number): string {
   return (
