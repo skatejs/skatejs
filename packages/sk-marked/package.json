@@ -2,7 +2,7 @@
   "author": "Trey Shugart <treshugart@gmail.com>",
   "browser": "dist/es/index.js",
   "dependencies": {
-    "marked": "0.3.14",
+    "marked": "0.3.17",
     "skatejs": "^5.1.1"
   },
   "description": "A web component for rendering Markdown using Marked.",
