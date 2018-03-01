@@ -126,7 +126,7 @@
     "jest-cli": "22.4.2",
     "jest-in-case": "1.0.2",
     "lint-staged": "7.0.0",
-    "now": "9.3.0",
+    "now": "10.1.1",
     "prettier": "1.11.0",
     "prettier-eslint": "8.8.1",
     "projector-cli": "3.1.0",
