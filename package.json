@@ -133,7 +133,7 @@
     "raw-loader": "0.5.1",
     "webpack": "3.11.0",
     "webpack-dev-server": "3.1.0",
-    "worker-loader": "1.1.0"
+    "worker-loader": "1.1.1"
   },
   "name": "skatejs-monorepo",
   "private": true,
