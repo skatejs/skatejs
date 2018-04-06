@@ -44,6 +44,9 @@ expose('NodeFilter');
 expose('StyleSheet');
 expose('Worker');
 
+Object.defineProperty = defineProperty
+Object.defineProperties = defineProperties
+
 // Startup.
 document.readyState = 'interactive';
 document.dispatchEvent(new Event('DOMContentLoaded'));
