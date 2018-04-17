@@ -6,6 +6,8 @@ exports[`renders 2`] = `"<div data-reactroot=\\"\\"><!-- react-text: 2 -->Hello,
 
 exports[`renders 3`] = `"<div data-reactroot=\\"\\"><!-- react-text: 2 -->Hello, <!-- /react-text --><!-- react-text: 3 -->Bob<!-- /react-text --><!-- react-text: 4 -->!<!-- /react-text --></div>"`;
 
+exports[`unmounts 1`] = `"<div data-reactroot=\\"\\"></div>"`;
+
 exports[`wrapper - override render() 1`] = `"<div data-reactroot=\\"\\"><!-- react-text: 2 -->Hello, <!-- /react-text --><slot></slot><!-- react-text: 4 -->!<!-- /react-text --></div>"`;
 
 exports[`wrapper - static component 1`] = `"<div data-reactroot=\\"\\"><!-- react-text: 2 -->Hello, <!-- /react-text --><slot></slot><!-- react-text: 4 -->!<!-- /react-text --></div>"`;
