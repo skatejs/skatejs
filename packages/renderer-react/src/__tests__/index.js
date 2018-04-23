@@ -88,6 +88,109 @@ test('unmounts', () => {
   container.removeChild(el);
 
   expect(el.firstChild).toBeNull();
+  expect(el._renderRoot).toBeNull();
   expect(mockMount).toHaveBeenCalledTimes(1);
   expect(mockUnmount).toHaveBeenCalledTimes(1);
+});
+
+test('re-connecting & disconnecting without rendering works', () => {
+  const container = document.createElement('div');
+
+  const mockMount = jest.fn();
+  const mockUnmount = jest.fn();
+
+  class MockReactComponent extends Component {
+    componentDidMount = mockMount;
+    componentWillUnmount = mockUnmount;
+    render() {
+      return <div />;
+    }
+  }
+
+  const ReactComponentWrapper = wrap(MockReactComponent);
+  define(ReactComponentWrapper);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  const el = new ReactComponentWrapper();
+  container.appendChild(el);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  el.renderer(el, el.render.bind(el));
+
+  expect(el.innerHTML).toMatchSnapshot();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  container.removeChild(el);
+
+  expect(el.firstChild).toBeNull();
+  expect(el._renderRoot).toBeNull();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(1);
+
+  // Re-connect
+  container.appendChild(el);
+
+  // Disconnect without having rendered
+  expect(() => container.removeChild(el)).not.toThrow();
+});
+
+test('rendering after re-connecting works', () => {
+  const container = document.createElement('div');
+
+  const mockMount = jest.fn();
+  const mockUnmount = jest.fn();
+
+  class MockReactComponent extends Component {
+    componentDidMount = mockMount;
+    componentWillUnmount = mockUnmount;
+    render() {
+      return <div />;
+    }
+  }
+
+  const ReactComponentWrapper = wrap(MockReactComponent);
+  define(ReactComponentWrapper);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  const el = new ReactComponentWrapper();
+  container.appendChild(el);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  el.renderer(el, el.render.bind(el));
+
+  expect(el.innerHTML).toMatchSnapshot();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  container.removeChild(el);
+
+  expect(el.firstChild).toBeNull();
+  expect(el._renderRoot).toBeNull();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(1);
+
+  // Re-connect
+  container.appendChild(el);
+
+  el.renderer(el, el.render.bind(el));
+
+  expect(el.innerHTML).toMatchSnapshot();
+  expect(mockMount).toHaveBeenCalledTimes(2);
+  expect(mockUnmount).toHaveBeenCalledTimes(1);
+
+  container.removeChild(el);
+
+  expect(el.firstChild).toBeNull();
+  expect(el._renderRoot).toBeNull();
+  expect(mockMount).toHaveBeenCalledTimes(2);
+  expect(mockUnmount).toHaveBeenCalledTimes(2);
 });
