@@ -1,3 +1,5 @@
+/** @jsx React.createElement */
+
 import React, { Component } from 'react';
 import { define } from 'skatejs';
 import withRenderer, { wrap } from '..';
@@ -30,17 +32,9 @@ test('renders', () => {
   expect(el.innerHTML).toMatchSnapshot();
 });
 
-test('wrapper - static component', () => {
-  const ReactComponentWrapper = wrap(ReactComponent);
-
-  define(ReactComponentWrapper);
-  const el = render(ReactComponentWrapper);
-  expect(el.innerHTML).toMatchSnapshot();
-});
-
 test('wrapper - override render()', () => {
   @define
-  class ReactComponentWrapper extends wrap(ReactComponent) {
+  class ReactComponentWrapper extends withRenderer() {
     render() {
       return <ReactComponent {...this.props} />;
     }
@@ -48,5 +42,13 @@ test('wrapper - override render()', () => {
 
   const el = new ReactComponentWrapper();
   el.renderer(el, el.render.bind(el));
+  expect(el.innerHTML).toMatchSnapshot();
+});
+
+test('wrapper - static component', () => {
+  const ReactComponentWrapper = wrap(ReactComponent);
+
+  define(ReactComponentWrapper);
+  const el = render(ReactComponentWrapper);
   expect(el.innerHTML).toMatchSnapshot();
 });
