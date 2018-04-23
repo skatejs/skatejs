@@ -13,7 +13,7 @@
     "prismjs": "1.12.2",
     "react": "15.6.2",
     "react-dom": "15.6.2",
-    "skatejs": "5.1.1",
+    "skatejs": "5.1.2",
     "yocss": "0.5.1"
   },
   "devDependencies": {
