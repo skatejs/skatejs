@@ -88,6 +88,7 @@ test('unmounts', () => {
   container.removeChild(el);
 
   expect(el.firstChild).toBeNull();
+  expect(el._renderRoot).toBeNull();
   expect(mockMount).toHaveBeenCalledTimes(1);
   expect(mockUnmount).toHaveBeenCalledTimes(1);
 });

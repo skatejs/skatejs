@@ -25,5 +25,6 @@ export default (Base = HTMLElement) =>
       // Preact hack https://github.com/developit/preact/issues/53
       const Nothing = () => null;
       this._preactDom = render(<Nothing />, this._renderRoot, this._preactDom);
+      this._renderRoot = null;
     }
   };
