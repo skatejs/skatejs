@@ -52,3 +52,42 @@ test('wrapper - static component', () => {
   const el = render(ReactComponentWrapper);
   expect(el.innerHTML).toMatchSnapshot();
 });
+
+test('unmounts', () => {
+  const container = document.createElement('div');
+
+  const mockMount = jest.fn();
+  const mockUnmount = jest.fn();
+
+  class MockReactComponent extends Component {
+    componentDidMount = mockMount;
+    componentWillUnmount = mockUnmount;
+    render() {
+      return <div />;
+    }
+  }
+
+  const ReactComponentWrapper = wrap(MockReactComponent);
+  define(ReactComponentWrapper);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  const el = new ReactComponentWrapper();
+  container.appendChild(el);
+
+  expect(mockMount).toHaveBeenCalledTimes(0);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  el.renderer(el, el.render.bind(el));
+
+  expect(el.innerHTML).toMatchSnapshot();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(0);
+
+  container.removeChild(el);
+
+  expect(el.firstChild).toBeNull();
+  expect(mockMount).toHaveBeenCalledTimes(1);
+  expect(mockUnmount).toHaveBeenCalledTimes(1);
+});

@@ -4,7 +4,8 @@
   "description": "A SkateJS renderer for React.",
   "devDependencies": {
     "react": "15.6.2",
-    "react-dom": "15.6.2"
+    "react-dom": "15.6.2",
+    "skatejs": "^5.1.2"
   },
   "esnext": "dist/esnext/index.js",
   "files": [
@@ -29,8 +30,5 @@
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
   },
-  "version": "0.2.1",
-  "dependencies": {
-    "skatejs": "^5.1.0"
-  }
+  "version": "0.2.1"
 }

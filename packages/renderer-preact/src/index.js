@@ -13,10 +13,17 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
+      this._renderRoot = root;
       this._preactDom = render(
         call(),
         root,
         this._preactDom || root.childNodes[0]
       );
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback && super.disconnectedCallback();
+      // Preact hack https://github.com/developit/preact/issues/53
+      const Nothing = () => null;
+      this._preactDom = render(<Nothing />, this._renderRoot, this._preactDom);
     }
   };

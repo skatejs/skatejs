@@ -1,6 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
-import { withRenderer } from 'skatejs';
+import { render, unmountComponentAtNode } from 'react-dom';
 
 const withReact = (Base = HTMLElement) =>
   class extends Base {
@@ -13,7 +12,13 @@ const withReact = (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
+      this._renderRoot = root;
       render(call(), root);
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback && super.disconnectedCallback();
+      unmountComponentAtNode(this._renderRoot);
+      this._renderRoot = null;
     }
   };
 
