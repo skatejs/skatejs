@@ -22,9 +22,8 @@ export default (Base = HTMLElement) =>
     }
     disconnectedCallback() {
       super.disconnectedCallback && super.disconnectedCallback();
-      // Preact hack https://github.com/developit/preact/issues/53
-      const Nothing = () => null;
-      this._preactDom = render(<Nothing />, this._renderRoot, this._preactDom);
+      // Render null to unmount. See https://github.com/skatejs/skatejs/pull/1432#discussion_r183381359
+      this._preactDom = render(null, this._renderRoot, this._preactDom);
       this._renderRoot = null;
     }
   };
