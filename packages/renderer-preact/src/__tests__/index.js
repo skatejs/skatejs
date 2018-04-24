@@ -74,5 +74,6 @@ test('wrappers cleanup', () => {
   root.removeChild(el);
 
   expect(el.innerHTML).toMatchSnapshot();
+  expect(el._renderRoot).toBeNull();
   expect(willUnmountSpy).toHaveBeenCalled();
 });

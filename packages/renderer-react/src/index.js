@@ -17,8 +17,10 @@ const withReact = (Base = HTMLElement) =>
     }
     disconnectedCallback() {
       super.disconnectedCallback && super.disconnectedCallback();
-      unmountComponentAtNode(this._renderRoot);
-      this._renderRoot = null;
+      if (this._renderRoot) {
+        unmountComponentAtNode(this._renderRoot);
+        this._renderRoot = null;
+      }
     }
   };
 
