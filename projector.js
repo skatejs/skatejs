@@ -53,7 +53,7 @@ async function release({ packages, type }) {
     await exec('git', ['tag', '-a', tag, '-m', tag], { cwd });
     await exec('npm', ['publish'], { cwd });
   }
-  await exec('git', ['push']);
+  await exec('git', ['push', '--follow-tags']);
 }
 
 module.exports = {
