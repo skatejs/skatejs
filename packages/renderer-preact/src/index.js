@@ -1,6 +1,26 @@
 /** @jsx h */
 
+import { define } from 'skatejs';
 import { h, render } from 'preact';
+
+let oldVnode;
+
+function setupPreact() {
+  oldVnode = preact.options.vnode;
+  preact.options.vnode = vnode => {
+    const fn = vnode.nodeName;
+    if (fn.is) {
+      vnode.nodeName = fn.is;
+    } else if (fn.constructor instanceof HTMLElement) {
+      fn = define(fn);
+      vnode.nodeName = fn.is;
+    }
+  };
+}
+
+function teardownPreact() {
+  preact.options.vnode = oldVnode;
+}
 
 export default (Base = HTMLElement) =>
   class extends Base {
@@ -13,12 +33,14 @@ export default (Base = HTMLElement) =>
       };
     }
     renderer(root, call) {
+      setupPreact();
       this._renderRoot = root;
       this._preactDom = render(
         call(),
         root,
         this._preactDom || root.childNodes[0]
       );
+      teardownPreact();
     }
     disconnectedCallback() {
       super.disconnectedCallback && super.disconnectedCallback();

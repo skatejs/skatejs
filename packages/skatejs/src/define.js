@@ -4,6 +4,11 @@ import type { CustomElement } from './types.js';
 import { name } from './name.js';
 
 export function define(Ctor: CustomElement): CustomElement {
-  customElements.define(Ctor.is || name(), Ctor);
+  if (!Ctor.is) {
+    Ctor = class extends Ctor {
+      static is = name();
+    };
+  }
+  customElements.define(Ctor.is, Ctor);
   return Ctor;
 }
