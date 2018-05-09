@@ -9,14 +9,12 @@ import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
 
 function create(propLocal) {
-  const el = new (define(
-    class extends withUpdate() {
-      static is = name();
-      static props = {
-        test: { ...propLocal, ...{ attribute: true } }
-      };
-    }
-  ))();
+  const el = new (define(class extends withUpdate() {
+    static is = name();
+    static props = {
+      test: { ...propLocal, ...{ attribute: true } }
+    };
+  }))();
   document.body.appendChild(el);
   return el;
 }
@@ -349,29 +347,27 @@ describe('withUpdate', () => {
     const secret2 = sym('secret2');
 
     beforeEach(done => {
-      elem = new (define(
-        class extends withUpdate() {
-          static is = name();
-          static props = {
-            [secret1]: null,
-            [secret2]: props.any,
-            public1: null,
-            public2: null
-          };
-          constructor() {
-            super();
-            this._rendered = 0;
-            this[secret1] = 'secretKey1';
-            this[secret2] = 'secretKey2';
-            this.public1 = 'publicKey1';
-            this.public2 = 'publicKey2';
-            this.undeclaredProp = 'undeclaredKey1';
-          }
-          updating() {
-            this._rendered++;
-          }
+      elem = new (define(class extends withUpdate() {
+        static is = name();
+        static props = {
+          [secret1]: null,
+          [secret2]: props.any,
+          public1: null,
+          public2: null
+        };
+        constructor() {
+          super();
+          this._rendered = 0;
+          this[secret1] = 'secretKey1';
+          this[secret2] = 'secretKey2';
+          this.public1 = 'publicKey1';
+          this.public2 = 'publicKey2';
+          this.undeclaredProp = 'undeclaredKey1';
         }
-      ))();
+        updating() {
+          this._rendered++;
+        }
+      }))();
       fixture(elem);
       afterMutations(done);
     });
@@ -477,15 +473,30 @@ describe('state', () => {
 
   it('should call triggerUpdate', () => {
     let updated;
-    const Test = define(
-      class extends Base {
-        triggerUpdate() {
-          updated = true;
-        }
+    const Test = define(class extends Base {
+      triggerUpdate() {
+        updated = true;
       }
-    );
+    });
     const test = new Test();
     test.state = {};
     expect(updated).toBe(true);
   });
+});
+
+test('setting attributes should call updated()', done => {
+  const Test = define(class extends withUpdate() {
+    static is = name();
+    static props = {
+      test: props.string
+    };
+    updated() {
+      expect(this.getAttribute('test')).toBe('something');
+      expect(this.test).toBe('something');
+      done();
+    }
+  });
+
+  const test = new Test();
+  test.setAttribute('test', 'something');
 });
