@@ -1,21 +1,29 @@
 /** @jsx h */
 
-import { define } from 'skatejs';
-import { h, render } from 'preact';
+import { name } from 'skatejs';
+import preact, { h, render } from 'preact';
+
+// TODO make this a Symbol() when it's supported.
+const preactNodeName = '__preactNodeName';
 
 let oldVnode;
 
+function newVnode(vnode) {
+  let fn = vnode.nodeName;
+  if (fn && fn.prototype instanceof HTMLElement) {
+    if (!fn[preactNodeName]) {
+      const prefix = fn.name;
+      fn = class extends fn {};
+      customElements.define((fn[preactNodeName] = name(prefix)), fn);
+    }
+    vnode.nodeName = fn[preactNodeName];
+  }
+  return vnode;
+}
+
 function setupPreact() {
   oldVnode = preact.options.vnode;
-  preact.options.vnode = vnode => {
-    const fn = vnode.nodeName;
-    if (fn.is) {
-      vnode.nodeName = fn.is;
-    } else if (fn.constructor instanceof HTMLElement) {
-      fn = define(fn);
-      vnode.nodeName = fn.is;
-    }
-  };
+  preact.options.vnode = newVnode;
 }
 
 function teardownPreact() {
