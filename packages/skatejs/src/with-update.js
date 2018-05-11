@@ -210,6 +210,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
           const propertyValue = deserialize ? deserialize(newValue) : newValue;
           this._props[propertyName] =
             propertyValue == null ? defaultValue : propertyValue;
+          this.triggerUpdate();
         }
       }
 
