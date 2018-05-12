@@ -99,6 +99,9 @@ prop(NodeProto, 'textContent', {
     return this.childNodes.map(c => c.nodeValue).join('');
   },
   set(val) {
+    while (this.firstChild) {
+      this.removeChild(this.firstChild);
+    }
     this.appendChild(document.createTextNode(val));
     if (this.nodeName === 'SCRIPT') {
       execCode(val);
