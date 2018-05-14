@@ -89,6 +89,7 @@
     "prismjs": "1.12.2",
     "react": "15.6.2",
     "react-dom": "15.6.2",
+    "snabbdom": "^0.7.1",
     "uglify-es": "3.3.10",
     "undom": "0.3.3",
     "yargs": "11.0.0",
