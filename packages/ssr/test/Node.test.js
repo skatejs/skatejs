@@ -100,4 +100,24 @@ describe('Node', () => {
       }
     });
   });
+
+  describe('textContent', () => {
+    it('should get textContent', () => {
+      const text = 'Hello Bob!';
+      const div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      expect(div.textContent).toEqual(text);
+    });
+
+    it('should set textContent', () => {
+      const div = document.createElement('div');
+      const text = `Hello World!`;
+      div.textContent = text;
+      expect(div.textContent).toEqual(text);
+
+      const newText = `Hello Bob!`;
+      div.textContent = newText;
+      expect(div.textContent).toEqual(newText);
+    });
+  });
 });
