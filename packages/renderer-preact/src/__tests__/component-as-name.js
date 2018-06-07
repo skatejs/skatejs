@@ -4,20 +4,21 @@ import { h } from 'preact';
 import { withComponent } from 'skatejs';
 import withRenderer from '..';
 
-class Comp1 extends withComponent(withRenderer()) {
+class MainComp extends withComponent(withRenderer()) {
   render() {
     return (
       <div>
         Hello,{' '}
-        <Comp2>
+        <ChildComp>
           <slot />
-        </Comp2>!
+        </ChildComp>
+        <ChildComp />
       </div>
     );
   }
 }
 
-class Comp2 extends withComponent(withRenderer()) {
+class ChildComp extends withComponent(withRenderer()) {
   render() {
     return (
       <b>
@@ -28,11 +29,13 @@ class Comp2 extends withComponent(withRenderer()) {
 }
 
 test('component as tag name / auto-defining', done => {
-  const comp1 = new Comp1();
-  document.body.appendChild(comp1);
+  const mainComp = new MainComp();
+  document.body.appendChild(mainComp);
   setTimeout(() => {
-    const comp2 = comp1.shadowRoot.children[0].children[0];
-    expect(comp2.nodeName).toMatch(new RegExp('^x-comp2'));
+    const childComp1 = mainComp.shadowRoot.children[0].children[0];
+    expect(childComp1.nodeName).toMatch(new RegExp('^child-comp'));
+    const childComp2 = mainComp.shadowRoot.children[0].children[1];
+    expect(childComp2.nodeName).toBe(childComp1.nodeName);
     done();
   });
 });
