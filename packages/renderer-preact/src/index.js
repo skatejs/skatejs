@@ -13,8 +13,10 @@ function newVnode(vnode) {
   if (fn && fn.prototype instanceof HTMLElement) {
     if (!fn[preactNodeName]) {
       const prefix = fn.name;
-      fn = class extends fn {};
-      customElements.define((fn[preactNodeName] = name(prefix)), fn);
+      customElements.define(
+        (fn[preactNodeName] = name(prefix)),
+        class extends fn {}
+      );
     }
     vnode.nodeName = fn[preactNodeName];
   }
