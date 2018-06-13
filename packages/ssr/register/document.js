@@ -5,6 +5,8 @@ const { find, nodeName } = require('./util');
 
 const createElement = document.createElement.bind(document);
 
+document.defaultView = window;
+
 document.createComment = function(textContent) {
   const comment = new Comment();
   comment.textContent = textContent;
