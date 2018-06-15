@@ -29,6 +29,10 @@ export function normaliseAttributeDefinition(
   return obj;
 }
 
+function identity(v: mixed) {
+  return v;
+}
+
 export function normalisePropertyDefinition(
   name: string,
   prop: PropType
@@ -36,18 +40,21 @@ export function normalisePropertyDefinition(
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
     attribute: normaliseAttributeDefinition(name, prop),
-    coerce: coerce || ((v: mixed) => v),
+    coerce: coerce || identity,
     default: def,
-    deserialize: deserialize || ((v: mixed) => v),
-    serialize: serialize || ((v: mixed) => v)
+    deserialize: deserialize || identity,
+    serialize: serialize || identity
   };
 }
+
+const defaultTypesMap = new Map();
 
 function defineProps(constructor) {
   if (constructor.hasOwnProperty('_propsNormalised')) return;
   const { props } = constructor;
   keys(props).forEach(name => {
     let func = props[name];
+    if (defaultTypesMap.has(func)) func = defaultTypesMap.get(func);
     if (typeof func !== 'function') func = prop((func: any));
     func({ constructor }, name);
   });
@@ -302,6 +309,12 @@ const string: Function = prop({
   coerce: String,
   serialize: (val: mixed): null | string => (empty(val) ? null : String(val))
 });
+
+defaultTypesMap.set(Array, array);
+defaultTypesMap.set(Boolean, boolean);
+defaultTypesMap.set(Number, number);
+defaultTypesMap.set(Object, object);
+defaultTypesMap.set(String, string);
 
 export const props = {
   any,

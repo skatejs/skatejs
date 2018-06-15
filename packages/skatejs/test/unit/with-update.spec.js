@@ -86,6 +86,41 @@ test('static get props() {} should define observedAttributes', () => {
   expect(Test.observedAttributes.indexOf('test')).toBe(0);
 });
 
+function comparePropTypes(type1, type2) {
+  expect(type1.coerce).toEqual(type2.coerce);
+  expect(type1.serialize).toEqual(type2.serialize);
+  expect(type1.deserialize).toEqual(type2.deserialize);
+  expect(type1.default).toEqual(type2.default);
+}
+
+test('prop types could be defined with native types constructors', () => {
+  @define
+  class Test extends withUpdate() {
+    static get props() {
+      return {
+        propsString: props.string,
+        nativeString: String,
+        propsBoolean: props.boolean,
+        nativeBoolean: Boolean,
+        propsNumber: props.number,
+        nativeNumber: Number,
+        propsArray: props.array,
+        nativeArray: Array,
+        propsObject: props.object,
+        nativeObject: Object
+      };
+    }
+  }
+  const testEl = new Test();
+  const propsNormalised = testEl.constructor._propsNormalised;
+
+  comparePropTypes(propsNormalised.nativeString, propsNormalised.propsString);
+  comparePropTypes(propsNormalised.nativeBoolean, propsNormalised.propsBoolean);
+  comparePropTypes(propsNormalised.nativeNumber, propsNormalised.propsNumber);
+  comparePropTypes(propsNormalised.nativeObject, propsNormalised.propsObject);
+  comparePropTypes(propsNormalised.nativeArray, propsNormalised.propsArray);
+});
+
 describe('withUpdate', () => {
   it('should not share _props instance', () => {
     class Test1 extends withUpdate() {
