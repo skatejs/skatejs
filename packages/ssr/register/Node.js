@@ -25,7 +25,7 @@ function connectNode(node) {
     node.connectedCallback();
   }
   node[isConnected] = true;
-  triggerMutation('add', node);
+  triggerMutation('add', node.parentNode);
 }
 
 function disconnectNode(node) {
@@ -33,7 +33,7 @@ function disconnectNode(node) {
     node.disconnectedCallback();
   }
   node[isConnected] = false;
-  triggerMutation('remove', node);
+  triggerMutation('remove', node.parentNode);
 }
 
 prop(NodeProto, 'content', {

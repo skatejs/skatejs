@@ -67,7 +67,7 @@ ElementProto.hasAttributes = function() {
 ElementProto.removeAttribute = function(name) {
   const oldValue = this.getAttribute(name);
   removeAttribute.call(this, name);
-  triggerMutation('attribute', this, name, oldValue);
+  triggerMutation('attribute', this, null, name, oldValue);
   if (this.attributeChangedCallback) {
     this.attributeChangedCallback(name, oldValue, null);
   }
@@ -84,7 +84,7 @@ ElementProto.setAttribute = function(name, newValue) {
     this[propName] = newValue;
     settingProp = false;
   }
-  triggerMutation('attribute', this, name, oldValue);
+  triggerMutation('attribute', this, null, name, oldValue);
   if (this.attributeChangedCallback && observedAttributes.indexOf(name) > -1) {
     this.attributeChangedCallback(name, oldValue, newValue);
   }

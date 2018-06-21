@@ -33,12 +33,24 @@ test('childList - textContent (batched)', done => {
   });
 });
 
-test('timing', () => {
+test('timing - text', done => {
   let called = 0;
   const { el } = observe(() => ++called, { childList: true });
   el.textContent = 'test1';
   el.textContent = 'test2';
-  return Promise.resolve().then(() => {
+  return setTimeout(() => {
     expect(called).toBe(1);
+    done();
+  });
+});
+
+test('timing - appendChild', done => {
+  let called = 0;
+  const { el } = observe(() => ++called, { childList: true });
+  el.appendChild(<div />);
+  el.appendChild(<div />);
+  return setTimeout(() => {
+    expect(called).toBe(1);
+    done();
   });
 });

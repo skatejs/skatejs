@@ -3,13 +3,15 @@ const { MutationRecord } = require('./MutationRecord');
 
 function triggerMutation(
   mutationType,
+  parentNode,
   childNode,
   attributeName = null,
   oldValue = null
 ) {
-  const { parentNode, previousSibling, nextSibling } = childNode;
-  dispatchEvent(
+  const { previousSibling, nextSibling } = parentNode;
+  parentNode.dispatchEvent(
     new Event('__MutationObserver', {
+      bubbles: true,
       mutationType,
       childNode,
       parentNode,
@@ -28,10 +30,8 @@ function promise(done) {
       done();
     }
   });
-  return {
-    cancel() {
-      cancelled = true;
-    }
+  return () => {
+    cancelled = true;
   };
 }
 
@@ -41,47 +41,31 @@ class MutationObserver {
     this._cancel = () => {};
     this._element = null;
     this._enqueue = this._enqueue.bind(this);
-    this._promise = this._makeBatchedCallback();
     this._records = new Map();
   }
   disconnect() {
-    removeEventListener('__MutationObserver', this._enqueue);
+    this._cleanup();
+    this._element.removeEventListener('__MutationObserver', this._enqueue);
   }
-  observe(element, options) {
+  observe(element) {
     this._element = element;
-    this._options = options;
-    addEventListener('__MutationObserver', this._enqueue);
+    this._element.addEventListener('__MutationObserver', this._enqueue);
   }
   takeRecords() {
     const entries = this._records.entries();
-    this._records.clear();
+    this._cleanup();
     return Array.from(entries).map(map => map[1]);
+  }
+  _cleanup() {
+    this._cancel();
+    this._records.clear();
   }
   _enqueue(e) {
     let record = this._records.get(e.parentNode);
+
     if (!record) {
       this._records.set(e.parentNode, (record = new MutationRecord()));
     }
-
-    // if (this._options.childList) {
-    //   if (e.mutationType !== 'add' && e.mutationType !== 'remove') {
-    //     return;
-    //   }
-    //   if (!this._options.subtree && this._element !== e.parentNode) {
-    //     return;
-    //   }
-    // }
-    //
-    // if (this._options.attributes && e.mutationType !== 'attribute') {
-    //   return;
-    // }
-    //
-    // if (this._options.characterData) {
-    //   throw new Error('The MutationObserver characterData is not implemented.');
-    // }
-
-    this._promise.cancel();
-    this._promise = this._makeBatchedCallback();
 
     if (e.mutationType === 'add') {
       record.type = 'childList';
@@ -100,9 +84,9 @@ class MutationObserver {
       record.type = 'characterData';
       record.oldValue = e.oldvalue;
     }
-  }
-  _makeBatchedCallback() {
-    return promise(() => this._callback(this.takeRecords()));
+
+    this._cancel();
+    this._cancel = promise(() => this._callback(this.takeRecords()));
   }
 }
 
