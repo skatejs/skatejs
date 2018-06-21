@@ -98,6 +98,9 @@ test('prop types could be defined with native types constructors', () => {
   class Test extends withUpdate() {
     static get props() {
       return {
+        propsAny: props.any,
+        nativeNull: null,
+        nativeUndefined: undefined,
         propsString: props.string,
         nativeString: String,
         propsBoolean: props.boolean,
@@ -114,6 +117,8 @@ test('prop types could be defined with native types constructors', () => {
   const testEl = new Test();
   const propsNormalised = testEl.constructor._propsNormalised;
 
+  comparePropTypes(propsNormalised.nativeNull, propsNormalised.propsAny);
+  comparePropTypes(propsNormalised.nativeUndefined, propsNormalised.propsAny);
   comparePropTypes(propsNormalised.nativeString, propsNormalised.propsString);
   comparePropTypes(propsNormalised.nativeBoolean, propsNormalised.propsBoolean);
   comparePropTypes(propsNormalised.nativeNumber, propsNormalised.propsNumber);

@@ -53,7 +53,7 @@ function defineProps(constructor) {
   if (constructor.hasOwnProperty('_propsNormalised')) return;
   const { props } = constructor;
   keys(props).forEach(name => {
-    let func = props[name];
+    let func = props[name] || props.any;
     if (defaultTypesMap.has(func)) func = defaultTypesMap.get(func);
     if (typeof func !== 'function') func = prop((func: any));
     func({ constructor }, name);
