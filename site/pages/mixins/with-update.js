@@ -35,7 +35,7 @@ export default class extends Component {
         <x-marked src="${`
           In the above example, we use the bare minimum setup and use the \`updated()\` callback to implement a very simple renderer. We've done this for the sake of example.
 
-          If we query the DOM for an instance of the element that we defined in the above example, we can update its props and the content will update. Suppose we have the following HTML using the above example's `with-update` element:
+          If we query the DOM for an instance of the element that we defined in the above example, we can update its props and the content will update. Suppose we have the following HTML using the above example's \`with-update\` element:
 
           \`\`\`html
           <with-update name="world"></with-update>

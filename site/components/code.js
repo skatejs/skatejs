@@ -31,7 +31,7 @@ function format(src) {
 
 function highlight(elem, code, language) {
   import('worker-loader!prismjs').then(Prism => {
-    const prism = new Prism();
+    const prism = new Prism.default();
     prism.onmessage = e => {
       elem.innerHTML = e.data;
     };
@@ -47,7 +47,9 @@ function highlight(elem, code, language) {
 withLoadable({
   is: 'code-style',
   loader: () =>
-    import('raw-loader!prismjs/themes/prism-twilight.css').then(style)
+    import('raw-loader!prismjs/themes/prism-twilight.css').then(i =>
+      style(i.default)
+    )
 });
 
 const cssCode = {

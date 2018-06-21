@@ -132,8 +132,9 @@
     "prettier-eslint": "8.8.1",
     "projector-cli": "3.1.0",
     "raw-loader": "0.5.1",
-    "webpack": "4.1.1",
-    "webpack-dev-server": "3.1.0",
+    "webpack": "4.12.0",
+    "webpack-cli": "3.0.8",
+    "webpack-dev-server": "3.1.4",
     "worker-loader": "1.1.1"
   },
   "name": "skatejs-monorepo",
@@ -144,7 +145,7 @@
     "flow": "flow",
     "precommit": "lint-staged",
     "prepublish": "bolt build",
-    "site": "cd site && webpack -p",
+    "site": "cd site && rm -rf public && webpack -p",
     "test": "jest"
   },
   "jest": {

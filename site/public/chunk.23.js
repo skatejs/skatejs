@@ -1,1 +1,0 @@
-webpackJsonp([23],{135:function(t,i,n){"use strict";window.location="/guides/getting-started"}});

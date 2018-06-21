@@ -6,28 +6,6 @@ const args = yargs.argv;
 const contextPath = path.join(__dirname, '.');
 const publicPath = path.join(__dirname, 'public');
 
-// require('@skatejs/ssr/register');
-// const render = require('@skatejs/ssr');
-// const fs = require('fs');
-//
-// class WebpackPrerenderPlugin {
-//   getFile(name) {
-//     return fs.readFileSync(path.join(publicPath, name)).toString();
-//   }
-//   apply(compiler) {
-//     // if (process.env.NODE_ENV !== 'production') {
-//     //   return;
-//     // }
-//     compiler.plugin('done', (comp, done) => {
-//       document.ssr.scriptBase = './public';
-//       document.body.innerHTML = this.getFile('index.html');
-//       render()
-//         .then(console.log)
-//         .then(done);
-//     });
-//   }
-// }
-
 module.exports = {
   context: contextPath,
   devServer: {
@@ -38,6 +16,7 @@ module.exports = {
   },
   devtool: args.p ? false : 'source-map',
   entry: './index.js',
+  mode: 'development',
   module: {
     rules: [
       {
@@ -68,19 +47,11 @@ module.exports = {
       }
     ]
   },
+  optimization: {
+    splitChunks: {}
+  },
   output: {
-    filename: 'chunk.[name].js',
     path: publicPath,
     publicPath: '/'
-  },
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      children: true,
-      deepChildren: true,
-      filename: 'entry.js',
-      minChunks: 2,
-      name: 'main'
-    })
-    // new WebpackPrerenderPlugin()
-  ]
+  }
 };
