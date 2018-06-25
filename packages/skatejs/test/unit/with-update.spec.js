@@ -482,6 +482,21 @@ describe('state', () => {
     test.state = {};
     expect(updated).toBe(true);
   });
+
+  describe('inherited', () => {
+    let vals;
+    const Base = class extends HTMLElement {
+      static observedAttributes() {
+        return vals;
+      }
+    };
+
+    it('should inherit non-empty observedAttributes from the superclass', () => {
+      vals = ['thing'];
+      const Elem = class extends withUpdate(Base) {};
+      expect(Elem.observedAttributes).toContain('thing');
+    });
+  });
 });
 
 test('setting attributes should call updated()', done => {
