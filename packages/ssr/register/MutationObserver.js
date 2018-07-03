@@ -9,18 +9,20 @@ function triggerMutation(
   oldValue = null
 ) {
   const { previousSibling, nextSibling } = parentNode;
-  parentNode.dispatchEvent(
-    new Event('__MutationObserver', {
-      bubbles: true,
-      mutationType,
-      childNode,
-      parentNode,
-      previousSibling,
-      nextSibling,
-      attributeName,
-      oldValue
-    })
-  );
+  if (parentNode && parentNode.dispatchEvent) {
+    parentNode.dispatchEvent(
+      new Event('__MutationObserver', {
+        bubbles: true,
+        mutationType,
+        childNode,
+        parentNode,
+        previousSibling,
+        nextSibling,
+        attributeName,
+        oldValue
+      })
+    );
+  }
 }
 
 function promise(done) {
