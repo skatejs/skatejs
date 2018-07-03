@@ -12,7 +12,7 @@ Skate is a functional abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) that:
 
 * Produces cross-framework compatible components.
-* Abstracts away common attribute / property semantics via `props`, such as
+* Abstracts away common attribute / property semantics via `props` or native types, such as
   attribute reflection and coercion.
 * Adds several lifecycle callbacks for responding to prop updates, rendering and
   updating, as well as a way to manage internal component state.
@@ -60,7 +60,7 @@ import { h } from 'preact';
 class WithPreact extends withComponent(withPreact()) {
   static get props() {
     return {
-      name: props.string
+      name: props.string // String could be used also to define the prop type
     };
   }
   render({ name }) {

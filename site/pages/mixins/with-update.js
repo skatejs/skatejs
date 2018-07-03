@@ -158,33 +158,34 @@ export default class extends Component {
           ### Built-in props
 
           Skate ships with several built-in props that solve many of the common situations that you'll encounter.
+          They can be used through \`props\` namespace or its corresponding native type, e.g., \`props.array\` or \`Array\`
 
           All built-in props exhibint the following behaviour with attributes:
 
           1. They're linked to an attribute that has the same name as the property, but dash-cased.
           2. Attribute binding is one-way: attribute updates affect the property, but not the other way around.
 
-          #### any
+          #### props.any / undefined / null
 
           This provides you a way to have the default prop behaviour while allowing any value to come in.
 
-          #### array
+          #### props.array / Array
 
           The \`array\` prop ensures that whatever is passed to the prop is coerced to an array. This means that a string would be made into an array where it is the only item in the array. When linked to an attribute, the value is JSON parsed / stringified as necessary.
 
-          #### boolean
+          #### props.boolean / Boolean
 
           The \`boolean\` prop coerces all values to a boolean. Attributes, when true, are void. When false, they're removed.
 
-          #### number
+          #### props.number / Number
 
           The \`number\` prop coerces all values to be a number.
 
-          #### object
+          #### props.object / Object
 
           The \`object\` prop ensures that a default, empty object is available. It doesn't coerce any values, like the \`array\` prop, but it does ensure that attribute values are JSON parsed / stringified.
 
-          #### string
+          #### props.string / String
 
           The \`string\` prop ensures that whatever value is passed is coerced to a string.
         `}"></x-marked>
