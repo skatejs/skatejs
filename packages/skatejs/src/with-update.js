@@ -8,7 +8,7 @@ import type {
 } from './types.js';
 import { dashCase, empty, keys, sym } from './util.js';
 
-export function normaliseAttributeDefinition(
+export function normalizeAttributeDefinition(
   name: string | Symbol,
   prop: PropType
 ): Object {
@@ -33,13 +33,13 @@ function identity(v: mixed) {
   return v;
 }
 
-export function normalisePropertyDefinition(
+export function normalizePropertyDefinition(
   name: string,
   prop: PropType
 ): Object {
   const { coerce, default: def, deserialize, serialize } = prop;
   return {
-    attribute: normaliseAttributeDefinition(name, prop),
+    attribute: normalizeAttributeDefinition(name, prop),
     coerce: coerce || identity,
     default: def,
     deserialize: deserialize || identity,
@@ -50,7 +50,7 @@ export function normalisePropertyDefinition(
 const defaultTypesMap = new Map();
 
 function defineProps(constructor) {
-  if (constructor.hasOwnProperty('_propsNormalised')) return;
+  if (constructor.hasOwnProperty('_propsNormalized')) return;
   const { props } = constructor;
   keys(props).forEach(name => {
     let func = props[name] || props.any;
@@ -73,17 +73,17 @@ export function prop(definition: PropType | void): Function {
 
   // Allows decorators, or imperative definitions.
   const func = function({ constructor }, name: string): void {
-    const normalised = normalisePropertyDefinition(name, propertyDefinition);
+    const normalized = normalizePropertyDefinition(name, propertyDefinition);
 
     // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
     // classes or share the instance anywhere where it's not intended to be shared explicitly in userland code.
-    if (!constructor.hasOwnProperty('_propsNormalised')) {
-      constructor._propsNormalised = {};
+    if (!constructor.hasOwnProperty('_propsNormalized')) {
+      constructor._propsNormalized = {};
     }
 
     // Cache the value so we can reference when syncing the attribute to the property.
-    constructor._propsNormalised[name] = normalised;
-    const { attribute: { source, target } } = normalised;
+    constructor._propsNormalized[name] = normalized;
+    const { attribute: { source, target } } = normalized;
 
     if (source) {
       constructor._observedAttributes.push(source);
@@ -97,10 +97,10 @@ export function prop(definition: PropType | void): Function {
       configurable: true,
       get() {
         const val = this._props[name];
-        return val == null ? normalised.default : val;
+        return val == null ? normalized.default : val;
       },
       set(val) {
-        const { attribute: { target }, serialize } = normalised;
+        const { attribute: { target }, serialize } = normalized;
         if (target) {
           const serializedVal = serialize ? serialize(val) : val;
           if (serializedVal == null) {
@@ -109,7 +109,7 @@ export function prop(definition: PropType | void): Function {
             this.setAttribute(target, serializedVal);
           }
         }
-        this._props[name] = normalised.coerce(val);
+        this._props[name] = normalized.coerce(val);
         this.triggerUpdate();
       }
     });
@@ -202,7 +202,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       const {
         _attributeToAttributeMap,
         _attributeToPropertyMap,
-        _propsNormalised
+        _propsNormalized
       } = this.constructor;
 
       if (super.attributeChangedCallback) {
@@ -211,7 +211,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
       const propertyName = _attributeToPropertyMap[name];
       if (propertyName) {
-        const propertyDefinition = _propsNormalised[propertyName];
+        const propertyDefinition = _propsNormalized[propertyName];
         if (propertyDefinition) {
           const { default: defaultValue, deserialize } = propertyDefinition;
           const propertyValue = deserialize ? deserialize(newValue) : newValue;
