@@ -202,7 +202,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       const {
         _attributeToAttributeMap,
         _attributeToPropertyMap,
-        props
+        _propsNormalised
       } = this.constructor;
 
       if (super.attributeChangedCallback) {
@@ -211,7 +211,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
       const propertyName = _attributeToPropertyMap[name];
       if (propertyName) {
-        const propertyDefinition = props[propertyName];
+        const propertyDefinition = _propsNormalised[propertyName];
         if (propertyDefinition) {
           const { default: defaultValue, deserialize } = propertyDefinition;
           const propertyValue = deserialize ? deserialize(newValue) : newValue;
