@@ -19,7 +19,7 @@ export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
         const fn = this.childrenUpdated.bind(this);
         this._mo = new MutationObserver(fn);
         this._mo.observe(this, { childList: true });
-        fn();
+        documentReady().then(fn);
       }
     }
 
@@ -30,3 +30,12 @@ export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
       }
     }
   };
+
+function documentReady() {
+  if (document.readyState === 'loading') {
+    return new Promise(resolve => {
+      document.addEventListener('DOMContentLoaded', resolve);
+    })
+  }
+  return Promise.resolve();
+}
