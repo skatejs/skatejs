@@ -26,9 +26,7 @@ export function createContext(initialProps: any): Context {
     }
 
     unobserve(callback) {
-      for (const prop of props) {
-        const callbacksForProp = this._callbacks.get(prop)
-
+      for (const [prop, callbacksForProp] of this._callbacks) {
         if (callbacksForProp)
           callbacksForProp.delete(callback)
       }
