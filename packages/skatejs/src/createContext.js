@@ -5,7 +5,7 @@ class Group extends Map {
   }
 }
 
-export function createContext(props: any): Context {
+export function createContext(initialProps: any): Context {
 
   class Context {
 
@@ -72,7 +72,9 @@ export function createContext(props: any): Context {
 
   const context = new Context
 
-  for (let prop of props) {
+  for (let prop in initialProps) {
+    propValues[prop] = initialProps[prop]
+
     Object.defineProperty(context, prop, {
       get: () => propValues[prop],
       set: value => {
