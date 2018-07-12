@@ -24,5 +24,5 @@
   "module": "dist/es/index.js",
   "name": "@skatejs/sk-marked",
   "repository": "https://github.com/skatejs/skatejs",
-  "version": "0.0.0"
+  "version": "0.0.1"
 }
