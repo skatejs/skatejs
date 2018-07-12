@@ -1,17 +1,19 @@
 // @flow
 
-class Group extends Map {
-  set(...itemsInGroup) {
-  }
-}
-
-export function createContext(initialProps: any): Context {
+export function defineContext(initialProps: any): Context {
+  initialProps = { ...initialProps }
 
   class Context {
 
     constructor() {
       this._callbacks = new Map
       this._updatedProps = new Set
+
+      this._propValues = {}
+
+      for (let prop in initialProps) {
+        this._propValues[prop] = initialProps[prop]
+      }
     }
 
     observe(props, callback) {
@@ -66,23 +68,17 @@ export function createContext(initialProps: any): Context {
 
   }
 
-  const propValues = {}
-
-  const context = new Context
-
   for (let prop in initialProps) {
-    propValues[prop] = initialProps[prop]
-
-    Object.defineProperty(context, prop, {
-      get: () => propValues[prop],
-      set: value => {
-        propValues[prop] = value
+    Object.defineProperty(Context.prototype, prop, {
+      get() { return this._propValues[prop] },
+      set(value) {
+        this._propValues[prop] = value
         this._updatedProps.add(prop)
         this._scheduleCallbacksForProp(prop)
       }
     })
   }
 
-  return Object.freeze(context)
+  return Context
 
 }
