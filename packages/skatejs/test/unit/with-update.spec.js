@@ -115,15 +115,15 @@ test('prop types could be defined with native types constructors', () => {
     }
   }
   const testEl = new Test();
-  const propsNormalised = testEl.constructor._propsNormalised;
+  const propsNormalized = testEl.constructor._propsNormalized;
 
-  comparePropTypes(propsNormalised.nativeNull, propsNormalised.propsAny);
-  comparePropTypes(propsNormalised.nativeUndefined, propsNormalised.propsAny);
-  comparePropTypes(propsNormalised.nativeString, propsNormalised.propsString);
-  comparePropTypes(propsNormalised.nativeBoolean, propsNormalised.propsBoolean);
-  comparePropTypes(propsNormalised.nativeNumber, propsNormalised.propsNumber);
-  comparePropTypes(propsNormalised.nativeObject, propsNormalised.propsObject);
-  comparePropTypes(propsNormalised.nativeArray, propsNormalised.propsArray);
+  comparePropTypes(propsNormalized.nativeNull, propsNormalized.propsAny);
+  comparePropTypes(propsNormalized.nativeUndefined, propsNormalized.propsAny);
+  comparePropTypes(propsNormalized.nativeString, propsNormalized.propsString);
+  comparePropTypes(propsNormalized.nativeBoolean, propsNormalized.propsBoolean);
+  comparePropTypes(propsNormalized.nativeNumber, propsNormalized.propsNumber);
+  comparePropTypes(propsNormalized.nativeObject, propsNormalized.propsObject);
+  comparePropTypes(propsNormalized.nativeArray, propsNormalized.propsArray);
 });
 
 describe('withUpdate', () => {
