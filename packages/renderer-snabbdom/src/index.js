@@ -17,7 +17,7 @@ export default function createMixin(modules) {
         this._renderRoot = root;
         let newVTree = call();
         newVTree = vnode(
-          root.tagName,
+          'root',
           {},
           Array.isArray(newVTree) ? newVTree : [newVTree],
           undefined,
@@ -27,7 +27,7 @@ export default function createMixin(modules) {
           // small cheat to allow rendering root el
           // creates an empty vnode with the same sel as the rendered vtree
           // this ensure the view element will be properly patched
-          const emptyVTree = vnode(root.tagName, {}, [], undefined, root);
+          const emptyVTree = vnode('root', {}, [], undefined, root);
           patch(emptyVTree, newVTree);
         } else {
           patch(this._vTree, newVTree);
@@ -36,13 +36,7 @@ export default function createMixin(modules) {
       }
       disconnectedCallback() {
         super.disconnectedCallback && super.disconnectedCallback();
-        const emptyVTree = vnode(
-          this._renderRoot.tagName,
-          {},
-          [],
-          undefined,
-          this._renderRoot
-        );
+        const emptyVTree = vnode('root', {}, [], undefined, this._renderRoot);
         patch(this._vTree, emptyVTree);
       }
     };
