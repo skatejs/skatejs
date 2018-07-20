@@ -5,14 +5,6 @@ export default function createMixin(modules) {
   var patch = init(modules);
   return (Base = HTMLElement) =>
     class extends Base {
-      get props() {
-        // We override props so that we can satisfy most use
-        // cases for children by using a slot.
-        return {
-          ...super.props,
-          ...{ children: vnode('slot', {}, [], undefined, undefined) }
-        };
-      }
       renderer(root, call) {
         this._renderRoot = root;
         let newVTree = call();
