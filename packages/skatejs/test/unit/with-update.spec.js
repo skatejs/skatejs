@@ -3,7 +3,6 @@
 import { mount } from '@skatejs/bore';
 import { h as preactH } from 'preact';
 import { define, name, prop, props, withUpdate } from '../../src';
-import { sym } from '../../src/util';
 
 import afterMutations from '../lib/after-mutations';
 import fixture from '../lib/fixture';
@@ -383,8 +382,8 @@ describe('withUpdate', () => {
     }
 
     let elem;
-    const secret1 = sym('secret1');
-    const secret2 = sym('secret2');
+    const secret1 = Symbol('secret1');
+    const secret2 = Symbol('secret2');
 
     beforeEach(done => {
       elem = new (define(class extends withUpdate() {
