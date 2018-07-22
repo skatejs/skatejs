@@ -18,8 +18,8 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       }
     }
 
-    updated(...args) {
-      super.updated && super.updated(...args);
+    updated(prevProps, prevState) {
+      super.updated && super.updated(prevProps, prevState);
       this.rendering && this.rendering();
       this.renderer(this.renderRoot, () => this.render && this.render(this));
       this.rendered && this.rendered();
