@@ -5,45 +5,33 @@ export default function createMixin(modules) {
   var patch = init(modules);
   return (Base = HTMLElement) =>
     class extends Base {
-      get props() {
-        // We override props so that we can satisfy most use
-        // cases for children by using a slot.
-        return {
-          ...super.props,
-          ...{ children: vnode('slot', {}, [], undefined, undefined) }
-        };
-      }
+      _lastVTree = null;
+        
       renderer(root, call) {
         this._renderRoot = root;
         let newVTree = call();
-        newVTree = vnode(
-          root.tagName,
-          {},
-          Array.isArray(newVTree) ? newVTree : [newVTree],
-          undefined,
-          root
-        );
-        if (!this._vTree) {
-          // small cheat to allow rendering root el
-          // creates an empty vnode with the same sel as the rendered vtree
-          // this ensure the view element will be properly patched
-          const emptyVTree = vnode(root.tagName, {}, [], undefined, root);
-          patch(emptyVTree, newVTree);
-        } else {
-          patch(this._vTree, newVTree);
+
+        // first render
+        if (!this._lastVTree) {
+          const tmp = document.createElement('tmp');
+          this.root.appendChild(tmp);
+          
+          // replaces the `tmp` element with content described by the vnode
+          this._lastVTree = patch(tmp, newVTree);
         }
-        this._vTree = newVTree;
+
+        // all subsequent renders
+        else {
+          this._lastVTree = patch(this._lastVTree, newVTree)
+        }
       }
+      
       disconnectedCallback() {
         super.disconnectedCallback && super.disconnectedCallback();
-        const emptyVTree = vnode(
-          this._renderRoot.tagName,
-          {},
-          [],
-          undefined,
-          this._renderRoot
-        );
-        patch(this._vTree, emptyVTree);
+
+        // How to "unmount" the component?
+        // Waiting for a reply at https://github.com/snabbdom/snabbdom/issues/386
+        
       }
     };
 }
