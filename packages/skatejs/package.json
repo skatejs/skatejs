@@ -1,0 +1,28 @@
+{
+  "name": "skatejs",
+  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
+  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
+  "license": "MIT",
+  "keywords": [
+    "components",
+    "custom",
+    "dom",
+    "elements",
+    "web",
+    "vdom",
+    "virtual"
+  ],
+  "repository": "https://github.com/skatejs/skatejs",
+  "version": "5.1.1",
+  "files": [
+    "dist/cjs",
+    "dist/esm"
+  ],
+  "browser": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "src": "src",
+  "devDependencies": {
+    "@skatejs/bore": "4.0.3"
+  }
+}
