@@ -1,0 +1,25 @@
+{
+  "name": "ssr-wc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@skatejs/val": "^0.4.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "hapi": "^17.0.0",
+    "outdent": "^0.4.1",
+    "preact": "^8.1.0",
+    "skatejs": "^5.0.0-beta.4",
+    "undom": "^0.3.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

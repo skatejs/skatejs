@@ -3,17 +3,17 @@
 const t = require('babel-types');
 const { convert } = require('./converters');
 
-/*::
+/*
+type Path = {};
 
 type PluginOptions = {};
 
 type State = {
   opts: PluginOptions
 };
-
 */
 
-function isPropsClassProperty(path /*: any */) {
+function isPropsClassProperty(path /*: Path*/) {
   return (
     path.isClassProperty() &&
     !path.node.computed &&
@@ -22,7 +22,7 @@ function isPropsClassProperty(path /*: any */) {
   );
 }
 
-function findPropsClassProperty(classBody /*: any */) /*: {} | false*/ {
+function findPropsClassProperty(classBody /*: Path*/) /*: Path | false*/ {
   for (let item of classBody.get('body')) {
     if (isPropsClassProperty(item)) {
       return item;
@@ -31,8 +31,8 @@ function findPropsClassProperty(classBody /*: any */) /*: {} | false*/ {
   return false;
 }
 
-function ClassDeclaration(path /*: any */) {
-  const props /*: any */ = findPropsClassProperty(path.get('body'));
+function ClassDeclaration(path) {
+  const props = findPropsClassProperty(path.get('body'));
   if (!props) {
     return;
   }
@@ -57,7 +57,7 @@ module.exports = () => {
   return {
     name: 'skate-flow-props',
     visitor: {
-      Program(path /*: any */, state /*: State */) {
+      Program(path /*: Path */, state /*: State */) {
         path.traverse({ ClassDeclaration, ClassExpression });
       }
     }
