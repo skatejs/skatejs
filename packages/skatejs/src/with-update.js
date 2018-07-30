@@ -37,14 +37,16 @@ export function normalizePropertyDefinition(
   name: string,
   prop: PropType
 ): Object {
-  const { coerce, default: def, deserialize, serialize } = prop;
-  return {
+  const { coerce, deserialize, serialize } = prop;
+  const defaultDescriptor = Object.getOwnPropertyDescriptor(prop, 'default');
+  const result = {
     attribute: normalizeAttributeDefinition(name, prop),
     coerce: coerce || identity,
-    default: def,
     deserialize: deserialize || identity,
     serialize: serialize || identity
   };
+  Object.defineProperty(result, 'default', defaultDescriptor);
+  return result;
 }
 
 const defaultTypesMap = new Map();
