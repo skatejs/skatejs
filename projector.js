@@ -21,7 +21,7 @@ charm.goto = function(pos /*: 'start' | 'end' */) {
   return this[pos === 'start' ? 'left' : 'right'](100000);
 };
 
-async function babel({ envs }: { envs: string }) {
+async function babel({ envs } /* : { envs: string } */) {
   need(envs, 'Please specify at least one environment.');
 
   const envArr = envs
@@ -81,7 +81,9 @@ async function babel({ envs }: { envs: string }) {
   charm.write('\n\n').end();
 }
 
-async function release({ packages, type }: { packages: string, type: string }) {
+async function release(
+  { packages, type } /*: { packages: string, type: string } */
+) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');
   await exec('bolt', ['build']);
