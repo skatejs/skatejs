@@ -12,6 +12,7 @@ import './__samples__/with-update';
 import codeWithUpdate from '!raw-loader!./__samples__/with-update';
 import codeWithUpdateHtml from '!raw-loader!./__samples__/with-update.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-mixins-update';

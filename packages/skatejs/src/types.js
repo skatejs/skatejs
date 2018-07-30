@@ -20,8 +20,8 @@ export type CustomElementEvent = CustomEvent & {
   composedPath?: () => Array<Node>
 };
 export interface CustomElementEventOptions {
-  bubbles: boolean;
-  cancelable: boolean;
-  composed: boolean;
-  detail?: void | Object;
+  bubbles?: boolean;
+  cancelable?: boolean;
+  composed?: boolean;
+  detail?: Object;
 }

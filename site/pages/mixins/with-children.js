@@ -15,6 +15,7 @@ import './__samples__/with-children/2';
 import codeWithChildren2 from '!raw-loader!./__samples__/with-children/2';
 import codeWithChildrenHtml2 from '!raw-loader!./__samples__/with-children/2.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-mixins-children';
@@ -27,9 +28,7 @@ export default class extends Component {
           your component's <code>children</code> by implementing a
           <code>childrenUpdated</code> lifecycle method.
         </p>
-        <x-runnable code="${codeWithChildren}" html="${
-      codeWithChildrenHtml
-    }"></x-runnable>
+        <x-runnable code="${codeWithChildren}" html="${codeWithChildrenHtml}"></x-runnable>
         <h3>
           Integrating with <code>props</code>
         </h3>
@@ -41,9 +40,7 @@ export default class extends Component {
           props still returns the same value it normally would if it weren't
           overridden.
         </p>
-        <x-runnable code="${codeWithChildren2}" html="${
-      codeWithChildrenHtml2
-    }"></x-runnable>
+        <x-runnable code="${codeWithChildren2}" html="${codeWithChildrenHtml2}"></x-runnable>
       </x-layout>
     `;
   }

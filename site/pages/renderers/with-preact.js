@@ -12,6 +12,7 @@ import './__samples__/with-preact';
 import codeWithPreact from '!raw-loader!./__samples__/with-preact';
 import codeWithPreactHtml from '!raw-loader!./__samples__/with-preact.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-preact';

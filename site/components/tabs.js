@@ -2,7 +2,6 @@
 
 import css, { value } from 'yocss';
 import { define, props } from 'skatejs';
-
 import { Component, style } from '../utils';
 
 const cssTabs = css({
@@ -38,26 +37,30 @@ const cssTabs = css({
   }
 });
 
+type Props = {
+  css: string,
+  items: Array<Object>,
+  selected: number
+};
+
+// $FlowFixMe - decorators
 @define
 export class Tabs extends Component {
   static is = 'x-tabs';
-  props: {
-    css: string,
-    items: Array<Object>,
-    selected: number
-  };
+  props: Props;
   state = {
     selected: 0
   };
   connecting() {
     this.style.display = 'block';
   }
-  onClick(i, e) {
+  onClick(i: number, e: Event) {
     e.preventDefault();
     this.state = { selected: i };
   }
-  render({ css, items, onClick, state }) {
-    const { selected } = state;
+  render() {
+    const { css, items } = this.props;
+    const { selected } = this.state;
     return this.$`
       ${this.$style}
       ${style(css, value(cssTabs))}
@@ -71,7 +74,7 @@ export class Tabs extends Component {
                       <a
                         className="${i === selected ? 'selected' : ''}"
                         href="#"
-                        on-click="${onClick.bind(this, i)}"
+                        on-click="${this.onClick.bind(this, i)}"
                       >
                         ${name}
                       </a>

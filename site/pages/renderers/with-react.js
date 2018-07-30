@@ -16,6 +16,7 @@ import './__samples__/wrap-react';
 import codeWrapReact from '!raw-loader!./__samples__/wrap-react';
 import codeWrapReactHtml from '!raw-loader!./__samples__/wrap-react.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-react';

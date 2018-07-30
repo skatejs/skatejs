@@ -21,7 +21,7 @@ charm.goto = function(pos /*: 'start' | 'end' */) {
   return this[pos === 'start' ? 'left' : 'right'](100000);
 };
 
-async function babel({ envs }) {
+async function babel({ envs }: { envs: string }) {
   need(envs, 'Please specify at least one environment.');
 
   const envArr = envs
@@ -81,7 +81,7 @@ async function babel({ envs }) {
   charm.write('\n\n').end();
 }
 
-async function release({ packages, type }) {
+async function release({ packages, type }: { packages: string, type: string }) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');
   await exec('bolt', ['build']);
@@ -92,6 +92,7 @@ async function release({ packages, type }) {
     if (!w) continue;
     const cwd = w.dir;
     await exec('npm', ['--no-git-tag-version', 'version', type], { cwd });
+    // $FlowFixMe - require string literal
     const ver = require(path.join(cwd, 'package.json')).version;
     const tag = `${name}-${ver}`;
     await exec('git', ['commit', '-am', tag], { cwd });

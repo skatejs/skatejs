@@ -11,6 +11,7 @@ import './__samples__/with-component';
 import codeWithComponent from '!raw-loader!./__samples__/with-component';
 import codeWithComponentHtml from '!raw-loader!./__samples__/with-component.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-mixins-component';

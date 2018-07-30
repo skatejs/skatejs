@@ -12,6 +12,7 @@ import './__samples__/default';
 import codeWithDefault from '!raw-loader!./__samples__/default';
 import codeWithDefaultHtml from '!raw-loader!./__samples__/default.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-default';

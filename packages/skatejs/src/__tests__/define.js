@@ -1,10 +1,11 @@
-/* @flow */
+// @flow
 
 import { define, name } from '..';
 
 const { expect, test } = global;
 
 test('should use `static is` as the element name', () => {
+  // $FlowFixMe - decorators :(
   @define
   class Elem extends HTMLElement {
     static is = name();
@@ -14,8 +15,10 @@ test('should use `static is` as the element name', () => {
 });
 
 test('should use `name()` to define a name if `static is` is not defined', () => {
+  // $FlowFixMe - decorators :(
   @define
   class Elem extends HTMLElement {}
+  // $FlowFixMe - we are ensuring "is" is not defined.
   expect(Elem.is).not.toBeDefined();
   const elem = new Elem();
   expect(elem.nodeName).toMatch('x-');

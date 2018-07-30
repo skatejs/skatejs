@@ -12,6 +12,7 @@ import './__samples__/with-renderer';
 import codeWithRenderer from '!raw-loader!./__samples__/with-renderer';
 import codeWithRendererHtml from '!raw-loader!./__samples__/with-renderer.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-mixins-renderer';

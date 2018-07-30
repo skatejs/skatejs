@@ -11,6 +11,7 @@ import './__samples__/with-lifecycle';
 import codeWithComponent from '!raw-loader!./__samples__/with-lifecycle';
 import codeWithComponentHtml from '!raw-loader!./__samples__/with-lifecycle.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-mixins-lifecycle';

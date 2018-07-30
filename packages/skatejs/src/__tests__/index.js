@@ -26,7 +26,6 @@ test('skate.link', () => {
 
 test('skate.with*', () => {
   expect(typeof api.withChildren).toBe('function', 'withChildren');
-  expect(typeof api.withContext).toBe('function', 'withContext');
   expect(typeof api.withComponent).toBe('function', 'withComponent');
   expect(typeof api.withLifecycle).toBe('function', 'withLifecycle');
   expect(typeof api.withRenderer).toBe('function', 'withRenderer');

@@ -1,3 +1,5 @@
+// @flow
+
 import { withComponent } from 'skatejs';
 import withLitHtml from '@skatejs/renderer-lit-html';
 import { value } from 'yocss';
@@ -11,14 +13,17 @@ const withContext = (Base = HTMLElement) =>
         return this._context;
       }
       let node = this;
+      // $FlowFixMe - host
       while ((node = node.parentNode || node.host)) {
         if ('context' in node) {
+          // $FlowFixMe - context
           return node.context;
         }
       }
       return {};
     }
-    set context(context) {
+    set context(context: *) {
+      // $FlowFixMe - _context
       this._context = context;
     }
   };
@@ -27,7 +32,10 @@ export const Component = class extends withContext(
   withComponent(withLitHtml(HTMLElement))
 ) {
   $ = html;
-  get $style() {
+  context: {
+    style: string
+  };
+  get $style(): string {
     return style(this.context.style, value(...Object.values(this.css || {})));
   }
 };

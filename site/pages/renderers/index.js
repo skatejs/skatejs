@@ -7,6 +7,7 @@ import { define } from 'skatejs';
 
 import { Component } from '../../utils';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-index';

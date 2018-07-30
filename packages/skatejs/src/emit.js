@@ -11,7 +11,7 @@ const defs: CustomElementEventOptions = {
 export function emit(
   elem: HTMLElement,
   name: string,
-  opts: CustomElementEventOptions
+  opts?: CustomElementEventOptions
 ): boolean {
   const eventOptions = { ...defs, ...opts };
   let e: CustomElementEvent;

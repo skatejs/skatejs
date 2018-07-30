@@ -10,7 +10,8 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
       return super.renderRoot || shadow(this);
     }
 
-    renderer(root, html) {
+    // $FlowFixMe - says ShadowRoot isn't an interface (but it is).
+    renderer(root: ShadowRoot, html: () => string) {
       if (super.renderer) {
         super.renderer(root, html);
       } else {
@@ -21,6 +22,7 @@ export const withRenderer = (Base: Class<any> = HTMLElement): Class<any> =>
     updated(...args) {
       super.updated && super.updated(...args);
       this.rendering && this.rendering();
+      // $FlowFixMe - don't know how to get ShadowRoot working.
       this.renderer(this.renderRoot, () => this.render && this.render(this));
       this.rendered && this.rendered();
     }

@@ -12,6 +12,7 @@ import './__samples__/with-lit-html';
 import codeWithLitHtml from '!raw-loader!./__samples__/with-lit-html';
 import codeWithLitHtmlHtml from '!raw-loader!./__samples__/with-lit-html.html';
 
+// $FlowFixMe - decorators
 @define
 export default class extends Component {
   static is = 'x-pages-renderers-lit-html';
