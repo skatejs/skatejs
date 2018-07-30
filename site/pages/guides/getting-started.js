@@ -149,7 +149,7 @@ export default class extends Component {
                 };
               }
               render({ name }) {
-                return \`Hello, ${name}!\`;
+                return \`Hello, \${name}!\`;
               }
             }
 
@@ -201,7 +201,7 @@ export default class extends Component {
               }
               render({ name }) {
                 const el = document.createElement('span');
-                el.innerHTML = \`Hello, ${name}!\`;
+                el.innerHTML = \`Hello, \${name}!\`;
                 return el;
               }
             }

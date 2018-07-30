@@ -1,2 +1,8 @@
+[ignore]
+.*/node_modules/config-chain/test/broken.json
+
 [libs]
 flow-typed
+
+[options]
+module.name_mapper='.*/__samples__/.*' -> '<PROJECT_ROOT>/flow/stub-raw-loader.js'
