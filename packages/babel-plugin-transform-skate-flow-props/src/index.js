@@ -3,8 +3,14 @@
 const t = require('babel-types');
 const { convert } = require('./converters');
 
-/*
-type Path = {};
+/*::
+type Path = {
+  insertAfter: {} => {}, 
+  isClassProperty: () => {},
+  get: string => *,
+  node: { computed: boolean, key: { name: string }, static: boolean },
+  traverse: {} => {}
+};
 
 type PluginOptions = {};
 
