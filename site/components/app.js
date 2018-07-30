@@ -55,10 +55,6 @@ const router = html`
       path="/mixins/with-component"
     ></sk-route>
     <sk-route
-      page="${withLoading(() => import('../pages/mixins/with-context'))}"
-      path="/mixins/with-context"
-    ></sk-route>
-    <sk-route
       page="${withLoading(() => import('../pages/mixins/with-lifecycle'))}"
       path="/mixins/with-lifecycle"
     ></sk-route>

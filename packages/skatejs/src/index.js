@@ -8,7 +8,6 @@ export * from './name.js';
 export * from './props.js';
 export * from './shadow.js';
 export * from './with-children.js';
-export * from './with-context.js';
 export * from './with-component.js';
 export * from './with-lifecycle.js';
 export * from './with-renderer.js';

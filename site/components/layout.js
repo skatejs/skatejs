@@ -39,7 +39,6 @@ const navItems = () => [
     tree: [
       { href: '/mixins/with-children', text: 'Children' },
       { href: '/mixins/with-component', text: 'Component' },
-      { href: '/mixins/with-context', text: 'Context' },
       { href: '/mixins/with-lifecycle', text: 'Lifecycle' },
       { href: '/mixins/with-renderer', text: 'Renderer' },
       { href: '/mixins/with-update', text: 'Update' }
