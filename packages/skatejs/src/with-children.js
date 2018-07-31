@@ -8,9 +8,9 @@ export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
       super.connectedCallback && super.connectedCallback();
       if (this.childrenUpdated) {
         const fn = this.childrenUpdated.bind(this);
-        fn();
         const mo = new MutationObserver(fn);
         mo.observe(this, { childList: true });
+        document.addEventListener('DOMContentLoaded', fn);
       }
     }
   };
