@@ -6,7 +6,7 @@ import type {
   PropTypes,
   PropTypesNormalized
 } from './types.js';
-import { dashCase, empty, keys, sym } from './util.js';
+import { dashCase, empty, keys } from './util.js';
 
 export function normalizeAttributeDefinition(
   name: string | Symbol,

@@ -19,11 +19,3 @@ export function keys(obj: Object | void): Array<any> {
     ? names.concat(Object.getOwnPropertySymbols(obj))
     : names;
 }
-
-let symbolCount = 0;
-export function sym(description?: string): Symbol | string {
-  description = String(description || ++symbolCount);
-  return typeof Symbol === 'function'
-    ? Symbol(description)
-    : `__skate_${description}`;
-}

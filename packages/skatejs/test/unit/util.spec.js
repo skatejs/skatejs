@@ -1,6 +1,6 @@
 /* eslint-env jest */
 
-import { dashCase, debounce, keys, sym } from '../../src/util';
+import { dashCase, debounce, keys } from '../../src/util';
 
 describe('utils', () => {
   describe('{ dashCase }', () => {
@@ -42,21 +42,10 @@ describe('utils', () => {
     });
 
     it('should return both normal keys and symbol keys from an object', () => {
-      const _sym = sym('_sym');
+      const _sym = Symbol('_sym');
       const names = keys({ foo: 1, [_sym]: 2 });
       expect(names[0]).toBe('foo');
       expect(names[1]).toBe(_sym);
-    });
-  });
-
-  describe('{ sym }', () => {
-    it('should return a new symbol when supported', () => {
-      const _sym = sym('test');
-      if (typeof Symbol === 'function') {
-        expect(typeof _sym).toBe('symbol');
-      } else {
-        expect(typeof _sym).toBe('string');
-      }
     });
   });
 });
