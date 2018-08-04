@@ -2,7 +2,7 @@
   "name": "@skatejs/site",
   "private": true,
   "dependencies": {
-    "@skatejs/renderer-lit-html": "0.2.0",
+    "@skatejs/renderer-lit-html": "0.2.1",
     "@skatejs/renderer-preact": "0.3.3",
     "@skatejs/renderer-react": "0.3.1",
     "@skatejs/sk-marked": "0.0.1",
@@ -13,7 +13,7 @@
     "prismjs": "1.12.2",
     "react": "15.6.2",
     "react-dom": "15.6.2",
-    "skatejs": "5.2.1",
+    "skatejs": "5.2.3",
     "yocss": "0.5.1"
   }
 }
