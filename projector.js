@@ -11,6 +11,7 @@ const semver = require('semver');
 function exec(...args) {
   return execa(...args).catch(console.log);
 }
+
 async function parallel(...args) {
   let code;
   const fn = args.pop();
