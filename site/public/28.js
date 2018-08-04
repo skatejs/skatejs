@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[28],{263:function(n,i,o){"use strict";window.location="/guides/getting-started"}}]);

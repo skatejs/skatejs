@@ -149,7 +149,7 @@
     "flow": "flow",
     "precommit": "lint-staged",
     "prepublish": "bolt build",
-    "site": "cd site && rm -rf public && webpack -p",
+    "site": "projector rm --path site/public && cd site && webpack -p",
     "test": "jest"
   },
   "jest": {

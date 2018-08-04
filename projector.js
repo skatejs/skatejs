@@ -11,6 +11,25 @@ const semver = require('semver');
 function exec(...args) {
   return execa(...args).catch(console.log);
 }
+async function parallel(...args) {
+  let code;
+  const fn = args.pop();
+  const mappedArgs = args.map(a => JSON.stringify(a)).join(',');
+  const iife = code => `
+    (async () => {
+      const result = await ${code}(${mappedArgs});
+      console.log(JSON.stringify(typeof result === 'undefined' ? null : result));
+    })();
+  `;
+
+  if (typeof fn === 'string') {
+    code = iife(`require('${path.resolve(__dirname, fn)}')`);
+  } else {
+    code = iife(`(${fn.toString()})`);
+  }
+
+  return exec('node', ['-e', code]).then(s => JSON.parse(s.stdout));
+}
 
 function need(val, msg) {
   if (!val) {
@@ -207,6 +226,19 @@ async function changed() {
   }
 }
 
+async function clean() {
+  parallel(() => require('fs-extra').remove('./site/public'));
+  for (const w of await getWorkspaces()) {
+    parallel(w.dir, async dir => {
+      const fs = require('fs-extra');
+      const path = require('path');
+      const toRemove = path.relative(process.cwd(), path.join(dir, 'dist'));
+      await fs.remove(toRemove);
+      return toRemove;
+    }).then(console.log);
+  }
+}
+
 async function release({ packages, type }) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');
@@ -227,8 +259,15 @@ async function release({ packages, type }) {
   await exec('git', ['push', '--follow-tags']);
 }
 
+// All platforms.
+async function rm({ path }) {
+  return fs.remove(path);
+}
+
 module.exports = {
   babel,
   changed,
-  release
+  clean,
+  release,
+  rm
 };
