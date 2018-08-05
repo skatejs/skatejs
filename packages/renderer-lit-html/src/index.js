@@ -1,4 +1,4 @@
-import { render } from 'lit-html/lib/lit-extended';
+import { render } from 'lit-html';
 
 export default (Base = HTMLElement) =>
   class extends Base {

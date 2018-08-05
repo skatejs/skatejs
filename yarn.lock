@@ -5673,9 +5673,9 @@ listr@^0.13.0:
     stream-to-observable "^0.2.0"
     strip-ansi "^3.0.1"
 
-lit-html@0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-0.9.0.tgz#a445ecbb3da7d8b17690e6ade6c872c89385092a"
+lit-html@^0.11.0-dev.1:
+  version "0.11.0-dev.1"
+  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-0.11.0-dev.1.tgz#15d2bb925540e2144bb399f7c6515d0bba9dd5c3"
 
 load-json-file@^1.0.0:
   version "1.1.0"
