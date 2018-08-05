@@ -5,7 +5,7 @@ _If there is a linked issue, mention it here._
 
 ## Requirements
 
-* [ ] Read the [contribution guidelines](https://github.com/skatejs/skatejs/blob/5.x/CONTRIBUTING.md).
+* [ ] Read the [contribution guidelines](https://github.com/skatejs/skatejs/blob/master/CONTRIBUTING.md).
 * [ ] Wrote tests.
 * [ ] Updated docs and upgrade instructions, if necessary.
 
