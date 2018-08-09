@@ -22,11 +22,11 @@
   "src": "src",
   "devDependencies": {
     "hyperhtml": "2.5.10",
-    "skatejs": "5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "peerDependencies": {
     "hyperhtml": "^2.5.10",
-    "skatejs": "^5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "version": "0.0.0"
 }

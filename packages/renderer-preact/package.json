@@ -22,11 +22,11 @@
   "src": "src",
   "devDependencies": {
     "preact": "8.2.7",
-    "skatejs": "5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "peerDependencies": {
     "preact": "^8.2.5",
-    "skatejs": "^5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "version": "0.2.5"
 }

@@ -3,7 +3,7 @@
   "dependencies": {
     "@skatejs/val": "0.4.0",
     "page": "1.8.3",
-    "skatejs": "^5.1.1"
+    "skatejs": "6.0.0-dev"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {

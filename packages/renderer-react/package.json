@@ -23,12 +23,12 @@
   "devDependencies": {
     "react": "16.2.0",
     "react-dom": "16.2.0",
-    "skatejs": "5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "peerDependencies": {
     "react": "^15.0.0 || ^16.2.0",
     "react-dom": "^15.0.0 || ^16.2.0",
-    "skatejs": "^5.1.0"
+    "skatejs": "6.0.0-dev"
   },
   "version": "0.2.1"
 }

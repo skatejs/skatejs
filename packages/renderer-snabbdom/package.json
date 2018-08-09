@@ -3,7 +3,7 @@
   "browser": "dist/es/index.js",
   "description": "A SkateJS renderer for Snabbdom.",
   "devDependencies": {
-    "skatejs": "^5.1.2",
+    "skatejs": "6.0.0-dev",
     "snabbdom": "^0.7.1"
   },
   "esnext": "dist/esnext/index.js",
@@ -26,6 +26,7 @@
   "module": "dist/es/index.js",
   "name": "@skatejs/renderer-snabbdom",
   "peerDependencies": {
+    "skatejs": "6.0.0-dev",
     "snabbdom": "^0.7.1"
   },
   "version": "0.0.0"
