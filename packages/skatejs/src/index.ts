@@ -7,6 +7,5 @@ export * from './props.js';
 export * from './shadow.js';
 export * from './with-children.js';
 export * from './with-component.js';
-export * from './with-lifecycle.js';
 export * from './with-renderer.js';
 export * from './with-update.js';

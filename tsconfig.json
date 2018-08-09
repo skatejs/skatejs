@@ -2,6 +2,8 @@
   "compilerOptions": {
     "jsx": "react",
     "jsxFactory": "h",
-    "lib": ["es2015"]
-  }
+    "target": "es2015"
+  },
+  "exclude": ["__tests__"],
+  "include": ["packages/*/src/**.ts"]
 }

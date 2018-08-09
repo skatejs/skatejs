@@ -1,8 +1,9 @@
 import { CustomElement, CustomElementConstructor } from './types';
 
 function delay(fn) {
-  if (typeof Promise === 'function') {
-    Promise.resolve().then(fn);
+  if (typeof global.Promise === 'function') {
+    // @ts-ignore - Promise.resove() indeed does exist.
+    global.Promise.resolve().then(fn);
   } else {
     setTimeout(fn);
   }

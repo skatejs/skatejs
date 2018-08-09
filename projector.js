@@ -15,7 +15,7 @@ function exec(...args) {
 async function parallel(...args) {
   let code;
   const fn = args.pop();
-  const mappedArgs = args.map(a => JSON.stringify(a)).join(',');
+  const mappedArgs = args.map(a => JSON.stringify(a) || 'null').join(',');
   const iife = code => `
     (async () => {
       const result = await ${code}(${mappedArgs});
@@ -149,21 +149,45 @@ async function build() {
   const ws = await getWorkspaces();
   await Promise.all(
     ws.map(w => {
-      return parallel(w.dir, w.config.main, async (dir, main) => {
-        const exec = require('execa');
-        const fs = require('fs-extra');
-        const path = require('path');
-        const index = path.join(`${dir}`, 'src', 'index.ts');
-        if (main && (await fs.exists(index))) {
-          return await exec(
-            'tsc',
-            [index, '--outDir', `${path.dirname(main)}`],
-            { cwd: dir }
-          )
-            .catch(e => e)
-            .then(r => r.stdout);
+      return parallel(
+        w.dir,
+        w.config.main,
+        w.config.module,
+        async (dir, entryMain, entryModule) => {
+          const exec = require('execa');
+          const fs = require('fs-extra');
+          const path = require('path');
+          const index = path.join(`${dir}`, 'src', 'index.ts');
+
+          if (!await fs.exists(index)) {
+            return;
+          }
+
+          if (entryMain) {
+            const result1 = await exec(
+              'tsc',
+              ['--outDir', path.dirname(entryMain), '--module', 'CommonJS'],
+              {
+                cwd: dir
+              }
+            )
+              .catch(e => e)
+              .then(r => r.stdout);
+          }
+
+          if (entryModule) {
+            const result1 = await exec(
+              'tsc',
+              ['--outDir', path.dirname(entryModule), '--module', 'ES2015'],
+              {
+                cwd: dir
+              }
+            )
+              .catch(e => e)
+              .then(r => r.stdout);
+          }
         }
-      }).then(r => r && console.log(r));
+      ).then(r => r && console.log(r));
     })
   );
 }

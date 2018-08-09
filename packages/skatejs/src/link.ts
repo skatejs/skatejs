@@ -1,7 +1,6 @@
 import {
   CustomElementEvent,
-  CustomElementLink,
-  DeepObject
+  CustomElementLink
 } from './types';
 
 function getValue(elem): boolean | string | void {
@@ -12,7 +11,7 @@ function getValue(elem): boolean | string | void {
   return value;
 }
 
-export function link(elem: HTMLElement, target: string = 'state.'): Function {
+export function link(elem: typeof HTMLElement, target: string = 'state.'): Function {
   return (e: CustomElementEvent): void => {
     // TODO revisit once all browsers have native support.
     //
@@ -30,7 +29,7 @@ export function link(elem: HTMLElement, target: string = 'state.'): Function {
       const firstPart = parts[0];
       const propName = parts.pop();
       const obj = parts.reduce(
-        (prev: DeepObject, curr: string): {} => prev[curr],
+        (prev: {}, curr: string): {} => prev[curr],
         elem
       );
 
