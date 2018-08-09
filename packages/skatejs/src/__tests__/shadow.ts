@@ -1,10 +1,5 @@
-/* @flow */
-/* @jsx h */
-
 import { h } from '@skatejs/val';
 import { shadow } from '..';
-
-const { expect, test } = global;
 
 test('should be a function', () => {
   expect(typeof shadow).toBe('function');

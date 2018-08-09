@@ -155,7 +155,11 @@ async function build() {
         const path = require('path');
         const index = path.join(`${dir}`, 'src', 'index.ts');
         if (main && (await fs.exists(index))) {
-          return await exec('tsc', [index, '--outDir', `${path.dirname(main)}`])
+          return await exec(
+            'tsc',
+            [index, '--outDir', `${path.dirname(main)}`],
+            { cwd: dir }
+          )
             .catch(e => e)
             .then(r => r.stdout);
         }

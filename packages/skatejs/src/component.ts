@@ -1,5 +1,3 @@
-// @flow
-
 import { withComponent } from './with-component.js';
 
 // This is so the transform can patch this class and everything extending it

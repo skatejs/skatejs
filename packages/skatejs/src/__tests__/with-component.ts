@@ -1,8 +1,4 @@
-/* @flow */
-
 import { withComponent } from '..';
-
-const { expect, test } = global;
 
 test('should extend custom classes', () => {
   class Base extends HTMLElement {}

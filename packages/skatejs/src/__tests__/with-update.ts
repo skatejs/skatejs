@@ -1,25 +1,18 @@
-/* @flow */
-/* @jsx h */
-
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import { props, withUpdate } from '..';
-
-const { expect, test } = global;
 
 class Elem extends withUpdate(HTMLElement) {
   static props = {
     testProp: String,
     testPropDoNotSet: null
   };
-  updating() {}
 }
 
 async function createElemAwaitTrigger() {
   const elem = new Elem();
-  // $FlowFixMe - jest is not defined.
-  elem.triggerUpdate = jest.fn();
-  return mount(elem).waitFor(w => elem.triggerUpdate.mock.calls.length === 1);
+  const mock: any = elem.triggerUpdate = jest.fn();
+  return mount(elem).waitFor(w => mock.calls.length === 1);
 }
 
 test('attr should be the prop.toLowerCase()', () => {
@@ -64,7 +57,6 @@ test('attr should set prop', () => {
 
 test('triggerUpdate() should be batched', done => {
   const { node } = mount(<Elem />);
-  // $FlowFixMe - jest is not defined.
   node.updating = jest.fn();
   node.triggerUpdate();
   node.triggerUpdate();

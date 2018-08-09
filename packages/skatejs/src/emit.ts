@@ -1,6 +1,4 @@
-// @flow
-
-import type { CustomElementEvent, CustomElementEventOptions } from './types.js';
+import { CustomElementEvent, CustomElementEventOptions } from './types';
 
 const defs: CustomElementEventOptions = {
   bubbles: true,
@@ -18,11 +16,11 @@ export function emit(
   if ('composed' in CustomEvent.prototype) {
     e = new CustomEvent(name, eventOptions);
   } else {
-    e = (document.createEvent('CustomEvent'): CustomElementEvent);
+    e = document.createEvent('CustomEvent');
     e.initCustomEvent(
       name,
-      ((eventOptions.bubbles: any): boolean),
-      ((eventOptions.cancelable: any): boolean),
+      eventOptions.bubbles,
+      eventOptions.cancelable,
       eventOptions.detail
     );
     Object.defineProperty(e, 'composed', { value: eventOptions.composed });

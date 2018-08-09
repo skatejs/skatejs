@@ -1,11 +1,13 @@
-// @flow
+import { CustomElementConstructor } from './types';
 
-export const withChildren = (Base: Class<any> = HTMLElement): Class<any> =>
+export const withChildren = (Base: CustomElementConstructor): CustomElementConstructor =>
   class extends Base {
     childrenUpdated: Function | void;
 
     connectedCallback() {
-      super.connectedCallback && super.connectedCallback();
+      if (typeof super.connectedCallback === 'function') {
+        super.connectedCallback();
+      }
       if (this.childrenUpdated) {
         const fn = this.childrenUpdated.bind(this);
         const mo = new MutationObserver(fn);

@@ -1,5 +1,3 @@
-// @flow
-
 const { parse } = JSON;
 
 export const props = {

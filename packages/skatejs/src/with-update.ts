@@ -1,24 +1,24 @@
-// @flow
-
-import type { CustomElement } from './types.js';
+import { CustomElement, CustomElementConstructor } from './types';
 
 function delay(fn) {
-  if (window.Promise) {
+  if (typeof Promise === 'function') {
     Promise.resolve().then(fn);
   } else {
     setTimeout(fn);
   }
 }
 
-export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
+export const withUpdate = (Base: CustomElementConstructor): CustomElementConstructor =>
   class extends Base {
-    static _attrToPropMap: { [string]: string } = {};
-    static props: { [string]: (any) => any | void } = {};
+    ['constructor']: CustomElementConstructor;
 
-    _prevProps: { [string]: any } = {};
-    _prevState: { [string]: any } = {};
-    _props: { [string]: any } = {};
-    _state: { [string]: any } = {};
+    static _attrToPropMap: { [s: string]: string } = {};
+    static props: { [s: string]: (any) => any | void } = {};
+
+    _prevProps: { [s: string]: any } = {};
+    _prevState: { [s: string]: any } = {};
+    _props: { [s: string]: any } = {};
+    _state: { [s: string]: any } = {};
     _updating: boolean = false;
 
     // This is invoked once when the element is defined. Due to this, we must
@@ -54,7 +54,6 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
     get props(): Object {
       return Object.keys(this.constructor.props).reduce(
-        // $FlowFixMe - no idea what's up here.
         (prev: Object, curr: string) => {
           prev[curr] = this[curr];
           return prev;
@@ -89,6 +88,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
 
       const propertyName = _attrToPropMap[name];
       const propertyFunc = props[propertyName];
+
       if (propertyFunc) {
         this._props[propertyName] = propertyFunc(newValue);
         this.triggerUpdate();
@@ -113,9 +113,6 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       this._updating = true;
       delay(() => {
         const { _prevProps, _prevState } = this;
-        if (this.updating) {
-          this.updating(_prevProps, _prevState);
-        }
         if (this.updated && this.shouldUpdate(_prevProps, _prevState)) {
           this.updated(_prevProps, _prevState);
         }
