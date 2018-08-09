@@ -1,0 +1,32 @@
+{
+  "author": "Luiz Américo Pereira Câmara",
+  "browser": "dist/es/index.js",
+  "description": "A SkateJS renderer for Snabbdom.",
+  "devDependencies": {
+    "skatejs": "^5.1.2",
+    "snabbdom": "^0.7.1"
+  },
+  "esnext": "dist/esnext/index.js",
+  "files": [
+    "dist/es",
+    "dist/esnext",
+    "dist/node"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "components",
+    "custom",
+    "dom",
+    "elements",
+    "web",
+    "vdom",
+    "virtual"
+  ],
+  "main": "dist/node/index.js",
+  "module": "dist/es/index.js",
+  "name": "@skatejs/renderer-snabbdom",
+  "peerDependencies": {
+    "snabbdom": "^0.7.1"
+  },
+  "version": "0.0.0"
+}
