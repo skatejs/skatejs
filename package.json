@@ -78,7 +78,7 @@
   "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "projector ./projector babel --envs cjs,esm",
+    "build": "projector build",
     "flow": "flow",
     "precommit": "lint-staged",
     "prepublishOnly": "bolt build",
