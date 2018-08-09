@@ -29,7 +29,14 @@ async function parallel(...args) {
     code = iife(`(${fn.toString()})`);
   }
 
-  return exec('node', ['-e', code]).then(s => JSON.parse(s.stdout));
+  return exec('node', ['-e', code])
+    .then(s => {
+      if (s.stderr) {
+        throw s.stderr;
+      }
+      return JSON.parse(s.stdout || null);
+    })
+    .catch(console.error);
 }
 
 function need(val, msg) {
@@ -138,66 +145,23 @@ function calculateNextVersion(version, changes) {
   return semver.inc(version, calculateReleaseType(changes));
 }
 
-async function babel({ envs }) {
-  need(envs, 'Please specify at least one environment.');
-
-  const envArr = envs
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean);
+async function build() {
   const ws = await getWorkspaces();
-  ws.sort((a, b) => a.name.localeCompare(b.name));
-
-  for (const w of ws) {
-    const files = w.config.files || [];
-    const wname = w.name.replace('@', '');
-
-    charm.write(chalk`\n{white ${wname}}`);
-
-    // If no envs exist for this package, exit early.
-    if (!envArr.every(e => files.some(f => f.match(e)))) {
-      charm.goto('start').write(chalk`{gray ${wname}}`);
-      continue;
-    }
-
-    // Clean up any old build.
-    await fs.remove(path.join(w.dir, 'dist'));
-
-    for (const env of envArr) {
-      charm.write(chalk` {yellow ${env}...}`);
-
-      // Don't build for this env if it's not specified for the package.
-      if (!files.some(f => f.match(env))) {
-        charm
-          .left(env.length + 3)
-          .write(chalk`{cyan ${env}}`)
-          .right(3)
-          .erase('end');
-        continue;
-      }
-
-      const src = path.join(w.dir, 'src');
-      const dst = path.join(w.dir, 'dist', env);
-
-      await Promise.all([
-        exec('flow-copy-source', [
-          '-i',
-          '**/__tests__/**',
-          'src',
-          `dist/${env}`
-        ]),
-        exec('babel', [src, '--out-dir', dst], {
-          env: { BABEL_ENV: env }
-        })
-      ]);
-
-      charm
-        .left(env.length + 3)
-        .write(chalk`{green ${env}}`)
-        .erase('end');
-    }
-  }
-  charm.write(os.EOL).end();
+  await Promise.all(
+    ws.map(w => {
+      return parallel(w.dir, w.config.main, async (dir, main) => {
+        const exec = require('execa');
+        const fs = require('fs-extra');
+        const path = require('path');
+        const index = path.join(`${dir}`, 'src', 'index.ts');
+        if (main && (await fs.exists(index))) {
+          return await exec('tsc', [index, '--outDir', `${path.dirname(main)}`])
+            .catch(e => e)
+            .then(r => r.stdout);
+        }
+      }).then(r => r && console.log(r));
+    })
+  );
 }
 
 async function changed() {
@@ -266,7 +230,7 @@ async function rm({ path }) {
 }
 
 module.exports = {
-  babel,
+  build,
   changed,
   clean,
   release,

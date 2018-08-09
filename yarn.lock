@@ -6292,9 +6292,9 @@ project-bin-path@^1.1.0:
   dependencies:
     find-up "^2.1.0"
 
-projector-cli@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/projector-cli/-/projector-cli-3.0.1.tgz#f2badd9995baf388e5094a9460a850b5cf33b397"
+projector-cli@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/projector-cli/-/projector-cli-3.1.0.tgz#6092b4e79a11bda838ecccd88526bf832f0ca4ec"
   dependencies:
     meow "^3.7.0"
     projector "^3.0.0"
@@ -7898,6 +7898,10 @@ typescript-eslint-parser@^11.0.0:
 typescript@^2.5.1:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.2.tgz#3c5b6fd7f6de0914269027f03c0946758f7673a4"
+
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 typewise-core@^1.2, typewise-core@^1.2.0:
   version "1.2.0"
