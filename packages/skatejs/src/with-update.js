@@ -171,13 +171,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     }
 
     get props(): Object {
-      return keys(this.constructor.props).reduce(
-        (prev: Object, curr: string) => {
-          prev[curr] = (this: any)[curr];
-          return prev;
-        },
-        {}
-      );
+      return { ...this._props };
     }
 
     set props(props: Object) {
