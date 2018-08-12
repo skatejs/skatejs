@@ -1,0 +1,21 @@
+{
+  "id": "img\\logo-50x50.png",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js": "module.exports = \"/68a8fce0a9e65929b13dffccb5737034.png\";"
+  },
+  "hash": "9f3c107032a3243f7f244bf075b30e39",
+  "cacheData": { "env": {} }
+}

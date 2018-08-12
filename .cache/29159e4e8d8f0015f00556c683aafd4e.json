@@ -1,0 +1,21 @@
+{
+  "id": "img\\loader.svg",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js": "module.exports = \"/4b6443ec40fd2f0a10c69634f426b40a.svg\";"
+  },
+  "hash": "fca598bd3f314ba5a05c61c16735b0cb",
+  "cacheData": { "env": {} }
+}

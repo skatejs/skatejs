@@ -1,0 +1,194 @@
+{
+  "id": "pages\\renderers\\__samples__\\default.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 1, "column": 37 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\__samples__\\default.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _skatejs = require('skatejs');\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nvar WithDefault = function (_withComponent) {\n  _inherits(WithDefault, _withComponent);\n\n  function WithDefault() {\n    _classCallCheck(this, WithDefault);\n\n    return _possibleConstructorReturn(this, (WithDefault.__proto__ || Object.getPrototypeOf(WithDefault)).apply(this, arguments));\n  }\n\n  _createClass(WithDefault, [{\n    key: 'render',\n    value: function render(_ref) {\n      var name = _ref.name;\n\n      return 'Hello, ' + name + '!';\n    }\n  }], [{\n    key: 'props',\n    get: function get() {\n      return {\n        name: _skatejs.props.string\n      };\n    }\n  }]);\n\n  return WithDefault;\n}((0, _skatejs.withComponent)());\n\ncustomElements.define('with-default', WithDefault);",
+    "map": {
+      "mappings": [
+        {
+          "generated": { "line": 5, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "name": "WithDefault",
+          "generated": { "line": 13, "column": 4 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 3, "column": 6 }
+        },
+        {
+          "generated": { "line": 24, "column": 33 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 19 }
+        },
+        {
+          "generated": { "line": 25, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 19 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 25, "column": 10 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 11 }
+        },
+        {
+          "generated": { "line": 25, "column": 14 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 19 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 25, "column": 22 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 11 }
+        },
+        {
+          "generated": { "line": 25, "column": 26 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 9, "column": 19 }
+        },
+        {
+          "generated": { "line": 27, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 10, "column": 4 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 27, "column": 25 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 10, "column": 21 }
+        },
+        {
+          "generated": { "line": 27, "column": 29 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 10, "column": 4 }
+        },
+        {
+          "generated": { "line": 28, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 11, "column": 3 }
+        },
+        {
+          "generated": { "line": 31, "column": 24 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 4, "column": 21 }
+        },
+        {
+          "generated": { "line": 32, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 5, "column": 4 }
+        },
+        {
+          "generated": { "line": 32, "column": 13 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 5, "column": 11 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 33, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 6, "column": 6 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 33, "column": 14 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 6, "column": 12 }
+        },
+        {
+          "name": "string",
+          "generated": { "line": 33, "column": 29 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 6, "column": 18 }
+        },
+        {
+          "generated": { "line": 34, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 5, "column": 11 }
+        },
+        {
+          "generated": { "line": 34, "column": 7 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 5, "column": 4 }
+        },
+        {
+          "generated": { "line": 35, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 8, "column": 3 }
+        },
+        {
+          "generated": { "line": 39, "column": 2 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 3, "column": 26 }
+        },
+        {
+          "name": "customElements",
+          "generated": { "line": 41, "column": 0 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 0 }
+        },
+        {
+          "name": "define",
+          "generated": { "line": 41, "column": 15 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 15 }
+        },
+        {
+          "generated": { "line": 41, "column": 21 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 0 }
+        },
+        {
+          "generated": { "line": 41, "column": 22 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 22 }
+        },
+        {
+          "generated": { "line": 41, "column": 36 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 0 }
+        },
+        {
+          "name": "WithDefault",
+          "generated": { "line": 41, "column": 38 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 38 }
+        },
+        {
+          "generated": { "line": 41, "column": 49 },
+          "source": "pages\\renderers\\__samples__\\default.js",
+          "original": { "line": 14, "column": 0 }
+        }
+      ],
+      "sources": {
+        "pages\\renderers\\__samples__\\default.js":
+          "import { props, withComponent } from 'skatejs';\r\n\r\nclass WithDefault extends withComponent() {\r\n  static get props() {\r\n    return {\r\n      name: props.string\r\n    };\r\n  }\r\n  render({ name }) {\r\n    return `Hello, ${name}!`;\r\n  }\r\n}\r\n\r\ncustomElements.define('with-default', WithDefault);\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "b0a8161fe754d57a01577b24713f6093",
+  "cacheData": { "env": {} }
+}

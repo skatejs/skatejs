@@ -1,0 +1,1000 @@
+{
+  "id": "utils\\with-loadable.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 3, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\with-loadable.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "./component",
+      "loc": { "line": 4, "column": 28 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\with-loadable.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\component.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\", \"\"], [\"\", \"\"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar skatejs_1 = require(\"skatejs\");\nvar component_1 = require(\"./component\");\nexports.withLoadable = function (props) {\n    var _a;\n    return skatejs_1.define((_a = function (_component_1$Componen) {\n        _inherits(_a, _component_1$Componen);\n\n        function _a() {\n            _classCallCheck(this, _a);\n\n            var _this = _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n\n            _this.props = props;\n            return _this;\n        }\n\n        _createClass(_a, [{\n            key: \"connecting\",\n            value: function connecting() {\n                var _this2 = this;\n\n                var loaded = this.props.loading;\n                if (loaded) {\n                    this.state = { loaded: loaded };\n                }\n                if (this.props.loader) {\n                    this.props.loader().then(function (r) {\n                        var loaded = r.default || r;\n                        if (loaded) {\n                            _this2.state = { loaded: loaded };\n                        }\n                    });\n                }\n            }\n        }, {\n            key: \"render\",\n            value: function render() {\n                var loaded = this.state.loaded;\n\n                return this.$(_templateObject, typeof loaded === 'function' ? new loaded() : loaded);\n            }\n        }, {\n            key: \"renderRoot\",\n            get: function get() {\n                return props.useShadowRoot ? this.renderRoot : this;\n            }\n        }]);\n\n        return _a;\n    }(component_1.Component), _a.is = props.is, _a));\n};",
+    "map": {
+      "mappings": [
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 4 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 16 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 24 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 33 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 16, "column": 34 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 4 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 18 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 26 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 39 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 17, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 13 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 13 },
+          "generated": { "line": 18, "column": 8 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 13 },
+          "generated": { "line": 18, "column": 20 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 28 },
+          "generated": { "line": 18, "column": 23 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 29 },
+          "generated": { "line": 18, "column": 33 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 28 },
+          "generated": { "line": 18, "column": 38 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 46 },
+          "generated": { "line": 18, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 20, "column": 11 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 20, "column": 21 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 20, "column": 27 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 20, "column": 29 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 23, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 23, "column": 22 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 24, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 26, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 26, "column": 122 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 18, "column": 6 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 18, "column": 6 },
+          "generated": { "line": 28, "column": 18 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 18, "column": 6 },
+          "generated": { "line": 28, "column": 23 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 18, "column": 14 },
+          "generated": { "line": 28, "column": 26 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 18, "column": 6 },
+          "generated": { "line": 28, "column": 31 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 4 },
+          "generated": { "line": 29, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 40, "column": 5 },
+          "generated": { "line": 30, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 22, "column": 16 },
+          "generated": { "line": 34, "column": 41 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 22, "column": 16 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 8 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 14 },
+          "generated": { "line": 37, "column": 20 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 23 },
+          "generated": { "line": 37, "column": 29 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 28 },
+          "generated": { "line": 37, "column": 34 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 23 },
+          "generated": { "line": 37, "column": 39 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 34 },
+          "generated": { "line": 37, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 23, "column": 8 },
+          "generated": { "line": 37, "column": 47 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 24, "column": 8 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 24, "column": 12 },
+          "generated": { "line": 38, "column": 20 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 24, "column": 8 },
+          "generated": { "line": 38, "column": 26 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 24, "column": 20 },
+          "generated": { "line": 38, "column": 28 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 39, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 15 },
+          "generated": { "line": 39, "column": 25 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 39, "column": 30 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 23 },
+          "generated": { "line": 39, "column": 33 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 25 },
+          "generated": { "line": 39, "column": 35 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 23 },
+          "generated": { "line": 39, "column": 49 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 39, "column": 51 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 26, "column": 9 },
+          "generated": { "line": 40, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 8 },
+          "generated": { "line": 41, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 12 },
+          "generated": { "line": 41, "column": 20 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 17 },
+          "generated": { "line": 41, "column": 25 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 12 },
+          "generated": { "line": 41, "column": 30 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 23 },
+          "generated": { "line": 41, "column": 31 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 8 },
+          "generated": { "line": 41, "column": 37 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 27, "column": 31 },
+          "generated": { "line": 41, "column": 39 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 10 },
+          "generated": { "line": 42, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 15 },
+          "generated": { "line": 42, "column": 25 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 10 },
+          "generated": { "line": 42, "column": 30 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 21 },
+          "generated": { "line": 42, "column": 31 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 10 },
+          "generated": { "line": 42, "column": 37 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 30 },
+          "generated": { "line": 42, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 10 },
+          "generated": { "line": 42, "column": 44 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 35 },
+          "generated": { "line": 42, "column": 45 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 39 },
+          "generated": { "line": 42, "column": 58 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 12 },
+          "generated": { "line": 43, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 18 },
+          "generated": { "line": 43, "column": 28 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 27 },
+          "generated": { "line": 43, "column": 37 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 29 },
+          "generated": { "line": 43, "column": 39 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 27 },
+          "generated": { "line": 43, "column": 46 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 40 },
+          "generated": { "line": 43, "column": 50 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 29, "column": 12 },
+          "generated": { "line": 43, "column": 51 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 30, "column": 12 },
+          "generated": { "line": 44, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 30, "column": 16 },
+          "generated": { "line": 44, "column": 28 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 30, "column": 12 },
+          "generated": { "line": 44, "column": 34 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 30, "column": 24 },
+          "generated": { "line": 44, "column": 36 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 14 },
+          "generated": { "line": 45, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 19 },
+          "generated": { "line": 45, "column": 35 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 14 },
+          "generated": { "line": 45, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 27 },
+          "generated": { "line": 45, "column": 43 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 29 },
+          "generated": { "line": 45, "column": 45 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 27 },
+          "generated": { "line": 45, "column": 59 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 31, "column": 14 },
+          "generated": { "line": 45, "column": 61 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 32, "column": 13 },
+          "generated": { "line": 46, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 33, "column": 11 },
+          "generated": { "line": 47, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 28, "column": 10 },
+          "generated": { "line": 47, "column": 21 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 34, "column": 9 },
+          "generated": { "line": 48, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 35, "column": 7 },
+          "generated": { "line": 49, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 50, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 51, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 52, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 36, "column": 12 },
+          "generated": { "line": 52, "column": 37 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 36, "column": 12 },
+          "generated": { "line": 53, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 37, "column": 16 },
+          "generated": { "line": 53, "column": 20 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 36, "column": 12 },
+          "generated": { "line": 53, "column": 26 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 37, "column": 27 },
+          "generated": { "line": 53, "column": 29 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 37, "column": 32 },
+          "generated": { "line": 53, "column": 34 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 36, "column": 12 },
+          "generated": { "line": 53, "column": 39 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 37, "column": 16 },
+          "generated": { "line": 53, "column": 40 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 36, "column": 12 },
+          "generated": { "line": 53, "column": 46 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 8 },
+          "generated": { "line": 55, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 15 },
+          "generated": { "line": 55, "column": 23 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 20 },
+          "generated": { "line": 55, "column": 28 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 8 },
+          "generated": { "line": 55, "column": 29 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 24 },
+          "generated": { "line": 55, "column": 47 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 31 },
+          "generated": { "line": 55, "column": 54 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 24 },
+          "generated": { "line": 55, "column": 60 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 42 },
+          "generated": { "line": 55, "column": 65 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 24 },
+          "generated": { "line": 55, "column": 75 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 55 },
+          "generated": { "line": 55, "column": 78 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 59 },
+          "generated": { "line": 55, "column": 82 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 55 },
+          "generated": { "line": 55, "column": 88 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 24 },
+          "generated": { "line": 55, "column": 90 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 70 },
+          "generated": { "line": 55, "column": 93 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 38, "column": 8 },
+          "generated": { "line": 55, "column": 99 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 39, "column": 7 },
+          "generated": { "line": 56, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 57, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 58, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 59, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 19, "column": 20 },
+          "generated": { "line": 59, "column": 32 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 8 },
+          "generated": { "line": 60, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 15 },
+          "generated": { "line": 60, "column": 23 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 21 },
+          "generated": { "line": 60, "column": 29 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 15 },
+          "generated": { "line": 60, "column": 42 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 37 },
+          "generated": { "line": 60, "column": 45 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 42 },
+          "generated": { "line": 60, "column": 50 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 15 },
+          "generated": { "line": 60, "column": 60 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 55 },
+          "generated": { "line": 60, "column": 63 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 20, "column": 8 },
+          "generated": { "line": 60, "column": 67 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 21, "column": 7 },
+          "generated": { "line": 61, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 62, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 64, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 65, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 18 },
+          "generated": { "line": 65, "column": 6 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 6, "column": 18 },
+          "generated": { "line": 65, "column": 18 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 65, "column": 27 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 7, "column": 13 },
+          "generated": { "line": 65, "column": 30 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 7, "column": 13 },
+          "generated": { "line": 65, "column": 33 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 7, "column": 13 },
+          "generated": { "line": 65, "column": 35 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 7, "column": 18 },
+          "generated": { "line": 65, "column": 38 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 7, "column": 24 },
+          "generated": { "line": 65, "column": 44 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 8 },
+          "generated": { "line": 65, "column": 46 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 65, "column": 50 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 5, "column": 2 },
+          "generated": { "line": 65, "column": 52 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 41, "column": 3 },
+          "generated": { "line": 66, "column": 0 }
+        },
+        {
+          "source": "utils\\with-loadable.ts",
+          "name": null,
+          "original": { "line": 4, "column": 13 },
+          "generated": { "line": 66, "column": 1 }
+        }
+      ],
+      "sources": {
+        "utils\\with-loadable.ts":
+          "import { define } from 'skatejs';\nimport { Component } from './component';\n\nexport const withLoadable = (props: Object) =>\n  define(\n    class extends Component {\n      static is = props.is;\n      props: {\n        format: any;\n        loader: any;\n        loading: any;\n        useShadowRoot: boolean;\n      };\n      renderRoot: HTMLElement;\n      state: {\n        loaded: boolean;\n      };\n      props = props;\n      get renderRoot() {\n        return props.useShadowRoot ? this.renderRoot : this;\n      }\n      connecting() {\n        const loaded = this.props.loading;\n        if (loaded) {\n          this.state = { loaded };\n        }\n        if (this.props.loader) {\n          this.props.loader().then(r => {\n            const loaded = r.default || r;\n            if (loaded) {\n              this.state = { loaded };\n            }\n          });\n        }\n      }\n      render() {\n        const { loaded } = this.state;\n        return this.$`${typeof loaded === 'function' ? new loaded() : loaded}`;\n      }\n    }\n  );\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "b4dadabd38ea38c932d2361247335c3a",
+  "cacheData": { "env": {} }
+}

@@ -1,0 +1,3200 @@
+{
+  "id": "node_modules\\skatejs\\dist\\esm\\component.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\package.json",
+      "includedInParent": true,
+      "mtime": 1533814982424
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "./observe",
+      "loc": { "line": 1, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\component.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\observe.js"
+    },
+    {
+      "name": "./shadow",
+      "loc": { "line": 2, "column": 23 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\component.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\shadow.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "var global = arguments[3];\n'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.component = component;\n\nvar _observe = require('./observe');\n\nvar _shadow = require('./shadow');\n\nfunction delay(fn) {\n    if (typeof global.Promise === 'function') {\n        // @ts-ignore - Promise.resove() indeed does exist.\n        global.Promise.resolve().then(fn);\n    } else {\n        setTimeout(fn);\n    }\n}\nfunction component(Base) {\n    var _a;\n    return _a = class extends Base {\n        constructor() {\n            super(...arguments);\n            this._prevProps = {};\n            this._prevState = {};\n            this._props = {};\n            this._state = {};\n            this._updating = false;\n        }\n        // This is invoked once when the element is defined. Due to this, we must\n        // link props to attrs here as opposed to doing it in the constructor.\n        static get observedAttributes() {\n            const { attrs, props } = this;\n            return Object.keys(props).reduce((observedAttrs, propName) => {\n                // We're opinionated about the propName -> propname (attribute)\n                // convention.\n                const attrName = propName.toLowerCase();\n                // Don't set props from attributes if there is no handler. This also\n                // means we don't need to observe them at all.\n                if (this.props[propName]) {\n                    this._attrToPropMap[attrName] = propName;\n                    this._propToAttrMap[propName] = attrName;\n                    observedAttrs = observedAttrs.concat(attrName);\n                }\n                // Defines a property to ensure it triggers an updated and syncs the\n                // corresponding attribute.\n                Object.defineProperty(this.prototype, propName, {\n                    configurable: true,\n                    get() {\n                        return this._props[propName];\n                    },\n                    set(propValue) {\n                        this._props[propName] = propValue;\n                        if (propName in attrs) {\n                            const attrName = this._propToAttrsMap[propName];\n                            const attrValue = attrs[propName](propValue);\n                            if (attrValue == null) {\n                                this.removeAttribute(attrName);\n                            } else {\n                                this.setAttribute(attrName, attrValue);\n                            }\n                        }\n                        this.triggerUpdate();\n                    }\n                });\n                return observedAttrs;\n            }, []);\n        }\n        static get attrs() {\n            return this.props;\n        }\n        static get props() {\n            return Object.keys(this.prototype).reduce((o, k) => {\n                o[k] = v => v;\n                return o;\n            }, {});\n        }\n        get props() {\n            return this._props;\n        }\n        set props(props) {\n            this._props = props;\n        }\n        get renderRoot() {\n            return super.renderRoot || (0, _shadow.shadow)(this);\n        }\n        get state() {\n            return this._state;\n        }\n        set state(state) {\n            this._state = state;\n            this._triggerUpdate();\n        }\n        attributeChangedCallback(name, oldValue, newValue) {\n            const { _attrToPropMap, props } = this.constructor;\n            if (super.attributeChangedCallback) {\n                super.attributeChangedCallback(name, oldValue, newValue);\n            }\n            const propertyName = _attrToPropMap[name];\n            const propertyFunc = props[propertyName];\n            if (propertyFunc) {\n                this._props[propertyName] = propertyFunc(newValue);\n                this._triggerUpdate();\n            }\n        }\n        connectedCallback() {\n            if (super.connectedCallback) {\n                super.connectedCallback();\n            }\n            if (this.childrenUpdated) {\n                (0, _observe.observe)(this, this.childrenUpdated.bind(this));\n            }\n            this._triggerUpdate();\n        }\n        renderer(root, html) {\n            if (super.renderer) {\n                super.renderer(root, html);\n            } else {\n                root.innerHTML = html();\n            }\n        }\n        shouldUpdate(props, state) {\n            return true;\n        }\n        _triggerUpdate() {\n            if (this._updating) {\n                return;\n            }\n            if (!this._boundRender) {\n                this._boundRender = this.render.bind(this);\n            }\n            // This flag prevents infinite loops if another update is triggered while\n            // performing the current update.\n            this._updating = true;\n            // We execute the update process at the end of the current microtask so\n            // we can debounce any subsequent updates using the _updating flag.\n            delay(() => {\n                const { _prevProps, _prevState } = this;\n                if (this.shouldUpdate(_prevProps, _prevState)) {\n                    this.renderer(this.renderRoot, this._boundRender);\n                    if (this.updated) {\n                        this.updated(_prevProps, _prevState);\n                    }\n                }\n                this._prevProps = this.props;\n                this._prevState = this.state;\n                this._updating = false;\n            });\n        }\n    }, _a._attrToPropMap = {}, _a._propToAttrMap = {}, _a;\n}",
+    "map": {
+      "mappings": [
+        {
+          "name": "component",
+          "generated": { "line": 7, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 16 }
+        },
+        {
+          "name": "component",
+          "generated": { "line": 7, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 16 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 11, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 2, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "name": "delay",
+          "generated": { "line": 13, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 9 }
+        },
+        {
+          "generated": { "line": 13, "column": 14 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "name": "fn",
+          "generated": { "line": 13, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 15 }
+        },
+        {
+          "generated": { "line": 13, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 14, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "generated": { "line": 14, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 8 }
+        },
+        {
+          "name": "global",
+          "generated": { "line": 14, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 15 }
+        },
+        {
+          "name": "Promise",
+          "generated": { "line": 14, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 22 }
+        },
+        {
+          "generated": { "line": 14, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 8 }
+        },
+        {
+          "generated": { "line": 14, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 34 }
+        },
+        {
+          "generated": { "line": 14, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "generated": { "line": 14, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 46 }
+        },
+        {
+          "generated": { "line": 15, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 5, "column": 8 }
+        },
+        {
+          "name": "global",
+          "generated": { "line": 16, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 8 }
+        },
+        {
+          "name": "Promise",
+          "generated": { "line": 16, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 15 }
+        },
+        {
+          "generated": { "line": 16, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 8 }
+        },
+        {
+          "name": "resolve",
+          "generated": { "line": 16, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 23 }
+        },
+        {
+          "generated": { "line": 16, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 8 }
+        },
+        {
+          "name": "then",
+          "generated": { "line": 16, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 33 }
+        },
+        {
+          "generated": { "line": 16, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 8 }
+        },
+        {
+          "name": "fn",
+          "generated": { "line": 16, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 38 }
+        },
+        {
+          "generated": { "line": 16, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 6, "column": 8 }
+        },
+        {
+          "generated": { "line": 17, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 7, "column": 5 }
+        },
+        {
+          "generated": { "line": 17, "column": 5 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "generated": { "line": 17, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 8, "column": 9 }
+        },
+        {
+          "name": "setTimeout",
+          "generated": { "line": 18, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 9, "column": 8 }
+        },
+        {
+          "name": "fn",
+          "generated": { "line": 18, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 9, "column": 19 }
+        },
+        {
+          "generated": { "line": 18, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 9, "column": 8 }
+        },
+        {
+          "generated": { "line": 19, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 10, "column": 5 }
+        },
+        {
+          "generated": { "line": 20, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 11, "column": 1 }
+        },
+        {
+          "generated": { "line": 21, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 7 }
+        },
+        {
+          "name": "component",
+          "generated": { "line": 21, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 16 }
+        },
+        {
+          "generated": { "line": 21, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 7 }
+        },
+        {
+          "name": "Base",
+          "generated": { "line": 21, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 26 }
+        },
+        {
+          "generated": { "line": 21, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 7 }
+        },
+        {
+          "generated": { "line": 21, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 12, "column": 32 }
+        },
+        {
+          "generated": { "line": 22, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 13, "column": 4 }
+        },
+        {
+          "name": "_a",
+          "generated": { "line": 22, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 13, "column": 8 }
+        },
+        {
+          "generated": { "line": 22, "column": 10 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 13, "column": 4 }
+        },
+        {
+          "generated": { "line": 23, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 4 }
+        },
+        {
+          "name": "_a",
+          "generated": { "line": 23, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 11 }
+        },
+        {
+          "generated": { "line": 23, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 16 }
+        },
+        {
+          "name": "Base",
+          "generated": { "line": 23, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 30 }
+        },
+        {
+          "generated": { "line": 23, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 16 }
+        },
+        {
+          "generated": { "line": 23, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 35 }
+        },
+        {
+          "name": "constructor",
+          "generated": { "line": 24, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 15, "column": 12 }
+        },
+        {
+          "generated": { "line": 24, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 15, "column": 26 }
+        },
+        {
+          "generated": { "line": 25, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 16, "column": 16 }
+        },
+        {
+          "generated": { "line": 25, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 16, "column": 22 }
+        },
+        {
+          "name": "arguments",
+          "generated": { "line": 25, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 16, "column": 25 }
+        },
+        {
+          "generated": { "line": 25, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 16, "column": 16 }
+        },
+        {
+          "generated": { "line": 26, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 17, "column": 16 }
+        },
+        {
+          "name": "_prevProps",
+          "generated": { "line": 26, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 17, "column": 21 }
+        },
+        {
+          "generated": { "line": 26, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 17, "column": 16 }
+        },
+        {
+          "generated": { "line": 26, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 17, "column": 34 }
+        },
+        {
+          "generated": { "line": 26, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 17, "column": 16 }
+        },
+        {
+          "generated": { "line": 27, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 18, "column": 16 }
+        },
+        {
+          "name": "_prevState",
+          "generated": { "line": 27, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 18, "column": 21 }
+        },
+        {
+          "generated": { "line": 27, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 18, "column": 16 }
+        },
+        {
+          "generated": { "line": 27, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 18, "column": 34 }
+        },
+        {
+          "generated": { "line": 27, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 18, "column": 16 }
+        },
+        {
+          "generated": { "line": 28, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 19, "column": 16 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 28, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 19, "column": 21 }
+        },
+        {
+          "generated": { "line": 28, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 19, "column": 16 }
+        },
+        {
+          "generated": { "line": 28, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 19, "column": 30 }
+        },
+        {
+          "generated": { "line": 28, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 19, "column": 16 }
+        },
+        {
+          "generated": { "line": 29, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 20, "column": 16 }
+        },
+        {
+          "name": "_state",
+          "generated": { "line": 29, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 20, "column": 21 }
+        },
+        {
+          "generated": { "line": 29, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 20, "column": 16 }
+        },
+        {
+          "generated": { "line": 29, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 20, "column": 30 }
+        },
+        {
+          "generated": { "line": 29, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 20, "column": 16 }
+        },
+        {
+          "generated": { "line": 30, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 21, "column": 16 }
+        },
+        {
+          "name": "_updating",
+          "generated": { "line": 30, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 21, "column": 21 }
+        },
+        {
+          "generated": { "line": 30, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 21, "column": 16 }
+        },
+        {
+          "generated": { "line": 30, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 21, "column": 33 }
+        },
+        {
+          "generated": { "line": 30, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 21, "column": 16 }
+        },
+        {
+          "generated": { "line": 31, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 22, "column": 13 }
+        },
+        {
+          "generated": { "line": 32, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 23, "column": 12 }
+        },
+        {
+          "generated": { "line": 33, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "generated": { "line": 34, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 25, "column": 12 }
+        },
+        {
+          "name": "observedAttributes",
+          "generated": { "line": 34, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 25, "column": 23 }
+        },
+        {
+          "generated": { "line": 34, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 25, "column": 12 }
+        },
+        {
+          "generated": { "line": 34, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 25, "column": 44 }
+        },
+        {
+          "generated": { "line": 35, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 16 }
+        },
+        {
+          "generated": { "line": 35, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 22 }
+        },
+        {
+          "name": "attrs",
+          "generated": { "line": 35, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 24 }
+        },
+        {
+          "generated": { "line": 35, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 22 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 35, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 31 }
+        },
+        {
+          "generated": { "line": 35, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 22 }
+        },
+        {
+          "generated": { "line": 35, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 41 }
+        },
+        {
+          "generated": { "line": 35, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 26, "column": 16 }
+        },
+        {
+          "generated": { "line": 36, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 16 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 36, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "name": "keys",
+          "generated": { "line": 36, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 30 }
+        },
+        {
+          "generated": { "line": 36, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 36, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 35 }
+        },
+        {
+          "generated": { "line": 36, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "name": "reduce",
+          "generated": { "line": 36, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 42 }
+        },
+        {
+          "generated": { "line": 36, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "generated": { "line": 36, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 49 }
+        },
+        {
+          "name": "observedAttrs",
+          "generated": { "line": 36, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 50 }
+        },
+        {
+          "generated": { "line": 36, "column": 59 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 49 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 36, "column": 61 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 65 }
+        },
+        {
+          "generated": { "line": 36, "column": 69 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 49 }
+        },
+        {
+          "generated": { "line": 36, "column": 74 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 78 }
+        },
+        {
+          "generated": { "line": 37, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 28, "column": 20 }
+        },
+        {
+          "generated": { "line": 38, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 29, "column": 20 }
+        },
+        {
+          "generated": { "line": 39, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 20 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 39, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 26 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 39, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 37 }
+        },
+        {
+          "name": "toLowerCase",
+          "generated": { "line": 39, "column": 42 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 46 }
+        },
+        {
+          "generated": { "line": 39, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 37 }
+        },
+        {
+          "generated": { "line": 39, "column": 55 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 30, "column": 20 }
+        },
+        {
+          "generated": { "line": 40, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 31, "column": 20 }
+        },
+        {
+          "generated": { "line": 41, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 32, "column": 20 }
+        },
+        {
+          "generated": { "line": 42, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 20 }
+        },
+        {
+          "generated": { "line": 42, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 24 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 42, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 29 }
+        },
+        {
+          "generated": { "line": 42, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 24 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 42, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 35 }
+        },
+        {
+          "generated": { "line": 42, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 24 }
+        },
+        {
+          "generated": { "line": 42, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 20 }
+        },
+        {
+          "generated": { "line": 42, "column": 42 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 33, "column": 46 }
+        },
+        {
+          "generated": { "line": 43, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 24 }
+        },
+        {
+          "name": "_attrToPropMap",
+          "generated": { "line": 43, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 29 }
+        },
+        {
+          "generated": { "line": 43, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 24 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 43, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 44 }
+        },
+        {
+          "generated": { "line": 43, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 24 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 43, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 56 }
+        },
+        {
+          "generated": { "line": 43, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 34, "column": 24 }
+        },
+        {
+          "generated": { "line": 44, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 24 }
+        },
+        {
+          "name": "_propToAttrMap",
+          "generated": { "line": 44, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 29 }
+        },
+        {
+          "generated": { "line": 44, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 24 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 44, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 44 }
+        },
+        {
+          "generated": { "line": 44, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 24 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 44, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 56 }
+        },
+        {
+          "generated": { "line": 44, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 35, "column": 24 }
+        },
+        {
+          "name": "observedAttrs",
+          "generated": { "line": 45, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 24 }
+        },
+        {
+          "name": "observedAttrs",
+          "generated": { "line": 45, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 40 }
+        },
+        {
+          "name": "concat",
+          "generated": { "line": 45, "column": 50 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 54 }
+        },
+        {
+          "generated": { "line": 45, "column": 56 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 40 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 45, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 61 }
+        },
+        {
+          "generated": { "line": 45, "column": 65 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 40 }
+        },
+        {
+          "generated": { "line": 45, "column": 66 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 36, "column": 24 }
+        },
+        {
+          "generated": { "line": 46, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 37, "column": 21 }
+        },
+        {
+          "generated": { "line": 47, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 38, "column": 20 }
+        },
+        {
+          "generated": { "line": 48, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 39, "column": 20 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 49, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 20 }
+        },
+        {
+          "name": "defineProperty",
+          "generated": { "line": 49, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 27 }
+        },
+        {
+          "generated": { "line": 49, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 20 }
+        },
+        {
+          "generated": { "line": 49, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 42 }
+        },
+        {
+          "name": "prototype",
+          "generated": { "line": 49, "column": 43 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 47 }
+        },
+        {
+          "generated": { "line": 49, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 20 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 49, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 58 }
+        },
+        {
+          "generated": { "line": 49, "column": 62 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 20 }
+        },
+        {
+          "generated": { "line": 49, "column": 64 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 68 }
+        },
+        {
+          "name": "configurable",
+          "generated": { "line": 50, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 41, "column": 24 }
+        },
+        {
+          "generated": { "line": 50, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 41, "column": 38 }
+        },
+        {
+          "generated": { "line": 50, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 68 }
+        },
+        {
+          "name": "get",
+          "generated": { "line": 51, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 42, "column": 24 }
+        },
+        {
+          "generated": { "line": 51, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 42, "column": 30 }
+        },
+        {
+          "generated": { "line": 52, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 28 }
+        },
+        {
+          "generated": { "line": 52, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 35 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 52, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 40 }
+        },
+        {
+          "generated": { "line": 52, "column": 42 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 35 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 52, "column": 43 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 47 }
+        },
+        {
+          "generated": { "line": 52, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 35 }
+        },
+        {
+          "generated": { "line": 52, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 43, "column": 28 }
+        },
+        {
+          "generated": { "line": 53, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 44, "column": 25 }
+        },
+        {
+          "generated": { "line": 53, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 68 }
+        },
+        {
+          "name": "set",
+          "generated": { "line": 54, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 45, "column": 24 }
+        },
+        {
+          "name": "propValue",
+          "generated": { "line": 54, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 45, "column": 28 }
+        },
+        {
+          "generated": { "line": 54, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 45, "column": 24 }
+        },
+        {
+          "generated": { "line": 54, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 45, "column": 39 }
+        },
+        {
+          "generated": { "line": 55, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 28 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 55, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 33 }
+        },
+        {
+          "generated": { "line": 55, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 28 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 55, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 40 }
+        },
+        {
+          "generated": { "line": 55, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 28 }
+        },
+        {
+          "name": "propValue",
+          "generated": { "line": 55, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 52 }
+        },
+        {
+          "generated": { "line": 55, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 46, "column": 28 }
+        },
+        {
+          "generated": { "line": 56, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 47, "column": 28 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 56, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 47, "column": 32 }
+        },
+        {
+          "name": "attrs",
+          "generated": { "line": 56, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 47, "column": 44 }
+        },
+        {
+          "generated": { "line": 56, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 47, "column": 28 }
+        },
+        {
+          "generated": { "line": 56, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 47, "column": 51 }
+        },
+        {
+          "generated": { "line": 57, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 32 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 57, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 38 }
+        },
+        {
+          "generated": { "line": 57, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 49 }
+        },
+        {
+          "name": "_propToAttrsMap",
+          "generated": { "line": 57, "column": 50 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 54 }
+        },
+        {
+          "generated": { "line": 57, "column": 65 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 49 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 57, "column": 66 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 70 }
+        },
+        {
+          "generated": { "line": 57, "column": 74 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 49 }
+        },
+        {
+          "generated": { "line": 57, "column": 75 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 48, "column": 32 }
+        },
+        {
+          "generated": { "line": 58, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 32 }
+        },
+        {
+          "name": "attrValue",
+          "generated": { "line": 58, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 38 }
+        },
+        {
+          "name": "attrs",
+          "generated": { "line": 58, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 50 }
+        },
+        {
+          "name": "propName",
+          "generated": { "line": 58, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 56 }
+        },
+        {
+          "generated": { "line": 58, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 50 }
+        },
+        {
+          "name": "propValue",
+          "generated": { "line": 58, "column": 62 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 66 }
+        },
+        {
+          "generated": { "line": 58, "column": 71 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 50 }
+        },
+        {
+          "generated": { "line": 58, "column": 72 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 49, "column": 32 }
+        },
+        {
+          "generated": { "line": 59, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 32 }
+        },
+        {
+          "name": "attrValue",
+          "generated": { "line": 59, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 36 }
+        },
+        {
+          "generated": { "line": 59, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 49 }
+        },
+        {
+          "generated": { "line": 59, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 32 }
+        },
+        {
+          "generated": { "line": 59, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 55 }
+        },
+        {
+          "generated": { "line": 60, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 51, "column": 36 }
+        },
+        {
+          "name": "removeAttribute",
+          "generated": { "line": 60, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 51, "column": 41 }
+        },
+        {
+          "generated": { "line": 60, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 51, "column": 36 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 60, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 51, "column": 57 }
+        },
+        {
+          "generated": { "line": 60, "column": 61 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 51, "column": 36 }
+        },
+        {
+          "generated": { "line": 61, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 52, "column": 33 }
+        },
+        {
+          "generated": { "line": 61, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 50, "column": 32 }
+        },
+        {
+          "generated": { "line": 61, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 53, "column": 37 }
+        },
+        {
+          "generated": { "line": 62, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 36 }
+        },
+        {
+          "name": "setAttribute",
+          "generated": { "line": 62, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 41 }
+        },
+        {
+          "generated": { "line": 62, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 36 }
+        },
+        {
+          "name": "attrName",
+          "generated": { "line": 62, "column": 50 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 54 }
+        },
+        {
+          "generated": { "line": 62, "column": 58 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 36 }
+        },
+        {
+          "name": "attrValue",
+          "generated": { "line": 62, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 64 }
+        },
+        {
+          "generated": { "line": 62, "column": 69 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 54, "column": 36 }
+        },
+        {
+          "generated": { "line": 63, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 55, "column": 33 }
+        },
+        {
+          "generated": { "line": 64, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 56, "column": 29 }
+        },
+        {
+          "generated": { "line": 65, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 57, "column": 28 }
+        },
+        {
+          "name": "triggerUpdate",
+          "generated": { "line": 65, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 57, "column": 33 }
+        },
+        {
+          "generated": { "line": 65, "column": 42 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 57, "column": 28 }
+        },
+        {
+          "generated": { "line": 66, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 58, "column": 25 }
+        },
+        {
+          "generated": { "line": 67, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 68 }
+        },
+        {
+          "generated": { "line": 67, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 40, "column": 20 }
+        },
+        {
+          "generated": { "line": 68, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 60, "column": 20 }
+        },
+        {
+          "name": "observedAttrs",
+          "generated": { "line": 68, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 60, "column": 27 }
+        },
+        {
+          "generated": { "line": 68, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 60, "column": 20 }
+        },
+        {
+          "generated": { "line": 69, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 61, "column": 17 }
+        },
+        {
+          "generated": { "line": 69, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "generated": { "line": 69, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 61, "column": 19 }
+        },
+        {
+          "generated": { "line": 69, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 23 }
+        },
+        {
+          "generated": { "line": 69, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 27, "column": 16 }
+        },
+        {
+          "generated": { "line": 70, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 62, "column": 13 }
+        },
+        {
+          "generated": { "line": 71, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 63, "column": 12 }
+        },
+        {
+          "name": "attrs",
+          "generated": { "line": 71, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 63, "column": 23 }
+        },
+        {
+          "generated": { "line": 71, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 63, "column": 12 }
+        },
+        {
+          "generated": { "line": 71, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 63, "column": 31 }
+        },
+        {
+          "generated": { "line": 72, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 64, "column": 16 }
+        },
+        {
+          "generated": { "line": 72, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 64, "column": 23 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 72, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 64, "column": 28 }
+        },
+        {
+          "generated": { "line": 72, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 64, "column": 16 }
+        },
+        {
+          "generated": { "line": 73, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 65, "column": 13 }
+        },
+        {
+          "generated": { "line": 74, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 66, "column": 12 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 74, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 66, "column": 23 }
+        },
+        {
+          "generated": { "line": 74, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 66, "column": 12 }
+        },
+        {
+          "generated": { "line": 74, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 66, "column": 31 }
+        },
+        {
+          "generated": { "line": 75, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 16 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 75, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "name": "keys",
+          "generated": { "line": 75, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 30 }
+        },
+        {
+          "generated": { "line": 75, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "generated": { "line": 75, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 35 }
+        },
+        {
+          "name": "prototype",
+          "generated": { "line": 75, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 40 }
+        },
+        {
+          "generated": { "line": 75, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "name": "reduce",
+          "generated": { "line": 75, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 51 }
+        },
+        {
+          "generated": { "line": 75, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "generated": { "line": 75, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 58 }
+        },
+        {
+          "name": "o",
+          "generated": { "line": 75, "column": 55 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 59 }
+        },
+        {
+          "generated": { "line": 75, "column": 56 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 58 }
+        },
+        {
+          "name": "k",
+          "generated": { "line": 75, "column": 58 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 62 }
+        },
+        {
+          "generated": { "line": 75, "column": 59 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 58 }
+        },
+        {
+          "generated": { "line": 75, "column": 64 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 68 }
+        },
+        {
+          "name": "o",
+          "generated": { "line": 76, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 20 }
+        },
+        {
+          "name": "k",
+          "generated": { "line": 76, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 22 }
+        },
+        {
+          "generated": { "line": 76, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 20 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 76, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 27 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 76, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 32 }
+        },
+        {
+          "generated": { "line": 76, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 68, "column": 20 }
+        },
+        {
+          "generated": { "line": 77, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 69, "column": 20 }
+        },
+        {
+          "name": "o",
+          "generated": { "line": 77, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 69, "column": 27 }
+        },
+        {
+          "generated": { "line": 77, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 69, "column": 20 }
+        },
+        {
+          "generated": { "line": 78, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 70, "column": 17 }
+        },
+        {
+          "generated": { "line": 78, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "generated": { "line": 78, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 70, "column": 19 }
+        },
+        {
+          "generated": { "line": 78, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 23 }
+        },
+        {
+          "generated": { "line": 78, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 67, "column": 16 }
+        },
+        {
+          "generated": { "line": 79, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 71, "column": 13 }
+        },
+        {
+          "generated": { "line": 80, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 72, "column": 12 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 80, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 72, "column": 16 }
+        },
+        {
+          "generated": { "line": 80, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 72, "column": 12 }
+        },
+        {
+          "generated": { "line": 80, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 72, "column": 24 }
+        },
+        {
+          "generated": { "line": 81, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 73, "column": 16 }
+        },
+        {
+          "generated": { "line": 81, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 73, "column": 23 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 81, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 73, "column": 28 }
+        },
+        {
+          "generated": { "line": 81, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 73, "column": 16 }
+        },
+        {
+          "generated": { "line": 82, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 74, "column": 13 }
+        },
+        {
+          "generated": { "line": 83, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 12 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 83, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 16 }
+        },
+        {
+          "generated": { "line": 83, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 12 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 83, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 22 }
+        },
+        {
+          "generated": { "line": 83, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 12 }
+        },
+        {
+          "generated": { "line": 83, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 75, "column": 29 }
+        },
+        {
+          "generated": { "line": 84, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 76, "column": 16 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 84, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 76, "column": 21 }
+        },
+        {
+          "generated": { "line": 84, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 76, "column": 16 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 84, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 76, "column": 30 }
+        },
+        {
+          "generated": { "line": 84, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 76, "column": 16 }
+        },
+        {
+          "generated": { "line": 85, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 77, "column": 13 }
+        },
+        {
+          "generated": { "line": 86, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 78, "column": 12 }
+        },
+        {
+          "name": "renderRoot",
+          "generated": { "line": 86, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 78, "column": 16 }
+        },
+        {
+          "generated": { "line": 86, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 78, "column": 12 }
+        },
+        {
+          "generated": { "line": 86, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 78, "column": 29 }
+        },
+        {
+          "generated": { "line": 87, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 16 }
+        },
+        {
+          "generated": { "line": 87, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 23 }
+        },
+        {
+          "name": "renderRoot",
+          "generated": { "line": 87, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 29 }
+        },
+        {
+          "generated": { "line": 87, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 23 }
+        },
+        {
+          "generated": { "line": 87, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 43 }
+        },
+        {
+          "generated": { "line": 87, "column": 59 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 50 }
+        },
+        {
+          "generated": { "line": 87, "column": 63 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 43 }
+        },
+        {
+          "generated": { "line": 87, "column": 64 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 79, "column": 16 }
+        },
+        {
+          "generated": { "line": 88, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 80, "column": 13 }
+        },
+        {
+          "generated": { "line": 89, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 81, "column": 12 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 89, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 81, "column": 16 }
+        },
+        {
+          "generated": { "line": 89, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 81, "column": 12 }
+        },
+        {
+          "generated": { "line": 89, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 81, "column": 24 }
+        },
+        {
+          "generated": { "line": 90, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 82, "column": 16 }
+        },
+        {
+          "generated": { "line": 90, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 82, "column": 23 }
+        },
+        {
+          "name": "_state",
+          "generated": { "line": 90, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 82, "column": 28 }
+        },
+        {
+          "generated": { "line": 90, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 82, "column": 16 }
+        },
+        {
+          "generated": { "line": 91, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 83, "column": 13 }
+        },
+        {
+          "generated": { "line": 92, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 12 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 92, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 16 }
+        },
+        {
+          "generated": { "line": 92, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 12 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 92, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 22 }
+        },
+        {
+          "generated": { "line": 92, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 12 }
+        },
+        {
+          "generated": { "line": 92, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 84, "column": 29 }
+        },
+        {
+          "generated": { "line": 93, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 85, "column": 16 }
+        },
+        {
+          "name": "_state",
+          "generated": { "line": 93, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 85, "column": 21 }
+        },
+        {
+          "generated": { "line": 93, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 85, "column": 16 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 93, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 85, "column": 30 }
+        },
+        {
+          "generated": { "line": 93, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 85, "column": 16 }
+        },
+        {
+          "generated": { "line": 94, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 86, "column": 16 }
+        },
+        {
+          "name": "_triggerUpdate",
+          "generated": { "line": 94, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 86, "column": 21 }
+        },
+        {
+          "generated": { "line": 94, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 86, "column": 16 }
+        },
+        {
+          "generated": { "line": 95, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 87, "column": 13 }
+        },
+        {
+          "name": "attributeChangedCallback",
+          "generated": { "line": 96, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 12 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 96, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 37 }
+        },
+        {
+          "generated": { "line": 96, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 12 }
+        },
+        {
+          "name": "oldValue",
+          "generated": { "line": 96, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 43 }
+        },
+        {
+          "generated": { "line": 96, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 12 }
+        },
+        {
+          "name": "newValue",
+          "generated": { "line": 96, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 53 }
+        },
+        {
+          "generated": { "line": 96, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 12 }
+        },
+        {
+          "generated": { "line": 96, "column": 59 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 88, "column": 63 }
+        },
+        {
+          "generated": { "line": 97, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 16 }
+        },
+        {
+          "generated": { "line": 97, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 22 }
+        },
+        {
+          "name": "_attrToPropMap",
+          "generated": { "line": 97, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 24 }
+        },
+        {
+          "generated": { "line": 97, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 22 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 97, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 40 }
+        },
+        {
+          "generated": { "line": 97, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 22 }
+        },
+        {
+          "generated": { "line": 97, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 50 }
+        },
+        {
+          "name": "constructor",
+          "generated": { "line": 97, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 55 }
+        },
+        {
+          "generated": { "line": 97, "column": 62 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 89, "column": 16 }
+        },
+        {
+          "generated": { "line": 98, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 90, "column": 16 }
+        },
+        {
+          "generated": { "line": 98, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 90, "column": 20 }
+        },
+        {
+          "name": "attributeChangedCallback",
+          "generated": { "line": 98, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 90, "column": 26 }
+        },
+        {
+          "generated": { "line": 98, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 90, "column": 16 }
+        },
+        {
+          "generated": { "line": 98, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 90, "column": 52 }
+        },
+        {
+          "generated": { "line": 99, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 20 }
+        },
+        {
+          "name": "attributeChangedCallback",
+          "generated": { "line": 99, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 26 }
+        },
+        {
+          "generated": { "line": 99, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 20 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 99, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 51 }
+        },
+        {
+          "generated": { "line": 99, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 20 }
+        },
+        {
+          "name": "oldValue",
+          "generated": { "line": 99, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 57 }
+        },
+        {
+          "generated": { "line": 99, "column": 61 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 20 }
+        },
+        {
+          "name": "newValue",
+          "generated": { "line": 99, "column": 63 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 67 }
+        },
+        {
+          "generated": { "line": 99, "column": 71 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 91, "column": 20 }
+        },
+        {
+          "generated": { "line": 100, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 92, "column": 17 }
+        },
+        {
+          "generated": { "line": 101, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 16 }
+        },
+        {
+          "name": "propertyName",
+          "generated": { "line": 101, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 22 }
+        },
+        {
+          "name": "_attrToPropMap",
+          "generated": { "line": 101, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 37 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 101, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 52 }
+        },
+        {
+          "generated": { "line": 101, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 37 }
+        },
+        {
+          "generated": { "line": 101, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 93, "column": 16 }
+        },
+        {
+          "generated": { "line": 102, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 16 }
+        },
+        {
+          "name": "propertyFunc",
+          "generated": { "line": 102, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 22 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 102, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 37 }
+        },
+        {
+          "name": "propertyName",
+          "generated": { "line": 102, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 43 }
+        },
+        {
+          "generated": { "line": 102, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 37 }
+        },
+        {
+          "generated": { "line": 102, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 94, "column": 16 }
+        },
+        {
+          "generated": { "line": 103, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 95, "column": 16 }
+        },
+        {
+          "name": "propertyFunc",
+          "generated": { "line": 103, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 95, "column": 20 }
+        },
+        {
+          "generated": { "line": 103, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 95, "column": 16 }
+        },
+        {
+          "generated": { "line": 103, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 95, "column": 34 }
+        },
+        {
+          "generated": { "line": 104, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 20 }
+        },
+        {
+          "name": "_props",
+          "generated": { "line": 104, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 25 }
+        },
+        {
+          "generated": { "line": 104, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 20 }
+        },
+        {
+          "name": "propertyName",
+          "generated": { "line": 104, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 32 }
+        },
+        {
+          "generated": { "line": 104, "column": 40 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 20 }
+        },
+        {
+          "name": "propertyFunc",
+          "generated": { "line": 104, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 48 }
+        },
+        {
+          "name": "newValue",
+          "generated": { "line": 104, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 61 }
+        },
+        {
+          "generated": { "line": 104, "column": 65 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 48 }
+        },
+        {
+          "generated": { "line": 104, "column": 66 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 96, "column": 20 }
+        },
+        {
+          "generated": { "line": 105, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 97, "column": 20 }
+        },
+        {
+          "name": "_triggerUpdate",
+          "generated": { "line": 105, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 97, "column": 25 }
+        },
+        {
+          "generated": { "line": 105, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 97, "column": 20 }
+        },
+        {
+          "generated": { "line": 106, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 98, "column": 17 }
+        },
+        {
+          "generated": { "line": 107, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 99, "column": 13 }
+        },
+        {
+          "name": "connectedCallback",
+          "generated": { "line": 108, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 100, "column": 12 }
+        },
+        {
+          "generated": { "line": 108, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 100, "column": 32 }
+        },
+        {
+          "generated": { "line": 109, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 101, "column": 16 }
+        },
+        {
+          "generated": { "line": 109, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 101, "column": 20 }
+        },
+        {
+          "name": "connectedCallback",
+          "generated": { "line": 109, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 101, "column": 26 }
+        },
+        {
+          "generated": { "line": 109, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 101, "column": 16 }
+        },
+        {
+          "generated": { "line": 109, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 101, "column": 45 }
+        },
+        {
+          "generated": { "line": 110, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 102, "column": 20 }
+        },
+        {
+          "name": "connectedCallback",
+          "generated": { "line": 110, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 102, "column": 26 }
+        },
+        {
+          "generated": { "line": 110, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 102, "column": 20 }
+        },
+        {
+          "generated": { "line": 111, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 103, "column": 17 }
+        },
+        {
+          "generated": { "line": 112, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 104, "column": 16 }
+        },
+        {
+          "generated": { "line": 112, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 104, "column": 20 }
+        },
+        {
+          "name": "childrenUpdated",
+          "generated": { "line": 112, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 104, "column": 25 }
+        },
+        {
+          "generated": { "line": 112, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 104, "column": 16 }
+        },
+        {
+          "generated": { "line": 112, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 104, "column": 42 }
+        },
+        {
+          "generated": { "line": 113, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 20 }
+        },
+        {
+          "generated": { "line": 113, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 28 }
+        },
+        {
+          "generated": { "line": 113, "column": 42 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 20 }
+        },
+        {
+          "generated": { "line": 113, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 34 }
+        },
+        {
+          "name": "childrenUpdated",
+          "generated": { "line": 113, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 39 }
+        },
+        {
+          "generated": { "line": 113, "column": 64 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 34 }
+        },
+        {
+          "name": "bind",
+          "generated": { "line": 113, "column": 65 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 55 }
+        },
+        {
+          "generated": { "line": 113, "column": 69 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 34 }
+        },
+        {
+          "generated": { "line": 113, "column": 70 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 60 }
+        },
+        {
+          "generated": { "line": 113, "column": 74 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 34 }
+        },
+        {
+          "generated": { "line": 113, "column": 75 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 105, "column": 20 }
+        },
+        {
+          "generated": { "line": 114, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 106, "column": 17 }
+        },
+        {
+          "generated": { "line": 115, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 107, "column": 16 }
+        },
+        {
+          "name": "_triggerUpdate",
+          "generated": { "line": 115, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 107, "column": 21 }
+        },
+        {
+          "generated": { "line": 115, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 107, "column": 16 }
+        },
+        {
+          "generated": { "line": 116, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 108, "column": 13 }
+        },
+        {
+          "name": "renderer",
+          "generated": { "line": 117, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 12 }
+        },
+        {
+          "name": "root",
+          "generated": { "line": 117, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 21 }
+        },
+        {
+          "generated": { "line": 117, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 12 }
+        },
+        {
+          "name": "html",
+          "generated": { "line": 117, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 27 }
+        },
+        {
+          "generated": { "line": 117, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 12 }
+        },
+        {
+          "generated": { "line": 117, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 109, "column": 33 }
+        },
+        {
+          "generated": { "line": 118, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 16 }
+        },
+        {
+          "generated": { "line": 118, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 20 }
+        },
+        {
+          "name": "renderer",
+          "generated": { "line": 118, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 26 }
+        },
+        {
+          "generated": { "line": 118, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 16 }
+        },
+        {
+          "generated": { "line": 118, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 36 }
+        },
+        {
+          "generated": { "line": 119, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 20 }
+        },
+        {
+          "name": "renderer",
+          "generated": { "line": 119, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 26 }
+        },
+        {
+          "generated": { "line": 119, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 20 }
+        },
+        {
+          "name": "root",
+          "generated": { "line": 119, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 35 }
+        },
+        {
+          "generated": { "line": 119, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 20 }
+        },
+        {
+          "name": "html",
+          "generated": { "line": 119, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 41 }
+        },
+        {
+          "generated": { "line": 119, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 111, "column": 20 }
+        },
+        {
+          "generated": { "line": 120, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 112, "column": 17 }
+        },
+        {
+          "generated": { "line": 120, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 110, "column": 16 }
+        },
+        {
+          "generated": { "line": 120, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 113, "column": 21 }
+        },
+        {
+          "name": "root",
+          "generated": { "line": 121, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 114, "column": 20 }
+        },
+        {
+          "name": "innerHTML",
+          "generated": { "line": 121, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 114, "column": 25 }
+        },
+        {
+          "generated": { "line": 121, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 114, "column": 20 }
+        },
+        {
+          "name": "html",
+          "generated": { "line": 121, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 114, "column": 37 }
+        },
+        {
+          "generated": { "line": 121, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 114, "column": 20 }
+        },
+        {
+          "generated": { "line": 122, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 115, "column": 17 }
+        },
+        {
+          "generated": { "line": 123, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 116, "column": 13 }
+        },
+        {
+          "name": "shouldUpdate",
+          "generated": { "line": 124, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 12 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 124, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 25 }
+        },
+        {
+          "generated": { "line": 124, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 12 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 124, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 32 }
+        },
+        {
+          "generated": { "line": 124, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 12 }
+        },
+        {
+          "generated": { "line": 124, "column": 35 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 117, "column": 39 }
+        },
+        {
+          "generated": { "line": 125, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 118, "column": 16 }
+        },
+        {
+          "generated": { "line": 125, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 118, "column": 23 }
+        },
+        {
+          "generated": { "line": 125, "column": 23 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 118, "column": 16 }
+        },
+        {
+          "generated": { "line": 126, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 119, "column": 13 }
+        },
+        {
+          "name": "_triggerUpdate",
+          "generated": { "line": 127, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 120, "column": 12 }
+        },
+        {
+          "generated": { "line": 127, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 120, "column": 29 }
+        },
+        {
+          "generated": { "line": 128, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 121, "column": 16 }
+        },
+        {
+          "generated": { "line": 128, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 121, "column": 20 }
+        },
+        {
+          "name": "_updating",
+          "generated": { "line": 128, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 121, "column": 25 }
+        },
+        {
+          "generated": { "line": 128, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 121, "column": 16 }
+        },
+        {
+          "generated": { "line": 128, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 121, "column": 36 }
+        },
+        {
+          "generated": { "line": 129, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 122, "column": 20 }
+        },
+        {
+          "generated": { "line": 130, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 123, "column": 17 }
+        },
+        {
+          "generated": { "line": 131, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 16 }
+        },
+        {
+          "generated": { "line": 131, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 20 }
+        },
+        {
+          "generated": { "line": 131, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 21 }
+        },
+        {
+          "name": "_boundRender",
+          "generated": { "line": 131, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 26 }
+        },
+        {
+          "generated": { "line": 131, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 16 }
+        },
+        {
+          "generated": { "line": 131, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 124, "column": 40 }
+        },
+        {
+          "generated": { "line": 132, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 20 }
+        },
+        {
+          "name": "_boundRender",
+          "generated": { "line": 132, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 25 }
+        },
+        {
+          "generated": { "line": 132, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 20 }
+        },
+        {
+          "generated": { "line": 132, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 40 }
+        },
+        {
+          "name": "render",
+          "generated": { "line": 132, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 45 }
+        },
+        {
+          "generated": { "line": 132, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 40 }
+        },
+        {
+          "name": "bind",
+          "generated": { "line": 132, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 52 }
+        },
+        {
+          "generated": { "line": 132, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 40 }
+        },
+        {
+          "generated": { "line": 132, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 57 }
+        },
+        {
+          "generated": { "line": 132, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 40 }
+        },
+        {
+          "generated": { "line": 132, "column": 58 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 125, "column": 20 }
+        },
+        {
+          "generated": { "line": 133, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 126, "column": 17 }
+        },
+        {
+          "generated": { "line": 134, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 127, "column": 16 }
+        },
+        {
+          "generated": { "line": 135, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 128, "column": 16 }
+        },
+        {
+          "generated": { "line": 136, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 129, "column": 16 }
+        },
+        {
+          "name": "_updating",
+          "generated": { "line": 136, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 129, "column": 21 }
+        },
+        {
+          "generated": { "line": 136, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 129, "column": 16 }
+        },
+        {
+          "generated": { "line": 136, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 129, "column": 33 }
+        },
+        {
+          "generated": { "line": 136, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 129, "column": 16 }
+        },
+        {
+          "generated": { "line": 137, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 130, "column": 16 }
+        },
+        {
+          "generated": { "line": 138, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 131, "column": 16 }
+        },
+        {
+          "name": "delay",
+          "generated": { "line": 139, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 132, "column": 16 }
+        },
+        {
+          "generated": { "line": 139, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 132, "column": 22 }
+        },
+        {
+          "generated": { "line": 139, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 132, "column": 28 }
+        },
+        {
+          "generated": { "line": 140, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 20 }
+        },
+        {
+          "generated": { "line": 140, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 26 }
+        },
+        {
+          "name": "_prevProps",
+          "generated": { "line": 140, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 28 }
+        },
+        {
+          "generated": { "line": 140, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 26 }
+        },
+        {
+          "name": "_prevState",
+          "generated": { "line": 140, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 40 }
+        },
+        {
+          "generated": { "line": 140, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 26 }
+        },
+        {
+          "generated": { "line": 140, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 55 }
+        },
+        {
+          "generated": { "line": 140, "column": 55 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 133, "column": 20 }
+        },
+        {
+          "generated": { "line": 141, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 20 }
+        },
+        {
+          "generated": { "line": 141, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 24 }
+        },
+        {
+          "name": "shouldUpdate",
+          "generated": { "line": 141, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 29 }
+        },
+        {
+          "generated": { "line": 141, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 24 }
+        },
+        {
+          "name": "_prevProps",
+          "generated": { "line": 141, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 42 }
+        },
+        {
+          "generated": { "line": 141, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 24 }
+        },
+        {
+          "name": "_prevState",
+          "generated": { "line": 141, "column": 50 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 54 }
+        },
+        {
+          "generated": { "line": 141, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 24 }
+        },
+        {
+          "generated": { "line": 141, "column": 61 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 20 }
+        },
+        {
+          "generated": { "line": 141, "column": 63 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 134, "column": 67 }
+        },
+        {
+          "generated": { "line": 142, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 24 }
+        },
+        {
+          "name": "renderer",
+          "generated": { "line": 142, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 29 }
+        },
+        {
+          "generated": { "line": 142, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 24 }
+        },
+        {
+          "generated": { "line": 142, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 38 }
+        },
+        {
+          "name": "renderRoot",
+          "generated": { "line": 142, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 43 }
+        },
+        {
+          "generated": { "line": 142, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 24 }
+        },
+        {
+          "generated": { "line": 142, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 55 }
+        },
+        {
+          "name": "_boundRender",
+          "generated": { "line": 142, "column": 56 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 60 }
+        },
+        {
+          "generated": { "line": 142, "column": 68 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 135, "column": 24 }
+        },
+        {
+          "generated": { "line": 143, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 136, "column": 24 }
+        },
+        {
+          "generated": { "line": 143, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 136, "column": 28 }
+        },
+        {
+          "name": "updated",
+          "generated": { "line": 143, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 136, "column": 33 }
+        },
+        {
+          "generated": { "line": 143, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 136, "column": 24 }
+        },
+        {
+          "generated": { "line": 143, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 136, "column": 42 }
+        },
+        {
+          "generated": { "line": 144, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 28 }
+        },
+        {
+          "name": "updated",
+          "generated": { "line": 144, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 33 }
+        },
+        {
+          "generated": { "line": 144, "column": 36 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 28 }
+        },
+        {
+          "name": "_prevProps",
+          "generated": { "line": 144, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 41 }
+        },
+        {
+          "generated": { "line": 144, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 28 }
+        },
+        {
+          "name": "_prevState",
+          "generated": { "line": 144, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 53 }
+        },
+        {
+          "generated": { "line": 144, "column": 59 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 137, "column": 28 }
+        },
+        {
+          "generated": { "line": 145, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 138, "column": 25 }
+        },
+        {
+          "generated": { "line": 146, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 139, "column": 21 }
+        },
+        {
+          "generated": { "line": 147, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 20 }
+        },
+        {
+          "name": "_prevProps",
+          "generated": { "line": 147, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 25 }
+        },
+        {
+          "generated": { "line": 147, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 20 }
+        },
+        {
+          "generated": { "line": 147, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 38 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 147, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 43 }
+        },
+        {
+          "generated": { "line": 147, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 140, "column": 20 }
+        },
+        {
+          "generated": { "line": 148, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 20 }
+        },
+        {
+          "name": "_prevState",
+          "generated": { "line": 148, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 25 }
+        },
+        {
+          "generated": { "line": 148, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 20 }
+        },
+        {
+          "generated": { "line": 148, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 38 }
+        },
+        {
+          "name": "state",
+          "generated": { "line": 148, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 43 }
+        },
+        {
+          "generated": { "line": 148, "column": 44 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 141, "column": 20 }
+        },
+        {
+          "generated": { "line": 149, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 142, "column": 20 }
+        },
+        {
+          "name": "_updating",
+          "generated": { "line": 149, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 142, "column": 25 }
+        },
+        {
+          "generated": { "line": 149, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 142, "column": 20 }
+        },
+        {
+          "generated": { "line": 149, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 142, "column": 37 }
+        },
+        {
+          "generated": { "line": 149, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 142, "column": 20 }
+        },
+        {
+          "generated": { "line": 150, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 143, "column": 17 }
+        },
+        {
+          "generated": { "line": 150, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 132, "column": 16 }
+        },
+        {
+          "generated": { "line": 151, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 144, "column": 13 }
+        },
+        {
+          "generated": { "line": 152, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 35 }
+        },
+        {
+          "generated": { "line": 152, "column": 5 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 11 }
+        },
+        {
+          "name": "_a",
+          "generated": { "line": 152, "column": 7 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 146, "column": 8 }
+        },
+        {
+          "name": "_attrToPropMap",
+          "generated": { "line": 152, "column": 10 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 146, "column": 11 }
+        },
+        {
+          "generated": { "line": 152, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 146, "column": 8 }
+        },
+        {
+          "generated": { "line": 152, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 146, "column": 28 }
+        },
+        {
+          "generated": { "line": 152, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 11 }
+        },
+        {
+          "name": "_a",
+          "generated": { "line": 152, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 147, "column": 8 }
+        },
+        {
+          "name": "_propToAttrMap",
+          "generated": { "line": 152, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 147, "column": 11 }
+        },
+        {
+          "generated": { "line": 152, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 147, "column": 8 }
+        },
+        {
+          "generated": { "line": 152, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 147, "column": 28 }
+        },
+        {
+          "generated": { "line": 152, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 11 }
+        },
+        {
+          "name": "_a",
+          "generated": { "line": 152, "column": 55 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 148, "column": 8 }
+        },
+        {
+          "generated": { "line": 152, "column": 57 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 14, "column": 4 }
+        },
+        {
+          "generated": { "line": 153, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\component.js",
+          "original": { "line": 149, "column": 1 }
+        }
+      ],
+      "sources": {
+        "node_modules\\skatejs\\dist\\esm\\component.js":
+          "import { observe } from './observe';\r\nimport { shadow } from './shadow';\r\nfunction delay(fn) {\r\n    if (typeof global.Promise === 'function') {\r\n        // @ts-ignore - Promise.resove() indeed does exist.\r\n        global.Promise.resolve().then(fn);\r\n    }\r\n    else {\r\n        setTimeout(fn);\r\n    }\r\n}\r\nexport function component(Base) {\r\n    var _a;\r\n    return _a = class extends Base {\r\n            constructor() {\r\n                super(...arguments);\r\n                this._prevProps = {};\r\n                this._prevState = {};\r\n                this._props = {};\r\n                this._state = {};\r\n                this._updating = false;\r\n            }\r\n            // This is invoked once when the element is defined. Due to this, we must\r\n            // link props to attrs here as opposed to doing it in the constructor.\r\n            static get observedAttributes() {\r\n                const { attrs, props } = this;\r\n                return Object.keys(props).reduce((observedAttrs, propName) => {\r\n                    // We're opinionated about the propName -> propname (attribute)\r\n                    // convention.\r\n                    const attrName = propName.toLowerCase();\r\n                    // Don't set props from attributes if there is no handler. This also\r\n                    // means we don't need to observe them at all.\r\n                    if (this.props[propName]) {\r\n                        this._attrToPropMap[attrName] = propName;\r\n                        this._propToAttrMap[propName] = attrName;\r\n                        observedAttrs = observedAttrs.concat(attrName);\r\n                    }\r\n                    // Defines a property to ensure it triggers an updated and syncs the\r\n                    // corresponding attribute.\r\n                    Object.defineProperty(this.prototype, propName, {\r\n                        configurable: true,\r\n                        get() {\r\n                            return this._props[propName];\r\n                        },\r\n                        set(propValue) {\r\n                            this._props[propName] = propValue;\r\n                            if (propName in attrs) {\r\n                                const attrName = this._propToAttrsMap[propName];\r\n                                const attrValue = attrs[propName](propValue);\r\n                                if (attrValue == null) {\r\n                                    this.removeAttribute(attrName);\r\n                                }\r\n                                else {\r\n                                    this.setAttribute(attrName, attrValue);\r\n                                }\r\n                            }\r\n                            this.triggerUpdate();\r\n                        }\r\n                    });\r\n                    return observedAttrs;\r\n                }, []);\r\n            }\r\n            static get attrs() {\r\n                return this.props;\r\n            }\r\n            static get props() {\r\n                return Object.keys(this.prototype).reduce((o, k) => {\r\n                    o[k] = v => v;\r\n                    return o;\r\n                }, {});\r\n            }\r\n            get props() {\r\n                return this._props;\r\n            }\r\n            set props(props) {\r\n                this._props = props;\r\n            }\r\n            get renderRoot() {\r\n                return super.renderRoot || shadow(this);\r\n            }\r\n            get state() {\r\n                return this._state;\r\n            }\r\n            set state(state) {\r\n                this._state = state;\r\n                this._triggerUpdate();\r\n            }\r\n            attributeChangedCallback(name, oldValue, newValue) {\r\n                const { _attrToPropMap, props } = this.constructor;\r\n                if (super.attributeChangedCallback) {\r\n                    super.attributeChangedCallback(name, oldValue, newValue);\r\n                }\r\n                const propertyName = _attrToPropMap[name];\r\n                const propertyFunc = props[propertyName];\r\n                if (propertyFunc) {\r\n                    this._props[propertyName] = propertyFunc(newValue);\r\n                    this._triggerUpdate();\r\n                }\r\n            }\r\n            connectedCallback() {\r\n                if (super.connectedCallback) {\r\n                    super.connectedCallback();\r\n                }\r\n                if (this.childrenUpdated) {\r\n                    observe(this, this.childrenUpdated.bind(this));\r\n                }\r\n                this._triggerUpdate();\r\n            }\r\n            renderer(root, html) {\r\n                if (super.renderer) {\r\n                    super.renderer(root, html);\r\n                }\r\n                else {\r\n                    root.innerHTML = html();\r\n                }\r\n            }\r\n            shouldUpdate(props, state) {\r\n                return true;\r\n            }\r\n            _triggerUpdate() {\r\n                if (this._updating) {\r\n                    return;\r\n                }\r\n                if (!this._boundRender) {\r\n                    this._boundRender = this.render.bind(this);\r\n                }\r\n                // This flag prevents infinite loops if another update is triggered while\r\n                // performing the current update.\r\n                this._updating = true;\r\n                // We execute the update process at the end of the current microtask so\r\n                // we can debounce any subsequent updates using the _updating flag.\r\n                delay(() => {\r\n                    const { _prevProps, _prevState } = this;\r\n                    if (this.shouldUpdate(_prevProps, _prevState)) {\r\n                        this.renderer(this.renderRoot, this._boundRender);\r\n                        if (this.updated) {\r\n                            this.updated(_prevProps, _prevState);\r\n                        }\r\n                    }\r\n                    this._prevProps = this.props;\r\n                    this._prevState = this.state;\r\n                    this._updating = false;\r\n                });\r\n            }\r\n        },\r\n        _a._attrToPropMap = {},\r\n        _a._propToAttrMap = {},\r\n        _a;\r\n}\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "60cdfab94fe384bb6a6d99a2dbda67b9",
+  "cacheData": { "env": {} }
+}

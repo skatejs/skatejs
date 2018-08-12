@@ -1,0 +1,705 @@
+{
+  "id": "css\\index.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1533796724733
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "yocss",
+      "loc": { "line": 1, "column": 16 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\css\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\yocss\\umd\\index.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\n\nvar _yocss = require('yocss');\n\nvar _yocss2 = _interopRequireDefault(_yocss);\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nexports.default = (0, _yocss2.default)({\n  '* a': {\n    color: '#F2567C',\n    textDecoration: 'none'\n  },\n  '* blockquote': {\n    backgroundColor: '#DCE4CA',\n    borderLeft: '3px solid #c6d3a8',\n    fontSize: 'smaller',\n    fontStyle: 'italic',\n    margin: '20px 0',\n    padding: '10px 15px'\n  },\n  '* blockquote code': {\n    backgroundColor: 'transparent',\n    display: 'inline',\n    padding: 0\n  },\n  '* blockquote p': {\n    margin: 0\n  },\n  '* code': {\n    backgroundColor: '#dce4c9',\n    display: 'inline-block',\n    fontFamily: 'monaco, Consolas, \"Lucida Console\", monospace',\n    fontSize: '.8em',\n    padding: '0 8px'\n  },\n  '* h1': {\n    fontSize: '2.5em',\n    fontWeight: 'normal'\n  },\n  '* h2': {\n    fontSize: '1.8em',\n    fontWeight: 'lighter',\n    lineHeight: '1.2em',\n    margin: '60px 0 30px 0'\n  },\n  '* h3': {\n    fontSize: '1.4em',\n    fontWeight: 'lighter',\n    margin: '50px 0 25px 0'\n  },\n  '* h4': {\n    fontSize: '1.3em',\n    fontWeight: 'lighter',\n    margin: '40px 0 20px 0'\n  },\n  '* .logo': {\n    display: 'block',\n    margin: '0 auto'\n  }\n});",
+    "map": {
+      "mappings": [
+        {
+          "generated": { "line": 7, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 18 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 15 }
+        },
+        {
+          "generated": { "line": 13, "column": 39 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 14, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 4, "column": 2 }
+        },
+        {
+          "generated": { "line": 14, "column": 9 },
+          "source": "css\\index.js",
+          "original": { "line": 4, "column": 9 }
+        },
+        {
+          "name": "color",
+          "generated": { "line": 15, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 5, "column": 4 }
+        },
+        {
+          "generated": { "line": 15, "column": 11 },
+          "source": "css\\index.js",
+          "original": { "line": 5, "column": 11 }
+        },
+        {
+          "generated": { "line": 15, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 4, "column": 9 }
+        },
+        {
+          "name": "textDecoration",
+          "generated": { "line": 16, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 6, "column": 4 }
+        },
+        {
+          "generated": { "line": 16, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 6, "column": 20 }
+        },
+        {
+          "generated": { "line": 17, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 4, "column": 9 }
+        },
+        {
+          "generated": { "line": 17, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 18, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "generated": { "line": 18, "column": 18 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "backgroundColor",
+          "generated": { "line": 19, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 9, "column": 4 }
+        },
+        {
+          "generated": { "line": 19, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 9, "column": 21 }
+        },
+        {
+          "generated": { "line": 19, "column": 30 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "borderLeft",
+          "generated": { "line": 20, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 10, "column": 4 }
+        },
+        {
+          "generated": { "line": 20, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 10, "column": 16 }
+        },
+        {
+          "generated": { "line": 20, "column": 35 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 21, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 11, "column": 4 }
+        },
+        {
+          "generated": { "line": 21, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 11, "column": 14 }
+        },
+        {
+          "generated": { "line": 21, "column": 23 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "fontStyle",
+          "generated": { "line": 22, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 12, "column": 4 }
+        },
+        {
+          "generated": { "line": 22, "column": 15 },
+          "source": "css\\index.js",
+          "original": { "line": 12, "column": 15 }
+        },
+        {
+          "generated": { "line": 22, "column": 23 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 23, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 13, "column": 4 }
+        },
+        {
+          "generated": { "line": 23, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 13, "column": 12 }
+        },
+        {
+          "generated": { "line": 23, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "name": "padding",
+          "generated": { "line": 24, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 14, "column": 4 }
+        },
+        {
+          "generated": { "line": 24, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 14, "column": 13 }
+        },
+        {
+          "generated": { "line": 25, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 8, "column": 18 }
+        },
+        {
+          "generated": { "line": 25, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 26, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 16, "column": 2 }
+        },
+        {
+          "generated": { "line": 26, "column": 23 },
+          "source": "css\\index.js",
+          "original": { "line": 16, "column": 23 }
+        },
+        {
+          "name": "backgroundColor",
+          "generated": { "line": 27, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 17, "column": 4 }
+        },
+        {
+          "generated": { "line": 27, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 17, "column": 21 }
+        },
+        {
+          "generated": { "line": 27, "column": 34 },
+          "source": "css\\index.js",
+          "original": { "line": 16, "column": 23 }
+        },
+        {
+          "name": "display",
+          "generated": { "line": 28, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 18, "column": 4 }
+        },
+        {
+          "generated": { "line": 28, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 18, "column": 13 }
+        },
+        {
+          "generated": { "line": 28, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 16, "column": 23 }
+        },
+        {
+          "name": "padding",
+          "generated": { "line": 29, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 19, "column": 4 }
+        },
+        {
+          "generated": { "line": 29, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 19, "column": 13 }
+        },
+        {
+          "generated": { "line": 30, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 16, "column": 23 }
+        },
+        {
+          "generated": { "line": 30, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 31, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 21, "column": 2 }
+        },
+        {
+          "generated": { "line": 31, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 21, "column": 20 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 32, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 22, "column": 4 }
+        },
+        {
+          "generated": { "line": 32, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 22, "column": 12 }
+        },
+        {
+          "generated": { "line": 33, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 21, "column": 20 }
+        },
+        {
+          "generated": { "line": 33, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 34, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 2 }
+        },
+        {
+          "generated": { "line": 34, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "name": "backgroundColor",
+          "generated": { "line": 35, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 25, "column": 4 }
+        },
+        {
+          "generated": { "line": 35, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 25, "column": 21 }
+        },
+        {
+          "generated": { "line": 35, "column": 30 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "name": "display",
+          "generated": { "line": 36, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 26, "column": 4 }
+        },
+        {
+          "generated": { "line": 36, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 26, "column": 13 }
+        },
+        {
+          "generated": { "line": 36, "column": 27 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "name": "fontFamily",
+          "generated": { "line": 37, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 27, "column": 4 }
+        },
+        {
+          "generated": { "line": 37, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 27, "column": 16 }
+        },
+        {
+          "generated": { "line": 37, "column": 63 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 38, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 28, "column": 4 }
+        },
+        {
+          "generated": { "line": 38, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 28, "column": 14 }
+        },
+        {
+          "generated": { "line": 38, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "name": "padding",
+          "generated": { "line": 39, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 29, "column": 4 }
+        },
+        {
+          "generated": { "line": 39, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 29, "column": 13 }
+        },
+        {
+          "generated": { "line": 40, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 24, "column": 12 }
+        },
+        {
+          "generated": { "line": 40, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 41, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 31, "column": 2 }
+        },
+        {
+          "generated": { "line": 41, "column": 10 },
+          "source": "css\\index.js",
+          "original": { "line": 31, "column": 10 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 42, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 32, "column": 4 }
+        },
+        {
+          "generated": { "line": 42, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 32, "column": 14 }
+        },
+        {
+          "generated": { "line": 42, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 31, "column": 10 }
+        },
+        {
+          "name": "fontWeight",
+          "generated": { "line": 43, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 33, "column": 4 }
+        },
+        {
+          "generated": { "line": 43, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 33, "column": 16 }
+        },
+        {
+          "generated": { "line": 44, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 31, "column": 10 }
+        },
+        {
+          "generated": { "line": 44, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 45, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 2 }
+        },
+        {
+          "generated": { "line": 45, "column": 10 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 10 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 46, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 36, "column": 4 }
+        },
+        {
+          "generated": { "line": 46, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 36, "column": 14 }
+        },
+        {
+          "generated": { "line": 46, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 10 }
+        },
+        {
+          "name": "fontWeight",
+          "generated": { "line": 47, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 37, "column": 4 }
+        },
+        {
+          "generated": { "line": 47, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 37, "column": 16 }
+        },
+        {
+          "generated": { "line": 47, "column": 25 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 10 }
+        },
+        {
+          "name": "lineHeight",
+          "generated": { "line": 48, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 38, "column": 4 }
+        },
+        {
+          "generated": { "line": 48, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 38, "column": 16 }
+        },
+        {
+          "generated": { "line": 48, "column": 23 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 10 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 49, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 39, "column": 4 }
+        },
+        {
+          "generated": { "line": 49, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 39, "column": 12 }
+        },
+        {
+          "generated": { "line": 50, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 35, "column": 10 }
+        },
+        {
+          "generated": { "line": 50, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 51, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 41, "column": 2 }
+        },
+        {
+          "generated": { "line": 51, "column": 10 },
+          "source": "css\\index.js",
+          "original": { "line": 41, "column": 10 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 52, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 42, "column": 4 }
+        },
+        {
+          "generated": { "line": 52, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 42, "column": 14 }
+        },
+        {
+          "generated": { "line": 52, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 41, "column": 10 }
+        },
+        {
+          "name": "fontWeight",
+          "generated": { "line": 53, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 43, "column": 4 }
+        },
+        {
+          "generated": { "line": 53, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 43, "column": 16 }
+        },
+        {
+          "generated": { "line": 53, "column": 25 },
+          "source": "css\\index.js",
+          "original": { "line": 41, "column": 10 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 54, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 44, "column": 4 }
+        },
+        {
+          "generated": { "line": 54, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 44, "column": 12 }
+        },
+        {
+          "generated": { "line": 55, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 41, "column": 10 }
+        },
+        {
+          "generated": { "line": 55, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 56, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 46, "column": 2 }
+        },
+        {
+          "generated": { "line": 56, "column": 10 },
+          "source": "css\\index.js",
+          "original": { "line": 46, "column": 10 }
+        },
+        {
+          "name": "fontSize",
+          "generated": { "line": 57, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 47, "column": 4 }
+        },
+        {
+          "generated": { "line": 57, "column": 14 },
+          "source": "css\\index.js",
+          "original": { "line": 47, "column": 14 }
+        },
+        {
+          "generated": { "line": 57, "column": 21 },
+          "source": "css\\index.js",
+          "original": { "line": 46, "column": 10 }
+        },
+        {
+          "name": "fontWeight",
+          "generated": { "line": 58, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 48, "column": 4 }
+        },
+        {
+          "generated": { "line": 58, "column": 16 },
+          "source": "css\\index.js",
+          "original": { "line": 48, "column": 16 }
+        },
+        {
+          "generated": { "line": 58, "column": 25 },
+          "source": "css\\index.js",
+          "original": { "line": 46, "column": 10 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 59, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 49, "column": 4 }
+        },
+        {
+          "generated": { "line": 59, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 49, "column": 12 }
+        },
+        {
+          "generated": { "line": 60, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 46, "column": 10 }
+        },
+        {
+          "generated": { "line": 60, "column": 3 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 61, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 51, "column": 2 }
+        },
+        {
+          "generated": { "line": 61, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 51, "column": 13 }
+        },
+        {
+          "name": "display",
+          "generated": { "line": 62, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 52, "column": 4 }
+        },
+        {
+          "generated": { "line": 62, "column": 13 },
+          "source": "css\\index.js",
+          "original": { "line": 52, "column": 13 }
+        },
+        {
+          "generated": { "line": 62, "column": 20 },
+          "source": "css\\index.js",
+          "original": { "line": 51, "column": 13 }
+        },
+        {
+          "name": "margin",
+          "generated": { "line": 63, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 53, "column": 4 }
+        },
+        {
+          "generated": { "line": 63, "column": 12 },
+          "source": "css\\index.js",
+          "original": { "line": 53, "column": 12 }
+        },
+        {
+          "generated": { "line": 64, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 51, "column": 13 }
+        },
+        {
+          "generated": { "line": 65, "column": 0 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 65, "column": 1 },
+          "source": "css\\index.js",
+          "original": { "line": 3, "column": 15 }
+        }
+      ],
+      "sources": {
+        "css\\index.js":
+          "import css from 'yocss';\r\n\r\nexport default css({\r\n  '* a': {\r\n    color: '#F2567C',\r\n    textDecoration: 'none'\r\n  },\r\n  '* blockquote': {\r\n    backgroundColor: '#DCE4CA',\r\n    borderLeft: '3px solid #c6d3a8',\r\n    fontSize: 'smaller',\r\n    fontStyle: 'italic',\r\n    margin: '20px 0',\r\n    padding: '10px 15px'\r\n  },\r\n  '* blockquote code': {\r\n    backgroundColor: 'transparent',\r\n    display: 'inline',\r\n    padding: 0\r\n  },\r\n  '* blockquote p': {\r\n    margin: 0\r\n  },\r\n  '* code': {\r\n    backgroundColor: '#dce4c9',\r\n    display: 'inline-block',\r\n    fontFamily: 'monaco, Consolas, \"Lucida Console\", monospace',\r\n    fontSize: '.8em',\r\n    padding: '0 8px'\r\n  },\r\n  '* h1': {\r\n    fontSize: '2.5em',\r\n    fontWeight: 'normal'\r\n  },\r\n  '* h2': {\r\n    fontSize: '1.8em',\r\n    fontWeight: 'lighter',\r\n    lineHeight: '1.2em',\r\n    margin: '60px 0 30px 0'\r\n  },\r\n  '* h3': {\r\n    fontSize: '1.4em',\r\n    fontWeight: 'lighter',\r\n    margin: '50px 0 25px 0'\r\n  },\r\n  '* h4': {\r\n    fontSize: '1.3em',\r\n    fontWeight: 'lighter',\r\n    margin: '40px 0 20px 0'\r\n  },\r\n  '* .logo': {\r\n    display: 'block',\r\n    margin: '0 auto'\r\n  }\r\n});\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "2aa7f6baa15073eb13f99d09fa49147e",
+  "cacheData": { "env": {} }
+}

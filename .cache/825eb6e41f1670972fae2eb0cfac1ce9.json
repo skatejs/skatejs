@@ -1,0 +1,570 @@
+{
+  "id": "pages\\renderers\\with-preact.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 4, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "../../components/code",
+      "loc": { "line": 5, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\code.ts"
+    },
+    {
+      "name": "../../components/layout",
+      "loc": { "line": 6, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts"
+    },
+    {
+      "name": "../../components/primitives",
+      "loc": { "line": 7, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\primitives.ts"
+    },
+    {
+      "name": "../../utils",
+      "loc": { "line": 8, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\index.ts"
+    },
+    {
+      "name": "./__samples__/with-preact",
+      "loc": { "line": 9, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\with-preact.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\renderers\\__samples__\\with-preact.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\\n      \", \"\\n      <x-layout title=\\\"Preact renderer\\\">\\n        <p>\\n          The\\n          <a href=\\\"https://github.com/skatejs/renderer-preact\\\">Preact renderer</a>\\n          allows you to render using\\n          <a href=\\\"https://github.com/developit/preact\\\">Preact</a>.\\n        </p>\\n        <x-runnable\\n          code=\\\"\", \"\\\"\\n          html=\\\"\", \"\\\"></x-runnable>\\n      </x-layout>\\n    \"], [\"\\n      \", \"\\n      <x-layout title=\\\"Preact renderer\\\">\\n        <p>\\n          The\\n          <a href=\\\"https://github.com/skatejs/renderer-preact\\\">Preact renderer</a>\\n          allows you to render using\\n          <a href=\\\"https://github.com/developit/preact\\\">Preact</a>.\\n        </p>\\n        <x-runnable\\n          code=\\\"\", \"\\\"\\n          html=\\\"\", \"\\\"></x-runnable>\\n      </x-layout>\\n    \"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar _a;\nvar skatejs_1 = require(\"skatejs\");\nrequire(\"../../components/code\");\nrequire(\"../../components/layout\");\nrequire(\"../../components/primitives\");\nvar utils_1 = require(\"../../utils\");\nrequire(\"./__samples__/with-preact\");\nvar codeWithPreact = fs.readFileSync('./__samples__/with-preact');\nvar codeWithPreactHtml = fs.readFileSync('./__samples__/with-preact.html');\nexports.default = skatejs_1.define((_a = function (_utils_1$Component) {\n  _inherits(_a, _utils_1$Component);\n\n  function _a() {\n    _classCallCheck(this, _a);\n\n    return _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n  }\n\n  _createClass(_a, [{\n    key: \"render\",\n    value: function render() {\n      return this.$(_templateObject, this.$style, codeWithPreact, codeWithPreactHtml);\n    }\n  }]);\n\n  return _a;\n}(utils_1.Component), _a.is = 'x-pages-renderers-preact', _a));",
+    "map": {
+      "mappings": [
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 4 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 16 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 24 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 33 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 34 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 8 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 31 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 8 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 33 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 8 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 37 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 4 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 14 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 22 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 35 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 21, "column": 36 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 22, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 22, "column": 8 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 22, "column": 35 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 23, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 23, "column": 4 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 23 },
+          "generated": { "line": 23, "column": 21 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 26 },
+          "generated": { "line": 23, "column": 24 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 23 },
+          "generated": { "line": 23, "column": 36 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 39 },
+          "generated": { "line": 23, "column": 37 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 23 },
+          "generated": { "line": 23, "column": 64 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 23, "column": 65 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 24, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 6 },
+          "generated": { "line": 24, "column": 4 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 27 },
+          "generated": { "line": 24, "column": 25 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 30 },
+          "generated": { "line": 24, "column": 28 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 27 },
+          "generated": { "line": 24, "column": 40 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 43 },
+          "generated": { "line": 24, "column": 41 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 27 },
+          "generated": { "line": 24, "column": 73 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 24, "column": 74 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 0 },
+          "generated": { "line": 25, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 0 },
+          "generated": { "line": 25, "column": 8 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 0 },
+          "generated": { "line": 25, "column": 15 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 15 },
+          "generated": { "line": 25, "column": 18 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 15 },
+          "generated": { "line": 25, "column": 28 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 15 },
+          "generated": { "line": 25, "column": 34 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 25, "column": 36 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 26, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 29, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 36, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 14, "column": 10 },
+          "generated": { "line": 36, "column": 29 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 6 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 13 },
+          "generated": { "line": 37, "column": 13 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 18 },
+          "generated": { "line": 37, "column": 18 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 6 },
+          "generated": { "line": 37, "column": 19 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 16, "column": 8 },
+          "generated": { "line": 37, "column": 37 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 16, "column": 13 },
+          "generated": { "line": 37, "column": 42 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 6 },
+          "generated": { "line": 37, "column": 48 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 25, "column": 18 },
+          "generated": { "line": 37, "column": 50 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 6 },
+          "generated": { "line": 37, "column": 64 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 26, "column": 18 },
+          "generated": { "line": 37, "column": 66 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 15, "column": 6 },
+          "generated": { "line": 37, "column": 84 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 29, "column": 5 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 39, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 41, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 42, "column": 0 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 12, "column": 16 },
+          "generated": { "line": 42, "column": 2 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 12, "column": 16 },
+          "generated": { "line": 42, "column": 10 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 42, "column": 19 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 13, "column": 11 },
+          "generated": { "line": 42, "column": 22 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 13, "column": 11 },
+          "generated": { "line": 42, "column": 25 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 13, "column": 11 },
+          "generated": { "line": 42, "column": 27 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 13, "column": 16 },
+          "generated": { "line": 42, "column": 30 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 21 },
+          "generated": { "line": 42, "column": 56 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 15 },
+          "generated": { "line": 42, "column": 60 }
+        },
+        {
+          "source": "pages\\renderers\\with-preact.ts",
+          "name": null,
+          "original": { "line": 11, "column": 0 },
+          "generated": { "line": 42, "column": 62 }
+        }
+      ],
+      "sources": {
+        "pages\\renderers\\with-preact.ts":
+          "import { define } from 'skatejs';\nimport '../../components/code';\nimport '../../components/layout';\nimport '../../components/primitives';\nimport { Component } from '../../utils';\nimport './__samples__/with-preact';\n\nconst codeWithPreact = fs.readFileSync('./__samples__/with-preact');\nconst codeWithPreactHtml = fs.readFileSync('./__samples__/with-preact.html');\n\nexport default define(\n  class extends Component {\n    static is = 'x-pages-renderers-preact';\n    render() {\n      return this.$`\n      ${this.$style}\n      <x-layout title=\"Preact renderer\">\n        <p>\n          The\n          <a href=\"https://github.com/skatejs/renderer-preact\">Preact renderer</a>\n          allows you to render using\n          <a href=\"https://github.com/developit/preact\">Preact</a>.\n        </p>\n        <x-runnable\n          code=\"${codeWithPreact}\"\n          html=\"${codeWithPreactHtml}\"></x-runnable>\n      </x-layout>\n    `;\n    }\n  }\n);\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "9d52621b35f737dc560720793629a2ce",
+  "cacheData": { "env": {} }
+}

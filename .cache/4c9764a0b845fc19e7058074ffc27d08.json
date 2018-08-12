@@ -1,0 +1,219 @@
+{
+  "id": "node_modules\\skatejs\\dist\\esm\\props.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\package.json",
+      "includedInParent": true,
+      "mtime": 1533814982424
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nconst { parse } = JSON;\nconst props = exports.props = {\n    any: v => v,\n    array: parse,\n    boolean: v => v === '',\n    number: Number,\n    object: parse,\n    string: String\n};",
+    "map": {
+      "mappings": [
+        {
+          "generated": { "line": 6, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 6, "column": 6 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 6 }
+        },
+        {
+          "name": "parse",
+          "generated": { "line": 6, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 8 }
+        },
+        {
+          "generated": { "line": 6, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 6 }
+        },
+        {
+          "name": "JSON",
+          "generated": { "line": 6, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 18 }
+        },
+        {
+          "generated": { "line": 6, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 7, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 7 }
+        },
+        {
+          "name": "props",
+          "generated": { "line": 7, "column": 6 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 13 }
+        },
+        {
+          "generated": { "line": 7, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "any",
+          "generated": { "line": 8, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 8, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 3, "column": 10 }
+        },
+        {
+          "generated": { "line": 8, "column": 10 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 3, "column": 9 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 8, "column": 14 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 3, "column": 16 }
+        },
+        {
+          "generated": { "line": 8, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "array",
+          "generated": { "line": 9, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "name": "parse",
+          "generated": { "line": 9, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 4, "column": 11 }
+        },
+        {
+          "generated": { "line": 9, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "boolean",
+          "generated": { "line": 10, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 5, "column": 4 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 10, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 5, "column": 14 }
+        },
+        {
+          "generated": { "line": 10, "column": 14 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 5, "column": 13 }
+        },
+        {
+          "name": "v",
+          "generated": { "line": 10, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 5, "column": 20 }
+        },
+        {
+          "generated": { "line": 10, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 5, "column": 26 }
+        },
+        {
+          "generated": { "line": 10, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "number",
+          "generated": { "line": 11, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 6, "column": 4 }
+        },
+        {
+          "name": "Number",
+          "generated": { "line": 11, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 6, "column": 12 }
+        },
+        {
+          "generated": { "line": 11, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "object",
+          "generated": { "line": 12, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 7, "column": 4 }
+        },
+        {
+          "name": "parse",
+          "generated": { "line": 12, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 7, "column": 12 }
+        },
+        {
+          "generated": { "line": 12, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "name": "string",
+          "generated": { "line": 13, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 8, "column": 4 }
+        },
+        {
+          "name": "String",
+          "generated": { "line": 13, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 8, "column": 12 }
+        },
+        {
+          "generated": { "line": 14, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 21 }
+        },
+        {
+          "generated": { "line": 14, "column": 1 },
+          "source": "node_modules\\skatejs\\dist\\esm\\props.js",
+          "original": { "line": 2, "column": 7 }
+        }
+      ],
+      "sources": {
+        "node_modules\\skatejs\\dist\\esm\\props.js":
+          "const { parse } = JSON;\r\nexport const props = {\r\n    any: (v) => v,\r\n    array: parse,\r\n    boolean: (v) => v === '',\r\n    number: Number,\r\n    object: parse,\r\n    string: String\r\n};\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "4a44bff7e4dd694beee2f7a6b6d0116f",
+  "cacheData": { "env": {} }
+}

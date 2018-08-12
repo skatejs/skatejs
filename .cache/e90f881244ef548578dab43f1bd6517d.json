@@ -1,0 +1,170 @@
+{
+  "id": "node_modules\\skatejs\\dist\\esm\\define.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\package.json",
+      "includedInParent": true,
+      "mtime": 1533814982424
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "./name.js",
+      "loc": { "line": 1, "column": 21 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\define.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\name.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "\n'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.define = define;\n\nvar _name = require('./name.js');\n\nfunction define(Ctor) {\n    customElements.define(Ctor.is || (0, _name.name)(), Ctor);\n    return Ctor;\n}",
+    "map": {
+      "mappings": [
+        {
+          "name": "define",
+          "generated": { "line": 7, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 16 }
+        },
+        {
+          "name": "define",
+          "generated": { "line": 7, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 16 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 11, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 7 }
+        },
+        {
+          "name": "define",
+          "generated": { "line": 11, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 16 }
+        },
+        {
+          "generated": { "line": 11, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 7 }
+        },
+        {
+          "name": "Ctor",
+          "generated": { "line": 11, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 23 }
+        },
+        {
+          "generated": { "line": 11, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 7 }
+        },
+        {
+          "generated": { "line": 11, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 2, "column": 29 }
+        },
+        {
+          "name": "customElements",
+          "generated": { "line": 12, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "name": "define",
+          "generated": { "line": 12, "column": 19 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 19 }
+        },
+        {
+          "generated": { "line": 12, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "name": "Ctor",
+          "generated": { "line": 12, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 26 }
+        },
+        {
+          "name": "is",
+          "generated": { "line": 12, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 31 }
+        },
+        {
+          "generated": { "line": 12, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 26 }
+        },
+        {
+          "generated": { "line": 12, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 37 }
+        },
+        {
+          "generated": { "line": 12, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "name": "Ctor",
+          "generated": { "line": 12, "column": 56 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 45 }
+        },
+        {
+          "generated": { "line": 12, "column": 60 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "generated": { "line": 13, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "name": "Ctor",
+          "generated": { "line": 13, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 4, "column": 11 }
+        },
+        {
+          "generated": { "line": 13, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "generated": { "line": 14, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\define.js",
+          "original": { "line": 5, "column": 1 }
+        }
+      ],
+      "sources": {
+        "node_modules\\skatejs\\dist\\esm\\define.js":
+          "import { name } from './name.js';\r\nexport function define(Ctor) {\r\n    customElements.define(Ctor.is || name(), Ctor);\r\n    return Ctor;\r\n}\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "5723ffcec0ec77f8d9bb541232eb0c62",
+  "cacheData": { "env": {} }
+}

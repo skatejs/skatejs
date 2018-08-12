@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "jsx": "react",
     "jsxFactory": "h",
     "target": "es2015"

@@ -1,0 +1,236 @@
+{
+  "id": "utils\\style.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "./html",
+      "loc": { "line": 3, "column": 23 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\style.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\html.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _templateObject = _taggedTemplateLiteral([\"<style textContent=\\\"\", \"\\\"></style>\"], [\"<style textContent=\\\"\", \"\\\"></style>\"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar html_1 = require(\"./html\");\nfunction style() {\n    for (var _len = arguments.length, css = Array(_len), _key = 0; _key < _len; _key++) {\n        css[_key] = arguments[_key];\n    }\n\n    return html_1.html(_templateObject, css.join(''));\n}\nexports.style = style;",
+    "map": {
+      "mappings": [
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 4 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 13 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 21 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 29 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 8, "column": 30 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 9, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 16 },
+          "generated": { "line": 9, "column": 9 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 9, "column": 14 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 43 },
+          "generated": { "line": 9, "column": 17 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 43 },
+          "generated": { "line": 10, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 25 },
+          "generated": { "line": 10, "column": 38 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 43 },
+          "generated": { "line": 10, "column": 41 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 25 },
+          "generated": { "line": 11, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 43 },
+          "generated": { "line": 11, "column": 11 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 43 },
+          "generated": { "line": 12, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 2 },
+          "generated": { "line": 14, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 9 },
+          "generated": { "line": 14, "column": 11 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 9 },
+          "generated": { "line": 14, "column": 18 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 2 },
+          "generated": { "line": 14, "column": 22 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 36 },
+          "generated": { "line": 14, "column": 40 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 40 },
+          "generated": { "line": 14, "column": 44 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 36 },
+          "generated": { "line": 14, "column": 48 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 45 },
+          "generated": { "line": 14, "column": 49 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 36 },
+          "generated": { "line": 14, "column": 51 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 4, "column": 2 },
+          "generated": { "line": 14, "column": 52 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 5, "column": 1 },
+          "generated": { "line": 15, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 16, "column": 0 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 16, "column": 8 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 16, "column": 13 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 16, "column": 16 }
+        },
+        {
+          "source": "utils\\style.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 16, "column": 21 }
+        }
+      ],
+      "sources": {
+        "utils\\style.ts":
+          "import { html } from './html';\n\nexport function style(...css: Array<string>) {\n  return html`<style textContent=\"${css.join('')}\"></style>`;\n}\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "8230c1684e043a3e2ebb1b3fd5699be6",
+  "cacheData": { "env": {} }
+}

@@ -1,0 +1,246 @@
+{
+  "id": "index.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1533796724733
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "./fills/history",
+      "loc": { "line": 1, "column": 7 },
+      "parent": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\fills\\history.js"
+    },
+    {
+      "name": "_bundle_loader",
+      "parent": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\node_modules\\parcel-bundler\\src\\builtins\\bundle-loader.js"
+    },
+    {
+      "name": "./components/app",
+      "dynamic": true,
+      "loc": { "line": 4, "column": 9 },
+      "parent": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\app.js"
+    },
+    {
+      "name": "./fills/ce-es5-shim",
+      "dynamic": true,
+      "loc": { "line": 8, "column": 9 },
+      "parent": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\fills\\ce-es5-shim.js"
+    },
+    {
+      "name": "./fills/ce-sd-fill",
+      "dynamic": true,
+      "loc": { "line": 10, "column": 9 },
+      "parent": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\index.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\fills\\ce-sd-fill.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nrequire('./fills/history');\n\nfunction mount() {\n  require(\"_bundle_loader\")(require.resolve('./components/app')).then();\n}\n\nif (window.customElements) {\n  require(\"_bundle_loader\")(require.resolve('./fills/ce-es5-shim')).then(mount);\n} else {\n  require(\"_bundle_loader\")(require.resolve('./fills/ce-sd-fill')).then(mount);\n}",
+    "map": {
+      "mappings": [
+        {
+          "generated": { "line": 3, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 5, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "name": "mount",
+          "generated": { "line": 5, "column": 9 },
+          "source": "index.js",
+          "original": { "line": 3, "column": 9 }
+        },
+        {
+          "generated": { "line": 5, "column": 14 },
+          "source": "index.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "generated": { "line": 5, "column": 17 },
+          "source": "index.js",
+          "original": { "line": 3, "column": 17 }
+        },
+        {
+          "generated": { "line": 6, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 4, "column": 2 }
+        },
+        {
+          "generated": { "line": 6, "column": 44 },
+          "source": "index.js",
+          "original": { "line": 4, "column": 9 }
+        },
+        {
+          "generated": { "line": 6, "column": 62 },
+          "source": "index.js",
+          "original": { "line": 4, "column": 2 }
+        },
+        {
+          "name": "then",
+          "generated": { "line": 6, "column": 65 },
+          "source": "index.js",
+          "original": { "line": 4, "column": 29 }
+        },
+        {
+          "generated": { "line": 6, "column": 69 },
+          "source": "index.js",
+          "original": { "line": 4, "column": 2 }
+        },
+        {
+          "generated": { "line": 7, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 5, "column": 1 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 0 }
+        },
+        {
+          "name": "window",
+          "generated": { "line": 9, "column": 4 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 4 }
+        },
+        {
+          "name": "customElements",
+          "generated": { "line": 9, "column": 11 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 11 }
+        },
+        {
+          "generated": { "line": 9, "column": 25 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 0 }
+        },
+        {
+          "generated": { "line": 9, "column": 27 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 27 }
+        },
+        {
+          "generated": { "line": 10, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "generated": { "line": 10, "column": 44 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 9 }
+        },
+        {
+          "generated": { "line": 10, "column": 65 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "name": "then",
+          "generated": { "line": 10, "column": 68 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 32 }
+        },
+        {
+          "generated": { "line": 10, "column": 72 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "name": "mount",
+          "generated": { "line": 10, "column": 73 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 37 }
+        },
+        {
+          "generated": { "line": 10, "column": 78 },
+          "source": "index.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "generated": { "line": 11, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 9, "column": 1 }
+        },
+        {
+          "generated": { "line": 11, "column": 1 },
+          "source": "index.js",
+          "original": { "line": 7, "column": 0 }
+        },
+        {
+          "generated": { "line": 11, "column": 7 },
+          "source": "index.js",
+          "original": { "line": 9, "column": 7 }
+        },
+        {
+          "generated": { "line": 12, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "generated": { "line": 12, "column": 44 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 9 }
+        },
+        {
+          "generated": { "line": 12, "column": 64 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "name": "then",
+          "generated": { "line": 12, "column": 67 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 31 }
+        },
+        {
+          "generated": { "line": 12, "column": 71 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "name": "mount",
+          "generated": { "line": 12, "column": 72 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 36 }
+        },
+        {
+          "generated": { "line": 12, "column": 77 },
+          "source": "index.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "generated": { "line": 13, "column": 0 },
+          "source": "index.js",
+          "original": { "line": 11, "column": 1 }
+        }
+      ],
+      "sources": {
+        "index.js":
+          "import './fills/history';\r\n\r\nfunction mount() {\r\n  import('./components/app').then();\r\n}\r\n\r\nif (window.customElements) {\r\n  import('./fills/ce-es5-shim').then(mount);\r\n} else {\r\n  import('./fills/ce-sd-fill').then(mount);\r\n}\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "8de1385ebca4560172cde5c21321c438",
+  "cacheData": { "env": {} }
+}

@@ -1,0 +1,3536 @@
+{
+  "id": "components\\layout.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "lit-html/lib/lit-extended",
+      "loc": { "line": 11, "column": 31 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\lit-html\\lib\\lit-extended.js"
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 12, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "yocss",
+      "loc": { "line": 13, "column": 37 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\yocss\\umd\\index.js"
+    },
+    {
+      "name": "../utils",
+      "loc": { "line": 14, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\index.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\\n        <ul>\\n          \", \"\\n        </ul>\\n      \"], [\"\\n        <ul>\\n          \", \"\\n        </ul>\\n      \"]),\n    _templateObject2 = _taggedTemplateLiteral([\"\\n              <li>\\n                <x-link\\n                  classNames=\\\"\", \"\\\"\\n                  css=\\\"\", \"\\\"\\n                  href=\\\"\", \"\\\"\\n                >\\n                  \", \"\\n                </x-link>\\n                \", \"\\n              </li>\\n            \"], [\"\\n              <li>\\n                <x-link\\n                  classNames=\\\"\", \"\\\"\\n                  css=\\\"\", \"\\\"\\n                  href=\\\"\", \"\\\"\\n                >\\n                  \", \"\\n                </x-link>\\n                \", \"\\n              </li>\\n            \"]),\n    _templateObject3 = _taggedTemplateLiteral([\"\\n      \", \"\\n      \", \"\\n      <div className=\\\"\", \"\\\">\\n        <div className=\\\"\", \"\\\"></div>\\n        <section className=\\\"\", \"\\\">\\n          \", \"\\n        </section>\\n      </div>\\n      <div className=\\\"\", \"\\\">\\n        \", \"\\n        <section className=\\\"\", \"\\\">\\n          <slot></slot>\\n        </section>\\n      </div>\\n    \"], [\"\\n      \", \"\\n      \", \"\\n      <div className=\\\"\", \"\\\">\\n        <div className=\\\"\", \"\\\"></div>\\n        <section className=\\\"\", \"\\\">\\n          \", \"\\n        </section>\\n      </div>\\n      <div className=\\\"\", \"\\\">\\n        \", \"\\n        <section className=\\\"\", \"\\\">\\n          <slot></slot>\\n        </section>\\n      </div>\\n    \"]),\n    _templateObject4 = _taggedTemplateLiteral([\"<h2>\", \"</h2>\"], [\"<h2>\", \"</h2>\"]),\n    _templateObject5 = _taggedTemplateLiteral([\"\\n                <nav className=\\\"\", \"\\\">\\n                  \", \"\\n                </nav>\\n              \"], [\"\\n                <nav className=\\\"\", \"\\\">\\n                  \", \"\\n                </nav>\\n              \"]);\n\nfunction _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nvar __importStar = this && this.__importStar || function (mod) {\n    if (mod && mod.__esModule) return mod;\n    var result = {};\n    if (mod != null) for (var k in mod) {\n        if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];\n    }result[\"default\"] = mod;\n    return result;\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar _a;\nvar lit_extended_1 = require(\"lit-html/lib/lit-extended\");\nvar skatejs_1 = require(\"skatejs\");\nvar yocss_1 = __importStar(require(\"yocss\"));\nvar utils_1 = require(\"../utils\");\nvar linkCss = function linkCss() {\n    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},\n        depth = _ref.depth,\n        selected = _ref.selected;\n\n    return yocss_1.default({\n        backgroundColor: selected ? '#DCE4CA' : 'transparent',\n        display: 'block',\n        padding: \"5px 10px 5px \" + ((depth ? depth * 10 : 0) + 10) + \"px\",\n        '&:hover': {\n            backgroundColor: '#DCE4CA'\n        }\n    });\n};\nvar navItems = function navItems() {\n    return [{\n        href: '/',\n        text: 'Home'\n    }, {\n        href: '/guides',\n        text: 'Guides',\n        tree: [{ href: '/guides/getting-started', text: 'Getting started' }, { href: '/guides/flowtype', text: 'Flowtype' }, { href: '/guides/storybook', text: 'Storybook' }]\n    }, {\n        href: '/migrating',\n        text: 'Migrating'\n    }, {\n        href: '/components',\n        text: 'Components',\n        tree: [{ href: '/components/index', text: 'Components' }]\n    }, {\n        href: '/renderers',\n        text: 'Renderers',\n        tree: [{ href: '/renderers/default', text: 'Default' }, { href: '/renderers/with-lit-html', text: 'LitHTML' }, { href: '/renderers/with-preact', text: 'Preact' }, { href: '/renderers/with-react', text: 'React' }]\n    }, {\n        href: '/utils',\n        text: 'Utilities',\n        tree: [{ href: '/utils/define', text: 'define()' }, { href: '/utils/emit', text: 'emit()' }, { href: '/utils/link', text: 'link()' }, { href: '/utils/name', text: 'name()' }, { href: '/utils/shadow', text: 'shadow()' }]\n    }];\n};\nfunction renderTree(items) {\n    var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;\n\n    return items && items.length ? lit_extended_1.html(_templateObject, items.map(function (n) {\n        var styles = linkCss({\n            depth: depth,\n            selected: location.pathname === n.href\n        });\n        return lit_extended_1.html(_templateObject2, { a: styles }, yocss_1.value(styles), n.href, n.text, location.pathname.indexOf(n.href) === 0 ? renderTree(n.tree, depth + 1) : '');\n    })) : '';\n}\nvar cssLayout = {\n    flex: yocss_1.default({\n        display: 'flex',\n        flexWrap: 'wrap',\n        margin: '0 auto',\n        maxWidth: '1000px'\n    }),\n    flexItem: yocss_1.default({\n        minWidth: 0\n    }),\n    nav: yocss_1.default({\n        flexBasis: '200px',\n        flexShrink: 0,\n        margin: '10px 20px 0 0',\n        ' li': {\n            margin: '5px 0',\n            padding: 0\n        },\n        ' ul': {\n            listStyle: 'none',\n            margin: 0,\n            padding: 0\n        }\n    }),\n    section: yocss_1.default({\n        flexBasis: '300px',\n        flexGrow: 1\n    })\n};\nexports.Layout = skatejs_1.define((_a = function (_utils_1$Component) {\n    _inherits(_a, _utils_1$Component);\n\n    function _a() {\n        _classCallCheck(this, _a);\n\n        var _this = _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n\n        _this.props = {\n            nav: true\n        };\n        return _this;\n    }\n\n    _createClass(_a, [{\n        key: \"connecting\",\n        value: function connecting() {\n            this.style.display = 'block';\n        }\n    }, {\n        key: \"render\",\n        value: function render(_ref2) {\n            var nav = _ref2.nav,\n                title = _ref2.title;\n\n            document.title = \"SkateJS\" + (title ? \" - \" + title : '');\n            return this.$(_templateObject3, this.$style, utils_1.style(yocss_1.value.apply(yocss_1, _toConsumableArray(Object.values(cssLayout)))), cssLayout.flex, yocss_1.names(cssLayout.flexItem, cssLayout.nav), yocss_1.names(cssLayout.flexItem, cssLayout.section), title ? this.$(_templateObject4, title) : '', cssLayout.flex, nav ? this.$(_templateObject5, yocss_1.names(cssLayout.flexItem, cssLayout.nav), renderTree(navItems())) : '', yocss_1.names(cssLayout.flexItem, cssLayout.section));\n        }\n    }]);\n\n    return _a;\n}(utils_1.Component), _a.is = 'x-layout', _a));",
+    "map": {
+      "mappings": [
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 56 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 31, "column": 57 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 33 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 32, "column": 34 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 35 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 42 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 43 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 33, "column": 44 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 32 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 34, "column": 33 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 0 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 6 },
+          "generated": { "line": 35, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 35, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 6 },
+          "generated": { "line": 35, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 35, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 36, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 39 },
+          "generated": { "line": 36, "column": 83 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 36, "column": 85 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 19 },
+          "generated": { "line": 37, "column": 8 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 37, "column": 13 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 19 },
+          "generated": { "line": 37, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 37, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 26 },
+          "generated": { "line": 38, "column": 8 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 38, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 26 },
+          "generated": { "line": 38, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 38, "column": 32 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 40, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 40, "column": 11 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 40, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 40, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 40, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 9, "column": 4 },
+          "generated": { "line": 41, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 9, "column": 21 },
+          "generated": { "line": 41, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 9, "column": 32 },
+          "generated": { "line": 41, "column": 36 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 9, "column": 21 },
+          "generated": { "line": 41, "column": 45 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 9, "column": 44 },
+          "generated": { "line": 41, "column": 48 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 41, "column": 61 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 10, "column": 4 },
+          "generated": { "line": 42, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 10, "column": 13 },
+          "generated": { "line": 42, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 42, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 4 },
+          "generated": { "line": 43, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 29 },
+          "generated": { "line": 43, "column": 36 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 30 },
+          "generated": { "line": 43, "column": 37 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 38 },
+          "generated": { "line": 43, "column": 45 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 46 },
+          "generated": { "line": 43, "column": 53 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 30 },
+          "generated": { "line": 43, "column": 55 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 51 },
+          "generated": { "line": 43, "column": 58 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 29 },
+          "generated": { "line": 43, "column": 59 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 56 },
+          "generated": { "line": 43, "column": 63 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 11, "column": 4 },
+          "generated": { "line": 43, "column": 65 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 43, "column": 73 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 12, "column": 4 },
+          "generated": { "line": 44, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 12, "column": 15 },
+          "generated": { "line": 44, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 13, "column": 6 },
+          "generated": { "line": 45, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 13, "column": 23 },
+          "generated": { "line": 45, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 12, "column": 15 },
+          "generated": { "line": 46, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 6 },
+          "generated": { "line": 47, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 47, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 47, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 48, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 7, "column": 0 },
+          "generated": { "line": 48, "column": 1 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 0 },
+          "generated": { "line": 49, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 6 },
+          "generated": { "line": 49, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 17 },
+          "generated": { "line": 49, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 6 },
+          "generated": { "line": 49, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 17 },
+          "generated": { "line": 49, "column": 32 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 17 },
+          "generated": { "line": 50, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 50, "column": 11 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 18, "column": 2 },
+          "generated": { "line": 50, "column": 12 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 19, "column": 4 },
+          "generated": { "line": 51, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 19, "column": 10 },
+          "generated": { "line": 51, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 18, "column": 2 },
+          "generated": { "line": 51, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 20, "column": 4 },
+          "generated": { "line": 52, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 20, "column": 10 },
+          "generated": { "line": 52, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 18, "column": 2 },
+          "generated": { "line": 53, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 53, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 22, "column": 2 },
+          "generated": { "line": 53, "column": 7 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 23, "column": 4 },
+          "generated": { "line": 54, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 23, "column": 10 },
+          "generated": { "line": 54, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 22, "column": 2 },
+          "generated": { "line": 54, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 24, "column": 4 },
+          "generated": { "line": 55, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 24, "column": 10 },
+          "generated": { "line": 55, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 22, "column": 2 },
+          "generated": { "line": 55, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 25, "column": 4 },
+          "generated": { "line": 56, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 56, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 6 },
+          "generated": { "line": 56, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 8 },
+          "generated": { "line": 56, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 14 },
+          "generated": { "line": 56, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 6 },
+          "generated": { "line": 56, "column": 48 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 41 },
+          "generated": { "line": 56, "column": 50 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 47 },
+          "generated": { "line": 56, "column": 56 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 26, "column": 6 },
+          "generated": { "line": 56, "column": 73 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 56, "column": 75 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 6 },
+          "generated": { "line": 56, "column": 77 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 8 },
+          "generated": { "line": 56, "column": 79 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 14 },
+          "generated": { "line": 56, "column": 85 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 6 },
+          "generated": { "line": 56, "column": 103 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 34 },
+          "generated": { "line": 56, "column": 105 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 40 },
+          "generated": { "line": 56, "column": 111 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 27, "column": 6 },
+          "generated": { "line": 56, "column": 121 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 56, "column": 123 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 6 },
+          "generated": { "line": 56, "column": 125 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 8 },
+          "generated": { "line": 56, "column": 127 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 14 },
+          "generated": { "line": 56, "column": 133 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 6 },
+          "generated": { "line": 56, "column": 152 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 35 },
+          "generated": { "line": 56, "column": 154 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 41 },
+          "generated": { "line": 56, "column": 160 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 28, "column": 6 },
+          "generated": { "line": 56, "column": 171 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 25, "column": 10 },
+          "generated": { "line": 56, "column": 173 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 22, "column": 2 },
+          "generated": { "line": 57, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 57, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 31, "column": 2 },
+          "generated": { "line": 57, "column": 7 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 32, "column": 4 },
+          "generated": { "line": 58, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 32, "column": 10 },
+          "generated": { "line": 58, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 31, "column": 2 },
+          "generated": { "line": 58, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 33, "column": 4 },
+          "generated": { "line": 59, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 33, "column": 10 },
+          "generated": { "line": 59, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 31, "column": 2 },
+          "generated": { "line": 60, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 60, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 35, "column": 2 },
+          "generated": { "line": 60, "column": 7 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 36, "column": 4 },
+          "generated": { "line": 61, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 36, "column": 10 },
+          "generated": { "line": 61, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 35, "column": 2 },
+          "generated": { "line": 61, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 37, "column": 4 },
+          "generated": { "line": 62, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 37, "column": 10 },
+          "generated": { "line": 62, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 35, "column": 2 },
+          "generated": { "line": 62, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 4 },
+          "generated": { "line": 63, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 10 },
+          "generated": { "line": 63, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 11 },
+          "generated": { "line": 63, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 13 },
+          "generated": { "line": 63, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 19 },
+          "generated": { "line": 63, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 11 },
+          "generated": { "line": 63, "column": 42 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 40 },
+          "generated": { "line": 63, "column": 44 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 46 },
+          "generated": { "line": 63, "column": 50 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 11 },
+          "generated": { "line": 63, "column": 62 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 38, "column": 10 },
+          "generated": { "line": 63, "column": 64 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 35, "column": 2 },
+          "generated": { "line": 64, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 64, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 40, "column": 2 },
+          "generated": { "line": 64, "column": 7 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 41, "column": 4 },
+          "generated": { "line": 65, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 41, "column": 10 },
+          "generated": { "line": 65, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 40, "column": 2 },
+          "generated": { "line": 65, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 42, "column": 4 },
+          "generated": { "line": 66, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 42, "column": 10 },
+          "generated": { "line": 66, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 40, "column": 2 },
+          "generated": { "line": 66, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 4 },
+          "generated": { "line": 67, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 10 },
+          "generated": { "line": 67, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 6 },
+          "generated": { "line": 67, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 8 },
+          "generated": { "line": 67, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 14 },
+          "generated": { "line": 67, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 6 },
+          "generated": { "line": 67, "column": 43 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 36 },
+          "generated": { "line": 67, "column": 45 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 42 },
+          "generated": { "line": 67, "column": 51 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 44, "column": 6 },
+          "generated": { "line": 67, "column": 60 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 10 },
+          "generated": { "line": 67, "column": 62 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 6 },
+          "generated": { "line": 67, "column": 64 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 8 },
+          "generated": { "line": 67, "column": 66 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 14 },
+          "generated": { "line": 67, "column": 72 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 6 },
+          "generated": { "line": 67, "column": 98 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 42 },
+          "generated": { "line": 67, "column": 100 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 48 },
+          "generated": { "line": 67, "column": 106 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 45, "column": 6 },
+          "generated": { "line": 67, "column": 115 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 10 },
+          "generated": { "line": 67, "column": 117 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 6 },
+          "generated": { "line": 67, "column": 119 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 8 },
+          "generated": { "line": 67, "column": 121 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 14 },
+          "generated": { "line": 67, "column": 127 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 6 },
+          "generated": { "line": 67, "column": 151 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 40 },
+          "generated": { "line": 67, "column": 153 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 46 },
+          "generated": { "line": 67, "column": 159 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 46, "column": 6 },
+          "generated": { "line": 67, "column": 167 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 10 },
+          "generated": { "line": 67, "column": 169 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 6 },
+          "generated": { "line": 67, "column": 171 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 8 },
+          "generated": { "line": 67, "column": 173 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 14 },
+          "generated": { "line": 67, "column": 179 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 6 },
+          "generated": { "line": 67, "column": 202 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 39 },
+          "generated": { "line": 67, "column": 204 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 45 },
+          "generated": { "line": 67, "column": 210 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 47, "column": 6 },
+          "generated": { "line": 67, "column": 217 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 43, "column": 10 },
+          "generated": { "line": 67, "column": 219 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 40, "column": 2 },
+          "generated": { "line": 68, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 68, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 50, "column": 2 },
+          "generated": { "line": 68, "column": 7 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 51, "column": 4 },
+          "generated": { "line": 69, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 51, "column": 10 },
+          "generated": { "line": 69, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 50, "column": 2 },
+          "generated": { "line": 69, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 52, "column": 4 },
+          "generated": { "line": 70, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 52, "column": 10 },
+          "generated": { "line": 70, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 50, "column": 2 },
+          "generated": { "line": 70, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 4 },
+          "generated": { "line": 71, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 6 },
+          "generated": { "line": 71, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 8 },
+          "generated": { "line": 71, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 14 },
+          "generated": { "line": 71, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 6 },
+          "generated": { "line": 71, "column": 38 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 31 },
+          "generated": { "line": 71, "column": 40 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 37 },
+          "generated": { "line": 71, "column": 46 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 54, "column": 6 },
+          "generated": { "line": 71, "column": 56 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 58 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 6 },
+          "generated": { "line": 71, "column": 60 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 8 },
+          "generated": { "line": 71, "column": 62 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 14 },
+          "generated": { "line": 71, "column": 68 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 6 },
+          "generated": { "line": 71, "column": 81 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 29 },
+          "generated": { "line": 71, "column": 83 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 35 },
+          "generated": { "line": 71, "column": 89 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 55, "column": 6 },
+          "generated": { "line": 71, "column": 97 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 99 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 71, "column": 101 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 8 },
+          "generated": { "line": 71, "column": 103 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 14 },
+          "generated": { "line": 71, "column": 109 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 71, "column": 122 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 29 },
+          "generated": { "line": 71, "column": 124 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 35 },
+          "generated": { "line": 71, "column": 130 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 71, "column": 138 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 140 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 6 },
+          "generated": { "line": 71, "column": 142 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 8 },
+          "generated": { "line": 71, "column": 144 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 14 },
+          "generated": { "line": 71, "column": 150 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 6 },
+          "generated": { "line": 71, "column": 163 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 29 },
+          "generated": { "line": 71, "column": 165 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 35 },
+          "generated": { "line": 71, "column": 171 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 57, "column": 6 },
+          "generated": { "line": 71, "column": 179 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 181 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 6 },
+          "generated": { "line": 71, "column": 183 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 8 },
+          "generated": { "line": 71, "column": 185 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 14 },
+          "generated": { "line": 71, "column": 191 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 6 },
+          "generated": { "line": 71, "column": 206 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 31 },
+          "generated": { "line": 71, "column": 208 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 37 },
+          "generated": { "line": 71, "column": 214 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 58, "column": 6 },
+          "generated": { "line": 71, "column": 224 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 53, "column": 10 },
+          "generated": { "line": 71, "column": 226 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 50, "column": 2 },
+          "generated": { "line": 72, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 23 },
+          "generated": { "line": 72, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 17 },
+          "generated": { "line": 72, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 17 },
+          "generated": { "line": 73, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 17, "column": 0 },
+          "generated": { "line": 73, "column": 1 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 0 },
+          "generated": { "line": 74, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 9 },
+          "generated": { "line": 74, "column": 9 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 0 },
+          "generated": { "line": 74, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 20 },
+          "generated": { "line": 74, "column": 20 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 0 },
+          "generated": { "line": 74, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 36 },
+          "generated": { "line": 74, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 36 },
+          "generated": { "line": 75, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 27 },
+          "generated": { "line": 75, "column": 8 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 36 },
+          "generated": { "line": 75, "column": 13 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 35 },
+          "generated": { "line": 75, "column": 84 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 63, "column": 36 },
+          "generated": { "line": 75, "column": 85 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 2 },
+          "generated": { "line": 77, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 9 },
+          "generated": { "line": 77, "column": 11 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 18 },
+          "generated": { "line": 77, "column": 20 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 24 },
+          "generated": { "line": 77, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 9 },
+          "generated": { "line": 77, "column": 32 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 65, "column": 6 },
+          "generated": { "line": 77, "column": 35 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 65, "column": 6 },
+          "generated": { "line": 77, "column": 50 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 9 },
+          "generated": { "line": 77, "column": 54 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 77, "column": 72 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 18 },
+          "generated": { "line": 77, "column": 78 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 77, "column": 81 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 22 },
+          "generated": { "line": 77, "column": 82 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 26 },
+          "generated": { "line": 77, "column": 95 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 12 },
+          "generated": { "line": 78, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 18 },
+          "generated": { "line": 78, "column": 12 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 27 },
+          "generated": { "line": 78, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 35 },
+          "generated": { "line": 78, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 69, "column": 14 },
+          "generated": { "line": 79, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 35 },
+          "generated": { "line": 79, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 14 },
+          "generated": { "line": 80, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 24 },
+          "generated": { "line": 80, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 33 },
+          "generated": { "line": 80, "column": 31 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 24 },
+          "generated": { "line": 80, "column": 39 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 46 },
+          "generated": { "line": 80, "column": 44 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 70, "column": 48 },
+          "generated": { "line": 80, "column": 46 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 35 },
+          "generated": { "line": 81, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 27 },
+          "generated": { "line": 81, "column": 9 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 68, "column": 12 },
+          "generated": { "line": 81, "column": 10 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 19 },
+          "generated": { "line": 82, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 19 },
+          "generated": { "line": 82, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 34 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 75, "column": 32 },
+          "generated": { "line": 82, "column": 53 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 75, "column": 34 },
+          "generated": { "line": 82, "column": 55 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 75, "column": 37 },
+          "generated": { "line": 82, "column": 58 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 75, "column": 32 },
+          "generated": { "line": 82, "column": 64 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 66 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 76, "column": 25 },
+          "generated": { "line": 82, "column": 68 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 76, "column": 25 },
+          "generated": { "line": 82, "column": 76 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 76, "column": 25 },
+          "generated": { "line": 82, "column": 81 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 76, "column": 31 },
+          "generated": { "line": 82, "column": 82 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 76, "column": 25 },
+          "generated": { "line": 82, "column": 88 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 89 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 77, "column": 26 },
+          "generated": { "line": 82, "column": 91 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 77, "column": 28 },
+          "generated": { "line": 82, "column": 93 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 97 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 79, "column": 20 },
+          "generated": { "line": 82, "column": 99 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 79, "column": 22 },
+          "generated": { "line": 82, "column": 101 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 105 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 107 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 27 },
+          "generated": { "line": 82, "column": 116 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 124 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 36 },
+          "generated": { "line": 82, "column": 125 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 132 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 44 },
+          "generated": { "line": 82, "column": 133 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 46 },
+          "generated": { "line": 82, "column": 135 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 139 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 56 },
+          "generated": { "line": 82, "column": 145 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 146 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 22 },
+          "generated": { "line": 82, "column": 149 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 33 },
+          "generated": { "line": 82, "column": 160 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 35 },
+          "generated": { "line": 82, "column": 162 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 22 },
+          "generated": { "line": 82, "column": 166 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 41 },
+          "generated": { "line": 82, "column": 168 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 49 },
+          "generated": { "line": 82, "column": 176 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 83, "column": 22 },
+          "generated": { "line": 82, "column": 177 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 82, "column": 18 },
+          "generated": { "line": 82, "column": 178 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 84, "column": 22 },
+          "generated": { "line": 82, "column": 181 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 72, "column": 12 },
+          "generated": { "line": 82, "column": 183 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 88, "column": 11 },
+          "generated": { "line": 83, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 83, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 9 },
+          "generated": { "line": 83, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 91, "column": 6 },
+          "generated": { "line": 83, "column": 10 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 64, "column": 2 },
+          "generated": { "line": 83, "column": 12 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 92, "column": 1 },
+          "generated": { "line": 84, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 0 },
+          "generated": { "line": 85, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 6 },
+          "generated": { "line": 85, "column": 4 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 18 },
+          "generated": { "line": 85, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 2 },
+          "generated": { "line": 86, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 8 },
+          "generated": { "line": 86, "column": 10 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 8 },
+          "generated": { "line": 86, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 8 },
+          "generated": { "line": 86, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 12 },
+          "generated": { "line": 86, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 96, "column": 4 },
+          "generated": { "line": 87, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 96, "column": 13 },
+          "generated": { "line": 87, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 12 },
+          "generated": { "line": 87, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 97, "column": 4 },
+          "generated": { "line": 88, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 97, "column": 14 },
+          "generated": { "line": 88, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 12 },
+          "generated": { "line": 88, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 98, "column": 4 },
+          "generated": { "line": 89, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 98, "column": 12 },
+          "generated": { "line": 89, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 12 },
+          "generated": { "line": 89, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 99, "column": 4 },
+          "generated": { "line": 90, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 99, "column": 14 },
+          "generated": { "line": 90, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 12 },
+          "generated": { "line": 91, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 95, "column": 8 },
+          "generated": { "line": 91, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 18 },
+          "generated": { "line": 91, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 2 },
+          "generated": { "line": 92, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 12 },
+          "generated": { "line": 92, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 12 },
+          "generated": { "line": 92, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 12 },
+          "generated": { "line": 92, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 16 },
+          "generated": { "line": 92, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 102, "column": 4 },
+          "generated": { "line": 93, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 102, "column": 14 },
+          "generated": { "line": 93, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 16 },
+          "generated": { "line": 94, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 101, "column": 12 },
+          "generated": { "line": 94, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 18 },
+          "generated": { "line": 94, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 2 },
+          "generated": { "line": 95, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 7 },
+          "generated": { "line": 95, "column": 9 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 7 },
+          "generated": { "line": 95, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 7 },
+          "generated": { "line": 95, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 95, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 105, "column": 4 },
+          "generated": { "line": 96, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 105, "column": 15 },
+          "generated": { "line": 96, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 96, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 106, "column": 4 },
+          "generated": { "line": 97, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 106, "column": 16 },
+          "generated": { "line": 97, "column": 20 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 97, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 107, "column": 4 },
+          "generated": { "line": 98, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 107, "column": 12 },
+          "generated": { "line": 98, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 98, "column": 31 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 108, "column": 4 },
+          "generated": { "line": 99, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 108, "column": 11 },
+          "generated": { "line": 99, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 109, "column": 6 },
+          "generated": { "line": 100, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 109, "column": 14 },
+          "generated": { "line": 100, "column": 20 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 108, "column": 11 },
+          "generated": { "line": 100, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 110, "column": 6 },
+          "generated": { "line": 101, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 110, "column": 15 },
+          "generated": { "line": 101, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 108, "column": 11 },
+          "generated": { "line": 102, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 102, "column": 9 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 112, "column": 4 },
+          "generated": { "line": 103, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 112, "column": 11 },
+          "generated": { "line": 103, "column": 15 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 113, "column": 6 },
+          "generated": { "line": 104, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 113, "column": 17 },
+          "generated": { "line": 104, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 112, "column": 11 },
+          "generated": { "line": 104, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 114, "column": 6 },
+          "generated": { "line": 105, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 114, "column": 14 },
+          "generated": { "line": 105, "column": 20 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 112, "column": 11 },
+          "generated": { "line": 105, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 115, "column": 6 },
+          "generated": { "line": 106, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 115, "column": 15 },
+          "generated": { "line": 106, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 112, "column": 11 },
+          "generated": { "line": 107, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 11 },
+          "generated": { "line": 108, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 104, "column": 7 },
+          "generated": { "line": 108, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 18 },
+          "generated": { "line": 108, "column": 6 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 2 },
+          "generated": { "line": 109, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 11 },
+          "generated": { "line": 109, "column": 13 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 11 },
+          "generated": { "line": 109, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 11 },
+          "generated": { "line": 109, "column": 28 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 15 },
+          "generated": { "line": 109, "column": 29 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 119, "column": 4 },
+          "generated": { "line": 110, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 119, "column": 15 },
+          "generated": { "line": 110, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 15 },
+          "generated": { "line": 110, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 120, "column": 4 },
+          "generated": { "line": 111, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 120, "column": 14 },
+          "generated": { "line": 111, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 15 },
+          "generated": { "line": 112, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 118, "column": 11 },
+          "generated": { "line": 112, "column": 5 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 18 },
+          "generated": { "line": 113, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 94, "column": 0 },
+          "generated": { "line": 113, "column": 1 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 13 },
+          "generated": { "line": 114, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 13 },
+          "generated": { "line": 114, "column": 8 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 13 },
+          "generated": { "line": 114, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 22 },
+          "generated": { "line": 114, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 22 },
+          "generated": { "line": 114, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 22 },
+          "generated": { "line": 114, "column": 33 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 114, "column": 35 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 115, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 117, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 117, "column": 18 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 118, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 120, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 120, "column": 118 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 4 },
+          "generated": { "line": 122, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 4 },
+          "generated": { "line": 122, "column": 14 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 4 },
+          "generated": { "line": 122, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 12 },
+          "generated": { "line": 122, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 132, "column": 6 },
+          "generated": { "line": 123, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 132, "column": 11 },
+          "generated": { "line": 123, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 12 },
+          "generated": { "line": 124, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 131, "column": 4 },
+          "generated": { "line": 124, "column": 9 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 2 },
+          "generated": { "line": 125, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 164, "column": 3 },
+          "generated": { "line": 126, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 128, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 129, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 130, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 134, "column": 14 },
+          "generated": { "line": 130, "column": 37 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 6 },
+          "generated": { "line": 131, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 11 },
+          "generated": { "line": 131, "column": 17 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 6 },
+          "generated": { "line": 131, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 17 },
+          "generated": { "line": 131, "column": 23 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 6 },
+          "generated": { "line": 131, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 27 },
+          "generated": { "line": 131, "column": 33 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 135, "column": 6 },
+          "generated": { "line": 131, "column": 40 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 136, "column": 5 },
+          "generated": { "line": 132, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 133, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 134, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 135, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 135, "column": 38 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 136, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 13 },
+          "generated": { "line": 136, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 136, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 13 },
+          "generated": { "line": 136, "column": 28 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 136, "column": 31 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 137, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 18 },
+          "generated": { "line": 137, "column": 16 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 137, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 18 },
+          "generated": { "line": 137, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 137, "column": 25 },
+          "generated": { "line": 137, "column": 35 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 6 },
+          "generated": { "line": 139, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 15 },
+          "generated": { "line": 139, "column": 21 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 6 },
+          "generated": { "line": 139, "column": 26 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 33 },
+          "generated": { "line": 139, "column": 42 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 47 },
+          "generated": { "line": 139, "column": 58 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 33 },
+          "generated": { "line": 139, "column": 63 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 57 },
+          "generated": { "line": 139, "column": 66 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 138, "column": 6 },
+          "generated": { "line": 139, "column": 68 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 13 },
+          "generated": { "line": 140, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 18 },
+          "generated": { "line": 140, "column": 24 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 140, "column": 8 },
+          "generated": { "line": 140, "column": 44 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 140, "column": 13 },
+          "generated": { "line": 140, "column": 49 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 55 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 8 },
+          "generated": { "line": 140, "column": 57 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 8 },
+          "generated": { "line": 140, "column": 65 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 8 },
+          "generated": { "line": 140, "column": 70 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 14 },
+          "generated": { "line": 140, "column": 71 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 14 },
+          "generated": { "line": 140, "column": 79 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 14 },
+          "generated": { "line": 140, "column": 84 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 23 },
+          "generated": { "line": 140, "column": 119 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 30 },
+          "generated": { "line": 140, "column": 126 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 23 },
+          "generated": { "line": 140, "column": 132 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 37 },
+          "generated": { "line": 140, "column": 133 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 23 },
+          "generated": { "line": 140, "column": 142 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 14 },
+          "generated": { "line": 140, "column": 143 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 141, "column": 8 },
+          "generated": { "line": 140, "column": 145 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 146 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 142, "column": 24 },
+          "generated": { "line": 140, "column": 148 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 142, "column": 34 },
+          "generated": { "line": 140, "column": 158 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 162 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 26 },
+          "generated": { "line": 140, "column": 164 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 26 },
+          "generated": { "line": 140, "column": 172 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 26 },
+          "generated": { "line": 140, "column": 177 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 32 },
+          "generated": { "line": 140, "column": 178 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 42 },
+          "generated": { "line": 140, "column": 188 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 26 },
+          "generated": { "line": 140, "column": 196 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 52 },
+          "generated": { "line": 140, "column": 198 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 62 },
+          "generated": { "line": 140, "column": 208 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 143, "column": 26 },
+          "generated": { "line": 140, "column": 211 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 212 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 30 },
+          "generated": { "line": 140, "column": 214 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 30 },
+          "generated": { "line": 140, "column": 222 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 30 },
+          "generated": { "line": 140, "column": 227 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 36 },
+          "generated": { "line": 140, "column": 228 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 46 },
+          "generated": { "line": 140, "column": 238 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 30 },
+          "generated": { "line": 140, "column": 246 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 56 },
+          "generated": { "line": 140, "column": 248 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 66 },
+          "generated": { "line": 140, "column": 258 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 144, "column": 30 },
+          "generated": { "line": 140, "column": 265 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 266 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 12 },
+          "generated": { "line": 140, "column": 268 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 20 },
+          "generated": { "line": 140, "column": 276 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 25 },
+          "generated": { "line": 140, "column": 281 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 12 },
+          "generated": { "line": 140, "column": 282 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 33 },
+          "generated": { "line": 140, "column": 301 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 12 },
+          "generated": { "line": 140, "column": 306 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 145, "column": 48 },
+          "generated": { "line": 140, "column": 310 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 312 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 148, "column": 24 },
+          "generated": { "line": 140, "column": 314 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 148, "column": 34 },
+          "generated": { "line": 140, "column": 324 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 328 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 150, "column": 10 },
+          "generated": { "line": 140, "column": 330 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 151, "column": 14 },
+          "generated": { "line": 140, "column": 336 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 151, "column": 19 },
+          "generated": { "line": 140, "column": 341 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 150, "column": 10 },
+          "generated": { "line": 140, "column": 342 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 34 },
+          "generated": { "line": 140, "column": 361 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 34 },
+          "generated": { "line": 140, "column": 369 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 34 },
+          "generated": { "line": 140, "column": 374 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 40 },
+          "generated": { "line": 140, "column": 375 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 50 },
+          "generated": { "line": 140, "column": 385 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 34 },
+          "generated": { "line": 140, "column": 393 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 60 },
+          "generated": { "line": 140, "column": 395 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 70 },
+          "generated": { "line": 140, "column": 405 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 152, "column": 34 },
+          "generated": { "line": 140, "column": 408 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 150, "column": 10 },
+          "generated": { "line": 140, "column": 409 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 153, "column": 20 },
+          "generated": { "line": 140, "column": 411 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 153, "column": 31 },
+          "generated": { "line": 140, "column": 422 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 153, "column": 20 },
+          "generated": { "line": 140, "column": 432 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 150, "column": 10 },
+          "generated": { "line": 140, "column": 433 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 156, "column": 14 },
+          "generated": { "line": 140, "column": 437 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 439 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 30 },
+          "generated": { "line": 140, "column": 441 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 30 },
+          "generated": { "line": 140, "column": 449 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 30 },
+          "generated": { "line": 140, "column": 454 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 36 },
+          "generated": { "line": 140, "column": 455 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 46 },
+          "generated": { "line": 140, "column": 465 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 30 },
+          "generated": { "line": 140, "column": 473 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 56 },
+          "generated": { "line": 140, "column": 475 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 66 },
+          "generated": { "line": 140, "column": 485 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 158, "column": 30 },
+          "generated": { "line": 140, "column": 492 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 139, "column": 6 },
+          "generated": { "line": 140, "column": 493 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 163, "column": 5 },
+          "generated": { "line": 141, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 142, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 144, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 145, "column": 0 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 16 },
+          "generated": { "line": 145, "column": 2 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 125, "column": 16 },
+          "generated": { "line": 145, "column": 10 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 145, "column": 19 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 126, "column": 11 },
+          "generated": { "line": 145, "column": 22 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 126, "column": 11 },
+          "generated": { "line": 145, "column": 25 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 126, "column": 11 },
+          "generated": { "line": 145, "column": 27 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 126, "column": 16 },
+          "generated": { "line": 145, "column": 30 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 28 },
+          "generated": { "line": 145, "column": 40 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 22 },
+          "generated": { "line": 145, "column": 44 }
+        },
+        {
+          "source": "components\\layout.ts",
+          "name": null,
+          "original": { "line": 124, "column": 13 },
+          "generated": { "line": 145, "column": 46 }
+        }
+      ],
+      "sources": {
+        "components\\layout.ts":
+          "import { html } from 'lit-html/lib/lit-extended';\nimport { define, props } from 'skatejs';\nimport css, { names, value } from 'yocss';\nimport { Component, style } from '../utils';\nimport { Link } from './primitives';\n\nconst linkCss = ({ depth, selected } = {}) =>\n  css({\n    backgroundColor: selected ? '#DCE4CA' : 'transparent',\n    display: 'block',\n    padding: `5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px`,\n    '&:hover': {\n      backgroundColor: '#DCE4CA'\n    }\n  });\n\nconst navItems = () => [\n  {\n    href: '/',\n    text: 'Home'\n  },\n  {\n    href: '/guides',\n    text: 'Guides',\n    tree: [\n      { href: '/guides/getting-started', text: 'Getting started' },\n      { href: '/guides/flowtype', text: 'Flowtype' },\n      { href: '/guides/storybook', text: 'Storybook' }\n    ]\n  },\n  {\n    href: '/migrating',\n    text: 'Migrating'\n  },\n  {\n    href: '/components',\n    text: 'Components',\n    tree: [{ href: '/components/index', text: 'Components' }]\n  },\n  {\n    href: '/renderers',\n    text: 'Renderers',\n    tree: [\n      { href: '/renderers/default', text: 'Default' },\n      { href: '/renderers/with-lit-html', text: 'LitHTML' },\n      { href: '/renderers/with-preact', text: 'Preact' },\n      { href: '/renderers/with-react', text: 'React' }\n    ]\n  },\n  {\n    href: '/utils',\n    text: 'Utilities',\n    tree: [\n      { href: '/utils/define', text: 'define()' },\n      { href: '/utils/emit', text: 'emit()' },\n      { href: '/utils/link', text: 'link()' },\n      { href: '/utils/name', text: 'name()' },\n      { href: '/utils/shadow', text: 'shadow()' }\n    ]\n  }\n];\n\nfunction renderTree(items, depth = 0) {\n  return items && items.length\n    ? html`\n        <ul>\n          ${items.map(n => {\n            const styles = linkCss({\n              depth,\n              selected: location.pathname === n.href\n            });\n            return html`\n              <li>\n                <x-link\n                  classNames=\"${{ a: styles }}\"\n                  css=\"${value(styles)}\"\n                  href=\"${n.href}\"\n                >\n                  ${n.text}\n                </x-link>\n                ${\n                  location.pathname.indexOf(n.href) === 0\n                    ? renderTree(n.tree, depth + 1)\n                    : ''\n                }\n              </li>\n            `;\n          })}\n        </ul>\n      `\n    : '';\n}\n\nconst cssLayout = {\n  flex: css({\n    display: 'flex',\n    flexWrap: 'wrap',\n    margin: '0 auto',\n    maxWidth: '1000px'\n  }),\n  flexItem: css({\n    minWidth: 0\n  }),\n  nav: css({\n    flexBasis: '200px',\n    flexShrink: 0,\n    margin: '10px 20px 0 0',\n    ' li': {\n      margin: '5px 0',\n      padding: 0\n    },\n    ' ul': {\n      listStyle: 'none',\n      margin: 0,\n      padding: 0\n    }\n  }),\n  section: css({\n    flexBasis: '300px',\n    flexGrow: 1\n  })\n};\n\nexport const Layout = define(\n  class extends Component {\n    static is = 'x-layout';\n    props: {\n      nav: boolean;\n      title: string;\n    };\n    props = {\n      nav: true\n    };\n    connecting() {\n      this.style.display = 'block';\n    }\n    render({ nav, title }) {\n      document.title = `SkateJS${title ? ` - ${title}` : ''}`;\n      return this.$`\n      ${this.$style}\n      ${style(value(...Object.values(cssLayout)))}\n      <div className=\"${cssLayout.flex}\">\n        <div className=\"${names(cssLayout.flexItem, cssLayout.nav)}\"></div>\n        <section className=\"${names(cssLayout.flexItem, cssLayout.section)}\">\n          ${title ? this.$`<h2>${title}</h2>` : ''}\n        </section>\n      </div>\n      <div className=\"${cssLayout.flex}\">\n        ${\n          nav\n            ? this.$`\n                <nav className=\"${names(cssLayout.flexItem, cssLayout.nav)}\">\n                  ${renderTree(navItems())}\n                </nav>\n              `\n            : ''\n        }\n        <section className=\"${names(cssLayout.flexItem, cssLayout.section)}\">\n          <slot></slot>\n        </section>\n      </div>\n    `;\n    }\n  }\n);\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "ea6ab0d86103852e07ccaf4776fed4be",
+  "cacheData": { "env": {} }
+}

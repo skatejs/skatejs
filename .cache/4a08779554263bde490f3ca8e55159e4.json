@@ -1,0 +1,380 @@
+{
+  "id": "pages\\migrating\\index.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "../../components/layout",
+      "loc": { "line": 4, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\migrating\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts"
+    },
+    {
+      "name": "../../components/marked",
+      "loc": { "line": 5, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\migrating\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\marked.ts"
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 6, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\migrating\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "../../utils",
+      "loc": { "line": 7, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\migrating\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\index.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\\n      <x-layout title=\\\"Migrating between major versions\\\">\\n        <x-marked src=\\\"\", \"\\\"></x-marked>\\n      </x-layout>\\n    \"], [\"\\n      <x-layout title=\\\"Migrating between major versions\\\">\\n        <x-marked src=\\\"\", \"\\\"></x-marked>\\n      </x-layout>\\n    \"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar _a;\nrequire(\"../../components/layout\");\nrequire(\"../../components/marked\");\nvar skatejs_1 = require(\"skatejs\");\nvar utils_1 = require(\"../../utils\");\nexports.default = skatejs_1.define((_a = function (_utils_1$Component) {\n  _inherits(_a, _utils_1$Component);\n\n  function _a() {\n    _classCallCheck(this, _a);\n\n    return _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n  }\n\n  _createClass(_a, [{\n    key: \"render\",\n    value: function render() {\n      return this.$(_templateObject, \"\\n          This is a guide for migrating between major versions.\\n\\n          ## 4.x to 5.x\\n\\n          ### Component base class\\n\\n          ```js\\n          - import { h, Component, define } from 'skatejs';\\n          + import { withComponent } from 'skatejs';\\n          + import { h } from 'preact';\\n          + import withPreact from '@skatejs/renderer-preact';\\n\\n          + const Component = withComponent(withPreact());\\n\\n            class Hello extends Component {\\n              static is = 'x-hello';\\n              render() {\\n                return <div>Hello <slot/></div>;\\n              }\\n            }\\n\\n            define(MyElement);\\n          ```\\n\\n          ### Props API\\n\\n          ___The ability to use a static getter for props is now back in 5.1!___\\n\\n          - In 5.0, you must explicitly set the static props property.\\n          - The ability to use a getter has been restored in 5.1.\\n\\n          ```js\\n            class Hello extends Component {\\n              // This doesn't work in 5.0, but does in 5.1.\\n          -   static get props() {\\n          -     return {\\n          -       who: prop.string()\\n          -     }\\n          -   }\\n\\n              // You can do this in both 5.0 and 5.1.\\n          +   static props = {\\n          +     who: props.string\\n          +   };\\n            }\\n          ```\\n\\n\\n          #### Configuring component props\\n\\n          ```js\\n          - import { define, Component, prop } from 'skatejs';\\n          + import { withComponent, props } from 'skatejs';\\n            import { h } from 'preact';\\n            import withPreact from '@skatejs/renderer-preact';\\n\\n            const Component = withComponent(withPreact());\\n\\n            class Hello extends Component {\\n              static is = 'x-hello';\\n              static props = {\\n          -     who: prop.string()\\n          +     who: props.string\\n              };\\n              render() {\\n                return <div>Hello {this.who}</div>;\\n              }\\n            }\\n\\n            define(MyElement);\\n          ```\\n\\n          #### Overriding pre-defined props\\n\\n          Built-in props used to be exposed as functions that would mix in whatever object you gave it. Now, it's just an object and if you want to merge objects, you can use the built-in object spread operator, or `Object.assign()`.\\n\\n          ```js\\n          - import { define, Component, prop } from 'skatejs';\\n          + import { withComponent, props } from 'skatejs';\\n            import { h } from 'preact';\\n            import withPreact from '@skatejs/renderer-preact';\\n\\n            const Component = withComponent(withPreact())\\n\\n            class Hello extends Component {\\n              static is = 'x-hello';\\n              static props = {\\n          -     who: prop.string({ attributes:true })\\n          +     who: { ...props.string, ...{ attributes: true } }\\n              };\\n              render() {\\n                return <div>Hello {this.who}</div>;\\n              }\\n            }\\n\\n            define(MyElement);\\n          ```\\n\\n          > Built-in props still reflect to attributes like before, but only one-way. If an attribute is set, it will set the linked property. However, if the property is set, it will _not_ set the linked attribute. This prevents unwanted mutations to the DOM and keeps the performance bar high.\\n\\n          #### Props configuration\\n\\n          ```js\\n            type PropTypeAttributeIdentifier = boolean | string;\\n            type PropTypeAttribute =\\n              | PropTypeAttributeIdentifier\\n              | {\\n                  source?: PropTypeAttributeIdentifier,\\n                  target?: PropTypeAttributeIdentifier\\n                };\\n            type PropOptions = {\\n              attribute?: PropTypeAttribute,\\n              coerce?: Function,\\n              default?: any,\\n              deserialize?: (val: string) => mixed,\\n              serialize?: (val: mixed) => null | string\\n          -   get?: <R>(elem: El, data: { name: string; internalValue: T; }) => R;\\n          -   set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;\\n          -   initial?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);\\n            }\\n          ```\\n\\n          #### Change / get props\\n\\n          ```js\\n          - import { withComponent, props, prop } from 'skatejs';\\n          + import { withComponent, props } from 'skatejs';\\n            import { h } from 'preact';\\n            import withPreact from '@skatejs/renderer-preact';\\n\\n            const Component = withComponent(withPreact());\\n\\n            class Hello extends Component {\\n              static is = 'x-hello';\\n              static props = {\\n                myArray: props.array,\\n                myBoolean: props.boolean\\n              };\\n\\n              // Some internal property.\\n              someNonPublicApiProp = 'Who are you?';\\n\\n              _changeProps() {\\n          -     props(this, { myBoolean: true });\\n          +     this.props = { myBoolean: true };\\n\\n                // Implementation detail -> props on the instance is getter / setter.\\n                // Or just directly.\\n                this.myBoolean = true\\n\\n          -     console.log( props(this) ) // { myArray: [], myBoolean: true }\\n          +     console.log( this.props ) // { myArray: [], myBoolean: true }\\n\\n          -     props( this, {myArray: ['hello']} )\\n          +     this.props = { myArray: ['hello'] }\\n\\n                // Or just directly.\\n                this.myArray = ['hello'];\\n\\n          -     console.log(props(this)) // { myArray: ['hello'], myBoolean: true }\\n          +     console.log(this.props) // { myArray: ['hello'], myBoolean: true }\\n\\n                // this will not trigger re-render\\n                this.someNonPublicApiProp = 'Im David'\\n              }\\n              render() {\\n                return <div>Hello {this.myBoolean}</div>;\\n              }\\n            }\\n\\n            define(MyElement);\\n          ```\\n\\n          ### Return array of VNodes with Preact as renderer\\n\\n          ```js\\n          - import { Component, define, h } from 'skatejs';\\n          + import { define, withComponent } from 'skatejs';\\n          + import { h } from 'preact';\\n          + import withPreact from '@skatejs/renderer-preact';\\n\\n          + const Component = withComponent(withPreact());\\n\\n            class MyElement extends Component {\\n              static is = 'x-hello';\\n              render() {\\n          -     return [\\n          -       <div>Hello <slot/></div>,\\n          -       <div>Yo what's up?</div>\\n          -     ];\\n          +     return <div>\\n          +       <div>Hello <slot/></div>\\n          +       <div>Yo what's up?</div>\\n          +     </div>;\\n              }\\n            }\\n\\n            define(MyElement);\\n          ```\\n\\n          > If you decide to use the [LitHTML renderer](/renderers/with-lit-html) you can return a fragment of nodes by simply omitting a wrapper.\\n        \");\n    }\n  }]);\n\n  return _a;\n}(utils_1.Component), _a.is = 'x-pages-migrating', _a));",
+    "map": {
+      "mappings": [
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 8 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 33 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 8 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 33 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 4 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 16 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 24 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 33 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 19, "column": 34 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 4 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 14 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 22 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 35 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 20, "column": 36 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 21, "column": 8 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 21, "column": 15 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 15 },
+          "generated": { "line": 21, "column": 18 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 15 },
+          "generated": { "line": 21, "column": 28 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 15 },
+          "generated": { "line": 21, "column": 34 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 21, "column": 36 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 22, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 24, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 25, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 27, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 30, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 11, "column": 10 },
+          "generated": { "line": 32, "column": 29 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 12, "column": 6 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 12, "column": 13 },
+          "generated": { "line": 33, "column": 13 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 12, "column": 18 },
+          "generated": { "line": 33, "column": 18 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 12, "column": 6 },
+          "generated": { "line": 33, "column": 19 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 219, "column": 5 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 9, "column": 16 },
+          "generated": { "line": 38, "column": 2 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 9, "column": 16 },
+          "generated": { "line": 38, "column": 10 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 38, "column": 19 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 11 },
+          "generated": { "line": 38, "column": 22 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 11 },
+          "generated": { "line": 38, "column": 25 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 11 },
+          "generated": { "line": 38, "column": 27 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 16 },
+          "generated": { "line": 38, "column": 30 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 21 },
+          "generated": { "line": 38, "column": 49 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 15 },
+          "generated": { "line": 38, "column": 53 }
+        },
+        {
+          "source": "pages\\migrating\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 0 },
+          "generated": { "line": 38, "column": 55 }
+        }
+      ],
+      "sources": {
+        "pages\\migrating\\index.ts":
+          "import '../../components/layout';\nimport '../../components/marked';\n\nimport { define } from 'skatejs';\n\nimport { Component } from '../../utils';\n\nexport default define(\n  class extends Component {\n    static is = 'x-pages-migrating';\n    render() {\n      return this.$`\n      <x-layout title=\"Migrating between major versions\">\n        <x-marked src=\"${`\n          This is a guide for migrating between major versions.\n\n          ## 4.x to 5.x\n\n          ### Component base class\n\n          \\`\\`\\`js\n          - import { h, Component, define } from 'skatejs';\n          + import { withComponent } from 'skatejs';\n          + import { h } from 'preact';\n          + import withPreact from '@skatejs/renderer-preact';\n\n          + const Component = withComponent(withPreact());\n\n            class Hello extends Component {\n              static is = 'x-hello';\n              render() {\n                return <div>Hello <slot/></div>;\n              }\n            }\n\n            define(MyElement);\n          \\`\\`\\`\n\n          ### Props API\n\n          ___The ability to use a static getter for props is now back in 5.1!___\n\n          - In 5.0, you must explicitly set the static props property.\n          - The ability to use a getter has been restored in 5.1.\n\n          \\`\\`\\`js\n            class Hello extends Component {\n              // This doesn't work in 5.0, but does in 5.1.\n          -   static get props() {\n          -     return {\n          -       who: prop.string()\n          -     }\n          -   }\n\n              // You can do this in both 5.0 and 5.1.\n          +   static props = {\n          +     who: props.string\n          +   };\n            }\n          \\`\\`\\`\n\n\n          #### Configuring component props\n\n          \\`\\`\\`js\n          - import { define, Component, prop } from 'skatejs';\n          + import { withComponent, props } from 'skatejs';\n            import { h } from 'preact';\n            import withPreact from '@skatejs/renderer-preact';\n\n            const Component = withComponent(withPreact());\n\n            class Hello extends Component {\n              static is = 'x-hello';\n              static props = {\n          -     who: prop.string()\n          +     who: props.string\n              };\n              render() {\n                return <div>Hello {this.who}</div>;\n              }\n            }\n\n            define(MyElement);\n          \\`\\`\\`\n\n          #### Overriding pre-defined props\n\n          Built-in props used to be exposed as functions that would mix in whatever object you gave it. Now, it's just an object and if you want to merge objects, you can use the built-in object spread operator, or \\`Object.assign()\\`.\n\n          \\`\\`\\`js\n          - import { define, Component, prop } from 'skatejs';\n          + import { withComponent, props } from 'skatejs';\n            import { h } from 'preact';\n            import withPreact from '@skatejs/renderer-preact';\n\n            const Component = withComponent(withPreact())\n\n            class Hello extends Component {\n              static is = 'x-hello';\n              static props = {\n          -     who: prop.string({ attributes:true })\n          +     who: { ...props.string, ...{ attributes: true } }\n              };\n              render() {\n                return <div>Hello {this.who}</div>;\n              }\n            }\n\n            define(MyElement);\n          \\`\\`\\`\n\n          > Built-in props still reflect to attributes like before, but only one-way. If an attribute is set, it will set the linked property. However, if the property is set, it will _not_ set the linked attribute. This prevents unwanted mutations to the DOM and keeps the performance bar high.\n\n          #### Props configuration\n\n          \\`\\`\\`js\n            type PropTypeAttributeIdentifier = boolean | string;\n            type PropTypeAttribute =\n              | PropTypeAttributeIdentifier\n              | {\n                  source?: PropTypeAttributeIdentifier,\n                  target?: PropTypeAttributeIdentifier\n                };\n            type PropOptions = {\n              attribute?: PropTypeAttribute,\n              coerce?: Function,\n              default?: any,\n              deserialize?: (val: string) => mixed,\n              serialize?: (val: mixed) => null | string\n          -   get?: <R>(elem: El, data: { name: string; internalValue: T; }) => R;\n          -   set?: (elem: El, data: { name: string; newValue: T | null | undefined; oldValue: T | null | undefined; }) => void;\n          -   initial?: T | null | undefined | ((elem: El, data: { name: string; }) => T | null | undefined);\n            }\n          \\`\\`\\`\n\n          #### Change / get props\n\n          \\`\\`\\`js\n          - import { withComponent, props, prop } from 'skatejs';\n          + import { withComponent, props } from 'skatejs';\n            import { h } from 'preact';\n            import withPreact from '@skatejs/renderer-preact';\n\n            const Component = withComponent(withPreact());\n\n            class Hello extends Component {\n              static is = 'x-hello';\n              static props = {\n                myArray: props.array,\n                myBoolean: props.boolean\n              };\n\n              // Some internal property.\n              someNonPublicApiProp = 'Who are you?';\n\n              _changeProps() {\n          -     props(this, { myBoolean: true });\n          +     this.props = { myBoolean: true };\n\n                // Implementation detail -> props on the instance is getter / setter.\n                // Or just directly.\n                this.myBoolean = true\n\n          -     console.log( props(this) ) // { myArray: [], myBoolean: true }\n          +     console.log( this.props ) // { myArray: [], myBoolean: true }\n\n          -     props( this, {myArray: ['hello']} )\n          +     this.props = { myArray: ['hello'] }\n\n                // Or just directly.\n                this.myArray = ['hello'];\n\n          -     console.log(props(this)) // { myArray: ['hello'], myBoolean: true }\n          +     console.log(this.props) // { myArray: ['hello'], myBoolean: true }\n\n                // this will not trigger re-render\n                this.someNonPublicApiProp = 'Im David'\n              }\n              render() {\n                return <div>Hello {this.myBoolean}</div>;\n              }\n            }\n\n            define(MyElement);\n          \\`\\`\\`\n\n          ### Return array of VNodes with Preact as renderer\n\n          \\`\\`\\`js\n          - import { Component, define, h } from 'skatejs';\n          + import { define, withComponent } from 'skatejs';\n          + import { h } from 'preact';\n          + import withPreact from '@skatejs/renderer-preact';\n\n          + const Component = withComponent(withPreact());\n\n            class MyElement extends Component {\n              static is = 'x-hello';\n              render() {\n          -     return [\n          -       <div>Hello <slot/></div>,\n          -       <div>Yo what's up?</div>\n          -     ];\n          +     return <div>\n          +       <div>Hello <slot/></div>\n          +       <div>Yo what's up?</div>\n          +     </div>;\n              }\n            }\n\n            define(MyElement);\n          \\`\\`\\`\n\n          > If you decide to use the [LitHTML renderer](/renderers/with-lit-html) you can return a fragment of nodes by simply omitting a wrapper.\n        `}\"></x-marked>\n      </x-layout>\n    `;\n    }\n  }\n);\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "a4d9c741cdd1c6b22fd31c9eb0077978",
+  "cacheData": { "env": {} }
+}

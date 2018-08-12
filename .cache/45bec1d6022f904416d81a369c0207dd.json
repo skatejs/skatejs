@@ -1,0 +1,154 @@
+{
+  "id": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\node_modules\\fbjs\\package.json",
+      "includedInParent": true,
+      "mtime": 1506381424000
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js":
+      "/**\n * Copyright (c) 2013-present, Facebook, Inc.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n *\n */\n\n'use strict';\n\nvar emptyObject = {};\n\nif ('development' !== 'production') {\n  Object.freeze(emptyObject);\n}\n\nmodule.exports = emptyObject;",
+    "map": {
+      "mappings": [
+        {
+          "generated": { "line": 1, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 9, "column": 0 }
+        },
+        {
+          "generated": { "line": 11, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 11, "column": 0 }
+        },
+        {
+          "name": "emptyObject",
+          "generated": { "line": 11, "column": 4 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 11, "column": 4 }
+        },
+        {
+          "generated": { "line": 11, "column": 18 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 11, "column": 18 }
+        },
+        {
+          "generated": { "line": 11, "column": 20 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 11, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 13, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 4 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 13, "column": 4 }
+        },
+        {
+          "generated": { "line": 13, "column": 22 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 13, "column": 29 }
+        },
+        {
+          "generated": { "line": 13, "column": 34 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 13, "column": 0 }
+        },
+        {
+          "generated": { "line": 13, "column": 36 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 13, "column": 43 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 14, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 14, "column": 2 }
+        },
+        {
+          "name": "freeze",
+          "generated": { "line": 14, "column": 9 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 14, "column": 9 }
+        },
+        {
+          "generated": { "line": 14, "column": 15 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 14, "column": 2 }
+        },
+        {
+          "name": "emptyObject",
+          "generated": { "line": 14, "column": 16 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 14, "column": 16 }
+        },
+        {
+          "generated": { "line": 14, "column": 27 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 14, "column": 2 }
+        },
+        {
+          "generated": { "line": 15, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 15, "column": 1 }
+        },
+        {
+          "name": "module",
+          "generated": { "line": 17, "column": 0 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 17, "column": 0 }
+        },
+        {
+          "name": "exports",
+          "generated": { "line": 17, "column": 7 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 17, "column": 7 }
+        },
+        {
+          "generated": { "line": 17, "column": 14 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 17, "column": 0 }
+        },
+        {
+          "name": "emptyObject",
+          "generated": { "line": 17, "column": 17 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 17, "column": 17 }
+        },
+        {
+          "generated": { "line": 17, "column": 28 },
+          "source": "..\\node_modules\\fbjs\\lib\\emptyObject.js",
+          "original": { "line": 17, "column": 0 }
+        }
+      ],
+      "sources": {
+        "..\\node_modules\\fbjs\\lib\\emptyObject.js":
+          "/**\n * Copyright (c) 2013-present, Facebook, Inc.\n *\n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n *\n */\n\n'use strict';\n\nvar emptyObject = {};\n\nif (process.env.NODE_ENV !== 'production') {\n  Object.freeze(emptyObject);\n}\n\nmodule.exports = emptyObject;"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "09ce4c3a7111ef1cd37a70b7de7b359b",
+  "cacheData": { "env": { "NODE_ENV": "development" } }
+}

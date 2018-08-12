@@ -1,0 +1,1800 @@
+{
+  "id": "components\\tabs.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "yocss",
+      "loc": { "line": 11, "column": 37 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\tabs.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\yocss\\umd\\index.js"
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 12, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\tabs.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "../utils",
+      "loc": { "line": 13, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\tabs.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\index.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\\n      \", \"\\n      \", \"\\n      <div className=\\\"\", \"\\\">\\n        <ul class=\\\"tabs\\\">\\n          \", \"\\n        </ul>\\n        \", \"\\n      </div>\\n    \"], [\"\\n      \", \"\\n      \", \"\\n      <div className=\\\"\", \"\\\">\\n        <ul class=\\\"tabs\\\">\\n          \", \"\\n        </ul>\\n        \", \"\\n      </div>\\n    \"]),\n    _templateObject2 = _taggedTemplateLiteral([\"\\n                    <li class=\\\"tab\\\">\\n                      <a\\n                        className=\\\"\", \"\\\"\\n                        href=\\\"#\\\"\\n                        on-click=\\\"\", \"\\\"\\n                      >\\n                        \", \"\\n                      </a>\\n                    </li>\\n                  \"], [\"\\n                    <li class=\\\"tab\\\">\\n                      <a\\n                        className=\\\"\", \"\\\"\\n                        href=\\\"#\\\"\\n                        on-click=\\\"\", \"\\\"\\n                      >\\n                        \", \"\\n                      </a>\\n                    </li>\\n                  \"]),\n    _templateObject3 = _taggedTemplateLiteral([\"\\n                  <div className=\\\"pane \", \"\\\">\\n                    \", \"\\n                  </div>\\n                \"], [\"\\n                  <div className=\\\"pane \", \"\\\">\\n                    \", \"\\n                  </div>\\n                \"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nvar __importStar = this && this.__importStar || function (mod) {\n    if (mod && mod.__esModule) return mod;\n    var result = {};\n    if (mod != null) for (var k in mod) {\n        if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];\n    }result[\"default\"] = mod;\n    return result;\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar _a;\nvar yocss_1 = __importStar(require(\"yocss\"));\nvar skatejs_1 = require(\"skatejs\");\nvar utils_1 = require(\"../utils\");\nvar cssTabs = yocss_1.default({\n    pane: {\n        display: 'none'\n    },\n    '.pane.selected': {\n        display: 'block'\n    },\n    tab: {\n        margin: 0,\n        overflow: 'hidden',\n        padding: 0\n    },\n    tabs: {\n        display: 'flex',\n        listStyle: 'none',\n        margin: 0,\n        padding: 0\n    },\n    '.tabs a': {\n        borderBottom: '3px solid transparent',\n        color: '#333',\n        display: 'inline-block',\n        padding: '15px 20px 18px 20px',\n        position: 'relative',\n        textDecoration: 'none',\n        top: '3px'\n    },\n    '.tabs a.selected, .tabs a:hover': {\n        borderBottom: '3px solid #F2567C',\n        color: '#eee'\n    }\n});\nexports.Tabs = skatejs_1.define((_a = function (_utils_1$Component) {\n    _inherits(_a, _utils_1$Component);\n\n    function _a() {\n        _classCallCheck(this, _a);\n\n        var _this = _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n\n        _this.state = {\n            selected: 0\n        };\n        return _this;\n    }\n\n    _createClass(_a, [{\n        key: \"connecting\",\n        value: function connecting() {\n            this.style.display = 'block';\n        }\n    }, {\n        key: \"onClick\",\n        value: function onClick(i, e) {\n            e.preventDefault();\n            this.state = { selected: i };\n        }\n    }, {\n        key: \"render\",\n        value: function render() {\n            var _this2 = this;\n\n            var _props = this.props,\n                css = _props.css,\n                items = _props.items;\n            var selected = this.state.selected;\n\n            return this.$(_templateObject, this.$style, utils_1.style(css, yocss_1.value(cssTabs)), cssTabs, items.map(function (_ref, i) {\n                var name = _ref.name,\n                    pane = _ref.pane;\n                return pane ? _this2.$(_templateObject2, i === selected ? 'selected' : '', _this2.onClick.bind(_this2, i), name) : '';\n            }), items.map(function (_ref2, i) {\n                var pane = _ref2.pane;\n                return pane ? _this2.$(_templateObject3, i === selected ? 'selected' : '', pane) : '';\n            }));\n        }\n    }]);\n\n    return _a;\n}(utils_1.Component), _a.is = 'x-tabs', _a));",
+    "map": {
+      "mappings": [
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 4 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 27 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 35 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 42 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 43 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 27, "column": 44 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 4 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 28, "column": 34 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 4 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 29, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 30, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 6 },
+          "generated": { "line": 30, "column": 4 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 16 },
+          "generated": { "line": 30, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 16 },
+          "generated": { "line": 30, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 16 },
+          "generated": { "line": 30, "column": 29 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 30, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 6, "column": 2 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 6, "column": 8 },
+          "generated": { "line": 31, "column": 10 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 7, "column": 4 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 7, "column": 13 },
+          "generated": { "line": 32, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 6, "column": 8 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 33, "column": 5 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 9, "column": 2 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 9, "column": 20 },
+          "generated": { "line": 34, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 10, "column": 4 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 10, "column": 13 },
+          "generated": { "line": 35, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 9, "column": 20 },
+          "generated": { "line": 36, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 36, "column": 5 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 12, "column": 2 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 12, "column": 7 },
+          "generated": { "line": 37, "column": 9 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 13, "column": 4 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 13, "column": 12 },
+          "generated": { "line": 38, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 12, "column": 7 },
+          "generated": { "line": 38, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 14, "column": 4 },
+          "generated": { "line": 39, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 14, "column": 14 },
+          "generated": { "line": 39, "column": 18 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 12, "column": 7 },
+          "generated": { "line": 39, "column": 26 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 15, "column": 4 },
+          "generated": { "line": 40, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 15, "column": 13 },
+          "generated": { "line": 40, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 12, "column": 7 },
+          "generated": { "line": 41, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 41, "column": 5 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 2 },
+          "generated": { "line": 42, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 8 },
+          "generated": { "line": 42, "column": 10 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 18, "column": 4 },
+          "generated": { "line": 43, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 18, "column": 13 },
+          "generated": { "line": 43, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 8 },
+          "generated": { "line": 43, "column": 23 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 19, "column": 4 },
+          "generated": { "line": 44, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 19, "column": 15 },
+          "generated": { "line": 44, "column": 19 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 8 },
+          "generated": { "line": 44, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 20, "column": 4 },
+          "generated": { "line": 45, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 20, "column": 12 },
+          "generated": { "line": 45, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 8 },
+          "generated": { "line": 45, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 21, "column": 4 },
+          "generated": { "line": 46, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 21, "column": 13 },
+          "generated": { "line": 46, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 17, "column": 8 },
+          "generated": { "line": 47, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 47, "column": 5 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 2 },
+          "generated": { "line": 48, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 48, "column": 15 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 24, "column": 4 },
+          "generated": { "line": 49, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 24, "column": 18 },
+          "generated": { "line": 49, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 49, "column": 45 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 25, "column": 4 },
+          "generated": { "line": 50, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 25, "column": 11 },
+          "generated": { "line": 50, "column": 15 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 50, "column": 21 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 26, "column": 4 },
+          "generated": { "line": 51, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 26, "column": 13 },
+          "generated": { "line": 51, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 51, "column": 31 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 27, "column": 4 },
+          "generated": { "line": 52, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 27, "column": 13 },
+          "generated": { "line": 52, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 52, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 28, "column": 4 },
+          "generated": { "line": 53, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 28, "column": 14 },
+          "generated": { "line": 53, "column": 18 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 53, "column": 28 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 29, "column": 4 },
+          "generated": { "line": 54, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 29, "column": 20 },
+          "generated": { "line": 54, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 54, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 30, "column": 4 },
+          "generated": { "line": 55, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 30, "column": 9 },
+          "generated": { "line": 55, "column": 13 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 23, "column": 13 },
+          "generated": { "line": 56, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 56, "column": 5 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 32, "column": 2 },
+          "generated": { "line": 57, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 32, "column": 37 },
+          "generated": { "line": 57, "column": 39 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 33, "column": 4 },
+          "generated": { "line": 58, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 33, "column": 18 },
+          "generated": { "line": 58, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 32, "column": 37 },
+          "generated": { "line": 58, "column": 41 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 34, "column": 4 },
+          "generated": { "line": 59, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 34, "column": 11 },
+          "generated": { "line": 59, "column": 15 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 32, "column": 37 },
+          "generated": { "line": 60, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 20 },
+          "generated": { "line": 61, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 16 },
+          "generated": { "line": 61, "column": 1 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 61, "column": 2 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 13 },
+          "generated": { "line": 62, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 13 },
+          "generated": { "line": 62, "column": 8 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 13 },
+          "generated": { "line": 62, "column": 12 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 20 },
+          "generated": { "line": 62, "column": 15 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 20 },
+          "generated": { "line": 62, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 20 },
+          "generated": { "line": 62, "column": 31 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 62, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 63, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 65, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 65, "column": 18 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 66, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 68, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 68, "column": 118 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 4 },
+          "generated": { "line": 70, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 4 },
+          "generated": { "line": 70, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 4 },
+          "generated": { "line": 70, "column": 19 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 12 },
+          "generated": { "line": 70, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 49, "column": 6 },
+          "generated": { "line": 71, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 49, "column": 16 },
+          "generated": { "line": 71, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 12 },
+          "generated": { "line": 72, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 48, "column": 4 },
+          "generated": { "line": 72, "column": 9 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 2 },
+          "generated": { "line": 73, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 96, "column": 3 },
+          "generated": { "line": 74, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 76, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 77, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 78, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 51, "column": 14 },
+          "generated": { "line": 78, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 6 },
+          "generated": { "line": 79, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 11 },
+          "generated": { "line": 79, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 6 },
+          "generated": { "line": 79, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 17 },
+          "generated": { "line": 79, "column": 23 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 6 },
+          "generated": { "line": 79, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 27 },
+          "generated": { "line": 79, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 52, "column": 6 },
+          "generated": { "line": 79, "column": 40 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 53, "column": 5 },
+          "generated": { "line": 80, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 81, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 82, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 83, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 54, "column": 12 },
+          "generated": { "line": 83, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 83, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 54, "column": 23 },
+          "generated": { "line": 83, "column": 35 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 83, "column": 36 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 54, "column": 31 },
+          "generated": { "line": 83, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 55, "column": 6 },
+          "generated": { "line": 84, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 55, "column": 8 },
+          "generated": { "line": 84, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 55, "column": 6 },
+          "generated": { "line": 84, "column": 28 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 85, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 11 },
+          "generated": { "line": 85, "column": 17 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 85, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 19 },
+          "generated": { "line": 85, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 21 },
+          "generated": { "line": 85, "column": 27 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 31 },
+          "generated": { "line": 85, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 19 },
+          "generated": { "line": 85, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 56, "column": 6 },
+          "generated": { "line": 85, "column": 40 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 57, "column": 5 },
+          "generated": { "line": 86, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 87, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 88, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 89, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 89, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 90, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 92, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 29 },
+          "generated": { "line": 92, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 34 },
+          "generated": { "line": 92, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 92, "column": 35 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 93, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 14 },
+          "generated": { "line": 93, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 93, "column": 19 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 14 },
+          "generated": { "line": 93, "column": 29 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 93, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 94, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 19 },
+          "generated": { "line": 94, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 94, "column": 21 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 59, "column": 19 },
+          "generated": { "line": 94, "column": 31 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 94, "column": 36 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 95, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 60, "column": 14 },
+          "generated": { "line": 95, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 95, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 60, "column": 27 },
+          "generated": { "line": 95, "column": 27 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 60, "column": 32 },
+          "generated": { "line": 95, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 95, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 60, "column": 14 },
+          "generated": { "line": 95, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 58, "column": 10 },
+          "generated": { "line": 95, "column": 46 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 97, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 13 },
+          "generated": { "line": 97, "column": 19 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 18 },
+          "generated": { "line": 97, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 97, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 62, "column": 8 },
+          "generated": { "line": 97, "column": 43 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 62, "column": 13 },
+          "generated": { "line": 97, "column": 48 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 97, "column": 54 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 8 },
+          "generated": { "line": 97, "column": 56 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 8 },
+          "generated": { "line": 97, "column": 64 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 8 },
+          "generated": { "line": 97, "column": 69 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 14 },
+          "generated": { "line": 97, "column": 70 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 8 },
+          "generated": { "line": 97, "column": 73 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 19 },
+          "generated": { "line": 97, "column": 75 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 19 },
+          "generated": { "line": 97, "column": 83 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 19 },
+          "generated": { "line": 97, "column": 88 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 25 },
+          "generated": { "line": 97, "column": 89 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 19 },
+          "generated": { "line": 97, "column": 96 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 63, "column": 8 },
+          "generated": { "line": 97, "column": 97 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 97, "column": 98 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 64, "column": 24 },
+          "generated": { "line": 97, "column": 100 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 97, "column": 107 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 66, "column": 12 },
+          "generated": { "line": 97, "column": 109 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 66, "column": 18 },
+          "generated": { "line": 97, "column": 115 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 66, "column": 12 },
+          "generated": { "line": 97, "column": 118 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 97, "column": 119 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 29 },
+          "generated": { "line": 97, "column": 135 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 97, "column": 136 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 98, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 15 },
+          "generated": { "line": 98, "column": 20 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 98, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 15 },
+          "generated": { "line": 98, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 98, "column": 36 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 99, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 21 },
+          "generated": { "line": 99, "column": 20 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 99, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 21 },
+          "generated": { "line": 99, "column": 32 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 99, "column": 36 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 100, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 68, "column": 14 },
+          "generated": { "line": 100, "column": 23 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 69, "column": 18 },
+          "generated": { "line": 100, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 69, "column": 23 },
+          "generated": { "line": 100, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 68, "column": 14 },
+          "generated": { "line": 100, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 37 },
+          "generated": { "line": 100, "column": 57 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 43 },
+          "generated": { "line": 100, "column": 63 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 37 },
+          "generated": { "line": 100, "column": 71 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 54 },
+          "generated": { "line": 100, "column": 74 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 37 },
+          "generated": { "line": 100, "column": 84 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 72, "column": 67 },
+          "generated": { "line": 100, "column": 87 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 68, "column": 14 },
+          "generated": { "line": 100, "column": 89 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 36 },
+          "generated": { "line": 100, "column": 91 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 41 },
+          "generated": { "line": 100, "column": 98 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 36 },
+          "generated": { "line": 100, "column": 105 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 49 },
+          "generated": { "line": 100, "column": 106 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 36 },
+          "generated": { "line": 100, "column": 110 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 60 },
+          "generated": { "line": 100, "column": 119 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 74, "column": 36 },
+          "generated": { "line": 100, "column": 120 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 68, "column": 14 },
+          "generated": { "line": 100, "column": 121 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 76, "column": 26 },
+          "generated": { "line": 100, "column": 123 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 68, "column": 14 },
+          "generated": { "line": 100, "column": 127 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 80, "column": 18 },
+          "generated": { "line": 100, "column": 131 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 100, "column": 133 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 67, "column": 12 },
+          "generated": { "line": 101, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 66, "column": 12 },
+          "generated": { "line": 101, "column": 13 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 101, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 83, "column": 10 },
+          "generated": { "line": 101, "column": 16 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 83, "column": 16 },
+          "generated": { "line": 101, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 83, "column": 10 },
+          "generated": { "line": 101, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 101, "column": 26 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 21 },
+          "generated": { "line": 101, "column": 43 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 101, "column": 44 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 102, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 13 },
+          "generated": { "line": 102, "column": 20 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 102, "column": 24 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 13 },
+          "generated": { "line": 102, "column": 33 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 102, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 103, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 85, "column": 12 },
+          "generated": { "line": 103, "column": 23 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 86, "column": 16 },
+          "generated": { "line": 103, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 86, "column": 21 },
+          "generated": { "line": 103, "column": 37 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 85, "column": 12 },
+          "generated": { "line": 103, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 41 },
+          "generated": { "line": 103, "column": 57 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 47 },
+          "generated": { "line": 103, "column": 63 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 41 },
+          "generated": { "line": 103, "column": 71 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 58 },
+          "generated": { "line": 103, "column": 74 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 41 },
+          "generated": { "line": 103, "column": 84 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 87, "column": 71 },
+          "generated": { "line": 103, "column": 87 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 85, "column": 12 },
+          "generated": { "line": 103, "column": 89 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 88, "column": 22 },
+          "generated": { "line": 103, "column": 91 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 85, "column": 12 },
+          "generated": { "line": 103, "column": 95 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 91, "column": 16 },
+          "generated": { "line": 103, "column": 99 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 103, "column": 101 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 84, "column": 10 },
+          "generated": { "line": 104, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 83, "column": 10 },
+          "generated": { "line": 104, "column": 13 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 61, "column": 6 },
+          "generated": { "line": 104, "column": 14 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 95, "column": 5 },
+          "generated": { "line": 105, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 106, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 108, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 109, "column": 0 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 16 },
+          "generated": { "line": 109, "column": 2 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 45, "column": 16 },
+          "generated": { "line": 109, "column": 10 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 109, "column": 19 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 46, "column": 11 },
+          "generated": { "line": 109, "column": 22 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 46, "column": 11 },
+          "generated": { "line": 109, "column": 25 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 46, "column": 11 },
+          "generated": { "line": 109, "column": 27 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 46, "column": 16 },
+          "generated": { "line": 109, "column": 30 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 26 },
+          "generated": { "line": 109, "column": 38 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 20 },
+          "generated": { "line": 109, "column": 42 }
+        },
+        {
+          "source": "components\\tabs.ts",
+          "name": null,
+          "original": { "line": 44, "column": 13 },
+          "generated": { "line": 109, "column": 44 }
+        }
+      ],
+      "sources": {
+        "components\\tabs.ts":
+          "import css, { value } from 'yocss';\nimport { define, props } from 'skatejs';\nimport { Component, style } from '../utils';\n\nconst cssTabs = css({\n  pane: {\n    display: 'none'\n  },\n  '.pane.selected': {\n    display: 'block'\n  },\n  tab: {\n    margin: 0,\n    overflow: 'hidden',\n    padding: 0\n  },\n  tabs: {\n    display: 'flex',\n    listStyle: 'none',\n    margin: 0,\n    padding: 0\n  },\n  '.tabs a': {\n    borderBottom: '3px solid transparent',\n    color: '#333',\n    display: 'inline-block',\n    padding: '15px 20px 18px 20px',\n    position: 'relative',\n    textDecoration: 'none',\n    top: '3px'\n  },\n  '.tabs a.selected, .tabs a:hover': {\n    borderBottom: '3px solid #F2567C',\n    color: '#eee'\n  }\n});\n\ntype Props = {\n  css: string;\n  items: Array<Object>;\n  selected: number;\n};\n\nexport const Tabs = define(\n  class extends Component {\n    static is = 'x-tabs';\n    props: Props;\n    state = {\n      selected: 0\n    };\n    connecting() {\n      this.style.display = 'block';\n    }\n    onClick(i: number, e: Event) {\n      e.preventDefault();\n      this.state = { selected: i };\n    }\n    render() {\n      const { css, items } = this.props;\n      const { selected } = this.state;\n      return this.$`\n      ${this.$style}\n      ${style(css, value(cssTabs))}\n      <div className=\"${cssTabs}\">\n        <ul class=\"tabs\">\n          ${items.map(\n            ({ name, pane }, i) =>\n              pane\n                ? this.$`\n                    <li class=\"tab\">\n                      <a\n                        className=\"${i === selected ? 'selected' : ''}\"\n                        href=\"#\"\n                        on-click=\"${this.onClick.bind(this, i)}\"\n                      >\n                        ${name}\n                      </a>\n                    </li>\n                  `\n                : ''\n          )}\n        </ul>\n        ${items.map(\n          ({ pane }, i) =>\n            pane\n              ? this.$`\n                  <div className=\"pane ${i === selected ? 'selected' : ''}\">\n                    ${pane}\n                  </div>\n                `\n              : ''\n        )}\n      </div>\n    `;\n    }\n  }\n);\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "10ff20b2ac7fb3857baa7e627dd6290f",
+  "cacheData": { "env": {} }
+}

@@ -21,13 +21,13 @@
   "module": "dist/esm/index.js",
   "src": "src",
   "devDependencies": {
-    "react": "16.2.0",
-    "react-dom": "16.2.0",
+    "react": "16.4.2",
+    "react-dom": "16.4.2",
     "skatejs": "6.0.0-dev"
   },
   "peerDependencies": {
-    "react": "^15.0.0 || ^16.2.0",
-    "react-dom": "^15.0.0 || ^16.2.0",
+    "react": "^15.0.0 || ^16.4.2",
+    "react-dom": "^15.0.0 || ^16.4.2",
     "skatejs": "6.0.0-dev"
   },
   "version": "0.2.1"

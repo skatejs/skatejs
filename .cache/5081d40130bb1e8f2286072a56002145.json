@@ -1,0 +1,195 @@
+{
+  "id": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\package.json",
+      "includedInParent": true,
+      "mtime": 1533814982424
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.shadow = shadow;\nfunction shadow(elem) {\n    return elem._shadowRoot || (elem._shadowRoot = elem.shadowRoot || elem.attachShadow({ mode: 'open' }));\n}",
+    "map": {
+      "mappings": [
+        {
+          "name": "shadow",
+          "generated": { "line": 6, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 16 }
+        },
+        {
+          "name": "shadow",
+          "generated": { "line": 6, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 16 }
+        },
+        {
+          "generated": { "line": 7, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 7 }
+        },
+        {
+          "name": "shadow",
+          "generated": { "line": 7, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 16 }
+        },
+        {
+          "generated": { "line": 7, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 7 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 7, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 23 }
+        },
+        {
+          "generated": { "line": 7, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 7 }
+        },
+        {
+          "generated": { "line": 7, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 1, "column": 29 }
+        },
+        {
+          "generated": { "line": 8, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 4 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 8, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 12 }
+        },
+        {
+          "name": "_shadowRoot",
+          "generated": { "line": 8, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 17 }
+        },
+        {
+          "generated": { "line": 8, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 12 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 8, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 9 }
+        },
+        {
+          "name": "_shadowRoot",
+          "generated": { "line": 8, "column": 37 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 14 }
+        },
+        {
+          "generated": { "line": 8, "column": 48 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 9 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 8, "column": 51 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 28 }
+        },
+        {
+          "name": "shadowRoot",
+          "generated": { "line": 8, "column": 56 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 33 }
+        },
+        {
+          "generated": { "line": 8, "column": 66 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 28 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 8, "column": 70 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 47 }
+        },
+        {
+          "name": "attachShadow",
+          "generated": { "line": 8, "column": 75 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 52 }
+        },
+        {
+          "generated": { "line": 8, "column": 87 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 47 }
+        },
+        {
+          "generated": { "line": 8, "column": 88 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 65 }
+        },
+        {
+          "name": "mode",
+          "generated": { "line": 8, "column": 90 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 67 }
+        },
+        {
+          "generated": { "line": 8, "column": 96 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 73 }
+        },
+        {
+          "generated": { "line": 8, "column": 102 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 65 }
+        },
+        {
+          "generated": { "line": 8, "column": 104 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 3, "column": 47 }
+        },
+        {
+          "generated": { "line": 8, "column": 105 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 12 }
+        },
+        {
+          "generated": { "line": 8, "column": 106 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 2, "column": 4 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\shadow.js",
+          "original": { "line": 4, "column": 1 }
+        }
+      ],
+      "sources": {
+        "node_modules\\skatejs\\dist\\esm\\shadow.js":
+          "export function shadow(elem) {\r\n    return (elem._shadowRoot ||\r\n        (elem._shadowRoot = elem.shadowRoot || elem.attachShadow({ mode: 'open' })));\r\n}\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "05c06a293504a07ad4d042f746bff739",
+  "cacheData": { "env": {} }
+}

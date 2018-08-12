@@ -1,0 +1,585 @@
+{
+  "id": "node_modules\\skatejs\\dist\\esm\\emit.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\package.json",
+      "includedInParent": true,
+      "mtime": 1533814982424
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n    value: true\n});\nexports.emit = emit;\nconst defs = {\n    bubbles: true,\n    cancelable: true,\n    composed: false\n};\nfunction emit(elem, name, opts) {\n    const eventOptions = Object.assign({}, defs, opts);\n    let e;\n    if ('composed' in CustomEvent.prototype) {\n        e = new CustomEvent(name, eventOptions);\n    } else {\n        e = document.createEvent('CustomEvent');\n        e.initCustomEvent(name, eventOptions.bubbles, eventOptions.cancelable, eventOptions.detail);\n        Object.defineProperty(e, 'composed', { value: eventOptions.composed });\n    }\n    return elem.dispatchEvent(e);\n}",
+    "map": {
+      "mappings": [
+        {
+          "name": "emit",
+          "generated": { "line": 6, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "name": "emit",
+          "generated": { "line": 6, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "generated": { "line": 7, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "name": "defs",
+          "generated": { "line": 7, "column": 6 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 6 }
+        },
+        {
+          "generated": { "line": 7, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 13 }
+        },
+        {
+          "name": "bubbles",
+          "generated": { "line": 8, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 2, "column": 4 }
+        },
+        {
+          "generated": { "line": 8, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 2, "column": 13 }
+        },
+        {
+          "generated": { "line": 8, "column": 17 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 13 }
+        },
+        {
+          "name": "cancelable",
+          "generated": { "line": 9, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 3, "column": 4 }
+        },
+        {
+          "generated": { "line": 9, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 3, "column": 16 }
+        },
+        {
+          "generated": { "line": 9, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 13 }
+        },
+        {
+          "name": "composed",
+          "generated": { "line": 10, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 4, "column": 4 }
+        },
+        {
+          "generated": { "line": 10, "column": 14 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 4, "column": 14 }
+        },
+        {
+          "generated": { "line": 11, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 13 }
+        },
+        {
+          "generated": { "line": 11, "column": 1 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 12, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "emit",
+          "generated": { "line": 12, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "generated": { "line": 12, "column": 13 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 12, "column": 14 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 21 }
+        },
+        {
+          "generated": { "line": 12, "column": 18 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 12, "column": 20 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 27 }
+        },
+        {
+          "generated": { "line": 12, "column": 24 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "opts",
+          "generated": { "line": 12, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 33 }
+        },
+        {
+          "generated": { "line": 12, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "generated": { "line": 12, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 6, "column": 39 }
+        },
+        {
+          "generated": { "line": 13, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 4 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 13, "column": 10 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 10 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 13, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 25 }
+        },
+        {
+          "name": "assign",
+          "generated": { "line": 13, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 32 }
+        },
+        {
+          "generated": { "line": 13, "column": 38 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 25 }
+        },
+        {
+          "generated": { "line": 13, "column": 39 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 39 }
+        },
+        {
+          "generated": { "line": 13, "column": 41 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 25 }
+        },
+        {
+          "name": "defs",
+          "generated": { "line": 13, "column": 43 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 43 }
+        },
+        {
+          "generated": { "line": 13, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 25 }
+        },
+        {
+          "name": "opts",
+          "generated": { "line": 13, "column": 49 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 49 }
+        },
+        {
+          "generated": { "line": 13, "column": 53 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 25 }
+        },
+        {
+          "generated": { "line": 13, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 7, "column": 4 }
+        },
+        {
+          "generated": { "line": 14, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 8, "column": 4 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 14, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 8, "column": 8 }
+        },
+        {
+          "generated": { "line": 14, "column": 9 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 8, "column": 4 }
+        },
+        {
+          "generated": { "line": 15, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 4 }
+        },
+        {
+          "generated": { "line": 15, "column": 8 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 8 }
+        },
+        {
+          "name": "CustomEvent",
+          "generated": { "line": 15, "column": 22 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 22 }
+        },
+        {
+          "name": "prototype",
+          "generated": { "line": 15, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 34 }
+        },
+        {
+          "generated": { "line": 15, "column": 43 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 4 }
+        },
+        {
+          "generated": { "line": 15, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 45 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 16, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 8 }
+        },
+        {
+          "generated": { "line": 16, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 12 }
+        },
+        {
+          "name": "CustomEvent",
+          "generated": { "line": 16, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 16 }
+        },
+        {
+          "generated": { "line": 16, "column": 27 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 12 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 16, "column": 28 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 28 }
+        },
+        {
+          "generated": { "line": 16, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 12 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 16, "column": 34 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 34 }
+        },
+        {
+          "generated": { "line": 16, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 12 }
+        },
+        {
+          "generated": { "line": 16, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 10, "column": 8 }
+        },
+        {
+          "generated": { "line": 17, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 11, "column": 5 }
+        },
+        {
+          "generated": { "line": 17, "column": 5 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 9, "column": 4 }
+        },
+        {
+          "generated": { "line": 17, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 12, "column": 9 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 18, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 8 }
+        },
+        {
+          "name": "document",
+          "generated": { "line": 18, "column": 12 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 12 }
+        },
+        {
+          "name": "createEvent",
+          "generated": { "line": 18, "column": 21 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 21 }
+        },
+        {
+          "generated": { "line": 18, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 12 }
+        },
+        {
+          "generated": { "line": 18, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 33 }
+        },
+        {
+          "generated": { "line": 18, "column": 46 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 12 }
+        },
+        {
+          "generated": { "line": 18, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 13, "column": 8 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 19, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "initCustomEvent",
+          "generated": { "line": 19, "column": 10 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 10 }
+        },
+        {
+          "generated": { "line": 19, "column": 25 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "name",
+          "generated": { "line": 19, "column": 26 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 26 }
+        },
+        {
+          "generated": { "line": 19, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 19, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 32 }
+        },
+        {
+          "name": "bubbles",
+          "generated": { "line": 19, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 45 }
+        },
+        {
+          "generated": { "line": 19, "column": 52 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 19, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 54 }
+        },
+        {
+          "name": "cancelable",
+          "generated": { "line": 19, "column": 67 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 67 }
+        },
+        {
+          "generated": { "line": 19, "column": 77 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 19, "column": 79 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 79 }
+        },
+        {
+          "name": "detail",
+          "generated": { "line": 19, "column": 92 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 92 }
+        },
+        {
+          "generated": { "line": 19, "column": 98 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 14, "column": 8 }
+        },
+        {
+          "name": "Object",
+          "generated": { "line": 20, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 8 }
+        },
+        {
+          "name": "defineProperty",
+          "generated": { "line": 20, "column": 15 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 15 }
+        },
+        {
+          "generated": { "line": 20, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 8 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 20, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 30 }
+        },
+        {
+          "generated": { "line": 20, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 8 }
+        },
+        {
+          "generated": { "line": 20, "column": 33 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 33 }
+        },
+        {
+          "generated": { "line": 20, "column": 43 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 8 }
+        },
+        {
+          "generated": { "line": 20, "column": 45 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 45 }
+        },
+        {
+          "name": "value",
+          "generated": { "line": 20, "column": 47 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 47 }
+        },
+        {
+          "name": "eventOptions",
+          "generated": { "line": 20, "column": 54 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 54 }
+        },
+        {
+          "name": "composed",
+          "generated": { "line": 20, "column": 67 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 67 }
+        },
+        {
+          "generated": { "line": 20, "column": 75 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 45 }
+        },
+        {
+          "generated": { "line": 20, "column": 77 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 15, "column": 8 }
+        },
+        {
+          "generated": { "line": 21, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 16, "column": 5 }
+        },
+        {
+          "generated": { "line": 22, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 4 }
+        },
+        {
+          "name": "elem",
+          "generated": { "line": 22, "column": 11 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 11 }
+        },
+        {
+          "name": "dispatchEvent",
+          "generated": { "line": 22, "column": 16 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 16 }
+        },
+        {
+          "generated": { "line": 22, "column": 29 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 11 }
+        },
+        {
+          "name": "e",
+          "generated": { "line": 22, "column": 30 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 30 }
+        },
+        {
+          "generated": { "line": 22, "column": 31 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 11 }
+        },
+        {
+          "generated": { "line": 22, "column": 32 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 17, "column": 4 }
+        },
+        {
+          "generated": { "line": 23, "column": 0 },
+          "source": "node_modules\\skatejs\\dist\\esm\\emit.js",
+          "original": { "line": 18, "column": 1 }
+        }
+      ],
+      "sources": {
+        "node_modules\\skatejs\\dist\\esm\\emit.js":
+          "const defs = {\r\n    bubbles: true,\r\n    cancelable: true,\r\n    composed: false\r\n};\r\nexport function emit(elem, name, opts) {\r\n    const eventOptions = Object.assign({}, defs, opts);\r\n    let e;\r\n    if ('composed' in CustomEvent.prototype) {\r\n        e = new CustomEvent(name, eventOptions);\r\n    }\r\n    else {\r\n        e = document.createEvent('CustomEvent');\r\n        e.initCustomEvent(name, eventOptions.bubbles, eventOptions.cancelable, eventOptions.detail);\r\n        Object.defineProperty(e, 'composed', { value: eventOptions.composed });\r\n    }\r\n    return elem.dispatchEvent(e);\r\n}\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "c3f136adaa698e834736c5ed6f90b4d9",
+  "cacheData": { "env": {} }
+}

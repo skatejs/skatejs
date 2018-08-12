@@ -1,0 +1,65 @@
+{
+  "id": "pages\\guides\\index.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js": "window.location = '/guides/getting-started';",
+    "map": {
+      "mappings": [
+        {
+          "source": "pages\\guides\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 1, "column": 0 }
+        },
+        {
+          "source": "pages\\guides\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 7 },
+          "generated": { "line": 1, "column": 7 }
+        },
+        {
+          "source": "pages\\guides\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 1, "column": 15 }
+        },
+        {
+          "source": "pages\\guides\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 18 },
+          "generated": { "line": 1, "column": 18 }
+        },
+        {
+          "source": "pages\\guides\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 1, "column": 43 }
+        }
+      ],
+      "sources": {
+        "pages\\guides\\index.ts":
+          "window.location = '/guides/getting-started';\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "8f42cad34d89a9852dfd808fc7e76393",
+  "cacheData": { "env": {} }
+}

@@ -1,0 +1,57 @@
+{
+  "id": "pages\\guides\\index.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1533796724733
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    }
+  ],
+  "generated": {
+    "js": "window.location = '/guides/getting-started';",
+    "map": {
+      "mappings": [
+        {
+          "name": "window",
+          "generated": { "line": 1, "column": 0 },
+          "source": "pages\\guides\\index.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "name": "location",
+          "generated": { "line": 1, "column": 7 },
+          "source": "pages\\guides\\index.js",
+          "original": { "line": 1, "column": 7 }
+        },
+        {
+          "generated": { "line": 1, "column": 15 },
+          "source": "pages\\guides\\index.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "generated": { "line": 1, "column": 18 },
+          "source": "pages\\guides\\index.js",
+          "original": { "line": 1, "column": 18 }
+        },
+        {
+          "generated": { "line": 1, "column": 43 },
+          "source": "pages\\guides\\index.js",
+          "original": { "line": 1, "column": 0 }
+        }
+      ],
+      "sources": {
+        "pages\\guides\\index.js":
+          "window.location = '/guides/getting-started';\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "cfafeb1c33f88ef17ca5e53b4b493d8c",
+  "cacheData": { "env": {} }
+}

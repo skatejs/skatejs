@@ -1,0 +1,380 @@
+{
+  "id": "pages\\components\\index.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 4, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\components\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    },
+    {
+      "name": "../../components/layout",
+      "loc": { "line": 5, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\components\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\layout.ts"
+    },
+    {
+      "name": "../../components/marked",
+      "loc": { "line": 6, "column": 8 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\components\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\components\\marked.ts"
+    },
+    {
+      "name": "../../utils",
+      "loc": { "line": 7, "column": 24 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\pages\\components\\index.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\index.ts"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nvar _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();\n\nvar _templateObject = _taggedTemplateLiteral([\"\\n        <x-layout title=\\\"Components\\\">\\n          <x-marked src=\\\"\", \"\\\"></x-marked>\\n        </x-layout>\\n      \"], [\"\\n        <x-layout title=\\\"Components\\\">\\n          <x-marked src=\\\"\", \"\\\"></x-marked>\\n        </x-layout>\\n      \"]);\n\nfunction _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); } return call && (typeof call === \"object\" || typeof call === \"function\") ? call : self; }\n\nfunction _inherits(subClass, superClass) { if (typeof superClass !== \"function\" && superClass !== null) { throw new TypeError(\"Super expression must either be null or a function, not \" + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar _a;\nvar skatejs_1 = require(\"skatejs\");\nrequire(\"../../components/layout\");\nrequire(\"../../components/marked\");\nvar utils_1 = require(\"../../utils\");\nexports.default = skatejs_1.define((_a = function (_utils_1$Component) {\n  _inherits(_a, _utils_1$Component);\n\n  function _a() {\n    _classCallCheck(this, _a);\n\n    return _possibleConstructorReturn(this, (_a.__proto__ || Object.getPrototypeOf(_a)).apply(this, arguments));\n  }\n\n  _createClass(_a, [{\n    key: \"render\",\n    value: function render() {\n      return this.$(_templateObject, \"\\n            TODO\\n          \");\n    }\n  }]);\n\n  return _a;\n}(utils_1.Component), _a.is = 'x-pages-components', _a));",
+    "map": {
+      "mappings": [
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 4 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 16 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 24 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 33 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 17, "column": 34 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 8 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 2, "column": 0 },
+          "generated": { "line": 18, "column": 33 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 8 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 19, "column": 33 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 4 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 14 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 22 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 35 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 20, "column": 36 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 21, "column": 8 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 21, "column": 15 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 15 },
+          "generated": { "line": 21, "column": 18 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 15 },
+          "generated": { "line": 21, "column": 28 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 15 },
+          "generated": { "line": 21, "column": 34 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 21, "column": 36 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 22, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 24, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 25, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 27, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 30, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 9, "column": 10 },
+          "generated": { "line": 32, "column": 29 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 6 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 13 },
+          "generated": { "line": 33, "column": 13 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 18 },
+          "generated": { "line": 33, "column": 18 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 10, "column": 6 },
+          "generated": { "line": 33, "column": 19 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 17, "column": 5 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 37, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 38, "column": 0 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 38, "column": 2 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 7, "column": 16 },
+          "generated": { "line": 38, "column": 10 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 38, "column": 19 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 11 },
+          "generated": { "line": 38, "column": 22 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 11 },
+          "generated": { "line": 38, "column": 25 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 11 },
+          "generated": { "line": 38, "column": 27 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 8, "column": 16 },
+          "generated": { "line": 38, "column": 30 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 21 },
+          "generated": { "line": 38, "column": 50 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 15 },
+          "generated": { "line": 38, "column": 54 }
+        },
+        {
+          "source": "pages\\components\\index.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 38, "column": 56 }
+        }
+      ],
+      "sources": {
+        "pages\\components\\index.ts":
+          "import { define } from 'skatejs';\nimport '../../components/layout';\nimport '../../components/marked';\nimport { Component } from '../../utils';\n\nexport default define(\n  class extends Component {\n    static is = 'x-pages-components';\n    render() {\n      return this.$`\n        <x-layout title=\"Components\">\n          <x-marked src=\"${`\n            TODO\n          `}\"></x-marked>\n        </x-layout>\n      `;\n    }\n  }\n);\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "b9f1dfabb48fb095d8a94dfaa5fdede6",
+  "cacheData": { "env": {} }
+}

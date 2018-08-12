@@ -1,0 +1,512 @@
+{
+  "id": "fills\\history.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "skatejs",
+      "loc": { "line": 3, "column": 26 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\fills\\history.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\skatejs\\dist\\esm\\index.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar skatejs_1 = require(\"skatejs\");\nvar oldPushState = window.history.pushState;\nvar oldReplaceState = window.history.replaceState;\nwindow.history.pushState = function () {\n    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {\n        args[_key] = arguments[_key];\n    }\n\n    oldPushState.call.apply(oldPushState, [this].concat(args));\n    skatejs_1.emit(window, 'pushstate');\n};\nwindow.history.replaceState = function () {\n    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {\n        args[_key2] = arguments[_key2];\n    }\n\n    oldReplaceState.call.apply(oldReplaceState, [this].concat(args));\n    skatejs_1.emit(window, 'replacestate');\n};",
+    "map": {
+      "mappings": [
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 4 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 16 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 24 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 33 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 34 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 5, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 6 },
+          "generated": { "line": 5, "column": 4 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 21 },
+          "generated": { "line": 5, "column": 19 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 28 },
+          "generated": { "line": 5, "column": 26 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 21 },
+          "generated": { "line": 5, "column": 33 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 36 },
+          "generated": { "line": 5, "column": 34 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 5, "column": 43 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 6, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 6 },
+          "generated": { "line": 6, "column": 4 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 24 },
+          "generated": { "line": 6, "column": 22 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 31 },
+          "generated": { "line": 6, "column": 29 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 24 },
+          "generated": { "line": 6, "column": 36 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 39 },
+          "generated": { "line": 6, "column": 37 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 6, "column": 49 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 7, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 7 },
+          "generated": { "line": 7, "column": 7 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 7, "column": 14 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 15 },
+          "generated": { "line": 7, "column": 15 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 7, "column": 24 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 27 },
+          "generated": { "line": 7, "column": 27 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 43 },
+          "generated": { "line": 7, "column": 39 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 43 },
+          "generated": { "line": 8, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 39 },
+          "generated": { "line": 8, "column": 38 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 43 },
+          "generated": { "line": 8, "column": 42 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 39 },
+          "generated": { "line": 9, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 43 },
+          "generated": { "line": 9, "column": 12 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 43 },
+          "generated": { "line": 10, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 2 },
+          "generated": { "line": 12, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 15 },
+          "generated": { "line": 12, "column": 17 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 2 },
+          "generated": { "line": 12, "column": 21 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 20 },
+          "generated": { "line": 12, "column": 43 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 2 },
+          "generated": { "line": 12, "column": 47 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 29 },
+          "generated": { "line": 12, "column": 56 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 6, "column": 2 },
+          "generated": { "line": 12, "column": 60 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 13, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 13, "column": 14 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 13, "column": 18 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 7 },
+          "generated": { "line": 13, "column": 19 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 13, "column": 25 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 15 },
+          "generated": { "line": 13, "column": 27 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 13, "column": 38 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 8, "column": 1 },
+          "generated": { "line": 14, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 14, "column": 1 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 15, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 7 },
+          "generated": { "line": 15, "column": 7 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 15, "column": 14 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 15 },
+          "generated": { "line": 15, "column": 15 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 15, "column": 27 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 30 },
+          "generated": { "line": 15, "column": 30 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 46 },
+          "generated": { "line": 15, "column": 42 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 46 },
+          "generated": { "line": 16, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 42 },
+          "generated": { "line": 16, "column": 39 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 46 },
+          "generated": { "line": 16, "column": 43 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 42 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 46 },
+          "generated": { "line": 17, "column": 12 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 46 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 18 },
+          "generated": { "line": 20, "column": 20 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 20, "column": 24 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 23 },
+          "generated": { "line": 20, "column": 49 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 20, "column": 53 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 32 },
+          "generated": { "line": 20, "column": 62 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 20, "column": 66 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 2 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 2 },
+          "generated": { "line": 21, "column": 14 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 2 },
+          "generated": { "line": 21, "column": 18 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 7 },
+          "generated": { "line": 21, "column": 19 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 2 },
+          "generated": { "line": 21, "column": 25 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 15 },
+          "generated": { "line": 21, "column": 27 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 11, "column": 2 },
+          "generated": { "line": 21, "column": 41 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 12, "column": 1 },
+          "generated": { "line": 22, "column": 0 }
+        },
+        {
+          "source": "fills\\history.ts",
+          "name": null,
+          "original": { "line": 9, "column": 0 },
+          "generated": { "line": 22, "column": 1 }
+        }
+      ],
+      "sources": {
+        "fills\\history.ts":
+          "import { emit } from 'skatejs';\r\n\r\nconst oldPushState = window.history.pushState;\r\nconst oldReplaceState = window.history.replaceState;\r\nwindow.history.pushState = function(...args) {\r\n  oldPushState.call(this, ...args);\r\n  emit(window, 'pushstate');\r\n};\r\nwindow.history.replaceState = function(...args) {\r\n  oldReplaceState.call(this, ...args);\r\n  emit(window, 'replacestate');\r\n};\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "bb2f2d882cfb14ba97b6a1f6bf958988",
+  "cacheData": { "env": {} }
+}

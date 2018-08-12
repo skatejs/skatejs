@@ -1,0 +1,735 @@
+{
+  "id": "utils\\html.js",
+  "dependencies": [
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1533796724733
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "lit-html/lib/lit-extended",
+      "loc": { "line": 27, "column": 21 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\html.js",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\lit-html\\lib\\lit-extended.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "'use strict';\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.html = undefined;\nexports.htmlExtended = htmlExtended;\n\nvar _litExtended = require('lit-html/lib/lit-extended');\n\nObject.defineProperty(exports, 'html', {\n  enumerable: true,\n  get: function () {\n    return _litExtended.html;\n  }\n});\n\n\n// This extends Lit to provide constructors as tag names. However, it's not\n// fully working yet as there's some kings to work out, so we still export the\n// standard html tagged literal for now.\nfunction htmlExtended(parts) {\n  var newArgs = [];\n  var newParts = parts.concat();\n  var joinIndicies = [];\n\n  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n    args[_key - 1] = arguments[_key];\n  }\n\n  for (var a = 0; a < args.length; a++) {\n    var possibleCtor = args[a];\n    if (possibleCtor && possibleCtor.is) {\n      newParts[a] = newParts[a] + possibleCtor.is;\n      joinIndicies.push(a);\n    } else {\n      newArgs.push(possibleCtor);\n    }\n  }\n  for (var _a = 0; _a < joinIndicies.length; _a++) {\n    var join = joinIndicies[_a] - _a;\n    newParts[join] = newParts[join] + newParts[join + 1];\n    newParts.splice(join + 1, 1);\n  }\n  return _litExtended.html.apply(undefined, [newParts].concat(newArgs));\n}",
+    "map": {
+      "mappings": [
+        {
+          "name": "htmlExtended",
+          "generated": { "line": 7, "column": 8 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "name": "htmlExtended",
+          "generated": { "line": 7, "column": 23 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "generated": { "line": 9, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 1, "column": 0 }
+        },
+        {
+          "name": "html",
+          "generated": { "line": 14, "column": 24 },
+          "source": "utils\\html.js",
+          "original": { "line": 27, "column": 9 }
+        },
+        {
+          "generated": { "line": 19, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 3, "column": 0 }
+        },
+        {
+          "generated": { "line": 20, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 4, "column": 0 }
+        },
+        {
+          "generated": { "line": 21, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 5, "column": 0 }
+        },
+        {
+          "generated": { "line": 22, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "htmlExtended",
+          "generated": { "line": 22, "column": 9 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 16 }
+        },
+        {
+          "generated": { "line": 22, "column": 21 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "name": "parts",
+          "generated": { "line": 22, "column": 22 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 29 }
+        },
+        {
+          "generated": { "line": 22, "column": 27 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 7 }
+        },
+        {
+          "generated": { "line": 22, "column": 29 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 45 }
+        },
+        {
+          "generated": { "line": 23, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 7, "column": 2 }
+        },
+        {
+          "name": "newArgs",
+          "generated": { "line": 23, "column": 6 },
+          "source": "utils\\html.js",
+          "original": { "line": 7, "column": 8 }
+        },
+        {
+          "generated": { "line": 23, "column": 16 },
+          "source": "utils\\html.js",
+          "original": { "line": 7, "column": 18 }
+        },
+        {
+          "generated": { "line": 23, "column": 18 },
+          "source": "utils\\html.js",
+          "original": { "line": 7, "column": 2 }
+        },
+        {
+          "generated": { "line": 24, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 24, "column": 6 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 8 }
+        },
+        {
+          "name": "parts",
+          "generated": { "line": 24, "column": 17 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 19 }
+        },
+        {
+          "name": "concat",
+          "generated": { "line": 24, "column": 23 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 25 }
+        },
+        {
+          "generated": { "line": 24, "column": 29 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 19 }
+        },
+        {
+          "generated": { "line": 24, "column": 31 },
+          "source": "utils\\html.js",
+          "original": { "line": 8, "column": 2 }
+        },
+        {
+          "generated": { "line": 25, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 9, "column": 2 }
+        },
+        {
+          "name": "joinIndicies",
+          "generated": { "line": 25, "column": 6 },
+          "source": "utils\\html.js",
+          "original": { "line": 9, "column": 8 }
+        },
+        {
+          "generated": { "line": 25, "column": 21 },
+          "source": "utils\\html.js",
+          "original": { "line": 9, "column": 23 }
+        },
+        {
+          "generated": { "line": 25, "column": 23 },
+          "source": "utils\\html.js",
+          "original": { "line": 9, "column": 2 }
+        },
+        {
+          "generated": { "line": 27, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 45 }
+        },
+        {
+          "name": "args",
+          "generated": { "line": 27, "column": 36 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 39 }
+        },
+        {
+          "generated": { "line": 27, "column": 40 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 45 }
+        },
+        {
+          "name": "args",
+          "generated": { "line": 28, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 39 }
+        },
+        {
+          "generated": { "line": 28, "column": 8 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 45 }
+        },
+        {
+          "generated": { "line": 29, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 6, "column": 45 }
+        },
+        {
+          "generated": { "line": 31, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "generated": { "line": 31, "column": 7 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 7 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 31, "column": 11 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 11 }
+        },
+        {
+          "generated": { "line": 31, "column": 15 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 15 }
+        },
+        {
+          "generated": { "line": 31, "column": 16 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 31, "column": 18 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 18 }
+        },
+        {
+          "name": "args",
+          "generated": { "line": 31, "column": 22 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 22 }
+        },
+        {
+          "name": "length",
+          "generated": { "line": 31, "column": 27 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 27 }
+        },
+        {
+          "generated": { "line": 31, "column": 33 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 31, "column": 35 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 35 }
+        },
+        {
+          "generated": { "line": 31, "column": 38 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 2 }
+        },
+        {
+          "generated": { "line": 31, "column": 40 },
+          "source": "utils\\html.js",
+          "original": { "line": 10, "column": 40 }
+        },
+        {
+          "generated": { "line": 32, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 4 }
+        },
+        {
+          "name": "possibleCtor",
+          "generated": { "line": 32, "column": 8 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 10 }
+        },
+        {
+          "name": "args",
+          "generated": { "line": 32, "column": 23 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 25 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 32, "column": 28 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 30 }
+        },
+        {
+          "generated": { "line": 32, "column": 29 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 25 }
+        },
+        {
+          "generated": { "line": 32, "column": 30 },
+          "source": "utils\\html.js",
+          "original": { "line": 11, "column": 4 }
+        },
+        {
+          "generated": { "line": 33, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 4 }
+        },
+        {
+          "name": "possibleCtor",
+          "generated": { "line": 33, "column": 8 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 8 }
+        },
+        {
+          "name": "possibleCtor",
+          "generated": { "line": 33, "column": 24 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 24 }
+        },
+        {
+          "name": "is",
+          "generated": { "line": 33, "column": 37 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 37 }
+        },
+        {
+          "generated": { "line": 33, "column": 39 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 4 }
+        },
+        {
+          "generated": { "line": 33, "column": 41 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 41 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 34, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 6 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 34, "column": 15 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 15 }
+        },
+        {
+          "generated": { "line": 34, "column": 16 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 6 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 34, "column": 20 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 20 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 34, "column": 29 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 29 }
+        },
+        {
+          "generated": { "line": 34, "column": 30 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 20 }
+        },
+        {
+          "name": "possibleCtor",
+          "generated": { "line": 34, "column": 34 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 34 }
+        },
+        {
+          "name": "is",
+          "generated": { "line": 34, "column": 47 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 47 }
+        },
+        {
+          "generated": { "line": 34, "column": 49 },
+          "source": "utils\\html.js",
+          "original": { "line": 13, "column": 6 }
+        },
+        {
+          "name": "joinIndicies",
+          "generated": { "line": 35, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 14, "column": 6 }
+        },
+        {
+          "name": "push",
+          "generated": { "line": 35, "column": 19 },
+          "source": "utils\\html.js",
+          "original": { "line": 14, "column": 19 }
+        },
+        {
+          "generated": { "line": 35, "column": 23 },
+          "source": "utils\\html.js",
+          "original": { "line": 14, "column": 6 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 35, "column": 24 },
+          "source": "utils\\html.js",
+          "original": { "line": 14, "column": 24 }
+        },
+        {
+          "generated": { "line": 35, "column": 25 },
+          "source": "utils\\html.js",
+          "original": { "line": 14, "column": 6 }
+        },
+        {
+          "generated": { "line": 36, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 15, "column": 5 }
+        },
+        {
+          "generated": { "line": 36, "column": 5 },
+          "source": "utils\\html.js",
+          "original": { "line": 12, "column": 4 }
+        },
+        {
+          "generated": { "line": 36, "column": 11 },
+          "source": "utils\\html.js",
+          "original": { "line": 15, "column": 11 }
+        },
+        {
+          "name": "newArgs",
+          "generated": { "line": 37, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 16, "column": 6 }
+        },
+        {
+          "name": "push",
+          "generated": { "line": 37, "column": 14 },
+          "source": "utils\\html.js",
+          "original": { "line": 16, "column": 14 }
+        },
+        {
+          "generated": { "line": 37, "column": 18 },
+          "source": "utils\\html.js",
+          "original": { "line": 16, "column": 6 }
+        },
+        {
+          "name": "possibleCtor",
+          "generated": { "line": 37, "column": 19 },
+          "source": "utils\\html.js",
+          "original": { "line": 16, "column": 19 }
+        },
+        {
+          "generated": { "line": 37, "column": 31 },
+          "source": "utils\\html.js",
+          "original": { "line": 16, "column": 6 }
+        },
+        {
+          "generated": { "line": 38, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 17, "column": 5 }
+        },
+        {
+          "generated": { "line": 39, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 18, "column": 3 }
+        },
+        {
+          "generated": { "line": 40, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 2 }
+        },
+        {
+          "generated": { "line": 40, "column": 7 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 7 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 40, "column": 11 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 11 }
+        },
+        {
+          "generated": { "line": 40, "column": 16 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 15 }
+        },
+        {
+          "generated": { "line": 40, "column": 17 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 2 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 40, "column": 19 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 18 }
+        },
+        {
+          "name": "joinIndicies",
+          "generated": { "line": 40, "column": 24 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 22 }
+        },
+        {
+          "name": "length",
+          "generated": { "line": 40, "column": 37 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 35 }
+        },
+        {
+          "generated": { "line": 40, "column": 43 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 2 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 40, "column": 45 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 43 }
+        },
+        {
+          "generated": { "line": 40, "column": 49 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 2 }
+        },
+        {
+          "generated": { "line": 40, "column": 51 },
+          "source": "utils\\html.js",
+          "original": { "line": 19, "column": 48 }
+        },
+        {
+          "generated": { "line": 41, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 4 }
+        },
+        {
+          "name": "join",
+          "generated": { "line": 41, "column": 8 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 10 }
+        },
+        {
+          "name": "joinIndicies",
+          "generated": { "line": 41, "column": 15 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 17 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 41, "column": 28 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 30 }
+        },
+        {
+          "generated": { "line": 41, "column": 30 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 17 }
+        },
+        {
+          "name": "a",
+          "generated": { "line": 41, "column": 34 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 35 }
+        },
+        {
+          "generated": { "line": 41, "column": 36 },
+          "source": "utils\\html.js",
+          "original": { "line": 20, "column": 4 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 42, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 4 }
+        },
+        {
+          "name": "join",
+          "generated": { "line": 42, "column": 13 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 13 }
+        },
+        {
+          "generated": { "line": 42, "column": 17 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 4 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 42, "column": 21 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 21 }
+        },
+        {
+          "name": "join",
+          "generated": { "line": 42, "column": 30 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 30 }
+        },
+        {
+          "generated": { "line": 42, "column": 34 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 21 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 42, "column": 38 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 38 }
+        },
+        {
+          "name": "join",
+          "generated": { "line": 42, "column": 47 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 47 }
+        },
+        {
+          "generated": { "line": 42, "column": 54 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 54 }
+        },
+        {
+          "generated": { "line": 42, "column": 55 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 38 }
+        },
+        {
+          "generated": { "line": 42, "column": 56 },
+          "source": "utils\\html.js",
+          "original": { "line": 21, "column": 4 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 43, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 4 }
+        },
+        {
+          "name": "splice",
+          "generated": { "line": 43, "column": 13 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 13 }
+        },
+        {
+          "generated": { "line": 43, "column": 19 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 4 }
+        },
+        {
+          "name": "join",
+          "generated": { "line": 43, "column": 20 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 20 }
+        },
+        {
+          "generated": { "line": 43, "column": 27 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 27 }
+        },
+        {
+          "generated": { "line": 43, "column": 28 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 4 }
+        },
+        {
+          "generated": { "line": 43, "column": 30 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 30 }
+        },
+        {
+          "generated": { "line": 43, "column": 31 },
+          "source": "utils\\html.js",
+          "original": { "line": 22, "column": 4 }
+        },
+        {
+          "generated": { "line": 44, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 23, "column": 3 }
+        },
+        {
+          "generated": { "line": 45, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 2 }
+        },
+        {
+          "name": "lit",
+          "generated": { "line": 45, "column": 9 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 9 }
+        },
+        {
+          "name": "newParts",
+          "generated": { "line": 45, "column": 45 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 13 }
+        },
+        {
+          "generated": { "line": 45, "column": 53 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 9 }
+        },
+        {
+          "name": "newArgs",
+          "generated": { "line": 45, "column": 62 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 26 }
+        },
+        {
+          "generated": { "line": 45, "column": 69 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 9 }
+        },
+        {
+          "generated": { "line": 45, "column": 71 },
+          "source": "utils\\html.js",
+          "original": { "line": 24, "column": 2 }
+        },
+        {
+          "generated": { "line": 46, "column": 0 },
+          "source": "utils\\html.js",
+          "original": { "line": 25, "column": 1 }
+        }
+      ],
+      "sources": {
+        "utils\\html.js":
+          "import { html as lit } from 'lit-html/lib/lit-extended';\r\n\r\n// This extends Lit to provide constructors as tag names. However, it's not\r\n// fully working yet as there's some kings to work out, so we still export the\r\n// standard html tagged literal for now.\r\nexport function htmlExtended(parts, ...args) {\r\n  const newArgs = [];\r\n  const newParts = parts.concat();\r\n  const joinIndicies = [];\r\n  for (let a = 0; a < args.length; a++) {\r\n    const possibleCtor = args[a];\r\n    if (possibleCtor && possibleCtor.is) {\r\n      newParts[a] = newParts[a] + possibleCtor.is;\r\n      joinIndicies.push(a);\r\n    } else {\r\n      newArgs.push(possibleCtor);\r\n    }\r\n  }\r\n  for (let a = 0; a < joinIndicies.length; a++) {\r\n    const join = joinIndicies[a] - a;\r\n    newParts[join] = newParts[join] + newParts[join + 1];\r\n    newParts.splice(join + 1, 1);\r\n  }\r\n  return lit(newParts, ...newArgs);\r\n}\r\n\r\nexport { html } from 'lit-html/lib/lit-extended';\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "d8a35f1bc9a3e01eeb62ea002393d60e",
+  "cacheData": { "env": {} }
+}

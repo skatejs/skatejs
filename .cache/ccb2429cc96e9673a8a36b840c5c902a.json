@@ -1,0 +1,938 @@
+{
+  "id": "utils\\html.ts",
+  "dependencies": [
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\tsconfig.json",
+      "includedInParent": true,
+      "mtime": 1533852749669
+    },
+    {
+      "name":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\package.json",
+      "includedInParent": true,
+      "mtime": 1534115027496
+    },
+    {
+      "name": "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\.babelrc",
+      "includedInParent": true,
+      "mtime": 1533796116874
+    },
+    {
+      "name": "lit-html/lib/lit-extended",
+      "loc": { "line": 29, "column": 29 },
+      "parent":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\utils\\html.ts",
+      "resolved":
+        "C:\\Users\\tjshu\\Documents\\GitHub\\skatejs\\site\\node_modules\\lit-html\\lib\\lit-extended.js"
+    }
+  ],
+  "generated": {
+    "js":
+      "\"use strict\";\n\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar lit_extended_1 = require(\"lit-html/lib/lit-extended\");\n// This extends Lit to provide constructors as tag names. However, it's not\n// fully working yet as there's some kings to work out, so we still export the\n// standard html tagged literal for now.\nfunction htmlExtended(parts) {\n    var newArgs = [];\n    var newParts = parts.concat();\n    var joinIndicies = [];\n\n    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {\n        args[_key - 1] = arguments[_key];\n    }\n\n    for (var a = 0; a < args.length; a++) {\n        var possibleCtor = args[a];\n        if (possibleCtor && possibleCtor.is) {\n            newParts[a] = newParts[a] + possibleCtor.is;\n            joinIndicies.push(a);\n        } else {\n            newArgs.push(possibleCtor);\n        }\n    }\n    for (var _a = 0; _a < joinIndicies.length; _a++) {\n        var join = joinIndicies[_a] - _a;\n        newParts[join] = newParts[join] + newParts[join + 1];\n        newParts.splice(join + 1, 1);\n    }\n    return lit_extended_1.html.apply(lit_extended_1, [newParts].concat(newArgs));\n}\nexports.htmlExtended = htmlExtended;\nvar lit_extended_2 = require(\"lit-html/lib/lit-extended\");\nexports.html = lit_extended_2.html;",
+    "map": {
+      "mappings": [
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 4 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 29 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 56 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 1, "column": 0 },
+          "generated": { "line": 4, "column": 57 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 3, "column": 0 },
+          "generated": { "line": 5, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 4, "column": 0 },
+          "generated": { "line": 6, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 5, "column": 0 },
+          "generated": { "line": 7, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 8, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 16 },
+          "generated": { "line": 8, "column": 9 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 8, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 29 },
+          "generated": { "line": 8, "column": 22 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 8, "column": 27 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 43 },
+          "generated": { "line": 8, "column": 29 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 9, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 7, "column": 8 },
+          "generated": { "line": 9, "column": 8 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 7, "column": 18 },
+          "generated": { "line": 9, "column": 18 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 7, "column": 2 },
+          "generated": { "line": 9, "column": 20 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 10, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 8 },
+          "generated": { "line": 10, "column": 8 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 19 },
+          "generated": { "line": 10, "column": 19 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 25 },
+          "generated": { "line": 10, "column": 25 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 19 },
+          "generated": { "line": 10, "column": 31 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 8, "column": 2 },
+          "generated": { "line": 10, "column": 33 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 9, "column": 2 },
+          "generated": { "line": 11, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 9, "column": 8 },
+          "generated": { "line": 11, "column": 8 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 9, "column": 23 },
+          "generated": { "line": 11, "column": 23 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 9, "column": 2 },
+          "generated": { "line": 11, "column": 25 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 43 },
+          "generated": { "line": 13, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 39 },
+          "generated": { "line": 13, "column": 38 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 43 },
+          "generated": { "line": 13, "column": 42 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 39 },
+          "generated": { "line": 14, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 43 },
+          "generated": { "line": 14, "column": 12 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 43 },
+          "generated": { "line": 15, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 17, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 7 },
+          "generated": { "line": 17, "column": 9 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 11 },
+          "generated": { "line": 17, "column": 13 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 15 },
+          "generated": { "line": 17, "column": 17 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 17, "column": 18 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 18 },
+          "generated": { "line": 17, "column": 20 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 22 },
+          "generated": { "line": 17, "column": 24 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 27 },
+          "generated": { "line": 17, "column": 29 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 17, "column": 35 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 35 },
+          "generated": { "line": 17, "column": 37 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 2 },
+          "generated": { "line": 17, "column": 40 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 10, "column": 40 },
+          "generated": { "line": 17, "column": 42 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 4 },
+          "generated": { "line": 18, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 10 },
+          "generated": { "line": 18, "column": 12 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 25 },
+          "generated": { "line": 18, "column": 27 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 30 },
+          "generated": { "line": 18, "column": 32 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 25 },
+          "generated": { "line": 18, "column": 33 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 11, "column": 4 },
+          "generated": { "line": 18, "column": 34 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 4 },
+          "generated": { "line": 19, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 8 },
+          "generated": { "line": 19, "column": 12 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 24 },
+          "generated": { "line": 19, "column": 28 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 37 },
+          "generated": { "line": 19, "column": 41 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 4 },
+          "generated": { "line": 19, "column": 43 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 41 },
+          "generated": { "line": 19, "column": 45 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 6 },
+          "generated": { "line": 20, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 15 },
+          "generated": { "line": 20, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 6 },
+          "generated": { "line": 20, "column": 22 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 20 },
+          "generated": { "line": 20, "column": 26 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 29 },
+          "generated": { "line": 20, "column": 35 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 20 },
+          "generated": { "line": 20, "column": 36 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 34 },
+          "generated": { "line": 20, "column": 40 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 47 },
+          "generated": { "line": 20, "column": 53 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 13, "column": 6 },
+          "generated": { "line": 20, "column": 55 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 14, "column": 6 },
+          "generated": { "line": 21, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 14, "column": 19 },
+          "generated": { "line": 21, "column": 25 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 14, "column": 6 },
+          "generated": { "line": 21, "column": 29 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 14, "column": 24 },
+          "generated": { "line": 21, "column": 30 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 14, "column": 6 },
+          "generated": { "line": 21, "column": 31 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 15, "column": 5 },
+          "generated": { "line": 22, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 12, "column": 4 },
+          "generated": { "line": 22, "column": 9 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 15, "column": 11 },
+          "generated": { "line": 22, "column": 15 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 16, "column": 6 },
+          "generated": { "line": 23, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 16, "column": 14 },
+          "generated": { "line": 23, "column": 20 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 16, "column": 6 },
+          "generated": { "line": 23, "column": 24 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 16, "column": 19 },
+          "generated": { "line": 23, "column": 25 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 16, "column": 6 },
+          "generated": { "line": 23, "column": 37 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 17, "column": 5 },
+          "generated": { "line": 24, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 18, "column": 3 },
+          "generated": { "line": 25, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 2 },
+          "generated": { "line": 26, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 7 },
+          "generated": { "line": 26, "column": 9 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 11 },
+          "generated": { "line": 26, "column": 13 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 15 },
+          "generated": { "line": 26, "column": 18 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 2 },
+          "generated": { "line": 26, "column": 19 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 18 },
+          "generated": { "line": 26, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 22 },
+          "generated": { "line": 26, "column": 26 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 35 },
+          "generated": { "line": 26, "column": 39 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 2 },
+          "generated": { "line": 26, "column": 45 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 43 },
+          "generated": { "line": 26, "column": 47 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 2 },
+          "generated": { "line": 26, "column": 51 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 19, "column": 48 },
+          "generated": { "line": 26, "column": 53 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 4 },
+          "generated": { "line": 27, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 10 },
+          "generated": { "line": 27, "column": 12 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 17 },
+          "generated": { "line": 27, "column": 19 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 30 },
+          "generated": { "line": 27, "column": 32 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 17 },
+          "generated": { "line": 27, "column": 34 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 35 },
+          "generated": { "line": 27, "column": 38 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 20, "column": 4 },
+          "generated": { "line": 27, "column": 40 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 4 },
+          "generated": { "line": 28, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 13 },
+          "generated": { "line": 28, "column": 17 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 4 },
+          "generated": { "line": 28, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 21 },
+          "generated": { "line": 28, "column": 25 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 30 },
+          "generated": { "line": 28, "column": 34 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 21 },
+          "generated": { "line": 28, "column": 38 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 38 },
+          "generated": { "line": 28, "column": 42 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 47 },
+          "generated": { "line": 28, "column": 51 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 54 },
+          "generated": { "line": 28, "column": 58 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 38 },
+          "generated": { "line": 28, "column": 59 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 21, "column": 4 },
+          "generated": { "line": 28, "column": 60 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 4 },
+          "generated": { "line": 29, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 13 },
+          "generated": { "line": 29, "column": 17 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 4 },
+          "generated": { "line": 29, "column": 23 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 20 },
+          "generated": { "line": 29, "column": 24 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 27 },
+          "generated": { "line": 29, "column": 31 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 4 },
+          "generated": { "line": 29, "column": 32 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 30 },
+          "generated": { "line": 29, "column": 34 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 22, "column": 4 },
+          "generated": { "line": 29, "column": 35 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 23, "column": 3 },
+          "generated": { "line": 30, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 2 },
+          "generated": { "line": 31, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 9 },
+          "generated": { "line": 31, "column": 11 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 9 },
+          "generated": { "line": 31, "column": 26 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 9 },
+          "generated": { "line": 31, "column": 30 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 13 },
+          "generated": { "line": 31, "column": 54 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 9 },
+          "generated": { "line": 31, "column": 62 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 26 },
+          "generated": { "line": 31, "column": 71 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 9 },
+          "generated": { "line": 31, "column": 78 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 24, "column": 2 },
+          "generated": { "line": 31, "column": 80 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 25, "column": 1 },
+          "generated": { "line": 32, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 33, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 33, "column": 8 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 33, "column": 20 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 33, "column": 23 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 6, "column": 0 },
+          "generated": { "line": 33, "column": 35 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 4 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 21 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 29 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 56 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 0 },
+          "generated": { "line": 34, "column": 57 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 0 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 8 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 12 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 15 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 30 }
+        },
+        {
+          "source": "utils\\html.ts",
+          "name": null,
+          "original": { "line": 27, "column": 9 },
+          "generated": { "line": 35, "column": 34 }
+        }
+      ],
+      "sources": {
+        "utils\\html.ts":
+          "import { html as lit } from 'lit-html/lib/lit-extended';\r\n\r\n// This extends Lit to provide constructors as tag names. However, it's not\r\n// fully working yet as there's some kings to work out, so we still export the\r\n// standard html tagged literal for now.\r\nexport function htmlExtended(parts, ...args) {\r\n  const newArgs = [];\r\n  const newParts = parts.concat();\r\n  const joinIndicies = [];\r\n  for (let a = 0; a < args.length; a++) {\r\n    const possibleCtor = args[a];\r\n    if (possibleCtor && possibleCtor.is) {\r\n      newParts[a] = newParts[a] + possibleCtor.is;\r\n      joinIndicies.push(a);\r\n    } else {\r\n      newArgs.push(possibleCtor);\r\n    }\r\n  }\r\n  for (let a = 0; a < joinIndicies.length; a++) {\r\n    const join = joinIndicies[a] - a;\r\n    newParts[join] = newParts[join] + newParts[join + 1];\r\n    newParts.splice(join + 1, 1);\r\n  }\r\n  return lit(newParts, ...newArgs);\r\n}\r\n\r\nexport { html } from 'lit-html/lib/lit-extended';\r\n"
+      },
+      "lineCount": null
+    }
+  },
+  "hash": "6e42ed6a610442afd60c29e3c78ffb19",
+  "cacheData": { "env": {} }
+}
