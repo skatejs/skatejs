@@ -2,6 +2,8 @@ import { CustomElementConstructor } from './types';
 import { observe } from './observe';
 import { shadow } from './shadow';
 
+const mapDefaultProps = {};
+
 function delay(fn) {
   if (typeof global.Promise === 'function') {
     // @ts-ignore - Promise.resove() indeed does exist.
@@ -11,8 +13,70 @@ function delay(fn) {
   }
 }
 
+// TODO make this compatible with the old API.
+function defineProperties(elem) {
+  const ctor = elem.constructor;
+  let defs = mapDefaultProps[elem.localName];
+
+  // If we've already defined props, we don't do anything.
+  if (defs) {
+    return;
+  }
+
+  defs = mapDefaultProps[elem.localName] = {};
+  const prot = ctor.prototype;
+
+  // Property / attribute mapping.
+  const attrToPropMap = ctor.attrs || {};
+  const propToAttrMap = {};
+
+  // Pre-cache the prop-to-attr map from the attr-to-prop-map.
+  Object.keys(attrToPropMap).forEach(name => {
+    propToAttrMap[attrToPropMap[name]] = name;
+  });
+
+  // Take all statically defiend props. If deriving props, ignore props that:
+  //
+  // - have already been defined on the prototype.
+  // - have a leading underscore.
+  (
+    ctor.props ||
+    Object.keys(elem).filter(
+      propName => !(propName in prot) || propName[0] !== '_'
+    )
+  ).forEach(propName => {
+    const desc = {
+      configurable: true,
+      get() {
+        return propName in this._props ? this._props[propName] : defs[propName];
+      },
+      set(propValue) {
+        this._props[propName] = propValue;
+        if (propName in propToAttrMap) {
+          const attrName = propToAttrMap[propName];
+          if (propName == null) {
+            this.removeAttribute(attrName);
+          } else {
+            this.setAttribute(attrName, propValue);
+          }
+        }
+        this.forceUpdate();
+      }
+    };
+    defs[propName] = elem[propName];
+
+    // Patching the prototype ensures all future instances get the
+    // property definition without having to redefine on construct.
+    Object.defineProperty(prot, propName, desc);
+
+    // The current instance still needs to be patched since we've
+    // doen this lazily.
+    Object.defineProperty(elem, propName, desc);
+  });
+}
+
 export function component(
-  Base: CustomElementConstructor
+  Base: CustomElementConstructor = HTMLElement
 ): CustomElementConstructor {
   return class extends Base {
     ['constructor']: CustomElementConstructor;
@@ -27,60 +91,7 @@ export function component(
 
     static _attrToPropMap = {};
     static _propToAttrMap = {};
-
-    // This is invoked once when the element is defined. Due to this, we must
-    // link props to attrs here as opposed to doing it in the constructor.
-    static get observedAttributes(): Array<string> {
-      const { attrs, props } = this;
-      return Object.keys(props).reduce((observedAttrs, propName) => {
-        // We're opinionated about the propName -> propname (attribute)
-        // convention.
-        const attrName = propName.toLowerCase();
-
-        // Don't set props from attributes if there is no handler. This also
-        // means we don't need to observe them at all.
-        if (this.props[propName]) {
-          this._attrToPropMap[attrName] = propName;
-          this._propToAttrMap[propName] = attrName;
-          observedAttrs = observedAttrs.concat(attrName);
-        }
-
-        // Defines a property to ensure it triggers an updated and syncs the
-        // corresponding attribute.
-        Object.defineProperty(this.prototype, propName, {
-          configurable: true,
-          get() {
-            return this._props[propName];
-          },
-          set(propValue) {
-            this._props[propName] = propValue;
-            if (propName in attrs) {
-              const attrName = this._propToAttrsMap[propName];
-              const attrValue = attrs[propName](propValue);
-              if (attrValue == null) {
-                this.removeAttribute(attrName);
-              } else {
-                this.setAttribute(attrName, attrValue);
-              }
-            }
-            this.triggerUpdate();
-          }
-        });
-
-        return observedAttrs;
-      }, []);
-    }
-
-    static get attrs() {
-      return this.props;
-    }
-
-    static get props() {
-      return Object.keys(this.prototype).reduce((o, k) => {
-        o[k] = v => v;
-        return o;
-      }, {});
-    }
+    static props?: Array<string>;
 
     get props(): {} {
       return this._props;
@@ -90,17 +101,23 @@ export function component(
       this._props = props;
     }
 
-    get renderRoot() {
-      return super.renderRoot || shadow(this);
-    }
-
     get state(): {} {
       return this._state;
     }
 
     set state(state: {}) {
       this._state = state;
-      this._triggerUpdate();
+      this.forceUpdate();
+    }
+
+    constructor() {
+      super();
+
+      // TODO is there a better way and to still make this declarative: renderer = renderer;
+      this.renderer = (root, func) => (root.innerHTML = func());
+
+      // TODO make this a getter.
+      this.renderRoot = shadow(this);
     }
 
     attributeChangedCallback(
@@ -119,7 +136,7 @@ export function component(
 
       if (propertyFunc) {
         this._props[propertyName] = propertyFunc(newValue);
-        this._triggerUpdate();
+        this.forceUpdate();
       }
     }
 
@@ -132,22 +149,11 @@ export function component(
         observe(this, this.childrenUpdated.bind(this));
       }
 
-      this._triggerUpdate();
+      defineProperties(this);
+      this.forceUpdate();
     }
 
-    renderer(root, html) {
-      if (super.renderer) {
-        super.renderer(root, html);
-      } else {
-        root.innerHTML = html();
-      }
-    }
-
-    shouldUpdate(props: {}, state: {}): boolean {
-      return true;
-    }
-
-    _triggerUpdate(): void {
+    forceUpdate(): void {
       if (this._updating) {
         return;
       }
@@ -175,5 +181,11 @@ export function component(
         this._updating = false;
       });
     }
+
+    shouldUpdate(props: {}, state: {}): boolean {
+      return true;
+    }
   };
 }
+
+export const Component = component();

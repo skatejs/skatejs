@@ -1,28 +1,24 @@
 import page from 'page';
-import { component, CustomElementConstructor, define, props } from 'skatejs';
+import { Component, define } from 'skatejs';
 import { h } from '@skatejs/val';
 
-function base(
-  Base: typeof HTMLElement = HTMLElement
-): CustomElementConstructor {
-  return class extends component(HTMLElement) {
-    renderer(renderRoot, render) {
-      const { firstChild } = renderRoot;
-      const dom = render();
-      if (firstChild) {
-        if (dom) {
-          renderRoot.replaceChild(dom, firstChild);
-        } else {
-          renderRoot.removeChild(firstChild);
-        }
-      } else if (dom) {
-        renderRoot.appendChild(dom);
+class Base extends Component {
+  renderer = function(renderRoot, render) {
+    const { firstChild } = renderRoot;
+    const dom = render();
+    if (firstChild) {
+      if (dom) {
+        renderRoot.replaceChild(dom, firstChild);
+      } else {
+        renderRoot.removeChild(firstChild);
       }
+    } else if (dom) {
+      renderRoot.appendChild(dom);
     }
   };
 }
 
-export class Link extends base() {
+export class Link extends Base {
   static is = 'sk-link';
   classNames: { a: string } = { a: '' };
   css: string = '';
@@ -42,7 +38,7 @@ export class Link extends base() {
   }
 }
 
-export class Route extends base() {
+export class Route extends Base {
   static is = 'sk-route';
   page?: typeof HTMLElement;
   PageToRender?: typeof HTMLElement;
@@ -73,7 +69,7 @@ export class Route extends base() {
 
 type RouterProps = {};
 
-export class Router extends base() {
+export class Router extends Base {
   static is = 'sk-router';
   options: {} = {};
   childrenUpdated() {

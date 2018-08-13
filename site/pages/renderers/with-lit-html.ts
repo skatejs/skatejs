@@ -1,12 +1,13 @@
+import fs from 'fs';
 import { define } from 'skatejs';
 import '../../components/code';
 import '../../components/layout';
 import '../../components/primitives';
 import { Component } from '../../utils';
-import './__samples__/with-lit-html';
+import './__samples__/lit-html';
 
-const codeWithLitHtml = fs.readFileSync('./__samples__/with-lit-html');
-const codeWithLitHtmlHtml = fs.readFileSync('./__samples__/with-lit-html.html');
+const codeWithLitHtml = fs.readFileSync('./__samples__/lit-html.ts');
+const codeWithLitHtmlHtml = fs.readFileSync('./__samples__/lit-html.html');
 
 export default define(
   class extends Component {

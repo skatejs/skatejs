@@ -1,9 +1,8 @@
+import { define } from 'skatejs';
 import '@skatejs/sk-marked';
+import { Component } from '../utils';
 import './code';
 import './primitives';
-
-import { define, props } from 'skatejs';
-import { Component } from '../utils';
 
 const defaultRenderers = {
   code(code, lang) {
@@ -17,25 +16,20 @@ const defaultRenderers = {
 export const Marked = define(
   class extends Component {
     static is = 'x-marked';
-    static props = {
-      renderers: props.object,
-      src: props.string
-    };
-    props = {
-      renderers: defaultRenderers,
-      src: ''
-    };
-    render({ renderers, src }) {
+    renderers: Object = {};
+    src: string = '';
+    render() {
+      const { renderers, src } = this;
       return this.$`
-      <sk-marked
-        css="${this.context.style}"
-        renderers="${{
-          ...defaultRenderers,
-          ...renderers
-        }}"
-        src="${src}"
-      ></sk-marked>
-    `;
+        <sk-marked
+          css="${this.context.style}"
+          renderers="${{
+            ...defaultRenderers,
+            ...renderers
+          }}"
+          src="${src}"
+        ></sk-marked>
+      `;
     }
   }
 );

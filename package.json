@@ -83,6 +83,7 @@
   "private": true,
   "scripts": {
     "build": "projector build",
+    "clean": "projector clean",
     "flow": "flow",
     "precommit": "lint-staged",
     "prepublish": "bolt build",

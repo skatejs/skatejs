@@ -1,10 +1,12 @@
-import { html } from 'lit-html/lib/lit-extended';
+import { readFileSync } from 'fs';
 import css, { value } from 'yocss';
-import { define, props, withComponent } from 'skatejs';
-import { Component, style, withLoadable } from '../utils';
+import { define } from 'skatejs';
+import { Component } from '../utils';
 import './tabs';
 
 const mapLang = {};
+// @ts-ignore;
+const values = obj => Object.values(obj);
 
 function format(src) {
   src = src || '';
@@ -28,18 +30,18 @@ function format(src) {
 }
 
 function highlight(elem, code, language) {
-  import('worker-loader!prismjs').then(Prism => {
-    const prism = new Prism();
-    prism.onmessage = e => {
-      elem.innerHTML = e.data;
-    };
-    prism.postMessage(
-      JSON.stringify({
-        code,
-        language
-      })
-    );
-  });
+  // import('prismjs').then(Prism => {
+  //   const prism = new Prism();
+  //   prism.onmessage = e => {
+  //     elem.innerHTML = e.data;
+  //   };
+  //   prism.postMessage(
+  //     JSON.stringify({
+  //       code,
+  //       language
+  //     })
+  //   );
+  // });
 }
 
 const cssCode = {
@@ -64,22 +66,23 @@ const cssCode = {
 export const Code = define(
   class extends Component {
     static is = 'x-code';
-    props: {
-      code: string;
-      lang: string;
-      title: string;
-    };
+    code: string = '';
+    lang: string = '';
+    title: string = '';
     connecting() {
       this.style.display = 'block';
     }
-    render({ code, lang, title }) {
+    render() {
+      const { code, lang, title } = this;
       const src = document.createElement('div');
       src.textContent = format(code);
       highlight(src, code, mapLang[lang] || 'js');
       return this.$`
       <div>
-        <style>${fs.readFileSync('prismjs/themes/prism-twilight.css')}</style>
-        <style textContent="${value(...Object.values(cssCode))}"></style>
+        <style>${readFileSync(
+          __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
+        )}</style>
+        <style textContent="${value(...values(cssCode))}"></style>
         ${
           title
             ? this.$`<div className="${cssCode.title}">${title}</div>`
@@ -111,7 +114,7 @@ const cssExample = {
 };
 
 export const Example = define(
-  class extends withComponent(HTMLElement) {
+  class extends Component {
     static is = 'x-example';
     props: {
       html: string;
@@ -120,29 +123,29 @@ export const Example = define(
     connecting() {
       this.style.display = 'block';
     }
-    renderer(root) {
+    renderer = function(root) {
       root.innerHTML = `
-      <style>${value(...Object.values(cssExample))}</style>
+      <style>${value(...values(cssExample))}</style>
       ${
         this.title ? `<div class="${cssExample.title}">${this.title}</div>` : ''
       }
       <div class="${cssExample.code}">${this.html}</div>
     `;
-    }
+    };
   }
 );
 
 export const Runnable = define(
   class extends Component {
     static is = 'x-runnable';
-    static props = {
-      code: null,
-      html: null
-    };
-    connecting() {
+    code: string = '';
+    html: string = '';
+    connectedCallback() {
+      super.connectedCallback();
       this.style.display = 'block';
     }
-    render({ code, html }) {
+    render() {
+      const { code, html } = this;
       return this.$`
       <x-tabs
         css="${`

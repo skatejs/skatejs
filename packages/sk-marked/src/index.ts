@@ -1,4 +1,4 @@
-import { component, define } from 'skatejs';
+import { Component, define } from 'skatejs';
 import marked from 'marked';
 
 function format(src) {
@@ -18,12 +18,13 @@ function format(src) {
 }
 
 export default define(
-  class extends component() {
+  class extends Component {
     static is = 'sk-marked';
     css: string = '';
     renderers: {} = {};
     src: string = '';
-    render({ css, renderers, src }) {
+    render() {
+      const { css, renderers, src } = this;
       const renderer = new marked.Renderer();
       Object.assign(renderer, renderers);
       return `

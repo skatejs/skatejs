@@ -1,10 +1,9 @@
 import '@skatejs/sk-router';
-
-import { define, props } from 'skatejs';
+import { define } from 'skatejs';
 import css, { value } from 'yocss';
-
-import { Component, style } from '../utils';
+// @ts-ignore
 import loaderImg from '../img/loader.svg';
+import { Component, style } from '../utils';
 
 const cssHr = css({
   letterSpacing: '10px',
@@ -31,16 +30,11 @@ const publicUrl = 'skatejs.netlify.com';
 export const Link = define(
   class extends Component {
     static is = 'x-link';
-    static props = {
-      classNames: props.object,
-      css: props.string,
-      href: props.string
-    };
-    props = {
-      classNames: {},
-      css: ''
-    };
-    render({ classNames, context, css, href }) {
+    classNames: { a: string } = { a: '' };
+    css: string = '';
+    href: string = '';
+    render() {
+      let { classNames, context, css, href } = this;
       if (href.indexOf(publicUrl) > -1) {
         href = href.split(publicUrl)[1];
       }

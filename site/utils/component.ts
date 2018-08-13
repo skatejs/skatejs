@@ -1,39 +1,31 @@
-import { withComponent } from 'skatejs';
-import withLitHtml from '@skatejs/renderer-lit-html';
+import { Component as SkateComponent } from 'skatejs';
+import renderer from '@skatejs/renderer-lit-html';
 import { value } from 'yocss';
 import { html } from './html';
 import { style } from './style';
 
-const withContext = (Base = HTMLElement) =>
-  class extends Base {
-    get context() {
-      if (this._context) {
-        return this._context;
-      }
-      let node = this;
-      // $FlowFixMe - host
-      while ((node = node.parentNode || node.host)) {
-        if ('context' in node) {
-          // $FlowFixMe - context
-          return node.context;
-        }
-      }
-      return {};
-    }
-    set context(context: *) {
-      // $FlowFixMe - _context
-      this._context = context;
-    }
-  };
-
-export const Component = class extends withContext(
-  withComponent(withLitHtml(HTMLElement))
-) {
+export const Component = class extends SkateComponent {
   $ = html;
-  context: {
-    style: string
-  };
+  _context: any;
+  renderer = renderer;
   get $style(): string {
+    // @ts-ignore
     return style(this.context.style, value(...Object.values(this.css || {})));
+  }
+  get context() {
+    if (this._context) {
+      return this._context;
+    }
+    let node = this;
+    // @ts-ignore
+    while ((node = node.parentNode || node.host)) {
+      if ('context' in node) {
+        return node.context;
+      }
+    }
+    return {};
+  }
+  set context(context: any) {
+    this._context = context;
   }
 };

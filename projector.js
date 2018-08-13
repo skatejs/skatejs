@@ -157,17 +157,24 @@ async function build() {
           const exec = require('execa');
           const fs = require('fs-extra');
           const path = require('path');
-          const indexTs = path.join(`${dir}`, 'src', 'index.ts');
-          const indexTsx = path.join(`${dir}`, 'src', 'index.tsx');
+          const indexTs = path.join(dir, 'src', 'index.ts');
+          const indexTsx = path.join(dir, 'src', 'index.tsx');
+          const tsConfig = path.join(dir, 'tsconfig.json');
+          let cleanUpTsConfig = false;
 
           if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
             return;
           }
 
+          if (!await fs.exists(tsConfig)) {
+            cleanUpTsConfig = true;
+            await fs.copy('tsconfig.json', tsConfig);
+          }
+
           if (entryMain) {
             const result1 = await exec(
               'tsc',
-              ['--outDir', path.dirname(entryMain), '--module', 'CommonJS'],
+              ['--module', 'CommonJS', '--outDir', path.dirname(entryMain)],
               {
                 cwd: dir
               }
@@ -179,13 +186,17 @@ async function build() {
           if (entryModule) {
             const result1 = await exec(
               'tsc',
-              ['--outDir', path.dirname(entryModule), '--module', 'ES2015'],
+              ['--module', 'ES2015', '--outDir', path.dirname(entryModule)],
               {
                 cwd: dir
               }
             )
               .catch(e => e)
               .then(r => r.stdout);
+          }
+
+          if (cleanUpTsConfig) {
+            await fs.remove(tsConfig);
           }
         }
       ).then(r => r && console.log(r));

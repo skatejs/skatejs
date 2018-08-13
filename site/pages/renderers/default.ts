@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { define } from 'skatejs';
 import '../../components/code';
 import '../../components/layout';
@@ -5,7 +6,7 @@ import '../../components/primitives';
 import { Component } from '../../utils';
 import './__samples__/default';
 
-const codeWithDefault = fs.readFileSync('./__samples__/default');
+const codeWithDefault = fs.readFileSync('./__samples__/default.ts');
 const codeWithDefaultHtml = fs.readFileSync('./__samples__/default.html');
 
 export default define(

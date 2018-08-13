@@ -1,31 +1,27 @@
-import { define } from 'skatejs';
+import { define, name } from 'skatejs';
 import { Component } from './component';
 
-export const withLoadable = (props: Object) =>
+export const withLoadable = (props: {
+  loader: Function;
+  loading: Object;
+  useShadowRoot?: boolean;
+}) =>
   define(
     class extends Component {
-      static is = props.is;
-      props: {
-        format: any;
-        loader: any;
-        loading: any;
-        useShadowRoot: boolean;
-      };
-      renderRoot: HTMLElement;
-      state: {
-        loaded: boolean;
-      };
-      props = props;
+      static is = name();
+      state: { loaded?: Object } = {};
+      loader: Function = props.loader;
+      loading: Object = props.loading;
       get renderRoot() {
         return props.useShadowRoot ? this.renderRoot : this;
       }
       connecting() {
-        const loaded = this.props.loading;
+        const loaded = this.loading;
         if (loaded) {
           this.state = { loaded };
         }
-        if (this.props.loader) {
-          this.props.loader().then(r => {
+        if (this.loader) {
+          this.loader().then(r => {
             const loaded = r.default || r;
             if (loaded) {
               this.state = { loaded };
@@ -34,8 +30,7 @@ export const withLoadable = (props: Object) =>
         }
       }
       render() {
-        const { loaded } = this.state;
-        return this.$`${typeof loaded === 'function' ? new loaded() : loaded}`;
+        return this.$`${this.state.loaded ? this.state.loaded : props.loading}`;
       }
     }
   );

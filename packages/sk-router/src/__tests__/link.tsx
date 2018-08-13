@@ -1,7 +1,8 @@
+/* @jsx h */
+
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import cases from 'jest-in-case';
-
 import { Link } from '..';
 
 cases(
@@ -11,5 +12,6 @@ cases(
       expect(w.node.shadowRoot.innerHTML).toMatchSnapshot();
     });
   },
+  // @ts-ignore
   [<Link />, <Link href="/test" />, <Link css="a { color: #333; }" />]
 );

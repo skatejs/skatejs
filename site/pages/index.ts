@@ -1,17 +1,20 @@
+import { readFileSync } from 'fs';
 import { define } from 'skatejs';
 import css from 'yocss';
 import '../components/code';
 import '../components/layout';
 import '../components/marked';
 import '../components/primitives';
-import { Component, style } from '../utils';
-import './renderers/__samples__/with-preact';
+import { Component } from '../utils';
+import './renderers/__samples__/preact';
 
-const codeWithPreact = fs.readFileSync('./renderers/__samples__/with-preact');
-const codeWithPreactHtml = fs.readFileSync(
-  './renderers/__samples__/with-preact.html'
+const codeWithPreact = readFileSync(
+  __dirname + '/renderers/__samples__/preact.tsx'
 );
-const README = fs.readFileSync('../../README.md');
+const codeWithPreactHtml = readFileSync(
+  __dirname + '/renderers/__samples__/preact.html'
+);
+const README = readFileSync(__dirname + '/../../README.md');
 
 const renderers = {
   heading(text, level) {
@@ -42,22 +45,22 @@ export default define(
     };
     render() {
       return this.$`
-      ${this.$style}
-      <div className="${this.css.hero}">
-        <h1 className="${this.css.title}">SkateJS</h1>
-        <h2 className="${this.css.subtitle}">
-          Effortless custom elements for modern view libraries.
-        </h2>
-      </div>
-      <x-runnable
-        className="${this.css.code}"
-        code="${codeWithPreact}"
-        html="${codeWithPreactHtml}"></x-runnable>
-      <x-hr></x-hr>
-      <x-layout>
-        <x-marked renderers="${renderers}" src="${README}"></x-marked>
-      </x-layout>
-    `;
+        ${this.$style}
+        <div className="${this.css.hero}">
+          <h1 className="${this.css.title}">SkateJS</h1>
+          <h2 className="${this.css.subtitle}">
+            Effortless custom elements for modern view libraries.
+          </h2>
+        </div>
+        <x-runnable
+          className="${this.css.code}"
+          code="${codeWithPreact}"
+          html="${codeWithPreactHtml}"></x-runnable>
+        <x-hr></x-hr>
+        <x-layout>
+          <x-marked renderers="${renderers}" src="${README}"></x-marked>
+        </x-layout>
+      `;
     }
   }
 );

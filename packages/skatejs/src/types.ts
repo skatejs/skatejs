@@ -1,10 +1,10 @@
 export interface CustomElement extends HTMLElement {
-  renderRoot?: Node;
+  renderRoot?: Root;
+  renderer?: (root: Root, func: () => string) => void;
   attributeChangedCallback?(name: string, oldValue: string, newValue: string);
   connectedCallback?();
   disconnectedCallback?();
   render?(host: CustomElement);
-  renderer?(root: HTMLElement | ShadowRoot, html: () => string);
   updated?(props?: {}, state?: {});
 }
 
@@ -34,3 +34,5 @@ export interface CustomElementEventOptions {
   composed?: boolean;
   detail?: Object;
 }
+
+export type Root = HTMLElement | ShadowRoot;

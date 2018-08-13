@@ -1,8 +1,5 @@
 import { render } from 'lit-html/lib/lit-extended';
 
-export default (Base = HTMLElement) =>
-  class extends Base {
-    renderer(root, call) {
-      render(call(), root);
-    }
-  };
+export default function(root, func) {
+  render(func(), root);
+}
