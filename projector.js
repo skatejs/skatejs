@@ -157,9 +157,10 @@ async function build() {
           const exec = require('execa');
           const fs = require('fs-extra');
           const path = require('path');
-          const index = path.join(`${dir}`, 'src', 'index.ts');
+          const indexTs = path.join(`${dir}`, 'src', 'index.ts');
+          const indexTsx = path.join(`${dir}`, 'src', 'index.tsx');
 
-          if (!await fs.exists(index)) {
+          if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
             return;
           }
 
