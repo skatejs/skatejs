@@ -87,8 +87,8 @@
     "flow": "flow",
     "precommit": "lint-staged",
     "prepublish": "bolt build",
-    "site": "cd site && webpack -p",
-    "start": "cd site && webpack-dev-server --hot",
+    "site": "cd site && parcel build index.html",
+    "start": "cd site && parcel index.html",
     "test": "jest"
   },
   "jest": {
