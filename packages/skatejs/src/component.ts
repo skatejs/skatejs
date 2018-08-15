@@ -47,18 +47,17 @@ function derivePropsFromConnectedInstance(elem: HTMLElement): PropTypes {
 function derivePropTypeFromValue(propValue: any): NormalizedPropType {
   return propValue == null
     ? props.any
-    : normalizePropType(propValue.constructor);
-}
-
-function normalizePropType(propType: PropType): NormalizedPropType {
-  return mapNativeToPropType.get(propType) || propType || props.any;
+    : mapNativeToPropType.get(propValue.constructor) || props.any;
 }
 
 function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
-  return Object.keys(propTypes).map(propName => ({
-    propName,
-    propType: normalizePropType(propTypes[propName])
-  }));
+  return Object.keys(propTypes).map(propName => {
+    const propType = propTypes[propName];
+    return {
+      propName,
+      propType: mapNativeToPropType.get(propType) || propType || props.any
+    };
+  });
 }
 
 // When proxies are a thing, we can remove most of this code but we still need
@@ -87,6 +86,7 @@ function defineProperties(elem: CustomElement) {
   normalizePropTypes(
     constructor.props || derivePropsFromConnectedInstance(elem)
   ).forEach(({ propName, propType }) => {
+    console.log(propName);
     const attrName = propType.target(propName);
     const propDesc = {
       configurable: true,
