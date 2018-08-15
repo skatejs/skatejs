@@ -6,7 +6,7 @@ export interface CustomElement extends HTMLElement {
   forceUpdate?();
   props?: Object;
   render?(host: CustomElement);
-  renderer?: (root: Root, func: () => string) => void;
+  renderer?: (root: Root, func: () => any) => void;
   renderRoot?: Root;
   shouldUpdate?(props: Object, state: Object);
   state?: Object;

@@ -265,6 +265,16 @@ export function component(
       this.forceUpdate();
     }
 
+    disconnectedCallback() {
+      if (super.disconnectedCallback) {
+        super.disconnectedCallback();
+      }
+
+      // Render null so that renderers can do whatever unmounting logic they
+      // need to.
+      this.renderer(this.renderRoot, () => null);
+    }
+
     forceUpdate(): void {
       if (this._updating) {
         return;
