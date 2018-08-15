@@ -11,7 +11,7 @@ const any: PropType = {
 const array: PropType = any;
 const boolean: PropType = {
   ...any,
-  deserialize: (val): boolean => val !== null,
+  deserialize: (val): boolean => val != null,
   serialize: (val: boolean) => (val ? '' : null)
 };
 const number: PropType = {
