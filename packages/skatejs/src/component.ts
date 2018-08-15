@@ -1,13 +1,13 @@
+import { props } from './props';
 import {
+  CustomElement,
+  CustomElementConstructor,
   NormalizedPropType,
   NormalizedPropTypes,
-  props,
+  ObservedAttributes,
   PropType,
   PropTypes
-} from './props';
-import { CustomElement, CustomElementConstructor } from './types';
-
-export type ObservedAttributes = Array<string>;
+} from './types';
 
 const mapAttributesToProps: { [s: string]: { [s: string]: string } } = {};
 const mapDefaultProps: { [s: string]: any } = {};
@@ -180,7 +180,7 @@ function observeUpdates(elem) {
 export function component(
   Base: CustomElementConstructor = HTMLElement
 ): CustomElementConstructor {
-  return class extends Base {
+  return class extends Base implements CustomElement {
     static props?: PropTypes;
     _prevProps: Object = {};
     _prevState: Object = {};
@@ -188,7 +188,6 @@ export function component(
     _state: Object = {};
     _updating: boolean = false;
     ['constructor']: CustomElementConstructor;
-    childrenUpdated?();
 
     static get observedAttributes() {
       const { props } = this;

@@ -1,10 +1,15 @@
 export interface CustomElement extends HTMLElement {
-  renderRoot?: Root;
-  renderer?: (root: Root, func: () => string) => void;
   attributeChangedCallback?(name: string, oldValue: string, newValue: string);
+  childrenUpdated?();
   connectedCallback?();
   disconnectedCallback?();
+  forceUpdate?();
+  props?: Object;
   render?(host: CustomElement);
+  renderer?: (root: Root, func: () => string) => void;
+  renderRoot?: Root;
+  shouldUpdate?(props: Object, state: Object);
+  state?: Object;
   updated?(props?: {}, state?: {});
 }
 
@@ -13,26 +18,32 @@ export interface CustomElementConstructor {
   is?: string;
   observedAttributes?: Array<string>;
   props?: {};
-  _attrToPropMap?: { [s: string]: string };
 }
 
-export type CustomElementLink = EventTarget & {
-  checked?: boolean;
-  name?: string;
-  type?: string;
-  value?: string;
+export type NormalizedPropType = {
+  deserialize: (string) => any;
+  serialize: (any) => string | void;
+  source: (string) => string;
+  target: (string) => string;
 };
 
-export type CustomElementEvent = CustomEvent & {
-  composed?: boolean;
-  composedPath?: () => Array<Node>;
-};
+export type NormalizedPropTypes = Array<{
+  propName: string;
+  propType: NormalizedPropType;
+}>;
 
-export interface CustomElementEventOptions {
-  bubbles?: boolean;
-  cancelable?: boolean;
-  composed?: boolean;
-  detail?: Object;
-}
+export type ObservedAttributes = Array<string>;
+
+export type PropType =
+  | ArrayConstructor
+  | BooleanConstructor
+  | NumberConstructor
+  | ObjectConstructor
+  | StringConstructor
+  | NormalizedPropType;
+
+export type PropTypes = {
+  [s: string]: PropType;
+};
 
 export type Root = HTMLElement | ShadowRoot;

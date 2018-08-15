@@ -1,26 +1,7 @@
+import { PropType } from './types';
+
 const formatAttributeName = propName => propName.toLowerCase();
 const isEmpty = (val: any): boolean => val == null;
-
-export type NormalizedPropType = {
-  deserialize: (string) => any;
-  serialize: (any) => string | void;
-  source: (string) => string;
-  target: (string) => string;
-};
-export type NormalizedPropTypes = Array<{
-  propName: string;
-  propType: NormalizedPropType;
-}>;
-export type PropType =
-  | ArrayConstructor
-  | BooleanConstructor
-  | NumberConstructor
-  | ObjectConstructor
-  | StringConstructor
-  | NormalizedPropType;
-export type PropTypes = {
-  [s: string]: PropType;
-};
 
 const any: PropType = {
   deserialize: JSON.parse,

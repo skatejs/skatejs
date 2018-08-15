@@ -1,4 +1,4 @@
-export function dashCase(str: string): string {
+function dashCase(str: string): string {
   return typeof str === 'string'
     ? str.split(/([_A-Z])/).reduce((one, two, idx) => {
         const dash = !one || idx % 2 === 0 ? '' : '-';
