@@ -4,9 +4,7 @@ import { name } from './name.js';
 export function define(
   ctor: CustomElementConstructor
 ): CustomElementConstructor {
-  if (!ctor.is) {
-    ctor.is = name();
-  }
+  Object.defineProperty(ctor, 'is', { value: name(ctor.is) });
   customElements.define(ctor.is, ctor);
   return ctor;
 }
