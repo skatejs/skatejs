@@ -1,7 +1,6 @@
 import { PropType } from './types';
 
 const formatAttributeName = propName => propName.toLowerCase();
-const isEmpty = (val: any): boolean => val == null;
 
 const any: PropType = {
   deserialize: JSON.parse,
@@ -12,19 +11,19 @@ const any: PropType = {
 const array: PropType = any;
 const boolean: PropType = {
   ...any,
-  deserialize: (val): boolean => !isEmpty(val),
+  deserialize: (val): boolean => val !== null,
   serialize: (val: boolean) => (val ? '' : null)
 };
 const number: PropType = {
   ...any,
-  deserialize: (val): number => (isEmpty(val) ? 0 : Number(val)),
-  serialize: (val: number) => (isEmpty(val) ? null : String(Number(val)))
+  deserialize: (val): number => (val == null ? 0 : Number(val)),
+  serialize: (val: number) => (val == null ? null : String(Number(val)))
 };
 const object: PropType = any;
 const string: PropType = {
   ...any,
   deserialize: val => val,
-  serialize: val => (isEmpty(val) ? null : String(val))
+  serialize: val => (val == null ? null : String(val))
 };
 
 export const props = {
