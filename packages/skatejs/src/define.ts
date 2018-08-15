@@ -1,7 +1,12 @@
 import { CustomElementConstructor } from './types';
 import { name } from './name.js';
 
-export function define(Ctor: CustomElementConstructor): CustomElementConstructor {
-  customElements.define(Ctor.is || name(), Ctor);
-  return Ctor;
+export function define(
+  ctor: CustomElementConstructor
+): CustomElementConstructor {
+  if (!ctor.is) {
+    ctor.is = name();
+  }
+  customElements.define(ctor.is, ctor);
+  return ctor;
 }
