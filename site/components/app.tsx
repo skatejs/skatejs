@@ -32,7 +32,6 @@ export default define(
     static is = 'x-app';
     context = { style: globalStyles };
     css = cssApp;
-    renderer = renderer;
     state: { href: string } = { href: '' };
     onHistory = () => {
       window.scrollTo(0, 0);
