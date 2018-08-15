@@ -36,7 +36,7 @@ function deriveAttributesFromProps(props: PropTypes): ObservedAttributes {
 function derivePropsFromConnectedInstance(elem: HTMLElement): PropTypes {
   const prot = elem.constructor.prototype;
   return Object.keys(elem)
-    .filter(propName => !(propName in prot) || propName[0] !== '_')
+    .filter(propName => !(propName in prot) && propName[0] !== '_')
     .reduce((propType, propName) => {
       propType[propName] = derivePropTypeFromValue(elem[propName]);
       return propType;
