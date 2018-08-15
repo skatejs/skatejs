@@ -85,7 +85,6 @@ function defineProperties(elem: CustomElement) {
   normalizePropTypes(
     constructor.props || derivePropsFromConnectedInstance(elem)
   ).forEach(({ propName, propType }) => {
-    console.log(propName);
     const attrName = propType.target(propName);
     const propDesc = {
       configurable: true,
@@ -147,7 +146,7 @@ function observeUpdates(elem) {
   observe(elem, mutations => {
     let shouldCallChildrenUpdated = false;
 
-    mutations.forEach(mutation => {
+    for (const mutation of mutations) {
       if (shouldObserveAllAttributes && mutation.type === 'attribute') {
         const { attributeName, oldValue } = mutation;
 
@@ -168,7 +167,7 @@ function observeUpdates(elem) {
         // We only want to invoke this once to limit perf implications.
         shouldCallChildrenUpdated = true;
       }
-    });
+    }
 
     if (shouldCallChildrenUpdated) {
       elem.childrenUpdated();
@@ -288,7 +287,7 @@ export function component(
       delay(() => {
         const { _prevProps, _prevState } = this;
         if (this.shouldUpdate(_prevProps, _prevState)) {
-          this.renderer(this.renderRoot, this.render.call(this));
+          this.renderer(this.renderRoot, () => this.render());
           if (this.updated) {
             this.updated(_prevProps, _prevState);
           }
