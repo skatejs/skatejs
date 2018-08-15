@@ -5,7 +5,6 @@ import {
   NormalizedPropType,
   NormalizedPropTypes,
   ObservedAttributes,
-  PropType,
   PropTypes
 } from './types';
 
