@@ -1,16 +1,14 @@
 import { Component as SkateComponent } from 'skatejs';
-import renderer from '@skatejs/renderer-lit-html';
+import renderer from '@skatejs/renderer-preact';
 import { value } from 'yocss';
-import { html } from './html';
 import { style } from './style';
 
 export const Component = class extends SkateComponent {
-  $ = html;
   _context: any;
   renderer = renderer;
   get $style(): string {
     // @ts-ignore
-    return style(this.context.style, value(...Object.values(this.css || {})));
+    return style(value(this.context.style), value(this.css));
   }
   get context() {
     if (this._context) {

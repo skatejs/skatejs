@@ -1,3 +1,5 @@
+/* @jsx h */
+
 import page from 'page';
 import { Component, define } from 'skatejs';
 import { h } from '@skatejs/val';

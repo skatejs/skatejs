@@ -1,9 +1,12 @@
+/* @jsx h */
+
 import '@skatejs/sk-router';
 import { define } from 'skatejs';
 import css, { value } from 'yocss';
+import { Component, style } from '../utils';
+
 // @ts-ignore
 import loaderImg from '../img/loader.svg';
-import { Component, style } from '../utils';
 
 const cssHr = css({
   letterSpacing: '10px',
@@ -66,12 +69,12 @@ export const Loading = define(
   class extends Component {
     static is = 'x-loading';
     render() {
-      return this.$`
-      <div className="${cssLoading}">
-        ${style(value(cssLoading))}
-        <img src="${loaderImg}">
-      </div>
-    `;
+      return (
+        <div class={cssLoading}>
+          {style(value(cssLoading))}
+          <img src={loaderImg} />
+        </div>
+      );
     }
   }
 );

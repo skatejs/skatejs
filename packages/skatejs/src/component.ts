@@ -288,9 +288,7 @@ export function component(
         const { _prevProps, _prevState } = this;
         if (this.shouldUpdate(_prevProps, _prevState)) {
           this.renderer(this.renderRoot, () => this.render());
-          if (this.updated) {
-            this.updated(_prevProps, _prevState);
-          }
+          this.updated(_prevProps, _prevState);
         }
         this._prevProps = this.props;
         this._prevState = this.state;
@@ -301,6 +299,8 @@ export function component(
     shouldUpdate(props: Object, state: Object): boolean {
       return true;
     }
+
+    updated(props: Object, state: Object) {}
   };
 }
 

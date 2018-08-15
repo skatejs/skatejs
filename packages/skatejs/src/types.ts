@@ -10,7 +10,7 @@ export interface CustomElement extends HTMLElement {
   renderRoot?: Root;
   shouldUpdate?(props: Object, state: Object);
   state?: Object;
-  updated?(props?: {}, state?: {});
+  updated?(props: Object, state: Object);
 }
 
 export interface CustomElementConstructor {
