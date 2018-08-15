@@ -208,10 +208,7 @@ export function component(
     }
 
     get renderRoot() {
-      if (!this.shadowRoot) {
-        this.attachShadow({ mode: 'open' });
-      }
-      return this.shadowRoot;
+      return this.shadowRoot || this.attachShadow({ mode: 'open' });
     }
 
     get state() {
