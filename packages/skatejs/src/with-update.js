@@ -97,7 +97,9 @@ export function prop(definition: PropType | void): Function {
       configurable: true,
       get() {
         const val = this._props[name];
-        return val == null ? normalized.default.call(this, name) : val;
+        return val == null
+          ? (this._props[name] = normalized.default.call(this, name))
+          : val;
       },
       set(val) {
         const { attribute: { target }, serialize, coerce } = normalized;
