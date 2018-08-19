@@ -41,7 +41,7 @@ export function normalizePropertyDefinition(
   return {
     attribute: normalizeAttributeDefinition(name, prop),
     coerce: coerce || identity,
-    default: def,
+    default: typeof def === 'function' ? def : () => def,
     deserialize: deserialize || identity,
     serialize: serialize || identity
   };
@@ -97,7 +97,7 @@ export function prop(definition: PropType | void): Function {
       configurable: true,
       get() {
         const val = this._props[name];
-        return val == null ? normalized.default : val;
+        return val == null ? normalized.default.call(this) : val;
       },
       set(val) {
         const { attribute: { target }, serialize } = normalized;
@@ -216,7 +216,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
           const { default: defaultValue, deserialize } = propertyDefinition;
           const propertyValue = deserialize ? deserialize(newValue) : newValue;
           this._props[propertyName] =
-            propertyValue == null ? defaultValue : propertyValue;
+            propertyValue == null ? defaultValue.call(this) : propertyValue;
           this.triggerUpdate();
         }
       }
