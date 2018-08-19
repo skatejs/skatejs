@@ -41,7 +41,7 @@ export function normalizePropertyDefinition(
   return {
     attribute: normalizeAttributeDefinition(name, prop),
     coerce: coerce || identity,
-    default: def,
+    default: typeof def === 'function' ? def : () => def,
     deserialize: deserialize || identity,
     serialize: serialize || identity
   };
@@ -97,19 +97,21 @@ export function prop(definition: PropType | void): Function {
       configurable: true,
       get() {
         const val = this._props[name];
-        return val == null ? normalized.default : val;
+        return val == null ? normalized.default.call(this, name) : val;
       },
       set(val) {
-        const { attribute: { target }, serialize } = normalized;
+        const { attribute: { target }, serialize, coerce } = normalized;
         if (target) {
-          const serializedVal = serialize ? serialize(val) : val;
+          const serializedVal = serialize
+            ? serialize.call(this, val, name)
+            : val;
           if (serializedVal == null) {
             this.removeAttribute(target);
           } else {
             this.setAttribute(target, serializedVal);
           }
         }
-        this._props[name] = normalized.coerce(val);
+        this._props[name] = coerce.call(this, val, name);
         this.triggerUpdate();
       }
     });
@@ -214,9 +216,11 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
         const propertyDefinition = _propsNormalized[propertyName];
         if (propertyDefinition) {
           const { default: defaultValue, deserialize } = propertyDefinition;
-          const propertyValue = deserialize ? deserialize(newValue) : newValue;
+          const propertyValue = deserialize
+            ? deserialize.call(this, newValue, propertyName)
+            : newValue;
           this._props[propertyName] =
-            propertyValue == null ? defaultValue : propertyValue;
+            propertyValue == null ? defaultValue.call(this) : propertyValue;
           this.triggerUpdate();
         }
       }
