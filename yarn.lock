@@ -69,6 +69,10 @@
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@skatejs/val/-/val-0.4.0.tgz#fc28fe75d6559625ccb79ae93c9ffcad8cc08a94"
 
+"@types/core-js@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@types/core-js/-/core-js-2.5.0.tgz#35cc282488de6f10af1d92902899a3b8ca3fbc47"
+
 "@types/es6-promise@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@types/es6-promise/-/es6-promise-3.3.0.tgz#61b55e554fd807b563f158a7986ee53d3a5a5a9d"
@@ -5817,9 +5821,9 @@ listr@^0.13.0:
     stream-to-observable "^0.2.0"
     strip-ansi "^3.0.1"
 
-lit-html@0.10.2:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-0.10.2.tgz#53c846afcf91bb1e6623179ef22e327ab8ac0e0e"
+lit-html@dev:
+  version "0.11.0-dev.2"
+  resolved "https://registry.yarnpkg.com/lit-html/-/lit-html-0.11.0-dev.2.tgz#da47afc9346e0afb82e77405c559f055b3101f2a"
 
 load-json-file@^1.0.0:
   version "1.1.0"

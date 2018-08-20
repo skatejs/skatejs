@@ -20,7 +20,7 @@
     "inquirer": "5.0.1",
     "jest-environment-node": "22.3.0",
     "js-beautify": "1.7.5",
-    "lit-html": "0.10.2",
+    "lit-html": "dev",
     "marked": "0.3.14",
     "mkdirp": "0.5.1",
     "outdent": "0.4.1",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@skatejs/val": "0.4.0",
+    "@types/core-js": "^2.5.0",
     "@types/es6-promise": "^3.3.0",
     "@types/jest": "^23.3.1",
     "babel-cli": "6.26.0",

@@ -1,8 +1,5 @@
-/* @jsx h */
-
-import renderer from '@skatejs/renderer-preact';
+import { h } from '@skatejs/renderer-preact';
 import { Route, Router } from '@skatejs/sk-router';
-import { h } from 'preact';
 import { define } from 'skatejs';
 import css from 'yocss';
 import globalStyles from '../css';
@@ -18,7 +15,6 @@ import logo100 from '../img/logo-100x100.png';
 const withLoading = (loader: Function) =>
   withLoadable({
     loader: loader,
-    loading: () => null
     loading: () => <Loading />
   });
 
@@ -49,9 +45,9 @@ export default define(
         <div class={cssApp}>
           {this.$style}
           <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
-          {/* <Router>
+          <Router>
             <Route page={RouteIndex} path="/" />
-            <Route
+            {/* <Route
               page={withLoading(() => import('../pages/guides'))}
               path="/guides"
             />
@@ -80,7 +76,9 @@ export default define(
               path="/renderers/default"
             />
             <Route
-              page={withLoading(() => import('../pages/renderers/with-lit-html'))}
+              page={withLoading(() =>
+                import('../pages/renderers/with-lit-html')
+              )}
               path="/renderers/with-lit-html"
             />
             <Route
@@ -119,11 +117,8 @@ export default define(
               page={withLoading(() => import('../pages/utils'))}
               path="/utils"
             />
-            <Route
-              page={withLoading(() => import('../pages/404'))}
-              path="*"
-            />
-          </Router> */}
+            <Route page={withLoading(() => import('../pages/404'))} path="*" /> */}
+          </Router>
         </div>
       );
     }

@@ -21,11 +21,11 @@
   "module": "dist/esm/index.js",
   "src": "src",
   "devDependencies": {
-    "lit-html": "0.10.2",
+    "lit-html": "dev",
     "skatejs": "6.0.0-dev"
   },
   "peerDependencies": {
-    "lit-html": "^0.10.2",
+    "lit-html": "dev",
     "skatejs": "6.0.0-dev"
   },
   "version": "0.2.0"
