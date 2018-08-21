@@ -159,7 +159,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       // only once when the custom element is defined. If we did this only in
       // the constructor, then props would not link to attributes.
       defineProps(this);
-      return this._observedAttributes;
+      return this._observedAttributes.concat(super.observedAttributes || []);
     }
 
     static get props(): PropTypesNormalized {
