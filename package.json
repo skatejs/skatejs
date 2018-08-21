@@ -16,6 +16,12 @@
           "flow",
           "react",
           "stage-0"
+        ],
+        "plugins": [
+          ["babel-plugin-transform-builtin-classes", {
+            "globals": ["HTMLElement", "Base"],
+            "logIfPatched": true
+          }]
         ]
       },
       "esnext": {
@@ -104,6 +110,7 @@
     "babel-plugin-dynamic-import-node": "1.2.0",
     "babel-plugin-modules-map": "1.0.0",
     "babel-plugin-modules-web-compat": "1.1.1",
+    "babel-plugin-transform-builtin-classes": "^0.6.1",
     "babel-plugin-transform-decorators-legacy": "1.3.4",
     "babel-plugin-transform-skate-flow-props": "0.1.0",
     "babel-preset-env": "1.6.1",
