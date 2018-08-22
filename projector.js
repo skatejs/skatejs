@@ -149,7 +149,7 @@ async function build({ pkg }) {
   const ws = await getWorkspaces();
   await Promise.all(
     ws.map(async w => {
-      if (pkg && !w.config.name.match(pkg)) {
+      if (pkg && !w.config.name.match(new RegExp(pkg))) {
         return;
       }
 
