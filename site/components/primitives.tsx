@@ -1,9 +1,6 @@
-/* @jsx h */
-
-import '@skatejs/sk-router';
-import { define } from 'skatejs';
+import { Link as SkLink } from '@skatejs/sk-router';
 import css, { value } from 'yocss';
-import { Component, style } from '../utils';
+import { Component, h, style } from '../utils';
 
 // @ts-ignore
 import loaderImg from '../img/loader.svg';
@@ -14,50 +11,40 @@ const cssHr = css({
   textAlign: 'center'
 });
 
-export const Hr = define(
-  class extends Component {
-    static is = 'x-hr';
-    render() {
-      return this.$`
-      <div className="${cssHr}">
-        ${style(value(cssHr))}
-        &mdash;&mdash;&mdash;
+export class Hr extends Component {
+  render() {
+    return (
+      <div class={cssHr}>
+        {style(value(cssHr))}
+        {'&mdash;&mdash;&mdash'}
       </div>
-    `;
-    }
+    );
   }
-);
+}
 
 const publicUrl = 'skatejs.netlify.com';
 
-export const Link = define(
-  class extends Component {
-    static is = 'x-link';
-    classNames: { a: string } = { a: '' };
-    css: string = '';
-    href: string = '';
-    render() {
-      let { classNames, context, css, href } = this;
-      if (href.indexOf(publicUrl) > -1) {
-        href = href.split(publicUrl)[1];
-      }
-      return href.indexOf('://') > -1
-        ? this.$`
-        ${style(context.style, css)}
-        <a className=${classNames.a} href="${href}"><slot></slot></a>
-      `
-        : this.$`
-      <sk-link
-        classNames="${classNames}"
-        css="${context.style + css}"
-        href="${href}"
-      >
-        <slot></slot>
-      </sk-link>
-    `;
+export class Link extends Component {
+  classNames: { a: string } = { a: '' };
+  css: string = '';
+  href: string = '';
+  render() {
+    let { classNames, context, css, href } = this;
+    if (href.indexOf(publicUrl) > -1) {
+      href = href.split(publicUrl)[1];
     }
+    return href.indexOf('://') > -1 ? (
+      <a className={classNames.a} href={href}>
+        {style(context.style, css)}
+        <slot />
+      </a>
+    ) : (
+      <SkLink classNames={classNames} css={context.style + css} href={href}>
+        <slot />
+      </SkLink>
+    );
   }
-);
+}
 
 const cssLoading = css({
   display: 'block',
@@ -65,19 +52,16 @@ const cssLoading = css({
   width: '44px'
 });
 
-export const Loading = define(
-  class extends Component {
-    static is = 'x-loading';
-    render() {
-      return (
-        <div class={cssLoading}>
-          {style(value(cssLoading))}
-          <img src={loaderImg} />
-        </div>
-      );
-    }
+export class Loading extends Component {
+  render() {
+    return (
+      <div class={cssLoading}>
+        {style(value(cssLoading))}
+        <img src={loaderImg} />
+      </div>
+    );
   }
-);
+}
 
 const cssNote = css({
   backgroundColor: '#DCE4CA',
@@ -87,16 +71,14 @@ const cssNote = css({
   padding: '10px 15px'
 });
 
-export const Note = define(
-  class extends Component {
-    static is = 'x-note';
-    render() {
-      return this.$`
-      <em className="${cssNote}">
-        ${style(value(cssNote))}
-        <slot></slot>
+export class Note extends Component {
+  static is = 'x-note';
+  render() {
+    return (
+      <em className={cssNote}>
+        {style(value(cssNote))}
+        <slot />
       </em>
-    `;
-    }
+    );
   }
-);
+}

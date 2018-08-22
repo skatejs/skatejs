@@ -1,8 +1,7 @@
 import { readFileSync } from 'fs';
 import css, { value } from 'yocss';
-import { define } from 'skatejs';
-import { Component } from '../utils';
-import './tabs';
+import { Component, h } from '../utils';
+import { Tabs } from './tabs';
 
 const mapLang = {};
 // @ts-ignore;
@@ -63,39 +62,36 @@ const cssCode = {
   })
 };
 
-export const Code = define(
-  class extends Component {
-    static is = 'x-code';
-    code: string = '';
-    lang: string = '';
-    title: string = '';
-    connecting() {
-      this.style.display = 'block';
-    }
-    render() {
-      const { code, lang, title } = this;
-      const src = document.createElement('div');
-      src.textContent = format(code);
-      highlight(src, code, mapLang[lang] || 'js');
-      return this.$`
+export class Code extends Component {
+  code: string = '';
+  css = cssCode;
+  lang: string = '';
+  title: string = '';
+  connectedCallback() {
+    super.connectedCallback();
+    this.style.display = 'block';
+  }
+  render() {
+    const { code, lang, title } = this;
+    const src = document.createElement('div');
+    src.textContent = format(code);
+    highlight(src, code, mapLang[lang] || 'js');
+    return (
       <div>
-        <style>${readFileSync(
-          __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
-        )}</style>
-        <style textContent="${value(...values(cssCode))}"></style>
-        ${
-          title
-            ? this.$`<div className="${cssCode.title}">${title}</div>`
-            : null
-        }
-        <div className="${cssCode.code}">
-          <pre className="${cssCode.pre}">${src}</pre>
+        <style>
+          ${readFileSync(
+            __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
+          )}
+        </style>
+        {this.$style}
+        {title ? <div class={cssCode.title}>{title}</div> : null}
+        <div class={cssCode.code}>
+          <pre class={cssCode.pre}>{src}</pre>
         </div>
       </div>
-    `;
-    }
+    );
   }
-);
+}
 
 const cssExample = {
   code: css({
@@ -113,42 +109,36 @@ const cssExample = {
   })
 };
 
-export const Example = define(
-  class extends Component {
-    static is = 'x-example';
-    props: {
-      html: string;
-      title: string;
-    };
-    connecting() {
-      this.style.display = 'block';
-    }
-    renderer = function(root) {
-      root.innerHTML = `
+export class Example extends Component {
+  html: string = '';
+  title: string = '';
+  connectedCallback() {
+    super.connectedCallback();
+    this.style.display = 'block';
+  }
+  renderer = function(root) {
+    root.innerHTML = `
       <style>${value(...values(cssExample))}</style>
       ${
         this.title ? `<div class="${cssExample.title}">${this.title}</div>` : ''
       }
       <div class="${cssExample.code}">${this.html}</div>
     `;
-    };
-  }
-);
+  };
+}
 
-export const Runnable = define(
-  class extends Component {
-    static is = 'x-runnable';
-    code: string = '';
-    html: string = '';
-    connectedCallback() {
-      super.connectedCallback();
-      this.style.display = 'block';
-    }
-    render() {
-      const { code, html } = this;
-      return this.$`
-      <x-tabs
-        css="${`
+export class Runnable extends Component {
+  code: string = '';
+  html: string = '';
+  connectedCallback() {
+    super.connectedCallback();
+    this.style.display = 'block';
+  }
+  render() {
+    const { code, html } = this;
+    return (
+      <Tabs
+        css={`
           .tabs {
             border-bottom: none;
           }
@@ -157,29 +147,26 @@ export const Runnable = define(
           }
           .tabs a.selected,
           .tabs a:hover {
-            background-color: #292D34;
+            background-color: #292d34;
             border-bottom: none;
             color: #eee;
           }
-        `}"
-        items="${[
+        `}
+        items={[
           {
             name: 'Code',
-            pane: this.$`<x-code code="${code}" lang="js"></x-code>`
+            pane: <Code code={code} lang="js" />
           },
           {
             name: 'HTML',
-            pane: html
-              ? this.$`<x-code code="${html}" lang="html"></x-code>`
-              : ''
+            pane: html ? <Code code={html} lang="html" /> : ''
           },
           {
             name: 'Result',
-            pane: html ? this.$`<x-example html="${html}"></x-example>` : ''
+            pane: html ? <Example html={html} /> : ''
           }
-        ]}"
-      ></x-tabs>
-    `;
-    }
+        ]}
+      />
+    );
   }
-);
+}

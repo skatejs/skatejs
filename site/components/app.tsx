@@ -1,11 +1,9 @@
-import { h } from '@skatejs/renderer-preact';
 import { Route, Router } from '@skatejs/sk-router';
-import { define } from 'skatejs';
 import css from 'yocss';
 import globalStyles from '../css';
 import RouteIndex from '../pages';
 import { Loading } from './primitives';
-import { Component, withLoadable } from '../utils';
+import { Component, h, withLoadable } from '../utils';
 
 // @ts-ignore
 import logo50 from '../img/logo-50x50.png';
@@ -18,36 +16,36 @@ const withLoading = (loader: Function) =>
     loading: () => <Loading />
   });
 
-const cssApp = css({
-  borderTop: '5px solid #F2567C',
-  padding: '50px 25px 25px 25px'
-});
-
-export default define(
-  class extends Component {
-    static is = 'x-app';
-    context = { style: globalStyles };
-    css = cssApp;
-    state: { href: string } = { href: '' };
-    onHistory = () => {
-      window.scrollTo(0, 0);
-      this.state = { href: location.pathname };
-    };
-    connectedCallback() {
-      super.connectedCallback();
-      this.onHistory();
-      window.addEventListener('popstate', this.onHistory);
-      window.addEventListener('pushstate', this.onHistory);
-      window.addEventListener('replaceState', this.onHistory);
-    }
-    render() {
-      return (
-        <div class={cssApp}>
-          {this.$style}
-          <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
-          <Router>
-            <Route page={RouteIndex} path="/" />
-            {/* <Route
+export default class App extends Component {
+  static is = 'x-app';
+  context = { style: globalStyles };
+  css = {
+    app: css({
+      borderTop: '5px solid #F2567C',
+      padding: '50px 25px 25px 25px'
+    })
+  };
+  state: { href: string } = { href: '' };
+  onHistory = () => {
+    window.scrollTo(0, 0);
+    this.state = { href: location.pathname };
+  };
+  connectedCallback() {
+    super.connectedCallback();
+    this.onHistory();
+    window.addEventListener('popstate', this.onHistory);
+    window.addEventListener('pushstate', this.onHistory);
+    window.addEventListener('replaceState', this.onHistory);
+  }
+  render() {
+    return (
+      <div class={this.css.app}>
+        {this.$style}
+        <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
+        <RouteIndex />
+        <Router>
+          {/* <Route page={RouteIndex} path="/" /> */}
+          {/* <Route
               page={withLoading(() => import('../pages/guides'))}
               path="/guides"
             />
@@ -118,9 +116,10 @@ export default define(
               path="/utils"
             />
             <Route page={withLoading(() => import('../pages/404'))} path="*" /> */}
-          </Router>
-        </div>
-      );
-    }
+        </Router>
+      </div>
+    );
   }
-);
+}
+
+customElements.define('x-app', App);

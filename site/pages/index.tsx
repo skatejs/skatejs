@@ -1,11 +1,10 @@
-import { h } from '@skatejs/renderer-preact';
 import { readFileSync } from 'fs';
 import css from 'yocss';
-import '../components/code';
-import '../components/layout';
-import '../components/marked';
-import '../components/primitives';
-import { Component } from '../utils';
+import { Runnable } from '../components/code';
+import { Layout } from '../components/layout';
+import { Marked } from '../components/marked';
+import { Hr } from '../components/primitives';
+import { Component, h } from '../utils';
 import './renderers/__samples__/preact';
 
 const codeWithPreact = readFileSync(
@@ -14,7 +13,7 @@ const codeWithPreact = readFileSync(
 const codeWithPreactHtml = readFileSync(
   __dirname + '/renderers/__samples__/preact.html'
 );
-const README = readFileSync(__dirname + '/../../README.md');
+const README = readFileSync(__dirname + '/../../README.md').toString('utf-8');
 
 const renderers = {
   heading(text, level) {
@@ -42,6 +41,7 @@ export default class Index extends Component {
     })
   };
   render() {
+    console.log(this.css.hero);
     return (
       <div>
         {this.$style}
@@ -51,15 +51,15 @@ export default class Index extends Component {
             Effortless custom elements for modern view libraries.
           </h2>
         </div>
-        {/* <x-runnable
+        <Runnable
           class={this.css.code}
           code={codeWithPreact}
           html={codeWithPreactHtml}
         />
-        <x-hr />
-        <x-layout>
-          <x-marked renderers={renderers} src={README} />
-        </x-layout> */}
+        <Hr />
+        <Layout>
+          <Marked renderers={renderers} src={README} />
+        </Layout>
       </div>
     );
   }

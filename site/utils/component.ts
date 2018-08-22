@@ -3,12 +3,13 @@ import renderer from '@skatejs/renderer-preact';
 import { value } from 'yocss';
 import { style } from './style';
 
+export { h } from '@skatejs/renderer-preact';
 export const Component = class extends SkateComponent {
   _context: any;
   renderer = renderer;
   get $style(): string {
     // @ts-ignore
-    return style(value(this.context.style), value(this.css));
+    return style(value(this.context.style), value(...Object.values(this.css)));
   }
   get context() {
     if (this._context) {

@@ -115,8 +115,8 @@ const cssLayout = {
 
 export class Layout extends Component {
   css = cssLayout;
-  nav = true;
-  title = '';
+  nav: boolean = true;
+  title: string = '';
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
