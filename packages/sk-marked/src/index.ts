@@ -1,7 +1,10 @@
-import { Component, define } from 'skatejs';
+import { Component } from 'skatejs';
 import marked from 'marked';
 
 function format(src) {
+  src = src || '';
+
+  // Normalize quotes.
   src = src.replace(/"/g, '&quot;');
 
   // Remove leading newlines.
@@ -17,20 +20,17 @@ function format(src) {
   return src.join('\n');
 }
 
-export default define(
-  class extends Component {
-    static is = 'sk-marked';
-    css: string = '';
-    renderers: {} = {};
-    src: string = '';
-    render() {
-      const { css, renderers, src } = this;
-      const renderer = new marked.Renderer();
-      Object.assign(renderer, renderers);
-      return `
-        <style>${css}></style>
-        ${marked(format(src), { renderer })}
-      `;
-    }
+export default class extends Component {
+  css: string = '';
+  renderers: {} = {};
+  src: string = '';
+  render() {
+    const { css, renderers, src } = this;
+    const renderer = new marked.Renderer();
+    Object.assign(renderer, renderers);
+    return `
+      <style>${css}></style>
+      ${marked(format(src), { renderer })}
+    `;
   }
-);
+}
