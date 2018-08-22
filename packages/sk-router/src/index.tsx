@@ -21,8 +21,7 @@ class Base extends Component {
 }
 
 export class Link extends Base {
-  static is = 'sk-link';
-  classNames: { a: string } = { a: '' };
+  classNames: { [s: string]: string } = { a: '' };
   css: string = '';
   href: string = '';
   go = e => {
@@ -41,12 +40,11 @@ export class Link extends Base {
 }
 
 export class Route extends Base {
-  static is = 'sk-route';
-  page?: typeof HTMLElement;
-  PageToRender?: typeof HTMLElement;
-  path: string;
-  propsToRender?: {};
-  updated(...args) {
+  page?: typeof HTMLElement = null;
+  PageToRender?: typeof HTMLElement = null;
+  path: string = '';
+  propsToRender: Object = {};
+  updated(prev, next) {
     let { PageToRender } = this;
     let PageToRenderInstance;
     if (PageToRender) {
@@ -59,7 +57,7 @@ export class Route extends Base {
         );
       }
     }
-    super.updated(...args);
+    super.updated(prev, next);
   }
   render() {
     const { PageToRender, propsToRender } = this;
@@ -69,14 +67,11 @@ export class Route extends Base {
   }
 }
 
-type RouterProps = {};
-
 export class Router extends Base {
-  static is = 'sk-router';
-  options: {} = {};
+  options: Object = {};
   childrenUpdated() {
-    [...this.children].forEach((route: Route) => {
-      page(route.path, (ctxt, next) => {
+    for (const route of this.children) {
+      page(route.path, ctxt => {
         route.propsToRender = ctxt;
         route.PageToRender = route.page;
       });
@@ -84,16 +79,14 @@ export class Router extends Base {
         route.PageToRender = null;
         next();
       });
-    });
+    }
     page.start();
   }
-  updated(...args) {
+  updated(prev, next) {
     page(this.options);
-    return super.updated(...args);
+    return super.updated(prev, next);
   }
   render() {
     return <slot />;
   }
 }
-
-[Link, Route, Router].forEach(define);

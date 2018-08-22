@@ -173,6 +173,18 @@ function observeUpdates(elem) {
       elem.childrenUpdated();
     }
   });
+
+  // Initialise children.
+  if (hasChildrenUpdated) {
+    elem.childrenUpdated();
+  }
+
+  // Initialise all attributes.
+  if (shouldObserveAllAttributes) {
+    for (const attribute of elem.attributes) {
+      elem.attributeChangedCallback(attribute.name, null, attribute.value);
+    }
+  }
 }
 
 export function component(

@@ -145,61 +145,61 @@ function calculateNextVersion(version, changes) {
   return semver.inc(version, calculateReleaseType(changes));
 }
 
-async function build() {
+async function build({ pkg }) {
   const ws = await getWorkspaces();
   await Promise.all(
-    ws.map(w => {
-      return parallel(
-        w.dir,
-        w.config.main,
-        w.config.module,
-        async (dir, entryMain, entryModule) => {
-          const exec = require('execa');
-          const fs = require('fs-extra');
-          const path = require('path');
-          const indexTs = path.join(dir, 'src', 'index.ts');
-          const indexTsx = path.join(dir, 'src', 'index.tsx');
-          const tsConfig = path.join(dir, 'tsconfig.json');
-          let cleanUpTsConfig = false;
+    ws.map(async w => {
+      if (pkg && !w.config.name.match(pkg)) {
+        return;
+      }
 
-          if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
-            return;
-          }
+      await parallel(w.dir, w.config, async (dir, pkg) => {
+        const exec = require('execa');
+        const fs = require('fs-extra');
+        const path = require('path');
+        const indexTs = path.join(dir, 'src', 'index.ts');
+        const indexTsx = path.join(dir, 'src', 'index.tsx');
+        const tsConfig = path.join(dir, 'tsconfig.json');
+        let cleanUpTsConfig = false;
 
-          if (!await fs.exists(tsConfig)) {
-            cleanUpTsConfig = true;
-            await fs.copy('tsconfig.json', tsConfig);
-          }
-
-          if (entryMain) {
-            const result1 = await exec(
-              'tsc',
-              ['--module', 'CommonJS', '--outDir', path.dirname(entryMain)],
-              {
-                cwd: dir
-              }
-            )
-              .catch(e => e)
-              .then(r => r.stdout);
-          }
-
-          if (entryModule) {
-            const result1 = await exec(
-              'tsc',
-              ['--module', 'ES2015', '--outDir', path.dirname(entryModule)],
-              {
-                cwd: dir
-              }
-            )
-              .catch(e => e)
-              .then(r => r.stdout);
-          }
-
-          if (cleanUpTsConfig) {
-            await fs.remove(tsConfig);
-          }
+        if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
+          return;
         }
-      ).then(r => r && console.log(r));
+
+        if (!await fs.exists(tsConfig)) {
+          cleanUpTsConfig = true;
+          await fs.copy('tsconfig.json', tsConfig);
+        }
+
+        if (pkg.main) {
+          const result1 = await exec(
+            'tsc',
+            ['--module', 'CommonJS', '--outDir', path.dirname(pkg.main)],
+            {
+              cwd: dir
+            }
+          )
+            .catch(e => e)
+            .then(r => r.stdout);
+        }
+
+        if (pkg.module) {
+          const result1 = await exec(
+            'tsc',
+            ['--module', 'ES2015', '--outDir', path.dirname(pkg.module)],
+            {
+              cwd: dir
+            }
+          )
+            .catch(e => e)
+            .then(r => r.stdout);
+        }
+
+        if (cleanUpTsConfig) {
+          await fs.remove(tsConfig);
+        }
+      });
+      console.log(w.config.name);
     })
   );
 }
