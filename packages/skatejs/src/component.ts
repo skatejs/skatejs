@@ -8,8 +8,11 @@ import {
   PropTypes
 } from './types';
 
-const mapAttributesToProps: { [s: string]: { [s: string]: string } } = {};
+const mapHasBeenConstructed: { [s: string]: boolean } = {};
+const mapAttributesToProps: { [s: string]: string } = {};
 const mapDefaultProps: { [s: string]: any } = {};
+const mapPropsToPropType: { [s: string]: NormalizedPropType } = {};
+// @ts-ignore
 const mapNativeToPropType = new Map();
 
 mapNativeToPropType.set(Array, props.array);
@@ -65,17 +68,15 @@ function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
 function defineProperties(elem: CustomElement) {
   const constructor = elem.constructor as CustomElementConstructor;
   const localName = elem.localName;
-  let propDefs = mapDefaultProps[localName];
 
   // If defaults have been set, we've already defined props for this type of
   // element.
-  if (propDefs) {
+  if (mapHasBeenConstructed[localName]) {
     return;
   }
 
   // We cache the defaults so we don't have to do this again.
-  propDefs = mapDefaultProps[localName] = {};
-  mapAttributesToProps[localName] = {};
+  mapHasBeenConstructed[localName] = true;
 
   // We allow the consumer to explicitly define their props but fallback to
   // trying to auto-detect props if they're not specified. This allows us to
@@ -85,34 +86,40 @@ function defineProperties(elem: CustomElement) {
   normalizePropTypes(
     constructor.props || derivePropsFromConnectedInstance(elem)
   ).forEach(({ propName, propType }) => {
+    const mapKey = localName + propName;
     const attrName = propType.target(propName);
     const propDesc = {
       configurable: true,
       get() {
         return propName in this._props
           ? this._props[propName]
-          : propDefs[propName];
+          : mapDefaultProps[localName + propName];
       },
       set(propValue) {
         this._props[propName] = propValue;
         if (attrName) {
-          const attrValue = propType.serialize(propValue);
-          if (attrValue == null) {
-            this.removeAttribute(attrName);
-          } else {
-            this.setAttribute(attrName, attrValue);
-          }
+          setTimeout(() => {
+            const attrValue = propType.serialize(propValue);
+            if (attrValue == null) {
+              this.removeAttribute(attrName);
+            } else {
+              this.setAttribute(attrName, attrValue);
+            }
+          });
         }
         this.forceUpdate();
       }
     };
 
     // Register the default value so it can be returned by the getter.
-    propDefs[propName] = elem[propName];
+    mapDefaultProps[mapKey] = elem[propName];
 
     // Register an attribute mapping so this can be looked up by attribute
     // handlers.
-    mapAttributesToProps[localName][propName] = attrName;
+    mapAttributesToProps[mapKey] = attrName;
+
+    // Map the prop back to the definition.
+    mapPropsToPropType[mapKey] = propType;
 
     // Patching the prototype ensures all future instances get the property
     // definition without having to redefine on construct.
@@ -245,13 +252,13 @@ export function component(
         super.attributeChangedCallback(name, oldValue, newValue);
       }
 
-      const { constructor, localName } = this;
-      const propertyName = mapAttributesToProps[localName][name];
+      const { localName } = this;
+      const propertyName = mapAttributesToProps[localName + name];
 
       if (propertyName) {
-        this._props[propertyName] = constructor.props[propertyName].deserialize(
-          newValue
-        );
+        this._props[propertyName] = mapPropsToPropType[
+          localName + propertyName
+        ].deserialize(newValue);
         this.forceUpdate();
       }
     }
