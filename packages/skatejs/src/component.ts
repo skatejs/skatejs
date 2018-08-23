@@ -2,16 +2,16 @@ import { props } from './props';
 import {
   CustomElement,
   CustomElementConstructor,
-  NormalizedPropType,
   NormalizedPropTypes,
   ObservedAttributes,
   PropTypes
 } from './types';
+import { Map } from 'core-js';
 
-const mapHasBeenConstructed: { [s: string]: boolean } = {};
-const mapAttributesToProps: { [s: string]: string } = {};
-const mapDefaultProps: { [s: string]: any } = {};
-const mapPropsToPropType: { [s: string]: NormalizedPropType } = {};
+// @ts-ignore
+const mapAttrsToProps = new Map();
+// @ts-ignore
+const mapPropsToTypes = new Map();
 // @ts-ignore
 const mapNativeToPropType = new Map();
 
@@ -30,26 +30,10 @@ function delay(fn) {
   }
 }
 
-function deriveAttributesFromProps(props: PropTypes): ObservedAttributes {
+function deriveAttrsFromProps(props: PropTypes): ObservedAttributes {
   return normalizePropTypes(props).map(({ propName, propType }) =>
     propType.source(propName)
   );
-}
-
-function derivePropsFromConnectedInstance(elem: HTMLElement): PropTypes {
-  const prot = elem.constructor.prototype;
-  return Object.keys(elem)
-    .filter(propName => !(propName in prot) && propName[0] !== '_')
-    .reduce((propType, propName) => {
-      propType[propName] = derivePropTypeFromValue(elem[propName]);
-      return propType;
-    }, {});
-}
-
-function derivePropTypeFromValue(propValue: any): NormalizedPropType {
-  return propValue == null
-    ? props.any
-    : mapNativeToPropType.get(propValue.constructor) || props.any;
 }
 
 function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
@@ -62,161 +46,73 @@ function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
   });
 }
 
-// When proxies are a thing, we can remove most of this code but we still need
-// a MutationObserver because there's no way to listen to all attribute
-// changes.
-function defineProperties(elem: CustomElement) {
-  const constructor = elem.constructor as CustomElementConstructor;
-  const localName = elem.localName;
-
-  // If defaults have been set, we've already defined props for this type of
-  // element.
-  if (mapHasBeenConstructed[localName]) {
-    return;
-  }
-
-  // We cache the defaults so we don't have to do this again.
-  mapHasBeenConstructed[localName] = true;
-
-  // We allow the consumer to explicitly define their props but fallback to
-  // trying to auto-detect props if they're not specified. This allows us to
-  // favour ergonomics and simplicity over performance in the most simple case
-  // but also allow explicit definition for those who prefer to do so, or want
-  // to favour performance.
-  normalizePropTypes(
-    constructor.props || derivePropsFromConnectedInstance(elem)
-  ).forEach(({ propName, propType }) => {
-    const mapKey = localName + propName;
-    const attrName = propType.target(propName);
-    const propDesc = {
-      configurable: true,
-      get() {
-        return propName in this._props
-          ? this._props[propName]
-          : mapDefaultProps[localName + propName];
-      },
-      set(propValue) {
-        this._props[propName] = propValue;
-        if (attrName) {
-          setTimeout(() => {
-            const attrValue = propType.serialize(propValue);
-            if (attrValue == null) {
-              this.removeAttribute(attrName);
-            } else {
-              this.setAttribute(attrName, attrValue);
-            }
-          });
-        }
-        this.forceUpdate();
-      }
-    };
-
-    // Register the default value so it can be returned by the getter.
-    mapDefaultProps[mapKey] = elem[propName];
-
-    // Register an attribute mapping so this can be looked up by attribute
-    // handlers.
-    mapAttributesToProps[mapKey] = attrName;
-
-    // Map the prop back to the definition.
-    mapPropsToPropType[mapKey] = propType;
-
-    // Patching the prototype ensures all future instances get the property
-    // definition without having to redefine on construct.
-    Object.defineProperty(constructor.prototype, propName, propDesc);
-
-    // The current instance still needs to be patched since we've done this
-    // lazily.
-    Object.defineProperty(elem, propName, propDesc);
-  });
-}
-
-function observe(
+function observeChildList(
   host: HTMLElement,
   observer: (EventListenerOrEventListenerObject) => void
 ) {
   const mo = new MutationObserver(observer);
-  mo.observe(host, { attributes: true, childList: true });
+  mo.observe(host, { childList: true });
   document.addEventListener('DOMContentLoaded', observer);
 }
 
 function observeUpdates(elem) {
-  const hasChildrenUpdated = elem.childrenUpdated;
-  const shouldObserveAllAttributes =
-    elem.constructor.observedAttributes.indexOf('*') > -1;
-
-  // We don't want the overhead of a MutationObserver if it's not necessary.
-  if (!hasChildrenUpdated && !shouldObserveAllAttributes) {
-    return;
-  }
-
-  observe(elem, mutations => {
-    let shouldCallChildrenUpdated = false;
-
-    for (const mutation of mutations) {
-      if (shouldObserveAllAttributes && mutation.type === 'attribute') {
-        const { attributeName, oldValue } = mutation;
-
-        // Don't call for certain attributes which can still be opt-in by
-        // specifying them explicitly.
-        if (attributeName === 'style') {
-          return;
-        }
-
-        // We have to invoke this for every mutation as that's what the spec
-        // does.
-        elem.attributeChangedCallback(
-          attributeName,
-          oldValue,
-          elem.getAttribute(attributeName)
-        );
-      } else if (hasChildrenUpdated && mutation.type === 'childList') {
-        // We only want to invoke this once to limit perf implications.
-        shouldCallChildrenUpdated = true;
-      }
-    }
-
-    if (shouldCallChildrenUpdated) {
-      elem.childrenUpdated();
-    }
-  });
-
-  // Initialise children.
-  if (hasChildrenUpdated) {
-    elem.childrenUpdated();
-  }
-
-  // Initialise all attributes.
-  if (shouldObserveAllAttributes) {
-    for (const attribute of elem.attributes) {
-      elem.attributeChangedCallback(attribute.name, null, attribute.value);
-    }
-  }
+  if (!elem.childrenUpdated) return;
+  observeChildList(elem, () => elem.childrenUpdated());
+  elem.childrenUpdated();
 }
 
 export function component(
   Base: CustomElementConstructor = HTMLElement
 ): CustomElementConstructor {
   return class extends Base implements CustomElement {
-    static props?: PropTypes;
     _prevProps: Object = {};
     _prevState: Object = {};
     _props: Object = {};
     _state: Object = {};
     _updating: boolean = false;
+
     ['constructor']: CustomElementConstructor;
+
+    static props?: PropTypes = {};
 
     static get observedAttributes() {
       const { props } = this;
 
-      // "*" has special meaning that we should be observing all changes except
-      // certain ones that get spammy, such as "style". We do this by default
-      // if there's no props specified so we can use derived props for re-
-      // rendering the component.
-      //
-      // If you define props explicitly, then it derives your observed
-      // attributes from those definitions and will not listen to all updates.
-      return props ? deriveAttributesFromProps(props) : ['*'];
+      mapAttrsToProps.set(this, {});
+      mapPropsToTypes.set(this, {});
+
+      normalizePropTypes(props).forEach(({ propName, propType }) => {
+        const attrName = propType.target(propName);
+
+        mapAttrsToProps.get(this)[propName] = attrName;
+        mapPropsToTypes.get(this)[propName] = propType;
+
+        Object.defineProperty(this.prototype, propName, {
+          configurable: true,
+          get() {
+            return this._props[propName];
+          },
+          set(propValue) {
+            this._props[propName] = propValue;
+            if (attrName) {
+              // We must delay attribute sets because property sets that are
+              // initialized in the constructor result in attributes being set
+              // and if an attribute is set in the constructor, the DOM throws.
+              delay(() => {
+                const attrValue = propType.serialize(propValue);
+                if (attrValue == null) {
+                  this.removeAttribute(attrName);
+                } else {
+                  this.setAttribute(attrName, attrValue);
+                }
+              });
+            }
+            this.forceUpdate();
+          }
+        });
+      });
+
+      return deriveAttrsFromProps(props);
     }
 
     get props() {
@@ -244,7 +140,7 @@ export function component(
     }
 
     attributeChangedCallback(
-      name: string,
+      attrName: string,
       oldValue: string | null,
       newValue: string | null
     ) {
@@ -252,13 +148,13 @@ export function component(
         super.attributeChangedCallback(name, oldValue, newValue);
       }
 
-      const { localName } = this;
-      const propertyName = mapAttributesToProps[localName + name];
+      const { constructor } = this;
+      const propName = mapAttrsToProps.get(constructor)[attrName];
 
-      if (propertyName) {
-        this._props[propertyName] = mapPropsToPropType[
-          localName + propertyName
-        ].deserialize(newValue);
+      if (propName) {
+        this._props[propName] = mapPropsToTypes
+          .get(constructor)
+          [propName].deserialize(newValue);
         this.forceUpdate();
       }
     }
@@ -268,14 +164,9 @@ export function component(
         super.connectedCallback();
       }
 
+      // We observe updates when connected because there's no point in
+      // observing if it's not connected yet.
       observeUpdates(this);
-
-      // We define properties here as it's necessary for deriving props, but it
-      // also allows us to defer any expensive work until the latest possible
-      // point. Props serve as a way to trigger a rendering of your component,
-      // so it doesn't make sense to define them if the component doesn't need
-      // to ever render, which would be the case if it's never connected.
-      defineProperties(this);
 
       // This does the initial render. This is necessary as props wouldn't be
       // triggering a render yet.
@@ -287,13 +178,17 @@ export function component(
         super.disconnectedCallback();
       }
 
-      // Render null so that renderers can do whatever unmounting logic they
-      // need to.
+      // Rendering null here allows renderers to perform any necessary
+      // unmounting logic if need be.
       this.renderer(this.renderRoot, () => null);
     }
 
     forceUpdate(): void {
-      if (this._updating) {
+      // We don't need to render when:
+      //
+      // - We're not connected.
+      // - We're already updating.
+      if (!this.parentNode || this._updating) {
         return;
       }
 
