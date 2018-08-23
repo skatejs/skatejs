@@ -21,6 +21,11 @@ function format(src) {
 }
 
 export default class extends Component {
+  static props = {
+    css: String,
+    renderers: Object,
+    src: String
+  };
   css: string = '';
   renderers: {} = {};
   src: string = '';
