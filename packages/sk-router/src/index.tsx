@@ -1,7 +1,5 @@
-/* @jsx h */
-
 import page from 'page';
-import { Component, define } from 'skatejs';
+import { Component } from 'skatejs';
 import { h } from '@skatejs/val';
 
 class Base extends Component {
@@ -21,6 +19,11 @@ class Base extends Component {
 }
 
 export class Link extends Base {
+  static props = {
+    classNames: Object,
+    css: String,
+    href: String
+  };
   classNames: { [s: string]: string } = { a: '' };
   css: string = '';
   href: string = '';
@@ -31,7 +34,7 @@ export class Link extends Base {
   render() {
     const { classNames, css, href } = this;
     return (
-      <a className={classNames.a} href={href} events={{ click: this.go }}>
+      <a class={classNames.a} href={href} events={{ click: this.go }}>
         <style>{css}</style>
         <slot />
       </a>
@@ -40,10 +43,16 @@ export class Link extends Base {
 }
 
 export class Route extends Base {
+  static props = {
+    page: null,
+    PageToRender: null,
+    path: String,
+    propsToRender: Object
+  };
   page?: typeof HTMLElement = null;
   PageToRender?: typeof HTMLElement = null;
   path: string = '';
-  propsToRender: Object = {};
+  propsToRender: { [s: string]: any } = {};
   updated(prev, next) {
     let { PageToRender } = this;
     let PageToRenderInstance;
@@ -68,7 +77,10 @@ export class Route extends Base {
 }
 
 export class Router extends Base {
-  options: Object = {};
+  static props = {
+    options: Object
+  };
+  options: { [s: string]: any } = {};
   childrenUpdated() {
     for (const route of this.children) {
       page(route.path, ctxt => {
