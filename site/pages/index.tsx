@@ -41,7 +41,6 @@ export default class Index extends Component {
     })
   };
   render() {
-    console.log(this.css.hero);
     return (
       <div>
         {this.$style}

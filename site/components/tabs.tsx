@@ -35,6 +35,11 @@ const cssTabs = css({
 });
 
 export class Tabs extends Component {
+  static props = {
+    css: String,
+    items: Array,
+    selected: Boolean
+  };
   css: string = '';
   items: Array<{ name: string; pane: string }> = [];
   selected: number = 0;

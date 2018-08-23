@@ -9,7 +9,10 @@ export const Component = class extends SkateComponent {
   renderer = renderer;
   get $style(): string {
     // @ts-ignore
-    return style(value(this.context.style), value(...Object.values(this.css)));
+    return style(
+      value(this.context.style),
+      value(...Object.values(this.css || {}))
+    );
   }
   get context() {
     if (this._context) {

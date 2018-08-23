@@ -63,6 +63,11 @@ const cssCode = {
 };
 
 export class Code extends Component {
+  static props = {
+    code: String,
+    lang: String,
+    title: String
+  };
   code: string = '';
   css = cssCode;
   lang: string = '';
@@ -110,6 +115,10 @@ const cssExample = {
 };
 
 export class Example extends Component {
+  static props = {
+    html: String,
+    title: String
+  };
   html: string = '';
   title: string = '';
   connectedCallback() {
@@ -128,6 +137,10 @@ export class Example extends Component {
 }
 
 export class Runnable extends Component {
+  static props = {
+    code: String,
+    html: String
+  };
   code: string = '';
   html: string = '';
   connectedCallback() {

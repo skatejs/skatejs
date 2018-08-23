@@ -25,6 +25,11 @@ export class Hr extends Component {
 const publicUrl = 'skatejs.netlify.com';
 
 export class Link extends Component {
+  static props = {
+    classNames: Object,
+    css: String,
+    href: String
+  };
   classNames: { a: string } = { a: '' };
   css: string = '';
   href: string = '';
@@ -34,7 +39,7 @@ export class Link extends Component {
       href = href.split(publicUrl)[1];
     }
     return href.indexOf('://') > -1 ? (
-      <a className={classNames.a} href={href}>
+      <a class={classNames.a} href={href}>
         {style(context.style, css)}
         <slot />
       </a>
@@ -72,10 +77,9 @@ const cssNote = css({
 });
 
 export class Note extends Component {
-  static is = 'x-note';
   render() {
     return (
-      <em className={cssNote}>
+      <em class={cssNote}>
         {style(value(cssNote))}
         <slot />
       </em>

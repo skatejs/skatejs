@@ -30,6 +30,9 @@ const defaultRenderers = {
 };
 
 export class Marked extends Component {
+  static props = {
+    src: String
+  };
   renderers: Object = {};
   src: string = '';
   render() {

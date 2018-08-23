@@ -69,7 +69,7 @@ function renderTree(items, depth = 0) {
         return (
           <li>
             <Link classNames={{ a: styles }} css={value(styles)} href={n.href}>
-              ${n.text}
+              {n.text}
             </Link>
             {location.pathname.indexOf(n.href) === 0
               ? renderTree(n.tree, depth + 1)
@@ -114,6 +114,10 @@ const cssLayout = {
 };
 
 export class Layout extends Component {
+  static props = {
+    nav: Boolean,
+    title: String
+  };
   css = cssLayout;
   nav: boolean = true;
   title: string = '';
