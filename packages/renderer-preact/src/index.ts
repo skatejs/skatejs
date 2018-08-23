@@ -6,7 +6,7 @@ let oldVnode;
 
 function generateUniqueName(prefix) {
   let suffix = 0;
-  while (customElements.get(prefix + suffix)) ++suffix;
+  while (customElements.get(`${prefix}-${suffix}`)) ++suffix;
   return `${prefix}-${suffix}`;
 }
 
