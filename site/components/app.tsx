@@ -43,6 +43,11 @@ export default class App extends Component {
         <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
         <Router>
           <Route page={RouteIndex} path="/" />
+          <Route
+            page={withLoading(() => import('../pages/guides'))}
+            path="/guides"
+          />
+          <Route page={withLoading(() => import('../pages/404'))} path="*" />
           {/* <Route
               page={withLoading(() => import('../pages/guides'))}
               path="/guides"
@@ -112,8 +117,7 @@ export default class App extends Component {
             <Route
               page={withLoading(() => import('../pages/utils'))}
               path="/utils"
-            />
-            <Route page={withLoading(() => import('../pages/404'))} path="*" /> */}
+            />*/}
         </Router>
       </div>
     );

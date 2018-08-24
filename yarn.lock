@@ -6463,6 +6463,12 @@ natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
 
+navaid@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/navaid/-/navaid-1.0.0.tgz#1d274c1f76be05b7cb2c22d86434d1d768fa4a4a"
+  dependencies:
+    regexparam "^0.0.1"
+
 needle@^2.2.1:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/needle/-/needle-2.2.2.tgz#1120ca4c41f2fcc6976fd28a8968afe239929418"
@@ -8183,6 +8189,10 @@ regex-not@^1.0.2:
   dependencies:
     extend-shallow "^3.0.2"
     safe-regex "^1.1.0"
+
+regexparam@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/regexparam/-/regexparam-0.0.1.tgz#bb1ee6ba527043d689cbe057089db71f025a902e"
 
 regexpu-core@^2.0.0:
   version "2.0.0"

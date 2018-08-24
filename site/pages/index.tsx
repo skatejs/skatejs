@@ -9,11 +9,11 @@ import './renderers/__samples__/preact';
 
 const codeWithPreact = readFileSync(
   __dirname + '/renderers/__samples__/preact.tsx'
-);
+).toString();
 const codeWithPreactHtml = readFileSync(
   __dirname + '/renderers/__samples__/preact.html'
-);
-const README = readFileSync(__dirname + '/../../README.md').toString('utf-8');
+).toString();
+const README = readFileSync(__dirname + '/../../README.md').toString();
 
 const renderers = {
   heading(text, level) {

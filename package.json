@@ -23,6 +23,7 @@
     "lit-html": "dev",
     "marked": "0.3.14",
     "mkdirp": "0.5.1",
+    "navaid": "^1.0.0",
     "outdent": "0.4.1",
     "page": "1.8.3",
     "parse5": "4.0.0",

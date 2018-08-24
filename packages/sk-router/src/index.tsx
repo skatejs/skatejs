@@ -1,4 +1,4 @@
-import page from 'page';
+import navaid from 'navaid';
 import { Component, define } from 'skatejs';
 import { h } from '@skatejs/val';
 
@@ -29,7 +29,13 @@ export class Link extends Base {
   href: string = '';
   go = e => {
     e.preventDefault();
-    page.show(this.href);
+    this.dispatchEvent(
+      new CustomEvent('sk-route-link', {
+        bubbles: true,
+        composed: true,
+        detail: this.href
+      })
+    );
   };
   render() {
     const { classNames, css, href } = this;
@@ -44,35 +50,17 @@ export class Link extends Base {
 
 export class Route extends Component {
   static props = {
-    page: null,
-    PageToRender: null,
-    path: String,
-    propsToRender: Object
+    page: Object,
+    pageProps: Object,
+    pageValue: Object,
+    path: String
   };
-  page: any = null;
+  page: any = undefined;
+  pageProps: any = null;
   pageValue: any = null;
   path: string = '';
-  propChanged(name, oldValue, newValue) {
-    if (name !== 'page') {
-      return;
-    }
-    if (newValue) {
-      if (page.prototype === Function.prototype) {
-        newValue = newValue();
-      }
-
-      if (newValue.then) {
-        newValue.then(p => (this.pageValue = p.default || p));
-      } else {
-        this.pageValue = newValue;
-      }
-    }
-  }
-  shouldUpdate() {
-    return this.pageValue;
-  }
   renderer = () => {
-    const { pageValue } = this;
+    const { pageProps, pageValue } = this;
     if (pageValue) {
       if (pageValue.prototype instanceof HTMLElement) {
         this.shadowRoot.innerHTML = '';
@@ -83,31 +71,62 @@ export class Route extends Component {
       } else {
         this.shadowRoot.innerHTML = `<${pageValue}></${pageValue}>`;
       }
+      this.shadowRoot.firstElementChild['props'] = pageProps;
+    } else {
+      this.shadowRoot.innerHTML = '';
     }
   };
 }
 
 export class Router extends Base {
   static props = {
-    options: Object
+    base: String
   };
-  options: { [s: string]: any } = {};
-  childrenUpdated() {
-    for (const route of this.children) {
-      page(route.path, ctxt => {
-        route.propsToRender = ctxt;
-        route.PageToRender = route.page;
-      });
-      page.exit(route.path, (ctxt, next) => {
-        route.PageToRender = null;
-        next();
-      });
-    }
-    page.start();
+  base = '/';
+  notFound: any;
+  previousRoute: any;
+  router: any;
+  constructor() {
+    super();
+    this.addEventListener('sk-route-link', (e: CustomEvent) => {
+      this.router.route(e.detail);
+    });
   }
-  updated(prev, next) {
-    page(this.options);
-    return super.updated(prev, next);
+  propChanged(name, oldValue, newValue) {
+    if (this.router) {
+      this.router.unlisten();
+    }
+    this.router = navaid(newValue, path => {
+      if (this.notFound) {
+        this.notFound.pageProps = { path };
+        this.notFound.pageValue = this.notFound.page;
+      }
+    });
+    this.router.listen();
+  }
+  connectedCallback() {
+    super.connectedCallback();
+  }
+  childrenUpdated() {
+    this.router.unlisten();
+    Array.from(this.children).forEach(route => {
+      if (route.path === '*') {
+        this.notFound = route;
+      } else {
+        this.router.on(route.path, params => {
+          if (this.previousRoute === route) {
+            return;
+          }
+          if (this.previousRoute) {
+            this.previousRoute.pageValue = null;
+          }
+          this.previousRoute = route;
+          route.pageProps = params;
+          route.pageValue = route.page;
+        });
+      }
+    });
+    this.router.listen();
   }
   render() {
     return <slot />;
