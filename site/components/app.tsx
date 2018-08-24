@@ -1,4 +1,4 @@
-import { Route, Router } from '@skatejs/sk-router';
+import { Route, Router } from '@skatejs/sk-router/src';
 import css from 'yocss';
 import globalStyles from '../css';
 import RouteIndex from '../pages';
@@ -41,9 +41,8 @@ export default class App extends Component {
       <div class={this.css.app}>
         {this.$style}
         <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
-        <RouteIndex />
         <Router>
-          {/* <Route page={RouteIndex} path="/" /> */}
+          <Route page={RouteIndex} path="/" />
           {/* <Route
               page={withLoading(() => import('../pages/guides'))}
               path="/guides"

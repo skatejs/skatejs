@@ -93,7 +93,9 @@ export function component(
             return this._props[propName];
           },
           set(propValue) {
+            const oldPropValue = this._props[propName];
             this._props[propName] = propValue;
+            this.propChanged(propName, oldPropValue, propValue);
             if (attrName) {
               // We must delay attribute sets because property sets that are
               // initialized in the constructor result in attributes being set
@@ -200,15 +202,20 @@ export function component(
       // we can debounce any subsequent updates using the _updating flag.
       delay(() => {
         const { _prevProps, _prevState } = this;
+        this.updated(_prevProps, _prevState);
         if (this.shouldUpdate(_prevProps, _prevState)) {
           this.renderer(this.renderRoot, () => this.render());
-          this.updated(_prevProps, _prevState);
+          this.rendered(_prevProps, _prevState);
         }
         this._prevProps = this.props;
         this._prevState = this.state;
         this._updating = false;
       });
     }
+
+    propChanged(name: string, oldValue: any, newValue: any) {}
+
+    rendered(props: Object, state: Object) {}
 
     shouldUpdate(props: Object, state: Object): boolean {
       return true;

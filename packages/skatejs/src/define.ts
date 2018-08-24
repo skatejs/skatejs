@@ -4,7 +4,10 @@ import { name } from './name.js';
 export function define(
   ctor: CustomElementConstructor
 ): CustomElementConstructor {
-  Object.defineProperty(ctor, 'is', { value: name(ctor.is) });
-  customElements.define(ctor.is, ctor);
+  const tag = name();
+  ctor = class extends ctor {
+    static is = tag;
+  };
+  customElements.define(tag, ctor);
   return ctor;
 }

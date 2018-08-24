@@ -1,5 +1,5 @@
 import page from 'page';
-import { Component } from 'skatejs';
+import { Component, define } from 'skatejs';
 import { h } from '@skatejs/val';
 
 class Base extends Component {
@@ -42,38 +42,49 @@ export class Link extends Base {
   }
 }
 
-export class Route extends Base {
+export class Route extends Component {
   static props = {
     page: null,
     PageToRender: null,
     path: String,
     propsToRender: Object
   };
-  page?: typeof HTMLElement = null;
-  PageToRender?: typeof HTMLElement = null;
+  page: any = null;
+  pageValue: any = null;
   path: string = '';
-  propsToRender: { [s: string]: any } = {};
-  updated(prev, next) {
-    let { PageToRender } = this;
-    let PageToRenderInstance;
-    if (PageToRender) {
-      if (PageToRender.constructor === Function) {
-        PageToRenderInstance = new PageToRender();
+  propChanged(name, oldValue, newValue) {
+    if (name !== 'page') {
+      return;
+    }
+    if (newValue) {
+      if (page.prototype === Function.prototype) {
+        newValue = newValue();
       }
-      if (PageToRenderInstance.then) {
-        PageToRenderInstance.then(
-          Page => (this.PageToRender = Page.default || Page)
-        );
+
+      if (newValue.then) {
+        newValue.then(p => (this.pageValue = p.default || p));
+      } else {
+        this.pageValue = newValue;
       }
     }
-    super.updated(prev, next);
   }
-  render() {
-    const { PageToRender, propsToRender } = this;
-    if (PageToRender && PageToRender.prototype) {
-      return <PageToRender {...propsToRender} />;
+  shouldUpdate() {
+    return this.pageValue;
+  }
+  renderer = () => {
+    const { pageValue } = this;
+    if (pageValue) {
+      if (pageValue.prototype instanceof HTMLElement) {
+        this.shadowRoot.innerHTML = '';
+        const Page = define(pageValue);
+        this.shadowRoot.appendChild(new Page());
+      } else if (pageValue[0] === '<') {
+        this.shadowRoot.innerHTML = pageValue;
+      } else {
+        this.shadowRoot.innerHTML = `<${pageValue}></${pageValue}>`;
+      }
     }
-  }
+  };
 }
 
 export class Router extends Base {
