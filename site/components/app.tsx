@@ -17,7 +17,6 @@ const withLoading = (loader: Function) =>
   });
 
 export default class App extends Component {
-  static is = 'x-app';
   context = { style: globalStyles };
   css = {
     app: css({
@@ -121,5 +120,3 @@ export default class App extends Component {
     );
   }
 }
-
-customElements.define('x-app', App);

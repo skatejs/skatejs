@@ -2,7 +2,7 @@ import css, { names, value } from 'yocss';
 import { Component, h, style } from '../utils';
 import { Link } from './primitives';
 
-const linkCss = ({ depth, selected } = {}) =>
+const linkCss = ({ depth, selected }) =>
   css({
     backgroundColor: selected ? '#DCE4CA' : 'transparent',
     display: 'block',
@@ -61,7 +61,7 @@ const navItems = () => [
 function renderTree(items, depth = 0) {
   return items && items.length ? (
     <ul>
-      ${items.map(n => {
+      {items.map(n => {
         const styles = linkCss({
           depth,
           selected: location.pathname === n.href

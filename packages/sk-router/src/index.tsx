@@ -34,7 +34,7 @@ export class Link extends Base {
   render() {
     const { classNames, css, href } = this;
     return (
-      <a class={classNames.a} href={href} events={{ click: this.go }}>
+      <a className={classNames.a} href={href} events={{ click: this.go }}>
         <style>{css}</style>
         <slot />
       </a>

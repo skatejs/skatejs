@@ -28,20 +28,20 @@ function format(src) {
   return src;
 }
 
-function highlight(elem, code, language) {
-  // import('prismjs').then(Prism => {
-  //   const prism = new Prism();
-  //   prism.onmessage = e => {
-  //     elem.innerHTML = e.data;
-  //   };
-  //   prism.postMessage(
-  //     JSON.stringify({
-  //       code,
-  //       language
-  //     })
-  //   );
-  // });
-}
+// function highlight(elem, code, language) {
+//   import('prismjs').then(Prism => {
+//     const prism = new Prism();
+//     prism.onmessage = e => {
+//       elem.innerHTML = e.data;
+//     };
+//     prism.postMessage(
+//       JSON.stringify({
+//         code,
+//         language
+//       })
+//     );
+//   });
+// }
 
 const cssCode = {
   code: css({
@@ -76,11 +76,12 @@ export class Code extends Component {
     super.connectedCallback();
     this.style.display = 'block';
   }
+  highlight = e => {
+    if (e) {
+      e.textContent = format(this.code);
+    }
+  };
   render() {
-    const { code, lang, title } = this;
-    const src = document.createElement('div');
-    src.textContent = format(code);
-    highlight(src, code, mapLang[lang] || 'js');
     return (
       <div>
         <style>
@@ -89,9 +90,9 @@ export class Code extends Component {
           )}
         </style>
         {this.$style}
-        {title ? <div class={cssCode.title}>{title}</div> : null}
+        {this.title ? <div class={cssCode.title}>{this.title}</div> : null}
         <div class={cssCode.code}>
-          <pre class={cssCode.pre}>{src}</pre>
+          <pre class={cssCode.pre} ref={this.highlight} />
         </div>
       </div>
     );
@@ -148,7 +149,6 @@ export class Runnable extends Component {
     this.style.display = 'block';
   }
   render() {
-    const { code, html } = this;
     return (
       <Tabs
         css={`
@@ -168,15 +168,15 @@ export class Runnable extends Component {
         items={[
           {
             name: 'Code',
-            pane: <Code code={code} lang="js" />
+            pane: <Code code={this.code} lang="js" />
           },
           {
             name: 'HTML',
-            pane: html ? <Code code={html} lang="html" /> : ''
+            pane: this.html ? <Code code={this.html} lang="html" /> : ''
           },
           {
             name: 'Result',
-            pane: html ? <Example html={html} /> : ''
+            pane: this.html ? <Example html={this.html} /> : ''
           }
         ]}
       />

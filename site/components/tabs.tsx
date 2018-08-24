@@ -37,12 +37,10 @@ const cssTabs = css({
 export class Tabs extends Component {
   static props = {
     css: String,
-    items: Array,
-    selected: Boolean
+    items: Array
   };
   css: string = '';
   items: Array<{ name: string; pane: string }> = [];
-  selected: number = 0;
   state = {
     selected: 0
   };
@@ -58,7 +56,7 @@ export class Tabs extends Component {
     const { css, items } = this;
     const { selected } = this.state;
     return (
-      <div className="${cssTabs}">
+      <div class={cssTabs}>
         {this.$style}
         {style(css, value(cssTabs))}
         <ul class="tabs">

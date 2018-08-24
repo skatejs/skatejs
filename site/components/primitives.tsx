@@ -1,4 +1,4 @@
-import { Link as SkLink } from '@skatejs/sk-router';
+import { Link as SkLink } from '@skatejs/sk-router/src';
 import css, { value } from 'yocss';
 import { Component, h, style } from '../utils';
 
@@ -16,7 +16,7 @@ export class Hr extends Component {
     return (
       <div class={cssHr}>
         {style(value(cssHr))}
-        {'&mdash;&mdash;&mdash'}
+        &mdash;&mdash;&mdash;
       </div>
     );
   }
@@ -44,7 +44,11 @@ export class Link extends Component {
         <slot />
       </a>
     ) : (
-      <SkLink classNames={classNames} css={context.style + css} href={href}>
+      <SkLink
+        classNames={classNames}
+        css={value(context.style) + css}
+        href={href}
+      >
         <slot />
       </SkLink>
     );
