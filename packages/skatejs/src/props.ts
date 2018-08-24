@@ -1,12 +1,10 @@
 import { PropType } from './types';
 
-const formatAttributeName = propName => propName.toLowerCase();
-
 const any: PropType = {
   deserialize: JSON.parse,
   serialize: JSON.stringify,
-  source: formatAttributeName,
-  target: formatAttributeName
+  source: propName => propName.toLowerCase(),
+  target: () => {}
 };
 const array: PropType = any;
 const boolean: PropType = {

@@ -23,8 +23,8 @@ export interface CustomElementConstructor {
 export type NormalizedPropType = {
   deserialize: (string) => any;
   serialize: (any) => string | void;
-  source: (string) => string;
-  target: (string) => string;
+  source: (string) => string | void;
+  target: (string) => string | void;
 };
 
 export type NormalizedPropTypes = Array<{

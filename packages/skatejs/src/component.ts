@@ -121,6 +121,12 @@ export function component(
       return this._props;
     }
 
+    set props(props: Object) {
+      for (const key in this.constructor.props) {
+        this[key] = props[key];
+      }
+    }
+
     get renderRoot() {
       return this.shadowRoot || this.attachShadow({ mode: 'open' });
     }
