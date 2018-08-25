@@ -56,11 +56,25 @@ export class Route extends Component {
     path: String
   };
   page: any = undefined;
-  pageProps: any = null;
-  pageValue: any = null;
   path: string = '';
+  state = {
+    pageProps: null,
+    pageValue: null
+  };
+  load = params => {
+    this.state = {
+      pageProps: params,
+      pageValue: this.page
+    };
+  };
+  unload = () => {
+    this.state = {
+      pageProps: null,
+      pageValue: null
+    };
+  };
   renderer = () => {
-    const { pageProps, pageValue } = this;
+    const { pageProps, pageValue } = this.state;
     if (pageValue) {
       if (pageValue.prototype instanceof HTMLElement) {
         this.shadowRoot.innerHTML = '';
@@ -83,23 +97,34 @@ export class Router extends Base {
     base: String
   };
   base = '/';
-  notFound: any;
-  previousRoute: any;
-  router: any;
+  private notFound: any;
+  private previousRoute: any;
+  private router: any;
   constructor() {
     super();
     this.addEventListener('sk-route-link', (e: CustomEvent) => {
       this.router.route(e.detail);
     });
   }
+  load = (route, params) => {
+    this.unload();
+    this.previousRoute = route;
+    route.load(params);
+  };
+  unload = () => {
+    if (this.previousRoute) {
+      this.previousRoute.unload();
+    }
+  };
   propChanged(name, oldValue, newValue) {
+    // This may be the initial setting.
     if (this.router) {
       this.router.unlisten();
     }
     this.router = navaid(newValue, path => {
       if (this.notFound) {
-        this.notFound.pageProps = { path };
-        this.notFound.pageValue = this.notFound.page;
+        this.unload();
+        this.notFound.load({ path });
       }
     });
     this.router.listen();
@@ -114,15 +139,7 @@ export class Router extends Base {
         this.notFound = route;
       } else {
         this.router.on(route.path, params => {
-          if (this.previousRoute === route) {
-            return;
-          }
-          if (this.previousRoute) {
-            this.previousRoute.pageValue = null;
-          }
-          this.previousRoute = route;
-          route.pageProps = params;
-          route.pageValue = route.page;
+          this.load(route, params);
         });
       }
     });
