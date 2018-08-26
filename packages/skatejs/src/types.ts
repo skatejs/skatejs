@@ -17,14 +17,22 @@ export interface CustomElementConstructor {
   new (): CustomElement;
   is?: string;
   observedAttributes?: Array<string>;
+  name: string;
   props?: {};
 }
+
+export type DenormalizedPropType = {
+  deserialize: void | ((string) => any);
+  serialize: void | ((any) => string | void);
+  source: string | void | ((string) => string | void);
+  target: string | void | ((string) => string | void);
+};
 
 export type NormalizedPropType = {
   deserialize: (string) => any;
   serialize: (any) => string | void;
-  source: (string) => string | void;
-  target: (string) => string | void;
+  source: string | void;
+  target: string | void;
 };
 
 export type NormalizedPropTypes = Array<{
@@ -40,7 +48,7 @@ export type PropType =
   | NumberConstructor
   | ObjectConstructor
   | StringConstructor
-  | NormalizedPropType;
+  | DenormalizedPropType;
 
 export type PropTypes = {
   [s: string]: PropType;
