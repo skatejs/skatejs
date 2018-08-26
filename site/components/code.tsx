@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import css, { value } from 'yocss';
-import { Component, h } from '../utils';
+import { Component, h } from '../utils/component';
 import { Tabs } from './tabs';
 
 const mapLang = {};
@@ -76,11 +76,6 @@ export class Code extends Component {
     super.connectedCallback();
     this.style.display = 'block';
   }
-  highlight = e => {
-    if (e) {
-      e.textContent = format(this.code);
-    }
-  };
   render() {
     return (
       <div>
@@ -92,7 +87,7 @@ export class Code extends Component {
         {this.$style}
         {this.title ? <div class={cssCode.title}>{this.title}</div> : null}
         <div class={cssCode.code}>
-          <pre class={cssCode.pre} ref={this.highlight} />
+          <pre class={cssCode.pre}>{format(this.code)}</pre>
         </div>
       </div>
     );

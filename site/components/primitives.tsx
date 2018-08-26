@@ -1,4 +1,4 @@
-import { Link as SkLink } from '@skatejs/sk-router/src';
+import { Link as SkLink } from '@skatejs/sk-router';
 import css, { value } from 'yocss';
 import { Component, h, style } from '../utils';
 

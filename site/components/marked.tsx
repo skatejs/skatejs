@@ -1,20 +1,11 @@
 import SkMarked from '@skatejs/sk-marked';
-import { define, name } from 'skatejs';
+import { define } from 'skatejs';
 import { Component, h } from '../utils';
 import { Code } from './code';
 import { Link } from './primitives';
 
-const CustomCode = define(
-  class extends Code {
-    static is = name();
-  }
-);
-
-const CustomLink = define(
-  class extends Link {
-    static is = name();
-  }
-);
+const CustomCode = define(Code);
+const CustomLink = define(Link);
 
 const defaultRenderers = {
   code(code, lang) {
@@ -31,6 +22,7 @@ const defaultRenderers = {
 
 export class Marked extends Component {
   static props = {
+    renderers: Object,
     src: String
   };
   renderers: Object = {};

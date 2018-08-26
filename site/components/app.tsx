@@ -1,4 +1,4 @@
-import { Route, Router } from '@skatejs/sk-router/src';
+import { Route, Router } from '@skatejs/sk-router';
 import css from 'yocss';
 import globalStyles from '../css';
 import RouteIndex from '../pages';
