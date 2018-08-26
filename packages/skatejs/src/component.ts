@@ -30,35 +30,58 @@ function delay(fn) {
   }
 }
 
-function deriveAttrsFromProps(props: PropTypes): ObservedAttributes {
-  return normalizePropTypes(props).map(({ propName, propType }) =>
-    propType.source(propName)
-  );
+function deriveAttrsFromProps(props: NormalizedPropTypes): ObservedAttributes {
+  return props.map(({ propType }) => propType.source as string);
+}
+
+function ensureFunction(type: any): (string) => any {
+  return typeof type === 'function' ? type : () => type;
 }
 
 function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
   return Object.keys(propTypes).map(propName => {
-    const propType = propTypes[propName];
+    const propType =
+      mapNativeToPropType.get(propTypes[propName]) ||
+      propTypes[propName] ||
+      props.any;
     return {
       propName,
-      propType: mapNativeToPropType.get(propType) || propType || props.any
+      propType: {
+        deserialize: ensureFunction(propType.deserialize),
+        serialize: ensureFunction(propType.serialize),
+        source: ensureFunction(propType.source)(propName),
+        target: ensureFunction(propType.target)(propName)
+      }
     };
   });
 }
 
-function observeChildList(
-  host: HTMLElement,
-  observer: (EventListenerOrEventListenerObject) => void
-) {
-  const mo = new MutationObserver(observer);
-  mo.observe(host, { childList: true });
-  document.addEventListener('DOMContentLoaded', observer);
-}
+function observeChildren(elem) {
+  const hasChildrenChanged = elem.childrenChanged;
+  const hasChildrenPropType = elem.constructor.props.children;
 
-function observeUpdates(elem) {
-  if (!elem.childrenUpdated) return;
-  observeChildList(elem, () => elem.childrenUpdated());
-  elem.childrenUpdated();
+  if (hasChildrenChanged || hasChildrenPropType) {
+    const mo = new MutationObserver(() => {
+      if (hasChildrenChanged) {
+        elem.childrenChanged();
+      }
+      if (hasChildrenPropType) {
+        elem.forceUpdate();
+      }
+    });
+
+    // We only need to observe direct children since we only care about light
+    // DOM.
+    mo.observe(elem, { childList: true });
+
+    // We wait for DOMContentLoaded to ensure the childList is complete. We
+    // also don't need to forceUpdate here as that will happen anyways.
+    if (hasChildrenChanged) {
+      document.addEventListener('DOMContentLoaded', () => {
+        elem.childrenChanged();
+      });
+    }
+  }
 }
 
 export function component(
@@ -76,15 +99,15 @@ export function component(
     static props?: PropTypes = {};
 
     static get observedAttributes() {
-      const { props } = this;
+      const props = normalizePropTypes(this.props);
 
       mapAttrsToProps.set(this, {});
       mapPropsToTypes.set(this, {});
 
-      normalizePropTypes(props).forEach(({ propName, propType }) => {
-        const attrName = propType.target(propName);
+      props.forEach(({ propName, propType }) => {
+        const { serialize, source, target } = propType;
 
-        mapAttrsToProps.get(this)[propName] = attrName;
+        mapAttrsToProps.get(this)[source as string] = propName;
         mapPropsToTypes.get(this)[propName] = propType;
 
         Object.defineProperty(this.prototype, propName, {
@@ -96,16 +119,16 @@ export function component(
             const oldPropValue = this._props[propName];
             this._props[propName] = propValue;
             this.propChanged(propName, oldPropValue, propValue);
-            if (attrName) {
+            if (target) {
               // We must delay attribute sets because property sets that are
               // initialized in the constructor result in attributes being set
               // and if an attribute is set in the constructor, the DOM throws.
               delay(() => {
-                const attrValue = propType.serialize(propValue);
+                const attrValue = serialize(propValue);
                 if (attrValue == null) {
-                  this.removeAttribute(attrName);
+                  this.removeAttribute(target);
                 } else {
-                  this.setAttribute(attrName, attrValue);
+                  this.setAttribute(target, attrValue);
                 }
               });
             }
@@ -174,7 +197,7 @@ export function component(
 
       // We observe updates when connected because there's no point in
       // observing if it's not connected yet.
-      observeUpdates(this);
+      observeChildren(this);
 
       // This does the initial render. This is necessary as props wouldn't be
       // triggering a render yet.
