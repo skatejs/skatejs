@@ -130,8 +130,8 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     static _observedAttributes: Array<string>;
     static _props: Object;
 
-    _prevProps: Object;
-    _prevState: Object;
+    _prevProps: Object | null;
+    _prevState: Object | null;
     _props: Object;
     _state: Object;
     _syncingAttributeToProperty: null | string;
@@ -149,8 +149,8 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     static _observedAttributes = [];
     static _props = {};
 
-    _prevProps = {};
-    _prevState = {};
+    _prevProps = null;
+    _prevState = null;
     _props = {};
     _state = {};
 
