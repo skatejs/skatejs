@@ -55,7 +55,7 @@ export class Route extends Component {
     pageValue: Object,
     path: String
   };
-  page: any = undefined;
+  page: any = null;
   path: string = '';
   state = {
     pageProps: null,
@@ -132,9 +132,9 @@ export class Router extends Base {
   connectedCallback() {
     super.connectedCallback();
   }
-  childrenUpdated() {
+  childrenChanged() {
     this.router.unlisten();
-    Array.from(this.children).forEach(route => {
+    Array.from(this.children).forEach((route: Route) => {
       if (route.path === '*') {
         this.notFound = route;
       } else {
