@@ -131,18 +131,16 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     static _props: Object;
 
     _prevProps: Object;
-    _prevState: Object;
     _props: Object;
-    _state: Object;
     _syncingAttributeToProperty: null | string;
     _syncingPropertyToAttribute: boolean;
     _updating: boolean;
     _wasInitiallyRendered: boolean;
 
-    updated: ?(props: Object, state: Object) => void;
-    shouldUpdate: (props: Object, state: Object) => void;
+    updated: ?(props: Object) => void;
+    shouldUpdate: (props: Object) => void;
     triggerUpdate: () => void;
-    updating: ?(props: Object, state: Object) => void;
+    updating: ?(props: Object) => void;
 
     static _attributeToAttributeMap = {};
     static _attributeToPropertyMap = {};
@@ -150,9 +148,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     static _props = {};
 
     _prevProps = {};
-    _prevState = {};
     _props = {};
-    _state = {};
 
     static get observedAttributes(): Array<string> {
       // We have to define props here because observedAttributes are retrieved
@@ -183,15 +179,6 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     set props(props: Object) {
       const ctorProps = this.constructor.props;
       keys(props).forEach(k => k in ctorProps && ((this: any)[k] = props[k]));
-    }
-
-    get state() {
-      return this._state;
-    }
-
-    set state(state: Object) {
-      this._state = state;
-      this.triggerUpdate();
     }
 
     attributeChangedCallback(
@@ -248,15 +235,14 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       }
       this._updating = true;
       delay(() => {
-        const { _prevProps, _prevState } = this;
+        const { _prevProps } = this;
         if (this.updating) {
-          this.updating(_prevProps, _prevState);
+          this.updating(_prevProps);
         }
-        if (this.updated && this.shouldUpdate(_prevProps, _prevState)) {
-          this.updated(_prevProps, _prevState);
+        if (this.updated && this.shouldUpdate(_prevProps)) {
+          this.updated(_prevProps);
         }
         this._prevProps = this.props;
-        this._prevState = this.state;
         this._updating = false;
       });
     }
