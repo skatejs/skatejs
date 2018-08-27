@@ -1,25 +1,13 @@
 import { options, render } from 'preact';
+import { define } from 'skatejs';
 
 const mapDom = new WeakMap();
-const mapNodeName = new WeakMap();
 let oldVnode;
 
-function generateUniqueName(prefix) {
-  let suffix = 0;
-  while (customElements.get(`${prefix}-${suffix}`)) ++suffix;
-  return `${prefix}-${suffix}`;
-}
-
 function newVnode(vnode) {
-  let fn = vnode.nodeName;
-  if (fn && fn.prototype instanceof HTMLElement) {
-    let nodeName = mapNodeName.get(fn);
-    if (!nodeName) {
-      nodeName = generateUniqueName(fn.name.toLowerCase());
-      mapNodeName.set(fn, nodeName);
-      customElements.define(nodeName, class extends fn {});
-    }
-    vnode.nodeName = nodeName;
+  const { nodeName } = vnode;
+  if (nodeName.prototype instanceof HTMLElement) {
+    vnode.nodeName = define(nodeName).is;
   }
   return vnode;
 }
