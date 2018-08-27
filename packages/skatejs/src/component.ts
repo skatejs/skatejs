@@ -163,13 +163,6 @@ export function component(
       this.forceUpdate();
     }
 
-    constructor() {
-      super();
-
-      // TODO is there a better way and to still make this declarative: renderer = renderer;
-      this.renderer = (root, func) => (root.innerHTML = func());
-    }
-
     attributeChangedCallback(
       attrName: string,
       oldValue: string | null,
@@ -211,7 +204,9 @@ export function component(
 
       // Rendering null here allows renderers to perform any necessary
       // unmounting logic if need be.
-      this.renderer(this.renderRoot, () => null);
+      if (this.render) {
+        this.renderer(this.renderRoot, () => null);
+      }
     }
 
     forceUpdate(): void {
@@ -232,7 +227,7 @@ export function component(
       delay(() => {
         const { _prevProps, _prevState } = this;
         this.updated(_prevProps, _prevState);
-        if (this.shouldUpdate(_prevProps, _prevState)) {
+        if (this.render && this.shouldRender(_prevProps, _prevState)) {
           this.renderer(this.renderRoot, () => this.render());
           this.rendered(_prevProps, _prevState);
         }
@@ -246,7 +241,9 @@ export function component(
 
     rendered(props: Object, state: Object) {}
 
-    shouldUpdate(props: Object, state: Object): boolean {
+    renderer = (root, func) => (root.innerHTML = func());
+
+    shouldRender(props: Object, state: Object): boolean {
       return true;
     }
 

@@ -8,7 +8,7 @@ export interface CustomElement extends HTMLElement {
   render?();
   renderer?: (root: Root, func: () => any) => void;
   renderRoot?: Root;
-  shouldUpdate?(props: Object, state: Object);
+  shouldRender?(props: Object, state: Object): boolean;
   state?: Object;
   updated?(props: Object, state: Object);
 }
