@@ -1,13 +1,12 @@
 import { CustomElementConstructor } from './types';
-import { name } from './name.js';
+import { name } from './name';
 
 export function define(
   ctor: CustomElementConstructor
 ): CustomElementConstructor {
-  const tag = name();
-  ctor = class extends ctor {
-    static is = tag;
-  };
-  customElements.define(tag, ctor);
+  if (!ctor.is) {
+    ctor.is = name(ctor.name);
+    customElements.define(ctor.is, ctor);
+  }
   return ctor;
 }
