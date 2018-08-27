@@ -3,6 +3,7 @@
     "declaration": true,
     "jsx": "react",
     "jsxFactory": "h",
+    "lib": ["dom", "es6"],
     "target": "es5"
   },
   "exclude": ["**/__tests__/**"],
