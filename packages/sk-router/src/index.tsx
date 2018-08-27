@@ -1,5 +1,5 @@
 import navaid from 'navaid';
-import { Component, define } from 'skatejs';
+import { Component, define } from 'skatejs/src';
 import { h } from '@skatejs/val';
 
 class Base extends Component {
@@ -51,45 +51,14 @@ export class Link extends Base {
 export class Route extends Component {
   static props = {
     page: Object,
-    pageProps: Object,
-    pageValue: Object,
     path: String
   };
   page: any = null;
   path: string = '';
-  state = {
-    pageProps: null,
-    pageValue: null
-  };
-  load = params => {
-    this.state = {
-      pageProps: params,
-      pageValue: this.page
-    };
-  };
-  unload = () => {
-    this.state = {
-      pageProps: null,
-      pageValue: null
-    };
-  };
-  renderer = () => {
-    const { pageProps, pageValue } = this.state;
-    if (pageValue) {
-      if (pageValue.prototype instanceof HTMLElement) {
-        this.shadowRoot.innerHTML = '';
-        const Page = define(pageValue);
-        this.shadowRoot.appendChild(new Page());
-      } else if (pageValue[0] === '<') {
-        this.shadowRoot.innerHTML = pageValue;
-      } else {
-        this.shadowRoot.innerHTML = `<${pageValue}></${pageValue}>`;
-      }
-      this.shadowRoot.firstElementChild['props'] = pageProps;
-    } else {
-      this.shadowRoot.innerHTML = '';
-    }
-  };
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
 }
 
 export class Router extends Base {
@@ -105,47 +74,41 @@ export class Router extends Base {
     this.addEventListener('sk-route-link', (e: CustomEvent) => {
       this.router.route(e.detail);
     });
-  }
-  load = (route, params) => {
-    this.unload();
-    this.previousRoute = route;
-    route.load(params);
-  };
-  unload = () => {
-    if (this.previousRoute) {
-      this.previousRoute.unload();
-    }
-  };
-  propChanged(name, oldValue, newValue) {
-    // This may be the initial setting.
-    if (this.router) {
-      this.router.unlisten();
-    }
-    this.router = navaid(newValue, path => {
+    this.router = navaid('/', path => {
       if (this.notFound) {
-        this.unload();
-        this.notFound.load({ path });
+        this.route(this.notFound, { path });
       }
     });
-    this.router.listen();
-  }
-  connectedCallback() {
-    super.connectedCallback();
   }
   childrenChanged() {
-    this.router.unlisten();
     Array.from(this.children).forEach((route: Route) => {
       if (route.path === '*') {
         this.notFound = route;
       } else {
         this.router.on(route.path, params => {
-          this.load(route, params);
+          this.route(route, params);
         });
       }
     });
     this.router.listen();
   }
-  render() {
-    return <slot />;
+  route(route, params) {
+    if (this.previousRoute === route) {
+      return;
+    }
+    if (this.previousRoute) {
+      this.previousRoute.shadowRoot.innerHTML = '';
+    }
+    if (route.page.prototype instanceof HTMLElement) {
+      route.shadowRoot.innerHTML = '';
+      var Page = define(route.page);
+      route.shadowRoot.appendChild(new Page());
+    } else if (route.page[0] === '<') {
+      route.shadowRoot.innerHTML = route.page;
+    } else {
+      route.shadowRoot.innerHTML = '<' + route.page + '></' + route.page + '>';
+    }
+    Object.assign(route.shadowRoot.firstElementChild, params);
+    this.previousRoute = route;
   }
 }
