@@ -160,14 +160,12 @@ async function build({ pkg }) {
         const indexTs = path.join(dir, 'src', 'index.ts');
         const indexTsx = path.join(dir, 'src', 'index.tsx');
         const tsConfig = path.join(dir, 'tsconfig.json');
-        let cleanUpTsConfig = false;
 
         if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
           return;
         }
 
         if (!await fs.exists(tsConfig)) {
-          cleanUpTsConfig = true;
           await fs.copy('tsconfig.json', tsConfig);
         }
 
@@ -193,10 +191,6 @@ async function build({ pkg }) {
           )
             .catch(e => e)
             .then(r => r.stdout);
-        }
-
-        if (cleanUpTsConfig) {
-          await fs.remove(tsConfig);
         }
       });
       console.log(w.config.name);
