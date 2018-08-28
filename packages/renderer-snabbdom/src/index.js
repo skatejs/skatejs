@@ -12,7 +12,9 @@ export default function createMixin(modules) {
         let newVTree = call();
 
         if (!this._lastVTree) {
-          root.innerHTML = '<div style="display: contents"></div>';
+          const container = document.createElement('div');
+          container.style = 'display: contents';
+          root.appendChild(container);
           this._lastVTree = patch(root.children[0], newVTree);
         } else {
           this._lastVTree = patch(this._lastVTree, newVTree);
