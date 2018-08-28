@@ -28,10 +28,7 @@ export default function createMixin(modules) {
       
       disconnectedCallback() {
         super.disconnectedCallback && super.disconnectedCallback();
-
-        // How to "unmount" the component?
-        // Waiting for a reply at https://github.com/snabbdom/snabbdom/issues/386
-        
+        patch(this._lastVTree, null)
       }
     };
 }
