@@ -13,11 +13,7 @@ export default function createMixin(modules) {
 
         // first render
         if (!this._lastVTree) {
-          const tmp = document.createElement('tmp');
-          this.root.appendChild(tmp);
-          
-          // replaces the `tmp` element with content described by the vnode
-          this._lastVTree = patch(tmp, newVTree);
+          this._lastVTree = patch(root, newVTree);
         }
 
         // all subsequent renders
