@@ -4,13 +4,13 @@ export interface CustomElement extends HTMLElement {
   connectedCallback?();
   disconnectedCallback?();
   forceUpdate?();
-  props?: Object;
+  props?: Props;
   render?();
-  renderer?: (root: Root, func: () => any) => void;
+  rendered?(props: Props);
+  renderer?(root: Root, func: () => any);
   renderRoot?: Root;
-  shouldRender?(props: Object, state: Object): boolean;
-  state?: Object;
-  updated?(props: Object, state: Object);
+  shouldRender?(props: Props): boolean;
+  updated?(props: Props);
 }
 
 export interface CustomElementConstructor {
@@ -22,17 +22,30 @@ export interface CustomElementConstructor {
 }
 
 export type DenormalizedPropType = {
-  deserialize: void | ((string) => any);
-  serialize: void | ((any) => string | void);
-  source: string | void | ((string) => string | void);
-  target: string | void | ((string) => string | void);
+  changed?:
+    | void
+    | ((elem: HTMLElement, name: string, oldValue: any, newValue: any) => void);
+  defined?: void | ((ctor: CustomElementConstructor, name: string) => void);
+  deserialize?: void | ((string) => any);
+  serialize?: void | ((any) => string | void);
+  source?: string | void | ((name: string) => string | void);
+  target?: string | void | ((name: string) => string | void);
+  [s: string]: any;
 };
 
 export type NormalizedPropType = {
+  changed: ((
+    elem: HTMLElement,
+    name: string,
+    oldValue: any,
+    newValue: any
+  ) => void);
+  defined: ((ctor: CustomElementConstructor, name: string) => void);
   deserialize: (string) => any;
   serialize: (any) => string | void;
   source: string | void;
   target: string | void;
+  [s: string]: any;
 };
 
 export type NormalizedPropTypes = Array<{
@@ -41,6 +54,10 @@ export type NormalizedPropTypes = Array<{
 }>;
 
 export type ObservedAttributes = Array<string>;
+
+export type Props = {
+  [s: string]: any;
+};
 
 export type PropType =
   | ArrayConstructor
