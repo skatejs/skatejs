@@ -2,11 +2,14 @@ import { props } from './props';
 import {
   CustomElement,
   CustomElementConstructor,
+  NormalizedPropType,
   NormalizedPropTypes,
   ObservedAttributes,
+  Props,
   PropTypes
 } from './types';
 import { Map } from 'core-js';
+import { normalize } from 'path';
 
 // @ts-ignore
 const mapAttrsToProps = new Map();
@@ -17,9 +20,63 @@ const mapNativeToPropType = new Map();
 
 mapNativeToPropType.set(Array, props.array);
 mapNativeToPropType.set(Boolean, props.boolean);
+mapNativeToPropType.set(Event, props.number);
 mapNativeToPropType.set(Number, props.number);
 mapNativeToPropType.set(Object, props.object);
 mapNativeToPropType.set(String, props.string);
+
+function defineProp(
+  ctor: CustomElementConstructor,
+  propName: string,
+  propType: NormalizedPropType
+) {
+  const { source, target } = propType;
+
+  mapAttrsToProps.get(ctor)[source as string] = propName;
+  mapPropsToTypes.get(ctor)[propName] = propType;
+
+  Object.defineProperty(ctor.prototype, propName, {
+    configurable: true,
+    get() {
+      return this._props[propName];
+    },
+    set(newPropValue) {
+      const oldPropValue = this._props[propName];
+      this._props[propName] = newPropValue;
+
+      if (oldPropValue !== newPropValue) {
+        this._propsChanged[propName] = oldPropValue;
+        propType.changed(this, propName, oldPropValue, newPropValue);
+      }
+
+      if (target) {
+        // We must delay attribute sets because property sets that are
+        // initialized in the constructor result in attributes being set
+        // and if an attribute is set in the constructor, the DOM throws.
+        delay(() => {
+          const attrValue = propType.serialize(newPropValue);
+          if (attrValue == null) {
+            this.removeAttribute(target);
+          } else {
+            this.setAttribute(target, attrValue);
+          }
+        });
+      }
+      this.forceUpdate();
+    }
+  });
+
+  propType.defined(ctor, propName);
+}
+
+function defineProps(ctor: CustomElementConstructor) {
+  const props = normalizePropTypes(ctor.props);
+  mapAttrsToProps.set(ctor, {});
+  mapPropsToTypes.set(ctor, {});
+  props.forEach(({ propName, propType }) =>
+    defineProp(ctor, propName, propType)
+  );
+}
 
 function delay(fn) {
   if (typeof global.Promise === 'function') {
@@ -30,8 +87,12 @@ function delay(fn) {
   }
 }
 
-function deriveAttrsFromProps(props: NormalizedPropTypes): ObservedAttributes {
-  return props.map(({ propType }) => propType.source as string);
+function deriveAttrsFromProps(
+  ctor: CustomElementConstructor
+): ObservedAttributes {
+  return normalizePropTypes(ctor.props).map(
+    ({ propType }) => propType.source as string
+  );
 }
 
 function ensureFunction(type: any): (string) => any {
@@ -47,6 +108,11 @@ function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
     return {
       propName,
       propType: {
+        // Pass on everything else as custom prop types may require additional
+        // options be passed as part of the definition.
+        ...propType,
+        changed: ensureFunction(propType.changed),
+        defined: ensureFunction(propType.defined),
         deserialize: ensureFunction(propType.deserialize),
         serialize: ensureFunction(propType.serialize),
         source: ensureFunction(propType.source)(propName),
@@ -88,79 +154,23 @@ export function component(
   Base: CustomElementConstructor = HTMLElement
 ): CustomElementConstructor {
   return class extends Base implements CustomElement {
-    _prevProps: Object = {};
-    _prevState: Object = {};
-    _props: Object = {};
-    _state: Object = {};
-    _updating: boolean = false;
+    private _props: Props = {};
+    private _propsChanged: Props = {};
+    private _propsUpdating: boolean = false;
 
     ['constructor']: CustomElementConstructor;
 
     static props?: PropTypes = {};
 
     static get observedAttributes() {
-      const props = normalizePropTypes(this.props);
-
-      mapAttrsToProps.set(this, {});
-      mapPropsToTypes.set(this, {});
-
-      props.forEach(({ propName, propType }) => {
-        const { serialize, source, target } = propType;
-
-        mapAttrsToProps.get(this)[source as string] = propName;
-        mapPropsToTypes.get(this)[propName] = propType;
-
-        Object.defineProperty(this.prototype, propName, {
-          configurable: true,
-          get() {
-            return this._props[propName];
-          },
-          set(propValue) {
-            const oldPropValue = this._props[propName];
-            this._props[propName] = propValue;
-            this.propChanged(propName, oldPropValue, propValue);
-            if (target) {
-              // We must delay attribute sets because property sets that are
-              // initialized in the constructor result in attributes being set
-              // and if an attribute is set in the constructor, the DOM throws.
-              delay(() => {
-                const attrValue = serialize(propValue);
-                if (attrValue == null) {
-                  this.removeAttribute(target);
-                } else {
-                  this.setAttribute(target, attrValue);
-                }
-              });
-            }
-            this.forceUpdate();
-          }
-        });
-      });
-
-      return deriveAttrsFromProps(props);
-    }
-
-    get props() {
-      return this._props;
-    }
-
-    set props(props: Object) {
-      for (const key in this.constructor.props) {
-        this[key] = props[key];
-      }
+      defineProps(this);
+      return deriveAttrsFromProps(this);
     }
 
     get renderRoot() {
-      return this.shadowRoot || this.attachShadow({ mode: 'open' });
-    }
-
-    get state() {
-      return this._state;
-    }
-
-    set state(state: Object) {
-      this._state = state;
-      this.forceUpdate();
+      return this.attachShadow
+        ? this.shadowRoot || this.attachShadow({ mode: 'open' })
+        : this;
     }
 
     attributeChangedCallback(
@@ -214,40 +224,38 @@ export function component(
       //
       // - We're not connected.
       // - We're already updating.
-      if (!this.parentNode || this._updating) {
+      if (!this.parentNode || this._propsUpdating) {
         return;
       }
 
       // This flag prevents infinite loops if another update is triggered while
       // performing the current update.
-      this._updating = true;
+      this._propsUpdating = true;
 
       // We execute the update process at the end of the current microtask so
       // we can debounce any subsequent updates using the _updating flag.
       delay(() => {
-        const { _prevProps, _prevState } = this;
-        this.updated(_prevProps, _prevState);
-        if (this.render && this.shouldRender(_prevProps, _prevState)) {
+        this.updated(this._propsChanged);
+        if (this.shouldRender(this._propsChanged)) {
           this.renderer(this.renderRoot, () => this.render());
-          this.rendered(_prevProps, _prevState);
+          this.rendered(this._propsChanged);
         }
-        this._prevProps = this.props;
-        this._prevState = this.state;
-        this._updating = false;
+        this._propsChanged = {};
+        this._propsUpdating = false;
       });
     }
 
-    propChanged(name: string, oldValue: any, newValue: any) {}
+    rendered(prevProps: Props) {}
 
-    rendered(props: Object, state: Object) {}
-
-    renderer = (root, func) => (root.innerHTML = func());
-
-    shouldRender(props: Object, state: Object): boolean {
-      return true;
+    renderer(root, func) {
+      root.innerHTML = func();
     }
 
-    updated(props: Object, state: Object) {}
+    shouldRender(prevProps: Props) {
+      return !!this.render;
+    }
+
+    updated(prevProps: Props) {}
   };
 }
 

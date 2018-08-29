@@ -1,23 +1,52 @@
 import { PropType } from './types';
 
 const any: PropType = {
-  deserialize: JSON.parse,
-  serialize: JSON.stringify,
+  changed: null,
+  defined: null,
+  deserialize: val => val,
+  serialize: val => val,
   source: propName => propName.toLowerCase(),
   target: () => {}
 };
-const array: PropType = any;
+
+const array: PropType = {
+  ...any,
+  deserialize: JSON.parse,
+  serialize: JSON.stringify
+};
+
 const boolean: PropType = {
   ...any,
   deserialize: (val): boolean => val != null,
   serialize: (val: boolean) => (val ? '' : null)
 };
+
+const event: PropType = {
+  ...any,
+  changed(elem, name, oldValue, newValue) {
+    // TODO see if we can deserialize to a standard onclick prop so that we
+    // can support in-attribute handlers.
+    const eventName = this.getEventName(name);
+    if (oldValue) {
+      elem.removeEventListener(eventName, oldValue);
+    }
+    if (newValue) {
+      elem.addEventListener(eventName, newValue);
+    }
+  },
+  getEventName(name: string): string {
+    return name;
+  }
+};
+
 const number: PropType = {
   ...any,
   deserialize: (val): number => (val == null ? 0 : Number(val)),
   serialize: (val: number) => (val == null ? null : String(Number(val)))
 };
-const object: PropType = any;
+
+const object: PropType = array;
+
 const string: PropType = {
   ...any,
   deserialize: val => val,
@@ -28,6 +57,7 @@ export const props = {
   any,
   array,
   boolean,
+  event,
   number,
   object,
   string
