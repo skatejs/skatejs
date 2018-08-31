@@ -37,7 +37,8 @@ const cssTabs = css({
 export class Tabs extends Component {
   static props = {
     css: String,
-    items: Array
+    items: Array,
+    state: Object
   };
   css: string = '';
   items: Array<{ name: string; pane: string }> = [];

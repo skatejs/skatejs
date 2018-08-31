@@ -17,6 +17,9 @@ const withLoading = (loader: Function) =>
   });
 
 export default class App extends Component {
+  static props = {
+    state: Object
+  };
   context = { style: globalStyles };
   css = {
     app: css({

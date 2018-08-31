@@ -7,7 +7,7 @@ export { h } from '@skatejs/renderer-preact';
 export class Component extends SkateComponent {
   _context: any;
   css: any;
-  renderer = renderer;
+  state = {};
   get $style(): string {
     // @ts-ignore
     return style(
@@ -30,5 +30,8 @@ export class Component extends SkateComponent {
   }
   set context(context: any) {
     this._context = context;
+  }
+  renderer(root, func) {
+    renderer(root, func);
   }
 }

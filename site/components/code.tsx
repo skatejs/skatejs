@@ -1,3 +1,4 @@
+import SkateComponent from 'skatejs';
 import { readFileSync } from 'fs';
 import css, { value } from 'yocss';
 import { Component, h } from '../utils/component';
@@ -110,7 +111,7 @@ const cssExample = {
   })
 };
 
-export class Example extends Component {
+export class Example extends SkateComponent {
   static props = {
     html: String,
     title: String
@@ -121,15 +122,15 @@ export class Example extends Component {
     super.connectedCallback();
     this.style.display = 'block';
   }
-  renderer = function(root) {
-    root.innerHTML = `
+  render() {
+    return `
       <style>${value(...values(cssExample))}</style>
       ${
         this.title ? `<div class="${cssExample.title}">${this.title}</div>` : ''
       }
       <div class="${cssExample.code}">${this.html}</div>
     `;
-  };
+  }
 }
 
 export class Runnable extends Component {

@@ -7,7 +7,8 @@ export const withLoadable = (props: {
 }) =>
   class extends Component {
     static props = {
-      props: Object
+      props: Object,
+      state: Object
     };
     state: { loaded?: Object } = {};
     loader: Function = props.loader;
