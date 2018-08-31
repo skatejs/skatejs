@@ -1,10 +1,11 @@
 import { PropType } from './types';
 
 const any: PropType = {
-  changed: null,
   defined: null,
   deserialize: val => val,
+  get: (elem, name, value) => value,
   serialize: val => val,
+  set: (elem, name, oldValue, newValue) => newValue,
   source: propName => propName.toLowerCase(),
   target: () => {}
 };
@@ -23,7 +24,7 @@ const boolean: PropType = {
 
 const event: PropType = {
   ...any,
-  changed(elem, name, oldValue, newValue) {
+  set(elem, name, oldValue, newValue) {
     // TODO see if we can deserialize to a standard onclick prop so that we
     // can support in-attribute handlers.
     const eventName = this.getEventName(name);
@@ -33,6 +34,7 @@ const event: PropType = {
     if (newValue) {
       elem.addEventListener(eventName, newValue);
     }
+    return newValue;
   },
   getEventName(name: string): string {
     return name;

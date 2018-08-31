@@ -36,16 +36,17 @@ function defineProp(
   Object.defineProperty(ctor.prototype, propName, {
     configurable: true,
     get() {
-      return this._props[propName];
+      return propType.get(this, propName, this._props[propName]);
     },
     set(newPropValue) {
       const oldPropValue = this._props[propName];
-      this._props[propName] = newPropValue;
-
-      if (oldPropValue !== newPropValue) {
-        this._propsChanged[propName] = oldPropValue;
-        propType.changed(this, propName, oldPropValue, newPropValue);
-      }
+      this._propsChanged[propName] = oldPropValue;
+      this._props[propName] = propType.set(
+        this,
+        propName,
+        oldPropValue,
+        newPropValue
+      );
 
       if (target) {
         // We must delay attribute sets because property sets that are
@@ -109,10 +110,11 @@ function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
         // Pass on everything else as custom prop types may require additional
         // options be passed as part of the definition.
         ...propType,
-        changed: ensureFunction(propType.changed),
         defined: ensureFunction(propType.defined),
         deserialize: ensureFunction(propType.deserialize),
+        get: ensureFunction(propType.get),
         serialize: ensureFunction(propType.serialize),
+        set: ensureFunction(propType.set),
         source: ensureFunction(propType.source)(propName),
         target: ensureFunction(propType.target)(propName)
       }
@@ -243,16 +245,16 @@ export default function(
       });
     }
 
-    rendered(prevProps: Props) {}
+    rendered(props: Props) {}
 
     renderer(root, func) {
       root.innerHTML = func();
     }
 
-    shouldRender(prevProps: Props) {
+    shouldRender(props: Props) {
       return !!this.render;
     }
 
-    updated(prevProps: Props) {}
+    updated(props: Props) {}
   };
 }
