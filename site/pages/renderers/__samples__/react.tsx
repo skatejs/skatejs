@@ -1,4 +1,4 @@
-/* @jsx React.createElement */
+/** @jsx React.createElement */
 
 import Component from 'skatejs';
 import renderer from '@skatejs/renderer-react';
@@ -8,7 +8,6 @@ class RendererReact extends Component {
   name: string = 'World';
   renderer = renderer;
   render() {
-    // @ts-ignore
     return <span>Hello, {this.name}!</span>;
   }
 }

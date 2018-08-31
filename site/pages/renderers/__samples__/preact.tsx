@@ -1,4 +1,4 @@
-/* @jsx h */
+/** @jsx h */
 
 import Component from 'skatejs';
 import renderer, { h } from '@skatejs/renderer-preact';
