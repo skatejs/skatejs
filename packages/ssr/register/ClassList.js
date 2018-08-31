@@ -1,6 +1,8 @@
 // TODO performance test and update this from class accessors instead.
 function set(list) {
-  return new Set((list._elem.className || '').split(' '));
+  const classList =
+    (list._elem.className && list._elem.className.split(' ')) || [];
+  return new Set(classList);
 }
 
 class ClassList {
@@ -8,14 +10,18 @@ class ClassList {
     this._elem = elem;
   }
   add(name) {
-    set(this).add(name);
+    const classList = set(this).add(name);
+    this._elem.className = Array.from(classList).join(' ');
     return this;
   }
   contains(name) {
     return set(this).has(name);
   }
   remove(name) {
-    set(this).delete(name);
+    const classList = set(this);
+    classList.delete(name);
+
+    this._elem.className = Array.from(classList).join(' ');
     return this;
   }
 }
