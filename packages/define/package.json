@@ -1,0 +1,25 @@
+{
+    "name": "@skatejs/define",
+    "description": "Define custom elements without worrying about having to find a unique name for them.",
+    "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
+    "license": "MIT",
+    "keywords": [
+      "custom",
+      "elements",
+      "web",
+      "components"
+    ],
+    "repository": "https://github.com/skatejs/skatejs",
+    "version": "0.0.0",
+    "files": [
+      "dist/cjs",
+      "dist/esm"
+    ],
+    "browser": "dist/esm/index.js",
+    "main": "dist/cjs/index.js",
+    "module": "dist/esm/index.js",
+    "devDependencies": {
+      "@skatejs/bore": "4.0.3"
+    }
+  }
+  

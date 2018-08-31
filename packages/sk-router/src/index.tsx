@@ -1,5 +1,6 @@
 import navaid from 'navaid';
-import { Component, define } from 'skatejs';
+import Component from 'skatejs';
+import define from '@skatejs/define';
 import { h } from '@skatejs/val';
 
 class Base extends Component {

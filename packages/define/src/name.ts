@@ -13,7 +13,7 @@ function format(prefix: string, suffix: number): string {
   );
 }
 
-export function name(prefix?: string): string {
+export default function(prefix?: string): string {
   prefix = dashcase(prefix || 'element');
   let suffix: number = 0;
   while (customElements.get(format(prefix, suffix))) ++suffix;

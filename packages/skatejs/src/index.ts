@@ -1,5 +1,3 @@
-export * from './component';
-export * from './define';
-export * from './name';
-export * from './props';
-export * from './types';
+export { default } from './component';
+export { default as createClass } from './create-class';
+export { default as props } from './props';

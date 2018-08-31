@@ -1,13 +1,13 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com>",
   "dependencies": {
-    "babel-types": "6.26.0",
-    "jest": "22.3.0"
+    "babel-types": "6.26.0"
   },
   "description": "> Babel plugin to transform Flow types to Skate props.",
   "devDependencies": {
-    "babel-core": "6.26.0",
-    "outdent": "0.4.1"
+    "babel-core": "6.26.3",
+    "outdent": "0.4.1",
+    "jest": "22.3.0"
   },
   "license": "MIT",
   "main": "src/index.js",

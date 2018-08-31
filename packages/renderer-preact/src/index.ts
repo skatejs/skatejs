@@ -1,5 +1,5 @@
 import { options, render } from 'preact';
-import { define } from 'skatejs';
+import define from '@skatejs/define';
 
 const mapDom = new WeakMap();
 let oldVnode;

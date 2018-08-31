@@ -53,7 +53,7 @@ const string: PropType = {
   serialize: val => (val == null ? null : String(val))
 };
 
-export const props = {
+export default {
   any,
   array,
   boolean,

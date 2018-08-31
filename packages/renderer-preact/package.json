@@ -20,13 +20,14 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "src": "src",
+  "dependencies": {
+    "@skatejs/define": "0.0.0"
+  },
   "devDependencies": {
-    "preact": "8.2.7",
-    "skatejs": "6.0.0-dev"
+    "preact": "8.2.7"
   },
   "peerDependencies": {
-    "preact": "^8.2.5",
-    "skatejs": "6.0.0-dev"
+    "preact": "^8.2.5"
   },
   "version": "0.2.5"
 }
