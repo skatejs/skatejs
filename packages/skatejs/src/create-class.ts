@@ -1,4 +1,4 @@
-import { props } from './props';
+import props from './props';
 import {
   CustomElement,
   CustomElementConstructor,

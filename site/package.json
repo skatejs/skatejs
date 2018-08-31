@@ -2,6 +2,7 @@
   "name": "@skatejs/site",
   "private": true,
   "dependencies": {
+    "@skatejs/define": "0.0.0",
     "@skatejs/renderer-lit-html": "0.2.0",
     "@skatejs/renderer-preact": "0.2.5",
     "@skatejs/renderer-react": "0.2.1",

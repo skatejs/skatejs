@@ -1,5 +1,5 @@
+import define from '@skatejs/define';
 import SkMarked from '@skatejs/sk-marked';
-import { define } from 'skatejs';
 import { Component, h } from '../utils';
 import { Code } from './code';
 import { Link } from './primitives';

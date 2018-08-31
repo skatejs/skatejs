@@ -1,4 +1,4 @@
-import { Component } from 'skatejs';
+import Component from 'skatejs';
 
 class RendererDefault extends Component {
   name: string = 'World';

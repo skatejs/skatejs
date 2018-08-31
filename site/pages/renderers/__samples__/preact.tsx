@@ -1,6 +1,6 @@
 /* @jsx h */
 
-import { Component } from 'skatejs';
+import Component from 'skatejs';
 import renderer from '@skatejs/renderer-preact';
 import { h } from 'preact';
 
