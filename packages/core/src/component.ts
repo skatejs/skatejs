@@ -1,2 +1,2 @@
-import createClass from './create-class';
-export default createClass();
+import mixin from './mixin';
+export default mixin();
