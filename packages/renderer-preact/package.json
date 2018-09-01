@@ -1,6 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "@skatejs/define": "0.0.0"
   },
@@ -12,6 +13,7 @@
     "dist/cjs",
     "dist/esm"
   ],
+  "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
     "components",
@@ -27,9 +29,7 @@
   "peerDependencies": {
     "preact": "^8.2.5"
   },
+  "repository": "skatejs/skatejs",
   "src": "src",
-  "version": "0.2.5",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "homepage": "https://skatejs.netlify.com",
-  "repository": "skatejs/skatejs"
+  "version": "0.2.5"
 }

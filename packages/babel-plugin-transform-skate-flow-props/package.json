@@ -1,5 +1,6 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "babel-types": "6.26.0"
   },
@@ -9,14 +10,6 @@
     "outdent": "0.4.1",
     "jest": "22.3.0"
   },
-  "license": "MIT",
-  "main": "src/index.js",
-  "name": "babel-plugin-transform-skate-flow-props",
-  "scripts": {
-    "test": "jest"
-  },
-  "version": "0.1.0",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -26,5 +19,12 @@
     "shadow",
     "dom"
   ],
-  "repository": "skatejs/skatejs"
+  "license": "MIT",
+  "main": "src/index.js",
+  "name": "babel-plugin-transform-skate-flow-props",
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "version": "0.1.0"
 }

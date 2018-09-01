@@ -11,6 +11,8 @@
     "@skatejs/sk-marked": "/node_modules/@skatejs/sk-marked/src",
     "@skatejs/sk-router": "/node_modules/@skatejs/sk-router/src"
   },
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "@skatejs/core": "6.0.0-dev",
     "@skatejs/define": "0.0.0",
@@ -31,10 +33,6 @@
   "devDependencies": {
     "parcel-bundler": "^1.9.7"
   },
-  "name": "@skatejs/site",
-  "private": true,
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -45,5 +43,7 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/site",
+  "private": true,
   "repository": "skatejs/skatejs"
 }

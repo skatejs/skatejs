@@ -1,6 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/es/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for Snabbdom.",
   "devDependencies": {
     "@skatejs/core": "6.0.0-dev",
@@ -12,6 +13,7 @@
     "dist/esnext",
     "dist/node"
   ],
+  "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
     "components",
@@ -28,8 +30,6 @@
     "@skatejs/core": "6.0.0-dev",
     "snabbdom": "^0.7.1"
   },
-  "version": "0.0.0",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "homepage": "https://skatejs.netlify.com",
-  "repository": "skatejs/skatejs"
+  "repository": "skatejs/skatejs",
+  "version": "0.0.0"
 }

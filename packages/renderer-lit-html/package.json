@@ -1,6 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for LitHTML.",
   "devDependencies": {
     "lit-html": "dev",
@@ -10,6 +11,7 @@
     "dist/cjs",
     "dist/esm"
   ],
+  "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
     "components",
@@ -26,9 +28,7 @@
     "lit-html": "dev",
     "@skatejs/core": "6.0.0-dev"
   },
+  "repository": "skatejs/skatejs",
   "src": "src",
-  "version": "0.2.0",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "homepage": "https://skatejs.netlify.com",
-  "repository": "skatejs/skatejs"
+  "version": "0.2.0"
 }

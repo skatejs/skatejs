@@ -1,5 +1,7 @@
 {
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bin": "./bin/index",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "babel-register": "6.26.0",
     "glob": "7.1.2",
@@ -25,10 +27,6 @@
     "jest.js",
     "utils.js"
   ],
-  "name": "@skatejs/ssr",
-  "version": "0.19.1",
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -39,5 +37,7 @@
     "dom"
   ],
   "license": "MIT",
-  "repository": "skatejs/skatejs"
+  "name": "@skatejs/ssr",
+  "repository": "skatejs/skatejs",
+  "version": "0.19.1"
 }

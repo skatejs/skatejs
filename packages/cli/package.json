@@ -1,7 +1,9 @@
 {
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bin": {
     "skatejs": "./index.js"
   },
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "chalk": "2.3.0",
     "conartist": "0.15.1",
@@ -12,10 +14,6 @@
     "yargs": "11.0.0"
   },
   "description": "A starter kit for SkateJS.",
-  "name": "@skatejs/cli",
-  "version": "0.0.2",
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -26,5 +24,7 @@
     "dom"
   ],
   "license": "MIT",
-  "repository": "skatejs/skatejs"
+  "name": "@skatejs/cli",
+  "repository": "skatejs/skatejs",
+  "version": "0.0.2"
 }
