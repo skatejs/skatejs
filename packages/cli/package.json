@@ -1,6 +1,4 @@
 {
-  "name": "@skatejs/cli",
-  "description": "A starter kit for SkateJS.",
   "bin": {
     "skatejs": "./index.js"
   },
@@ -13,5 +11,20 @@
     "spawndamnit": "1.0.0",
     "yargs": "11.0.0"
   },
-  "version": "0.0.2"
+  "description": "A starter kit for SkateJS.",
+  "name": "@skatejs/cli",
+  "version": "0.0.2",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "repository": "skatejs/skatejs"
 }

@@ -1,5 +1,5 @@
 {
-  "author": "Trey Shugart <treshugart@gmail.com>",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "dependencies": {
     "babel-types": "6.26.0"
   },
@@ -15,5 +15,16 @@
   "scripts": {
     "test": "jest"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "repository": "skatejs/skatejs"
 }

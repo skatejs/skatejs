@@ -1,5 +1,5 @@
 {
-  "author": "Luiz Américo Pereira Câmara",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/es/index.js",
   "description": "A SkateJS renderer for Snabbdom.",
   "devDependencies": {
@@ -12,16 +12,15 @@
     "dist/esnext",
     "dist/node"
   ],
-  "license": "MIT",
   "keywords": [
+    "web",
     "components",
     "custom",
-    "dom",
     "elements",
-    "web",
-    "vdom",
-    "virtual"
+    "shadow",
+    "dom"
   ],
+  "license": "MIT",
   "main": "dist/node/index.js",
   "module": "dist/es/index.js",
   "name": "@skatejs/renderer-snabbdom",
@@ -29,5 +28,8 @@
     "@skatejs/core": "6.0.0-dev",
     "snabbdom": "^0.7.1"
   },
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "repository": "skatejs/skatejs"
 }

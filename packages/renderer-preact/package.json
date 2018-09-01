@@ -1,33 +1,35 @@
 {
-  "name": "@skatejs/renderer-preact",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "dist/esm/index.js",
+  "dependencies": {
+    "@skatejs/define": "0.0.0"
+  },
   "description": "A SkateJS renderer for Preact.",
-  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "license": "MIT",
-  "keywords": [
-    "components",
-    "custom",
-    "dom",
-    "elements",
-    "web",
-    "vdom",
-    "virtual"
-  ],
+  "devDependencies": {
+    "preact": "8.2.7"
+  },
   "files": [
     "dist/cjs",
     "dist/esm"
   ],
-  "browser": "dist/esm/index.js",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "src": "src",
-  "dependencies": {
-    "@skatejs/define": "0.0.0"
-  },
-  "devDependencies": {
-    "preact": "8.2.7"
-  },
+  "name": "@skatejs/renderer-preact",
   "peerDependencies": {
     "preact": "^8.2.5"
   },
-  "version": "0.2.5"
+  "src": "src",
+  "version": "0.2.5",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "repository": "skatejs/skatejs"
 }

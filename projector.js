@@ -253,7 +253,8 @@ async function normalize() {
       }
     );
     await fs.writeFile(
-      path.join(w.dir, 'package.json').JSON.stringify(pkg, null, 2)
+      path.join(w.dir, 'package.json'),
+      JSON.stringify(pkg, null, 2)
     );
   }
 }
@@ -287,6 +288,7 @@ module.exports = {
   build,
   changed,
   clean,
+  normalize,
   release,
   rm
 };

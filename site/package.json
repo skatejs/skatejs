@@ -1,6 +1,16 @@
 {
-  "name": "@skatejs/site",
-  "private": true,
+  "alias": {
+    "@skatejs/define": "/../packages/define/src",
+    "@skatejs/renderer-hyperhtml": "/../packages/renderer-hyperhtml",
+    "@skatejs/renderer-lit-html": "/../packages/renderer-lit-html",
+    "@skatejs/renderer-preact": "/../packages/renderer-preact",
+    "@skatejs/renderer-react": "/../packages/renderer-react",
+    "@skatejs/renderer-snabbdom": "/../packages/renderer-snabbdom",
+    "@skatejs/sk-context": "/../packages/sk-context/src",
+    "@skatejs/sk-marked": "/../packages/sk-marked/src",
+    "@skatejs/sk-router": "/../packages/sk-router/src",
+    "skatejs": "/../packages/skatejs/src"
+  },
   "dependencies": {
     "@skatejs/define": "0.0.0",
     "@skatejs/renderer-lit-html": "0.2.0",
@@ -20,16 +30,19 @@
   "devDependencies": {
     "parcel-bundler": "^1.9.7"
   },
-  "alias": {
-    "@skatejs/define": "/../packages/define/src",
-    "@skatejs/renderer-hyperhtml": "/../packages/renderer-hyperhtml",
-    "@skatejs/renderer-lit-html": "/../packages/renderer-lit-html",
-    "@skatejs/renderer-preact": "/../packages/renderer-preact",
-    "@skatejs/renderer-react": "/../packages/renderer-react",
-    "@skatejs/renderer-snabbdom": "/../packages/renderer-snabbdom",
-    "@skatejs/sk-context": "/../packages/sk-context/src",
-    "@skatejs/sk-marked": "/../packages/sk-marked/src",
-    "@skatejs/sk-router": "/../packages/sk-router/src",
-    "skatejs": "/../packages/skatejs/src"
-  }
+  "name": "@skatejs/site",
+  "private": true,
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "repository": "skatejs/skatejs"
 }

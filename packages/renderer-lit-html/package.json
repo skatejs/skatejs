@@ -1,32 +1,34 @@
 {
-  "name": "@skatejs/renderer-lit-html",
-  "description": "A SkateJS renderer for LitHTML.",
-  "author": "Trey Shugart <treshugart@gmail.com> (http://treshugart.github.io)",
-  "license": "MIT",
-  "keywords": [
-    "components",
-    "custom",
-    "dom",
-    "elements",
-    "web",
-    "vdom",
-    "virtual"
-  ],
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/esm/index.js",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "src": "src",
+  "description": "A SkateJS renderer for LitHTML.",
   "devDependencies": {
     "lit-html": "dev",
     "@skatejs/core": "6.0.0-dev"
   },
+  "files": [
+    "dist/cjs",
+    "dist/esm"
+  ],
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "name": "@skatejs/renderer-lit-html",
   "peerDependencies": {
     "lit-html": "dev",
     "@skatejs/core": "6.0.0-dev"
   },
-  "version": "0.2.0"
+  "src": "src",
+  "version": "0.2.0",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "repository": "skatejs/skatejs"
 }
