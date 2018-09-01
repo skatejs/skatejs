@@ -1,7 +1,7 @@
 {
     "author": "Trey Shugart <treshugart@gmail.com>",
     "dependencies": {
-      "skatejs": "6.0.0-dev"
+      "@skatejs/core": "6.0.0-dev"
     },
     "description": "A web component for providing and consuming contextual values, based on the React context API.",
     "devDependencies": {

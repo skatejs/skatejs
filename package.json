@@ -102,5 +102,12 @@
       "prettier --write",
       "git add"
     ]
-  }
+  },
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "contributors": [],
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": ["web", "components", "custom", "elements", "shadow", "dom"],
+  "license": "MIT",
+  "repository": "skatejs/skatejs"
 }

@@ -238,6 +238,26 @@ async function clean() {
   }
 }
 
+async function normalize() {
+  const corePkg = require(path.join(__dirname, 'package.json'));
+  for (const w of await getWorkspaces()) {
+    const pkg = Object.keys(w.config)
+      .sort()
+      .reduce((prev, next) => {
+        prev[next] = w.config[next];
+        return prev;
+      }, {});
+    ['author', 'bugs', 'homepage', 'keywords', 'license', 'repository'].forEach(
+      key => {
+        pkg[key] = corePkg[key];
+      }
+    );
+    await fs.writeFile(
+      path.join(w.dir, 'package.json').JSON.stringify(pkg, null, 2)
+    );
+  }
+}
+
 async function release({ packages, type }) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');

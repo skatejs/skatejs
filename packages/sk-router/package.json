@@ -4,7 +4,7 @@
     "@skatejs/define": "0.0.0",
     "@skatejs/val": "0.4.0",
     "navaid": "^1.0.0",
-    "skatejs": "6.0.0-dev"
+    "@skatejs/core": "6.0.0-dev"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {

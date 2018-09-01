@@ -22,11 +22,11 @@
   "src": "src",
   "devDependencies": {
     "lit-html": "dev",
-    "skatejs": "6.0.0-dev"
+    "@skatejs/core": "6.0.0-dev"
   },
   "peerDependencies": {
     "lit-html": "dev",
-    "skatejs": "6.0.0-dev"
+    "@skatejs/core": "6.0.0-dev"
   },
   "version": "0.2.0"
 }
