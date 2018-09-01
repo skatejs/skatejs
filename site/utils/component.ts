@@ -1,4 +1,4 @@
-import SkateComponent from 'skatejs';
+import SkateComponent from '@skatejs/core';
 import renderer from '@skatejs/renderer-preact';
 import { value } from 'yocss';
 import { style } from './style';

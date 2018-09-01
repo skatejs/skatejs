@@ -1,17 +1,18 @@
 {
   "alias": {
-    "@skatejs/define": "/../packages/define/src",
-    "@skatejs/renderer-hyperhtml": "/../packages/renderer-hyperhtml",
-    "@skatejs/renderer-lit-html": "/../packages/renderer-lit-html",
-    "@skatejs/renderer-preact": "/../packages/renderer-preact",
-    "@skatejs/renderer-react": "/../packages/renderer-react",
-    "@skatejs/renderer-snabbdom": "/../packages/renderer-snabbdom",
-    "@skatejs/sk-context": "/../packages/sk-context/src",
-    "@skatejs/sk-marked": "/../packages/sk-marked/src",
-    "@skatejs/sk-router": "/../packages/sk-router/src",
-    "skatejs": "/../packages/skatejs/src"
+    "@skatejs/core": "/node_modules/@skatejs/core/src",
+    "@skatejs/define": "/node_modules/@skatejs/define/src",
+    "@skatejs/renderer-hyperhtml": "/node_modules/@skatejs/renderer-hyperhtml/src",
+    "@skatejs/renderer-lit-html": "/node_modules/@skatejs/renderer-lit-html/src",
+    "@skatejs/renderer-preact": "/node_modules/@skatejs/renderer-preact/src",
+    "@skatejs/renderer-react": "/node_modules/@skatejs/renderer-react/src",
+    "@skatejs/renderer-snabbdom": "/node_modules/@skatejs/renderer-snabbdom/src",
+    "@skatejs/sk-context": "/node_modules/@skatejs/sk-context/src",
+    "@skatejs/sk-marked": "/node_modules/@skatejs/sk-marked/src",
+    "@skatejs/sk-router": "/node_modules/@skatejs/sk-router/src"
   },
   "dependencies": {
+    "@skatejs/core": "6.0.0-dev",
     "@skatejs/define": "0.0.0",
     "@skatejs/renderer-lit-html": "0.2.0",
     "@skatejs/renderer-preact": "0.2.5",
@@ -24,7 +25,6 @@
     "prismjs": "1.11.0",
     "react": "16.4.2",
     "react-dom": "16.4.2",
-    "skatejs": "6.0.0-dev",
     "yocss": "0.5.1"
   },
   "devDependencies": {

@@ -1,14 +1,14 @@
 /** @jsx h */
 
-import Component from 'skatejs';
+import Component from '@skatejs/core';
 import renderer, { h } from '@skatejs/renderer-preact';
 
 class RendererPreact extends Component {
   static props = {
     name: String
   };
+  name = 'World';
   renderer = renderer;
-  name: string = 'World';
   render() {
     return <span>Hello, {this.name}!</span>;
   }

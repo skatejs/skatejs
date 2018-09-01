@@ -1,4 +1,4 @@
-import SkateComponent from 'skatejs';
+import SkateComponent from '@skatejs/core';
 import { readFileSync } from 'fs';
 import css, { value } from 'yocss';
 import { Component, h } from '../utils/component';

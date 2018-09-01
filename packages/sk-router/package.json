@@ -2,10 +2,10 @@
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "dist/esm/index.js",
   "dependencies": {
+    "@skatejs/core": "6.0.0-dev",
     "@skatejs/define": "0.0.0",
     "@skatejs/val": "0.4.0",
-    "navaid": "^1.0.0",
-    "@skatejs/core": "6.0.0-dev"
+    "navaid": "^1.0.0"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {

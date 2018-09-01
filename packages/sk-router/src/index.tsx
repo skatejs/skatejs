@@ -1,5 +1,5 @@
 import navaid from 'navaid';
-import Component from 'skatejs';
+import Component from '@skatejs/core';
 import define from '@skatejs/define';
 import { h } from '@skatejs/val';
 

@@ -1,7 +1,10 @@
-import Component from 'skatejs';
+import Component from '@skatejs/core';
 
 class RendererDefault extends Component {
-  name: string = 'World';
+  static props = {
+    name: String
+  };
+  name = 'World';
   render() {
     return `Hello, ${this.name}!`;
   }
