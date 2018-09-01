@@ -46,32 +46,52 @@ export default class App extends Component {
         <img class="logo" src={this.state.href === '/' ? logo100 : logo50} />
         <Router>
           <Route page={RouteIndex} path="/" />
+          <Route page={withLoading(() => import('../pages/404'))} path="*" />
           <Route
-            page={withLoading(() => import('../pages/guides'))}
+            page={withLoading(() => import('../pages/components'))}
+            path="/components"
+          />
+          <Route
+            page={withLoading(() => import('../pages/components/sk-context'))}
+            path="/components/sk-context"
+          />
+          <Route
+            page={withLoading(() => import('../pages/components/sk-marked'))}
+            path="/components/sk-marked"
+          />
+          <Route
+            page={withLoading(() => import('../pages/components/sk-router'))}
+            path="/components/sk-router"
+          />
+          <Route
+            page={withLoading(() => import('../pages/guides/getting-started'))}
             path="/guides"
           />
-          <Route page={withLoading(() => import('../pages/404'))} path="*" />
+          <Route
+            page={withLoading(() => import('../pages/guides/getting-started'))}
+            path="/guides/getting-started"
+          />
+          <Route
+            page={withLoading(() => import('../pages/guides/flowtype'))}
+            path="/guides/flowtype"
+          />
+          <Route
+            page={withLoading(() => import('../pages/guides/storybook'))}
+            path="/guides/storybook"
+          />
+          <Route
+            page={withLoading(() => import('../pages/migrating/4.x-5.x'))}
+            path="/migrating"
+          />
+          <Route
+            page={withLoading(() => import('../pages/migrating/4.x-5.x'))}
+            path="/migrating/4.x-5.x"
+          />
+          <Route
+            page={withLoading(() => import('../pages/migrating/5.x-6.x'))}
+            path="/migrating/5.x-6.x"
+          />
           {/* <Route
-              page={withLoading(() => import('../pages/guides'))}
-              path="/guides"
-            />
-            <Route
-              page={withLoading(() => import('../pages/guides/flowtype'))}
-              path="/guides/flowtype"
-            />
-            <Route
-              page={withLoading(() => import('../pages/guides/index'))}
-              path="/guides/getting-started"
-            />
-            <Route
-              page={withLoading(() => import('../pages/guides/storybook'))}
-              path="/guides/storybook"
-            />
-            <Route
-              page={withLoading(() => import('../pages/migrating'))}
-              path="/migrating"
-            />
-            <Route
               page={withLoading(() => import('../pages/components'))}
               path="/components"
             />

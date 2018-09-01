@@ -1,4 +1,4 @@
-import { define } from 'skatejs';
+import define from '@skatejs/define';
 import '../../components/layout';
 import '../../components/marked';
 import { Component } from '../../utils';
@@ -14,9 +14,9 @@ export default define(
           component around it. We've provided renderers for some of the popular UI
           libraries:
 
-          - [LitHTML](/renderers/with-lit-html)
-          - [Preact](/renderers/with-preact)
-          - [React](/renderers/with-react)
+          - [LitHTML](/renderers/lit-html)
+          - [Preact](/renderers/preact)
+          - [React](/renderers/react)
 
           Skate also ships with a super-simple
           [default renderer](/renderers/default) that

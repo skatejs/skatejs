@@ -2,21 +2,23 @@ import define from '@skatejs/define';
 import SkMarked from '@skatejs/sk-marked';
 import { Component, h } from '../utils';
 import { Code } from './code';
-import { Link } from './primitives';
+import { Link, Note } from './primitives';
 
-const CustomCode = define(Code);
-const CustomLink = define(Link);
+// Ensure they're defined so we can use them as HTML in the markdown renderers.
+[Code, Link, Note].forEach(define);
 
 const defaultRenderers = {
+  blockquote(text) {
+    return `<${Note.is}>${text}</${Note.is}>`;
+  },
   code(code, lang) {
-    return `<${CustomCode.is} code="${code}" lang="${lang}"></${
-      CustomCode.is
-    }>`;
+    return `<${Code.is} code="${code}" lang="${lang}"></${Code.is}>`;
+  },
+  heading(text, level) {
+    return level === 1 ? '' : `<h${level}>${text}</h${level}>`;
   },
   link(href, title, text) {
-    return `<${CustomLink.is} href="${href}" title="${title}">${text}</${
-      CustomLink.is
-    }>`;
+    return `<${Link.is} href="${href}" title="${title}">${text}</${Link.is}>`;
   }
 };
 

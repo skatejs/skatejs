@@ -15,12 +15,6 @@ const codeWithPreactHtml = readFileSync(
 ).toString();
 const README = readFileSync(__dirname + '/../../README.md').toString();
 
-const renderers = {
-  heading(text, level) {
-    return level === 1 ? '' : `<h${level}>${text}</h${level}>`;
-  }
-};
-
 export default class Index extends Component {
   css = {
     code: css({
@@ -57,7 +51,7 @@ export default class Index extends Component {
         />
         <Hr />
         <Layout>
-          <Marked renderers={renderers} src={README} />
+          <Marked src={README} />
         </Layout>
       </div>
     );

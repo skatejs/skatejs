@@ -5,16 +5,17 @@ function format(src) {
   src = src || '';
 
   // Normalize quotes.
+  src = src.replace(/'/g, '&rsquo;');
   src = src.replace(/"/g, '&quot;');
 
   // Remove leading newlines.
   src = src.split('\n');
 
   // Get the initial indent so we can remove it from subsequent lines.
-  const indent = src[1] ? src[1].match(/^\s*/)[0].length : 0;
+  const indent = src[0] ? src[0].match(/^\s*/)[0].length : 0;
 
   // Format indentation.
-  src = src.map(s => s.substring(indent));
+  src = src.map(s => s.substring(indent) || '');
 
   // Re-instate newline formatting.
   return src.join('\n');

@@ -28,12 +28,20 @@ const navItems = () => [
   },
   {
     href: '/migrating',
-    text: 'Migrating'
+    text: 'Migrating',
+    tree: [
+      { href: '/migrating/4.x-5.x', text: '4.x ⇢ 5.x' },
+      { href: '/migrating/5.x-6.x', text: '5.x ⇢ 6.x' }
+    ]
   },
   {
     href: '/components',
     text: 'Components',
-    tree: [{ href: '/components/index', text: 'Components' }]
+    tree: [
+      { href: '/components/sk-context', text: 'sk-context' },
+      { href: '/components/sk-marked', text: 'sk-marked' },
+      { href: '/components/sk-router', text: 'sk-router' }
+    ]
   },
   {
     href: '/renderers',

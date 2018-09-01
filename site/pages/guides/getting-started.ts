@@ -1,6 +1,6 @@
 import md from '../../utils/md';
 
-export default md`
+export default md('Getting started')`
   At its core, Skate is about creating
   [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/). Skate
   provides a series of
