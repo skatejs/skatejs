@@ -1,4 +1,4 @@
-import charm from 'charm';
+import * as charm from 'charm';
 
 const ch = charm();
 ch.pipe(process.stdout);

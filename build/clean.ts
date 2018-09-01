@@ -1,15 +1,11 @@
 import { getWorkspaces } from 'bolt';
-import parallel from './lib/parallel';
+import { remove } from 'fs-extra';
+import { join, relative } from 'path';
 
 export default async function() {
-  parallel(() => require('fs-extra').remove('./site/public'));
+  await remove('./site/.cache');
   for (const w of await getWorkspaces()) {
-    parallel(w.dir, async dir => {
-      const fs = require('fs-extra');
-      const path = require('path');
-      const toRemove = path.relative(process.cwd(), path.join(dir, 'dist'));
-      await fs.remove(toRemove);
-      return toRemove;
-    }).then(console.log);
+    const toRemove = relative(process.cwd(), join(w.dir, 'dist'));
+    await remove(toRemove);
   }
 }

@@ -1,5 +1,5 @@
 import { getWorkspaces } from 'bolt';
-import path from 'path';
+import * as path from 'path';
 import exec from './lib/exec';
 import build from './build';
 

@@ -1,8 +1,8 @@
 import { getWorkspaces } from 'bolt';
 import chalk from 'chalk';
-import os from 'os';
+import * as os from 'os';
 import outdent from 'outdent';
-import path from 'path';
+import * as path from 'path';
 import semver from 'semver';
 import exec from './lib/exec';
 

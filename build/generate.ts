@@ -1,6 +1,6 @@
 import { getWorkspaces } from 'bolt';
-import fs from 'fs-extra';
-import path from 'path';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 export default async function() {
   const corePkg = require(path.join(__dirname, 'package.json'));
