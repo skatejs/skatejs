@@ -19,5 +19,17 @@
   },
   "devDependencies": {
     "parcel-bundler": "^1.9.7"
+  },
+  "alias": {
+    "@skatejs/define": "/../packages/define/src",
+    "@skatejs/renderer-hyperhtml": "/../packages/renderer-hyperhtml",
+    "@skatejs/renderer-lit-html": "/../packages/renderer-lit-html",
+    "@skatejs/renderer-preact": "/../packages/renderer-preact",
+    "@skatejs/renderer-react": "/../packages/renderer-react",
+    "@skatejs/renderer-snabbdom": "/../packages/renderer-snabbdom",
+    "@skatejs/sk-context": "/../packages/sk-context/src",
+    "@skatejs/sk-marked": "/../packages/sk-marked/src",
+    "@skatejs/sk-router": "/../packages/sk-router/src",
+    "skatejs": "/../packages/skatejs/src"
   }
 }
