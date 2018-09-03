@@ -19,7 +19,7 @@ const array: PropType = {
 const boolean: PropType = {
   ...any,
   deserialize: (val): boolean => val != null,
-  serialize: (val: boolean) => (val ? '' : null)
+  serialize: (val: boolean) => (val && val !== 'false' ? '' : null)
 };
 
 const event: PropType = {
