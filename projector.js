@@ -61,8 +61,24 @@ async function getLatestVersionFromTag(tag) {
   return parts && parts.length ? parts[parts.length - 1] : null;
 }
 
+async function getCommitsSinceBeginning(workspace) {
+  const commit = (await exec('git', [
+    'log',
+    '--diff-filter',
+    'A',
+    '--oneline',
+    path.join(workspace.dir, 'package.json')
+  ])).stdout;
+  const commitHash = commit.split(' ')[0];
+  return getCommitsFromRange(commitHash);
+}
+
 async function getCommitsSinceTag(tag) {
-  const diff = (await exec('git', ['log', `${tag}...master`, '--oneline']))
+  return getCommitsFromRange(tag);
+}
+
+async function getCommitsFromRange(start, end = 'master') {
+  const diff = (await exec('git', ['log', `${start}...${end}`, '--oneline']))
     .stdout;
   return diff
     .split('\n')
@@ -91,33 +107,33 @@ async function getFilesForCommit(commit) {
 
 async function getChangesInWorkspace(workspace) {
   const latestTag = await getLatestTagFor(workspace.name);
-  if (latestTag) {
-    const commits = await getCommitsSinceTag(latestTag);
-    const mapped = await Promise.all(
-      commits.map(async c => {
-        const files = await getFilesForCommit(c.hash);
-        return files.some(f => {
-          const relativeWorkspaceDir = path.relative(
-            process.cwd(),
-            workspace.dir
-          );
-          return f.indexOf(relativeWorkspaceDir) === 0;
-        })
-          ? c
-          : null;
+  const commits = latestTag
+    ? await getCommitsSinceTag(latestTag)
+    : await getCommitsSinceBeginning(workspace);
+
+  const mapped = await Promise.all(
+    commits.map(async c => {
+      const files = await getFilesForCommit(c.hash);
+      return files.some(f => {
+        const relativeWorkspaceDir = path.relative(
+          process.cwd(),
+          workspace.dir
+        );
+        return f.indexOf(relativeWorkspaceDir) === 0;
       })
-    );
-    return mapped.filter(Boolean);
-  }
-  return [];
+        ? c
+        : null;
+    })
+  );
+  return mapped.filter(Boolean);
 }
 
 function inferReleaseType(message) {
   const lc = message.toLowerCase();
-  if (lc.includes('breaking')) {
+  if (lc.includes('breaking') || lc.includes('remove')) {
     return 'major';
   }
-  if (lc.includes('implements')) {
+  if (lc.includes('add') || lc.includes('implements')) {
     return 'minor';
   }
   return 'patch';
@@ -202,6 +218,10 @@ async function babel({ envs }) {
 
 async function changed() {
   for (const w of await getWorkspaces()) {
+    if (w.config.private) {
+      continue;
+    }
+
     const changes = await getChangesInWorkspace(w);
     if (changes.length) {
       console.log(
@@ -225,6 +245,8 @@ async function changed() {
       );
     }
   }
+
+  console.log('');
 }
 
 async function clean() {
