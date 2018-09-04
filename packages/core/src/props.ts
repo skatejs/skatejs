@@ -11,7 +11,7 @@ const any: PropType = {
   target: propName => {}
 };
 
-const array: PropType = {
+const object: PropType = {
   ...any,
   deserialize: (elem, name, oldValue, newValue) => JSON.parse(newValue),
   serialize: (elem, name, oldValue, newValue) => JSON.stringify(newValue)
@@ -50,7 +50,7 @@ const number: PropType = {
     newValue == null ? null : String(Number(newValue))
 };
 
-const object: PropType = array;
+const array: PropType = object;
 
 const string: PropType = {
   ...any,
