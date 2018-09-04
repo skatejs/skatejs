@@ -23,5 +23,5 @@
   "name": "skatejs",
   "repository": "https://github.com/skatejs/skatejs",
   "types": "src/index.d.ts",
-  "version": "5.2.3"
+  "version": "5.2.4"
 }
