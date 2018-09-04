@@ -143,9 +143,13 @@ function observeChildren(elem) {
     // We wait for DOMContentLoaded to ensure the childList is complete. We
     // also don't need to forceUpdate here as that will happen anyways.
     if (hasChildrenChanged) {
-      document.addEventListener('DOMContentLoaded', () => {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          elem.childrenChanged();
+        });
+      } else {
         elem.childrenChanged();
-      });
+      }
     }
   }
 }
