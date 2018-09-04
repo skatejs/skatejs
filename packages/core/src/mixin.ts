@@ -18,7 +18,7 @@ const mapNativeToPropType = new Map();
 
 mapNativeToPropType.set(Array, props.array);
 mapNativeToPropType.set(Boolean, props.boolean);
-mapNativeToPropType.set(Event, props.number);
+mapNativeToPropType.set(Event, props.event);
 mapNativeToPropType.set(Number, props.number);
 mapNativeToPropType.set(Object, props.object);
 mapNativeToPropType.set(String, props.string);
@@ -36,7 +36,8 @@ function defineProp(
   Object.defineProperty(ctor.prototype, propName, {
     configurable: true,
     get() {
-      return propType.get(this, propName, this._props[propName]);
+      const value = propType.get(this, propName, this._props[propName]);
+      return value == null ? propType.default(this, propName) : value;
     },
     set(newPropValue) {
       const oldPropValue = this._props[propName];
@@ -53,7 +54,12 @@ function defineProp(
         // initialized in the constructor result in attributes being set
         // and if an attribute is set in the constructor, the DOM throws.
         delay(() => {
-          const attrValue = propType.serialize(newPropValue);
+          const attrValue = propType.serialize(
+            this,
+            propName,
+            oldPropValue,
+            newPropValue
+          );
           if (attrValue == null) {
             this.removeAttribute(target);
           } else {
@@ -110,6 +116,7 @@ function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
         // Pass on everything else as custom prop types may require additional
         // options be passed as part of the definition.
         ...propType,
+        default: ensureFunction(propType.default),
         defined: ensureFunction(propType.defined),
         deserialize: ensureFunction(propType.deserialize),
         get: ensureFunction(propType.get),

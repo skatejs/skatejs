@@ -21,28 +21,63 @@ export interface CustomElementConstructor {
   props?: {};
 }
 
+export type PropTypeDefault = (elem: CustomElement, name: string) => any;
+
+export type PropTypeDefined = (
+  ctor: CustomElementConstructor,
+  name: string
+) => void;
+
+export type PropTypeDeserialize = (
+  elem: CustomElement,
+  name: string,
+  oldValue: any,
+  newValue: any
+) => any;
+
+export type PropTypeGet = (
+  elem: CustomElement,
+  name: string,
+  value: any
+) => any;
+
+export type PropTypeSerialize = (
+  elem: CustomElement,
+  name: string,
+  oldValue: any,
+  newValue: any
+) => string | void;
+
+export type PropTypeSet = (
+  elem: HTMLElement,
+  name: string,
+  oldValue: any,
+  newValue: any
+) => void;
+
+export type PropTypeSource = (name: string) => string | void;
+
+export type PropTypeTarget = (name: string) => string | void;
+
 export type DenormalizedPropType = {
-  changed?:
-    | void
-    | ((elem: HTMLElement, name: string, oldValue: any, newValue: any) => void);
-  defined?: void | ((ctor: CustomElementConstructor, name: string) => void);
-  deserialize?: void | ((string) => any);
-  serialize?: void | ((any) => string | void);
-  source?: string | void | ((name: string) => string | void);
-  target?: string | void | ((name: string) => string | void);
+  default?: PropTypeDefault;
+  defined?: PropTypeDefined;
+  deserialize?: PropTypeDeserialize;
+  get?: PropTypeGet;
+  serialize?: PropTypeSerialize;
+  set?: PropTypeSet;
+  source?: string | PropTypeSource;
+  target?: string | PropTypeTarget;
   [s: string]: any;
 };
 
 export type NormalizedPropType = {
-  changed: ((
-    elem: HTMLElement,
-    name: string,
-    oldValue: any,
-    newValue: any
-  ) => void);
-  defined: ((ctor: CustomElementConstructor, name: string) => void);
-  deserialize: (string) => any;
-  serialize: (any) => string | void;
+  default: PropTypeDefault;
+  defined: PropTypeDefined;
+  deserialize: PropTypeDeserialize;
+  get: PropTypeGet;
+  serialize: PropTypeSerialize;
+  set: PropTypeSet;
   source: string | void;
   target: string | void;
   [s: string]: any;
