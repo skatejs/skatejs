@@ -49,14 +49,14 @@ export function normalizePropertyDefinition(
 
 const defaultTypesMap = new Map();
 
-function defineProps(constructor) {
+function defineProps(constructor, WithUpdate) {
   if (constructor.hasOwnProperty('_propsNormalized')) return;
   const { props } = constructor;
   keys(props).forEach(name => {
     let func = props[name] || props.any;
     if (defaultTypesMap.has(func)) func = defaultTypesMap.get(func);
     if (typeof func !== 'function') func = prop((func: any));
-    func({ constructor }, name);
+    func({ constructor }, name, WithUpdate);
   });
 }
 
@@ -72,7 +72,7 @@ export function prop(definition: PropType | void): Function {
   const propertyDefinition: PropType = definition || {};
 
   // Allows decorators, or imperative definitions.
-  const func = function({ constructor }, name: string): void {
+  const func = function({ constructor }, name: string, WithUpdate): void {
     const normalized = normalizePropertyDefinition(name, propertyDefinition);
 
     // Ensure that we can cache properties. We have to do this so the _props object literal doesn't modify parent
@@ -93,7 +93,7 @@ export function prop(definition: PropType | void): Function {
       }
     }
 
-    Object.defineProperty(constructor.prototype, name, {
+    Object.defineProperty(WithUpdate.prototype, name, {
       configurable: true,
       get() {
         const val = this._props[name];
@@ -124,7 +124,7 @@ export function prop(definition: PropType | void): Function {
 }
 
 export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
-  class extends Base {
+  class WithUpdate extends Base {
     static _attributeToAttributeMap: Object;
     static _attributeToPropertyMap: Object;
     static _observedAttributes: Array<string>;
@@ -158,7 +158,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
       // We have to define props here because observedAttributes are retrieved
       // only once when the custom element is defined. If we did this only in
       // the constructor, then props would not link to attributes.
-      defineProps(this);
+      defineProps(this, WithUpdate);
       return this._observedAttributes.concat(super.observedAttributes || []);
     }
 
