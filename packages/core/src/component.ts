@@ -74,8 +74,10 @@ function defineProp(
   propType.defined(ctor, propName);
 }
 
-function defineProps(ctor: CustomElementConstructor) {
-  const props = normalizePropTypes(ctor.props);
+function defineProps(
+  ctor: CustomElementConstructor,
+  props: NormalizedPropTypes
+) {
   mapAttrsToProps.set(ctor, {});
   mapPropsToTypes.set(ctor, {});
   props.forEach(({ propName, propType }) =>
@@ -92,12 +94,8 @@ function delay(fn) {
   }
 }
 
-function deriveAttrsFromProps(
-  ctor: CustomElementConstructor
-): ObservedAttributes {
-  return normalizePropTypes(ctor.props).map(
-    ({ propType }) => propType.source as string
-  );
+function deriveAttrsFromProps(props: NormalizedPropTypes): ObservedAttributes {
+  return props.map(({ propType }) => propType.source as string);
 }
 
 function ensureFunction(type: any): (string) => any {
@@ -174,8 +172,9 @@ export function component(
     static props?: PropTypes = {};
 
     static get observedAttributes() {
-      defineProps(this);
-      return deriveAttrsFromProps(this);
+      const normalized = normalizePropTypes(this.props);
+      defineProps(this, normalized);
+      return deriveAttrsFromProps(normalized);
     }
 
     get renderRoot() {
