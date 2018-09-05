@@ -59,7 +59,7 @@ const string: PropType = {
     newValue == null ? null : String(newValue)
 };
 
-export default {
+export const props = {
   any,
   array,
   boolean,

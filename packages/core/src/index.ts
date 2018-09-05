@@ -1,3 +1,3 @@
-export { default } from './component';
-export { default as mixin } from './mixin';
-export { default as props } from './props';
+export * from './component';
+export * from './props';
+export * from './types';
