@@ -6720,9 +6720,9 @@ p-try@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-1.0.0.tgz#cbc79cdbaf8fd4228e13f621f2b1a237c1b207b3"
 
-page@1.8.4:
-  version "1.8.4"
-  resolved "https://registry.yarnpkg.com/page/-/page-1.8.4.tgz#9fbe17b5ff718b5c8a22c453958b6d77dfa2c2d9"
+page@1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/page/-/page-1.9.0.tgz#37d7f90e5713eca8d3744938adba78741a1c2782"
   dependencies:
     path-to-regexp "~1.2.1"
 
