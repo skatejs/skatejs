@@ -2,6 +2,6 @@
 
 exports[`render case: 1 1`] = `"<a class=\\"\\"><style></style><slot></slot></a>"`;
 
-exports[`render case: 2 1`] = `"<a class=\\"\\"><style></style><slot></slot></a>"`;
+exports[`render case: 2 1`] = `"<a class=\\"\\" href=\\"/test\\"><style></style><slot></slot></a>"`;
 
 exports[`render case: 3 1`] = `"<a class=\\"\\"><style>a { color: #333; }</style><slot></slot></a>"`;

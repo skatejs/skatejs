@@ -2,23 +2,8 @@
 
 import page from 'page';
 import { define, props, withComponent } from 'skatejs';
-import { h } from '@skatejs/val';
 
-class Component extends withComponent() {
-  renderer(renderRoot, render) {
-    const { firstChild } = renderRoot;
-    const dom = render();
-    if (firstChild) {
-      if (dom) {
-        renderRoot.replaceChild(dom, firstChild);
-      } else {
-        renderRoot.removeChild(firstChild);
-      }
-    } else if (dom) {
-      renderRoot.appendChild(dom);
-    }
-  }
-}
+const Component = withComponent();
 
 export class Link extends Component {
   static is = 'sk-link';
@@ -27,17 +12,20 @@ export class Link extends Component {
     css: props.string,
     href: props.string
   };
+  classNames = {
+    a: ''
+  };
   go = e => {
     e.preventDefault();
     page.show(this.href);
   };
   render({ classNames, css, href }) {
-    return (
-      <a className={classNames.a || ''} href={href} events={{ click: this.go }}>
-        <style>{css}</style>
-        <slot />
-      </a>
-    );
+    return `<a class="${classNames.a}" ${
+      href ? `href="${href}"` : ''
+    }><style>${css}</style><slot></slot></a>`;
+  }
+  rendered() {
+    this.shadowRoot.firstChild.addEventListener('click', this.go);
   }
 }
 
@@ -62,12 +50,10 @@ export class Route extends Component {
     return super.updated(...args);
   }
   render({ PageToRender, propsToRender }) {
-    if (
-      PageToRender &&
-      PageToRender.prototype &&
-      PageToRender.prototype.render
-    ) {
-      return <PageToRender />;
+    if (PageToRender && PageToRender.prototype) {
+      const { shadowRoot } = this;
+      shadowRoot.this.innerHTML = '';
+      shadowRoot.this.appendChild(new PageToRender());
     }
   }
 }
@@ -95,7 +81,7 @@ export class Router extends Component {
     return super.updated(...args);
   }
   render() {
-    return <slot />;
+    return `<slot></slot>`;
   }
 }
 
