@@ -28,5 +28,5 @@
   "module": "dist/es/index.js",
   "name": "@skatejs/sk-router",
   "repository": "https://github.com/skatejs/skatejs",
-  "version": "0.3.1"
+  "version": "0.3.2"
 }
