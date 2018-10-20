@@ -67,7 +67,9 @@ function defineProp(
           }
         });
       }
-      this.forceUpdate();
+      if (this.forceUpdate) {
+        this.forceUpdate();
+      }
     }
   });
 
@@ -159,17 +161,31 @@ function observeChildren(elem) {
   }
 }
 
-export function component(
+export function withProps(Base: CustomElementConstructor = HTMLElement) {
+  defineProps(Base, normalizePropTypes(Base.props));
+}
+
+export function withComponent(
   Base: CustomElementConstructor = HTMLElement
 ): CustomElementConstructor {
   return class extends Base implements CustomElement {
+    ['constructor']: CustomElementConstructor;
+    static props?: PropTypes = {};
+    static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
+    private _boundRender = () => {
+      return this.render(this);
+    };
+    private _boundUpdate = () => {
+      this.updated(this._propsChanged);
+      if (this.shouldRender(this._propsChanged)) {
+        this.forceRender();
+      }
+      this._propsChanged = {};
+      this._propsUpdating = false;
+    };
     private _props: Props = {};
     private _propsChanged: Props = {};
     private _propsUpdating: boolean = false;
-
-    ['constructor']: CustomElementConstructor;
-
-    static props?: PropTypes = {};
 
     static get observedAttributes() {
       const normalized = normalizePropTypes(this.props);
@@ -177,9 +193,11 @@ export function component(
       return deriveAttrsFromProps(normalized);
     }
 
-    get renderRoot() {
-      return this.attachShadow
-        ? this.shadowRoot || this.attachShadow({ mode: 'open' })
+    constructor() {
+      super();
+      const { shadowRootOptions } = this.constructor;
+      this.renderRoot = shadowRootOptions
+        ? this.attachShadow(shadowRootOptions)
         : this;
     }
 
@@ -229,6 +247,15 @@ export function component(
       }
     }
 
+    forceRender(): void {
+      if (this.render) {
+        this.renderer(this.renderRoot, this._boundRender);
+      }
+      if (this.rendered) {
+        this.rendered(this._propsChanged);
+      }
+    }
+
     forceUpdate(): void {
       // We don't need to render when:
       //
@@ -243,30 +270,20 @@ export function component(
       this._propsUpdating = true;
 
       // We execute the update process at the end of the current microtask so
-      // we can debounce any subsequent updates using the _updating flag.
-      delay(() => {
-        this.updated(this._propsChanged);
-        if (this.shouldRender(this._propsChanged)) {
-          this.renderer(this.renderRoot, () => this.render());
-          this.rendered(this._propsChanged);
-        }
-        this._propsChanged = {};
-        this._propsUpdating = false;
-      });
+      // we can debounce any subsequent updates using the _propsUpdating flag.
+      delay(this._boundUpdate);
     }
-
-    rendered(props: Props) {}
 
     renderer(root, func) {
       root.innerHTML = func();
     }
 
     shouldRender(props: Props) {
-      return !!this.render;
+      return true;
     }
 
     updated(props: Props) {}
   };
 }
 
-export const Component = component();
+export const Component = withComponent();

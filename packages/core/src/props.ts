@@ -11,8 +11,9 @@ const any: PropType = {
   target: propName => {}
 };
 
-const object: PropType = {
+const array: PropType = {
   ...any,
+  default: () => [],
   deserialize: (elem, name, oldValue, newValue) => JSON.parse(newValue),
   serialize: (elem, name, oldValue, newValue) => JSON.stringify(newValue)
 };
@@ -44,16 +45,21 @@ const event: PropType = {
 
 const number: PropType = {
   ...any,
+  default: () => 0,
   deserialize: (elem, name, oldValue, newValue): number =>
     newValue == null ? 0 : Number(newValue),
   serialize: (elem, name, oldValue, newValue) =>
     newValue == null ? null : String(Number(newValue))
 };
 
-const array: PropType = object;
+const object: PropType = {
+  ...array,
+  default: () => ({})
+};
 
 const string: PropType = {
   ...any,
+  default: () => '',
   deserialize: (elem, name, oldValue, newValue) => newValue,
   serialize: (elem, name, oldValue, newValue) =>
     newValue == null ? null : String(newValue)

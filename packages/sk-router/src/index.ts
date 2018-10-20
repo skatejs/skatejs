@@ -1,25 +1,8 @@
 import navaid from 'navaid';
 import Component from '@skatejs/core';
 import define from '@skatejs/define';
-import { h } from '@skatejs/val';
 
-class Base extends Component {
-  renderer = function(renderRoot, render) {
-    const { firstChild } = renderRoot;
-    const dom = render();
-    if (firstChild) {
-      if (dom) {
-        renderRoot.replaceChild(dom, firstChild);
-      } else {
-        renderRoot.removeChild(firstChild);
-      }
-    } else if (dom) {
-      renderRoot.appendChild(dom);
-    }
-  };
-}
-
-export class Link extends Base {
+export class Link extends Component {
   static props = {
     classNames: Object,
     css: String,
@@ -40,12 +23,12 @@ export class Link extends Base {
   };
   render() {
     const { classNames, css, href } = this;
-    return (
-      <a className={classNames.a} href={href} events={{ click: this.go }}>
-        <style>{css}</style>
-        <slot />
-      </a>
-    );
+    return `<a class="${classNames.a}" ${
+      href ? `href="${href}"` : ''
+    }><style>${css}</style><slot></slot></a>`;
+  }
+  rendered() {
+    this.renderRoot.firstChild.addEventListener('click', this.go);
   }
 }
 
@@ -56,17 +39,9 @@ export class Route extends Component {
   };
   page: any = null;
   path: string = '';
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-  }
 }
 
-export class Router extends Base {
-  static props = {
-    base: String
-  };
-  base = '/';
+export class Router extends Component {
   private notFound: any;
   private previousRoute: any;
   private router: any;
@@ -102,7 +77,7 @@ export class Router extends Base {
     }
     if (route.page.prototype instanceof HTMLElement) {
       route.shadowRoot.innerHTML = '';
-      var Page = define(route.page);
+      const Page = define(route.page);
       route.shadowRoot.appendChild(new Page());
     } else if (route.page[0] === '<') {
       route.shadowRoot.innerHTML = route.page;

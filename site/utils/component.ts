@@ -1,4 +1,4 @@
-import SkateComponent from '@skatejs/core';
+import { Component as SkateComponent } from '@skatejs/core';
 import renderer from '@skatejs/renderer-preact';
 import { value } from 'yocss';
 import { style } from './style';
@@ -12,6 +12,7 @@ export class Component extends SkateComponent {
     // @ts-ignore
     return style(
       value(this.context.style),
+      // @ts-ignore
       value(...Object.values(this.css || {}))
     );
   }

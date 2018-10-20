@@ -1,5 +1,5 @@
 import { bind } from 'hyperhtml';
-import { Root } from 'skatejs';
+import { Root } from '@skatejs/core';
 
 const cache = new WeakMap();
 

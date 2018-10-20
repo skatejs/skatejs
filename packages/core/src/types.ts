@@ -5,7 +5,7 @@ export interface CustomElement extends HTMLElement {
   disconnectedCallback?();
   forceUpdate?();
   props?: Props;
-  render?();
+  render?(customElement: CustomElement);
   rendered?(props: Props);
   renderer?(root: Root, func: () => any);
   renderRoot?: Root;
@@ -19,6 +19,7 @@ export interface CustomElementConstructor {
   observedAttributes?: Array<string>;
   name: string;
   props?: {};
+  shadowRootOptions?: ShadowRootInit;
 }
 
 export type PropTypeDefault = (elem: CustomElement, name: string) => any;

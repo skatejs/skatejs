@@ -1,5 +1,5 @@
 import { getWorkspaces } from 'bolt';
-import exec from 'execa';
+import * as exec from 'execa';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
