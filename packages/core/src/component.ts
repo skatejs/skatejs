@@ -195,10 +195,12 @@ export function withComponent(
 
     constructor() {
       super();
-      const { shadowRootOptions } = this.constructor;
-      this.renderRoot = shadowRootOptions
-        ? this.attachShadow(shadowRootOptions)
-        : this;
+      if (!this.shadowRoot) {
+        const { shadowRootOptions } = this.constructor;
+        this.renderRoot = shadowRootOptions
+          ? this.attachShadow(shadowRootOptions)
+          : this;
+      }
     }
 
     attributeChangedCallback(
