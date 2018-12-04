@@ -3,9 +3,11 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for HyperHTML.",
+  "dependencies": {},
   "devDependencies": {
-    "hyperhtml": "2.5.10",
-    "@skatejs/core": "6.0.0-dev"
+    "@skatejs/core": "^6.0.0-dev",
+    "@skatejs/define": "^0.0.0",
+    "hyperhtml": "^2.5.10"
   },
   "files": [
     "dist/cjs",
@@ -25,8 +27,7 @@
   "module": "dist/esm/index.js",
   "name": "@skatejs/renderer-hyperhtml",
   "peerDependencies": {
-    "hyperhtml": "^2.5.10",
-    "@skatejs/core": "6.0.0-dev"
+    "hyperhtml": "^2.5.10"
   },
   "repository": "skatejs/skatejs",
   "src": "src",

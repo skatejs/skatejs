@@ -4,7 +4,8 @@
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for Snabbdom.",
   "devDependencies": {
-    "@skatejs/core": "6.0.0-dev",
+    "@skatejs/core": "^6.0.0-dev",
+    "@skatejs/define": "^0.0.0",
     "snabbdom": "^0.7.1"
   },
   "esnext": "dist/esnext/index.js",
@@ -27,7 +28,6 @@
   "module": "dist/es/index.js",
   "name": "@skatejs/renderer-snabbdom",
   "peerDependencies": {
-    "@skatejs/core": "6.0.0-dev",
     "snabbdom": "^0.7.1"
   },
   "repository": "skatejs/skatejs",

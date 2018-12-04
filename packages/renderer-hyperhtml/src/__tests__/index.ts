@@ -1,4 +1,5 @@
-import { Component, define } from 'skatejs';
+import Component from '@skatejs/core';
+import define from '@skatejs/define';
 import renderer from '..';
 
 class Base extends Component {

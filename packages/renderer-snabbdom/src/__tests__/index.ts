@@ -1,4 +1,4 @@
-import { define } from 'skatejs';
+import define from '@skatejs/define';
 import createRenderer from '..';
 import h from 'snabbdom/h';
 

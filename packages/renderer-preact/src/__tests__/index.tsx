@@ -1,7 +1,8 @@
 /* @jsx h */
 
 import { h } from 'preact';
-import { Component, define } from 'skatejs';
+import Component from '@skatejs/core';
+import define from '@skatejs/define';
 import renderer from '..';
 
 class Base extends Component {
@@ -12,7 +13,6 @@ const Test = define(
   class extends Base {
     name: string = '';
     render() {
-      // @ts-ignore
       return <span>Hello, {this.name}!</span>;
     }
   }
