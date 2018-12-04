@@ -2,7 +2,7 @@
 
 import { mount } from '@skatejs/bore';
 import { h } from '@skatejs/val';
-import cases from 'jest-in-case';
+import * as cases from 'jest-in-case';
 import { Link } from '..';
 
 cases(
