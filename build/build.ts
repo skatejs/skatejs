@@ -3,6 +3,15 @@ import * as exec from 'execa';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
+async function tsc(out, cwd) {
+  await fs.remove(out);
+  return exec('tsc', ['--module', 'CommonJS', '--outDir', out], { cwd })
+    .catch(e => e)
+    .then(r => r.stdout);
+}
+
+const mainTsConfigJson = require(path.join('..', 'tsconfig.json'));
+
 export default async function({ pkg }) {
   const ws = await getWorkspaces();
   await Promise.all(
@@ -20,32 +29,22 @@ export default async function({ pkg }) {
       }
 
       if (!await fs.exists(tsConfig)) {
-        await fs.copy('tsconfig.json', tsConfig);
+        await fs.writeJson(tsConfig, {
+          ...mainTsConfigJson,
+          exclude: ['**/__tests__/**'],
+          include: ['src']
+        });
       }
 
-      if (w.config.main) {
-        const result1 = await exec(
-          'tsc',
-          ['--module', 'CommonJS', '--outDir', path.dirname(w.config.main)],
-          {
-            cwd: w.dir
-          }
-        )
-          .catch(e => e)
-          .then(r => r.stdout);
+      await Promise.all([
+        w.config.main && tsc(path.dirname(w.config.main), w.dir),
+        w.config.module && tsc(path.dirname(w.config.module), w.dir)
+      ]);
+
+      if (await fs.exists(tsConfig)) {
+        await fs.remove(tsConfig);
       }
 
-      if (w.config.module) {
-        const result1 = await exec(
-          'tsc',
-          ['--module', 'ES2015', '--outDir', path.dirname(w.config.module)],
-          {
-            cwd: w.dir
-          }
-        )
-          .catch(e => e)
-          .then(r => r.stdout);
-      }
       console.log(w.config.name);
     })
   );

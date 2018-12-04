@@ -1,4 +1,4 @@
-import { CustomElementRegistry } from '../register/CustomElementRegistry';
+const { CustomElementRegistry } = require('../register/CustomElementRegistry');
 
 const customElements = new CustomElementRegistry();
 

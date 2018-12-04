@@ -3,6 +3,9 @@ const path = require('path');
 const vm = require('vm');
 
 function each(node, call) {
+  if (!node) {
+    return node;
+  }
   if (node.nodeName === '#document-fragment') {
     Array.from(node.childNodes).forEach(call);
   } else {

@@ -135,11 +135,21 @@ ElementProto.attachShadow = function({ mode, test }) {
   const host = this;
   const shadowRoot = document.createElement('shadowroot');
 
+  if (this.__hasShadowRoot) {
+    throw new Error(
+      'Failed to execute "attachShadow" on "Element": Shadow root cannot be created on a host which already hosts a shadow tree.'
+    );
+  }
+
+  // This is so we can check for multiple invocations.
+  this.__hasShadowRoot = true;
+
   prop(shadowRoot, 'host', {
     get() {
       return host;
     }
   });
+
   prop(shadowRoot, 'mode', {
     get() {
       return mode;

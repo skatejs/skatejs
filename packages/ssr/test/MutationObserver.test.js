@@ -1,9 +1,7 @@
-/** @jsx h */
-
-const { h } = require('@skatejs/val');
+const div = () => document.createElement('div');
 
 function observe(func, opts) {
-  const el = <div />;
+  const el = div();
   const mo = new MutationObserver(func);
   mo.observe(el, opts);
   return { el, mo };
@@ -19,7 +17,7 @@ test('childList', done => {
       childList: true
     }
   );
-  el.appendChild(<div />);
+  el.appendChild(div());
 });
 
 test('childList - textContent (batched)', done => {

@@ -6,7 +6,5 @@
     "lib": ["dom", "es6"],
     "target": "es5"
   },
-  "exclude": ["**/__tests__/**"],
-  "include": ["src"],
   "types": ["core-js"]
 }
