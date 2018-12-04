@@ -199,7 +199,9 @@ prop(ElementProto, 'innerHTML', {
     while (this.hasChildNodes()) {
       this.removeChild(this.firstChild);
     }
-    this.appendChild(translateParsed(parseFragment(val)));
+    if (val) {
+      this.appendChild(translateParsed(parseFragment(val)));
+    }
   }
 });
 
