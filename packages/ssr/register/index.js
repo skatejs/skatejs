@@ -34,6 +34,7 @@ expose('Element');
 expose('Event');
 expose('History');
 expose('HTMLElement');
+expose('HTMLIFrameElement');
 expose('Location');
 expose('MouseEvent');
 expose('MutationObserver');

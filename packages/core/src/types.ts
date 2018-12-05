@@ -5,7 +5,7 @@ export interface CustomElement extends HTMLElement {
   disconnectedCallback?();
   forceUpdate?();
   props?: Props;
-  render?(customElement: CustomElement);
+  render?(...args);
   rendered?(props: Props);
   renderer?(root: Root, func: () => any);
   renderRoot?: Root;

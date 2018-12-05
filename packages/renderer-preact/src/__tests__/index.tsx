@@ -4,6 +4,7 @@ import { h } from 'preact';
 import Component from '@skatejs/core';
 import define from '@skatejs/define';
 import renderer from '..';
+import { watchFile } from 'fs';
 
 class Base extends Component {
   renderer = renderer;
@@ -11,7 +12,7 @@ class Base extends Component {
 
 const Test = define(
   class extends Base {
-    name: string = '';
+    name: string = 'World';
     render() {
       return <span>Hello, {this.name}!</span>;
     }
@@ -19,14 +20,22 @@ const Test = define(
 );
 
 function testContent(text) {
-  return `<div>Hello, ${text}!</div>`;
+  return `<span>Hello, ${text}!</span>`;
 }
 
-test('renders', () => {
+test('renders', async () => {
   const el = new Test();
-  expect(el.innerHTML).toEqual('');
-  el.renderer(el, el.render.bind(el, { name: 'World' }));
-  expect(el.innerHTML).toEqual(testContent('World'));
-  el.renderer(el, el.render.bind(el, { name: 'Bob' }));
-  expect(el.innerHTML).toEqual(testContent('Bob'));
+  expect(el.shadowRoot.innerHTML).toEqual('');
+
+  document.body.appendChild(el);
+  el.forceRender();
+  expect(el.shadowRoot.innerHTML).toEqual(testContent('World'));
+
+  el.name = 'Bob';
+  el.forceRender();
+  expect(el.shadowRoot.innerHTML).toEqual(testContent('Bob'));
+
+  document.body.removeChild(el);
+  el.forceRender();
+  expect(el.shadowRoot.innerHTML).toEqual('');
 });

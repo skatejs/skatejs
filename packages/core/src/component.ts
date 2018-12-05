@@ -67,9 +67,8 @@ function defineProp(
           }
         });
       }
-      if (this.forceUpdate) {
-        this.forceUpdate();
-      }
+
+      this.forceUpdate();
     }
   });
 
@@ -170,22 +169,27 @@ export function withComponent(
 ): CustomElementConstructor {
   return class extends Base implements CustomElement {
     ['constructor']: CustomElementConstructor;
+    // Props / attributes the component should observe.
     static props?: PropTypes = {};
+
+    // Options when automatically creating the shadow root. This can be set to
+    // a falsy value to prevent shadow root creation.
     static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
-    private _boundRender = () => {
-      return this.render(this);
-    };
-    private _boundUpdate = () => {
-      this.updated(this._propsChanged);
-      if (this.shouldRender(this._propsChanged)) {
-        this.forceRender();
-      }
-      this._propsChanged = {};
-      this._propsUpdating = false;
-    };
+
+    // Whether or not the element is connected.
+    //
+    // This might be useful for renderers to determine whether or not they need
+    // to clean up when disconnected.
+    isConnected: boolean = false;
+
+    // The current props values.
     private _props: Props = {};
+
+    // The current props values that have changed since the last update.
     private _propsChanged: Props = {};
-    private _propsUpdating: boolean = false;
+
+    // Whether or not an update is currently being handled.
+    private _isUpdating: boolean = false;
 
     static get observedAttributes() {
       const normalized = normalizePropTypes(this.props);
@@ -228,6 +232,8 @@ export function withComponent(
         super.connectedCallback();
       }
 
+      this.isConnected = true;
+
       // We observe updates when connected because there's no point in
       // observing if it's not connected yet.
       observeChildren(this);
@@ -242,20 +248,12 @@ export function withComponent(
         super.disconnectedCallback();
       }
 
-      // Rendering null here allows renderers to perform any necessary
-      // unmounting logic if need be.
-      if (this.render) {
-        this.renderer(this.renderRoot, () => null);
-      }
+      this.isConnected = false;
     }
 
     forceRender(): void {
-      if (this.render) {
-        this.renderer(this.renderRoot, this._boundRender);
-      }
-      if (this.rendered) {
-        this.rendered(this._propsChanged);
-      }
+      this.renderer(this);
+      this.rendered(this._propsChanged);
     }
 
     forceUpdate(): void {
@@ -263,24 +261,37 @@ export function withComponent(
       //
       // - We're not connected.
       // - We're already updating.
-      if (!this.parentNode || this._propsUpdating) {
+      if (!this.parentNode || this._isUpdating) {
         return;
       }
 
       // This flag prevents infinite loops if another update is triggered while
       // performing the current update.
-      this._propsUpdating = true;
+      this._isUpdating = true;
 
       // We execute the update process at the end of the current microtask so
       // we can debounce any subsequent updates using the _propsUpdating flag.
-      delay(this._boundUpdate);
+      delay(() => {
+        this.updated(this._propsChanged);
+        if (this.shouldUpdateRender(this._propsChanged)) {
+          this.forceRender();
+        }
+        this._propsChanged = {};
+        this._isUpdating = false;
+      });
     }
 
-    renderer(root, func) {
-      root.innerHTML = func();
+    render() {
+      return '';
     }
 
-    shouldRender(props: Props) {
+    rendered(props: Props) {}
+
+    renderer(elem: CustomElement) {
+      elem.renderRoot.innerHTML = elem.render();
+    }
+
+    shouldUpdateRender(props: Props) {
       return true;
     }
 

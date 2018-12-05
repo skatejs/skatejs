@@ -21,10 +21,18 @@ function teardownPreact() {
   options.vnode = oldVnode;
 }
 
-export default function(root, func) {
+export default function(elem) {
+  const root = elem.renderRoot;
   const dom = mapDom.get(root);
   setupPreact();
-  mapDom.set(root, render(func(), root, dom || root.childNodes[0]));
+  mapDom.set(
+    root,
+    render(
+      elem.isConnected ? elem.render() : null,
+      root,
+      dom || root.childNodes[0]
+    )
+  );
   teardownPreact();
 }
 

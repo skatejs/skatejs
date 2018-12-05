@@ -1,6 +1,6 @@
+import { CustomElement } from '@skatejs/core';
 import { render } from 'react-dom';
-import { Root } from '@skatejs/core';
 
-export default function(root: Root, func: () => Object) {
-  render(func(), root);
+export default function(elem: CustomElement) {
+  render(elem.isConnected ? elem.render() : null, elem.renderRoot);
 }

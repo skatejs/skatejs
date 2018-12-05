@@ -9,7 +9,7 @@ class Base extends Component {
 
 const Test = define(
   class extends Base {
-    name: string = '';
+    name: string = 'World';
     render() {
       return html`Hello, ${this.name}!`;
     }
@@ -20,11 +20,15 @@ function testContent(text) {
   return new RegExp(`Hello, ${text}!`);
 }
 
-test('renders', () => {
+test('renders', async () => {
   const el = new Test();
-  expect(el.innerHTML).toEqual('');
-  el.renderer(el, el.render.bind(el, { name: 'World' }));
-  expect(el.innerHTML).toMatch(testContent('World'));
-  el.renderer(el, el.render.bind(el, { name: 'Bob' }));
-  expect(el.innerHTML).toMatch(testContent('Bob'));
+  expect(el.shadowRoot.innerHTML).toEqual('');
+
+  document.body.appendChild(el);
+  el.forceRender();
+  expect(el.shadowRoot.innerHTML).toEqual(testContent('World'));
+
+  el.name = 'Bob';
+  el.forceRender();
+  expect(el.shadowRoot.innerHTML).toEqual(testContent('Bob'));
 });
