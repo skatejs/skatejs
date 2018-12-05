@@ -1,3 +1,6 @@
+// IMPORTANT: this test is disabled because lit-html only shipts ESM with the
+// extension of ".js" and it errors when you import it into a Node env.
+
 import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
 import { html } from 'lit-html';
@@ -5,8 +8,8 @@ import Component from '..';
 
 const Test = define(
   class extends Component {
-    name: string = 'World';
     static props = { name: String };
+    name: string = 'World';
     render() {
       return html`Hello, ${this.name}!`;
     }

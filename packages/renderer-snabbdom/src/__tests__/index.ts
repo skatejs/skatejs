@@ -1,21 +1,20 @@
 import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
 import h from 'snabbdom/h';
-import component from '..';
-
-const Component = component([
-  require('snabbdom/modules/attributes').default,
-  require('snabbdom/modules/eventlisteners').default,
-  require('snabbdom/modules/class').default,
-  require('snabbdom/modules/props').default,
-  require('snabbdom/modules/style').default,
-  require('snabbdom/modules/dataset').default
-]);
+import Component from '..';
 
 const Test = define(
   class extends Component {
-    name: string = 'World';
+    static modules = [
+      require('snabbdom/modules/attributes').default,
+      require('snabbdom/modules/eventlisteners').default,
+      require('snabbdom/modules/class').default,
+      require('snabbdom/modules/props').default,
+      require('snabbdom/modules/style').default,
+      require('snabbdom/modules/dataset').default
+    ];
     static props = { name: String };
+    name: string = 'World';
     render() {
       return h('span', `Hello, ${this.name}!`);
     }

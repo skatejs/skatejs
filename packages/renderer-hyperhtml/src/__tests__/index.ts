@@ -4,9 +4,8 @@ import Component from '..';
 
 const Test = define(
   class extends Component {
-    $: Function;
-    name: string = 'World';
     static props = { name: String };
+    name: string = 'World';
     render(html) {
       html`Hello, ${this.name}!`;
     }

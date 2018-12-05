@@ -7,8 +7,8 @@ import Component from '..';
 
 const Test = define(
   class extends Component {
-    name: string = 'World';
     static props = { name: String };
+    name: string = 'World';
     render() {
       return <span>Hello, {this.name}!</span>;
     }
