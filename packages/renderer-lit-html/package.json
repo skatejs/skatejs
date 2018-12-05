@@ -5,6 +5,7 @@
   "description": "A SkateJS renderer for LitHTML.",
   "dependencies": {},
   "devDependencies": {
+    "@skatejs/bore": "^4.0.3",
     "@skatejs/component": "^0.0.0",
     "@skatejs/define": "^0.0.0",
     "lit-html": "dev"

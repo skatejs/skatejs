@@ -1,6 +1,14 @@
-import { CustomElement } from '@skatejs/component';
+import Component from '@skatejs/component';
 import { render } from 'react-dom';
 
-export default function(elem: CustomElement) {
-  render(elem.isConnected ? elem.render() : null, elem.renderRoot);
+export default class extends Component {
+  disconnectedCallback() {
+    if (super.disconnectedCallback) {
+      super.disconnectedCallback();
+    }
+    render(null, this.renderRoot);
+  }
+  renderer() {
+    render(this.render(), this.renderRoot);
+  }
 }

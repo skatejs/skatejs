@@ -187,3 +187,9 @@ function walkTree({ childNodes }, call) {
 export default function mount(elem) {
   return new Wrapper(elem);
 }
+
+export function wait(ms = 0) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}

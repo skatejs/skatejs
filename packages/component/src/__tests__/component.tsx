@@ -1,12 +1,6 @@
-import mount from '@skatejs/bore';
+import mount, { wait } from '@skatejs/bore';
 import define, { getName } from '@skatejs/define';
 import Component, { props } from '..';
-
-function wait(ms = 0) {
-  return new Promise(res => {
-    setTimeout(res, ms);
-  });
-}
 
 // This test isn't completely necessary at this point because we don't yet
 // offer a mixin to insert above the prototype chain of Component, but it

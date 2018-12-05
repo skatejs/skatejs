@@ -7,6 +7,7 @@
   },
   "description": "A SkateJS renderer for Preact.",
   "devDependencies": {
+    "@skatejs/bore": "^4.0.3",
     "@skatejs/component": "^0.0.0",
     "@skatejs/define": "^0.0.0",
     "preact": "^8.2.7"

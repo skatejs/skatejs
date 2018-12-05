@@ -232,6 +232,8 @@ export default class Component extends HTMLElement implements CustomElement {
     this.forceUpdate();
   }
 
+  disconnectedCallback() {}
+
   forceUpdate() {
     // We don't need to render when:
     //
@@ -258,7 +260,7 @@ export default class Component extends HTMLElement implements CustomElement {
     });
   }
 
-  render() {
+  render(...args): any {
     return '';
   }
 

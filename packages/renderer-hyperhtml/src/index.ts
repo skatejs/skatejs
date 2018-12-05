@@ -1,4 +1,4 @@
-import { Component } from '@skatejs/component';
+import Component from '@skatejs/component';
 import { bind } from 'hyperhtml';
 
 const cache = new WeakMap();

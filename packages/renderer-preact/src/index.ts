@@ -1,5 +1,6 @@
-import { options, render } from 'preact';
+import Component from '@skatejs/component';
 import define from '@skatejs/define';
+import { options, render } from 'preact';
 
 const mapDom = new WeakMap();
 let oldVnode;
@@ -21,19 +22,19 @@ function teardownPreact() {
   options.vnode = oldVnode;
 }
 
-export default function(elem) {
-  const root = elem.renderRoot;
-  const dom = mapDom.get(root);
-  setupPreact();
-  mapDom.set(
-    root,
-    render(
-      elem.isConnected ? elem.render() : null,
-      root,
-      dom || root.childNodes[0]
-    )
-  );
-  teardownPreact();
+export default class extends Component {
+  disconnectedCallback() {
+    if (super.disconnectedCallback) {
+      super.disconnectedCallback();
+    }
+    render(null, this.renderRoot, mapDom.get(this));
+  }
+  renderer() {
+    const dom = mapDom.get(this);
+    setupPreact();
+    mapDom.set(this, render(this.render(), this.renderRoot, dom));
+    teardownPreact();
+  }
 }
 
 export { h } from 'preact';

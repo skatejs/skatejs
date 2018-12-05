@@ -1,15 +1,12 @@
-import { html } from 'lit-html';
-import Component from '@skatejs/component';
+import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
-import renderer from '..';
-
-class Base extends Component {
-  renderer = renderer;
-}
+import { html } from 'lit-html';
+import Component from '..';
 
 const Test = define(
-  class extends Base {
+  class extends Component {
     name: string = 'World';
+    static props = { name: String };
     render() {
       return html`Hello, ${this.name}!`;
     }
@@ -22,13 +19,14 @@ function testContent(text) {
 
 test('renders', async () => {
   const el = new Test();
+  await wait();
   expect(el.shadowRoot.innerHTML).toEqual('');
 
   document.body.appendChild(el);
-  el.forceRender();
+  await wait();
   expect(el.shadowRoot.innerHTML).toEqual(testContent('World'));
 
   el.name = 'Bob';
-  el.forceRender();
+  await wait();
   expect(el.shadowRoot.innerHTML).toEqual(testContent('Bob'));
 });
