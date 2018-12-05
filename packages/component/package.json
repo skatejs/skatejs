@@ -22,7 +22,7 @@
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "name": "@skatejs/core",
+  "name": "@skatejs/component",
   "repository": "skatejs/skatejs",
-  "version": "6.0.0-dev"
+  "version": "0.0.0"
 }

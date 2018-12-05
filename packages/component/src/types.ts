@@ -3,6 +3,7 @@ export interface CustomElement extends HTMLElement {
   childrenUpdated?();
   connectedCallback?();
   disconnectedCallback?();
+  forceRender?();
   forceUpdate?();
   props?: Props;
   render?(...args);

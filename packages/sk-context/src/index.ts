@@ -1,4 +1,4 @@
-import Component, { props } from '@skatejs/core';
+import Component, { props } from '@skatejs/component';
 
 export interface IConsumer {
   onchange: (e: CustomEventInit) => void | null;

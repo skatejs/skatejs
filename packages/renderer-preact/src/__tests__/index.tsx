@@ -1,7 +1,7 @@
 /* @jsx h */
 
 import { h } from 'preact';
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import define from '@skatejs/define';
 import renderer from '..';
 import { watchFile } from 'fs';

@@ -1,4 +1,4 @@
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import marked from 'marked';
 
 function format(src) {

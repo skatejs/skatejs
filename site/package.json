@@ -1,6 +1,6 @@
 {
   "alias": {
-    "@skatejs/core": "/node_modules/@skatejs/core/src",
+    "@skatejs/component": "/node_modules/@skatejs/component/src",
     "@skatejs/define": "/node_modules/@skatejs/define/src",
     "@skatejs/renderer-hyperhtml": "/node_modules/@skatejs/renderer-hyperhtml/src",
     "@skatejs/renderer-lit-html": "/node_modules/@skatejs/renderer-lit-html/src",
@@ -14,7 +14,7 @@
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "@skatejs/core": "6.0.0-dev",
+    "@skatejs/component": "0.0.0",
     "@skatejs/define": "0.0.0",
     "@skatejs/renderer-lit-html": "0.2.0",
     "@skatejs/renderer-preact": "0.2.5",

@@ -5,7 +5,7 @@
   "description": "Define custom elements without worrying about having to find a unique name for them.",
   "devDependencies": {
     "@skatejs/bore": "^4.0.3",
-    "@skatejs/core": "^6.0.0-dev"
+    "@skatejs/component": "^0.0.0"
   },
   "files": [
     "dist/cjs",

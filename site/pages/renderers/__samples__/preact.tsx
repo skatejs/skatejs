@@ -1,6 +1,6 @@
 /** @jsx h */
 
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import renderer, { h } from '@skatejs/renderer-preact';
 
 class RendererPreact extends Component {

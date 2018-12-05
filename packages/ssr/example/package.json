@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@skatejs/core": "6.0.0-dev",
+    "@skatejs/component": "0.0.0",
     "@skatejs/val": "^0.4.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",

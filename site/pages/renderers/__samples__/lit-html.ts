@@ -1,4 +1,4 @@
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import renderer from '@skatejs/renderer-lit-html';
 import { html } from 'lit-html';
 

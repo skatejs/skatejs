@@ -1,4 +1,4 @@
-import { CustomElement } from '@skatejs/core';
+import { CustomElement } from '@skatejs/component';
 import { render } from 'lit-html';
 
 export default function(elem: CustomElement) {

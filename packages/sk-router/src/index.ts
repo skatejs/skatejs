@@ -1,5 +1,5 @@
 import navaid from 'navaid';
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import define from '@skatejs/define';
 
 export class Link extends Component {

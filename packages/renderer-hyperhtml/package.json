@@ -5,7 +5,7 @@
   "description": "A SkateJS renderer for HyperHTML.",
   "dependencies": {},
   "devDependencies": {
-    "@skatejs/core": "^6.0.0-dev",
+    "@skatejs/component": "^0.0.0",
     "@skatejs/define": "^0.0.0",
     "hyperhtml": "^2.5.10"
   },

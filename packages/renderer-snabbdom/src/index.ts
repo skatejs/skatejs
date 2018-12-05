@@ -1,4 +1,4 @@
-import { CustomElement } from '@skatejs/core';
+import { CustomElement } from '@skatejs/component';
 import { init } from 'snabbdom';
 import vnode from 'snabbdom/vnode';
 

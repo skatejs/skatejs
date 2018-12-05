@@ -1,4 +1,4 @@
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 
 class RendererDefault extends Component {
   static props = {

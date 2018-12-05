@@ -1,5 +1,5 @@
 import { bind } from 'hyperhtml';
-import { CustomElement } from '@skatejs/core';
+import { CustomElement } from '@skatejs/component';
 
 const cache = new WeakMap();
 

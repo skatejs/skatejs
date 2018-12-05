@@ -1,4 +1,4 @@
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import define from '@skatejs/define';
 import renderer from '..';
 

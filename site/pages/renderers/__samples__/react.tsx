@@ -1,6 +1,6 @@
 /** @jsx React.createElement */
 
-import Component from '@skatejs/core';
+import Component from '@skatejs/component';
 import renderer from '@skatejs/renderer-react';
 import React from 'react';
 
