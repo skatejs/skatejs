@@ -3,8 +3,8 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "@skatejs/component": "0.0.0",
-    "@skatejs/define": "0.0.0",
+    "@skatejs/component": "^0.0.0",
+    "@skatejs/define": "^0.0.0",
     "@skatejs/val": "0.4.0",
     "navaid": "^1.0.0"
   },
