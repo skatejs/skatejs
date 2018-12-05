@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import * as os from 'os';
 import outdent from 'outdent';
 import * as path from 'path';
-import semver from 'semver';
+import * as semver from 'semver';
 import exec from './lib/exec';
 
 type Change = {
