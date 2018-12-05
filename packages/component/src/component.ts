@@ -11,8 +11,10 @@ import {
 
 // @ts-ignore
 const mapAttrsToProps = new Map();
+
 // @ts-ignore
 const mapPropsToTypes = new Map();
+
 // @ts-ignore
 const mapNativeToPropType = new Map();
 
@@ -169,6 +171,7 @@ export function withComponent(
 ): CustomElementConstructor {
   return class extends Base implements CustomElement {
     ['constructor']: CustomElementConstructor;
+
     // Props / attributes the component should observe.
     static props?: PropTypes = {};
 
@@ -178,7 +181,7 @@ export function withComponent(
 
     // Whether or not the element is connected.
     //
-    // This might be useful for renderers to determine whether or not they need
+    // This would be useful for renderers to determine whether or not they need
     // to clean up when disconnected.
     isConnected: boolean = false;
 
@@ -222,7 +225,7 @@ export function withComponent(
       if (propName) {
         this._props[propName] = mapPropsToTypes
           .get(constructor)
-          [propName].deserialize(newValue);
+          [propName].deserialize(this, attrName, oldValue, newValue);
         this.forceUpdate();
       }
     }
