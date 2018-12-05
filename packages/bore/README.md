@@ -13,7 +13,7 @@ Bore makes testing the DOM simpler in the same way Enzyme makes testing React si
 ```js
 /* @jsx h */
 
-import { mount } from '@skatejs/bore';
+import mount from '@skatejs/bore';
 import { h } from '@skatejs/val';
 
 const wrapper = mount(
@@ -54,7 +54,7 @@ The mount function takes a node, or a string - and converts it to a node - and r
 ```js
 /** @jsx h */
 
-import { mount } from '@skatejs/bore';
+import mount from '@skatejs/bore';
 import { h } from '@skatejs/val';
 
 mount(

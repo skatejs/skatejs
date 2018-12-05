@@ -1,13 +1,18 @@
-const { DocumentFragment, Node, Promise } = window;
-const { slice } = [];
+import { diff } from 'skatejs-dom-diff';
+
+// @ts-ignore
+const { Node, Promise } = window;
+
+// @ts-ignore
 const { customElements, HTMLElement } = window;
 const { body } = document;
 const { attachShadow } = HTMLElement.prototype;
-const { diff } = require('skatejs-dom-diff');
 
 // Ensure we can force sync operations in the polyfill.
 if (customElements) {
-  customElements.enableFlush = true;
+  Object.defineProperty(customElements, 'enableFlush', {
+    value: true
+  });
 }
 
 // Create and add a fixture to append nodes to.
@@ -21,7 +26,9 @@ HTMLElement.prototype.attachShadow = function() {
 
 // Ensures polyfill operations are run sync.
 function flush() {
-  if (customElements && typeof customElements.flush === 'function') {
+  // @ts-ignore - it is defined when the polyfill is included.
+  if (customElements.flush) {
+    // @ts-ignore - it is defined when the polyfill is included.
     customElements.flush();
   }
 }
@@ -72,6 +79,9 @@ function setFixtureContent(node, shouldSetChildrenViaString) {
 }
 
 class Wrapper {
+  node: any;
+  opts: {} = {};
+
   constructor(node, opts = {}) {
     const isRootNode = !node.parentNode;
 
@@ -135,11 +145,14 @@ class Wrapper {
     return this.all(query)[0];
   }
 
-  wait(func) {
+  wait(func: (w: Wrapper) => any = () => {}) {
     return this.waitFor(wrap => !!wrap.node.shadowRoot).then(func);
   }
 
-  waitFor(func, { delay } = { delay: 1 }) {
+  waitFor(
+    func: (w: Wrapper) => any = () => {},
+    { delay }: { delay: number } = { delay: 1 }
+  ) {
     return new Promise((resolve, reject) => {
       const check = () => {
         const ret = (() => {
@@ -162,10 +175,6 @@ class Wrapper {
   }
 }
 
-function mount(elem) {
-  return new Wrapper(elem);
-}
-
 function walkTree({ childNodes }, call) {
   for (const node of childNodes) {
     call(node);
@@ -175,4 +184,6 @@ function walkTree({ childNodes }, call) {
   }
 }
 
-module.exports.mount = mount;
+export default function mount(elem) {
+  return new Wrapper(elem);
+}
