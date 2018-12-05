@@ -169,7 +169,7 @@ export function withProps(Base: CustomElementConstructor = HTMLElement) {
   defineProps(Base, normalizePropTypes(Base.props));
 }
 
-export class Component extends HTMLElement implements CustomElement {
+export default class Component extends HTMLElement implements CustomElement {
   ['constructor']: CustomElementConstructor;
 
   // Props / attributes the component should observe.
