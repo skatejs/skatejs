@@ -1,6 +1,6 @@
 /* @jsx h */
 
-import { mount } from '@skatejs/bore';
+import mount from '@skatejs/bore';
 import { h } from '@skatejs/val';
 import * as cases from 'jest-in-case';
 import { Link } from '..';
