@@ -1,7 +1,7 @@
 /* @jsx h */
 
 import { wait } from '@skatejs/bore';
-import define from '@skatejs/define';
+import define, { getName } from '@skatejs/define';
 import { h } from 'preact';
 import Component from '..';
 
@@ -10,13 +10,27 @@ const Test = define(
     static props = { name: String };
     name: string = 'World';
     render() {
-      return <span>Hello, {this.name}!</span>;
+      // @ts-ignore
+      return <TestHello>{this.name}</TestHello>;
     }
   }
 );
 
+// This tests to ensure our Preact mods will auto-define and use the name of
+// the auto-defined component when using a constructor as a node name.
+class TestHello extends Component {
+  render() {
+    return (
+      <span>
+        Hello, <slot />!
+      </span>
+    );
+  }
+}
+
 function testContent(text) {
-  return `<span>Hello, ${text}!</span>`;
+  const name = getName(TestHello);
+  return `<${name}>${text}</${name}>`;
 }
 
 test('renders', async () => {

@@ -1,5 +1,5 @@
 import Component from '@skatejs/component';
-import define from '@skatejs/define';
+import define, { getName } from '@skatejs/define';
 import { options, render } from 'preact';
 
 const mapDom = new WeakMap();
@@ -8,7 +8,8 @@ let oldVnode;
 function newVnode(vnode) {
   const { nodeName } = vnode;
   if (nodeName.prototype instanceof HTMLElement) {
-    vnode.nodeName = define(nodeName).is;
+    define(nodeName);
+    vnode.nodeName = getName(nodeName);
   }
   return vnode;
 }
@@ -36,5 +37,3 @@ export default class extends Component {
     teardownPreact();
   }
 }
-
-export { h } from 'preact';

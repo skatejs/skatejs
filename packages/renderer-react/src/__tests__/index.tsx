@@ -1,4 +1,4 @@
-/* @jsx React.createElement */
+/** @jsx React.createElement */
 
 import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
