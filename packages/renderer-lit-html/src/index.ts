@@ -1,6 +1,10 @@
-import { CustomElement } from '@skatejs/component';
+import Component from '@skatejs/component';
 import { render } from 'lit-html';
 
-export default function(elem: CustomElement) {
-  render(elem.render(), elem.renderRoot);
+export default class extends Component {
+  renderer() {
+    return render(this.render(), this.renderRoot);
+  }
 }
+
+export { html } from 'lit-html';

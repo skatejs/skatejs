@@ -3,26 +3,21 @@ const outdent = require('outdent');
 module.exports = {
   'package.json': {
     dependencies: {
-      '@skatejs/renderer-lit-html': '*',
-      'lit-html': '*'
+      '@skatejs/component': '^0.0.0',
+      '@skatejs/renderer-lit-html': '^0.2.0',
+      'lit-html': 'dev'
     }
   },
   'src/index.js': outdent`
-    import { html } from 'lit-html/lib/lit-extended';
-    import withRenderer from '@skatejs/renderer-lit-html';
-    import { define, props, withComponent } from 'skatejs';
+    import Component, { html } from '@skatejs/renderer-lit-html';
 
-    @define
-    class Hello extends withComponent(withRenderer()) {
-      static is = 'x-hello';
+    export default class extends Component {
       static props = {
-        name: props.string
+        name: String
       };
-      render({ name }) {
-        return html\`Hey, <strong>\${name}</strong>!\`;
+      render() {
+        return html\`Hey, <strong>\${this.name}</strong>!\`;
       }
     }
-
-    export default Hello;
   `
 };

@@ -1,13 +1,8 @@
-import Component from '@skatejs/component';
 import define from '@skatejs/define';
-import renderer from '..';
-
-class Base extends Component {
-  renderer = renderer;
-}
+import Component from '..';
 
 const Test = define(
-  class extends Base {
+  class extends Component {
     $: Function;
     name: string = 'World';
     render(html) {

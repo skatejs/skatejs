@@ -38,8 +38,11 @@ function defineProp(
   Object.defineProperty(ctor.prototype, propName, {
     configurable: true,
     get() {
-      const value = propType.get(this, propName, this._props[propName]);
-      return value == null ? propType.default(this, propName) : value;
+      const oldValue = this._props[propName];
+      const newValue = propType.get(this, propName, oldValue);
+      return newValue == null
+        ? propType.default(this, propName, oldValue)
+        : newValue;
     },
     set(newPropValue) {
       const oldPropValue = this._props[propName];
@@ -166,140 +169,108 @@ export function withProps(Base: CustomElementConstructor = HTMLElement) {
   defineProps(Base, normalizePropTypes(Base.props));
 }
 
-export function withComponent(
-  Base: CustomElementConstructor = HTMLElement
-): CustomElementConstructor {
-  return class extends Base implements CustomElement {
-    ['constructor']: CustomElementConstructor;
+export class Component extends HTMLElement implements CustomElement {
+  ['constructor']: CustomElementConstructor;
 
-    // Props / attributes the component should observe.
-    static props?: PropTypes = {};
+  // Props / attributes the component should observe.
+  static props?: PropTypes = {};
 
-    // Options when automatically creating the shadow root. This can be set to
-    // a falsy value to prevent shadow root creation.
-    static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
+  // Options when automatically creating the shadow root. This can be set to
+  // a falsy value to prevent shadow root creation.
+  static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
 
-    // Whether or not the element is connected.
-    //
-    // This would be useful for renderers to determine whether or not they need
-    // to clean up when disconnected.
-    isConnected: boolean = false;
+  // The current props values.
+  private _props: Props = {};
 
-    // The current props values.
-    private _props: Props = {};
+  // The current props values that have changed since the last update.
+  private _propsChanged: Props = {};
 
-    // The current props values that have changed since the last update.
-    private _propsChanged: Props = {};
+  // Whether or not an update is currently being handled.
+  private _isUpdating: boolean = false;
 
-    // Whether or not an update is currently being handled.
-    private _isUpdating: boolean = false;
+  renderRoot: ShadowRoot | HTMLElement;
 
-    static get observedAttributes() {
-      const normalized = normalizePropTypes(this.props);
-      defineProps(this, normalized);
-      return deriveAttrsFromProps(normalized);
+  static get observedAttributes() {
+    const normalized = normalizePropTypes(this.props);
+    defineProps(this, normalized);
+    return deriveAttrsFromProps(normalized);
+  }
+
+  constructor() {
+    super();
+    if (!this.shadowRoot) {
+      const { shadowRootOptions } = this.constructor;
+      this.renderRoot = shadowRootOptions
+        ? this.attachShadow(shadowRootOptions)
+        : this;
     }
+  }
 
-    constructor() {
-      super();
-      if (!this.shadowRoot) {
-        const { shadowRootOptions } = this.constructor;
-        this.renderRoot = shadowRootOptions
-          ? this.attachShadow(shadowRootOptions)
-          : this;
-      }
-    }
+  attributeChangedCallback(
+    attrName: string,
+    oldValue: string | null,
+    newValue: string | null
+  ) {
+    const { constructor } = this;
+    const propName = mapAttrsToProps.get(constructor)[attrName];
 
-    attributeChangedCallback(
-      attrName: string,
-      oldValue: string | null,
-      newValue: string | null
-    ) {
-      if (super.attributeChangedCallback) {
-        super.attributeChangedCallback(name, oldValue, newValue);
-      }
-
-      const { constructor } = this;
-      const propName = mapAttrsToProps.get(constructor)[attrName];
-
-      if (propName) {
-        this._props[propName] = mapPropsToTypes
-          .get(constructor)
-          [propName].deserialize(this, attrName, oldValue, newValue);
-        this.forceUpdate();
-      }
-    }
-
-    connectedCallback() {
-      if (super.connectedCallback) {
-        super.connectedCallback();
-      }
-
-      this.isConnected = true;
-
-      // We observe updates when connected because there's no point in
-      // observing if it's not connected yet.
-      observeChildren(this);
-
-      // This does the initial render. This is necessary as props wouldn't be
-      // triggering a render yet.
+    if (propName) {
+      this._props[propName] = mapPropsToTypes
+        .get(constructor)
+        [propName].deserialize(this, attrName, oldValue, newValue);
       this.forceUpdate();
     }
+  }
 
-    disconnectedCallback() {
-      if (super.disconnectedCallback) {
-        super.disconnectedCallback();
+  connectedCallback() {
+    // We observe updates when connected because there's no point in
+    // observing if it's not connected yet.
+    observeChildren(this);
+
+    // This does the initial render. This is necessary as props wouldn't be
+    // triggering a render yet.
+    this.forceUpdate();
+  }
+
+  forceUpdate() {
+    // We don't need to render when:
+    //
+    // - We're already updating.
+    // - We're not connected.
+    if (this._isUpdating || !this.parentNode) {
+      return;
+    }
+
+    // This flag prevents infinite loops if another update is triggered while
+    // performing the current update.
+    this._isUpdating = true;
+
+    // We execute the update process at the end of the current microtask so
+    // we can debounce any subsequent updates using the _propsUpdating flag.
+    delay(() => {
+      this.updated(this._propsChanged);
+      if (this.shouldUpdateRender(this._propsChanged)) {
+        this.renderer();
+        this.rendered(this._propsChanged);
       }
+      this._propsChanged = {};
+      this._isUpdating = false;
+    });
+  }
 
-      this.isConnected = false;
-    }
+  render() {
+    return '';
+  }
 
-    forceRender(): void {
-      this.renderer(this);
-      this.rendered(this._propsChanged);
-    }
+  rendered(props: Props) {}
 
-    forceUpdate(): void {
-      // We don't need to render when:
-      //
-      // - We're not connected.
-      // - We're already updating.
-      if (!this.parentNode || this._isUpdating) {
-        return;
-      }
+  renderer() {
+    this.renderRoot.innerHTML = this.render();
+  }
 
-      // This flag prevents infinite loops if another update is triggered while
-      // performing the current update.
-      this._isUpdating = true;
+  shouldUpdateRender(props: Props) {
+    return true;
+  }
 
-      // We execute the update process at the end of the current microtask so
-      // we can debounce any subsequent updates using the _propsUpdating flag.
-      delay(() => {
-        this.updated(this._propsChanged);
-        if (this.shouldUpdateRender(this._propsChanged)) {
-          this.forceRender();
-        }
-        this._propsChanged = {};
-        this._isUpdating = false;
-      });
-    }
-
-    render() {
-      return '';
-    }
-
-    rendered(props: Props) {}
-
-    renderer(elem: CustomElement) {
-      elem.renderRoot.innerHTML = elem.render();
-    }
-
-    shouldUpdateRender(props: Props) {
-      return true;
-    }
-
-    updated(props: Props) {}
-  };
+  updated(props: Props) {}
 }
-
-export const Component = withComponent();

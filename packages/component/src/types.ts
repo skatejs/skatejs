@@ -3,7 +3,6 @@ export interface CustomElement extends HTMLElement {
   childrenUpdated?();
   connectedCallback?();
   disconnectedCallback?();
-  forceRender?();
   forceUpdate?();
   props?: Props;
   render?(...args);
@@ -23,7 +22,11 @@ export interface CustomElementConstructor {
   shadowRootOptions?: ShadowRootInit;
 }
 
-export type PropTypeDefault = (elem: CustomElement, name: string) => any;
+export type PropTypeDefault = (
+  elem: CustomElement,
+  name: string,
+  oldValue: any
+) => any;
 
 export type PropTypeDefined = (
   ctor: CustomElementConstructor,
@@ -40,7 +43,7 @@ export type PropTypeDeserialize = (
 export type PropTypeGet = (
   elem: CustomElement,
   name: string,
-  value: any
+  oldValue: any
 ) => any;
 
 export type PropTypeSerialize = (

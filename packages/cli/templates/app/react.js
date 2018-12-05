@@ -3,31 +3,24 @@ const outdent = require('outdent');
 module.exports = {
   'package.json': {
     dependencies: {
-      '@skatejs/renderer-react': '*',
-      react: '*',
-      'react-dom': '*'
+      '@skatejs/component': '^0.0.0',
+      '@skatejs/renderer-react': '^0.2.1',
+      react: '^16.6.3',
+      'react-dom': '^16.6.3'
     }
   },
   'src/index.js': outdent`
-    import React, { Fragment } from 'react';
-    import withRenderer from '@skatejs/renderer-react';
-    import { define, props, withComponent } from 'skatejs';
+    /** @jsx h */
 
-    @define
-    class Hello extends withComponent(withRenderer()) {
-      static is = 'x-hello';
+    import Component, { h } from '@skatejs/renderer-react';
+
+    export default class extends Component {
       static props = {
-        name: props.string
+        name: String
       };
-      render({ name }) {
-        return (
-          <Fragment>
-            Hey, <strong>{name}</strong>!
-          </Fragment>
-        );
+      render() {
+        return <span>Hey, <strong>{this.name}</strong>!</span>;
       }
     }
-
-    export default Hello;
   `
 };

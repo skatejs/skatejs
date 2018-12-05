@@ -1,39 +1,25 @@
 const outdent = require('outdent');
 
 module.exports = {
-  '.babelrc': {
-    plugins: [
-      ['transform-builtin-classes', { globals: ['HTMLElement'] }],
-      'transform-decorators-legacy',
-      'transform-skate-flow-props'
-    ],
-    presets: ['env', 'flow', 'react', 'stage-0']
-  },
+  'tsconfig.json': {},
   'package.json': {
     private: true,
-    dependencies: {
-      skatejs: '*'
-    },
+    dependencies: {},
     devDependencies: {
-      '@skatejs/bore': '*',
-      '@skatejs/ssr': '*',
-      '@skatejs/val': '*',
-      'babel-jest': '*',
-      'babel-plugin-transform-builtin-classes': '^*',
-      'babel-plugin-transform-decorators-legacy': '*',
-      'babel-plugin-transform-skate-flow-props': '*',
-      'babel-polyfill': '*',
-      'babel-preset-env': '*',
-      'babel-preset-flow': '*',
-      'babel-preset-react': '*',
-      'babel-preset-stage-0': '*',
-      conartist: '*',
-      jest: '*',
-      'parcel-bundler': '*'
+      '@skatejs/bore': '^4.0.3',
+      '@skatejs/ssr': '^0.19.1',
+      jest: '23.6.0',
+      'jest-cli': '23.6.0',
+      'parcel-bundler': '^1.9.7'
     },
     jest: {
-      testEnvironment: '@skatejs/ssr/jest',
-      transformIgnorePatterns: []
+      testEnvironment: './packages/ssr/jest',
+      transformIgnorePatterns: [],
+      transform: {
+        '^.+\\.tsx?$': 'ts-jest'
+      },
+      testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node']
     },
     scripts: {
       build: 'parcel build src/index.html',

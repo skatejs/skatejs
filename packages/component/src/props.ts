@@ -1,10 +1,10 @@
 import { PropType } from './types';
 
 const any: PropType = {
-  defined: (elem, name) => {},
-  default: (elem, name) => null,
+  default: (elem, name, oldValue) => null,
+  defined: (ctor, name) => {},
   deserialize: (elem, name, oldValue, newValue) => newValue,
-  get: (elem, name, value) => value,
+  get: (elem, name, oldValue) => oldValue,
   serialize: (elem, name, oldValue, newValue) => newValue,
   set: (elem, name, oldValue, newValue) => newValue,
   source: propName => propName.toLowerCase(),
