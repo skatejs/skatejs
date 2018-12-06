@@ -6,10 +6,8 @@ import { Tabs } from './tabs';
 const values = obj => Object.values(obj);
 
 function format(src) {
+  return src;
   src = src || '';
-
-  // Fix imports.
-  src = src.replace(/(\.\.\/)*src/, 'skatejs').replace(/\/umd/, '');
 
   // Remove leading newlines and only allow up to two newlines in code.
   src = src.split('\n').filter((v, i, a) => a[i - 1] || v.trim().length);
@@ -28,6 +26,7 @@ function format(src) {
 
 export class Code extends Component {
   static props = {
+    children: null,
     code: String,
     lang: String,
     title: String
@@ -58,9 +57,10 @@ export class Code extends Component {
     this.style.display = 'block';
   }
   refHighlight = e => {
+    if (!e) return;
     import('prismjs').then(prism => {
       e.innerHTML = prism.highlight(
-        format(this.code),
+        format(this.innerHTML || this.code),
         prism.languages[this.lang] || prism.languages.markup,
         this.lang || 'markup'
       );
