@@ -7,6 +7,7 @@ import { Component, h, withLoadable } from '../utils';
 
 // @ts-ignore
 import logo50 from '../img/logo-50x50.png';
+
 // @ts-ignore
 import logo100 from '../img/logo-100x100.png';
 
@@ -72,75 +73,44 @@ export default class App extends Component {
             path="/guides/getting-started"
           />
           <Route
-            page={withLoading(() => import('../pages/guides/flowtype'))}
-            path="/guides/flowtype"
-          />
-          <Route
             page={withLoading(() => import('../pages/guides/storybook'))}
             path="/guides/storybook"
           />
           <Route
-            page={withLoading(() => import('../pages/migrating/4.x-5.x'))}
-            path="/migrating"
+            page={withLoading(() =>
+              import('../pages/migrating/skatejs-to-skatejs-element')
+            )}
+            path="/migrating/skatejs-to-skatejs-element"
           />
-          <Route
-            page={withLoading(() => import('../pages/migrating/4.x-5.x'))}
-            path="/migrating/4.x-5.x"
           />
-          <Route
-            page={withLoading(() => import('../pages/migrating/5.x-6.x'))}
-            path="/migrating/5.x-6.x"
-          />
-          {/* <Route
-              page={withLoading(() => import('../pages/components'))}
-              path="/components"
-            />
+          {/* 
             <Route
-              page={withLoading(() => import('../pages/renderers/default'))}
-              path="/renderers/default"
+              page={withLoading(() => import('../pages/api/element'))}
+              path="/api/element"
             />
             <Route
               page={withLoading(() =>
-                import('../pages/renderers/with-lit-html')
+                import('../pages/api/element-lit-html')
               )}
-              path="/renderers/with-lit-html"
+              path="/api/element-lit-html"
             />
             <Route
-              page={withLoading(() => import('../pages/renderers/with-preact'))}
-              path="/renderers/with-preact"
+              page={withLoading(() => import('../pages/api/element-preact'))}
+              path="/api/element-preact"
             />
             <Route
-              page={withLoading(() => import('../pages/renderers/with-react'))}
-              path="/renderers/with-react"
+              page={withLoading(() => import('../pages/api/element-react'))}
+              path="/api/element-react"
             />
             <Route
-              page={withLoading(() => import('../pages/renderers'))}
-              path="/renderers"
+              page={withLoading(() => import('../pages/api'))}
+              path="/api"
             />
             <Route
               page={withLoading(() => import('../pages/utils/define'))}
-              path="/utils/define"
+              path="/api/define"
             />
-            <Route
-              page={withLoading(() => import('../pages/utils/emit'))}
-              path="/utils/emit"
-            />
-            <Route
-              page={withLoading(() => import('../pages/utils/link'))}
-              path="/utils/link"
-            />
-            <Route
-              page={withLoading(() => import('../pages/utils/name'))}
-              path="/utils/name"
-            />
-            <Route
-              page={withLoading(() => import('../pages/utils/shadow'))}
-              path="/utils/shadow"
-            />
-            <Route
-              page={withLoading(() => import('../pages/utils'))}
-              path="/utils"
-            />*/}
+          */}
         </Router>
       </div>
     );

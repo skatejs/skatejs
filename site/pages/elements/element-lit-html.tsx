@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { define } from 'skatejs';
+import define from '@skatejs/define';
 import '../../components/code';
 import '../../components/layout';
 import '../../components/primitives';
@@ -12,8 +12,8 @@ const codeWithLitHtmlHtml = fs.readFileSync('./__samples__/lit-html.html');
 export default define(
   class extends Component {
     static is = 'x-pages-renderers-lit-html';
-    render() {
-      return this.$`
+    render(html) {
+      return html`
       ${this.$style}
       <x-layout title="LitHTML renderer">
         <p>

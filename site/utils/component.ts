@@ -1,10 +1,9 @@
-import { Component as SkateComponent } from '@skatejs/element';
-import renderer from '@skatejs/element-preact';
+import Element from '@skatejs/element-preact';
 import { value } from 'yocss';
 import { style } from './style';
 
-export { h } from '@skatejs/element-preact';
-export class Component extends SkateComponent {
+export { h } from 'preact';
+export class Component extends Element {
   _context: any;
   css: any;
   state = {};
@@ -31,8 +30,5 @@ export class Component extends SkateComponent {
   }
   set context(context: any) {
     this._context = context;
-  }
-  renderer(root, func) {
-    renderer(root, func);
   }
 }

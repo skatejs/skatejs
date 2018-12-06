@@ -5,5 +5,5 @@ export default md('Components')`
 
   * [sk-context](/components/sk-context) - Use context similar to React.
   * [sk-marked](/components/sk-marked) - Parse and render markdown.
-  * [sk-context](/components/sk-context) - A router for your SPA.
+  * [sk-router](/components/sk-router) - A router for your SPA.
 `;
