@@ -28,11 +28,11 @@ class History {
     const abs = Math.abs(rel);
     const method = rel > 0;
     if (rel > 0) {
-      for (const a = 0; a < abs; a++) {
+      for (let a = 0; a < abs; a++) {
         this.forward();
       }
     } else if (rel < 0) {
-      for (const a = 0; a < abs; a++) {
+      for (let a = 0; a < abs; a++) {
         this.back();
       }
     }
