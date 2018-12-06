@@ -14,6 +14,4 @@ class PatchedEvent extends Event {
   }
 }
 
-module.exports = {
-  Event: PatchedEvent
-};
+module.exports = PatchedEvent;

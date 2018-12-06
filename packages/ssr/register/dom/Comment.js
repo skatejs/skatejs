@@ -1,4 +1,4 @@
-const { Node } = require('./Node');
+const Node = require('./Node');
 
 const Comment = class extends Node {
   constructor() {
@@ -25,6 +25,4 @@ const Comment = class extends Node {
   }
 };
 
-module.exports = {
-  Comment
-};
+module.exports = Comment;

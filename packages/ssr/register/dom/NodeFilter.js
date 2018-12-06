@@ -12,6 +12,4 @@ const NodeFilter = {
   SHOW_TEXT: 4
 };
 
-module.exports = {
-  NodeFilter
-};
+module.exports = NodeFilter;

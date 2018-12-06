@@ -8,27 +8,25 @@ afterEach(() => {
   document.body.innerHTML = '';
 });
 
-describe('createTreeWalker', () => {
-  it('should visit all nodes', () => {
-    document.head.innerHTML = '<div id="one"></div>';
-    document.body.innerHTML = '<div id="one"></div>';
+test('createTreeWalker', () => {
+  document.head.innerHTML = '<div id="one"></div>';
+  document.body.innerHTML = '<div id="one"></div>';
 
-    const list = [];
-    const tree = document.createTreeWalker(document);
+  const list = [];
+  const tree = document.createTreeWalker(document);
 
-    while (tree.nextNode()) {
-      list.push(tree.currentNode.nodeName);
-    }
+  while (tree.nextNode()) {
+    list.push(tree.currentNode.nodeName);
+  }
 
-    expect(list).toMatchObject([
-      '#document',
-      'HTML',
-      'HEAD',
-      'DIV',
-      'BODY',
-      'DIV'
-    ]);
-  });
+  expect(list).toMatchObject([
+    '#document',
+    'HTML',
+    'HEAD',
+    'DIV',
+    'BODY',
+    'DIV'
+  ]);
 });
 
 describe('getElementById', () => {

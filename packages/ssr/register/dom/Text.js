@@ -1,6 +1,6 @@
-const { Node } = require('./Node');
+const Node = require('./Node');
 
-const Text = class extends Node {
+class Text extends Node {
   constructor() {
     super();
     this._nodeValue = '';
@@ -23,8 +23,6 @@ const Text = class extends Node {
   set textContent(textContent) {
     this.nodeValue = textContent;
   }
-};
+}
 
-module.exports = {
-  Text
-};
+module.exports = Text;

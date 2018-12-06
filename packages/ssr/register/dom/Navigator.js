@@ -4,6 +4,4 @@ class Navigator {
   }
 }
 
-module.exports = {
-  Navigator
-};
+module.exports = Navigator;

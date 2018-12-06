@@ -3,11 +3,12 @@ const path = require('path');
 const vm = require('vm');
 const { parseFragment } = require('parse5');
 
-const { execFile, nodeName, prop } = require('./util');
-const { ClassList } = require('./ClassList');
-const { Node } = require('./Node');
-const { triggerMutation } = require('./MutationObserver');
-const { CSSStyleSheet } = require('./StyleSheet');
+const ClassList = require('./ClassList');
+const Node = require('./Node');
+const MutationObserver = require('./MutationObserver');
+const CSSStyleSheet = require('./StyleSheet');
+
+const { execFile, nodeName, prop } = require('../util');
 
 const ElementProto = Element.prototype;
 const {
@@ -76,7 +77,7 @@ ElementProto.hasAttributes = function() {
 ElementProto.removeAttribute = function(name) {
   const oldValue = this.getAttribute(name);
   removeAttribute.call(this, name);
-  triggerMutation('attribute', this, name, oldValue);
+  MutationObserver.trigger('attribute', this, name, oldValue);
   if (this.attributeChangedCallback) {
     this.attributeChangedCallback(name, oldValue, null);
   }
@@ -93,7 +94,7 @@ ElementProto.setAttribute = function(name, newValue) {
     this[propName] = newValue;
     settingProp = false;
   }
-  triggerMutation('attribute', this, name, oldValue);
+  MutationObserver.trigger('attribute', this, name, oldValue);
   if (this.attributeChangedCallback && observedAttributes.indexOf(name) > -1) {
     this.attributeChangedCallback(name, oldValue, newValue);
   }
@@ -337,6 +338,4 @@ prop(ElementProto, 'textContent', {
   }
 });
 
-module.exports = {
-  Element
-};
+module.exports = Element;

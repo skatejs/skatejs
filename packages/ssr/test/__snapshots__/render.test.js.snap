@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`rendering: document 1`] = `"<!doctype html><html><head></head><body><script>function __ssr() {var r,s=document.currentScript,f=s.parentNode;h=f.parentNode;f.removeChild(s);h.removeChild(f);r=h.attachShadow({mode:h.getAttribute('mode')||'open'});while(f&&f.firstChild)r.appendChild(f.firstChild);}</script><x-hello><shadowroot><script>__ssr()</script></shadowroot>World</x-hello></body></html>"`;
-
-exports[`rendering: node 1`] = `"<x-hello><shadowroot><script>__ssr()</script></shadowroot>World</x-hello>"`;
