@@ -1,7 +1,6 @@
 import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
-import h from 'snabbdom/h';
-import Element from '..';
+import Element, { h } from '..';
 
 const Test = define(
   class extends Element {

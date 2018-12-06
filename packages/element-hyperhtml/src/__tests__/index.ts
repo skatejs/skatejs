@@ -6,8 +6,8 @@ const Test = define(
   class extends Element {
     static props = { name: String };
     name: string = 'World';
-    render(html) {
-      html`Hello, ${this.name}!`;
+    render(h) {
+      h`Hello, ${this.name}!`;
     }
   }
 );

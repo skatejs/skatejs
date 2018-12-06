@@ -11,11 +11,11 @@ npm install @skatejs/element-hyperhtml hyperhtml
 ## Usage
 
 ```js
-import Component from '@skatejs/element-hyperhtml';
+import Element from '@skatejs/element-hyperhtml';
 
-class Hello extends Component {
-  render(html) {
-    return html`Hello, <slot />!`;
+class Hello extends Element {
+  render(h) {
+    return h`Hello, <slot />!`;
   }
 }
 

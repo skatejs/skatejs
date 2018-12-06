@@ -11,10 +11,9 @@ npm i @skatejs/element-snabbdom snabbdom
 ## Usage
 
 ```js
-import Component from '@skatejs/element-snabbdom';
-import h from 'snabbdom/h';
+import Element, { h } from '@skatejs/element-snabbdom';
 
-class Hello extends Component {
+class Hello extends Element {
   static modules = [
     require('snabbdom/modules/attributes').default,
     require('snabbdom/modules/eventlisteners').default,
@@ -23,15 +22,12 @@ class Hello extends Component {
     require('snabbdom/modules/style').default,
     require('snabbdom/modules/dataset').default
   ];
-  static props = {
-    name: String
-  };
   render() {
-    return h('div', `Hello, ${this.name}!`);
+    return h('div', `Hello, `, h('slot'), '!');
   }
 }
 
 customElements.define('x-hello', Hello);
 ```
 
-It's possible to use JSX via [snabbdom-pragma](https://github.com/Swizz/snabbdom-pragma)
+It's possible to use JSX via [snabbdom-pragma](https://github.com/Swizz/snabbdom-pragma).

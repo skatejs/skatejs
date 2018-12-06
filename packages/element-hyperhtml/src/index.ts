@@ -5,8 +5,8 @@ const cache = new WeakMap();
 
 export default class extends Element {
   renderer() {
-    let html = cache.get(this);
-    if (!html) cache.set(this, (html = bind(this.renderRoot)));
-    this.render(html);
+    let h = cache.get(this);
+    if (!h) cache.set(this, (h = bind(this.renderRoot)));
+    this.render(h);
   }
 }

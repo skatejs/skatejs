@@ -6,3 +6,5 @@ export default class extends Element {
     return render(this.render(), this.renderRoot);
   }
 }
+
+export { html as h } from 'lit-html';

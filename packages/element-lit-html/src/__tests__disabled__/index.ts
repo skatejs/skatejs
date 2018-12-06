@@ -3,15 +3,14 @@
 
 import { wait } from '@skatejs/bore';
 import define from '@skatejs/define';
-import { html } from 'lit-html';
-import Element from '..';
+import Element, { h } from '..';
 
 const Test = define(
   class extends Element {
     static props = { name: String };
     name: string = 'World';
     render() {
-      return html`Hello, ${this.name}!`;
+      return h`Hello, ${this.name}!`;
     }
   }
 );

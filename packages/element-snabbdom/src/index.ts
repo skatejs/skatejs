@@ -42,3 +42,5 @@ export default class Renderer extends Element {
     this._vTree = newVTree;
   }
 }
+
+export { h } from 'snabbdom/h';

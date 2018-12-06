@@ -11,12 +11,11 @@ npm i @skatejs/element-lit-html lit-html
 ## Usage
 
 ```js
-import Component from '@skatejs/element-lit-html';
-import { html } from 'lit-html';
+import Element, { h } from '@skatejs/element-lit-html';
 
-class Hello extends Component {
+class Hello extends Element {
   render() {
-    return html`Hello, <slot></slot>!`;
+    return h`Hello, <slot></slot>!`;
   }
 }
 
