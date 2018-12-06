@@ -5,7 +5,7 @@
 ## Install
 
 ```sh
-npm install @skatejs/sk-router
+npm i @skatejs/sk-router
 ```
 
 ## Usage

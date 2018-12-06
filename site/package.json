@@ -1,7 +1,7 @@
 {
   "alias": {
-    "@skatejs/element": "/node_modules/@skatejs/element/src",
     "@skatejs/define": "/node_modules/@skatejs/define/src",
+    "@skatejs/element": "/node_modules/@skatejs/element/src",
     "@skatejs/element-hyperhtml": "/node_modules/@skatejs/element-hyperhtml/src",
     "@skatejs/element-lit-html": "/node_modules/@skatejs/element-lit-html/src",
     "@skatejs/element-preact": "/node_modules/@skatejs/element-preact/src",
@@ -28,6 +28,7 @@
     "prismjs": "1.11.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
+    "shadow-css": "^0.1.0",
     "yocss": "0.5.1"
   },
   "devDependencies": {

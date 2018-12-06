@@ -8894,6 +8894,10 @@ sha.js@^2.4.0, sha.js@^2.4.8:
     inherits "^2.0.1"
     safe-buffer "^5.0.1"
 
+shadow-css@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/shadow-css/-/shadow-css-0.1.0.tgz#051be1d9330beaa772a21dfbaeb56734fc3d1543"
+
 shallow-copy@~0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/shallow-copy/-/shallow-copy-0.0.1.tgz#415f42702d73d810330292cc5ee86eae1a11a170"

@@ -1,43 +1,37 @@
-# skatejs/renderer-snabbdom
+# element-snabbdom
 
 > SkateJS renderer for [Snabbdom](https://github.com/snabbdom/snabbdom)
 
 ## Install
 
 ```sh
-npm install @skatejs/element-snabbdom snabbdom skatejs
+npm i @skatejs/element-snabbdom snabbdom
 ```
 
 ## Usage
 
-`skatejs/renderer-snabbdom` exports a factory function that creates a renderer mixin. It accepts as argument an array
-of snabbdom modules
-
 ```js
-import { props, withComponent } from 'skatejs';
-import createRenderer from '@skatejs/element-snabbdom';
+import Component from '@skatejs/element-snabbdom';
 import h from 'snabbdom/h';
 
-// configure the renderer with the required modules
-const withSnabbdom = createRenderer([
-  require('snabbdom/modules/attributes').default,
-  require('snabbdom/modules/eventlisteners').default,
-  require('snabbdom/modules/class').default,
-  require('snabbdom/modules/props').default,
-  require('snabbdom/modules/style').default,
-  require('snabbdom/modules/dataset').default
-]);
-
-class WcHello extends withComponent(withSnabbdom()) {
+class Hello extends Component {
+  static modules = [
+    require('snabbdom/modules/attributes').default,
+    require('snabbdom/modules/eventlisteners').default,
+    require('snabbdom/modules/class').default,
+    require('snabbdom/modules/props').default,
+    require('snabbdom/modules/style').default,
+    require('snabbdom/modules/dataset').default
+  ];
   static props = {
-    name: props.string
+    name: String
   };
-  render({ name }) {
-    return h('div', `Hello, ${name}!`);
+  render() {
+    return h('div', `Hello, ${this.name}!`);
   }
 }
 
-customElements.define('wc-hello', WcHello);
+customElements.define('x-hello', Hello);
 ```
 
-It's possible to use JSX syntax through [Snabbdom-pragma](https://github.com/Swizz/snabbdom-pragma)
+It's possible to use JSX via [snabbdom-pragma](https://github.com/Swizz/snabbdom-pragma)

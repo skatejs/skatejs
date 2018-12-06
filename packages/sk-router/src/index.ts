@@ -1,5 +1,5 @@
 import navaid from 'navaid';
-import define from '@skatejs/define';
+import define, { getName } from '@skatejs/define';
 import Element from '@skatejs/element';
 
 export class Link extends Element {
@@ -76,15 +76,16 @@ export class Router extends Element {
       this.previousRoute.shadowRoot.innerHTML = '';
     }
     if (route.page.prototype instanceof HTMLElement) {
-      route.shadowRoot.innerHTML = '';
-      const Page = define(route.page);
-      route.shadowRoot.appendChild(new Page());
+      const page = getName(define(route.page));
+      this.shadowRoot.innerHTML = `<${page}></${page}>`;
     } else if (route.page[0] === '<') {
-      route.shadowRoot.innerHTML = route.page;
+      this.shadowRoot.innerHTML = route.page;
     } else {
-      route.shadowRoot.innerHTML = '<' + route.page + '></' + route.page + '>';
+      this.shadowRoot.innerHTML = `<${route.page}></${route.page}>`;
     }
-    Object.assign(route.shadowRoot.firstElementChild, params);
+    if (this.shadowRoot.firstElementChild) {
+      Object.assign(this.shadowRoot.firstElementChild, params);
+    }
     this.previousRoute = route;
   }
 }

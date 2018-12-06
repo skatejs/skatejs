@@ -1,11 +1,11 @@
-# skatejs/renderer-react
+# element-react
 
 > SkateJS renderer for React.
 
 ## Install
 
 ```sh
-npm install @skatejs/element-react react react-dom skatejs
+npm i @skatejs/element-react react react-dom
 ```
 
 ## Usage

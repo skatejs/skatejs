@@ -1,11 +1,11 @@
-# skatejs/renderer-preact
+# element-preact
 
 > SkateJS renderer for Preact.
 
 ## Install
 
 ```sh
-npm install @skatejs/element-preact preact skatejs
+npm i @skatejs/element-preact preact
 ```
 
 ## Usage

@@ -1,6 +1,8 @@
-import md from '../../utils/md';
+import { md } from '../../utils';
 
-export default md('Storybook')`
+export default md(`
+  # Storybook
+
   If you're building UI components, it's likely you want to have a development environment to test different permutations of your components by actually using them. The React ecosystem came up with a fantastic tool called [Storybook](https://storybook.js.org). If you haven't heard of it, you should check it out. However, if you're here, it's likely you have, but you might be wondering how you can use it with web components.
 
   ### Getting set up
@@ -167,4 +169,4 @@ export default md('Storybook')`
   ~~~
 
   You lose some possibly important features, such as HMR support because you can only register a custom element with the same name once, and this would try to do it multiple times. However, this goes to show that custom elements are the glue that allows you to share components across frameworks; the DOM is your abstraction layer.
-`;
+`);

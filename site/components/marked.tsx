@@ -1,24 +1,28 @@
-import define from '@skatejs/define';
+import define, { getName } from '@skatejs/define';
 import SkMarked from '@skatejs/sk-marked';
 import { Component, h } from '../utils';
 import { Code } from './code';
 import { Link, Note } from './primitives';
 
 // Ensure they're defined so we can use them as HTML in the markdown renderers.
-[Code, Link, Note].forEach(define);
+const custom = {
+  code: () => getName(define(Code)),
+  link: () => getName(define(Link)),
+  note: () => getName(define(Note))
+};
 
 const defaultRenderers = {
   blockquote(text) {
-    return `<${Note.is}>${text}</${Note.is}>`;
+    return `<${custom.note()}>${text}</${custom.note()}>`;
   },
   code(code, lang) {
-    return `<${Code.is} code="${code}" lang="${lang}"></${Code.is}>`;
+    return `<${custom.code()} code="${code}" lang="${lang}"></${custom.code()}>`;
   },
   heading(text, level) {
     return level === 1 ? '' : `<h${level}>${text}</h${level}>`;
   },
   link(href, title, text) {
-    return `<${Link.is} href="${href}" title="${title}">${text}</${Link.is}>`;
+    return `<${custom.link()} href="${href}" title="${title}">${text}</${custom.link()}>`;
   }
 };
 
@@ -33,7 +37,7 @@ export class Marked extends Component {
     const { renderers, src } = this;
     return (
       <SkMarked
-        css={this.context.style}
+        css={this.getStyle()}
         renderers={{
           ...defaultRenderers,
           ...renderers

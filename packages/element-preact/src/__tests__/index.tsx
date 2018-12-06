@@ -1,9 +1,6 @@
-/* @jsx h */
-
 import { wait } from '@skatejs/bore';
 import define, { getName } from '@skatejs/define';
-import { h } from 'preact';
-import Element from '..';
+import Element, { h } from '..';
 
 const Test = define(
   class extends Element {

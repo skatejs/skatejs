@@ -1,16 +1,16 @@
-import css, { names, value } from 'yocss';
-import { Component, h, style } from '../utils';
+import { Component, h } from '../utils';
 import { Link } from './primitives';
 
-const linkCss = ({ depth, selected }) =>
-  css({
-    backgroundColor: selected ? '#DCE4CA' : 'transparent',
-    display: 'block',
-    padding: `5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px`,
-    '&:hover': {
-      backgroundColor: '#DCE4CA'
-    }
-  });
+const linkCss = ({ depth, selected }) => `
+  a {
+    background-color: ${selected ? '#DCE4CA' : 'transparent'};
+    display: block;
+    padding: 5px 10px 5px ${(depth ? depth * 10 : 0) + 10}px;
+  }
+  a:hover {
+    background-color: #DCE4CA;
+  }
+`;
 
 const navItems = () => [
   {
@@ -22,46 +22,26 @@ const navItems = () => [
     text: 'Guides',
     tree: [
       { href: '/guides/getting-started', text: 'Getting started' },
-      { href: '/guides/flowtype', text: 'Flowtype' },
       { href: '/guides/storybook', text: 'Storybook' }
     ]
   },
   {
     href: '/migrating',
     text: 'Migrating',
-    tree: [
-      { href: '/migrating/4.x-5.x', text: '4.x ⇢ 5.x' },
-      { href: '/migrating/5.x-6.x', text: '5.x ⇢ 6.x' }
-    ]
+    tree: [{ href: '/migrating/old-to-new', text: 'Old to new' }]
   },
   {
-    href: '/components',
-    text: 'Components',
+    href: '/docs',
+    text: 'Docs',
     tree: [
-      { href: '/components/sk-context', text: 'sk-context' },
-      { href: '/components/sk-marked', text: 'sk-marked' },
-      { href: '/components/sk-router', text: 'sk-router' }
-    ]
-  },
-  {
-    href: '/renderers',
-    text: 'Renderers',
-    tree: [
-      { href: '/renderers/default', text: 'Default' },
-      { href: '/renderers/with-lit-html', text: 'LitHTML' },
-      { href: '/renderers/with-preact', text: 'Preact' },
-      { href: '/renderers/with-react', text: 'React' }
-    ]
-  },
-  {
-    href: '/utils',
-    text: 'Utilities',
-    tree: [
-      { href: '/utils/define', text: 'define()' },
-      { href: '/utils/emit', text: 'emit()' },
-      { href: '/utils/link', text: 'link()' },
-      { href: '/utils/name', text: 'name()' },
-      { href: '/utils/shadow', text: 'shadow()' }
+      { href: '/docs/define', text: 'define' },
+      { href: '/docs/element', text: 'element' },
+      { href: '/docs/element-lit-html', text: 'element-lit-html' },
+      { href: '/docs/element-preact', text: 'element-preact' },
+      { href: '/docs/element-react', text: 'element-react' },
+      { href: '/docs/sk-context', text: 'sk-context' },
+      { href: '/docs/sk-marked', text: 'sk-marked' },
+      { href: '/docs/sk-router', text: 'sk-router' }
     ]
   }
 ];
@@ -70,13 +50,15 @@ function renderTree(items, depth = 0) {
   return items && items.length ? (
     <ul>
       {items.map(n => {
-        const styles = linkCss({
-          depth,
-          selected: location.pathname === n.href
-        });
         return (
           <li>
-            <Link classNames={{ a: styles }} css={value(styles)} href={n.href}>
+            <Link
+              css={linkCss({
+                depth,
+                selected: location.pathname === n.href
+              })}
+              href={n.href}
+            >
               {n.text}
             </Link>
             {location.pathname.indexOf(n.href) === 0
@@ -91,42 +73,40 @@ function renderTree(items, depth = 0) {
   );
 }
 
-const cssLayout = {
-  flex: css({
-    display: 'flex',
-    flexWrap: 'wrap',
-    margin: '0 auto',
-    maxWidth: '1000px'
-  }),
-  flexItem: css({
-    minWidth: 0
-  }),
-  nav: css({
-    flexBasis: '200px',
-    flexShrink: 0,
-    margin: '10px 20px 0 0',
-    ' li': {
-      margin: '5px 0',
-      padding: 0
-    },
-    ' ul': {
-      listStyle: 'none',
-      margin: 0,
-      padding: 0
-    }
-  }),
-  section: css({
-    flexBasis: '300px',
-    flexGrow: 1
-  })
-};
-
 export class Layout extends Component {
   static props = {
     nav: Boolean,
     title: String
   };
-  css = cssLayout;
+  css = `
+    .flex {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0 auto;
+      max-width: 1000px;
+    }
+    .flex-item {
+      min-width: 0;
+    }
+    .nav {
+      flex-basis: 200px;
+      flex-shrink: 0;
+      margin: 10px 20px 0 0;
+    }
+    .nav li {
+      margin: 5px 0;
+      padding: 0;
+    }
+    .nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .section {
+      flex-basis: 300px;
+      flex-grow: 1;
+    }
+  `;
   nav: boolean = true;
   title: string = '';
   connectedCallback() {
@@ -138,22 +118,16 @@ export class Layout extends Component {
     document.title = `SkateJS${title ? ` - ${title}` : ''}`;
     return (
       <div>
-        <div class={cssLayout.flex}>
-          {this.$style}
-          <div class={names(cssLayout.flexItem, cssLayout.nav)} />
-          <section class={names(cssLayout.flexItem, cssLayout.section)}>
+        {this.renderStyle()}
+        <div class="flex">
+          <div class="flex-item nav" />
+          <section class="flex-item section">
             {title ? <h2>{title}</h2> : ''}
           </section>
         </div>
-        <div class={cssLayout.flex}>
-          {nav ? (
-            <nav class={names(cssLayout.flexItem, cssLayout.nav)}>
-              {renderTree(navItems())}
-            </nav>
-          ) : (
-            ''
-          )}
-          <section class={names(cssLayout.flexItem, cssLayout.section)}>
+        <div class="flex">
+          {nav ? <nav class="flex-item nav">{renderTree(navItems())}</nav> : ''}
+          <section class="flex-item section">
             <slot />
           </section>
         </div>

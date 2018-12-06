@@ -1,7 +1,6 @@
 /** @jsx h */
 
-import Element from '@skatejs/element';
-import renderer, { h } from '@skatejs/element-preact';
+import Element, { h } from '@skatejs/element-preact';
 
 class ElementPreact extends Element {
   static props = {

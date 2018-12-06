@@ -1,28 +1,17 @@
 import { Component, h } from './component';
 
-export const withLoadable = (props: {
-  loader: Function;
-  loading: Object;
-  useShadowRoot?: boolean;
-}) =>
+export const withLoadable = (props: { loader: Function; loading: Object }) =>
   class extends Component {
     static props = {
       props: Object,
       state: Object
     };
-    state: { loaded?: Object } = {};
+    props: {} = {};
+    state: { loaded: Object } = { loaded: null };
     loader: Function = props.loader;
     loading: Object = props.loading;
-    get renderRoot() {
-      return props.useShadowRoot ? super.renderRoot : this;
-    }
-    connectedCallback() {
-      super.connectedCallback();
-      const loaded = this.loading;
-      if (loaded) {
-        this.state = { loaded };
-      }
-      if (this.loader) {
+    updated() {
+      if (!this.state.loaded && this.loader) {
         this.loader().then(r => {
           const loaded = r.default || r;
           if (loaded) {
@@ -32,7 +21,7 @@ export const withLoadable = (props: {
       }
     }
     render() {
-      const Comp = this.state.loaded ? this.state.loaded : this.loading;
+      const Comp = this.state.loaded || this.loading;
       return <Comp props={this.props} />;
     }
   };

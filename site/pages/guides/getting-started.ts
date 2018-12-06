@@ -1,6 +1,8 @@
-import md from '../../utils/md';
+import { md } from '../../utils';
 
-export default md('Getting started')`
+export default md(`
+  # Getting started
+
   At its core, Skate is about creating
   [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/). Skate
   provides a series of
@@ -240,4 +242,4 @@ export default md('Getting started')`
 
   Now that the greeting component is rendered via Preact, when it renders, it only
   changes the part of the DOM that requires updating.
-`;
+`);

@@ -1,54 +1,51 @@
 import { readFileSync } from 'fs';
-import css from 'yocss';
+import css from 'shadow-css';
 import { Runnable } from '../components/code';
 import { Layout } from '../components/layout';
 import { Marked } from '../components/marked';
 import { Hr } from '../components/primitives';
 import { Component, h } from '../utils';
-import './renderers/__samples__/preact';
 
-const codeWithPreact = readFileSync(
-  __dirname + '/renderers/__samples__/preact.tsx'
+import './docs/__samples__/element-preact';
+const codeSample = readFileSync(
+  __dirname + '/docs/__samples__/element-preact.tsx'
 ).toString();
-const codeWithPreactHtml = readFileSync(
-  __dirname + '/renderers/__samples__/preact.html'
+const codeSampleHtml = readFileSync(
+  __dirname + '/docs/__samples__/element-preact.html'
 ).toString();
 const README = readFileSync(__dirname + '/../../README.md').toString();
 
+const style = css(`
+  .code {
+    margin: 0 auto;
+    overflow: hidden;
+    max-width: 600px;
+  }
+  .hero {
+    margin: 60px 0;
+    text-align: center;
+  }
+  .subtitle {
+    font-size: 1.4em;
+    margin-top: 30px;
+  }
+  .title {
+    margin-bottom: 30px;
+  }
+`);
+
 export default class Index extends Component {
-  css = {
-    code: css({
-      margin: '0 auto',
-      overflow: 'hidden',
-      maxWidth: '600px'
-    }),
-    hero: css({
-      margin: '60px 0',
-      textAlign: 'center'
-    }),
-    subtitle: css({
-      fontSize: '1.4em',
-      marginTop: '30px'
-    }),
-    title: css({
-      marginBottom: '30px'
-    })
-  };
   render() {
     return (
       <div>
-        {this.$style}
-        <div class={this.css.hero}>
-          <h1 class={this.css.title}>SkateJS</h1>
-          <h2 class={this.css.subtitle}>
+        <style>{this.renderStyle(style)}</style>
+        <div class="hero">
+          <h1 class="title">SkateJS</h1>
+          <h2 class="subtitle">
             Effortless custom elements for modern view libraries.
           </h2>
         </div>
-        <Runnable
-          class={this.css.code}
-          code={codeWithPreact}
-          html={codeWithPreactHtml}
-        />
+        <Runnable class="code" code={codeSample} html={codeSampleHtml} />
         <Hr />
         <Layout>
           <Marked src={README} />

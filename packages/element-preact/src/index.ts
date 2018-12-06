@@ -1,27 +1,8 @@
-import Element from '@skatejs/element';
 import define, { getName } from '@skatejs/define';
-import { options, render } from 'preact';
+import Element from '@skatejs/element';
+import { h as preactH, render } from 'preact';
 
 const mapDom = new WeakMap();
-let oldVnode;
-
-function newVnode(vnode) {
-  const { nodeName } = vnode;
-  if (nodeName.prototype instanceof HTMLElement) {
-    define(nodeName);
-    vnode.nodeName = getName(nodeName);
-  }
-  return vnode;
-}
-
-function setupPreact() {
-  oldVnode = options.vnode;
-  options.vnode = newVnode;
-}
-
-function teardownPreact() {
-  options.vnode = oldVnode;
-}
 
 export default class extends Element {
   disconnectedCallback() {
@@ -32,8 +13,14 @@ export default class extends Element {
   }
   renderer() {
     const dom = mapDom.get(this);
-    setupPreact();
     mapDom.set(this, render(this.render(), this.renderRoot, dom));
-    teardownPreact();
   }
+}
+
+export function h(name, props, ...chren) {
+  if (name.prototype instanceof HTMLElement) {
+    define(name);
+    name = getName(name);
+  }
+  return preactH(name, props, ...chren);
 }

@@ -1,7 +1,5 @@
-import SkateComponent from '@skatejs/element';
 import { readFileSync } from 'fs';
-import css, { value } from 'yocss';
-import { Component, h } from '../utils/component';
+import { Component, h } from '../utils';
 import { Tabs } from './tabs';
 
 const mapLang = {};
@@ -44,25 +42,6 @@ function format(src) {
 //   });
 // }
 
-const cssCode = {
-  code: css({
-    backgroundColor: '#292D34',
-    color: '#eee',
-    margin: 0,
-    overflow: 'auto',
-    padding: '20px'
-  }),
-  pre: css({
-    margin: 0
-  }),
-  title: css({
-    backgroundColor: '#20232A',
-    color: '#eee',
-    fontSize: '.8em',
-    padding: '10px 20px'
-  })
-};
-
 export class Code extends Component {
   static props = {
     code: String,
@@ -70,7 +49,24 @@ export class Code extends Component {
     title: String
   };
   code: string = '';
-  css = cssCode;
+  css = `
+    .code {
+      background-color: #292D34;
+      color: #eee;
+      margin: 0;
+      overflow: auto;
+      padding: 2px 20px;
+    }),
+    .pre {
+      margin: 0;
+    }
+    .title {
+      background-color: #20232A;
+      color: #eee;
+      font-size: .8em;
+      padding: 10px 20px;
+    }
+  `;
   lang: string = '';
   title: string = '';
   connectedCallback() {
@@ -85,37 +81,36 @@ export class Code extends Component {
             __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
           )}
         </style>
-        {this.$style}
-        {this.title ? <div class={cssCode.title}>{this.title}</div> : null}
-        <div class={cssCode.code}>
-          <pre class={cssCode.pre}>{format(this.code)}</pre>
+        {this.renderStyle()}
+        {this.title ? <div class="title">{this.title}</div> : null}
+        <div class="code">
+          <pre class="pre">{format(this.code)}</pre>
         </div>
       </div>
     );
   }
 }
 
-const cssExample = {
-  code: css({
-    backgroundColor: '#292D34',
-    color: 'white',
-    margin: 0,
-    overflow: 'auto',
-    padding: '20px'
-  }),
-  title: css({
-    backgroundColor: '#20232A',
-    color: '#eee',
-    fontSize: '.8em',
-    padding: '10px 20px'
-  })
-};
-
-export class Example extends SkateComponent {
+export class Example extends Component {
   static props = {
     html: String,
     title: String
   };
+  css = `
+    .code {
+      background-color: #292D34;
+      color: white;
+      margin: 0;
+      overflow: auto;
+      padding: 20px;
+    }
+    .title {
+      background-color: #20232A;
+      color: #eee;
+      font-size: .8em;
+      padding: 10px 20px;
+    }
+  `;
   html: string = '';
   title: string = '';
   connectedCallback() {
@@ -123,13 +118,18 @@ export class Example extends SkateComponent {
     this.style.display = 'block';
   }
   render() {
-    return `
-      <style>${value(...values(cssExample))}</style>
-      ${
-        this.title ? `<div class="${cssExample.title}">${this.title}</div>` : ''
-      }
-      <div class="${cssExample.code}">${this.html}</div>
-    `;
+    return (
+      <div>
+        {this.renderStyle()}
+        {this.title ? <div class="title">{this.title}</div> : ''}
+        <div
+          class="code"
+          ref={e => {
+            e && (e.innerHTML = this.html);
+          }}
+        />
+      </div>
+    );
   }
 }
 
