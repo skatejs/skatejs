@@ -31,9 +31,6 @@
     "shadow-css": "^0.1.0",
     "yocss": "0.5.1"
   },
-  "devDependencies": {
-    "parcel-bundler": "^1.9.7"
-  },
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",

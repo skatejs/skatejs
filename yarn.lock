@@ -7259,7 +7259,7 @@ pako@~1.0.5:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.7.tgz#2473439021b57f1516c82f58be7275ad8ef1bb27"
 
-parcel-bundler@^1.9.7:
+parcel-bundler@^1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/parcel-bundler/-/parcel-bundler-1.10.3.tgz#8502b40d3f23139093b25e82658f6060f025c024"
   dependencies:

@@ -2,7 +2,6 @@ import { readFileSync } from 'fs';
 import { Component, h } from '../utils';
 import { Tabs } from './tabs';
 
-const mapLang = {};
 // @ts-ignore;
 const values = obj => Object.values(obj);
 
@@ -26,21 +25,6 @@ function format(src) {
 
   return src;
 }
-
-// function highlight(elem, code, language) {
-//   import('prismjs').then(Prism => {
-//     const prism = new Prism();
-//     prism.onmessage = e => {
-//       elem.innerHTML = e.data;
-//     };
-//     prism.postMessage(
-//       JSON.stringify({
-//         code,
-//         language
-//       })
-//     );
-//   });
-// }
 
 export class Code extends Component {
   static props = {
@@ -67,24 +51,33 @@ export class Code extends Component {
       padding: 10px 20px;
     }
   `;
-  lang: string = '';
+  lang: string = 'js';
   title: string = '';
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
   }
+  refHighlight = e => {
+    import('prismjs').then(prism => {
+      e.innerHTML = prism.highlight(
+        format(this.code),
+        prism.languages[this.lang] || prism.languages.markup,
+        this.lang || 'markup'
+      );
+    });
+  };
   render() {
     return (
       <div>
         <style>
           ${readFileSync(
             __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
-          )}
+          ).toString()}
         </style>
         {this.renderStyle()}
         {this.title ? <div class="title">{this.title}</div> : null}
         <div class="code">
-          <pre class="pre">{format(this.code)}</pre>
+          <pre class="pre" ref={this.refHighlight} />
         </div>
       </div>
     );
