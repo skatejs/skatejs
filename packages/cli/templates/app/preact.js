@@ -3,17 +3,17 @@ const outdent = require('outdent');
 module.exports = {
   'package.json': {
     dependencies: {
-      '@skatejs/component': '^0.0.0',
-      '@skatejs/renderer-preact': '^0.2.5',
+      '@skatejs/element': '^0.0.0',
+      '@skatejs/element-preact': '^0.2.5',
       preact: '^8.2.7'
     }
   },
   'src/index.js': outdent`
     /** @jsx h */
 
-    import Component, { h } from '@skatejs/renderer-preact';
+    import Element, { h } from '@skatejs/element-preact';
 
-    export default class extends Component {
+    export default class extends Element {
       static props = {
         name: String
       };

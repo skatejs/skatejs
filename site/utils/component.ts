@@ -1,9 +1,9 @@
-import { Component as SkateComponent } from '@skatejs/component';
-import renderer from '@skatejs/renderer-preact';
+import { Component as SkateComponent } from '@skatejs/element';
+import renderer from '@skatejs/element-preact';
 import { value } from 'yocss';
 import { style } from './style';
 
-export { h } from '@skatejs/renderer-preact';
+export { h } from '@skatejs/element-preact';
 export class Component extends SkateComponent {
   _context: any;
   css: any;

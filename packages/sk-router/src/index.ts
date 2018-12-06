@@ -1,8 +1,8 @@
 import navaid from 'navaid';
-import Component from '@skatejs/component';
 import define from '@skatejs/define';
+import Element from '@skatejs/element';
 
-export class Link extends Component {
+export class Link extends Element {
   static props = {
     classNames: Object,
     css: String,
@@ -32,7 +32,7 @@ export class Link extends Component {
   }
 }
 
-export class Route extends Component {
+export class Route extends Element {
   static props = {
     page: Object,
     path: String
@@ -41,7 +41,7 @@ export class Route extends Component {
   path: string = '';
 }
 
-export class Router extends Component {
+export class Router extends Element {
   private notFound: any;
   private previousRoute: any;
   private router: any;

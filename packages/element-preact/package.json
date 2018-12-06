@@ -3,16 +3,14 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
+    "@skatejs/define": "^0.0.0"
+  },
+  "description": "A SkateJS renderer for Preact.",
+  "devDependencies": {
+    "@skatejs/bore": "^4.0.3",
     "@skatejs/define": "^0.0.0",
     "@skatejs/element": "^0.0.0",
-    "@skatejs/val": "0.4.0",
-    "navaid": "^1.0.0"
-  },
-  "description": "A web component router that's compatible with code-splitting out of the box.",
-  "devDependencies": {
-    "@skatejs/bore": "4.0.3",
-    "@skatejs/ssr": "0.19.1",
-    "jest-in-case": "1.0.2"
+    "preact": "^8.2.7"
   },
   "files": [
     "dist/cjs",
@@ -30,8 +28,11 @@
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "name": "@skatejs/sk-router",
+  "name": "@skatejs/element-preact",
+  "peerDependencies": {
+    "preact": "^8.2.7"
+  },
   "repository": "skatejs/skatejs",
   "src": "src",
-  "version": "0.2.0"
+  "version": "0.0.0"
 }

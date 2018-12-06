@@ -3,8 +3,8 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "marked": "0.3.14",
-    "@skatejs/component": "^0.0.0"
+    "@skatejs/element": "^0.0.0",
+    "marked": "0.3.14"
   },
   "description": "A web component for rendering Markdown using Marked.",
   "devDependencies": {

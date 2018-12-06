@@ -1,4 +1,4 @@
-import Component from '@skatejs/component';
+import Element from '@skatejs/element';
 import marked from 'marked';
 
 function format(src) {
@@ -21,7 +21,7 @@ function format(src) {
   return src.join('\n');
 }
 
-export default class extends Component {
+export default class extends Element {
   static props = {
     css: String,
     renderers: Object,

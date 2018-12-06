@@ -3,7 +3,7 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "@skatejs/component": "^0.0.0"
+    "@skatejs/element": "^0.0.0"
   },
   "description": "A web component for providing and consuming contextual values, based on the React context API.",
   "devDependencies": {

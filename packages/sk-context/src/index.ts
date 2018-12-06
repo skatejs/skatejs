@@ -1,4 +1,4 @@
-import Component, { props } from '@skatejs/component';
+import Element, { props } from '@skatejs/element';
 
 export interface IConsumer {
   onchange: (e: CustomEventInit) => void | null;
@@ -19,7 +19,7 @@ export interface IProviderConstructor {
 export default function(
   defaultValue
 ): { Consumer: IConsumerConstructor; Provider: IProviderConstructor } {
-  class Consumer extends Component implements IConsumer {
+  class Consumer extends Element implements IConsumer {
     static props = {
       onchange: Event
     };
@@ -79,7 +79,7 @@ export default function(
     }
   }
 
-  class Provider extends Component {
+  class Provider extends Element {
     static props = {
       value: {
         ...props.any,

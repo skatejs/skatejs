@@ -56,7 +56,7 @@ export default md('Getting started')`
   > It's worth noting that while \`withRenderer()\` provides a very basic renderer that
   > sets \`innerHTML\` using the return value of \`render()\`, it's not intended for complex
   > usage. If you need events / props / efficient updates, you should use something
-  > like \`@skatejs/renderer-preact\`.
+  > like \`@skatejs/element-preact\`.
 
   When this element is rendered, the DOM will look something like the following:
 
@@ -218,7 +218,7 @@ export default md('Getting started')`
   /** @jsx h */
 
   import { props, withComponent } from 'skatejs';
-  import withRenderer from '@skatejs/renderer-preact';
+  import withRenderer from '@skatejs/element-preact';
   import { h } from 'preact';
 
   const Component = withComponent(withRenderer());

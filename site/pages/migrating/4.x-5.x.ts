@@ -7,7 +7,7 @@ export default md('4.x ⇢ 5.x')`
   - import { h, Component, define } from 'skatejs';
   + import { withComponent } from 'skatejs';
   + import { h } from 'preact';
-  + import withPreact from '@skatejs/renderer-preact';
+  + import withPreact from '@skatejs/element-preact';
 
   + const Component = withComponent(withPreact());
 
@@ -51,7 +51,7 @@ export default md('4.x ⇢ 5.x')`
   - import { define, Component, prop } from 'skatejs';
   + import { withComponent, props } from 'skatejs';
     import { h } from 'preact';
-    import withPreact from '@skatejs/renderer-preact';
+    import withPreact from '@skatejs/element-preact';
 
     const Component = withComponent(withPreact());
 
@@ -77,7 +77,7 @@ export default md('4.x ⇢ 5.x')`
   - import { define, Component, prop } from 'skatejs';
   + import { withComponent, props } from 'skatejs';
     import { h } from 'preact';
-    import withPreact from '@skatejs/renderer-preact';
+    import withPreact from '@skatejs/element-preact';
 
     const Component = withComponent(withPreact())
 
@@ -125,7 +125,7 @@ export default md('4.x ⇢ 5.x')`
   - import { withComponent, props, prop } from 'skatejs';
   + import { withComponent, props } from 'skatejs';
     import { h } from 'preact';
-    import withPreact from '@skatejs/renderer-preact';
+    import withPreact from '@skatejs/element-preact';
 
     const Component = withComponent(withPreact());
 
@@ -176,7 +176,7 @@ export default md('4.x ⇢ 5.x')`
   - import { Component, define, h } from 'skatejs';
   + import { define, withComponent } from 'skatejs';
   + import { h } from 'preact';
-  + import withPreact from '@skatejs/renderer-preact';
+  + import withPreact from '@skatejs/element-preact';
 
   + const Component = withComponent(withPreact());
 

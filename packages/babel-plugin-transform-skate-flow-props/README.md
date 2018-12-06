@@ -65,7 +65,7 @@ An example:
 
 import React from 'react';
 import { props, withComponent } from 'skatejs';
-import withRenderer from '@skatejs/renderer-react';
+import withRenderer from '@skatejs/element-react';
 
 type Props = {
   name: string,

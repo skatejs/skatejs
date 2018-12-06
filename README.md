@@ -33,7 +33,7 @@ inject renderers for any view library. For example, if you wanted to write your
 custom elements with Preact, you'd install it like so:
 
 ```sh
-npm install skatejs @skatejs/renderer-preact preact
+npm install skatejs @skatejs/element-preact preact
 ```
 
 There are renderers for many popular view libraries:
@@ -55,7 +55,7 @@ This is how you might write a web component using Skate and Preact:
 // @jsx h
 
 import { props, withComponent } from 'skatejs';
-import withPreact from '@skatejs/renderer-preact';
+import withPreact from '@skatejs/element-preact';
 import { h } from 'preact';
 
 class WithPreact extends withComponent(withPreact()) {

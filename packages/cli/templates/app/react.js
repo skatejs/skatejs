@@ -3,8 +3,8 @@ const outdent = require('outdent');
 module.exports = {
   'package.json': {
     dependencies: {
-      '@skatejs/component': '^0.0.0',
-      '@skatejs/renderer-react': '^0.2.1',
+      '@skatejs/element': '^0.0.0',
+      '@skatejs/element-react': '^0.2.1',
       react: '^16.6.3',
       'react-dom': '^16.6.3'
     }
@@ -12,9 +12,9 @@ module.exports = {
   'src/index.js': outdent`
     /** @jsx h */
 
-    import Component, { h } from '@skatejs/renderer-react';
+    import Element, { h } from '@skatejs/element-react';
 
-    export default class extends Component {
+    export default class extends Element {
       static props = {
         name: String
       };

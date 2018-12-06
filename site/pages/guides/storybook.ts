@@ -45,14 +45,14 @@ export default md('Storybook')`
   3. The [SkateJS renderer for LitHTML](/renderers/with-lit-html) - just ties LitHTML into Skate.
 
   ~~~js
-  npm i skatejs @skatejs/renderer-lit-html lit-html
+  npm i skatejs @skatejs/element-lit-html lit-html
   ~~~
 
   Once those are installed, we can start writing out component. For the sake of simplicity, we'll just put this in the story file that was created for us. If you were setting up a dev environment for yourself, you'd probably be putting this in a separate directory and importing it.
 
   ~~~js
   import { define, withComponent } from 'skatejs';
-  import withLitHtml from '@skatejs/renderer-lit-html';
+  import withLitHtml from '@skatejs/element-lit-html';
   import { html } from 'lit-html/lib/lit-extended';
 
   const Hello = define(
@@ -111,7 +111,7 @@ export default md('Storybook')`
   import { storiesOf } from '@storybook/react';
 
   import { define, withComponent } from 'skatejs';
-  import withLitHtml from '@skatejs/renderer-lit-html';
+  import withLitHtml from '@skatejs/element-lit-html';
   import { html } from 'lit-html/lib/lit-extended';
 
   import val from '@skatejs/val';
