@@ -40,19 +40,23 @@ export class Tabs extends Component {
     items: Array,
     state: Object
   };
-  css: string = '';
-  items: Array<{ name: string; pane: string }> = [];
-  state = {
+
+  css?: string = '';
+  items?: Array<{ name: string; pane: any }> = [];
+  state?: { selected: number } = {
     selected: 0
   };
+
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
   }
+
   onClick(i: number, e: Event) {
     e.preventDefault();
     this.state = { selected: i };
   }
+
   render() {
     return (
       <div>

@@ -6,7 +6,6 @@ import { Tabs } from './tabs';
 const values = obj => Object.values(obj);
 
 function format(src) {
-  return src;
   src = src || '';
 
   // Remove leading newlines and only allow up to two newlines in code.
@@ -24,6 +23,7 @@ function format(src) {
   return src;
 }
 
+// @ts-ignore
 export class Code extends Component {
   static props = {
     children: null,
@@ -31,7 +31,12 @@ export class Code extends Component {
     lang: String,
     title: String
   };
+
+  children?: any;
   code: string = '';
+  lang?: string = 'js';
+  title?: string = '';
+
   css = `
     .code {
       background-color: #292D34;
@@ -50,12 +55,12 @@ export class Code extends Component {
       padding: 10px 20px;
     }
   `;
-  lang: string = 'js';
-  title: string = '';
+
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
   }
+
   refHighlight = e => {
     if (!e) return;
     import('prismjs').then(prism => {
@@ -66,6 +71,7 @@ export class Code extends Component {
       );
     });
   };
+
   render() {
     return (
       <div>
@@ -84,11 +90,16 @@ export class Code extends Component {
   }
 }
 
+// @ts-ignore
 export class Example extends Component {
   static props = {
     html: String,
     title: String
   };
+
+  html?: string = '';
+  title?: string = '';
+
   css = `
     .code {
       background-color: #292D34;
@@ -104,12 +115,12 @@ export class Example extends Component {
       padding: 10px 20px;
     }
   `;
-  html: string = '';
-  title: string = '';
+
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
   }
+
   render() {
     return (
       <div>
@@ -131,12 +142,15 @@ export class Runnable extends Component {
     code: String,
     html: String
   };
+
   code: string = '';
   html: string = '';
+
   connectedCallback() {
     super.connectedCallback();
     this.style.display = 'block';
   }
+
   render() {
     return (
       <Tabs

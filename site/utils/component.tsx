@@ -57,10 +57,11 @@ const styles = css(`
 
 export { h } from '@skatejs/element-preact';
 export class Component extends Element {
-  _context: any;
-  _styles: any;
-  css: any;
-  state = {};
+  _context?: any;
+  _styles?: any;
+  css?: any;
+  state? = {};
+
   get context() {
     if (this._context) {
       return this._context;
@@ -74,9 +75,11 @@ export class Component extends Element {
     }
     return {};
   }
+
   set context(context: any) {
     this._context = context;
   }
+
   getStyle(...args) {
     return [styles]
       .concat(args)
@@ -86,6 +89,7 @@ export class Component extends Element {
         return prev + (typeof next === 'function' ? next(this) : next);
       }, '');
   }
+
   renderStyle(...args) {
     return <style>{this.getStyle(...args)}</style>;
   }
