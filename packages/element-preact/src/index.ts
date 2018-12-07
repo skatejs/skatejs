@@ -1,3 +1,5 @@
+/** @jsx h */
+
 import define, { getName } from '@skatejs/define';
 import Element from '@skatejs/element';
 import { h as preactH, render } from 'preact';
@@ -23,4 +25,11 @@ export function h(name, props, ...chren) {
     name = getName(name);
   }
   return preactH(name, props, ...chren);
+}
+
+export declare namespace h {
+  namespace JSX {
+    interface Element {}
+    type LibraryManagedAttributes<E, _> = E extends { props: infer Props; prototype: infer Prototype; } ? Pick<Prototype, Extract<keyof Prototype, keyof Props>> : _;
+  }
 }
