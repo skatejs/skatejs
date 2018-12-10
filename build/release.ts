@@ -20,7 +20,11 @@ export default async function release({ packages, type }) {
     const w = ws.filter(w => w.name === name)[0];
     if (!w) continue;
     const cwd = w.dir;
-    await exec('npm', ['--no-git-tag-version', 'version', type], { cwd });
+    await exec(
+      'npm',
+      ['--allow-same-version', '--no-git-tag-version', 'version', type],
+      { cwd }
+    );
     const ver = require(path.join(cwd, 'package.json')).version;
     const tag = `${name}-${ver}`;
     await exec('git', ['commit', '-am', tag], { cwd });
