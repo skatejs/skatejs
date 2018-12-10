@@ -29,5 +29,5 @@
   "name": "@skatejs/sk-context",
   "repository": "skatejs/skatejs",
   "src": "src",
-  "version": "0.0.0"
+  "version": "0.0.1"
 }
