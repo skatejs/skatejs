@@ -9,7 +9,7 @@ function need(val, msg) {
   }
 }
 
-async function release({ packages, type }) {
+export async function release({ packages, type }) {
   need(packages, 'Please specify at least one package.');
   need(type, 'Please specify a release type (or version number).');
   await exec('bolt', ['build']);
