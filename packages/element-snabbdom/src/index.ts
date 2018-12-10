@@ -1,5 +1,6 @@
 import Element from '@skatejs/element';
 import { init } from 'snabbdom';
+import { h as snabbdomH } from 'snabbdom/h';
 import vnode from 'snabbdom/vnode';
 
 export default class Renderer extends Element {
@@ -43,7 +44,7 @@ export default class Renderer extends Element {
   }
 }
 
-export { h } from 'snabbdom/h';
+export const h = snabbdomH;
 
 export declare namespace h {
   namespace JSX {

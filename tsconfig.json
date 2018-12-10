@@ -3,8 +3,9 @@
     "declaration": true,
     "jsx": "react",
     "jsxFactory": "h",
-    "lib": ["dom", "es6"]
+    "lib": ["dom", "es6"],
+    "target": "es5"
   },
-  "types": ["core-js"],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "types": ["core-js"]
 }
