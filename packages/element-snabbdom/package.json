@@ -3,10 +3,12 @@
   "browser": "dist/es/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for Snabbdom.",
+  "dependencies": {
+    "@skatejs/element": "^0.0.0"
+  },
   "devDependencies": {
-    "@skatejs/bore": "^4.0.3",
+    "@skatejs/bore": "^5.0.0",
     "@skatejs/define": "^0.0.0",
-    "@skatejs/element": "^0.0.0",
     "snabbdom": "^0.7.1"
   },
   "esnext": "dist/esnext/index.js",

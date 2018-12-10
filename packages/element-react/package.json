@@ -3,10 +3,12 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for React.",
-  "devDependencies": {
-    "@skatejs/bore": "^4.0.3",
+  "dependencies": {
     "@skatejs/define": "^0.0.0",
-    "@skatejs/element": "^0.0.0",
+    "@skatejs/element": "^0.0.0"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "^5.0.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   },

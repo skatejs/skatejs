@@ -16,20 +16,19 @@
   "dependencies": {
     "@skatejs/define": "^0.0.0",
     "@skatejs/element": "^0.0.0",
-    "@skatejs/element-lit-html": "0.0.0",
-    "@skatejs/element-preact": "0.0.0",
-    "@skatejs/element-react": "0.0.0",
+    "@skatejs/element-lit-html": "^0.0.0",
+    "@skatejs/element-preact": "^0.0.0",
+    "@skatejs/element-react": "^0.0.0",
     "@skatejs/sk-context": "^0.0.0",
-    "@skatejs/sk-marked": "^0.0.1",
-    "@skatejs/sk-router": "0.2.0",
-    "highlight.js": "9.12.0",
+    "@skatejs/sk-marked": "^0.1.0",
+    "@skatejs/sk-router": "^0.2.1",
+    "highlight.js": "^9.12.0",
     "lit-html": "dev",
     "preact": "^8.2.7",
-    "prismjs": "1.11.0",
+    "prismjs": "^1.11.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
-    "shadow-css": "^0.1.0",
-    "yocss": "0.5.1"
+    "shadow-css": "^0.1.0"
   },
   "homepage": "https://skatejs.netlify.com",
   "keywords": [

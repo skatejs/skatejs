@@ -7,8 +7,8 @@
   },
   "description": "A web component for providing and consuming contextual values, based on the React context API.",
   "devDependencies": {
-    "@skatejs/bore": "4.0.3",
-    "@skatejs/ssr": "0.19.1"
+    "@skatejs/bore": "^5.0.0",
+    "@skatejs/ssr": "^0.19.10"
   },
   "files": [
     "dist/cjs",

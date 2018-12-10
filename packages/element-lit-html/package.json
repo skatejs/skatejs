@@ -3,11 +3,12 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "A SkateJS renderer for LitHTML.",
-  "dependencies": {},
+  "dependencies": {
+    "@skatejs/element": "^0.0.0"
+  },
   "devDependencies": {
-    "@skatejs/bore": "^4.0.3",
+    "@skatejs/bore": "^5.0.0",
     "@skatejs/define": "^0.0.0",
-    "@skatejs/element": "^0.0.0",
     "lit-html": "dev"
   },
   "files": [

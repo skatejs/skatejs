@@ -5,14 +5,13 @@
   "dependencies": {
     "@skatejs/define": "^0.0.0",
     "@skatejs/element": "^0.0.0",
-    "@skatejs/val": "0.4.0",
+    "@skatejs/val": "^0.4.0",
     "navaid": "^1.0.0"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {
-    "@skatejs/val": "0.4.0",
-    "@skatejs/bore": "4.0.3",
-    "jest-in-case": "1.0.2"
+    "@skatejs/bore": "^5.0.0",
+    "jest-in-case": "^1.0.2"
   },
   "files": [
     "dist/cjs",
