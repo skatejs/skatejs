@@ -1,5 +1,5 @@
-const outdent = require('outdent');
-const { prop } = require('./util');
+// const outdent = require('outdent');
+const { prop } = require('../util');
 
 class CustomElementRegistry {
   constructor() {
@@ -60,6 +60,4 @@ class CustomElementRegistry {
   }
 }
 
-module.exports = {
-  CustomElementRegistry
-};
+module.exports = CustomElementRegistry;

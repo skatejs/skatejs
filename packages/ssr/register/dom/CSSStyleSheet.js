@@ -1,6 +1,6 @@
 // @flow
 
-const { StyleSheet } = require('./StyleSheet');
+const StyleSheet = require('./StyleSheet');
 
 class CSSStyleSheet extends StyleSheet {
   /*:: cssRules: Array<string>; */
@@ -18,6 +18,4 @@ class CSSStyleSheet extends StyleSheet {
   }
 }
 
-module.exports = {
-  CSSStyleSheet
-};
+module.exports = CSSStyleSheet;

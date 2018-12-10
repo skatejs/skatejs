@@ -1,7 +1,6 @@
 const vm = require('vm');
-
-const { triggerMutation } = require('./MutationObserver');
-const { each, execCode, nodeName, prop } = require('./util');
+const MutationObserver = require('./MutationObserver');
+const { each, execCode, nodeName, prop } = require('../util');
 
 const nodeTypes = {
   COMMENT_NODE: 8,
@@ -23,19 +22,25 @@ const prevSibling = Object.getOwnPropertyDescriptor(
 );
 
 function connectNode(node) {
-  if (node.connectedCallback && !node[isConnected]) {
+  if (node[isConnected]) {
+    return;
+  }
+  if (node.connectedCallback) {
     node.connectedCallback();
   }
   node[isConnected] = true;
-  triggerMutation('add', node);
+  MutationObserver.trigger('add', node);
 }
 
 function disconnectNode(node) {
-  if (node.disconnectedCallback && node[isConnected]) {
+  if (!node[isConnected]) {
+    return;
+  }
+  if (node.disconnectedCallback) {
     node.disconnectedCallback();
   }
   node[isConnected] = false;
-  triggerMutation('remove', node);
+  MutationObserver.trigger('remove', node);
 }
 
 // Copy node type constants over to both statics and the prototype.
@@ -160,6 +165,4 @@ NodeProto.removeChild = function(refNode) {
   });
 };
 
-module.exports = {
-  Node
-};
+module.exports = Node;

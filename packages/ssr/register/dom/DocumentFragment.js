@@ -1,4 +1,4 @@
-const { Element } = require('./Element');
+const Element = require('./Element');
 
 // TODO split out Element into a common base since this shouldn't be
 // inheriting all of it.
@@ -11,6 +11,4 @@ const DocumentFragment = class extends Element {
   }
 };
 
-module.exports = {
-  DocumentFragment
-};
+module.exports = DocumentFragment;

@@ -12,6 +12,4 @@ class MutationRecord {
   }
 }
 
-module.exports = {
-  MutationRecord
-};
+module.exports = MutationRecord;

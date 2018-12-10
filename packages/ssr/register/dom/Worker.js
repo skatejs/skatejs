@@ -1,6 +1,6 @@
 const path = require('path');
 const vm = require('vm');
-const { execFile } = require('./util');
+const { execFile } = require('../util');
 
 function trigger(obj, data) {
   if (obj.onmessage) {
@@ -24,6 +24,4 @@ class Worker {
   }
 }
 
-module.exports = {
-  Worker
-};
+module.exports = Worker;

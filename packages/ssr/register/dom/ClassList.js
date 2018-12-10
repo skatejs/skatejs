@@ -20,6 +20,4 @@ class ClassList {
   }
 }
 
-module.exports = {
-  ClassList
-};
+module.exports = ClassList;

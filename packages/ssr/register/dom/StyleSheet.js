@@ -7,6 +7,4 @@ class StyleSheet {
   }
 }
 
-module.exports = {
-  StyleSheet
-};
+module.exports = StyleSheet;

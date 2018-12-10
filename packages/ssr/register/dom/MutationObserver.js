@@ -1,25 +1,5 @@
-const { Event } = require('./Event');
-const { MutationRecord } = require('./MutationRecord');
-
-function triggerMutation(
-  mutationType,
-  childNode,
-  attributeName = null,
-  oldValue = null
-) {
-  const { parentNode, previousSibling, nextSibling } = childNode;
-  dispatchEvent(
-    new Event('__MutationObserver', {
-      mutationType,
-      childNode,
-      parentNode,
-      previousSibling,
-      nextSibling,
-      attributeName,
-      oldValue
-    })
-  );
-}
+const Event = require('./Event');
+const MutationRecord = require('./MutationRecord');
 
 function promise(done) {
   let cancelled = false;
@@ -44,19 +24,23 @@ class MutationObserver {
     this._promise = this._makeBatchedCallback();
     this._records = new Map();
   }
+
   disconnect() {
     removeEventListener('__MutationObserver', this._enqueue);
   }
+
   observe(element, options) {
     this._element = element;
     this._options = options;
     addEventListener('__MutationObserver', this._enqueue);
   }
+
   takeRecords() {
     const entries = this._records.entries();
     this._records.clear();
     return Array.from(entries).map(map => map[1]);
   }
+
   _enqueue(e) {
     let record = this._records.get(e.parentNode);
     if (!record) {
@@ -101,13 +85,30 @@ class MutationObserver {
       record.oldValue = e.oldvalue;
     }
   }
+
   _makeBatchedCallback() {
     return promise(() => this._callback(this.takeRecords()));
   }
+
+  static trigger(
+    mutationType,
+    childNode,
+    attributeName = null,
+    oldValue = null
+  ) {
+    const { parentNode, previousSibling, nextSibling } = childNode;
+    dispatchEvent(
+      new Event('__MutationObserver', {
+        mutationType,
+        childNode,
+        parentNode,
+        previousSibling,
+        nextSibling,
+        attributeName,
+        oldValue
+      })
+    );
+  }
 }
 
-module.exports = {
-  MutationObserver,
-  MutationRecord,
-  triggerMutation
-};
+module.exports = MutationObserver;
