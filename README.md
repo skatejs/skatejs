@@ -12,7 +12,7 @@ Skate is a functional reactive abstraction over
 * 🌏 Cross-framework compatible components.
 * ⚛️ Render components using your favourite view libary, or none at all.
 * 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
-* 👑 Full TypeScript support.
+* 🌟 Full TypeScript support.
 * 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
