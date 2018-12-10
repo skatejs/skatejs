@@ -3,23 +3,21 @@
 [![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 [![Downloads per month](https://img.shields.io/npm/dm/skatejs.svg)](https://www.npmjs.com/package/skatejs)
-[![OpenCollective](https://opencollective.com/skatejs/backers/badge.svg)](#backers)
-[![OpenCollective](https://opencollective.com/skatejs/sponsors/badge.svg)](#sponsors)
-[![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
 Skate is a functional reactive abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) that. It is a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
 
-* Cross-framework compatible components.
-* Render components using your favourite view libary, or none at all.
-* Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
-* Full TypeScript support.
-* Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
+* 🌏 Cross-framework compatible components.
+* ⚛️ Render components using your favourite view libary, or none at all.
+* 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
+* 👑 Full TypeScript support.
+* 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
 
-The simplest way to get up and running is to start with a pre-configured element such as `@skatejs/element-lit-html`.
+The simplest way to get up and running is to start with a pre-configured element such as [`@skatejs/element-lit-html`]([https://skatejs.netlify.com/packages/element-lit-html).
 
 ```sh
 npm i @skatejs/element-lit-html
@@ -46,14 +44,19 @@ Coming soon!
 
 ### Cli
 
-There's a [@skatejs/cli](https://github.com/skatejs/skatejs/tree/master/packages/cli) package that will let you hit the ground running. Feel free to fire it up while reading these docs!
+There's a CLI to get you up and running: [https://skatejs.netlify.com/packages/cli](https://skatejs.netlify.com/packages/cli).
+
+```sh
+$ npm i -g @skatejs/cli
+$ skate
+```
 
 ## Polyfills
 
 Skate builds upon the
 [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and
 [the Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards.
-Skate is capable of operating without the Shadow DOM &mdash; it just means you
+It is capable of operating without the Shadow DOM &mdash; it just means you
 don't get any encapsulation of your component's HTML or styles. It also means
 that it's up to you to provide a way to project content (i.e. `<slot>`). It's
 highly recommended you use Shadow DOM whenever possible.
