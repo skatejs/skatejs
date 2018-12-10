@@ -44,3 +44,10 @@ export default class Renderer extends Element {
 }
 
 export { h } from 'snabbdom/h';
+
+export declare namespace h {
+  namespace JSX {
+    interface Element {}
+    type LibraryManagedAttributes<E, _> = E extends { props: infer Props; prototype: infer Prototype; } ? Pick<Prototype, Extract<keyof Prototype, keyof Props>> : _;
+  }
+}

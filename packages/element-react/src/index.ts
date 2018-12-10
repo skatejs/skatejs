@@ -1,6 +1,6 @@
 import define, { getName } from '@skatejs/define';
 import Element from '@skatejs/element';
-import * as React from 'react';
+import { createElement } from 'react';
 import { render } from 'react-dom';
 
 export default class extends Element {
@@ -20,5 +20,22 @@ export function h(name, props, ...chren) {
     define(name);
     name = getName(name);
   }
-  return React.createElement(name, props, ...chren);
+  return createElement(name, props, ...chren);
+}
+
+const symRef = Symbol();
+export function setProps(domProps, refCallback = e => {}) {
+  return refCallback[symRef] || (refCallback[symRef] = e => {
+    refCallback(e);
+    if (e) {
+      Object.assign(e, domProps);
+    }
+  });
+}
+
+export declare namespace h {
+  namespace JSX {
+    interface Element {}
+    type LibraryManagedAttributes<E, _> = E extends { props: infer Props; prototype: infer Prototype; } ? Pick<Prototype, Extract<keyof Prototype, keyof Props>> : _;
+  }
 }

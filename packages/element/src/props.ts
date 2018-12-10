@@ -26,20 +26,33 @@ const boolean: PropType = {
 
 const event: PropType = {
   ...any,
+
+  // Takes an event handler and returns a function that is invoked with event
+  // detail to trigger the corresponding event with.
   set(elem, name, oldValue, newValue) {
     // TODO see if we can deserialize to a standard onclick prop so that we
     // can support in-attribute handlers.
     const eventName = this.getEventName(name);
+
     if (oldValue) {
       elem.removeEventListener(eventName, oldValue);
     }
+
     if (newValue) {
       elem.addEventListener(eventName, newValue);
     }
-    return newValue;
+
+    return detail => elem.dispatchEvent(new CustomEvent(eventName, { detail }));
   },
+
+  // Standardizes custom event names:
+  //
+  // - Rremove "on" prefix.
+  // - Event name becomes all lowercase.
+  //
+  // e.g. onCustomEvent -> customevent
   getEventName(name: string): string {
-    return name;
+    return name.substring(2).toLowerCase();
   }
 };
 
