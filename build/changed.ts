@@ -12,6 +12,10 @@ type Change = {
 };
 type Changes = Array<Change>;
 
+function sort(a, b) {
+  return b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' });
+}
+
 async function getAddedCommitsFor(workspace): Promise<string> {
   return (await exec('git', [
     'log',
@@ -27,13 +31,15 @@ async function getTags() {
 }
 
 async function getTagsFor(workspace): Promise<Array<string>> {
-  return (await getTags()).filter(t => t.indexOf(workspace.name) === 0);
+  const tags = (await getTags()).filter(t => t.indexOf(workspace.name) === 0);
+  tags.sort(sort);
+  return tags;
 }
 
 async function getLatestRefFor(workspace) {
   const tags = await getTagsFor(workspace);
   if (tags.length) {
-    return tags[tags.length - 1];
+    return tags[0];
   }
 
   const refs = await getAddedCommitsFor(workspace);
@@ -129,9 +135,9 @@ function formatChange(color) {
   };
 }
 
-export default async function() {
+export default async function({ pkg }) {
   for (const w of await getWorkspaces()) {
-    if (w.config.private) {
+    if (w.config.private || (pkg && pkg !== w.name)) {
       continue;
     }
 

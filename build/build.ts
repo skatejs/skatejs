@@ -16,7 +16,7 @@ export default async function({ pkg }) {
   const ws = await getWorkspaces();
   await Promise.all(
     ws.map(async w => {
-      if (pkg && !w.config.name.match(new RegExp(pkg))) {
+      if (pkg && pkg !== w.name) {
         return;
       }
 
@@ -24,11 +24,11 @@ export default async function({ pkg }) {
       const indexTsx = path.join(w.dir, 'src', 'index.tsx');
       const tsConfig = path.join(w.dir, 'tsconfig.json');
 
-      if (!await fs.exists(indexTs) && !await fs.exists(indexTsx)) {
+      if (!(await fs.exists(indexTs)) && !(await fs.exists(indexTsx))) {
         return;
       }
 
-      if (!await fs.exists(tsConfig)) {
+      if (!(await fs.exists(tsConfig))) {
         await fs.writeJson(tsConfig, {
           ...mainTsConfigJson,
           exclude: ['**/__tests__/**'],
@@ -45,7 +45,7 @@ export default async function({ pkg }) {
         await fs.remove(tsConfig);
       }
 
-      console.log(w.config.name);
+      console.log(`Built ${w.config.name}`);
     })
   );
 }
