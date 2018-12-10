@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "lib": ["dom", "es6"],
+    "target": "es5"
+  },
+  "types": ["core-js"],
+  "include": ["**/*.ts"]
+}

@@ -1,0 +1,29 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "description": "Define custom elements without worrying about having to find a unique name for them.",
+  "devDependencies": {
+    "@skatejs/bore": "^4.0.3",
+    "@skatejs/element": "^0.0.0"
+  },
+  "files": [
+    "dist/cjs",
+    "dist/esm"
+  ],
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "name": "@skatejs/define",
+  "repository": "skatejs/skatejs",
+  "version": "0.0.0"
+}

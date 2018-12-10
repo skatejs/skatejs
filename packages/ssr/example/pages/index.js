@@ -1,7 +1,7 @@
-const { define, withComponent } = require('skatejs');
+const { define, Component } = require('skatejs');
 const outdent = require('outdent');
 
-class Hello extends withComponent() {
+class Hello extends Component {
   render() {
     return outdent`
       <span class="test">
@@ -12,7 +12,7 @@ class Hello extends withComponent() {
   }
 }
 
-class Index extends withComponent() {
+class Index extends Component {
   render() {
     return outdent`
       <div class="test">
@@ -23,7 +23,7 @@ class Index extends withComponent() {
   }
 }
 
-class Yell extends withComponent() {
+class Yell extends Component {
   render() {
     return outdent`
       <style>.test { font-weight: bold; }</style>

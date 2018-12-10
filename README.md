@@ -8,73 +8,45 @@
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
-Skate is a functional abstraction over
-[the web component standards](https://github.com/w3c/webcomponents) that:
+Skate is a functional reactive abstraction over
+[the web component standards](https://github.com/w3c/webcomponents) that. It is a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
 
-* Produces cross-framework compatible components.
-* Abstracts away common attribute / property semantics via `props` or native types, such as
-  attribute reflection and coercion.
-* Adds several lifecycle callbacks for responding to prop updates, rendering and
-  updating, as well as a way to manage internal component state.
-* Provides a base set of
-  [mixins](http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/)
-  that hook into renderers such as
-  [@skatejs/renderer-preact](https://github.com/skatejs/skatejs/tree/master/packages/renderer-preact).
-
-## Installing
-
-Skate is on NPM:
-
-```sh
-npm install skatejs
-```
-
-The core principle of Skate is to provide abstractions for writing custom
-elements based on best-practices; things that aren't controversial. However,
-templating can be highly contentious. For this reason, Skate provides a hook to
-inject renderers for any view library. For example, if you wanted to write your
-custom elements with Preact, you'd install it like so:
-
-```sh
-npm install skatejs @skatejs/renderer-preact preact
-```
-
-There are renderers for many popular view libraries:
-
-* [LitHTML](https://skatejs.netlify.com/renderers/with-lit-html)
-* [Preact](https://skatejs.netlify.com/renderers/with-preact)
-* [React](https://skatejs.netlify.com/renderers/with-react)
-* Or a [custom renderer](https://skatejs.netlify.com/renderers)!
-
-## Usage
-
-This is how you might write a web component using Skate and Preact:
-
-```js
-// @jsx h
-
-import { props, withComponent } from 'skatejs';
-import withPreact from '@skatejs/renderer-preact';
-import { h } from 'preact';
-
-class WithPreact extends withComponent(withPreact()) {
-  static get props() {
-    return {
-      name: props.string // String could be used also to define the prop type
-    };
-  }
-  render({ name }) {
-    return <span>Hello, {name}!</span>;
-  }
-}
-
-customElements.define('with-preact', WithPreact);
-```
+* Cross-framework compatible components.
+* Render components using your favourite view libary, or none at all.
+* Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
+* Full TypeScript support.
+* Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
 
-To get up and running with Skate, head over to the
-[getting started guide](https://skatejs.netlify.com/guides/getting-started).
+The simplest way to get up and running is to start with a pre-configured element such as `@skatejs/element-lit-html`.
+
+```sh
+npm i @skatejs/element-lit-html
+```
+
+### Hello example
+
+```js
+import Element, { html } from '@skatejs/element-lit-html';
+
+export default class extends Element {
+  static props = {
+    name: String
+  };
+  render() {
+    return html`Hello, ${this.name}!`;
+  }
+}
+```
+
+### CodeSandbox
+
+Coming soon!
+
+### Cli
+
+There's a [@skatejs/cli](https://github.com/skatejs/skatejs/tree/master/packages/cli) package that will let you hit the ground running. Feel free to fire it up while reading these docs!
 
 ## Polyfills
 
@@ -90,7 +62,7 @@ Though most modern browsers support these standards, some still need polyfills
 to implement missing or inconsistent behaviours for them.
 
 For more information on the polyfills, see
-[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs).
+[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs), emphasis on the caveats.
 
 ## Browser Support
 

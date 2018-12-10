@@ -13,42 +13,18 @@ Object.defineProperties = function(obj, def) {
 // it's already exposed.
 require('undom/register');
 
-const { prop } = require('./util');
-
-// We can now require our stuff.
-const { Event } = require('./Event');
 const { expose } = require('./util');
 
-// Globals.
-require('./window');
-require('./document');
-
-// Custom interfaces.
-expose('ClassList');
-expose('Comment');
-expose('CSSStyleSheet');
-expose('CustomElementRegistry');
-expose('CustomEvent');
-expose('DocumentFragment');
-expose('Element');
-expose('Event');
-expose('History');
-expose('HTMLElement');
-expose('Location');
-expose('MouseEvent');
-expose('MutationObserver');
-expose('MutationRecord');
-expose('Navigator');
-expose('Node');
-expose('NodeFilter');
-expose('StyleSheet');
-expose('Worker');
-
-Object.defineProperty = defineProperty
-Object.defineProperties = defineProperties
-
 // Startup.
+require('./window');
+const Document = require('./dom/Document');
+
+// window.document.
+expose('document', new Document());
+
+// Fast-track this since we're in node.
 document.readyState = 'interactive';
 document.dispatchEvent(new Event('DOMContentLoaded'));
 document.readyState = 'complete';
+
 dispatchEvent(new Event('load'));

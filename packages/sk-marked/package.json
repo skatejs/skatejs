@@ -1,28 +1,35 @@
 {
-  "author": "Trey Shugart <treshugart@gmail.com>",
-  "browser": "dist/es/index.js",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "marked": "0.3.14",
-    "skatejs": "^5.1.1"
+    "@skatejs/element": "^0.0.0",
+    "marked": "0.3.14"
   },
   "description": "A web component for rendering Markdown using Marked.",
-  "esnext": "dist/esnext/index.js",
+  "devDependencies": {
+    "@skatejs/bore": "4.0.3",
+    "@skatejs/ssr": "0.19.1",
+    "jest-in-case": "1.0.2"
+  },
   "files": [
-    "dist/es",
-    "dist/esnext",
-    "dist/node"
+    "dist/cjs",
+    "dist/esm"
   ],
+  "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
-    "component",
-    "marked",
-    "markdown",
-    "skatejs"
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
   ],
   "license": "MIT",
-  "main": "dist/node/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "name": "@skatejs/sk-marked",
-  "repository": "https://github.com/skatejs/skatejs",
+  "repository": "skatejs/skatejs",
+  "src": "src",
   "version": "0.0.1"
 }

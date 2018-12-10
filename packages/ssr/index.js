@@ -26,9 +26,9 @@ function stringify(node) {
   }
 
   if (node.shadowRoot) {
-    str += `<shadowroot>${node.shadowRoot.childNodes.map(stringify).join('')}${
-      shadowRootScriptCall
-    }</shadowroot>`;
+    str += `<shadowroot>${node.shadowRoot.childNodes
+      .map(stringify)
+      .join('')}${shadowRootScriptCall}</shadowroot>`;
   }
 
   if (node.childNodes) {

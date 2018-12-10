@@ -1,9 +1,12 @@
 {
-  "author": "Trey Shugart <treshugart@gmail.com>",
-  "browser": "dist/es/index.js",
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "page": "1.9.0",
-    "skatejs": "^5.1.1"
+    "@skatejs/define": "^0.0.0",
+    "@skatejs/element": "^0.0.0",
+    "@skatejs/val": "0.4.0",
+    "navaid": "^1.0.0"
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {
@@ -11,22 +14,24 @@
     "@skatejs/bore": "4.0.3",
     "jest-in-case": "1.0.2"
   },
-  "esnext": "dist/esnext/index.js",
   "files": [
-    "dist/es",
-    "dist/esnext",
-    "dist/node"
+    "dist/cjs",
+    "dist/esm"
   ],
+  "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
-    "component",
-    "router",
-    "skatejs"
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
   ],
   "license": "MIT",
-  "main": "dist/node/index.js",
-  "module": "dist/es/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
   "name": "@skatejs/sk-router",
-  "repository": "https://github.com/skatejs/skatejs",
-  "version": "0.3.2"
+  "repository": "skatejs/skatejs",
+  "src": "src",
+  "version": "0.2.0"
 }

@@ -1,12 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>SkateJS</title>
-    <meta name="description" content="SkateJS is a web component library designed to give you an augmentation of the web component specs focusing on a functional rendering pipeline, clean property / attribute semantics and a small footprint.">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       body {
-        background-color: #F2F5EB;
+        background-color: #f2f5eb;
         color: #333;
         font-family: Helvetica;
         font-size: 1.2em;
@@ -19,6 +17,12 @@
   </head>
   <body>
     <x-app></x-app>
-    <script src="/main.js"></script>
+    <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.0.4/custom-elements-es5-adapter.js"></script>
+    <script src="index.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker/index.ts');
+      }
+    </script>
   </body>
 </html>
