@@ -31,5 +31,5 @@
   "name": "@skatejs/sk-marked",
   "repository": "skatejs/skatejs",
   "src": "src",
-  "version": "0.0.1"
+  "version": "0.1.0"
 }
