@@ -36,4 +36,6 @@ export default async function release({ pkg, ver }) {
   await exec('git', ['tag', '-a', tag, '-m', tag], { cwd });
   await exec('npm', ['publish', '--access', 'public'], { cwd });
   await exec('git', ['push', '--follow-tags']);
+
+  console.log(`Released ${w.name}`);
 }
