@@ -36,19 +36,24 @@ async function getTagsFor(workspace): Promise<Array<string>> {
   return tags;
 }
 
-async function getLatestRefFor(workspace) {
+async function getLatestRefsFor(workspace) {
   const tags = await getTagsFor(workspace);
   if (tags.length) {
-    return tags[0];
+    return [tags[0], tags[1]];
   }
 
   const refs = await getAddedCommitsFor(workspace);
-  return refs[refs.length - 1].split(' ')[0];
+  return [refs[refs.length - 1].split(' ')[0], 'master'];
 }
 
-async function getCommitsSinceRef(ref): Promise<Changes> {
-  const diff = (await exec('git', ['log', `${ref}...master`, '--oneline']))
-    .stdout;
+async function getLatestCommitsFor(workspace): Promise<Changes> {
+  const refs = await getLatestRefsFor(workspace);
+  console.log(refs);
+  const diff = (await exec('git', [
+    'log',
+    `${refs[0]}...${refs[1]}`,
+    '--oneline'
+  ])).stdout;
   return diff
     .split('\n')
     .filter(Boolean)
@@ -75,8 +80,7 @@ async function getFilesForCommit(commit) {
 }
 
 async function getChangesInWorkspace(workspace): Promise<Changes> {
-  const ref = await getLatestRefFor(workspace);
-  const commits = await getCommitsSinceRef(ref);
+  const commits = await getLatestCommitsFor(workspace);
   const mapped = await Promise.all(
     commits.map(async c => {
       const files = await getFilesForCommit(c.hash);
@@ -135,25 +139,32 @@ function formatChange(color) {
   };
 }
 
-export default async function({ pkg }) {
+export default async function({ explain, pkg }) {
   for (const w of await getWorkspaces()) {
     if (w.config.private || (pkg && pkg !== w.name)) {
       continue;
     }
 
     const changes = await getChangesInWorkspace(w);
+
+    if (!changes.length) {
+      continue;
+    }
+
     const nextVersion = await calculateNextVersion(w, changes);
 
     const releaseType = calculateReleaseType(changes);
     const releaseColor = colors[releaseType];
-    const chalkVersion = chalk`{blue ${w.config.version}}`;
+    const chalkVersion = w.config.version;
     const chalkVersionNext = chalk`{${releaseColor} ${nextVersion}}`;
 
     console.log(
       outdent`
-
-        ${w.config.name} ${chalkVersion} -> ${chalkVersionNext}
-        ${changes.map(formatChange(releaseColor)).join(os.EOL)}
+        ${w.config.name} ${chalkVersion} -> ${chalkVersionNext}${
+        explain
+          ? os.EOL + changes.map(formatChange(releaseColor)).join(os.EOL)
+          : ''
+      }
       `
     );
   }
