@@ -54,6 +54,7 @@
     "jest-cli": "^23.6.0",
     "jest-in-case": "^1.0.2",
     "lint-staged": "^6.1.1",
+    "memoizee": "^0.4.14",
     "parcel-bundler": "^1.10.3",
     "prettier": "^1.10.2",
     "prettier-eslint": "^8.8.1",
