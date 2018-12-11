@@ -56,19 +56,12 @@ export default async function({ dry, pkg }) {
       if (depwMerged[wName] !== wVersion) {
         logger(EOL + wName);
         console.log(`  ${depw.name}: ${depwMerged[wName]} -> ${wVersion}`);
-      }
 
-      if (!dry) {
-        writeJson(path.join(depw.dir, 'package.json'), depwConf);
-
-        const mainPkgPath = path.join(process.cwd(), 'package.json');
-        const mainPkgJson = require(mainPkgPath);
-
-        updateVersion(wName, wVersion, mainPkgJson.dependencies);
-        updateVersion(wName, wVersion, mainPkgJson.devDependencies);
-        updateVersion(wName, wVersion, mainPkgJson.optionalDependencies);
-        updateVersion(wName, wVersion, mainPkgJson.peerDependencies);
-        writeJson(mainPkgPath, mainPkgJson);
+        if (!dry) {
+          writeJson(path.join(depw.dir, 'package.json'), depwConf, {
+            spaces: 2
+          });
+        }
       }
     }
   }

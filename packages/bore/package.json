@@ -1,1 +1,36 @@
-{"author":"Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)","browser":"dist/esm/index.js","bugs":"https://github.com/skatejs/skatejs/issues","dependencies":{"@skatejs/val":"^0.4.0","skatejs-dom-diff":"^1.0.0"},"description":"Enzyme-like testing for the DOM.","devDependencies":{"@skatejs/ssr":"0.19.11","@skatejs/val":"^0.4.0"},"files":["dist/cjs","dist/esm"],"homepage":"https://skatejs.netlify.com","keywords":["web","components","custom","elements","shadow","dom"],"license":"MIT","main":"dist/cjs/index.js","module":"dist/esm/index.js","name":"@skatejs/bore","repository":"skatejs/skatejs","scripts":{"test":"jest"},"version":"5.0.1"}
+{
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "dist/esm/index.js",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "dependencies": {
+    "@skatejs/val": "^0.4.0",
+    "skatejs-dom-diff": "^1.0.0"
+  },
+  "description": "Enzyme-like testing for the DOM.",
+  "devDependencies": {
+    "@skatejs/ssr": "0.19.11",
+    "@skatejs/val": "^0.4.0"
+  },
+  "files": [
+    "dist/cjs",
+    "dist/esm"
+  ],
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "name": "@skatejs/bore",
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "version": "5.0.1"
+}
