@@ -1,6 +1,5 @@
 # Skate
 
-[![NPM version](https://img.shields.io/npm/v/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Build Status](https://travis-ci.org/skatejs/skatejs.svg?branch=master)](https://travis-ci.org/skatejs/skatejs)
 [![Downloads per month](https://img.shields.io/npm/dm/skatejs.svg)](https://www.npmjs.com/package/skatejs)
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs)
@@ -9,11 +8,11 @@
 Skate is a functional reactive abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) that. It is a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
 
-* 🌏 Cross-framework compatible components.
-* ⚛️ Render components using your favourite view libary, or none at all.
-* 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
-* 🌟 Full TypeScript support.
-* 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
+- 🌏 Cross-framework compatible components.
+- ⚛️ Render components using your favourite view libary, or none at all.
+- 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
+- 🌟 Full TypeScript support.
+- 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
 
@@ -33,7 +32,9 @@ export default class extends Element {
     name: String
   };
   render() {
-    return html`Hello, ${this.name}!`;
+    return html`
+      Hello, ${this.name}!
+    `;
   }
 }
 ```
