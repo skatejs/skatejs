@@ -32,7 +32,6 @@
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "shadow-css": "^0.1.0",
-    "skatejs-dom-diff": "^1.0.0",
     "snabbdom": "^0.7.1",
     "spawndamnit": "^1.0.0",
     "uglify-es": "^3.3.10",

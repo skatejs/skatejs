@@ -1,4 +1,4 @@
-import { diff } from 'skatejs-dom-diff';
+import { diff } from './diff';
 
 // @ts-ignore
 const { Node, Promise } = window;

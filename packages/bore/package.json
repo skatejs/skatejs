@@ -3,8 +3,7 @@
   "browser": "dist/esm/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
-    "@skatejs/val": "^0.4.0",
-    "skatejs-dom-diff": "^1.0.0"
+    "@skatejs/val": "^0.4.0"
   },
   "description": "Enzyme-like testing for the DOM.",
   "devDependencies": {
