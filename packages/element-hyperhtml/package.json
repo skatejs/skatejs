@@ -7,7 +7,7 @@
     "@skatejs/element": "0.0.1"
   },
   "devDependencies": {
-    "@skatejs/bore": "5.0.1",
+    "@skatejs/bore": "5.0.2",
     "@skatejs/define": "0.0.1",
     "hyperhtml": "^2.5.10"
   },

@@ -8,7 +8,7 @@
     "@skatejs/element": "0.0.1"
   },
   "devDependencies": {
-    "@skatejs/bore": "5.0.1",
+    "@skatejs/bore": "5.0.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   },
