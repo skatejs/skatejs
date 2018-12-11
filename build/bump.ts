@@ -6,40 +6,69 @@ import * as path from 'path';
 import getDependants from './lib/get-dependants';
 import getWorkspace from './lib/get-workspace';
 
+function logOnce() {
+  let logged = false;
+  return (...args) => {
+    if (!logged) {
+      logged = true;
+      console.log(...args);
+    }
+  };
+}
+
+function updateVersion(wName, wVersion, depwDeps) {
+  if (depwDeps && depwDeps[wName] && depwDeps[wName] !== wVersion) {
+    depwDeps[wName] = wVersion;
+  }
+}
+
 export default async function({ dry, pkg }) {
   const memoGetDependants = memo(getDependants);
 
   for (const w of await getWorkspaces()) {
+    const wName = w.name;
+    const wVersion = w.config.version;
     const deps = await memoGetDependants(w.name);
 
     if (!deps.length) {
       continue;
     }
 
-    let logged = false;
+    const logger = logOnce();
     for (const dep of deps) {
       if (pkg && pkg !== dep) {
         continue;
       }
 
-      if (!logged) {
-        logged = true;
-        console.log(EOL + w.name);
+      const depw = await getWorkspace(dep);
+      const depwConf = depw.config;
+      const depwDeps = depwConf.dependencies;
+      const depwDevs = depwConf.devDependencies;
+      const depwOpts = depwConf.optionalDependencies;
+      const depwPeer = depwConf.peerDependencies;
+      const depwMerged = { ...depwDeps, ...depwDevs, ...depwOpts, ...depwPeer };
+
+      updateVersion(wName, wVersion, depwDeps);
+      updateVersion(wName, wVersion, depwDevs);
+      updateVersion(wName, wVersion, depwOpts);
+      updateVersion(wName, wVersion, depwPeer);
+
+      if (depwMerged[wName] !== wVersion) {
+        logger(EOL + wName);
+        console.log(`  ${depw.name}: ${depwMerged[wName]} -> ${wVersion}`);
       }
 
-      const depw = await getWorkspace(dep);
-      const depwDeps = depw.config.dependencies;
+      if (!dry) {
+        writeJson(path.join(depw.dir, 'package.json'), depwConf);
 
-      if (depwDeps && depwDeps[w.name]) {
-        console.log(
-          `  ${depw.name}: ${depwDeps[w.name]} -> ${w.config.version}`
-        );
+        const mainPkgPath = path.join(process.cwd(), 'package.json');
+        const mainPkgJson = require(mainPkgPath);
 
-        depwDeps[w.name] = w.config.version;
-
-        if (!dry) {
-          writeJson(path.join(depw.dir, 'package.json'), depw.config);
-        }
+        updateVersion(wName, wVersion, mainPkgJson.dependencies);
+        updateVersion(wName, wVersion, mainPkgJson.devDependencies);
+        updateVersion(wName, wVersion, mainPkgJson.optionalDependencies);
+        updateVersion(wName, wVersion, mainPkgJson.peerDependencies);
+        writeJson(mainPkgPath, mainPkgJson);
       }
     }
   }

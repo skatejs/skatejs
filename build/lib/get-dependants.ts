@@ -3,7 +3,16 @@ import { getWorkspaces } from 'bolt';
 export default async function(name: string) {
   return (await getWorkspaces())
     .filter(w => {
-      return name in { ...w.config.dependencies, ...w.config.peerDependencies };
+      const pkg = w.config;
+      return (
+        name in
+        {
+          ...pkg.dependencies,
+          ...pkg.devDependencies,
+          ...pkg.optionalDependencies,
+          ...pkg.peerDependencies
+        }
+      );
     })
     .map(w => {
       return w.name;
