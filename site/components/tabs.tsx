@@ -62,34 +62,30 @@ export class Tabs extends Component {
       <div>
         {this.renderStyle(style)}
         <ul class="tabs">
-          {this.items.map(
-            ({ name, pane }, i) =>
-              pane ? (
-                <li class="tab">
-                  <a
-                    class={i === this.state.selected ? 'selected' : ''}
-                    href="#"
-                    onClick={this.onClick.bind(this, i)}
-                  >
-                    {name}
-                  </a>
-                </li>
-              ) : (
-                ''
-              )
-          )}
-        </ul>
-        {this.items.map(
-          ({ pane }, i) =>
+          {this.items.map(({ name, pane }, i) =>
             pane ? (
-              <div
-                class={`pane ${i === this.state.selected ? 'selected' : ''}`}
-              >
-                {pane}
-              </div>
+              <li class="tab">
+                <a
+                  class={i === this.state.selected ? 'selected' : ''}
+                  href="#"
+                  onClick={this.onClick.bind(this, i)}
+                >
+                  {name}
+                </a>
+              </li>
             ) : (
               ''
             )
+          )}
+        </ul>
+        {this.items.map(({ pane }, i) =>
+          pane ? (
+            <div class={`pane ${i === this.state.selected ? 'selected' : ''}`}>
+              {pane}
+            </div>
+          ) : (
+            ''
+          )
         )}
       </div>
     );

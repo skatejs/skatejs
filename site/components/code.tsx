@@ -76,7 +76,8 @@ export class Code extends Component {
     return (
       <div>
         <style>
-          ${readFileSync(
+          $
+          {readFileSync(
             __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
           ).toString()}
         </style>
@@ -143,7 +144,7 @@ export class Runnable extends Component {
     html: String
   };
 
-  code: string = '';
+  code: string;
   html: string = '';
 
   connectedCallback() {

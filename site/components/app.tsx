@@ -1,3 +1,5 @@
+/** @jsx h */
+
 import { Route, Router } from '@skatejs/sk-router';
 import RouteIndex from '../pages';
 import { Loading } from './primitives';

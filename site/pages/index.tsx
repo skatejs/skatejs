@@ -1,3 +1,5 @@
+/** @jsx h */
+
 import { readFileSync } from 'fs';
 import css from 'shadow-css';
 import { Runnable } from '../components/code';
@@ -45,7 +47,7 @@ export default class Index extends Component {
             Effortless custom elements for modern view libraries.
           </h2>
         </div>
-        <Runnable class="code" code={codeSample} html={codeSampleHtml} />
+        <Runnable className="code" code={codeSample} html={codeSampleHtml} />
         <Hr />
         <Layout>
           <Marked src={README} />

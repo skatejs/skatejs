@@ -32,7 +32,7 @@ export class Link extends Component {
   css: string = '';
   href: string = '';
   render() {
-    let { context, css, href } = this;
+    let { css, href } = this;
     if (href.indexOf(publicUrl) > -1) {
       href = href.split(publicUrl)[1];
     }
