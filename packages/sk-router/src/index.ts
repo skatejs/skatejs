@@ -8,9 +8,9 @@ export class Link extends Element {
     css: String,
     href: String
   };
-  classNames: { [s: string]: string } = { a: '' };
-  css: string = '';
-  href: string = '';
+  classNames?: { [s: string]: string } = { a: '' };
+  css?: string = '';
+  href?: string = '';
   go = e => {
     e.preventDefault();
     this.dispatchEvent(
@@ -37,8 +37,8 @@ export class Route extends Element {
     page: Object,
     path: String
   };
-  page: any = null;
-  path: string = '';
+  page?: any = null;
+  path?: string = '';
 }
 
 export class Router extends Element {
