@@ -12,6 +12,7 @@
     "@skatejs/sk-router": "/node_modules/@skatejs/sk-router/src"
   },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "@skatejs/define": "0.0.1",
@@ -30,6 +31,7 @@
     "react-dom": "^16.6.3",
     "shadow-css": "^0.1.0"
   },
+  "esnext": "esnext/index.js",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -40,7 +42,10 @@
     "dom"
   ],
   "license": "MIT",
+  "main": "main/index.js",
+  "module": "module/index.js",
   "name": "@skatejs/site",
   "private": true,
-  "repository": "skatejs/skatejs"
+  "repository": "skatejs/skatejs",
+  "source": null
 }

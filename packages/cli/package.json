@@ -24,7 +24,9 @@
     "dom"
   ],
   "license": "MIT",
+  "main": "index.js",
   "name": "@skatejs/cli",
   "repository": "skatejs/skatejs",
+  "source": "index.js",
   "version": "0.1.1"
 }

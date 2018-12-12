@@ -1,6 +1,6 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "dist/esm/index.js",
+  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "@skatejs/define": "0.0.1",
@@ -13,6 +13,7 @@
     "@skatejs/bore": "5.0.2",
     "jest-in-case": "^1.0.2"
   },
+  "esnext": "esnext/index.js",
   "files": [
     "dist/cjs",
     "dist/esm"
@@ -27,10 +28,11 @@
     "dom"
   ],
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "main/index.js",
+  "module": "module/index.js",
   "name": "@skatejs/sk-router",
   "repository": "skatejs/skatejs",
+  "source": "src/index.ts",
   "src": "src",
   "version": "0.3.3"
 }

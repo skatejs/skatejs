@@ -37,7 +37,9 @@
     "dom"
   ],
   "license": "MIT",
+  "main": "index.js",
   "name": "@skatejs/ssr",
   "repository": "skatejs/skatejs",
+  "source": "index.js",
   "version": "0.19.11"
 }

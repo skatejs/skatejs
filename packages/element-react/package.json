@@ -1,17 +1,18 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "dist/esm/index.js",
+  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "A SkateJS renderer for React.",
   "dependencies": {
     "@skatejs/define": "0.0.1",
     "@skatejs/element": "0.0.1"
   },
+  "description": "A SkateJS renderer for React.",
   "devDependencies": {
     "@skatejs/bore": "5.0.2",
     "react": "^16.6.3",
     "react-dom": "^16.6.3"
   },
+  "esnext": "esnext/index.js",
   "files": [
     "dist/cjs",
     "dist/esm"
@@ -26,14 +27,15 @@
     "dom"
   ],
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "main/index.js",
+  "module": "module/index.js",
   "name": "@skatejs/element-react",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
   },
   "repository": "skatejs/skatejs",
+  "source": "src/index.ts",
   "src": "src",
   "version": "0.0.1"
 }

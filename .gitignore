@@ -2,9 +2,10 @@
 .DS_Store
 coverage
 dist
+esnext
+main
+module
 node_modules
-npm-debug.log*
 package-lock.json
-ts-output
-**.log
+**.log*
 packages/**/tsconfig.json

@@ -1,12 +1,13 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "dist/esm/index.js",
+  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "Define custom elements without worrying about having to find a unique name for them.",
   "devDependencies": {
     "@skatejs/bore": "5.0.2",
     "@skatejs/element": "0.0.1"
   },
+  "esnext": "esnext/index.js",
   "files": [
     "dist/cjs",
     "dist/esm"
@@ -21,9 +22,10 @@
     "dom"
   ],
   "license": "MIT",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
+  "main": "main/index.js",
+  "module": "module/index.js",
   "name": "@skatejs/define",
   "repository": "skatejs/skatejs",
+  "source": "src/index.ts",
   "version": "0.0.1"
 }

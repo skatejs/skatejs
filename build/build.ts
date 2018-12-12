@@ -3,9 +3,13 @@ import * as exec from 'execa';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
-async function tsc(out, cwd) {
+async function tsc(out, cwd, optModule, optTarget) {
   await fs.remove(out);
-  return exec('tsc', ['--module', 'CommonJS', '--outDir', out], { cwd })
+  return exec(
+    'tsc',
+    ['--module', optModule, '--outDir', out, '--target', optTarget],
+    { cwd }
+  )
     .catch(e => e)
     .then(r => r.stdout);
 }
@@ -37,8 +41,12 @@ export default async function({ pkg }) {
       }
 
       await Promise.all([
-        w.config.main && tsc(path.dirname(w.config.main), w.dir),
-        w.config.module && tsc(path.dirname(w.config.module), w.dir)
+        w.config.esnext &&
+          tsc(path.dirname(w.config.esnext), w.dir, 'esnext', 'esnext'),
+        w.config.main &&
+          tsc(path.dirname(w.config.main), w.dir, 'commonjs', 'es5'),
+        w.config.module &&
+          tsc(path.dirname(w.config.module), w.dir, 'es2015', 'es5')
       ]);
 
       if (await fs.exists(tsConfig)) {
