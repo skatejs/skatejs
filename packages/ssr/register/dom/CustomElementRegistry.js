@@ -7,6 +7,20 @@ class CustomElementRegistry {
     this.registry = {};
   }
   define(name, func) {
+    if (this.registry[name]) {
+      throw new Error(
+        "Failed to execute 'define' on 'CustomElementRegistry': this name has already been used with this registry"
+      );
+    }
+
+    for (const registryName in this.registry) {
+      if (this.registry[registryName] === func) {
+        throw new Error(
+          "Failed to execute 'define' on 'CustomElementRegistry': this constructor has already been used with this registry"
+        );
+      }
+    }
+
     // We must invoke the getter for observedAttributes to mimic the spec'd
     // behaviour just in case consumer getters require side-effects happen
     // within it.
