@@ -180,13 +180,13 @@ export default class Component extends HTMLElement implements CustomElement {
   static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
 
   // The current props values.
-  private _props: Props = {};
+  _props: Props = {};
 
   // The current props values that have changed since the last update.
-  private _propsChanged: Props = {};
+  _propsChanged: Props = {};
 
   // Whether or not an update is currently being handled.
-  private _isUpdating: boolean = false;
+  _isUpdating: boolean = false;
 
   renderRoot: ShadowRoot | HTMLElement;
 
