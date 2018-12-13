@@ -23,7 +23,8 @@ export function h(name, props, ...chren) {
 }
 
 const symRef = Symbol();
-export function setProps(domProps, refCallback = e => {}) {
+export function setProps(domProps, refCallback?) {
+  refCallback = refCallback || (refCallback = e => {});
   return (
     refCallback[symRef] ||
     (refCallback[symRef] = e => {
