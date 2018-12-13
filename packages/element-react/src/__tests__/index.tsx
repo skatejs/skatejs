@@ -1,17 +1,15 @@
 import { wait } from '@skatejs/bore';
 import define, { getName } from '@skatejs/define';
-import Element, { h } from '..';
+import Element, { h, setProps } from '..';
 
-const Test = define(
-  class extends Element {
-    static props = { name: String };
-    name: string = 'World';
-    render() {
-      // @ts-ignore
-      return <TestHello>{this.name}</TestHello>;
-    }
+const Test = define(class extends Element {
+  static props = { name: String };
+  name: string = 'World';
+  render() {
+    // @ts-ignore
+    return <TestHello>{this.name}</TestHello>;
   }
-);
+});
 
 // This tests to ensure our Preact mods will auto-define and use the name of
 // the auto-defined component when using a constructor as a node name.
@@ -46,4 +44,11 @@ test('renders', async () => {
   document.body.removeChild(el);
   await wait();
   expect(el.shadowRoot.innerHTML).toEqual('');
+});
+
+test('setProps', () => {
+  const ref = setProps({ test: true });
+  const obj = { test: false };
+  ref(obj);
+  expect(obj.test).toBe(true);
 });
