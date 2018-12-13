@@ -25,17 +25,25 @@ export function h(name, props, ...chren) {
 
 const symRef = Symbol();
 export function setProps(domProps, refCallback = e => {}) {
-  return refCallback[symRef] || (refCallback[symRef] = e => {
-    refCallback(e);
-    if (e) {
-      Object.assign(e, domProps);
-    }
-  });
+  return (
+    refCallback[symRef] ||
+    (refCallback[symRef] = e => {
+      refCallback(e);
+      if (e) {
+        Object.assign(e, domProps);
+      }
+    })
+  );
 }
 
 export declare namespace h {
   namespace JSX {
     interface Element {}
-    type LibraryManagedAttributes<E, _> = E extends { props: infer Props; prototype: infer Prototype; } ? Pick<Prototype, Extract<keyof Prototype, keyof Props>> : _;
+    type LibraryManagedAttributes<E, _> = E extends {
+      props: infer Props;
+      prototype: infer Prototype;
+    }
+      ? Pick<Prototype, Extract<keyof Prototype, keyof Props>>
+      : _;
   }
 }
