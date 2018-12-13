@@ -1,5 +1,3 @@
-/** @jsx h */
-
 import define, { getName } from '@skatejs/define';
 import Element from '@skatejs/element';
 import { h as preactH, render } from 'preact';
@@ -21,8 +19,7 @@ export default class extends Element {
 
 export function h(name, props, ...chren) {
   if (name.prototype instanceof HTMLElement) {
-    define(name);
-    name = getName(name);
+    name = getName(define(name));
   }
   return preactH(name, props, ...chren);
 }

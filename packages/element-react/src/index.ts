@@ -17,8 +17,7 @@ export default class extends Element {
 
 export function h(name, props, ...chren) {
   if (name.prototype instanceof HTMLElement) {
-    define(name);
-    name = getName(name);
+    name = getName(define(name));
   }
   return createElement(name, props, ...chren);
 }
