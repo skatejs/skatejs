@@ -1,0 +1,23 @@
+{
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "description": "Plugin for automatically defining custom elements.",
+  "license": "MIT",
+  "main": "index.js",
+  "name": "@skatejs/parcel-plugin-custom-element",
+  "source": "src/index.ts",
+  "version": "0.0.0",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "repository": "skatejs/skatejs",
+  "browser": "module/index.js",
+  "esnext": "esnext/index.js",
+  "module": "module/index.js"
+}
