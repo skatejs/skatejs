@@ -2,18 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { expose } = require('./util');
 
-// Copy current window globals over to the main global before we overwrite
-// window with global, making mutations to either happen on both.
-Object.getOwnPropertyNames(window).forEach(name => {
-  global[name] = window[name];
-});
-
-// We must do this in order to make mutations to ether affect the other.
-window = global;
+// Emulate window global.
+global.window = global;
 
 // Expose all DOM interfaces.
-fs
-  .readdirSync(path.join(__dirname, 'dom'))
+fs.readdirSync(path.join(__dirname, 'dom'))
   .filter(file => file.indexOf('.') > -1)
   .forEach(file => {
     expose(file.replace('.js', ''), require(path.join(__dirname, 'dom', file)));

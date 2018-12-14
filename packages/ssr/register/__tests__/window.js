@@ -3,8 +3,8 @@ test('window should work if re-included', () => {
 });
 
 test('Object', () => {
-  expect(window.Object).toBeDefined();
   expect(window.Object).toEqual(global.Object);
+  expect({}).toBeInstanceOf(Object);
 });
 
 test('customElements should be an object', () => {
