@@ -4,6 +4,13 @@ import marked from 'marked';
 function format(src) {
   src = src || '';
 
+  // Sanitise quotes.
+  src = src.replace(/'/g, '&apos;');
+  src = src.replace(/"/g, '&quot;');
+
+  // Ensure windows doesn't screw anything up.
+  src = src.replace(/\r/g, '');
+
   // Remove leading newlines.
   src = src.split('\n');
 
