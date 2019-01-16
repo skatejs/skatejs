@@ -4,10 +4,6 @@ import marked from 'marked';
 function format(src) {
   src = src || '';
 
-  // Normalize quotes.
-  src = src.replace(/'/g, '&rsquo;');
-  src = src.replace(/"/g, '&quot;');
-
   // Remove leading newlines.
   src = src.split('\n');
 
