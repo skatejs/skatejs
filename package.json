@@ -1,6 +1,5 @@
 {
   "bolt": {
-    "version": "^0.22.6",
     "workspaces": [
       "site",
       "packages/*"

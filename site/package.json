@@ -47,5 +47,6 @@
   "name": "@skatejs/site",
   "private": true,
   "repository": "skatejs/skatejs",
-  "source": null
+  "source": null,
+  "version": "0.0.0"
 }
