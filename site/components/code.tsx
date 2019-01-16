@@ -65,7 +65,7 @@ export class Code extends Component {
     if (!e) return;
     import('prismjs').then(prism => {
       e.innerHTML = prism.highlight(
-        format(this.innerHTML || this.code),
+        format(this.code || this.innerHTML),
         prism.languages[this.lang] || prism.languages.markup,
         this.lang || 'markup'
       );

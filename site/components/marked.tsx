@@ -16,7 +16,7 @@ const defaultRenderers = {
     return `<${custom.note()}>${text}</${custom.note()}>`;
   },
   code(code, lang) {
-    return `<${custom.code()} lang="${lang}">${code}</${custom.code()}>`;
+    return `<${custom.code()} code="${code}" lang="${lang}"></${custom.code()}>`;
   },
   heading(text, level) {
     return level === 1 ? '' : `<h${level}>${text}</h${level}>`;
