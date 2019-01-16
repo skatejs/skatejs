@@ -20,10 +20,7 @@ const navItems = () => [
   {
     href: '/guides',
     text: 'Guides',
-    tree: [
-      { href: '/guides/getting-started', text: 'Getting started' },
-      { href: '/guides/storybook', text: 'Storybook' }
-    ]
+    tree: [{ href: '/guides/storybook', text: 'Storybook' }]
   },
   {
     href: '/migrating',

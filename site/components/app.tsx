@@ -87,12 +87,8 @@ export default class App extends Component {
           />
 
           <Route
-            page={withLoading(() => import('../pages/guides/getting-started'))}
+            page={withLoading(() => import('../pages/guides'))}
             path="/guides"
-          />
-          <Route
-            page={withLoading(() => import('../pages/guides/getting-started'))}
-            path="/guides/getting-started"
           />
           <Route
             page={withLoading(() => import('../pages/guides/storybook'))}
