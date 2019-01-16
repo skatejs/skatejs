@@ -68,6 +68,7 @@
     "build": "projector build",
     "clean": "projector clean",
     "precommit": "lint-staged",
+    "site": "cd site && parcel build index.html",
     "start": "cd site && parcel index.html",
     "test": "jest"
   },
