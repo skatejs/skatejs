@@ -33,9 +33,9 @@ const router = (
 The `page` prop on the `Route` component is just a function that returns a DOM
 node. This means that it can be:
 
-* A custom element constructor.
-* A function that mounts a React DOM tree to a node and returns the node.
-* A function that does anything, so long as it returns a normal DOM node.
+- A custom element constructor.
+- A function that mounts a React DOM tree to a node and returns the node.
+- A function that does anything, so long as it returns a normal DOM node.
 
 ### Optimisation / code-splitting
 
