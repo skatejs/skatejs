@@ -6,7 +6,7 @@
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
 Skate is a functional reactive abstraction over
-[the web component standards](https://github.com/w3c/webcomponents) that. It is a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
+[the web component standards](https://github.com/w3c/webcomponents) as a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
 
 - 🌏 Cross-framework compatible components.
 - ⚛️ Render components using your favourite view libary, or none at all.
