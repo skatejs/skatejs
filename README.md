@@ -22,7 +22,7 @@ The simplest way to get up and running is to start with a pre-configured element
 npm i @skatejs/element-lit-html
 ```
 
-### Hello example
+### Simple example
 
 ```js
 import Element, { html } from '@skatejs/element-lit-html';
@@ -39,9 +39,9 @@ export default class extends Element {
 }
 ```
 
-### CodeSandbox
+### Other examples
 
-Coming soon!
+1. [Todo list](https://codesandbox.io/s/8zjp9qqj9l)
 
 ### Cli
 
