@@ -80,17 +80,6 @@ function defineProp(
   propType.defined(ctor, propName);
 }
 
-function defineProps(
-  ctor: CustomElementConstructor,
-  props: NormalizedPropTypes
-) {
-  mapAttrsToProps.set(ctor, {});
-  mapPropsToTypes.set(ctor, {});
-  props.forEach(({ propName, propType }) =>
-    defineProp(ctor, propName, propType)
-  );
-}
-
 function delay(fn) {
   if (typeof global.Promise === 'function') {
     // @ts-ignore - Promise.resove() indeed does exist.
@@ -165,8 +154,14 @@ function observeChildren(elem) {
   }
 }
 
-export function withProps(Base: CustomElementConstructor = HTMLElement) {
-  defineProps(Base, normalizePropTypes(Base.props));
+export function defineProps(ctor: CustomElementConstructor) {
+  const normalized = normalizePropTypes(ctor.props);
+  mapAttrsToProps.set(ctor, {});
+  mapPropsToTypes.set(ctor, {});
+  normalized.forEach(({ propName, propType }) =>
+    defineProp(ctor, propName, propType)
+  );
+  return normalized;
 }
 
 export default class Component extends HTMLElement implements CustomElement {
@@ -191,9 +186,7 @@ export default class Component extends HTMLElement implements CustomElement {
   renderRoot: ShadowRoot | HTMLElement;
 
   static get observedAttributes() {
-    const normalized = normalizePropTypes(this.props);
-    defineProps(this, normalized);
-    return deriveAttrsFromProps(normalized);
+    return deriveAttrsFromProps(defineProps(this));
   }
 
   constructor() {
