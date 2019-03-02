@@ -1,3 +1,3 @@
-export { default } from './component';
+export { default } from './element';
 export * from './props';
 export * from './types';

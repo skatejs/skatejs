@@ -164,10 +164,10 @@ export function defineProps(ctor: CustomElementConstructor) {
   return normalized;
 }
 
-export default class Component extends HTMLElement implements CustomElement {
+export default class Element extends HTMLElement implements CustomElement {
   ['constructor']: CustomElementConstructor;
 
-  // Props / attributes the component should observe.
+  // Props / attributes the element should observe.
   static props?: PropTypes = {};
 
   // Options when automatically creating the shadow root. This can be set to
