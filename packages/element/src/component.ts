@@ -241,7 +241,7 @@ export default class Component extends HTMLElement implements CustomElement {
     this._isUpdating = true;
 
     // We execute the update process at the end of the current microtask so
-    // we can debounce any subsequent updates using the _propsUpdating flag.
+    // we can debounce any subsequent updates.
     delay(() => {
       this.updated(this._propsChanged);
       if (this.shouldUpdateRender(this._propsChanged)) {
