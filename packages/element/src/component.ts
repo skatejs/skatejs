@@ -260,7 +260,7 @@ export default class Component extends HTMLElement implements CustomElement {
     });
   }
 
-  render(...args): any {
+  render(...args: any): any {
     return '';
   }
 
