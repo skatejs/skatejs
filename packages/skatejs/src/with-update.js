@@ -134,10 +134,7 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _prevState: Object;
     _props: Object;
     _state: Object;
-    _syncingAttributeToProperty: null | string;
-    _syncingPropertyToAttribute: boolean;
     _updating: boolean;
-    _wasInitiallyRendered: boolean;
 
     updated: ?(props: Object, state: Object) => void;
     shouldUpdate: (props: Object, state: Object) => void;
@@ -155,6 +152,11 @@ export const withUpdate = (Base: Class<any> = HTMLElement): Class<any> =>
     _state = {};
 
     static get observedAttributes(): Array<string> {
+      // make sure to create a new instance of these static props per constructor.
+      if (!('_attributeToAttributeMap' in this)) this._attributeToAttributeMap = {}
+      if (!('_attributeToPropertyMap' in this)) this._attributeToPropertyMap = {}
+      if (!('_observedAttributes' in this)) this._observedAttributes = []
+
       // We have to define props here because observedAttributes are retrieved
       // only once when the custom element is defined. If we did this only in
       // the constructor, then props would not link to attributes.
