@@ -276,7 +276,7 @@ const array: Function = prop({
     Array.isArray(val) ? val : empty(val) ? null : [val],
   default: Object.freeze([]),
   deserialize: parse,
-  serialize: stringify
+  serialize: (val: mixed): null | string => (val == null ? null : stringify(val))
 });
 
 const boolean: Function = prop({
@@ -300,7 +300,7 @@ const object: Function = prop({
   attribute,
   default: Object.freeze({}),
   deserialize: parse,
-  serialize: stringify
+  serialize: (val: mixed): null | string => (val == null ? null : stringify(val))
 });
 
 const string: Function = prop({
