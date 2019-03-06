@@ -1,16 +1,4 @@
 {
-  "alias": {
-    "@skatejs/define": "/node_modules/@skatejs/define/src",
-    "@skatejs/element": "/node_modules/@skatejs/element/src",
-    "@skatejs/element-hyperhtml": "/node_modules/@skatejs/element-hyperhtml/src",
-    "@skatejs/element-lit-html": "/node_modules/@skatejs/element-lit-html/src",
-    "@skatejs/element-preact": "/node_modules/@skatejs/element-preact/src",
-    "@skatejs/element-react": "/node_modules/@skatejs/element-react/src",
-    "@skatejs/element-snabbdom": "/node_modules/@skatejs/element-snabbdom/src",
-    "@skatejs/sk-context": "/node_modules/@skatejs/sk-context/src",
-    "@skatejs/sk-marked": "/node_modules/@skatejs/sk-marked/src",
-    "@skatejs/sk-router": "/node_modules/@skatejs/sk-router/src"
-  },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",

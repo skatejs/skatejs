@@ -78,7 +78,7 @@ export class Code extends Component {
         <style>
           $
           {readFileSync(
-            __dirname + '/../node_modules/prismjs/themes/prism-twilight.css'
+            __dirname + '/../../node_modules/prismjs/themes/prism-twilight.css'
           ).toString()}
         </style>
         {this.renderStyle()}
