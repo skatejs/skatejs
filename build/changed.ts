@@ -1,8 +1,8 @@
-import { getWorkspaces } from 'bolt';
 import chalk from 'chalk';
 import * as os from 'os';
 import outdent from 'outdent';
 import getChanged from './lib/get-changed';
+import getWorkspaces from './lib/get-workspaces';
 
 const colors = { major: 'red', minor: 'yellow', patch: 'green' };
 

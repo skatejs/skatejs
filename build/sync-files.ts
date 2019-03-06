@@ -1,6 +1,6 @@
-import { getWorkspaces } from 'bolt';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import getWorkspaces from './lib/get-workspaces';
 
 type Pkg = {
   browser: string;

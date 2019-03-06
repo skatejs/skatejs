@@ -1,7 +1,7 @@
-import { getWorkspaces } from 'bolt';
 import * as exec from 'execa';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import getWorkspaces from './lib/get-workspaces';
 
 async function tsc(out, cwd, optModule, optTarget) {
   await fs.remove(out);

@@ -1,10 +1,10 @@
-import { getWorkspaces } from 'bolt';
 import { writeJson } from 'fs-extra';
 import * as memo from 'memoizee';
 import { EOL } from 'os';
 import * as path from 'path';
 import getDependants from './lib/get-dependants';
 import getWorkspace from './lib/get-workspace';
+import getWorkspaces from './lib/get-workspaces';
 
 function logOnce() {
   let logged = false;

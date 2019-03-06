@@ -1,7 +1,7 @@
-import { getWorkspaces } from 'bolt';
 import * as path from 'path';
 import exec from './lib/exec';
 import build from './build';
+import getWorkspaces from './lib/get-workspaces';
 
 function need(val, msg) {
   if (!val) {

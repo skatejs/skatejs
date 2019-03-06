@@ -7,13 +7,13 @@ export default async function() {
   const workspaces = [];
 
   for (const workspaceGlob of pkg.workspaces) {
-    const workspacePaths = await glob(workspaceGlob);
+    const workspacePaths = glob.sync(workspaceGlob);
     for (const workspacePath of workspacePaths) {
-      const wsPkg = require(path.join(workspacePath, 'package.json'));
+      const wsPkg = require(path.join(cwd, workspacePath, 'package.json'));
       workspaces.push({
+        config: wsPkg,
         dir: workspacePath,
-        name: wsPkg.name,
-        pkg: wsPkg
+        name: wsPkg.name
       });
     }
   }

@@ -128,11 +128,10 @@ function inferReleaseType(message): Type {
   return 'patch';
 }
 
-export default async function getChanged(name): Promise<Change> {
+async function getLatestCommitsForOnly(name) {
   const workspace = await getWorkspace(name);
-  const commits = await getLatestCommitsFor(name);
-  const releaseType = calculateReleaseType(commits);
   const commitsChanges = [];
+  const commits = await getLatestCommitsFor(name);
 
   for (const commit of commits) {
     const files = (await getFilesForCommit(commit.hash)).filter(function(f) {
@@ -150,8 +149,16 @@ export default async function getChanged(name): Promise<Change> {
     }
   }
 
+  return commitsChanges;
+}
+
+export default async function getChanged(name): Promise<Change> {
+  const workspace = await getWorkspace(name);
+  const commits = await getLatestCommitsForOnly(name);
+  const releaseType = calculateReleaseType(commits);
+
   return {
-    commits: commitsChanges,
+    commits,
     type: releaseType,
     version: await calculateNextVersion(
       name,
