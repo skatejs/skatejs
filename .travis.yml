@@ -1,4 +1,4 @@
 language: node_js
 install:
-  - npx bolt
-  - npx bolt build
+  - npx yarn
+  - npx yarn build
