@@ -56,7 +56,7 @@
   "scripts": {
     "build": "projector build",
     "clean": "projector clean",
-    "netlify": "yarn && parcel build site/index.html",
+    "netlify": "yarn && parcel build site/*.html",
     "precommit": "lint-staged",
     "start": "parcel site/index.html",
     "test": "jest"
