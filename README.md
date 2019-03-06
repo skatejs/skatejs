@@ -49,7 +49,7 @@ There's a CLI to get you up and running: [https://skatejs.netlify.com/packages/c
 
 ```sh
 $ npm i -g @skatejs/cli
-$ skate
+$ skatejs
 ```
 
 ## Polyfills
