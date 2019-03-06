@@ -1,5 +1,5 @@
-import { getWorkspaces } from 'bolt';
 import getWorkspace from './get-workspace';
+import getWorkspaces from './get-workspaces';
 
 export default async function(name): Promise<Array<string>> {
   const w = await getWorkspace(name);

@@ -29,7 +29,7 @@ const { log } = console;
   ]);
 
   log();
-  if (!await exists('package.json')) {
+  if (!(await exists('package.json'))) {
     log(chalk`Generating {italic package.json}...`);
     await spawn('npm', ['init', '-f']);
   }

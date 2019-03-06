@@ -6,15 +6,14 @@ maintainer; the more the merrier.
 
 ## Technical overview
 
-We use [Bolt](https://github.com/boltpkg/bolt) to manage our mono-repo. Please
-read their docs before proceeding.
+We use [Yarn Workspaces](https://yarnpkg.com/lang/en/docs/workspaces/) to manage our mono-repo.
 
-* The site can be found in `site/`.
-* All packages can be found in `packages/`.
+- The site can be found in `site/`.
+- All packages can be found in `packages/`.
 
 ## Getting started
 
-To get started, run `bolt`.
+To get started, run `yarn`.
 
 ### Tests
 
@@ -36,7 +35,7 @@ example.
 
 ### Documentation / website
 
-To document a package or work on the website, run `bolt start`. This will
+To document a package or work on the website, run `yarn start`. This will
 startup a `webpack-dev-server` and you can dev as normal.
 
 ### Other commands
@@ -44,14 +43,12 @@ startup a `webpack-dev-server` and you can dev as normal.
 Here are some other commands that you may need to run from time to time, for
 whatever reason:
 
-* `bolt build` builds all distributions.
-* `bolt flow` invokes the local `flow-bin` dependency.
-* `bolt precommit` runs the pre-commit hook.
-* `bolt prepare` prepares the packages for publishing.
-* `bolt site` compiles the website.
-* `bolt test` runs all tests for all packages once.
-* `bolt test:js` runs all the unit / integration tests.
-* `bolt test:ts` runs all of the TypeScript definition tests.
+- `yarn build` builds all distributions.
+- `yarn clean` cleans your working copy.
+- `yarn netlify` compiles the website.
+- `yarn precommit` runs the pre-commit hook.
+- `yarn start` runs the website in dev mode.
+- `yarn test` runs all the tests.
 
 ## Core team
 
@@ -63,13 +60,13 @@ all repos within the org.
 
 The core team has the following responsibilities:
 
-* Being available to answer high-level questions about Skate's vision and
+- Being available to answer high-level questions about Skate's vision and
   future.
-* Being available to review longstanding / forgotten pull requests.
-* Occasionally check the issues, offer input and assign labels; triage.
-* Looking out for up-and-coming members of the Skate community who might want to
+- Being available to review longstanding / forgotten pull requests.
+- Occasionally check the issues, offer input and assign labels; triage.
+- Looking out for up-and-coming members of the Skate community who might want to
   serve as core team members.
-* Performing releases.
+- Performing releases.
 
 The core team – and all contributors – are open source _volunteers_; membership
 on the core team is expressly _not_ an obligation. The core team is
@@ -81,15 +78,15 @@ their time, and may not be available to help immediately.
 
 The current core team members, ordered by time of addition:
 
-* [@treshugart](https://github.com/treshugart)
+- [@treshugart](https://github.com/treshugart)
 
 ### Adding new core team members
 
 The process for adding new core team members is as follows:
 
-* An existing core team member reaches out privately to see if the individual is
+- An existing core team member reaches out privately to see if the individual is
   interested. If they are, open a pull request adding them to the list.
-* Existing core team members review the pull request. The person merging the PR
+- Existing core team members review the pull request. The person merging the PR
   is responsible for adding them to the
   ["Core" GitHub team](https://github.com/orgs/skatejs/teams/core) and for
   adding them as an owner to the npm package. (`npm owner add <npmusername>`)

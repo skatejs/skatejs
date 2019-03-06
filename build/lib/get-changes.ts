@@ -1,9 +1,9 @@
-import { getWorkspaces } from 'bolt';
 import * as memo from 'memoizee';
 import * as semver from 'semver';
 import getChanged from './get-changed';
 import getDependencies from './get-dependencies';
 import getWorkspace from './get-workspace';
+import getWorkspaces from './get-workspaces';
 
 type Change = {
   dependents: { [s: string]: Array<string> };

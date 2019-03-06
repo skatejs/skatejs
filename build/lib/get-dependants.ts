@@ -1,4 +1,4 @@
-import { getWorkspaces } from 'bolt';
+import getWorkspaces from './get-workspaces';
 
 export default async function(name: string) {
   return (await getWorkspaces())
