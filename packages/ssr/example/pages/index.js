@@ -1,37 +1,56 @@
-const { define, Component } = require('skatejs');
-const outdent = require('outdent');
+const define = require('@skatejs/define').default;
+const Element = require('@skatejs/element').default;
 
-class Hello extends Component {
+class Centered extends HTMLElement {
   render() {
-    return outdent`
-      <span class="test">
-        Hello,
-        <x-yell><slot></slot></x-yell>!
-      </span>
+    return `
+      <style>:host{text-align: center}</style>
+      <slot></slot>
     `;
   }
 }
 
-class Index extends Component {
+class Namecard extends Element {
   render() {
-    return outdent`
-      <div class="test">
-        <h1>SkateJS</h1>
-        <p><x-hello>World</x-hello></p>
-      </div>
+    return `
+      <x-centered>
+        <h1><slot name="name"></slot></h1>
+        <x-slant><slot name="description"></slot></x-slant>
+      </x-centered>
     `;
   }
 }
 
-class Yell extends Component {
+class Nametag extends Element {
+  static get props() {
+    return {
+      name: String,
+      description: String
+    };
+  }
+  constructor() {
+    super();
+    this.description = 'Web Components enthusiast';
+    this.name = 'John Doe';
+  }
   render() {
-    return outdent`
-      <style>.test { font-weight: bold; }</style>
-      <span class="test"><slot></slot></span>
+    return `
+      <x-namecard>
+        <p slot="description">${this.description}</p>
+        <strong slot="name">${this.name}</strong>
+      </x-namecard>
     `;
   }
 }
 
-[Hello, Index, Yell].forEach(define);
+class Slant extends HTMLElement {
+  render() {
+    return `
+      <em><slot></slot></em>
+    `;
+  }
+}
 
-module.exports = Index;
+[Centered, Namecard, Nametag, Slant].forEach(define);
+
+module.exports = Nametag;

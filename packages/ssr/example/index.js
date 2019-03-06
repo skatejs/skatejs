@@ -1,7 +1,3 @@
-require('babel-register')({
-  presets: ['react', 'stage-0'].map(m => require(`babel-preset-${m}`))
-});
-
 require('../register');
 const render = require('../index');
 

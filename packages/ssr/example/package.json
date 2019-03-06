@@ -1,18 +1,14 @@
 {
+  "private": true,
   "name": "ssr-wc",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@skatejs/element": "^0.0.0",
-    "@skatejs/val": "^0.4.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "babel-register": "^6.24.1",
+    "@skatejs/define": "*",
+    "@skatejs/element": "*",
     "hapi": "^17.0.0",
-    "outdent": "^0.4.1",
-    "preact": "^8.1.0",
-    "undom": "^0.3.3"
+    "outdent": "^0.4.1"
   },
   "devDependencies": {},
   "scripts": {

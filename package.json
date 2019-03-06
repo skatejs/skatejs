@@ -102,6 +102,7 @@
   "repository": "skatejs/skatejs",
   "workspaces": [
     "packages/*",
+    "packages/ssr/example",
     "site"
   ]
 }
