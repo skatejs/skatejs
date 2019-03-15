@@ -1,12 +1,10 @@
 import define, { getName } from '@skatejs/define';
-import Element from '@skatejs/element';
-import { createContext, createElement } from 'react';
+import SkateElement from '@skatejs/element';
+import { createElement } from 'react';
 import { render } from 'react-dom';
 import { renderToString } from 'react-dom/server';
 
-const Context = createContext<{}>(null);
-
-export default class extends Element {
+export default class extends SkateElement {
   disconnectedCallback() {
     if (super.disconnectedCallback) {
       super.disconnectedCallback();
@@ -18,65 +16,63 @@ export default class extends Element {
     // @ts-ignore
     render(this.render(), this.renderRoot);
   }
-  static renderToString(
-    name: string,
-    props: { [s: string]: any },
-    chren: Array<any>
-  ) {
-    const elem = new this();
-    Object.assign(elem, props);
-    return (
-      renderToString(
-        // We have to pass the children down so that slots can intercept them
-        // and render them inside themselves. We do it this way so that SEO
-        // isn't screwed up by out-of-order content.
-        h(Context.Provider, { value: chren }, elem.render())
-      )
-        // Not sure if we need to do this.
-        .replace(/\sdata-reactroot=""/g, '')
-    );
+  renderToString() {
+    return renderToString(this.render());
   }
 }
 
+function constructCustomElement(Ctor, props) {
+  const elem = new Ctor();
+  Object.assign(elem, props);
+  return elem;
+}
+
+// Uses this in lieu of context because separate renderToString calls cannot
+// share context.
+let currentLightDOM;
+
 export function h(name, props, ...chren) {
   const isSsr = typeof window === 'undefined';
+
+  // If it extends HTMLElement.
   if (name.prototype instanceof HTMLElement) {
-    const Component = name;
-    name = getName(define(name));
+    const customElementName = getName(define(name));
+
+    // Not being able to retrieve a name from a defined element is an
+    // exceptional state.
+    if (!customElementName) {
+      throw new Error(`Could not find name for: ${name}`);
+    }
 
     // We only try and convert the custom element to a string if we're on the
     // server. We leave it it to the custom element to determine how it should
     // be rendered to a string, so this can be compatible with any web
     // component framework.
-    if (isSsr && Component.renderToString) {
-      props = {
+    if (isSsr && name.prototype.renderToString) {
+      currentLightDOM = chren;
+      return createElement(customElementName, {
         ...props,
-
         // No other way to get a string into React.
         dangerouslySetInnerHTML: {
-          __html: Component.renderToString(name, props, chren)
+          __html: constructCustomElement(name, props).renderToString()
         }
-      };
-
-      // We cant dangerouslySetInnerHTML and have children.
-      chren = null;
+      });
     }
-  } else if (isSsr && name === 'slot') {
-    // If we're rendering a slot, we try and get any children that should be
-    // projected into it via context.
-    const oldChren = chren;
-    chren = [
-      h(Context.Consumer, null, lightDom => {
-        return (
-          lightDom.filter(d => {
-            return props && props.name
-              ? props.name === d.props.slot
-              : !d.props.slot;
-          }) || oldChren
-        );
-      })
-    ];
+
+    // We're on the client, so just create as normal.
+    return createElement(customElementName, props, ...chren);
   }
+
+  if (isSsr && name === 'slot') {
+    return createElement(
+      name,
+      props,
+      ...(currentLightDOM.filter(d =>
+        props && props.name ? props.name === d.props.slot : !d.props.slot
+      ) || chren)
+    );
+  }
+
   return createElement(name, props, ...chren);
 }
 
