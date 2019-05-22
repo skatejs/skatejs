@@ -1,0 +1,33 @@
+{
+    "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+    "browser": "module/index.js",
+    "bugs": "https://github.com/skatejs/skatejs/issues",
+    "dependencies": {},
+    "description": "A web component for declaratively attaching a shadow root to its parent that is SSR friendly.",
+    "devDependencies": {
+      "@skatejs/bore": "5.0.2"
+    },
+    "esnext": "esnext/index.js",
+    "files": [
+      "esnext",
+      "main",
+      "module"
+    ],
+    "homepage": "https://skatejs.netlify.com",
+    "keywords": [
+      "web",
+      "components",
+      "custom",
+      "elements",
+      "shadow",
+      "dom"
+    ],
+    "license": "MIT",
+    "main": "main/index.js",
+    "module": "module/index.js",
+    "name": "@skatejs/sk-shadow",
+    "repository": "skatejs/skatejs",
+    "source": "src/index.ts",
+    "src": "src",
+    "version": "0.3.3"
+  }
