@@ -10,6 +10,7 @@
   },
   "description": "A web component router that's compatible with code-splitting out of the box.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "jest-in-case": "^1.0.2"
   },

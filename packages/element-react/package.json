@@ -8,6 +8,7 @@
   },
   "description": "A SkateJS renderer for React.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "@types/react": "^16.8.8",
     "@types/react-dom": "^16.8.2",

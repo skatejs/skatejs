@@ -4,6 +4,7 @@
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "Define custom elements without worrying about having to find a unique name for them.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "@skatejs/element": "0.0.1"
   },

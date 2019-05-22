@@ -7,6 +7,7 @@
   },
   "description": "A SkateJS renderer for LitHTML.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "@skatejs/define": "0.0.1",
     "lit-html": "dev"

@@ -8,6 +8,7 @@
   },
   "description": "A SkateJS renderer for Preact.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "preact": "^8.2.7"
   },

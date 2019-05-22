@@ -7,6 +7,7 @@
   },
   "description": "A web component for providing and consuming contextual values, based on the React context API.",
   "devDependencies": {
+    "@pika/pack": "^0.3.7",
     "@skatejs/bore": "5.0.2",
     "@skatejs/ssr": "0.19.11"
   },
