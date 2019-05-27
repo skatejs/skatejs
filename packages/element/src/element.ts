@@ -190,6 +190,17 @@ export default class Element extends HTMLElement implements CustomElement {
 
   constructor() {
     super();
+
+    // Values that exist on the element before it is upgraded prevent the
+    // prop setters from being invoked when set again, so we must store the
+    // value, delete it, then set it again to ensure the prop setter takes
+    // over.
+    Object.keys(this.constructor.props).forEach(k => {
+      const value = this[k];
+      delete this[k];
+      this[k] = value;
+    });
+
     if (!this.shadowRoot) {
       const { shadowRootOptions } = this.constructor;
       this.renderRoot = shadowRootOptions
