@@ -40,13 +40,11 @@ test('checks for existing shadow root', () => {
 
 test('reflects initial attribute values to props', () => {
   const name = getName(
-    define(
-      class extends Element {
-        static props = {
-          test: Boolean
-        };
-      }
-    )
+    define(class extends Element {
+      static props = {
+        test: Boolean
+      };
+    })
   );
 
   const w = mount(`<${name} test></${name}>`);
@@ -54,13 +52,11 @@ test('reflects initial attribute values to props', () => {
 });
 
 test('reflects subsequent values to props', () => {
-  const Elem = define(
-    class extends Element {
-      static props = {
-        test: Boolean
-      };
-    }
-  );
+  const Elem = define(class extends Element {
+    static props = {
+      test: Boolean
+    };
+  });
 
   const w = mount(new Elem());
   w.node.setAttribute('test', '');
@@ -68,13 +64,11 @@ test('reflects subsequent values to props', () => {
 });
 
 test('does not reflect to attribute by default', async () => {
-  const Elem = define(
-    class extends Element {
-      static props = {
-        test: Boolean
-      };
-    }
-  );
+  const Elem = define(class extends Element {
+    static props = {
+      test: Boolean
+    };
+  });
 
   const w = mount(new Elem());
   expect(w.node.getAttribute('test')).toEqual(null);
@@ -85,13 +79,11 @@ test('does not reflect to attribute by default', async () => {
 });
 
 test('reflects to attribute if target is supplied', async () => {
-  const Elem = define(
-    class extends Element {
-      static props = {
-        test: { ...props.boolean, target: 'test' }
-      };
-    }
-  );
+  const Elem = define(class extends Element {
+    static props = {
+      test: { ...props.boolean, target: 'test' }
+    };
+  });
 
   const w = mount(new Elem());
   expect(w.node.getAttribute('test')).toEqual(null);
@@ -99,4 +91,16 @@ test('reflects to attribute if target is supplied', async () => {
   w.node.test = true;
   await wait();
   expect(w.node.getAttribute('test')).toEqual('');
+});
+
+test('renders innerHTML by default', async () => {
+  const Elem = define(class extends Element {
+    render() {
+      return 'test';
+    }
+  });
+
+  const w = mount(new Elem());
+  await wait();
+  expect(w.node.shadowRoot.innerHTML).toBe('test');
 });
