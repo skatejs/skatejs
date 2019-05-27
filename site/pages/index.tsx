@@ -44,7 +44,7 @@ export default class Index extends Component {
         <div class="hero">
           <h1 class="title">SkateJS</h1>
           <h2 class="subtitle">
-            Effortless custom elements for modern view libraries.
+            Effortless custom elements powered by modern view libraries
           </h2>
         </div>
         <Runnable className="code" code={codeSample} html={codeSampleHtml} />
