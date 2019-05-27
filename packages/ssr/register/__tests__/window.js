@@ -2,6 +2,11 @@ test('window should work if re-included', () => {
   require('..');
 });
 
+test('Array', () => {
+  expect(window.Array).toEqual(global.Array);
+  expect([]).toBeInstanceOf(Array);
+});
+
 test('Object', () => {
   expect(window.Object).toEqual(global.Object);
   expect({}).toBeInstanceOf(Object);
