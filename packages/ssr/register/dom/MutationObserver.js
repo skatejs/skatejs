@@ -26,19 +26,19 @@ class MutationObserver {
   }
 
   disconnect() {
-    removeEventListener('__MutationObserver', this._enqueue);
+    this._element.removeEventListener('__MutationObserver', this._enqueue);
   }
 
   observe(element, options) {
     this._element = element;
     this._options = options;
-    addEventListener('__MutationObserver', this._enqueue);
+    element.addEventListener('__MutationObserver', this._enqueue);
   }
 
   takeRecords() {
-    const entries = this._records.entries();
+    const entries = Array.from(this._records.entries());
     this._records.clear();
-    return Array.from(entries).map(map => map[1]);
+    return entries.map(e => e[1]);
   }
 
   _enqueue(e) {
@@ -87,7 +87,7 @@ class MutationObserver {
   }
 
   _makeBatchedCallback() {
-    return promise(() => this._callback(this.takeRecords()));
+    return promise(() => this._callback(this.takeRecords(), this));
   }
 
   static trigger(
@@ -97,8 +97,9 @@ class MutationObserver {
     oldValue = null
   ) {
     const { parentNode, previousSibling, nextSibling } = childNode;
-    dispatchEvent(
+    parentNode.dispatchEvent(
       new Event('__MutationObserver', {
+        bubbles: true,
         mutationType,
         childNode,
         parentNode,
