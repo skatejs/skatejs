@@ -28,9 +28,11 @@ npm i @skatejs/element-lit-html
 import Element, { html } from '@skatejs/element-lit-html';
 
 export default class extends Element {
-  static props = {
-    name: String
-  };
+  static get props() {
+    return {
+      name: String
+    };
+  }
   render() {
     return html`
       Hello, ${this.name}!
