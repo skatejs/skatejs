@@ -45,11 +45,14 @@ export function h(name, props, ...chren) {
     }
 
     // We only try and convert the custom element to a string if we're on the
-    // server. We leave it it to the custom element to determine how it should
-    // be rendered to a string, so this can be compatible with any web
-    // component framework.
+    // server. It decides how to render itself to a string which means this
+    // could render a web component built with any (or no) framework.
     if (isSsr && name.prototype.renderToString) {
+      // We save the current children because we'll slot them later.
       currentLightDOM = chren;
+
+      // We now render the current element to a string by simply invoking its
+      // renderToString() method.
       return createElement(customElementName, {
         ...props,
         // No other way to get a string into React.
@@ -63,15 +66,30 @@ export function h(name, props, ...chren) {
     return createElement(customElementName, props, ...chren);
   }
 
+  // If we've encountered a slot, we filter out the light DOM we've saved
+  // that should be projected into it. This simulates slotted content so
+  // that content reads as intended to bots. The sk-shadow element can
+  // reverse engineer this upon hydration.
   if (isSsr && name === "slot") {
-    return createElement(
-      name,
-      props,
-      ...(currentLightDOM.filter(d => {
-        const dSlot = d.props && d.props.slot;
-        return props && props.name ? props.name === dSlot : !dSlot;
-      }) || chren)
-    );
+    // TODO remove elements from the array as they are slotted.
+    const filteredLightDOM = currentLightDOM.filter(d => {
+      const dSlot = d.props && d.props.slot;
+      return props && props.name ? props.name === dSlot : !dSlot;
+    });
+
+    // If there is light DOM, we render those instead of the normal
+    // children (which would be the slot's default content).
+    //
+    // If there is no light DOM, we flag the slot as showing its default
+    // content. This is so that the slot's content is not removed during
+    // rehydration.
+    if (filteredLightDOM.length) {
+      chren = filteredLightDOM;
+    } else {
+      props.default = "";
+    }
+
+    return createElement(name, props, ...chren);
   }
 
   return createElement(name, props, ...chren);
