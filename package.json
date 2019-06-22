@@ -30,7 +30,7 @@
     "yocss": "^0.5.1"
   },
   "devDependencies": {
-    "@skatejs/config-core": "./packages/config-core",
+    "@skatejs/cli": "./packages/cli",
     "@skatejs/val": "^0.4.0",
     "@types/core-js": "^2.5.0",
     "@types/es6-promise": "^3.3.0",

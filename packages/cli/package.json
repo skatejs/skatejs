@@ -1,7 +1,7 @@
 {
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "author": "You <at@you.com>",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "A starter kit for SkateJS.",
+  "description": "SkateJS CLI",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -22,13 +22,8 @@
   },
   "browser": "module/index.js",
   "dependencies": {
-    "chalk": "^2.3.0",
-    "conartist": "^0.15.1",
-    "fs-extra": "^5.0.0",
-    "inquirer": "^5.0.1",
-    "outdent": "^0.5.0",
-    "spawndamnit": "^1.0.0",
-    "yargs": "^11.0.0"
+    "conartist": "^0.28.1",
+    "package-info": "^3.0.2"
   },
   "devDependencies": {},
   "esnext": "esnext/index.js",
@@ -40,8 +35,6 @@
   "main": "main/index.js",
   "module": "module/index.js",
   "source": "src/index.ts",
-  "bin": {
-    "skatejs": "./index.js"
-  },
-  "version": "0.1.1"
+  "bin": "./bin.js",
+  "version": "0.0.0"
 }

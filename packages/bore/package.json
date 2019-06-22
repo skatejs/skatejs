@@ -1,7 +1,36 @@
 {
+  "description": "Enzyme-like testing for the DOM.",
+  "license": "MIT",
+  "name": "@skatejs/bore",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-standard-pkg",
+        {
+          "exclude": [
+            "__tests__/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-types"
+      ]
+    ]
+  },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "Enzyme-like testing for the DOM.",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -11,22 +40,16 @@
     "shadow",
     "dom"
   ],
-  "license": "MIT",
-  "name": "@skatejs/bore",
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": "skatejs/skatejs",
-  "scripts": {
-    "test": "jest"
-  },
   "browser": "module/index.js",
   "dependencies": {
     "@skatejs/val": "^0.4.0"
   },
   "devDependencies": {
     "@skatejs/ssr": "0.19.11",
-    "@skatejs/val": "^0.4.0"
+    "@skatejs/val": "^0.4.0",
+    "@pika/pack": "~0.4.0",
+    "np": "^5.0.3"
   },
   "esnext": "esnext/index.js",
   "files": [
