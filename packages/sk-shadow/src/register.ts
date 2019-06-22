@@ -1,3 +1,3 @@
-import Shadow from '.';
+import Shadow from "./index";
 
-customElements.define('sk-shadow', Shadow);
+customElements.define("sk-shadow", Shadow);
