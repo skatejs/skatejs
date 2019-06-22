@@ -1,8 +1,8 @@
-import define, { getName } from '@skatejs/define';
-import SkateElement from '@skatejs/element';
-import { createElement } from 'react';
-import { render } from 'react-dom';
-import { renderToString } from 'react-dom/server';
+import define, { getName } from "@skatejs/define";
+import SkateElement from "@skatejs/element";
+import { createElement } from "react";
+import { render } from "react-dom";
+import { renderToString } from "react-dom/server";
 
 export default class extends SkateElement {
   disconnectedCallback() {
@@ -32,7 +32,7 @@ function constructCustomElement(Ctor, props) {
 let currentLightDOM;
 
 export function h(name, props, ...chren) {
-  const isSsr = typeof window === 'undefined';
+  const isSsr = typeof window === "undefined";
 
   // If it extends HTMLElement.
   if (name.prototype instanceof HTMLElement) {
@@ -63,13 +63,14 @@ export function h(name, props, ...chren) {
     return createElement(customElementName, props, ...chren);
   }
 
-  if (isSsr && name === 'slot') {
+  if (isSsr && name === "slot") {
     return createElement(
       name,
       props,
-      ...(currentLightDOM.filter(d =>
-        props && props.name ? props.name === d.props.slot : !d.props.slot
-      ) || chren)
+      ...(currentLightDOM.filter(d => {
+        const dSlot = d.props && d.props.slot;
+        return props && props.name ? props.name === dSlot : !dSlot;
+      }) || chren)
     );
   }
 

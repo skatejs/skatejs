@@ -8,6 +8,7 @@
     "hyperhtml": "^2.5.10",
     "inquirer": "^5.0.1",
     "jest-environment-node": "^23.4.0",
+    "jobsite": "^0.0.8",
     "js-beautify": "^1.7.5",
     "lit-html": "dev",
     "marked": "^0.3.14",
@@ -29,12 +30,12 @@
     "yocss": "^0.5.1"
   },
   "devDependencies": {
+    "@skatejs/config-core": "./packages/config-core",
     "@skatejs/val": "^0.4.0",
     "@types/core-js": "^2.5.0",
     "@types/es6-promise": "^3.3.0",
-    "@types/jest": "^23.3.1",
+    "@types/jest": "^24.0.15",
     "charm": "^1.0.2",
-    "conartist": "^0.15.1",
     "execa": "^0.9.0",
     "fs-extra": "^5.0.0",
     "husky": "^0.14.3",
@@ -58,7 +59,6 @@
     "build": "projector build",
     "clean": "projector clean",
     "netlify": "yarn && parcel build site/*.html",
-    "precommit": "lint-staged",
     "start": "parcel site/index.html",
     "test": "jest"
   },
@@ -77,9 +77,6 @@
       "json",
       "node"
     ]
-  },
-  "prettier": {
-    "singleQuote": true
   },
   "lint-staged": {
     "*.{js,json,md}": [

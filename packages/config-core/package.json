@@ -1,0 +1,9 @@
+{
+  "name": "@skatejs/config-core",
+  "description": "Default generator for core SkateJS packages.",
+  "bin": "./bin.js",
+  "version": "0.0.0",
+  "dependencies": {
+    "conartist": "^0.27.2"
+  }
+}
