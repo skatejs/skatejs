@@ -1,7 +1,9 @@
 {
+  "description": "A web component for declaratively attaching a shadow root to its parent that is SSR friendly.",
+  "license": "MIT",
+  "name": "@skatejs/sk-shadow",
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "A web component for declaratively attaching a shadow root to its parent that is SSR friendly.",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -11,19 +13,23 @@
     "shadow",
     "dom"
   ],
-  "license": "MIT",
-  "name": "@skatejs/sk-shadow",
   "publishConfig": {
     "access": "public"
   },
   "repository": "skatejs/skatejs",
   "scripts": {
-    "test": "jest"
+    "build": "pack build"
   },
   "browser": "module/index.js",
   "dependencies": {},
   "devDependencies": {
-    "@skatejs/bore": "5.0.2"
+    "@skatejs/bore": "5.0.2",
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "typescript": "^3.5.2"
   },
   "esnext": "esnext/index.js",
   "files": [
@@ -39,7 +45,7 @@
   "@pika/pack": {
     "pipeline": [
       [
-        "@pika/plugin-standard-pkg",
+        "@pika/plugin-ts-standard-pkg",
         {
           "exclude": [
             "__tests__/**/*"

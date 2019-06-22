@@ -1,7 +1,9 @@
 {
+  "description": "A SkateJS renderer for Preact.",
+  "license": "MIT",
+  "name": "@skatejs/element-preact",
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "A SkateJS renderer for Preact.",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -11,14 +13,12 @@
     "shadow",
     "dom"
   ],
-  "license": "MIT",
-  "name": "@skatejs/element-preact",
   "publishConfig": {
     "access": "public"
   },
   "repository": "skatejs/skatejs",
   "scripts": {
-    "test": "jest"
+    "build": "pack build"
   },
   "browser": "module/index.js",
   "dependencies": {
@@ -27,7 +27,13 @@
   },
   "devDependencies": {
     "@skatejs/bore": "5.0.2",
-    "preact": "^8.2.7"
+    "preact": "^8.2.7",
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "typescript": "^3.5.2"
   },
   "esnext": "esnext/index.js",
   "files": [
@@ -42,5 +48,26 @@
     "preact": "^8.2.7"
   },
   "src": "src",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg",
+        {
+          "exclude": [
+            "__tests__/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-types"
+      ]
+    ]
+  }
 }

@@ -26,15 +26,13 @@ module.exports = ({ cli, cwd }) => ({
           "@pika/plugin-build-node",
           "@pika/plugin-build-web",
           "@pika/plugin-build-types",
-          "np",
           "typescript"
         ]),
         publishConfig: {
           access: "public"
         },
         scripts: {
-          build: "pack build",
-          test: "jest"
+          build: "pack build"
         },
         source: "src/index.ts",
         "@pika/pack": {

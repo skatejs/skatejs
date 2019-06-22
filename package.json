@@ -56,9 +56,9 @@
   "name": "skatejs-monorepo",
   "private": true,
   "scripts": {
-    "build": "projector build",
-    "clean": "projector clean",
+    "build": "jobsite npm build",
     "netlify": "yarn && parcel build site/*.html",
+    "sync": "jobsite get -w \"**/*(bore|define|element*|sk-*)\" | xargs ./packages/cli/bin.js package",
     "start": "parcel site/index.html",
     "test": "jest"
   },
@@ -78,26 +78,7 @@
       "node"
     ]
   },
-  "lint-staged": {
-    "*.{js,json,md}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "contributors": [],
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
   "license": "MIT",
-  "repository": "skatejs/skatejs",
   "workspaces": [
     "packages/*",
     "packages/ssr/example",

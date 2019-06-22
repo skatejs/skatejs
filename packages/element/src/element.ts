@@ -1,4 +1,4 @@
-import { props } from './props';
+import { props } from "./props.js";
 import {
   CustomElement,
   CustomElementConstructor,
@@ -7,7 +7,7 @@ import {
   ObservedAttributes,
   Props,
   PropTypes
-} from './types';
+} from "./types.js";
 
 // @ts-ignore
 const mapAttrsToProps = new Map();
@@ -81,7 +81,7 @@ function defineProp(
 }
 
 function delay(fn) {
-  if (typeof global.Promise === 'function') {
+  if (typeof global.Promise === "function") {
     // @ts-ignore - Promise.resove() indeed does exist.
     global.Promise.resolve().then(fn);
   } else {
@@ -94,7 +94,7 @@ function deriveAttrsFromProps(props: NormalizedPropTypes): ObservedAttributes {
 }
 
 function ensureFunction(type: any): (string) => any {
-  return typeof type === 'function' ? type : () => type;
+  return typeof type === "function" ? type : () => type;
 }
 
 function normalizePropTypes(propTypes: PropTypes): NormalizedPropTypes {
@@ -143,8 +143,8 @@ function observeChildren(elem) {
     // We wait for DOMContentLoaded to ensure the childList is complete. We
     // also don't need to forceUpdate here as that will happen anyways.
     if (hasChildrenChanged) {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => {
           elem.childrenChanged();
         });
       } else {
@@ -165,14 +165,14 @@ export function defineProps(ctor: CustomElementConstructor) {
 }
 
 export default class Element extends HTMLElement implements CustomElement {
-  ['constructor']: CustomElementConstructor;
+  ["constructor"]: CustomElementConstructor;
 
   // Props / attributes the element should observe.
   static props?: PropTypes = {};
 
   // Options when automatically creating the shadow root. This can be set to
   // a falsy value to prevent shadow root creation.
-  static shadowRootOptions?: ShadowRootInit = { mode: 'open' };
+  static shadowRootOptions?: ShadowRootInit = { mode: "open" };
 
   // The current props values.
   _props: Props = {};
@@ -254,7 +254,7 @@ export default class Element extends HTMLElement implements CustomElement {
   }
 
   render(...args: any): any {
-    return '';
+    return "";
   }
 
   rendered(props: Props) {}

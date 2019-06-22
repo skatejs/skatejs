@@ -1,5 +1,5 @@
-import Element from '@skatejs/element';
-import { bind } from 'hyperhtml';
+import Element from "@skatejs/element";
+import { bind } from "hyperhtml";
 
 const cache = new WeakMap();
 

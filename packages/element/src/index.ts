@@ -1,3 +1,3 @@
-export { default } from './element';
-export * from './props';
-export * from './types';
+export { default } from "./element.js";
+export * from "./props.js";
+export * from "./types.js";

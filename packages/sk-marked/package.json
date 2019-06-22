@@ -1,7 +1,9 @@
 {
+  "description": "A web component for rendering Markdown using Marked.",
+  "license": "MIT",
+  "name": "@skatejs/sk-marked",
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "A web component for rendering Markdown using Marked.",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -11,14 +13,12 @@
     "shadow",
     "dom"
   ],
-  "license": "MIT",
-  "name": "@skatejs/sk-marked",
   "publishConfig": {
     "access": "public"
   },
   "repository": "skatejs/skatejs",
   "scripts": {
-    "test": "jest"
+    "build": "pack build"
   },
   "browser": "module/index.js",
   "dependencies": {
@@ -28,7 +28,13 @@
   "devDependencies": {
     "@skatejs/bore": "5.0.2",
     "@skatejs/ssr": "0.19.11",
-    "jest-in-case": "^1.0.2"
+    "jest-in-case": "^1.0.2",
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "typescript": "^3.5.2"
   },
   "esnext": "esnext/index.js",
   "files": [
@@ -40,5 +46,26 @@
   "module": "module/index.js",
   "source": "src/index.ts",
   "src": "src",
-  "version": "0.1.1"
+  "version": "0.1.1",
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg",
+        {
+          "exclude": [
+            "__tests__/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-types"
+      ]
+    ]
+  }
 }

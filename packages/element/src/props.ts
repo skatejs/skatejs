@@ -1,4 +1,4 @@
-import { PropType } from './types';
+import { PropType } from "./types.js";
 
 const any: PropType = {
   default: (elem, name, oldValue) => null,
@@ -21,7 +21,7 @@ const array: PropType = {
 const boolean: PropType = {
   ...any,
   deserialize: (elem, name, oldValue, newValue): boolean => newValue != null,
-  serialize: (elem, name, oldValue, newValue) => (newValue ? '' : null)
+  serialize: (elem, name, oldValue, newValue) => (newValue ? "" : null)
 };
 
 const event: PropType = {
@@ -72,7 +72,7 @@ const object: PropType = {
 
 const string: PropType = {
   ...any,
-  default: () => '',
+  default: () => "",
   deserialize: (elem, name, oldValue, newValue) => newValue,
   serialize: (elem, name, oldValue, newValue) =>
     newValue == null ? null : String(newValue)
