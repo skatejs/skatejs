@@ -16,6 +16,10 @@ function getLatestVersions(depNames) {
 module.exports = {
   files: [
     {
+      name: "src/index.ts",
+      data: ""
+    },
+    {
       name: "package.json",
       merge: true,
       data: {
