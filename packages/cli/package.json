@@ -1,18 +1,6 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bin": {
-    "skatejs": "./index.js"
-  },
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "chalk": "^2.3.0",
-    "conartist": "^0.15.1",
-    "fs-extra": "^5.0.0",
-    "inquirer": "^5.0.1",
-    "outdent": "^0.5.0",
-    "spawndamnit": "^1.0.0",
-    "yargs": "^11.0.0"
-  },
   "description": "A starter kit for SkateJS.",
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
@@ -24,9 +12,36 @@
     "dom"
   ],
   "license": "MIT",
-  "main": "index.js",
   "name": "@skatejs/cli",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": "skatejs/skatejs",
-  "source": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "conartist": "^0.15.1",
+    "fs-extra": "^5.0.0",
+    "inquirer": "^5.0.1",
+    "outdent": "^0.5.0",
+    "spawndamnit": "^1.0.0",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {},
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
+  "main": "main/index.js",
+  "module": "module/index.js",
+  "source": "src/index.ts",
+  "bin": {
+    "skatejs": "./index.js"
+  },
   "version": "0.1.1"
 }

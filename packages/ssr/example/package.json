@@ -1,9 +1,27 @@
 {
-  "private": true,
-  "name": "ssr-wc",
-  "version": "1.0.0",
+  "author": "",
+  "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "",
-  "main": "index.js",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "ISC",
+  "name": "ssr-wc",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "browser": "module/index.js",
   "dependencies": {
     "@skatejs/define": "*",
     "@skatejs/element": "*",
@@ -11,11 +29,15 @@
     "outdent": "^0.4.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "start": "node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
+  "main": "main/index.js",
+  "module": "module/index.js",
+  "source": "src/index.ts",
+  "private": true,
+  "version": "1.0.0"
 }

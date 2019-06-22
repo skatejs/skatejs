@@ -1,25 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "@skatejs/define": "0.0.1",
-    "@skatejs/element": "0.0.1"
-  },
   "description": "A SkateJS renderer for React.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/bore": "5.0.2",
-    "@types/react": "^16.8.8",
-    "@types/react-dom": "^16.8.2",
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -30,15 +12,39 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/element-react",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {
+    "@skatejs/define": "0.0.1",
+    "@skatejs/element": "0.0.1"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "5.0.2",
+    "@types/react": "^16.8.8",
+    "@types/react-dom": "^16.8.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "main": "main/index.js",
   "module": "module/index.js",
-  "name": "@skatejs/element-react",
+  "source": "src/index.ts",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0"
   },
-  "repository": "skatejs/skatejs",
-  "source": "src/index.ts",
   "src": "src",
   "version": "0.0.1"
 }

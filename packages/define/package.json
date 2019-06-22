@@ -1,18 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "description": "Define custom elements without worrying about having to find a unique name for them.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/bore": "5.0.2",
-    "@skatejs/element": "0.0.1"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -23,10 +12,28 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/define",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@skatejs/bore": "5.0.2",
+    "@skatejs/element": "0.0.1"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "main": "main/index.js",
   "module": "module/index.js",
-  "name": "@skatejs/define",
-  "repository": "skatejs/skatejs",
   "source": "src/index.ts",
   "version": "0.0.1"
 }

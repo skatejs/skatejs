@@ -1,7 +1,26 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bin": "./bin/index",
   "bugs": "https://github.com/skatejs/skatejs/issues",
+  "description": "Server-side render your web components.",
+  "homepage": "https://skatejs.netlify.com",
+  "keywords": [
+    "web",
+    "components",
+    "custom",
+    "elements",
+    "shadow",
+    "dom"
+  ],
+  "license": "MIT",
+  "name": "@skatejs/ssr",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
   "dependencies": {
     "babel-register": "^6.26.0",
     "glob": "^7.1.2",
@@ -15,31 +34,21 @@
     "undom": "^0.3.3",
     "yargs": "^11.0.0"
   },
-  "description": "Server-side render your web components.",
   "devDependencies": {
     "@skatejs/val": "^0.4.0"
   },
+  "esnext": "esnext/index.js",
   "files": [
-    "bin",
-    "perf",
-    "register",
+    "esnext",
+    "main",
+    "module",
     "index.js",
     "jest.js",
     "utils.js"
   ],
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "license": "MIT",
-  "main": "index.js",
-  "name": "@skatejs/ssr",
-  "repository": "skatejs/skatejs",
-  "source": "index.js",
+  "main": "main/index.js",
+  "module": "module/index.js",
+  "source": "src/index.ts",
+  "bin": "./bin/index",
   "version": "0.19.11"
 }

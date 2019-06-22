@@ -1,22 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "@skatejs/element": "0.0.1"
-  },
   "description": "A SkateJS renderer for HyperHTML.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/bore": "5.0.2",
-    "@skatejs/define": "0.0.1",
-    "hyperhtml": "^2.5.10"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -27,14 +12,35 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/element-hyperhtml",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {
+    "@skatejs/element": "0.0.1"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "5.0.2",
+    "@skatejs/define": "0.0.1",
+    "hyperhtml": "^2.5.10"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "main": "main/index.js",
   "module": "module/index.js",
-  "name": "@skatejs/element-hyperhtml",
+  "source": "src/index.ts",
   "peerDependencies": {
     "hyperhtml": "^2.5.10"
   },
-  "repository": "skatejs/skatejs",
-  "source": "src/index.ts",
   "src": "src",
   "version": "0.0.1"
 }

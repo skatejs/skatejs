@@ -1,23 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "@skatejs/element": "0.0.1"
-  },
   "description": "A SkateJS renderer for Snabbdom.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/bore": "5.0.2",
-    "@skatejs/define": "0.0.1",
-    "snabbdom": "^0.7.1"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/es",
-    "dist/esnext",
-    "dist/node"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -28,13 +12,34 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/element-snabbdom",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {
+    "@skatejs/element": "0.0.1"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "5.0.2",
+    "@skatejs/define": "0.0.1",
+    "snabbdom": "^0.7.1"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "main": "main/index.js",
   "module": "module/index.js",
-  "name": "@skatejs/element-snabbdom",
+  "source": "src/index.ts",
   "peerDependencies": {
     "snabbdom": "^0.7.1"
   },
-  "repository": "skatejs/skatejs",
-  "source": "src/index.ts",
   "version": "0.0.1"
 }

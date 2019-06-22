@@ -1,21 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "@skatejs/val": "^0.4.0"
-  },
   "description": "Enzyme-like testing for the DOM.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/ssr": "0.19.11",
-    "@skatejs/val": "^0.4.0"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -26,13 +12,30 @@
     "dom"
   ],
   "license": "MIT",
-  "main": "main/index.js",
-  "module": "module/index.js",
   "name": "@skatejs/bore",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": "skatejs/skatejs",
   "scripts": {
     "test": "jest"
   },
+  "browser": "module/index.js",
+  "dependencies": {
+    "@skatejs/val": "^0.4.0"
+  },
+  "devDependencies": {
+    "@skatejs/ssr": "0.19.11",
+    "@skatejs/val": "^0.4.0"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
+  "main": "main/index.js",
+  "module": "module/index.js",
   "source": "src/index.ts",
   "version": "5.0.2"
 }

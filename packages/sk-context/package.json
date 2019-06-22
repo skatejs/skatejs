@@ -1,21 +1,7 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "browser": "module/index.js",
   "bugs": "https://github.com/skatejs/skatejs/issues",
-  "dependencies": {
-    "@skatejs/element": "0.0.1"
-  },
   "description": "A web component for providing and consuming contextual values, based on the React context API.",
-  "devDependencies": {
-    "@pika/pack": "^0.3.7",
-    "@skatejs/bore": "5.0.2",
-    "@skatejs/ssr": "0.19.11"
-  },
-  "esnext": "esnext/index.js",
-  "files": [
-    "dist/cjs",
-    "dist/esm"
-  ],
   "homepage": "https://skatejs.netlify.com",
   "keywords": [
     "web",
@@ -26,10 +12,30 @@
     "dom"
   ],
   "license": "MIT",
+  "name": "@skatejs/sk-context",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "skatejs/skatejs",
+  "scripts": {
+    "test": "jest"
+  },
+  "browser": "module/index.js",
+  "dependencies": {
+    "@skatejs/element": "0.0.1"
+  },
+  "devDependencies": {
+    "@skatejs/bore": "5.0.2",
+    "@skatejs/ssr": "0.19.11"
+  },
+  "esnext": "esnext/index.js",
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "main": "main/index.js",
   "module": "module/index.js",
-  "name": "@skatejs/sk-context",
-  "repository": "skatejs/skatejs",
   "source": "src/index.ts",
   "src": "src",
   "version": "0.0.1"
