@@ -1,10 +1,10 @@
-import compareElement from './element';
-import compareText from './text';
+import compareElement from "./element.js";
+import compareText from "./text.js";
 
 const NODE_ELEMENT = 1;
 const NODE_TEXT = 3;
 
-export default function (src, tar) {
+export default function(src, tar) {
   const tarType = tar.nodeType;
   const srcType = src.nodeType;
 

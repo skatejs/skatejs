@@ -1,6 +1,6 @@
-import createTextNode from './text';
-import root from './util/root';
-import WeakMap from './util/weak-map';
+import createTextNode from "./text.js";
+import root from "./util/root.js";
+import WeakMap from "./util/weak-map.js";
 
 // @ts-ignore
 const { HTMLElement } = root;
@@ -15,7 +15,7 @@ function ensureNodes(arr) {
   arr.filter(Boolean).forEach(function(item) {
     if (Array.isArray(item)) {
       out = out.concat(ensureNodes(item));
-    } else if (typeof item === 'object') {
+    } else if (typeof item === "object") {
       out.push(translateFromReact(item));
     } else {
       out.push(createTextNode(item));
@@ -25,15 +25,15 @@ function ensureNodes(arr) {
 }
 
 function ensureObject(val) {
-  return val && typeof val === 'object' ? val : {};
+  return val && typeof val === "object" ? val : {};
 }
 
 function isNode(arg) {
   return (
     arg &&
-    (typeof arg === 'string' ||
+    (typeof arg === "string" ||
       Array.isArray(arg) ||
-      typeof arg.nodeType === 'number' ||
+      typeof arg.nodeType === "number" ||
       isReactNode(arg))
   );
 }
@@ -85,7 +85,7 @@ export default function(localName, props, ...chren) {
     const tempLocalName = new localName().localName;
     localNameMap.set(localName, tempLocalName);
     localName = tempLocalName;
-  } else if (typeof localName === 'function') {
+  } else if (typeof localName === "function") {
     return localName(props, chren);
   }
 
@@ -115,14 +115,14 @@ export default function(localName, props, ...chren) {
   const { attributes: nodeAttributes } = node;
 
   // Aria attributes
-  if (typeof aria === 'object') {
+  if (typeof aria === "object") {
     for (let name in aria) {
       nodeAttributes[`aria-${name}`] = aria[name];
     }
   }
 
   // Data attributes
-  if (typeof data === 'object') {
+  if (typeof data === "object") {
     for (let name in data) {
       nodeAttributes[`data-${name}`] = data[name];
     }

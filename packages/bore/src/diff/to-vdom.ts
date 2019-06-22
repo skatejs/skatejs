@@ -1,10 +1,10 @@
-import { isElement, isFragment, isString } from './util/is-type';
-import fragment from './fragment';
-import h from './h';
-import nodeMap from './util/node-map';
-import root from './util/root';
-import text from './text';
-import WeakMap from './util/weak-map';
+import { isElement, isFragment, isString } from "./util/is-type.js";
+import fragment from "./fragment.js";
+import h from "./h.js";
+import nodeMap from "./util/node-map.js";
+import root from "./util/root.js";
+import text from "./text.js";
+import WeakMap from "./util/weak-map.js";
 
 // @ts-ignore
 const { NodeFilter } = root;
@@ -24,7 +24,7 @@ function getAttributes(node) {
 }
 
 function getFragmentFromString(str) {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   const fra = document.createDocumentFragment();
   div.innerHTML = str;
   while (div.hasChildNodes()) {

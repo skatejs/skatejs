@@ -1,7 +1,7 @@
-import * as types from '../types';
-import compareNode from '../compare/node';
+import * as types from "../types.js";
+import compareNode from "../compare/node.js";
 
-function diffNode (source, target) {
+function diffNode(source, target) {
   let nodeInstructions = compareNode(source, target);
 
   // If there are instructions (even an empty array) it means the node can be
@@ -12,14 +12,16 @@ function diffNode (source, target) {
     return nodeInstructions.concat(diff(source, target));
   }
 
-  return [{
-    target,
-    source,
-    type: types.REPLACE_CHILD
-  }];
+  return [
+    {
+      target,
+      source,
+      type: types.REPLACE_CHILD
+    }
+  ];
 }
 
-export default function diff (src, tar) {
+export default function diff(src, tar) {
   let instructions = [];
 
   const srcChs = src.childNodes;

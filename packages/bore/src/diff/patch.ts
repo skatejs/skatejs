@@ -1,12 +1,12 @@
-import * as types from './types';
-import appendChild from './patch/append-child';
-import removeChild from './patch/remove-child';
-import removeAttribute from './patch/remove-attribute';
-import replaceChild from './patch/replace-child';
-import setAttribute from './patch/set-attribute';
-import setEvent from './patch/set-event';
-import setProperty from './patch/set-property';
-import textContent from './patch/text-content';
+import * as types from "./types.js";
+import appendChild from "./patch/append-child.js";
+import removeChild from "./patch/remove-child.js";
+import removeAttribute from "./patch/remove-attribute.js";
+import replaceChild from "./patch/replace-child.js";
+import setAttribute from "./patch/set-attribute.js";
+import setEvent from "./patch/set-event.js";
+import setProperty from "./patch/set-property.js";
+import textContent from "./patch/text-content.js";
 
 const patchers = {};
 patchers[types.APPEND_CHILD] = appendChild;
@@ -18,7 +18,7 @@ patchers[types.SET_ATTRIBUTE] = setAttribute;
 patchers[types.SET_PROPERTY] = setProperty;
 patchers[types.TEXT_CONTENT] = textContent;
 
-function patch (instruction) {
+function patch(instruction) {
   patchers[instruction.type](
     instruction.source,
     instruction.target,
@@ -26,6 +26,6 @@ function patch (instruction) {
   );
 }
 
-export default function (instructions) {
+export default function(instructions) {
   instructions.forEach(patch);
 }

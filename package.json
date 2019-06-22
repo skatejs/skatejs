@@ -8,7 +8,7 @@
     "hyperhtml": "^2.5.10",
     "inquirer": "^5.0.1",
     "jest-environment-node": "^23.4.0",
-    "jobsite": "^0.0.8",
+    "jobsite": "^0.1.0",
     "js-beautify": "^1.7.5",
     "lit-html": "dev",
     "marked": "^0.3.14",

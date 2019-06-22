@@ -1,6 +1,6 @@
-import * as types from '../types';
+import * as types from "../types.js";
 
-export default function (src, tar) {
+export default function(src, tar) {
   const tarEvents = tar.events;
   const srcEvents = src.events;
   const instructions = [];

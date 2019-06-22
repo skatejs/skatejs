@@ -1,7 +1,7 @@
-import dom from '../to-dom';
-import nodeMap from '../util/node-map';
+import dom from "../to-dom.js";
+import nodeMap from "../util/node-map.js";
 
-export default function (src, tar) {
+export default function(src, tar) {
   const realSrc = nodeMap[src.__id];
   if (realSrc) {
     realSrc.parentNode && realSrc.parentNode.replaceChild(dom(tar), realSrc);

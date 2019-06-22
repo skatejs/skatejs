@@ -1,6 +1,6 @@
-import compareAttributes from './attributes';
-import compareEvents from './events';
-import compareProperties from './properties';
+import compareAttributes from "./attributes.js";
+import compareEvents from "./events.js";
+import compareProperties from "./properties.js";
 
 export default function(src, tar) {
   if (src.localName === tar.localName) {

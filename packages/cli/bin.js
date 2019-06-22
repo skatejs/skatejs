@@ -4,8 +4,8 @@ require("conartist").bin({
   ...require("./package.json"),
   conartist: require("."),
   commands: {
-    element: {
-      description: "Maintains a SkateJS element.",
+    default: {
+      description: "Generates an example SkateJS element.",
       options: {
         type: {
           alias: "t",
@@ -17,6 +17,9 @@ require("conartist").bin({
           }
         }
       }
+    },
+    package: {
+      description: "Generates a SkateJS monorepo package."
     }
   }
 });

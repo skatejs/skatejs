@@ -1,6 +1,6 @@
-import nodeMap from '../util/node-map';
+import nodeMap from "../util/node-map.js";
 
-export default function (src, tar) {
+export default function(src, tar) {
   const realtar = nodeMap[tar.__id];
   const realSrc = nodeMap[src.__id];
 

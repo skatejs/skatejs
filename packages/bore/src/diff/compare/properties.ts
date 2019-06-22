@@ -1,6 +1,6 @@
-import { SET_PROPERTY } from '../types';
+import { SET_PROPERTY } from "../types.js";
 
-export default function (src, tar) {
+export default function(src, tar) {
   const { properties: srcValues } = src;
   const { properties: tarValues } = tar;
   const instructions = [];

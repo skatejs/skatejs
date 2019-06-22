@@ -2,23 +2,23 @@
 // available properly.
 
 let index = 0;
-const prefix = '__WEAK_MAP_POLYFILL_';
+const prefix = "__WEAK_MAP_POLYFILL_";
 
-export default (function () {
-  if (typeof WeakMap !== 'undefined') {
+export default (function() {
+  if (typeof WeakMap !== "undefined") {
     return WeakMap;
   }
 
-  function Polyfill () {
+  function Polyfill() {
     this.key = prefix + index;
     ++index;
   }
 
   Polyfill.prototype = {
-    get (obj) {
+    get(obj) {
       return obj[this.key];
     },
-    set (obj, val) {
+    set(obj, val) {
       obj[this.key] = val;
     }
   };

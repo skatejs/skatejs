@@ -1,12 +1,4 @@
 .cache
 .DS_Store
-coverage
-dist
-esnext
-main
-module
 node_modules
-package-lock.json
-**.log*
-**.tgz
-packages/**/tsconfig.json
+pkg

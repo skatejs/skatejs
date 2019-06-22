@@ -1,4 +1,4 @@
-import WeakMap from './weak-map';
+import WeakMap from "./weak-map.js";
 
 // @ts-ignore
 const map = new WeakMap();

@@ -1,10 +1,10 @@
-import nodeMap from '../util/node-map';
+import nodeMap from "../util/node-map.js";
 
 const propToAttrMap = {
-  className: 'class'
+  className: "class"
 };
 
-export default function (src, tar, data) {
+export default function(src, tar, data) {
   const { name } = data;
   const node = nodeMap[src.__id];
   const prop = tar.properties[name];
@@ -16,13 +16,13 @@ export default function (src, tar, data) {
     } else {
       node.className = prop;
     }
-  } else if (name === 'style') {
+  } else if (name === "style") {
     const { style } = node;
     // Clear so we don't have to diff.
-    style.cssText = '';
+    style.cssText = "";
 
     // Handle both strings and objects.
-    if (typeof prop === 'string') {
+    if (typeof prop === "string") {
       style.cssText = prop;
     } else {
       for (let name in prop) {

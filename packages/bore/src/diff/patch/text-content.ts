@@ -1,5 +1,5 @@
-import nodeMap from '../util/node-map';
+import nodeMap from "../util/node-map.js";
 
-export default function (src, tar) {
+export default function(src, tar) {
   nodeMap[src.__id].textContent = tar.textContent;
 }

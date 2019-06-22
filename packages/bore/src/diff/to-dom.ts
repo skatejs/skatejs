@@ -1,6 +1,6 @@
-import eventMap from './util/event-map';
-import nodeMap from './util/node-map';
-import root from './util/root';
+import eventMap from "./util/event-map.js";
+import nodeMap from "./util/node-map.js";
+import root from "./util/root.js";
 
 // @ts-ignore
 const { Node } = root;

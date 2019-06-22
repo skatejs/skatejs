@@ -1,5 +1,5 @@
-import diff from './diff';
-import patch from './patch';
+import diff from "./diff.js";
+import patch from "./patch.js";
 
 // @ts-ignore
 export default function(src, tar, { done } = {}) {

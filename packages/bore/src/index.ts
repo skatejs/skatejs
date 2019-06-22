@@ -1,4 +1,4 @@
-import { diff } from './diff';
+import { diff } from "./diff/index.js";
 
 // @ts-ignore
 const { Node, Promise } = window;
@@ -10,18 +10,18 @@ const { attachShadow } = HTMLElement.prototype;
 
 // Ensure we can force sync operations in the polyfill.
 if (customElements) {
-  Object.defineProperty(customElements, 'enableFlush', {
+  Object.defineProperty(customElements, "enableFlush", {
     value: true
   });
 }
 
 // Create and add a fixture to append nodes to.
-const fixture = document.createElement('div');
+const fixture = document.createElement("div");
 document.body.appendChild(fixture);
 
 // Override to force mode "open" so we can query against all shadow roots.
 HTMLElement.prototype.attachShadow = function() {
-  return attachShadow.call(this, { mode: 'open' });
+  return attachShadow.call(this, { mode: "open" });
 };
 
 // Ensures polyfill operations are run sync.
@@ -54,7 +54,7 @@ function matches(node, query) {
 }
 
 function getInstantiatedNodeWithinFixture(node, isRootNode) {
-  const isStringNode = typeof node === 'string';
+  const isStringNode = typeof node === "string";
 
   // If the fixture has been removed from the document, re-insert it.
   if (!body.contains(fixture)) {
@@ -70,7 +70,7 @@ function getInstantiatedNodeWithinFixture(node, isRootNode) {
 
 function setFixtureContent(node, shouldSetChildrenViaString) {
   // If this is a new node, clean up the fixture.
-  fixture.innerHTML = '';
+  fixture.innerHTML = "";
 
   // Add the node to the fixture so it runs the connectedCallback().
   shouldSetChildrenViaString
@@ -115,9 +115,9 @@ class Wrapper {
       });
     } else if (query.prototype instanceof HTMLElement) {
       walkTree(shadowRoot, node => node instanceof query && temp.push(node));
-    } else if (type === 'function') {
+    } else if (type === "function") {
       walkTree(shadowRoot, node => query(node) && temp.push(node));
-    } else if (type === 'object') {
+    } else if (type === "object") {
       const keys = Object.keys(query);
       if (keys.length === 0) {
         return temp;
@@ -126,7 +126,7 @@ class Wrapper {
         shadowRoot,
         node => keys.every(key => node[key] === query[key]) && temp.push(node)
       );
-    } else if (type === 'string') {
+    } else if (type === "string") {
       walkTree(shadowRoot, node => {
         if (matches(node, query)) {
           temp.push(node);

@@ -1,7 +1,7 @@
-import fragment from './fragment';
-import merge from './merge';
-import toVdom from './to-vdom';
-import WeakMap from './util/weak-map';
+import fragment from "./fragment.js";
+import merge from "./merge.js";
+import toVdom from "./to-vdom.js";
+import WeakMap from "./util/weak-map.js";
 
 // @ts-ignore
 const targetMap = new WeakMap();

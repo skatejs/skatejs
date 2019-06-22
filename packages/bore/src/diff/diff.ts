@@ -1,5 +1,5 @@
-import diffMain from './diff/main';
-import root from './util/root';
+import diffMain from "./diff/main.js";
+// import root from "./util/root";
 
 // const { Node } = root;
 

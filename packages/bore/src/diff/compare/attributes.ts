@@ -1,8 +1,8 @@
-import { REMOVE_ATTRIBUTE, SET_ATTRIBUTE } from '../types';
+import { REMOVE_ATTRIBUTE, SET_ATTRIBUTE } from "../types.js";
 
 const empty = v => v == null;
 
-export default function (src, tar) {
+export default function(src, tar) {
   const { attributes: srcValues } = src;
   const { attributes: tarValues } = tar;
   const instructions = [];

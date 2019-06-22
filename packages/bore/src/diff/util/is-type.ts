@@ -1,4 +1,4 @@
-import root from './root';
+import root from "./root.js";
 
 // @ts-ignore
 const { Node } = root;
@@ -10,4 +10,4 @@ export const isFragment = e => isNode(e, DOCUMENT_FRAGMENT_NODE);
 export const isText = e => isNode(e, TEXT_NODE);
 
 export const isType = (v, t) => typeof v === t;
-export const isString = v => isType(v, 'string');
+export const isString = v => isType(v, "string");
