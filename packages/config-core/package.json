@@ -22,7 +22,7 @@
   },
   "browser": "module/index.js",
   "dependencies": {
-    "conartist": "^0.27.2",
+    "conartist": "^0.28.0",
     "package-info": "^3.0.2"
   },
   "devDependencies": {},

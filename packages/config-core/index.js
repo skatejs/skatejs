@@ -32,6 +32,19 @@ module.exports = {
         repository: "skatejs/skatejs",
         scripts: {
           test: "jest"
+        },
+        "@pika/pack": {
+          pipeline: [
+            [
+              "@pika/plugin-standard-pkg",
+              {
+                exclude: ["__tests__/**/*"]
+              }
+            ],
+            ["@pika/plugin-build-node"],
+            ["@pika/plugin-build-web"],
+            ["@pika/plugin-build-types"]
+          ]
         }
       }
     },
