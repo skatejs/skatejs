@@ -23,18 +23,18 @@ export function h(name, props, ...chren) {
   return preactH(name, props, ...chren);
 }
 
-// export declare namespace h {
-//   namespace JSX {
-//     interface Element {
-//       key: any;
-//       props: any;
-//       type: any;
-//     }
-//     type LibraryManagedAttributes<E, _> = E extends {
-//       props: infer Props;
-//       prototype: infer Prototype;
-//     }
-//       ? Pick<Prototype, Extract<keyof Prototype, keyof Props>>
-//       : _;
-//   }
-// }
+export declare namespace h {
+  namespace JSX {
+    interface Element {
+      key: any;
+      props: any;
+      type: any;
+    }
+    type LibraryManagedAttributes<E, _> = E extends {
+      props: infer Props;
+      prototype: infer Prototype;
+    }
+      ? Pick<Prototype, Extract<keyof Prototype, keyof Props>>
+      : _;
+  }
+}
