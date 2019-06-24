@@ -6,6 +6,11 @@
     "moduleResolution": "node",
     "target": "es2019"
   },
-  "include": ["src/index.ts"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+  "include": [
+    "src/index.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/*"
+  ]
 }

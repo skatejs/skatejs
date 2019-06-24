@@ -1722,6 +1722,7 @@
   version "0.0.0"
   dependencies:
     conartist "^0.28.1"
+    jobsite "^0.1.0"
     package-info "^3.0.2"
 
 "@skatejs/val@^0.4.0":

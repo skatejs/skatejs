@@ -1,6 +1,7 @@
-const { getLatestVersions } = require("./_");
+const path = require("path");
+const { getLatestVersions, getWorkspacePackages } = require("./_");
 
-module.exports = ({ cli, cwd }) => ({
+module.exports = ({ cwd }) => ({
   files: [
     {
       name: "src/index.ts",
@@ -52,6 +53,7 @@ module.exports = ({ cli, cwd }) => ({
     },
     {
       name: "tsconfig.json",
+      merge: true,
       data: {
         compilerOptions: {
           jsx: "react",
@@ -62,6 +64,32 @@ module.exports = ({ cli, cwd }) => ({
         },
         include: ["src/index.ts"],
         exclude: ["node_modules", "**/__tests__/*"]
+      }
+    },
+    {
+      name: "tsconfig.json",
+      merge: true,
+      overwrite: true,
+      data: {
+        paths: undefined
+        // paths: async () => {
+        //   const ws = await getWorkspacePackages();
+        //   const pkg = ws[cwd];
+        //   const deps = {
+        //     ...pkg.optionalDependencies,
+        //     ...pkg.peerDependencies,
+        //     ...pkg.devDependencies,
+        //     ...pkg.dependencies
+        //   };
+        //   const paths = {};
+        //   for (const w in ws) {
+        //     const { name } = ws[w];
+        //     if (name in deps) {
+        //       paths[name] = path.relative(cwd, require.resolve(name));
+        //     }
+        //   }
+        //   return paths;
+        // }
       }
     },
     {

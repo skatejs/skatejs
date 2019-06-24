@@ -23,6 +23,7 @@
   "browser": "module/index.js",
   "dependencies": {
     "conartist": "^0.28.1",
+    "jobsite": "^0.1.0",
     "package-info": "^3.0.2"
   },
   "devDependencies": {},
