@@ -1,6 +1,6 @@
-import define, { getName } from '@skatejs/define';
-import Element from '@skatejs/element';
-import { h as preactH, render } from 'preact';
+import define, { getName } from "@skatejs/define";
+import Element from "@skatejs/element";
+import { h as preactH, render } from "preact";
 
 const mapDom = new WeakMap();
 
@@ -12,8 +12,7 @@ export default class extends Element {
     render(null, this.renderRoot, mapDom.get(this));
   }
   renderer() {
-    const dom = mapDom.get(this);
-    mapDom.set(this, render(this.render(), this.renderRoot, dom));
+    mapDom.set(this, render(this.render(), this.renderRoot, mapDom.get(this)));
   }
 }
 
@@ -24,14 +23,18 @@ export function h(name, props, ...chren) {
   return preactH(name, props, ...chren);
 }
 
-export declare namespace h {
-  namespace JSX {
-    interface Element {}
-    type LibraryManagedAttributes<E, _> = E extends {
-      props: infer Props;
-      prototype: infer Prototype;
-    }
-      ? Pick<Prototype, Extract<keyof Prototype, keyof Props>>
-      : _;
-  }
-}
+// export declare namespace h {
+//   namespace JSX {
+//     interface Element {
+//       key: any;
+//       props: any;
+//       type: any;
+//     }
+//     type LibraryManagedAttributes<E, _> = E extends {
+//       props: infer Props;
+//       prototype: infer Prototype;
+//     }
+//       ? Pick<Prototype, Extract<keyof Prototype, keyof Props>>
+//       : _;
+//   }
+// }

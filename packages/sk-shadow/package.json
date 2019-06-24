@@ -20,7 +20,6 @@
   "scripts": {
     "build": "pack build"
   },
-  "browser": "module/index.js",
   "dependencies": {},
   "devDependencies": {
     "@skatejs/bore": "5.0.2",
@@ -31,16 +30,7 @@
     "@pika/plugin-build-types": "~0.4.0",
     "typescript": "^3.5.2"
   },
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
-  "main": "main/index.js",
-  "module": "module/index.js",
   "source": "src/index.ts",
-  "src": "src",
   "version": "0.3.3",
   "@pika/pack": {
     "pipeline": [
@@ -62,5 +52,6 @@
         "@pika/plugin-build-types"
       ]
     ]
-  }
+  },
+  "types": "src/index.ts"
 }

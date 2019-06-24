@@ -41,7 +41,6 @@
     "dom"
   ],
   "repository": "skatejs/skatejs",
-  "browser": "module/index.js",
   "devDependencies": {
     "@skatejs/ssr": "0.19.11",
     "@skatejs/val": "^0.4.0",
@@ -52,14 +51,7 @@
     "@pika/plugin-ts-standard-pkg": "~0.4.0",
     "typescript": "^3.5.2"
   },
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
-  "main": "main/index.js",
-  "module": "module/index.js",
   "source": "src/index.ts",
-  "version": "5.0.2"
+  "version": "5.0.2",
+  "types": "src/index.ts"
 }

@@ -36,6 +36,7 @@ module.exports = ({ cwd }) => ({
           build: "pack build"
         },
         source: "src/index.ts",
+        types: "src/index.ts",
         "@pika/pack": {
           pipeline: [
             [
@@ -64,32 +65,6 @@ module.exports = ({ cwd }) => ({
         },
         include: ["src/index.ts"],
         exclude: ["node_modules", "**/__tests__/*"]
-      }
-    },
-    {
-      name: "tsconfig.json",
-      merge: true,
-      overwrite: true,
-      data: {
-        paths: undefined
-        // paths: async () => {
-        //   const ws = await getWorkspacePackages();
-        //   const pkg = ws[cwd];
-        //   const deps = {
-        //     ...pkg.optionalDependencies,
-        //     ...pkg.peerDependencies,
-        //     ...pkg.devDependencies,
-        //     ...pkg.dependencies
-        //   };
-        //   const paths = {};
-        //   for (const w in ws) {
-        //     const { name } = ws[w];
-        //     if (name in deps) {
-        //       paths[name] = path.relative(cwd, require.resolve(name));
-        //     }
-        //   }
-        //   return paths;
-        // }
       }
     },
     {

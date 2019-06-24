@@ -2,8 +2,9 @@ const info = require("package-info");
 const { findWorkspaces } = require("jobsite");
 const path = require("path");
 
+const cache = {};
 async function getLatestVersion(name, val) {
-  const version = (await info(name)).version;
+  const version = cache[name] || (cache[name] = (await info(name)).version);
   const fuzzy = version[0] === "0" ? "~" : "^";
   return fuzzy + version;
 }

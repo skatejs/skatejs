@@ -9,12 +9,10 @@ export default class extends SkateElement {
     if (super.disconnectedCallback) {
       super.disconnectedCallback();
     }
-    // @ts-ignore
-    render(null, this.renderRoot);
+    render(null, this.renderRoot as Element);
   }
   renderer() {
-    // @ts-ignore
-    render(this.render(), this.renderRoot);
+    render(this.render(), this.renderRoot as Element);
   }
   renderToString() {
     return renderToString(this.render());
