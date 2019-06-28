@@ -6,61 +6,59 @@ if (typeof HTMLElement === "undefined") {
 }
 
 export default class Shadow extends HTMLElement {
+  constructor() {
+    super();
+    // @ts-ignore
+    super.childNodes = [];
+  }
+  get(member: string) {
+    const root = this.parentElementRoot;
+    return root ? root[member] : super[member];
+  }
+  set(member: string, value: any) {
+    const root = this.parentElementRoot;
+    if (root) {
+      root[member] = value;
+    } else {
+      super[member] = value;
+    }
+  }
+  call(member: string, ...args: Array<any>) {
+    const root = this.parentElementRoot;
+    return root ? root[member](...args) : super[member](...args);
+  }
   get parentElementRoot() {
-    const { parentElement } = this;
-    return parentElement ? parentElement.shadowRoot : null;
+    return this.parentElement ? this.parentElement.shadowRoot : null;
   }
   get childNodes() {
-    const root = this.parentElementRoot;
-    return root ? root.childNodes : super.childNodes;
+    return this.get("childNodes");
   }
   get children() {
-    const root = this.parentElementRoot;
-    return root ? root.children : super.children;
+    return this.get("children");
   }
   get innerHTML() {
-    const root = this.parentElementRoot;
-    return root ? root.innerHTML : super.innerHTML;
+    return this.get("innerHTML");
   }
   set innerHTML(html) {
-    const root = this.parentElementRoot;
-    if (root) {
-      root.innerHTML = html;
-    } else {
-      super.innerHTML = html;
-    }
+    this.set("innerHTML", html);
   }
   get textContent() {
-    const root = this.parentElementRoot;
-    return root ? root.textContent : super.textContent;
+    return this.get("textContent");
   }
   set textContent(text) {
-    const root = this.parentElementRoot;
-    if (root) {
-      root.textContent = text;
-    } else {
-      super.textContent = text;
-    }
+    this.set("textContent", text);
   }
   appendChild<T extends Node>(node: T): T {
-    const root = this.parentElementRoot;
-    return root ? root.appendChild(node) : super.appendChild(node);
+    return this.call("appendChild", node);
   }
   insertBefore<T extends Node>(node: T, referenceNode: Node): T {
-    const root = this.parentElementRoot;
-    return root
-      ? root.insertBefore(node, referenceNode)
-      : super.insertBefore(node, referenceNode);
+    return this.call("insertBefore", node, referenceNode);
   }
   removeChild<T extends Node>(node: T): T {
-    const root = this.parentElementRoot;
-    return root ? root.removeChild(node) : super.removeChild(node);
+    return this.call("removeChild", node);
   }
   replaceChild<T extends Node>(node: Node, referenceNode: T): T {
-    const root = this.parentElementRoot;
-    return root
-      ? root.replaceChild(node, referenceNode)
-      : super.replaceChild(node, referenceNode);
+    return this.call("replaceChild", node, referenceNode);
   }
   connectedCallback() {
     const { parentElement } = this;
@@ -78,7 +76,7 @@ export default class Shadow extends HTMLElement {
 
     // This takes all the content in the declared shadow root, and puts
     // them in the real shadow root. This is rehydration on the client.
-    Array.from(super.childNodes).forEach(node => {
+    Array.from(super.childNodes || []).forEach(node => {
       parentElementRoot.appendChild(node as Node);
     });
 

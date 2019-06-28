@@ -50,8 +50,11 @@ test("hydrate", () => {
   )}</div>`;
 
   // Currently this is expected to generate a warning as hydration invokes the
-  // custom element lifecycle which attaches shadow roots and does not do any
-  // sort of simulation for transforming to a string.
+  // custom element lifecycle which attaches shadow roots which will cause a
+  // mismatch when react checks to see if the output matches what it expected.
+  // i.e. you will get warnings like:
+  //
+  // > Warning: Expected server HTML to contain a matching <span> in <x-hello>.
   hydrate(<App />, document.getElementById("app"));
 
   expect(document.body.innerHTML).toBe(
