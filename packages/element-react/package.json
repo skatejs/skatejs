@@ -16,9 +16,8 @@
     "@pika/plugin-build-types": "~0.4.0",
     "@pika/plugin-build-web": "~0.4.0",
     "@pika/plugin-ts-standard-pkg": "~0.4.0",
-    "@skatejs/bore": "5.0.2",
-    "@types/react": "^16.8.8",
-    "@types/react-dom": "^16.8.2",
+    "@skatejs/bore": "^5.0.2",
+    "@skatejs/sk-shadow": "~0.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "typescript": "^3.5.2"

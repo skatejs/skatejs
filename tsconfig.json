@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "jsx": "react",
     "jsxFactory": "h",
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2019"
   },
-  "include": ["**/src/index.ts"],
   "exclude": ["node_modules", "**/__tests__/*"]
 }

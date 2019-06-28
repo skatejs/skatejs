@@ -61,7 +61,8 @@ module.exports = async ({ cli, cwd }) => {
         merge: true,
         remove: !isTsProject,
         data: {
-          extends: "../../tsconfig.json"
+          extends: "../../tsconfig.json",
+          include: [`src/index.${suffix}`]
         }
       },
       {
