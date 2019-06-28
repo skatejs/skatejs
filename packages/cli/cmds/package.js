@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { promisify } = require("util");
-const { getLatestVersions, getWorkspacePackages } = require("./_");
+const { getLatestVersion, getWorkspacePackages } = require("./_");
 
 const exists = promisify(fs.exists);
 
@@ -18,6 +18,7 @@ module.exports = async ({ cli, cwd }) => {
       {
         name: "package.json",
         merge: true,
+        sort: true,
         data: {
           author: "Your Name <you@yourname.com>",
           description: "",
@@ -31,6 +32,7 @@ module.exports = async ({ cli, cwd }) => {
         name: "package.json",
         merge: true,
         overwrite: true,
+        sort: true,
         data: {
           "@pika/pack": useTypecript({
             pipeline: [
@@ -41,26 +43,17 @@ module.exports = async ({ cli, cwd }) => {
             ]
           }),
           devDependencies: {
-            "@pika/pack": useTypecript(getLatestVersions),
-            "@pika/plugin-ts-standard-pkg": useTypecript(getLatestVersions),
-            "@pika/plugin-build-node": useTypecript(getLatestVersions),
-            "@pika/plugin-build-web": useTypecript(getLatestVersions),
-            "@pika/plugin-build-types": useTypecript(getLatestVersions),
-            typescript: useTypecript(getLatestVersions)
+            "@pika/pack": useTypecript(getLatestVersion),
+            "@pika/plugin-ts-standard-pkg": useTypecript(getLatestVersion),
+            "@pika/plugin-build-node": useTypecript(getLatestVersion),
+            "@pika/plugin-build-web": useTypecript(getLatestVersion),
+            "@pika/plugin-build-types": useTypecript(getLatestVersion),
+            typescript: useTypecript(getLatestVersion)
           },
           scripts: {
-            build: useTypeScript("pack build")
+            build: useTypecript("pack build")
           },
-          types: useTypescript("src/index.ts"),
-
-          // Migration
-          browser: undefined,
-          esnext: undefined,
-          module: undefined,
-          bugs: undefined,
-          homepage: undefined,
-          keywords: undefined,
-          repository: undefined
+          types: useTypecript("src/index.ts")
         }
       },
       {
@@ -73,17 +66,14 @@ module.exports = async ({ cli, cwd }) => {
       },
       {
         name: "README.md",
-        data: `
-        # ${cwd}
+        data: () => {
+          const pkg = require(path.resolve(cwd, "package.json"));
+          return `
+            # ${pkg.name}
 
-        > ...
-
-        ## Usage
-
-        \`\`\`js
-        // ...
-        \`\`\`
-      `
+            > ${pkg.description}
+          `;
+        }
       }
     ]
   };

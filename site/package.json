@@ -1,26 +1,5 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "license": "MIT",
-  "name": "@skatejs/site",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "test": "jest"
-  },
-  "browser": "module/index.js",
   "dependencies": {
     "@skatejs/define": "0.0.1",
     "@skatejs/element": "0.0.1",
@@ -38,16 +17,15 @@
     "react-dom": "^16.6.3",
     "shadow-css": "^0.1.0"
   },
+  "description": "",
   "devDependencies": {},
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
+  "files": ["esnext", "main", "module"],
+  "license": "MIT",
   "main": "main/index.js",
-  "module": "module/index.js",
-  "source": "src/index.ts",
+  "name": "@skatejs/site",
   "private": true,
+  "publishConfig": { "access": "public" },
+  "scripts": { "test": "jest" },
+  "source": "src/index.ts",
   "version": "0.0.0"
 }

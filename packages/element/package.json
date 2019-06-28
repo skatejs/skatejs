@@ -1,58 +1,30 @@
 {
-  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
-  "license": "MIT",
-  "name": "@skatejs/element",
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "build": "pack build"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "@skatejs/bore": "5.0.2",
-    "@skatejs/define": "0.0.1",
-    "@pika/pack": "~0.4.0",
-    "@pika/plugin-ts-standard-pkg": "~0.4.0",
-    "@pika/plugin-build-node": "~0.4.0",
-    "@pika/plugin-build-web": "~0.4.0",
-    "@pika/plugin-build-types": "~0.4.0",
-    "typescript": "^3.5.2"
-  },
-  "source": "src/index.ts",
-  "types": "src/index.ts",
-  "version": "0.0.1",
   "@pika/pack": {
     "pipeline": [
-      [
-        "@pika/plugin-ts-standard-pkg",
-        {
-          "exclude": [
-            "__tests__/**/*"
-          ]
-        }
-      ],
-      [
-        "@pika/plugin-build-node"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ],
-      [
-        "@pika/plugin-build-types"
-      ]
+      ["@pika/plugin-ts-standard-pkg", { "exclude": ["__tests__/**/*"] }],
+      ["@pika/plugin-build-node"],
+      ["@pika/plugin-build-web"],
+      ["@pika/plugin-build-types"]
     ]
-  }
+  },
+  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
+  "dependencies": {},
+  "description": "Skate is a library built on top of the W3C web component specs that enables you to write functional and performant web components with a very small footprint.",
+  "devDependencies": {
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
+    "@skatejs/bore": "5.0.2",
+    "@skatejs/define": "0.0.1",
+    "typescript": "^3.5.2"
+  },
+  "license": "MIT",
+  "name": "@skatejs/element",
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "pack build" },
+  "source": "src/index.ts",
+  "types": "src/index.ts",
+  "version": "0.0.1"
 }

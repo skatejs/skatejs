@@ -2,15 +2,16 @@
   "author": "You <at@you.com>",
   "bin": "index.js",
   "dependencies": {
-    "conartist": "^0.28.1",
+    "conartist": "^0.29.1",
     "jobsite": "^0.1.0",
     "package-info": "^3.0.2"
   },
-  "description": "SkateJS CLI",
+  "description": "CLI tool for generating SkateJS projects.",
+  "devDependencies": {},
   "license": "MIT",
   "name": "@skatejs/cli",
-  "publishConfig": {
-    "access": "public"
-  },
+  "publishConfig": { "access": "public" },
+  "scripts": {},
+  "source": "src/index.js",
   "version": "0.0.0"
 }

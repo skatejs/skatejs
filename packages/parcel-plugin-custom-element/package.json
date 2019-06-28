@@ -1,36 +1,14 @@
 {
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "Plugin for automatically defining custom elements.",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "license": "MIT",
-  "name": "@skatejs/parcel-plugin-custom-element",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "test": "jest"
-  },
-  "browser": "module/index.js",
   "dependencies": {},
+  "description": "Plugin for automatically defining custom elements.",
   "devDependencies": {},
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
+  "files": ["esnext", "main", "module"],
+  "license": "MIT",
   "main": "main/index.js",
-  "module": "module/index.js",
+  "name": "@skatejs/parcel-plugin-custom-element",
+  "publishConfig": { "access": "public" },
+  "scripts": { "test": "jest" },
   "source": "src/index.ts",
   "version": "0.0.0"
 }

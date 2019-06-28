@@ -1802,7 +1802,7 @@
 "@skatejs/cli@./packages/cli":
   version "0.0.0"
   dependencies:
-    conartist "^0.28.1"
+    conartist "^0.29.0"
     jobsite "^0.1.0"
     package-info "^3.0.2"
 
@@ -3289,10 +3289,10 @@ component-emitter@^1.2.1:
   resolved "https://registry.yarnpkg.com/component-emitter/-/component-emitter-1.3.0.tgz#16e4070fba8ae29b679f2215853ee181ab2eabc0"
   integrity sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==
 
-conartist@^0.28.1:
-  version "0.28.1"
-  resolved "https://registry.yarnpkg.com/conartist/-/conartist-0.28.1.tgz#aa7a60c4fc29573ae03a685fcba24fe07874da9e"
-  integrity sha512-AII+rW43NbK2Od9BjdZQJp+v6mEDvEUAM8gA8z5I433RKJMOaNNpvYIho8bIkatYeQ77BM3FRYN29P0AnWXfRg==
+conartist@^0.29.0:
+  version "0.29.0"
+  resolved "https://registry.yarnpkg.com/conartist/-/conartist-0.29.0.tgz#de59e38b98eea24305a984f3ee7af142b2fd65b8"
+  integrity sha512-He/GjzCfsxpmJcMFM2qR1Iik2SXASYtrDCWGpIgF1VfMG4RbvD4GT/J1IeydAAkhA47nQHmkYol1KU1Fr8WWsQ==
   dependencies:
     camelcase "^5.3.1"
     cosmiconfig "^5.2.1"
@@ -3302,6 +3302,7 @@ conartist@^0.28.1:
     pkg-up "^3.1.0"
     prettier "^1.17.1"
     sade "^1.5.0"
+    sort-json "^2.0.0"
     strip-indent "^3.0.0"
 
 concat-map@0.0.1:
@@ -10524,6 +10525,15 @@ somever@2.x.x:
   dependencies:
     bounce "1.x.x"
     hoek "6.x.x"
+
+sort-json@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/sort-json/-/sort-json-2.0.0.tgz#a7030d8875adbd4a5ea39a000567ed94c1aa3c50"
+  integrity sha512-OgXPErPJM/rBK5OhzIJ+etib/BmLQ1JY55Nb/ElhoWUec62pXNF/X6DrecHq3NW5OAGX0KxYD7m0HtgB9dvGeA==
+  dependencies:
+    detect-indent "^5.0.0"
+    detect-newline "^2.1.0"
+    minimist "^1.2.0"
 
 sort-keys@^2.0.0:
   version "2.0.0"

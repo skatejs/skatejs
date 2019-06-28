@@ -1,43 +1,23 @@
 {
   "author": "",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "license": "ISC",
-  "name": "ssr-wc",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ."
-  },
-  "browser": "module/index.js",
   "dependencies": {
     "@skatejs/define": "*",
     "@skatejs/element": "*",
     "hapi": "^17.0.0",
     "outdent": "^0.4.1"
   },
+  "description": "",
   "devDependencies": {},
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
+  "files": ["esnext", "main", "module"],
+  "license": "ISC",
   "main": "main/index.js",
-  "module": "module/index.js",
-  "source": "src/index.ts",
+  "name": "ssr-wc",
   "private": true,
+  "publishConfig": { "access": "public" },
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "source": "src/index.ts",
   "version": "1.0.0"
 }

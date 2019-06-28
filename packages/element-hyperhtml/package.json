@@ -1,64 +1,32 @@
 {
-  "description": "A SkateJS renderer for HyperHTML.",
-  "license": "MIT",
-  "name": "@skatejs/element-hyperhtml",
+  "@pika/pack": {
+    "pipeline": [
+      ["@pika/plugin-ts-standard-pkg", { "exclude": ["__tests__/**/*"] }],
+      ["@pika/plugin-build-node"],
+      ["@pika/plugin-build-web"],
+      ["@pika/plugin-build-types"]
+    ]
+  },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "build": "pack build"
-  },
-  "dependencies": {
-    "@skatejs/element": "0.0.1"
-  },
+  "dependencies": { "@skatejs/element": "0.0.1" },
+  "description": "A SkateJS renderer for HyperHTML.",
   "devDependencies": {
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
     "@skatejs/bore": "5.0.2",
     "@skatejs/define": "0.0.1",
     "hyperhtml": "^2.5.10",
-    "@pika/pack": "~0.4.0",
-    "@pika/plugin-ts-standard-pkg": "~0.4.0",
-    "@pika/plugin-build-node": "~0.4.0",
-    "@pika/plugin-build-web": "~0.4.0",
-    "@pika/plugin-build-types": "~0.4.0",
     "typescript": "^3.5.2"
   },
+  "license": "MIT",
+  "name": "@skatejs/element-hyperhtml",
+  "peerDependencies": { "hyperhtml": "^2.5.10" },
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "pack build" },
   "source": "src/index.ts",
-  "peerDependencies": {
-    "hyperhtml": "^2.5.10"
-  },
-  "version": "0.0.1",
-  "@pika/pack": {
-    "pipeline": [
-      [
-        "@pika/plugin-ts-standard-pkg",
-        {
-          "exclude": [
-            "__tests__/**/*"
-          ]
-        }
-      ],
-      [
-        "@pika/plugin-build-node"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ],
-      [
-        "@pika/plugin-build-types"
-      ]
-    ]
-  },
-  "types": "src/index.ts"
+  "types": "src/index.ts",
+  "version": "0.0.1"
 }
