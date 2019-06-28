@@ -1,8 +1,25 @@
-module.exports = args => {
-  let config;
-  try {
-    return require(`./cmds/${args.cmd}`);
-  } catch (e) {
-    console.error(`The command ${args.cmd} does not exist.`);
+#! /usr/bin/env node
+
+require("conartist").bin({
+  ...require("./package.json"),
+  conartist: ({ cmd }) => require(`./cmds/${cmd}`),
+  commands: {
+    default: {
+      description: "Generates an example SkateJS element.",
+      options: {
+        type: {
+          alias: "t",
+          default: "preact",
+          description: "The type of element you are building.",
+          question: {
+            choices: ["preact", "react"],
+            message: "What type of element are you building?"
+          }
+        }
+      }
+    },
+    package: {
+      description: "Generates a SkateJS monorepo package."
+    }
   }
-};
+});

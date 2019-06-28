@@ -1,41 +1,16 @@
 {
   "author": "You <at@you.com>",
-  "bugs": "https://github.com/skatejs/skatejs/issues",
-  "description": "SkateJS CLI",
-  "homepage": "https://skatejs.netlify.com",
-  "keywords": [
-    "web",
-    "components",
-    "custom",
-    "elements",
-    "shadow",
-    "dom"
-  ],
-  "license": "MIT",
-  "name": "@skatejs/cli",
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": "skatejs/skatejs",
-  "scripts": {
-    "test": "jest"
-  },
-  "browser": "module/index.js",
+  "bin": "index.js",
   "dependencies": {
     "conartist": "^0.28.1",
     "jobsite": "^0.1.0",
     "package-info": "^3.0.2"
   },
-  "devDependencies": {},
-  "esnext": "esnext/index.js",
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
-  "main": "main/index.js",
-  "module": "module/index.js",
-  "source": "src/index.ts",
-  "bin": "./bin.js",
+  "description": "SkateJS CLI",
+  "license": "MIT",
+  "name": "@skatejs/cli",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.0.0"
 }
