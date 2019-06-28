@@ -6264,6 +6264,11 @@ jest-resolve@^24.8.0:
     jest-pnp-resolver "^1.2.1"
     realpath-native "^1.1.0"
 
+jest-resolver-ts-js@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/jest-resolver-ts-js/-/jest-resolver-ts-js-0.0.1.tgz#5e5f28e7c53f148a43e634a317b667e0e5823385"
+  integrity sha512-WnJ2l/3/ChUNB/JjD0pMJ/whh81VVElMtTpQetK2z/s+BtfIYmKLRJoJLysn5gNqF5gLj5WXrqWwq0FRMaiTKg==
+
 jest-runner@^24.8.0:
   version "24.8.0"
   resolved "https://registry.yarnpkg.com/jest-runner/-/jest-runner-24.8.0.tgz#4f9ae07b767db27b740d7deffad0cf67ccb4c5bb"

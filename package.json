@@ -31,6 +31,7 @@
     "jest-cli": "^24.8.0",
     "jest-environment-node": "^23.4.0",
     "jest-in-case": "^1.0.2",
+    "jest-resolver-ts-js": "^0.0.1",
     "jobsite": "^0.1.0",
     "js-beautify": "^1.7.5",
     "lint-staged": "^6.1.1",
@@ -71,7 +72,7 @@
     "moduleNameMapper": {
       "@skatejs/(.*)": "<rootDir>/packages/$1/src"
     },
-    "resolver": "<rootDir>/jest/resolver.js",
+    "resolver": "jest-resolver-ts-js",
     "testEnvironment": "./packages/ssr/jest",
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
     "transform": {
