@@ -90,6 +90,7 @@
     "test": "jest"
   },
   "workspaces": [
+    "next",
     "packages/*",
     "packages/ssr/example",
     "site"

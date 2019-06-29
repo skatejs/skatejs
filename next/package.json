@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@skatejs/element-react": "./packages/element-react",
+    "@skatejs/sk-shadow": "./packages/sk-shadow",
+    "next": "^8.1.0",
+    "next-transpile-modules": "^2.3.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "name": "@skatejs/site-next",
+  "private": true,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "version": "0.0.0"
+}

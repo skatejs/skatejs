@@ -1,10 +1,23 @@
 {
   "@pika/pack": {
     "pipeline": [
-      ["@pika/plugin-ts-standard-pkg", { "exclude": ["__tests__/**/*"] }],
-      ["@pika/plugin-build-node"],
-      ["@pika/plugin-build-web"],
-      ["@pika/plugin-build-types"]
+      [
+        "@pika/plugin-ts-standard-pkg",
+        {
+          "exclude": [
+            "__tests__/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ],
+      [
+        "@pika/plugin-build-types"
+      ]
     ]
   },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
@@ -21,9 +34,14 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/define",
-  "publishConfig": { "access": "public" },
-  "scripts": { "build": "pack build" },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "pack build"
+  },
   "source": "src/index.ts",
   "types": "src/index.ts",
   "version": "0.0.1"

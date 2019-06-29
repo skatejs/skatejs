@@ -1,21 +1,21 @@
 /** @jsx h */
 
-import { readFileSync } from 'fs';
-import css from 'shadow-css';
-import { Runnable } from '../components/code';
-import { Layout } from '../components/layout';
-import { Marked } from '../components/marked';
-import { Hr } from '../components/primitives';
-import { Component, h } from '../utils';
+import { readFileSync } from "fs";
+import css from "shadow-css";
+import { Runnable } from "../components/code";
+import { Layout } from "../components/layout";
+import { Marked } from "../components/marked";
+import { Hr } from "../components/primitives";
+import { Component, h } from "../utils";
 
-import './docs/__samples__/element-preact';
+import "./docs/__samples__/element-preact";
 const codeSample = readFileSync(
-  __dirname + '/docs/__samples__/element-preact.tsx'
+  __dirname + "/docs/__samples__/element-preact.tsx"
 ).toString();
 const codeSampleHtml = readFileSync(
-  __dirname + '/docs/__samples__/element-preact.html'
+  __dirname + "/docs/__samples__/element-preact.html"
 ).toString();
-const README = readFileSync(__dirname + '/../../README.md').toString();
+const README = readFileSync(__dirname + "/../../README.md").toString();
 
 const style = css(`
   .code {

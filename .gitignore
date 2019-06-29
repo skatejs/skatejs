@@ -1,4 +1,4 @@
-.cache
 .DS_Store
+.next
 node_modules
 pkg

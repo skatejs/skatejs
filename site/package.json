@@ -9,6 +9,7 @@
     "@skatejs/sk-context": "0.0.1",
     "@skatejs/sk-marked": "0.1.1",
     "@skatejs/sk-router": "0.3.3",
+    "@zeit/next-typescript": "^1.1.1",
     "highlight.js": "^9.12.0",
     "lit-html": "dev",
     "preact": "^8.2.7",
@@ -19,13 +20,21 @@
   },
   "description": "",
   "devDependencies": {},
-  "files": ["esnext", "main", "module"],
+  "files": [
+    "esnext",
+    "main",
+    "module"
+  ],
   "license": "MIT",
   "main": "main/index.js",
   "name": "@skatejs/site",
   "private": true,
-  "publishConfig": { "access": "public" },
-  "scripts": { "test": "jest" },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest"
+  },
   "source": "src/index.ts",
   "version": "0.0.0"
 }
