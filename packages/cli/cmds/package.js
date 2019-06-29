@@ -17,15 +17,23 @@ module.exports = async ({ cli, cwd }) => {
     files: [
       {
         name: "package.json",
-        merge: true,
-        sort: true,
         data: {
           author: "Your Name <you@yourname.com>",
           description: "",
           license: "MIT",
           name: cwd,
-          publishConfig: { access: "public" },
           source: `src/index.${suffix}`
+        }
+      },
+      {
+        name: "package.json",
+        merge: true,
+        sort: true,
+        data: () => {
+          const pkg = require(path.resolve(cwd, "package.json"));
+          return {
+            publishConfig: pkg.private ? undefined : { access: "public" }
+          };
         }
       },
       {
@@ -33,28 +41,29 @@ module.exports = async ({ cli, cwd }) => {
         merge: true,
         overwrite: true,
         sort: true,
-        data: {
-          "@pika/pack": useTypecript({
+        data: useTypeScript({
+          "@pika/pack": {
             pipeline: [
               ["@pika/plugin-ts-standard-pkg", { exclude: ["__tests__/**/*"] }],
               ["@pika/plugin-build-node"],
               ["@pika/plugin-build-web"],
               ["@pika/plugin-build-types"]
             ]
-          }),
+          },
           devDependencies: {
-            "@pika/pack": useTypecript(getLatestVersion),
-            "@pika/plugin-ts-standard-pkg": useTypecript(getLatestVersion),
-            "@pika/plugin-build-node": useTypecript(getLatestVersion),
-            "@pika/plugin-build-web": useTypecript(getLatestVersion),
-            "@pika/plugin-build-types": useTypecript(getLatestVersion),
-            typescript: useTypecript(getLatestVersion)
+            "@pika/pack": getLatestVersion,
+            "@pika/plugin-ts-standard-pkg": getLatestVersion,
+            "@pika/plugin-build-node": getLatestVersion,
+            "@pika/plugin-build-web": getLatestVersion,
+            "@pika/plugin-build-types": getLatestVersion,
+            typescript: getLatestVersion
           },
+          main: "pkg",
           scripts: {
-            build: useTypecript("pack build")
+            build: "pack build"
           },
-          types: useTypecript("src/index.ts")
-        }
+          types: "src/index.ts"
+        })
       },
       {
         name: "tsconfig.json",
