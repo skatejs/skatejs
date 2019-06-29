@@ -10,7 +10,7 @@
   "devDependencies": {},
   "files": ["esnext", "main", "module"],
   "license": "ISC",
-  "main": "main/index.js",
+  "main": "pkg",
   "name": "ssr-wc",
   "private": true,
   "publishConfig": { "access": "public" },

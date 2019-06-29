@@ -9,6 +9,7 @@
   "description": "CLI tool for generating SkateJS projects.",
   "devDependencies": {},
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/cli",
   "publishConfig": { "access": "public" },
   "scripts": {},

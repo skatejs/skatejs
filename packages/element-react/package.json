@@ -1,30 +1,14 @@
 {
   "@pika/pack": {
     "pipeline": [
-      [
-        "@pika/plugin-ts-standard-pkg",
-        {
-          "exclude": [
-            "__tests__/**/*"
-          ]
-        }
-      ],
-      [
-        "@pika/plugin-build-node"
-      ],
-      [
-        "@pika/plugin-build-web"
-      ],
-      [
-        "@pika/plugin-build-types"
-      ]
+      ["@pika/plugin-ts-standard-pkg", { "exclude": ["__tests__/**/*"] }],
+      ["@pika/plugin-build-node"],
+      ["@pika/plugin-build-web"],
+      ["@pika/plugin-build-types"]
     ]
   },
   "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "dependencies": {
-    "@skatejs/define": "*",
-    "@skatejs/element": "*"
-  },
+  "dependencies": { "@skatejs/define": "*", "@skatejs/element": "*" },
   "description": "A SkateJS renderer for React.",
   "devDependencies": {
     "@pika/pack": "~0.4.0",
@@ -45,12 +29,8 @@
     "react": "^15.0.0 || ^16.8.6",
     "react-dom": "^15.0.0 || ^16.8.6"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "build": "pack build"
-  },
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "pack build" },
   "source": "src/index.ts",
   "types": "src/index.ts",
   "version": "0.0.1"

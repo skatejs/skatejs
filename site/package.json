@@ -20,21 +20,13 @@
   },
   "description": "",
   "devDependencies": {},
-  "files": [
-    "esnext",
-    "main",
-    "module"
-  ],
+  "files": ["esnext", "main", "module"],
   "license": "MIT",
-  "main": "main/index.js",
+  "main": "pkg",
   "name": "@skatejs/site",
   "private": true,
-  "publishConfig": {
-    "access": "public"
-  },
-  "scripts": {
-    "test": "jest"
-  },
+  "publishConfig": { "access": "public" },
+  "scripts": { "test": "jest" },
   "source": "src/index.ts",
   "version": "0.0.0"
 }

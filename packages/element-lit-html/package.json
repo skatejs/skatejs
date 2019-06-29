@@ -22,6 +22,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/element-lit-html",
   "peerDependencies": { "lit-html": "dev" },
   "publishConfig": { "access": "public" },

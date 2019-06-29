@@ -21,6 +21,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/element-preact",
   "peerDependencies": { "preact": "^8.4.2" },
   "publishConfig": { "access": "public" },

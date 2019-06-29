@@ -21,6 +21,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/element",
   "publishConfig": { "access": "public" },
   "scripts": { "build": "pack build" },

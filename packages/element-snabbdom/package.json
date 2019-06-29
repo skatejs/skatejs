@@ -22,6 +22,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
+  "main": "pkg",
   "name": "@skatejs/element-snabbdom",
   "peerDependencies": { "snabbdom": "^0.7.1" },
   "publishConfig": { "access": "public" },
