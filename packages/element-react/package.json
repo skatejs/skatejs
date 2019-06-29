@@ -23,7 +23,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
-  "main": "pkg",
+  "module": "pkg",
   "name": "@skatejs/element-react",
   "peerDependencies": {
     "react": "^15.0.0 || ^16.8.6",

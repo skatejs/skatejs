@@ -1,8 +1,8 @@
 {
   "author": "Your Name <you@yourname.com>",
   "dependencies": {
-    "@skatejs/element-react": "./packages/element-react",
-    "@skatejs/sk-shadow": "./packages/sk-shadow",
+    "@skatejs/element-react": "*",
+    "@skatejs/sk-shadow": "*",
     "next": "^8.1.0",
     "next-transpile-modules": "^2.3.1",
     "react": "^16.8.6",

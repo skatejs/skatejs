@@ -11,7 +11,7 @@ module.exports = async ({ cli, cwd }) => {
   const isTsx =
     cli.typescript === "tsx" || (await exists(path.join(cwd, "src/index.tsx")));
   const isTsProject = isTs || isTsx;
-  const useTypecript = config => (isTsProject ? config : undefined);
+  const useTypescript = config => (isTsProject ? config : undefined);
   const suffix = isTs ? "ts" : isTsx ? "tsx" : "js";
   return {
     files: [
@@ -41,7 +41,7 @@ module.exports = async ({ cli, cwd }) => {
         merge: true,
         overwrite: true,
         sort: true,
-        data: useTypeScript({
+        data: useTypescript({
           "@pika/pack": {
             pipeline: [
               ["@pika/plugin-ts-standard-pkg", { exclude: ["__tests__/**/*"] }],
@@ -58,7 +58,9 @@ module.exports = async ({ cli, cwd }) => {
             "@pika/plugin-build-types": getLatestVersion,
             typescript: getLatestVersion
           },
-          main: "pkg",
+          // This proxies pika's output, but allows dev mode to point to the
+          // built module source.
+          module: "pkg",
           scripts: {
             build: "pack build"
           },

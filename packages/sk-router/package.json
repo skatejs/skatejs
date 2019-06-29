@@ -26,7 +26,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
-  "main": "pkg",
+  "module": "pkg",
   "name": "@skatejs/sk-router",
   "publishConfig": { "access": "public" },
   "scripts": { "build": "pack build" },

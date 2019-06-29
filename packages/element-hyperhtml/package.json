@@ -22,7 +22,7 @@
     "typescript": "^3.5.2"
   },
   "license": "MIT",
-  "main": "pkg",
+  "module": "pkg",
   "name": "@skatejs/element-hyperhtml",
   "peerDependencies": { "hyperhtml": "^2.5.10" },
   "publishConfig": { "access": "public" },

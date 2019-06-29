@@ -1349,15 +1349,6 @@
     jobsite "^0.1.0"
     package-info "^3.0.2"
 
-"@skatejs/element-react@./packages/element-react":
-  version "0.0.1"
-  dependencies:
-    "@skatejs/define" "*"
-    "@skatejs/element" "*"
-
-"@skatejs/sk-shadow@./packages/sk-shadow":
-  version "0.0.0"
-
 "@skatejs/val@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@skatejs/val/-/val-0.4.0.tgz#fc28fe75d6559625ccb79ae93c9ffcad8cc08a94"
