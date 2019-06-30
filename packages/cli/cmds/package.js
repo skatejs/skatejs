@@ -71,6 +71,10 @@ module.exports = async ({ cli, cwd }) => {
         })
       },
       {
+        name: `src/index.${suffix}`,
+        data: `export default () => {};`
+      },
+      {
         name: "tsconfig.json",
         merge: true,
         remove: !isTsProject,
