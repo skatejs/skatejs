@@ -72,8 +72,12 @@ export function h(name, props, ...chren) {
 
   // If we've encountered a slot, we filter out the light DOM we've saved
   // that should be projected into it. This simulates slotted content so
-  // that content reads as intended to bots. The sk-shadow element can
-  // reverse engineer this upon hydration.
+  // that content reads as intended to bots.
+  //
+  // When rehydrated on the client, React will reapply light DOM, so all
+  // we need to do is make sure a shadow root is attached in the constructor
+  // of the custom element and things will just work. @skatejs/element
+  // ensures this is already done for you.
   if (isSsr && name === "slot") {
     // TODO remove elements from the array as they are slotted.
     const filteredLightDOM = currentLightDOM.filter(d => {
