@@ -6,7 +6,8 @@ export function getGlobal(key) {
 }
 
 export function setGlobalFallback(key, fallback) {
-  return (fallbacks[key] = fallback);
+  fallbacks[key] = fallback;
+  return getGlobal(key);
 }
 
 export const customElements = setGlobalFallback("customElements", {
