@@ -32,8 +32,14 @@ let currentLightDOM;
 export function h(name, props, ...chren) {
   const isSsr = typeof window === "undefined";
 
-  // If it extends HTMLElement.
-  if (name.prototype instanceof HTMLElement) {
+  // We check to see if it's a custom element by checking to see if it has
+  // a connected callback. We can't check HTMLElement because we might be in
+  // Node and that would be stubbed.
+  //
+  // Checking connectedCallback is reliable, because if you're rendering
+  // anything, you will need *at least* a connectedCallback. If it is not
+  // rendering anything, then we don't need to do this.
+  if (name.prototype && name.prototype.connectedCallback) {
     const customElementName = getName(define(name));
 
     // Not being able to retrieve a name from a defined element is an

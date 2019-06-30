@@ -1,4 +1,4 @@
-export interface CustomElement extends HTMLElement {
+export interface CustomElement {
   attributeChangedCallback?(name: string, oldValue: string, newValue: string);
   childrenUpdated?();
   connectedCallback?();

@@ -1,7 +1,15 @@
+/* @jsx h */
+
 import Element, { h } from "@skatejs/element-react";
 
-export default class extends Element {
+class Hello extends Element {
   render() {
-    return <p>Hello</p>;
+    return (
+      <div>
+        Hello, <slot />!
+      </div>
+    );
   }
 }
+
+export default () => <Hello>You</Hello>;

@@ -1,3 +1,4 @@
+import { Event, HTMLElement } from "@skatejs/globals";
 import { props } from "./props.js";
 import {
   CustomElement,
@@ -191,7 +192,14 @@ export default class Element extends HTMLElement implements CustomElement {
 
   constructor() {
     super();
-    if (!this.shadowRoot) {
+
+    // We check both if we can attach a shadow and if there isn't already
+    // a shadow root because:
+    //
+    // 1. We might be running in Node.
+    // 2. You can't attach multiple shadow roots.
+    // 3. An element can be given a shadow root before it is upgraded.
+    if (this.attachShadow && !this.shadowRoot) {
       const { shadowRootOptions } = this.constructor;
       this.renderRoot = shadowRootOptions
         ? this.attachShadow(shadowRootOptions)

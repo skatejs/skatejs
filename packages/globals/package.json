@@ -1,0 +1,28 @@
+{
+  "@pika/pack": {
+    "pipeline": [
+      ["@pika/plugin-ts-standard-pkg", { "exclude": ["__tests__/**/*"] }],
+      ["@pika/plugin-build-node"],
+      ["@pika/plugin-build-web"],
+      ["@pika/plugin-build-types"]
+    ]
+  },
+  "author": "Trey Shugart <treshugart@gmail.com>",
+  "description": "Manage globals and fallbacks to run code in the browser and Node.",
+  "devDependencies": {
+    "@pika/pack": "~0.4.0",
+    "@pika/plugin-build-node": "~0.4.0",
+    "@pika/plugin-build-types": "~0.4.0",
+    "@pika/plugin-build-web": "~0.4.0",
+    "@pika/plugin-ts-standard-pkg": "~0.4.0",
+    "typescript": "^3.5.2"
+  },
+  "license": "MIT",
+  "module": "pkg",
+  "name": "@skatejs/globals",
+  "publishConfig": { "access": "public" },
+  "scripts": { "build": "pack build" },
+  "source": "src/index.js",
+  "types": "src/index.ts",
+  "version": "0.0.0"
+}

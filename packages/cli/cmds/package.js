@@ -17,12 +17,15 @@ module.exports = async ({ cli, cwd }) => {
     files: [
       {
         name: "package.json",
+        merge: true,
+        sort: true,
         data: {
           author: "Your Name <you@yourname.com>",
           description: "",
           license: "MIT",
           name: cwd,
-          source: `src/index.${suffix}`
+          source: `src/index.${suffix}`,
+          version: "0.0.0"
         }
       },
       {
