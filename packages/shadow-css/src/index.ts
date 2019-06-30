@@ -3,6 +3,17 @@ const native =
   customElements.define.toString().indexOf("native code") > -1;
 
 let scope = 0;
+
+function parseValue(v) {
+  if (typeof v === "number") {
+    return `${v}px`;
+  }
+  if (Array.isArray(v)) {
+    return v.map(parseValue).join(" ");
+  }
+  return v;
+}
+
 export default function(strings, ...parts) {
   let parsed = "";
   let classNames = {};
@@ -14,7 +25,7 @@ export default function(strings, ...parts) {
       classNames[cn] = cnScoped;
       parsed += `${strings[i]}.${cnScoped}`;
     } else {
-      parsed += strings[i] + p;
+      parsed += strings[i] + parseValue(p);
     }
   });
   parsed += strings[strings.length - 1];
