@@ -84,6 +84,7 @@
   "private": true,
   "scripts": {
     "build": "jobsite npm build",
+    "dev": "next next",
     "netlify": "yarn && parcel build site/*.html",
     "start": "parcel site/index.html",
     "sync": "jobsite get | xargs node packages/cli package",

@@ -94,7 +94,8 @@ export function h(name, props, ...chren) {
     if (filteredLightDOM.length) {
       chren = filteredLightDOM;
     } else {
-      props.default = "";
+      // Props may be undefined / null.
+      props = { default: "", ...props };
     }
 
     return createElement(name, props, ...chren);

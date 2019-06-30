@@ -1,21 +1,12 @@
 {
-  "author": "Your Name <you@yourname.com>",
   "dependencies": {
     "@skatejs/element-react": "*",
-    "@skatejs/sk-shadow": "*",
+    "@skatejs/shadow-css": "*",
     "next": "^8.1.0",
-    "next-transpile-modules": "^2.3.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   },
-  "description": "",
-  "devDependencies": {},
-  "license": "MIT",
-  "main": "pkg",
   "name": "@skatejs/site-next",
   "private": true,
-  "publishConfig": { "access": "public" },
-  "scripts": { "dev": "next", "start": "next start" },
-  "source": "src/index.js",
   "version": "0.0.0"
 }

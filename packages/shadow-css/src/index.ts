@@ -1,35 +1,30 @@
-import { getName } from "@skatejs/define";
-
-const cache = {};
 const native =
   typeof customElements !== "undefined" &&
   customElements.define.toString().indexOf("native code") > -1;
-const regexClassName = /^\s*\.([a-zA-Z0-9]+)/g;
-const regexHostBare = /:host([\s\{])/g;
-const regexHostContext = /:host-context\(([^)]+)\)/g;
-const regexHostSelector = /:host\(([^)]+)\)/g;
 
-function parse(id, css) {
-  if (!cache[id]) {
-    cache[id] = {};
-  }
+let scope = 0;
+export default function(strings, ...parts) {
+  let parsed = "";
+  let classNames = {};
 
-  if (cache[id][css]) {
-    return cache[id][css];
-  }
+  parts.forEach((p, i) => {
+    if (p[0] === ".") {
+      const cn = p.substring(1);
+      const cnScoped = native ? cn : `${cn}-${scope}`;
+      classNames[cn] = cnScoped;
+      parsed += `${strings[i]}.${cnScoped}`;
+    } else {
+      parsed += strings[i] + p;
+    }
+  });
+  parsed += strings[strings.length - 1];
 
-  let parsed = css;
+  ++scope;
 
-  parsed = parsed.replace(regexClassName, `${id} .$1`);
-  parsed = parsed.replace(regexHostBare, `${id}$1`);
-  parsed = parsed.replace(regexHostContext, `$1 ${id}`);
-  parsed = parsed.replace(regexHostSelector, `${id}$1`);
-
-  return (cache[id][css] = parsed);
-}
-
-export default function css(str) {
-  return function({ constructor }) {
-    return native ? str : parse(getName(constructor), str);
+  return {
+    ...classNames,
+    toString() {
+      return parsed;
+    }
   };
 }
