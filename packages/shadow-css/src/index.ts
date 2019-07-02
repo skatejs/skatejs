@@ -1,7 +1,3 @@
-const native =
-  typeof customElements !== "undefined" &&
-  customElements.define.toString().indexOf("native code") > -1;
-
 let scope = 0;
 
 function parseValue(v) {
@@ -21,7 +17,7 @@ export default function(strings, ...parts) {
   parts.forEach((p, i) => {
     if (p[0] === ".") {
       const cn = p.substring(1);
-      const cnScoped = native ? cn : `${cn}-${scope}`;
+      const cnScoped = `${cn}-${scope}`;
       classNames[cn] = cnScoped;
       parsed += `${strings[i]}.${cnScoped}`;
     } else {

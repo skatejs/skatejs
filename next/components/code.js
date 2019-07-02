@@ -27,7 +27,7 @@ function format(src) {
 
 const cssCode = css`
   ${".code"} {
-    background-color: var(--background-color-highlight);
+    background-color: #333;
     line-height: 1.2em;
     font-size: 1.2em;
     margin: 0;
@@ -68,7 +68,6 @@ export class Code extends Element {
   };
 
   render() {
-    console.log(typeof this.css);
     return (
       <div className={cssCode.host}>
         {/* <style>{theme}</style> */}
