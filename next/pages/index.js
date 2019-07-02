@@ -2,13 +2,14 @@
 
 import Element, { h } from "@skatejs/element-react";
 import css from "@skatejs/shadow-css";
-import { Code } from "../components";
+import { Code, Markdown } from "../components";
 import { global, shared } from "../styles";
 import { outdent } from "../util";
+import pkg from "../../package.json";
+import readme from "raw-loader!../../README.md";
 
 const styles = css`
   ${".code"} {
-    color: #eee;
     display: block;
     margin: 0 auto;
     overflow: hidden;
@@ -20,7 +21,7 @@ const styles = css`
   }
   ${".layout"} {
     margin: 0 auto;
-    max-width: 1000px;
+    max-width: 800px;
   }
   ${".subtitle"} {
     font-size: 1.4em;
@@ -39,38 +40,27 @@ export default () => (
     <div className={styles.hero}>
       <h1 className={styles.title}>SkateJS</h1>
       <h2 className={styles.subtitle}>
-        Effortless custom elements for modern view libraries.
+        Web components powered by modern view libraries.
       </h2>
     </div>
-    <Code class={styles.code}>
-      {outdent`
+    <Code
+      class={styles.code}
+      code={`
         // @jsx h
 
-        import Element, { h } from "@skatejs/element-react";
-        import { render } from "react-dom";
-        import css from "@skatejs/shadow-css";
-
-        const style = css\`
-          \${".app"} {
-            border: 1px solid black;
-            display: inline-block;
-            padding: 10px;
-          }
-        \`;
-
-        class Hello extends Element {
+        import Element, { g } from "@skatejs/element-react";
+        
+        export default class extends Element {
           render() {
             return (
-              <div className={style.app}>
-                <style>{style.toString()}</style>
+              <span>
                 Hello, <slot />!
-              </div>
+              </span>
             );
           }
         }
-
-        render(<Hello />, window.app);
       `}
-    </Code>
+    />
+    <Markdown src={readme} />
   </div>
 );

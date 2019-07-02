@@ -2,34 +2,15 @@
 
 import Element, { h } from "@skatejs/element-react";
 import css from "@skatejs/shadow-css";
+import { outdent } from "../util";
 // import { Tabs } from "./tabs";
 // import theme from "css-loader!prismjs/themes/prism-twilight.css";
 
-const values = obj => Object.values(obj);
-
-function format(src) {
-  src = src || "";
-
-  // Remove leading newlines and only allow up to two newlines in code.
-  src = src.split("\n").filter((v, i, a) => a[i - 1] || v.trim().length);
-
-  // Get the initial indent so we can remove it from subsequent lines.
-  const indent = src[0] ? src[0].match(/^\s*/)[0].length : 0;
-
-  // Format indentation.
-  src = src.map(s => s.substring(indent));
-
-  // Re-instate newline formatting.
-  src = src.join("\n");
-
-  return src;
-}
-
-const cssCode = css`
+const styles = css`
   ${".code"} {
     background-color: #333;
+    color: #eee;
     line-height: 1.2em;
-    font-size: 1.2em;
     margin: 0;
     overflow: auto;
     padding: 20px;
@@ -52,30 +33,20 @@ const cssCode = css`
 
 export class Code extends Element {
   static props = {
+    code: String,
     lang: String,
     title: String
   };
 
-  refHighlight = e => {
-    if (!e) return;
-    import("prismjs").then(prism => {
-      e.innerHTML = prism.highlight(
-        format(this.innerHTML),
-        prism.languages[this.lang] || prism.languages.markup,
-        this.lang || "markup"
-      );
-    });
-  };
-
   render() {
     return (
-      <div className={cssCode.host}>
+      <div className={styles.host}>
         {/* <style>{theme}</style> */}
-        <style>{cssCode.toString()}</style>
-        {this.title ? <div className={cssCode.title}>{this.title}</div> : null}
-        <div className={cssCode.code}>
-          <pre className={cssCode.pre}>
-            <slot />
+        <style>{styles.toString()}</style>
+        {this.title ? <div className={styles.title}>{this.title}</div> : null}
+        <div className={styles.code}>
+          <pre className={styles.pre}>
+            {this.code ? outdent(this.code) : <slot />}
           </pre>
         </div>
       </div>

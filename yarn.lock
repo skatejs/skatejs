@@ -4562,6 +4562,14 @@ file-entry-cache@^2.0.0:
     flat-cache "^1.2.1"
     object-assign "^4.0.1"
 
+file-loader@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/file-loader/-/file-loader-4.0.0.tgz#c3570783fefb6e1bc0978a856f4bf5825b966c2a"
+  integrity sha512-roAbL6IdSGczwfXxhMi6Zq+jD4IfUpL0jWHD7fvmjdOVb7xBfdRUHe4LpBgO23VtVK5AW1OlWZo0p34Jvx3iWg==
+  dependencies:
+    loader-utils "^1.2.2"
+    schema-utils "^1.0.0"
+
 file-uri-to-path@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz#553a7b8446ff6f684359c445f1e37a05dacc33dd"
@@ -6894,7 +6902,7 @@ loader-utils@1.1.0:
     emojis-list "^2.0.0"
     json5 "^0.5.0"
 
-loader-utils@1.2.3, loader-utils@^1.0.2, loader-utils@^1.1.0, loader-utils@^1.2.3:
+loader-utils@1.2.3, loader-utils@^1.0.2, loader-utils@^1.1.0, loader-utils@^1.2.2, loader-utils@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-1.2.3.tgz#1ff5dc6911c9f0a062531a4c04b609406108c2c7"
   integrity sha512-fkpz8ejdnEMG3s37wGL07iSBDg99O9D5yflE9RGNH3hRdx9SOwYfnGYdZOUIZitN8E+E2vkq3MUMYMvPYl5ZZA==
@@ -7131,6 +7139,11 @@ marked@^0.3.14:
   version "0.3.19"
   resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.19.tgz#5d47f709c4c9fc3c216b6d46127280f40b39d790"
   integrity sha512-ea2eGWOqNxPcXv8dyERdSr/6FmzvWwzjMxpfGB/sbMccXoct+xY+YukPD+QTUZwyvK7BZwcr4m21WBOW41pAkg==
+
+marked@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-0.6.3.tgz#79babad78af638ba4d522a9e715cdfdd2429e946"
+  integrity sha512-Fqa7eq+UaxfMriqzYLayfqAE40WN03jf+zHjT18/uXNuzjq3TY0XTbrAoPeqSJrAmPz11VuUA+kBPYOhHt9oOQ==
 
 math-random@^1.0.1:
   version "1.0.4"
@@ -9180,6 +9193,14 @@ range-parser@^1.0.3, range-parser@~1.2.0, range-parser@~1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/range-parser/-/range-parser-1.2.1.tgz#3cf37023d199e1c24d1a55b84800c2f3e6468031"
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
+
+raw-loader@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/raw-loader/-/raw-loader-3.0.0.tgz#9a660dc9cfbfb8324eede3ea3511454d2a5d0389"
+  integrity sha512-FsELYliOpX5HdPdxa7PzTmEc5OTchmLUs/r4f8oLDGCYE+xC2FjVbDXzdyLcBrdlDnvkx1x5wzphixcWpxJG5w==
+  dependencies:
+    loader-utils "^1.1.0"
+    schema-utils "^1.0.0"
 
 rc@^0.5.1:
   version "0.5.5"

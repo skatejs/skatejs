@@ -1,4 +1,8 @@
 export function outdent(strings, ...replacements) {
+  if (typeof strings === "string") {
+    strings = [strings];
+  }
+
   let src =
     strings.map((s, i) => s + (replacements[i] || "")) +
     (replacements.pop() || "");

@@ -5,39 +5,141 @@
 [![Join the chat at https://gitter.im/skatejs/skatejs](https://badges.gitter.im/skatejs/skatejs.svg)](https://gitter.im/skatejs/skatejs)
 [![Follow @skate_js on Twitter](https://img.shields.io/twitter/follow/skate_js.svg?style=social&label=@skate_js)](https://twitter.com/skate_js)
 
-Skate is a functional reactive abstraction over
-[the web component standards](https://github.com/w3c/webcomponents) as a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
+Skate is a functional abstraction over
+[the web component standards](https://github.com/w3c/webcomponents) as a set of
+packages that enables you to write small, fast and scalable web components using
+popular view libraries such as React, Preact and LitHTML.
 
 - 🌏 Cross-framework compatible components.
 - ⚛️ Render components using your favourite view libary, or none at all.
-- 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
-- 🌟 Full TypeScript support.
+- 👑 Streamlined reaction to attributes, properties and events.
+- 🔌 Plug in _any_ view framework.
+- 🖥 Server-side rendering support for certain frameworks.
+- 🌟 TypeScript!
 - 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
 
-The simplest way to get up and running is to start with a pre-configured element such as [`@skatejs/element-lit-html`]([https://skatejs.netlify.com/packages/element-lit-html).
+The simplest way to get up and running is to start with a base class such as
+[@skatejs/element-react]([https://skatejs.netlify.com/packages/element-react).
+These element base classes are pre-configured to work with existing, popular
+view libaries:
+
+- [@skatejs/element-hyperhtml]([https://skatejs.netlify.com/packages/element-hyperhtml)
+- [@skatejs/element-lit-html]([https://skatejs.netlify.com/packages/element-lit-html)
+- [@skatejs/element-preact]([https://skatejs.netlify.com/packages/element-preact)
+- [@skatejs/element-react]([https://skatejs.netlify.com/packages/element-react)
+
+Leveraging the plethora of frameworks that already exists allows us to focus on
+a common web component abstraction around each of them.
+
+Additionally, the following view libraries support server-side rendering:
+
+- [@skatejs/element-react]([https://skatejs.netlify.com/packages/element-react)
+- @skatejs/element-preact - coming soon!
+
+### Installing
+
+You'll need to install the base class and its corresponding view framework. To
+write web components using React, you'd install:
 
 ```sh
-npm i @skatejs/element-lit-html
+npm i @skatejs/element-react react react-dom
 ```
+
+_You need both React and ReactDOM because you may already be using it, so its
+best for Skate to make this a peer dependency and not install its own version._
 
 ### Simple example
 
+The following example is how you'd create a simple "hello world" example using
+the React element.
+
 ```js
-import Element, { html } from '@skatejs/element-lit-html';
+// @jsx h
+
+import Element, { g } from "@skatejs/element-react";
 
 export default class extends Element {
-  static props = {
-    name: String
-  };
   render() {
-    return html`
-      Hello, ${this.name}!
-    `;
+    return (
+      <span>
+        Hello, <slot />!
+      </span>
+    );
   }
 }
 ```
+
+The resulting element can be used anywhere as a standard HTMLElement by first
+defining it:
+
+```js
+import Hello from "./hello";
+
+customElements.define("x-hello", Hello);
+```
+
+And then using it:
+
+```html
+<x-hello>World</x-hello>
+```
+
+Or you could use it in React like so:
+
+```js
+import { h } from "@skatejs/element-react";
+import Hello from "./hello";
+
+<Hello>World</Hello>;
+```
+
+_It's important to use the `h` export from `@skatejs/element-react` because it
+wraps `React.createElement` to support things like custom element constructors
+as tag names and Shadow DOM simulation when server-side rendering._
+
+Since the React element supports server-side rendering, all you need to do is
+just call `renderToString()` on it if you need SSR.
+
+```js
+import { h } from "@skatejs/element-react";
+import { renderToString } from "react-dom/server";
+import Hello from "./hello";
+
+// The resulting HTML would look something like:
+//
+// <x-hello>
+//   <span>
+//     Hello, <slot>World</slot>!
+//   </span>
+// </x-hello>
+renderToString(<Hello>World</Hello>);
+```
+
+This output is friendly to bots because there are no shadow roots present. It's
+simulating the content projection offered by shadow roots and slots. To get
+simulated CSS scoping, you could use something like `@skatejs/shadow-css`.
+
+Rehydration is just as simple.
+
+```js
+import { h } from "@skatejs/element-react";
+import { hydrate } from "react-dom";
+import Hello from "./hello";
+
+// Dev tools would show something like:
+//
+// <x-hello>
+//   # shadow-root
+//     <span>Hello, <slot />!</span>
+//   World
+// </x-hello>
+hydrate(<Hello>World</Hello>, window.app);
+```
+
+For more information on @skatejs/element-react, see its
+[documentation]([https://skatejs.netlify.com/packages/element-react).
 
 ### Other examples
 
@@ -45,82 +147,53 @@ export default class extends Element {
 
 ### Cli
 
-There's a CLI to get you up and running: [https://skatejs.netlify.com/packages/cli](https://skatejs.netlify.com/packages/cli).
+If you want to get up and running super quickly then
+[@skatejs/cli](https://skatejs.netlify.com/packages/cli) can help you!
 
 ```sh
-$ npm i -g @skatejs/cli
-$ skatejs
+$ npx @skatejs/cli -h
+
+  Description
+    CLI tool for generating SkateJS projects.
+
+  Usage
+    $ @skatejs/cli <command> [options]
+
+  Available Commands
+    default    Generates an example SkateJS element.
+    package    Generates a SkateJS monorepo package.
+
+  For more info, run any command with the `--help` flag
+    $ @skatejs/cli default --help
+    $ @skatejs/cli package --help
+
+  Options
+    -d, --dry        Perform a dry run.
+    -v, --version    Displays current version
+    -h, --help       Displays this message
+
 ```
 
 ## Polyfills
 
 Skate builds upon the
 [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and
-[the Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards.
-It is capable of operating without the Shadow DOM &mdash; it just means you
-don't get any encapsulation of your component's HTML or styles. It also means
-that it's up to you to provide a way to project content (i.e. `<slot>`). It's
-highly recommended you use Shadow DOM whenever possible.
+[Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards. It is
+capable of operating without the Shadow DOM &mdash; it just means you don't get
+any encapsulation of your component's HTML or styles. It also means that it's up
+to you to provide a way to project content (i.e. `<slot>`). It's highly
+recommended you use Shadow DOM whenever possible.
 
-Though most modern browsers support these standards, some still need polyfills
-to implement missing or inconsistent behaviours for them.
+Though most modern browsers support these standards, if you're still targetting
+IE11 then you'll need to include at least the Custom Element polyfill (and shim,
+if you're transpiling to ES5). You'll also need the Shadow DOM polyfill if you
+want encapsulation.
 
 For more information on the polyfills, see
-[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs), emphasis on the caveats.
+[the web components polyfill documentation](https://github.com/webcomponents/webcomponentsjs),
+emphasis on the caveats.
 
 ## Browser Support
 
 Skate supports all evergreens and IE11, and is subject to the browser support
 matrix of the polyfills.
-
-## Backers
-
-Support us with a monthly donation and help us continue our activities.
-[Become a backer](https://opencollective.com/skatejs#backer)!
-
-[![](https://opencollective.com/skatejs/backer/0/avatar.svg)](https://opencollective.com/skatejs/backer/0/website)
-[![](https://opencollective.com/skatejs/backer/1/avatar.svg)](https://opencollective.com/skatejs/backer/1/website)
-[![](https://opencollective.com/skatejs/backer/2/avatar.svg)](https://opencollective.com/skatejs/backer/2/website)
-[![](https://opencollective.com/skatejs/backer/3/avatar.svg)](https://opencollective.com/skatejs/backer/3/website)
-[![](https://opencollective.com/skatejs/backer/4/avatar.svg)](https://opencollective.com/skatejs/backer/4/website)
-[![](https://opencollective.com/skatejs/backer/5/avatar.svg)](https://opencollective.com/skatejs/backer/5/website)
-[![](https://opencollective.com/skatejs/backer/6/avatar.svg)](https://opencollective.com/skatejs/backer/6/website)
-[![](https://opencollective.com/skatejs/backer/7/avatar.svg)](https://opencollective.com/skatejs/backer/7/website)
-[![](https://opencollective.com/skatejs/backer/8/avatar.svg)](https://opencollective.com/skatejs/backer/8/website)
-[![](https://opencollective.com/skatejs/backer/9/avatar.svg)](https://opencollective.com/skatejs/backer/9/website)
-[![](https://opencollective.com/skatejs/backer/10/avatar.svg)](https://opencollective.com/skatejs/backer/10/website)
-[![](https://opencollective.com/skatejs/backer/11/avatar.svg)](https://opencollective.com/skatejs/backer/11/website)
-[![](https://opencollective.com/skatejs/backer/12/avatar.svg)](https://opencollective.com/skatejs/backer/12/website)
-[![](https://opencollective.com/skatejs/backer/13/avatar.svg)](https://opencollective.com/skatejs/backer/13/website)
-[![](https://opencollective.com/skatejs/backer/14/avatar.svg)](https://opencollective.com/skatejs/backer/14/website)
-[![](https://opencollective.com/skatejs/backer/15/avatar.svg)](https://opencollective.com/skatejs/backer/15/website)
-[![](https://opencollective.com/skatejs/backer/16/avatar.svg)](https://opencollective.com/skatejs/backer/16/website)
-[![](https://opencollective.com/skatejs/backer/17/avatar.svg)](https://opencollective.com/skatejs/backer/17/website)
-[![](https://opencollective.com/skatejs/backer/18/avatar.svg)](https://opencollective.com/skatejs/backer/18/website)
-[![](https://opencollective.com/skatejs/backer/19/avatar.svg)](https://opencollective.com/skatejs/backer/19/website)
-
-## Sponsors
-
-Become a sponsor and get your logo on our README on Github with a link to your
-site. [Become a sponsor](https://opencollective.com/skatejs#sponsor)!
-
-[![](https://opencollective.com/skatejs/sponsor/0/avatar.svg)](https://opencollective.com/skatejs/sponsor/0/website)
-[![](https://opencollective.com/skatejs/sponsor/1/avatar.svg)](https://opencollective.com/skatejs/sponsor/1/website)
-[![](https://opencollective.com/skatejs/sponsor/2/avatar.svg)](https://opencollective.com/skatejs/sponsor/2/website)
-[![](https://opencollective.com/skatejs/sponsor/3/avatar.svg)](https://opencollective.com/skatejs/sponsor/3/website)
-[![](https://opencollective.com/skatejs/sponsor/4/avatar.svg)](https://opencollective.com/skatejs/sponsor/4/website)
-[![](https://opencollective.com/skatejs/sponsor/5/avatar.svg)](https://opencollective.com/skatejs/sponsor/5/website)
-[![](https://opencollective.com/skatejs/sponsor/6/avatar.svg)](https://opencollective.com/skatejs/sponsor/6/website)
-[![](https://opencollective.com/skatejs/sponsor/7/avatar.svg)](https://opencollective.com/skatejs/sponsor/7/website)
-[![](https://opencollective.com/skatejs/sponsor/8/avatar.svg)](https://opencollective.com/skatejs/sponsor/8/website)
-[![](https://opencollective.com/skatejs/sponsor/9/avatar.svg)](https://opencollective.com/skatejs/sponsor/9/website)
-[![](https://opencollective.com/skatejs/sponsor/10/avatar.svg)](https://opencollective.com/skatejs/sponsor/10/website)
-[![](https://opencollective.com/skatejs/sponsor/11/avatar.svg)](https://opencollective.com/skatejs/sponsor/11/website)
-[![](https://opencollective.com/skatejs/sponsor/12/avatar.svg)](https://opencollective.com/skatejs/sponsor/12/website)
-[![](https://opencollective.com/skatejs/sponsor/13/avatar.svg)](https://opencollective.com/skatejs/sponsor/13/website)
-[![](https://opencollective.com/skatejs/sponsor/14/avatar.svg)](https://opencollective.com/skatejs/sponsor/14/website)
-[![](https://opencollective.com/skatejs/sponsor/15/avatar.svg)](https://opencollective.com/skatejs/sponsor/15/website)
-[![](https://opencollective.com/skatejs/sponsor/16/avatar.svg)](https://opencollective.com/skatejs/sponsor/16/website)
-[![](https://opencollective.com/skatejs/sponsor/17/avatar.svg)](https://opencollective.com/skatejs/sponsor/17/website)
-[![](https://opencollective.com/skatejs/sponsor/18/avatar.svg)](https://opencollective.com/skatejs/sponsor/18/website)
-[![](https://opencollective.com/skatejs/sponsor/19/avatar.svg)](https://opencollective.com/skatejs/sponsor/19/website)

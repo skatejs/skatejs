@@ -29,7 +29,6 @@ export const shared = css`
   blockquote {
     background-color: #dce4ca;
     border-left: 3px solid #c6d3a8;
-    font-size: smaller;
     font-style: italic;
     margin: 20px 0;
     padding: 10px 15px;
@@ -45,7 +44,7 @@ export const shared = css`
   code {
     background-color: #dce4c9;
     display: inline-block;
-    font-family: monaco, Consolas, "Lucida Console", monospace;
+    font-family: monaco;
     font-size: 0.8em;
     padding: 0 8px;
   }
