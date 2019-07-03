@@ -1,8 +1,6 @@
-/** @jsx h */
-
 import { wait } from "@skatejs/bore";
 import define, { getName } from "@skatejs/define";
-import Element, { h, setProps } from "..";
+import Element, { React } from "..";
 
 const Test = define(class extends Element {
   static props = { name: String };
@@ -43,11 +41,4 @@ test("renders", async () => {
   document.body.removeChild(el);
   await wait();
   expect(el.shadowRoot.innerHTML).toEqual("");
-});
-
-test("setProps", () => {
-  const ref = setProps({ test: true });
-  const obj = { test: false };
-  ref(obj);
-  expect(obj.test).toBe(true);
 });

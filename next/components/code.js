@@ -1,6 +1,4 @@
-// @jsx h
-
-import Element, { h } from "@skatejs/element-react";
+import Element, { React } from "@skatejs/element-react";
 import css from "@skatejs/shadow-css";
 import { outdent } from "../util";
 // import { Tabs } from "./tabs";
@@ -16,7 +14,7 @@ const styles = css`
     padding: 20px;
   }
   ${".host"} {
-    border-radius: 4px;
+    border-radius: 5px;
     box-shadow: 1px 1px var(--grid) rgba(0, 0, 0, 0.5);
     margin: var(--grid) 0;
     overflow: hidden;

@@ -190,6 +190,12 @@ export default class Element extends HTMLElement implements CustomElement {
     return deriveAttrsFromProps(defineProps(this));
   }
 
+  static renderToString(props) {
+    const elem = new this();
+    Object.assign(elem, props);
+    return elem.renderToString();
+  }
+
   constructor() {
     super();
 
@@ -269,6 +275,10 @@ export default class Element extends HTMLElement implements CustomElement {
 
   renderer() {
     this.renderRoot.innerHTML = this.render();
+  }
+
+  renderToString() {
+    return this.render();
   }
 
   shouldUpdateRender(props: Props) {

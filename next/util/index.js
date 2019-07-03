@@ -1,3 +1,43 @@
+import Element, { React } from "@skatejs/element-react";
+import { Markdown } from "../components";
+
+function parseValue(str, value, props) {
+  if (Array.isArray(value)) {
+    const indent = str
+      .split("\n")
+      .pop()
+      .match(/^\s*/)[0];
+    return value.map(v => parseValue(str, v, props)).join(`\n${indent}`);
+  }
+  if (value && value.renderToString) {
+    return value.renderToString();
+  }
+  if (typeof value === "function") {
+    return parseValue(str, value(props), props);
+  }
+  return value;
+}
+
+export function md(strings, ...replacements) {
+  if (typeof strings === "string") {
+    strings = [strings];
+  }
+  return class extends Element {
+    static get props() {
+      return {
+        props: Object
+      };
+    }
+    render() {
+      const src =
+        replacements.reduce((prev, next, i) => {
+          return prev + strings[i] + parseValue(strings[i], next, this.props);
+        }, "") + strings[strings.length - 1];
+      return <Markdown src={src} />;
+    }
+  };
+}
+
 export function outdent(strings, ...replacements) {
   if (typeof strings === "string") {
     strings = [strings];

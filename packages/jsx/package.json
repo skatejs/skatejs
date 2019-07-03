@@ -20,38 +20,26 @@
       ]
     ]
   },
-  "author": "Trey Shugart <treshugart@gmail.com> (https://github.com/treshugart)",
-  "dependencies": {
-    "@skatejs/element": "*",
-    "@skatejs/jsx": "*"
-  },
-  "description": "A SkateJS renderer for React.",
+  "author": "Trey Shugart <treshugart@gmail.com>",
+  "description": "A web component wrapper for React and Preact that enables SSR, elements as tag names and consistent prop setting.",
   "devDependencies": {
     "@pika/pack": "~0.4.0",
     "@pika/plugin-build-node": "~0.4.0",
     "@pika/plugin-build-types": "~0.4.0",
     "@pika/plugin-build-web": "~0.4.0",
     "@pika/plugin-ts-standard-pkg": "~0.4.0",
-    "@skatejs/bore": "*",
-    "@skatejs/define": "*",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
     "typescript": "^3.5.2"
   },
   "license": "MIT",
   "module": "pkg",
-  "name": "@skatejs/element-react",
-  "peerDependencies": {
-    "react": "^15.0.0 || ^16.8.6",
-    "react-dom": "^15.0.0 || ^16.8.6"
-  },
+  "name": "@skatejs/jsx",
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "pack build"
   },
-  "source": "src/index.ts",
+  "source": "src/index.js",
   "types": "src/index.ts",
-  "version": "0.0.1"
+  "version": "0.0.0"
 }

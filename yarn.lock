@@ -1342,6 +1342,13 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
+"@skatejs/cli@./packages/cli":
+  version "0.0.0"
+  dependencies:
+    conartist "^0.29.1"
+    jobsite "^0.1.0"
+    package-info "^3.0.2"
+
 "@skatejs/val@^0.4.0":
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@skatejs/val/-/val-0.4.0.tgz#fc28fe75d6559625ccb79ae93c9ffcad8cc08a94"

@@ -4,7 +4,14 @@ module.exports = {
     "@babel/plugin-syntax-dynamic-import"
   ],
   presets: [
-    ["@babel/preset-env", { exclude: ["@babel/plugin-transform-classes"] }],
+    [
+      "@babel/preset-env",
+      {
+        exclude: ["@babel/plugin-transform-classes"],
+        corejs: 2,
+        useBuiltIns: "usage"
+      }
+    ],
     "@babel/preset-react"
   ]
 };

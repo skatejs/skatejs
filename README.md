@@ -11,11 +11,11 @@ packages that enables you to write small, fast and scalable web components using
 popular view libraries such as React, Preact and LitHTML.
 
 - 🌏 Cross-framework compatible components.
-- ⚛️ Render components using your favourite view libary, or none at all.
 - 👑 Streamlined reaction to attributes, properties and events.
-- 🔌 Plug in _any_ view framework.
-- 🖥 Server-side rendering support for certain frameworks.
-- 🌟 TypeScript!
+- ⚛️ Render components using your favourite view libary.
+- 🔌 Plug in _any_ framework if we haven't already.
+- 🖥 Server-side rendering support for popular frameworks.
+- 🌟 TypeScript support.
 - 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
 
 ## Getting started
@@ -47,8 +47,9 @@ write web components using React, you'd install:
 npm i @skatejs/element-react react react-dom
 ```
 
-_You need both React and ReactDOM because you may already be using it, so its
-best for Skate to make this a peer dependency and not install its own version._
+_You need both React and ReactDOM because we place a `peerDependency` on them.
+You may already be using them, so it's ideal if everything can share the same
+version._
 
 ### Simple example
 
@@ -56,16 +57,14 @@ The following example is how you'd create a simple "hello world" example using
 the React element.
 
 ```js
-// @jsx h
-
-import Element, { g } from "@skatejs/element-react";
+import Element, { React } from "@skatejs/element-react";
 
 export default class extends Element {
   render() {
     return (
-      <span>
+      <>
         Hello, <slot />!
-      </span>
+      </>
     );
   }
 }
@@ -89,50 +88,51 @@ And then using it:
 Or you could use it in React like so:
 
 ```js
-import { h } from "@skatejs/element-react";
+import { React } from "@skatejs/element-react";
 import Hello from "./hello";
 
 <Hello>World</Hello>;
 ```
 
-_It's important to use the `h` export from `@skatejs/element-react` because it
-wraps `React.createElement` to support things like custom element constructors
-as tag names and Shadow DOM simulation when server-side rendering._
+_It's important to use the `React.createElement` (or `h`) exported from
+`@skatejs/element-react` because it wraps the original `React.createElement` to
+support things like custom element constructors as tag names and Shadow DOM
+simulation when server-side rendering._
 
 Since the React element supports server-side rendering, all you need to do is
 just call `renderToString()` on it if you need SSR.
 
 ```js
-import { h } from "@skatejs/element-react";
+import { React } from "@skatejs/element-react";
 import { renderToString } from "react-dom/server";
 import Hello from "./hello";
 
 // The resulting HTML would look something like:
 //
 // <x-hello>
-//   <span>
-//     Hello, <slot>World</slot>!
-//   </span>
+//   Hello, <slot>World</slot>!
 // </x-hello>
 renderToString(<Hello>World</Hello>);
 ```
 
 This output is friendly to bots because there are no shadow roots present. It's
 simulating the content projection offered by shadow roots and slots. To get
-simulated CSS scoping, you could use something like `@skatejs/shadow-css`.
+simulated scoping, you could use something like CSS modules or
+`@skatejs/shadow-css`, which uses native Shadow DOM CSS scoping if it's
+available.
 
 Rehydration is just as simple.
 
 ```js
-import { h } from "@skatejs/element-react";
+import { React } from "@skatejs/element-react";
 import { hydrate } from "react-dom";
 import Hello from "./hello";
 
-// Dev tools would show something like:
+// Dev tools would show something like this once hydrated:
 //
 // <x-hello>
 //   # shadow-root
-//     <span>Hello, <slot />!</span>
+//     Hello, <slot />!
 //   World
 // </x-hello>
 hydrate(<Hello>World</Hello>, window.app);

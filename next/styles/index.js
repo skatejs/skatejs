@@ -68,8 +68,4 @@ export const shared = css`
     font-weight: lighter;
     margin: 40px 0 20px 0;
   }
-  .logo {
-    display: block;
-    margin: 0 auto;
-  }
 `;

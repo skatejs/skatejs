@@ -1,20 +1,18 @@
-/** @jsx h */
 /** @jest-environment node */
 
-import Shadow from "@skatejs/sk-shadow";
-import { renderToString } from "react-dom/server";
-import Element, { h } from "..";
 import { hydrate } from "react-dom";
+import { renderToString } from "react-dom/server";
+import Element, { React } from "..";
 
 // We want to ensure this gets SSR'd correctly, and its slot content
 // projection is simulated.
 class Hello extends Element {
   render() {
     return (
-      <Shadow>
+      <>
         Hello, <slot />
         <slot name="punctuation">.</slot>
-      </Shadow>
+      </>
     );
   }
 }
