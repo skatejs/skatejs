@@ -1,13 +1,4 @@
 {
-  "conartist": {
-    "files": [
-      {
-        "merge": true,
-        "name": "package.json",
-        "sort": true
-      }
-    ]
-  },
   "dependencies": {
     "@skatejs/cli": "./packages/cli",
     "@skatejs/val": "^0.4.0",
@@ -80,18 +71,16 @@
     }
   },
   "license": "MIT",
-  "name": "skatejs-monorepo",
+  "name": "skatejs",
   "private": true,
   "scripts": {
-    "build": "jobsite npm build",
-    "dev": "next next",
-    "netlify": "yarn && parcel build site/*.html",
-    "start": "parcel site/index.html",
+    "dev": "next site",
+    "build": "next build site",
+    "start": "next start site",
     "sync": "jobsite get | xargs node packages/cli package",
     "test": "jest"
   },
   "workspaces": [
-    "next",
     "packages/*",
     "packages/ssr/example",
     "site"
