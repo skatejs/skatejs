@@ -1,5 +1,5 @@
 import Element, { React } from "@skatejs/element-react";
-import css from "@skatejs/shadow-css";
+import css, { cx } from "@skatejs/shadow-css";
 import { outdent } from "../util";
 // import { Tabs } from "./tabs";
 // import theme from "css-loader!prismjs/themes/prism-twilight.css";
@@ -32,17 +32,24 @@ const styles = css`
 export class Code extends Element {
   static props = {
     code: String,
+    css: Object,
     lang: String,
     title: String
   };
 
+  css = this.css || {};
+
   render() {
+    if (typeof window === "undefined") {
+      console.log(this.css);
+    }
     return (
       <div className={styles.host}>
         {/* <style>{theme}</style> */}
-        <style>{styles.toString()}</style>
+        <style>{styles.css}</style>
+        <style>{this.css.css}</style>
         {this.title ? <div className={styles.title}>{this.title}</div> : null}
-        <div className={styles.code}>
+        <div className={cx(styles.code, this.css.code)}>
           <pre className={styles.pre}>
             {this.code ? outdent(this.code) : <slot />}
           </pre>

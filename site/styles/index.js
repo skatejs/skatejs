@@ -3,6 +3,7 @@ import css from "@skatejs/shadow-css";
 export const global = css`
   :root {
     --background-color: #f2f5eb;
+    --hero-background-color: #333;
     --font-family: helvetica;
     --font-size: 1em;
     --grid: 20px;
@@ -51,21 +52,25 @@ export const shared = css`
   h1 {
     font-size: 2.5em;
     font-weight: normal;
+    margin: 0;
   }
   h2 {
     font-size: 1.8em;
     font-weight: lighter;
     line-height: 1.2em;
-    margin: 60px 0 30px 0;
+    margin: calc(var(--grid) * 3) 0 var(--grid) 0;
+  }
+  h2:first-of-type {
+    margin: calc(var(--grid) / 2) 0 calc(var(--grid) * 1.5) 0;
   }
   h3 {
     font-size: 1.4em;
     font-weight: lighter;
-    margin: 50px 0 25px 0;
+    margin: calc(var(--grid) * 2) 0 var(--grid) 0;
   }
   h4 {
     font-size: 1.3em;
     font-weight: lighter;
-    margin: 40px 0 20px 0;
+    margin: calc(var(--grid) * 1.5) 0 var(--grid) 0;
   }
 `;

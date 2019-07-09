@@ -3,6 +3,7 @@
     "@skatejs/define": "*",
     "@skatejs/element-react": "*",
     "@skatejs/shadow-css": "*",
+    "@skatejs/sk-context": "*",
     "file-loader": "^4.0.0",
     "marked": "^0.6.3",
     "next": "^8.1.0",

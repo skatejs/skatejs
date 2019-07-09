@@ -18,6 +18,22 @@ function parseValue(str, value, props) {
   return value;
 }
 
+export const createState = defaultValue => {
+  let state = [defaultValue, value => (state[0] = value)];
+
+  const Consumer = ({ children }) => {
+    state = React.useState(state[0]);
+    return children(state[0]);
+  };
+
+  const Provider = ({ children }) => {
+    state[1](typeof children === "function" ? children(state[0]) : children);
+    return "";
+  };
+
+  return { Consumer, Provider };
+};
+
 export function md(strings, ...replacements) {
   if (typeof strings === "string") {
     strings = [strings];
@@ -33,6 +49,7 @@ export function md(strings, ...replacements) {
         replacements.reduce((prev, next, i) => {
           return prev + strings[i] + parseValue(strings[i], next, this.props);
         }, "") + strings[strings.length - 1];
+      const h1 = src.match(/#(.*)/);
       return <Markdown src={src} />;
     }
   };

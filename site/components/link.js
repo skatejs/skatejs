@@ -17,7 +17,7 @@ export class Link extends Element {
   render() {
     return (
       <>
-        <style>{shared.toString()}</style>
+        <style>{shared.css}</style>
         <NextLink as={this.as} href={this.href}>
           <a onClick={this.onClick}>
             <slot />

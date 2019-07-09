@@ -11,6 +11,11 @@ const renderer = Object.assign(new marked.Renderer(), {
     return renderToString(<Code code={code} lang={lang} />);
   },
   heading(text, level) {
+    if (level === 1) {
+      import("../state").then(({ AppProvider }) =>
+        AppProvider({ children: { title: text } })
+      );
+    }
     return level === 1 ? "" : `<h${level}>${text}</h${level}>`;
   },
   link(href, something, text) {
@@ -36,7 +41,7 @@ export class Markdown extends Element {
     const src = outdent(this.src);
     return (
       <>
-        <style>{shared.toString()}</style>
+        <style>{shared.css}</style>
         <div
           dangerouslySetInnerHTML={{
             __html: marked(src, { renderer })

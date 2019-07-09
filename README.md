@@ -179,10 +179,10 @@ $ npx @skatejs/cli -h
 Skate builds upon the
 [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and
 [Shadow DOM](https://w3c.github.io/webcomponents/spec/shadow/) standards. It is
-capable of operating without the Shadow DOM &mdash; it just means you don't get
-any encapsulation of your component's HTML or styles. It also means that it's up
-to you to provide a way to project content (i.e. `<slot>`). It's highly
-recommended you use Shadow DOM whenever possible.
+capable of operating without Shadow DOM &mdash; it just means you don't get any
+encapsulation of your component's HTML or styles. It also means that it's up to
+you to provide a way to project content (i.e. `<slot>`). It's highly recommended
+you use Shadow DOM whenever possible.
 
 Though most modern browsers support these standards, if you're still targetting
 IE11 then you'll need to include at least the Custom Element polyfill (and shim,
