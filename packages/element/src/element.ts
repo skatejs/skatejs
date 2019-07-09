@@ -211,6 +211,13 @@ export default class Element extends HTMLElement implements CustomElement {
         ? this.attachShadow(shadowRootOptions)
         : this;
     }
+
+    // Initialize attributes.
+    if (this.attributes) {
+      for (const attr of this.attributes) {
+        this.attributeChangedCallback(attr.name, null, attr.value);
+      }
+    }
   }
 
   attributeChangedCallback(
