@@ -27,11 +27,17 @@ function parseValue(v: Value | ValueArr | ValueFn): string {
   return v;
 }
 
-export default function(strings: TemplateStringsArray, ...parts: Array<any>) {
+export default function(
+  strings: TemplateStringsArray,
+  ...parts: Array<any>
+): {
+  [className: string]: string;
+  css: string;
+} {
   const key = String.raw(strings, ...parts);
   const scope = scopes[key] || (scopes[key] = hash(key));
-  const classNames = {};
-  const parsed =
+  const classNames = { css: "" };
+  classNames.css =
     parts.reduce((parsed, part, i) => {
       if (part[0] === ".") {
         const cn = part.substring(1);
@@ -42,8 +48,10 @@ export default function(strings: TemplateStringsArray, ...parts: Array<any>) {
         return parsed + strings[i] + parseValue(part);
       }
     }, "") + strings[strings.length - 1];
-  return {
-    ...classNames,
-    toString: () => parsed
-  };
+  classNames.toString = () => JSON.stringify(classNames);
+  return classNames;
+}
+
+export function cx(...classNames) {
+  return classNames.filter(Boolean).join(" ");
 }
