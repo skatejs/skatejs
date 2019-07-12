@@ -38,12 +38,12 @@ Additionally, the following view libraries support server-side rendering:
 - [@skatejs/element-react]([https://skatejs.netlify.com/packages/element-react)
 - @skatejs/element-preact - coming soon!
 
-### Installing
+## Installing
 
 You'll need to install the base class and its corresponding view framework. To
 write web components using React, you'd install:
 
-```sh
+```bash
 npm i @skatejs/element-react react react-dom
 ```
 
@@ -51,12 +51,12 @@ _You need both React and ReactDOM because we place a `peerDependency` on them.
 You may already be using them, so it's ideal if everything can share the same
 version._
 
-### Simple example
+## Simple example
 
 The following example is how you'd create a simple "hello world" example using
 the React element.
 
-```js
+```jsx
 import Element, { React } from "@skatejs/element-react";
 
 export default class extends Element {
@@ -73,7 +73,7 @@ export default class extends Element {
 The resulting element can be used anywhere as a standard HTMLElement by first
 defining it:
 
-```js
+```jsx
 import Hello from "./hello";
 
 customElements.define("x-hello", Hello);
@@ -85,24 +85,28 @@ And then using it:
 <x-hello>World</x-hello>
 ```
 
-Or you could use it in React like so:
+## Usage in React
 
-```js
+You could take that same element and use it in React.
+
+```jsx
 import { React } from "@skatejs/element-react";
 import Hello from "./hello";
 
 <Hello>World</Hello>;
 ```
 
-_It's important to use the `React.createElement` (or `h`) exported from
+_It's important to use the `React.createElement` exported from
 `@skatejs/element-react` because it wraps the original `React.createElement` to
 support things like custom element constructors as tag names and Shadow DOM
 simulation when server-side rendering._
 
+### Server-side rendering (SSR)
+
 Since the React element supports server-side rendering, all you need to do is
 just call `renderToString()` on it if you need SSR.
 
-```js
+```jsx
 import { React } from "@skatejs/element-react";
 import { renderToString } from "react-dom/server";
 import Hello from "./hello";
@@ -123,7 +127,7 @@ available.
 
 Rehydration is just as simple.
 
-```js
+```jsx
 import { React } from "@skatejs/element-react";
 import { hydrate } from "react-dom";
 import Hello from "./hello";
@@ -141,11 +145,11 @@ hydrate(<Hello>World</Hello>, window.app);
 For more information on @skatejs/element-react, see its
 [documentation]([https://skatejs.netlify.com/packages/element-react).
 
-### Other examples
+## Other examples
 
 1. [Todo list](https://codesandbox.io/s/8zjp9qqj9l)
 
-### Cli
+## Cli
 
 If you want to get up and running super quickly then
 [@skatejs/cli](https://skatejs.netlify.com/packages/cli) can help you!

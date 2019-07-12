@@ -2,7 +2,8 @@ import Element, { React } from "@skatejs/element-react";
 import css, { cx } from "@skatejs/shadow-css";
 import { outdent } from "../util";
 // import { Tabs } from "./tabs";
-// import theme from "css-loader!prismjs/themes/prism-twilight.css";
+import { highlight, languages } from "prismjs";
+import theme from "css-loader!prismjs/themes/prism.css";
 
 const styles = css`
   ${".code"} {
@@ -36,16 +37,29 @@ export class Code extends Element {
     title: String
   };
 
+  lang = this.lang || "tsx";
+
   render() {
     return (
       <div className={styles.host}>
-        {/* <style>{theme}</style> */}
+        <style>{theme}</style>
         <style>{styles.css}</style>
         {this.title ? <div className={styles.title}>{this.title}</div> : null}
         <div className={styles.code}>
-          <pre className={styles.pre}>
-            {this.code ? outdent(this.code) : <slot />}
-          </pre>
+          {languages[this.lang] ? (
+            <pre
+              className={styles.pre}
+              dangerouslySetInnerHTML={{
+                __html: highlight(
+                  outdent(this.code),
+                  languages[this.lang],
+                  this.lang
+                )
+              }}
+            />
+          ) : (
+            <pre className={styles.pre}>{outdent(this.code)}</pre>
+          )}
         </div>
       </div>
     );

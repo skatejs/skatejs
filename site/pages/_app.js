@@ -10,7 +10,7 @@ const styles = css`
   }
   ${".hero"} {
     max-width: 600px;
-    margin: 0 auto;
+    margin: ${[0, "auto", 40, "auto"]};
   }
   ${".heroContainer"} {
     padding: 1px 0;
@@ -46,6 +46,9 @@ const styles = css`
   ${".nav"} li {
     margin: 0;
     padding: 0;
+  }
+  ${".pageTitle"} {
+    margin: ${[40, 0, 40, 200]};
   }
   ${".separator"} {
     background-color: var(--hero-background-color);
@@ -95,12 +98,13 @@ export default ({ Component, pageProps, router }) => {
           }
         </AppConsumer>
         <section className={styles.layout}>
-          <nav className={styles.nav} />
           <section>
             {router.route === "/" ? (
               ""
             ) : (
-              <AppConsumer>{({ title }) => <h1>{title} </h1>}</AppConsumer>
+              <AppConsumer>
+                {({ title }) => <h1 className={styles.pageTitle}>{title} </h1>}
+              </AppConsumer>
             )}
           </section>
         </section>
