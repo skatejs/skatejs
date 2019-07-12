@@ -56,7 +56,7 @@ version._
 The following example is how you'd create a simple "hello world" example using
 the React element.
 
-```jsx
+```js
 import Element, { React } from "@skatejs/element-react";
 
 export default class extends Element {
@@ -73,7 +73,7 @@ export default class extends Element {
 The resulting element can be used anywhere as a standard HTMLElement by first
 defining it:
 
-```jsx
+```js
 import Hello from "./hello";
 
 customElements.define("x-hello", Hello);
@@ -89,7 +89,7 @@ And then using it:
 
 You could take that same element and use it in React.
 
-```jsx
+```js
 import { React } from "@skatejs/element-react";
 import Hello from "./hello";
 
@@ -106,7 +106,7 @@ simulation when server-side rendering._
 Since the React element supports server-side rendering, all you need to do is
 just call `renderToString()` on it if you need SSR.
 
-```jsx
+```js
 import { React } from "@skatejs/element-react";
 import { renderToString } from "react-dom/server";
 import Hello from "./hello";
@@ -127,7 +127,7 @@ available.
 
 Rehydration is just as simple.
 
-```jsx
+```js
 import { React } from "@skatejs/element-react";
 import { hydrate } from "react-dom";
 import Hello from "./hello";

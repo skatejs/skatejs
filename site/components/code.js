@@ -40,7 +40,7 @@ export class Code extends Element {
     title: String
   };
 
-  lang = this.lang || "tsx";
+  lang = this.lang || "js";
 
   render() {
     return (

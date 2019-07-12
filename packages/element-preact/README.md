@@ -10,7 +10,7 @@ npm i @skatejs/element-preact preact
 
 ## Usage
 
-```jsx
+```js
 // @jsx h
 
 import Element, { h } from "@skatejs/element-preact";

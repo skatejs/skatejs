@@ -10,7 +10,7 @@ npm i @skatejs/element-react react react-dom
 
 ## Usage
 
-```jsx
+```js
 import Element, { React } from "@skatejs/element-react";
 
 class Hello extends Element {
@@ -49,7 +49,7 @@ In Skate, a lot of this happens automatically for you. However there are times
 when you must still explicitly specify a property. For this case, we've provided
 a `setProps` export that allows you to do this in React:
 
-```jsx
+```js
 import Element, { React, setProps } from "@skatejs/element-react";
 import React, { Component } from "react";
 
@@ -83,7 +83,7 @@ Instead of providing a separate abstraction to work around this, you can define
 properties that bind to custom events and use the `setProps` function to add
 custom event handlers. With Skate's `event` prop type, this is trivial.
 
-```jsx
+```js
 import Element, { React, setProps } from "@skatejs/element-react";
 import React, { Component } from "react";
 
