@@ -17,6 +17,8 @@ const styles = css`
     text-align: center;
   }
   ${".heroCode"} {
+    --code-background-color: var(--background-color);
+    --code-text-color: var(--hero-background-color);
     display: block;
     margin: var(--grid) auto;
   }
@@ -53,14 +55,6 @@ const styles = css`
   }
 `;
 
-// TODO find out why this isn't working with SSR or HMR.
-const stylesCode = css`
-  ${".code"} {
-    background-color: var(--background-color);
-    color: var(--hero-background-color);
-  }
-`;
-
 export default ({ Component, pageProps, router }) => {
   return (
     <>
@@ -80,7 +74,6 @@ export default ({ Component, pageProps, router }) => {
                 </section>
                 <Code
                   class={styles.heroCode}
-                  css={stylesCode}
                   code={`
                     import Element, { React } from "@skatejs/element-react";
 

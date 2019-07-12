@@ -6,8 +6,8 @@ import { outdent } from "../util";
 
 const styles = css`
   ${".code"} {
-    background-color: #333;
-    color: #eee;
+    background-color: var(--code-background-color, #333);
+    color: var(--code-text-color, #eee);
     line-height: 1.2em;
     margin: 0;
     overflow: auto;
@@ -32,24 +32,17 @@ const styles = css`
 export class Code extends Element {
   static props = {
     code: String,
-    css: Object,
     lang: String,
     title: String
   };
 
-  css = this.css || {};
-
   render() {
-    if (typeof window === "undefined") {
-      console.log(this.css);
-    }
     return (
       <div className={styles.host}>
         {/* <style>{theme}</style> */}
         <style>{styles.css}</style>
-        <style>{this.css.css}</style>
         {this.title ? <div className={styles.title}>{this.title}</div> : null}
-        <div className={cx(styles.code, this.css.code)}>
+        <div className={styles.code}>
           <pre className={styles.pre}>
             {this.code ? outdent(this.code) : <slot />}
           </pre>
