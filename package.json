@@ -74,9 +74,8 @@
   "name": "skatejs",
   "private": true,
   "scripts": {
-    "dev": "next site",
-    "build": "next build site",
-    "start": "next start site",
+    "deploy": "next build site && next export site",
+    "start": "next site",
     "sync": "jobsite get | xargs node packages/cli package",
     "test": "jest"
   },
