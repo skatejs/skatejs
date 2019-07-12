@@ -20,6 +20,9 @@ const styles = css`
     margin: var(--grid) 0;
     overflow: hidden;
   }
+  .token.operator {
+    background-color: transparent;
+  }
   ${".pre"} {
     margin: 0;
     padding: 0;

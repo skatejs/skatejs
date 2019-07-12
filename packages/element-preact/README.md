@@ -10,8 +10,10 @@ npm i @skatejs/element-preact preact
 
 ## Usage
 
-```js
-import Element, { h } from '@skatejs/element-preact';
+```jsx
+// @jsx h
+
+import Element, { h } from "@skatejs/element-preact";
 
 class Hello extends Element {
   render() {
@@ -23,7 +25,7 @@ class Hello extends Element {
   }
 }
 
-customElements.define('x-hello', Hello);
+customElements.define("x-hello", Hello);
 ```
 
 ```html
