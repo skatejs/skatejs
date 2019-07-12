@@ -23,7 +23,7 @@
     "jest-environment-node": "^23.4.0",
     "jest-in-case": "^1.0.2",
     "jest-resolver-ts-js": "^0.0.1",
-    "jobsite": "^0.1.0",
+    "jobsite": "^0.3.1",
     "js-beautify": "^1.7.5",
     "lint-staged": "^6.1.1",
     "lit-html": "dev",
@@ -74,7 +74,8 @@
   "name": "skatejs",
   "private": true,
   "scripts": {
-    "deploy": "next build site && next export site",
+    "build": "jobsite -c 2 npm build",
+    "deploy": "yarn build && next build site && next export site",
     "start": "next site",
     "sync": "jobsite get | xargs node packages/cli package",
     "test": "jest"
