@@ -32,6 +32,7 @@
     "mkdirp": "^0.5.1",
     "navaid": "^1.0.0",
     "next": "^8.1.0",
+    "now": "^15.8.0",
     "outdent": "^0.5.0",
     "page": "^1.8.3",
     "parcel-bundler": "^1.10.3",
@@ -74,9 +75,8 @@
   "name": "skatejs",
   "private": true,
   "scripts": {
-    "build": "jobsite -c 2 npm build",
-    "deploy": "yarn build && next build site && next export site",
-    "start": "next site",
+    "now-build": "jobsite -c 2 npm build && next build site && next export site",
+    "start": "now dev",
     "sync": "jobsite get | xargs node packages/cli package",
     "test": "jest"
   },
