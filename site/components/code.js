@@ -6,30 +6,24 @@ import { highlight, languages } from "prismjs";
 import theme from "css-loader!prismjs/themes/prism.css";
 
 const styles = css`
-  ${".code"} {
-    background-color: var(--code-background-color, #333);
-    color: var(--code-text-color, #eee);
-    line-height: 1.2em;
-    margin: 0;
-    overflow: auto;
-    padding: 20px;
-  }
   ${".host"} {
     border-radius: 5px;
     box-shadow: 1px 1px var(--grid) rgba(0, 0, 0, 0.5);
-    margin: var(--grid) 0;
-    overflow: hidden;
-  }
-  .token.operator {
-    background-color: transparent;
+    background-color: var(--code-background-color, #333);
+    box-sizing: border-box;
+    color: var(--code-text-color, #eee);
+    overflow: auto;
   }
   ${".pre"} {
-    margin: 0;
-    padding: 0;
+    margin: 0 -40px 0 0;
+    padding: 20px;
   }
   ${".title"} {
     background-color: #20232a;
     padding: 10px 20px;
+  }
+  .token.operator {
+    background-color: transparent;
   }
 `;
 
@@ -48,22 +42,20 @@ export class Code extends Element {
         <style>{theme}</style>
         <style>{styles.css}</style>
         {this.title ? <div className={styles.title}>{this.title}</div> : null}
-        <div className={styles.code}>
-          {languages[this.lang] ? (
-            <pre
-              className={styles.pre}
-              dangerouslySetInnerHTML={{
-                __html: highlight(
-                  outdent(this.code),
-                  languages[this.lang],
-                  this.lang
-                )
-              }}
-            />
-          ) : (
-            <pre className={styles.pre}>{outdent(this.code)}</pre>
-          )}
-        </div>
+        {languages[this.lang] ? (
+          <pre
+            className={styles.pre}
+            dangerouslySetInnerHTML={{
+              __html: highlight(
+                outdent(this.code),
+                languages[this.lang],
+                this.lang
+              )
+            }}
+          />
+        ) : (
+          <pre className={styles.pre}>{outdent(this.code)}</pre>
+        )}
       </div>
     );
   }

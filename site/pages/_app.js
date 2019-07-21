@@ -5,12 +5,9 @@ import { global, shared } from "../styles";
 import { AppConsumer } from "../state";
 
 const styles = css`
-  ${".content"} {
-    max-width: 600px;
-  }
   ${".hero"} {
+    margin: auto;
     max-width: 600px;
-    margin: ${[0, "auto", 40, "auto"]};
   }
   ${".heroContainer"} {
     padding: 1px 0;
@@ -19,8 +16,6 @@ const styles = css`
   ${".heroCode"} {
     --code-background-color: var(--background-color);
     --code-text-color: var(--hero-background-color);
-    display: block;
-    margin: var(--grid) auto;
   }
   ${".heroSubtitle"} {
     font-size: 1.4em;
@@ -33,28 +28,31 @@ const styles = css`
     display: flex;
     margin: 0 auto;
     max-width: 800px;
+    padding: 20px;
   }
   ${".nav"} {
-    padding: 15px 0;
-    width: 200px;
+    margin: 0;
+    padding: 0;
   }
   ${".nav"} ul {
     list-style: none;
-    margin: 0;
+    margin: auto;
     padding: 0;
   }
   ${".nav"} li {
+    display: inline-block;
+    margin: 0 20px 0 0;
+  }
+  ${".nav"} li:last-of-type {
     margin: 0;
-    padding: 0;
   }
   ${".pageTitle"} {
-    margin: ${[40, 0, 40, 200]};
+    margin: var(--grid) 0;
   }
   ${".separator"} {
     background-color: var(--hero-background-color);
     color: #eee;
-    margin: 0 0 var(--grid) 0;
-    padding: 0;
+    padding: 20px;
   }
 `;
 
@@ -65,51 +63,6 @@ export default ({ Component, pageProps, router }) => {
       <style>{shared.css}</style>
       <style>{styles.css}</style>
       <div className={styles.separator}>
-        <AppConsumer>
-          {({ title }) =>
-            router.route === "/" ? (
-              <section className={styles.hero}>
-                <section className={styles.heroContainer}>
-                  <h1 className={styles.heroTitle}>SkateJS</h1>
-                  <h2 className={styles.heroSubtitle}>
-                    Web components powered by modern view libraries.
-                  </h2>
-                </section>
-                <Code
-                  class={styles.heroCode}
-                  code={`
-                    import Element, { React } from "@skatejs/element-react";
-
-                    export default class extends Element {
-                      render() {
-                        return (
-                          <>
-                            Hello, <slot />!
-                          </>
-                        );
-                      }
-                    }
-                  `}
-                />
-              </section>
-            ) : (
-              ""
-            )
-          }
-        </AppConsumer>
-        <section className={styles.layout}>
-          <section>
-            {router.route === "/" ? (
-              ""
-            ) : (
-              <AppConsumer>
-                {({ title }) => <h1 className={styles.pageTitle}>{title} </h1>}
-              </AppConsumer>
-            )}
-          </section>
-        </section>
-      </div>
-      <section className={styles.layout}>
         <nav className={styles.nav}>
           <ul>
             <li>
@@ -123,9 +76,39 @@ export default ({ Component, pageProps, router }) => {
             </li>
           </ul>
         </nav>
-        <section className={styles.content}>
-          <Component props={pageProps} />
-        </section>
+        {router.route === "/" ? (
+          <section className={styles.hero}>
+            <section className={styles.heroContainer}>
+              <h1 className={styles.heroTitle}>SkateJS</h1>
+              <h2 className={styles.heroSubtitle}>
+                Web components powered by modern view libraries.
+              </h2>
+            </section>
+            <Code
+              class={styles.heroCode}
+              code={`
+                import Element, { React } from "@skatejs/element-react";
+
+                export default class extends Element {
+                  render() {
+                    return (
+                      <>
+                        Hello, <slot />!
+                      </>
+                    );
+                  }
+                }
+              `}
+            />
+          </section>
+        ) : (
+          <AppConsumer>
+            {({ title }) => <h1 className={styles.pageTitle}>{title}</h1>}
+          </AppConsumer>
+        )}
+      </div>
+      <section className={styles.layout}>
+        <Component props={pageProps} />
       </section>
     </>
   );

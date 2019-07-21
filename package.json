@@ -76,7 +76,7 @@
   "private": true,
   "scripts": {
     "now-build": "jobsite -c 2 npm build && next build site && next export site",
-    "start": "now dev",
+    "start": "next dev site",
     "sync": "jobsite get | xargs node packages/cli package",
     "test": "jest"
   },
