@@ -9,7 +9,7 @@ Skate is a functional reactive abstraction over
 [the web component standards](https://github.com/w3c/webcomponents) as a set of packages that enables you to write small, fast and scalable web components using popular view libraries such as React, Preact and LitHTML.
 
 - 🌏 Cross-framework compatible components.
-- ⚛️ Render components using your favourite view libary, or none at all.
+- ⚛️ Render components using your favourite view library, or none at all.
 - 👑 Guided conventions for best-practices when reflecting between, and reacting to attributes, properties and events.
 - 🌟 Full TypeScript support.
 - 📚 Docs [https://skatejs.netlify.com](https://skatejs.netlify.com).
