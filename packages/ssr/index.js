@@ -17,8 +17,10 @@ function stringify(node) {
     return node.textContent;
   }
 
-  str += `<${node.localName}${(node.attributes || [])
-    .map(a => ` ${a.name}="${a.value}"`)
+  const { map } = Array.prototype;
+
+  str += `<${node.localName}${map
+    .call(node.attributes || [], a => ` ${a.name}="${a.value}"`)
     .join('')}>`;
 
   if (node.nodeName === 'BODY') {
@@ -26,13 +28,13 @@ function stringify(node) {
   }
 
   if (node.shadowRoot) {
-    str += `<shadowroot>${node.shadowRoot.childNodes
-      .map(stringify)
+    str += `<shadowroot>${map
+      .call(node.shadowRoot.childNodes, stringify)
       .join('')}${shadowRootScriptCall}</shadowroot>`;
   }
 
   if (node.childNodes) {
-    str += node.childNodes.map(stringify).join('');
+    str += map.call(node.childNodes, stringify).join('');
   }
 
   str += `</${node.localName}>`;
