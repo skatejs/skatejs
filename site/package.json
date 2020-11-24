@@ -11,7 +11,7 @@
     "@skatejs/sk-context": "0.0.1",
     "@skatejs/sk-marked": "0.1.1",
     "@skatejs/sk-router": "0.3.3",
-    "highlight.js": "^9.12.0",
+    "highlight.js": "^10.1.2",
     "lit-html": "dev",
     "preact": "^8.2.7",
     "prismjs": "^1.11.0",
