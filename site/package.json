@@ -14,7 +14,7 @@
     "highlight.js": "^9.12.0",
     "lit-html": "dev",
     "preact": "^8.2.7",
-    "prismjs": "^1.11.0",
+    "prismjs": "^1.24.0",
     "react": "^16.6.3",
     "react-dom": "^16.6.3",
     "shadow-css": "^0.1.0"
