@@ -4,7 +4,7 @@
   "bugs": "https://github.com/skatejs/skatejs/issues",
   "dependencies": {
     "@skatejs/element": "0.0.1",
-    "marked": "^0.3.14"
+    "marked": "^4.0.10"
   },
   "description": "A web component for rendering Markdown using Marked.",
   "devDependencies": {
